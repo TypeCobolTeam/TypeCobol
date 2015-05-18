@@ -1,0 +1,39 @@
+﻿-- Line 1 --
+*** DIRECTIVE SKIP1 ([8,12:SKIP1]<SKIP1>) ***
+
+-- Line 2 --
+*** DIRECTIVE SKIP2 ([8,12:SKIP2]<SKIP2>) ***
+
+-- Line 3 --
+*** DIRECTIVE SKIP3 ([8,12:SKIP3]<SKIP3>) ***
+
+-- Line 4 --
+*** DIRECTIVE SKIP1 ([8,12:SKIP1]<SKIP1>[13,13+:.]<PeriodSeparator>) ***
+
+-- Line 5 --
+*** DIRECTIVE SKIP2 ([8,12:SKIP2]<SKIP2>[13,13+:.]<PeriodSeparator>) ***
+
+-- Line 6 --
+*** DIRECTIVE SKIP3 ([8,12:SKIP3]<SKIP3>[13,13+:.]<PeriodSeparator>) ***
+
+-- Line 7 --
+*** DIRECTIVE SKIP1 ([8,12:SKIP1]<SKIP1>[13,14:. ]<PeriodSeparator>) ***
+*** DIRECTIVE SKIP2 ([15,19:SKIP2]<SKIP2>) ***
+[20,20: ]<SpaceSeparator>
+*** DIRECTIVE SKIP3 ([21,25:SKIP3]<SKIP3>) ***
+
+-- Line 8 --
++++ CONTINUATION OF CompilerDirective ([8,8+:.]<PeriodSeparator>) +++
+
+-- Line 9 --
+
+-- Line 10 --
+[8,10:P1.]<InvalidToken>
+
+-- Line 11 --
+[8,14:DISPLAY]<DISPLAY>
+[15,15: ]<SpaceSeparator>
+[16,22:"start"]<AlphanumericLiteral>(",Y,Y){start}
+[23,23: ]<SpaceSeparator>
+*** DIRECTIVE SKIP2 ([24,28:SKIP2]<SKIP2>) ***
+

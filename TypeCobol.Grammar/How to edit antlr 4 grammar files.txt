@@ -1,0 +1,8 @@
+﻿1. Download ANTLRWorks 2 :
+http://tunnelvisionlabs.com/products/demo/antlrworks
+
+2. Use the editor to browse and edit the .g4 files
+
+3. If you want to enable all the navigation features of the editor, as Antlrworks does not like imported grammar fragments,
+   you can temporarily replace the following directive at the beginning of CobolDirectives.g4 or Cobol.g4 : 
+   "import CobolCommon;" by the full text contained in CobolCommon.g4.  

@@ -1,0 +1,130 @@
+http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.aix.cbl.doc/PGandLR/ref/rlcdscop.htm
+
+9.The COPY statement with REPLACING phrase can be used to replace parts of words. 
+By inserting a dummy operand delimited by colons into the program text, the compiler will replace the dummy operand with the desired text. 
+Example 3 shows how this is used with the dummy operand :TAG:. 
+The colons serve as separators and make TAG a stand-alone operand.
+
+http://documentation.microfocus.com/help/index.jsp?topic=%2FGUID-0E0191D8-C39A-44D1-BA4C-D67107BAF784%2FHRLHLHCOMP02.html
+
+14.ANS85 If certain conventions are followed in library text, parts of names, for example the prefix portion of data-names, can be changed with the REPLACING phrase. 
+To use this type of "partial word replacement" the portion of the words to be modified must be enclosed in one of the following ways:  
+a.In pairs of left and right parentheses. For example, (ABC) 
+b.Within colons. For example :XYZ:
+
+http://www-01.ibm.com/support/docview.wss?uid=swg1PM97865
+
+When a COPY statement with the REPLACING phrase is used and the pseudo text being replaced is a partial
+word and the partial word being replaced in the copy book is replaced with the string EXEC, the resulting 
+string is two separate words instead of one.
+Example:                         
+COPY XYZ                               
+  REPLACING ==:TAG:== BY ==EXEC-==  
+copy member XYZ                       
+AAA-:TAG-:                        
+result in the following string        
+AAA- EXEC                         
+instead of the following string       
+ AAA-EXEC                          
+When doing word replacements in the copy phase, the word EXEC
+was treated as the start of a potential EXEC SQL INCLUDE
+statement even if it was part of a partial word replacement
+string
+The compiler is changed to not treat the word EXEC as a key word
+when it is used in partial word replacement in COPY with
+REPLACING.
+
+http://www.csis.ul.ie/cobol/course/Copy.htm
+
+-> test cases
+
+Sample EI code
+
+004060     replace ==:NBJLCC:==        by ==7==                         00337001
+005970     05 W-TAB-LCC-X OCCURS :NBJLCC:                               00501001
+
+112250        replace ==:ZONE:== by ==NATIONALITE==.                    10812001
+112260        if (W-CCOMDE-UN-CHOIX(CCOMDI-:ZONE:) = 'D' or             10813001
+
+115720        replace ==:ZONE:== by ==SUPX==                            11159001
+115730                ==:SSPRO:== by ==CCTZ023B==.                      11160001
+115740        copy YCCTCTL.                                             11161001
+
+--- Characters allowed ---
+
+// p9: Except for arithmetic operators and relation characters, each character of a COBOL
+// word is selected from the following set:
+// - Latin uppercase letters A through Z
+// - Latin lowercase letters a through z
+// - digits 0 through 9
+// - - (hyphen)
+// - _ (underscore)
+
+p45 : Table 4. Separators 
+( Left parenthesis 
+) Right parenthesis 
+: Colon
+p46 :
+Parentheses{(}...{)} Except in pseudo-text, parentheses can appear only in balanced pairs of left and right parentheses. They delimit subscripts, a list of function arguments, reference-modifiers, arithmetic expressions, or conditions. 
+Colon{:} The colon is a separator and is required when shown in general formats. 
+
+==> Usage of ColonSeparator
+
+repositoryParagraph: 
+                   REPOSITORY PeriodSeparator 
+                   (CLASS className (IS? (externalClassName | javaArrayClassReference))?)*;
+
+*javaArrayClassReference : jobjectArray (ColonSeparator externalClassName)?;
+
+jobjectArray : alphanumericLiteral;
+
+externalClassName : alphanumericLiteral;
+
+functionIdentifier:
+                FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+identifier:
+              ( qualifiedDataName
+                (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
+                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?) 
+
+*referenceModifier:
+                     leftMostCharacterPosition ColonSeparator length?;
+
+length: arithmeticExpression;
+
+==> Usage of LeftParenthesisSeparator
+
+expressionBase:
+                   identifier | numericLiteral | (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator);
+
+conditionBase:
+                 simpleCondition | (LeftParenthesisSeparator complexCondition RightParenthesisSeparator);
+
+functionIdentifier:
+                FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+identifier:
+              ( qualifiedDataName
+                (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
+                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?)
+
+conditionNameReference:
+                          conditionName 
+                          ((IN | OF) dataName)* 
+                          ((IN | OF) fileName)?
+                          (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+--------
+Solution
+--------
+
+- support only pattern :TAG: mentioned in the IBM documentation
+- with a limitation : continuation between the two ':' chars will not be allowed
+- do NOT support pattern (TAG) mentioned in Cobol 85 standard
+
+- allow ':' char inside UserDefinedWords
+- when encountering ':', try to match cobol word chars until a second ':' char => if found match UserDefinedWord instead of ColonSeparator
+- if UserDefinedWord contains ':' pattern, special token type PartialReplaceCobolWord
+
+- in the replace algorithm : implement partial cobol word replacement when PartialCobolWord is found in pseudo text

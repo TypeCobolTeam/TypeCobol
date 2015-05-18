@@ -1,0 +1,916 @@
+﻿Vocabulary
+----------
+
+Variables = user-supplied names (identifier) or user-supplied values (literal)
+Symbols = punctuation marks, parentheses, arithmetic operators
+Statement = keyword, operand, delimiter, entries
+Separators
+Division, Section, Paragraph, Phrase, Statement, Clause
+Special register, Declarative, Figurative constant
+Intrinsic functions
+Comments, inline comments
+Compiler options
+
+character set = set of letters, numbers, special characters, and other elements used to represent information
+coded character set = coded representation of a set of characters, where each character is assigned a numerical position, called a code point, in the encoding scheme
+code page = coded character set
+Code page identified by
+- code page name (IBM-1252)
+- coded character set identifier - CCSID (1252)
+
+EBCDIC encoding 
+---------------
+
+http://www-01.ibm.com/software/globalization/cp/cp_cpgid.html
+http://fr.wikipedia.org/wiki/EBCDIC_297
+ 
+http://site.icu-project.org/home
+
+http://download.boulder.ibm.com/ibmdl/pub/software/dw/java/cdctables.zip  
+
+Encoding Scheme Identifiers
+http://www-01.ibm.com/software/globalization/ccsid/es.html
+http://www-01.ibm.com/software/globalization/cdra/appendix_a.html
+
+ESID (hex) Interpretation Number of States 
+1100 EBCDIC, SBCS. No code extension is allowed 1 
+6100 EBCDIC Presentation, SBCS. No code extension is allowed 1 
+1200 EBCDIC, DBCS, No code extension is allowed 1 
+6200 EBCDIC DBCS presentation. 1 
+1301 EBCDIC, Mixed single-byte and double-byte, using SO/SI code extension method 1 
+
+.Net Encodings : 1147 | IBM01147 | IBM EBCDIC (France-Euro) 
+
+
+DBCS encoding
+-------------
+
+DBCS strings can be used in
+- literals
+- comments
+- user-defined words
+DBCS strings delimited by
+- shift-out character X'0E' (represented by <)
+- shift-in character X'0F' (represented by >)
+
+In EBCDIC DBCS data containing mixed single-byte and double-byte characters,
+double-byte character strings are delimited by shift-out and shift-in characters.
+
+In ASCII DBCS data containing mixed single-byte and double-byte characters,
+double-byte character strings are not delimited by shift-out and shift-in
+characters.
+
+National characters
+-------------------
+
+National characters are represented in UTF-16, a 16-bit encoding form of Unicode.
+The encoding for national literals and data items described with usage NATIONAL is UTF-16BE (big endian), CCSID 1200.
+
+Characters
+----------
+
+basic character set = latin letters, digits, special characters
+
+[Basic COBOL character set]
+  Space
++ Plus sign
+- Minus sign or hyphen
+* Asterisk
+/ Forward slash or solidus
+= Equal sign
+$ Currency sign (The currency sign is the character with the value X'5B', regardless of the code page in
+effect. The assigned graphic character can be the dollar sign or a local currency sign.)
+, Comma
+; Semicolon
+. Decimal point or period
+" Quotation mark (The quotation mark is the character with the value X'7F')
+’ Apostrophe
+( Left parenthesis
+) Right parenthesis
+> Greater than
+< Less than
+: Colon
+_ Underscore
+A - Z Alphabet (uppercase)
+a - z Alphabet (lowercase)
+0 - 9 Numeric characters
+
+For certain language elements, the basic character set is extended with the EBCDIC
+Double-Byte Character Set (DBCS) :
+- user-defined words
+The elements below can include any of the characters in the computer's compile-time character set, and can
+include both single-byte and DBCS characters :
+- alphanumeric literals
+- comment lines  / comment entries
+
+When the NSYMBOL (NATIONAL) compiler option is in effect, literals identified
+by the opening delimiter N" or N' are national literals and can contain any
+single-byte or double-byte characters, or both, that are valid for the compile-time
+code page in effect (either the default code page or the code page specified for the
+CODEPAGE compiler option). Characters contained in national literals are
+represented as national characters at run time.
+
+character-string = character+
+separator = character+
+
+words, literals, phrases, clauses, statements, sentences = (character-string | separator)+
+
+Character decoding
+------------------
+
+character encoding unit = unit of data that COBOL treats as a single character at run time
+character and character position refer to a single encoding unit
+
+The size of an encoding unit for data items and literals depends on the USAGE clause of the data item or the category of the literal as follows:
+- For data items described with USAGE DISPLAY and for alphanumeric literals,
+	an encoding unit is 1 byte, regardless of the code page used and regardless of the number of bytes used to represent a given graphic character.
+- For data items described with USAGE DISPLAY-1 (DBCS data items) and for DBCS literals, 
+	an encoding unit is 2 bytes.
+- For data items described with USAGE NATIONAL and for national literals,
+	an encoding unit is 2 bytes.
+
+The relationship between a graphic character and an encoding unit depends on the
+type of code page used for the data item or literal. 
+
+* Single-byte EBCDIC code pages
+
+You can use a single-byte EBCDIC code page in data items described with USAGE
+DISPLAY and in literals of category alphanumeric. An encoding unit is 1 byte and
+each graphic character is represented in 1 byte. For these data items and literals,
+you need not be concerned with encoding units.
+
+* EBCDIC DBCS code pages
+
+  + USAGE DISPLAY
+
+You can use a mixture of single-byte and double-byte EBCDIC characters in data
+items described with USAGE DISPLAY and in literals of category alphanumeric.
+Double-byte characters must be delimited by shift-out and shift-in characters. An
+encoding unit is 1 byte and the size of a graphic character is 1 byte or 2 bytes.
+
+When alphanumeric data items or literals contain DBCS data, programmers are
+responsible for ensuring that operations do not unintentionally separate the
+multiple encoding units that form a graphic character. Care should be taken with
+reference modification, and truncation during moves should be avoided. The
+COBOL runtime system does not check for a split between the encoding units that
+form a graphic character or for the loss of shift-out or shift-in codes.
+
+To avoid problems, you can convert alphanumeric literals and data items described
+with usage DISPLAY to national data (UTF-16) by moving the data items or literals
+to data items described with usage NATIONAL or by using the NATIONAL-OF
+intrinsic function. You can then perform operations on the national data with less
+concern for splitting graphic characters. You can convert the data back to USAGE
+DISPLAY by using the DISPLAY-OF intrinsic function.
+
+  + USAGE DISPLAY-1
+
+You can use double-byte characters of an EBCDIC DBCScode page in data items
+described with USAGE DISPLAY-1 and in literals of category DBCS. An encoding
+unit is 2 bytes and each graphic character is represented in a single 2-byte
+encoding unit. For these data items and literals, you need not be concerned with
+encoding units.
+
+* Unicode UTF-16
+
+You can use UTF-16 in data items described with USAGE NATIONAL. National
+literals are stored as UTF-16 characters regardless of the code page used for the
+source program. An encoding unit for data items of usage NATIONAL and
+national literals is 2 bytes.
+
+For most of the characters in UTF-16, a graphic character is one encoding unit.
+Characters converted to UTF-16 from an EBCDIC, ASCII, or EUC code page are
+represented in one UTF-16 encoding unit. Some of the other graphic characters in
+UTF-16 are represented by a surrogate pair or a combining character sequence. A
+surrogate pair consists of two encoding units (4 bytes). A combining character
+sequence consists of a base character and one or more combining marks or a
+sequence of one or more combining marks (4 bytes or more, in 2-byte increments).
+In data items of usage NATIONAL, each 2-byte encoding unit is treated as a
+character.
+
+When national data contains surrogate pairs or combining character sequences,
+programmers are responsible for ensuring that operations on national characters do
+not unintentionally separate the multiple encoding units that form a graphic
+character. Care should be taken with reference modification, and truncation during
+moves should be avoided. The COBOL runtime system does not check for a split
+between the encoding units that form a graphic character.
+
+CODEPAGE compiler option
+-------------------------
+
+http://pic.dhe.ibm.com/infocenter/pdthelp/v1r1/index.jsp?topic=%2Fcom.ibm.entcobol.doc_4.2%2FPGandLR%2Fui%2Fup6080.htm
+
+Characters from the basic COBOL character set (see the table of these characters in the related reference below about characters) 
+Though the encoding of the basic COBOL characters default currency sign ($), quotation mark ("), and the lowercase Latin letters varies in different EBCDIC code pages, the compiler always interprets these characters using the EBCDIC code page 1140 encoding. In particular, the default currency sign is always the character with value X'5B' (unless changed by the CURRENCY compiler option or the CURRENCY SIGN clause in the SPECIAL-NAMES paragraph), and the quotation mark is always the character with value X'7F'.
+
+Table 1. EBCDIC multibyte coded character set identifiers National language MBCS CCSID SBCS CCSID component DBCS CCSID component 
+Japanese (Katakana-Kanji) 930 290 300 
+Japanese (Katakana-Kanji with euro) 1390 8482 16684 
+Japanese (Katakana-Kanji) 5026 290 4396 
+Japanese (Latin-Kanji) 939 1027 300 
+Japanese (Latin-Kanji with euro) 1399 5123 16684 
+Japanese (Latin-Kanji) 5035 1027 4396 
+Korean 933 833 834 
+Korean 1364 13121 4930 
+Simplified Chinese 935 836 837 
+Simplified Chinese 1388 13124 4933 
+Traditional Chinese 937 28709 835 
+
+Compiler options
+----------------
+
+*CODEPAGE*
+coded character set for use at compile time and run time for code-page-sensitive elements, such as:
+- The encoding of literals in the source program
+- The default encoding for data items described with USAGE DISPLAY or DISPLAY-1
+- The default encoding for XML parsing and XML generation
+For further details about the CODEPAGE compiler option, see CODEPAGE in the Enterprise COBOL Programming Guide.
+If you do not specify a code page, the default is code page IBM-1140, CCSID 1140.
+
+The source text representation of the content of the national literal character-data can include any combination of EBCDIC single-byte
+characters and double-byte characters encoded in the Coded Character Set ID (CCSID) specified by the CODEPAGE compiler option.
+
+*NSYMBOL(DBCS)/NSYMBOL(NATIONAL)*
+literals identified by the opening delimiter N" or N' are national literals and can contain any
+single-byte or double-byte characters, or both, that are valid for the compile-time code page in effect
+The encoding of national data is not affected by the CODEPAGE compiler option.
+The encoding for national literals and data items described with usage NATIONAL is UTF-16BE (big endian), CCSID 1200.
+
+*APOST/QUOTE*
+
+*DBCS*
+
+*ARITH(COMPAT)/ARITH(EXTEND)*
+
+Character-strings
+-----------------
+
+file = separator character-string separator
+
+character-string = COBOL word | literal | PICTURE character-string | comment-entry
+
+text word = character string and separators = contiguous characters (possibly continued across lines) between character positions 8 and 72 inclusive
+in : source text | library text | pseudo-text
+
+Source text, library text, and pseudo-text can be written in single-byte EBCDIC
+and, for some character-strings, DBCS. (The compiler cannot process source code
+written in ASCII or Unicode.)
+You can use single-byte and double-byte character-strings to form the following
+items:
+- COBOL words
+- Literals
+- Comment text
+You can use only single-byte characters to form PICTURE character-strings.
+
+COBOL words 
+-----------
+
+  * with single-byte characters
+
+COBOL word = character-string = user-defined word | system-name | reserved word
+
+A reserved word cannot be used as a user-defined word or as a system-name.
+The same COBOL word, however, can be used as both a user-defined word and as a system-name. 
+The classification of a specific occurrence of a COBOL word is determined by the context of the clause or phrase in which it occurs.
+
+COBOL word = arithmetic operators | relation characters | [A-Za-z0-9][-_A-Za-z0-9]*
+(the hyphen cand the underscore cannot appear as the first character in such words )
+
+user-defined words = udw without alphabetic characters | udw with at least one alphabetic character
+udw without alphabetic characters = section-names | paragraph-names | priority-numbers | level-numbers 
+
+The maximum size of a COBOL user-defined word is 30 bytes. 
+The number of characters that can be specified depends on the code page indicated by the compile-time locale.
+
+CASE SENSITIVTY :
+In COBOL words (but not in the content of alphanumeric, DBCS, and nationalliterals), each lowercase single-byte alphabetic letter is considered to be equivalent to its corresponding single-byte uppercase alphabetic letter.
+
+User-defined words
+------------------
+
+A user-defined word names a data resource or a COBOL programming element.
+Examples of named data resources are a file, a data item, or a record. 
+Examples of named programming elements are a program, a paragraph, a method, or a class definition.
+
+  * encodings allowed
+
+user-defined word = udw single byte | udw DBCS allowed
+
+(**sets**)
+
+udw single byte = 
+	Level-numbers | Library-name | Object-oriented class-name |
+	Priority-numbers | Program-name | Text-name
+
+udw DBCS allowed = 
+	Alphabet-name | Class-name (of data) | Condition-name | Data-name |
+	File-name | Index-name | Mnemonic-name | Paragraph-name |
+	Record-name | Section-name | Symbolic-character | XML-schema-name
+
+DBCS user-defined words begin with a shift-out character and end with a shift-in character
+DBCS user-defined words can contain only double-byte characters
+
+A given user-defined word can belong to only one of these sets, except that a given number can be both a priority-number and a level-number. 
+
+  * characters allowed
+
+DBCS user-defined words must contain at least one DBCS character that is not in the set A through Z, a through z, 0 through 9, hyphen, and underscore (DBCS representation of these characters has X'42' in the first byte)
+DBCS user-defined words can contain characters whose values range from X'41' to X'FE' for both bytes.
+DBCS characters that correspond to single-byte EBCDIC characters follow the normal rules for COBOL user-defined words
+- the characters A - Z, a - z, 0 - 9, the hyphen (-), and the underscore (_) are allowed
+- the hyphen cannot appear as the first or last character
+- the underscore cannot appear as the first character. 
+Any of the DBCS characters that have no corresponding single-byte EBCDIC character can be used in DBCS user-defined words.
+
+Level-numbers = 01–49, 66, 77, 88
+Priority-numbers = 00–99
+
+  * maximum length
+
+The maximum length of a user-defined word is 30 bytes.
+Maximum length for a DBCS user-defined word : 14 characters
+
+Level-numbers and priority numbers must each be a one-digit or two-digit integer.
+
+  * comparison 
+
+In COBOL words, each lowercase single-byte encoded character "a" through "z" is considered to be equivalent to its corresponding single-byte encoded uppercase character.
+DBCS-encoded uppercase and lowercase letters are not equivalent.
+
+  * scope and unicity
+
+Each user-defined word within a set (**sets**) must be unique, 
+except for priority-numbers and level-numbers
+and except as specified in Chapter 8, “Referencing data names, copy libraries, and PROCEDURE DIVISION names,” on page 65.
+
+Program - The following types of user-defined words can be referenced by statements and
+entries in the program in which the user-defined word is declared:
+- Paragraph-name
+- Section-name
+
+Compiling system - The following types of user-defined words can be referenced by any COBOL
+program, provided that the compiling system supports the associated library or
+other system and that the entities referenced are known to that system:
+- Library-name
+- Text-name
+
+Program and embedded programs - The following types of names, when they are declared within a configuration
+section, can be referenced by statements and entries in the program that contains the configuration section or in any program contained within that program:
+- Alphabet-name
+- Class-name
+- Condition-name
+- Mnemonic-name
+- Symbolic-character
+- XML-schema-name
+
+System-names
+------------
+
+system-name = Computer-name | Language-name | Implementor-name
+
+implementer-names = Environment-name | External-class-name | External-fileid | Assignment-name
+
+Computer-name can be written in DBCS characters, but the other system-names cannot.
+
+Function-names
+--------------
+
+A function-name specifies the mechanism provided to determine the value of an intrinsic function.
+The same word, in a different context, can appear in a program as a user-defined word or a system-name.
+
+For a list of function-names and their definitions, see Table 51 on page 485.
+
+Reserved words
+--------------
+
+Reserved words are listed in Appendix E, “Reserved words,” on page 581.
+
+reserved word = 
+	Keyword | Optional word | Figurative constant |
+	Special character word | Special object identifier | Special register
+
+Keywords are reserved words that are required within a given clause, entry, or statement.
+
+Optional words are reserved words that can be included in the format of a clause, entry, or statement in order to improve readability. 
+They have no effect on the execution of the program.
+
+Figurative constants are reserved words that name and refer to specific constant values. 
+The reserved words for figurative constants and their meanings are listed in this section (p13).
+
+Special character words
+There are two types of special character words, which are recognized as special characters 
+only when represented in single-byte characters:
+- Arithmetic operators: + - / * **   (See “Arithmetic expressions” on page 253)
+- Relational operators: <>=<=>=      (See “Conditional expressions” on page 256)
+
+Special object identifiers
+COBOL provides two special object identifiers, SELF and SUPER
+
+Special registers are reserved words that name storage areas generated by the compiler. 
+Their primary use is to store information produced through specific COBOL features. 
+Each such storage area has a fixed name, and must not be defined within the program.
+See “Special registers” on page 16.
+
+Figurative constants
+--------------------
+
+The singular and plural forms of NULL, ZERO, SPACE, HIGH-VALUE, LOW-VALUE, and QUOTE can be used interchangeably.
+	
+You can use a figurative constant wherever literal appears in a syntax diagram, except where explicitly prohibited.
+When a numeric literal appears in a syntax diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used.
+Figurative constants are not allowed as function arguments except in an arithmetic expression, where the expression is an argument to a function.
+
+The length of a figurative constant depends on the context of its use. 
+- When a figurative constant is specified in a VALUE clause or associated with a data item (for example, when it is moved to or compared with another item), 
+  the length of the figurative constant character-string is equal to 1 or the number of character positions in the associated data item, whichever is greater.
+- When a figurative constant, other than the ALL literal, is not associated with another data item (for example, in a CALL, INVOKE, STOP, STRING, or UNSTRING statement), 
+  the length of the character-string is one character.
+
+Special registers
+-----------------
+
+Unless otherwise explicitly restricted, a special register can be used wherever a data-name or identifier that has the same definition as the implicit definition of the special register can be used. 
+Implicit definitions, if applicable, are given in the specification of each special register.
+You can specify an alphanumeric special register in a function wherever an alphanumeric argument to a function is allowed, unless specifically prohibited.
+
+If qualification is allowed, special registers can be qualified as necessary to provide uniqueness. (For more information, see “Qualification” on page 65.)
+
+Literals
+--------
+
+literal = character-string = characters | figurative constant
+
+literal = Alphanumeric literal | DBCS literal | National literal | Numeric literals
+
+alphanumeric literals =
+	Format 1: “Basic alphanumeric literals”
+	Format 2: “Alphanumeric literals with DBCS characters”
+	Format 3: “Hexadecimal notation for alphanumeric literals”
+	Format 4: “Null-terminated alphanumeric literals”
+
+* Basic alphanumeric literals = "single-byte-characters" | ’single-byte-characters’
+
+Basic alphanumeric literals can contain any character in a single-byte EBCDIC character set.
+The enclosing quotation marks or apostrophes are excluded from the literal when the program is compiled.
+An embedded quotation mark or apostrophe must be represented by a pair of quotation marks ("") or a pair of apostrophes (’’), respectively, when it is the character used as the opening delimiter.
+The delimiter character used as the opening delimiter for a literal must be used as the closing delimiter for that literal.
+Any punctuation characters included within an alphanumeric literal are part of the value of the literal.
+The maximum length of an alphanumeric literal is 160 bytes. The minimum length is 1 byte.
+
+* Alphanumeric literals with DBCS characters = "mixed-SBCS-and-DBCS-characters" | ’mixed-SBCS-and-DBCS-characters’
+
+When the DBCS compiler option is in effect, the characters X'0E' and X'0F' in an alphanumeric literal will be recognized as shift codes for DBCS characters. 
+That is, the characters between paired shift codes will be recognized as DBCS characters.
+Unlike an alphanumeric literal compiled under the NODBCS option, additional syntax rules apply to DBCS characters in an alphanumeric literal.
+
+Shift-out and shift-in control characters are part of the literal and must be paired. 
+They must contain zero or an even number of intervening bytes.
+Nested shift codes are not allowed in the DBCS portion of the literal.
+The syntax rules for single-byte characters in the literal follow the rules for basic alphanumeric literals. 
+The syntax rules for DBCS characters in the literal follow the rules for DBCS literals.
+The move and comparison rules for alphanumeric literals with DBCS characters are the same as those for any alphanumeric literal.
+The length of an alphanumeric literal with DBCS characters is its byte length, including the shift control characters. 
+The maximum length is limited by the available space on one line in Area B. 
+An alphanumeric literal with DBCS characters cannot be continued.
+
+!! Alphanumeric literals with DBCS characters cannot be used as a literal in the following cases: see list p35.
+Enterprise COBOL statements process alphanumeric literals with DBCS characters without sensitivity to the shift codes and character codes. 
+The use of statements that operate on a byte-to-byte basis (for example, STRING and UNSTRING) can result in strings that are not valid mixtures of single-byte EBCDIC and DBCS characters.
+
+* Hexadecimal notation for alphanumeric literals = X"hexadecimal-digits" | X’hexadecimal-digits’
+
+Hexadecimal digits are characters in the range '0' to '9', 'a' to 'f', and 'A' to 'F', inclusive. 
+Two hexadecimal digits represent one character in a single-byte character set (EBCDIC or ASCII). 
+Four hexadecimal digits represent one character in a DBCS character set. 
+A string of EBCDIC DBCS characters represented in hexadecimal notation must be preceded by the hexadecimal representation 
+of a shift-out control character (X'0E') and followed by the hexadecimal representation of a shift-in control character (X'0F'). 
+An even number of hexadecimal digits must be specified.
+The maximum length of a hexadecimal literal is 320 hexadecimal digits.
+The continuation rules are the same as those for any alphanumeric literal. 
+The opening delimiter (X" or X’) cannot be split across lines.
+The DBCS compiler option has no effect on the processing of hexadecimal notation of alphanumeric literals.
+An alphanumeric literal in hexadecimal notation has data class and category alphanumeric. 
+Hexadecimal notation for alphanumeric literals can be used anywhere alphanumeric literals can be used.
+
+* Null-terminated alphanumeric literals = Z"mixed-characters" | Z’mixed-characters’
+
+mixed-characters can be any of the following characters:
+- Solely single-byte characters
+- Mixed single-byte and DBCS characters
+- Solely DBCS characters
+However, you cannot specify the single-byte character with the value X'00'.
+X'00' is the null character automatically appended to the end of the literal.
+The content of the literal is otherwise subject to the same rules and restrictions as an alphanumeric literal with DBCS characters (format 2).
+The length of the string of characters in the literal content can be 0 to 159 bytes.
+The actual length of the literal includes the terminating null character, and is a maximum of 160 bytes.
+It can be used anywhere an alphanumeric literal can be used except that null-terminated literals are not supported in ALL literal figurative constants.
+The LENGTH intrinsic function, when applied to a null-terminated literal, returns the number of bytes in the literal prior to but not including the terminating null.
+(The LENGTH special register does not support literal operands.)
+
+* Numeric literals
+
+numeric literal is a character-string whose characters are selected from 
+=> the digits 0 through 9, a sign character (+ or -), and the decimal point.
+
+Only one sign character is allowed. 
+If included, it must be the leftmost character of the literal. 
+If the literal is unsigned, it is a positive value.
+
+If the ARITH(COMPAT) compiler option is in effect, one through 18 digits are allowed. 
+If the ARITH(EXTEND) compiler option is in effect, one through 31 digits are allowed.
+
+Only one decimal point is allowed. 
+If a decimal point is included, it is treated as an assumed decimal point (that is, as not taking up a character position in the literal).
+The decimal point can appear anywhere within the literal except as the rightmost character.
+If the literal contains no decimal point, it is an integer.
+
+The value of a numeric literal is the algebraic quantity expressed by the characters in the literal.
+The size of a numeric literal is equal to the number of digits specified by the user.
+Numeric literals can be fixed-point or floating-point numbers.
+
+The format and rules for floating-point literals are listed below :
+- (+-)[mantissa]E(+-)[exponent]
+- The sign is optional before the mantissa and the exponent; if you omit the sign, the compiler assumes a positive number.
+- The mantissa can contain between one and 16 digits. A decimal point must be included in the mantissa.
+- The exponent is represented by an E followed by an optional sign and one or two digits.
+- The magnitude of a floating-point literal value must fall between 0.54E-78 and 0.72E+76. 
+For values outside of this range, an E-level diagnostic message is produced and the value is replaced by either 0 or 0.72E+76, respectively.
+
+* DBCS literals = G"<DBCS-characters>" | G’<DBCS-characters>’ |
+				  N"<DBCS-characters>" | N’<DBCS-characters>’
+
+N" and N’ identify a DBCS literal when the NSYMBOL(DBCS) compiler option is in effect. 
+They identify a national literal when the NSYMBOL(NATIONAL) compiler option is in effect
+
+The opening delimiter must be followed immediately by a shift-out control character.
+The closing delimiter must appear immediately after the shift-in control character.
+
+For literals with opening delimiter N" or N’, when embedded quotes or apostrophes are specified as part of DBCS characters in a DBCS literal, a
+single embedded DBCS quote or apostrophe is represented by two DBCS quotes or apostrophes. 
+If a single embedded DBCS quote or apostrophe is found, an E-level compiler message will be issued and a second embedded
+DBCS quote or apostrophe will be assumed.
+
+DBCS-characters can be one or more characters in the range of X'00' through X'FF' for either byte. 
+Any value will be accepted in the content of the literal, although whether it is a valid value at run time depends on the CCSID in effect for the CODEPAGE compiler option.
+
+Maximum length : 28 characters
+Continuation rules : Cannot be continued across lines
+
+DBCS literals can be used in the following places: see page 39.
+
+* National literals = Basic national literals | Hexadecimal notation for national literals
+
+Basic national literals = N"character-data" | N’character-data’
+
+When the NSYMBOL(NATIONAL) compiler option is in effect, the opening delimiter N" or N’ identifies a national literal.
+To include the quotation mark or apostrophe used in the opening delimiter in the content of the literal, specify a pair of quotation marks or apostrophes, respectively.
+
+The source text representation of the content of the national literal character-data can include any combination of EBCDIC single-byte
+characters and double-byte characters encoded in the Coded Character Set ID (CCSID) specified by the CODEPAGE compiler option.
+DBCS characters in the content of the literal must be delimited by shift-out and shift-in control characters.
+
+The source text representation of character-data is automatically converted to UTF-16 for use at run time 
+(for example, when the literal is moved to or compared with a data item of category national).
+
+Maximum length : The maximum length of a national literal is 80 character positions, excluding the opening and closing delimiters. 
+If the source content of the literal contains one or more DBCS characters, the maximum length is limited by the available space in Area B of a single source line.
+The literal must contain at least one character. 
+Each single-byte character in the literal counts as one character position and each DBCS character in the literal counts as one character position. 
+Shift-in and shift-out delimiters for DBCS characters are not counted.
+
+Continuation rules :  When the content of the literal includes DBCS characters, the literal cannot be continued. 
+When the content of the literal does not include DBCS characters, normal continuation rules apply.
+
+Hexadecimal notation for national literals = NX"hexadecimal-digits" | NX’hexadecimal-digits’
+
+The hexadecimal notation format of national literals is not affected by the NSYMBOL compiler option.
+The content of a national literal in hexadecimal notation is stored as national characters. 
+The resulting content has the same meaning as a basic national literal that specifies the same national characters.
+
+Hexadecimal digits in the range '0' to '9', 'a' - f', and 'A' to 'F', inclusive.
+Each group of four hexadecimal digits represents a single national character and must represent a valid code point in UTF-16. 
+The number of hexadecimal digits must be a multiple of four.
+
+Maximum length : The length of a national literal in hexadecimal notation must be from four to 320 hexadecimal digits, excluding the opening and closing delimiters.
+The length must be a multiple of four.
+
+Continuation rules : Normal continuation rules apply.
+
+Where national literals can be used : see page 42.
+
+PICTURE character-strings
+-------------------------
+
+A PICTURE character-string is composed of the currency symbol and certain combinations of characters in the COBOL character set. 
+PICTURE character-strings are delimited only by the separator space, separator comma, separator semicolon, or separator period.
+
+A chart of PICTURE clause symbols appears in Table 12 on page 199.
+
+* Symbols
+
+ABEGNPSVXZ90/,.+-[CR][DB]*[currency symbol]
+
+sequences allowed shown in table p 202
+
+An unsigned nonzero integer enclosed in parentheses immediately following any of these symbols specifies the number of consecutive occurrences of that symbol.
+Example: The following two PICTURE clause specifications are equivalent:
+PICTURE IS $99999.99CR
+PICTURE IS $9(5).9(2)CR
+
+Symbols that can appear more than once
+A B G N P X Z 9 0 / , + – * cs
+
+Symbols that can appear only once
+E S V . CR DB
+At least one of the symbols A, G, N, X, Z, 9, or *, 
+or at least two of the symbols +, –, or cs 
+must be present in a PICTURE string.
+
+* Delimiters
+
+PICTURE character string = ([currency symbol][cobol character set])+  (separator space | separator comma | separator semicolon | separator period)
+
+Any punctuation character that appears within the PICTURE character-string is not
+considered a punctuation character, but rather is a PICTURE character-string
+symbol.
+
+When specified in the SPECIAL-NAMES paragraph, DECIMAL-POINT IS
+COMMA exchanges the functions of the period and the comma in PICTURE
+character-strings and in numeric literals.
+
+* Max length
+
+Character-string can contain a maximum of 50 characters
+
+* Case sensitivity
+
+The lowercase letters that correspond to the uppercase letters that represent the
+following PICTURE symbols are equivalent to their uppercase representations in a
+PICTURE character-string:
+A, B, E, G, N, P, S, V, X, Z, CR, DB
+
+All other lowercase letters are not equivalent to their corresponding uppercase
+representations.
+
+* Details
+
+COBOL Picture strings tend to mess up the best of parsers. The minus sign you are having trouble with is only the tip of the iceburg! Picture Strings are difficult to parse through because the period and comma may be part of a Picture string but serve as separators outside of the string. This means that parsers cannot unambiguously classify a period or comma in a context free manner. They need to be "aware" of the context in which it is encountered. This may sound trivial but it isn't.
+
+Technically, the separator period and comma must be followed by a space (or end of line). This little fact could make determining the period/comma role very simple because a Picture String cannot contain a space. However, many commercial COBOL compilers are "smart" enough correctly recognize separator periods/commas that are not followed by a space. Consequently there are a lot of COBOL programmers that code illegal separator period/commas, which means you will probably have to deal with them.
+
+The bottom line is that no matter what you do, those little Picture Strings are going to haunt you. They will take quite a bit of effort to to deal with.
+
+Just a hint of things to come, how would you parse the following:
+01 DISP-NBR-1 PIC -99,999.
+01 DISP-NBR-2 PIC -99,999..
+01 DISP-NBR-3 PIC -99,999, .
+01 DISP-NBR-4 PIC -99,999,. 
+
+The period following DISP-NBR-1 terminates the Picture string. It is a separator period. 
+The period following DISP-NBR-2 is part of the string, the second period is the separator. 
+The comma following DISP-NBR-3 is a separator - it is not part of the Picture string. 
+However the comma following DISP-NBR-4 is part of the Picture string because it is not followed by a space.
+
+Comment
+-------
+
+A comment is a character-string that can contain any combination of characters from the character set of the computer.
+It has no effect on the execution of the program. 
+There are three forms of comments:
+- Comment entry (IDENTIFICATION DIVISION)
+This form is described under “Optional paragraphs” on page 105.
+- Comment line (any division)
+This form is described under “Comment lines” on page 56.
+- Inline comments (any division)
+An inline comment is identified by a floating comment indicator (*>) 
+preceded by one or more character-strings in the program-text area, 
+and can be written on any line of a compilation group. 
+All characters that follow the floating comment indicator up to the end of area B are comment text.
+
+Character-strings that form comments can contain DBCS characters or a combination of DBCS and single-byte EBCDIC characters.
+Multiple comment lines that contain DBCS strings are allowed. 
+The embedding of DBCS characters in a comment line must be done on a line-by-line basis. 
+Words containing those characters cannot be continued to a following line. 
+No syntax checking for valid strings is provided in comment lines.
+
+Separators
+----------
+
+A separator is a character or a string of two or more contiguous characters that delimits character-strings.
+
+b represents a space. 
+Anywhere a space is used as a separator or as part of a separator, more than one space can be used.
+A space can immediately precede or follow any separator except:
+- The opening pseudo-text delimiter, where the preceding space is required.
+- Within quotation marks. Spaces between quotation marks are considered part of the alphanumeric literal; they are not considered separators.
+
+Separator Meaning
+b Space
+,b Comma
+.b Period
+;b Semicolon
+( Left parenthesis
+) Right parenthesis
+: Colon
+
+A separator comma is composed of a comma followed by a space. 
+A separator semicolon is composed of a semicolon followed by a space.
+The separator comma and separator semicolon can be used anywhere the separator space is used.
+
+A separator period is composed of a period followed by a space. 
+The separator period must be used only to indicate the end of a sentence, or as shown in formats.
+
+The colon is a separator and is required when shown in general formats.
+
+Except in pseudo-text, parentheses can appear only in balanced pairs of left and right parentheses. 
+They delimit subscripts, a list of function arguments, reference-modifiers, arithmetic expressions, or conditions.
+
+" Quotation mark
+’ Apostrophe
+X" Opening delimiter for a hexadecimal format alphanumeric literal
+X’ Opening delimiter for a hexadecimal format alphanumeric literal
+Z" Opening delimiter for a null-terminated alphanumeric literal
+Z’ Opening delimiter for a null-terminated alphanumeric literal
+N" Opening delimiter for a national literal2
+N’ Opening delimiter for a national literal2
+NX" Opening delimiter for a hexadecimal format national literal
+NX’ Opening delimiter for a hexadecimal format national literal
+G" Opening delimiter for a DBCS literal
+G’ Opening delimiter for a DBCS literal
+== Pseudo-text delimiter
+
+An opening quotation mark must be immediately preceded by a space or a left parenthesis. 
+A closing quotation mark must be immediately followed by a separator space, comma, semicolon, period, right parenthesis, or pseudo-text delimiter. 
+Quotation marks must appear as balanced pairs.
+They delimit alphanumeric literals, except when the literal is continued.
+(idem for apostrophe and all literal/pseudo-text delimiters)
+
+Reference format
+----------------
+
+COBOL source text must be written in COBOL reference format.
+
+Reference format consists of the following areas in a 72-character line.
+Sequence number area : Columns 1 through 6
+Indicator area : Column 7
+Area A : Columns 8 through 11
+Area B : Columns 12 through 72
+
+* Sequence number area
+
+The sequence number area can be used to label a source statement line. 
+The content of this area can consist of any character in the character set of the computer.
+
+* Indicator area
+
+Use the indicator area to specify 
+- the continuation of words or alphanumeric literals from the previous line onto the current line, 
+- the treatment of text as documentation, 
+- and debugging lines.
+
+The indicator area can be used for source listing formatting. 
+A slash (/) placed in the indicator column causes the compiler to start a new page for the source listing,
+and the corresponding source record to be treated as a comment. 
+The effect can be dependent on the LINECOUNT compiler option.
+
+* Area A
+
+Certain items must begin in Area A.
+- Division headers
+- Section headers
+- Paragraph headers or paragraph names
+- Level indicators or level-numbers (01 and 77)
+- DECLARATIVES and END DECLARATIVES
+- End program, end class, and end method markers
+
+* Area B
+
+Certain items must begin in Area B.
+- Entries, sentences, statements, and clauses
+- Continuation lines
+
+If there is no hyphen (-) in the indicator area (column 7) of a line, the last character
+of the preceding line is assumed to be followed by a space.
+
+* Area A or Area B
+
+Certain items can begin in either Area A or Area B.
+These items are:
+- Level-numbers
+- Comment lines
+- Floating comment indicators (*>)
+- Compiler-directing statements
+- Debugging lines
+- Pseudo-text
+
+A level-number that can begin in Area A or B is a one- or two-digit integer with a value of 02 through 49, 66, or 88.
+A level-number that must begin in Area A is a one- or two-digit integer with a value of 01 or 77. 
+A level-number must be followed by a space or a separator period.
+
+A comment line is any line with an asterisk (*) or slash (/) in the indicator area (column 7) of the line, 
+or with a floating comment indicator (*>) as the first character-string in the program text area (Area A plus Area B).
+Comment lines can be placed anywhere in a program, method, or class definition.
+Comment lines placed before the IDENTIFICATION DIVISION header must follow any control cards (for example, PROCESS or CBL).
+The compiler treats a comment line as documentation, and does not check it syntactically.
+
+These are the rules for floating comment indicators:
+- Both characters (* and >) that form the multiple-character floating indicator must be contiguous and on the same line.
+- The floating comment indicator for an inline comment must be preceded by a separator space, and can be specified wherever a separator space can be specified.
+- All characters following the floating comment indicator up to the end of Area B are comment text.
+
+A debugging line is any line with a D (or d) in the indicator area of the line.
+Debugging lines can be written in the ENVIRONMENT DIVISION (after the OBJECT-COMPUTER paragraph), the DATA DIVISION, and the PROCEDURE DIVISION. 
+If a debugging line contains only spaces in Area A and Area B, it is considered a blank line.
+
+A blank line contains nothing but spaces in column 7 through column 72. 
+A blank line can be anywhere in a program.
+
+Continuation lines
+------------------
+
+Any sentence, entry, clause, or phrase that requires more than one line can be
+continued in Area B of the next line that is neither a comment line nor a blank line.
+The line being continued is a continued line; the succeeding lines are continuation lines. 
+Area A of a continuation line must be blank.
+
+If there is no hyphen (-) in the indicator area (column 7) of a line, the last character
+of the preceding line is assumed to be followed by a space.
+
+The following cannot be continued:
+- DBCS user-defined words
+- DBCS literals
+- Alphanumeric literals containing DBCS characters
+- National literals containing DBCS characters
+Alphanumeric and national literals can be continued only when there are no DBCS
+characters in the content of the literal.
+However, alphanumeric literals and national literals in hexadecimal notation can be
+continued regardless of the kind of characters expressed in hexadecimal notation.
+
+All characters that make up an opening literal delimiter must be on the same line.
+For example, Z", G", N", NX", or X".
+Both characters that make up the pseudo-text delimiter separator "==" must be on
+the same line.
+
+If there is a hyphen in the indicator area of a line, the first nonblank character of
+the continuation line immediately follows the last nonblank character of the
+continued line without an intervening space.
+
+- If the continued line contains an alphanumeric or national literal without a
+closing quotation mark, all spaces at the end of the continued line (through
+column 72) are considered to be part of the literal. The continuation line must
+contain a hyphen in the indicator area, and the first nonblank character must be
+a quotation mark. The continuation of the literal begins with the character
+immediately following the quotation mark.
+- If an alphanumeric or national literal that is to be continued on the next line has
+as its last character a quotation mark in column 72, the continuation line must
+start with two consecutive quotation marks. This will result in a single quotation
+mark as part of the value of the literal.
+- If the last character on the continued line of an alphanumeric or national literal
+is a single quotation mark in Area B, the continuation line can start with a single
+quotation mark. This will result in two consecutive literals instead of one
+continued literal
+
+PICTURE clause
+--------------
+
+character-string can contain a maximum of 50 characters.
+
+Any punctuation character that appears within the PICTURE character-string is not considered a punctuation character, 
+but rather is a PICTURE character-string symbol.
+
+When specified in the SPECIAL-NAMES paragraph, DECIMAL-POINT IS COMMA exchanges the functions of the period and the comma in PICTURE character-strings and in numeric literals.
+
+The lowercase letters that correspond to the uppercase letters that represent the following PICTURE symbols 
+are equivalent to their uppercase representations in a PICTURE character-string:
+A, B, E, G, N, P, S, V, X, Z, CR, DB
+All other lowercase letters are not equivalent to their corresponding uppercase representations.
+
+
+
+Obsolete
+--------
+
+The following language elements are categorized as obsolete by Standard COBOL
+85:
+v ALTER statement
+v AUTHOR paragraph
+v Comment entry
+v DATA RECORDS clause
+v DATE-COMPILED paragraph
+v DATE-WRITTEN paragraph
+v DEBUG-ITEM special register
+v Debugging sections
+v ENTER statement
+v GO TO without a specified procedure-name
+v INSTALLATION paragraph
+v LABEL RECORDS clause
+v MEMORY SIZE clause
+v MULTIPLE FILE TAPE clause
+v RERUN clause
+v REVERSED phrase
+v SECURITY paragraph
+v Segmentation module
+v STOP literal format of the STOP statement
+v USE FOR DEBUGGING declarative
+v VALUE OF clause
+v The figurative constant ALL literal with a length greater than one, when the
+figurative constant is associated with a numeric or numeric-edited item

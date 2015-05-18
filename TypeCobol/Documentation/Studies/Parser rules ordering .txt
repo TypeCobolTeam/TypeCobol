@@ -1,0 +1,67 @@
+117 => check OK
+
+Program IDENTIFICATION DIVISION 
+For a program, the first paragraph of the IDENTIFICATION DIVISION must be the PROGRAM-ID paragraph. 
+The other paragraphs are optional and can appear in any order. 
+
+Class IDENTIFICATION DIVISION 
+For a class, the first paragraph of the IDENTIFICATION DIVISION must be the CLASS-ID paragraph. 
+The other paragraphs are optional and can appear in any order. 
+
+Factory IDENTIFICATION DIVISION 
+A factory IDENTIFICATION DIVISION contains only a factory paragraph header. 
+
+Object IDENTIFICATION DIVISION 
+An object IDENTIFICATION DIVISION contains only an object paragraph header. 
+
+Method IDENTIFICATION DIVISION 
+For a method, the first paragraph of the IDENTIFICATION DIVISION must be the METHOD-ID paragraph. 
+The other paragraphs are optional and can appear in any order.
+
+132 => check OK
+
+SPECIAL-NAMES paragraph
+The clauses in the SPECIAL-NAMES paragraph can appear in any order.
+
+146 => check OK
+
+FILE-CONTROL paragraph 
+Within each entry, the SELECT clause must appear first. 
+The other clauses can appear in any order, except that the PASSWORD clause for indexed files, if specified, must immediately follow the RECORD KEY or ALTERNATE RECORD KEY data-name with which it is associated.
+
+153 => not included in the grammar yet
+
+Environment variable contents for a QSAM file
+After data-set-name or member-name, the data set attributes can follow in any order.
+
+164 => check OK
+
+I-O-CONTROL paragraph
+The order in which I-O-CONTROL paragraph clauses are written is not significant.
+
+173 => check OK
+
+DATA DIVISION 
+If included, the sections must be written in the order shown.
+
+189 => check OK
+
+DATA DIVISION--file description entries
+The order in which the optional clauses follow the FD or SD entry is not important.
+
+194 => check OK
+
+FILE SECTION
+The clauses that follow file-name are optional, and they can appear in any order. 
+
+205 => check OK
+
+DATA DIVISION--data description entry
+The clauses can be written in any order, with two exceptions: 
+- data-name-1 or FILLER, if specified, must immediately follow the level-number. 
+- When the REDEFINES clause is specified, it must immediately follow data-name-1 or FILLER, if either is specified. If data-name-1 or FILLER is not specified, the REDEFINES clause must immediately follow the level-number.
+
+400 => check OK
+
+OPEN statement
+The INPUT, OUTPUT, I-O, and EXTEND phrases can appear in any order. 

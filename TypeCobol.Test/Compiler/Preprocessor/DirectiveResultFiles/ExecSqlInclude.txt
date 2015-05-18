@@ -1,0 +1,94 @@
+﻿-- Line 1 --
+*** DIRECTIVE EXEC_SQL_INCLUDE.SUPPRESS TEXTNAME1 ([8,11:EXEC]<EXEC>[12,12: ]<SpaceSeparator>[13,15:SQL]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:INCLUDE]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,33:TEXTNAME1]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:SUPPRESS]<SUPPRESS>[43,43: ]<SpaceSeparator>[44,51:END-EXEC]<END_EXEC>[52,52+:.]<PeriodSeparator>) ***
+
+-- Line 2 --
+*** DIRECTIVE EXEC_SQL_INCLUDE textname2.OF(library2) <REPLACE-SingleToken:[17,20:toto]<UserDefinedWord>><BY:[31,34:titi]<UserDefinedWord>> <REPLACE-SingleToken:[17,20:exec]<EXEC>><BY:[31,37:execute]<EXECUTE>> ([8,14:execute]<EXECUTE>[15,15: ]<SpaceSeparator>) ***
+
+-- Line 3 --
++++ CONTINUATION OF CopyImportDirective ([8,9:  ]<SpaceSeparator>[10,12:sql]<ExecTranslatorName>[13,13: ]<SpaceSeparator>) +++
+
+-- Line 4 --
++++ CONTINUATION OF ContinuationTokenGroup ([8,10:   ]<SpaceSeparator>[11,17:include]<EXEC_SQL_INCLUDE>[18,18: ]<SpaceSeparator>[19,27:textname2]<UserDefinedWord>[28,28: ]<SpaceSeparator>[29,30:of]<OF>[31,31: ]<SpaceSeparator>[32,39:library2]<UserDefinedWord>) +++
+
+-- Line 5 --
++++ CONTINUATION OF ContinuationTokenGroup ([8,10:   ]<SpaceSeparator>[11,19:replacing]<REPLACING>) +++
+
+-- Line 6 --
++++ CONTINUATION OF ContinuationTokenGroup ([8,13:      ]<SpaceSeparator>[14,15:==]<PseudoTextDelimiter>[16,16: ]<SpaceSeparator>[17,20:toto]<UserDefinedWord>[21,21: ]<SpaceSeparator>[22,23:==]<PseudoTextDelimiter>[24,24: ]<SpaceSeparator>[25,26:by]<BY>[27,27: ]<SpaceSeparator>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,34:titi]<UserDefinedWord>[35,35: ]<SpaceSeparator>[36,37+:==]<PseudoTextDelimiter>) +++
+
+-- Line 7 --
++++ CONTINUATION OF ContinuationTokenGroup ([8,13:      ]<SpaceSeparator>[14,15:==]<PseudoTextDelimiter>[16,16: ]<SpaceSeparator>[17,20:exec]<EXEC>[21,21: ]<SpaceSeparator>[22,23:==]<PseudoTextDelimiter>[24,24: ]<SpaceSeparator>[25,26:by]<BY>[27,27: ]<SpaceSeparator>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,37:execute]<EXECUTE>[38,38: ]<SpaceSeparator>[39,40+:==]<PseudoTextDelimiter>) +++
+
+-- Line 8 --
++++ CONTINUATION OF ContinuationTokenGroup ([8,15:end-exec]<END_EXEC>[16,16+:.]<PeriodSeparator>) +++
+
+-- Line 9 --
+
+-- Line 10 --
+[8,11:exec]<EXEC>
+[12,12: ]<SpaceSeparator>
+[13,15:sql]<ExecTranslatorName>
+[16,16: ]<SpaceSeparator>
+[17,35:Truncate table toto]<ExecStatementText>
+[36,36: ]<SpaceSeparator>
+[37,44:end-exec]<END_EXEC>
+[45,45+:.]<PeriodSeparator>
+
+-- Line 11 --
+[8,11:exec]<EXEC>
+[12,12: ]<SpaceSeparator>
+[13,19:include]<ExecTranslatorName>
+[20,20: ]<SpaceSeparator>
+[21,29:textname3]<ExecStatementText>
+[30,30: ]<SpaceSeparator>
+[31,38:end-exec]<END_EXEC>
+[39,39+:.]<PeriodSeparator>
+
+-- Line 12 --
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,32:end-exec]<END_EXEC>[33,33+:.]<PeriodSeparator>) ***
+[25,32]<28,Error,Syntax>Syntax error : missing {AlphanumericLiteral, UserDefinedWord} at 'end-exec'
+
+-- Line 13 --
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname4 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,33:textname4]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:end-exec]<END_EXEC>) ***
+[8,11]<28,Error,Syntax>Syntax error : mismatched input 'exec' expecting PeriodSeparator
+
+-- Line 14 --
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname5 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,33:textname5]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
+[34,34]<28,Error,Syntax>Syntax error : missing END_EXEC at '.'
+
+-- Line 15 --
+[8,11:exec]<EXEC>
+[12,12: ]<SpaceSeparator>
+
+-- Line 16 --
+[8,10:sql]<ExecTranslatorName>
+[11,11: ]<SpaceSeparator>
+[12,17:select]<ExecStatementText>
+
+-- Line 17 --
+[8,22:     * from any]<ExecStatementText>
+
+-- Line 18 --
+[8,15:end-exec]<END_EXEC>
+[16,16+:.]<PeriodSeparator>
+
+-- Line 19 --
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname6 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,33:textname6]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,41:endexec]<UserDefinedWord>[42,42+:.]<PeriodSeparator>) ***
+[35,41]<28,Error,Syntax>Syntax error : mismatched input 'endexec' expecting END_EXEC
+
+-- Line 20 --
+[8,14:display]<DISPLAY>
+[15,15: ]<SpaceSeparator>
+[16,21:"ok ?"]<AlphanumericLiteral>(",Y,Y){ok ?}
+[22,22+:.]<PeriodSeparator>
+
+-- Line 21 --
+[8,11:exec]<EXEC>
+[12,12: ]<SpaceSeparator>
+[13,15:sql]<ExecTranslatorName>
+[16,16: ]<SpaceSeparator>
+[17,35:delete * from table]<ExecStatementText>
+[36,36: ]<SpaceSeparator>
+[37,44:end-exec]<END_EXEC>
+[45,46:. ]<PeriodSeparator>
+

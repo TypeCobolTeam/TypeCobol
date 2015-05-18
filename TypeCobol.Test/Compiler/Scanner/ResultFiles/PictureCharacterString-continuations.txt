@@ -1,0 +1,46 @@
+﻿-- Line 1 --
+[1,7:PICTURE]<PICTURE>
+[8,8: ]<SpaceSeparator>
+[9,10:IS]<IS>
+[11,11: ]<SpaceSeparator>
+=>continued:[12,12:X]<PictureCharacterString>
+
+-- Line 2 --
+[2,5:    ]<SpaceSeparator>
+=>continuation:[6,7:.4]<PictureCharacterString>#X.4#
+[8,9:. ]<PeriodSeparator>
+[10,12:PIC]<PIC>
+[13,13: ]<SpaceSeparator>
+[14,15:IS]<IS>
+[16,16: ]<SpaceSeparator>
+[17,17:Y]<PictureCharacterString>
+=>continued:[18,18+:.]<DecimalLiteral>{NULL}
+
+-- Line 3 --
+[2,5:    ]<SpaceSeparator>
+=>continuation:[6,6:3]<DecimalLiteral>{3|1>0,3}#.3#
+[7,8:. ]<PeriodSeparator>
+[9,15:PICTURE]<PICTURE>
+[6,6]<25,Warning,Tokens>The continuation computed for this picture character string could be wrong : be aware that this compiler does not support continuations like PIC 999.|999 or PIC 999,|999 - please move the period/comma char at the beginning of the continuation line
+
+-- Line 4 --
+=>continued:[1,2:X(]<PictureCharacterString>
+
+-- Line 5 --
+[2,5:    ]<SpaceSeparator>
+=>continuation:[6,7:3)]<PictureCharacterString>#X(3)#
+
+-- Line 6 --
+[1,7:PICTURE]<PICTURE>
+[8,8: ]<SpaceSeparator>
+[9,12:abcd]<PictureCharacterString>
+=>continued:[13,13+:,]<CommaSeparator>
+
+-- Line 7 --
+[2,5:    ]<SpaceSeparator>
+=>continuation:[6,5:]<CommaSeparator>#,#
+[6,9:YKF3]<UserDefinedWord>
+[10,10+:.]<PeriodSeparator>
+[6,5]<2,Error,Tokens>Invalid character found after , : expecting space or digit
+[6,5]<25,Warning,Tokens>The continuation computed for this picture character string could be wrong : be aware that this compiler does not support continuations like PIC 999.|999 or PIC 999,|999 - please move the period/comma char at the beginning of the continuation line
+

@@ -1,0 +1,323 @@
+http://sourceforge.net/p/koopa/discussion/989430/thread/1f9c6886/
+Mostly the CBL, EJECT, SKIP1/SKIP2/SKIP3 and -INC are coded on column 7 onwards 
+but they can start anywhere in Area A or B including column 1. 
+Essentially they can be 'FREE FORMAT' coding within otherwise FIXED FORMAT source code. 
+
+-- Before reference format
+
+BASIS (compilerKeyword) 
+sequence-number Can optionally appear in columns 1 through 6, followed by a space. 
+Can appear anywhere in columns 1 through 72, followed by basis-name.
+There must be no other text in the statement.
+<Microfocus>
+The BASIS mechanism is valid for fixed-format source only. 
+These special statements are not part of the COBOL language. Each one must, in its entirety, be contained on a single line and must be in upper case. 
+The program submitted to your COBOL system consists of two files: an edit control file (containing the BASIS statement and editing information) and the COBOL source file (the subject program as described above). 
+</Microfocus>
+
+
+DELETE (can be both keyword or compilerKeyword)
+sequence-number Can optionally appear in columns 1 through 6, followed by a space. The content of this field is ignored.
+DELETE Can appear anywhere within columns 1 through 72. 
+The keyword DELETE must be followed by a space and the sequence-number-field. 
+There must be no other text in the statement.
+!!! If a DELETE statement begins in column 12 or higher and a valid sequence-number-field does not follow the keyword DELETE, the compiler assumes that this DELETE statement is a COBOL DELETE statement.
+statement => DELETE UserDefinedWord (must contain at least one alphabetic character)
+compilerStatement => DELETE IntegerLiteral
+
+INSERT (compilerKeyword)
+sequence-number Can optionally appear in columns 1 through 6, followed by a space. The content of this field is ignored.
+INSERT Can appear anywhere within columns 1 through 72, followed by a space and the sequence-number-field.
+There must be no other text in the statement.
+
+CBL (compilerKeyword)
+PROCESS (compilerKeyword)
+The CBL (PROCESS) statement can be preceded by a sequence number in columns 1 through 6.
+The first character of the sequence number must be numeric, and CBL or PROCESS can begin in column 8 or after; 
+if a sequence number is not specified,CBL or PROCESS can begin in column 1 or after.
+The CBL (PROCESS) statement must end before or at column 72, and options cannot be continued across multiple CBL (PROCESS) statements. 
+However, you can use more than one CBL (PROCESS) statement. Multiple CBL (PROCESS) statements must follow one another with no intervening statements of any other type.
+The CBL (PROCESS) statement must be placed before any comment lines or other compiler-directing statements.
+The CBL (PROCESS) statement is placed before the IDENTIFICATION DIVISION header of an outermost program.
+
+*CBL (compilerKeyword)
+*CONTROL (compilerKeyword)
+The characters *CONTROL or *CBL can start in any column beginning with column 7, followed by at least one space or comma and one or more option keywords.
+This statement must be the only statement on the line, and continuation is not allowed.
+the *CONTROL and *CBL statements must be placed between the PROCESS (CBL) statement and the end of the program (or END PROGRAM marker, if specified).
+
+-- After reference format
+
+The compiler does not generate token records for any lines that are treated as comment lines, which include, but are not limited to, items in the following list. 
+
+•Comment lines, which are source lines that have an asterisk (*) or a slash (/) in column 7
+•The following compiler-directing statements: ?*CBL (*CONTROL)
+?BASIS
+?COPY
+?DELETE
+?EJECT
+?INSERT
+?REPLACE
+?SKIP1
+?SKIP2
+?SKIP3
+?TITLE
+
+•Debugging lines, which are source lines that have a D in column 7, if WITH DEBUGGING MODE is not specified
+
+-- After tokenizing
+
+COPY (compilerKeyword)
+Each COPY statement must be preceded by a space and ended with a separator period.
+A COPY statement can appear in the source text anywhere a character string or a separator can appear.
+except that a COPY statement must not occur within another COPY statement. 
+If the word COPY appears in a comment-entry, or in the place where a comment-entry can appear, it is considered part of the comment-entry.
+<Microfocus> 
+Library text must conform to the rules for COBOL reference format. 
+10.Each text-word copied from the library but not replaced, or only partially replaced, is copied so as to start in the same area of the line in the resultant source text as it begins in the line within the library. However, if a text-word copied from the library begins in area A but follows another text-word, which also begins in area A of the same line, and if replacement of a preceding text-word in the line by replacement text of greater length occurs, the following text-word begins in area B if it cannot begin in area A. Each text-word in pseudo-text-2 that is to be placed into the resultant source text begins in the same area of the resultant source text as it appears in pseudo-text-2. Each identifier-2, literal-2, and word-2 that is to be placed into the resultant source text begins in the same area of the resultant source text as the leftmost library text-word that participated in the match would appear if it had not been replaced. 
+If additional lines are introduced into the source text as a result of a COPY statement, each text-word introduced appears on a debugging line if the copy statement begins on a debugging line, or if the text-word being introduced appears on a debugging line in library text. When a text-word specified in the BY phrase is introduced, it appears on a debugging line if the first library text-word being replaced is specified on a debugging line. Except in the preceding cases, only those text-words that are specified on debugging lines where the debugging line is within pseudo-text-2 appear on debugging lines in the resultant source text. If any literal specified as literal-2 or within pseudo-text-2 or library text is of too great a length to be accommodated on a single line without continuation to another line in the resultant source text and the literal is not being placed on a debugging line, additional continuation lines are introduced which contain the remainder of the literal. If replacement requires that the continued literal be continued on a debugging line, the compilation group is in error. 
+11.For purposes of compilation, text-words after replacement are placed in the source text according to the rules for reference format as described in the section Reference Format in the chapter Language Fundamentals. 
+</Microfocus>
+       
+REPLACE (compilerKeyword)
+A REPLACE statement can occur anywhere in the source text that a character-string can occur. 
+It must be preceded by a separator period except when it is the first statement in a separately compiled program. 
+It must be terminated by a separator period. 
+If the word REPLACE appears in a comment-entry or in the place where a comment-entry can appear, it is considered part of the comment-entry.
+When a REPLACE statement is specified on a debugging line, the statement is treated as if the letter "D" did not appear in the indicator area.
+<Microfocus>
+3.A given occurrence of the  REPLACE statement is in effect from the point at which it is specified until the next occurrence of the statement or the end of the compilation unit, respectively. 
+4.Any REPLACE statements contained in a source unit are processed after the processing of any COPY statements contained in that source unit.. 
+6.The comparison operation to determine text replacement occurs in the following manner: 
+a.Starting with the leftmost source text word and the first pseudo-text-1, pseudo-text-1 is compared to an equivalent number of contiguous source text words. 
+b.Pseudo-text-1 matches the source text if, and only if, the order sequence of text words that forms pseudo-text-1 is equal, character for character, to the ordered sequence of source text words. For purposes of matching, each occurrence of a separator comma, semicolon, or space in pseudo-text-1 or in the source text is considered to be a single space. Each sequence of one or more space separators is considered to be a single space. 
+Each lowercase letter is equivalent to the corresponding uppercase letter as specified for the COBOL character set. 
+c.If no match occurs, the comparison is repeated with each next successive occurrence of pseudo-text-1, until either a match is found or there is no next successive occurrence of pseudo-text-1. 
+d.Whenever a match occurs between pseudo-text-1 and the source text, the corresponding pseudo-text-2 replaces the matched text in the source text. The source text word immediately following the rightmost text word that participated in the match is then considered as the leftmost source text word. The comparison cycle starts again with the first occurrence of pseudo-text-1. 
+e.The comparison operation continues until the rightmost text word in the source text which is within the scope of the REP  LACE statement has either participated in a match or been considered as a leftmost source text word and participated in a complete comparison cycle. 
+</Microfocus>
+! The compiler processes REPLACE statements in source text after the processing of any COPY statements. 
+! COPY must be processed first, to assemble complete source text.
+! Then REPLACE can be used to modify that source text, performing simple string substitution
+
+-Continuation rules for pseudo-text
+-The character-strings and separators comprising pseudo-text can start in either Area A or Area B.
+-If, however, there is a hyphen in the indicator area of a line that follows the
+-opening pseudo-text delimiter, Area A of the line must be blank; and the normal rules for continuation of lines apply to the formation of text words. (See “Continuation lines” on page 54.)
+-Debugging lines are permitted in pseudo-text. Text words within a debugging line
+-participate in the matching rules as if the letter "D" did not appear in the indicator
+-area.
+
+!!Except for COPY and REPLACE statements, the syntactic correctness of the source
+text cannot be determined until after all COPY and REPLACE statements have
+been completely processed.
+
+-Lines containing *CONTROL (*CBL), EJECT, SKIP1/2/3, or TITLE statements can
+-occur in source text. Such lines are treated as comment lines during REPLACE
+-statement processing.
+
+EJECT (compilerKeyword)
+The EJECT statement must be the only statement on the line. 
+It can be written in either Area A or Area B, and can be terminated with a separator period.
+The EJECT statement must be placed between the CBL (PROCESS) statement and the end of the program (or the END PROGRAM marker, if specified).
+
+SKIP1, SKIP2, SKIP3 (compilerKeyword)
+SKIP statements have no effect on the compilation of the source text itself.
+SKIP1, SKIP2, or SKIP3 can be written anywhere in either Area A or Area B, and can be terminated with a separator period. 
+It must be the only statement on the line.
+
+TITLE (compilerKeyword)
+The word TITLE can begin in either Area A or Area B.
+The TITLE statement must be embedded in a class or program source.
+No other statement can appear on the same line as the TITLE statement.
+The TITLE statement:
+v Has no other effect on compilation
+v Has no effect on program execution
+v Cannot be continued on another line
+
+ENTER (compilerKeyword)
+Nothing
+
+READY (compilerKeyword) TRACE (compilerKeyword)
+RESET (compilerKeyword) TRACE (compilerKeyword)
+The READY or RESET TRACE statement can appear only in the PROCEDURE DIVISION, but has no effect on your program.
+
+SERVICE (compilerKeyword) LABEL (also used in file description entry)
+SERVICE LABEL statement can appear only in the PROCEDURE DIVISION, but not in the declaratives section.
+
+SERVICE (compilerKeyword) RELOAD (compilerKeyword)
+The SERVICE RELOAD statement is syntax checked, but has no effect on the execution of the program.
+
+
+
+-- TO DO
+                      
+
+
+
+EXEC (only used in execStatement) (SQL(dedicated keyword) | SQLIMS(not reserved words)) INCLUDE ()
+Margins: You must code SQL statements that begin with EXEC SQL in columns 12
+through 72. Otherwise the DB2 precompiler does not recognize the SQL statement.
+The following two lines are therefore treated the same way. (The period that ends
+the EXEC SQL INCLUDE statement is required.)
+EXEC SQL INCLUDE name END-EXEC.
+COPY "name".
+
+Programming guide :
+p309: EXEC CICS or EXEC DLI
+p311: EXEC SQL or EXEC SQLIMS statements
+p411: EXEC CICS command-name command-options END-EXEC
+
+NB: EXECUTE is a reserved word but not used in the grammar
+=> the Token record in SYSADATA shows
+0022
+EXEC
+EXECUTE => EXECUTE is equivalent to EXEC for the compiler
+
+p417: When the compiler encounters CICS statements, and at other significant points in
+the source program, the compiler interfaces with the integrated CICS translator. All
+text between EXEC CICS and END-EXEC statements is passed to the translator. The
+translator takes appropriate actions and then returns to the compiler, typically
+indicating which native language statements to generate.
+
+p436: IMS program might contain EXEC SQL statements for accessing a DB2 SQL
+database, EXEC SQLIMS statements for accessing an IMS DLI databases, or both.
+The SQL option enables EXEC SQL statements while the SQLIMS option enables
+EXEC SQLIMS statements.
+
+http://pic.dhe.ibm.com/infocenter/eiic/v1r1/topic/com.ibm.ims9.doc.pdf/dfsapcg5.pdf
+p34 : Summary of EXEC DLI Commands
+
+>>The MDECK compiler option specifies that a copy of the updated input source after
+>>library processing (that is, the result of COPY, BASIS, REPLACE, EXEC SQL INCLUDE,
+>>and EXEC SQLIMS INCLUDE statements) is written to a file.
+
+
+
+-------------
+NOTES free format:
+
+<Microfocus>
+The first six characters are considered part of the normal source line and may contain COBOL source code. Column 1 takes the role of the indicator area as follows: 
+* comment line 
+/ comment line starting on a new page in the listing file 
+D or d followed by space, debugging line 
+$ special line (for example, directive, conditional compilation) 
+any other character normal source line  
+
+There are no continuation lines. Continuation of alphanumeric literals is achieved through concatenation (for example, "A" & "B"). 
+There is no distinction between area A and area B. 
+There is no fixed right margin, though for practical purposes this implementation restricts the maximum length of a source line to 250 single-byte or 125 double-byte characters. 
+Comment-entries are only allowed on the same line as the paragraph header and must not continue onto another line. 
+</Microfocus>
+
+<ISO Cobol standard 2010>
+3) Free-form
+a) The number of character positions on a line may vary from line to line, ranging from a minimum of 0 to a
+maximum of 255.
+b) The implementor shall specify any control characters that terminate a free-form line, and whether such
+control characters may be specified in comments and the content of alphanumeric and national literals.
+
+Floating indicators may be used in fixed-form or free-form reference format. The following COBOL
+character-strings are floating indicators:
+Character-string Indicator name Indicates
+*> comment indicator 1) a comment line when specified as the first
+character-string in the program-text area;
+2) an inline comment when specified following one or
+more character-strings in the program-text area, subject
+to the additional rules in 6.2.2.1, Syntax Rules.
+>> compiler directive a compiler-directive line when followed by a compiler-directive
+indicator word - with or without an intervening space, subject to
+additional rules in 7.3, Compiler directives.
+"- literal continuation continuation of a literal when specified in an unterminated
+'- indicator literal with the same quotation symbol in its opening delimiter,
+subject to additional rules in 6.2.2.1, Syntax Rules.
+</ISO Cobol standard 2010>
+
+2008 Draft -
+http://www.cobolstandard.info/wg4/open/WD1-10-pdf.zip - wrote on pages 22/23:
+
+
+Fixed indicators may be specified in the indicator area of fixed-form reference format [...][column 7].  The following are fixed indicators:
+Character          Indicator name          Indicates
+*                  comment indicator       a comment line
+/                  comment indicator       a comment line with page ejection
+-  (hyphen)        continuation indicator  a continuation line
+space              source indicator        any line that is not a comment line or a continuation line [...]
+
+Floating indicators may be used in fixed-form or free-form reference format.  The following COBOL character-strings are floating indicators:
+Character-string   Indicator name          Indicates
+*>                 comment indicator       1) a comment line when specified as the first
+                                              character-string in the program-text area;
+                                           2) an inline comment when specified following one or
+                                              more character-strings in the program-text area, subject
+                                              to the additional rules in 6.1.2.1, Syntax Rules.[...]
+
+
+human 
+  
+   wmklein 
+Posted on:  2009/6/8 20:21 
+
+
+
+Home away from home
+
+Joined: 2008/12/27
+
+From: 
+
+Posts: 327
+ 
+
+Re: OpenCOBOL treatment of * (comment)
+
+The ability to use a "*" rather than "*>" in column 1 of free form reference format is a COMMON extension to the Standard. Micro Focus has this; see the MFCOMMENT directive.
+
+Any "conforming to the '02 Standard" compiler will accept "*>" in columns 1-2 of the free form reference format as a comment line.
+
+Any comforming compiler ('85 or '02") will accept "*>" in columns 7-8 (with blanks in columns 1-6) as a comment line whether in fixed form or free form reference format.
+
+I agree with the recommendation to code all source code (original and COPY code) so that it will compile with either fixed for free format refence format. The only problem (and I don't know if this is still a problem) with doing this in OC, is the continuation of alphanumeric (or national) literals.
+
+In the '02 Standard, you may code something like
+
+
+   "ABC"-
+  "XYZ"
+
+
+
+where the '85 Standard requied (for fixed format - the only format in that STandard)
+
+
+              "ABC
+ -    "XYZ"
+
+ 
+where the C of the first line was in column 71 (or just before the R-margin) and the "-" was in column 7. 
+
+If OC has implmented the new form of literal continuation, then there is no reason why you should ever code source code that won't compile identically in fixed and free format.
+
+NOTE: I think that OC has ">>D" for debugging lines, but I know that OC isn't conforming for debugging lines any way so this is less an issue.
+
+NOTE2: For an '02 Standard conforming implementation, it is possible to have free from reference format in COPY code that is used by fixed form reference format main source. You do this by coding the SOURCE-FROMAT directive at the top of the COPY member. By default, the source format will "return" to the original format at the end of the COUY source code.
+
+
+At least with Standard conforming (2002 or later) COBOL, using free form reference format, a COPY statemnt may start in column 1 (following a line ending with a period).
+
+A space must ALWAYS be assumed between lines of source code.
+
+See 6.3.1 Continuation of lines in the '02 Standard that states,
+
+"The last nonblank character of each line is treated as if it were followed by a space."
+
+http://www.ibm.com/developerworks/rational/cafe/attachments/3149-1-2179/S8204%20-%20Boston%20-%202002%20COBOL%20-%20Good,%20Bad,%20and%20the%20Ugly.pdf
+http://koopa.sourceforge.net/
+http://www.cobolproducts.com/lib/?gclid=CN6t0trAoMACFVDKtAodhzMA5Q
+
+CCVS -- Federal Cobol Compiler test suite by National Institute of Standards and Technology (NIST). 
+It will, of course, (finally?) kill off the little used
+BASIS, INSERT, DELETE feature that very few customers know that IBM still supports.
+
+Control flow noramlization : http://www.cs.vu.nl/~x/cfn/cfn.html

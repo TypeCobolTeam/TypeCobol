@@ -1,0 +1,41 @@
+﻿-- Line 1 --
+*** DIRECTIVE CBL|NOADATA|AFP=VOLATILE|ARCH=6|CODEPAGE=1140|BUFSIZE=1K ([1,60:CBL NOADATA AFP(VOLATILE) ARCH(6) CODEPAGE(1140) BUFSIZE(1K)]<CompilerDirective>) ***
+
+-- Line 2 --
+[1,2:  ]<SpaceSeparator>
+*** DIRECTIVE CBL|CICS=’string2’|CICS="string3"|CURRENCY=X"0AB2"|BLOCK0 ([3,64:CBL CICS(’string2’),CICS("string3"),CURRENCY(X"0AB2"),  BLOCK0]<CompilerDirective>) ***
+
+-- Line 3 --
+[1,4:0120]<IntegerLiteral>{120}
+*** DIRECTIVE PROCESS|EXIT= INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2)  ([5,65:PROCESS EXIT( INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2) )]<CompilerDirective>) ***
+
+-- Line 4 --
+*** DIRECTIVE PROCESS|FLAG=I,I|FLAGSTD=x[yy][,0] ([1,37:PROCESS FLAG(I,I) FLAGSTD(x[yy][,0]) ]<CompilerDirective>) ***
+
+-- Line 5 --
+*** DIRECTIVE INVALID SYNTAX -> CBL|TOTO ([1,8:CBL TOTO]<CompilerDirective>) ***
+[1,8]<26,Error,Directives>Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 6 --
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,9:CBL ARCH.]<CompilerDirective>) ***
+[1,9]<26,Error,Directives>Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 7 --
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,9:CBL ARCH(]<CompilerDirective>) ***
+[1,9]<26,Error,Directives>Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 8 --
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,5:CBL (]<CompilerDirective>) ***
+[1,5]<26,Error,Directives>Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 9 --
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,10:CBL ARCH(5]<CompilerDirective>) ***
+[1,10]<26,Error,Directives>Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 10 --
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,14:CBL ARCH(5 B()]<CompilerDirective>) ***
+[1,14]<26,Error,Directives>Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
+
+-- Line 11 --
+*** DIRECTIVE PROCESS|CP=1147|NOADV|C ([1,24:PROCESS CP(1147) NOADV C]<CompilerDirective>) ***
+

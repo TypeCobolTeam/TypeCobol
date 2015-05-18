@@ -1,0 +1,110 @@
+﻿-- Line 1 --
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,21:SOURCE]<UserDefinedWord>) ***
+
+-- Line 2 --
+*** DIRECTIVE ASTERISK_CBL|SOURCE ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,17:SOURCE]<UserDefinedWord>) ***
+
+-- Line 3 --
+*** DIRECTIVE ASTERISK_CONTROL|NOSOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,23:NOSOURCE]<UserDefinedWord>) ***
+
+-- Line 4 --
+*** DIRECTIVE ASTERISK_CBL|NOSOURCE ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,19:NOSOURCE]<UserDefinedWord>) ***
+
+-- Line 5 --
+*** DIRECTIVE ASTERISK_CONTROL|LIST ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,19:LIST]<UserDefinedWord>) ***
+
+-- Line 6 --
+*** DIRECTIVE ASTERISK_CBL|LIST ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,15:LIST]<UserDefinedWord>) ***
+
+-- Line 7 --
+*** DIRECTIVE ASTERISK_CONTROL|NOLIST ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,21:NOLIST]<UserDefinedWord>) ***
+
+-- Line 8 --
+*** DIRECTIVE ASTERISK_CBL|NOLIST ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,17:NOLIST]<UserDefinedWord>) ***
+
+-- Line 9 --
+*** DIRECTIVE ASTERISK_CONTROL|MAP ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,18:MAP]<UserDefinedWord>) ***
+
+-- Line 10 --
+*** DIRECTIVE ASTERISK_CBL|MAP ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,14:MAP]<UserDefinedWord>) ***
+
+-- Line 11 --
+*** DIRECTIVE ASTERISK_CONTROL|NOMAP ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,20:NOMAP]<UserDefinedWord>) ***
+
+-- Line 12 --
+*** DIRECTIVE ASTERISK_CBL|NOMAP ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,16:NOMAP]<UserDefinedWord>) ***
+
+-- Line 13 --
+
+-- Line 14 --
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([6,13:*CONTROL]<ASTERISK_CONTROL>[14,14: ]<SpaceSeparator>[15,20:SOURCE]<UserDefinedWord>) ***
+
+-- Line 15 --
+*** DIRECTIVE ASTERISK_CBL|SOURCE ([6,9:*CBL]<ASTERISK_CBL>[10,10: ]<SpaceSeparator>[11,16:SOURCE]<UserDefinedWord>) ***
+
+-- Line 16 --
+[8,12:     ]<SpaceSeparator>
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([13,20:*CONTROL]<ASTERISK_CONTROL>[21,21: ]<SpaceSeparator>[22,27:SOURCE]<UserDefinedWord>) ***
+
+-- Line 17 --
+[8,12:     ]<SpaceSeparator>
+*** DIRECTIVE ASTERISK_CBL|SOURCE ([13,16:*CBL]<ASTERISK_CBL>[17,17: ]<SpaceSeparator>[18,23:SOURCE]<UserDefinedWord>) ***
+
+-- Line 18 --
+
+-- Line 19 --
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>) ***
+[7,10]<28,Error,Syntax>Syntax error : mismatched input '*CBL' expecting UserDefinedWord
+
+-- Line 20 --
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>) ***
+[7,14]<28,Error,Syntax>Syntax error : mismatched input '*CONTROL' expecting UserDefinedWord
+
+-- Line 21 --
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,20:SOURC]<UserDefinedWord>) ***
+[16,20]<27,Error,Directives>Invalid option specified for *CONTROL or *CBL compiler directive, expecting : SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
+
+-- Line 22 --
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,16:SOURC]<UserDefinedWord>) ***
+[12,16]<27,Error,Directives>Invalid option specified for *CONTROL or *CBL compiler directive, expecting : SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
+
+-- Line 23 --
+
+-- Line 24 --
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,21:SOURCE]<UserDefinedWord>) ***
+[22,22: ]<SpaceSeparator>
+*** DIRECTIVE ASTERISK_CBL|SOURCE ([23,26:*CBL]<ASTERISK_CBL>[27,27: ]<SpaceSeparator>[28,33:SOURCE]<UserDefinedWord>) ***
+
+-- Line 25 --
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>) ***
+
+-- Line 26 --
++++ CONTINUATION OF CompilerDirective ([8,13:SOURCE]<UserDefinedWord>) +++
+
+-- Line 27 --
+*** DIRECTIVE ASTERISK_CBL|MAP|NOMAP|SOURCE|NOSOURCE ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,14:MAP]<UserDefinedWord>[15,15: ]<SpaceSeparator>[16,20:NOMAP]<UserDefinedWord>[21,21: ]<SpaceSeparator>[22,27:SOURCE]<UserDefinedWord>[28,30:   ]<SpaceSeparator>[31,38:NOSOURCE]<UserDefinedWord>) ***
+
+-- Line 28 --
+
+-- Line 29 --
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,21:SOURCE]<UserDefinedWord>[22,23:. ]<PeriodSeparator>) ***
+*** DIRECTIVE ASTERISK_CBL|SOURCE ([24,27:*CBL]<ASTERISK_CBL>[28,28: ]<SpaceSeparator>) ***
+
+-- Line 30 --
++++ CONTINUATION OF CompilerDirective ([8,13:SOURCE]<UserDefinedWord>[14,15:. ]<PeriodSeparator>) +++
+*** DIRECTIVE ASTERISK_CONTROL|SOURCE ([16,23:*CONTROL]<ASTERISK_CONTROL>[24,24: ]<SpaceSeparator>[25,30:SOURCE]<UserDefinedWord>) ***
+
+-- Line 31 --
+*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL|SOURCE ([7,10:*CBL]<ASTERISK_CBL>[11,12:. ]<PeriodSeparator>[13,18:SOURCE]<UserDefinedWord>) ***
+[11,12]<28,Error,Syntax>Syntax error : extraneous input '. ' expecting UserDefinedWord
+
+-- Line 32 --
+
+-- Line 33 --
+[8,72:CONTROLE CAISSES                                                 ]<CommentLine>
+
+-- Line 34 --
+[8,72:CBLENDRIER ANNUEL                                                ]<CommentLine>
+
+-- Line 35 --
+

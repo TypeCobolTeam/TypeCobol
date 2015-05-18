@@ -1,0 +1,97 @@
+﻿-- Line 1 --
+*** DIRECTIVE CBL ([1,3:CBL]<CompilerDirective>) ***
+
+-- Line 2 --
+*** DIRECTIVE PROCESS ([4,10:PROCESS]<CompilerDirective>) ***
+
+-- Line 3 --
+[8,15:CODEPAGE]<UserDefinedWord>
+[16,16:(]<LeftParenthesisSeparator>
+[17,20:1140]<IntegerLiteral>{1140}
+[21,21:)]<RightParenthesisSeparator>
+
+-- Line 4 --
+*** DIRECTIVE CBL|NOADATA|AFP=VOLATILE|ARCH=6|BUFSIZE=1K ([8,53:CBL NOADATA,AFP(VOLATILE),ARCH(6), BUFSIZE(1K)]<CompilerDirective>) ***
+
+-- Line 5 --
+*** DIRECTIVE PROCESS|CICS=’string2’|CICS="string3"|CURRENCY='EUR' ([8,62:PROCESS CICS(’string2’),CICS("string3"),CURRENCY('EUR')]<CompilerDirective>) ***
+
+-- Line 6 --
+*** DIRECTIVE CBL|EXIT= INEXIT([’str1’,]mod1) LIBEXIT([’str2’,]mod2)  ([4,59:CBL EXIT( INEXIT([’str1’,]mod1) LIBEXIT([’str2’,]mod2) )]<CompilerDirective>) ***
+
+-- Line 7 --
+*** DIRECTIVE INVALID SYNTAX -> PROCESS ([1,35:PROCESS FLAG(I,I FLAGSTD(x[yy][,0])]<CompilerDirective>) ***
+
+-- Line 8 --
+
+-- Line 9 --
+[8,10:   ]<SpaceSeparator>
+*** DIRECTIVE CBL|DATA=31 ([11,72:CBL DATA(31)                                                  ]<CompilerDirective>) ***
+
+-- Line 10 --
+[8,72:-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  ]<CommentLine>
+
+-- Line 11 --
+[8,9:  ]<SpaceSeparator>
+*** DIRECTIVE CBL|OFFSET ([10,72:CBL OFFSET                                                     ]<CompilerDirective>) ***
+
+-- Line 12 --
+[8,72:*****************************************************************]<CommentLine>
+
+-- Line 13 --
+[8,72: CBL OPTIMIZE(FULL)                                              ]<CommentLine>
+
+-- Line 14 --
+[8,72:========================*                                        ]<CommentLine>
+
+-- Line 15 --
+*** DIRECTIVE CBL|ARITH=EXTEND ([8,72:CBL ARITH(EXTEND)                                                ]<CompilerDirective>) ***
+
+-- Line 16 --
+[8,72: CST 26/01/2011 RU012046 DEB                                     ]<CommentLine>
+
+-- Line 17 --
+*** DIRECTIVE CBL|DATA=31 ([7,72:CBL DATA(31)                                                      ]<CompilerDirective>) ***
+
+-- Line 18 --
+*** DIRECTIVE CBL|OPTIMIZE=FULL|TEST=NONE,SYM|SSRANGE|FLAG=I,E ([8,72:CBL OPTIMIZE(FULL),TEST(NONE,SYM),SSRANGE,FLAG(I,E)              ]<CompilerDirective>) ***
+
+-- Line 19 --
+[8,72:-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  ]<CommentLine>
+
+-- Line 20 --
+[8,8: ]<SpaceSeparator>
+*** DIRECTIVE CBL|OPT=FULL ([9,72:CBL OPT(FULL)                                                   ]<CompilerDirective>) ***
+
+-- Line 21 --
+[8,20:**           ]<CommentLine>
+
+-- Line 22 --
+*** DIRECTIVE CBL|DATA=31 ([7,72:CBL DATA(31)                                                      ]<CompilerDirective>) ***
+
+-- Line 23 --
+[8,72:-----------------------------------------------------------------]<CommentLine>
+
+-- Line 24 --
+*** DIRECTIVE PROCESS|ARITH=EXTEND ([8,72:PROCESS ARITH(EXTEND)                                            ]<CompilerDirective>) ***
+
+-- Line 25 --
+[8,21:IDENTIFICATION]<IDENTIFICATION>
+[22,22: ]<SpaceSeparator>
+[23,30:DIVISION]<DIVISION>
+[31,32:. ]<PeriodSeparator>
+
+-- Line 26 --
+[8,72:-Reason  : AMEELIORATION PROCESS ACTIMAT                         ]<CommentLine>
+
+-- Line 27 --
+[8,16:         ]<SpaceSeparator>
+[17,23:PERFORM]<PERFORM>
+[24,24: ]<SpaceSeparator>
+[25,49:PROCESSUS-INDEXATION-IMMO]<UserDefinedWord>
+[50,51:. ]<PeriodSeparator>
+[52,72:                     ]<SpaceSeparator>
+
+-- Line 28 --
+[8,72:*** PROCESSUS DE MENAGE                                          ]<CommentLine>
+

@@ -1,0 +1,25 @@
+﻿** Document path PgmReplaceSingleToMultiple **
+-- Line 1 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TOTO]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 5 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TITI]<UserDefinedWord>
+[11,14:TATA]<UserDefinedWord>
+[11,14:TUTU]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 6 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TITI1]<UserDefinedWord>
+[11,15:(]<LeftParenthesisSeparator>
+[11,15:01]<IntegerLiteral>{1}
+[11,15:)]<RightParenthesisSeparator>
+[16,16+:.]<PeriodSeparator>
+-- Line 7 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO2]<UserDefinedWord>
+[17,21:VALUE]<VALUE>
+[23,28:"TITI"]<AlphanumericLiteral>(",Y,Y){TITI}
+[23,28:SUPPRESS]<SUPPRESS>
+[29,29+:.]<PeriodSeparator>

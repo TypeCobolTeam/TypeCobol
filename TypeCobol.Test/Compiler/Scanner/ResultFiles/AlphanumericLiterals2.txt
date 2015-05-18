@@ -1,0 +1,86 @@
+﻿-- Line 1 --
+[1,7:N"toto"]<NationalLiteral>(",Y,Y){toto}
+[8,8: ]<SpaceSeparator>
+[9,15:N'titi']<NationalLiteral>(',Y,Y){titi}
+[16,16: ]<SpaceSeparator>
+[17,17:N]<UserDefinedWord>
+[18,18: ]<SpaceSeparator>
+[19,27:G"'tata'"]<DBCSLiteral>(",Y,Y){'tata'}
+[28,28: ]<SpaceSeparator>
+[29,37:G'"tutu"']<DBCSLiteral>(',Y,Y){"tutu"}
+[38,38: ]<SpaceSeparator>
+[39,39:G]<UserDefinedWord>
+[40,40: ]<SpaceSeparator>
+[41,43:Z""]<NullTerminatedAlphanumericLiteral>(",Y,Y){}
+[44,44: ]<SpaceSeparator>
+[45,47:Z'']<NullTerminatedAlphanumericLiteral>(',Y,Y){}
+[48,48: ]<SpaceSeparator>
+[49,49:Z]<UserDefinedWord>
+[50,50+:.]<PeriodSeparator>
+
+-- Line 2 --
+[1,5:N"ok"]<NationalLiteral>(",Y,Y){ok}
+[6,6: ]<SpaceSeparator>
+[7,16:N"sans fin]<NationalLiteral>(",Y,N){sans fin}
+
+-- Line 3 --
+[1,5:N'ok']<NationalLiteral>(',Y,Y){ok}
+[6,6: ]<SpaceSeparator>
+[7,16:N'sans fin]<NationalLiteral>(',Y,N){sans fin}
+
+-- Line 4 --
+[1,12+:N"fin ligne"]<NationalLiteral>(",Y,Y){fin ligne}
+
+-- Line 5 --
+[1,12+:N'fin ligne']<NationalLiteral>(',Y,Y){fin ligne}
+
+-- Line 6 --
+[1,2:N"]<NationalLiteral>(",Y,N){}
+
+-- Line 7 --
+[1,2:N']<NationalLiteral>(',Y,N){}
+
+-- Line 8 --
+[1,5:G"ok"]<DBCSLiteral>(",Y,Y){ok}
+[6,6: ]<SpaceSeparator>
+[7,16:G"sans fin]<DBCSLiteral>(",Y,N){sans fin}
+
+-- Line 9 --
+[1,5:G'ok']<DBCSLiteral>(',Y,Y){ok}
+[6,6: ]<SpaceSeparator>
+[7,16:G'sans fin]<DBCSLiteral>(',Y,N){sans fin}
+
+-- Line 10 --
+[1,12+:G"fin ligne"]<DBCSLiteral>(",Y,Y){fin ligne}
+
+-- Line 11 --
+[1,12+:G'fin ligne']<DBCSLiteral>(',Y,Y){fin ligne}
+
+-- Line 12 --
+[1,2:G"]<DBCSLiteral>(",Y,N){}
+
+-- Line 13 --
+[1,2:G']<DBCSLiteral>(',Y,N){}
+
+-- Line 14 --
+[1,5:Z"ok"]<NullTerminatedAlphanumericLiteral>(",Y,Y){ok}
+[6,6: ]<SpaceSeparator>
+[7,16:Z"sans fin]<NullTerminatedAlphanumericLiteral>(",Y,N){sans fin}
+
+-- Line 15 --
+[1,5:Z'ok']<NullTerminatedAlphanumericLiteral>(',Y,Y){ok}
+[6,6: ]<SpaceSeparator>
+[7,16:Z'sans fin]<NullTerminatedAlphanumericLiteral>(',Y,N){sans fin}
+
+-- Line 16 --
+[1,12+:Z"fin ligne"]<NullTerminatedAlphanumericLiteral>(",Y,Y){fin ligne}
+
+-- Line 17 --
+[1,12+:Z'fin ligne']<NullTerminatedAlphanumericLiteral>(',Y,Y){fin ligne}
+
+-- Line 18 --
+[1,2:Z"]<NullTerminatedAlphanumericLiteral>(",Y,N){}
+
+-- Line 19 --
+[1,2:Z']<NullTerminatedAlphanumericLiteral>(',Y,N){}
+

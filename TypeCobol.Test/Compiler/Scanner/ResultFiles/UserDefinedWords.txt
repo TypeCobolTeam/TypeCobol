@@ -1,0 +1,17 @@
+﻿-- Line 1 --
+[1,17:laurent_prud-on10]<UserDefinedWord>
+
+-- Line 2 --
+[1,17:!super-_@#1254540]<UserDefinedWord>
+[18,20:.10]<DecimalLiteral>{10|2>0,1}
+[21,30:azfdaedf99]<UserDefinedWord>
+[31,31:*]<MultiplyOperator>
+[32,32:8]<IntegerLiteral>{8}
+[33,33::]<ColonSeparator>
+[34,37:tshg]<UserDefinedWord>
+[38,39:; ]<SemicolonSeparator>
+[40,43:prud]<UserDefinedWord>
+[44,48:'hon']<AlphanumericLiteral>(',Y,Y){hon}
+[49,50:==]<PseudoTextDelimiter>
+[31,31]<5,Error,Tokens>Invalid character found after * : expecting space, *, > or C
+

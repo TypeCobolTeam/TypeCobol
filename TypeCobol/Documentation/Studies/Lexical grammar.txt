@@ -1,0 +1,79 @@
+﻿text word = contiguous characters (possibly continued across lines) between character positions 8 and 72 inclusive
+
+text word = separator character-string separator
+
+separator = 
+	b Space
+	,b Comma
+	.b Period
+	;b Semicolon
+	( Left parenthesis
+	) Right parenthesis
+	: Colon
+
+character-string  = COBOL word | literal | PICTURE character-string | comment-entry
+
+COBOL word = user-defined word | system-name | reserved word | function-name
+
+user-defined word = udw numeric | udw single byte | udw DBCS allowed
+
+udw numeric = Level-number | Priority-number
+
+udw single byte = 
+	 Library-name | Object-oriented class-name |
+	 Program-name | Text-name
+
+udw DBCS allowed = 
+	Alphabet-name | Class-name (of data) | Condition-name | Data-name |
+	File-name | Index-name | Mnemonic-name | Paragraph-name |
+	Record-name | Section-name | Symbolic-character | XML-schema-name
+
+system-name = sn single byte | sn DBCS allowed
+
+sn single byte = Language-name | Implementor-name
+
+Implementor-name = Environment-name | External-class-name | External-fileid | Assignment-name
+
+sn DBCS allowed = Computer-name
+
+function-name = see Table 51 on page 485
+
+reserved word = in Appendix E, “Reserved words,” on page 581
+
+reserved word = 
+	Keyword | Optional word | Figurative constant |
+	Special character word | Special object identifier | Special register 
+
+Figurative constant = see page 13
+
+Special character words = Arithmetic operators | Relational operators
+
+Special object identifiers = SELF | SUPER
+
+Special registers = see page 16
+
+literal-expected = literal | figurative constant
+
+literal = Alphanumeric literal | DBCS literal | National literal | Numeric literal
+
+Alphanumeric literal = 
+	"single-byte-characters" | ’single-byte-characters’ |
+	"mixed-SBCS-and-DBCS-characters" | ’mixed-SBCS-and-DBCS-characters’ |
+	X"hexadecimal-digits" | X’hexadecimal-digits’ |
+	Z"mixed-characters" | Z’mixed-characters’
+
+Numeric literal = fixed-point number | floating-point number
+
+fixed-point number = [+-]?[0-9]*(.[0-9]+)?
+
+floating-point number = (+-)[mantissa]E(+-)[exponent]
+
+DBCS literal = G"<DBCS-characters>" | G’<DBCS-characters>’ |
+			   N"<DBCS-characters>" | N’<DBCS-characters>’
+
+National literal =  N"character-data" | N’character-data’
+
+PICTURE character-string = Table 12 on page 199
+PICTURE character-strings are delimited only by the separator space, separator comma, separator semicolon, or separator period.
+
+comment-entry = *> chars until end of area B

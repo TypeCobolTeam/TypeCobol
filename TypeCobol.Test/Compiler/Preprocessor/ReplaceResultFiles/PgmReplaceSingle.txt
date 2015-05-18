@@ -1,0 +1,81 @@
+﻿** Document path PgmReplaceSingle **
+-- Line 1 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TOTO]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 3 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TITI]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 4 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO1]<UserDefinedWord>
+[16,16+:.]<PeriodSeparator>
+-- Line 5 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO2]<UserDefinedWord>
+[17,21:VALUE]<VALUE>
+[23,28:"TOTO"]<AlphanumericLiteral>(",Y,Y){TOTO}
+[29,29+:.]<PeriodSeparator>
+-- Line 7 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TOTO]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 8 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TITI1]<UserDefinedWord>
+[16,16+:.]<PeriodSeparator>
+-- Line 9 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO2]<UserDefinedWord>
+[17,21:VALUE]<VALUE>
+[23,28:"TOTO"]<AlphanumericLiteral>(",Y,Y){TOTO}
+[29,29+:.]<PeriodSeparator>
+-- Line 11 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TOTO]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 12 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO1]<UserDefinedWord>
+[16,16+:.]<PeriodSeparator>
+-- Line 13 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO2]<UserDefinedWord>
+[17,21:VALUE]<VALUE>
+[23,28:"TITI"]<AlphanumericLiteral>(",Y,Y){TITI}
+[29,29+:.]<PeriodSeparator>
+-- Line 15 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TOTO]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 16 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO1]<UserDefinedWord>
+[16,16+:.]<PeriodSeparator>
+-- Line 17 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO2]<UserDefinedWord>
+[17,21:VALUE]<VALUE>
+[23,28:"TOTO"]<AlphanumericLiteral>(",Y,Y){TOTO}
+[29,29+:.]<PeriodSeparator>
+-- Line 21 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TITI]<UserDefinedWord>
+[15,15+:.]<PeriodSeparator>
+-- Line 22 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TITI1]<UserDefinedWord>
+[16,16+:.]<PeriodSeparator>
+-- Line 23 --
+[8,9:01]<IntegerLiteral>{1}
+[11,15:TOTO2]<UserDefinedWord>
+[17,21:VALUE]<VALUE>
+[23,28:"TITI"]<AlphanumericLiteral>(",Y,Y){TITI}
+[29,29+:.]<PeriodSeparator>
+-- Line 25 --
+[8,9:01]<IntegerLiteral>{1}
+[11,14:TOTO]<UserDefinedWord>
+[25,29:BLANK]<BLANK>
+[31,34:ZERO]<ZERO>
+[35,35+:.]<PeriodSeparator>

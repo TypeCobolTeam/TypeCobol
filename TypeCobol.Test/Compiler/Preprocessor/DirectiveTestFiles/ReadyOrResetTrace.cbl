@@ -1,0 +1,12 @@
+﻿000001 READY TRACE.
+000002 reset TRACE.
+
+000001 READY.
+000002 reset.
+000001 READY trace
+000002 reset TRACE
+000READY trace
+000reset TRACE
+000003 ready reset
+000004 trace
+000005 .

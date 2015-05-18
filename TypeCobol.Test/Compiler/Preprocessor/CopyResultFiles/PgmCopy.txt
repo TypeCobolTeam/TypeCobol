@@ -1,0 +1,64 @@
+﻿** Document path PgmCopy **
+-- Line 2 --
+[8,9:01]<IntegerLiteral>{1}
+[11,17:YACMPSB]<UserDefinedWord>
+[19,26:EXTERNAL]<EXTERNAL>
+[27,28:. ]<PeriodSeparator>
+** Document path PgmCopy/CPY1 **
+-- Line 1 --
+[8,9:01]<IntegerLiteral>{1}
+[11,17:YACMPSB]<UserDefinedWord>
+[18,19:. ]<PeriodSeparator>
+-- Line 2 --
+[11,12:05]<IntegerLiteral>{5}
+[14,26:ACMPSB-NB-PCB]<UserDefinedWord>
+[39,41:PIC]<PIC>
+[43,46:9(4)]<PictureCharacterString>
+[48,51:COMP]<COMP>
+[52,53:. ]<PeriodSeparator>
+** Document path PgmCopy **
+-- Line 4 --
+[8,9:01]<IntegerLiteral>{1}
+[11,16:FILLER]<FILLER>
+[43,45:PIC]<PIC>
+[47,50:X(8)]<PictureCharacterString>
+[52,56:VALUE]<VALUE>
+[58,67:'YPAC711 ']<AlphanumericLiteral>(',Y,Y){YPAC711 }
+[68,69:. ]<PeriodSeparator>
+-- Line 5 --
+[8,9:01]<IntegerLiteral>{1}
+[11,16:PAC711]<UserDefinedWord>
+[17,18:. ]<PeriodSeparator>
+** Document path PgmCopy/CPY2 **
+-- Line 1 --
+[8,9:01]<IntegerLiteral>{1}
+[11,16:PACVAR]<UserDefinedWord>
+[17,18:. ]<PeriodSeparator>
+-- Line 2 --
+[12,13:05]<IntegerLiteral>{5}
+[15,28:PAC421-EPL-REF]<UserDefinedWord>
+[29,30:. ]<PeriodSeparator>
+** Document path PgmCopy/CPY2/CPY3 **
+-- Line 1 --
+[15,16:10]<IntegerLiteral>{10}
+[18,35:PAC421-EPL-REF-BQE]<UserDefinedWord>
+[51,53:PIC]<PIC>
+[55,58:X(5)]<PictureCharacterString>
+[59,60:. ]<PeriodSeparator>
+-- Line 2 --
+[15,16:10]<IntegerLiteral>{10}
+[18,35:PAC421-EPL-REF-CAI]<UserDefinedWord>
+[51,53:PIC]<PIC>
+[55,58:X(5)]<PictureCharacterString>
+[59,60:. ]<PeriodSeparator>
+** Document path PgmCopy/CPY2 **
+-- Line 4 --
+[17,18:15]<IntegerLiteral>{15}
+[20,41:PAC421-EPL-REF-CPT-RAC]<UserDefinedWord>
+[51,53:PIC]<PIC>
+[55,58:X(9)]<PictureCharacterString>
+[59,60:. ]<PeriodSeparator>
+
+++ Preprocessor diagnostics ++
+-- Line 6 --
+[8,21]<29,Error,Directives>Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named UNKNOWN

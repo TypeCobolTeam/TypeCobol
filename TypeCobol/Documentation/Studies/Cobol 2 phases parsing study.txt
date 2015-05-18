@@ -1,0 +1,202 @@
+--cobolProgram 
+	programIdentification //  RECURSIVE clause only in the outermost program, COMMON clause only in nested programs
+		environmentDivisionHeader // optional
+			configurationSectionHeader // configuration section only in the outermost program
+                     		sourceComputerParagraph
+                     		objectComputerParagraph
+                     		specialNamesParagraph
+                     		repositoryParagraph // repository paragraph only in the outermost program	
+			inputOutputSectionHeader
+                  		fileControlParagraph
+                  		ioControlParagraph
+		dataDivisionHeader // optional
+			fileSectionHeader
+				fileDescriptionEntry
+				dataDescriptionEntry
+                        workingStorageSectionHeader 
+				dataDescriptionEntry
+                        localStorageSectionHeader 
+				dataDescriptionEntry
+                        linkageSectionHeader 
+				dataDescriptionEntry
+		procedureDivisionHeaderWithParameters // optional
+			declarativesHeader // optional
+				//  each section header must be followed by a separator period, and must be followed by a USE statement followed by a separator period. No other text can appear on the same line
+				sectionHeader useStatement // debugging sections only in the outermost program
+					paragraphName // optional
+						--statement
+						sentenceEnd
+			declarativesEnd
+			sectionHeader // optional
+				paragraphName // optional
+					--statement // ENTRY statement not allowed in nested programs, and with PROCEDURE DIVISION RETURNING phrase
+					sentenceEnd
+		--nestedSourceProgram // RECURSIVE programs cannot contain nested subprograms
+	programEnd // optional for the last program in the sequence
+
+--cobolClass
+	classIdentification
+        	environmentDivisionHeader // required
+			configurationSectionHeader // optional for programs and classes
+                     		sourceComputerParagraph
+                     		objectComputerParagraph
+                     		specialNamesParagraph
+                     		repositoryParagraph	
+                factoryIdentification // optional
+                	dataDivisionHeader 
+			workingStorageSectionHeader 
+				dataDescriptionEntry
+                     	procedureDivisionHeader
+			methodIdentification
+                     		environmentDivisionHeader 
+					inputOutputSectionHeader // the same rules apply to program and method I-O sections
+                  				fileControlParagraph // a method FILE SECTION can define external files only
+                  				ioControlParagraph
+                     		dataDivisionHeader 
+					fileSectionHeader
+						fileDescriptionEntry
+						dataDescriptionEntry
+                        		workingStorageSectionHeader 
+						dataDescriptionEntry
+                        		localStorageSectionHeader 
+						dataDescriptionEntry
+                        		linkageSectionHeader 
+						dataDescriptionEntry
+                     		procedureDivisionHeaderWithParameters // BY REFERENCE not supported in method using phrase
+					--procedureDivisionContent // You cannot specify the following statements or clauses in a method procedure division: v ALTER v ENTRY v EXIT PROGRAM v GO TO without a specified procedure name v SEGMENT-LIMIT v USE FOR DEBUGGING
+                     	methodEnd
+                factoryEnd
+                objectIdentification // optional
+                     	dataDivisionHeader 
+			workingStorageSectionHeader 
+				dataDescriptionEntry
+                     	procedureDivisionHeader 
+			--methodDefinition
+                objectEnd
+	classEnd // optional
+
+----------
+Statements
+----------
+
+acceptStatement
+alterStatement
+cancelStatement
+closeStatement
+continueStatement
+displayStatement
+entryStatement
+execStatement
+exitStatement
+exitMethodStatement
+exitProgramStatement
+gobackStatement
+gotoStatement
+initializeStatement
+inspectStatement
+mergeStatement
+moveStatement
+openStatement
+performProcedureStatement
+releaseStatement
+setStatement
+sortStatement
+stopStatement
+
+// imperativeStatement = statement+ (without Statement Condition) 
+
+addStatement
+	onSizeError imperativeStatement // optional = exception phrase, STATEMENT CONDITION
+	notOnSizeError imperativeStatement // optional
+addStatementEnd // optional, STATEMENT END
+
+callStatement
+	onException imperativeStatement // optional
+	notOnException imperativeStatement // optional
+	onOverflow imperativeStatement // optional
+callStatementEnd // optional
+
+computeStatement
+	-- sizeExceptionPhrases
+computeStatementEnd
+
+deleteStatement
+	invalidKey imperativeStatement // optional
+	notInvalidKey imperativeStatement // optional
+deleteStatementEnd
+
+divideStatement
+	-- sizeExceptionPhrases // optional
+divideStatementEnd 
+
+evaluateStatement
+	whenEvaluateCondition imperativeStatement
+evaluateStatementEnd
+
+ifStatement
+	statement | nextSentence
+elseCondition // optional
+	statement | nextSentence
+ifStatementEnd // optional
+	
+invokeStatement
+	-- exceptionPhrases // optional
+invokeStatementEnd // optional
+
+multiplyStatement
+	-- sizeExceptionPhrases // optional
+multiplyStatementEnd // optional
+
+performStatement
+	imperativeStatement
+performStatementEnd
+
+readStatement
+	atEnd imperativeStatement // optional
+	notAtEnd imperativeStatement // optional
+	-- invalidKey phrases // optional
+readStatementEnd // optional
+
+returnStatement
+	-- atEnd phrases // optional
+returnStatementEnd // optional
+
+rewriteStatement
+	-- invalidKey phrases // optional
+rewriteStatementEnd // optional
+
+searchStatement
+	atEnd imperativeStatement // optional
+	whenSearchCondition imperativeStatement | nextSentence // optional
+searchStatementEnd // optional
+
+startStatement
+	-- invalidKey phrases // optional
+startStatementEnd // optional
+
+stringStatement
+	onOverflow imperativeStatement // optional
+	notOnOverflow imperativeStatement // optional
+stringStatementEnd // optional
+
+subtractStatement
+	-- sizeExceptionPhrases
+subtractStatementEnd
+
+unstringStatement
+	-- onOverflow phrases // optional
+unstringStatementEnd // optional
+
+writeStatement
+	atEndOfPage imperativeStatement // optional
+	notAtEndOfPage imperativeStatement // optional
+	-- invalidKey phrases // optional
+writeStatementEnd // optional
+
+xmlGenerateStatement
+	-- exceptionPhrases // optional
+xmlGenerateStatementEnd // optional
+
+xmlParseStatement
+	-- exceptionPhrases // optional
+xmlParseStatementEnd // optional

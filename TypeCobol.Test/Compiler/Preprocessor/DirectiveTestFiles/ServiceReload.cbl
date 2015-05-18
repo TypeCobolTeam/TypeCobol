@@ -1,0 +1,12 @@
+﻿000001 SERVICE RELOAD Test1
+000002        SERVICE        reload Test2
+000003 DISPLAY "start" service        
+000004 reload 
+000005 Test3 DISPLAY "end"
+
+000003 SERVICE RELOAD Test3.
+000004     service RELOAD.
+000005 RELOAD
+000006 service Test3.
+000SERVICE RELOAD
+000006 service reload

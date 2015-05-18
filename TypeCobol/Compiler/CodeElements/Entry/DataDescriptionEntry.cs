@@ -1,0 +1,770 @@
+﻿using System;
+using System.Collections.Generic;
+using TypeCobol.Compiler.Scanner;
+
+namespace TypeCobol.Compiler.CodeElements
+{
+    /// <summary>
+    /// A data description entry specifies the characteristics of a data item.
+    /// Sets of data description entries are called record description entries.
+    /// Data description entries that define independent data items do not make up a
+    /// record. These entries are known as data item description entries.
+    /// Data description entries have three general formats :
+    /// Format 1: data description entry
+    /// Format 2: renames
+    /// Regroups previously defined items.
+    /// All level-66 entries associated with one record must immediately follow the last
+    /// data description entry in that record.
+    /// Format 3: condition-name
+    /// A user-specified name that associates a value, a set of values, or a range of
+    /// values with a conditional variable.
+    /// Level-88 entries must immediately follow the data description entry for the
+    /// conditional variable with which the condition-names are associated.
+    /// </summary>
+    public class DataDescriptionEntry : CodeElement
+    {
+        public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry)
+        { }
+
+        /// <summary>
+        /// The level-number specifies the hierarchy of data within a record, and identifies
+        /// special-purpose data entries. A level-number begins a data description entry, a
+        /// renamed or redefined item, or a condition-name entry.
+        /// A level-number has an integer value between 1 and 49, inclusive, or one of the
+        /// special level-number values 66, 77, or 88.
+        /// 66 
+        /// Identifies items that must contain a RENAMES clause; such items regroup previously defined data items. (For details, see “RENAMES clause” on page 219.) 
+        /// 77 
+        /// Identifies data item description entries that are independent WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION items; they are not subdivisions of other items and are not subdivided themselves. 
+        /// 88 
+        /// Identifies any condition-name entry that is associated with a particular value of a conditional variable. (For details, see “VALUE clause” on page 237.)
+        /// </summary>
+        public int LevelNumber { get; set; }
+    }
+
+    /// <summary>
+    /// Format 1 is used for data description entries in all DATA DIVISION sections.
+    /// The level-number in format 1 can be any number in the range 01–49, or 77.
+    /// </summary>
+    public class DataNameDescription : DataDescriptionEntry
+    {
+        /// <summary>
+        /// Explicitly identifies the data being described.
+        /// data-name-1, if specified, identifies a data item used in the program.
+        /// Level-77 and level-01 entries in the WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION that are referenced in a program or method must be given unique data-names because level-77 and level-01 entries cannot be qualified. 
+        /// Subordinate data-names that are referenced in the program or method must be either uniquely defined, or made unique through qualification. 
+        /// Unreferenced data-names need not be uniquely defined.
+        /// data-name1 must be specified for any entry containing the GLOBAL or EXTERNAL clause,
+        /// and for record description entries associated with file description entries that have the GLOBAL or EXTERNAL clauses.
+        /// ---
+        /// FILLER => DataName is null
+        /// A data item that is not explicitly referred to in a program. 
+        /// In a MOVE CORRESPONDING statement or in an ADD CORRESPONDING or SUBTRACT CORRESPONDING statement, FILLER items are ignored. 
+        /// In an INITIALIZE statement, elementary FILLER items are ignored.
+        /// If data-name-1 or the FILLER clause is omitted, the data item being described is treated as though FILLER had been specified.
+        /// </summary>
+        public DataName DataName { get; set; }
+
+        /// <summary>
+        /// The EXTERNAL clause specifies that the storage associated with a data item is
+        /// associated with the run unit rather than with any particular program or method
+        /// within the run unit.
+        /// An external data item can be referenced by any program or method in the run unit
+        /// that describes the data item. References to an external data item from different
+        /// programs or methods using separate descriptions of the data item are always to
+        /// the same data item. In a run unit, there is only one representative of an external
+        /// data item.
+        /// The EXTERNAL clause can be specified only on data description entries whose
+        /// level-number is 01. It can be specified only on data description entries that are in
+        /// the WORKING-STORAGE SECTION of a program or method. It cannot be
+        /// specified in LINKAGE SECTION or FILE SECTION data description entries. Any
+        /// data item described by a data description entry subordinate to an entry that
+        /// describes an external record also attains the external attribute. Indexes in an
+        /// external data record do not possess the external attribute.
+        /// Use of the EXTERNAL clause does not imply that the associated data-name is a
+        /// global name.
+        /// </summary>
+        public bool IsExternal { get; set; }
+
+        /// <summary>
+        /// The GLOBAL clause specifies that a data-name is available to every program
+        /// contained within the program that declares it, as long as the contained program
+        /// does not itself have a declaration for that name. All data-names subordinate to or
+        /// condition-names or indexes associated with a global name are global names.
+        /// A data-name is global if the GLOBAL clause is specified either in the data
+        /// description entry by which the data-name is declared or in another entry to which
+        /// that data description entry is subordinate. The GLOBAL clause can be specified in
+        /// the WORKING-STORAGE SECTION, the FILE SECTION, the LINKAGE SECTION,
+        /// and the LOCAL-STORAGE SECTION, but only in data description entries whose
+        /// level-number is 01.
+        /// In the same DATA DIVISION, the data description entries for any two data items
+        /// for which the same data-name is specified must not include the GLOBAL clause.
+        /// A statement in a program contained directly or indirectly within a program that
+        /// describes a global name can reference that name without describing it again.
+        /// </summary>
+        public bool IsGlobal { get; set; }
+
+        /// <summary>
+        /// The REDEFINES clause allows you to use different data description entries to
+        /// describe the same computer storage area.
+        /// When specified, the REDEFINES clause must be the first entry following
+        /// data-name-1 or FILLER. If data-name-1 or FILLER is not specified, the REDEFINES
+        /// clause must be the first entry following the level-number.
+        /// data-name-1, FILLER
+        /// Identifies an alternate description for the data area identified by
+        /// data-name-2; data-name-1 is the redefining item or the REDEFINES subject.
+        /// Neither data-name-1 nor any of its subordinate entries can contain a VALUE
+        /// clause.
+        /// data-name-2
+        /// Identifies the redefined item or the REDEFINES object.
+        /// The data description entry for data-name-2 can contain a REDEFINES
+        /// clause.
+        /// The data description entry for data-name-2 cannot contain an OCCURS
+        /// clause. However, data-name-2 can be subordinate to an item whose data
+        /// description entry contains an OCCURS clause; in this case, the reference to
+        /// data-name-2 in the REDEFINES clause must not be subscripted.
+        /// Neither data-name-1 nor data-name-2 can contain an OCCURS DEPENDING ON
+        /// clause.
+        /// data-name-1 and data-name-2 must have the same level in the hierarchy; however,
+        /// the level numbers need not be the same. Neither data-name-1 nor data-name-2 can
+        /// be defined with level number 66 or 88.
+        /// data-name-1 and data-name-2 can each be described with any usage.
+        /// Redefinition begins at data-name-1 and ends when a level-number less than or
+        /// equal to that of data-name-1 is encountered. No entry that has a level-number
+        /// numerically lower than those of data-name-1 and data-name-2 can occur between
+        /// these entries.
+        /// If the GLOBAL clause is used in the data description entry that contains the
+        /// REDEFINES clause, only data-name-1 (the redefining item) possesses the global
+        /// attribute. 
+        /// The EXTERNAL clause must not be specified in the same data description entry as
+        /// a REDEFINES clause.
+        /// If the redefined data item (data-name-2) is declared to be an external data record,
+        /// the size of the redefining data item (data-name-1) must not be greater than the size
+        /// of the redefined data item. If the redefined data item is not declared to be an
+        /// external data record, there is no such constraint.
+        /// One or more redefinitions of the same storage area are permitted. The entries that
+        /// give the new descriptions of the storage area must immediately follow the
+        /// description of the redefined area without intervening entries that define new
+        /// character positions. Multiple redefinitions can, but need not, all use the data-name
+        /// of the original entry that defined this storage area. 
+        /// Also, multiple redefinitions can use the name of the preceding definition.
+        /// When more than one level-01 entry is written subordinate to an FD entry, a
+        /// condition known as implicit redefinition occurs. That is, the second level-01 entry
+        /// implicitly redefines the storage allotted for the first entry. In such level-01 entries,
+        /// the REDEFINES clause must not be specified.
+        /// When the data item implicitly redefines multiple 01-level records in a file
+        /// description (FD) entry, items subordinate to the redefining or redefined item can
+        /// contain an OCCURS DEPENDING ON clause.
+        /// </summary>
+        public SymbolReference<DataName> RedefinesDataName { get; set; }
+
+        /// <summary>
+        /// The DATA DIVISION language elements used for table handling are the OCCURS
+        /// clause and the INDEXED BY phrase.
+        /// For the INDEXED BY phrase description, see “INDEXED BY phrase” on page 194.
+        /// The OCCURS clause specifies tables whose elements can be referred to by indexing
+        /// or subscripting. It also eliminates the need for separate entries for repeated data
+        /// items.
+        /// Formats for the OCCURS clause include fixed-length tables and variable-length
+        /// tables.
+        /// The subject of an OCCURS clause is the data-name of the data item that contains
+        /// the OCCURS clause. Except for the OCCURS clause itself, data description clauses
+        /// used with the subject apply to each occurrence of the item described.
+        /// Whenever the subject of an OCCURS clause or any data-item subordinate to it is
+        /// referenced, it must be subscripted or indexed, with the following exceptions:
+        /// - When the subject of the OCCURS clause is used as the subject of a SEARCH
+        ///   statement
+        /// - When the subject or a subordinate data item is the object of the
+        ///   ASCENDING/DESCENDING KEY phrase
+        /// - When the subordinate data item is the object of the REDEFINES clause
+        /// When subscripted or indexed, the subject refers to one occurrence within the table,
+        /// unless the ALL subscript is used in an intrinsic function.
+        /// The OCCURS clause cannot be specified in a data description entry that:
+        /// - Has a level number of 01, 66, 77, or 88.
+        /// - Describes a redefined data item. (However, a redefined item can be subordinate
+        ///   to an item that contains an OCCURS clause.)
+        /// Because seven subscripts or indexes are allowed, six nested levels and one
+        /// outermost level of the format-1 OCCURS clause are allowed.
+        /// </summary>
+        public bool IsTableOccurence { get; set; }
+
+        /// <summary>
+        /// Fixed-length tables are specified using the OCCURS clause.
+        /// integer-2
+        /// The exact number of occurrences. integer-2 must be greater than zero.
+        /// Variable-length tables
+        /// You can specify variable-length tables by using the OCCURS DEPENDING ON
+        /// clause.
+        /// integer-1
+        /// The minimum number of occurrences.
+        /// The value of integer-1 must be greater than or equal to zero, and it must
+        /// also be less than the value of integer-2.
+        /// If integer-1 is omitted, a value of 1 is assumed
+        /// </summary>
+        public int MinOccurencesCount { get; set; }
+
+        /// <summary>
+        /// Fixed-length tables are specified using the OCCURS clause.
+        /// integer-2
+        /// The exact number of occurrences. integer-2 must be greater than zero.
+        /// integer-2
+        /// The maximum number of occurrences.
+        /// integer-2 must be greater than integer-1.
+        /// The length of the subject item is fixed. Only the number of repetitions of the subject
+        /// item is variable.
+        /// UNBOUNDED => Int32.MaxValue
+        /// Unbounded maximum number of occurrences.
+        /// Unbounded group
+        /// A group that contains at least one unbounded table.
+        /// You can define unbounded groups only in the LINKAGE
+        /// SECTION. Either alphanumeric groups or national groups can be
+        /// unbounded.
+        /// </summary>
+        public int MaxOccurencesCount { get; set; }
+
+        /// <summary>
+        /// The OCCURS DEPENDING ON clause specifies variable-length tables.
+        /// data-name-1
+        /// Identifies the object of the OCCURS DEPENDING ON clause; that is, the
+        /// data item whose current value represents the current number of
+        /// occurrences of the subject item. The contents of items whose occurrence
+        /// numbers exceed the value of the object are undefined.
+        /// The object of the OCCURS DEPENDING ON clause (data-name-1) must
+        /// describe an integer data item.
+        /// The object of the OCCURS DEPENDING ON clause must not occupy any
+        /// storage position within the range of the table (that is, any storage position
+        /// from the first character position in the table through the last character
+        /// position in the table).
+        /// The object of the OCCURS DEPENDING ON clause cannot be variably
+        /// located; the object cannot follow an item that contains an OCCURS
+        /// DEPENDING ON clause.
+        /// data-name-1 must be described in the same DATA DIVISION as the subject
+        /// of the entry.
+        /// All data-names used in the OCCURS clause can be qualified; they cannot be
+        /// subscripted or indexed.
+        /// At the time that the group item, or any data item that contains a subordinate
+        /// OCCURS DEPENDING ON item or that follows but is not subordinate to the
+        /// OCCURS DEPENDING ON item, is referenced, the value of the object of the
+        /// OCCURS DEPENDING ON clause must fall within the range integer-1 through
+        /// integer-2, if identifier-2 is specified.
+        /// The object of an OCCURS DEPENDING ON clause cannot be a nonsubordinate
+        /// item that follows a complex ODO item.
+        /// Any nonsubordinate item that follows an item described with an OCCURS
+        /// DEPENDING ON clause is a variably located item. That is, its location is affected by
+        /// the value of the OCCURS DEPENDING ON object.
+        /// </summary>
+        public SymbolReference<DataName> OccursDependingOn { get; set; }
+
+        /// <summary>
+        /// ASCENDING KEY and DESCENDING KEY phrases
+        /// Data is arranged in ascending or descending order, depending on the keyword
+        /// specified, according to the values contained in data-name-2. The data-names are
+        /// listed in their descending order of significance.
+        /// The order is determined by the rules for comparison of operands (see “Relation
+        /// conditions” on page 259). The ASCENDING KEY and DESCENDING KEY data
+        /// items are used in OCCURS clauses and the SEARCH ALL statement for a binary
+        /// search of the table element.
+        /// data-name-2
+        /// Must be the name of the subject entry or the name of an entry subordinate
+        /// to the subject entry. data-name-2 can be qualified.
+        /// If data-name-2 names the subject entry, that entire entry becomes the
+        /// ASCENDING KEY or DESCENDING KEY and is the only key that can be
+        /// specified for this table element.
+        /// If data-name-2 does not name the subject entry, then data-name-2:
+        /// - Must be subordinate to the subject of the table entry itself
+        /// - Must not be subordinate to, or follow, any other entry that contains an
+        ///   OCCURS clause
+        // - Must not contain an OCCURS clause
+        /// data-name-2 must not have subordinate items that contain OCCURS
+        /// DEPENDING ON clauses.
+        /// </summary>
+        public IList<SymbolReference<DataName>> TableOccurenceKeys { get; set; }
+
+        /// <summary>
+        /// ASCENDING KEY and DESCENDING KEY phrases
+        /// Data is arranged in ascending or descending order, depending on the keyword specified.
+        /// </summary>
+        public IList<KeyDirection> TableOccurenceKeyDirections { get; set; }
+
+        /// <summary>
+        /// The INDEXED BY phrase specifies the indexes that can be used with a table. A
+        /// table without an INDEXED BY phrase can be referred to through indexing by
+        /// using an index-name associated with another table.
+        /// Indexes normally are allocated in static memory associated with the program that
+        /// contains the table. Thus indexes are in the last-used state when a program is
+        /// reentered. However, in the following cases, indexes are allocated on a
+        /// per-invocation basis. Thus you must set the value of the index on every entry for
+        /// indexes on tables in the following sections:
+        ///- The LOCAL-STORAGE SECTION
+        /// - The WORKING-STORAGE SECTION of a class definition (object instance
+        ///   variables)
+        /// - The LINKAGE SECTION of:
+        ///   – Methods
+        ///   – Programs compiled with the RECURSIVE clause
+        ///   – Programs compiled with the THREAD option
+        ///    Each index-name specifies an index to be created by the compiler for use
+        /// by the program. These index-names are not data-names and are not
+        /// identified elsewhere in the COBOL program; instead, they can be regarded
+        /// as private special registers for the use of this object program only. They are
+        /// not data and are not part of any data hierarchy.
+        /// Unreferenced index names need not be uniquely defined.
+        /// In one table entry, up to 12 index-names can be specified.
+        /// If a data item that possesses the global attribute includes a table accessed
+        /// with an index, that index also possesses the global attribute. Therefore, the
+        /// scope of an index-name is the same as that of the data-name that names
+        /// the table in which the index is defined.
+        /// Indexes specified in an external data record do not possess the external attribute.
+        /// </summary>
+        public IList<IndexName> IndexedBy { get; set; }
+
+        /// <summary>
+        /// The SYNCHRONIZED clause specifies the alignment of an elementary item on a
+        /// natural boundary in storage.
+        /// The SYNCHRONIZED clause is never required, but can improve performance on
+        /// some systems for binary items used in arithmetic.
+        /// The SYNCHRONIZED clause can be specified for elementary items and for
+        /// level-01 group items, in which case every elementary item within the group item is
+        /// synchronized.
+        /// When specified, the LEFT and the RIGHT phrases are syntax checked but have no
+        /// effect on the execution of the program.
+        /// The length of an elementary item is not affected by the SYNCHRONIZED clause.
+        /// </summary>
+        public bool IsSynchronized { get; set; }
+
+        /// <summary>
+        /// A GROUP-USAGE clause with the NATIONAL phrase specifies that the group
+        /// item defined by the entry is a national group item. A national group item contains
+        /// national characters in all subordinate data items and subordinate group items.
+        /// When GROUP-USAGE NATIONAL is specified:
+        /// - The subject of the entry is a national group item. The class and category of a
+        ///  national group are national.
+        /// - A USAGE clause must not be specified for the subject of the entry. A USAGE
+        ///   NATIONAL clause is implied.
+        /// - A USAGE NATIONAL clause is implied for any subordinate elementary data
+        ///   items that are not described with a USAGE NATIONAL clause.
+        /// - All subordinate elementary data items must be explicitly or implicitly described
+        ///   with USAGE NATIONAL.
+        /// - Any signed numeric data items must be described with the SIGN IS SEPARATE
+        ///   clause.
+        /// - A GROUP-USAGE NATIONAL clause is implied for any subordinate group
+        ///   items that are not described with a GROUP-USAGE NATIONAL clause.
+        /// - All subordinate group items must be explicitly or implicitly described with a
+        ///   GROUP-USAGE NATIONAL clause.
+        /// - The JUSTIFIED clause must not be specified.
+        /// Unless stated otherwise, a national group item is processed as though it were an
+        /// elementary data item of usage national, class and category national, described with
+        /// PICTURE N(m), where m is the length of the group in national character positions.
+        /// Usage note: When you use national groups, the compiler can ensure proper
+        /// truncation and padding of group items for statements such as MOVE and
+        /// INSPECT. Groups defined without a GROUP-USAGE NATIONAL clause are
+        /// alphanumeric groups. The content of alphanumeric groups, including any national
+        /// characters, is treated as alphanumeric data, possibly leading to invalid truncation
+        /// or mishandling of national character data.
+        /// </summary>
+        public bool GroupUsageIsNational { get; set; }
+
+        /// <summary>
+        /// The USAGE clause specifies the format in which data is represented in storage.
+        /// The USAGE clause can be specified for a data description entry with any
+        /// level-number other than 66 or 88.
+        /// When specified at the group level, the USAGE clause applies to each elementary
+        /// item in the group. The usage of elementary items must not contradict the usage of
+        /// a group to which the elementary items belongs.
+        /// A USAGE clause must not be specified in a group level entry for which a
+        /// GROUP-USAGE NATIONAL clause is specified.
+        /// When a GROUP-USAGE NATIONAL clause is specified or implied for a group
+        /// level entry, USAGE NATIONAL must be specified or implied for every elementary
+        /// item within the group. 
+        /// When the USAGE clause is not specified at either the group or elementary level, a
+        /// usage clause is implied with:
+        /// - Usage DISPLAY when the PICTURE clause contains only symbols other than G
+        ///   or N
+        /// - Usage NATIONAL when the PICTURE clause contains only one or more of the
+        ///   symbol N and the NSYMBOL(NATIONAL) compiler option is in effect
+        /// - Usage DISPLAY-1 when the PICTURE clause contains one or more of the symbol
+        ///   N and the NSYMBOL(DBCS) compiler option is in effect
+        /// NATIVE is treated as a comment in all phrases for which NATIVE is
+        /// shown in the USAGE clause.
+        /// </summary>
+        public DataUsage Usage { get; set; }
+
+        /// <summary>
+        /// The PICTURE clause specifies the general characteristics and editing requirements
+        /// of an elementary item.
+        /// The PICTURE clause must be specified for every elementary item except
+        /// the following ones:
+        /// - Index data items
+        /// - The subject of the RENAMES clause
+        /// - Items described with USAGE POINTER, USAGE FUNCTION-POINTER,
+        ///   USAGE PROCEDURE-POINTER, or USAGE OBJECT REFERENCE
+        /// - Internal floating-point data items
+        /// In these cases, use of the PICTURE clause is prohibited.
+        /// The PICTURE clause can be specified only at the elementary level.
+        /// character-string
+        /// character-string is made up of certain COBOL characters used as picture
+        /// symbols. The allowable combinations determine the category of the
+        /// elementary data item.
+        /// </summary>
+        public string Picture { get; set; }
+
+        /// <summary>
+        /// The SIGN clause specifies the position and mode of representation of the
+        /// operational sign for the signed numeric item to which it applies.
+        /// The SIGN clause is required only when an explicit description of the properties or
+        /// position of the operational sign is necessary.
+        /// The SIGN clause can be specified only for the following items:
+        /// - An elementary numeric data item of usage DISPLAY or NATIONAL that is
+        ///   described with an S in its picture character string, or
+        /// - A group item that contains at least one such elementary entry as a subordinate
+        ///   item
+        /// When the SIGN clause is specified at the group level, that SIGN clause applies
+        /// only to subordinate signed numeric elementary data items of usage DISPLAY or
+        /// NATIONAL. Such a group can also contain items that are not affected by the SIGN
+        /// clause. If the SIGN clause is specified for a group or elementary entry that is
+        /// subordinate to a group item that has a SIGN clause, the SIGN clause for the
+        /// subordinate entry takes precedence for that subordinate entry.
+        /// The SIGN clause is treated as documentation for external floating-point items.
+        /// When the SIGN clause is specified without the SEPARATE phrase, USAGE
+        /// DISPLAY must be specified explicitly or implicitly. When SIGN IS SEPARATE is
+        /// specified, either USAGE DISPLAY or USAGE NATIONAL can be specified.
+        /// If you specify the CODE-SET clause in an FD entry, any signed numeric data
+        /// description entries associated with that file description entry must be described
+        /// with the SIGN IS SEPARATE clause.
+        /// If the SEPARATE CHARACTER phrase is not specified, then:
+        /// - The operational sign is presumed to be associated with the LEADING or
+        ///   TRAILING digit position, whichever is specified, of the elementary numeric data
+        ///   item. (In this instance, specification of SIGN IS TRAILING is the equivalent of
+        ///   the standard action of the compiler.)
+        /// - The character S in the PICTURE character string is not counted in determining
+        ///   the size of the item (in terms of standard data format characters).
+        /// If the SEPARATE CHARACTER phrase is specified, then:
+        /// - The operational sign is presumed to be the LEADING or TRAILING character
+        ///   position, whichever is specified, of the elementary numeric data item. This
+        ///   character position is not a digit position.
+        /// - The character S in the PICTURE character string is counted in determining the
+        ///   size of the data item (in terms of standard data format characters).
+        /// - + is the character used for the positive operational sign.
+        /// - - is the character used for the negative operational sign.
+        /// </summary>
+        public bool SignIsSeparate { get; set; }
+
+        /// <summary>
+        /// The SIGN clause specifies the position and mode of representation of the
+        /// operational sign for the signed numeric item to which it applies.
+        /// The operational sign is presumed to be associated with the LEADING or
+        /// TRAILING digit position, whichever is specified, of the elementary numeric data
+        /// item. (In this instance, specification of SIGN IS TRAILING is the equivalent of
+        /// the standard action of the compiler.)
+        /// </summary>
+        public SignPosition SignPosition { get; set; }
+
+        /// <summary>
+        /// The BLANK WHEN ZERO clause specifies that an item contains only spaces when
+        /// its value is zero.
+        /// The BLANK WHEN ZERO clause may be specified only for an elementary item
+        /// described by its picture character string as category numeric-edited or numeric,
+        /// without the picture symbol S or *. These items must be described, either implicitly
+        /// or explicitly, as USAGE DISPLAY or USAGE NATIONAL.
+        /// A BLANK WHEN ZERO clause that is specified for an item defined as numeric by
+        /// its picture character string defines the item as category numeric-edited.
+        /// </summary>
+        public bool IsBlankWhenZero { get; set; }
+
+        /// <summary>
+        /// The JUSTIFIED clause overrides standard positioning rules for receiving items of
+        /// category alphabetic, alphanumeric, DBCS, or national.
+        /// You can specify the JUSTIFIED clause only at the elementary level. 
+        /// When the JUSTIFIED clause is specified for a receiving item, the data is aligned at
+        /// the rightmost character position in the receiving item. Also:
+        /// - If the sending item is larger than the receiving item, the leftmost character
+        ///   positions are truncated.
+        /// - If the sending item is smaller than the receiving item, the unused character
+        ///   positions at the left are filled with spaces.
+        /// If you omit the JUSTIFIED clause, the rules for standard alignment are followed.
+        /// The JUSTIFIED clause does not affect initial settings as determined by the VALUE
+        /// clause.
+        /// </summary>
+        public bool IsJustifiedRight { get; set; }
+
+        /// <summary>
+        /// The VALUE clause specifies the initial contents of a data item or the values
+        /// associated with a condition-name. The use of the VALUE clause differs depending
+        /// on the DATA DIVISION section in which it is specified.
+        /// A VALUE clause that is used in the FILE SECTION or the LINKAGE SECTION in
+        /// an entry other than a condition-name entry is syntax checked, but has no effect on
+        /// the execution of the program.
+        /// In the WORKING-STORAGE SECTION and the LOCAL-STORAGE SECTION, the
+        /// VALUE clause can be used in condition-name entries or in specifying the initial
+        /// value of any data item. The data item assumes the specified value at the beginning
+        /// of program execution. If the initial value is not explicitly specified, the value is
+        /// unpredictable.
+        /// Initialization is independent of
+        /// any BLANK WHEN ZERO or JUSTIFIED clause that is specified.
+        /// A format-1 VALUE clause specified in a data description entry that contains or is
+        /// subordinate to an OCCURS clause causes every occurrence of the associated data
+        /// item to be assigned the specified value. Each structure that contains the
+        /// DEPENDING ON phrase of the OCCURS clause is assumed to contain the
+        /// maximum number of occurrences for the purposes of VALUE initialization.
+        /// The VALUE clause must not be specified for a data description entry that contains
+        /// or is subordinate to an entry that contains either an EXTERNAL or a REDEFINES
+        /// clause. This rule does not apply to condition-name entries.
+        /// A format-1 VALUE clause can be specified for an elementary data item or for a
+        /// group item. When the VALUE clause is specified at the group level, the group area
+        /// is initialized without consideration for the subordinate entries within the group. In
+        /// addition, a VALUE clause must not be specified for subordinate entries within the
+        /// group.
+        /// For group items, the VALUE clause must not be specified if any subordinate
+        /// entries contain a JUSTIFIED or SYNCHRONIZED clause.
+        /// If the VALUE clause is specified for an alphanumeric group, all subordinate items
+        /// must be explicitly or implicitly described with USAGE DISPLAY.
+        /// The VALUE clause must not conflict with other clauses in the data description
+        /// entry or in the data description of that entry's hierarchy.
+        /// The functions of the editing characters in a PICTURE clause are ignored in
+        /// determining the initial value of the item described. However, editing characters are
+        /// included in determining the size of the item. Therefore, any editing characters
+        /// must be included in the literal. For example, if the item is defined as PICTURE
+        /// +999.99 and the value is to be +12.34, then the VALUE clause should be specified
+        /// as VALUE "+012.34".
+        /// A VALUE clause cannot be specified for external floating-point items.
+        /// A data item cannot contain a VALUE clause if the prior data item contains an
+        /// OCCURS clause with the DEPENDING ON phrase.
+        /// </summary>
+        public LiteralValue InitialValue { get; set; }
+
+        /// <summary>
+        /// Format 3: NULL value
+        ///                VALUE IS? (NULL | NULLS);
+        /// This format assigns an invalid address as the initial value of an item defined as
+        /// USAGE POINTER, USAGE PROCEDURE POINTER, or USAGE
+        /// FUNCTION-POINTER. It also assigns an invalid object reference as the initial
+        /// value of an item defined as USAGE OBJECT REFERENCE.
+        /// VALUE IS NULL can be specified only for elementary items described implicitly or
+        /// explicitly as USAGE POINTER, USAGE PROCEDURE-POINTER, USAGE
+        /// FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
+        /// </summary>
+        public bool InitialValueIsNull { get; set; }
+
+        // --- Temporary : First TypeCobol DEMO ---
+
+        /// <summary>
+        /// Type Cobol extension
+        /// </summary>
+        public string DataType { get; set; }
+    }
+
+    /// <summary>
+    /// ASCENDING KEY and DESCENDING KEY phrases
+    /// Data is arranged in ascending or descending order, depending on the keyword specified.
+    /// </summary>
+    public enum KeyDirection
+    {
+        Ascending,
+        Descending
+    }
+
+    /// <summary>
+    /// The operational sign is presumed to be associated with the LEADING or
+    /// TRAILING digit position, whichever is specified, of the elementary numeric data
+    /// item.
+    /// </summary>
+    public enum SignPosition
+    {
+        Leading,
+        Trailing
+    }
+
+    /// <summary>
+    /// The USAGE clause specifies the format in which data is represented in storage.
+    /// </summary>
+    public enum DataUsage
+    {
+        /// <summary>
+        /// p230: BINARY         
+        /// </summary>
+        Binary,
+        /// <summary>
+        /// p231: PACKED-DECIMAL 
+        /// </summary>
+        PackedDecimal,
+        /// <summary>
+        /// p231: COMPUTATIONAL or COMP (binary) 
+        /// </summary>
+        Comp,
+        /// <summary>
+        //// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
+        /// </summary>
+        Comp1,
+        /// <summary>
+        /// p231: COMPUTATIONAL-2 or COMP-2 (long floating-point)
+        /// </summary>
+        Comp2,
+        /// <summary>
+        /// p231: COMPUTATIONAL-3 or COMP-3 (internal decimal) 
+        /// </summary>
+        Comp3,
+        /// <summary>
+        /// p231: COMPUTATIONAL-4 or COMP-4 (binary) 
+        /// </summary>
+        Comp4,
+        /// <summary>
+        /// p231: COMPUTATIONAL-5 or COMP-5 (native binary) 
+        /// </summary>
+        Comp5,
+        /// <summary>
+        /// p232: DISPLAY phrase 
+        /// </summary>
+        Display,
+        /// <summary>
+        /// p233: DISPLAY-1 phrase
+        /// </summary>
+        Display1,
+        /// <summary>
+        /// p233: FUNCTION-POINTER phrase 
+        /// </summary>
+        FunctionPointer,
+        /// <summary>
+        /// p233: INDEX phrase 
+        /// Index data item
+        /// An index data item is a data item that can hold the value of an index.
+        /// You define an index data item by specifying the USAGE IS INDEX clause in a data
+        /// description entry. The name of an index data item is a data-name. An index data
+        /// item can be used anywhere a data-name or identifier can be used, unless stated
+        /// otherwise in the rules of a particular statement. You can use the SET statement to
+        /// save the value of an index (referenced by index-name) in an index data item.
+        /// </summary>
+        Index,
+        /// <summary>
+        /// p234: NATIONAL phrase
+        /// </summary>
+        National,
+        /// <summary>
+        /// p234: OBJECT REFERENCE phrase 
+        /// </summary>
+        ObjectReference,
+        /// <summary>
+        /// p235: POINTER phrase
+        /// </summary>
+        Pointer,
+        /// <summary>
+        /// p236: PROCEDURE-POINTER phrase 
+        /// </summary>
+        ProcedurePointer
+    }
+
+    /// <summary>
+    /// The RENAMES clause specifies alternative and possibly overlapping groupings of
+    /// elementary data items.
+    /// The special level-number 66 must be specified for data description entries that
+    /// contain the RENAMES clause.
+    /// One or more RENAMES entries can be written for a logical record. All RENAMES
+    /// entries associated with one logical record must immediately follow the last data
+    /// description entry of that record.
+    /// </summary>
+    public class RenamesDataNameDescription : DataDescriptionEntry
+    {
+        /// <summary>
+        /// data-name-1
+        /// Identifies an alternative grouping of data items.
+        /// A level-66 entry cannot rename a level-01, level-77, level-88, or another
+        /// level-66 entry.
+        /// data-name-1 cannot be used as a qualifier; it can be qualified only by the
+        /// names of level indicator entries or level-01 entries.
+        /// </summary>
+        public DataName DataName { get; set; }
+
+        /// <summary>
+        /// Data-name-2, data-name-3
+        /// Identify the original grouping of elementary data items; that is, they must
+        /// name elementary or group items within the associated level-01 entry and
+        /// must not be the same data-name. Both data-names can be qualified.
+        /// data-name-2 and data-name-3 can each reference any of the following items:
+        /// - An elementary data item
+        /// - An alphanumeric group item
+        /// - A national group item
+        /// When data-name-2 or data-name-3 references a national group item, the
+        /// referenced item is processed as a group (not as an elementary data item of
+        /// category national).
+        /// The OCCURS clause must not be specified in the data entries for
+        /// data-name-2 and data-name-3, or for any group entry to which they are
+        /// subordinate. In addition, the OCCURS DEPENDING clause must not be
+        /// specified for any item defined between data-name-2 and data-name-3.
+        /// When the THROUGH phrase is specified:
+        /// - data-name-1 defines an alphanumeric group item that includes all the elementary
+        ///   items that:
+        ///   – Start with data-name-2 if it is an elementary item, or the first elementary item
+        ///     within data-name-2 if it is a group item
+        ///   – End with data-name-3 if it is an elementary item, or the last elementary item
+        ///     within data-name-3 if it is an alphanumeric group item or national group item
+        /// - The storage area occupied by the starting item through the ending item becomes
+        ///   the storage area occupied by data-name-1.
+        /// The leftmost character position in data-name-3 must not precede the leftmost
+        /// character position in data-name-2, and the rightmost character position in
+        /// data-name-3 must not precede the rightmost character position in data-name-2. This
+        /// means that data-name-3 cannot be totally subordinate to data-name-2.
+        /// When the THROUGH phrase is not specified:
+        /// - The storage area occupied by data-name-2 becomes the storage area occupied by
+        ///   data-name-1.
+        /// - All of the data attributes of data-name-2 become the data attributes for
+        ///   data-name-1. That is:
+        ///   – When data-name-2 is an alphanumeric group item, data-name-1 is an
+        ///     alphanumeric group item.
+        ///   – When data-name-2 is a national group item, data-name-1 is a national group
+        ///     item.
+        ///   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
+        /// </summary>
+        public SymbolReference<DataName> RenamesFromDataName { get; set; }
+        public SymbolReference<DataName> RenamesToDataName { get; set; }
+    }
+
+    /// <summary>
+    /// Format 2: condition-name value
+    /// 88 conditionName* ((VALUE IS?) | (VALUES ARE?)) (literal ((THROUGH | THRU) literal)?)+;
+    /// This format associates a value, values, or ranges of values with a condition-name.
+    /// Each such condition-name requires a separate level-88 entry. 
+    /// </summary>
+    public class ConditionNameDescription : DataDescriptionEntry
+    {
+        /// <summary>
+        /// condition-name-1
+        /// A user-specified name that associates a value with a conditional variable. If
+        /// the associated conditional variable requires subscripts or indexes, each
+        /// procedural reference to the condition-name must be subscripted or indexed
+        /// as required for the conditional variable.
+        /// Condition-names are tested procedurally in condition-name conditions.
+        /// </summary>
+        public ConditionName ConditionName { get; set; }
+
+        /// <summary>
+        /// literal-1
+        /// Associates the condition-name with a single value.
+        /// The class of literal-1 must be a valid class for assignment to the associated
+        /// conditional variable.
+        /// </summary>
+        public LiteralValue Value { get; set; }
+
+        /// <summary>
+        /// literal-1 THROUGH literal-2
+        /// Associates the condition-name with at least one range of values. When the
+        /// THROUGH phrase is used, literal-1 must be less than literal-2. 
+        /// literal-1 and literal-2 must be of the same class. The class of literal-1 and
+        /// literal-2 must be a valid class for assignment to the associated conditional
+        /// variable.
+        /// When literal-1 and literal-2 are DBCS literals, the range of DBCS values
+        /// specified by the THROUGH phrase is based on the binary collating
+        /// sequence of the hexadecimal values of the DBCS characters.
+        /// When literal-1 and literal-2 are national literals, the range of national
+        /// character values specified by the THROUGH phrase is based on the binary
+        /// collating sequence of the hexadecimal values of the national characters
+        /// represented by the literals.
+        /// If the associated conditional variable is of class DBCS, literal-1 and literal-2
+        /// must be DBCS literals. The figurative constant SPACE or the figurative
+        /// constant ALL DBCS-literal can be specified.
+        /// If the associated conditional variable is of class national, literal-1 and
+        /// literal-2 must be either both national literals or both alphanumeric literals
+        /// for a given condition-name. The figurative constants ZERO, SPACE,
+        /// QUOTE, HIGH-VALUE, LOW-VALUE, symbolic-character, ALL
+        /// national-literal, or ALL literal can be specified.
+        /// </summary>
+        public LiteralValue ThroughValue { get; set; }
+    }
+}

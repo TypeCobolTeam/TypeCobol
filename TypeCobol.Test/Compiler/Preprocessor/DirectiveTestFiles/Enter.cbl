@@ -1,0 +1,7 @@
+﻿000001 ENTER Java.
+000002 ENTER Java ComputeSum.
+
+000003 ENTER
+000004 ENTER Java
+000005 ENTER Java Compute1 Compute2
+0000ENTER Java.
