@@ -41,8 +41,8 @@ The solution was uploaded to Github using [Visual Studio 2015 Community RC](http
 The best way to test this project is to download and install both tools (for free) on your local machine, [login to Github from Visual Studio Team Explorer](http://channel9.msdn.com/Series/ConnectOn-Demand/217), then refresh this page and click on the *Open in Visual Studio* button which should appear on the right of the repository : this action will clone the solution in your local Git repository and open it in Visual Studio.
 
 The solution contains 4 projects :
-- **TypeCobol.Grammar** uses Antlr4 to generate C# parsers for Cobol compiler directives and Cobol statements
 - **TypeCobol** is the main project, it implements a complete Cobol compiler front-end
+- **TypeCobol.Grammar** uses Antlr4 to generate C# parsers for Cobol compiler directives and Cobol statements
 - **TypeCobol.Test** provides unit tests which can be launched from the *Test Explorer* in Visual Studio
 - **TypeCobolStudio** is a sample code editor used for visual demos
 
@@ -59,3 +59,21 @@ The following librairies are included in the Visual Studio projects by the Nuget
 - [System.Collections.Immutable](http://blogs.msdn.com/b/dotnet/archive/2013/09/25/immutable-collections-ready-for-prime-time.aspx) : This package provides collections that are thread safe and guaranteed to never change their contents, also known as immutable collections. Like strings, any methods that perform modifications will not change the existing instance but instead return a new instance. For efficiency reasons, the implementation uses a sharing mechanism to ensure that newly created instances share as much data as possible with the previous instance while ensuring that operations have a predictable time complexity.
  
 - [AvalonEdit](http://avalonedit.net/) : AvalonEdit is a WPF-based text editor component. It was written by Daniel Grunwald for the SharpDevelop IDE. Starting with version 5.0, AvalonEdit is released under the MIT license.
+
+## Code analysis steps and TypeCobol namespaces
+
+### Compilation pipeline : Compiler/CompilationUnit
+
+### Step 1 : Compiler/File - File libraries & EBCDIC encoding
+
+### Step 2 : Compiler/Text - Text lines & Columns format
+
+### Step 3 : Compiler/Scanner - Lexical analysis & Line continuations
+
+### Step 4 : Compiler/Preprocessor - Compiler directives, COPY & REPLACE
+
+### Step 5 : Compiler/Parser - Code elements parsing & Code model
+
+### Step 6 : Compiler/TypeChecker - Semantic analysis & Type checking
+
+### Step 7 : Compiler/Generator - Cobol source code generation (from TypeCobol extended syntax)
