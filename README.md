@@ -60,13 +60,101 @@ The following librairies are included in the Visual Studio projects by the Nuget
  
 - [AvalonEdit](http://avalonedit.net/) : AvalonEdit is a WPF-based text editor component. It was written by Daniel Grunwald for the SharpDevelop IDE. Starting with version 5.0, AvalonEdit is released under the MIT license.
 
-## Code analysis steps and TypeCobol namespaces
+## TypeCobol project - Code analysis steps
 
-### Compilation pipeline : Compiler/CompilationUnit
+### Compilation pipeline : Compiler/
 
-### Step 1 : Compiler/File - File libraries & EBCDIC encoding
+**Input** : libraryName, textName, sourceFileProvider, compilerOptions
 
-### Step 2 : Compiler/Text - Text lines & Columns format
+**Output** : TextDocument, TokensDocument, ProcessedTokensDocument, SyntaxDocument, SemanticsDocument
+
+**Namespace** : TypeCobol.Compiler
+
+Class | Description
+---|---
+CompilationProject | Collection of Cobol files compiled together, maintains a shared cache of preprocessed files.
+CompilationDocument | Partial compilation pipeline, from file loading to preprocessor step, used for COPY files.
+CompilationUnit | Complete compilation pipeline, from file loading to semantic analysis step, used for PROGRAM files.
+
+### Step 1 : Compiler/File - File loading, Characters decoding, Line endings
+
+#### Step 1.1 : File loading
+
+**Input** : libraryName, textName
+
+**Output** : binary Stream
+
+**Namespace** : TypeCobol.Compiler.File
+
+Class | Description
+---|---
+SourceFileProvider | Enables the compiler to find Cobol source files referenced by name in the Cobol syntax (collection of Cobol text libraries filtered by libraryName).
+ICobolLibray | Common interface for Cobol text libraries (dictionary of files indexed by textName), could be implemented as a remote dataset on the mainframe, a repository in a version control system, or a simple directory on the local machine.
+CobolFile | Abstract class representing a Cobol text file, with OpenInputStream and OpenOutputStream methods.
+ 
+Implementation for files found in Windows directories on the local machine :
+
+Class | Description
+---|---
+LocalDirectoryLibrary | Implementation of an ICobolLibrary as a local directory containing Cobol text files.
+LocalCobolFile | Implementation of a CobolFile as a text file in the local filesystem.
+
+#### Step 1.2 : Characters decoding and Line endings
+
+**Input** : binary Stream, ibmCCSID (IBM Coded Character Set ID), fixedLineLength or endOfLineDelimiter
+
+**Output** : IEnumerable<char> (stream of Unicode chars with normalized Cr/Lf line endings)
+
+**Namespace** : TypeCobol.Compiler.File
+
+Class / Method | Description
+---|---
+IBMCodePages | Gets the .Net Encoding equivalent for an IBM Coded Character Set ID.
+CobolFile.ReadChars  | Reads the characters of the source file as Unicode characters. Inserts additional Cr/Lf characters at end of line for fixed length lines.
+
+### Step 2 : Compiler/Text - Text lines, Source text areas
+
+#### Step 2.1 : Text lines
+
+**Input** : IEnumerable<char> (stream of Unicode chars with normalized Cr/Lf line endings)
+
+**Output** : ITextDocument, a list of ITextLines
+
+**Namespace** : TypeCobol.Compiler.Text
+
+Class | Description
+---|---
+ITextDocument | Interface enabling the integration of the Cobol compiler with any kind of text editor. A document is both : an array of characters which can be accessed by offset from the beginning of the document, and a list of text lines, which can be accessed by their index in the list. A document sends notifications each time one of its lines is changed. 
+ITextLine | Interface enabling the integration of the Cobol compiler with any kind of text editor. Each line has an index to describe its position in the document.
+
+Implementation for a read-only text document in memory :
+
+Class | Description
+---|---
+TextDocument | Immutable Cobol text document for batch compilation. Document loaded once from a file and never modified.
+TextLine | Immutable Cobol line for batch compilation. Text line loaded once from a file and never modified.
+
+Implementation for an interactive text editor in TypeCobolStudio :
+
+Class | Description
+---|---
+AvalonEditTextDocument | Adapter used to implement the TypeCobol.Compiler.Text.ITextDocument interfaceon top of an AvalonEdit.TextDocument instance.
+
+#### Step 2.2 : Source text areas (columns reference format)
+
+**Input** : ITextLine, ColumnsLayout
+
+**Output** : TextLineMap, a list of source text areas (SequenceNumber, Indicator, Source, Comment)
+
+**Namespace** : TypeCobol.Compiler.Text
+
+Class | Description
+---|---
+ColumnsLayout | *CobolReferenceFormat* : fixed-form reference format / Columns 1-6 = Sequence number / Column 7 = Indicator / Columns 8-72 = Text Area A and Area B / Columns 73+ = Comment, or *Free-form format* : there is not limit on the size a source line / the first seven characters of each line are considered part of the normal source line and may contain COBOL source code / column 1 takes the role of the indicator area / there is no fixed right margin, but floating comment indicators : *>.
+TextAreaType | Enumeration of the standard text areas : SequenceNumber, Indicator, Source, Comment.
+TextArea | Portion of a text line (StartIndex / EndIndex) with a specific meaning.
+TextLineMap | Partition of a COBOL source line into reference format areas (also detects a list of compiler directives keywords which can be encountered before column 8 even in Cobol reference format).
+TextLineType | Line types defined in the Cobol reference format : Source, Debug, Comment, Continuation, Invalid, Blank.
 
 ### Step 3 : Compiler/Scanner - Lexical analysis & Line continuations
 
