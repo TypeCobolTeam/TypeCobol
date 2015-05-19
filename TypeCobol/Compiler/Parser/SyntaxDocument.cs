@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.Parser
             while (codeElement != null);
 
             // Trigger ParseNodeChanged event
-            ParseNodeChangedEvent parseEvent = new ParseNodeChangedEvent();
+            CodeElementChangedEvent parseEvent = new CodeElementChangedEvent();
             parseNodeChangedEventsSource.OnNext(parseEvent);
         }
 
@@ -145,9 +145,9 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Implement IObservable<ParseNodeChangedEvent>
 
-        private ISubject<ParseNodeChangedEvent> parseNodeChangedEventsSource = new Subject<ParseNodeChangedEvent>();
+        private ISubject<CodeElementChangedEvent> parseNodeChangedEventsSource = new Subject<CodeElementChangedEvent>();
 
-        public IObservable<ParseNodeChangedEvent> ParseNodeChangedEventsSource
+        public IObservable<CodeElementChangedEvent> ParseNodeChangedEventsSource
         {
             get { return parseNodeChangedEventsSource; }
         }

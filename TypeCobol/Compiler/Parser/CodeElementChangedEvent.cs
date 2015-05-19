@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
-    /// Models a change in one node of the parse tree 
+    /// Models a change in one code element in the parse tree 
     /// </summary>
-    public class ParseNodeChangedEvent
+    public class CodeElementChangedEvent
     {
     }
 }

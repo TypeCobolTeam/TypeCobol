@@ -14,7 +14,7 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.TypeChecker
 {
-    public class SemanticsDocument : IObserver<ParseNodeChangedEvent>
+    public class SemanticsDocument : IObserver<CodeElementChangedEvent>
     {
         /// <summary>
         /// Underlying SyntaxTree
@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.TypeChecker
             CompilerOptions = compilerOptions;
         }
 
-        public void OnNext(ParseNodeChangedEvent parseEvent)
+        public void OnNext(CodeElementChangedEvent parseEvent)
         {
             // Analyse result with the type checker
             CobolTypeChecker typeChecker = new CobolTypeChecker();

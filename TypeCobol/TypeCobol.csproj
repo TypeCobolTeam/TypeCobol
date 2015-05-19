@@ -270,7 +270,7 @@
     <Compile Include="Compiler\File\SourceFileProvider.cs" />
     <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder.cs" />
-    <Compile Include="Compiler\Parser\ParseNodeChangedEvent.cs" />
+    <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\SyntaxDocument.cs" />
     <Compile Include="Compiler\Parser\TracingCobolParser.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />
