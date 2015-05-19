@@ -60,7 +60,7 @@ The following librairies are included in the Visual Studio projects by the Nuget
  
 - [AvalonEdit](http://avalonedit.net/) : AvalonEdit is a WPF-based text editor component. It was written by Daniel Grunwald for the SharpDevelop IDE. Starting with version 5.0, AvalonEdit is released under the MIT license.
 
-## Code analysis steps and TypeCobol namespaces
+## TypeCobol project - Code analysis steps
 
 ### Compilation pipeline : Compiler/
 
@@ -112,7 +112,49 @@ Class / Method | Description
 IBMCodePages | Gets the .Net Encoding equivalent for an IBM Coded Character Set ID.
 CobolFile.ReadChars  | Reads the characters of the source file as Unicode characters. Inserts additional Cr/Lf characters at end of line for fixed length lines.
 
-### Step 2 : Compiler/Text - Text lines & Columns format
+### Step 2 : Compiler/Text - Text lines, Source text areas
+
+#### Step 2.1 : Text lines
+
+**Input** : IEnumerable<char> (stream of Unicode chars with normalized Cr/Lf line endings)
+
+**Output** : ITextDocument, a list of ITextLines
+
+**Namespace** : TypeCobol.Compiler.Text
+
+Class | Description
+---|---
+ITextDocument | Interface enabling the integration of the Cobol compiler with any kind of text editor. A document is both : an array of characters which can be accessed by offset from the beginning of the document, and a list of text lines, which can be accessed by their index in the list. A document sends notifications each time one of its lines is changed. 
+ITextLine | Interface enabling the integration of the Cobol compiler with any kind of text editor. Each line has an index to describe its position in the document.
+
+Implementation for a read-only text document in memory :
+
+Class | Description
+---|---
+TextDocument | Immutable Cobol text document for batch compilation. Document loaded once from a file and never modified.
+TextLine | Immutable Cobol line for batch compilation. Text line loaded once from a file and never modified.
+
+Implementation for an interactive text editor in TypeCobolStudio :
+
+Class | Description
+---|---
+AvalonEditTextDocument | Adapter used to implement the TypeCobol.Compiler.Text.ITextDocument interfaceon top of an AvalonEdit.TextDocument instance.
+
+#### Step 2.2 : Source text areas (columns reference format)
+
+**Input** : ITextLine, ColumnsLayout
+
+**Output** : TextLineMap, a list of source text areas (SequenceNumber, Indicator, Source, Comment)
+
+**Namespace** : TypeCobol.Compiler.Text
+
+Class | Description
+---|---
+ColumnsLayout | *CobolReferenceFormat* : fixed-form reference format / Columns 1-6 = Sequence number / Column 7 = Indicator / Columns 8-72 = Text Area A and Area B / Columns 73+ = Comment, or *Free-form format* : there is not limit on the size a source line / the first seven characters of each line are considered part of the normal source line and may contain COBOL source code / column 1 takes the role of the indicator area / there is no fixed right margin, but floating comment indicators : *>.
+TextAreaType | Enumeration of the standard text areas : SequenceNumber, Indicator, Source, Comment.
+TextArea | Portion of a text line (StartIndex / EndIndex) with a specific meaning.
+TextLineMap | Partition of a COBOL source line into reference format areas (also detects a list of compiler directives keywords which can be encountered before column 8 even in Cobol reference format).
+TextLineType | Line types defined in the Cobol reference format : Source, Debug, Comment, Continuation, Invalid, Blank.
 
 ### Step 3 : Compiler/Scanner - Lexical analysis & Line continuations
 
