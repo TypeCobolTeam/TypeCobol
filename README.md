@@ -62,9 +62,55 @@ The following librairies are included in the Visual Studio projects by the Nuget
 
 ## Code analysis steps and TypeCobol namespaces
 
-### Compilation pipeline : Compiler/CompilationUnit
+### Compilation pipeline : Compiler/
 
-### Step 1 : Compiler/File - File libraries & EBCDIC encoding
+**Input** : libraryName, textName, sourceFileProvider, compilerOptions
+
+**Output** : TextDocument, TokensDocument, ProcessedTokensDocument, SyntaxDocument, SemanticsDocument
+
+**Namespace** : TypeCobol.Compiler
+
+Class | Description
+---|---
+CompilationProject | Collection of Cobol files compiled together, maintains a shared cache of preprocessed files.
+CompilationDocument | Partial compilation pipeline, from file loading to preprocessor step, used for COPY files.
+CompilationUnit | Complete compilation pipeline, from file loading to semantic analysis step, used for PROGRAM files.
+
+### Step 1 : Compiler/File - File loading, Characters decoding, Line endings
+
+#### Step 1.1 : File loading
+
+**Input** : libraryName, textName
+
+**Output** : binary Stream
+
+**Namespace** : TypeCobol.Compiler.File
+
+Class | Description
+---|---
+SourceFileProvider | Enables the compiler to find Cobol source files referenced by name in the Cobol syntax (collection of Cobol text libraries filtered by libraryName).
+ICobolLibray | Common interface for Cobol text libraries (dictionary of files indexed by textName), could be implemented as a remote dataset on the mainframe, a repository in a version control system, or a simple directory on the local machine.
+CobolFile | Abstract class representing a Cobol text file, with OpenInputStream and OpenOutputStream methods.
+ 
+Implementation for files found in Windows directories on the local machine :
+
+Class | Description
+---|---
+LocalDirectoryLibrary | Implementation of an ICobolLibrary as a local directory containing Cobol text files.
+LocalCobolFile | Implementation of a CobolFile as a text file in the local filesystem.
+
+#### Step 1.2 : Characters decoding and Line endings
+
+**Input** : binary Stream, ibmCCSID (IBM Coded Character Set ID), fixedLineLength or endOfLineDelimiter
+
+**Output** : IEnumerable<char> (stream of Unicode chars with normalized Cr/Lf line endings)
+
+**Namespace** : TypeCobol.Compiler.File
+
+Class / Method | Description
+---|---
+IBMCodePages | Gets the .Net Encoding equivalent for an IBM Coded Character Set ID.
+CobolFile.ReadChars  | Reads the characters of the source file as Unicode characters. Inserts additional Cr/Lf characters at end of line for fixed length lines.
 
 ### Step 2 : Compiler/Text - Text lines & Columns format
 
