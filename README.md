@@ -76,6 +76,28 @@ CompilationProject | Collection of Cobol files compiled together, maintains a sh
 CompilationDocument | Partial compilation pipeline, from file loading to preprocessor step, used for COPY files.
 CompilationUnit | Complete compilation pipeline, from file loading to semantic analysis step, used for PROGRAM files.
 
+Overview of the documents providing the results of the successive compilation steps :
+
+Namespace | Class | Description
+---|--- |---
+TypeCobol.Compiler.File | CobolFile | Cobol source text file.
+TypeCobol.Compiler.Text | TextDocument | Lines of unicode characters.
+TypeCobol.Compiler.Scanner | TokensDocument | Lines of lexical tokens (before preprocessing).
+TypeCobol.Compiler.Preprocessor | ProcessedTokensDocument | Iterator on processed tokens, after compiler directives parsing, COPY and REPLACE directive implementation.
+TypeCobol.Compiler.Parser | SyntaxDocument | Lines of code elements (set of tokens matched by a grammar production) and code model with unresolved symbol references.
+TypeCobol.Compiler.TypeChecker | SemanticsDocument | Code model with resolved symbol references, data model, data & control flow analysis.
+
+Overview of the events sent between these documents to implement the incremental compilation pipeline :
+
+Class | Change event
+---|---
+CobolFile | CobolFileChangedEvent
+TextDocument | TextChangedEvent
+TokensDocument | TokensChangedEvent
+ProcessedTokensDocument | TokensChangedEvent
+SyntaxDocument | CodeElementChangedEvent
+SemanticsDocument | CodeModelChangedEvent
+
 ### Step 1 : Compiler/File - File loading, Characters decoding, Line endings
 
 #### Step 1.1 : File loading
@@ -99,11 +121,11 @@ Class | Description
 LocalDirectoryLibrary | Implementation of an ICobolLibrary as a local directory containing Cobol text files.
 LocalCobolFile | Implementation of a CobolFile as a text file in the local filesystem.
 
-#### Step 1.2 : Characters decoding and Line endings
+#### Step 1.2 : Characters decoding & Line endings
 
 **Input** : binary Stream, ibmCCSID (IBM Coded Character Set ID), fixedLineLength or endOfLineDelimiter
 
-**Output** : IEnumerable<char> (stream of Unicode chars with normalized Cr/Lf line endings)
+**Output** : `IEnumerable<char>` (stream of Unicode chars with normalized Cr/Lf line endings)
 
 **Namespace** : TypeCobol.Compiler.File
 
@@ -116,9 +138,9 @@ CobolFile.ReadChars  | Reads the characters of the source file as Unicode charac
 
 #### Step 2.1 : Text lines
 
-**Input** : IEnumerable<char> (stream of Unicode chars with normalized Cr/Lf line endings)
+**Input** : `IEnumerable<char>` (stream of Unicode chars with normalized Cr/Lf line endings)
 
-**Output** : ITextDocument, a list of ITextLines
+**Output** : `ITextDocument`, a list of `ITextLines`
 
 **Namespace** : TypeCobol.Compiler.Text
 
@@ -142,21 +164,58 @@ AvalonEditTextDocument | Adapter used to implement the TypeCobol.Compiler.Text.I
 
 #### Step 2.2 : Source text areas (columns reference format)
 
-**Input** : ITextLine, ColumnsLayout
+**Input** : `ITextLine`, `ColumnsLayout`
 
-**Output** : TextLineMap, a list of source text areas (SequenceNumber, Indicator, Source, Comment)
+**Output** : `TextLineMap`, a list of source text areas (SequenceNumber, Indicator, Source, Comment)
 
 **Namespace** : TypeCobol.Compiler.Text
 
 Class | Description
 ---|---
-ColumnsLayout | *CobolReferenceFormat* : fixed-form reference format / Columns 1-6 = Sequence number / Column 7 = Indicator / Columns 8-72 = Text Area A and Area B / Columns 73+ = Comment, or *Free-form format* : there is not limit on the size a source line / the first seven characters of each line are considered part of the normal source line and may contain COBOL source code / column 1 takes the role of the indicator area / there is no fixed right margin, but floating comment indicators : *>.
+ColumnsLayout | *CobolReferenceFormat* : fixed-form reference format / Columns 1-6 = Sequence number / Column 7 = Indicator / Columns 8-72 = Text Area A and Area B / Columns 73+ = Comment, or *FreeTextFormat* : there is not limit on the size a source line / the first seven characters of each line are considered part of the normal source line and may contain COBOL source code / column 1 takes the role of the indicator area / there is no fixed right margin, but floating comment indicators : *>.
 TextAreaType | Enumeration of the standard text areas : SequenceNumber, Indicator, Source, Comment.
-TextArea | Portion of a text line (StartIndex / EndIndex) with a specific meaning.
+TextArea | Portion of a text line with a specific meaning.
 TextLineMap | Partition of a COBOL source line into reference format areas (also detects a list of compiler directives keywords which can be encountered before column 8 even in Cobol reference format).
 TextLineType | Line types defined in the Cobol reference format : Source, Debug, Comment, Continuation, Invalid, Blank.
 
-### Step 3 : Compiler/Scanner - Lexical analysis & Line continuations
+### Step 3 : Compiler/Scanner - Lexical analysis, Line continuations
+
+#### Step 3.1 : Lexical analysis
+
+**Input** :  textLine, previousTokensLine, compilerOptions
+
+**Output** : `IList<Token>`, `IList<Diagnostic>`, initial & final scan states
+
+**Namespace** : TypeCobol.Compiler.Scanner
+
+Class | Description
+---|---
+Scanner | Partitions a Cobol source text line into lexical tokens (Cobol words).
+Token | Substring of the source text corresponding to a character string or a separator. A character-string is a character or a sequence of contiguous characters that forms a COBOL word, a literal, a PICTURE character-string, or a comment-entry. A separator is a string of contiguous characters used to delimit character strings.
+TokenType | Enumeration of the 454 different types of tokens defined by the Cobol syntax, arranged in token families (see TokenFamily enum).
+
+View of the source text file as a tokens document :
+
+Class | Description
+---|---
+TokensLine | List of tokens and diagnostics found by scanning one line of text.
+TokensDocument | View of a source document after the lexical analysis stage as lines of tokens.
+TokensLineIterator | Iterator over tokens stored in TokensLines and originating from a single document (with token type filtering).
+
+Implementation of context-sensitive lexical analysis :
+
+Class | Description
+---|---
+MultilineScanState | Internal Scanner state propagated from one line to the other when compiling a complete source file.
+
+#### Step 3.2 : Line continuations
+
+**Namespace** : TypeCobol.Compiler.Scanner
+
+Class / Method | Description
+---|---
+Scanner.ScanTokensLine | Handle continuation from the previous line : Any sentence, entry, clause, or phrase that requires more than one line can be continued in Area B of the next line that is neither a comment line nor a blank line. The line being continued is a continued line; the succeeding lines are continuation lines.
+ContinuationToken | Class used for tokens which are a continuation of other tokens starting on previous lines.
 
 ### Step 4 : Compiler/Preprocessor - Compiler directives, COPY & REPLACE
 
