@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
-    /// The Cobol syntax can be decomposed in 116 elementary code elements
+    /// The Cobol syntax can be decomposed in 117 elementary code elements
     /// </summary>
     public enum CodeElementType
     {
