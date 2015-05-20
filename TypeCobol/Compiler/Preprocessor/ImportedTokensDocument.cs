@@ -10,13 +10,7 @@ namespace TypeCobol.Compiler.Preprocessor
 {
     /// <summary>
     /// Local view of a ProcessedTokensDocument imported by a COPY directive in another ProcessedTokensDocument.
-    /// All TokensLines from the imported document which are not impacted by either :
-    /// - the REPLACING clause of the COPY directive in the host document, 
-    /// - or a REPLACE directive in the host document
-    /// are directly referenced with no dedicated memory allocation.
-    /// If at least one token of the imported document needs to be replaced in the context of the host document,
-    /// a new TokensLine is created and replaced tokens specific to the host document are inserted.
-    /// The imported ProcessedTokensDocument is itself never modified.
+    /// Handles a nested replace iterator to implement the REPLACING clause on top of of an tokens line iterator on the imported document.
     /// </summary>
     public class ImportedTokensDocument
     {
