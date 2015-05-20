@@ -219,8 +219,97 @@ ContinuationToken | Class used for tokens which are a continuation of other toke
 
 ### Step 4 : Compiler/Preprocessor - Compiler directives, COPY & REPLACE
 
-### Step 5 : Compiler/Parser - Code elements parsing & Code model
+#### Step 4.1 : Compiler directives parsing
 
-### Step 6 : Compiler/TypeChecker - Semantic analysis & Type checking
+**Input** :  `IList<TokensLine>` where Cobol statement tokens are mixed with compiler directives tokens
 
-### Step 7 : Compiler/Generator - Cobol source code generation (from TypeCobol extended syntax)
+**Output** : `IList<ProcessedTokensLine>` where the tokens forming one compiler directive are grouped into one specific single token
+
+**Namespace** : TypeCobol.Compiler.Preprocessor
+
+Class | Description
+---|---
+CobolDirectivesParser | Parser generated from the Antlr4 grammar file CobolDirectives.g4 (in project TypeCobol.Grammar), used to match compiler directive tokens when specific compiler directive starting keywords are encountered.
+CompilerDirectiveBuilder | Builds a CompilerDirective object (see below) while visiting its parse tree.
+ProcessedTokensLine | Different list of tokens where the tokens forming one compiler directive have been grouped into one specific single token (see below).
+
+**Namespace** : TypeCobol.Compiler.Scanner
+
+TokensGroup | Replaces a list of tokens all located on the same source line by a single token. Used to mark the limits of compiler directives and replaced token groups.
+CompilerDirectiveToken | After the text preprocessing phase, this single token replaces all the tokens contributing to a compiler directive.  If the compiler directive spans several text lines, one single CompilerDirectiveToken will be created on the first line, and generic ContinuationTokenGroups will be created on the following lines and will reference this first token. This token also holds a reference to a corresponding CompilerDirective object.
+
+**Namespace** : TypeCobol.Compiler.Directives
+
+Class | Description
+---|---
+CompilerDirective | Object representing a compiler-directing statement : a statement that causes the compiler to take a specific action during compilation. You can use compiler-directing statements for the following purposes : - Extended source library control (BASIS, DELETE, and INSERT statements) - Source text manipulation (COPY and REPLACE statements) - Controlling compiler listing (*CONTROL, *CBL, EJECT, TITLE, SKIP1, SKIP2, and SKIP3 statements) - Specifying compiler options (CBL and PROCESS statements).
+IBMCompilerOptions |  You can direct and control your compilation by using compiler options or by using compiler-directing statements (compiler directives). CBL and PROCESS compiler directives can change the compilation options on the fly.
+
+#### Step 4.2 : COPY directive implementation
+
+**Input** : `IList<ProcessedTokensLine>`
+
+**Output** : `IDictionary<CopyDirective, ImportedTokensDocument>`, `CopyTokensLinesIterator`
+
+**Namespace** : TypeCobol.Compiler.Preprocessor
+
+Class | Description
+---|---
+(Directives.)CopyDirective | Object describing all the attributes of the COPY compiler directive (including the REPLACING clause).
+IProcessedTokensDocumentProvider | The project system is free to implement the most efficient strategy to build and cache ProcessedTokenDocuments for all the files imported by COPY directives. This interface is implemented by the class Compilation Project.
+ImportedTokensDocument | Local view of a ProcessedTokensDocument imported by a COPY directive in another ProcessedTokensDocument. Handles a nested replace iterator to implement the REPLACING clause on top of of an tokens line iterator on the imported document.
+CopyTokensLinesIterator | Iterator over tokens stored in a ProcessedTokensDocument. This iterator handles COPY directives : it returns the tokens from the main document AND all tokens imported from secondary documents. This iterator does not handle REPLACE directives : it simply returns REPLACE CompilerDirectiveTokens which will be handled at another level by a ReplaceTokensLinesIterator.
+
+#### Step 4.3 : REPLACE (and COPY REPLACING) directive implementation
+
+**Input** : `ITokensLinesIterator`
+
+**Output** : `ReplaceTokensLinesIterator`
+
+**Namespace** : TypeCobol.Compiler.Preprocessor
+
+Class | Description
+---|---
+(Directives.)ReplaceDirective | Object describing all the attributes of the REPLACE compiler directive.
+(Directives.)ReplaceOperation | SingleTokenReplaceOperation : one comparison token => zero or one replacement token. PartialWordReplaceOperation : one pure partial word => one replacement token. SingleToMultipleTokensReplaceOperation : one comparison token => more than one replacement tokens. MultipleTokensReplaceOperation : one first + several following comparison tokens => zero to many replacement tokens.
+ReplacedToken | ReplacedToken : Token placeholder used to implement the REPLACE and COPY REPLACING compiler directives in the most common case when a single source token is replaced by a single replacement token. ReplacedPartialCobolWord : Token placeholder used to implement the REPLACE and COPY REPLACING compiler directives when the variable part of a partial Cobol word is replaced by a prefix or suffix. ReplacedTokenGroup : Token placeholder used to implement the REPLACE and COPY REPLACING compiler directives in the less common case when a list of source tokens are replaced by a list of replacement tokens.    
+ReplaceTokensLinesIterator |  Implements the REPLACE directives on top of an underlying tokens iterator. Returns ReplacedToken objects each time a ReplaceOperation is performed.
+
+### Step 5 : Compiler/Parser - Code elements parsing, Code model
+
+#### Step 5.1 : Code elements parsing
+
+**Input** :  
+
+**Output** : 
+
+**Namespace** : TypeCobol.Compiler.Parser
+
+Class | Description
+---|---
+
+
+**Namespace** : TypeCobol.Compiler.CodeElements
+
+Class | Description
+---|---
+
+
+#### Step 5.2 : Code model
+
+**Input** :  
+
+**Output** : 
+
+**Namespace** : TypeCobol.Compiler.Parser
+
+Class | Description
+---|---
+
+### Step 6 : Compiler/TypeChecker - Semantic analysis, Type checking
+
+Not implemented yet.
+
+### Step 7 : Compiler/Generator - Cobol source code generation from TypeCobol extended syntax
+
+Not implemented yet.
