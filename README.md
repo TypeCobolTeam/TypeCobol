@@ -235,6 +235,8 @@ ProcessedTokensLine | Different list of tokens where the tokens forming one comp
 
 **Namespace** : TypeCobol.Compiler.Scanner
 
+Class | Description
+---|---
 TokensGroup | Replaces a list of tokens all located on the same source line by a single token. Used to mark the limits of compiler directives and replaced token groups.
 CompilerDirectiveToken | After the text preprocessing phase, this single token replaces all the tokens contributing to a compiler directive.  If the compiler directive spans several text lines, one single CompilerDirectiveToken will be created on the first line, and generic ContinuationTokenGroups will be created on the following lines and will reference this first token. This token also holds a reference to a corresponding CompilerDirective object.
 
@@ -242,7 +244,7 @@ CompilerDirectiveToken | After the text preprocessing phase, this single token r
 
 Class | Description
 ---|---
-CompilerDirective | Object representing a compiler-directing statement : a statement that causes the compiler to take a specific action during compilation. You can use compiler-directing statements for the following purposes : - Extended source library control (BASIS, DELETE, and INSERT statements) - Source text manipulation (COPY and REPLACE statements) - Controlling compiler listing (*CONTROL, *CBL, EJECT, TITLE, SKIP1, SKIP2, and SKIP3 statements) - Specifying compiler options (CBL and PROCESS statements).
+CompilerDirective (14 derived classes) | Object representing a compiler-directing statement : a statement that causes the compiler to take a specific action during compilation. You can use compiler-directing statements for the following purposes : - Extended source library control (BASIS, DELETE, and INSERT statements) - Source text manipulation (COPY and REPLACE statements) - Controlling compiler listing (*CONTROL, *CBL, EJECT, TITLE, SKIP1, SKIP2, and SKIP3 statements) - Specifying compiler options (CBL and PROCESS statements).
 IBMCompilerOptions |  You can direct and control your compilation by using compiler options or by using compiler-directing statements (compiler directives). CBL and PROCESS compiler directives can change the compilation options on the fly.
 
 #### Step 4.2 : COPY directive implementation
@@ -279,37 +281,47 @@ ReplaceTokensLinesIterator |  Implements the REPLACE directives on top of an und
 
 #### Step 5.1 : Code elements parsing
 
-**Input** :  
+**Input** : `ITokensLinesIterator`
 
-**Output** : 
+**Output** : `IList<CodeElement>`
 
 **Namespace** : TypeCobol.Compiler.Parser
 
 Class | Description
 ---|---
-
+CobolParser | Parser generated from the Antlr4 grammar file Cobol.g4 (in project TypeCobol.Grammar), used to match Cobol statements after all preprocessor steps have been applied to the source tokens. The starting rule called to match code elements and get a linearized view of the Cobol syntax (useful for incremental parsing) is CobolParser.codeElement().
+CodeElementBuilder | Builds a CodeElement object (see below) while visiting its parse tree.
+TracingCobolParser | Utility class used to attach the parsed CodeElements to line numbers in the main source document (necessary for incremental parsing - *Not yet implemented*).
 
 **Namespace** : TypeCobol.Compiler.CodeElements
 
 Class | Description
 ---|---
-
+CodeElement (117 derived classes) | The Cobol syntax can be decomposed in 117 elementary code elements : entries, headers, identifications, paragraphs, statements, statement conditions, statement ends. Objects collecting all the properties of these code elements. At this step, the nested structure of the Cobol syntax is not represented, and the symbol references are not resolved.
+Symbol | Symbols defined in the Cobol syntax.
+SymbolReference | Reference to a symbol defined in the Cobol syntax.
 
 #### Step 5.2 : Code model
 
-**Input** :  
+**Input** : `IList<CodeElement>` 
 
-**Output** : 
+**Output** : `Program` or `Class`
 
 **Namespace** : TypeCobol.Compiler.Parser
 
+*Not yet implemented.*
+
+**Namespace** : TypeCobol.Compiler.CodeModel
+
 Class | Description
 ---|---
+Program | Object graph (tree) representing a Cobol program.
+Class | Object graph (tree) representing a Cobol class.
 
 ### Step 6 : Compiler/TypeChecker - Semantic analysis, Type checking
 
-Not implemented yet.
+*Not yet implemented.*
 
 ### Step 7 : Compiler/Generator - Cobol source code generation from TypeCobol extended syntax
 
-Not implemented yet.
+*Not yet implemented.*
