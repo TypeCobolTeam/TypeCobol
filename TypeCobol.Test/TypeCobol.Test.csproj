@@ -74,6 +74,7 @@
     <Compile Include="Compiler\File\TestCobolFile.cs" />
     <Compile Include="Compiler\File\TestIBMCodePages.cs" />
     <Compile Include="Compiler\Parser\ParserUtils.cs" />
+    <Compile Include="Compiler\Parser\TestCodeElements.cs" />
     <Compile Include="Compiler\Parser\TestParser.cs" />
     <Compile Include="Compiler\Parser\TestTokenSource.cs" />
     <Compile Include="Compiler\Preprocessor\PreprocessorUtils.cs" />
@@ -93,6 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\ACMERMON.TXT" />
+    <Content Include="Compiler\Parser\ResultFiles\EXITCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\ENDCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\ATCodeElements.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
     <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />
@@ -157,7 +161,10 @@
     <None Include="Compiler\File\Samples\copyb.14" />
     <None Include="Compiler\File\Samples\MSVCINP free format.cpy" />
     <None Include="Compiler\File\Samples\MSVCOUT.cpy" />
+    <None Include="Compiler\Parser\Samples\EXITCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\ENDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\MSVCOUT.cpy" />
+    <None Include="Compiler\Parser\Samples\ATCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\TESTPGM1.cbl" />
     <None Include="Compiler\Preprocessor\CopyTestFiles\CPY1.cpy" />
     <None Include="Compiler\Preprocessor\CopyTestFiles\CPY2.cpy" />

@@ -104,11 +104,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new ProcedureDivisionHeader();
         }
 
-        public override void EnterProcedureDivisionHeaderWithParameters(CobolParser.ProcedureDivisionHeaderWithParametersContext context)
-        {
-            CodeElement = new ProcedureDivisionHeaderWithParameters();
-        }
-
         public override void EnterDeclarativesHeader(CobolParser.DeclarativesHeaderContext context)
         {
             CodeElement = new DeclarativesHeader();
@@ -474,14 +469,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new NotAtEndCondition();
         }
 
-        public override void EnterAtEndOfPage(CobolParser.AtEndOfPageContext context)
+        public override void EnterAtEndOfPageCondition(CobolParser.AtEndOfPageConditionContext context)
         {
-            CodeElement = new AtEndOfPage();
+            CodeElement = new AtEndOfPageCondition();
         }
 
-        public override void EnterNotAtEndOfPage(CobolParser.NotAtEndOfPageContext context)
+        public override void EnterNotAtEndOfPageCondition(CobolParser.NotAtEndOfPageConditionContext context)
         {
-            CodeElement = new NotAtEndOfPage();
+            CodeElement = new NotAtEndOfPageCondition();
         }
 
         public override void EnterOnExceptionCondition(CobolParser.OnExceptionConditionContext context)

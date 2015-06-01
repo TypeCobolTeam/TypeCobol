@@ -7,13 +7,10 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         public static void Check_ParserIntegration()
         {
-            // Test file properties
-            string relativePath = @"Compiler\Parser\Samples";
             string textName = "TESTPGM1";
-            DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
 
             // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(relativePath, textName, documentFormat);
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(textName);
             
             // The code below enables rich diagnostic if necessary
             //TestErrorListener errorListener = new TestErrorListener();

@@ -32,9 +32,15 @@ namespace TypeCobol.Compiler.AntlrUtils
             // Build a string representing the current grammar rules being recognized
             StringBuilder ruleStack = new StringBuilder();
             IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
+            bool isFirst = true;
             foreach (string ruleInvocation in stack.Reverse())
             {
-                ruleStack.AppendLine(ruleInvocation);
+                if(isFirst) { isFirst = false;  }
+                else
+                {
+                    ruleStack.Append('>');
+                }
+                ruleStack.Append(ruleInvocation);
             }
 
             // Register a new diagnostic
@@ -65,5 +71,10 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// Stack of grammar rules which were being recognized when an incorrect token occured
         /// </summary>
         public string RuleStack { get; private set; }
+
+        public string ToStringWithRuleStack()
+        {
+            return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + ")";
+        }
     }
 }

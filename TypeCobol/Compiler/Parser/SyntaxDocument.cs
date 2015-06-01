@@ -111,22 +111,25 @@ namespace TypeCobol.Compiler.Parser
                     codeElement.FirstTokenLineIndexInMainDocument = cobolParser.FirstTokenLineIndexInMainDocument;
                     codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
 
-                    // Register compiler directive parse errors
-                    bool errorFoundWhileParsingCodeElement = errorListener.Diagnostics.Count > 0 || codeElementBuilder.Diagnostics.Count > 0;
-                    if (errorFoundWhileParsingCodeElement)
+                    // Add code element to the list
+                    CodeElements.Add(codeElement);
+                }
+
+                // Register compiler directive parse errors
+                bool errorFoundWhileParsingCodeElement = errorListener.Diagnostics.Count > 0 || codeElementBuilder.Diagnostics.Count > 0;
+                if (errorFoundWhileParsingCodeElement)
+                {
+                    foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
                     {
-                        foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
-                        {
-                            Diagnostics.Add(parserDiag);
-                        }
-                        foreach (Diagnostic codeElementDiag in codeElementBuilder.Diagnostics)
-                        {
-                            Diagnostics.Add(codeElementDiag);
-                        }
+                        Diagnostics.Add(parserDiag);
+                    }
+                    foreach (Diagnostic codeElementDiag in codeElementBuilder.Diagnostics)
+                    {
+                        Diagnostics.Add(codeElementDiag);
                     }
                 }
             }
-            while (codeElement != null);
+            while (codeElement != null && tokenStream.La(1) >= 0);
 
             // Trigger ParseNodeChanged event
             CodeElementChangedEvent parseEvent = new CodeElementChangedEvent();

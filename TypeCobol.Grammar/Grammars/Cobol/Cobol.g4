@@ -54,7 +54,7 @@ codeElement:
                        // dataDescriptionEntry
                    linkageSectionHeader |
                        // dataDescriptionEntry
-               procedureDivisionHeaderWithParameters |
+               procedureDivisionHeader |
                declarativesHeader |
                    sectionHeader | useStatement |
                        paragraphHeader |
@@ -79,7 +79,7 @@ codeElement:
                    // dataDivisionHeader 
                        // workingStorageSectionHeader 
                            // dataDescriptionEntry
-                   procedureDivisionHeader |
+                   // procedureDivisionHeader |
                        methodIdentification |
                            // environmentDivisionHeader 
                                // inputOutputSectionHeader
@@ -95,7 +95,7 @@ codeElement:
                                    // dataDescriptionEntry
                                // linkageSectionHeader 
                                    // dataDescriptionEntry
-                           // procedureDivisionHeaderWithParameters
+                           // procedureDivisionHeader
                                // ... procedure division content ...
                        methodEnd |
                factoryEnd |
@@ -198,8 +198,8 @@ codeElement:
            // ... on overflow phrases ...
        unstringStatementEnd |
        writeStatement |
-           atEndOfPage  | // ... imperative statements ...
-           notAtEndOfPage  | // ... imperative statements ...
+           atEndOfPageCondition  | // ... imperative statements ...
+           notAtEndOfPageCondition  | // ... imperative statements ...
            // ... invalid key phrases ...
        writeStatementEnd |
        xmlGenerateStatement |
@@ -3766,7 +3766,7 @@ valueClause:
 // p248: Format: method procedure division header
 // -> BY REFERENCE not supported in using phrase
 
-procedureDivisionHeaderWithParameters:
+procedureDivisionHeader:
                        PROCEDURE DIVISION
                        usingPhrase?
                        returningPhrase?
@@ -3775,8 +3775,8 @@ procedureDivisionHeaderWithParameters:
 
 // factory and object procedure division header
 
-procedureDivisionHeader:
-                       PROCEDURE DIVISION PeriodSeparator;
+//procedureDivisionHeader:
+//                       PROCEDURE DIVISION PeriodSeparator;
 
 // p248: The USING phrase specifies the parameters that a program or method receives
 // when the program is called or the method is invoked.
@@ -8278,16 +8278,16 @@ writeStatement:
 
 writeStatementConditional:
                              writeStatement
-                             (atEndOfPage imperativeStatement)? 
-                             (notAtEndOfPage imperativeStatement)? 
+                             (atEndOfPageCondition imperativeStatement)? 
+                             (notAtEndOfPageCondition imperativeStatement)? 
                              (invalidKeyCondition imperativeStatement)?
                              (notInvalidKeyCondition imperativeStatement)? 
                              writeStatementEnd?;
 
-atEndOfPage:
+atEndOfPageCondition:
                AT? (END_OF_PAGE | EOP);
 
-notAtEndOfPage:
+notAtEndOfPageCondition:
                   NOT AT? (END_OF_PAGE | EOP);
 
 writeStatementEnd:

@@ -65,6 +65,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
+    <None Include="Grammars\Cobol\TokenTypes.xlsx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Parser;
@@ -34,16 +36,17 @@ namespace TypeCobol.Test.Compiler.Parser
             return compilationDoc;
         }
 
-        public static CompilationUnit ParseCobolFile(string relativePath, string textName, DocumentFormat documentFormat)
+        public static CompilationUnit ParseCobolFile(string textName)
         {
-            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(relativePath));
-            if(!localDirectory.Exists)
+            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(@"Compiler\Parser\Samples"));
+            if (!localDirectory.Exists)
             {
-                throw new Exception(String.Format("Directory : {0} does not exist", relativePath));
+                throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
-
-            CompilationProject project = new CompilationProject("test", 
-                localDirectory.FullName, new string[] {"*.cbl","*.cpy"},
+            
+            DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
+            CompilationProject project = new CompilationProject("test",
+                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
 
             CompilationUnit compilationUnit = new CompilationUnit(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions());
@@ -51,6 +54,40 @@ namespace TypeCobol.Test.Compiler.Parser
             compilationUnit.StartDocumentProcessing();
 
             return compilationUnit;
+        }
+
+        public static string DumpCodeElements(CompilationUnit compilationUnit)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (compilationUnit.SyntaxDocument.Diagnostics != null && compilationUnit.SyntaxDocument.Diagnostics.Count > 0)
+            {
+                sb.AppendLine("--- Diagnostics ---");
+                foreach (Diagnostic diag in compilationUnit.SyntaxDocument.Diagnostics)
+                {
+                    sb.AppendLine(diag.ToString());
+                }
+            }
+            if (compilationUnit.SyntaxDocument.CodeElements != null && compilationUnit.SyntaxDocument.CodeElements.Count > 0)
+            {
+                sb.AppendLine("--- Code Elements ---");
+                foreach (CodeElement codeElement in compilationUnit.SyntaxDocument.CodeElements)
+                {
+                    sb.AppendLine(codeElement.ToString());
+                }
+            }
+            return sb.ToString();
+        }
+
+        public static void CheckWithResultFile(string result, string testName)
+        {
+            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
+            {
+                string expectedResult = reader.ReadToEnd();
+                if (result != expectedResult)
+                {
+                    throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result");
+                }
+            }
         }
     }
 

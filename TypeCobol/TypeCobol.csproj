@@ -126,7 +126,6 @@
     <Compile Include="Compiler\CodeElements\Header\LocalStorageSectionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\ParagraphHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\ProcedureDivisionHeader.cs" />
-    <Compile Include="Compiler\CodeElements\Header\ProcedureDivisionHeaderWithParameters.cs" />
     <Compile Include="Compiler\CodeElements\Header\SectionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\SentenceEnd.cs" />
     <Compile Include="Compiler\CodeElements\Header\WorkingStorageSectionHeader.cs" />
@@ -147,11 +146,11 @@
     <Compile Include="Compiler\CodeElements\Paragraph\SourceComputerParagraph.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\SpecialNamesParagraph.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\AtEndCondition.cs" />
-    <Compile Include="Compiler\CodeElements\StatementCondition\AtEndOfPage.cs" />
+    <Compile Include="Compiler\CodeElements\StatementCondition\AtEndOfPageCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\ElseCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\InvalidKeyCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\NotAtEndCondition.cs" />
-    <Compile Include="Compiler\CodeElements\StatementCondition\NotAtEndOfPage.cs" />
+    <Compile Include="Compiler\CodeElements\StatementCondition\NotAtEndOfPageCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\NotInvalidKeyCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\NotOnExceptionCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\NotOnOverflowCondition.cs" />
@@ -319,6 +318,7 @@
     <None Include="Documentation\Architecture\TypeCobolStats_14_04_2015.xlsx" />
     <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Language Reference.pdf" />
     <None Include="Documentation\Studies\CobolLexer.tokens.xlsx" />
+    <None Include="Documentation\Studies\Code elements.xlsx" />
     <None Include="Documentation\Studies\Compiler directive study.xlsx" />
     <None Include="Documentation\Studies\Compiler options study.xlsx" />
     <None Include="Documentation\Studies\IBM compiler versions study.xlsx" />

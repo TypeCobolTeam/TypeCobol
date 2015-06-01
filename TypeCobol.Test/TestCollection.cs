@@ -99,6 +99,10 @@ namespace TypeCobol.Test
             TestTokenSource.Check_CobolTokenSource();
             TestTokenSource.Check_CobolTokenSource_WithStartToken();
 
+            TestCodeElements.Check_ATCodeElements();
+            TestCodeElements.Check_ENDCodeElements();
+            TestCodeElements.Check_EXITCodeElements();
+
             TestParser.Check_ParserIntegration();
         }
     }

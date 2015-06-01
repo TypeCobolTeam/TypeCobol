@@ -56,9 +56,13 @@ namespace TypeCobol.Compiler.Scanner
             {
                 tokenFamilyFromTokenType[tokenType] = TokenFamily.Symbol;
             }
-            for (; tokenType < (int)TokenFamily.StatementStartingKeyword; tokenType++)
+            for (; tokenType < (int)TokenFamily.CodeElementStartingKeyword; tokenType++)
             {
                 tokenFamilyFromTokenType[tokenType] = TokenFamily.CompilerDirectiveStartingKeyword;
+            }
+            for (; tokenType < (int)TokenFamily.StatementStartingKeyword; tokenType++)
+            {
+                tokenFamilyFromTokenType[tokenType] = TokenFamily.CodeElementStartingKeyword;
             }
             for (; tokenType < (int)TokenFamily.StatementEndingKeyword; tokenType++)
             {

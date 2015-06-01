@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            return "[" + Type.ToString() + ":"+FirstTokenLineIndexInMainDocument+","+ConsumedTokens[0].Text+"->"+LastTokenLineIndexInMainDocument+","+ConsumedTokens[ConsumedTokens.Count-1].Text+"]";
+            return "[" + Type.ToString() + " : "+ ConsumedTokens[0].ToString() +" --> " + ConsumedTokens[ConsumedTokens.Count-1].ToString() + "]";
         }
     }
 }

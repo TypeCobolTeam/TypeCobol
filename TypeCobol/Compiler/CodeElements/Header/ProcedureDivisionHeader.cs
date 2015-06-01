@@ -4,7 +4,7 @@ namespace TypeCobol.Compiler.CodeElements
 {
     public class ProcedureDivisionHeader : CodeElement
     {
-        public ProcedureDivisionHeader() : base(CodeElementType.ProgramIdentification)
+        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader)
         { }
     }
 }

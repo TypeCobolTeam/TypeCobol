@@ -29,7 +29,6 @@ namespace TypeCobol.Compiler.CodeElements
         EnvironmentDivisionHeader,
         DataDivisionHeader,
         ProcedureDivisionHeader,
-        ProcedureDivisionHeaderWithParameters,
         DeclarativesHeader,
         DeclarativesEnd,
         // -- Section --
@@ -117,8 +116,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         AtEndCondition,
         NotAtEndCondition,
-        AtEndOfPage,
-        NotAtEndOfPage,
+        AtEndOfPageCondtion,
+        NotAtEndOfPageCondition,
         OnExceptionCondition,
         NotOnExceptionCondition,
         OnOverflowCondition,
