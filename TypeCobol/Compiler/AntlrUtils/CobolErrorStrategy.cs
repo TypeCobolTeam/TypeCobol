@@ -37,12 +37,14 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
             lastErrorStates.Add(recognizer.State);
 
-            // Consume until next cstatement starting keyword (excluded), PeriodSeparator (included), or the end of line
+            // Consume until next statement starting keyword (excluded), PeriodSeparator (included), or the end of line
             IToken lastConsumedToken = ((ITokenStream)recognizer.InputStream).Lt(-1);
             IToken currentInvalidToken = ((ITokenStream)recognizer.InputStream).Lt(1);
             while ((lastConsumedToken == null || currentInvalidToken.Line == lastConsumedToken.Line) && currentInvalidToken.Type != TokenConstants.Eof)
             {
-                if (((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementStartingKeyword)
+                if (((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementStartingKeyword ||
+                    ((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementEndingKeyword ||
+                    ((Token)currentInvalidToken).TokenFamily == TokenFamily.CodeElementStartingKeyword)
                 {
                     break;
                 }
@@ -63,7 +65,9 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             // SINGLE TOKEN DELETION
             Token nextToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
-            if (nextToken.TokenFamily != TokenFamily.StatementStartingKeyword)
+            if (nextToken.TokenFamily != TokenFamily.StatementStartingKeyword &&
+                nextToken.TokenFamily != TokenFamily.StatementEndingKeyword &&
+                nextToken.TokenFamily != TokenFamily.CodeElementStartingKeyword)
             {
                 IToken matchedSymbol = SingleTokenDeletion(recognizer);
                 if (matchedSymbol != null)

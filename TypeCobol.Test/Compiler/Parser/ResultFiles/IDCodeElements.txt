@@ -1,0 +1,11 @@
+﻿--- Code Elements ---
+[ClassIdentification : [8,9:ID]<ID> --> [8,23:        Unknown1]<CommentEntry>]
+[FactoryIdentification : [8,9:ID]<ID> --> [28,29:. ]<PeriodSeparator>]
+[MethodIdentification : [8,9:ID]<ID> --> [8,23:        Unknown2]<CommentEntry>]
+[ObjectIdentification : [8,9:ID]<ID> --> [27,28:. ]<PeriodSeparator>]
+[ProgramIdentification : [8,9:ID]<ID> --> [8,23:        Unknown3]<CommentEntry>]
+[ClassIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,23:        Unknown4]<CommentEntry>]
+[FactoryIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [40,41:. ]<PeriodSeparator>]
+[MethodIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,23:        Unknown5]<CommentEntry>]
+[ObjectIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [39,40:. ]<PeriodSeparator>]
+[ProgramIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,23:        Unknown6]<CommentEntry>]

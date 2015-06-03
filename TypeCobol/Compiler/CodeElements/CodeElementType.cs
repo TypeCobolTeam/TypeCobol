@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.CodeElements
         ElseCondition,
         WhenEvaluateCondition,
         WhenOtherCondition,
-        WhenSearchCondition,
+        WhenConditionalExpression,
 
         // Statement ends
 

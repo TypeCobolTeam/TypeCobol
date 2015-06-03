@@ -1,0 +1,7 @@
+﻿--- Code Elements ---
+[SectionHeader : [8,17:MySection1]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>]
+[ParagraphHeader : [8,20:MyParagraph11]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]
+[ParagraphHeader : [8,20:MyParagraph12]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]
+[SectionHeader : [8,17:MySection2]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>]
+[ParagraphHeader : [8,20:MyParagraph21]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]
+[ParagraphHeader : [8,20:MyParagraph22]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]

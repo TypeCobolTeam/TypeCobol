@@ -152,6 +152,7 @@ codeElement:
            // ... size exception phrases ...
        divideStatementEnd |
        evaluateStatement |
+           whenConditionalExpression | // ... imperative statements ...
            whenEvaluateCondition | // ... imperative statements ...
            whenOtherCondition | // ... imperative statements ...
        evaluateStatementEnd |
@@ -182,7 +183,7 @@ codeElement:
        rewriteStatementEnd |
        searchStatement |
            // atEnd ... imperative statements ...
-           whenSearchCondition | // ... imperativeStatements ... | nextSentence
+           // whenConditionalExpression ... imperativeStatements ... | nextSentence
        searchStatementEnd |
        startStatement |
            // ... invalid key phrases ...
@@ -4294,7 +4295,8 @@ imperativeStatement:
          moveStatement        |
          multiplyStatement    |
          openStatement        |
-         performStatement     |
+         performStatementWithBody |
+         performProcedureStatement |
          readStatement        |
          releaseStatement     |
          returnStatement      |
@@ -4467,14 +4469,14 @@ statement:
          displayStatement     |
          divideStatementConditional |
          entryStatement       |
-         evaluateStatement    |
+         evaluateStatementWithBody |
          execStatement        |
          exitStatement        |
          exitMethodStatement  |
          exitProgramStatement |
          gobackStatement      |
          gotoStatement        |
-         ifStatement          |
+         ifStatementWithBody  |
          initializeStatement  |
          inspectStatement     |
          invokeStatementConditional |
@@ -4482,12 +4484,13 @@ statement:
          moveStatement        |
          multiplyStatementConditional |
          openStatement        |
-         performStatement     |
+         performStatementWithBody |
+         performProcedureStatement |
          readStatementConditional |
          releaseStatement     |
          returnStatementConditional |
          rewriteStatementConditional |
-         searchStatement      |
+         searchStatementWithBody |
          setStatement         |
          sortStatement        |
          startStatementConditional |
@@ -4497,7 +4500,7 @@ statement:
          unstringStatementConditional |
          writeStatementConditional |
          xmlGenerateStatementConditional |
-         xmlParseStatement;
+         xmlParseStatementConditional;
 
 // p281: There are several phrases common to arithmetic and data manipulation statements,
 // such as:
@@ -5302,12 +5305,16 @@ entryStatement:
 // For more information, see “Delimited scope statements” on page 280. 
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
-evaluateStatement:
-                     EVALUATE (identifier | literal | expression | (TRUE | FALSE)) (ALSO (identifier | literal | expression | (TRUE | FALSE)))*
-                     (whenEvaluateCondition+ imperativeStatement)+
+evaluateStatementWithBody:
+                     evaluateStatement
+                     ((whenConditionalExpression | whenEvaluateCondition)+ imperativeStatement)+
                      (whenOtherCondition imperativeStatement)?
                      evaluateStatementEnd?;
-                     
+
+evaluateStatement:
+                     EVALUATE (identifier | literal | expression | (TRUE | FALSE)) (ALSO (identifier | literal | expression | (TRUE | FALSE)))*
+                 ;
+
 whenEvaluateCondition:
                          WHEN (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)) 
                         (ALSO (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)))*;
@@ -5484,13 +5491,16 @@ gotoStatement:
 // encountered is matched with the nearest preceding IF that has not been implicitly
 // or explicitly terminated.
 
-ifStatement:
-               IF conditionalExpression THEN? 
+ifStatementWithBody:
+                ifStatement
                     (statement+ | nextSentenceStatement)
                (elseCondition 
                     (statement+ | nextSentenceStatement)
                )?
                ifStatementEnd?;
+
+ifStatement:
+               IF conditionalExpression THEN?;
 
 nextSentenceStatement:
                          NEXT SENTENCE;
@@ -6672,19 +6682,22 @@ openStatement:
 //   executed.
 
 performProcedureStatement:
-                    PERFORM procedureName ((THROUGH |THRU) procedureName)? 
+                             PERFORM procedureName ((THROUGH |THRU) procedureName)? 
                                  ( performTimesPhrase | 
                                    performUntilPhrase |
-                                  (performVaryingPhrase performVaryingAfterPhrase+) )?
+                                  (performVaryingPhrase performVaryingAfterPhrase*) )?
+                            ;
+
+performStatementWithBody:
+                            performStatement
+                            imperativeStatement? 
+                            performStatementEnd 
                             ;
 
 performStatement:
                     PERFORM   ( performTimesPhrase | 
                                    performUntilPhrase |
-                                   performVaryingPhrase )?
-                             imperativeStatement? 
-                             performStatementEnd 
-                            ;
+                                   performVaryingPhrase )?;
 
 performTimesPhrase:
                       (identifier | IntegerLiteral) TIMES;
@@ -7053,14 +7066,17 @@ rewriteStatementEnd:
 // ... more details p412->414 Binary search ...
 // ... more details p414 Search statement considerations ...
 
-searchStatement:
-                   SEARCH ALL? identifier
-                   (VARYING (identifier | indexName))?
+searchStatementWithBody:
+                   searchStatement
                    (atEndCondition imperativeStatement)?
-                   (whenSearchCondition (imperativeStatement | nextSentenceStatement))+
+                   (whenConditionalExpression (imperativeStatement | nextSentenceStatement))+
                    searchStatementEnd?;
 
-whenSearchCondition:
+searchStatement:
+                   SEARCH ALL? identifier
+                   (VARYING (identifier | indexName))?;
+
+whenConditionalExpression:
                        WHEN conditionalExpression;                       
 
 searchStatementEnd:

@@ -1285,7 +1285,7 @@ namespace TypeCobol.Compiler.Scanner
             int firstCharIndex = startIndex;
             for (; firstCharIndex <= lastIndex && line[firstCharIndex] == ' '; firstCharIndex++) { }
             // Check if it is in area A
-            if(line[firstCharIndex] != ' ' && firstCharIndex < 4)
+            if(line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.TextLineMap.Source.StartIndex + 4))
             {
                 // Reset scanner state and retry scanning
                 tokensLine.ScanState.ResetKeywordsState();

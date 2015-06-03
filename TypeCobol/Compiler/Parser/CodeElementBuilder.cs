@@ -533,9 +533,10 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new WhenOtherCondition();
         }
-        public override void EnterWhenSearchCondition(CobolParser.WhenSearchConditionContext context)
+
+        public override void EnterWhenConditionalExpression(CobolParser.WhenConditionalExpressionContext context)
         {
-            CodeElement = new WhenSearchCondition();
+            CodeElement = new WhenConditionalExpression();
         }
         
         // Statement ends

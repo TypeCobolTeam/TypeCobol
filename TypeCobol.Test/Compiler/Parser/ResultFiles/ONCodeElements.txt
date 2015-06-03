@@ -1,0 +1,7 @@
+﻿--- Code Elements ---
+[OnExceptionCondition : [8,16:EXCEPTION]<EXCEPTION> --> [8,16:EXCEPTION]<EXCEPTION>]
+[OnExceptionCondition : [8,9:ON]<ON> --> [11,19:EXCEPTION]<EXCEPTION>]
+[OnOverflowCondition : [8,15:OVERFLOW]<OVERFLOW> --> [8,15:OVERFLOW]<OVERFLOW>]
+[OnOverflowCondition : [8,9:ON]<ON> --> [11,18:OVERFLOW]<OVERFLOW>]
+[OnSizeErrorCondition : [8,11:SIZE]<SIZE> --> [13,17:ERROR]<ERROR>]
+[OnSizeErrorCondition : [8,9:ON]<ON> --> [16,20:ERROR]<ERROR>]

@@ -102,6 +102,13 @@ namespace TypeCobol.Test
             TestCodeElements.Check_ATCodeElements();
             TestCodeElements.Check_ENDCodeElements();
             TestCodeElements.Check_EXITCodeElements();
+            TestCodeElements.Check_IDCodeElements();
+            TestCodeElements.Check_NOTCodeElements();
+            TestCodeElements.Check_ONCodeElements();
+            TestCodeElements.Check_PERFORMCodeElements();
+            TestCodeElements.Check_UDWCodeElements();
+            TestCodeElements.Check_WHENCodeElements();
+            TestCodeElements.Check_XMLCodeElements();
 
             TestParser.Check_ParserIntegration();
         }

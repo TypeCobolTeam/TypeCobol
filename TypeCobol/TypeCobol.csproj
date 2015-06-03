@@ -160,7 +160,7 @@
     <Compile Include="Compiler\CodeElements\StatementCondition\OnSizeErrorCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\WhenEvaluateCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\WhenOtherCondition.cs" />
-    <Compile Include="Compiler\CodeElements\StatementCondition\WhenSearchCondition.cs" />
+    <Compile Include="Compiler\CodeElements\StatementCondition\WhenConditionalExpression.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\AddStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\CallStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\ComputeStatementEnd.cs" />
