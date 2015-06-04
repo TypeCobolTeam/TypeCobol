@@ -234,6 +234,8 @@
     <Compile Include="Compiler\CodeElements\Symbols\CharsetClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ConditionName.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\SectionName.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\ParagraphName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\DataName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\FileName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\IndexName.cs" />

@@ -5,6 +5,8 @@ namespace TypeCobol.Test.Compiler.Parser
 {
     static class TestCodeElements
     {
+        // --- Tests the recognition of potentially ambiguous CodeElements which begin with the same first Token --- 
+
         public static void Check_ATCodeElements()
         {
             string testName = "ATCodeElements";
@@ -116,6 +118,20 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void Check_XMLCodeElements()
         {
             string testName = "XMLCodeElements";
+
+            // Compile test file
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
+
+            // Check code elements
+            string result = ParserUtils.DumpCodeElements(compilationUnit);
+            ParserUtils.CheckWithResultFile(result, testName);
+        }
+
+        // --- Tests the correct parsing of all CodeElements ---
+
+        public static void Check_HeaderCodeElements()
+        {
+            string testName = "HeaderCodeElements";
 
             // Compile test file
             CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);

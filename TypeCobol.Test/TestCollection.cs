@@ -110,6 +110,8 @@ namespace TypeCobol.Test
             TestCodeElements.Check_WHENCodeElements();
             TestCodeElements.Check_XMLCodeElements();
 
+            TestCodeElements.Check_HeaderCodeElements();
+
             TestParser.Check_ParserIntegration();
         }
     }

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.AntlrUtils;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -25,6 +22,9 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
+        /// <summary>
+        /// Initialization code run before parsing each new CodeElement
+        /// </summary>
         public override void EnterCodeElement(CobolParser.CodeElementContext context)
         {
             CodeElement = null;
@@ -101,7 +101,42 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProcedureDivisionHeader(CobolParser.ProcedureDivisionHeaderContext context)
         {
-            CodeElement = new ProcedureDivisionHeader();
+            ProcedureDivisionHeader procedureDivisionHeader = new ProcedureDivisionHeader();
+
+            if(context.usingPhrase() != null)
+            {
+                foreach(var inputParametersContext in context.usingPhrase().inputParameters())
+                {
+                    ReceivingMode receivingMode = ReceivingMode.ByReference;
+                    if(inputParametersContext.receivingMode() != null && 
+                       inputParametersContext.receivingMode() is CobolParser.ByValueContext)
+                    {
+                        receivingMode = ReceivingMode.ByValue;
+                    }
+                    foreach(var dataNameContext in inputParametersContext.dataName())
+                    {
+                        string dataName = ParseTreeUtils.GetUserDefinedWord(dataNameContext);
+                        InputParameter inputParameter = new InputParameter() { ReceivingMode = receivingMode, DataName = new DataName(dataName) };
+
+                        if (procedureDivisionHeader.UsingParameters == null)
+                        {
+                            procedureDivisionHeader.UsingParameters = new List<InputParameter>();
+                        }
+                        procedureDivisionHeader.UsingParameters.Add(inputParameter);
+                    }
+                }
+            }
+
+            if(context.returningPhrase() != null)
+            {
+                string dataName = ParseTreeUtils.GetUserDefinedWord(context.returningPhrase().dataName());
+                if(dataName != null)
+                {
+                    procedureDivisionHeader.ReturningDataName = new DataName(dataName);
+                }
+            }
+
+            CodeElement = procedureDivisionHeader;
         }
 
         public override void EnterDeclarativesHeader(CobolParser.DeclarativesHeaderContext context)
@@ -118,7 +153,17 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSectionHeader(CobolParser.SectionHeaderContext context)
         {
-            CodeElement = new SectionHeader();
+            SectionHeader sectionHeader = new SectionHeader();
+
+            string sectionName = ParseTreeUtils.GetUserDefinedWord(context.sectionName());
+            if (sectionName != null)
+            {
+                sectionHeader.SectionName = new SectionName(sectionName);
+            }
+
+            sectionHeader.PriorityNumber = (int?)ParseTreeUtils.GetIntegerLiteral(context.priorityNumber());
+            
+            CodeElement = sectionHeader;
         }
 
         public override void EnterConfigurationSectionHeader(CobolParser.ConfigurationSectionHeaderContext context)
@@ -155,7 +200,15 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterParagraphHeader(CobolParser.ParagraphHeaderContext context)
         {
-            CodeElement = new ParagraphHeader();
+            ParagraphHeader paragraphHeader = new ParagraphHeader();
+
+            string paragraphName = ParseTreeUtils.GetUserDefinedWord(context.paragraphName());
+            if (paragraphName != null)
+            {
+                paragraphHeader.ParagraphName = new ParagraphName(paragraphName);
+            }
+            
+            CodeElement = paragraphHeader;
         }
 
         public override void EnterFileControlParagraphHeader(CobolParser.FileControlParagraphHeaderContext context)

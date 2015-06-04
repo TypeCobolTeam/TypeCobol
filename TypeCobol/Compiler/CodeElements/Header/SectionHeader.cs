@@ -2,9 +2,46 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    /// <summary>
+    /// Section
+    /// A section-header optionally followed by one or more paragraphs.
+    /// </summary>
     public class SectionHeader : CodeElement
     {
         public SectionHeader() : base(CodeElementType.SectionHeader)
         { }
+
+        /// <summary>
+        /// A user-defined word that identifies a section. A referenced
+        /// section-name, because it cannot be qualified, must be unique
+        /// within the program in which it is defined.
+        /// </summary>
+        public SectionName SectionName { get; set; }
+
+        /// <summary>
+        /// An integer or a positive signed numeric literal ranging in value
+        /// from 0 through 99. Priority-number identifies a fixed segment or an
+        /// independent segment that is to contain the section.
+        /// A segment consists of all sections in a program that have the same
+        /// priority-number. Priority-number determines whether a section is stored in
+        /// a fixed segment or an independent segment at run time.
+        /// Segments with a priority-number of 0 through 49 are fixed segments.
+        /// Segments with a priority-number of 50 through 99 are independent
+        /// segments.
+        /// </summary>
+        public int? PriorityNumber { get; set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            string result = base.ToString() + "{SectionName=" + SectionName.Name;
+            if(PriorityNumber != null)
+            {
+                result += ",PriorityNumber=" + PriorityNumber;
+            }
+            return result + "}";
+        }
     }
 }

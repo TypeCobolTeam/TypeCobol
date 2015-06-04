@@ -18,7 +18,9 @@ namespace TypeCobol.Compiler.CodeElements
         MethodName,
         MnemonicForEnvironmentName,
         MnemonicForUPSISwitchName,
+        ParagraphName,
         ProgramName,
+        SectionName,
         SymbolicCharacter,
         XmlSchemaName
     }

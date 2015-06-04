@@ -3857,7 +3857,14 @@ procedureDivisionHeader:
 // data types for COBOL and Java” on page 361.
 
 usingPhrase:
-               USING (((BY? REFERENCE) | (BY? VALUE))? dataName+)+;
+               USING inputParameters+;
+
+inputParameters:
+                   receivingMode? dataName+;
+
+receivingMode:
+                 BY? REFERENCE  #ByReference | 
+                 BY? VALUE      #ByValue;
 
 // p250: The RETURNING phrase specifies a data item that is to receive the program or
 // method result.
@@ -8878,7 +8885,7 @@ xmlParseStatement:
                      (WITH? ENCODING codepage)? 
                      (RETURNING NATIONAL)?
                      (VALIDATING WITH? (identifier | (FILE xmlSchemaName)))?
-                     PROCESSING PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
+                     PROCESSING PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)   ?;
 
 xmlParseStatementConditional:
                                 xmlParseStatement

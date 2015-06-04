@@ -264,14 +264,14 @@ namespace TypeCobol.Compiler.Preprocessor
             // Single number
             if (context.DecimalLiteral() == null)
             {
-                int sequenceNumber = (int)ParseTreeUtils.GetIntegerLiteralValue(context.IntegerLiteral());
+                int sequenceNumber = (int)ParseTreeUtils.GetIntegerLiteral(context.IntegerLiteral());
                 sequenceNumberRange.From = sequenceNumber;
                 sequenceNumberRange.To = sequenceNumber;
             }
             // Real range
             else
             {
-                sequenceNumberRange.From = (int)ParseTreeUtils.GetIntegerLiteralValue(context.IntegerLiteral());
+                sequenceNumberRange.From = (int)ParseTreeUtils.GetIntegerLiteral(context.IntegerLiteral());
                 sequenceNumberRange.To = -(int)((DecimalLiteralValue)((Token)(context.DecimalLiteral().Symbol)).LiteralValue).IntegerValue;
             }
 
@@ -314,7 +314,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             if (context.sequenceNumber() != null && context.sequenceNumber().IntegerLiteral() != null)
             {
-                insertDirective.SequenceNumber = (int)ParseTreeUtils.GetIntegerLiteralValue(context.sequenceNumber().IntegerLiteral());
+                insertDirective.SequenceNumber = (int)ParseTreeUtils.GetIntegerLiteral(context.sequenceNumber().IntegerLiteral());
             }
         }
         
