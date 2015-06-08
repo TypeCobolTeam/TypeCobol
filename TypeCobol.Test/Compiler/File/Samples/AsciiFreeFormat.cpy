@@ -1,17 +1,8 @@
 /----------------------------------------------------------------
-* MSVCINP               partie ALLER FIXE des MESSAGES échangés avec tout SERVICE APPLICATIF C14
-*                                        Version  : 000          
-*                                        Longueur : 01000 octets 
-*----------------------------------------------------------------
 01  :MSVCINP:.                                                   
                                                                  
 *----------------------------------------------------------------
-* En-tête généralisé pour tout COPY de type MESSAGE           C14*
 * Comportant TAGs (ou BALISEs) standards/normalisés apposées via  commentaires standards à respecter                             
-* TAGs standards/normalisés C14 d'en-tête de COPY MESSAGE        
-*  - [MsgIdt] : identifiant du message (=nom COPY associé)       
-*  - [MsgVrs] : version en cours de la description de cette partie du message                             
-*  - [MsgLen] : Longueur effective de cette description
 *----------------------------------------------------------------
     05  .                                                        
       10                          PIC X(008) VALUE 

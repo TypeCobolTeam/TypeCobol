@@ -93,7 +93,7 @@
     <Compile Include="TestLauncher.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Compiler\File\Samples\ACMERMON.TXT" />
+    <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
     <Content Include="Compiler\Parser\ResultFiles\IDCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\ONCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
@@ -160,15 +160,15 @@
     <Content Include="Compiler\Scanner\ResultFiles\SymbolicCharacters.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\UserDefinedWords-continuations.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\UserDefinedWords.txt" />
-    <Content Include="Compiler\Scanner\Samples\ADAGAPEL.TXT" />
-    <Content Include="Compiler\Scanner\Samples\CCTPHIS.TXT" />
-    <Content Include="Compiler\Scanner\Samples\CEUTP510.TXT" />
-    <Content Include="Compiler\Scanner\Samples\EPLMM003.TXT" />
+    <Content Include="Compiler\Scanner\Samples\RealPGM1.TXT" />
+    <Content Include="Compiler\Scanner\Samples\RealPGM2.TXT" />
+    <Content Include="Compiler\Scanner\Samples\RealPGM3.TXT" />
+    <Content Include="Compiler\Scanner\Samples\RealPGM4.TXT" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Compiler\File\Samples\copyb.14" />
-    <None Include="Compiler\File\Samples\MSVCINP free format.cpy" />
-    <None Include="Compiler\File\Samples\MSVCOUT.cpy" />
+    <None Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
+    <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
+    <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\HeaderCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ONCodeElements.cbl" />
