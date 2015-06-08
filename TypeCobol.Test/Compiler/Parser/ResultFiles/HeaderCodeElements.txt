@@ -1,1 +1,20 @@
-﻿
+﻿--- Code Elements ---
+[ConfigurationSectionHeader : [8,20:CONFIGURATION]<CONFIGURATION> --> [29,29+:.]<PeriodSeparator>]
+[DataDivisionHeader : [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>]
+[DeclarativesHeader : [8,19:DECLARATIVES]<DECLARATIVES> --> [20,20+:.]<PeriodSeparator>]
+[DeclarativesEnd : [8,10:END]<END> --> [24,24+:.]<PeriodSeparator>]
+[EnvironmentDivisionHeader : [8,18:ENVIRONMENT]<ENVIRONMENT> --> [28,28+:.]<PeriodSeparator>]
+[FileControlParagraphHeader : [8,19:FILE-CONTROL]<FILE_CONTROL> --> [20,20+:.]<PeriodSeparator>]
+[FileSectionHeader : [8,11:FILE]<FILE> --> [20,20+:.]<PeriodSeparator>]
+[InputOutputSectionHeader : [8,19:INPUT-OUTPUT]<INPUT_OUTPUT> --> [28,28+:.]<PeriodSeparator>]
+[IOControlParagraphHeader : [8,18:I-O-CONTROL]<I_O_CONTROL> --> [19,19+:.]<PeriodSeparator>]
+[LinkageSectionHeader : [8,14:LINKAGE]<LINKAGE> --> [23,23+:.]<PeriodSeparator>]
+[LocalStorageSectionHeader : [8,20:LOCAL-STORAGE]<LOCAL_STORAGE> --> [29,29+:.]<PeriodSeparator>]
+[ParagraphHeader : [8,18:MyParagraph]<UserDefinedWord> --> [19,19+:.]<PeriodSeparator>]{ParagraphName=MyParagraph}
+[ProcedureDivisionHeader : [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>]
+[ProcedureDivisionHeader : [8,16:PROCEDURE]<PROCEDURE> --> [61,61+:.]<PeriodSeparator>]{InputParameters= ByReference:InParam1,ReturningDataName=OutParam1}
+[ProcedureDivisionHeader : [8,16:PROCEDURE]<PROCEDURE> --> [39,39+:.]<PeriodSeparator>]{InputParameters= ByReference:InParam1 ByValue:InParam2 ByValue:InParam3 ByReference:InParam4 ByReference:InParam5,ReturningDataName=}
+[SectionHeader : [8,17:MySection1]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>]{SectionName=MySection1}
+[SectionHeader : [8,17:MySection2]<UserDefinedWord> --> [29,29+:.]<PeriodSeparator>]{SectionName=MySection2,PriorityNumber=10}
+[SentenceEnd : [8,8+:.]<PeriodSeparator> --> [8,8+:.]<PeriodSeparator>]
+[WorkingStorageSectionHeader : [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>]

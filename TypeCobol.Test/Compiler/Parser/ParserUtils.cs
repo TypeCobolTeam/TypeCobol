@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -64,7 +65,14 @@ namespace TypeCobol.Test.Compiler.Parser
                 sb.AppendLine("--- Diagnostics ---");
                 foreach (Diagnostic diag in compilationUnit.SyntaxDocument.Diagnostics)
                 {
-                    sb.AppendLine(diag.ToString());
+                    if (diag is ParserDiagnostic)
+                    {
+                        sb.AppendLine(((ParserDiagnostic)diag).ToStringWithRuleStack());
+                    }
+                    else
+                    {
+                        sb.AppendLine(diag.ToString());
+                    }
                 }
             }
             if (compilationUnit.SyntaxDocument.CodeElements != null && compilationUnit.SyntaxDocument.CodeElements.Count > 0)
