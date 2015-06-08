@@ -745,11 +745,26 @@ methodName : alphanumOrNationalLiteral;
 // !! p117 : The other paragraphs are optional and can appear in any order.
 
 authoringProperties :
-                                ( (AUTHOR PeriodSeparator? CommentEntry*) |
-                                  (INSTALLATION PeriodSeparator? CommentEntry*) |
-                                  (DATE_WRITTEN PeriodSeparator? CommentEntry*) |
-                                  (DATE_COMPILED PeriodSeparator? CommentEntry*) |
-                                  (SECURITY PeriodSeparator? CommentEntry*) )*;
+                                ( authorParagraph |
+                                  installationParagraph |
+                                  dateWrittenParagraph |
+                                  dateCompiledParagraph |
+                                  securityParagraph )*;
+
+authorParagraph:
+                   AUTHOR PeriodSeparator? CommentEntry*;
+
+installationParagraph:
+                         INSTALLATION PeriodSeparator? CommentEntry*;
+
+dateWrittenParagraph:
+                        DATE_WRITTEN PeriodSeparator? CommentEntry*;
+
+dateCompiledParagraph:
+                         DATE_COMPILED PeriodSeparator? CommentEntry*;
+
+securityParagraph:
+                     SECURITY PeriodSeparator? CommentEntry*;
 
 // p105 : The comment-entry in any of the optional paragraphs can be any combination of
 // characters from the character set of the computer. The comment-entry is written in

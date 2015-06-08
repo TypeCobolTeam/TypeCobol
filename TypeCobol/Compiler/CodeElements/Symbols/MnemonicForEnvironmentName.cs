@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -12,7 +13,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class MnemonicForEnvironmentName : Symbol
     {
-        public MnemonicForEnvironmentName(string userDefinedWord) :
+        public MnemonicForEnvironmentName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.MnemonicForEnvironmentName)
         { }
     }

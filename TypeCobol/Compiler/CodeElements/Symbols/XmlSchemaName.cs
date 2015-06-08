@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class XmlSchemaName : Symbol
     {
-        public XmlSchemaName(string userDefinedWord) :
+        public XmlSchemaName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.XmlSchemaName)
         { }
     }

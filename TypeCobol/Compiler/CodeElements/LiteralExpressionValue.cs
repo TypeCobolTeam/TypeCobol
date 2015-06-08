@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class SymbolicCharacterValue : LiteralValue
     {
-        public SymbolicCharacterValue(string symbolicCharacter) : base(LiteralValueType.SymbolicCharacter)
+        public SymbolicCharacterValue(Token symbolicCharacter) : base(LiteralValueType.SymbolicCharacter)
         {
             SymbolicCharacter = new SymbolReference<SymbolicCharacter>(new SymbolicCharacter(symbolicCharacter));
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -9,7 +10,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ClassName : Symbol
     {
-        public ClassName(string userDefinedWord) :
+        public ClassName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.ClassName)
         { }
     }

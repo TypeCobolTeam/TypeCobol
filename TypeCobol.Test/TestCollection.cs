@@ -111,6 +111,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_XMLCodeElements();
 
             TestCodeElements.Check_HeaderCodeElements();
+            TestCodeElements.Check_IdentificationCodeElements();
 
             TestParser.Check_ParserIntegration();
         }

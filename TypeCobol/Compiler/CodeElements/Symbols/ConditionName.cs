@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -16,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ConditionName : Symbol
     {
-        public ConditionName(string userDefinedWord) :
+        public ConditionName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.ConditionName)
         { }
     }

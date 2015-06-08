@@ -6,7 +6,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ProgramIdentification() : base(CodeElementType.ProgramIdentification)
         {
-            AuthoringProperties = new AuthoringProperties();
+            IsCommon = false;
+            IsInitial = false;
+            IsRecursive = false;
         }
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// A separately compiled program and all of its directly and indirectly contained programs 
         /// must have unique program-names within that separately compiled program.
         /// </summary>
-        public ProgramName Name { get; set; }
+        public ProgramName ProgramName { get; set; }
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
@@ -76,5 +78,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// clause can be used only in nested programs.
         /// </summary>
         public bool IsCommon { get; set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            string result = base.ToString() + "{ProgramName=" + ProgramName + ",IsInitial=" + IsInitial + ",IsRecursive=" + IsRecursive + ",IsCommon=" + IsCommon;
+            if (AuthoringProperties != null)
+            {
+                result += " / " + AuthoringProperties.ToString();
+            }
+            return result + "}";
+        }
     }
 }

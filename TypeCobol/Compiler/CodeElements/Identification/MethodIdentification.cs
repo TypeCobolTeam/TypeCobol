@@ -2,12 +2,18 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    /// <summary>
+    /// Method IDENTIFICATION DIVISION
+    /// For a method, the first paragraph of the IDENTIFICATION DIVISION
+    /// must be the METHOD-ID paragraph. The other paragraphs are optional
+    /// and can appear in any order.
+    /// The METHOD-ID paragraph specifies the name by which a method is known and
+    /// assigns selected attributes to that method.
+    /// </summary>
     public class MethodIdentification : CodeElement
     {
         public MethodIdentification() : base(CodeElementType.MethodIdentification)
-        {
-            AuthoringProperties = new AuthoringProperties();
-        }
+        { }
 
         /// <summary>
         /// method-name
@@ -16,7 +22,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// method name. Method names are used directly, without translation. The
         /// method name is processed in a case-sensitive manner.
         /// </summary>
-        public MethodName Name { get; set; }
+        public MethodName MethodName { get; set; }
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
@@ -24,5 +30,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// AUTHOR, INSTALLATION, DATE-WRITTEN, DATE-COMPILED, SECURITY
         /// </summary>
         public AuthoringProperties AuthoringProperties { get; set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            string result = base.ToString() + "{MethodName=" + MethodName;
+            if (AuthoringProperties != null)
+            {
+                result += " / " + AuthoringProperties.ToString();
+            }
+            return result + "}";
+        }
     }
 }

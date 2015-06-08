@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -11,7 +12,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class CharsetClassName : Symbol
     {
-        public CharsetClassName(string userDefinedWord) :
+        public CharsetClassName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.CharsetClassName)
         { }
     }

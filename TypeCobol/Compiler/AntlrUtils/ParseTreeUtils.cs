@@ -32,6 +32,19 @@ namespace TypeCobol.Compiler.AntlrUtils
             return (Token)terminalNode.Symbol;
         }
 
+        public static Token GetSymbolOrLiteralToken(IParseTree node)
+        {
+            ITerminalNode terminalNode = GetFirstTerminalNode(node);
+            if (terminalNode != null)
+            {
+                return GetToken(terminalNode);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         // --- Get values from tokens in terminal nodes ---
 
         public static string GetUserDefinedWord(IParseTree node)

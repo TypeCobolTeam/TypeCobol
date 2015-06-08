@@ -2,9 +2,29 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    /// <summary>
+    /// An end program marker separates each program in the sequence of programs. 
+    /// program-name must be identical to a program-name declared in a preceding program-ID paragraph.
+    /// An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
+    /// </summary>
     public class ProgramEnd : CodeElement
     {
         public ProgramEnd() : base(CodeElementType.ProgramEnd)
         { }
+
+        /// <summary>
+        /// program-name
+        /// A user-defined word or alphanumeric literal, but not a figurative constant,
+        /// that identifies your program.
+        /// </summary>
+        public ProgramName ProgramName { get; set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            return base.ToString() + "{ProgramName=" + ProgramName + "}";
+        }
     }
 }

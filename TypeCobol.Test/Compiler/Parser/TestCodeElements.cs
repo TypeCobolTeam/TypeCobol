@@ -140,5 +140,17 @@ namespace TypeCobol.Test.Compiler.Parser
             string result = ParserUtils.DumpCodeElements(compilationUnit);
             ParserUtils.CheckWithResultFile(result, testName);
         }
+
+        public static void Check_IdentificationCodeElements()
+        {
+            string testName = "IdentificationCodeElements";
+
+            // Compile test file
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
+
+            // Check code elements
+            string result = ParserUtils.DumpCodeElements(compilationUnit);
+            ParserUtils.CheckWithResultFile(result, testName);
+        }
     }
 }

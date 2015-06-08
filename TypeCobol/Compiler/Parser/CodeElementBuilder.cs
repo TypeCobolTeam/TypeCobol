@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.Scanner;
+using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
+using System.Text;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -37,24 +43,147 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProgramIdentification(CobolParser.ProgramIdentificationContext context)
         {
-            CodeElement = new ProgramIdentification();
+            ProgramIdentification programIdentification = new ProgramIdentification();
+
+            Token programName = ParseTreeUtils.GetSymbolOrLiteralToken(context.programName());
+            if (programName != null)
+            {
+                programIdentification.ProgramName = new ProgramName(programName);
+            }
+            if(context.COMMON() != null)
+            {
+                programIdentification.IsCommon = true;
+            }
+            if(context.INITIAL() != null)
+            {
+                programIdentification.IsInitial = true;
+            }
+            if(context.RECURSIVE() != null)
+            {
+                programIdentification.IsRecursive = true;
+            }
+
+            CodeElement = programIdentification;
         }
 
         public override void EnterProgramEnd(CobolParser.ProgramEndContext context)
         {
-            CodeElement = new ProgramEnd();
+            ProgramEnd programEnd = new ProgramEnd();
+
+            Token programName = ParseTreeUtils.GetSymbolOrLiteralToken(context.programName());
+            if (programName != null)
+            {
+                programEnd.ProgramName = new ProgramName(programName);
+            }
+
+            CodeElement = programEnd;
         }
+
+        public override void EnterAuthoringProperties(CobolParser.AuthoringPropertiesContext context)
+        {
+            AuthoringProperties authoringProperties = new AuthoringProperties();
+
+            if(context.authorParagraph() != null)
+            {
+                string commentEntries = BuildCommentEntriesText(context.authorParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Author = commentEntries;
+            }
+            if (context.dateCompiledParagraph() != null)
+            {
+                string commentEntries = BuildCommentEntriesText(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.DateCompiled = commentEntries;
+            }
+            if (context.dateWrittenParagraph() != null)
+            {
+                string commentEntries = BuildCommentEntriesText(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.DateWritten = commentEntries;
+            }
+            if (context.installationParagraph() != null)
+            {
+                string commentEntries = BuildCommentEntriesText(context.installationParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Installation = commentEntries;
+            }
+            if (context.securityParagraph() != null)
+            {
+                string commentEntries = BuildCommentEntriesText(context.securityParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Security = commentEntries;
+            }
+
+            if (CodeElement is ProgramIdentification)
+            {
+                ((ProgramIdentification)CodeElement).AuthoringProperties = authoringProperties;
+            }
+            else if (CodeElement is ClassIdentification)
+            {
+                ((ClassIdentification)CodeElement).AuthoringProperties = authoringProperties;
+            }
+            else if (CodeElement is MethodIdentification)
+            {
+                ((MethodIdentification)CodeElement).AuthoringProperties = authoringProperties;
+            }
+        }
+
+        private string BuildCommentEntriesText(IEnumerable<ITerminalNode> commentEntriesNodes)
+        {
+            StringBuilder sbCommentEntries = new StringBuilder();
+            bool isFirstLine = true;
+            foreach(ITerminalNode commentEntryNode in commentEntriesNodes)
+            {
+                if(isFirstLine)
+                {
+                    sbCommentEntries.Append(ParseTreeUtils.GetToken(commentEntryNode).Text);
+                    isFirstLine = false;
+                }
+                else
+                {
+                    sbCommentEntries.AppendLine();
+                    sbCommentEntries.Append(ParseTreeUtils.GetToken(commentEntryNode).Text);
+                }
+            }
+            return sbCommentEntries.ToString();
+        }
+
 
         // -- Class --
 
         public override void EnterClassIdentification(CobolParser.ClassIdentificationContext context)
         {
-            CodeElement = new ClassIdentification();
+            ClassIdentification classIdentification = new ClassIdentification();
+
+            if (context.className() != null)
+            {
+                if (context.className().Count >= 1)
+                {
+                    Token className = ParseTreeUtils.GetSymbolOrLiteralToken(context.className()[0]);
+                    if (className != null)
+                    {
+                        classIdentification.ClassName = new ClassName(className);
+                    }
+                }
+                if (context.className().Count >= 2)
+                {
+                    Token className = ParseTreeUtils.GetSymbolOrLiteralToken(context.className()[1]);
+                    if (className != null)
+                    {
+                        classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(className));
+                    }
+                }
+            }
+
+            CodeElement = classIdentification;
         }
 
         public override void EnterClassEnd(CobolParser.ClassEndContext context)
         {
-            CodeElement = new ClassEnd();
+            ClassEnd classEnd = new ClassEnd();
+
+            Token className = ParseTreeUtils.GetSymbolOrLiteralToken(context.className());
+            if (className != null)
+            {
+                classEnd.ClassName = new ClassName(className);
+            }
+
+            CodeElement = classEnd;
         }
 
         public override void EnterFactoryIdentification(CobolParser.FactoryIdentificationContext context)
@@ -79,12 +208,28 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMethodIdentification(CobolParser.MethodIdentificationContext context)
         {
-            CodeElement = new MethodIdentification();
+            MethodIdentification methodIdentification = new MethodIdentification();
+
+            Token methodName = ParseTreeUtils.GetSymbolOrLiteralToken(context.methodName());
+            if (methodName != null)
+            {
+                methodIdentification.MethodName = new MethodName(methodName);
+            }
+
+            CodeElement = methodIdentification;
         }
 
         public override void EnterMethodEnd(CobolParser.MethodEndContext context)
         {
-            CodeElement = new MethodEnd();
+            MethodEnd methodEnd = new MethodEnd();
+
+            Token methodName = ParseTreeUtils.GetSymbolOrLiteralToken(context.methodName());
+            if (methodName != null)
+            {
+                methodEnd.MethodName = new MethodName(methodName);
+            }
+
+            CodeElement = methodEnd;
         }
 
         // -- Division --
@@ -115,7 +260,7 @@ namespace TypeCobol.Compiler.Parser
                     }
                     foreach(var dataNameContext in inputParametersContext.dataName())
                     {
-                        string dataName = ParseTreeUtils.GetUserDefinedWord(dataNameContext);
+                        Token dataName = ParseTreeUtils.GetSymbolOrLiteralToken(dataNameContext);
                         InputParameter inputParameter = new InputParameter() { ReceivingMode = receivingMode, DataName = new DataName(dataName) };
 
                         if (procedureDivisionHeader.UsingParameters == null)
@@ -129,7 +274,7 @@ namespace TypeCobol.Compiler.Parser
 
             if(context.returningPhrase() != null)
             {
-                string dataName = ParseTreeUtils.GetUserDefinedWord(context.returningPhrase().dataName());
+                Token dataName = ParseTreeUtils.GetSymbolOrLiteralToken(context.returningPhrase().dataName());
                 if(dataName != null)
                 {
                     procedureDivisionHeader.ReturningDataName = new DataName(dataName);
@@ -155,7 +300,7 @@ namespace TypeCobol.Compiler.Parser
         {
             SectionHeader sectionHeader = new SectionHeader();
 
-            string sectionName = ParseTreeUtils.GetUserDefinedWord(context.sectionName());
+            Token sectionName = ParseTreeUtils.GetSymbolOrLiteralToken(context.sectionName());
             if (sectionName != null)
             {
                 sectionHeader.SectionName = new SectionName(sectionName);
@@ -202,7 +347,7 @@ namespace TypeCobol.Compiler.Parser
         {
             ParagraphHeader paragraphHeader = new ParagraphHeader();
 
-            string paragraphName = ParseTreeUtils.GetUserDefinedWord(context.paragraphName());
+            Token paragraphName = ParseTreeUtils.GetSymbolOrLiteralToken(context.paragraphName());
             if (paragraphName != null)
             {
                 paragraphHeader.ParagraphName = new ParagraphName(paragraphName);

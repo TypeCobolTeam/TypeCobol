@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,7 +9,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ParagraphName : Symbol
     {
-        public ParagraphName(string userDefinedWord) :
+        public ParagraphName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.ParagraphName)
         { }
     }

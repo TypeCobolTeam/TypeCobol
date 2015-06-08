@@ -2,12 +2,16 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    /// <summary>
+    /// Class IDENTIFICATION DIVISION
+    /// For a class, the first paragraph of the IDENTIFICATION DIVISION must
+    /// be the CLASS-ID paragraph. The other paragraphs are optional and can
+    /// appear in any order.
+    /// </summary>
     public class ClassIdentification : CodeElement
     {
         public ClassIdentification() : base(CodeElementType.ClassIdentification)
-        {
-            AuthoringProperties = new AuthoringProperties();
-        }
+        { }
 
         /// <summary>
         /// class-name
@@ -15,7 +19,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// have an entry in the REPOSITORY paragraph of the configuration section
         /// of the class definition.
         /// </summary>
-        public ClassName Name { get; set; }
+        public ClassName ClassName { get; set; }
 
         /// <summary>
         /// INHERITS
@@ -40,5 +44,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// AUTHOR, INSTALLATION, DATE-WRITTEN, DATE-COMPILED, SECURITY
         /// </summary>
         public AuthoringProperties AuthoringProperties { get; set; }
+        
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            string result = base.ToString() + "{ClassName=" + ClassName + ",InheritsFromClassName=" + InheritsFromClassName ;
+            if(AuthoringProperties != null)
+            {
+                result += " / " + AuthoringProperties.ToString();
+            }
+            return result + "}";
+        }
     }
 }

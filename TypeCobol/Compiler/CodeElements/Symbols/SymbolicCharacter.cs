@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -12,7 +13,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SymbolicCharacter : Symbol
     {
-        public SymbolicCharacter(string symbolicCharacter) :
+        public SymbolicCharacter(Token symbolicCharacter) :
             base(symbolicCharacter, SymbolType.SymbolicCharacter)
         { }
     }
