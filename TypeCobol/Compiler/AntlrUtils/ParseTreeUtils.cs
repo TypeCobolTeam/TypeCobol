@@ -27,17 +27,24 @@ namespace TypeCobol.Compiler.AntlrUtils
             return (ITerminalNode)node;
         }
 
-        public static Token GetToken(ITerminalNode terminalNode)
+        public static Token GetTokenFromTerminalNode(ITerminalNode terminalNode)
         {
             return (Token)terminalNode.Symbol;
         }
 
-        public static Token GetSymbolOrLiteralToken(IParseTree node)
+        public static Token GetFirstToken(IParseTree node)
         {
-            ITerminalNode terminalNode = GetFirstTerminalNode(node);
-            if (terminalNode != null)
+            if (node != null)
             {
-                return GetToken(terminalNode);
+                ITerminalNode terminalNode = GetFirstTerminalNode(node);
+                if (terminalNode != null)
+                {
+                    return GetTokenFromTerminalNode(terminalNode);
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -54,7 +61,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 ITerminalNode terminalNode = GetFirstTerminalNode(node);
                 if (terminalNode != null)
                 {
-                    Token userDefinedWordToken = GetToken(terminalNode);
+                    Token userDefinedWordToken = GetTokenFromTerminalNode(terminalNode);
                     if (userDefinedWordToken.TokenType == TokenType.UserDefinedWord)
                     {
                         return userDefinedWordToken.Text;
@@ -71,7 +78,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 ITerminalNode terminalNode = GetFirstTerminalNode(node);
                 if (terminalNode != null)
                 {
-                    Token integerLiteralToken = GetToken(terminalNode);
+                    Token integerLiteralToken = GetTokenFromTerminalNode(terminalNode);
                     if (integerLiteralToken.TokenType == TokenType.IntegerLiteral)
                     {
                         return ((IntegerLiteralValue)integerLiteralToken.LiteralValue).Number;
@@ -88,7 +95,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 ITerminalNode terminalNode = GetFirstTerminalNode(node);
                 if (terminalNode != null)
                 {
-                    Token numericLiteralToken = GetToken(terminalNode);
+                    Token numericLiteralToken = GetTokenFromTerminalNode(terminalNode);
                     if (numericLiteralToken.TokenType == TokenType.IntegerLiteral)
                     {
                         return ((IntegerLiteralValue)numericLiteralToken.LiteralValue).Number;
@@ -113,7 +120,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 ITerminalNode terminalNode = GetFirstTerminalNode(node);
                 if (terminalNode != null)
                 {
-                    Token alphaNumericLiteralToken = GetToken(terminalNode);
+                    Token alphaNumericLiteralToken = GetTokenFromTerminalNode(terminalNode);
                     if (alphaNumericLiteralToken.TokenFamily == TokenFamily.AlphanumericLiteral)
                     {
                         return ((AlphanumericLiteralValue)alphaNumericLiteralToken.LiteralValue).Text;

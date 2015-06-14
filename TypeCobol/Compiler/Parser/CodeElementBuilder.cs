@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Antlr4.Runtime.Tree;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Scanner;
-using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-using System.Text;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -45,22 +43,25 @@ namespace TypeCobol.Compiler.Parser
         {
             ProgramIdentification programIdentification = new ProgramIdentification();
 
-            Token programName = ParseTreeUtils.GetSymbolOrLiteralToken(context.programName());
+            Token programName = ParseTreeUtils.GetFirstToken(context.programName());
             if (programName != null)
             {
                 programIdentification.ProgramName = new ProgramName(programName);
             }
-            if(context.COMMON() != null)
+            Token commonFlag = ParseTreeUtils.GetFirstToken(context.COMMON());
+            if(commonFlag != null)
             {
-                programIdentification.IsCommon = true;
+                programIdentification.IsCommon = new SyntaxBoolean(commonFlag);
             }
-            if(context.INITIAL() != null)
+            Token initialFlag = ParseTreeUtils.GetFirstToken(context.INITIAL());
+            if (initialFlag != null)
             {
-                programIdentification.IsInitial = true;
+                programIdentification.IsInitial = new SyntaxBoolean(initialFlag);
             }
-            if(context.RECURSIVE() != null)
+            Token recursiveFlag = ParseTreeUtils.GetFirstToken(context.RECURSIVE());
+            if (recursiveFlag != null)
             {
-                programIdentification.IsRecursive = true;
+                programIdentification.IsRecursive = new SyntaxBoolean(recursiveFlag);
             }
 
             CodeElement = programIdentification;
@@ -70,7 +71,7 @@ namespace TypeCobol.Compiler.Parser
         {
             ProgramEnd programEnd = new ProgramEnd();
 
-            Token programName = ParseTreeUtils.GetSymbolOrLiteralToken(context.programName());
+            Token programName = ParseTreeUtils.GetFirstToken(context.programName());
             if (programName != null)
             {
                 programEnd.ProgramName = new ProgramName(programName);
@@ -131,13 +132,13 @@ namespace TypeCobol.Compiler.Parser
             {
                 if(isFirstLine)
                 {
-                    sbCommentEntries.Append(ParseTreeUtils.GetToken(commentEntryNode).Text);
+                    sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                     isFirstLine = false;
                 }
                 else
                 {
                     sbCommentEntries.AppendLine();
-                    sbCommentEntries.Append(ParseTreeUtils.GetToken(commentEntryNode).Text);
+                    sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                 }
             }
             return sbCommentEntries.ToString();
@@ -154,7 +155,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (context.className().Count >= 1)
                 {
-                    Token className = ParseTreeUtils.GetSymbolOrLiteralToken(context.className()[0]);
+                    Token className = ParseTreeUtils.GetFirstToken(context.className()[0]);
                     if (className != null)
                     {
                         classIdentification.ClassName = new ClassName(className);
@@ -162,7 +163,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 if (context.className().Count >= 2)
                 {
-                    Token className = ParseTreeUtils.GetSymbolOrLiteralToken(context.className()[1]);
+                    Token className = ParseTreeUtils.GetFirstToken(context.className()[1]);
                     if (className != null)
                     {
                         classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(className));
@@ -177,7 +178,7 @@ namespace TypeCobol.Compiler.Parser
         {
             ClassEnd classEnd = new ClassEnd();
 
-            Token className = ParseTreeUtils.GetSymbolOrLiteralToken(context.className());
+            Token className = ParseTreeUtils.GetFirstToken(context.className());
             if (className != null)
             {
                 classEnd.ClassName = new ClassName(className);
@@ -210,7 +211,7 @@ namespace TypeCobol.Compiler.Parser
         {
             MethodIdentification methodIdentification = new MethodIdentification();
 
-            Token methodName = ParseTreeUtils.GetSymbolOrLiteralToken(context.methodName());
+            Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
             if (methodName != null)
             {
                 methodIdentification.MethodName = new MethodName(methodName);
@@ -223,7 +224,7 @@ namespace TypeCobol.Compiler.Parser
         {
             MethodEnd methodEnd = new MethodEnd();
 
-            Token methodName = ParseTreeUtils.GetSymbolOrLiteralToken(context.methodName());
+            Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
             if (methodName != null)
             {
                 methodEnd.MethodName = new MethodName(methodName);
@@ -260,7 +261,7 @@ namespace TypeCobol.Compiler.Parser
                     }
                     foreach(var dataNameContext in inputParametersContext.dataName())
                     {
-                        Token dataName = ParseTreeUtils.GetSymbolOrLiteralToken(dataNameContext);
+                        Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
                         InputParameter inputParameter = new InputParameter() { ReceivingMode = receivingMode, DataName = new DataName(dataName) };
 
                         if (procedureDivisionHeader.UsingParameters == null)
@@ -274,7 +275,7 @@ namespace TypeCobol.Compiler.Parser
 
             if(context.returningPhrase() != null)
             {
-                Token dataName = ParseTreeUtils.GetSymbolOrLiteralToken(context.returningPhrase().dataName());
+                Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataName());
                 if(dataName != null)
                 {
                     procedureDivisionHeader.ReturningDataName = new DataName(dataName);
@@ -300,7 +301,7 @@ namespace TypeCobol.Compiler.Parser
         {
             SectionHeader sectionHeader = new SectionHeader();
 
-            Token sectionName = ParseTreeUtils.GetSymbolOrLiteralToken(context.sectionName());
+            Token sectionName = ParseTreeUtils.GetFirstToken(context.sectionName());
             if (sectionName != null)
             {
                 sectionHeader.SectionName = new SectionName(sectionName);
@@ -347,7 +348,7 @@ namespace TypeCobol.Compiler.Parser
         {
             ParagraphHeader paragraphHeader = new ParagraphHeader();
 
-            Token paragraphName = ParseTreeUtils.GetSymbolOrLiteralToken(context.paragraphName());
+            Token paragraphName = ParseTreeUtils.GetFirstToken(context.paragraphName());
             if (paragraphName != null)
             {
                 paragraphHeader.ParagraphName = new ParagraphName(paragraphName);

@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
                 else
                 {
-                    Token errorToken = ParseTreeUtils.GetToken(context.UserDefinedWord());
+                    Token errorToken = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
                     Diagnostic diag = new Diagnostic(
                         MessageCode.InvalidControlCblCompilerStatementOption, 
                         errorToken.Column, errorToken.EndColumn,

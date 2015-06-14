@@ -128,6 +128,9 @@
     <Compile Include="Compiler\CodeElements\Entry\FileDescriptionEntry.cs" />
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\SyntaxBoolean.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\SyntaxInteger.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\SyntaxString.cs" />
     <Compile Include="Compiler\CodeElements\Header\ConfigurationSectionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\DataDivisionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\DeclarativesEnd.cs" />
@@ -155,7 +158,7 @@
     <Compile Include="Compiler\CodeElements\Identification\ObjectIdentification.cs" />
     <Compile Include="Compiler\CodeElements\Identification\ProgramEnd.cs" />
     <Compile Include="Compiler\CodeElements\Identification\ProgramIdentification.cs" />
-    <Compile Include="Compiler\CodeElements\LiteralExpressionValue.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\LiteralExpressionValue.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\ObjectComputerParagraph.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\RepositoryParagraph.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\SourceComputerParagraph.cs" />
@@ -287,6 +290,7 @@
     <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
+    <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
     <Compile Include="Compiler\Parser\SyntaxDocument.cs" />
     <Compile Include="Compiler\Parser\TracingCobolParser.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />
@@ -346,7 +350,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Compiler\CodeElements\Expressions\" />
     <Folder Include="Documentation\Presentations\" />
   </ItemGroup>
   <ItemGroup>
