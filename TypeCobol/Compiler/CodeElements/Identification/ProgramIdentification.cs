@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -84,12 +85,16 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            string result = base.ToString() + "{ProgramName=" + ProgramName + ",IsInitial=" + IsInitial + ",IsRecursive=" + IsRecursive + ",IsCommon=" + IsCommon;
+            StringBuilder sb = new StringBuilder(base.ToString());
+            sb.AppendLine("- ProgramName = " + ProgramName);
+            sb.AppendLine("- IsInitial = " + IsInitial);
+            sb.AppendLine("- IsRecursive = " + IsRecursive);
+            sb.AppendLine("- IsCommon = " + IsCommon);
             if (AuthoringProperties != null)
             {
-                result += " / " + AuthoringProperties.ToString();
+                sb.Append(AuthoringProperties);
             }
-            return result + "}";
+            return sb.ToString();
         }
     }
 }

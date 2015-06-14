@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -50,12 +51,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            string result = base.ToString() + "{ClassName=" + ClassName + ",InheritsFromClassName=" + InheritsFromClassName ;
+            StringBuilder sb = new StringBuilder(base.ToString());
+            sb.AppendLine("- ClassName = " + ClassName);
+            sb.AppendLine("- InheritsFromClassName = " + InheritsFromClassName);
             if(AuthoringProperties != null)
             {
-                result += " / " + AuthoringProperties.ToString();
+                sb.Append(AuthoringProperties);
             }
-            return result + "}";
+            return sb.ToString();
         }
     }
 }

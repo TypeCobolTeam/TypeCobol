@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -39,7 +40,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            return "[" + Type.ToString() + " : "+ ConsumedTokens[0].ToString() +" --> " + ConsumedTokens[ConsumedTokens.Count-1].ToString() + "]";
+            StringBuilder sb = new StringBuilder("[[");
+            sb.Append(Type);
+            sb.Append("]] ");
+            sb.Append(ConsumedTokens[0]).ToString();
+            sb.Append(" --> ");
+            sb.AppendLine(ConsumedTokens[ConsumedTokens.Count-1].ToString());
+            return sb.ToString();
         }
     }
 }

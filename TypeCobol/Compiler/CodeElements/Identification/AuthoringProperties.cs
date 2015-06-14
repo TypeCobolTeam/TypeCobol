@@ -53,35 +53,24 @@ namespace TypeCobol.Compiler.CodeElements
             StringBuilder sb = new StringBuilder();
             if(!String.IsNullOrEmpty(Author))
             {
-                sb.Append("AUTHOR=|");
-                sb.Append(Author);
-                sb.Append("| ");
+                sb.AppendLine("- AUTHOR = " + Author.Replace("\r", " ").Replace("\n", " "));
             }
             if (!String.IsNullOrEmpty(DateCompiled))
             {
-                sb.Append("DATE-COMPILED=|");
-                sb.Append(DateCompiled);
-                sb.Append("| ");
+                sb.AppendLine("- DATE-COMPILED = " + DateCompiled.Replace("\r", " ").Replace("\n", " "));
             }
             if (!String.IsNullOrEmpty(DateWritten))
             {
-                sb.Append("DATE-WRITTEN=|");
-                sb.Append(DateWritten);
-                sb.Append("| ");
+                sb.AppendLine("- DATE-WRITTEN = " + DateWritten.Replace("\r", " ").Replace("\n", " "));
             }
             if (!String.IsNullOrEmpty(Installation))
             {
-                sb.Append("INSTALLATION=|");
-                sb.Append(Installation);
-                sb.Append("| ");
+                sb.AppendLine("- INSTALLATION = " + Installation.Replace("\r", " ").Replace("\n", " "));
             }
             if (!String.IsNullOrEmpty(Security))
             {
-                sb.Append("SECURITY=|");
-                sb.Append(Security);
-                sb.Append("| ");
+                sb.AppendLine("- SECURITY = " + Security.Replace("\r", " ").Replace("\n", " "));
             }
-
             return sb.ToString();
         }
     }

@@ -1,7 +1,13 @@
 ﻿--- Code Elements ---
-[AtEndCondition : [8,9:AT]<AT> --> [11,13:END]<END>]
-[AtEndCondition : [8,10:END]<END> --> [8,10:END]<END>]
-[AtEndOfPageCondtion : [8,9:AT]<AT> --> [11,21:END-OF-PAGE]<END_OF_PAGE>]
-[AtEndOfPageCondtion : [8,18:END-OF-PAGE]<END_OF_PAGE> --> [8,18:END-OF-PAGE]<END_OF_PAGE>]
-[AtEndOfPageCondtion : [8,9:AT]<AT> --> [11,13:EOP]<EOP>]
-[AtEndOfPageCondtion : [8,10:EOP]<EOP> --> [8,10:EOP]<EOP>]
+[[AtEndCondition]] [8,9:AT]<AT> --> [11,13:END]<END>
+
+[[AtEndCondition]] [8,10:END]<END> --> [8,10:END]<END>
+
+[[AtEndOfPageCondition]] [8,9:AT]<AT> --> [11,21:END-OF-PAGE]<END_OF_PAGE>
+
+[[AtEndOfPageCondition]] [8,18:END-OF-PAGE]<END_OF_PAGE> --> [8,18:END-OF-PAGE]<END_OF_PAGE>
+
+[[AtEndOfPageCondition]] [8,9:AT]<AT> --> [11,13:EOP]<EOP>
+
+[[AtEndOfPageCondition]] [8,10:EOP]<EOP> --> [8,10:EOP]<EOP>
+

@@ -1,11 +1,12 @@
 // IBM Enterprise Cobol 5.1 for zOS
 
-// -------------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // Common parts of the Cobol grammar used by the Cobol compiler directives
-// and by the Cobol statements (imported by Cobol.g4 and CobolDirectives.g4)
-// -------------------------------------------------------------------------
+// and by the Cobol code elements (imported by CobolCompilerDirectives.g4 
+// and by CobolCodeElements.g4) : tokens, token families and literals.
+// -----------------------------------------------------------------------
 
-grammar CobolCommon;
+grammar CobolBase;
 
 // ****************************
 // Step 1 - Characters encoding
@@ -1150,7 +1151,7 @@ grammar CobolCommon;
 // Words or literals containing DBCS characters cannot be continued across
 // lines.
 
-// --- TOKEN TYPES --
+// --- Cobol TOKEN TYPES --
 
 tokens 
 {  
@@ -1656,6 +1657,10 @@ alphanumericLiteralBase:
                        HexadecimalAlphanumericLiteral |                      
                        figurativeConstant;
 
+alphanumOrHexadecimalLiteral :
+                              AlphanumericLiteral |
+                              HexadecimalAlphanumericLiteral;
+
 // p13: You can use a figurative constant wherever literal appears in a syntax diagram,
 // except where explicitly prohibited.
 
@@ -1700,36 +1705,38 @@ literal:
            alphanumOrNationalLiteral |
            numericLiteral;
 
+// Special registers
+
 specialRegister : 
-(DEBUG_CONTENTS |
-DEBUG_ITEM |
-DEBUG_LINE |
-DEBUG_NAME |
-DEBUG_SUB_1 |
-DEBUG_SUB_2 |
-DEBUG_SUB_3 |
-JNIENVPTR |
-LINAGE_COUNTER |
-RETURN_CODE |
-SHIFT_IN |
-SHIFT_OUT |
-SORT_CONTROL |
-SORT_CORE_SIZE |
-SORT_FILE_SIZE |
-SORT_MESSAGE |
-SORT_MODE_SIZE |
-SORT_RETURN |
-TALLY |
-WHEN_COMPILED |
-XML_CODE |
-XML_EVENT |
-XML_INFORMATION |
-XML_NAMESPACE |
-XML_NAMESPACE_PREFIX |
-XML_NNAMESPACE |
-XML_NNAMESPACE_PREFIX |
-XML_NTEXT |
-XML_TEXT);
+    (DEBUG_CONTENTS |
+    DEBUG_ITEM |
+    DEBUG_LINE |
+    DEBUG_NAME |
+    DEBUG_SUB_1 |
+    DEBUG_SUB_2 |
+    DEBUG_SUB_3 |
+    JNIENVPTR |
+    LINAGE_COUNTER |
+    RETURN_CODE |
+    SHIFT_IN |
+    SHIFT_OUT |
+    SORT_CONTROL |
+    SORT_CORE_SIZE |
+    SORT_FILE_SIZE |
+    SORT_MESSAGE |
+    SORT_MODE_SIZE |
+    SORT_RETURN |
+    TALLY |
+    WHEN_COMPILED |
+    XML_CODE |
+    XML_EVENT |
+    XML_INFORMATION |
+    XML_NAMESPACE |
+    XML_NAMESPACE_PREFIX |
+    XML_NNAMESPACE |
+    XML_NNAMESPACE_PREFIX |
+    XML_NTEXT |
+    XML_TEXT);
 
 // Reserved words
 

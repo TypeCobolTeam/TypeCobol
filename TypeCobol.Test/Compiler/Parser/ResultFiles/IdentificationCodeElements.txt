@@ -1,21 +1,70 @@
 ﻿--- Code Elements ---
-[ClassEnd : [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>]{ClassName=MyClass}
-[ClassIdentification : [8,9:ID]<ID> --> [63,63+:.]<PeriodSeparator>]{ClassName=MyClass1,InheritsFromClassName=JavaLangObject / }
-[ClassIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,31:              31/12/2030]<CommentEntry>]{ClassName=MyClass2,InheritsFromClassName=MyFatherClass / AUTHOR=|Mister X
-        Mister Y| DATE-WRITTEN=|01/01/1900
-              31/12/2030| }
-[FactoryEnd : [8,10:END]<END> --> [19,19+:.]<PeriodSeparator>]
-[FactoryIdentification : [8,9:ID]<ID> --> [28,28+:.]<PeriodSeparator>]
-[FactoryIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [40,40+:.]<PeriodSeparator>]
-[MethodEnd : [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>]{MethodName=MyMethod}
-[MethodIdentification : [8,9:ID]<ID> --> [43,43+:.]<PeriodSeparator>]{MethodName=MyMethod1 / }
-[MethodIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [22,26:Never]<CommentEntry>]{MethodName=MyMethod2 / DATE-COMPILED=|01/01/2000| INSTALLATION=|Never| SECURITY=|None| }
-[ObjectEnd : [8,10:END]<END> --> [18,18+:.]<PeriodSeparator>]
-[ObjectIdentification : [8,9:ID]<ID> --> [27,27+:.]<PeriodSeparator>]
-[ObjectIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [39,39+:.]<PeriodSeparator>]
-[ProgramEnd : [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>]{ProgramName=MyProgram}
-[ProgramIdentification : [8,9:ID]<ID> --> [43,43+:.]<PeriodSeparator>]{ProgramName=MyProgram1,IsInitial=False,IsRecursive=False,IsCommon=False / }
-[ProgramIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [18,23:Hidden]<CommentEntry>]{ProgramName=MyProgram2,IsInitial=False,IsRecursive=True,IsCommon=False / AUTHOR=|Toto| DATE-COMPILED=|Date 1| DATE-WRITTEN=|Date 2| INSTALLATION=|Environment 1
-    Environment 2| SECURITY=|Hidden| }
-[ProgramIdentification : [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,14:INITIAL]<INITIAL>]{ProgramName=MyProgram3,IsInitial=True,IsRecursive=False,IsCommon=True / }
-[ProgramIdentification : [8,9:ID]<ID> --> [58,58+:.]<PeriodSeparator>]{ProgramName=MyProgram4,IsInitial=False,IsRecursive=False,IsCommon=True / }
+[[ClassEnd]] [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>
+- ClassName = MyClass
+
+[[ClassIdentification]] [8,9:ID]<ID> --> [63,63+:.]<PeriodSeparator>
+- ClassName = MyClass1
+- InheritsFromClassName = JavaLangObject
+
+[[ClassIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,31:              31/12/2030]<CommentEntry>
+- ClassName = MyClass2
+- InheritsFromClassName = MyFatherClass
+- AUTHOR = Mister X          Mister Y
+- DATE-WRITTEN = 01/01/1900                31/12/2030
+
+[[FactoryEnd]] [8,10:END]<END> --> [19,19+:.]<PeriodSeparator>
+
+[[FactoryIdentification]] [8,9:ID]<ID> --> [28,28+:.]<PeriodSeparator>
+
+[[FactoryIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [40,40+:.]<PeriodSeparator>
+
+[[MethodEnd]] [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>
+- MethodName = MyMethod
+
+[[MethodIdentification]] [8,9:ID]<ID> --> [43,43+:.]<PeriodSeparator>
+- MethodName = MyMethod1
+
+[[MethodIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [22,26:Never]<CommentEntry>
+- MethodName = MyMethod2
+- DATE-COMPILED = 01/01/2000
+- INSTALLATION = Never
+- SECURITY = None
+
+[[ObjectEnd]] [8,10:END]<END> --> [18,18+:.]<PeriodSeparator>
+
+[[ObjectIdentification]] [8,9:ID]<ID> --> [27,27+:.]<PeriodSeparator>
+
+[[ObjectIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [39,39+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>
+- ProgramName = MyProgram
+
+[[ProgramIdentification]] [8,9:ID]<ID> --> [43,43+:.]<PeriodSeparator>
+- ProgramName = MyProgram1
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [18,23:Hidden]<CommentEntry>
+- ProgramName = MyProgram2
+- IsInitial = False
+- IsRecursive = True
+- IsCommon = False
+- AUTHOR = Toto
+- DATE-COMPILED = Date 1
+- DATE-WRITTEN = Date 2
+- INSTALLATION = Environment 1      Environment 2
+- SECURITY = Hidden
+
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,14:INITIAL]<INITIAL>
+- ProgramName = MyProgram3
+- IsInitial = True
+- IsRecursive = False
+- IsCommon = True
+
+[[ProgramIdentification]] [8,9:ID]<ID> --> [58,58+:.]<PeriodSeparator>
+- ProgramName = MyProgram4
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = True
+

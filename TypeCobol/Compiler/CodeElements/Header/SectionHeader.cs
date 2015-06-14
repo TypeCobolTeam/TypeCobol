@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -36,12 +37,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            string result = base.ToString() + "{SectionName=" + SectionName.Name;
+            StringBuilder sb = new StringBuilder(base.ToString());
+            sb.AppendLine("- SectionName = " + SectionName);
             if(PriorityNumber != null)
             {
-                result += ",PriorityNumber=" + PriorityNumber;
+                sb.AppendLine("- PriorityNumber = " + PriorityNumber);
             }
-            return result + "}";
+            return sb.ToString();
         }
     }
 }

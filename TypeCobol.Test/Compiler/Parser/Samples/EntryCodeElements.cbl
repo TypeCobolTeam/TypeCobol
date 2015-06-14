@@ -1,0 +1,6 @@
+000010 
+
+DataDescriptionEntry
+FileControlEntry
+FileDescriptionEntry
+IOControlEntry

@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Preprocessor
     /// <summary>
     /// Build a CompilerDirective object while visiting its parse tree
     /// </summary>
-    internal class CompilerDirectiveBuilder : CobolDirectivesBaseListener
+    internal class CompilerDirectiveBuilder : CobolCompilerDirectivesBaseListener
     {
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
@@ -30,18 +30,18 @@ namespace TypeCobol.Compiler.Preprocessor
         
         // --- Visiting the tree ---
 
-        public override void EnterCompilerDirectingStatement(CobolDirectivesParser.CompilerDirectingStatementContext context)
+        public override void EnterCompilerDirectingStatement(CobolCompilerDirectivesParser.CompilerDirectingStatementContext context)
         {
             CompilerDirective = null;
             Diagnostics = new List<Diagnostic>();
         }
 
-        public override void EnterBasisCompilerStatement(CobolDirectivesParser.BasisCompilerStatementContext context) 
+        public override void EnterBasisCompilerStatement(CobolCompilerDirectivesParser.BasisCompilerStatementContext context) 
         {
             CompilerDirective = new BasisDirective();
         }
         
-        public override void EnterBasisName(CobolDirectivesParser.BasisNameContext context) 
+        public override void EnterBasisName(CobolCompilerDirectivesParser.BasisNameContext context) 
         {
             string basisName = null;
             ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref basisName);
@@ -50,12 +50,12 @@ namespace TypeCobol.Compiler.Preprocessor
             ((BasisDirective)CompilerDirective).BasisName = basisName;
         }
         
-        public override void EnterControlCblCompilerStatement(CobolDirectivesParser.ControlCblCompilerStatementContext context) 
+        public override void EnterControlCblCompilerStatement(CobolCompilerDirectivesParser.ControlCblCompilerStatementContext context) 
         {
             CompilerDirective = new ControlCblDirective(context.ASTERISK_CONTROL() != null ? CompilerDirectiveType.ASTERISK_CONTROL : CompilerDirectiveType.ASTERISK_CBL);
         }
 
-        public override void EnterControlCblOption(CobolDirectivesParser.ControlCblOptionContext context) 
+        public override void EnterControlCblOption(CobolCompilerDirectivesParser.ControlCblOptionContext context) 
         {
             string option = null;
             ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref option);
@@ -78,12 +78,12 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
         
-        public override void EnterCopyCompilerStatement(CobolDirectivesParser.CopyCompilerStatementContext context) 
+        public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) 
         {
             CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY);
         }
         
-        public override void EnterTextName(CobolDirectivesParser.TextNameContext context)
+        public override void EnterTextName(CobolCompilerDirectivesParser.TextNameContext context)
         {
             CopyDirective copyDirective = CompilerDirective as CopyDirective;
             if (copyDirective != null)
@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public override void EnterLibraryName(CobolDirectivesParser.LibraryNameContext context)
+        public override void EnterLibraryName(CobolCompilerDirectivesParser.LibraryNameContext context)
         {
             CopyDirective copyDirective = CompilerDirective as CopyDirective;
             if (copyDirective != null)
@@ -107,7 +107,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public override void EnterCopyCompilerStatementBody(CobolDirectivesParser.CopyCompilerStatementBodyContext context) 
+        public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) 
         {
             CopyDirective copyDirective = (CopyDirective)CompilerDirective;
 
@@ -133,7 +133,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Used to distinguish pseudo-text1 and pseudo-text2
                 int pseudoTextIndex = 0;
 
-                foreach (CobolDirectivesParser.CopyReplacingOperandContext replacingOperandContext in context.copyReplacingOperand())
+                foreach (CobolCompilerDirectivesParser.CopyReplacingOperandContext replacingOperandContext in context.copyReplacingOperand())
                 {
                     // Get relevant tokens
                     IList<IToken> operandTokens = null;
@@ -251,12 +251,12 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public override void EnterDeleteCompilerStatement(CobolDirectivesParser.DeleteCompilerStatementContext context) 
+        public override void EnterDeleteCompilerStatement(CobolCompilerDirectivesParser.DeleteCompilerStatementContext context) 
         {
             CompilerDirective = new DeleteDirective();
         }
         
-        public override void EnterSequenceNumberElement(CobolDirectivesParser.SequenceNumberElementContext context) 
+        public override void EnterSequenceNumberElement(CobolCompilerDirectivesParser.SequenceNumberElementContext context) 
         {
             DeleteDirective deleteDirective = (DeleteDirective)CompilerDirective;
             DeleteDirective.SequenceNumberRange sequenceNumberRange = new DeleteDirective.SequenceNumberRange();
@@ -278,12 +278,12 @@ namespace TypeCobol.Compiler.Preprocessor
             deleteDirective.SequenceNumberRangesList.Add(sequenceNumberRange);
         }
 
-        public override void EnterEjectCompilerStatement(CobolDirectivesParser.EjectCompilerStatementContext context) 
+        public override void EnterEjectCompilerStatement(CobolCompilerDirectivesParser.EjectCompilerStatementContext context) 
         {
             CompilerDirective = new EjectDirective();
         }
         
-        public override void EnterEnterCompilerStatement(CobolDirectivesParser.EnterCompilerStatementContext context) 
+        public override void EnterEnterCompilerStatement(CobolCompilerDirectivesParser.EnterCompilerStatementContext context) 
         {
             EnterDirective enterDirective = new EnterDirective();
             CompilerDirective = enterDirective;
@@ -302,12 +302,12 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
         
-        public override void EnterExecSqlIncludeStatement(CobolDirectivesParser.ExecSqlIncludeStatementContext context) 
+        public override void EnterExecSqlIncludeStatement(CobolCompilerDirectivesParser.ExecSqlIncludeStatementContext context) 
         {
             CompilerDirective = new CopyDirective(CompilerDirectiveType.EXEC_SQL_INCLUDE);
         }
 
-        public override void EnterInsertCompilerStatement(CobolDirectivesParser.InsertCompilerStatementContext context) 
+        public override void EnterInsertCompilerStatement(CobolCompilerDirectivesParser.InsertCompilerStatementContext context) 
         {
             InsertDirective insertDirective = new InsertDirective();
             CompilerDirective = insertDirective;
@@ -318,12 +318,12 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
         
-        public override void EnterReadyOrResetTraceCompilerStatement(CobolDirectivesParser.ReadyOrResetTraceCompilerStatementContext context)
+        public override void EnterReadyOrResetTraceCompilerStatement(CobolCompilerDirectivesParser.ReadyOrResetTraceCompilerStatementContext context)
         {
             CompilerDirective = new ReadyOrResetTraceDirective(context.READY() != null ? CompilerDirectiveType.READY_TRACE : CompilerDirectiveType.RESET_TRACE);
         }
         
-        public override void EnterReplaceCompilerStatement(CobolDirectivesParser.ReplaceCompilerStatementContext context) 
+        public override void EnterReplaceCompilerStatement(CobolCompilerDirectivesParser.ReplaceCompilerStatementContext context) 
         {
             ReplaceDirective replaceDirective = new ReplaceDirective(context.OFF() == null ? CompilerDirectiveType.REPLACE : CompilerDirectiveType.REPLACE_OFF);
             CompilerDirective = replaceDirective;
@@ -339,7 +339,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Used to distinguish pseudo-text1 and pseudo-text2
                 int pseudoTextIndex = 0;
 
-                foreach(CobolDirectivesParser.PseudoTextContext pseudoTextContext in context.pseudoText())
+                foreach(CobolCompilerDirectivesParser.PseudoTextContext pseudoTextContext in context.pseudoText())
                 {
                     /*// Comparison tokens
                     if (pseudoTextIndex % 2 == 0)
@@ -416,12 +416,12 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
         
-        public override void EnterServiceLabelCompilerStatement(CobolDirectivesParser.ServiceLabelCompilerStatementContext context) 
+        public override void EnterServiceLabelCompilerStatement(CobolCompilerDirectivesParser.ServiceLabelCompilerStatementContext context) 
         {
             CompilerDirective = new ServiceLabelDirective();
         }
         
-        public override void EnterServiceReloadCompilerStatement(CobolDirectivesParser.ServiceReloadCompilerStatementContext context) 
+        public override void EnterServiceReloadCompilerStatement(CobolCompilerDirectivesParser.ServiceReloadCompilerStatementContext context) 
         {
             ServiceReloadDirective serviceReloadDirective = new ServiceReloadDirective();
             CompilerDirective = serviceReloadDirective;
@@ -431,7 +431,7 @@ namespace TypeCobol.Compiler.Preprocessor
             serviceReloadDirective.UserDefinedWord = userDefinedWord;
         }
                 
-        public override void EnterSkipCompilerStatement(CobolDirectivesParser.SkipCompilerStatementContext context) 
+        public override void EnterSkipCompilerStatement(CobolCompilerDirectivesParser.SkipCompilerStatementContext context) 
         { 
             if(context.SKIP1() != null)
             {
@@ -447,7 +447,7 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
                 
-        public override void EnterTitleCompilerStatement(CobolDirectivesParser.TitleCompilerStatementContext context) 
+        public override void EnterTitleCompilerStatement(CobolCompilerDirectivesParser.TitleCompilerStatementContext context) 
         {
             TitleDirective titleDirective = new TitleDirective();
             CompilerDirective = titleDirective;

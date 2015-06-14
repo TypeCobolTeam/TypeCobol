@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
+using TypeCobol.Test.Compiler.Pipeline;
 using TypeCobol.Test.Compiler.Preprocessor;
 using TypeCobol.Test.Compiler.Scanner;
 using TypeCobol.Test.Compiler.Text;
@@ -112,8 +113,32 @@ namespace TypeCobol.Test
 
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
+            TestCodeElements.Check_ParagraphCodeElements();
+            TestCodeElements.Check_EntryCodeElements();
 
-            TestParser.Check_ParserIntegration();
+            TestParser.Check_ParserIntegration(); 
+        }
+
+        public static void CheckPipeline()
+        {
+            TestFileWatcher.CheckAddProgramFile();
+            TestFileWatcher.CheckRenameProgramFile();
+            TestFileWatcher.CheckUpdateProgramFile();
+            TestFileWatcher.CheckRemoveProgramFile();
+
+            TestIncrementalScanner.CheckAddToken();
+            TestIncrementalScanner.CheckUpdateToken();
+            TestIncrementalScanner.CheckRemoveToken();
+
+            TestIncrementalPreprocessor.CheckAddCompilerDirective();
+            TestIncrementalPreprocessor.CheckUpdateCompilerDirective();
+            TestIncrementalPreprocessor.CheckRemoveCompilerDirective();
+
+            TestIncrementalParser.CheckAddCodeElement();
+            TestIncrementalParser.CheckUpdateCodeElement();
+            TestIncrementalParser.CheckRemoveCodeElement();
+
+            TestIncrementalPipeline.CheckUpdateFromFile();
         }
     }
 }

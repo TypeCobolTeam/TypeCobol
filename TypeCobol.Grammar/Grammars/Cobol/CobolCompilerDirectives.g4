@@ -1,12 +1,12 @@
 // IBM Enterprise Cobol 5.1 for zOS
 
-// --------------------------------------------------------------------
-// Grammar for the Cobol compiler directives (used by the preprocessor)
-// --------------------------------------------------------------------
+// -----------------------------------------------------------------------
+// Grammar used by the preprocessor to parse the Cobol compiler directives
+// -----------------------------------------------------------------------
 
-grammar CobolDirectives;
+grammar CobolCompilerDirectives;
 
-import CobolCommon;
+import CobolBase;
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
 // statements are processed to generate a source text suitable for subsequent parsing. 

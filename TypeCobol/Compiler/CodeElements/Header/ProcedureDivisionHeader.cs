@@ -42,23 +42,22 @@ namespace TypeCobol.Compiler.CodeElements
             else
             {
                 StringBuilder sb = new StringBuilder(base.ToString());
-                sb.Append("{InputParameters=");
                 if (UsingParameters != null)
                 {
+                    sb.Append("- InputParameters =");
                     foreach (InputParameter inputParam in UsingParameters)
                     {
                         sb.Append(' ');
-                        sb.Append(inputParam.ReceivingMode.ToString());
+                        sb.Append(inputParam.ReceivingMode);
                         sb.Append(':');
-                        sb.Append(inputParam.DataName.Name);
+                        sb.Append(inputParam.DataName);
                     }
-                }
-                sb.Append(",ReturningDataName=");
+                    sb.AppendLine();
+                }                
                 if (ReturningDataName != null)
                 {
-                    sb.Append(ReturningDataName.Name);
-                }
-                sb.Append('}');
+                    sb.AppendLine("- ReturningDataName = " + ReturningDataName);
+                }                
                 return sb.ToString();
             }
         }

@@ -152,5 +152,29 @@ namespace TypeCobol.Test.Compiler.Parser
             string result = ParserUtils.DumpCodeElements(compilationUnit);
             ParserUtils.CheckWithResultFile(result, testName);
         }
+
+        public static void Check_ParagraphCodeElements()
+        {
+            string testName = "ParagraphCodeElements";
+
+            // Compile test file
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
+
+            // Check code elements
+            string result = ParserUtils.DumpCodeElements(compilationUnit);
+            ParserUtils.CheckWithResultFile(result, testName);
+        }
+
+        public static void Check_EntryCodeElements()
+        {
+            string testName = "EntryCodeElements";
+
+            // Compile test file
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
+
+            // Check code elements
+            string result = ParserUtils.DumpCodeElements(compilationUnit);
+            ParserUtils.CheckWithResultFile(result, testName);
+        }
     }
 }

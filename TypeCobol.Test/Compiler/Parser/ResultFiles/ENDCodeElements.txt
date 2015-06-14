@@ -1,8 +1,18 @@
 ﻿--- Code Elements ---
-[AtEndCondition : [8,10:END]<END> --> [8,10:END]<END>]
-[ClassEnd : [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>]{ClassName=MyClass}
-[DeclarativesEnd : [8,10:END]<END> --> [24,24+:.]<PeriodSeparator>]
-[FactoryEnd : [8,10:END]<END> --> [19,19+:.]<PeriodSeparator>]
-[ObjectEnd : [8,10:END]<END> --> [18,18+:.]<PeriodSeparator>]
-[MethodEnd : [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>]{MethodName=MyMethod}
-[ProgramEnd : [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>]{ProgramName=MyProgram}
+[[AtEndCondition]] [8,10:END]<END> --> [8,10:END]<END>
+
+[[ClassEnd]] [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>
+- ClassName = MyClass
+
+[[DeclarativesEnd]] [8,10:END]<END> --> [24,24+:.]<PeriodSeparator>
+
+[[FactoryEnd]] [8,10:END]<END> --> [19,19+:.]<PeriodSeparator>
+
+[[ObjectEnd]] [8,10:END]<END> --> [18,18+:.]<PeriodSeparator>
+
+[[MethodEnd]] [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>
+- MethodName = MyMethod
+
+[[ProgramEnd]] [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>
+- ProgramName = MyProgram
+

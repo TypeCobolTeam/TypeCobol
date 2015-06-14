@@ -70,35 +70,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolBaseListener.cs">
-      <Link>Compiler\Parser\Generated\CobolBaseListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsBaseListener.cs">
+      <Link>Compiler\Parser\Generated\CobolCodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\CobolBaseVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\CobolCodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolDirectivesBaseListener.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolDirectivesBaseListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsListener.cs">
+      <Link>Compiler\Parser\Generated\CobolCodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolDirectivesBaseVisitor.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolDirectivesBaseVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsParser.cs">
+      <Link>Compiler\Parser\Generated\CobolCodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolDirectivesListener.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolDirectivesListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsVisitor.cs">
+      <Link>Compiler\Parser\Generated\CobolCodeElementsVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolDirectivesParser.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolDirectivesParser.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesBaseListener.cs">
+      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolDirectivesVisitor.cs">
-      <Link>Compiler\Preprocessor\Generated\CobolDirectivesVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesBaseVisitor.cs">
+      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolListener.cs">
-      <Link>Compiler\Parser\Generated\CobolListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesListener.cs">
+      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolParser.cs">
-      <Link>Compiler\Parser\Generated\CobolParser.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesParser.cs">
+      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesParser.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolVisitor.cs">
-      <Link>Compiler\Parser\Generated\CobolVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesVisitor.cs">
+      <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassBaseListener.cs">
+      <Link>Compiler\Parser\Generated\CobolProgramClassBaseListener.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\CobolProgramClassBaseVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassListener.cs">
+      <Link>Compiler\Parser\Generated\CobolProgramClassListener.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassParser.cs">
+      <Link>Compiler\Parser\Generated\CobolProgramClassParser.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassVisitor.cs">
+      <Link>Compiler\Parser\Generated\CobolProgramClassVisitor.cs</Link>
     </Compile>
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
@@ -227,8 +242,8 @@
     <Compile Include="Compiler\CodeElements\Statement\WriteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\XmlGenerateStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\XmlParseStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Symbol.cs" />
-    <Compile Include="Compiler\CodeElements\SymbolReference.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\Symbol.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\SymbolReference.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AlphabetName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AssignmentName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\CharsetClassName.cs" />
@@ -245,7 +260,7 @@
     <Compile Include="Compiler\CodeElements\Symbols\ProgramName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SymbolicCharacter.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\XmlSchemaName.cs" />
-    <Compile Include="Compiler\CodeElements\SymbolType.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\SymbolType.cs" />
     <Compile Include="Compiler\CodeModel\Class.cs" />
     <Compile Include="Compiler\CodeModel\FileDescription.cs" />
     <Compile Include="Compiler\CodeModel\Method.cs" />
@@ -331,6 +346,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Compiler\CodeElements\Expressions\" />
     <Folder Include="Documentation\Presentations\" />
   </ItemGroup>
   <ItemGroup>

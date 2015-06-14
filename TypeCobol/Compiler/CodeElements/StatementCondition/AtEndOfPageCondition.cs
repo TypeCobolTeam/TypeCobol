@@ -4,7 +4,7 @@ namespace TypeCobol.Compiler.CodeElements
 {
     public class AtEndOfPageCondition : CodeElement
     {
-        public AtEndOfPageCondition() : base(CodeElementType.AtEndOfPageCondtion)
+        public AtEndOfPageCondition() : base(CodeElementType.AtEndOfPageCondition)
         { }
     }
 }

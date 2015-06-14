@@ -56,15 +56,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Antlr4 Include="Grammars\Cobol\Cobol.g4">
+    <Antlr4 Include="Grammars\Cobol\CobolCodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
-    <None Include="Grammars\Cobol\CobolCommon.g4" />
-    <Antlr4 Include="Grammars\Cobol\CobolDirectives.g4">
+    <None Include="Grammars\Cobol\CobolBase.g4" />
+    <Antlr4 Include="Grammars\Cobol\CobolCompilerDirectives.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
+    <Antlr4 Include="Grammars\Cobol\CobolProgramClass.g4" />
     <None Include="Grammars\Cobol\TokenTypes.xlsx" />
     <None Include="packages.config" />
   </ItemGroup>

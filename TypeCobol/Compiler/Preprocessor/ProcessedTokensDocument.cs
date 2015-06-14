@@ -150,7 +150,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // Init a compiler directive parser
                 CommonTokenStream tokenStream = new CommonTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
-                CobolDirectivesParser directivesParser = new CobolDirectivesParser(tokenStream);
+                CobolCompilerDirectivesParser directivesParser = new CobolCompilerDirectivesParser(tokenStream);
                 IAntlrErrorStrategy compilerDirectiveErrorStrategy = new CompilerDirectiveErrorStrategy();
                 directivesParser.ErrorHandler = compilerDirectiveErrorStrategy;
 
@@ -193,7 +193,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     errorListener.Diagnostics.Clear();
 
                     // 3. Try to parse a compiler directive starting with the current token
-                    CobolDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
+                    CobolCompilerDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
 
                     // 4. Visit the parse tree to build a first class object representing the compiler directive
                     walker.Walk(directiveBuilder, directiveParseTree);

@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Parser
     /// <summary>
     /// Build a CodeElement object while visiting its parse tree
     /// </summary>
-    internal class CodeElementBuilder : CobolBaseListener
+    internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
         /// <summary>
         /// CodeElement object resulting of the visit the parse tree
@@ -31,7 +31,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Initialization code run before parsing each new CodeElement
         /// </summary>
-        public override void EnterCodeElement(CobolParser.CodeElementContext context)
+        public override void EnterCodeElement(CobolCodeElementsParser.CodeElementContext context)
         {
             CodeElement = null;
             Diagnostics = new List<Diagnostic>();
@@ -41,7 +41,7 @@ namespace TypeCobol.Compiler.Parser
 
         // -- Program --
 
-        public override void EnterProgramIdentification(CobolParser.ProgramIdentificationContext context)
+        public override void EnterProgramIdentification(CobolCodeElementsParser.ProgramIdentificationContext context)
         {
             ProgramIdentification programIdentification = new ProgramIdentification();
 
@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = programIdentification;
         }
 
-        public override void EnterProgramEnd(CobolParser.ProgramEndContext context)
+        public override void EnterProgramEnd(CobolCodeElementsParser.ProgramEndContext context)
         {
             ProgramEnd programEnd = new ProgramEnd();
 
@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = programEnd;
         }
 
-        public override void EnterAuthoringProperties(CobolParser.AuthoringPropertiesContext context)
+        public override void EnterAuthoringProperties(CobolCodeElementsParser.AuthoringPropertiesContext context)
         {
             AuthoringProperties authoringProperties = new AuthoringProperties();
 
@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.Parser
 
         // -- Class --
 
-        public override void EnterClassIdentification(CobolParser.ClassIdentificationContext context)
+        public override void EnterClassIdentification(CobolCodeElementsParser.ClassIdentificationContext context)
         {
             ClassIdentification classIdentification = new ClassIdentification();
 
@@ -173,7 +173,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = classIdentification;
         }
 
-        public override void EnterClassEnd(CobolParser.ClassEndContext context)
+        public override void EnterClassEnd(CobolCodeElementsParser.ClassEndContext context)
         {
             ClassEnd classEnd = new ClassEnd();
 
@@ -186,27 +186,27 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = classEnd;
         }
 
-        public override void EnterFactoryIdentification(CobolParser.FactoryIdentificationContext context)
+        public override void EnterFactoryIdentification(CobolCodeElementsParser.FactoryIdentificationContext context)
         {
             CodeElement = new FactoryIdentification();
         }
 
-        public override void EnterFactoryEnd(CobolParser.FactoryEndContext context)
+        public override void EnterFactoryEnd(CobolCodeElementsParser.FactoryEndContext context)
         {
             CodeElement = new FactoryEnd();
         }
 
-        public override void EnterObjectIdentification(CobolParser.ObjectIdentificationContext context)
+        public override void EnterObjectIdentification(CobolCodeElementsParser.ObjectIdentificationContext context)
         {
             CodeElement = new ObjectIdentification();
         }
 
-        public override void EnterObjectEnd(CobolParser.ObjectEndContext context)
+        public override void EnterObjectEnd(CobolCodeElementsParser.ObjectEndContext context)
         {
             CodeElement = new ObjectEnd();
         }
 
-        public override void EnterMethodIdentification(CobolParser.MethodIdentificationContext context)
+        public override void EnterMethodIdentification(CobolCodeElementsParser.MethodIdentificationContext context)
         {
             MethodIdentification methodIdentification = new MethodIdentification();
 
@@ -219,7 +219,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = methodIdentification;
         }
 
-        public override void EnterMethodEnd(CobolParser.MethodEndContext context)
+        public override void EnterMethodEnd(CobolCodeElementsParser.MethodEndContext context)
         {
             MethodEnd methodEnd = new MethodEnd();
 
@@ -234,17 +234,17 @@ namespace TypeCobol.Compiler.Parser
 
         // -- Division --
 
-        public override void EnterEnvironmentDivisionHeader(CobolParser.EnvironmentDivisionHeaderContext context)
+        public override void EnterEnvironmentDivisionHeader(CobolCodeElementsParser.EnvironmentDivisionHeaderContext context)
         {
             CodeElement = new EnvironmentDivisionHeader();
         }
 
-        public override void EnterDataDivisionHeader(CobolParser.DataDivisionHeaderContext context)
+        public override void EnterDataDivisionHeader(CobolCodeElementsParser.DataDivisionHeaderContext context)
         {
             CodeElement = new DataDivisionHeader();
         }
 
-        public override void EnterProcedureDivisionHeader(CobolParser.ProcedureDivisionHeaderContext context)
+        public override void EnterProcedureDivisionHeader(CobolCodeElementsParser.ProcedureDivisionHeaderContext context)
         {
             ProcedureDivisionHeader procedureDivisionHeader = new ProcedureDivisionHeader();
 
@@ -254,7 +254,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     ReceivingMode receivingMode = ReceivingMode.ByReference;
                     if(inputParametersContext.receivingMode() != null && 
-                       inputParametersContext.receivingMode() is CobolParser.ByValueContext)
+                       inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext)
                     {
                         receivingMode = ReceivingMode.ByValue;
                     }
@@ -284,19 +284,19 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = procedureDivisionHeader;
         }
 
-        public override void EnterDeclarativesHeader(CobolParser.DeclarativesHeaderContext context)
+        public override void EnterDeclarativesHeader(CobolCodeElementsParser.DeclarativesHeaderContext context)
         {
             CodeElement = new DeclarativesHeader();
         }
 
-        public override void EnterDeclarativesEnd(CobolParser.DeclarativesEndContext context)
+        public override void EnterDeclarativesEnd(CobolCodeElementsParser.DeclarativesEndContext context)
         {
             CodeElement = new DeclarativesEnd();
         }
 
         // -- Section --
 
-        public override void EnterSectionHeader(CobolParser.SectionHeaderContext context)
+        public override void EnterSectionHeader(CobolCodeElementsParser.SectionHeaderContext context)
         {
             SectionHeader sectionHeader = new SectionHeader();
 
@@ -311,39 +311,39 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = sectionHeader;
         }
 
-        public override void EnterConfigurationSectionHeader(CobolParser.ConfigurationSectionHeaderContext context)
+        public override void EnterConfigurationSectionHeader(CobolCodeElementsParser.ConfigurationSectionHeaderContext context)
         {
             CodeElement = new ConfigurationSectionHeader();
         }
 
-        public override void EnterInputOutputSectionHeader(CobolParser.InputOutputSectionHeaderContext context)
+        public override void EnterInputOutputSectionHeader(CobolCodeElementsParser.InputOutputSectionHeaderContext context)
         {
             CodeElement = new InputOutputSectionHeader();
         }
 
-        public override void EnterFileSectionHeader(CobolParser.FileSectionHeaderContext context)
+        public override void EnterFileSectionHeader(CobolCodeElementsParser.FileSectionHeaderContext context)
         {
             CodeElement = new FileSectionHeader();
         }
 
-        public override void EnterWorkingStorageSectionHeader(CobolParser.WorkingStorageSectionHeaderContext context)
+        public override void EnterWorkingStorageSectionHeader(CobolCodeElementsParser.WorkingStorageSectionHeaderContext context)
         {
             CodeElement = new WorkingStorageSectionHeader();
         }
 
-        public override void EnterLocalStorageSectionHeader(CobolParser.LocalStorageSectionHeaderContext context)
+        public override void EnterLocalStorageSectionHeader(CobolCodeElementsParser.LocalStorageSectionHeaderContext context)
         {
             CodeElement = new LocalStorageSectionHeader();
         }
 
-        public override void EnterLinkageSectionHeader(CobolParser.LinkageSectionHeaderContext context)
+        public override void EnterLinkageSectionHeader(CobolCodeElementsParser.LinkageSectionHeaderContext context)
         {
             CodeElement = new LinkageSectionHeader();
         }
 
         // -- Paragraph --
 
-        public override void EnterParagraphHeader(CobolParser.ParagraphHeaderContext context)
+        public override void EnterParagraphHeader(CobolCodeElementsParser.ParagraphHeaderContext context)
         {
             ParagraphHeader paragraphHeader = new ParagraphHeader();
 
@@ -356,19 +356,19 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = paragraphHeader;
         }
 
-        public override void EnterFileControlParagraphHeader(CobolParser.FileControlParagraphHeaderContext context)
+        public override void EnterFileControlParagraphHeader(CobolCodeElementsParser.FileControlParagraphHeaderContext context)
         {
             CodeElement = new FileControlParagraphHeader();
         }
 
-        public override void EnterIoControlParagraphHeader(CobolParser.IoControlParagraphHeaderContext context)
+        public override void EnterIoControlParagraphHeader(CobolCodeElementsParser.IoControlParagraphHeaderContext context)
         {
             CodeElement = new IOControlParagraphHeader();
         }
 
         // -- Sentence --
 
-        public override void EnterSentenceEnd(CobolParser.SentenceEndContext context)
+        public override void EnterSentenceEnd(CobolCodeElementsParser.SentenceEndContext context)
         {
             CodeElement = new SentenceEnd();
         }
@@ -377,24 +377,24 @@ namespace TypeCobol.Compiler.Parser
         
         // -- Data Division --
 
-        public override void EnterFileDescriptionEntry(CobolParser.FileDescriptionEntryContext context)
+        public override void EnterFileDescriptionEntry(CobolCodeElementsParser.FileDescriptionEntryContext context)
         {
             CodeElement = new FileDescriptionEntry();
         }
 
-        public override void EnterDataDescriptionEntry(CobolParser.DataDescriptionEntryContext context)
+        public override void EnterDataDescriptionEntry(CobolCodeElementsParser.DataDescriptionEntryContext context)
         {
             CodeElement = new DataDescriptionEntry();
         }
 
         // -- InputOutput Section --
 
-        public override void EnterFileControlEntry(CobolParser.FileControlEntryContext context)
+        public override void EnterFileControlEntry(CobolCodeElementsParser.FileControlEntryContext context)
         {
             CodeElement = new FileControlEntry();
         }
 
-        public override void EnterIoControlEntry(CobolParser.IoControlEntryContext context)
+        public override void EnterIoControlEntry(CobolCodeElementsParser.IoControlEntryContext context)
         {
             CodeElement = new IOControlEntry();
         }
@@ -403,438 +403,438 @@ namespace TypeCobol.Compiler.Parser
 
         // --Configuration Section --
 
-        public override void EnterSourceComputerParagraph(CobolParser.SourceComputerParagraphContext context)
+        public override void EnterSourceComputerParagraph(CobolCodeElementsParser.SourceComputerParagraphContext context)
         {
             CodeElement = new SourceComputerParagraph();
         }
 
-        public override void EnterObjectComputerParagraph(CobolParser.ObjectComputerParagraphContext context)
+        public override void EnterObjectComputerParagraph(CobolCodeElementsParser.ObjectComputerParagraphContext context)
         {
             CodeElement = new ObjectComputerParagraph();
         }
 
-        public override void EnterSpecialNamesParagraph(CobolParser.SpecialNamesParagraphContext context)
+        public override void EnterSpecialNamesParagraph(CobolCodeElementsParser.SpecialNamesParagraphContext context)
         {
             CodeElement = new SpecialNamesParagraph();
         }
 
-        public override void EnterRepositoryParagraph(CobolParser.RepositoryParagraphContext context)
+        public override void EnterRepositoryParagraph(CobolCodeElementsParser.RepositoryParagraphContext context)
         {
             CodeElement = new RepositoryParagraph();
         }
         
         // Statements
 
-        public override void EnterAcceptStatement(CobolParser.AcceptStatementContext context)
+        public override void EnterAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
         {
             CodeElement = new AcceptStatement();
         }
 
-        public override void EnterAddStatement(CobolParser.AddStatementContext context)
+        public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
         {
             CodeElement = new AddStatement();
         }
 
-        public override void EnterAlterStatement(CobolParser.AlterStatementContext context)
+        public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
         {
             CodeElement = new AlterStatement();
         }
 
-        public override void EnterCallStatement(CobolParser.CallStatementContext context)
+        public override void EnterCallStatement(CobolCodeElementsParser.CallStatementContext context)
         {
             CodeElement = new CallStatement();
         }
 
-        public override void EnterCancelStatement(CobolParser.CancelStatementContext context)
+        public override void EnterCancelStatement(CobolCodeElementsParser.CancelStatementContext context)
         {
             CodeElement = new CancelStatement();
         }
 
-        public override void EnterCloseStatement(CobolParser.CloseStatementContext context)
+        public override void EnterCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
         {
             CodeElement = new CloseStatement();
         }
 
-        public override void EnterComputeStatement(CobolParser.ComputeStatementContext context)
+        public override void EnterComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
         {
             CodeElement = new ComputeStatement();
         }
 
-        public override void EnterContinueStatement(CobolParser.ContinueStatementContext context)
+        public override void EnterContinueStatement(CobolCodeElementsParser.ContinueStatementContext context)
         {
             CodeElement = new ContinueStatement();
         }
 
-        public override void EnterDeleteStatement(CobolParser.DeleteStatementContext context)
+        public override void EnterDeleteStatement(CobolCodeElementsParser.DeleteStatementContext context)
         {
             CodeElement = new DeleteStatement();
         }
 
-        public override void EnterDisplayStatement(CobolParser.DisplayStatementContext context)
+        public override void EnterDisplayStatement(CobolCodeElementsParser.DisplayStatementContext context)
         {
             CodeElement = new DisplayStatement();
         }
 
-        public override void EnterDivideStatement(CobolParser.DivideStatementContext context)
+        public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
         {
             CodeElement = new DivideStatement();
         }
 
-        public override void EnterEntryStatement(CobolParser.EntryStatementContext context)
+        public override void EnterEntryStatement(CobolCodeElementsParser.EntryStatementContext context)
         {
             CodeElement = new EntryStatement();
         }
 
-        public override void EnterEvaluateStatement(CobolParser.EvaluateStatementContext context)
+        public override void EnterEvaluateStatement(CobolCodeElementsParser.EvaluateStatementContext context)
         {
             CodeElement = new EvaluateStatement();
         }
 
-        public override void EnterExecStatement(CobolParser.ExecStatementContext context)
+        public override void EnterExecStatement(CobolCodeElementsParser.ExecStatementContext context)
         {
             CodeElement = new ExecStatement();
         }
 
-        public override void EnterExitMethodStatement(CobolParser.ExitMethodStatementContext context)
+        public override void EnterExitMethodStatement(CobolCodeElementsParser.ExitMethodStatementContext context)
         {
             CodeElement = new ExitMethodStatement();
         }
 
-        public override void EnterExitProgramStatement(CobolParser.ExitProgramStatementContext context)
+        public override void EnterExitProgramStatement(CobolCodeElementsParser.ExitProgramStatementContext context)
         {
             CodeElement = new ExitProgramStatement();
         }
 
-        public override void EnterExitStatement(CobolParser.ExitStatementContext context)
+        public override void EnterExitStatement(CobolCodeElementsParser.ExitStatementContext context)
         {
             CodeElement = new ExitStatement();
         }
 
-        public override void EnterGobackStatement(CobolParser.GobackStatementContext context)
+        public override void EnterGobackStatement(CobolCodeElementsParser.GobackStatementContext context)
         {
             CodeElement = new GobackStatement();
         }
 
-        public override void EnterGotoStatement(CobolParser.GotoStatementContext context)
+        public override void EnterGotoStatement(CobolCodeElementsParser.GotoStatementContext context)
         {
             CodeElement = new GotoStatement();
         }
 
-        public override void EnterIfStatement(CobolParser.IfStatementContext context)
+        public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
         {
             CodeElement = new IfStatement();
         }
 
-        public override void EnterInitializeStatement(CobolParser.InitializeStatementContext context)
+        public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
         {
             CodeElement = new InitializeStatement();
         }
 
-        public override void EnterInspectStatement(CobolParser.InspectStatementContext context)
+        public override void EnterInspectStatement(CobolCodeElementsParser.InspectStatementContext context)
         {
             CodeElement = new InspectStatement();
         }
 
-        public override void EnterInvokeStatement(CobolParser.InvokeStatementContext context)
+        public override void EnterInvokeStatement(CobolCodeElementsParser.InvokeStatementContext context)
         {
             CodeElement = new InvokeStatement();
         }
 
-        public override void EnterMergeStatement(CobolParser.MergeStatementContext context)
+        public override void EnterMergeStatement(CobolCodeElementsParser.MergeStatementContext context)
         {
             CodeElement = new MergeStatement();
         }
 
-        public override void EnterMoveStatement(CobolParser.MoveStatementContext context)
+        public override void EnterMoveStatement(CobolCodeElementsParser.MoveStatementContext context)
         {
             CodeElement = new MoveStatement();
         }
 
-        public override void EnterMultiplyStatement(CobolParser.MultiplyStatementContext context)
+        public override void EnterMultiplyStatement(CobolCodeElementsParser.MultiplyStatementContext context)
         {
             CodeElement = new MultiplyStatement();
         }
 
-        public override void EnterNextSentenceStatement(CobolParser.NextSentenceStatementContext context)
+        public override void EnterNextSentenceStatement(CobolCodeElementsParser.NextSentenceStatementContext context)
         {
             CodeElement = new NextSentenceStatement();
         }
 
-        public override void EnterOpenStatement(CobolParser.OpenStatementContext context)
+        public override void EnterOpenStatement(CobolCodeElementsParser.OpenStatementContext context)
         {
             CodeElement = new OpenStatement();
         }
 
-        public override void EnterPerformProcedureStatement(CobolParser.PerformProcedureStatementContext context)
+        public override void EnterPerformProcedureStatement(CobolCodeElementsParser.PerformProcedureStatementContext context)
         {
             CodeElement = new PerformProcedureStatement();
         }
 
-        public override void EnterPerformStatement(CobolParser.PerformStatementContext context)
+        public override void EnterPerformStatement(CobolCodeElementsParser.PerformStatementContext context)
         {
             CodeElement = new PerformStatement();
         }
 
-        public override void EnterReadStatement(CobolParser.ReadStatementContext context)
+        public override void EnterReadStatement(CobolCodeElementsParser.ReadStatementContext context)
         {
             CodeElement = new ReadStatement();
         }
 
-        public override void EnterReleaseStatement(CobolParser.ReleaseStatementContext context)
+        public override void EnterReleaseStatement(CobolCodeElementsParser.ReleaseStatementContext context)
         {
             CodeElement = new ReleaseStatement();
         }
 
-        public override void EnterReturnStatement(CobolParser.ReturnStatementContext context)
+        public override void EnterReturnStatement(CobolCodeElementsParser.ReturnStatementContext context)
         {
             CodeElement = new ReturnStatement();
         }
 
-        public override void EnterRewriteStatement(CobolParser.RewriteStatementContext context)
+        public override void EnterRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
         {
             CodeElement = new RewriteStatement();
         }
 
-        public override void EnterSearchStatement(CobolParser.SearchStatementContext context)
+        public override void EnterSearchStatement(CobolCodeElementsParser.SearchStatementContext context)
         {
             CodeElement = new SearchStatement();
         }
 
-        public override void EnterSetStatement(CobolParser.SetStatementContext context)
+        public override void EnterSetStatement(CobolCodeElementsParser.SetStatementContext context)
         {
             CodeElement = new SetStatement();
         }
 
-        public override void EnterSortStatement(CobolParser.SortStatementContext context)
+        public override void EnterSortStatement(CobolCodeElementsParser.SortStatementContext context)
         {
             CodeElement = new SortStatement();
         }
 
-        public override void EnterStartStatement(CobolParser.StartStatementContext context)
+        public override void EnterStartStatement(CobolCodeElementsParser.StartStatementContext context)
         {
             CodeElement = new StartStatement();
         }
 
-        public override void EnterStopStatement(CobolParser.StopStatementContext context)
+        public override void EnterStopStatement(CobolCodeElementsParser.StopStatementContext context)
         {
             CodeElement = new StopStatement();
         }
 
-        public override void EnterStringStatement(CobolParser.StringStatementContext context)
+        public override void EnterStringStatement(CobolCodeElementsParser.StringStatementContext context)
         {
             CodeElement = new StringStatement();
         }
 
-        public override void EnterSubtractStatement(CobolParser.SubtractStatementContext context)
+        public override void EnterSubtractStatement(CobolCodeElementsParser.SubtractStatementContext context)
         {
             CodeElement = new SubtractStatement();
         }
 
-        public override void EnterUnstringStatement(CobolParser.UnstringStatementContext context)
+        public override void EnterUnstringStatement(CobolCodeElementsParser.UnstringStatementContext context)
         {
             CodeElement = new UnstringStatement();
         }
 
-        public override void EnterUseStatement(CobolParser.UseStatementContext context)
+        public override void EnterUseStatement(CobolCodeElementsParser.UseStatementContext context)
         {
             CodeElement = new UseStatement();
         }
 
-        public override void EnterWriteStatement(CobolParser.WriteStatementContext context)
+        public override void EnterWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
         {
             CodeElement = new WriteStatement();
         }
 
-        public override void EnterXmlGenerateStatement(CobolParser.XmlGenerateStatementContext context)
+        public override void EnterXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)
         {
             CodeElement = new XmlGenerateStatement();
         }
 
-        public override void EnterXmlParseStatement(CobolParser.XmlParseStatementContext context)
+        public override void EnterXmlParseStatement(CobolCodeElementsParser.XmlParseStatementContext context)
         {
             CodeElement = new XmlParseStatement();
         }
         
         // Statement conditions
 
-        public override void EnterAtEndCondition(CobolParser.AtEndConditionContext context)
+        public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)
         {
             CodeElement = new AtEndCondition();
         }
 
-        public override void EnterNotAtEndCondition(CobolParser.NotAtEndConditionContext context)
+        public override void EnterNotAtEndCondition(CobolCodeElementsParser.NotAtEndConditionContext context)
         {
             CodeElement = new NotAtEndCondition();
         }
 
-        public override void EnterAtEndOfPageCondition(CobolParser.AtEndOfPageConditionContext context)
+        public override void EnterAtEndOfPageCondition(CobolCodeElementsParser.AtEndOfPageConditionContext context)
         {
             CodeElement = new AtEndOfPageCondition();
         }
 
-        public override void EnterNotAtEndOfPageCondition(CobolParser.NotAtEndOfPageConditionContext context)
+        public override void EnterNotAtEndOfPageCondition(CobolCodeElementsParser.NotAtEndOfPageConditionContext context)
         {
             CodeElement = new NotAtEndOfPageCondition();
         }
 
-        public override void EnterOnExceptionCondition(CobolParser.OnExceptionConditionContext context)
+        public override void EnterOnExceptionCondition(CobolCodeElementsParser.OnExceptionConditionContext context)
         {
             CodeElement = new OnExceptionCondition();
         }
 
-        public override void EnterNotOnExceptionCondition(CobolParser.NotOnExceptionConditionContext context)
+        public override void EnterNotOnExceptionCondition(CobolCodeElementsParser.NotOnExceptionConditionContext context)
         {
             CodeElement = new NotOnExceptionCondition();
         }
 
-        public override void EnterOnOverflowCondition(CobolParser.OnOverflowConditionContext context)
+        public override void EnterOnOverflowCondition(CobolCodeElementsParser.OnOverflowConditionContext context)
         {
             CodeElement = new OnOverflowCondition();
         }
 
-        public override void EnterNotOnOverflowCondition(CobolParser.NotOnOverflowConditionContext context)
+        public override void EnterNotOnOverflowCondition(CobolCodeElementsParser.NotOnOverflowConditionContext context)
         {
             CodeElement = new NotOnOverflowCondition();
         }
 
-        public override void EnterInvalidKeyCondition(CobolParser.InvalidKeyConditionContext context)
+        public override void EnterInvalidKeyCondition(CobolCodeElementsParser.InvalidKeyConditionContext context)
         {
             CodeElement = new InvalidKeyCondition();
         }
 
-        public override void EnterNotInvalidKeyCondition(CobolParser.NotInvalidKeyConditionContext context)
+        public override void EnterNotInvalidKeyCondition(CobolCodeElementsParser.NotInvalidKeyConditionContext context)
         {
             CodeElement = new NotInvalidKeyCondition();
         }
 
-        public override void EnterOnSizeErrorCondition(CobolParser.OnSizeErrorConditionContext context)
+        public override void EnterOnSizeErrorCondition(CobolCodeElementsParser.OnSizeErrorConditionContext context)
         {
             CodeElement = new OnSizeErrorCondition();
         }
 
-        public override void EnterNotOnSizeErrorCondition(CobolParser.NotOnSizeErrorConditionContext context)
+        public override void EnterNotOnSizeErrorCondition(CobolCodeElementsParser.NotOnSizeErrorConditionContext context)
         {
             CodeElement = new NotOnSizeErrorCondition();
         }
 
-        public override void EnterElseCondition(CobolParser.ElseConditionContext context)
+        public override void EnterElseCondition(CobolCodeElementsParser.ElseConditionContext context)
         {
             CodeElement = new ElseCondition();
         }
 
-        public override void EnterWhenEvaluateCondition(CobolParser.WhenEvaluateConditionContext context)
+        public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
         {
             CodeElement = new WhenEvaluateCondition();
         }
 
-        public override void EnterWhenOtherCondition(CobolParser.WhenOtherConditionContext context)
+        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
         {
             CodeElement = new WhenOtherCondition();
         }
 
-        public override void EnterWhenConditionalExpression(CobolParser.WhenConditionalExpressionContext context)
+        public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
         {
             CodeElement = new WhenConditionalExpression();
         }
         
         // Statement ends
 
-        public override void EnterAddStatementEnd(CobolParser.AddStatementEndContext context)
+        public override void EnterAddStatementEnd(CobolCodeElementsParser.AddStatementEndContext context)
         {
             CodeElement = new AddStatementEnd();
         }
 
-        public override void EnterCallStatementEnd(CobolParser.CallStatementEndContext context)
+        public override void EnterCallStatementEnd(CobolCodeElementsParser.CallStatementEndContext context)
         {
             CodeElement = new CallStatementEnd();
         }
 
-        public override void EnterComputeStatementEnd(CobolParser.ComputeStatementEndContext context)
+        public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
         {
             CodeElement = new ComputeStatementEnd();
         }
 
-        public override void EnterDeleteStatementEnd(CobolParser.DeleteStatementEndContext context)
+        public override void EnterDeleteStatementEnd(CobolCodeElementsParser.DeleteStatementEndContext context)
         {
             CodeElement = new DeleteStatementEnd();
         }
 
-        public override void EnterDivideStatementEnd(CobolParser.DivideStatementEndContext context)
+        public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
         {
             CodeElement = new DivideStatementEnd();
         }
 
-        public override void EnterEvaluateStatementEnd(CobolParser.EvaluateStatementEndContext context)
+        public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
         {
             CodeElement = new EvaluateStatementEnd();
         }
 
-        public override void EnterIfStatementEnd(CobolParser.IfStatementEndContext context)
+        public override void EnterIfStatementEnd(CobolCodeElementsParser.IfStatementEndContext context)
         {
             CodeElement = new IfStatementEnd();
         }
 
-        public override void EnterInvokeStatementEnd(CobolParser.InvokeStatementEndContext context)
+        public override void EnterInvokeStatementEnd(CobolCodeElementsParser.InvokeStatementEndContext context)
         {
             CodeElement = new InvokeStatementEnd();
         }
 
-        public override void EnterMultiplyStatementEnd(CobolParser.MultiplyStatementEndContext context)
+        public override void EnterMultiplyStatementEnd(CobolCodeElementsParser.MultiplyStatementEndContext context)
         {
             CodeElement = new MultiplyStatementEnd();
         }
 
-        public override void EnterPerformStatementEnd(CobolParser.PerformStatementEndContext context)
+        public override void EnterPerformStatementEnd(CobolCodeElementsParser.PerformStatementEndContext context)
         {
             CodeElement = new PerformStatementEnd();
         }
 
-        public override void EnterReadStatementEnd(CobolParser.ReadStatementEndContext context)
+        public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)
         {
             CodeElement = new ReadStatementEnd();
         }
 
-        public override void EnterReturnStatementEnd(CobolParser.ReturnStatementEndContext context)
+        public override void EnterReturnStatementEnd(CobolCodeElementsParser.ReturnStatementEndContext context)
         {
             CodeElement = new ReturnStatementEnd();
         }
 
-        public override void EnterRewriteStatementEnd(CobolParser.RewriteStatementEndContext context)
+        public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
         {
             CodeElement = new RewriteStatementEnd();
         }
 
-        public override void EnterSearchStatementEnd(CobolParser.SearchStatementEndContext context)
+        public override void EnterSearchStatementEnd(CobolCodeElementsParser.SearchStatementEndContext context)
         {
             CodeElement = new SearchStatementEnd();
         }
 
-        public override void EnterStartStatementEnd(CobolParser.StartStatementEndContext context)
+        public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)
         {
             CodeElement = new StartStatementEnd();
         }
 
-        public override void EnterStringStatementEnd(CobolParser.StringStatementEndContext context)
+        public override void EnterStringStatementEnd(CobolCodeElementsParser.StringStatementEndContext context)
         {
             CodeElement = new StringStatementEnd();
         }
 
-        public override void EnterSubtractStatementEnd(CobolParser.SubtractStatementEndContext context)
+        public override void EnterSubtractStatementEnd(CobolCodeElementsParser.SubtractStatementEndContext context)
         {
             CodeElement = new SubtractStatementEnd();
         }
 
-        public override void EnterUnstringStatementEnd(CobolParser.UnstringStatementEndContext context)
+        public override void EnterUnstringStatementEnd(CobolCodeElementsParser.UnstringStatementEndContext context)
         {
             CodeElement = new UnstringStatementEnd();
         }
 
-        public override void EnterWriteStatementEnd(CobolParser.WriteStatementEndContext context)
+        public override void EnterWriteStatementEnd(CobolCodeElementsParser.WriteStatementEndContext context)
         {
             CodeElement = new WriteStatementEnd();
         }
 
-        public override void EnterXmlStatementEnd(CobolParser.XmlStatementEndContext context)
+        public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
         } 

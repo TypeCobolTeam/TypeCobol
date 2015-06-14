@@ -1,34 +1,22 @@
 // IBM Enterprise Cobol 5.1 for zOS
 
-// Help :
-// http://www.cs.vu.nl/grammarware/browsable/vs-cobol-ii/TYPE
-// https://java.net/downloads/javacc/contrib/grammars/cobol.jj
+// -----------------------------------------------------------------------
+// Grammar for the FIRST step of the Cobol parser : flat view of the Cobol
+// syntax, useful for incremental parsing. The goal here is to produce a 
+// LIST of syntax nodes instead of TREE (beacause it is easier to reuse).
+// -----------------------------------------------------------------------
 
-// Not included in this grammar file yet :
-// - p59 : Chapter 7. Scope of names
-// - p65 : Chapter 8. Referencing data names, copy libraries, and PROCEDURE DIVISION names
-// - p79 : Chapter 9. Transfer of control
+grammar CobolCodeElements;
 
-// +++ TO DO : 
-// - implement all "Token validity rules" in Excel file CobolLexer.tokens.xlsx
-// - continue to check all literal types in parser rules, cf Literals and Identifiers in parser rules.xlsx
-// - check all user defined words in parser rules
-// - use rule element labels instead of subrules everywhere
-// - imperativeStatement = several statements
-// - special treatment for ExecSqlIncludeStatement
-// - implement compilerOption at the Scanner level
-// +++
+import CobolBase;
 
-grammar Cobol;
-
-import CobolCommon;
-
-// --- STARTING PARSER RULE for PHASE 1 of parsing ---
+// --- Starting parser rule for PHASE 1 of parsing ---
 
 cobolCodeElements:
                      codeElement* EOF;
 
-// "Linearized" view of the Cobol syntax useful for incremental parsing
+// --- List of Cobol Code Elements --
+// (see namespace :  TypeCobol.Compiler.CodeElements)
 
 codeElement:
             // -- Cobol source program --
@@ -210,36 +198,8 @@ codeElement:
            // ... exceptionPhrases ...
        // xmlStatementEnd
            ;
-                     
-// --- STARTING PARSER RULE fo PHASE 2 of parsing or documentation ---
 
-// p103 : You cannot include a class definition in a sequence of programs or other class
-// definitions in a single compilation group. Each class must be specified as a
-// separate source file; that is, a class definition cannot be included in a batch
-// compile.
-
-cobolCompilationUnit : 
-                         (cobolProgram | cobolClass) EOF;
-
-// p83 : A COBOL source program is a syntactically correct set of COBOL statements.
-// p83 : A nested program is a program that is contained in another program.
-// p83 : Sibling programs are programs that are directly contained in the same program.
-
-// p83 : With the exception of the COPY and REPLACE statements and the end program marker,
-//       the statements, entries, paragraphs, and sections of a COBOL source program 
-//       are grouped into the following four divisions : 
-//       IDENTIFICATION DIVISION,ENVIRONMENT DIVISION,DATA DIVISION,PROCEDURE DIVISION
-
-// p83 : The end of a COBOL source program is indicated by the END PROGRAM marker.
-//       If there are no nested programs, the absence of additional source program lines
-//       also indicates the end of a COBOL program.
-
-// p97 : The IDENTIFICATION DIVISION must be the first division in each COBOL source
-// program, factory definition, object definition, and method definition. The
-// identification division names the program, class, or method and identifies the
-// factory definition and object definition. The IDENTIFICATION DIVISION can
-// include the date a program, class, or method was written, the date of compilation,
-// and other such documentary information.
+// --- Individual code elements syntax ---
 
 // p97 : Program IDENTIFICATION DIVISION
 // For a program, the first paragraph of the IDENTIFICATION DIVISION
@@ -307,42 +267,6 @@ cobolCompilationUnit :
 // - An altered GO TO statement contained in the program is set to its initial
 //   state.
 
-// p84 : Format: COBOL source program
-
-cobolProgram:
-                programIdentification
-               (environmentDivisionHeader 
-                    configurationSection?
-                    inputOutputSection?
-               )?
-               (dataDivisionHeader 
-                    fileSection?
-                    workingStorageSection?
-                    localStorageSection?
-                    linkageSection?
-               )?
-               (procedureDivisionHeader 
-                    declaratives?
-                    section*
-               )?
-                cobolProgram* 
-                programEnd?
-                ;
-
-programIdentification:
-                       (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       PROGRAM_ID PeriodSeparator? programName
-                       (IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
-                       authoringProperties;
-                       
-programEnd:
-              END PROGRAM programName PeriodSeparator;
-
-// p85 : An end program marker separates each program in the sequence of programs. 
-//       program-name must be identical to a program-name declared in a preceding program-ID paragraph.
-
-// p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
-
 // p85 : Nested programs can be directly or indirectly contained in the containing program.
 //       Nested programs are not supported for programs compiled with the THREAD option.
 
@@ -356,16 +280,24 @@ programEnd:
 // common program and programs contained within them. The COMMON
 // clause can be used only in nested programs.
 
-// p102 : 
+programIdentification:
+                       (IDENTIFICATION | ID) DIVISION PeriodSeparator 
+                       PROGRAM_ID PeriodSeparator? programName
+                       (IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
+                       authoringProperties;
+                       
 
-//nestedSourceProgram :
-//                       programIdentification
-//                       (environmentDivisionHeader environmentDivisionContent)?
-//                       (dataDivisionHeader dataDivisionContent)?
-//                       (procedureDivisionHeader procedureDivisionContent?)?
-//                       (nestedSourceProgram)*  
-//                       programEnd
-//                   ;
+// p83 : The end of a COBOL source program is indicated by the END PROGRAM marker.
+//       If there are no nested programs, the absence of additional source program lines
+//       also indicates the end of a COBOL program.
+
+// p85 : An end program marker separates each program in the sequence of programs. 
+//       program-name must be identical to a program-name declared in a preceding program-ID paragraph.
+
+// p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
+
+programEnd:
+              END PROGRAM programName PeriodSeparator;
 
 // p85 : program-name can be specified either as a user-defined word or in an alphanumeric literal. 
 //       program-name cannot be a figurative constant. 
@@ -440,31 +372,6 @@ programEnd:
 
 programName : UserDefinedWord | alphanumericLiteral;
 
-// p89 : Enterprise COBOL provides object-oriented syntax to facilitate interoperation of 
-//       COBOL and Java programs.
-//       You can use object-oriented syntax to:
-//       - Define classes, with methods and data implemented in COBOL
-//       - Create instances of Java or COBOL classes
-//       - Invoke methods on Java or COBOL objects
-//       - Write classes that inherit from Java classes or from other COBOL classes
-//       - Define and invoke overloaded methods
-
-// p91 : With the exception of the COPY and REPLACE statements and the END CLASS
-//       marker, the statements, entries, paragraphs, and sections of a COBOL class
-//       definition are grouped into the following structure:
-// - IDENTIFICATION DIVISION
-// - ENVIRONMENT DIVISION (configuration section only)
-// - Factory definition
-//   . IDENTIFICATION DIVISION
-//   . DATA DIVISION
-//   . PROCEDURE DIVISION (containing one or more method definitions)
-// - Object definition
-//   . IDENTIFICATION DIVISION
-//   . DATA DIVISION
-//   . PROCEDURE DIVISION (containing one or more method definitions)
-
-// p91 : The end of a COBOL class definition is indicated by the END CLASS marker.
-
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
 // be the CLASS-ID paragraph. The other paragraphs are optional and can
@@ -500,35 +407,13 @@ programName : UserDefinedWord | alphanumericLiteral;
 // than one parent. Only one class-name can be specified in the INHERITS phrase of
 // a class definition.
 
-// p92 : Format: COBOL class definition
-
-cobolClass:
-              classIdentification
-              environmentDivisionHeader
-                  configurationSection?
-             (factoryIdentification
-                 (dataDivisionHeader 
-                      workingStorageSection?
-                 )?
-                 (procedureDivisionHeader 
-                      methodDefinition*
-                 )?
-              factoryEnd)?
-             (objectIdentification
-                 (dataDivisionHeader 
-                      workingStorageSection?
-                 )?
-                 (procedureDivisionHeader 
-                      methodDefinition*
-                 )?             
-              objectEnd)?
-              classEnd?;
-
 classIdentification:
                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
                        CLASS_ID PeriodSeparator className INHERITS className PeriodSeparator
                        authoringProperties
                    ;
+
+// p91 : The end of a COBOL class definition is indicated by the END CLASS marker.
 
 classEnd:
             END CLASS className PeriodSeparator;
@@ -604,15 +489,6 @@ objectEnd:
 // p93 : A COBOL method definition describes a method. 
 //       You can specify method definitions only within the factory paragraph and the object paragraph of a class definition.
 
-// p93 : With the exception of COPY and REPLACE statements and the END METHOD
-//       marker, the statements, entries, paragraphs, and sections of a COBOL method
-//       definition are grouped into the following four divisions:
-// - IDENTIFICATION DIVISION
-// - ENVIRONMENT DIVISION (input-output section only)
-// - DATA DIVISION
-// - PROCEDURE DIVISION
-
-// p93 : The end of a COBOL method definition is indicated by the END METHOD marker.
 
 // p97 : Method IDENTIFICATION DIVISION
 // For a method, the first paragraph of the IDENTIFICATION DIVISION
@@ -647,29 +523,12 @@ objectEnd:
 // recursive (unlike COBOL programs, which support recursion only if the
 // RECURSIVE attribute is specified in the program-ID paragraph.)
 
-// p93 : Format: method definition 
-
-methodDefinition : 
-                     methodIdentification
-                    (environmentDivisionHeader
-                         inputOutputSection?
-                    )?
-                    (dataDivisionHeader 
-                         fileSection?
-                         workingStorageSection?
-                         localStorageSection?
-                         linkageSection?
-                    )?
-                    (procedureDivisionHeader 
-                         declaratives?
-                         section*
-                    )?
-                     methodEnd;
-
 methodIdentification:
                         (IDENTIFICATION | ID) DIVISION PeriodSeparator 
                         METHOD_ID PeriodSeparator? methodName PeriodSeparator?
                         authoringProperties;
+
+// p93 : The end of a COBOL method definition is indicated by the END METHOD marker.
 
 methodEnd:
              END METHOD methodName PeriodSeparator;
@@ -721,6 +580,8 @@ methodName : alphanumOrNationalLiteral;
 // signature in the superclasses of the method definition that would otherwise
 // be accessible. A factory method must not hide an instance method.
 
+// --- Authoring properties commuon to all identification divisions ---
+
 // p105 : Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
 // The optional paragraphs are:
 // AUTHOR
@@ -765,6 +626,8 @@ dateCompiledParagraph:
 
 securityParagraph:
                      SECURITY PeriodSeparator? CommentEntry*;
+
+// ---
 
 // p105 : The comment-entry in any of the optional paragraphs can be any combination of
 // characters from the character set of the computer. The comment-entry is written in
@@ -831,15 +694,6 @@ environmentDivisionHeader:
 // section. The entries apply only to the method in which the configuration
 // section is specified.
 
-// p109 : CONFIGURATION SECTION Format:
-
-configurationSection : 
-                     configurationSectionHeader
-                     sourceComputerParagraph?
-                     objectComputerParagraph?
-                     specialNamesParagraph?
-                     repositoryParagraph?;
-
 configurationSectionHeader:
                               CONFIGURATION SECTION PeriodSeparator;
 
@@ -872,7 +726,12 @@ configurationSectionHeader:
 
 sourceComputerParagraph: 
                            SOURCE_COMPUTER PeriodSeparator
-                           (computerName (WITH? DEBUGGING MODE)? PeriodSeparator)?;
+                           (computerName 
+                            withDebuggingModeClause? 
+                            PeriodSeparator)?;
+
+withDebuggingModeClause:
+                           WITH? DEBUGGING MODE;
 
 // p110 : computer-name
 // A system-name. For example:
@@ -924,10 +783,19 @@ computerName : UserDefinedWord;
 objectComputerParagraph :
                         OBJECT_COMPUTER PeriodSeparator
                         (computerName 
-                         (MEMORY SIZE? IntegerLiteral (WORDS | CHARACTERS | MODULES))?
-                         (PROGRAM? COLLATING? SEQUENCE IS? alphabetName)?
-                         (SEGMENT_LIMIT IS? priorityNumber)?
+                         memorySizeClause?
+                         programCollatingSequenceClause?
+                         segmentLimitClause?
                          PeriodSeparator)?;
+
+memorySizeClause:
+                    MEMORY SIZE? IntegerLiteral (WORDS | CHARACTERS | MODULES);
+
+programCollatingSequenceClause:
+                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetName;
+
+segmentLimitClause:
+                      SEGMENT_LIMIT IS? priorityNumber;
 
 // p111 : priority-number
 // An integer ranging from 1 through 49. 
@@ -961,52 +829,22 @@ priorityNumber : IntegerLiteral;
 //   identifying files containing XML schemas
 
 // p113 : Format: SPECIAL-NAMES paragraph
-// !! Additional syntactic conditions must be checked on the simplified grammar below
-// ++ This separator period is optional when no clauses are selected. If you use 
-//    any clauses, you must code the period after the last clause.
 
 // !! p112 : The clauses in the SPECIAL-NAMES paragraph can appear in any order.
 
 specialNamesParagraph : 
                       SPECIAL_NAMES PeriodSeparator
-                      (environmentNameClause |
-                       alphabetClause |
-                       symbolicCharactersClause |
-                       classClause |
-                       currencySignClause | // p119: // The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
-                       decimalPointClause |
-                       xmlSchemaClause
-                      )* PeriodSeparator?;
+                      ((upsiSwitchNameClause |
+                        environmentNameClause |                        
+                        alphabetClause |
+                        symbolicCharactersClause |
+                        classClause |
+                        currencySignClause |
+                        decimalPointClause |
+                        xmlSchemaClause
+                      )+ PeriodSeparator)?;
 
-
-environmentNameClause : 
-                          (environmentName IS? mnemonicName) |
-                          (environmentName ((IS? mnemonicName environmentNameClauseEntry1?) | environmentNameClauseEntry1));
-
-environmentNameClauseEntry1:
-                               (ON STATUS? IS? conditionName (OFF STATUS? IS? conditionName)?) |
-                               (OFF STATUS? IS? conditionName (ON STATUS? IS? conditionName)?);
-
-// p114 : environment-name-1
-// System devices or standard system actions taken by the compiler.
-// Valid specifications for environment-name-1 are shown in the following table.
-//   environmentName : Meaning : Allowed in
-//   SYSIN | SYSIPT : System logical input unit : ACCEPT
-//   SYSOUT | SYSLIST | SYSLST : System logical output unit : DISPLAY
-//   SYSPUNCH | SYSPCH : System punch device : DISPLAY
-//   CONSOLE : Console : ACCEPT and DISPLAY
-//   C01 through C12 : Skip to channel 1 through channel 12, respectively : WRITE ADVANCING
-//   CSP : Suppress spacing : WRITE ADVANCING
-//   S01 through S05 : Pocket select 1 through 5 on punch devices : WRITE ADVANCING
-//   AFP-5A : Advanced Function Printing : WRITE ADVANCING
-
-//environmentName1 : SYSIN | SYSIPT | SYSOUT | SYSLIST | SYSLST | SYSPUNCH | SYSPCH | CONSOLE |
-//                C01 | C02 | C03 | C04 | C05 | C06 | C07 | C08 | C09 | C10 | C11 | C12 |
-//                CSP | S01 | S02 | S03 | S04 | S05 | AFP_5A;
-
-environmentName : UserDefinedWord;
-
-// p115 : environment-name-2
+// p115 : upsiSwitchName
 // A 1-byte user-programmable status indicator (UPSI) switch.
 //   Valid specifications for environment-name-2 are UPSI-0 through UPSI-7.
 
@@ -1016,21 +854,32 @@ environmentName : UserDefinedWord;
 // the PROCEDURE DIVISION, an UPSI switch can be tested; if it is ON, the
 // special branch is taken. (See “Switch-status condition” on page 270.)
 
-//environmentName2 : UPSI_0 | UPSI_1 | UPSI_2 | UPSI_3 | UPSI_4 | UPSI_5 | UPSI_6 | UPSI_7;
+//upsiSwitchName : UPSI-0 | UPSI-1 | UPSI-2 | UPSI-3 | UPSI-4 | UPSI-5 | UPSI-6 | UPSI-7;
+
+upsiSwitchName : UserDefinedWord;
+
+                        // !! Impossible to avoid a TARGET LANGUAGE DEPENDENT semantic predicate here 
+                        //    (... ambiguity with environmentNameClause ...)
+upsiSwitchNameClause:   { CurrentToken.Text.StartsWith("UPSI-", System.StringComparison.OrdinalIgnoreCase) }? 
+                        upsiSwitchName ((IS? mnemonicForUPSISwitchName conditionNamesForUPSISwitch?) | conditionNamesForUPSISwitch);
+
+conditionNamesForUPSISwitch:
+                               (onConditionNameForUPSISwitch offConditionNameForUPSISwitch?) |
+                               (offConditionNameForUPSISwitch onConditionNameForUPSISwitch?);
+
+onConditionNameForUPSISwitch:
+                                ON STATUS? IS? conditionName;
+
+offConditionNameForUPSISwitch:
+                                 OFF STATUS? IS? conditionName;
 
 // p115 : mnemonic-name-1 , mnemonic-name-2
 // mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
 // user-defined names. 
-// mnemonic-name-1 can be used in ACCEPT, DISPLAY, and WRITE statements. 
-// mnemonic-name-2 can be referenced only in the SET statement. 
+
 // mnemonic-name-2 can qualify condition-1 or condition-2 names.
 
-// p115 : Mnemonic-names and environment-names need not be unique. If you
-// choose a mnemonic-name that is also an environment-name, its definition
-// as a mnemonic-name will take precedence over its definition as an
-// environment-name.
-
-mnemonicName : UserDefinedWord;
+mnemonicForUPSISwitchName : UserDefinedWord;
 
 // p115 : condition-1, condition-2
 // Condition-names follow the rules for user-defined names. At least one
@@ -1046,13 +895,70 @@ mnemonicName : UserDefinedWord;
 
 conditionName : UserDefinedWord;
 
+// p114 : environmentName
+// System devices or standard system actions taken by the compiler.
+// Valid specifications for environment-name-1 are shown in the following table.
+//   environmentName : Meaning : Allowed in
+//   SYSIN | SYSIPT : System logical input unit : ACCEPT
+//   SYSOUT | SYSLIST | SYSLST : System logical output unit : DISPLAY
+//   SYSPUNCH | SYSPCH : System punch device : DISPLAY
+//   CONSOLE : Console : ACCEPT and DISPLAY
+//   C01 through C12 : Skip to channel 1 through channel 12, respectively : WRITE ADVANCING
+//   CSP : Suppress spacing : WRITE ADVANCING
+//   S01 through S05 : Pocket select 1 through 5 on punch devices : WRITE ADVANCING
+//   AFP-5A : Advanced Function Printing : WRITE ADVANCING
+
+//environmentName : SYSIN | SYSIPT | SYSOUT | SYSLIST | SYSLST | SYSPUNCH | SYSPCH | CONSOLE |
+//                C01 | C02 | C03 | C04 | C05 | C06 | C07 | C08 | C09 | C10 | C11 | C12 |
+//                CSP | S01 | S02 | S03 | S04 | S05 | AFP-5A;
+
+environmentName : UserDefinedWord;
+
+environmentNameClause : 
+                          environmentName IS? mnemonicForEnvironmentName;
+
+// p115 : mnemonic-name-1 , mnemonic-name-2
+// mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
+// user-defined names. 
+
+// p115 : Mnemonic-names and environment-names need not be unique. If you
+// choose a mnemonic-name that is also an environment-name, its definition
+// as a mnemonic-name will take precedence over its definition as an
+// environment-name.
+
+// mnemonic-name-1 can be used in ACCEPT, DISPLAY, and WRITE statements. 
+// mnemonic-name-2 can be referenced only in the SET statement. 
+
+mnemonicForEnvironmentName : UserDefinedWord;
+
 // p 115 : The ALPHABET clause provides a means of relating an alphabet-name to a
 // specified character code set or collating sequence.
 // The related character code set or collating sequence can be used for alphanumeric
 // data, but not for DBCS or national data.
 
 alphabetClause : 
-                   ALPHABET alphabetName IS? ((STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC) | (alphabetClauseLiteral (((THROUGH |THRU) alphabetClauseLiteral) | (ALSO alphabetClauseLiteral)+)?)+);
+                   ALPHABET alphabetName IS? (standardCollatingSequence | userDefinedCollatingSequence);
+
+standardCollatingSequence:
+                                 STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
+
+userDefinedCollatingSequence:
+                                (charactersLiteral | charactersRange | charactersEqualSet)+;
+
+// In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
+// it may contain SEVERAL characters
+
+charactersLiteral: 
+                     characterInCollatingSequence;
+
+// In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
+// it can contain ONLY ONE characters
+
+charactersRange:
+                   characterInCollatingSequence (THROUGH | THRU) characterInCollatingSequence;
+
+charactersEqualSet:
+                      characterInCollatingSequence (ALSO characterInCollatingSequence)+;
 
 // p 115 : ALPHABET alphabet-name-1 IS
 // alphabet-name-1 specifies a collating sequence when used in:
@@ -1148,7 +1054,7 @@ alphabetName : UserDefinedWord;
 // national literal, a DBCS literal, or a symbolic-character figurative
 // constant must not be specified.
 
-alphabetClauseLiteral : alphanumericLiteral | IntegerLiteral;
+characterInCollatingSequence : alphanumericLiteral | IntegerLiteral;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
@@ -1156,7 +1062,10 @@ alphabetClauseLiteral : alphanumericLiteral | IntegerLiteral;
 // Provides a means of specifying one or more symbolic characters.
 
 symbolicCharactersClause :
-                             SYMBOLIC CHARACTERS? (SymbolicCharacter+ (ARE|IS)? IntegerLiteral+)+ (IN alphabetName)?;
+                             SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetName)?;
+
+symbolicCharactersOrdinalPositions:
+                                SymbolicCharacter+ (ARE|IS)? IntegerLiteral+;
 
 // p117 : symbolic-character-1 is a user-defined word and must contain at least one
 // alphabetic character. The same symbolic-character can appear only once in
@@ -1193,7 +1102,7 @@ symbolicCharactersClause :
 // ascending or descending order.
 
 classClause : 
-                CLASS charsetClassName IS? (charsetClassliteral ((THROUGH | THRU) charsetClassliteral)?)+;
+                CLASS charsetClassName IS? (charactersLiteral | charactersRange)+;
 
 // p118 : CLASS class-name-1 IS
 // Provides a means for relating a name to the specified set of characters
@@ -1222,8 +1131,7 @@ charsetClassName : UserDefinedWord;
 // If the alphanumeric literal is associated with a THROUGH phrase, the
 // literal must be one character in length.
 
-charsetClassliteral:
-                       alphanumericLiteral | numericLiteral;
+// => charactersLiteral / charactersRange
 
 // p118 : The CURRENCY SIGN clause affects numeric-edited data items whose PICTURE
 // character-strings contain a currency symbol.
@@ -1286,8 +1194,10 @@ charsetClassliteral:
 // CURRENCY and NOCURRENCY compiler options, see CURRENCY in the
 // Enterprise COBOL Programming Guide.
 
+// p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
+
 currencySignClause :
-                       CURRENCY SIGN? IS? literal (WITH? PICTURE SYMBOL literal)?;
+                       CURRENCY SIGN? IS? alphanumOrHexadecimalLiteral (WITH? PICTURE SYMBOL alphanumOrHexadecimalLiteral)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.
@@ -1387,9 +1297,21 @@ externalFileId : UserDefinedWord;
 // class-name-1
 // A user-defined word that identifies the class.
 
+// NB: externalClassName and javaArrayClassReference are both alphanumeric literals.
+// AFTER the parsing phase, if the alphanumeric literal starts with :
+// jbooleanArray / jbyteArray / jshortArray / jintArray / jlongArray / jcharArray / jobjectArray 
+// then it is a javaArrayClassReference.
+// The literal can then contain an optional colon character and an externalClassName.
+
+// Sample : Programming guide p615
+// Repository. 
+// Class jobjectArray is "jobjectArray" 
+// Class Employee is "com.acme.Employee" 
+// Class Department is "jobjectArray:com.acme.Employee". 
+
 repositoryParagraph: 
                    REPOSITORY PeriodSeparator 
-                   (CLASS className (IS? (externalClassName | javaArrayClassReference))?)*;
+                   (CLASS className (IS? externalClassName /*| javaArrayClassReference*/)?)*;
 
 // p122: external-class-name-1
 // An alphanumeric literal containing a name that enables a COBOL program
@@ -1410,6 +1332,9 @@ externalClassName : alphanumericLiteral;
 // java-array-class-reference must be an alphanumeric literal with content in the
 // following format: 
 
+// p122: jobjectArray
+// Specifies a Java object array class.
+
 // p122: 
 // : A required separator when external-class-name-2 is specified. The
 // colon must not be preceded or followed by space characters.
@@ -1422,12 +1347,8 @@ externalClassName : alphanumericLiteral;
 // separator and external-class-name-2, the elements of the object array are of
 // type java.lang.Object.
 
-javaArrayClassReference : jobjectArray (ColonSeparator externalClassName)?;
+// javaArrayClassReference : "jobjectArray" | "jobjectArray:externalClassName";
 
-// p122: jobjectArray
-// Specifies a Java object array class.
-
-jobjectArray : alphanumericLiteral;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
@@ -1442,13 +1363,6 @@ jobjectArray : alphanumericLiteral;
 //   The input-output section is not valid for class definitions.
 // Method input-output section
 //   The same rules apply to program and method I-O sections.
-
-// p125: Format: input-output section
-
-inputOutputSection: 
-                  inputOutputSectionHeader
-                  fileControlParagraph
-                  ioControlParagraph?;
 
 inputOutputSectionHeader:
                             INPUT_OUTPUT SECTION PeriodSeparator;
@@ -1484,14 +1398,6 @@ inputOutputSectionHeader:
 // Line sequential2 - Text stream I-O
 // 1. VSAM does not support z/OS UNIX files.
 // 2. Line-sequential support is limited to z/OS UNIX files.
-
-// p126: The FILE-CONTROL paragraph begins with the word FILE-CONTROL followed
-// by a separator period. It must contain one and only one entry for each file
-// described in an FD or SD entry in the DATA DIVISION.
-
-fileControlParagraph :
-                         fileControlParagraphHeader 
-                         fileControlEntry*;
 
 fileControlParagraphHeader:
                              FILE_CONTROL PeriodSeparator;
@@ -1824,10 +1730,6 @@ fileStatusClause:
 // The order in which I-O-CONTROL paragraph clauses are written is not significant. 
 // !! The I-O-CONTROL paragraph ends with a separator period.
 
-ioControlParagraph : 
-                       ioControlParagraphHeader
-                       (ioControlEntry+ PeriodSeparator)?;
-
 ioControlParagraphHeader:
                             I_O_CONTROL PeriodSeparator;
 
@@ -2000,9 +1902,6 @@ dataDivisionHeader:
 // Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
 // A method FILE SECTION can define external files only. A single run-unit-level file connector is shared by all programs and methods that contain a declaration of a given external file.
 
-fileSection :
-                fileSectionHeader (fileDescriptionEntry dataDescriptionEntry+)*;
-
 fileSectionHeader:
                      FILE SECTION PeriodSeparator;
 
@@ -2021,9 +1920,6 @@ fileSectionHeader:
 // Each is defined in a separate data-item description entry that begins with either the level number 77 or 01. 
 // See Chapter 18, “DATA DIVISION--data description entry,” on page 185 for more information.
 
-workingStorageSection :
-                          workingStorageSectionHeader dataDescriptionEntry*;
-
 workingStorageSectionHeader:
                                WORKING_STORAGE SECTION PeriodSeparator;
 
@@ -2036,9 +1932,6 @@ workingStorageSectionHeader:
 // The LOCAL-STORAGE SECTION must begin with the header LOCAL-STORAGE SECTION, followed by a separator period.
 // You can specify the LOCAL-STORAGE SECTION in recursive programs, in nonrecursive programs, and in methods.
 // Method LOCAL-STORAGE content is the same as program LOCAL-STORAGE content except that the GLOBAL clause has no effect (because methods cannot be nested).
-
-localStorageSection:
-                        localStorageSectionHeader dataDescriptionEntry*;
 
 localStorageSectionHeader:
                              LOCAL_STORAGE SECTION PeriodSeparator;                             
@@ -2064,9 +1957,6 @@ localStorageSectionHeader:
 //   above.
 // - They are condition-names or index-names associated with data items that satisfy
 //   any of the above conditions.
-
-linkageSection:
-                   linkageSectionHeader dataDescriptionEntry*;
 
 linkageSectionHeader:
                         LINKAGE SECTION PeriodSeparator;
@@ -3982,13 +3872,6 @@ returningPhrase:
 // The declarative procedure is exited when the last statement in the procedure is
 // executed.
 
-declaratives:
-                declarativesHeader
-                   (sectionHeader useStatement
-                        paragraph* 
-                   )+
-                declarativesEnd;
-
 declarativesHeader:
                       DECLARATIVES PeriodSeparator;
 
@@ -4136,10 +4019,6 @@ procedureName:
 // the PROCEDURE DIVISION, or, in the declaratives portion, at the
 // keywords END DECLARATIVES.
 
-section:
-           sectionHeader?
-           paragraph+;
-
 sectionHeader:
                  sectionName SECTION priorityNumber? PeriodSeparator;
 
@@ -4181,12 +4060,6 @@ sectionName : UserDefinedWord;
 // Paragraphs need not all be contained within sections, even if one or more
 // paragraphs are so contained.
 
-paragraph:
-            (paragraphHeader
-                sentence*
-            ) |
-                sentence+;
-
 paragraphHeader:
                    paragraphName PeriodSeparator;
 
@@ -4200,10 +4073,6 @@ paragraphName : UserDefinedWord;
 
 // Sentence
 // One or more statements terminated by a separator period.
-
-sentence : 
-             statement+ 
-             sentenceEnd;
 
 sentenceEnd:
                PeriodSeparator;
@@ -4235,204 +4104,13 @@ sentenceEnd:
 // scope terminator is also classified as an imperative statement.
 // For more information about explicit scope terminator, see “Delimited scope
 // statements” on page 280).
-// The following lists contain the COBOL imperative statements.
-// Arithmetic
-// - ADD 1
-// - COMPUTE 1
-// - DIVIDE 1
-// - MULTIPLY 1
-// - SUBTRACT1
-//   1. Without the ON SIZE ERROR or the NOT ON SIZE ERROR phrase.
-// Data movement
-// - ACCEPT (DATE, DAY, DAY-OF-WEEK, TIME)
-// - INITIALIZE
-// - INSPECT
-// - MOVE
-// - SET
-// - STRING 2
-// - UNSTRING 2
-// - XML GENERATE 8
-// - XML PARSE 8
-//   2. Without the ON OVERFLOW or the NOT ON OVERFLOW phrase.
-//   8. Without the ON EXCEPTION or NOT ON EXCEPTION phrase.
-// Ending
-// - STOP RUN
-// - EXIT PROGRAM
-// - EXIT METHOD
-// - GOBACK
-// Input-output
-// - ACCEPT identifier
-// - CLOSE
-// - DELETE 3
-// - DISPLAY
-// - OPEN
-// - READ 4
-// - REWRITE 3
-// - START 3
-// - STOP literal
-// - WRITE 5
-//   3. Without the INVALID KEY or the NOT INVALID KEY phrase.
-//   4. Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-//   5. Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
-// Ordering
-// - MERGE
-// - RELEASE
-// - RETURN 6
-// - SORT
-//   6. Without the AT END or NOT AT END phrase.
-// Procedure-branching
-// - ALTER
-// - EXIT
-// - GO TO
-// - PERFORM
-// Program or method linkage
-// - CALL 7
-// - CANCEL
-// - INVOKE
-//   7. Without the ON OVERFLOW phrase, and without the ON EXCEPTION or NOT ON EXCEPTION phrase.
-// Table-handling
-// - SET
-
-imperativeStatement:
-         (acceptStatement     |
-         addStatement         |
-         alterStatement       |
-         callStatement        |
-         cancelStatement      |
-         closeStatement       |
-         computeStatement     |
-         deleteStatement      |
-         displayStatement     |
-         divideStatement      |
-         execStatement        |
-         exitStatement        |
-         exitMethodStatement  |
-         exitProgramStatement |
-         gobackStatement      |
-         gotoStatement        |
-         initializeStatement  |
-         inspectStatement     |
-         invokeStatement      |
-         mergeStatement       |
-         moveStatement        |
-         multiplyStatement    |
-         openStatement        |
-         performStatementWithBody |
-         performProcedureStatement |
-         readStatement        |
-         releaseStatement     |
-         returnStatement      |
-         rewriteStatement     |
-         setStatement         |
-         sortStatement        |
-         startStatement       |
-         stopStatement        |
-         stringStatement      |
-         subtractStatement    |
-         unstringStatement    |
-         writeStatement       |
-         xmlGenerateStatement |
-         xmlParseStatement)+;
-                       
-// List of keywords which can start an imperative statement
-/*
-imperativeStatementStartPredicate:
-         ACCEPT     |
-         ADD        |
-         ALTER      |
-         CALL       |
-         CANCEL     |
-         CLOSE      |
-         COMPUTE    |
-         DELETE     |
-         DISPLAY    |
-         DIVIDE     |
-         EXEC       |
-         EXECUTE    |
-         EXIT       |
-         GOBACK     |
-         GO         |
-         INITIALIZE |
-         INSPECT    |
-         INVOKE     |
-         MERGE      |
-         MOVE       |
-         MULTIPLY   |
-         OPEN       |
-         PERFORM    |
-         READ       |
-         RELEASE    |
-         RETURN     |
-         REWRITE    |
-         SET        |
-         SORT       |
-         START      |
-         STOP       |
-         STRING     |
-         SUBTRACT   |
-         UNSTRING   |
-         WRITE      |
-         XML;  
-*/
-
+                   
 // p278: Conditional statements
 // A conditional statement specifies that the truth value of a condition is to be
 // determined and that the subsequent action of the object program is dependent on
 // this truth value.
 // For more information about conditional expressions, see “Conditional expressions”
 // on page 256.)
-// The following lists contain COBOL statements that become conditional when a
-// condition (for example, ON SIZE ERROR or ON OVERFLOW) is included and
-// when the statement is not terminated by its explicit scope terminator.
-// Arithmetic
-// - ADD ... ON SIZE ERROR
-// - ADD ... NOT ON SIZE ERROR
-// - COMPUTE ... ON SIZE ERROR
-// - COMPUTE ... NOT ON SIZE ERROR
-// - DIVIDE ... ON SIZE ERROR
-// - DIVIDE ... NOT ON SIZE ERROR
-// - MULTIPLY ... ON SIZE ERROR
-// - MULTIPLY ... NOT ON SIZE ERROR
-// - SUBTRACT ... ON SIZE ERROR
-// - SUBTRACT ... NOT ON SIZE ERROR
-// Data movement
-// - STRING ... ON OVERFLOW
-// - STRING ... NOT ON OVERFLOW
-// - UNSTRING ... ON OVERFLOW
-// - UNSTRING ... NOT ON OVERFLOW
-// - XML GENERATE ... ON EXCEPTION
-// - XML GENERATE ... NOT ON EXCEPTION
-// - XML PARSE ... ON EXCEPTION
-// - XML PARSE ... NOT ON EXCEPTION
-// Decision
-// - IF
-// - EVALUATE
-// Input-output
-// - DELETE ... INVALID KEY
-// - DELETE ... NOT INVALID KEY
-// - READ ... AT END
-// - READ ... NOT AT END
-// - READ ... INVALID KEY
-// - READ ... NOT INVALID KEY
-// - REWRITE ... INVALID KEY
-// - REWRITE ... NOT INVALID KEY
-// - START ... INVALID KEY
-// - START ... NOT INVALID KEY
-// - WRITE ... AT END-OF-PAGE
-// - WRITE ... NOT AT END-OF-PAGE
-// - WRITE ... INVALID KEY
-// - WRITE ... NOT INVALID KEY
-// Ordering
-// - RETURN ... AT END
-// - RETURN ... NOT AT END
-// Program or method linkage
-// - CALL ... ON OVERFLOW
-// - CALL ... ON EXCEPTION
-// - CALL ... NOT ON EXCEPTION
-// - INVOKE ... ON EXCEPTION
-// - INVOKE ... NOT ON EXCEPTION
-// Table-handling
-// - SEARCH
 
 // p280: Delimited scope statements
 // In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
@@ -4449,80 +4127,6 @@ imperativeStatementStartPredicate:
 // A conditional statement that is delimited by its explicit scope terminator is
 // considered an imperative statement and must follow the rules for imperative
 // statements.
-// These are the explicit scope terminators:
-// - END-ADD
-// - END-CALL
-// - END-COMPUTE
-// - END-DELETE
-// - END-DIVIDE
-// - END-EVALUATE
-// - END-IF
-// - END-INVOKE
-// - END-MULTIPLY
-// - END-PERFORM
-// - END-READ
-// - END-RETURN
-// - END-REWRITE
-// - END-SEARCH
-// - END-START
-// - END-STRING
-// - END-SUBTRACT
-// - END-UNSTRING
-// - END-WRITE
-// - END-XML
-// Implicit scope terminators
-// At the end of any sentence, an implicit scope terminator is a separator period that
-// terminates the scope of all previous statements not yet terminated.
-// An unterminated conditional statement cannot be contained by another statement.
-// Except for nesting conditional statements within IF statements, nested statements
-// must be imperative statements and must follow the rules for imperative
-// statements. You should not nest conditional statements.
-
-statement:
-         acceptStatement      |
-         addStatementConditional |
-         alterStatement       |
-         callStatementConditional |
-         cancelStatement      |
-         closeStatement       |
-         computeStatementConditional |
-         continueStatement    |
-         deleteStatementConditional |
-         displayStatement     |
-         divideStatementConditional |
-         entryStatement       |
-         evaluateStatementWithBody |
-         execStatement        |
-         exitStatement        |
-         exitMethodStatement  |
-         exitProgramStatement |
-         gobackStatement      |
-         gotoStatement        |
-         ifStatementWithBody  |
-         initializeStatement  |
-         inspectStatement     |
-         invokeStatementConditional |
-         mergeStatement       |
-         moveStatement        |
-         multiplyStatementConditional |
-         openStatement        |
-         performStatementWithBody |
-         performProcedureStatement |
-         readStatementConditional |
-         releaseStatement     |
-         returnStatementConditional |
-         rewriteStatementConditional |
-         searchStatementWithBody |
-         setStatement         |
-         sortStatement        |
-         startStatementConditional |
-         stopStatement        |
-         stringStatementConditional |
-         subtractStatementConditional |
-         unstringStatementConditional |
-         writeStatementConditional |
-         xmlGenerateStatementConditional |
-         xmlParseStatementConditional;
 
 // p281: There are several phrases common to arithmetic and data manipulation statements,
 // such as:
@@ -4665,6 +4269,7 @@ statement:
 // transfer of control, then if necessary an implicit transfer of control is made after
 // execution of the phrase to the end of the arithmetic statement. 
 
+// -- Individual statements --
 
 // p294: ACCEPT statement
 // The ACCEPT statement transfers data or system date-related information into the data area referenced by the specified identifier. 
@@ -4739,7 +4344,7 @@ statement:
 
 acceptStatement:
                    ACCEPT identifier (FROM 
-                                      ( mnemonicName | environmentName ) |
+                                      ( mnemonicForEnvironmentName | environmentName ) |
                                       (   (DATE YYYYMMDD ?) |
                                           (DAY YYYYDDD ?) |
                                           (DAY_OF_WEEK |
@@ -4798,11 +4403,11 @@ addStatement:
                 ADD (CORRESPONDING | CORR)? (identifier | numericLiteral)+ TO ((identifier ROUNDED?)+ | numericLiteral)
                 (GIVING (identifier ROUNDED?)+)?;
 
-addStatementConditional:
-                           addStatement
-                           (onSizeErrorCondition imperativeStatement)?
-                           (notOnSizeErrorCondition imperativeStatement)?
-                           addStatementEnd?;
+//addStatementConditional:
+//                           addStatement
+//                           (onSizeErrorCondition imperativeStatement)?
+//                           (notOnSizeErrorCondition imperativeStatement)?
+//                           addStatementEnd?;
 
 onSizeErrorCondition:
                         ON? SIZE ERROR;
@@ -4973,12 +4578,12 @@ callStatement:
                         )+)?
                  (RETURNING identifier)?;
 
-callStatementConditional:
-                            callStatement
-                            (((onExceptionCondition imperativeStatement)?
-                            (notOnExceptionCondition imperativeStatement)?) |
-                            (onOverflowCondition imperativeStatement)?)
-                            callStatementEnd;
+//callStatementConditional:
+//                            callStatement
+//                            (((onExceptionCondition imperativeStatement)?
+//                            (notOnExceptionCondition imperativeStatement)?) |
+//                            (onOverflowCondition imperativeStatement)?)
+//                            callStatementEnd;
 
 onExceptionCondition:
                         ON? EXCEPTION;
@@ -5087,11 +4692,11 @@ closeStatement:
 computeStatement:
                     COMPUTE (identifier ROUNDED?)+ (EqualOperator | EQUAL) arithmeticExpression;
 
-computeStatementConditional:
-                               computeStatement
-                               (onSizeErrorCondition imperativeStatement)?
-                               (notOnSizeErrorCondition imperativeStatement)?
-                               computeStatementEnd?;
+//computeStatementConditional:
+//                               computeStatement
+//                               (onSizeErrorCondition imperativeStatement)?
+//                               (notOnSizeErrorCondition imperativeStatement)?
+//                               computeStatementEnd?;
 
 computeStatementEnd:
                        END_COMPUTE;
@@ -5126,11 +4731,11 @@ continueStatement:
 deleteStatement:
                    DELETE fileName RECORD?;
 
-deleteStatementConditional:
-                              deleteStatement
-                              (invalidKeyCondition imperativeStatement)?
-                              (notInvalidKeyCondition imperativeStatement)?
-                              deleteStatementEnd?;
+//deleteStatementConditional:
+//                              deleteStatement
+//                              (invalidKeyCondition imperativeStatement)?
+//                              (notInvalidKeyCondition imperativeStatement)?
+//                              deleteStatementEnd?;
 
 invalidKeyCondition:
                        INVALID KEY?;
@@ -5186,7 +4791,7 @@ deleteStatementEnd:
 
 displayStatement:
                     DISPLAY (identifier | literal)+
-                    (UPON (mnemonicName | environmentName))?
+                    (UPON (mnemonicForEnvironmentName | environmentName))?
                     (WITH? NO ADVANCING)?;
 
 // p325: DIVIDE statement
@@ -5272,11 +4877,11 @@ divideStatement:
                    (GIVING (identifier ROUNDED?)+)?
                    (REMAINDER identifier)?;
 
-divideStatementConditional:
-                              divideStatement
-                              (onSizeErrorCondition imperativeStatement)?
-                              (notOnSizeErrorCondition imperativeStatement)?
-                              divideStatementEnd?;
+//divideStatementConditional:
+//                              divideStatement
+//                              (onSizeErrorCondition imperativeStatement)?
+//                              (notOnSizeErrorCondition imperativeStatement)?
+//                              divideStatementEnd?;
 
 divideStatementEnd:
                       END_DIVIDE;
@@ -5327,11 +4932,11 @@ entryStatement:
 // For more information, see “Delimited scope statements” on page 280. 
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
-evaluateStatementWithBody:
-                     evaluateStatement
-                     ((whenConditionalExpression | whenEvaluateCondition)+ imperativeStatement)+
-                     (whenOtherCondition imperativeStatement)?
-                     evaluateStatementEnd?;
+//evaluateStatementWithBody:
+//                     evaluateStatement
+//                     ((whenConditionalExpression | whenEvaluateCondition)+ imperativeStatement)+
+//                     (whenOtherCondition imperativeStatement)?
+//                     evaluateStatementEnd?;
 
 evaluateStatement:
                      EVALUATE (identifier | literal | expression | (TRUE | FALSE)) (ALSO (identifier | literal | expression | (TRUE | FALSE)))*
@@ -5513,13 +5118,13 @@ gotoStatement:
 // encountered is matched with the nearest preceding IF that has not been implicitly
 // or explicitly terminated.
 
-ifStatementWithBody:
-                ifStatement
-                    (statement+ | nextSentenceStatement)
-               (elseCondition 
-                    (statement+ | nextSentenceStatement)
-               )?
-               ifStatementEnd?;
+//ifStatementWithBody:
+//                ifStatement
+//                    (statement+ | nextSentenceStatement)
+//               (elseCondition 
+//                    (statement+ | nextSentenceStatement)
+//               )?
+//               ifStatementEnd?;
 
 ifStatement:
                IF conditionalExpression THEN?;
@@ -6066,11 +5671,11 @@ invokeStatement:
                    (USING (BY? VALUE (((LENGTH OF)? identifier) | literal)+)+)?
                    (RETURNING identifier)?;
 
-invokeStatementConditional:
-                              invokeStatement
-                              (onExceptionCondition imperativeStatement)?
-                              (notOnExceptionCondition imperativeStatement)?
-                              invokeStatementEnd?;
+//invokeStatementConditional:
+//                              invokeStatement
+//                              (onExceptionCondition imperativeStatement)?
+//                              (notOnExceptionCondition imperativeStatement)?
+//                              invokeStatementEnd?;
 
 invokeStatementEnd:
                       END_INVOKE;
@@ -6419,11 +6024,11 @@ multiplyStatement:
                      MULTIPLY (identifier | literal) BY ((identifier ROUNDED?)+ | literal)
                      (GIVING (identifier ROUNDED?)+)?;
 
-multiplyStatementConditional:
-                                multiplyStatement
-                                (onSizeErrorCondition imperativeStatement)?
-                                (notOnSizeErrorCondition imperativeStatement)?
-                                multiplyStatementEnd?;
+//multiplyStatementConditional:
+//                                multiplyStatement
+//                                (onSizeErrorCondition imperativeStatement)?
+//                                (notOnSizeErrorCondition imperativeStatement)?
+//                                multiplyStatementEnd?;
 
 multiplyStatementEnd:
                         END_MULTIPLY;
@@ -6710,11 +6315,11 @@ performProcedureStatement:
                                   (performVaryingPhrase performVaryingAfterPhrase*) )?
                             ;
 
-performStatementWithBody:
-                            performStatement
-                            imperativeStatement? 
-                            performStatementEnd 
-                            ;
+//performStatementWithBody:
+//                            performStatement
+//                            imperativeStatement? 
+//                            performStatementEnd 
+//                            ;
 
 performStatement:
                     PERFORM   ( performTimesPhrase | 
@@ -6832,13 +6437,13 @@ readStatement:
                  READ fileName NEXT? RECORD? (INTO identifier)?
                  (KEY IS? dataName)?;
 
-readStatementConditional:
-                            readStatement
-                            (atEndCondition imperativeStatement)?
-                            (notAtEndCondition imperativeStatement)?                 
-                            (invalidKeyCondition imperativeStatement)?
-                            (notInvalidKeyCondition imperativeStatement)?
-                            readStatementEnd?;
+//readStatementConditional:
+//                            readStatement
+//                            (atEndCondition imperativeStatement)?
+//                            (notAtEndCondition imperativeStatement)?                 
+//                            (invalidKeyCondition imperativeStatement)?
+//                            (notInvalidKeyCondition imperativeStatement)?
+//                            readStatementEnd?;
 
 atEndCondition:
                   AT? END;
@@ -6968,11 +6573,12 @@ recordName:
 returnStatement:
                    RETURN fileName RECORD? (INTO identifier)?;
 
-returnStatementConditional:
-                              returnStatement
-                              (atEndCondition imperativeStatement)?
-                              (notAtEndCondition imperativeStatement)?
-                              returnStatementEnd?;
+//returnStatementConditional:
+//                              returnStatement
+//                              (atEndCondition imperativeStatement)?
+//                              (notAtEndCondition imperativeStatement)?
+//                              returnStatementEnd?;
+
 returnStatementEnd:
                       END_RETURN;
 
@@ -7025,11 +6631,11 @@ returnStatementEnd:
 rewriteStatement:
                     REWRITE recordName (FROM identifier)?;
 
-rewriteStatementConditional:
-                             rewriteStatement
-                             (invalidKeyCondition imperativeStatement)?
-                             (notInvalidKeyCondition imperativeStatement)?
-                             rewriteStatementEnd?;
+//rewriteStatementConditional:
+//                             rewriteStatement
+//                             (invalidKeyCondition imperativeStatement)?
+//                             (notInvalidKeyCondition imperativeStatement)?
+//                             rewriteStatementEnd?;
 
 rewriteStatementEnd:
                        END_REWRITE;
@@ -7088,11 +6694,11 @@ rewriteStatementEnd:
 // ... more details p412->414 Binary search ...
 // ... more details p414 Search statement considerations ...
 
-searchStatementWithBody:
-                   searchStatement
-                   (atEndCondition imperativeStatement)?
-                   (whenConditionalExpression (imperativeStatement | nextSentenceStatement))+
-                   searchStatementEnd?;
+//searchStatementWithBody:
+//                   searchStatement
+//                   (atEndCondition imperativeStatement)?
+//                   (whenConditionalExpression (imperativeStatement | nextSentenceStatement))+
+//                   searchStatementEnd?;
 
 searchStatement:
                    SEARCH ALL? identifier
@@ -7315,7 +6921,7 @@ searchStatementEnd:
 setStatement:
                 SET ( ((indexName | identifier | (ADDRESS OF identifier))+ TO (indexName | identifier | IntegerLiteral | (ADDRESS OF identifier) | (ENTRY_ARG (identifier | literal)) | (NULL | NULLS | SELF))) |
                       ((indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral)) |
-                      (mnemonicName+ TO (ON | OFF))+ |
+                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
                       (conditionName+ TO TRUE) );
 
 // p422: SORT statement
@@ -7664,11 +7270,11 @@ startStatement:
                             (NOT LESS THAN?) | (NOT LessThanOperator) |
                             (GREATER THAN? OR EQUAL TO?) | GreaterThanOrEqualOperator) dataName)?;
 
-startStatementConditional:
-                             startStatement
-                             (invalidKeyCondition imperativeStatement)?
-                             (notInvalidKeyCondition imperativeStatement)?
-                             startStatementEnd?;
+//startStatementConditional:
+//                             startStatement
+//                             (invalidKeyCondition imperativeStatement)?
+//                             (notInvalidKeyCondition imperativeStatement)?
+//                             startStatementEnd?;
 
 startStatementEnd:
                      END_START;
@@ -7820,11 +7426,11 @@ stringStatement:
                    DELIMITED BY? (identifier | literal | SIZE))+
                    INTO identifier (WITH? POINTER identifier)?;
 
-stringStatementConditional:
-                              stringStatement
-                              (onOverflowCondition imperativeStatement)?
-                              (notOnOverflowCondition imperativeStatement)?
-                              stringStatementEnd?;
+//stringStatementConditional:
+//                              stringStatement
+//                              (onOverflowCondition imperativeStatement)?
+//                              (notOnOverflowCondition imperativeStatement)?
+//                              stringStatementEnd?;
 
 notOnOverflowCondition:
                           NOT ON? OVERFLOW;
@@ -7904,11 +7510,11 @@ subtractStatement:
                 SUBTRACT (CORRESPONDING | CORR)? (identifier | literal)+ FROM ((identifier ROUNDED?)+ | literal)
                 (GIVING (identifier ROUNDED?)+)?;
 
-subtractStatementConditional:
-                                subtractStatement
-                                (onSizeErrorCondition imperativeStatement)?
-                                (notOnSizeErrorCondition imperativeStatement)?
-                                subtractStatementEnd?;
+//subtractStatementConditional:
+//                                subtractStatement
+//                                (onSizeErrorCondition imperativeStatement)?
+//                                (notOnSizeErrorCondition imperativeStatement)?
+//                                subtractStatementEnd?;
 
 subtractStatementEnd:
                         END_SUBTRACT;
@@ -8096,11 +7702,11 @@ unstringStatement:
                      (WITH? POINTER identifier)? 
                      (TALLYING IN? identifier)?;
 
-unstringStatementConditional:
-                                unstringStatement
-                                (onOverflowCondition imperativeStatement)?
-                                (notOnOverflowCondition imperativeStatement)?
-                                unstringStatementEnd?;
+//unstringStatementConditional:
+//                                unstringStatement
+//                                (onOverflowCondition imperativeStatement)?
+//                                (notOnOverflowCondition imperativeStatement)?
+//                                unstringStatementEnd?;
 
 unstringStatementEnd:
                         END_UNSTRING;
@@ -8312,15 +7918,15 @@ unstringStatementEnd:
 
 writeStatement:
                   WRITE recordName (FROM identifier)?
-                  ((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE |LINES)?) | mnemonicName | PAGE))?;
+                  ((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE |LINES)?) | mnemonicForEnvironmentName | PAGE))?;
 
-writeStatementConditional:
-                             writeStatement
-                             (atEndOfPageCondition imperativeStatement)? 
-                             (notAtEndOfPageCondition imperativeStatement)? 
-                             (invalidKeyCondition imperativeStatement)?
-                             (notInvalidKeyCondition imperativeStatement)? 
-                             writeStatementEnd?;
+//writeStatementConditional:
+//                             writeStatement
+//                             (atEndOfPageCondition imperativeStatement)? 
+//                             (notAtEndOfPageCondition imperativeStatement)? 
+//                             (invalidKeyCondition imperativeStatement)?
+//                             (notInvalidKeyCondition imperativeStatement)? 
+//                             writeStatementEnd?;
 
 atEndOfPageCondition:
                AT? (END_OF_PAGE | EOP);
@@ -8683,11 +8289,11 @@ whenPhrase:
               WHEN (ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES)
               (OR? (ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES))*;
 
-xmlGenerateStatementConditional:
-                                   xmlGenerateStatement
-                                   (onExceptionCondition imperativeStatement)?
-                                   (notOnExceptionCondition imperativeStatement)?
-                                   xmlStatementEnd?;
+//xmlGenerateStatementConditional:
+//                                   xmlGenerateStatement
+//                                   (onExceptionCondition imperativeStatement)?
+//                                   (notOnExceptionCondition imperativeStatement)?
+//                                   xmlStatementEnd?;
 
 xmlStatementEnd:
                    END_XML;
@@ -8902,11 +8508,11 @@ xmlParseStatement:
                      (VALIDATING WITH? (identifier | (FILE xmlSchemaName)))?
                      PROCESSING PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)   ?;
 
-xmlParseStatementConditional:
-                                xmlParseStatement
-                                (onExceptionCondition imperativeStatement)?
-                                (notOnExceptionCondition imperativeStatement)?
-                                xmlStatementEnd?;
+//xmlParseStatementConditional:
+//                                xmlParseStatement
+//                                (onExceptionCondition imperativeStatement)?
+//                                (notOnExceptionCondition imperativeStatement)?
+//                                xmlStatementEnd?;
             
 // ------------------------------
 // Start of DB2 coprocessor
@@ -10140,7 +9746,7 @@ conditionNameReference:
 
 conditionNameReferenceInSpecialNamesParagraph:
                                                  conditionName 
-                                                ((IN | OF) mnemonicName)*;
+                                                ((IN | OF) mnemonicForUPSISwitchName)*;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of

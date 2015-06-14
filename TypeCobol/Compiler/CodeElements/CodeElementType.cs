@@ -116,7 +116,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         AtEndCondition,
         NotAtEndCondition,
-        AtEndOfPageCondtion,
+        AtEndOfPageCondition,
         NotAtEndOfPageCondition,
         OnExceptionCondition,
         NotOnExceptionCondition,

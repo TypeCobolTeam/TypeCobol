@@ -1,7 +1,20 @@
 ﻿--- Code Elements ---
-[SectionHeader : [8,17:MySection1]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>]{SectionName=MySection1}
-[ParagraphHeader : [8,20:MyParagraph11]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]{ParagraphName=MyParagraph11}
-[ParagraphHeader : [8,20:MyParagraph12]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]{ParagraphName=MyParagraph12}
-[SectionHeader : [8,17:MySection2]<UserDefinedWord> --> [29,29+:.]<PeriodSeparator>]{SectionName=MySection2,PriorityNumber=22}
-[ParagraphHeader : [8,20:MyParagraph21]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]{ParagraphName=MyParagraph21}
-[ParagraphHeader : [8,20:MyParagraph22]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>]{ParagraphName=MyParagraph22}
+[[SectionHeader]] [8,17:MySection1]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>
+- SectionName = MySection1
+
+[[ParagraphHeader]] [8,20:MyParagraph11]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>
+- ParagraphName = MyParagraph11
+
+[[ParagraphHeader]] [8,20:MyParagraph12]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>
+- ParagraphName = MyParagraph12
+
+[[SectionHeader]] [8,17:MySection2]<UserDefinedWord> --> [29,29+:.]<PeriodSeparator>
+- SectionName = MySection2
+- PriorityNumber = 22
+
+[[ParagraphHeader]] [8,20:MyParagraph21]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>
+- ParagraphName = MyParagraph21
+
+[[ParagraphHeader]] [8,20:MyParagraph22]<UserDefinedWord> --> [21,21+:.]<PeriodSeparator>
+- ParagraphName = MyParagraph22
+

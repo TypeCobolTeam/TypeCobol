@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -23,7 +24,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + "{ParagraphName=" + ParagraphName.Name + "}";
+            StringBuilder sb = new StringBuilder(base.ToString());
+            sb.AppendLine("- ParagraphName = " + ParagraphName);
+            return sb.ToString();
         }
     }
 }

@@ -1,3 +1,5 @@
 ﻿--- Code Elements ---
-[XmlGenerateStatement : [8,10:XML]<XML> --> [38,43:MyData]<UserDefinedWord>]
-[XmlParseStatement : [8,10:XML]<XML> --> [29,39:MyParagraph]<UserDefinedWord>]
+[[XmlGenerateStatement]] [8,10:XML]<XML> --> [38,43:MyData]<UserDefinedWord>
+
+[[XmlParseStatement]] [8,10:XML]<XML> --> [29,39:MyParagraph]<UserDefinedWord>
+

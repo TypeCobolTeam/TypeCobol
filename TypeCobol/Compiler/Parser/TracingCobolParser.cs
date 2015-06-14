@@ -7,7 +7,7 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
-    internal class TracingCobolParser : CobolParser
+    internal class TracingCobolParser : CobolCodeElementsParser
     {
         public TracingCobolParser(ITokenStream input) : base(input)
         {

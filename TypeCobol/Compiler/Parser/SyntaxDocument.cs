@@ -99,7 +99,7 @@ namespace TypeCobol.Compiler.Parser
                 cobolParser.ResetTraces();
 
                 // Try to parse a code element starting with the current token
-                CobolParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
+                CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
 
                 // Visit the parse tree to build a first class object representing the compiler directive
                 walker.Walk(codeElementBuilder, codeElementParseTree);

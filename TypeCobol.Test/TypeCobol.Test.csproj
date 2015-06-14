@@ -77,6 +77,11 @@
     <Compile Include="Compiler\Parser\TestCodeElements.cs" />
     <Compile Include="Compiler\Parser\TestParser.cs" />
     <Compile Include="Compiler\Parser\TestTokenSource.cs" />
+    <Compile Include="Compiler\Pipeline\TestFileWatcher.cs" />
+    <Compile Include="Compiler\Pipeline\TestIncrementalParser.cs" />
+    <Compile Include="Compiler\Pipeline\TestIncrementalPipeline.cs" />
+    <Compile Include="Compiler\Pipeline\TestIncrementalPreprocessor.cs" />
+    <Compile Include="Compiler\Pipeline\TestIncrementalScanner.cs" />
     <Compile Include="Compiler\Preprocessor\PreprocessorUtils.cs" />
     <Compile Include="Compiler\Preprocessor\TestCompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\TestCopyDirective.cs" />
@@ -94,6 +99,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
+    <Content Include="Compiler\Parser\ResultFiles\ParagraphCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\EntryCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\IdentificationCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\IDCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\ONCodeElements.txt" />
@@ -170,6 +177,8 @@
     <None Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
     <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
+    <None Include="Compiler\Parser\Samples\ParagraphCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\EntryCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IdentificationCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\HeaderCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />

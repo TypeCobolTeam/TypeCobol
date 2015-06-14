@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -21,7 +22,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + "{ClassName=" + ClassName + "}";
+            StringBuilder sb = new StringBuilder(base.ToString());
+            sb.AppendLine("- ClassName = " + ClassName);
+            return sb.ToString();
         }
     }
 }
