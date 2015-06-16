@@ -1,30 +1,30 @@
 ﻿-- Line 1 --
 [1,7:REPLACE]<REPLACE>
 [8,8: ]<SpaceSeparator>
-=>continued:[9,9+:*]<ASTERISK_CONTROL>
+=>continued:[9,9+:*CONTROL]<ASTERISK_CONTROL>
 
 -- Line 2 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,12:CONTROL]<ASTERISK_CONTROL>#*CONTROL#
+=>continuation:[6,12:*CONTROL]<ASTERISK_CONTROL>
 [13,13: ]<SpaceSeparator>
 [14,18:BASIS]<BASIS>
 [19,19: ]<SpaceSeparator>
-=>continued:[20,22:COP]<COPY>
+=>continued:[20,22:COPY]<COPY>
 
 -- Line 3 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,6:Y]<COPY>#COPY#
+=>continuation:[6,6:COPY]<COPY>
 [7,7: ]<SpaceSeparator>
-=>continued:[8,10:ALT]<ALTER>
+=>continued:[8,10:ALTER]<ALTER>
 
 -- Line 4 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,7:ER]<ALTER>#ALTER#
+=>continuation:[6,7:ALTER]<ALTER>
 
 -- Line 5 --
-=>continued:[1,4:end-]<END_EXEC>
+=>continued:[1,4:end-EXEC]<END_EXEC>
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,9:EXEC]<END_EXEC>#end-EXEC#
+=>continuation:[6,9:end-EXEC]<END_EXEC>
 

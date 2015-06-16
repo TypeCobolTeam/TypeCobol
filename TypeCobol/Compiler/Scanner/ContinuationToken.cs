@@ -31,14 +31,14 @@ namespace TypeCobol.Compiler.Scanner
             ContinuedToken = continuedToken;
 
             //  Store the concatenated source text
-            string sourceTextForConcat = this.Text.Substring(offsetForLiteralContinuation); // An extra delimiter must be removed in case of a continued alphanumeric literal
+            string sourceTextForConcat = this.SourceText.Substring(offsetForLiteralContinuation); // An extra delimiter must be removed in case of a continued alphanumeric literal
             if (continuedToken is ContinuationToken)
             {
                 ContinuedSourceText = ((ContinuationToken)continuedToken).ContinuedSourceText + sourceTextForConcat;
             }
             else
             {
-                ContinuedSourceText = continuedToken.Text + sourceTextForConcat;
+                ContinuedSourceText = continuedToken.SourceText + sourceTextForConcat;
             }
 
             // Ragister backward link (doubly linked list)
@@ -69,9 +69,32 @@ namespace TypeCobol.Compiler.Scanner
             ContinuedToken.SetPropertiesFromContinuationToken();
         }
 
+        /// <summary>
+        /// Text returned to the parser :
+        /// - ContinuedSourceText if the token is not continued on the next line
+        /// - ContinuationToken.Text if the token IsContinuedOnTheNextLine
+        /// </summary>
+        public override string Text
+        {
+            get
+            {
+                if (!IsContinuedOnTheNextLine)
+                {
+                    return ContinuedSourceText;
+                }
+                else
+                {
+                    return ContinuationToken.Text;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
         public override string ToString()
         {
-            return "=>continuation:" + base.ToString() + "#" + ContinuedSourceText + "#";
+            return "=>continuation:" + base.ToString();
         }
     }
 }

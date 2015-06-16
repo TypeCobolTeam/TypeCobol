@@ -27,11 +27,11 @@
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
 
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [61,61+:.]<PeriodSeparator>
-- InputParameters = ByReference:InParam1
+- InputParameters = InParam1
 - ReturningDataName = OutParam1
 
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [39,39+:.]<PeriodSeparator>
-- InputParameters = ByReference:InParam1 ByValue:InParam2 ByValue:InParam3 ByReference:InParam4 ByReference:InParam5
+- InputParameters = InParam1 ByValue:InParam2 ByValue:InParam3 ByReference:InParam4 ByReference:InParam5
 
 [[SectionHeader]] [8,17:MySection1]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>
 - SectionName = MySection1

@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.Scanner
                         // Compute end index of the continuation token on the current line
                         int endOfContinuationIndex = virtualConcatenatedToken.Length - continuedTextFromPreviousLine.Length - 1 + startOfContinuationIndex + offsetForLiteralContinuation;
 
-                        // Create a continuation token : copy of the firstToken, with different line and index properties
+                        // Create a continuation token : copy of the first token, with different line and index properties
                         ContinuationToken continuationToken = new ContinuationToken(virtualConcatenatedToken, startOfContinuationIndex, offsetForLiteralContinuation, endOfContinuationIndex, textLineMap.TextLine, lastTokenFromPreviousLine);
                         
                         // Adjust the scanner state of the previous and current line : 

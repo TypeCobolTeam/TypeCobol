@@ -409,7 +409,7 @@ programName : UserDefinedWord | alphanumericLiteral;
 
 classIdentification:
                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       CLASS_ID PeriodSeparator className INHERITS className PeriodSeparator
+                       CLASS_ID PeriodSeparator classId=className INHERITS inheritsFromClassName=className PeriodSeparator
                        authoringProperties
                    ;
 
@@ -979,7 +979,7 @@ charactersEqualSet:
 // EBCDIC
 // Specifies the EBCDIC character set.
 
-alphabetName : UserDefinedWord;
+alphabetName : UserDefinedWord | standardCollatingSequence;
 
 // p116 : literal-1, literal-2, literal-3
 // Specifies that the collating sequence for alphanumeric data is
@@ -1311,7 +1311,7 @@ externalFileId : UserDefinedWord;
 
 repositoryParagraph: 
                    REPOSITORY PeriodSeparator 
-                   (CLASS className (IS? externalClassName /*| javaArrayClassReference*/)?)*;
+                   ((CLASS className (IS? externalClassName /*| javaArrayClassReference*/)?)+ PeriodSeparator)?;
 
 // p122: external-class-name-1
 // An alphanumeric literal containing a name that enables a COBOL program

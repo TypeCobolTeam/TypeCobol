@@ -9,7 +9,7 @@
 
 -- Line 4 --
 [2,2: ]<SpaceSeparator>
-=>continuation:[3,2:]<PeriodSeparator>#.#
+=>continuation:[3,2:.]<PeriodSeparator>
 [3,3:a]<UserDefinedWord>
 [2,2]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 [3,2]<12,Error,Tokens>Invalid character found after . : expecting space or digit
@@ -19,7 +19,7 @@
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,5:]<PeriodSeparator>#.#
+=>continuation:[6,5:.]<PeriodSeparator>
 [6,6:a]<UserDefinedWord>
 [6,5]<12,Error,Tokens>Invalid character found after . : expecting space or digit
 
@@ -28,7 +28,7 @@
 
 -- Line 8 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,5:]<CommaSeparator>#,#
+=>continuation:[6,5:,]<CommaSeparator>
 [6,6:a]<UserDefinedWord>
 [6,5]<2,Error,Tokens>Invalid character found after , : expecting space or digit
 
@@ -37,7 +37,7 @@
 
 -- Line 10 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,5:]<SemicolonSeparator>#;#
+=>continuation:[6,5:;]<SemicolonSeparator>
 [6,6:a]<UserDefinedWord>
 [6,5]<3,Error,Tokens>Semicolon separator should be followed by a space
 
@@ -64,32 +64,32 @@
 
 -- Line 17 --
 [1,1:(]<LeftParenthesisSeparator>
-=>continued:[2,2+:.]<DecimalLiteral>{NULL}
+=>continued:[2,2+:.025]<DecimalLiteral>{25|3>0,025}
 
 -- Line 18 --
-=>continuation:[2,4:025]<DecimalLiteral>{25|3>0,025}#.025#
+=>continuation:[2,4:.025]<DecimalLiteral>{25|3>0,025}
 [5,5: ]<SpaceSeparator>
 [6,7:* ]<MultiplyOperator>
-=>continued:[8,8+:.]<DecimalLiteral>{NULL}
+=>continued:[8,8+:.44]<DecimalLiteral>{44|2>0,44}
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 19 --
-=>continuation:[2,3:44]<DecimalLiteral>{44|2>0,44}#.44#
+=>continuation:[2,3:.44]<DecimalLiteral>{44|2>0,44}
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 20 --
 [2,2:)]<RightParenthesisSeparator>
 [3,3: ]<SpaceSeparator>
 [4,5:+ ]<PlusOperator>
-=>continued:[6,6:1]<DecimalLiteral>{1}
+=>continued:[6,6:1.18]<DecimalLiteral>{118|2>1,18}
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 21 --
-=>continuation:=>continued:[2,3:.1]<DecimalLiteral>{11|1>1,1}#1.1#
+=>continuation:=>continued:[2,3:1.18]<DecimalLiteral>{118|2>1,18}
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 22 --
-=>continuation:[2,2:8]<DecimalLiteral>{118|2>1,18}#1.18#
+=>continuation:[2,2:1.18]<DecimalLiteral>{118|2>1,18}
 [3,3+:.]<PeriodSeparator>
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 

@@ -206,11 +206,31 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Returns the substring of raw source text comprised between the starting and ending column of the token.
         /// </summary>
-        public virtual string Text
+        public string SourceText
         {
             get
             {
                 return textLine.TextSegment(startIndex, stopIndex);
+            }
+        }
+
+        /// <summary>
+        /// Text returned to the parser :
+        /// - SourceText if the token is not continued on the next line
+        /// - ContinuationToken.Text if the token IsContinuedOnTheNextLine
+        /// </summary>
+        public virtual string Text
+        {
+            get
+            {
+                if (!IsContinuedOnTheNextLine)
+                {
+                    return SourceText;
+                }
+                else
+                {
+                    return ContinuationToken.Text;
+                }
             }
         }
 
@@ -262,7 +282,6 @@ namespace TypeCobol.Compiler.Scanner
         {
             // Register continuation token
             IsContinuedOnTheNextLine = true;
-            Channel = CHANNEL_ContinuationTokens;
             ContinuationToken = continuationToken;
 
             // Recursively inherit the token type from the continuation token
@@ -274,8 +293,8 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal virtual void SetPropertiesFromContinuationToken()
         {
-            TokenType = ContinuationToken.TokenType;
-            TokenFamily = ContinuationToken.TokenFamily;            
+            CorrectType(ContinuationToken.TokenType);
+            LiteralValue = ContinuationToken.LiteralValue;       
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
 ﻿using Antlr4.Runtime.Tree;
 using System;
 using TypeCobol.Compiler.Scanner;
+using System.Collections.Generic;
+using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -50,6 +52,27 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                 return null;
             }
+        }
+
+        public static IList<Token> GetTokensList(IParseTree node)
+        {
+            IList<Token> tokens = new List<Token>();
+            if(node is ITerminalNode)
+            {
+                tokens.Add(GetTokenFromTerminalNode((ITerminalNode)node));
+            }
+            else
+            {
+                for(int i=0; i<node.ChildCount; i++)
+                {
+                    var childNode = node.GetChild(i);
+                    if(childNode is ITerminalNode)
+                    {
+                        tokens.Add(GetTokenFromTerminalNode((ITerminalNode)childNode));
+                    }
+                }
+            }
+            return tokens;
         }
 
         // --- Get values from tokens in terminal nodes ---

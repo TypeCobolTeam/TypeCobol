@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         public string ToStringWithRuleStack()
         {
-            return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + ")";
+            return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + OffendingSymbol.Line + ")";
         }
     }
 }

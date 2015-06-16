@@ -48,8 +48,11 @@ namespace TypeCobol.Compiler.CodeElements
                     foreach (InputParameter inputParam in UsingParameters)
                     {
                         sb.Append(' ');
-                        sb.Append(inputParam.ReceivingMode);
-                        sb.Append(':');
+                        if (inputParam.ReceivingMode != null)
+                        {
+                            sb.Append(inputParam.ReceivingMode);
+                            sb.Append(':');
+                        }
                         sb.Append(inputParam.DataName);
                     }
                     sb.AppendLine();
@@ -72,7 +75,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Argument receiving mode : BY REFERENCE or BY VALUE
         /// </summary>
-        public ReceivingMode ReceivingMode { get; set; }
+        public SyntaxProperty<ReceivingMode> ReceivingMode { get; set; }
 
         /// <summary>
         /// Each USING identifier must be defined as a level-01 or level-77 item in the

@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Parser
             Token initialFlag = ParseTreeUtils.GetFirstToken(context.INITIAL());
             if (initialFlag != null)
             {
-                programIdentification.IsInitial = new SyntaxBoolean(initialFlag);
+                programIdentification.IsInitial = new SyntaxBoolean(initialFlag); 
             }
             Token recursiveFlag = ParseTreeUtils.GetFirstToken(context.RECURSIVE());
             if (recursiveFlag != null)
@@ -84,30 +84,25 @@ namespace TypeCobol.Compiler.Parser
         {
             AuthoringProperties authoringProperties = new AuthoringProperties();
 
-            if(context.authorParagraph() != null)
+            if(context.authorParagraph().Count > 0)
             {
-                string commentEntries = BuildCommentEntriesText(context.authorParagraph().SelectMany(p => p.CommentEntry()));
-                authoringProperties.Author = commentEntries;
+                authoringProperties.Author = BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.dateCompiledParagraph() != null)
+            if (context.dateCompiledParagraph().Count > 0)
             {
-                string commentEntries = BuildCommentEntriesText(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
-                authoringProperties.DateCompiled = commentEntries;
+                authoringProperties.DateCompiled = BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.dateWrittenParagraph() != null)
+            if (context.dateWrittenParagraph().Count > 0)
             {
-                string commentEntries = BuildCommentEntriesText(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
-                authoringProperties.DateWritten = commentEntries;
+                authoringProperties.DateWritten = BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.installationParagraph() != null)
+            if (context.installationParagraph().Count > 0)
             {
-                string commentEntries = BuildCommentEntriesText(context.installationParagraph().SelectMany(p => p.CommentEntry()));
-                authoringProperties.Installation = commentEntries;
+                authoringProperties.Installation = BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.securityParagraph() != null)
+            if (context.securityParagraph().Count > 0)
             {
-                string commentEntries = BuildCommentEntriesText(context.securityParagraph().SelectMany(p => p.CommentEntry()));
-                authoringProperties.Security = commentEntries;
+                authoringProperties.Security = BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
             }
 
             if (CodeElement is ProgramIdentification)
@@ -124,12 +119,17 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private string BuildCommentEntriesText(IEnumerable<ITerminalNode> commentEntriesNodes)
+        private SyntaxProperty<string> BuildCommentEntriesProperty(IEnumerable<ITerminalNode> commentEntriesNodes)
         {
+            IList<Token> tokensList = new List<Token>();
             StringBuilder sbCommentEntries = new StringBuilder();
+
             bool isFirstLine = true;
             foreach(ITerminalNode commentEntryNode in commentEntriesNodes)
             {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode);
+                tokensList.Add(token);
+
                 if(isFirstLine)
                 {
                     sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
@@ -141,7 +141,8 @@ namespace TypeCobol.Compiler.Parser
                     sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                 }
             }
-            return sbCommentEntries.ToString();
+                        
+            return new SyntaxProperty<string>(sbCommentEntries.ToString(), tokensList);
         }
 
 
@@ -150,25 +151,16 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterClassIdentification(CobolCodeElementsParser.ClassIdentificationContext context)
         {
             ClassIdentification classIdentification = new ClassIdentification();
-
-            if (context.className() != null)
+            
+            Token className = ParseTreeUtils.GetFirstToken(context.classId);
+            if (className != null)
             {
-                if (context.className().Count >= 1)
-                {
-                    Token className = ParseTreeUtils.GetFirstToken(context.className()[0]);
-                    if (className != null)
-                    {
-                        classIdentification.ClassName = new ClassName(className);
-                    }
-                }
-                if (context.className().Count >= 2)
-                {
-                    Token className = ParseTreeUtils.GetFirstToken(context.className()[1]);
-                    if (className != null)
-                    {
-                        classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(className));
-                    }
-                }
+                classIdentification.ClassName = new ClassName(className);
+            }
+            Token inheritsFromClassName = ParseTreeUtils.GetFirstToken(context.inheritsFromClassName);
+            if (inheritsFromClassName != null)
+            {
+                classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
             }
 
             CodeElement = classIdentification;
@@ -253,11 +245,12 @@ namespace TypeCobol.Compiler.Parser
             {
                 foreach(var inputParametersContext in context.usingPhrase().inputParameters())
                 {
-                    ReceivingMode receivingMode = ReceivingMode.ByReference;
-                    if(inputParametersContext.receivingMode() != null && 
-                       inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext)
+                    SyntaxProperty<ReceivingMode> receivingMode = null;
+                    if (inputParametersContext.receivingMode() != null)
                     {
-                        receivingMode = ReceivingMode.ByValue;
+                        receivingMode = new SyntaxProperty<ReceivingMode>(
+                            inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext ? ReceivingMode.ByValue : ReceivingMode.ByReference, 
+                            ParseTreeUtils.GetTokensList(inputParametersContext.receivingMode()));
                     }
                     foreach(var dataNameContext in inputParametersContext.dataName())
                     {
@@ -307,7 +300,11 @@ namespace TypeCobol.Compiler.Parser
                 sectionHeader.SectionName = new SectionName(sectionName);
             }
 
-            sectionHeader.PriorityNumber = (int?)ParseTreeUtils.GetIntegerLiteral(context.priorityNumber());
+            Token priorityNumber = ParseTreeUtils.GetFirstToken(context.priorityNumber());
+            if (priorityNumber != null)
+            {
+                sectionHeader.PriorityNumber = new SyntaxInteger(priorityNumber);
+            }
             
             CodeElement = sectionHeader;
         }

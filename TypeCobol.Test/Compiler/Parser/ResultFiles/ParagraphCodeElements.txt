@@ -1,0 +1,53 @@
+﻿--- Code Elements ---
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [23,23+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [32,32+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [50,50+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [60,60+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [59,59+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [52,52+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [9,9+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [49,49+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [52,52+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [58,58+:.]<PeriodSeparator>
+
+[[RepositoryParagraph]] [8,17:REPOSITORY]<REPOSITORY> --> [18,18+:.]<PeriodSeparator>
+
+[[RepositoryParagraph]] [8,17:REPOSITORY]<REPOSITORY> --> [22,22+:.]<PeriodSeparator>
+
+[[RepositoryParagraph]] [8,17:Repository]<REPOSITORY> --> [60,61:. ]<PeriodSeparator>
+
+[[SourceComputerParagraph]] [8,22:SOURCE-COMPUTER]<SOURCE_COMPUTER> --> [23,23+:.]<PeriodSeparator>
+
+[[SourceComputerParagraph]] [8,22:SOURCE-COMPUTER]<SOURCE_COMPUTER> --> [32,32+:.]<PeriodSeparator>
+
+[[SourceComputerParagraph]] [8,22:SOURCE-COMPUTER]<SOURCE_COMPUTER> --> [47,47+:.]<PeriodSeparator>
+
+[[SourceComputerParagraph]] [8,22:SOURCE-COMPUTER]<SOURCE_COMPUTER> --> [52,52+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [21,21+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [32,32+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [23,23+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [44,45:. ]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [26,26+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [63,63+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [54,54+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [30,30+:.]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:SPECIAL-NAMES]<SPECIAL_NAMES> --> [45,45+:.]<PeriodSeparator>
+

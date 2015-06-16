@@ -14,19 +14,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// AUTHOR
         /// Name of the author of the program. 
         /// </summary>
-        public string Author { get; set; }
+        public SyntaxProperty<string> Author { get; set; }
 
         /// <summary>
         /// INSTALLATION
         /// Name of the company or location.
         /// </summary>
-        public string Installation { get; set; }
+        public SyntaxProperty<string> Installation { get; set; }
 
         /// <summary>
         /// DATE-WRITTEN
         /// Date the program was written.
         /// </summary>
-        public string DateWritten { get; set; }
+        public SyntaxProperty<string> DateWritten { get; set; }
 
         /// <summary>
         /// DATE-COMPILED
@@ -37,13 +37,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// DATE-COMPILED is printed. For example:
         /// DATE-COMPILED. 06/30/10.
         /// </summary>
-        public string DateCompiled { get; set; }
+        public SyntaxProperty<string> DateCompiled { get; set; }
 
         /// <summary>
         /// SECURITY
         /// Level of confidentiality of the program.
         /// </summary>
-        public string Security { get; set; }
+        public SyntaxProperty<string> Security { get; set; }
 
         /// <summary>
         /// Debug string
@@ -51,25 +51,25 @@ namespace TypeCobol.Compiler.CodeElements
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            if(!String.IsNullOrEmpty(Author))
+            if(Author != null)
             {
-                sb.AppendLine("- AUTHOR = " + Author.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- AUTHOR = " + Author.Value.Replace("\r", " ").Replace("\n", " "));
             }
-            if (!String.IsNullOrEmpty(DateCompiled))
+            if (DateCompiled != null)
             {
-                sb.AppendLine("- DATE-COMPILED = " + DateCompiled.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- DATE-COMPILED = " + DateCompiled.Value.Replace("\r", " ").Replace("\n", " "));
             }
-            if (!String.IsNullOrEmpty(DateWritten))
+            if (DateWritten != null)
             {
-                sb.AppendLine("- DATE-WRITTEN = " + DateWritten.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- DATE-WRITTEN = " + DateWritten.Value.Replace("\r", " ").Replace("\n", " "));
             }
-            if (!String.IsNullOrEmpty(Installation))
+            if (Installation != null)
             {
-                sb.AppendLine("- INSTALLATION = " + Installation.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- INSTALLATION = " + Installation.Value.Replace("\r", " ").Replace("\n", " "));
             }
-            if (!String.IsNullOrEmpty(Security))
+            if (Security != null)
             {
-                sb.AppendLine("- SECURITY = " + Security.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- SECURITY = " + Security.Value.Replace("\r", " ").Replace("\n", " "));
             }
             return sb.ToString();
         }
