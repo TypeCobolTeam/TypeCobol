@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Parser
                 // Try to parse a code element starting with the current token
                 CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
 
-                // Visit the parse tree to build a first class object representing the compiler directive
+                // Visit the parse tree to build a first class object representing the code elements
                 walker.Walk(codeElementBuilder, codeElementParseTree);
                 codeElement = codeElementBuilder.CodeElement;
                 if (codeElement != null)

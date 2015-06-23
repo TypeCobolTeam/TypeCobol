@@ -4005,8 +4005,21 @@ useStatementForDebuggingDeclarative:
 // sections, and a paragraph or group of paragraphs.
 // A procedure-name is a user-defined name that identifies a section or a paragraph.
 
+// p66: References to PROCEDURE DIVISION names
+// PROCEDURE DIVISION names that are explicitly referenced in a program must be
+// unique within a section.
+// A section-name is the highest and only qualifier available for a paragraph-name
+// and must be unique if referenced. (Section-names are described under
+// “Procedures” on page 252.)
+// If explicitly referenced, a paragraph-name must not be duplicated within a section.
+// When a paragraph-name is qualified by a section-name, the word SECTION must
+// not appear. A paragraph-name need not be qualified when referred to within the
+// section in which it appears. A paragraph-name or section-name that appears in a
+// program cannot be referenced from any other program.
+
 procedureName:
-                 sectionName | paragraphName;
+                 (paragraphName ((IN | OF) sectionName)?) |
+                 sectionName;
 
 // p252: Section
 // A section-header optionally followed by one or more paragraphs.
@@ -9165,8 +9178,6 @@ relationCondition:
 
 // ... p262 to p267 : many more details on comparisons ...
 
-
-
 generalRelationCondition:
                             operand IS? relationalOperator operand 
                             // p274: Abbreviated combined relation conditions
@@ -9535,6 +9546,21 @@ argument:
             identifier | literal | arithmeticExpression |
             functionIdentifier | specialRegister;
 
+// p67: References to DATA DIVISION names
+// This section discusses the following types of references.
+// - “Simple data reference”
+// - “Identifiers” on page 68
+// Simple data reference
+// The most basic method of referencing data items in a COBOL program is simple
+// data reference, which is data-name-1 without qualification, subscripting, or reference
+// modification. Simple data reference is used to reference a single elementary or
+// group item.
+// data-name-1
+// Can be any data description entry.
+// data-name-1 must be unique in a program.
+
+dataName : UserDefinedWord;
+
 // p65: Uniqueness of reference
 // Every user-defined name in a COBOL program is assigned by the user to name a
 // resource for solving a data processing problem. To use a resource, a statement in a
@@ -9587,166 +9613,26 @@ argument:
 // different types of user-defined words.
 // These same rules apply to classes and their contained methods.
 
-// p66: References to COPY libraries
-// If library-name-1 is not specified, SYSLIB is assumed as the library name.
-// For rules on referencing COPY libraries, see “COPY statement” on page 530.
-
-copyLibraryReference:
-                          textName ((IN | OF) libraryName)?;
-
-// p66: References to PROCEDURE DIVISION names
-// PROCEDURE DIVISION names that are explicitly referenced in a program must be
-// unique within a section.
-// A section-name is the highest and only qualifier available for a paragraph-name
-// and must be unique if referenced. (Section-names are described under
-// “Procedures” on page 252.)
-// If explicitly referenced, a paragraph-name must not be duplicated within a section.
-// When a paragraph-name is qualified by a section-name, the word SECTION must
-// not appear. A paragraph-name need not be qualified when referred to within the
-// section in which it appears. A paragraph-name or section-name that appears in a
-// program cannot be referenced from any other program.
-
-procedureDivisionNameReference:
-                                    (paragraphName ((IN | OF) sectionName)?) |
-                                    sectionName;
-
-// p67: References to DATA DIVISION names
-// This section discusses the following types of references.
-// - “Simple data reference”
-// - “Identifiers” on page 68
-// Simple data reference
-// The most basic method of referencing data items in a COBOL program is simple
-// data reference, which is data-name-1 without qualification, subscripting, or reference
-// modification. Simple data reference is used to reference a single elementary or
-// group item.
-// data-name-1
-// Can be any data description entry.
-// data-name-1 must be unique in a program.
-
-dataDivisionNameReference:
-                              dataName | identifier;
-
-// p68: Identifiers
-// When used in a syntax diagram in this information, the term identifier refers to a
-// valid combination of a data-name or function-identifier with its qualifiers,
-// subscripts, and reference-modifiers as required for uniqueness of reference.
-// Rules for identifiers associated with a format can however specifically prohibit
-// qualification, subscripting, or reference modification.
-// The term data-name refers to a name that must not be qualified, subscripted, or
-// reference modified unless specifically permitted by the rules for the format.
-// - For a description of qualification, see “Qualification” on page 65.
-// - For a description of subscripting, see “Subscripting” on page 71.
-// - For a description of reference modification, see “Reference modification” on
-//   page 74.
-// p69: Duplication of data-names must not occur in those places where the data-names
-// cannot be made unique by qualification.
-// In the same program, the data-name specified as the subject of the entry whose
-// level-number is 01 that includes the EXTERNAL clause must not be the same
-// data-name specified for any other data description entry that includes the
-// EXTERNAL clause.
-// In the same DATA DIVISION, the data description entries for any two data items
-// for which the same data-name is specified must not include the GLOBAL clause.
-// DATA DIVISION names that are explicitly referenced must either be uniquely
-// defined or made unique through qualification. Unreferenced data items need not
-// be uniquely defined. The highest level in a data hierarchy (a data item associated
-// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
-// must be uniquely named if referenced. Data items associated with level-numbers
-// 02 through 49 are successively lower levels of the hierarchy.
-
-// p68: Format 1
-//identifier:
-//              dataName 
-//              ((IN | OF) dataName)* 
-//              ((IN | OF) fileName)?
-//              ('(' subscript+ ')')?
-//              ('(' leftMostCharacterPosition ':' length? ')')?;
-// data-name-1 , data-name-2
-// Can be a record-name.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// file-name-1 must be unique within this program.
-
-// p69: Format 2
-//identifier:
-//              (conditionName | dataName)
-//              ((IN | OF) dataName)* 
-//              ((IN | OF) fileName)?;
-// data-name-1 , data-name-2
-// Can be a record-name.
-// condition-name-1
-// Can be referenced by statements and entries either in the program that
-// contains the configuration section or in a program contained within that
-// program.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// Must be unique within this program.
-
-// p69: Format 3
-//identifier:
-//              LINAGE_COUNTER
-//              ((IN | OF) fileName)?
-// LINAGE-COUNTER
-// Must be qualified each time it is referenced if more than one file
-// description entry that contains a LINAGE clause has been specified in the
-// source unit.
-// file-name-2
-// Must be identified by the FD or SD entry in the DATA DIVISION.
-// file-name-2 must be unique within this program.
-
 qualifiedDataName:
                      dataName 
                      ((IN | OF) dataName)* 
                      ((IN | OF) fileName)?;
-identifier:
-              ( qualifiedDataName
-                (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
-                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?) |
-              
-              ( conditionName
-                ((IN | OF) dataName)* 
-                ((IN | OF) fileName)?) |
-              
-              ( LINAGE_COUNTER
-                ((IN | OF) fileName)?);
-              
-// p70: Condition-name
-// condition-name-1
-// Can be referenced by statements and entries either in the program that
-// contains the definition of condition-name-1, or in a program contained
-// within that program.
-// If explicitly referenced, a condition-name must be unique or be made
-// unique through qualification or subscripting (or both) except when the
-// scope of names by itself ensures uniqueness of reference.
-// If qualification is used to make a condition-name unique, the associated
-// conditional variable can be used as the first qualifier. If qualification is
-// used, the hierarchy of names associated with the conditional variable itself
-// must be used to make the condition-name unique.
-// If references to a conditional variable require subscripting, reference to any
-// of its condition-names also requires the same combination of subscripting.
-// In this information, condition-name refers to a condition-name qualified or
-// subscripted, as necessary.
-// data-name-1
-// Can be a record-name.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// file-name-1 must be unique within this program.
-// mnemonic-name-1
-// For information about acceptable values for mnemonic-name-1, see
-// “SPECIAL-NAMES paragraph” on page 112.
 
-// p70: Format 1: condition-name in data division
-
-conditionNameReference:
-                          conditionName 
+qualifiedConditionName:
+                          conditionName
                           ((IN | OF) dataName)* 
-                          ((IN | OF) fileName)?
-                          (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+                          ((IN | OF) fileName)?;
 
-// p70: Format 2: condition-name in SPECIAL-NAMES paragraph
+// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
+// data-name or identifier that has the same definition as the implicit definition of the
+// special register can be used.
 
-conditionNameReferenceInSpecialNamesParagraph:
-                                                 conditionName 
-                                                ((IN | OF) mnemonicForUPSISwitchName)*;
+qualifiedDataNameOrSpecialRegister:
+                                      qualifiedDataName |
+                                      specialRegister |
+                                      (ADDRESS OF dataNameReference) |
+                                      (LENGTH OF dataNameReference) |
+                                      (LINAGE_COUNTER OF fileName);
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -9862,6 +9748,47 @@ subscript:
              (dataName ((PlusOperator | MinusOperator) IntegerLiteral)?) |
              (indexName ((PlusOperator | MinusOperator) IntegerLiteral)?);
 
+dataNameReference:
+                     qualifiedDataNameOrSpecialRegister
+                     (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// p70: Condition-name
+// condition-name-1
+// Can be referenced by statements and entries either in the program that
+// contains the definition of condition-name-1, or in a program contained
+// within that program.
+// If explicitly referenced, a condition-name must be unique or be made
+// unique through qualification or subscripting (or both) except when the
+// scope of names by itself ensures uniqueness of reference.
+// If qualification is used to make a condition-name unique, the associated
+// conditional variable can be used as the first qualifier. If qualification is
+// used, the hierarchy of names associated with the conditional variable itself
+// must be used to make the condition-name unique.
+// If references to a conditional variable require subscripting, reference to any
+// of its condition-names also requires the same combination of subscripting.
+// In this information, condition-name refers to a condition-name qualified or
+// subscripted, as necessary.
+// data-name-1
+// Can be a record-name.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// file-name-1 must be unique within this program.
+// mnemonic-name-1
+// For information about acceptable values for mnemonic-name-1, see
+// “SPECIAL-NAMES paragraph” on page 112.
+
+// p70: Format 1: condition-name in data division
+
+conditionNameReference:
+                          qualifiedConditionName
+                          (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// p70: Format 2: condition-name in SPECIAL-NAMES paragraph
+
+conditionNameReferenceInSpecialNamesParagraph:
+                                                 conditionName 
+                                                ((IN | OF) mnemonicForUPSISwitchName)*;
+
 // p74: Reference modification
 // Reference modification defines a data item by specifying a leftmost character and
 // optional length for the data item.
@@ -9946,87 +9873,85 @@ referenceModifier:
 leftMostCharacterPosition: arithmeticExpression;
 length: arithmeticExpression;
 
+// p68: Identifiers
+// When used in a syntax diagram in this information, the term identifier refers to a
+// valid combination of a data-name or function-identifier with its qualifiers,
+// subscripts, and reference-modifiers as required for uniqueness of reference.
+// Rules for identifiers associated with a format can however specifically prohibit
+// qualification, subscripting, or reference modification.
+// The term data-name refers to a name that must not be qualified, subscripted, or
+// reference modified unless specifically permitted by the rules for the format.
+// - For a description of qualification, see “Qualification” on page 65.
+// - For a description of subscripting, see “Subscripting” on page 71.
+// - For a description of reference modification, see “Reference modification” on
+//   page 74.
+// p69: Duplication of data-names must not occur in those places where the data-names
+// cannot be made unique by qualification.
+// In the same program, the data-name specified as the subject of the entry whose
+// level-number is 01 that includes the EXTERNAL clause must not be the same
+// data-name specified for any other data description entry that includes the
+// EXTERNAL clause.
+// In the same DATA DIVISION, the data description entries for any two data items
+// for which the same data-name is specified must not include the GLOBAL clause.
+// DATA DIVISION names that are explicitly referenced must either be uniquely
+// defined or made unique through qualification. Unreferenced data items need not
+// be uniquely defined. The highest level in a data hierarchy (a data item associated
+// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
+// must be uniquely named if referenced. Data items associated with level-numbers
+// 02 through 49 are successively lower levels of the hierarchy.
 
-// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
-// data-name or identifier that has the same definition as the implicit definition of the
-// special register can be used.
+// p68: Format 1
+//identifier:
+//              dataName 
+//              ((IN | OF) dataName)* 
+//              ((IN | OF) fileName)?
+//              ('(' subscript+ ')')?
+//              ('(' leftMostCharacterPosition ':' length? ')')?;
+// data-name-1 , data-name-2
+// Can be a record-name.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// file-name-1 must be unique within this program.
 
-dataValue : 
-                dataName |
-                (ADDRESS OF dataName) |
-                (LENGTH OF dataName) |
-                specialRegister;
+// p69: Format 2
+//identifier:
+//              (conditionName | dataName)
+//              ((IN | OF) dataName)* 
+//              ((IN | OF) fileName)?;
+// data-name-1 , data-name-2
+// Can be a record-name.
+// condition-name-1
+// Can be referenced by statements and entries either in the program that
+// contains the configuration section or in a program contained within that
+// program.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// Must be unique within this program.
 
-dataName : UserDefinedWord;
+// p69: Format 3
+//identifier:
+//              LINAGE_COUNTER
+//              ((IN | OF) fileName)?
+// LINAGE-COUNTER
+// Must be qualified each time it is referenced if more than one file
+// description entry that contains a LINAGE clause has been specified in the
+// source unit.
+// file-name-2
+// Must be identified by the FD or SD entry in the DATA DIVISION.
+// file-name-2 must be unique within this program.
 
-// ****************
-// ADDITIONAL TOKENS
+identifier:
+              ( dataNameReference
+                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)? 
+              ) |              
+              conditionNameReference;
+              
 
-// -- Syntax words found in grammar but not declared as keywords
 
-// EBCDIC : 'EBCDIC'; // found in alphabet clause
-// SYMBOL : 'SYMBOL'; // found in currencySignClause
-// UNBOUNDED : 'UNBOUNDED'; // found in occursClause
 
-// DATE_YYYYMMDD : 'DATE YYYYMMDD'; // found in acceptStatement
-// DAY_YYYYDDD : 'DAY YYYYDDD'; // found in acceptStatement
-// NEW : 'NEW'; // found in invokeStatement
 
-// ENCODING : 'ENCODING'; // found in xmlGenerateStatement
-// XML_DECLARATION : 'XML-DECLARATION'; // found in xmlGenerateStatement
-// ATTRIBUTES : 'ATTRIBUTES'; // found in xmlGenerateStatement
-// NAMESPACE : 'NAMESPACE'; // found in xmlGenerateStatement
-// NAMESPACE_PREFIX  : 'NAMESPACE-PREFIX'; // found in xmlGenerateStatement
-// NAME : 'NAME'; // found in xmlGenerateStatement
-// ATTRIBUTE : 'ATTRIBUTE'; // found in xmlGenerateStatement
-// ELEMENT : 'ELEMENT'; // found in xmlGenerateStatement
-// NONNUMERIC : 'NONNUMERIC'; // found in xmlGenerateStatement
-// PARSE : 'PARSE'; // found in xmlParseStatement
-// VALIDATING : 'VALIDATING'; // found in xmlParseStatement
 
-// -- Compiler directed statements
 
-// cblProcessStatement
-// PROCESS : 'PROCESS';
-// controlCblStatement
-// ASTERISK_CONTROL : '*CONTROL';
-// ASTERISK_CBL : '*CBL';
-// SOURCE : 'SOURCE';
-// NOSOURCE : 'NOSOURCE';
-// LIST : 'LIST';
-// NOLIST : 'NOLIST';
-// MAP : 'MAP';
-// NOMAP : 'NOMAP';
 
-// -- DB2 coprocessor
 
-// INCLUDE : 'INCLUDE'; // found in execSqlIncludeStatement
-// DECLARE : 'DECLARE'; // found in execSqlDeclareStatement
 
-// p433: Precompiler: With the DB2 precompiler, if you pass host variables that might be
-// located at different addresses when the program is called more than once, the
-// called program must reset SQL-INIT-FLAG. Resetting this flag indicates to DB2 that
-// storage must be initialized when the next SQL statement runs. To reset the flag,
-// insert the statement MOVE ZERO TO SQL-INIT-FLAG in the PROCEDURE DIVISION of the
-// called program ahead of any executable SQL statements that use those host
-// variables.
-// Coprocessor: With the DB2 coprocessor, the called program does not need to reset
-// SQL-INIT-FLAG. An SQL-INIT-FLAG is automatically defined in the program to aid
-// program portability. However, statements that modify SQL-INIT-FLAG, such as MOVE
-// ZERO TO SQL-INIT-FLAG, have no effect on the SQL processing in the program.
-
-// DB2 11 for zOs - Application Programming and SQL Guide p330:
-// If your program uses the DB2 precompiler and uses parameters that are
-// defined in LINKAGE SECTION as host variables to DB2 and the address of the
-// input parameter might change on subsequent invocations of your program, your
-// program must reset the variable SQL-INIT-FLAG. This flag is generated by the
-// DB2 precompiler. Resetting this flag indicates that the storage must initialize when
-// the next SQL statement executes. To reset the flag, insert the statement MOVE
-// ZERO TO SQL-INIT-FLAG in the called program's PROCEDURE DIVISION, ahead
-// of any executable SQL statements that use the host variables. If you use the
-// COBOL DB2 coprocessor, the called program does not need to reset
-// SQL-INIT-FLAG.
-
-// SQL_INIT_FLAG : 'SQL-INIT-FLAG';
-
-// ----

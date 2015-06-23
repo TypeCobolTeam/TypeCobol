@@ -1,34 +1,15 @@
 // IBM Enterprise Cobol 5.1 for zOS
 
 // -----------------------------------------------------------------------
-// Grammar for the FIRST step of the Cobol parser : flat view of the Cobol
-// syntax, useful for incremental parsing. The goal here is to produce a 
-// LIST of syntax nodes instead of TREE (beacause it is easier to reuse).
+// Grammar for the SECOND step of the Cobol parser : build a syntax
+// TREE representing a Cobol program or a Cobol class from the list of 
+// elementary CodeElements recognized by the first step of the Cobol parser.
 // -----------------------------------------------------------------------
-
-// Help :
-// http://www.cs.vu.nl/grammarware/browsable/vs-cobol-ii/TYPE
-// https://java.net/downloads/javacc/contrib/grammars/cobol.jj
-
-// Not included in this grammar file yet :
-// - p59 : Chapter 7. Scope of names
-// - p65 : Chapter 8. Referencing data names, copy libraries, and PROCEDURE DIVISION names
-// - p79 : Chapter 9. Transfer of control
-
-// +++ TO DO : 
-// - implement all "Token validity rules" in Excel file CobolLexer.tokens.xlsx
-// - continue to check all literal types in parser rules, cf Literals and Identifiers in parser rules.xlsx
-// - check all user defined words in parser rules
-// - use rule element labels instead of subrules everywhere
-// - imperativeStatement = several statements
-// - special treatment for ExecSqlIncludeStatement
-// - implement compilerOption at the Scanner level
-// +++
 
 grammar CobolProgramClass;
 
-// -- Code Elements produced by the first parsing step are listed as TOKEN TYPES in this grammar --
-// (see CobolCodeElements.g4 grammar)
+// Code Elements produced by the first parsing step (see CobolCodeElements.g4 grammar)
+// are listed as TOKEN TYPES in this grammar.
 
 tokens 
 { 
@@ -176,7 +157,7 @@ tokens
     XmlStatementEnd
 }
 
-// --- Starting parser rule fo PHASE 2 of parsing ---
+// --- Starting parser rule for PHASE 2 of parsing ---
 
 // p103 : You cannot include a class definition in a sequence of programs or other class
 // definitions in a single compilation group. Each class must be specified as a
@@ -781,9 +762,9 @@ imperativeStatement:
          MoveStatement        |
          MultiplyStatement    |
          OpenStatement        |
-         PerformProcedureStatement |
+         PerformProcedureStatement) |
          performStatementWithBody |
-         ReadStatement        |
+        (ReadStatement        |
          ReleaseStatement     |
          ReturnStatement      |
          RewriteStatement     |
@@ -796,49 +777,8 @@ imperativeStatement:
          UnstringStatement    |
          WriteStatement       |
          XmlGenerateStatement |
-         XmlParseStatement)+;
-                       
-// List of keywords which can start an imperative statement
-/*
-imperativeStatementStartPredicate:
-         ACCEPT     |
-         ADD        |
-         ALTER      |
-         CALL       |
-         CANCEL     |
-         CLOSE      |
-         COMPUTE    |
-         DELETE     |
-         DISPLAY    |
-         DIVIDE     |
-         EXEC       |
-         EXECUTE    |
-         EXIT       |
-         GOBACK     |
-         GO         |
-         INITIALIZE |
-         INSPECT    |
-         INVOKE     |
-         MERGE      |
-         MOVE       |
-         MULTIPLY   |
-         OPEN       |
-         PERFORM    |
-         READ       |
-         RELEASE    |
-         RETURN     |
-         REWRITE    |
-         SET        |
-         SORT       |
-         START      |
-         STOP       |
-         STRING     |
-         SUBTRACT   |
-         UNSTRING   |
-         WRITE      |
-         XML;  
-*/
-
+         XmlParseStatement);
+   
 // p278: Conditional statements
 // A conditional statement specifies that the truth value of a condition is to be
 // determined and that the subsequent action of the object program is dependent on
@@ -994,39 +934,39 @@ statement:
 
 addStatementConditional:
                            AddStatement
-                           (OnSizeErrorCondition imperativeStatement)?
-                           (NotOnSizeErrorCondition imperativeStatement)?
+                           (OnSizeErrorCondition imperativeStatement+)?
+                           (NotOnSizeErrorCondition imperativeStatement+)?
                            AddStatementEnd?;
 
 callStatementConditional:
                             CallStatement
-                            (((OnExceptionCondition imperativeStatement)?
-                            (NotOnExceptionCondition imperativeStatement)?) |
-                            (OnOverflowCondition imperativeStatement)?)
+                            (((OnExceptionCondition imperativeStatement+)?
+                            (NotOnExceptionCondition imperativeStatement+)?) |
+                            (OnOverflowCondition imperativeStatement+)?)
                             CallStatementEnd;
 
 computeStatementConditional:
                                ComputeStatement
-                               (OnSizeErrorCondition imperativeStatement)?
-                               (NotOnSizeErrorCondition imperativeStatement)?
+                               (OnSizeErrorCondition imperativeStatement+)?
+                               (NotOnSizeErrorCondition imperativeStatement+)?
                                ComputeStatementEnd?;
 
 deleteStatementConditional:
                               DeleteStatement
-                              (InvalidKeyCondition imperativeStatement)?
-                              (NotInvalidKeyCondition imperativeStatement)?
+                              (InvalidKeyCondition imperativeStatement+)?
+                              (NotInvalidKeyCondition imperativeStatement+)?
                               DeleteStatementEnd?;
 
 divideStatementConditional:
                               DivideStatement
-                              (OnSizeErrorCondition imperativeStatement)?
-                              (NotOnSizeErrorCondition imperativeStatement)?
+                              (OnSizeErrorCondition imperativeStatement+)?
+                              (NotOnSizeErrorCondition imperativeStatement+)?
                               DivideStatementEnd?;
 
 evaluateStatementWithBody:
                      EvaluateStatement
-                     ((WhenConditionalExpression | WhenEvaluateCondition)+ imperativeStatement)+
-                     (WhenOtherCondition imperativeStatement)?
+                     ((WhenConditionalExpression | WhenEvaluateCondition)+ imperativeStatement+)+
+                     (WhenOtherCondition imperativeStatement+)?
                      EvaluateStatementEnd?;
 
 ifStatementWithBody:
@@ -1039,87 +979,87 @@ ifStatementWithBody:
 
 invokeStatementConditional:
                               InvokeStatement
-                              (OnExceptionCondition imperativeStatement)?
-                              (NotOnExceptionCondition imperativeStatement)?
+                              (OnExceptionCondition imperativeStatement+)?
+                              (NotOnExceptionCondition imperativeStatement+)?
                               InvokeStatementEnd?;
 
 multiplyStatementConditional:
                                 MultiplyStatement
-                                (OnSizeErrorCondition imperativeStatement)?
-                                (NotOnSizeErrorCondition imperativeStatement)?
+                                (OnSizeErrorCondition imperativeStatement+)?
+                                (NotOnSizeErrorCondition imperativeStatement+)?
                                 MultiplyStatementEnd?;
 
 performStatementWithBody:
                             PerformStatement
-                            imperativeStatement? 
+                            imperativeStatement* 
                             PerformStatementEnd;
 
 readStatementConditional:
                             ReadStatement
-                            (AtEndCondition imperativeStatement)?
-                            (NotAtEndCondition imperativeStatement)?                 
-                            (InvalidKeyCondition imperativeStatement)?
-                            (NotInvalidKeyCondition imperativeStatement)?
+                            (AtEndCondition imperativeStatement+)?
+                            (NotAtEndCondition imperativeStatement+)?                 
+                            (InvalidKeyCondition imperativeStatement+)?
+                            (NotInvalidKeyCondition imperativeStatement+)?
                             ReadStatementEnd?;
 
 returnStatementConditional:
                               ReturnStatement
-                              (AtEndCondition imperativeStatement)?
-                              (NotAtEndCondition imperativeStatement)?
+                              (AtEndCondition imperativeStatement+)?
+                              (NotAtEndCondition imperativeStatement+)?
                               ReturnStatementEnd?;
 
 rewriteStatementConditional:
                              RewriteStatement
-                             (InvalidKeyCondition imperativeStatement)?
-                             (NotInvalidKeyCondition imperativeStatement)?
+                             (InvalidKeyCondition imperativeStatement+)?
+                             (NotInvalidKeyCondition imperativeStatement+)?
                              RewriteStatementEnd?;
 
 searchStatementWithBody:
                    SearchStatement
-                   (AtEndCondition imperativeStatement)?
-                   (WhenConditionalExpression (imperativeStatement | NextSentenceStatement))+
+                   (AtEndCondition imperativeStatement+)?
+                   (WhenConditionalExpression (imperativeStatement+ | NextSentenceStatement))+
                    SearchStatementEnd?;
 
 startStatementConditional:
                              StartStatement
-                             (InvalidKeyCondition imperativeStatement)?
-                             (NotInvalidKeyCondition imperativeStatement)?
+                             (InvalidKeyCondition imperativeStatement+)?
+                             (NotInvalidKeyCondition imperativeStatement+)?
                              StartStatementEnd?;
 
 stringStatementConditional:
                               StringStatement
-                              (OnOverflowCondition imperativeStatement)?
-                              (NotOnOverflowCondition imperativeStatement)?
+                              (OnOverflowCondition imperativeStatement+)?
+                              (NotOnOverflowCondition imperativeStatement+)?
                               StringStatementEnd?;
 
 subtractStatementConditional:
                                 SubtractStatement
-                                (OnSizeErrorCondition imperativeStatement)?
-                                (NotOnSizeErrorCondition imperativeStatement)?
+                                (OnSizeErrorCondition imperativeStatement+)?
+                                (NotOnSizeErrorCondition imperativeStatement+)?
                                 SubtractStatementEnd?;
 
 unstringStatementConditional:
                                 UnstringStatement
-                                (OnOverflowCondition imperativeStatement)?
-                                (NotOnOverflowCondition imperativeStatement)?
+                                (OnOverflowCondition imperativeStatement+)?
+                                (NotOnOverflowCondition imperativeStatement+)?
                                 UnstringStatementEnd?;
 
 writeStatementConditional:
                              WriteStatement
-                             (AtEndOfPageCondition imperativeStatement)? 
-                             (NotAtEndOfPageCondition imperativeStatement)? 
-                             (InvalidKeyCondition imperativeStatement)?
-                             (NotInvalidKeyCondition imperativeStatement)? 
+                             (AtEndOfPageCondition imperativeStatement+)? 
+                             (NotAtEndOfPageCondition imperativeStatement+)? 
+                             (InvalidKeyCondition imperativeStatement+)?
+                             (NotInvalidKeyCondition imperativeStatement+)? 
                              WriteStatementEnd?;
 
 xmlGenerateStatementConditional:
                                    XmlGenerateStatement
-                                   (OnExceptionCondition imperativeStatement)?
-                                   (NotOnExceptionCondition imperativeStatement)?
+                                   (OnExceptionCondition imperativeStatement+)?
+                                   (NotOnExceptionCondition imperativeStatement+)?
                                    XmlStatementEnd?;
 
 xmlParseStatementConditional:
                                 XmlParseStatement
-                                (OnExceptionCondition imperativeStatement)?
-                                (NotOnExceptionCondition imperativeStatement)?
+                                (OnExceptionCondition imperativeStatement+)?
+                                (NotOnExceptionCondition imperativeStatement+)?
                                 XmlStatementEnd?;

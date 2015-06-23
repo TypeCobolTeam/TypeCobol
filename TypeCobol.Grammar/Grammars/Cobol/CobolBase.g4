@@ -8,8 +8,758 @@
 
 grammar CobolBase;
 
-// ****************************
-// Step 1 - Characters encoding
+// Note : the complete specifications of the COBOL TEXT FORMAT :
+//   1. Encoding, 2. Reference format, 3. Tokenizing
+// are reproduced in the comments at the end of this grammar file.
+
+// --- COBOL TOKEN TYPES ---
+
+// The token types are recognized by the Scanner before the parsing step.
+// All token types names start with a capital letter.
+
+// The grammar rules defined in the Parser match sequences of theses token types.
+// All grammar rule names start with a lower case letter.
+
+// IMPORTANT : HOW TO INSERT, REMOVE, or REORDER a TOKEN TYPE in the list of tokens ?
+
+// 1. The token types list below is GENERATED from the following Excel table :
+// -> TypeCobol.Grammar/Grammars/Cobol/TokenTypes.xlsx
+// This Excel table should be updated first, and then be used to generate a new
+// version of the list.
+
+// 2. The ORDERED list of token types in this grammar file MUST ALWAYS 
+// STAY IN SYNC with the TokenType and TokenFamily enumerations in the C# file :
+// -> TypeCobol/Compiler/Scanner/TokenType.cs 
+// You should also use the Excel table to generate the TokenType enumeration.
+
+// 3. Each time you update the TokenType or TokenFamily enumerations, 
+// you MUST ALSO update another C# file :
+// -> TypeCobol/Compiler/Scanner/TokenUtils.cs 
+// . update the total number of token types
+// . map new token types to token families
+// . register the character strings corresponding to each new token type (for keywords only)
+
+tokens 
+{ 
+    // Separators - Whitespace
+    SpaceSeparator,
+    CommaSeparator,
+    SemicolonSeparator,
+    EndOfFile, // <- do not use in this grammar, use constant EOF instead
+    // Comments
+    FloatingComment,
+    CommentLine,
+    // Separators - Syntax
+    PeriodSeparator,
+    ColonSeparator,
+    LeftParenthesisSeparator,
+    RightParenthesisSeparator,
+    PseudoTextDelimiter,
+    // Special character word - Arithmetic operators
+    PlusOperator,
+    MinusOperator,
+    DivideOperator,
+    MultiplyOperator,
+    PowerOperator,
+    // Special character word - Relational operators
+    LessThanOperator,
+    GreaterThanOperator,
+    LessThanOrEqualOperator,
+    GreaterThanOrEqualOperator,
+    EqualOperator,
+    // Literals - Alphanumeric
+    AlphanumericLiteral,
+    HexadecimalAlphanumericLiteral,
+    NullTerminatedAlphanumericLiteral,
+    NationalLiteral,
+    HexadecimalNationalLiteral,
+    DBCSLiteral,
+    // Literals - Numeric
+    IntegerLiteral,
+    DecimalLiteral,
+    FloatingPointLiteral,
+    // Literals - Syntax tokens
+    PictureCharacterString,
+    CommentEntry,
+    ExecStatementText,
+    // Symbols    
+    FunctionName,
+    ExecTranslatorName,
+    PartialCobolWord ,
+    UserDefinedWord,
+    // Keywords - Compiler directive starting tokens
+    ASTERISK_CBL,
+    ASTERISK_CONTROL,
+    BASIS,
+    CBL,
+    COPY,
+    DELETE_CD,
+    EJECT,
+    ENTER,
+    EXEC_SQL_INCLUDE,
+    INSERT,
+    PROCESS,
+    READY,
+    RESET,
+    REPLACE,
+    SERVICE,
+    SKIP1,
+    SKIP2,
+    SKIP3,
+    TITLE,
+    // Keywords - Code element starting tokens
+    APPLY,
+    CONFIGURATION,
+    ELSE,
+    ENVIRONMENT,
+    FD,
+    FILE_CONTROL,
+    I_O_CONTROL,
+    ID,
+    IDENTIFICATION,
+    INPUT_OUTPUT,
+    LINKAGE,
+    LOCAL_STORAGE,
+    MULTIPLE,
+    OBJECT_COMPUTER,
+    REPOSITORY,
+    RERUN,
+    SAME,
+    SD,
+    SELECT,
+    SOURCE_COMPUTER,
+    SPECIAL_NAMES,
+    USE,
+    WORKING_STORAGE,
+    // Keywords - Statement starting tokens
+    ACCEPT,
+    ADD,
+    ALTER,
+    CALL,
+    CANCEL,
+    CLOSE,
+    COMPUTE,
+    CONTINUE,
+    DELETE,
+    DISPLAY,
+    DIVIDE,
+    ENTRY,
+    EVALUATE,
+    EXEC,
+    EXECUTE,
+    EXIT,
+    GOBACK,
+    GO,
+    IF,
+    INITIALIZE,
+    INSPECT,
+    INVOKE,
+    MERGE,
+    MOVE,
+    MULTIPLY,
+    OPEN,
+    PERFORM,
+    READ,
+    RELEASE,
+    RETURN,
+    REWRITE,
+    SEARCH,
+    SET,
+    SORT,
+    START,
+    STOP,
+    STRING,
+    SUBTRACT,
+    UNSTRING,
+    WRITE,
+    XML,
+    // Keywords - Statement ending tokens
+    END_ADD,
+    END_CALL,
+    END_COMPUTE,
+    END_DELETE,
+    END_DIVIDE,
+    END_EVALUATE,
+    END_EXEC,
+    END_IF,
+    END_INVOKE,
+    END_MULTIPLY,
+    END_PERFORM,
+    END_READ,
+    END_RETURN,
+    END_REWRITE,
+    END_SEARCH,
+    END_START,
+    END_STRING,
+    END_SUBTRACT,
+    END_UNSTRING,
+    END_WRITE,
+    END_XML,
+    // Keywords - Special registers
+    ADDRESS,
+    DEBUG_CONTENTS,
+    DEBUG_ITEM,
+    DEBUG_LINE,
+    DEBUG_NAME,
+    DEBUG_SUB_1,
+    DEBUG_SUB_2,
+    DEBUG_SUB_3,
+    JNIENVPTR,
+    LENGTH,
+    LINAGE_COUNTER,
+    RETURN_CODE,
+    SHIFT_IN,
+    SHIFT_OUT,
+    SORT_CONTROL,
+    SORT_CORE_SIZE,
+    SORT_FILE_SIZE,
+    SORT_MESSAGE,
+    SORT_MODE_SIZE,
+    SORT_RETURN,
+    TALLY,
+    WHEN_COMPILED,
+    XML_CODE,
+    XML_EVENT,
+    XML_INFORMATION,
+    XML_NAMESPACE,
+    XML_NAMESPACE_PREFIX,
+    XML_NNAMESPACE,
+    XML_NNAMESPACE_PREFIX,
+    XML_NTEXT,
+    XML_TEXT,
+    // Keywords - Figurative constants
+    HIGH_VALUE,
+    HIGH_VALUES,
+    LOW_VALUE,
+    LOW_VALUES,
+    NULL,
+    NULLS,
+    QUOTE,
+    QUOTES,
+    SPACE,
+    SPACES,
+    ZERO,
+    ZEROES,
+    ZEROS,
+    SymbolicCharacter,
+    // Keywords - Special object identifiers
+    SELF,
+    SUPER,
+    // Keywords - Syntax tokens
+    ACCESS,
+    ADVANCING,
+    AFTER,
+    ALL,
+    ALPHABET,
+    ALPHABETIC,
+    ALPHABETIC_LOWER,
+    ALPHABETIC_UPPER,
+    ALPHANUMERIC,
+    ALPHANUMERIC_EDITED,
+    ALSO,
+    ALTERNATE,
+    AND,
+    ANY,
+    ARE,
+    AREA,
+    AREAS,
+    ASCENDING,
+    ASSIGN,
+    AT,
+    ATTRIBUTE,
+    ATTRIBUTES,
+    AUTHOR,
+    BEFORE,
+    BEGINNING,
+    BINARY,
+    BLANK,
+    BLOCK,
+    BOTTOM,
+    BY,
+    CHARACTER,
+    CHARACTERS,
+    CLASS,
+    CLASS_ID,
+    COBOL,
+    CODE,
+    CODE_SET,
+    COLLATING,
+    COM_REG,
+    COMMA,
+    COMMON,
+    COMP,
+    COMP_1,
+    COMP_2,
+    COMP_3,
+    COMP_4,
+    COMP_5,
+    COMPUTATIONAL,
+    COMPUTATIONAL_1,
+    COMPUTATIONAL_2,
+    COMPUTATIONAL_3,
+    COMPUTATIONAL_4,
+    COMPUTATIONAL_5,
+    CONTAINS,
+    CONTENT,
+    CONVERTING,
+    CORR,
+    CORRESPONDING,
+    COUNT,
+    CURRENCY,
+    DATA,
+    DATE,
+    DATE_COMPILED,
+    DATE_WRITTEN,
+    DAY,
+    DAY_OF_WEEK,
+    DBCS,
+    DEBUGGING,
+    DECIMAL_POINT,
+    DECLARATIVES,
+    DELIMITED,
+    DELIMITER,
+    DEPENDING,
+    DESCENDING,
+    DISPLAY_ARG,
+    DISPLAY_1,
+    DIVISION,
+    DOWN,
+    DUPLICATES,
+    DYNAMIC,
+    EBCDIC,
+    EGCS,
+    ELEMENT,
+    ENCODING,
+    END,
+    END_OF_PAGE,
+    ENDING,
+    ENTRY_ARG,
+    EOP,
+    EQUAL,
+    ERROR,
+    EVERY,
+    EXCEPTION,
+    EXTEND,
+    EXTERNAL,
+    FACTORY,
+    FALSE,
+    FILE,
+    FILLER,
+    FIRST,
+    FOOTING,
+    FOR,
+    FROM,
+    FUNCTION,
+    FUNCTION_POINTER,
+    GENERATE,
+    GIVING,
+    GLOBAL,
+    GREATER,
+    GROUP_USAGE,
+    I_O,
+    IN,
+    INDEX,
+    INDEXED,
+    INHERITS,
+    INITIAL,
+    INPUT,
+    INSTALLATION,
+    INTO,
+    INVALID,
+    IS,
+    JUST,
+    JUSTIFIED,
+    KANJI,
+    KEY,
+    LABEL,
+    LEADING,
+    LEFT,
+    LESS,
+    LINAGE,
+    LINE,
+    LINES,
+    LOCK,
+    MEMORY,
+    METHOD,
+    METHOD_ID,
+    MODE,
+    MODULES,
+    MORE_LABELS,
+    NAME,
+    NAMESPACE,
+    NAMESPACE_PREFIX,
+    NATIONAL,
+    NATIONAL_EDITED,
+    NATIVE,
+    NEGATIVE,
+    NEW,
+    NEXT,
+    NO,
+    NONNUMERIC,
+    NOT,
+    NUMERIC,
+    NUMERIC_EDITED,
+    OBJECT,
+    OCCURS,
+    OF,
+    OFF,
+    OMITTED,
+    ON,
+    OPTIONAL,
+    OR,
+    ORDER,
+    ORGANIZATION,
+    OTHER,
+    OUTPUT,
+    OVERFLOW,
+    OVERRIDE,
+    PACKED_DECIMAL,
+    PADDING,
+    PAGE,
+    PARSE,
+    PASSWORD,
+    PIC,
+    PICTURE,
+    POINTER,
+    POSITION,
+    POSITIVE,
+    PROCEDURE,
+    PROCEDURE_POINTER,
+    PROCEDURES,
+    PROCEED,
+    PROCESSING,
+    PROGRAM,
+    PROGRAM_ID,
+    RANDOM,
+    RECORD,
+    RECORDING,
+    RECORDS,
+    RECURSIVE,
+    REDEFINES,
+    REEL,
+    REFERENCE,
+    REFERENCES,
+    RELATIVE,
+    RELOAD,
+    REMAINDER,
+    REMOVAL,
+    RENAMES,
+    REPLACING,
+    RESERVE,
+    RETURNING,
+    REVERSED,
+    REWIND,
+    RIGHT,
+    ROUNDED,
+    RUN,
+    SECTION,
+    SECURITY,
+    SEGMENT_LIMIT,
+    SENTENCE,
+    SEPARATE,
+    SEQUENCE,
+    SEQUENTIAL,
+    SIGN,
+    SIZE,
+    SORT_ARG,
+    SORT_MERGE,
+    SQL,
+    SQLIMS,
+    STANDARD,
+    STANDARD_1,
+    STANDARD_2,
+    STATUS,
+    SUPPRESS,
+    SYMBOL,
+    SYMBOLIC,
+    SYNC,
+    SYNCHRONIZED,
+    TALLYING,
+    TAPE,
+    TEST,
+    THAN,
+    THEN,
+    THROUGH,
+    THRU,
+    TIME,
+    TIMES,
+    TO,
+    TOP,
+    TRACE,
+    TRAILING,
+    TRUE,
+    TYPE,
+    UNBOUNDED,
+    UNIT,
+    UNTIL,
+    UP,
+    UPON,
+    USAGE,
+    USING,
+    VALIDATING,
+    VALUE,
+    VALUES,
+    VARYING,
+    WHEN,
+    WITH,
+    WORDS,
+    WRITE_ONLY,
+    XML_DECLARATION,
+    XML_SCHEMA,
+    YYYYDDD,
+    YYYYMMDD
+}
+
+// --- COBOL TOKEN FAMILIES ---
+
+// - 1. Numeric literals -
+
+// p37: In this documentation, the word integer appearing in a format represents a numeric literal of nonzero value
+// that contains no sign and no decimal point, except when other rules are included
+// with the description of the format.
+
+//integer : IntegerLiteral;
+
+// p37: Numeric literals can be fixed-point or floating-point numbers.
+// p13: When a numeric literal appears in a syntax
+// diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used.
+
+numericLiteral: 
+                  IntegerLiteral | DecimalLiteral | FloatingPointLiteral | (ZERO | ZEROS | ZEROES);
+
+// - 2. Alphanumeric literals -
+
+// p33: A literal is a character-string whose value is specified either by the characters of
+// which it is composed or by the use of a figurative constant.
+// p34: The formats of alphanumeric literals are:
+// - Format 1: “Basic alphanumeric literals”
+// - Format 2: “Alphanumeric literals with DBCS characters” on page 35
+// - Format 3: “Hexadecimal notation for alphanumeric literals” on page 36
+// - Format 4: “Null-terminated alphanumeric literals” on page 37
+
+alphanumOrHexadecimalLiteral:
+                                AlphanumericLiteral |
+                                HexadecimalAlphanumericLiteral;
+
+alphanumericLiteralBase:
+                           AlphanumericLiteral |
+                           HexadecimalAlphanumericLiteral |                      
+                           figurativeConstant;
+
+alphanumOrNationalLiteralBase:
+                                 (AlphanumericLiteral |
+                                  HexadecimalAlphanumericLiteral |                      
+                                  NationalLiteral |
+                                  HexadecimalNationalLiteral |
+                                  DBCSLiteral) |
+                                 figurativeConstant;
+
+// p13: You can use a figurative constant wherever literal appears in a syntax diagram,
+// except where explicitly prohibited.
+
+figurativeConstant:
+                      HIGH_VALUE |
+                      HIGH_VALUES |
+                      LOW_VALUE |
+                      LOW_VALUES |
+                      NULL |
+                      NULLS |
+                      QUOTE |
+                      QUOTES |
+                      SPACE |
+                      SPACES |
+                      ZERO |
+                      ZEROES |
+                      ZEROS |
+                      SymbolicCharacter;
+
+// p13: ALL literal
+// literal can be an alphanumeric literal, a DBCS literal, a national literal, or a
+// figurative constant other than the ALL literal.
+// p37: null-terminated literals are not supported in ALL literal figurative constants.
+
+alphanumericLiteral:
+           alphanumericLiteralBase |
+           NullTerminatedAlphanumericLiteral |
+           (ALL alphanumericLiteralBase);
+
+alphanumOrNationalLiteral:
+           alphanumOrNationalLiteralBase |
+           NullTerminatedAlphanumericLiteral |
+           (ALL alphanumOrNationalLiteralBase);
+
+// p534: literal
+// Can be numeric, alphanumeric, DBCS, or national.
+
+literal:
+           alphanumOrNationalLiteral | numericLiteral;
+
+// - 3. Special registers -
+
+// p16: Special registers are reserved words that name storage areas generated by the
+// compiler. Their primary use is to store information produced through specific
+// COBOL features. Each such storage area has a fixed name, and must not be
+// defined within the program.
+// ... p16-p17 : more details on all special registers ...
+// Unless otherwise explicitly restricted, a special register can be used wherever a
+// data-name or identifier that has the same definition as the implicit definition of the
+// special register can be used. Implicit definitions, if applicable, are given in the
+// specification of each special register.
+// You can specify an alphanumeric special register in a function wherever an
+// alphanumeric argument to a function is allowed, unless specifically prohibited.
+// If qualification is allowed, special registers can be qualified as necessary to provide
+// uniqueness. (For more information, see “Qualification” on page 65.)
+// ... p17-p33 : more details on all special registers ...
+
+specialRegister : 
+   (DEBUG_CONTENTS |
+    DEBUG_ITEM |
+    DEBUG_LINE |
+    DEBUG_NAME |
+    DEBUG_SUB_1 |
+    DEBUG_SUB_2 |
+    DEBUG_SUB_3 |
+    JNIENVPTR |
+    LINAGE_COUNTER |
+    RETURN_CODE |
+    SHIFT_IN |
+    SHIFT_OUT |
+    SORT_CONTROL |
+    SORT_CORE_SIZE |
+    SORT_FILE_SIZE |
+    SORT_MESSAGE |
+    SORT_MODE_SIZE |
+    SORT_RETURN |
+    TALLY |
+    WHEN_COMPILED |
+    XML_CODE |
+    XML_EVENT |
+    XML_INFORMATION |
+    XML_NAMESPACE |
+    XML_NAMESPACE_PREFIX |
+    XML_NNAMESPACE |
+    XML_NNAMESPACE_PREFIX |
+    XML_NTEXT |
+    XML_TEXT);
+
+// - 4. Reserved words -
+
+// This list of reserved word is useful to parse the COPY REPLACING operands
+// -> it should be updated each time a new keyword token is added
+
+reservedWord:
+                 keyword | figurativeConstant | specialRegister;
+
+keyword:
+// Keywords - Compiler directive starting tokens
+    (ASTERISK_CBL | ASTERISK_CONTROL | BASIS | CBL | COPY | DELETE_CD | EJECT |
+    ENTER | EXEC_SQL_INCLUDE | INSERT | PROCESS | READY | RESET | REPLACE |
+    SERVICE | SKIP1 | SKIP2 | SKIP3 | TITLE |
+    // Keywords - Statement starting tokens
+    ACCEPT | ADD | ALTER | CALL | CANCEL | CLOSE | COMPUTE | CONTINUE |
+    DELETE | DISPLAY | DIVIDE | ENTRY | EVALUATE | EXEC | EXECUTE | EXIT |
+    GOBACK | GO | IF | INITIALIZE | INSPECT | INVOKE | MERGE | MOVE |
+    MULTIPLY | OPEN | PERFORM | READ | RELEASE | RETURN | REWRITE | SEARCH |
+    SET | SORT | START | STOP | STRING | SUBTRACT | UNSTRING | WRITE | XML |
+    // Keywords - Statement ending tokens
+    END_ADD | END_CALL | END_COMPUTE | END_DELETE | END_DIVIDE | END_EVALUATE |
+    END_EXEC | END_IF | END_INVOKE | END_MULTIPLY | END_PERFORM | END_READ |
+    END_RETURN | END_REWRITE | END_SEARCH | END_START | END_STRING |
+    END_SUBTRACT | END_UNSTRING | END_WRITE | END_XML |
+    // Keywords - Special object identifiers
+    SELF | SUPER |
+    // Keywords - Syntax tokens
+    ACCESS | ADVANCING | AFTER | ALL | ALPHABET | ALPHABETIC |
+    ALPHABETIC_LOWER | ALPHABETIC_UPPER | ALPHANUMERIC | ALPHANUMERIC_EDITED |
+    ALSO | ALTERNATE | AND | ANY | APPLY | ARE | AREA | AREAS | ASCENDING |
+    ASSIGN | AT | ATTRIBUTE | ATTRIBUTES | AUTHOR | BEFORE | BEGINNING |
+    BINARY | BLANK | BLOCK | BOTTOM | BY | CHARACTER | CHARACTERS | CLASS |
+    CLASS_ID | COBOL | CODE | CODE_SET | COLLATING | COM_REG | COMMA | COMMON |
+    COMP | COMP_1 | COMP_2 | COMP_3 | COMP_4 | COMP_5 | COMPUTATIONAL |
+    COMPUTATIONAL_1 | COMPUTATIONAL_2 | COMPUTATIONAL_3 | COMPUTATIONAL_4 |
+    COMPUTATIONAL_5 | CONFIGURATION | CONTAINS | CONTENT | CONVERTING |
+    CORR | CORRESPONDING | COUNT | CURRENCY | DATA | DATE | DATE_COMPILED |
+    DATE_WRITTEN | DAY | DAY_OF_WEEK | DBCS | DEBUGGING | DECIMAL_POINT |
+    DECLARATIVES | DELIMITED | DELIMITER | DEPENDING | DESCENDING |
+    DISPLAY_ARG | DISPLAY_1 | DIVISION | DOWN | DUPLICATES | DYNAMIC | EBCDIC |
+    EGCS | ELEMENT | ELSE | ENCODING | END | END_OF_PAGE | ENDING | ENTRY_ARG |
+    ENVIRONMENT | EOP | EQUAL | ERROR | EVERY | EXCEPTION | EXTEND | EXTERNAL |
+    FACTORY | FALSE | FD | FILE | FILE_CONTROL | FILLER | FIRST | FOOTING |
+    FOR | FROM | FUNCTION | FUNCTION_POINTER | GENERATE | GIVING | GLOBAL |
+    GREATER | GROUP_USAGE | I_O | I_O_CONTROL | ID | IDENTIFICATION | IN |
+    INDEX | INDEXED | INHERITS | INITIAL | INPUT | INPUT_OUTPUT | INSTALLATION |
+    INTO | INVALID | IS | JUST | JUSTIFIED | KANJI | KEY | LABEL | LEADING |
+    LEFT | LESS | LINAGE | LINE | LINES | LINKAGE | LOCAL_STORAGE | LOCK |
+    MEMORY | METHOD | METHOD_ID | MODE | MODULES | MORE_LABELS | MULTIPLE |
+    NAME | NAMESPACE | NAMESPACE_PREFIX | NATIONAL | NATIONAL_EDITED | NATIVE |
+    NEGATIVE | NEW | NEXT | NO | NONNUMERIC | NOT | NUMERIC | NUMERIC_EDITED |
+    OBJECT | OBJECT_COMPUTER | OCCURS | OF | OFF | OMITTED | ON | OPTIONAL |
+    OR | ORDER | ORGANIZATION | OTHER | OUTPUT | OVERFLOW | OVERRIDE |
+    PACKED_DECIMAL | PADDING | PAGE | PARSE | PASSWORD | PIC | PICTURE |
+    POINTER | POSITION | POSITIVE | PROCEDURE | PROCEDURE_POINTER |
+    PROCEDURES | PROCEED | PROCESSING | PROGRAM | PROGRAM_ID | RANDOM |
+    RECORD | RECORDING | RECORDS | RECURSIVE | REDEFINES | REEL | REFERENCE |
+    REFERENCES | RELATIVE | RELOAD | REMAINDER | REMOVAL | RENAMES | REPLACING |
+    REPOSITORY | RERUN | RESERVE | RETURNING | REVERSED | REWIND | RIGHT |
+    ROUNDED | RUN | SAME | SD | SECTION | SECURITY | SEGMENT_LIMIT | SELECT |
+    SENTENCE | SEPARATE | SEQUENCE | SEQUENTIAL | SIGN | SIZE | SORT_ARG |
+    SORT_MERGE | SOURCE_COMPUTER | SPECIAL_NAMES | SQL | SQLIMS | STANDARD |
+    STANDARD_1 | STANDARD_2 | STATUS | SUPPRESS | SYMBOL | SYMBOLIC | SYNC |
+    SYNCHRONIZED | TALLYING | TAPE | TEST | THAN | THEN | THROUGH | THRU |
+    TIME | TIMES | TO | TOP | TRACE | TRAILING | TRUE | TYPE | UNBOUNDED |
+    UNIT | UNTIL | UP | UPON | USAGE | USE | USING | VALIDATING | VALUE |
+    VALUES | VARYING | WHEN | WITH | WORDS | WORKING_STORAGE | WRITE_ONLY |
+    XML_DECLARATION | XML_SCHEMA | YYYYDDD | YYYYMMDD);
+
+// - 5. Text names -
+
+// For rules on referencing COPY libraries, see “COPY statement” on page 530.
+ 
+// * text-name , library-name
+// text-name identifies the copy text. library-name identifies where the copy text
+// exists.
+// - Can be from 1-30 characters in length
+// - Can contain the following characters: Latin uppercase letters A-Z, Latin
+//   lowercase letters a-z, digits 0-9, and hyphen
+// - The first or last character must not be a hyphen
+// - Cannot contain an underscore
+// Neither text-name nor library-name need to be unique within a program.
+// They can be identical to other user-defined words in the program.
+// text-name need not be qualified. If text-name is not qualified, a library-name
+// of SYSLIB is assumed.
+// When compiling from JCL or TSO, only the first eight characters are used
+// as the identifying name. When compiling with the cob2 command and
+// processing COPY text residing in the z/OS UNIX file system, all characters
+// are significant.
+// * literal-1 , literal-2
+// Must be alphanumeric literals. literal-1 identifies the copy text. literal-2
+// identifies where the copy text exists.
+// When compiling from JCL or TSO:
+// - Literals can be from 1-30 characters in length.
+// - Literals can contain characters: A-Z, a-z, 0-9, hyphen, @, #, or $.
+// - The first or last character must not be a hyphen.
+// - Literals cannot contain an underscore.
+// - Only the first eight characters are used as the identifying name.
+// When compiling with the cob2 command and processing COPY text
+// residing in the z/OS UNIX file system, the literal can be from 1 to 160
+// characters in length.
+// The uniqueness of text-name and library-name is determined after the formation and
+// conversion rules for a system-dependent name have been applied.
+// For information about the mapping of characters in the text-name, library-name, and
+// literals, see Compiler-directing statements in the Enterprise COBOL Programming
+// Guide.
+
+textName : UserDefinedWord | AlphanumericLiteral;
+libraryName : UserDefinedWord | AlphanumericLiteral;
+
+
+// -----------------
+// COBOL TEXT FORMAT
+// -----------------
+
+// **********************
+// 1. Characters encoding
+// **********************
 
 // -- 1.1 Character decoding  at compile time --
 
@@ -164,8 +914,9 @@ grammar CobolBase;
 // moves should be avoided. The COBOL runtime system does not check for a split
 // between the encoding units that form a graphic character.
 
-// **************
-// Step 2 : Reference format
+// *******************
+// 2. Reference format
+// *******************
 
 // p51: COBOL source text must be written in COBOL reference format.
 
@@ -388,8 +1139,9 @@ grammar CobolBase;
 // A blank line contains nothing but spaces in column 7 through column 72. A blank
 // line can be anywhere in a program.
 
-// **************
-// Step 3 : tokenizing
+// *************
+// 3. Tokenizing
+// *************
 
 // -- 3.1 Separators --
 
@@ -1151,660 +1903,62 @@ grammar CobolBase;
 // Words or literals containing DBCS characters cannot be continued across
 // lines.
 
-// --- Cobol TOKEN TYPES --
+// -- 3.7 Additional keywords --
 
-tokens 
-{  
-    // Separators - Whitespace
-    SpaceSeparator,
-    CommaSeparator,
-    SemicolonSeparator,
-    EndOfFile, // <- do not use in this grammar, use constant EOF instead
-    // Comments
-    FloatingComment,
-    CommentLine,
-    // Separators - Syntax
-    PeriodSeparator,
-    ColonSeparator,
-    LeftParenthesisSeparator,
-    RightParenthesisSeparator,
-    PseudoTextDelimiter,
-    // Special character word - Arithmetic operators
-    PlusOperator,
-    MinusOperator,
-    DivideOperator,
-    MultiplyOperator,
-    PowerOperator,
-    // Special character word - Relational operators
-    LessThanOperator,
-    GreaterThanOperator,
-    LessThanOrEqualOperator,
-    GreaterThanOrEqualOperator,
-    EqualOperator,
-    // Literals - Alphanumeric
-    AlphanumericLiteral,
-    HexadecimalAlphanumericLiteral,
-    NullTerminatedAlphanumericLiteral,
-    NationalLiteral,
-    HexadecimalNationalLiteral,
-    DBCSLiteral,
-    // Literals - Numeric
-    IntegerLiteral,
-    DecimalLiteral,
-    FloatingPointLiteral,
-    // Literals - Syntax tokens
-    PictureCharacterString,
-    CommentEntry,
-    ExecStatementText,
-    // Symbols    
-    FunctionName,
-    ExecTranslatorName,
-    PartialCobolWord ,
-    UserDefinedWord,
-    // Keywords - Compiler directive starting tokens
-    ASTERISK_CBL,
-    ASTERISK_CONTROL,
-    BASIS,
-    CBL,
-    COPY,
-    DELETE_CD,
-    EJECT,
-    ENTER,
-    EXEC_SQL_INCLUDE,
-    INSERT,
-    PROCESS,
-    READY,
-    RESET,
-    REPLACE,
-    SERVICE,
-    SKIP1,
-    SKIP2,
-    SKIP3,
-    TITLE,
-    // Keywords - Code element starting tokens
-    APPLY,
-    CONFIGURATION,
-    ELSE,
-    ENVIRONMENT,
-    FD,
-    FILE_CONTROL,
-    I_O_CONTROL,
-    ID,
-    IDENTIFICATION,
-    INPUT_OUTPUT,
-    LINKAGE,
-    LOCAL_STORAGE,
-    MULTIPLE,
-    OBJECT_COMPUTER,
-    REPOSITORY,
-    RERUN,
-    SAME,
-    SD,
-    SELECT,
-    SOURCE_COMPUTER,
-    SPECIAL_NAMES,
-    USE,
-    WORKING_STORAGE,
-    // Keywords - Statement starting tokens
-    ACCEPT,
-    ADD,
-    ALTER,
-    CALL,
-    CANCEL,
-    CLOSE,
-    COMPUTE,
-    CONTINUE,
-    DELETE,
-    DISPLAY,
-    DIVIDE,
-    ENTRY,
-    EVALUATE,
-    EXEC,
-    EXECUTE,
-    EXIT,
-    GOBACK,
-    GO,
-    IF,
-    INITIALIZE,
-    INSPECT,
-    INVOKE,
-    MERGE,
-    MOVE,
-    MULTIPLY,
-    OPEN,
-    PERFORM,
-    READ,
-    RELEASE,
-    RETURN,
-    REWRITE,
-    SEARCH,
-    SET,
-    SORT,
-    START,
-    STOP,
-    STRING,
-    SUBTRACT,
-    UNSTRING,
-    WRITE,
-    XML,
-    // Keywords - Statement ending tokens
-    END_ADD,
-    END_CALL,
-    END_COMPUTE,
-    END_DELETE,
-    END_DIVIDE,
-    END_EVALUATE,
-    END_EXEC,
-    END_IF,
-    END_INVOKE,
-    END_MULTIPLY,
-    END_PERFORM,
-    END_READ,
-    END_RETURN,
-    END_REWRITE,
-    END_SEARCH,
-    END_START,
-    END_STRING,
-    END_SUBTRACT,
-    END_UNSTRING,
-    END_WRITE,
-    END_XML,
-    // Keywords - Special registers
-    ADDRESS,
-    DEBUG_CONTENTS,
-    DEBUG_ITEM,
-    DEBUG_LINE,
-    DEBUG_NAME,
-    DEBUG_SUB_1,
-    DEBUG_SUB_2,
-    DEBUG_SUB_3,
-    JNIENVPTR,
-    LENGTH,
-    LINAGE_COUNTER,
-    RETURN_CODE,
-    SHIFT_IN,
-    SHIFT_OUT,
-    SORT_CONTROL,
-    SORT_CORE_SIZE,
-    SORT_FILE_SIZE,
-    SORT_MESSAGE,
-    SORT_MODE_SIZE,
-    SORT_RETURN,
-    TALLY,
-    WHEN_COMPILED,
-    XML_CODE,
-    XML_EVENT,
-    XML_INFORMATION,
-    XML_NAMESPACE,
-    XML_NAMESPACE_PREFIX,
-    XML_NNAMESPACE,
-    XML_NNAMESPACE_PREFIX,
-    XML_NTEXT,
-    XML_TEXT,
-    // Keywords - Figurative constants
-    HIGH_VALUE,
-    HIGH_VALUES,
-    LOW_VALUE,
-    LOW_VALUES,
-    NULL,
-    NULLS,
-    QUOTE,
-    QUOTES,
-    SPACE,
-    SPACES,
-    ZERO,
-    ZEROES,
-    ZEROS,
-    SymbolicCharacter,
-    // Keywords - Special object identifiers
-    SELF,
-    SUPER,
-    // Keywords - Syntax tokens
-    ACCESS,
-    ADVANCING,
-    AFTER,
-    ALL,
-    ALPHABET,
-    ALPHABETIC,
-    ALPHABETIC_LOWER,
-    ALPHABETIC_UPPER,
-    ALPHANUMERIC,
-    ALPHANUMERIC_EDITED,
-    ALSO,
-    ALTERNATE,
-    AND,
-    ANY,
-    ARE,
-    AREA,
-    AREAS,
-    ASCENDING,
-    ASSIGN,
-    AT,
-    ATTRIBUTE,
-    ATTRIBUTES,
-    AUTHOR,
-    BEFORE,
-    BEGINNING,
-    BINARY,
-    BLANK,
-    BLOCK,
-    BOTTOM,
-    BY,
-    CHARACTER,
-    CHARACTERS,
-    CLASS,
-    CLASS_ID,
-    COBOL,
-    CODE,
-    CODE_SET,
-    COLLATING,
-    COM_REG,
-    COMMA,
-    COMMON,
-    COMP,
-    COMP_1,
-    COMP_2,
-    COMP_3,
-    COMP_4,
-    COMP_5,
-    COMPUTATIONAL,
-    COMPUTATIONAL_1,
-    COMPUTATIONAL_2,
-    COMPUTATIONAL_3,
-    COMPUTATIONAL_4,
-    COMPUTATIONAL_5,
-    CONTAINS,
-    CONTENT,
-    CONVERTING,
-    CORR,
-    CORRESPONDING,
-    COUNT,
-    CURRENCY,
-    DATA,
-    DATE,
-    DATE_COMPILED,
-    DATE_WRITTEN,
-    DAY,
-    DAY_OF_WEEK,
-    DBCS,
-    DEBUGGING,
-    DECIMAL_POINT,
-    DECLARATIVES,
-    DELIMITED,
-    DELIMITER,
-    DEPENDING,
-    DESCENDING,
-    DISPLAY_ARG,
-    DISPLAY_1,
-    DIVISION,
-    DOWN,
-    DUPLICATES,
-    DYNAMIC,
-    EBCDIC,
-    EGCS,
-    ELEMENT,
-    ENCODING,
-    END,
-    END_OF_PAGE,
-    ENDING,
-    ENTRY_ARG,
-    EOP,
-    EQUAL,
-    ERROR,
-    EVERY,
-    EXCEPTION,
-    EXTEND,
-    EXTERNAL,
-    FACTORY,
-    FALSE,
-    FILE,
-    FILLER,
-    FIRST,
-    FOOTING,
-    FOR,
-    FROM,
-    FUNCTION,
-    FUNCTION_POINTER,
-    GENERATE,
-    GIVING,
-    GLOBAL,
-    GREATER,
-    GROUP_USAGE,
-    I_O,
-    IN,
-    INDEX,
-    INDEXED,
-    INHERITS,
-    INITIAL,
-    INPUT,
-    INSTALLATION,
-    INTO,
-    INVALID,
-    IS,
-    JUST,
-    JUSTIFIED,
-    KANJI,
-    KEY,
-    LABEL,
-    LEADING,
-    LEFT,
-    LESS,
-    LINAGE,
-    LINE,
-    LINES,
-    LOCK,
-    MEMORY,
-    METHOD,
-    METHOD_ID,
-    MODE,
-    MODULES,
-    MORE_LABELS,
-    NAME,
-    NAMESPACE,
-    NAMESPACE_PREFIX,
-    NATIONAL,
-    NATIONAL_EDITED,
-    NATIVE,
-    NEGATIVE,
-    NEW,
-    NEXT,
-    NO,
-    NONNUMERIC,
-    NOT,
-    NUMERIC,
-    NUMERIC_EDITED,
-    OBJECT,
-    OCCURS,
-    OF,
-    OFF,
-    OMITTED,
-    ON,
-    OPTIONAL,
-    OR,
-    ORDER,
-    ORGANIZATION,
-    OTHER,
-    OUTPUT,
-    OVERFLOW,
-    OVERRIDE,
-    PACKED_DECIMAL,
-    PADDING,
-    PAGE,
-    PARSE,
-    PASSWORD,
-    PIC,
-    PICTURE,
-    POINTER,
-    POSITION,
-    POSITIVE,
-    PROCEDURE,
-    PROCEDURE_POINTER,
-    PROCEDURES,
-    PROCEED,
-    PROCESSING,
-    PROGRAM,
-    PROGRAM_ID,
-    RANDOM,
-    RECORD,
-    RECORDING,
-    RECORDS,
-    RECURSIVE,
-    REDEFINES,
-    REEL,
-    REFERENCE,
-    REFERENCES,
-    RELATIVE,
-    RELOAD,
-    REMAINDER,
-    REMOVAL,
-    RENAMES,
-    REPLACING,
-    RESERVE,
-    RETURNING,
-    REVERSED,
-    REWIND,
-    RIGHT,
-    ROUNDED,
-    RUN,
-    SECTION,
-    SECURITY,
-    SEGMENT_LIMIT,
-    SENTENCE,
-    SEPARATE,
-    SEQUENCE,
-    SEQUENTIAL,
-    SIGN,
-    SIZE,
-    SORT_ARG,
-    SORT_MERGE,
-    SQL,
-    SQLIMS,
-    STANDARD,
-    STANDARD_1,
-    STANDARD_2,
-    STATUS,
-    SUPPRESS,
-    SYMBOL,
-    SYMBOLIC,
-    SYNC,
-    SYNCHRONIZED,
-    TALLYING,
-    TAPE,
-    TEST,
-    THAN,
-    THEN,
-    THROUGH,
-    THRU,
-    TIME,
-    TIMES,
-    TO,
-    TOP,
-    TRACE,
-    TRAILING,
-    TRUE,
-    TYPE,
-    UNBOUNDED,
-    UNIT,
-    UNTIL,
-    UP,
-    UPON,
-    USAGE,
-    USING,
-    VALIDATING,
-    VALUE,
-    VALUES,
-    VARYING,
-    WHEN,
-    WITH,
-    WORDS,
-    WRITE_ONLY,
-    XML_DECLARATION,
-    XML_SCHEMA,
-    YYYYDDD,
-    YYYYMMDD
-}
+// => Reserved words found in the grammar rules but not declared as keywords 
+//    in the IBM Cobol language reference v5.1
 
-// --- TOKEN FAMILIES ---
+// - CobolCodeElements -
 
-// p37: Numeric literals can be fixed-point or floating-point numbers.
-// p13: When a numeric literal appears in a syntax
-// diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used.
+// ATTRIBUTE : 'ATTRIBUTE'; // found in xmlGenerateStatement
+// ATTRIBUTES : 'ATTRIBUTES'; // found in xmlGenerateStatement
+// EBCDIC : 'EBCDIC'; // found in alphabet clause
+// ELEMENT : 'ELEMENT'; // found in xmlGenerateStatement
+// ENCODING : 'ENCODING'; // found in xmlGenerateStatement
+// NAME : 'NAME'; // found in xmlGenerateStatement
+// NAMESPACE : 'NAMESPACE'; // found in xmlGenerateStatement
+// NAMESPACE_PREFIX  : 'NAMESPACE-PREFIX'; // found in xmlGenerateStatement
+// NEW : 'NEW'; // found in invokeStatement
+// NONNUMERIC : 'NONNUMERIC'; // found in xmlGenerateStatement
+// PARSE : 'PARSE'; // found in xmlParseStatement
+// SYMBOL : 'SYMBOL'; // found in currencySignClause
+// UNBOUNDED : 'UNBOUNDED'; // found in occursClause
+// VALIDATING : 'VALIDATING'; // found in xmlParseStatement
+// XML_DECLARATION : 'XML-DECLARATION'; // found in xmlGenerateStatement
+// YYYYMMDD : 'DATE YYYYMMDD'; // found in acceptStatement
+// YYYYDDD : 'DAY YYYYDDD'; // found in acceptStatement
 
-numericLiteral: 
-                  IntegerLiteral | DecimalLiteral | FloatingPointLiteral | (ZERO | ZEROS | ZEROES);
+// - CobolCompilerDirectives -
 
-// p37: In this documentation, the word integer appearing in a format represents a numeric literal of nonzero value
-// that contains no sign and no decimal point, except when other rules are included
-// with the description of the format.
+// ASTERISK_CBL : '*CBL'; // found in controlCblStatement
+// ASTERISK_CONTROL : '*CONTROL'; // found in controlCblStatement 
+// EXEC_SQL_INCLUDE : 'EXEC SQL INCLUDE'; // found in execSqlIncludeStatement
+// PROCESS : 'PROCESS'; // found in cblProcessStatement
 
-integer : IntegerLiteral;
+// - !! TO DO if necessary : no token SQL-INIT-FLAG has been defined in the scanner yet -
 
-// p33: A literal is a character-string whose value is specified either by the characters of
-// which it is composed or by the use of a figurative constant.
-// p34: The formats of alphanumeric literals are:
-// - Format 1: “Basic alphanumeric literals”
-// - Format 2: “Alphanumeric literals with DBCS characters” on page 35
-// - Format 3: “Hexadecimal notation for alphanumeric literals” on page 36
-// - Format 4: “Null-terminated alphanumeric literals” on page 37
+// p433: Precompiler: With the DB2 precompiler, if you pass host variables that might be
+// located at different addresses when the program is called more than once, the
+// called program must reset SQL-INIT-FLAG. Resetting this flag indicates to DB2 that
+// storage must be initialized when the next SQL statement runs. To reset the flag,
+// insert the statement MOVE ZERO TO SQL-INIT-FLAG in the PROCEDURE DIVISION of the
+// called program ahead of any executable SQL statements that use those host
+// variables.
+// Coprocessor: With the DB2 coprocessor, the called program does not need to reset
+// SQL-INIT-FLAG. An SQL-INIT-FLAG is automatically defined in the program to aid
+// program portability. However, statements that modify SQL-INIT-FLAG, such as MOVE
+// ZERO TO SQL-INIT-FLAG, have no effect on the SQL processing in the program.
 
-alphanumericLiteral:
-           alphanumericLiteralBase |
-           NullTerminatedAlphanumericLiteral |
-           (ALL alphanumericLiteralBase);
+// DB2 11 for zOs - Application Programming and SQL Guide p330:
+// If your program uses the DB2 precompiler and uses parameters that are
+// defined in LINKAGE SECTION as host variables to DB2 and the address of the
+// input parameter might change on subsequent invocations of your program, your
+// program must reset the variable SQL-INIT-FLAG. This flag is generated by the
+// DB2 precompiler. Resetting this flag indicates that the storage must initialize when
+// the next SQL statement executes. To reset the flag, insert the statement MOVE
+// ZERO TO SQL-INIT-FLAG in the called program's PROCEDURE DIVISION, ahead
+// of any executable SQL statements that use the host variables. If you use the
+// COBOL DB2 coprocessor, the called program does not need to reset
+// SQL-INIT-FLAG.
 
-alphanumericLiteralBase:
-                       AlphanumericLiteral |
-                       HexadecimalAlphanumericLiteral |                      
-                       figurativeConstant;
-
-alphanumOrHexadecimalLiteral :
-                              AlphanumericLiteral |
-                              HexadecimalAlphanumericLiteral;
-
-// p13: You can use a figurative constant wherever literal appears in a syntax diagram,
-// except where explicitly prohibited.
-
-figurativeConstant:
-                      HIGH_VALUE |
-                      HIGH_VALUES |
-                      LOW_VALUE |
-                      LOW_VALUES |
-                      NULL |
-                      NULLS |
-                      QUOTE |
-                      QUOTES |
-                      SPACE |
-                      SPACES |
-                      ZERO |
-                      ZEROES |
-                      ZEROS |
-                      SymbolicCharacter;
-
-// p13: ALL literal
-// literal can be an alphanumeric literal, a DBCS literal, a national literal, or a
-// figurative constant other than the ALL literal.
-// p37: null-terminated literals are not supported in ALL literal figurative constants.
-
-alphanumOrNationalLiteral:
-           alphanumOrNationalLiteralBase |
-           NullTerminatedAlphanumericLiteral |
-           (ALL alphanumOrNationalLiteralBase);
-
-alphanumOrNationalLiteralBase:
-                       (AlphanumericLiteral |
-                       HexadecimalAlphanumericLiteral |                      
-                       NationalLiteral |
-                       HexadecimalNationalLiteral |
-                       DBCSLiteral) |
-                       figurativeConstant;
-
-// p534: literal
-// Can be numeric, alphanumeric, DBCS, or national.
-
-literal:
-           alphanumOrNationalLiteral |
-           numericLiteral;
-
-// Special registers
-
-specialRegister : 
-    (DEBUG_CONTENTS |
-    DEBUG_ITEM |
-    DEBUG_LINE |
-    DEBUG_NAME |
-    DEBUG_SUB_1 |
-    DEBUG_SUB_2 |
-    DEBUG_SUB_3 |
-    JNIENVPTR |
-    LINAGE_COUNTER |
-    RETURN_CODE |
-    SHIFT_IN |
-    SHIFT_OUT |
-    SORT_CONTROL |
-    SORT_CORE_SIZE |
-    SORT_FILE_SIZE |
-    SORT_MESSAGE |
-    SORT_MODE_SIZE |
-    SORT_RETURN |
-    TALLY |
-    WHEN_COMPILED |
-    XML_CODE |
-    XML_EVENT |
-    XML_INFORMATION |
-    XML_NAMESPACE |
-    XML_NAMESPACE_PREFIX |
-    XML_NNAMESPACE |
-    XML_NNAMESPACE_PREFIX |
-    XML_NTEXT |
-    XML_TEXT);
-
-// Reserved words
-
-reservedWord:
-                 keyword | figurativeConstant | specialRegister;
-
-keyword:
-// Keywords - Compiler directive starting tokens
-    (ASTERISK_CBL | ASTERISK_CONTROL | BASIS | CBL | COPY | DELETE_CD | EJECT |
-    ENTER | EXEC_SQL_INCLUDE | INSERT | PROCESS | READY | RESET | REPLACE |
-    SERVICE | SKIP1 | SKIP2 | SKIP3 | TITLE |
-    // Keywords - Statement starting tokens
-    ACCEPT | ADD | ALTER | CALL | CANCEL | CLOSE | COMPUTE | CONTINUE |
-    DELETE | DISPLAY | DIVIDE | ENTRY | EVALUATE | EXEC | EXECUTE | EXIT |
-    GOBACK | GO | IF | INITIALIZE | INSPECT | INVOKE | MERGE | MOVE |
-    MULTIPLY | OPEN | PERFORM | READ | RELEASE | RETURN | REWRITE | SEARCH |
-    SET | SORT | START | STOP | STRING | SUBTRACT | UNSTRING | WRITE | XML |
-    // Keywords - Statement ending tokens
-    END_ADD | END_CALL | END_COMPUTE | END_DELETE | END_DIVIDE | END_EVALUATE |
-    END_EXEC | END_IF | END_INVOKE | END_MULTIPLY | END_PERFORM | END_READ |
-    END_RETURN | END_REWRITE | END_SEARCH | END_START | END_STRING |
-    END_SUBTRACT | END_UNSTRING | END_WRITE | END_XML |
-    // Keywords - Special object identifiers
-    SELF | SUPER |
-    // Keywords - Syntax tokens
-    ACCESS | ADVANCING | AFTER | ALL | ALPHABET | ALPHABETIC |
-    ALPHABETIC_LOWER | ALPHABETIC_UPPER | ALPHANUMERIC | ALPHANUMERIC_EDITED |
-    ALSO | ALTERNATE | AND | ANY | APPLY | ARE | AREA | AREAS | ASCENDING |
-    ASSIGN | AT | ATTRIBUTE | ATTRIBUTES | AUTHOR | BEFORE | BEGINNING |
-    BINARY | BLANK | BLOCK | BOTTOM | BY | CHARACTER | CHARACTERS | CLASS |
-    CLASS_ID | COBOL | CODE | CODE_SET | COLLATING | COM_REG | COMMA | COMMON |
-    COMP | COMP_1 | COMP_2 | COMP_3 | COMP_4 | COMP_5 | COMPUTATIONAL |
-    COMPUTATIONAL_1 | COMPUTATIONAL_2 | COMPUTATIONAL_3 | COMPUTATIONAL_4 |
-    COMPUTATIONAL_5 | CONFIGURATION | CONTAINS | CONTENT | CONVERTING |
-    CORR | CORRESPONDING | COUNT | CURRENCY | DATA | DATE | DATE_COMPILED |
-    DATE_WRITTEN | DAY | DAY_OF_WEEK | DBCS | DEBUGGING | DECIMAL_POINT |
-    DECLARATIVES | DELIMITED | DELIMITER | DEPENDING | DESCENDING |
-    DISPLAY_ARG | DISPLAY_1 | DIVISION | DOWN | DUPLICATES | DYNAMIC | EBCDIC |
-    EGCS | ELEMENT | ELSE | ENCODING | END | END_OF_PAGE | ENDING | ENTRY_ARG |
-    ENVIRONMENT | EOP | EQUAL | ERROR | EVERY | EXCEPTION | EXTEND | EXTERNAL |
-    FACTORY | FALSE | FD | FILE | FILE_CONTROL | FILLER | FIRST | FOOTING |
-    FOR | FROM | FUNCTION | FUNCTION_POINTER | GENERATE | GIVING | GLOBAL |
-    GREATER | GROUP_USAGE | I_O | I_O_CONTROL | ID | IDENTIFICATION | IN |
-    INDEX | INDEXED | INHERITS | INITIAL | INPUT | INPUT_OUTPUT | INSTALLATION |
-    INTO | INVALID | IS | JUST | JUSTIFIED | KANJI | KEY | LABEL | LEADING |
-    LEFT | LESS | LINAGE | LINE | LINES | LINKAGE | LOCAL_STORAGE | LOCK |
-    MEMORY | METHOD | METHOD_ID | MODE | MODULES | MORE_LABELS | MULTIPLE |
-    NAME | NAMESPACE | NAMESPACE_PREFIX | NATIONAL | NATIONAL_EDITED | NATIVE |
-    NEGATIVE | NEW | NEXT | NO | NONNUMERIC | NOT | NUMERIC | NUMERIC_EDITED |
-    OBJECT | OBJECT_COMPUTER | OCCURS | OF | OFF | OMITTED | ON | OPTIONAL |
-    OR | ORDER | ORGANIZATION | OTHER | OUTPUT | OVERFLOW | OVERRIDE |
-    PACKED_DECIMAL | PADDING | PAGE | PARSE | PASSWORD | PIC | PICTURE |
-    POINTER | POSITION | POSITIVE | PROCEDURE | PROCEDURE_POINTER |
-    PROCEDURES | PROCEED | PROCESSING | PROGRAM | PROGRAM_ID | RANDOM |
-    RECORD | RECORDING | RECORDS | RECURSIVE | REDEFINES | REEL | REFERENCE |
-    REFERENCES | RELATIVE | RELOAD | REMAINDER | REMOVAL | RENAMES | REPLACING |
-    REPOSITORY | RERUN | RESERVE | RETURNING | REVERSED | REWIND | RIGHT |
-    ROUNDED | RUN | SAME | SD | SECTION | SECURITY | SEGMENT_LIMIT | SELECT |
-    SENTENCE | SEPARATE | SEQUENCE | SEQUENTIAL | SIGN | SIZE | SORT_ARG |
-    SORT_MERGE | SOURCE_COMPUTER | SPECIAL_NAMES | SQL | SQLIMS | STANDARD |
-    STANDARD_1 | STANDARD_2 | STATUS | SUPPRESS | SYMBOL | SYMBOLIC | SYNC |
-    SYNCHRONIZED | TALLYING | TAPE | TEST | THAN | THEN | THROUGH | THRU |
-    TIME | TIMES | TO | TOP | TRACE | TRAILING | TRUE | TYPE | UNBOUNDED |
-    UNIT | UNTIL | UP | UPON | USAGE | USE | USING | VALIDATING | VALUE |
-    VALUES | VARYING | WHEN | WITH | WORDS | WORKING_STORAGE | WRITE_ONLY |
-    XML_DECLARATION | XML_SCHEMA | YYYYDDD | YYYYMMDD);
-
-// For rules on referencing COPY libraries, see “COPY statement” on page 530.
-
-textName : UserDefinedWord | AlphanumericLiteral;
-libraryName : UserDefinedWord | AlphanumericLiteral;
+// SQL_INIT_FLAG : 'SQL-INIT-FLAG';

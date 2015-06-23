@@ -8,6 +8,9 @@ namespace TypeCobol.Compiler.Scanner
 {
     internal static class TokenUtils
     {
+        /// <summary>
+        /// Total number of token types
+        /// </summary>
         public static int MAX_TOKEN_TYPE = 454;
 
         static TokenUtils()
