@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
@@ -470,7 +471,43 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDisplayStatement(CobolCodeElementsParser.DisplayStatementContext context)
         {
-            CodeElement = new DisplayStatement();
+            var displayStement = new DisplayStatement();
+
+            Token advancingFlag = ParseTreeUtils.GetFirstToken(context.ADVANCING());
+            if (advancingFlag != null)
+            {
+                displayStement.IsWithNoAdvancing = new SyntaxBoolean(advancingFlag);
+            }
+
+            Token uponFlag = ParseTreeUtils.GetFirstToken(context.UPON());
+            if (uponFlag != null)
+            {
+                Token envName = ParseTreeUtils.GetFirstToken(context.environmentName());
+                if (envName != null)
+                {
+                    //TODO
+                    //displayStement.UponEnvironmentName = new EnvironmentName(envName);
+                }
+                else
+                {
+                    Token mnemonicForEnvName = ParseTreeUtils.GetFirstToken(context.mnemonicForEnvironmentName());
+                    if (mnemonicForEnvName != null)
+                    {
+                        displayStement.UponMnemonicForEnvironmentName = new MnemonicForEnvironmentName(mnemonicForEnvName);
+                    }
+                }
+            }
+
+            //TODO literal and identifier
+//            if (context.literal() != null)
+//            {
+//                foreach (var literal in context.literal())
+//                {
+//
+//                }
+//            }
+
+            CodeElement = displayStement;
         }
 
         public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
