@@ -17,9 +17,10 @@ namespace TypeCobolStudio.Editor
         private ICSharpCode.AvalonEdit.Document.TextDocument _avalonEditTextDocument;
         private WeakLineTracker _weakLineTracker;
 
-        public AvalonEditTextDocument(ICSharpCode.AvalonEdit.Document.TextDocument avalonEditTextDocument, ColumnsLayout columnsLayout)
-        {
-            ColumnsLayout = columnsLayout;
+        public AvalonEditTextDocument(ICSharpCode.AvalonEdit.Document.TextDocument avalonEditTextDocument, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout)
+        { 
+            // Document source name and text format
+            Source = new TextSourceInfo(_avalonEditTextDocument.FileName, encodingForHexadecimalAlphanumericLiterals, columnsLayout);
 
             _avalonEditTextDocument = avalonEditTextDocument;
             // Listen to all line changes in the editor
@@ -40,6 +41,11 @@ namespace TypeCobolStudio.Editor
             }
             _avalonEditTextDocument.Text = sb.ToString();
         }
+
+        /// <summary>
+        /// Document source name and text format
+        /// </summary>
+        public TextSourceInfo Source { get; private set; }
 
         /// <summary>
         /// Iterator over the document chars
@@ -82,11 +88,6 @@ namespace TypeCobolStudio.Editor
                 return _avalonEditTextDocument.TextLength;
             }
         }
-
-        /// <summary>
-        /// Format of the text document lines : Cobol reference format on 72 columns, or free text format
-        /// </summary>
-        public ColumnsLayout ColumnsLayout { get; private set; }
 
         /// <summary>
         /// Iterator over the document lines
@@ -143,19 +144,7 @@ namespace TypeCobolStudio.Editor
                 return _avalonEditTextDocument.LineCount;
             }
         }
-
-        /// <summary>
-        /// Gets the name of the file the document is stored in.
-        /// Could also be a non-existent dummy file name or null if no name has been set.
-        /// </summary>
-        public string FileName
-        {
-            get
-            {
-                return _avalonEditTextDocument.FileName;
-            }
-        }
-
+        
         // Tracks the current state
         private bool sendNextChangeEvents = false;
 

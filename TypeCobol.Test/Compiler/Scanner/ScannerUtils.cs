@@ -38,6 +38,7 @@ namespace TypeCobol.Test.Compiler.Scanner
 
     internal static class ScannerUtils
     {
+        public static TextSourceInfo TextSourceInfo = new TextSourceInfo("test", IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), ColumnsLayout.FreeTextFormat);
         public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
 
         public static string ScanLine(string testLine)
@@ -48,16 +49,16 @@ namespace TypeCobol.Test.Compiler.Scanner
 
         public static string ScanLines(string[] testLines)
         {
-            IList<TokensLine> tokensLines = new List<TokensLine>();
+            IList <TokensLine> tokensLines = new List<TokensLine>();
 
             ITextLine firstTextLine = new TestTextLine(testLines[0]);
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, ColumnsLayout.FreeTextFormat, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), CompilerOptions);
+            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, TextSourceInfo, CompilerOptions);
             tokensLines.Add(tokensLine);
 
             for (int i = 1; i < testLines.Length; i++)
             {
                 TextLine textLine = new TestTextLine(testLines[i]);
-                tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanTextLine(textLine, ColumnsLayout.FreeTextFormat, tokensLine, CompilerOptions);
+                tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanTextLine(textLine, tokensLine, TextSourceInfo, CompilerOptions);
                 tokensLines.Add(tokensLine);
             }
 
@@ -74,7 +75,7 @@ namespace TypeCobol.Test.Compiler.Scanner
 
         public static string ScanTextLine(ITextLine textLine)
         {
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(textLine, ColumnsLayout.FreeTextFormat, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), CompilerOptions);
+            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(textLine, false, false, TextSourceInfo, CompilerOptions);
             return BuildResultString(tokensLine);
         }
         
@@ -83,13 +84,13 @@ namespace TypeCobol.Test.Compiler.Scanner
             IList<TokensLine> tokensLines = new List<TokensLine>();
 
             ITextLine firstTextLine = textLines[0];
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, ColumnsLayout.FreeTextFormat, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), CompilerOptions);
+            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, TextSourceInfo, CompilerOptions);
             tokensLines.Add(tokensLine);
 
             for (int i = 1; i < textLines.Length; i++)
             {
                 ITextLine textLine = textLines[i];
-                tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanTextLine(textLine, ColumnsLayout.FreeTextFormat, tokensLine, CompilerOptions);
+                tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanTextLine(textLine, tokensLine, TextSourceInfo, CompilerOptions);
                 tokensLines.Add(tokensLine);
             }
 

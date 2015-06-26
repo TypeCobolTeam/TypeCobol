@@ -27,15 +27,16 @@ namespace TypeCobol.Test.Compiler.Parser
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                compilationDocument.TextDocument.FileName,
+                compilationDocument.TextDocument.Source.Name,
                 compilationDocument.TokensDocument.TokensLines,
                 null,
                 Token.CHANNEL_SourceTokens);
 
             // Crate an Antlr compatible token source on top a the token iterator
-            TokensDocumentTokenSource tokenSource = new TokensDocumentTokenSource(
-                compilationDocument.TextDocument,
+            TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                compilationDocument.TextDocument.Source.Name,
                 tokensIterator);
+            tokenSource.NextToken();
 
             // Get underlying CharStream
             ICharStream charStream = tokenSource.InputStream;
@@ -52,13 +53,13 @@ namespace TypeCobol.Test.Compiler.Parser
             {
                 throw new Exception("La(1) should be 0");
             }
-            if (charStream.La(5) != '1')
+            if (charStream.La(4) != '1')
             {
-                throw new Exception("La(5) should be 1");
+                throw new Exception("La(4) should be 1");
             }
-            if (charStream.La(5) != '1')
+            if (charStream.La(5) != '6')
             {
-                throw new Exception("La(5) should be 1");
+                throw new Exception("La(5) should be 6");
             }
 
             charStream.Consume();
@@ -66,23 +67,23 @@ namespace TypeCobol.Test.Compiler.Parser
             {
                 throw new Exception("Char stream index should be 1 after consume");
             }
-            if (charStream.La(4) != '1')
+            if (charStream.La(4) != '6')
             {
-                throw new Exception("La(4) should be 1 after consume");
+                throw new Exception("La(4) should be 6 after consume");
             }
-            if (charStream.La(17921) != IntStreamConstants.Eof)
+            if (charStream.La(80) != IntStreamConstants.Eof)
             {
-                throw new Exception("La(17921) should be Eof");
+                throw new Exception("La(80) should be Eof");
             }
             
-            charStream.Seek(88);
-            if(charStream.Index != 88)
+            charStream.Seek(12);
+            if(charStream.Index != 12)
             {
-                throw new Exception("Char stream index should be 88 after seek");
+                throw new Exception("Char stream index should be 12 after seek");
             }
-            if (charStream.La(-1) != '-')
+            if (charStream.La(-1) != ':')
             {
-                throw new Exception("La(-1) should be - after seek");
+                throw new Exception("La(-1) should be : after seek");
             }
             if (charStream.La(1) != 'M')
             {
@@ -91,25 +92,20 @@ namespace TypeCobol.Test.Compiler.Parser
             // should do nothing
             int marker = charStream.Mark();
             charStream.Release(marker);
-            if (charStream.La(2) != 'a')
+            if (charStream.La(2) != 'S')
             {
-                throw new Exception("La(2) should be a after release");
+                throw new Exception("La(2) should be S after release");
             }
 
-            string text = charStream.GetText(new Interval(220,300));
-            if (text != "========    00002101000040*-Descent : 14/10/13 at 17:27:08         MemoId  : JAEG")
+            string text = charStream.GetText(new Interval(11,18));
+            if (text != ":MSVCOUT")
             {
                 throw new Exception("Char stream GetText method KO");
             }
 
-            if (charStream.Size != 17920)
+            if (charStream.Size != 80)
             {
                 throw new Exception("Char stream size KO");
-            }
-
-            if (charStream.SourceName != "MSVCOUT")
-            {
-                throw new Exception("Char stream name KO");
             }
         }
 
@@ -125,14 +121,14 @@ namespace TypeCobol.Test.Compiler.Parser
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                compilationDocument.TextDocument.FileName,
+                compilationDocument.TextDocument.Source.Name,
                 compilationDocument.TokensDocument.TokensLines,
                 null,
                 Token.CHANNEL_SourceTokens);
 
             // Crate an Antlr compatible token source on top a the token iterator
-            TokensDocumentTokenSource tokenSource = new TokensDocumentTokenSource(
-                compilationDocument.TextDocument,
+            TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                compilationDocument.TextDocument.Source.Name,
                 tokensIterator);
 
             if (tokenSource.SourceName != "MSVCOUT")
@@ -143,7 +139,7 @@ namespace TypeCobol.Test.Compiler.Parser
             IToken token = tokenSource.TokenFactory.Create((int)TokenType.ACCEPT, "AccePt");
             if (token.Channel != Token.CHANNEL_SourceTokens || token.Column != 1 || token.Line != 1 || 
                 token.StartIndex != 0 || token.StopIndex != 5 || token.Text != "AccePt" || 
-                token.TokenIndex != -1 || token.InputStream != null || token.TokenSource !=null ||
+                token.TokenIndex != -1 || token.InputStream == null || token.TokenSource !=null ||
                 token.Type != (int)TokenType.ACCEPT)
             {
                 throw new Exception("TokenFactory first Create method KO");
@@ -200,14 +196,14 @@ namespace TypeCobol.Test.Compiler.Parser
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                compilationDocument.TextDocument.FileName,
+                compilationDocument.TextDocument.Source.Name,
                 compilationDocument.TokensDocument.TokensLines,
                 startToken,
                 Token.CHANNEL_SourceTokens);
 
             // Crate an Antlr compatible token source on top a the token iterator
-            TokensDocumentTokenSource tokenSource = new TokensDocumentTokenSource(
-                compilationDocument.TextDocument,
+            TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                compilationDocument.TextDocument.Source.Name,
                 tokensIterator);
 
             IToken token = null;

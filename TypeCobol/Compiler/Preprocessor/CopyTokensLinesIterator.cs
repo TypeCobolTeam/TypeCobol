@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Preprocessor
     public class CopyTokensLinesIterator : ITokensLinesIterator
     {
         // Source data
-        private ITextDocument textDocument;
+        private string sourceFileName;
         private IReadOnlyList<ProcessedTokensLine> tokensLines;
 
         // Start conditions
@@ -36,6 +36,9 @@ namespace TypeCobol.Compiler.Preprocessor
             // (null if the iterator is not inside a COPY directive)
             public ITokensLinesIterator ImportedDocumentIterator;
             public object ImportedDocumentIteratorPosition;
+
+            // Last Token that was returned by the NextToken method
+            public Token CurrentToken;
         }
 
         // Current iterator position
@@ -43,18 +46,17 @@ namespace TypeCobol.Compiler.Preprocessor
 
         // Main document line / token
         private ProcessedTokensLine currentLine;
-        private Token currentToken;
+        private Token currentTokenInMainDocument;
 
         // Previous snapshot position
         private object snapshotPosition;
 
         /// <summary>
         /// Set the initial position of the iterator with startToken.
-        /// Filter 
         /// </summary>
-        public CopyTokensLinesIterator(ITextDocument textDocument, IReadOnlyList<ProcessedTokensLine> tokensLines, int channelFilter)
+        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<ProcessedTokensLine> tokensLines, int channelFilter)
         {
-            this.textDocument = textDocument;
+            this.sourceFileName = sourceFileName;
             this.tokensLines = tokensLines;
             this.channelFilter = channelFilter;
 
@@ -77,7 +79,7 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 currentLine = null;
             }
-            currentToken = null;
+            currentTokenInMainDocument = null;
         }
 
         /// <summary>
@@ -91,11 +93,11 @@ namespace TypeCobol.Compiler.Preprocessor
             { 
                 if(currentPosition.ImportedDocumentIterator == null)
                 {
-                    return textDocument.FileName;
+                    return sourceFileName;
                 }
                 else
                 {
-                    return textDocument.FileName + "/" + currentPosition.ImportedDocumentIterator.DocumentPath;
+                    return sourceFileName + "/" + currentPosition.ImportedDocumentIterator.DocumentPath;
                 }
             } 
         }
@@ -126,13 +128,13 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 if (currentPosition.ImportedDocumentIterator == null)
                 {
-                    if (currentToken == null)
+                    if (currentTokenInMainDocument == null)
                     {
                         return 0;
                     }
                     else
                     {
-                        return currentToken.StopIndex;
+                        return currentTokenInMainDocument.StopIndex;
                     }
                 }
                 else
@@ -170,9 +172,9 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (currentPosition.ImportedDocumentIterator == null)
                 {
                     int currentOffset = 0;
-                    if (currentLine != null && currentToken != null)
+                    if (currentLine != null && currentTokenInMainDocument != null)
                     {
-                        currentOffset = currentLine.TextLineMap.TextLine.StartOffset + currentToken.StartIndex;
+                        currentOffset = currentLine.TextLineMap.TextLine.StartOffset + currentTokenInMainDocument.StartIndex;
                     }
                     return currentOffset;
                 }
@@ -222,11 +224,11 @@ namespace TypeCobol.Compiler.Preprocessor
             }
             if (currentPosition.TokenIndexInLine >= 0 && currentLine != null)
             {
-                currentToken = currentLine.TokensWithCompilerDirectives[currentPosition.TokenIndexInLine];
+                currentTokenInMainDocument = currentLine.TokensWithCompilerDirectives[currentPosition.TokenIndexInLine];
             }
             else
             {
-                currentToken = null;
+                currentTokenInMainDocument = null;
             }
         }
 
@@ -238,6 +240,7 @@ namespace TypeCobol.Compiler.Preprocessor
             // If the document is empty or after end of file, immediately return EndOfFile
             if (currentLine == null)
             {
+                currentPosition.CurrentToken = Token.END_OF_FILE;
                 return Token.END_OF_FILE;
             }
 
@@ -252,13 +255,14 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
                 else
                 {
+                    currentPosition.CurrentToken = nextImportedToken;
                     return nextImportedToken;
                 }
             }
 
             // While we can find a next token
-            currentToken = null;
-            while (currentToken == null)
+            currentTokenInMainDocument = null;
+            while (currentTokenInMainDocument == null)
             {
                 // try to find the next token on the same line
                 currentPosition.TokenIndexInLine++;
@@ -277,6 +281,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         // return EndOfFile
                         currentLine = null;
+                        currentPosition.CurrentToken = Token.END_OF_FILE;
                         return Token.END_OF_FILE;
                     }
                 }
@@ -284,15 +289,15 @@ namespace TypeCobol.Compiler.Preprocessor
                 Token nextTokenCandidate = currentLine.TokensWithCompilerDirectives[currentPosition.TokenIndexInLine];
                 if (nextTokenCandidate.Channel == channelFilter || nextTokenCandidate.TokenType == TokenType.CopyImportDirective || nextTokenCandidate.TokenType == TokenType.ReplaceDirective)
                 {
-                    currentToken = nextTokenCandidate;
+                    currentTokenInMainDocument = nextTokenCandidate;
                 }
             }
 
             // Check if the next token is a COPY import compiler directive
-            if (currentToken.TokenType == TokenType.CopyImportDirective)
+            if (currentTokenInMainDocument.TokenType == TokenType.CopyImportDirective)
             {
                 // Get next token in the imported document
-                ImportedTokensDocument importedDocument = currentLine.ImportedDocuments[(CopyDirective)((CompilerDirectiveToken)currentToken).CompilerDirective];
+                ImportedTokensDocument importedDocument = currentLine.ImportedDocuments[(CopyDirective)((CompilerDirectiveToken)currentTokenInMainDocument).CompilerDirective];
                 if (importedDocument != null)
                 {
                     ITokensLinesIterator importedDocumentIterator = importedDocument.GetTokensIterator();
@@ -308,6 +313,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     else
                     {
                         currentPosition.ImportedDocumentIterator = importedDocumentIterator;
+                        currentPosition.CurrentToken = nextTokenCandidate;
                         return nextTokenCandidate;
                     }
                 }   
@@ -320,8 +326,17 @@ namespace TypeCobol.Compiler.Preprocessor
             }
             else
             {
-                return currentToken;
+                currentPosition.CurrentToken = currentTokenInMainDocument;
+                return currentTokenInMainDocument;
             }
+        }
+
+        /// <summary>
+        /// Get null (before the first call to NextToken()), current token, or EndOfFile
+        /// </summary>
+        public Token CurrentToken
+        {
+            get { return currentPosition.CurrentToken; }
         }
 
         /// <summary>

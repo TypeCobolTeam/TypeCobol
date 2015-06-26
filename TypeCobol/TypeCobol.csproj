@@ -119,8 +119,9 @@
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\DiagnosticSyntaxErrorListener.cs" />
     <Compile Include="Compiler\AntlrUtils\ParseTreeUtils.cs" />
-    <Compile Include="Compiler\AntlrUtils\TextDocumentCharStream.cs" />
-    <Compile Include="Compiler\AntlrUtils\TokensDocumentTokenSource.cs" />
+    <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
+    <Compile Include="Compiler\AntlrUtils\TokensLinesTokenSource.cs" />
+    <Compile Include="Compiler\AntlrUtils\TokensLinesTokenStream.cs" />
     <Compile Include="Compiler\CodeElements\CodeElement.cs" />
     <Compile Include="Compiler\CodeElements\CodeElementType.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataDescriptionEntry.cs" />
@@ -302,6 +303,10 @@
     <Compile Include="Compiler\Preprocessor\ProcessedTokensLine.cs" />
     <Compile Include="Compiler\Preprocessor\ReplacedToken.cs" />
     <Compile Include="Compiler\Preprocessor\ReplaceTokensLinesIterator.cs" />
+    <Compile Include="Compiler\Text\ColumnsLayout.cs" />
+    <Compile Include="Compiler\Text\TextArea.cs" />
+    <Compile Include="Compiler\Text\TextChange.cs" />
+    <Compile Include="Compiler\Text\TextSourceInfo.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compiler\Scanner\CompilerDirectiveToken.cs" />

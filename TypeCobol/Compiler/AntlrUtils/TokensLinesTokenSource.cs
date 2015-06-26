@@ -10,16 +10,16 @@ using TypeCobol.Compiler.Text;
 namespace TypeCobol.Compiler.AntlrUtils
 {
     /// <summary>
-    /// Implementation of the Antlr ITokenSource interface on top of a TokensDocument
+    /// Implementation of the Antlr ITokenSource interface on top of a ITokensLinesIterator
     /// </summary>
-    public class TokensDocumentTokenSource : ITokenSource
+    public class TokensLinesTokenSource : ITokenSource
     {
-        private ITextDocument textDocument;
+        private string sourceFileName;
         private ITokensLinesIterator tokensIterator;       
 
-        public TokensDocumentTokenSource(ITextDocument textDocument, ITokensLinesIterator tokensIterator)
+        public TokensLinesTokenSource(string sourceFileName, ITokensLinesIterator tokensIterator)
         {
-            this.textDocument = textDocument;
+            this.sourceFileName = sourceFileName;
             this.tokensIterator = tokensIterator;
         }
 
@@ -40,8 +40,16 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             get 
             {
-                int currentOffset = tokensIterator.Offset;
-                return new TextDocumentCharStream(textDocument, currentOffset); 
+                Token currentToken = tokensIterator.CurrentToken;
+                if (currentToken != null)
+                {
+                    ITextLine currentTextLine = currentToken.TextLine;
+                    return new TextLineCharStream(currentTextLine);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -56,7 +64,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         public IToken NextToken()
         {
             Token nextToken = tokensIterator.NextToken();
-            nextToken.SetAntlrSource(Tuple.Create<ITokenSource, ICharStream>(this, this.InputStream));
+            nextToken.SetAntlrSource(this);
             return nextToken;
         }
 
@@ -64,7 +72,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             get 
             { 
-                return textDocument.FileName; 
+                return sourceFileName; 
             }
         }
 
@@ -84,13 +92,11 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         private class CobolTokenFactory : ITokenFactory
         {
-            protected internal static readonly Tuple<ITokenSource, ICharStream> EmptySource = Tuple.Create<ITokenSource, ICharStream>(null, null); 
-
             public IToken Create(int type, string text)
             {
                 if (text == null) text = String.Empty;
                 Token token = new Token((TokenType)type, 0, text.Length - 1, new TextLine(0, -1, text));
-                token.SetAntlrSource(EmptySource);
+                token.SetAntlrSource(null);
                 SetTokenLiteralValue(token, text);
                 return token;
             }
@@ -99,7 +105,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                 if (text == null) text = String.Empty;
                 Token token = new Token((TokenType)type, 0, text.Length - 1, new TextLine(line - 1, -1, text));
-                token.SetAntlrSource(source);
+                token.SetAntlrSource(source.Item1);
                 token.Channel = channel;
                 SetTokenLiteralValue(token, text);
                 return token;

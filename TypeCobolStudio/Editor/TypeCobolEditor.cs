@@ -80,7 +80,7 @@ namespace TypeCobolStudio.Editor
             }
 
             // Wrap the AvalonEdit.Document in a ITextDocument interface
-            textDocument = new AvalonEditTextDocument(Document, ColumnsLayout.CobolReferenceFormat);
+            textDocument = new AvalonEditTextDocument(Document, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), ColumnsLayout.CobolReferenceFormat);
         }
 
         // --- Handle Scanner and error events ---

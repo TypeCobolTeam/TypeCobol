@@ -15,6 +15,11 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public interface ITextDocument
     {
+        /// <summary>
+        /// Document source name and text format
+        /// </summary>
+        TextSourceInfo Source { get; }
+
         // -- Document chars --
 
         /// <summary>
@@ -46,12 +51,7 @@ namespace TypeCobol.Compiler.Text
         int Length { get; }
 
         // -- Document lines --
-
-        /// <summary>
-        /// Format of the text document lines : Cobol reference format on 72 columns, or free text format
-        /// </summary>
-        ColumnsLayout ColumnsLayout { get; }
-
+                
         /// <summary>
         /// Iterator over the document lines
         /// </summary>
@@ -85,42 +85,6 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Call this method only after all observers have been chained to form the compilation pipeline
         /// </summary>
-        void StartSendingChangeEvents();
-
-        // -- Document source --
-
-        /// <summary>
-        /// Gets the name of the file the document is stored in.
-        /// Could also be a non-existent dummy file name or null if no name has been set.
-        /// </summary>
-        string FileName { get; }
-    }
-
-    /// <summary>
-    /// Enumeration of standard formats for a Cobol text line
-    /// </summary>
-    public enum ColumnsLayout
-    {
-        /// <summary>
-        /// Fixed-form reference format
-        /// Columns 1-6 : Sequence number
-        /// Columns 7 : Indicator
-        /// Columns 8-72 : Text Area A and Area B
-        /// Columns 73-> : Comment
-        /// </summary>
-        CobolReferenceFormat,
-        /// <summary>
-        /// Free-form format
-        /// There is not limit on the size a source line.
-        /// The first seven characters of each line are considered part of the normal source line and may contain COBOL source code.
-        /// Column 1 takes the role of the indicator area as follows:
-        ///    * comment line 
-        ///    / comment line starting on a new page in the listing file 
-        ///    - continuation line
-        ///    D or d followed by space, debugging line 
-        ///    any other character normal source line.
-        /// There is no fixed right margin, but floating comment indicators : *>.
-        /// </summary>
-        FreeTextFormat
+        void StartSendingChangeEvents();       
     }
 }

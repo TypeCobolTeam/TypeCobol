@@ -47,7 +47,7 @@ namespace TypeCobol.Test.Compiler.Text
 
         public static void Check_EmptyDocument()
         {
-            TextDocument textDocument = new TextDocument("empty", String.Empty, ColumnsLayout.CobolReferenceFormat);
+            TextDocument textDocument = new TextDocument("empty", Encoding.Default, ColumnsLayout.CobolReferenceFormat, String.Empty);
 
             Exception resultException = null;
             try
@@ -81,7 +81,7 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("An empty document should have 0 chars");
             }
 
-            if(textDocument.FileName != "empty")
+            if(textDocument.Source.Name != "empty")
             {
                 throw new Exception("File name should be \"empty\"");
             }
@@ -174,7 +174,7 @@ namespace TypeCobol.Test.Compiler.Text
             }
                 
             // Load the CobolFile in a TextDocument
-            TextDocument textDocument = new TextDocument("MSVCOUT.cpy", cobolFile.ReadChars(), docFormat.ColumnsLayout);
+            TextDocument textDocument = new TextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
             
             if(textDocument.CharAt(0) != '0')
             {
@@ -267,7 +267,7 @@ namespace TypeCobol.Test.Compiler.Text
             }
 
             // Load the CobolFile in a TextDocument
-            TextDocument textDocument = new TextDocument("MSVCINP free format.cpy", cobolFile.ReadChars(), docFormat.ColumnsLayout);
+            TextDocument textDocument = new TextDocument("MSVCINP free format.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
 
             if (textDocument.CharAt(0) != '/')
             {

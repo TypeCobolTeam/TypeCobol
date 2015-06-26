@@ -10,12 +10,12 @@ using TypeCobol.Compiler.Text;
 namespace TypeCobol.Compiler.AntlrUtils
 {
     /// <summary>
-    /// Implementation of AntlrInputStream on top of the ITextDocument interface
+    /// Implementation of AntlrInputStream on top of the ITextLine interface
     /// </summary>
-    internal class TextDocumentCharStream : ICharStream
+    internal class TextLineCharStream : ICharStream
     {
         /// <summary>The data being scanned</summary>
-        protected internal ITextDocument data;
+        protected internal ITextLine data;
 
         /// <summary>How many characters are actually in the buffer</summary>
         protected internal int n;
@@ -26,13 +26,11 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// <summary>What is name or source of this char stream?</summary>
         public string name;
 
-        /// <summary>Copy data in string to a local char array</summary>
-        public TextDocumentCharStream(ITextDocument document, int currentOffset)
+        /// <summary>Reference immutable text line char array</summary>
+        public TextLineCharStream(ITextLine line)
         {
-            data = document;
-            name = document.FileName;
-            n = document.Length;
-            p = currentOffset;
+            data = line;
+            n = line.Length;
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                 return IntStreamConstants.Eof;
             }
-            return data.CharAt(p + i - 1);
+            return data.Text[p + i - 1];
         }
 
         public virtual int Lt(int i)
