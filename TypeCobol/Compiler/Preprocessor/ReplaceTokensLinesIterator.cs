@@ -42,6 +42,9 @@ namespace TypeCobol.Compiler.Preprocessor
             public Token[] ReplacementTokensBeingReturned;
             // Index of the last token returned in a replacement tokens group
             public int ReplacementTokenIndexLastReturned;
+
+            // Last Token that was returned by the NextToken method
+            public Token CurrentToken;
         }
 
         // Current iterator position
@@ -146,6 +149,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     currentPosition.ReplacementTokensBeingReturned = null;
                     currentPosition.ReplacementTokenIndexLastReturned = 0;
                 }
+
+                currentPosition.CurrentToken = nextToken;
                 return nextToken;
             }
             // Analyze the next token returned by the underlying iterator
@@ -202,6 +207,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         Token replacedToken = CreateReplacedTokens(nextToken, currentPosition.ReplaceOperation, originalMatchingTokens);
                         if (replacedToken != null)
                         {
+                            currentPosition.CurrentToken = replacedToken;
                             return replacedToken;
                         }
                         // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
@@ -224,6 +230,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Token replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
                             if (replacedToken != null)
                             {
+                                currentPosition.CurrentToken = replacedToken;
                                 return replacedToken;
                             }
                             // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
@@ -237,8 +244,17 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
 
                 // If no replacement took place, simply return the next token of the underlying iterator
+                currentPosition.CurrentToken = nextToken;
                 return nextToken;
             }
+        }
+
+        /// <summary>
+        /// Get null (before the first call to NextToken()), current token, or EndOfFile
+        /// </summary>
+        public Token CurrentToken
+        {
+            get { return currentPosition.CurrentToken; }
         }
 
         /// <summary>

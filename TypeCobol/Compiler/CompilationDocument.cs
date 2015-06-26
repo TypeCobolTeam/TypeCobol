@@ -97,10 +97,10 @@ namespace TypeCobol.Compiler
             }
 
             // 2. Load it in a new text document in memory
-            TextDocument = new TextDocument(sourceFile.Name, sourceFile.ReadChars(), columnsLayout);
+            TextDocument = new TextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
 
             // 3. Prepare to scan the contents of the TextDocument to build TokensLines
-            TokensDocument = new TokensDocument(TextDocument, sourceFile.Encoding, compilerOptions);
+            TokensDocument = new TokensDocument(TextDocument.Source, compilerOptions);
 
             // 4. Prepare to compute the COPY and REPLACE statements
             CopyReferences = new List<CompilationDocument>();
@@ -131,7 +131,7 @@ namespace TypeCobol.Compiler
             textDocument.LoadChars(sourceFile.ReadChars());
 
             // 3. Prepare to scan the contents of the TextDocument to build TokensLines
-            TokensDocument = new TokensDocument(TextDocument, sourceFile.Encoding, CompilerOptions);
+            TokensDocument = new TokensDocument(TextDocument.Source, CompilerOptions);
 
             // 4. Prepare to compute the COPY and REPLACE statements
             CopyReferences = new List<CompilationDocument>();
@@ -148,7 +148,7 @@ namespace TypeCobol.Compiler
             CompilerOptions = compilerOptions;
 
             // 1. Prepare to scan the contents of the TextDocument to build TokensLines
-            TokensDocument = new TokensDocument(TextDocument, encodingForHexadecimalAlphanumericLiterals, CompilerOptions);
+            TokensDocument = new TokensDocument(TextDocument.Source, CompilerOptions);
 
             // 2. Prepare to compute the COPY and REPLACE statements
             CopyReferences = new List<CompilationDocument>();
@@ -166,7 +166,7 @@ namespace TypeCobol.Compiler
             CompilerOptions = compilerOptions;
 
             // 1. Prepare to scan the contents of the TextDocument to build TokensLines
-            TokensDocument = new TokensDocument(TextDocument, cobolFile.Encoding, CompilerOptions);
+            TokensDocument = new TokensDocument(TextDocument.Source, CompilerOptions);
 
             // 2. Prepare to compute the COPY and REPLACE statements
             CopyReferences = new List<CompilationDocument>();

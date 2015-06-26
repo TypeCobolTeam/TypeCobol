@@ -29,7 +29,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("EbcdicRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("EbcdicRefFormat.TXT", cobolFile.ReadChars(), docFormat.ColumnsLayout);
+                TextDocument textDocument = new TextDocument("EbcdicRefFormat.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
@@ -84,7 +84,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("AsciiRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("MSVCOUT.cpy", cobolFile.ReadChars(), docFormat.ColumnsLayout);
+                TextDocument textDocument = new TextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
@@ -139,7 +139,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("AsciiLinuxFormat.14", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("AsciiLinuxFormat.14", cobolFile.ReadChars(), docFormat.ColumnsLayout);
+                TextDocument textDocument = new TextDocument("AsciiLinuxFormat.14", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
@@ -194,7 +194,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("AsciiFreeFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("AsciiFreeFormat.cpy", cobolFile.ReadChars(), docFormat.ColumnsLayout);
+                TextDocument textDocument = new TextDocument("AsciiFreeFormat.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();

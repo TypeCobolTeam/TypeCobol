@@ -41,7 +41,7 @@
 [15,15: ]<SpaceSeparator>
 [16,20:Test3]<UserDefinedWord>
 [21,21+:.]<PeriodSeparator>
-[16,20]<28,Error,Syntax>Syntax error : no viable alternative at input ''
+[16,20]<28,Error,Syntax>Syntax error : no viable alternative at input 'service ... Test3'
 
 -- Line 11 --
 [8,17:ICE RELOAD]<InvalidToken>

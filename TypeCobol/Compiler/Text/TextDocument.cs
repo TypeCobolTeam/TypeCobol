@@ -26,10 +26,10 @@ namespace TypeCobol.Compiler.Text
         /// </summary> 
         /// <param name="fileName">Name of the file the document is stored in</param>
         /// <param name="textSource">Sequence of unicode characters with line delimiters (Cr? Lf)</param>
-        public TextDocument(string fileName, IEnumerable<char> textSource, ColumnsLayout columnsLayout)
+        public TextDocument(string fileName, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout, IEnumerable<char> textSource)
         {
-            FileName = fileName;
-            ColumnsLayout = columnsLayout;
+            // Document source name and text format
+            Source = new TextSourceInfo(fileName, encodingForHexadecimalAlphanumericLiterals, columnsLayout);
 
             // Initialize document text lines
             LoadChars(textSource);
@@ -107,6 +107,11 @@ namespace TypeCobol.Compiler.Text
                 SendSocumentChangeEvent();
             }
         }
+
+        /// <summary>
+        /// Document source name and text format
+        /// </summary>
+        public TextSourceInfo Source { get; private set; }
 
         /// <summary>
         /// Iterator over the document chars
@@ -192,11 +197,6 @@ namespace TypeCobol.Compiler.Text
                 return charsCount;
             }
         }
-
-        /// <summary>
-        /// Format of the text document lines : Cobol reference format on 72 columns, or free text format
-        /// </summary>
-        public ColumnsLayout ColumnsLayout { get; private set; }
 
         /// <summary>
         /// Iterator over the document lines
@@ -325,11 +325,5 @@ namespace TypeCobol.Compiler.Text
             }
             textChangedEventsSource.OnNext(textLoadedEvent);
         }
-
-        /// <summary>
-        /// Gets the name of the file the document is stored in.
-        /// Could also be a non-existent dummy file name or null if no name has been set.
-        /// </summary>
-        public string FileName { get; private set; }
     }
 }

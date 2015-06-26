@@ -56,12 +56,12 @@ namespace TypeCobol.Compiler.Parser
             ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetTokensIterator();
 
             // Create an Antlr compatible token source on top a the token iterator
-            TokensDocumentTokenSource tokenSource = new TokensDocumentTokenSource(
-                ProcessedTokensDocument.TokensDocument.TextDocument,
+            TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                ProcessedTokensDocument.TokensDocument.TextSourceInfo.Name,
                 tokensIterator);
 
             // Init parser
-            CommonTokenStream tokenStream = new CommonTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
+            ITokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
             TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
             // -> activate full ambiguities detection
             //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 

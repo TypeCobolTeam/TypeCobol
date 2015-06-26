@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public ITokensLinesIterator GetTokensIterator()
         {
-            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(TokensDocument.TextDocument, processedTokensLines, Token.CHANNEL_SourceTokens);
+            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(TokensDocument.TextSourceInfo.Name, processedTokensLines, Token.CHANNEL_SourceTokens);
             ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator);
             return replaceIterator;
         }
@@ -138,18 +138,18 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // Create a token iterator on top of tokens lines
                 TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                    TokensDocument.TextDocument.FileName,
+                    TokensDocument.TextSourceInfo.Name,
                     TokensDocument.TokensLines,
                     null,
                     Token.CHANNEL_SourceTokens);
 
                 // Crate an Antlr compatible token source on top a the token iterator
-                TokensDocumentTokenSource tokenSource = new TokensDocumentTokenSource(
-                   TokensDocument.TextDocument,
+                TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                   TokensDocument.TextSourceInfo.Name,
                    tokensIterator);                
 
                 // Init a compiler directive parser
-                CommonTokenStream tokenStream = new CommonTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
+                CommonTokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
                 CobolCompilerDirectivesParser directivesParser = new CobolCompilerDirectivesParser(tokenStream);
                 IAntlrErrorStrategy compilerDirectiveErrorStrategy = new CompilerDirectiveErrorStrategy();
                 directivesParser.ErrorHandler = compilerDirectiveErrorStrategy;

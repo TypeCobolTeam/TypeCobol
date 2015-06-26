@@ -17,24 +17,18 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class TokensDocument : IObserver<TextChangedEvent>
     {
-        public TokensDocument(ITextDocument textDocument, Encoding encodingForHexadecimalAlphanumericLiterals, TypeCobolOptions compilerOptions)
+        public TokensDocument(TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextDocument = textDocument;
-            EncodingForHexadecimalAlphanumericLiterals = encodingForHexadecimalAlphanumericLiterals;
+            TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
 
             tokensLines = ImmutableList<TokensLine>.Empty;
         }
 
         /// <summary>
-        /// Reference to the source text
+        /// File name and text format for the text source
         /// </summary>
-        public ITextDocument TextDocument { get; private set; }
-
-        /// <summary>
-        /// Cobol source text file encoding
-        /// </summary>
-        public Encoding EncodingForHexadecimalAlphanumericLiterals { get; private set; }
+        public TextSourceInfo TextSourceInfo { get; private set; }
 
         /// <summary>
         /// Compiler options directing the scanner operations
@@ -56,7 +50,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             get
             {
-                TokensLinesIterator tokenSource = new TokensLinesIterator(TextDocument.FileName, TokensLines, null, Token.CHANNEL_SourceTokens);
+                TokensLinesIterator tokenSource = new TokensLinesIterator(TextSourceInfo.Name, TokensLines, null, Token.CHANNEL_SourceTokens);
                 Token token = null;
                 do
                 {
@@ -137,12 +131,12 @@ namespace TypeCobol.Compiler.Scanner
                             {
                                 // If it was not the first line : continue with the scan state of the previous line
                                 TokensLine previousLine = getTokensLineAtIndex(textChange.LineIndex - 1);
-                                insertedLine = Scanner.ScanTextLine(textChange.NewLine, TextDocument.ColumnsLayout, previousLine, CompilerOptions);
+                                insertedLine = Scanner.ScanTextLine(textChange.NewLine, previousLine, TextSourceInfo, CompilerOptions);
                             }
                             else
                             {
                                 // If it was the first line : initialize a new scan state
-                                insertedLine = Scanner.ScanFirstLine(textChange.NewLine, TextDocument.ColumnsLayout, false, false, EncodingForHexadecimalAlphanumericLiterals, CompilerOptions);
+                                insertedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, TextSourceInfo, CompilerOptions);
                             }
                             // Insert a new line in the immutable list
                             insertTokensLineAtIndex(textChange.LineIndex, insertedLine);
@@ -161,7 +155,7 @@ namespace TypeCobol.Compiler.Scanner
                             {
                                 // If it was not the first line : continue with the scan state of the previous line
                                 TokensLine previousLine = getTokensLineAtIndex(textChange.LineIndex - 1);
-                                updatedLine = Scanner.ScanTextLine(textChange.NewLine, TextDocument.ColumnsLayout, previousLine, CompilerOptions);
+                                updatedLine = Scanner.ScanTextLine(textChange.NewLine, previousLine, TextSourceInfo, CompilerOptions);
 
                                 // If the updated line is a continuation line, the last token of previous line may also
                                 // have been updated as part of the continuation => signal this change
@@ -184,7 +178,7 @@ namespace TypeCobol.Compiler.Scanner
                             else
                             {
                                 // If it was the first line : initialize a new scan state
-                                updatedLine = Scanner.ScanFirstLine(textChange.NewLine, TextDocument.ColumnsLayout, false, false, EncodingForHexadecimalAlphanumericLiterals, CompilerOptions);
+                                updatedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, TextSourceInfo, CompilerOptions);
                             }
                             // Update the line in the immutable list
                             setTokensLineAtIndex(textChange.LineIndex, updatedLine);                            
@@ -263,12 +257,12 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // If it was not the first line : continue with the scan state of the previous line
                         TokensLine previousLine = getTokensLineAtIndex(lineIndex - 1);
-                        updatedLine = Scanner.ScanTextLine(currentLine.TextLineMap.TextLine, TextDocument.ColumnsLayout, previousLine, CompilerOptions);
+                        updatedLine = Scanner.ScanTextLine(currentLine.TextLineMap.TextLine, previousLine, TextSourceInfo, CompilerOptions);
                     }
                     else
                     {
                         // If it was the first line : initialize a new scan state
-                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLineMap.TextLine, TextDocument.ColumnsLayout, false, false, lastScanState.EncodingForHexadecimalAlphanumericLiterals, CompilerOptions);
+                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLineMap.TextLine, false, false, TextSourceInfo, CompilerOptions);
                     }
                     // Update the line in the immutable list
                     setTokensLineAtIndex(lineIndex, updatedLine);

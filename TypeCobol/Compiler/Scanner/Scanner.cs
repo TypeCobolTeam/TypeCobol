@@ -15,17 +15,17 @@ namespace TypeCobol.Compiler.Scanner
     {
         // --- Entry points and fast path for trivial cases ---
 
-        public static TokensLine ScanFirstLine(ITextLine textLine, ColumnsLayout columnsLayout, bool insideDataDivision, bool decimalPointIsComma, Encoding encodingForHexadecimalAlphanumericLiterals, TypeCobolOptions compilerOptions)
+        public static TokensLine ScanFirstLine(ITextLine textLine, bool insideDataDivision, bool decimalPointIsComma, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextLineMap textLineMap = new TextLineMap(textLine, columnsLayout);
-            TokensLine tokensLine = new TokensLine(textLineMap, insideDataDivision, decimalPointIsComma, encodingForHexadecimalAlphanumericLiterals);
+            TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
+            TokensLine tokensLine = new TokensLine(textLineMap, insideDataDivision, decimalPointIsComma, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals);
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
         }
 
-        public static TokensLine ScanTextLine(ITextLine textLine, ColumnsLayout columnsLayout, TokensLine previousLine, TypeCobolOptions compilerOptions)
+        public static TokensLine ScanTextLine(ITextLine textLine, TokensLine previousLine, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextLineMap textLineMap = new TextLineMap(textLine, columnsLayout);
+            TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
             TokensLine tokensLine = new TokensLine(textLineMap, previousLine);
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;

@@ -32,7 +32,7 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,19:toto]<UserDefinedWord>[20,20: ]<SpaceSeparator>[21,22:by]<BY>[23,23: ]<SpaceSeparator>[24,27:titi]<UserDefinedWord>[28,28+:.]<PeriodSeparator>) ***
-[16,19]<28,Error,Syntax>Syntax error : no viable alternative at input ''
+[16,19]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto'
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE <REPLACE-SingleToken:[19,22:toto]<UserDefinedWord>><BY:[33,36:titi]<UserDefinedWord>> ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39+:==]<PseudoTextDelimiter>) ***
@@ -66,7 +66,7 @@
 
 -- Line 20 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>) ***
-[8,14]<28,Error,Syntax>Syntax error : no viable alternative at input ''
+[8,14]<28,Error,Syntax>Syntax error : no viable alternative at input 'REPLACE'
 
 -- Line 21 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:off]<OFF>) ***

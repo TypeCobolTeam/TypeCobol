@@ -332,10 +332,9 @@ namespace TypeCobol.Compiler.Scanner
 
         // --- Methods from Antlr IToken, must be set for error handling in Antlr parser ---
 
-        internal void SetAntlrSource(Tuple<Antlr4.Runtime.ITokenSource, Antlr4.Runtime.ICharStream> source)
+        internal void SetAntlrSource(Antlr4.Runtime.ITokenSource source)
         {
-            tokenSource = source.Item1;
-            inputStream = source.Item2;
+            tokenSource = source;
         }
 
         private Antlr4.Runtime.ITokenSource tokenSource;
@@ -348,14 +347,12 @@ namespace TypeCobol.Compiler.Scanner
             get { return tokenSource; }
         }
 
-        private Antlr4.Runtime.ICharStream inputStream;
-
         /// <summary>
         /// Always returns null
         /// </summary>
         public Antlr4.Runtime.ICharStream InputStream
         {
-            get { return inputStream; }
+            get { return new AntlrUtils.TextLineCharStream(textLine); }
         }
 
         /// <summary>

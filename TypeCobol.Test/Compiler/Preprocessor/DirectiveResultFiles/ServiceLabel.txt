@@ -25,5 +25,5 @@
 [8,12:label]<LABEL>
 [13,13: ]<SpaceSeparator>
 [14,20:service]<SERVICE>
-[1,0]<28,Error,Syntax>Syntax error : no viable alternative at input ''
+[1,0]<28,Error,Syntax>Syntax error : no viable alternative at input 'service ... '
 

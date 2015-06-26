@@ -169,6 +169,14 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
+        /// Get null (before the first call to NextToken()), current token, or EndOfFile
+        /// </summary>
+        public Token CurrentToken
+        {
+            get { return currentToken; }
+        }
+
+        /// <summary>
         /// Get the next token, with or without applying the channel filter
         /// </summary>
         public Token NextToken(bool applyChannelFilter)

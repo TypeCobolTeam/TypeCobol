@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Parser
         /// <returns></returns>
         protected int GetCurrentLineIndexInMainDocument()
         {
-            ITokensLinesIterator tokensLinesIterator = ((TokensDocumentTokenSource)((ITokenStream)InputStream).TokenSource).TokensIterator;
+            ITokensLinesIterator tokensLinesIterator = ((TokensLinesTokenSource)((ITokenStream)InputStream).TokenSource).TokensIterator;
             return tokensLinesIterator.LineIndexInMainDocument;
         }
 

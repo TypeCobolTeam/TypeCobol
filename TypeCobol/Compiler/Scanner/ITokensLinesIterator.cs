@@ -49,6 +49,11 @@ namespace TypeCobol.Compiler.Scanner
         Token NextToken();
 
         /// <summary>
+        /// Get null (before the first call to NextToken()), current token, or EndOfFile
+        /// </summary>
+        Token CurrentToken { get; }
+
+        /// <summary>
         /// Get an opaque object representing the current position of the iterator.
         /// Use it with the SeekToPosition method to restore this position later.
         /// </summary>
