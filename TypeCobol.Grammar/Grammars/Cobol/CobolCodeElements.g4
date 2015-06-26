@@ -425,7 +425,7 @@ classEnd:
 
 // p103 : class-name-1 and class-name-2 must conform to the normal rules of formation for a
 // COBOL user-defined word, using single-byte characters.
-// See ‚ÄúREPOSITORY paragraph‚Äù on page 121 for details on specifying a class-name
+// See ìREPOSITORY paragraphî on page 121 for details on specifying a class-name
 // that is part of a Java package or for using non-COBOL naming conventions for
 // class-names.
 
@@ -762,14 +762,14 @@ computerName : UserDefinedWord;
 // The PROGRAM COLLATING SEQUENCE clause does not apply to DBCS
 // data items or data items of usage NATIONAL.
 // If the PROGRAM COLLATING SEQUENCE clause is omitted, the EBCDIC
-// collating sequence is used. (See Appendix C, ‚ÄúEBCDIC and ASCII collating
-// sequences,‚Äù on page 569.)
+// collating sequence is used. (See Appendix C, ìEBCDIC and ASCII collating
+// sequences,î on page 569.)
 
 // p111 : SEGMENT-LIMIT IS
 // The SEGMENT-LIMIT clause is syntax checked but has no effect on the
 // execution of the program.
 // All sections with priority-numbers 0
-// through 49 are fixed permanent segments. See ‚ÄúProcedures‚Äù on page 252
+// through 49 are fixed permanent segments. See ìProceduresî on page 252
 // for a description of priority-numbers and segmentation support.
 // Segmentation is not supported for programs compiled with the THREAD
 // option.
@@ -852,7 +852,7 @@ specialNamesParagraph :
 // UPSI switches process special conditions within a program, such as
 // year-beginning or year-ending processing. For example, at the beginning of
 // the PROCEDURE DIVISION, an UPSI switch can be tested; if it is ON, the
-// special branch is taken. (See ‚ÄúSwitch-status condition‚Äù on page 270.)
+// special branch is taken. (See ìSwitch-status conditionî on page 270.)
 
 //upsiSwitchName : UPSI-0 | UPSI-1 | UPSI-2 | UPSI-3 | UPSI-4 | UPSI-5 | UPSI-6 | UPSI-7;
 
@@ -990,7 +990,7 @@ alphabetName : UserDefinedWord | standardCollatingSequence;
 // - Each numeric literal specified must be an unsigned integer.
 // - Each numeric literal must have a value that corresponds to a
 // valid ordinal position within the collating sequence in effect.
-// See Appendix C, ‚ÄúEBCDIC and ASCII collating sequences,‚Äù on
+// See Appendix C, ìEBCDIC and ASCII collating sequences,î on
 // page 569 for the ordinal numbers for characters in the
 // single-byte EBCDIC and ASCII collating sequences.
 // - Each character in an alphanumeric literal represents that actual
@@ -1047,8 +1047,8 @@ alphabetName : UserDefinedWord | standardCollatingSequence;
 // of the collating sequence, the LOW-VALUE character would be
 // D.)
 // When literal-1, literal-2, or literal-3 is specified, the alphabet-name
-// must not be referred to in a CODE-SET clause (see ‚ÄúCODE-SET
-// clause‚Äù on page 183).
+// must not be referred to in a CODE-SET clause (see ìCODE-SET
+// clauseî on page 183).
 // literal-1, literal-2, and literal-3 must be alphanumeric or numeric
 // literals. All must have the same category. A floating-point literal, a
 // national literal, a DBCS literal, or a symbolic-character figurative
@@ -1141,7 +1141,7 @@ charsetClassName : UserDefinedWord;
 // numeric or numeric-edited receiver
 // Typically, currency sign values identify the monetary units stored in a data item.
 // For example: '$', 'EUR', 'CHF', 'JPY', 'HK$', 'HKD', or X'9F' (hexadecimal code point
-// in some EBCDIC code pages for ‚Ç¨, the Euro currency sign). For details on
+// in some EBCDIC code pages for Ä, the Euro currency sign). For details on
 // programming techniques for handling the Euro, see Using currency signs in the
 // Enterprise COBOL Programming Guide.
 // The CURRENCY SIGN clause specifies a currency sign value and the currency
@@ -1160,10 +1160,10 @@ charsetClassName : UserDefinedWord;
 // currency sign value
 // - Must be a single character
 // - Must not contain any of the following digits or characters:
-//   ‚Äì Digits 0 through 9
-//   ‚Äì Alphabetic characters A, B, C, D, E, G, N, P, R, S, V, X, Z, their
+//   ñ Digits 0 through 9
+//   ñ Alphabetic characters A, B, C, D, E, G, N, P, R, S, V, X, Z, their
 //     lowercase equivalents, or the space
-//   ‚Äì Special characters + - , . * / ; ( ) " = ‚Äô (plus sign, minus sign, comma,
+//   ñ Special characters + - , . * / ; ( ) " = í (plus sign, minus sign, comma,
 //     period, asterisk, slash, semicolon, left parenthesis, right parenthesis,
 //     quotation mark, equal sign, apostrophe)
 // - Can be one of the following lowercase alphabetic characters: f, h, i, j, k, l,
@@ -1173,8 +1173,8 @@ charsetClassName : UserDefinedWord;
 // specifies the currency symbol for this currency sign value.
 // - Can consist of one or more characters.
 // - Must not contain any of the following digits or characters:
-// ‚Äì Digits 0 through 9
-// ‚Äì Special characters + - . ,
+// ñ Digits 0 through 9
+// ñ Special characters + - . ,
 
 // p119: PICTURE SYMBOL literal-7
 // Specifies a currency symbol that can be used in a PICTURE clause to
@@ -1186,7 +1186,7 @@ charsetClassName : UserDefinedWord;
 // - Digits 0 through 9
 // - Alphabetic characters A, B, C, D, E, G, N, P, R, S, V, X, Z, their lowercase
 // equivalents, or the space
-// - Special characters + - , . * / ; ( ) " = ‚Äô
+// - Special characters + - , . * / ; ( ) " = í
 // If the CURRENCY SIGN clause is specified, the CURRENCY and NOCURRENCY
 // compiler options are ignored. If the CURRENCY SIGN clause is not specified and
 // the NOCURRENCY compiler option is in effect, the dollar sign ($) is used as the
@@ -1214,8 +1214,8 @@ decimalPointClause :
 // The external file identifier must be either the name specified in the DD statement
 // for the file or the name of an environment variable that contains the file
 // identification information.
-// For details on specifying an environment variable, see ‚ÄúEnvironment variable
-// contents for an XML schema file.‚Äù => p120
+// For details on specifying an environment variable, see ìEnvironment variable
+// contents for an XML schema file.î => p120
 
 // p120 : literal-8
 // Specifies an alphanumeric literal that must conform to the following rules:
@@ -1279,8 +1279,8 @@ externalFileId : UserDefinedWord;
 // - Hyphens are translated to zero.
 // - Underscores are not translated.
 // - If the first character of the name is a digit, it is converted as follows:
-//    ‚Äì Digits 1 though 9 are changed to A through I.
-//    ‚Äì 0 is changed to J.
+//    ñ Digits 1 though 9 are changed to A through I.
+//    ñ 0 is changed to J.
 // The class can be implemented in Java or COBOL.
 // When referencing a class that is part of a Java package, external-class-name-1 must
 // be specified and must give the fully qualified Java class-name.
@@ -1353,8 +1353,8 @@ externalClassName : alphanumericLiteral;
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
 // The exact contents of the input-output section depend on the file organization and
-// access methods used. See ‚ÄúORGANIZATION clause‚Äù on page 135 and ‚ÄúACCESS
-// MODE clause‚Äù on page 138.
+// access methods used. See ìORGANIZATION clauseî on page 135 and ìACCESS
+// MODE clauseî on page 138.
 
 // p125: 
 // Program input-output section
@@ -1499,7 +1499,7 @@ fileControlEntry :
 // p130: SELECT OPTIONAL 
 // Can be specified only for files opened in the input, I-O, or extend mode. 
 // You must specify SELECT OPTIONAL for those input files that are not necessarily available each time the object program is executed. 
-// For more information, see ‚ÄúOPEN statement notes‚Äù on page 382.
+// For more information, see ìOPEN statement notesî on page 382.
 // p130: If the file connector referenced by file-name-1 is an external file connector, all file-control entries in the run unit that reference this file connector must have the same specification for the OPTIONAL phrase.
 
 selectClause:
@@ -1540,18 +1540,18 @@ assignClause:
 // For VSAM indexed and relative files, the organization field must be omitted. 
 // name A required field that specifies the external name for this file. 
 // It must be either the name specified in the DD statement for this file or the name of an environment variable that contains file allocation information. 
-// For details on specifying an environment variable, see ‚ÄúAssignment name for environment variable‚Äù on page 132. 
+// For details on specifying an environment variable, see ìAssignment name for environment variableî on page 132. 
 // name must conform to the following rules of formation: 
 // * If assignment-name-1 is a user-defined word: 
-// ‚Äì The name can contain from one to eight characters. 
-// ‚Äì The name can contain the characters A-Z, a-z, and 0-9. 
-// ‚Äì The leading character must be alphabetic. 
-// ‚Äì The name cannot contain an underscore. 
+// ñ The name can contain from one to eight characters. 
+// ñ The name can contain the characters A-Z, a-z, and 0-9. 
+// ñ The leading character must be alphabetic. 
+// ñ The name cannot contain an underscore. 
 // * If assignment-name-1 is a literal: 
-// ‚Äì The name can contain from one to eight characters. 
-// ‚Äì The name can contain the characters A-Z, a-z, 0-9, @, #, and $. 
-// ‚Äì The leading character must be alphabetic. 
-// ‚Äì The name cannot contain an underscore. 
+// ñ The name can contain from one to eight characters. 
+// ñ The name can contain the characters A-Z, a-z, 0-9, @, #, and $. 
+// ñ The leading character must be alphabetic. 
+// ñ The name cannot contain an underscore. 
 // For both user-defined words and literals, the compiler folds name to uppercase to form the ddname for the file. 
 // In a sort or merge file, name is treated as a comment.
 
@@ -1580,7 +1580,7 @@ reserveClause:
 // p135: ORGANIZATION clause
 // The ORGANIZATION clause identifies the logical structure of the file. 
 // The logical structure is established at the time the file is created and cannot subsequently be changed.
-// You can find a discussion of the different ways in which data can be organized and of the different access methods that you can use to retrieve the data under ‚ÄúFile organization and access modes‚Äù on page 139. 
+// You can find a discussion of the different ways in which data can be organized and of the different access methods that you can use to retrieve the data under ìFile organization and access modesî on page 139. 
 // ORGANIZATION IS SEQUENTIAL (format 1) 
 // A predecessor-successor relationship among the records in the file is established by the order in which records are placed in the file when it is created or extended. 
 // ORGANIZATION IS INDEXED (format 2) 
@@ -1700,7 +1700,7 @@ passwordClause:
 
 // p143: The FILE STATUS clause monitors the execution of each input-output operation for the file.
 // When the FILE STATUS clause is specified, the system moves a value into the file status key data item after each input-output operation that explicitly or implicitly refers to this file. 
-// The value indicates the status of execution of the statement. (See the file status key description under ‚ÄúCommon processing facilities‚Äù on page 286.) 
+// The value indicates the status of execution of the statement. (See the file status key description under ìCommon processing facilitiesî on page 286.) 
 // data-name-1 The file status key data item can be defined in the WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION as one of the following items: v A two-character data item of category alphanumeric v A two-character data item of category national v A two-digit data item of category numeric with usage DISPLAY or NATIONAL (an external decimal data item) 
 // data-name-1 must not contain the PICTURE symbol 'P'.
 // data-name-1 can be qualified.
@@ -1794,7 +1794,7 @@ ioControlEntry:
 // The file named in the RERUN clause must be a file defined in the same program as the I-O-CONTROL paragraph, even if the file is defined as GLOBAL. 
 // assignment-name-1 The external data set for the checkpoint file. It must not be the same assignment-name as that specified in any ASSIGN clause throughout the entire program, including contained and containing programs. 
 // For QSAM files, assignment-name-1 has the format: label-? S-? name 
-// The QSAM file must reside on a tape or direct access device. See also Appendix F, ‚ÄúASCII considerations,‚Äù on page 595. 
+// The QSAM file must reside on a tape or direct access device. See also Appendix F, ìASCII considerations,î on page 595. 
 // SORT/MERGE considerations: 
 // When the RERUN clause is specified in the I-O-CONTROL paragraph, checkpoint records are written at logical intervals determined by the sort/merge program during execution of each SORT or MERGE statement in the program. When the RERUN clause is omitted, checkpoint records are not written. 
 // There can be only one SORT/MERGE I-O-CONTROL paragraph in a program, and it cannot be specified in contained programs. It will have a global effect on all SORT and MERGE statements in the program unit. 
@@ -1894,9 +1894,9 @@ dataDivisionHeader:
 // The FILE SECTION must begin with the header FILE SECTION, followed by a separator period.
 // file-description-entry 
 // Represents the highest level of organization in the FILE SECTION. It provides information about the physical structure and identification of a file, and gives the record-names associated with that file. 
-// For the format and the clauses required in a file description entry, see Chapter 17, ‚ÄúDATA DIVISION--file description entries,‚Äù on page 169. 
+// For the format and the clauses required in a file description entry, see Chapter 17, ìDATA DIVISION--file description entries,î on page 169. 
 // record-description-entry 
-// A set of data description entries (described in Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185) that describe the particular records contained within a particular file. 
+// A set of data description entries (described in Chapter 18, ìDATA DIVISION--data description entry,î on page 185) that describe the particular records contained within a particular file. 
 // A record in the FILE SECTION must be described as an alphanumeric group item, a national group item, or an elementary data item of class alphabetic, alphanumeric, DBCS, national, or numeric.
 // More than one record description entry can be specified; each is an alternative description of the same record storage area.
 // Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
@@ -1914,11 +1914,11 @@ fileSectionHeader:
 // p156: The WORKING-STORAGE SECTION contains record description entries and data description entries for independent data items, called data item description entries. 
 // record-description-entry 
 // Data entries in the WORKING-STORAGE SECTION that bear a definite hierarchic relationship to one another must be grouped into records structured by level number. 
-// See Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185 for more information. 
+// See Chapter 18, ìDATA DIVISION--data description entry,î on page 185 for more information. 
 // data-item-description-entry 
 // Independent items in the WORKING-STORAGE SECTION that bear no hierarchic relationship to one another need not be grouped into records provided that they do not need to be further subdivided. Instead, they are classified and defined as independent elementary items. 
 // Each is defined in a separate data-item description entry that begins with either the level number 77 or 01. 
-// See Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185 for more information.
+// See Chapter 18, ìDATA DIVISION--data description entry,î on page 185 for more information.
 
 workingStorageSectionHeader:
                                WORKING_STORAGE SECTION PeriodSeparator;
@@ -2216,7 +2216,7 @@ blockContainsClause:
 // characters, the RECORD clause should say the same, RECORD CONTAINS 20
 // CHARACTERS.
 // The size of a record is determined according to the rules for obtaining the size of a
-// group item. (See ‚ÄúUSAGE clause‚Äù on page 228 and ‚ÄúSYNCHRONIZED clause‚Äù
+// group item. (See ìUSAGE clauseî on page 228 and ìSYNCHRONIZED clauseî
 // on page 223.)
 // When the RECORD clause is omitted, the compiler determines the record lengths
 // from the record descriptions. When one of the entries within a record description
@@ -2415,13 +2415,13 @@ dataRecordsClause:
 //   if specified
 // - The same corresponding external data items referenced by data-name-5,
 //   data-name-6, data-name-7, and data-name-8
-// See ‚ÄúADVANCING phrase‚Äù on page 451 for the behavior of carriage control
+// See ìADVANCING phraseî on page 451 for the behavior of carriage control
 // characters in external files.
 // A LINAGE clause under an SD is syntax checked, but has no effect on the
 // execution of the program.
 // LINAGE-COUNTER special register
 // For information about the LINAGE-COUNTER special register, see
-// ‚ÄúLINAGE-COUNTER‚Äù on page 20.
+// ìLINAGE-COUNTERî on page 20.
 
 linageClause:
                 LINAGE IS? (dataName | IntegerLiteral) LINES? 
@@ -2550,7 +2550,7 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 // - When the REDEFINES clause is specified, it must immediately follow
 //   data-name-1 or FILLER, if either is specified. If data-name-1 or FILLER is not
 //   specified, the REDEFINES clause must immediately follow the level-number.
-// The level-number in format 1 can be any number in the range 01‚Äì49, or 77.
+// The level-number in format 1 can be any number in the range 01ñ49, or 77.
 // A space, a comma, or a semicolon must separate clauses.
 
 // p186: Format 2: renames
@@ -2677,7 +2677,7 @@ typeCobolExt_typeClause: TYPE AlphanumericLiteral;
 // p159: A level-number, with its descriptive entry, indicates the properties of specific data. 
 // Level-numbers can be used to describe a data hierarchy; they can indicate that this data has a special purpose. 
 // Although they can be associated with (and subordinate to) level indicators, they can also be used independently to describe internal data or data common to two or more programs. 
-// (See ‚ÄúLevel-numbers‚Äù on page 186 for level-number rules.) 
+// (See ìLevel-numbersî on page 186 for level-number rules.) 
 
 // p159: A level-number is a one-digit or two-digit integer between 01 and 49, or one of three special level-numbers: 66, 77, or 88. 
 // 01 
@@ -2692,12 +2692,12 @@ typeCobolExt_typeClause: TYPE AlphanumericLiteral;
 
 // p161: 
 // 66 
-// Identifies items that must contain a RENAMES clause; such items regroup previously defined data items. (For details, see ‚ÄúRENAMES clause‚Äù on page 219.) 
+// Identifies items that must contain a RENAMES clause; such items regroup previously defined data items. (For details, see ìRENAMES clauseî on page 219.) 
 // 77 
 // Identifies data item description entries that are independent WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION items; they are not subdivisions of other items and are not subdivided themselves. 
 // Level-77 items must begin in Area A. 
 // 88 
-// Identifies any condition-name entry that is associated with a particular value of a conditional variable. (For details, see ‚ÄúVALUE clause‚Äù on page 237.)
+// Identifies any condition-name entry that is associated with a particular value of a conditional variable. (For details, see ìVALUE clauseî on page 237.)
 
 // p161: Successive data description entries can begin in the same column as preceding entries, or can be indented.
 // Indentation is useful for documentation but does not affect the action of the compiler. 
@@ -2723,8 +2723,8 @@ levelNumber : IntegerLiteral;
 // All other types of elementary data items have a class and category as shown in Table 8 on page 163.
 // A function references an elementary data item and belongs to the data class and category associated with the type of the function, as shown in Table 9 on page 163.
 // Literals have a class and category as shown in Table 10 on page 163. 
-// Figurative constants (except NULL) have a class and category that depends on the literal or value represented by the figurative constant in the context of its use. For details, see ‚ÄúFigurative constants‚Äù on page 13.
-// All group items have a class and category, even if the subordinate elementary items belong to another class and category. For the classification of group items, see ‚ÄúClasses and categories of group items‚Äù on page 161. 
+// Figurative constants (except NULL) have a class and category that depends on the literal or value represented by the figurative constant in the context of its use. For details, see ìFigurative constantsî on page 13.
+// All group items have a class and category, even if the subordinate elementary items belong to another class and category. For the classification of group items, see ìClasses and categories of group itemsî on page 161. 
 
 // p164: The category of a data item is established by the attributes of its data description entry (such as its PICTURE character-string or USAGE clause) or by its function definition.
 
@@ -2823,7 +2823,7 @@ blankWhenZeroClause:
 //   NATIONAL, each unused position is filled with the default Unicode space
 //   (NX'0020'); otherwise, each unused position is filled with an alphanumeric space.
 // If you omit the JUSTIFIED clause, the rules for standard alignment are followed
-// (see ‚ÄúAlignment rules‚Äù on page 166).
+// (see ìAlignment rulesî on page 166).
 // The JUSTIFIED clause does not affect initial settings as determined by the VALUE
 // clause.
 
@@ -2886,7 +2886,7 @@ groupUsageClause:
 
 // p191: The DATA DIVISION language elements used for table handling are the OCCURS
 // clause and the INDEXED BY phrase.
-// For the INDEXED BY phrase description, see ‚ÄúINDEXED BY phrase‚Äù on page 194.
+// For the INDEXED BY phrase description, see ìINDEXED BY phraseî on page 194.
 // The OCCURS clause specifies tables whose elements can be referred to by indexing
 // or subscripting. It also eliminates the need for separate entries for repeated data
 // items.
@@ -2907,7 +2907,7 @@ groupUsageClause:
 // The OCCURS clause cannot be specified in a data description entry that:
 // - Has a level number of 01, 66, 77, or 88.
 // - Describes a redefined data item. (However, a redefined item can be subordinate
-//   to an item that contains an OCCURS clause.) See ‚ÄúREDEFINES clause‚Äù on page
+//   to an item that contains an OCCURS clause.) See ìREDEFINES clauseî on page
 //   216.
 
 // p192: Format 1: fixed-length tables
@@ -3073,8 +3073,8 @@ groupUsageClause:
 // Data is arranged in ascending or descending order, depending on the keyword
 // specified, according to the values contained in data-name-2. The data-names are
 // listed in their descending order of significance.
-// The order is determined by the rules for comparison of operands (see ‚ÄúRelation
-// conditions‚Äù on page 259). The ASCENDING KEY and DESCENDING KEY data
+// The order is determined by the rules for comparison of operands (see ìRelation
+// conditionsî on page 259). The ASCENDING KEY and DESCENDING KEY data
 // items are used in OCCURS clauses and the SEARCH ALL statement for a binary
 // search of the table element.
 // data-name-2
@@ -3119,8 +3119,8 @@ groupUsageClause:
 // The INDEXED BY phrase specifies the indexes that can be used with a table. A
 // table without an INDEXED BY phrase can be referred to through indexing by
 // using an index-name associated with another table.
-// For more information about using indexing, see ‚ÄúSubscripting using index-names
-// (indexing)‚Äù on page 73.
+// For more information about using indexing, see ìSubscripting using index-names
+// (indexing)î on page 73.
 // Indexes normally are allocated in static memory associated with the program that
 // contains the table. Thus indexes are in the last-used state when a program is
 // reentered. However, in the following cases, indexes are allocated on a
@@ -3130,9 +3130,9 @@ groupUsageClause:
 // - The WORKING-STORAGE SECTION of a class definition (object instance
 //   variables)
 // - The LINKAGE SECTION of:
-//   ‚Äì Methods
-//   ‚Äì Programs compiled with the RECURSIVE clause
-//   ‚Äì Programs compiled with the THREAD option
+//   ñ Methods
+//   ñ Programs compiled with the RECURSIVE clause
+//   ñ Programs compiled with the THREAD option
 
 occursClause:
                 OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
@@ -3226,9 +3226,9 @@ pictureClause:
 // Symbols that can appear more than once
 // The following symbols can appear more than once in one PICTURE
 // character-string:
-//    A B G N P X Z 9 0 / , + ‚Äì * cs
+//    A B G N P X Z 9 0 / , + ñ * cs
 // At least one of the symbols A, G, N, X, Z, 9, or *, or at least two of the
-// symbols +, ‚Äì, or cs must be present in a PICTURE string.
+// symbols +, ñ, or cs must be present in a PICTURE string.
 // An unsigned nonzero integer enclosed in parentheses immediately
 // following any of these symbols specifies the number of consecutive
 // occurrences of that symbol.
@@ -3285,11 +3285,11 @@ pictureClause:
 
 // p210: ... PICTURE clause editing ...
 // Types of editing are described in the following sections:
-// - ‚ÄúSimple insertion editing‚Äù o, page 211
-// - ‚ÄúSpecial insertion editing‚Äù on page 212
-// - ‚ÄúFixed insertion editing‚Äù on page 212
-// - ‚ÄúFloating insertion editing‚Äù on page 213
-// - ‚ÄúZero suppression and replacement editing‚Äù on page 214
+// - ìSimple insertion editingî o, page 211
+// - ìSpecial insertion editingî on page 212
+// - ìFixed insertion editingî on page 212
+// - ìFloating insertion editingî on page 213
+// - ìZero suppression and replacement editingî on page 214
 
 // => Lexer token type : PictureCharacterString
                      
@@ -3381,9 +3381,9 @@ redefinesClause:
 // When the THROUGH phrase is specified:
 // - data-name-1 defines an alphanumeric group item that includes all the elementary
 //   items that:
-//   ‚Äì Start with data-name-2 if it is an elementary item, or the first elementary item
+//   ñ Start with data-name-2 if it is an elementary item, or the first elementary item
 //     within data-name-2 if it is a group item
-//   ‚Äì End with data-name-3 if it is an elementary item, or the last elementary item
+//   ñ End with data-name-3 if it is an elementary item, or the last elementary item
 //     within data-name-3 if it is an alphanumeric group item or national group item
 // - The storage area occupied by the starting item through the ending item becomes
 //   the storage area occupied by data-name-1.
@@ -3398,11 +3398,11 @@ redefinesClause:
 //   data-name-1.
 // - All of the data attributes of data-name-2 become the data attributes for
 //   data-name-1. That is:
-//   ‚Äì When data-name-2 is an alphanumeric group item, data-name-1 is an
+//   ñ When data-name-2 is an alphanumeric group item, data-name-1 is an
 //     alphanumeric group item.
-//   ‚Äì When data-name-2 is a national group item, data-name-1 is a national group
+//   ñ When data-name-2 is a national group item, data-name-1 is a national group
 //     item.
-//   ‚Äì When data-name-2 is an elementary item, data-name-1 is an elementary item.
+//   ñ When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
                  /* 66 dataName */ RENAMES dataName ((THROUGH | THRU) dataName)?;
@@ -3485,7 +3485,7 @@ synchronizedClause:
 // GROUP-USAGE NATIONAL clause is specified.
 // When a GROUP-USAGE NATIONAL clause is specified or implied for a group
 // level entry, USAGE NATIONAL must be specified or implied for every elementary
-// item within the group. For details, see ‚ÄúGROUP-USAGE clause‚Äù on page 190.
+// item within the group. For details, see ìGROUP-USAGE clauseî on page 190.
 // When the USAGE clause is not specified at either the group or elementary level, a
 // usage clause is implied with:
 // - Usage DISPLAY when the PICTURE clause contains only symbols other than G
@@ -3602,7 +3602,7 @@ usageClause:
 // procedural reference to the condition-name must be subscripted or indexed
 // as required for the conditional variable.
 // Condition-names are tested procedurally in condition-name conditions (see
-// ‚ÄúConditional expressions‚Äù on page 256).
+// ìConditional expressionsî on page 256).
 // literal-1
 // Associates the condition-name with a single value.
 // The class of literal-1 must be a valid class for assignment to the associated
@@ -3610,7 +3610,7 @@ usageClause:
 // literal-1 THROUGH literal-2
 // Associates the condition-name with at least one range of values. When the
 // THROUGH phrase is used, literal-1 must be less than literal-2. For details,
-// see ‚ÄúRules for condition-name entries.‚Äù
+// see ìRules for condition-name entries.î
 // literal-1 and literal-2 must be of the same class. The class of literal-1 and
 // literal-2 must be a valid class for assignment to the associated conditional
 // variable.
@@ -3758,8 +3758,8 @@ procedureDivisionHeader:
 // entry for that object reference; that is, data-name-1 must not be a universal
 // object reference.
 // For methods, the parameter data types are restricted to the data types that
-// are interoperable between COBOL and Java, as listed in ‚ÄúInteroperable
-// data types for COBOL and Java‚Äù on page 361.
+// are interoperable between COBOL and Java, as listed in ìInteroperable
+// data types for COBOL and Javaî on page 361.
 
 usingPhrase:
                USING inputParameters+;
@@ -3779,13 +3779,13 @@ receivingMode:
 // Note: An unbounded group cannot be specified as data-name-2.
 // In a method procedure division header, the data type of data-name-2 must
 // be one of the types supported for Java interoperation, as listed in
-// ‚ÄúInteroperable data types for COBOL and Java‚Äù on page 361.
+// ìInteroperable data types for COBOL and Javaî on page 361.
 // The RETURNING data item is an output-only parameter. On entry to the
 // method, the initial state of the RETURNING data item has an undefined
 // and unpredictable value. You must initialize the PROCEDURE DIVISION
 // RETURNING data item before you reference its value. The value that is
 // returned to the invoking routine is the value that the data item has at the
-// point of exit from the method. See ‚ÄúRETURNING phrase‚Äù on page 359 for
+// point of exit from the method. See ìRETURNING phraseî on page 359 for
 // further details on conformance requirements for the INVOKE RETURNING
 // identifier and the method RETURNING data item.
 // Do not use the PROCEDURE DIVISION RETURNING phrase in:
@@ -3801,7 +3801,7 @@ returningPhrase:
                    RETURNING dataName;
 
 // p246: Format: procedure division
-// 1 The USE statement is described under ‚ÄúUSE statement‚Äù on page 546.
+// 1 The USE statement is described under ìUSE statementî on page 546.
 // 2 Section-name can be omitted. If you omit section-name, paragraph-name can be omitted.
 // 3 Priority-numbers are not valid for methods, recursive programs, or programs compiled with the
 //   THREAD option.
@@ -3812,7 +3812,7 @@ returningPhrase:
 // - You can use the EXIT METHOD statement or the GOBACK statement to return
 //   control to the invoking method or program. An implicit EXIT METHOD
 //   statement is generated as the last statement of every method procedure division.
-// For details on the EXIT METHOD statement, see ‚ÄúEXIT METHOD statement‚Äù on
+// For details on the EXIT METHOD statement, see ìEXIT METHOD statementî on
 // page 336.
 // - You can use the STOP RUN statement (which terminates the run unit) in a
 //   method.
@@ -3821,7 +3821,7 @@ returningPhrase:
 //   statement, but the RETURN-CODE value is not returned to the invoker of the
 //   current method. Use the procedure division RETURNING data name to return a
 //   value to the invoker of the current method. For details, see the discussion of
-//   RETURNING data-name-2 under ‚ÄúThe PROCEDURE DIVISION header.‚Äù
+//   RETURNING data-name-2 under ìThe PROCEDURE DIVISION header.î
 // You cannot specify the following statements or clauses in a method procedure
 // division:
 // - ALTER
@@ -3854,8 +3854,8 @@ returningPhrase:
 // be followed by a separator period, and must be followed by a USE statement
 // followed by a separator period. No other text can appear on the same line.
 // The USE statement has three formats, discussed in these sections:
-// - ‚ÄúEXCEPTION/ERROR declarative‚Äù on page 547
-// - ‚ÄúDEBUGGING declarative‚Äù on page 549
+// - ìEXCEPTION/ERROR declarativeî on page 547
+// - ìDEBUGGING declarativeî on page 549
 // The USE statement itself is never executed; instead, the USE statement defines the
 // conditions that execute the succeeding procedural paragraphs, which specify the
 // actions to be taken. After the procedure is executed, control is returned to the
@@ -3927,7 +3927,7 @@ useStatement:
 // - Upon recognition of an INVALID KEY or AT END condition when an INVALID
 //   KEY or AT END phrase has not been specified in the input/output statement, or
 // - Upon recognition of an IBM-defined condition that causes file status key 1 to be
-//   set to 9. (See ‚ÄúFile status key‚Äù on page 287.)
+//   set to 9. (See ìFile status keyî on page 287.)
 // After execution of the EXCEPTION/ERROR procedure, control is returned to the
 // invoking routine in the input/output control system. If the input/output status
 // value does not indicate a critical input/output error, the input/output control
@@ -3936,7 +3936,7 @@ useStatement:
 // An applicable EXCEPTION/ERROR procedure is activated when an input/output
 // error occurs during execution of a READ, WRITE, REWRITE, START, OPEN,
 // CLOSE, or DELETE statement. To determine what conditions are errors, see
-// ‚ÄúCommon processing facilities‚Äù on page 286.
+// ìCommon processing facilitiesî on page 286.
 
 useStatementForExceptionDeclarative:
                 USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE 
@@ -3955,7 +3955,7 @@ useStatementForExceptionDeclarative:
 // - A program compiled with the THREAD compiler option
 // The WITH DEBUGGING MODE clause of the SOURCE-COMPUTER paragraph
 // activates all debugging sections and lines that have been compiled into the object
-// code. See Appendix D, ‚ÄúSource language debugging,‚Äù on page 577 for additional
+// code. See Appendix D, ìSource language debugging,î on page 577 for additional
 // details.
 // When the debugging mode is suppressed by not specifying the WITH
 // DEBUGGING MODE clause, all USE FOR DEBUGGING declarative procedures
@@ -4005,21 +4005,8 @@ useStatementForDebuggingDeclarative:
 // sections, and a paragraph or group of paragraphs.
 // A procedure-name is a user-defined name that identifies a section or a paragraph.
 
-// p66: References to PROCEDURE DIVISION names
-// PROCEDURE DIVISION names that are explicitly referenced in a program must be
-// unique within a section.
-// A section-name is the highest and only qualifier available for a paragraph-name
-// and must be unique if referenced. (Section-names are described under
-// ‚ÄúProcedures‚Äù on page 252.)
-// If explicitly referenced, a paragraph-name must not be duplicated within a section.
-// When a paragraph-name is qualified by a section-name, the word SECTION must
-// not appear. A paragraph-name need not be qualified when referred to within the
-// section in which it appears. A paragraph-name or section-name that appears in a
-// program cannot be referenced from any other program.
-
 procedureName:
-                 (paragraphName ((IN | OF) sectionName)?) |
-                 sectionName;
+                 sectionName | paragraphName;
 
 // p252: Section
 // A section-header optionally followed by one or more paragraphs.
@@ -4115,14 +4102,14 @@ sentenceEnd:
 // A series of imperative statements can be specified wherever an imperative
 // statement is allowed. A conditional statement that is terminated by its explicit
 // scope terminator is also classified as an imperative statement.
-// For more information about explicit scope terminator, see ‚ÄúDelimited scope
-// statements‚Äù on page 280).
+// For more information about explicit scope terminator, see ìDelimited scope
+// statementsî on page 280).
                    
 // p278: Conditional statements
 // A conditional statement specifies that the truth value of a condition is to be
 // determined and that the subsequent action of the object program is dependent on
 // this truth value.
-// For more information about conditional expressions, see ‚ÄúConditional expressions‚Äù
+// For more information about conditional expressions, see ìConditional expressionsî
 // on page 256.)
 
 // p280: Delimited scope statements
@@ -4299,7 +4286,7 @@ sentenceEnd:
 // - An elementary data item of usage DISPLAY, DISPLAY-1, or NATIONAL 
 // A national group item is processed an elementary data item of category national. 
 // mnemonic-name-1 
-// Specifies the input device. mnemonic-name-1 must be associated in the SPECIAL-NAMES paragraph with an environment-name. See ‚ÄúSPECIAL-NAMES paragraph‚Äù on page 112. 
+// Specifies the input device. mnemonic-name-1 must be associated in the SPECIAL-NAMES paragraph with an environment-name. See ìSPECIAL-NAMES paragraphî on page 112. 
 // - System input device 
 // The length of a data transfer is the same as the length of the record on the input device, with a maximum of 32,760 bytes. 
 // The system input device is read until the receiving area is filled or EOF is encountered. 
@@ -4318,9 +4305,9 @@ sentenceEnd:
 // 3. After the message code (the same code as in item 1) is entered from the console and recognized by the system, ACCEPT statement execution is resumed. The message is moved to the receiving area and left-justified regardless of its PICTURE clause. 
 // If identifier-1 references a data item of usage NATIONAL, the message is converted from the native code page representation to national character representation. The native code page is the one that was specified by the CODEPAGE compiler option when the source code was compiled. 
 // The ACCEPT statement is terminated if any of the following occurs: 
-// ‚Äì No data is received from the console; for example, if the operator hits the Enter key. 
-// ‚Äì The receiving data item is filled with data. 
-// ‚Äì Fewer than 114 characters of data are entered. If 114 bytes of data are entered and the receiving area is still not filled with data, more requests for data are issued to the console. If more than 114 characters of data are entered, only the first 114 characters will be recognized by the system. 
+// ñ No data is received from the console; for example, if the operator hits the Enter key. 
+// ñ The receiving data item is filled with data. 
+// ñ Fewer than 114 characters of data are entered. If 114 bytes of data are entered and the receiving area is still not filled with data, more requests for data are issued to the console. If more than 114 characters of data are entered, only the first 114 characters will be recognized by the system. 
 // If the receiving area is longer than the incoming message, the rightmost characters are padded with spaces of the appropriate representation for the receiving area. If the incoming message is longer than the receiving area, the character positions beyond the length of the receiving area are truncated.
 // For information about obtaining ACCEPT input from a z/OS UNIX file or stdin, see Assigning input from a screen or file (ACCEPT) in the Enterprise COBOL Programming Guide. 
 // environment-name 
@@ -4329,11 +4316,11 @@ sentenceEnd:
 // * System date-related information transfer 
 // System information contained in the specified conceptual data items DATE, DATE YYYYMMDD, DAY, DAY YYYYDDD, DAY-OF-WEEK, or TIME, can be transferred
 // into the data item referenced by identifier-2. The transfer must follow the rules for the MOVE statement without the CORRESPONDING phrase.
-// For more information, see ‚ÄúMOVE statement‚Äù on page 369.
-// identifier-2 The receiving area. Can be: v An alphanumeric group item v A national group item v An elementary data item of one of the following categories: ‚Äì alphanumeric ‚Äì alphanumeric-edited ‚Äì numeric-edited (with usage DISPLAY or NATIONAL) ‚Äì national ‚Äì national-edited ‚Äì numeric ‚Äì internal floating-point ‚Äì external floating-point (with usage DISPLAY or NATIONAL) A national group item is processed an an elementary data item of category national.
+// For more information, see ìMOVE statementî on page 369.
+// identifier-2 The receiving area. Can be: v An alphanumeric group item v A national group item v An elementary data item of one of the following categories: ñ alphanumeric ñ alphanumeric-edited ñ numeric-edited (with usage DISPLAY or NATIONAL) ñ national ñ national-edited ñ numeric ñ internal floating-point ñ external floating-point (with usage DISPLAY or NATIONAL) A national group item is processed an an elementary data item of category national.
 // Format 2 accesses the current date in two formats: the day of the week or the time of day as carried by the system (which can be useful in identifying when a particular run of an object program was executed). 
 // You can also use format 2 to supply the date in headings and footings.
-// The current date and time can also be accessed with the intrinsic function CURRENT-DATE, which also supports four-digit year values and provides additional information (see ‚ÄúCURRENT-DATE‚Äù on page 490). 
+// The current date and time can also be accessed with the intrinsic function CURRENT-DATE, which also supports four-digit year values and provides additional information (see ìCURRENT-DATEî on page 490). 
 // DATE, DATE YYYYMMDD, DAY, DAY YYYYDDD, DAY-OF-WEEK, and TIME 
 // The conceptual data items DATE, DATE YYYYMMDD, DAY, DAY YYYYDDD, DAY-OF-WEEK, and TIME implicitly have USAGE DISPLAY. 
 // Because these are conceptual data items, they cannot be described in the COBOL program.
@@ -4401,16 +4388,16 @@ acceptStatement:
 // Must be a numeric literal. Floating-point data items and literals can be used anywhere that a numeric data item or literal can be specified.
 // When the ARITH(COMPAT) compiler option is in effect, the composite of operands can contain a maximum of 30 digits.
 // When the ARITH(EXTEND) compiler option is in effect, the composite of operands can contain a maximum of 31 digits. 
-// For more information, see ‚ÄúArithmetic statement operands‚Äù on page 284 and the details on arithmetic intermediate results in Appendix A. Intermediate results and arithmetic precision in the Enterprise COBOL Programming Guide. 
+// For more information, see ìArithmetic statement operandsî on page 284 and the details on arithmetic intermediate results in Appendix A. Intermediate results and arithmetic precision in the Enterprise COBOL Programming Guide. 
 // ROUNDED phrase
-// For formats 1, 2, and 3, see ‚ÄúROUNDED phrase‚Äù on page 282. 
+// For formats 1, 2, and 3, see ìROUNDED phraseî on page 282. 
 // SIZE ERROR phrases
-// For formats 1, 2, and 3, see ‚ÄúSIZE ERROR phrases‚Äù on page 283. 
+// For formats 1, 2, and 3, see ìSIZE ERROR phrasesî on page 283. 
 // CORRESPONDING phrase (format 3)
-// See ‚ÄúCORRESPONDING phrase‚Äù on page 281. 
+// See ìCORRESPONDING phraseî on page 281. 
 // END-ADD phrase
 // This explicit scope terminator serves to delimit the scope of the ADD statement. END-ADD permits a conditional ADD statement to be nested in another conditional statement. END-ADD can also be used with an imperative ADD statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 
 addStatement:
                 ADD (CORRESPONDING | CORR)? (identifier | numericLiteral)+ TO ((identifier ROUNDED?)+ | numericLiteral)
@@ -4461,16 +4448,16 @@ alterStatement:
 // identifier-1, literal-1 
 // literal-1 must be an alphanumeric literal. 
 // identifier-1 must be an alphanumeric, alphabetic, or numeric data item described with USAGE DISPLAY such that its value can be a program-name. 
-// The rules of formation for program-names are dependent on the PGMNAME compiler option. For details, see the discussion of program-names in ‚ÄúPROGRAM-ID paragraph‚Äù on page 100 and also the description of PGMNAME in the Enterprise COBOL Programming Guide. 
+// The rules of formation for program-names are dependent on the PGMNAME compiler option. For details, see the discussion of program-names in ìPROGRAM-ID paragraphî on page 100 and also the description of PGMNAME in the Enterprise COBOL Programming Guide. 
 // Usage note: Do not specify the name of a class or method in the CALL statement. 
 // When the called subprogram is to be entered at the beginning of the PROCEDURE DIVISION, literal-1 or the contents of identifier-1 must specify the program-name of the called subprogram.
 // When the called subprogram is entered through an ENTRY statement, literal-1 or the contents of identifier-1 must be the same as the name specified in the called subprogram's ENTRY statement.
-// For information about how the compiler resolves calls to program-names found in multiple programs, see ‚ÄúConventions for program-names‚Äù on page 86. 
+// For information about how the compiler resolves calls to program-names found in multiple programs, see ìConventions for program-namesî on page 86. 
 // USING phrase
 // The USING phrase specifies arguments that are passed to the target program.
 // Include the USING phrase in the CALL statement only if there is a USING phrase in the PROCEDURE DIVISION header or the ENTRY statement through which the called program is run. 
 // The number of operands in each USING phrase must be identical.
-// For more information about the USING phrase, see ‚ÄúThe PROCEDURE DIVISION header‚Äù on page 247.
+// For more information about the USING phrase, see ìThe PROCEDURE DIVISION headerî on page 247.
 // The sequence of the operands in the USING phrase of the CALL statement and in the corresponding USING phrase in the called subprogram's PROCEDURE DIVISION header or ENTRY statement determines the correspondence between the operands used by the calling and called programs. This correspondence is positional.
 // The values of the parameters referenced in the USING phrase of the CALL statement are made available to the called subprogram at the time the CALL statement is executed. 
 // The description of the data items in the called program must describe the same number of character positions as the description of the corresponding data items in the calling program.
@@ -4503,7 +4490,7 @@ alterStatement:
 // - A DBCS literal
 // - A national literal 
 // LENGTH OF special register 
-// For information about the LENGTH OF special register, see ‚ÄúLENGTH OF‚Äù on page 19.
+// For information about the LENGTH OF special register, see ìLENGTH OFî on page 19.
 // ADDRESS OF identifier-3 
 // identifier-3 must be a data item of any level except 66 or 88 defined in the LINKAGE SECTION, the WORKING-STORAGE SECTION, or the LOCAL-STORAGE SECTION. 
 // OMITTED Indicates that no argument is passed.
@@ -4532,7 +4519,7 @@ alterStatement:
 // - LINAGE-COUNTER special register when it is usage binary 
 // ADDRESS OF identifier-4 
 // identifier-4 must be a data item of any level except 66 or 88 defined in the LINKAGE SECTION, the WORKING-STORAGE SECTION, or the LOCAL-STORAGE SECTION. 
-// LENGTH OF special register A LENGTH OF special register passed BY VALUE is treated as a PIC 9(9) binary. For information about the LENGTH OF special register, see ‚ÄúLENGTH OF‚Äù on page 19. 
+// LENGTH OF special register A LENGTH OF special register passed BY VALUE is treated as a PIC 9(9) binary. For information about the LENGTH OF special register, see ìLENGTH OFî on page 19. 
 // literal-3 
 // Must be of one of the following types: 
 // - A numeric literal 
@@ -4540,7 +4527,7 @@ alterStatement:
 // - A one-character alphanumeric literal 
 // - A one-character national literal 
 // - A symbolic character
-// - A single-byte figurative constant ‚Äì SPACE ‚Äì QUOTE ‚Äì HIGH-VALUE ‚Äì LOW-VALUE 
+// - A single-byte figurative constant ñ SPACE ñ QUOTE ñ HIGH-VALUE ñ LOW-VALUE 
 //   ZERO is treated as a numeric value; a fullword binary zero is passed. 
 // If literal-3 is a fixed-point numeric literal, it must have a precision of nine or fewer digits. In this case, a fullword binary representation of the literal value is passed. 
 // If literal-3 is a floating-point numeric literal, an 8-byte internal floating-point (COMP-2) representation of the value is passed. 
@@ -4576,7 +4563,7 @@ alterStatement:
 // The ON OVERFLOW phrase has the same effect as the ON EXCEPTION phrase. 
 // END-CALL phrase
 // This explicit scope terminator serves to delimit the scope of the CALL statement. END-CALL permits a conditional CALL statement to be nested in another conditional statement. END-CALL can also be used with an imperative CALL statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 // SUMMARY :
 // * by reference : the address of the data is passed in the arguments list
 // * by value : the compiler builds a copy of the data in the arguments list, but only floating point, binary, or single byte data item may be passed by value
@@ -4629,7 +4616,7 @@ functionPointer:
 // identifier-1, literal-1 
 // literal-1 must be an alphanumeric literal. 
 // identifier-1 must be an alphanumeric, alphabetic, or zoned decimal data item such that its value can be a program-name.
-// The rules of formation for program-names are dependent on the PGMNAME compiler option. For details, see the discussion of program-names in ‚ÄúPROGRAM-ID paragraph‚Äù on page 100 and the description of PGMNAME in the Enterprise COBOL Programming Guide. 
+// The rules of formation for program-names are dependent on the PGMNAME compiler option. For details, see the discussion of program-names in ìPROGRAM-ID paragraphî on page 100 and the description of PGMNAME in the Enterprise COBOL Programming Guide. 
 // literal-1 or the contents of identifier-1 must be the same as a literal or the contents of an identifier specified in an associated CALL statement.
 // Do not specify the name of a class or a method in the CANCEL statement.
 // After a CANCEL statement for a called subprogram has been executed, that subprogram no longer has a logical connection to the program. 
@@ -4691,16 +4678,16 @@ closeStatement:
 // identifier-1 
 // Must name an elementary numeric item or an elementary numeric-edited item. Can name an elementary floating-point data item. 
 // arithmetic-expression 
-// Can be any arithmetic expression, as defined in ‚ÄúArithmetic expressions‚Äù on page 253. 
+// Can be any arithmetic expression, as defined in ìArithmetic expressionsî on page 253. 
 // When the COMPUTE statement is executed, the value of arithmetic expression is calculated and stored as the new value of each data item referenced by identifier-1. 
 // An arithmetic expression consisting of a single identifier, numeric function, or literal allows the user to set the value of the data items that are referenced by identifier-1 equal to the value of that identifier, function, or literal. 
 // ROUNDED phrase
-// For a discussion of the ROUNDED phrase, see ‚ÄúROUNDED phrase‚Äù on page 282.
+// For a discussion of the ROUNDED phrase, see ìROUNDED phraseî on page 282.
 // SIZE ERROR phrases
-// For a discussion of the SIZE ERROR phrases, see ‚ÄúSIZE ERROR phrases‚Äù on page 283. 
+// For a discussion of the SIZE ERROR phrases, see ìSIZE ERROR phrasesî on page 283. 
 // END-COMPUTE phrase
 // This explicit scope terminator serves to delimit the scope of the COMPUTE statement. END-COMPUTE permits a conditional COMPUTE statement to be nested in another conditional statement. END-COMPUTE can also be used with an imperative COMPUTE statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 
 computeStatement:
                     COMPUTE (identifier ROUNDED?)+ (EqualOperator | EQUAL) arithmeticExpression;
@@ -4719,12 +4706,8 @@ computeStatementEnd:
 
 continueStatement:
                      CONTINUE;
-//
+
 // p320: DELETE statement
-// >>‚ïê‚ïêdelete‚ïê‚ïê‚ïêfile-name-1‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê><
-//                           ‚ïö‚ïêRECORD‚ïê‚ïù   ‚ïö‚ïêINVALID‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïêimperative-statement-1‚ïê‚ïê‚ïù  ‚ïö‚ïêNOT INVALID‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïêimperative-statement-2‚ïê‚ïù   ‚ïö‚ïêEND-DELETE‚ïê‚ïù
-//                                                  ‚ïö‚ïêKEY‚ïê‚ïù                                           ‚ïö‚ïêKEY‚ïê‚ïù     
-//
 // The DELETE statement removes a record from an indexed or relative file. 
 // For indexed files, the key can then be reused for record addition.
 // For relative files, the space is then available for a new record with the same RELATIVE KEY value.
@@ -4739,11 +4722,11 @@ continueStatement:
 //For a file in sequential access mode, the INVALID KEY and NOT INVALID KEY phrases must not be specified. An EXCEPTION/ERROR procedure can be specified.
 //Random or dynamic access mode
 //In random or dynamic access mode, DELETE statement execution results depend on the file organization: indexed or relative.
-//When the DELETE statement is executed, the system removes the record identified by the contents of the prime RECORD KEY data item for indexed files, or the RELATIVE KEY data item for relative files. If the file does not contain such a record, an INVALID KEY condition exists. (See ‚ÄúInvalid key condition‚Äù on page 290.)
+//When the DELETE statement is executed, the system removes the record identified by the contents of the prime RECORD KEY data item for indexed files, or the RELATIVE KEY data item for relative files. If the file does not contain such a record, an INVALID KEY condition exists. (See ìInvalid key conditionî on page 290.)
 //Both the INVALID KEY phrase and an applicable EXCEPTION/ERROR procedure can be omitted.
 //Transfer of control after the successful execution of a DELETE statement, with the NOT INVALID KEY phrase specified, is to the imperative statement associated with the phrase. END-DELETE phrase
 //This explicit scope terminator serves to delimit the scope of the DELETE statement. END-DELETE permits a conditional DELETE statement to be nested in another conditional statement. END-DELETE can also be used with an imperative DELETE statement.
-//For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+//For more information, see ìDelimited scope statementsî on page 280.
 
 deleteStatement:
                    DELETE fileName RECORD?;
@@ -4764,40 +4747,26 @@ deleteStatementEnd:
                       END_DELETE;
 
 // p322: DISPLAY statement
-//
-//              ‚ïî‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïó  
-//              Y                   ‚ïë
-// >>‚ïê‚ïêdisplay‚ïê‚ïê‚ï©‚ï¶‚ïê‚ïêidentifier-1‚ïê‚ï¶‚ïê‚ïê‚ï©‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê><
-//               ‚ïö‚ïê‚ïêliteral-1‚ïê‚ïê‚ïê‚ïê‚ïù    ‚ïö‚ïêUPON‚ïê‚ï¶‚ïêmnemonic-name-1‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïù  ‚ïö‚ïê‚ï¶‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ï¶‚ïê‚ïêNO ADVANCING‚ïê‚ïù
-//                                           ‚ïö‚ïêenvironment-name-1‚ïê‚ïù     ‚ïö‚ïêWITH‚ïê‚ïù
-//
 // DISPLAY statement transfers the contents of each operand to the output device. 
 // The contents are displayed on the output device in the order, left to right, in which the operands are listed.
-//
 // identifier-1 
 // Identifier-1 references the data that is to be displayed. 
 // Identifier-1 can reference any data item except an item of usage PROCEDURE-POINTER, FUNCTION-POINTER, OBJECT REFERENCE, or INDEX. Identifier-1 cannot be an index-name.
 // If identifier-1 is a binary, internal decimal, or internal floating-point data item, identifier-1 is converted automatically to external format as follows: 
 // - Binary and internal decimal items are converted to zoned decimal. Negative signed values cause a low-order sign overpunch. 
 // - Internal floating-point numbers are converted to external floating-point numbers for display such that: 
-//    ‚Äì A COMP-1 item will display as if it had an external floating-point PICTURE clause of -.9(8)E-99. 
-//    ‚Äì A COMP-2 item will display as if it had an external floating-point PICTURE clause of -.9(17)E-99. 
+//    ñ A COMP-1 item will display as if it had an external floating-point PICTURE clause of -.9(8)E-99. 
+//    ñ A COMP-2 item will display as if it had an external floating-point PICTURE clause of -.9(17)E-99. 
 // Data items defined with USAGE POINTER are converted to a zoned decimal number that has an implicit PICTURE clause of PIC 9(10). 
-// If the output is directed to CONSOLE, data items described with usage NATIONAL are converted from national character representation to EBCDIC. 
-// The conversion uses the EBCDIC code page that was specified in the CODEPAGE compiler option when the source code was compiled. 
-// National characters without EBCDIC counterparts are converted to default substitution characters; no exception condition is indicated or raised. 
+// If the output is directed to CONSOLE, data items described with usage NATIONAL are converted from national character representation to EBCDIC. The conversion uses the EBCDIC code page that was specified in the CODEPAGE compiler option when the source code was compiled. National characters without EBCDIC counterparts are converted to default substitution characters; no exception condition is indicated or raised. 
 // If the output is not directed to CONSOLE, data items described with usage NATIONAL are written without conversion and without data validation. 
 // No other categories of data require conversion.
-// DBCS data items, explicitly or implicitly defined as USAGE DISPLAY-1, are transferred to the sending field of the output device. For proper results, 
-// the output device must have the capability to recognize DBCS shift-out and shift-in control characters. 
-// Both DBCS and non-DBCS operands can be specified in a single DISPLAY statement. 
-//
+// DBCS data items, explicitly or implicitly defined as USAGE DISPLAY-1, are transferred to the sending field of the output device. For proper results, the output device must have the capability to recognize DBCS shift-out and shift-in control characters. Both DBCS and non-DBCS operands can be specified in a single DISPLAY statement. 
 // literal-1 
-// Can be any literal or any figurative constant as specified in ‚ÄúFigurative constants‚Äù on page 13. 
+// Can be any literal or any figurative constant as specified in ìFigurative constantsî on page 13. 
 // When a figurative constant is specified, only a single occurrence of that figurative constant is displayed. 
-//
 // UPON 
-// environment-name-1 or the environment name associated with mnemonic-name-1 must be associated with an output device. See ‚ÄúSPECIAL-NAMES paragraph‚Äù on page 112. 
+// environment-name-1 or the environment name associated with mnemonic-name-1 must be associated with an output device. See ìSPECIAL-NAMES paragraphî on page 112. 
 // A default logical record size is assumed for each device, as follows: 
 // - The system logical output device 120 characters 
 // - The system punch device 80 characters
@@ -4809,7 +4778,6 @@ deleteStatementEnd:
 // On the system punch device, the last eight characters are used for PROGRAM-ID name. 
 // When the UPON phrase is omitted, the system's logical output device is assumed. The list of valid environment-names in a DISPLAY statement is shown in Table 5 on page 114. 
 // For details on routing DISPLAY output to stdout, see Displaying values on a screen or in a file (DISPLAY) in the Enterprise COBOL Programming Guide. 
-//
 // WITH NO ADVANCING 
 // When specified, the positioning of the output device will not be changed in any way following the display of the last operand.
 // If the WITH NO ADVANCING phrase is not specified, after the last operand has been transferred to the output device, the positioning of the output device will be reset to the leftmost position of the next line of the device.
@@ -4889,18 +4857,18 @@ displayStatement:
 // In formats 1, 2, and 3, floating-point data items and literals can be used anywhere that a numeric data item or literal can be specified.
 // In formats 4 and 5, floating-point data items or literals cannot be used. 
 // ROUNDED phrase
-// For formats 1, 2, and 3, see ‚ÄúROUNDED phrase‚Äù on page 282.
+// For formats 1, 2, and 3, see ìROUNDED phraseî on page 282.
 // For formats 4 and 5, the quotient used to calculate the remainder is in an intermediate field. The value of the intermediate field is truncated rather than rounded. 
 // REMAINDER phrase
 // The result of subtracting the product of the quotient and the divisor from the dividend is stored in identifier-4. Ifidentifier-3, the quotient, is a numeric-edited item, the quotient used to calculate the remainder is an intermediate field that contains the unedited quotient.
 // The REMAINDER phrase is invalid if the receiver or any of the operands is a floating-point item.
 // Any subscripts for identifier-4 in the REMAINDER phrase are evaluated after the result of the divide operation is stored in identifier-3 of the GIVING phrase. 
 // SIZE ERROR phrases
-// For formats 1, 2, and 3, see ‚ÄúSIZE ERROR phrases‚Äù on page 283.
+// For formats 1, 2, and 3, see ìSIZE ERROR phrasesî on page 283.
 // For formats 4 and 5, if a size error occurs in the quotient, no remainder calculation is meaningful. Therefore, the contents of the quotient field (identifier-3) and the remainder field (identifier-4) are unchanged.
 // If size error occurs in the remainder, the contents of the remainder field (identifier-4) are unchanged.
 // In either of these cases, you must analyze the results to determine which situation has actually occurred.
-// For information about the NOT ON SIZE ERROR phrase, see ‚ÄúSIZE ERROR phrases‚Äù on page 283.
+// For information about the NOT ON SIZE ERROR phrase, see ìSIZE ERROR phrasesî on page 283.
 // END-DIVIDE phrase
 // This explicit scope terminator serves to delimit the scope of the DIVIDE statement. END-DIVIDE turns a conditional DIVIDE statement into an imperative statement that can be nested in another conditional statement. END-DIVIDE can also be used with an imperative DIVIDE statement.
 
@@ -4921,17 +4889,17 @@ divideStatementEnd:
 // p330: ENTRY statement
 // The ENTRY statement establishes an alternate entry point into a COBOL called subprogram.
 // The ENTRY statement cannot be used in: 
-// - Programs that specify a return value using the PROCEDURE DIVISION RETURNING phrase. For details, see the discussion of the RETURNING phrase under ‚ÄúThe PROCEDURE DIVISION header‚Äù on page 247. 
-// - Nested program. See ‚ÄúNested programs‚Äù on page 85 for a description of nested programs.
+// - Programs that specify a return value using the PROCEDURE DIVISION RETURNING phrase. For details, see the discussion of the RETURNING phrase under ìThe PROCEDURE DIVISION headerî on page 247. 
+// - Nested program. See ìNested programsî on page 85 for a description of nested programs.
 // When a CALL statement that specifies the alternate entry point is executed in a calling program, control is transferred to the next executable statement following the ENTRY statement.
 // literal-1 
-// Must be an alphanumeric literal that conform to the rules for the formation of a program-name in an outermost program (see ‚ÄúPROGRAM-ID paragraph‚Äù on page 100). 
+// Must be an alphanumeric literal that conform to the rules for the formation of a program-name in an outermost program (see ìPROGRAM-ID paragraphî on page 100). 
 // Must not match the program-ID or any other ENTRY literal in this program. 
 // Must not be a figurative constant.
 // Execution of the called program begins at the first executable statement following the ENTRY statement whose literal corresponds to the literal or identifier specified in the CALL statement.
 // The entry point name on the ENTRY statement can be affected by the PGMNAME compiler option. For details, see PGMNAME in the Enterprise COBOL Programming Guide. 
 // USING phrase
-// For a discussion of the USING phrase, see ‚ÄúThe PROCEDURE DIVISION header‚Äù on page 247.
+// For a discussion of the USING phrase, see ìThe PROCEDURE DIVISION headerî on page 247.
 
 entryStatement:
                   ENTRY literal
@@ -4961,7 +4929,7 @@ entryStatement:
 // - The word ANY can correspond to a selection subject of any type.
 // END-EVALUATE phrase
 // This explicit scope terminator serves to delimit the scope of the EVALUATE statement. END-EVALUATE permits a conditional EVALUATE statement to be nested in another conditional statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280. 
+// For more information, see ìDelimited scope statementsî on page 280. 
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 //evaluateStatementWithBody:
@@ -5048,7 +5016,7 @@ gobackStatement:
 //
 // Unconditional GO TO 
 // The unconditional GO TO statement transfers control to the first statement in the paragraph or section identified by procedure-name, unless the GO TO statement has been modified by an ALTER statement.
-// For more information, see ‚ÄúALTER statement‚Äù on page 301.
+// For more information, see ìALTER statementî on page 301.
 // Format 1: unconditional GO TO statement
 //gotoStatement:
 //                 GO TO? procedureName;
@@ -5092,8 +5060,8 @@ gotoStatement:
 // object program, depending on the evaluation.
 // Notes: END-IF can be specified with statement-2 or NEXT SENTENCE.
 // condition-1
-// Can be any simple or complex condition, as described in ‚ÄúConditional
-// expressions‚Äù on page 256.
+// Can be any simple or complex condition, as described in ìConditional
+// expressionsî on page 256.
 // statement-1, statement-2
 // Can be any one of the following options:
 // - An imperative statement
@@ -5108,8 +5076,8 @@ gotoStatement:
 // END-IF phrase
 // This explicit scope terminator serves to delimit the scope of the IF statement.
 // END-IF permits a conditional IF statement to be nested in another conditional
-// statement. For more information about explicit scope terminators, see ‚ÄúDelimited
-// scope statements‚Äù on page 280.
+// statement. For more information about explicit scope terminators, see ìDelimited
+// scope statementsî on page 280.
 // The scope of an IF statement can be terminated by any of the following options:
 // - An END-IF phrase at the same level of nesting
 // - A separator period
@@ -5180,16 +5148,16 @@ ifStatementEnd:
 // - An alphanumeric group item
 // - A national group item
 // - An elementary data item of one of the following categories:
-//   ‚Äì Alphabetic
-//   ‚Äì Alphanumeric
-//   ‚Äì Alphanumeric-edited
-//   ‚Äì DBCS
-//   ‚Äì External floating-point
-//   ‚Äì Internal floating-point
-//   ‚Äì National
-//   ‚Äì National-edited
-//   ‚Äì Numeric
-//   ‚Äì Numeric-edited
+//   ñ Alphabetic
+//   ñ Alphanumeric
+//   ñ Alphanumeric-edited
+//   ñ DBCS
+//   ñ External floating-point
+//   ñ Internal floating-point
+//   ñ National
+//   ñ National-edited
+//   ñ Numeric
+//   ñ Numeric-edited
 // - A special register that is valid as a receiving operand in a MOVE
 //   statement with identifer-2 or literal-1 as the sending operand.
 // When identifier-1 references a national group item, identifier-1 is processed
@@ -5226,7 +5194,7 @@ ifStatementEnd:
 //   category.
 // - The same category cannot be repeated in a REPLACING phrase.
 // With the exception of EGCS, the keyword after the word REPLACING corresponds
-// to a category of data shown in ‚ÄúClasses and categories of data‚Äù on page 162.
+// to a category of data shown in ìClasses and categories of dataî on page 162.
 // EGCS in the REPLACING phrase is synonymous with DBCS.
 // When the REPLACING phrase is not specified:
 // - SPACE is the implied sending item for receiving items of category alphabetic,
@@ -5330,7 +5298,7 @@ initializeStatement:
 // figurative constant SPACE.
 // When identifier-1 is of usage DISPLAY or NATIONAL, literals can be any
 // figurative constant that does not begin with the word ALL, as specified in
-// ‚ÄúFigurative constants‚Äù on page 13. The figurative constant is treated as a
+// ìFigurative constantsî on page 13. The figurative constant is treated as a
 // one-character alphanumeric literal when identifier-1 is of usage DISPLAY,
 // and as a one-character national literal when identifier-1 is of usage
 // NATIONAL.
@@ -5563,11 +5531,11 @@ inspectStatementPhrase1:
 // specified in associated VALUE clauses, and a reference to the created object
 // is returned.
 // When NEW is specified, you must also specify a RETURNING phrase as
-// described in ‚ÄúRETURNING phrase‚Äù on page 359.
+// described in ìRETURNING phraseî on page 359.
 // USING phrase
 // The USING phrase specifies arguments that are passed to the target method. The
 // argument data types and argument linkage conventions are restricted to those
-// supported by Java. See ‚ÄúBY VALUE phrase‚Äù for details.
+// supported by Java. See ìBY VALUE phraseî for details.
 // BY VALUE phrase
 // Arguments specified in an INVOKE statement must be passed BY VALUE.
 // The BY VALUE phrase specifies that the value of the argument is passed, not a
@@ -5578,23 +5546,23 @@ inspectStatementPhrase1:
 // identifier-3
 // Must be an elementary data item in the DATA DIVISION. The data type of
 // identifier-3 must be one of the types supported for Java interoperation, as
-// listed in ‚ÄúInteroperable data types for COBOL and Java‚Äù on page 361.
+// listed in ìInteroperable data types for COBOL and Javaî on page 361.
 // Miscellaneous cases that are also supported as identifier-3 are listed in
-// ‚ÄúMiscellaneous argument types for COBOL and Java‚Äù on page 362, with
+// ìMiscellaneous argument types for COBOL and Javaî on page 362, with
 // their corresponding Java type.
 // See Conformance requirements for arguments for additional requirements
 // that apply to identifier-3.
 // literal-2
 // Must be of a type suitable for Java interoperation and must exactly match
 // the type of the corresponding parameter in the target method. Supported
-// literal forms are listed in ‚ÄúMiscellaneous argument types for COBOL and
-// Java‚Äù on page 362, with their corresponding Java type.
+// literal forms are listed in ìMiscellaneous argument types for COBOL and
+// Javaî on page 362, with their corresponding Java type.
 // literal-2 must not be a DBCS literal.
 // LENGTH OF identifier-3
 // Specifies that the length of identifier-3 is passed as an argument in the
 // LENGTH OF special register. A LENGTH OF special register passed BY
 // VALUE is treated as a PIC 9(9) binary value. For information about the
-// LENGTH OF special register, see ‚ÄúLENGTH OF‚Äù on page 19.
+// LENGTH OF special register, see ìLENGTH OFî on page 19.
 // Conformance requirements for arguments
 // When identifier-3 is an object reference, certain rules apply.
 // The rules are:
@@ -5609,7 +5577,7 @@ inspectStatementPhrase1:
 //   target method.
 // - If the target method is implemented in Java, the description of identifier-3 must
 //   correspond to the Java type of the formal parameter in the target method, as
-//   specified in ‚ÄúInteroperable data types for COBOL and Java‚Äù on page 361.
+//   specified in ìInteroperable data types for COBOL and Javaî on page 361.
 // Usage note: Adherence to conformance requirements for arguments is the
 // responsibility of the programmer. Conformance requirements are not verified by
 // the compiler.
@@ -5623,7 +5591,7 @@ inspectStatementPhrase1:
 // - Must not be reference-modified
 // - Is not changed if an EXCEPTION occurs
 // The data type of identifier-4 must be one of the types supported for Java
-// interoperation, as listed in ‚ÄúInteroperable data types for COBOL and Java‚Äù
+// interoperation, as listed in ìInteroperable data types for COBOL and Javaî
 // on page 361.
 // See Conformance requirements for the RETURNING item for additional
 // requirements that apply to identifier-4.
@@ -5658,12 +5626,12 @@ inspectStatementPhrase1:
 // - The presence or absence of a return value must be the same on the INVOKE
 //   statement and in the target method.
 // - If the RETURNING item is not an object reference, the following rules apply:
-//   ‚Äì If the target method is implemented in COBOL, the returning item in the
+//   ñ If the target method is implemented in COBOL, the returning item in the
 //     INVOKE statement and the RETURNING item in the target method must
 //     have an identical data description entry.
-//   ‚Äì If the target method is implemented in Java, the returning item in the
+//   ñ If the target method is implemented in Java, the returning item in the
 //     INVOKE statement must correspond to the Java type of the method result, as
-//     described in ‚ÄúInteroperable data types for COBOL and Java‚Äù on page 361.
+//     described in ìInteroperable data types for COBOL and Javaî on page 361.
 // - If the RETURNING item is an object reference, the RETURNING item specified
 //   in the INVOKE statement must be an object reference typed exactly to the class
 //   of the returning item specified in the target method. That is, the class of
@@ -5755,20 +5723,20 @@ invokeStatementEnd:
 // - KEY data items must not contain an OCCURS clause or be subordinate
 //   to an item that contains an OCCURS clause.
 // - KEY data items cannot be:
-//   ‚Äì Variably located
-//   ‚Äì Group items that contain variable-occurrence data items
-//   ‚Äì Category numeric described with usage NATIONAL (national decimal
+//   ñ Variably located
+//   ñ Group items that contain variable-occurrence data items
+//   ñ Category numeric described with usage NATIONAL (national decimal
 //     type)
-//   ‚Äì Category external floating-point described with usage NATIONAL
+//   ñ Category external floating-point described with usage NATIONAL
 //     (national floating-point)
-//   ‚Äì Category DBCS
+//   ñ Category DBCS
 // - KEY data items can be qualified.
 // - KEY data items can be any of the following data categories:
-//   ‚Äì Alphabetic, alphanumeric, alphanumeric-edited
-//   ‚Äì Numeric (except numeric with usage NATIONAL)
-//   ‚Äì Numeric-edited (with usage DISPLAY or NATIONAL)
-//   ‚Äì Internal floating-point or display floating-point
-//   ‚Äì National or national-edited
+//   ñ Alphabetic, alphanumeric, alphanumeric-edited
+//   ñ Numeric (except numeric with usage NATIONAL)
+//   ñ Numeric-edited (with usage DISPLAY or NATIONAL)
+//   ñ Internal floating-point or display floating-point
+//   ñ National or national-edited
 // The direction of the merge operation depends on the specification of the
 // ASCENDING or DESCENDING keywords as follows:
 // - When ASCENDING is specified, the sequence is from the lowest key value to
@@ -5779,7 +5747,7 @@ invokeStatementEnd:
 // values is based on the binary values of the national characters.
 // When the COLLATING SEQUENCE phrase is not specified, the key comparisons
 // are performed according to the rules for comparison of operands in a relation
-// condition. For details, see ‚ÄúGeneral relation conditions‚Äù on page 260.
+// condition. For details, see ìGeneral relation conditionsî on page 260.
 // When the COLLATING SEQUENCE phrase is specified, the indicated collating
 // sequence is used for key data items of alphabetic, alphanumeric,
 // alphanumeric-edited, external floating-point, and numeric-edited categories. For all
@@ -5796,8 +5764,8 @@ invokeStatementEnd:
 // with the following results:
 // STANDARD-1
 // The ASCII collating sequence is used for all alphanumeric
-// comparisons. (The ASCII collating sequence is shown in ‚ÄúUS
-// English ASCII code page‚Äù on page 572.)
+// comparisons. (The ASCII collating sequence is shown in ìUS
+// English ASCII code pageî on page 572.)
 // STANDARD-2
 // The 7-bit code defined in the International Reference Version of
 // ISO/IEC 646, 7-bit coded character set for information interchange is
@@ -5805,11 +5773,11 @@ invokeStatementEnd:
 // NATIVE
 // The EBCDIC collating sequence is used for all alphanumeric
 // comparisons. (The EBCDIC collating sequence is shown in
-// ‚ÄúEBCDIC collating sequence‚Äù on page 569.)
+// ìEBCDIC collating sequenceî on page 569.)
 // EBCDIC
 // The EBCDIC collating sequence is used for all alphanumeric
 // comparisons. (The EBCDIC collating sequence is shown in
-// ‚ÄúEBCDIC collating sequence‚Äù on page 569.)
+// ìEBCDIC collating sequenceî on page 569.)
 // literal
 // The collating sequence established by the specification of literals in
 // the ALPHABET-NAME clause is used for all alphanumeric
@@ -5886,7 +5854,7 @@ invokeStatementEnd:
 // executed during the merging operation just as if it were named in a PERFORM
 // statement. As with the PERFORM statement, execution of the procedure is
 // terminated after the last statement completes execution. The last statement in an
-// OUTPUT PROCEDURE can be the EXIT statement (see ‚ÄúEXIT statement‚Äù on page
+// OUTPUT PROCEDURE can be the EXIT statement (see ìEXIT statementî on page
 // 335).
 // MERGE special registers
 // The topic describes special registers of the MERGE statement.
@@ -5897,13 +5865,13 @@ invokeStatementEnd:
 // If you use a sort control file to specify control statements, the values
 // specified in the sort control file take precedence over those in the other
 // SORT special registers.
-// For information, see ‚ÄúSORT-CONTROL‚Äù on page 22.
+// For information, see ìSORT-CONTROLî on page 22.
 // SORT-MESSAGE special register
-// For information, see ‚ÄúSORT-MESSAGE‚Äù on page 23. The special register
+// For information, see ìSORT-MESSAGEî on page 23. The special register
 // SORT-MESSAGE is equivalent to an option control statement keyword in
 // the sort control file.
 // SORT-RETURN special register
-// For information, see ‚ÄúSORT-RETURN‚Äù on page 23.
+// For information, see ìSORT-RETURNî on page 23.
 // Segmentation considerations
 // If a MERGE statement is coded in a fixed segment, any output procedure
 // referenced by that MERGE statement must be either totally within a fixed segment
@@ -5946,14 +5914,14 @@ mergeStatement:
 //   processed as an elementary data item of category national.
 // - The data in the sending area is moved into the data item referenced by each
 //   identifier-2 in the order in which the identifier-2 data items are specified in the
-//   MOVE statement. See ‚ÄúElementary moves‚Äù on page 370 and ‚ÄúGroup moves‚Äù on
+//   MOVE statement. See ìElementary movesî on page 370 and ìGroup movesî on
 //   page 374 below.
 // When format 2 is specified:
 // - Both identifiers must be group items.
 // - A national group item is processed as a group item (and not as an elementary
 //   data item of category national).
 // - Selected items in identifier-1 are moved to identifier-2 according to the rules for
-//   the ‚ÄúCORRESPONDING phrase‚Äù on page 281. The results are the same as if
+//   the ìCORRESPONDING phraseî on page 281. The results are the same as if
 //   each pair of CORRESPONDING identifiers were referenced in a separate MOVE
 //   statement.
 // Data items described with the following types of usage cannot be specified in a
@@ -5968,7 +5936,7 @@ mergeStatement:
 // group item that is referenced in a MOVE CORRESPONDING statement; however,
 // no movement of data from those data items takes place.
 // The evaluation of the length of the sending or receiving area can be affected by the
-// DEPENDING ON phrase of the OCCURS clause (see ‚ÄúOCCURS clause‚Äù on page
+// DEPENDING ON phrase of the OCCURS clause (see ìOCCURS clauseî on page
 // 191).
 // If the sending field (identifier-1) is reference-modified or subscripted, or is an
 // alphanumeric or national function-identifier, the reference-modifier, subscript, or
@@ -6037,20 +6005,20 @@ moveStatement:
 // When the ARITH(COMPAT) compiler option is in effect, the composite of operands
 // can contain a maximum of 30 digits. When the ARITH(EXTEND) compiler option
 // is in effect, the composite of operands can contain a maximum of 31 digits. For
-// more information, see ‚ÄúArithmetic statement operands‚Äù on page 284 and the
+// more information, see ìArithmetic statement operandsî on page 284 and the
 // details on arithmetic intermediate results, Appendix A. Intermediate results and
 // arithmetic precision in the Enterprise COBOL Programming Guide.
 // ROUNDED phrase
-// For formats 1 and 2, see ‚ÄúROUNDED phrase‚Äù on page 282.
+// For formats 1 and 2, see ìROUNDED phraseî on page 282.
 // Chapter 20. PROCEDURE DIVISION statements 377
 // SIZE ERROR phrases
-// For formats 1 and 2, see ‚ÄúSIZE ERROR phrases‚Äù on page 283.
+// For formats 1 and 2, see ìSIZE ERROR phrasesî on page 283.
 // END-MULTIPLY phrase
 // This explicit scope terminator serves to delimit the scope of the MULTIPLY
 // statement. END-MULTIPLY permits a conditional MULTIPLY statement to be
 // nested in another conditional statement. END-MULTIPLY can also be used with an
 // imperative MULTIPLY statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280. 
+// For more information, see ìDelimited scope statementsî on page 280. 
 
 multiplyStatement:
                      MULTIPLY (identifier | literal) BY ((identifier ROUNDED?)+ | literal)
@@ -6135,7 +6103,7 @@ multiplyStatementEnd:
 // do not apply.
 // NO REWIND
 // Valid only for sequential single-reel files. It is not valid for VSAM files.
-// For information on file sizes, see Appendix B, ‚ÄúCompiler limits,‚Äù on page 565.
+// For information on file sizes, see Appendix B, ìCompiler limits,î on page 565.
 // ... more details p381 General rules ...
 // ... more details p382->383 OPEN statement notes ...
 
@@ -6266,7 +6234,7 @@ openStatement:
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified.
 // condition-1
-// Can be any condition described under ‚ÄúConditional expressions‚Äù on page
+// Can be any condition described under ìConditional expressionsî on page
 // initiated, the specified procedures are not executed.
 // Any subscripting associated with the operands specified in condition-1 is
 // evaluated each time the condition is tested.
@@ -6282,7 +6250,7 @@ openStatement:
 // * PERFORM with VARYING phrase
 // The VARYING phrase increases or decreases the value of one or more identifiers or
 // index-names, according to certain rules.
-// For more information, see ‚ÄúVarying phrase rules‚Äù on page 393.
+// For more information, see ìVarying phrase rulesî on page 393.
 // The format-4 VARYING phrase PERFORM statement can serially search an entire
 // seven-dimensional table.
 // p388: Format 4: PERFORM statement with VARYING phrase
@@ -6299,7 +6267,7 @@ openStatement:
 // literal-1 through literal-4
 // Must represent a numeric literal.
 // condition-1, condition-2
-// Can be any condition described under ‚ÄúConditional expressions‚Äù on page
+// Can be any condition described under ìConditional expressionsî on page
 // 256. If the condition is true at the time the PERFORM statement is
 // initiated, the specified procedures are not executed.
 // After the conditions specified in the UNTIL phrase are satisfied, control is
@@ -6323,17 +6291,17 @@ openStatement:
 // specified.
 // The rules are:
 // - In the VARYING or AFTER phrases, when an index-name is specified:
-//   ‚Äì The index-name is initialized and incremented or decremented according to
-//     the rules under ‚ÄúINDEX phrase‚Äù on page 233. (See also ‚ÄúSET statement‚Äù on
+//   ñ The index-name is initialized and incremented or decremented according to
+//     the rules under ìINDEX phraseî on page 233. (See also ìSET statementî on
 //     page 415.)
-//   ‚Äì In the associated FROM phrase, an identifier must be described as an integer
+//   ñ In the associated FROM phrase, an identifier must be described as an integer
 //     and have a positive value; a literal must be a positive integer.
-//   ‚Äì In the associated BY phrase, an identifier must be described as an integer; a
+//   ñ In the associated BY phrase, an identifier must be described as an integer; a
 //     literal must be a nonzero integer.
 // - In the FROM phrase, when an index-name is specified:
-//   ‚Äì In the associated VARYING or AFTER phrase, an identifier must be described
+//   ñ In the associated VARYING or AFTER phrase, an identifier must be described
 //     as an integer. It is initialized as described in the SET statement.
-//   ‚Äì In the associated BY phrase, an identifier must be described as an integer and
+//   ñ In the associated BY phrase, an identifier must be described as an integer and
 //     have a nonzero value; a literal must be a nonzero integer.
 // - In the BY phrase, identifiers and literals must have nonzero values.
 // - Changing the values of identifiers or index-names in the VARYING, FROM, and
@@ -6453,13 +6421,13 @@ performStatementEnd:
 // INVALID KEY phrases
 // Both the INVALID KEY phrase and an applicable EXCEPTION/ERROR procedure
 // can be omitted.
-// For information about INVALID KEY phrase processing, see ‚ÄúInvalid key
-// condition‚Äù on page 290.
+// For information about INVALID KEY phrase processing, see ìInvalid key
+// conditionî on page 290.
 // END-READ phrase
 // This explicit scope terminator serves to delimit the scope of the READ statement.
 // END-READ permits a conditional READ statement to be nested in another
 // conditional statement. END-READ can also be used with an imperative READ
-// statement. For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// statement. For more information, see ìDelimited scope statementsî on page 280.
 // ... more details p396 : Processing files with variable length records or multiple record descriptions ...
 // ... more details p396->398 : Sequential access mode ...
 // ... more details p398->399 : Random access mode ...
@@ -6517,7 +6485,7 @@ readStatementEnd:
 // item in accordance with the rules of the MOVE statement.
 // identifier-1 and record-name-1 must not refer to the same storage area.
 // After the RELEASE statement is executed, the information is still available
-// in identifier-1. (See ‚ÄúINTO and FROM phrases‚Äù on page 291 under
+// in identifier-1. (See ìINTO and FROM phrasesî on page 291 under
 // "Common processing facilities".)
 // If the RELEASE statement is executed without specifying the SD entry for
 // file-name-1 in a SAME RECORD AREA clause, the information in record-name-1 is
@@ -6600,7 +6568,7 @@ recordName:
 // statement. END-RETURN permits a conditional RETURN statement to be nested in
 // another conditional statement. END-RETURN can also be used with an imperative
 // RETURN statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 
 returnStatement:
                    RETURN fileName RECORD? (INTO identifier)?;
@@ -6640,7 +6608,7 @@ returnStatementEnd:
 // item in accordance with the rules of the MOVE statement.
 // identifier-1 and record-name-1 must not refer to the same storage area.
 // After the REWRITE statement is executed, the information is still available
-// in identifier-1 (‚ÄúINTO and FROM phrases‚Äù on page 291 under "Common
+// in identifier-1 (ìINTO and FROM phrasesî on page 291 under "Common
 // processing facilities").
 // INVALID KEY phrases
 // An INVALID KEY condition exists when:
@@ -6657,7 +6625,7 @@ returnStatementEnd:
 // statement. END-REWRITE permits a conditional REWRITE statement to be nested
 // in another conditional statement. END-REWRITE can also be used with an
 // imperative REWRITE statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 // ... more details p406->407 Reusing a logical record, Sequential / Indexed / Relative files ...
 
 rewriteStatement:
@@ -6720,7 +6688,7 @@ rewriteStatementEnd:
 // This explicit scope terminator delimits the scope of the SEARCH statement.
 // END-SEARCH permits a conditional SEARCH statement to be nested in another
 // conditional statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 // The function of END-SEARCH is the same for a serial search and a binary search.
 // ... more details p409->412 Serial search ...
 // ... more details p412->414 Binary search ...
@@ -6898,13 +6866,13 @@ searchStatementEnd:
 // a sending field.
 // identifier-8
 // Must be defined as an alphabetic or alphanumeric item such that the value
-// can be a program name. For more information, see ‚ÄúPROGRAM-ID
-// paragraph‚Äù on page 100. For entry points in non-COBOL programs,
+// can be a program name. For more information, see ìPROGRAM-ID
+// paragraphî on page 100. For entry points in non-COBOL programs,
 // identifier-8 can contain the characters @, #, and, $.
 // literal-1
 // Must be alphanumeric and must conform to the rules for formation of
 // program-names. For details on formation rules, see the discussion of
-// program-name under ‚ÄúPROGRAM-ID paragraph‚Äù on page 100.
+// program-name under ìPROGRAM-ID paragraphî on page 100.
 // identifier-8 or literal-1 must refer to one of the following types of entry
 // points:
 // - The primary entry point of a COBOL program as defined by the
@@ -6962,7 +6930,7 @@ setStatement:
 // output procedure or in an output file.
 // The SORT statement can appear anywhere in the PROCEDURE DIVISION except
 // in the declarative portion.
-// See also ‚ÄúMERGE statement‚Äù on page 364.
+// See also ìMERGE statementî on page 364.
 // The SORT statement is not supported for programs compiled with the THREAD
 // option.
 // file-name-1
@@ -6994,20 +6962,20 @@ setStatement:
 // - KEY data items must not contain an OCCURS clause or be subordinate
 //   to an item that contains an OCCURS clause.
 // - KEY data items cannot be:
-//   ‚Äì Variably located
-//   ‚Äì Group items that contain variable-occurrence data items
-//   ‚Äì Category numeric described with usage NATIONAL (national decimal
+//   ñ Variably located
+//   ñ Group items that contain variable-occurrence data items
+//   ñ Category numeric described with usage NATIONAL (national decimal
 //     item)
-//   ‚Äì Category external floating-point described with usage NATIONAL
+//   ñ Category external floating-point described with usage NATIONAL
 //     (national floating-point item)
-//   ‚Äì Category DBCS
+//   ñ Category DBCS
 // - KEY data items can be qualified.
 // - KEY data items can be any of the following data categories:
-//   ‚Äì Alphabetic, alphanumeric, alphanumeric-edited
-//   ‚Äì Numeric (except numeric with usage NATIONAL)
-//   ‚Äì Numeric-edited (with usage DISPLAY or NATIONAL)
-//   ‚Äì Internal floating-point or display floating-point
-//   ‚Äì National or national-edited
+//   ñ Alphabetic, alphanumeric, alphanumeric-edited
+//   ñ Numeric (except numeric with usage NATIONAL)
+//   ñ Numeric-edited (with usage DISPLAY or NATIONAL)
+//   ñ Internal floating-point or display floating-point
+//   ñ National or national-edited
 // If file-name-3 references an indexed file, the first specification of data-name-1 must
 // be associated with an ASCENDING phrase and the data item referenced by that
 // data-name-1 must occupy the same character positions in this record as the data
@@ -7024,7 +6992,7 @@ setStatement:
 //   in numeric order.
 // - When the COLLATING SEQUENCE phrase is not specified, the key
 //   comparisons are performed according to the rules for comparison of operands in
-//   a relation condition. See ‚ÄúGeneral relation conditions‚Äù on page 260).
+//   a relation condition. See ìGeneral relation conditionsî on page 260).
 // - When the COLLATING SEQUENCE phrase is specified, the indicated collating
 //   sequence is used for key data items of alphabetic, alphanumeric,
 //   alphanumeric-edited, external floating-point, and numeric-edited categories. For
@@ -7052,7 +7020,7 @@ setStatement:
 // STANDARD-1
 // The ASCII collating sequence is used for all alphanumeric
 // comparisons. (The ASCII collating sequence is shown in
-// Appendix C, ‚ÄúEBCDIC and ASCII collating sequences,‚Äù on page
+// Appendix C, ìEBCDIC and ASCII collating sequences,î on page
 // 569.)
 // STANDARD-2
 // The International Reference Version of ISO/IEC 646, 7-bit coded
@@ -7061,12 +7029,12 @@ setStatement:
 // NATIVE
 // The EBCDIC collating sequence is used for all alphanumeric
 // comparisons. (The EBCDIC collating sequence is shown in
-// Appendix C, ‚ÄúEBCDIC and ASCII collating sequences,‚Äù on page
+// Appendix C, ìEBCDIC and ASCII collating sequences,î on page
 // 569.)
 // EBCDIC
 // The EBCDIC collating sequence is used for all alphanumeric
 // comparisons. (The EBCDIC collating sequence is shown in
-// Appendix C, ‚ÄúEBCDIC and ASCII collating sequences,‚Äù on page
+// Appendix C, ìEBCDIC and ASCII collating sequences,î on page
 // 569.)
 // literal
 // The collating sequence established by the specification of literals in
@@ -7186,7 +7154,7 @@ setStatement:
 // sorting operation just as if it were named in a PERFORM statement. As
 // with the PERFORM statement, execution of the procedure is terminated
 // after the last statement completes execution. The last statement in an input
-// or output procedure can be the EXIT statement (see ‚ÄúEXIT statement‚Äù on
+// or output procedure can be the EXIT statement (see ìEXIT statementî on
 // page 335).
 // SORT special registers
 // The special registers, SORT-CORE-SIZE, SORT-MESSAGE, and SORT-MODE-SIZE,
@@ -7195,17 +7163,17 @@ setStatement:
 // Usage note: If you use a sort control file to specify control statements, the values
 // specified in the sort control file take precedence over those in the special register.
 // SORT-MESSAGE special register
-// See ‚ÄúSORT-MESSAGE‚Äù on page 23.
+// See ìSORT-MESSAGEî on page 23.
 // SORT-CORE-SIZE special register
-// See ‚ÄúSORT-CORE-SIZE‚Äù on page 22.
+// See ìSORT-CORE-SIZEî on page 22.
 // SORT-FILE-SIZE special register
-// See ‚ÄúSORT-FILE-SIZE‚Äù on page 22.
+// See ìSORT-FILE-SIZEî on page 22.
 // SORT-MODE-SIZE special register
-// See ‚ÄúSORT-MODE-SIZE‚Äù on page 23.
+// See ìSORT-MODE-SIZEî on page 23.
 // SORT-CONTROL special register
-// See ‚ÄúSORT-CONTROL‚Äù on page 22.
+// See ìSORT-CONTROLî on page 22.
 // SORT-RETURN special register
-// See ‚ÄúSORT-RETURN‚Äù on page 23.
+// See ìSORT-RETURNî on page 23.
 // Segmentation considerations
 // The topic lists considerations of using the SORT statement.
 // If a SORT statement is coded in a fixed segment, any input or output procedure
@@ -7242,12 +7210,12 @@ sortStatement:
 // When the START statement is executed, a comparison is made between the current
 // value in the key data-name and the corresponding key field in the file's index.
 // If the FILE STATUS clause is specified in the file-control entry, the associated file
-// status key is updated when the START statement is executed (See ‚ÄúFile status key‚Äù
+// status key is updated when the START statement is executed (See ìFile status keyî
 // on page 287).
 // INVALID KEY phrases
 // If the comparison is not satisfied by any record in the file, an invalid key condition
 // exists; the position of the file position indicator is undefined, and (if specified) the
-// INVALID KEY imperative-statement is executed. (See ‚ÄúINTO and FROM phrases‚Äù
+// INVALID KEY imperative-statement is executed. (See ìINTO and FROM phrasesî
 // on page 291 under "Common processing facilities".)
 // Both the INVALID KEY phrase and an applicable EXCEPTION/ERROR procedure
 // can be omitted.
@@ -7256,7 +7224,7 @@ sortStatement:
 // END-START permits a conditional START statement to be nested in another
 // conditional statement. END-START can also be used with an imperative START
 // statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 // Indexed files
 // When the KEY phrase is specified, the key data item used for the comparison is
 // data-name-1.
@@ -7415,7 +7383,7 @@ stopStatement:
 // If identifier-1 or identifier-2 occupies the same storage area as identifier-3 or
 // identifier-4, undefined results will occur, even if the identifiers are defined by the
 // same data description entry.
-// See ‚ÄúData flow‚Äù for details of STRING statement processing.
+// See ìData flowî for details of STRING statement processing.
 // ON OVERFLOW phrases
 // imperative-statement-1
 // Executed when the pointer value (explicit or implicit):
@@ -7450,7 +7418,7 @@ stopStatement:
 // END-STRING permits a conditional STRING statement to be nested in another
 // conditional statement. END-STRING can also be used with an imperative STRING
 // statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280. 
+// For more information, see ìDelimited scope statementsî on page 280. 
 // ... more details p435->437 Data flow / Example of the STRING statement ...
 
 stringStatement:
@@ -7525,18 +7493,18 @@ stringStatementEnd:
 // and literals can be specified.
 // ROUNDED phrase
 // For information about the ROUNDED phrase, and for operand considerations, see
-// ‚ÄúROUNDED phrase‚Äù on page 282.
+// ìROUNDED phraseî on page 282.
 // SIZE ERROR phrases
 // For information about the SIZE ERROR phrases, and for operand considerations,
-// see ‚ÄúSIZE ERROR phrases‚Äù on page 283.
+// see ìSIZE ERROR phrasesî on page 283.
 // CORRESPONDING phrase (format 3)
-// See ‚ÄúCORRESPONDING phrase‚Äù on page 281.
+// See ìCORRESPONDING phraseî on page 281.
 // END-SUBTRACT phrase
 // This explicit scope terminator serves to delimit the scope of the SUBTRACT
 // statement. END-SUBTRACT permits a conditional SUBTRACT statement to be
 // nested in another conditional statement. END-SUBTRACT can also be used with
 // an imperative SUBTRACT statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 
 subtractStatement:
                 SUBTRACT (CORRESPONDING | CORR)? (identifier | literal)+ FROM ((identifier ROUNDED?)+ | literal)
@@ -7613,10 +7581,10 @@ subtractStatementEnd:
 // One UNSTRING statement can take the place of a series of MOVE statements,
 // except that evaluation or calculation of certain elements is performed only once, at
 // the beginning of the execution of the UNSTRING statement. For more information,
-// see ‚ÄúValues at the end of execution of the UNSTRING statement‚Äù on page 447.
+// see ìValues at the end of execution of the UNSTRING statementî on page 447.
 // The rules for moving are the same as those for a MOVE statement for an
 // elementary sending item of the category of identifier-1, with the appropriate
-// identifier-4 as the receiving item (see ‚ÄúMOVE statement‚Äù on page 369). For example,
+// identifier-4 as the receiving item (see ìMOVE statementî on page 369). For example,
 // rules for moving a DBCS item are used when identifier-1 is a DBCS item.
 // DELIMITED BY phrase
 // This phrase specifies delimiters within the data that control the data transfer.
@@ -7722,7 +7690,7 @@ subtractStatementEnd:
 // statement. END-UNSTRING permits a conditional UNSTRING statement to be
 // nested in another conditional statement. END-UNSTRING can also be used with
 // an imperative UNSTRING statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280.
+// For more information, see ìDelimited scope statementsî on page 280.
 // ... more details p445->447 Data flow ...
 // ... more details p447 Values at the end of execution of the UNSTRING statement ...
 // ... more details p447->448 Example of the UNSTRING statement ...
@@ -7798,7 +7766,7 @@ unstringStatementEnd:
 // record-name-1 as the receiving item.
 // identifier-1 and record-name-1 must not refer to the same storage area.
 // After the WRITE statement is executed, the information is still available in
-// identifier-1. (See ‚ÄúINTO and FROM phrases‚Äù on page 291 under "Common
+// identifier-1. (See ìINTO and FROM phrasesî on page 291 under "Common
 // processing facilities".)
 // identifier-2
 // Must be an integer data item.
@@ -7905,30 +7873,30 @@ unstringStatementEnd:
 // - For sequential files, an attempt is made to write beyond the externally defined
 //   boundary of the file.
 // - For indexed files:
-//   ‚Äì An attempt is made to write beyond the externally defined boundary of the
+//   ñ An attempt is made to write beyond the externally defined boundary of the
 //     file.
-//   ‚Äì ACCESS SEQUENTIAL is specified and the file is opened OUTPUT, and the
+//   ñ ACCESS SEQUENTIAL is specified and the file is opened OUTPUT, and the
 //     value of the prime record key is not greater than that of the previous record.
-//   ‚Äì The file is opened OUTPUT or I-O and the value of the prime record key
+//   ñ The file is opened OUTPUT or I-O and the value of the prime record key
 //     equals that of an already existing record.
 // - For relative files:
-//   ‚Äì An attempt is made to write beyond the externally defined boundary of the
+//   ñ An attempt is made to write beyond the externally defined boundary of the
 //     file.
-//   ‚Äì When the access mode is random or dynamic and the RELATIVE KEY data
+//   ñ When the access mode is random or dynamic and the RELATIVE KEY data
 //     item specifies a record that already exists in the file.
-//   ‚Äì The number of significant digits in the relative record number is larger than
+//   ñ The number of significant digits in the relative record number is larger than
 //     the size of the relative key data item for the file.
 // When an invalid key condition occurs:
 // - If the INVALID KEY phrase is specified, imperative-statement-1 is executed. For
 //   details of invalid key processing, see Invalid key condition.
 // - Otherwise, the WRITE statement is unsuccessful and the contents of record-name
 //   are unaffected (except for QSAM files) and the following occurs:
-// ‚Äì For sequential files, the file status key, if specified, is updated and an
+// ñ For sequential files, the file status key, if specified, is updated and an
 //   EXCEPTION/ERROR condition exists.
 // If an explicit or implicit EXCEPTION/ERROR procedure is specified for the
 // file, the procedure is executed. If no such procedure is specified, the results
 // are unpredictable.
-// ‚Äì For relative and indexed files, program execution proceeds according to the
+// ñ For relative and indexed files, program execution proceeds according to the
 // rules described by Invalid key condition under "Common processing
 // facilities".
 // The INVALID KEY conditions that apply to a relative file in OPEN OUTPUT
@@ -7943,7 +7911,7 @@ unstringStatementEnd:
 // END-WRITE permits a conditional WRITE statement to be nested in another
 // conditional statement. END-WRITE can also be used with an imperative WRITE
 // statement.
-// For more information, see ‚ÄúDelimited scope statements‚Äù on page 280. 
+// For more information, see ìDelimited scope statementsî on page 280. 
 // ... more details p454->456 WRITE for sequential files ...
 // ... more details p456 WRITE for indexed files ...
 // ... more details p456 WRITE for relative files ...
@@ -7995,10 +7963,10 @@ writeStatementEnd:
 // - identifier-4 or identifier-5 references a data item of category national.
 // - literal-4 or literal-5 is of category national.
 // - The generated XML includes data from identifier-2 for:
-//   ‚Äì Any data item of class national or class DBCS
-//   ‚Äì Any data item with a DBCS name (that is, a data item whose name
+//   ñ Any data item of class national or class DBCS
+//   ñ Any data item with a DBCS name (that is, a data item whose name
 //     consists of DBCS characters)
-//   ‚Äì Any data item of class alphanumeric that contains DBCS characters
+//   ñ Any data item of class alphanumeric that contains DBCS characters
 // identifier-1 must be large enough to contain the generated XML document.
 // Typically, it must be from 5 to 10 times the size of identifier-2, depending
 // on the length of the data-name or data-names within identifier-2. If
@@ -8069,10 +8037,10 @@ writeStatementEnd:
 //   FILLER data item. ASFNPTR is ignored because it specifies the
 //   REDEFINES clause.)
 // - Any of the elementary data items that are subordinate to STRUCT except:
-//   ‚Äì ASFNPTR or PTR (disallowed usage)
-//   ‚Äì UNREFERENCED OF NG-AREA2 (nonunique names for data items that are
+//   ñ ASFNPTR or PTR (disallowed usage)
+//   ñ UNREFERENCED OF NG-AREA2 (nonunique names for data items that are
 //     otherwise eligible)
-// ‚Äì Any FILLER data items
+// ñ Any FILLER data items
 // The following data items cannot be specified as identifier-2:
 // - NG-AREA1, because subordinate data item PTR specifies USAGE POINTER
 //   but does not specify the REDEFINES clause. (PTR would be ignored if it
@@ -8206,13 +8174,13 @@ writeStatementEnd:
 // - When ELEMENT is specified, identifier-7 is expressed in the generated
 //   XML as an element. The XML element name is derived from identifier-7
 //   and the element character content is derived from the converted content
-//   of identifier-7 as described in ‚ÄúOperation of XML GENERATE‚Äù on page
+//   of identifier-7 as described in ìOperation of XML GENERATEî on page
 //   465.
 // - When CONTENT is specified, identifier-7 is expressed in the generated
 //   XML as element character content of the XML element that corresponds
 //   to the data item immediately superordinate to identifier-7. The value of
 //   the element character content is derived from the converted content of
-//   identifier-7 as described in ‚ÄúOperation of XML GENERATE‚Äù on page 465.
+//   identifier-7 as described in ìOperation of XML GENERATEî on page 465.
 // When CONTENT is specified for multiple identifiers all corresponding
 // to the same superordinate identifier, the multiple contributions to the
 // element character content are concatenated.
@@ -8393,9 +8361,9 @@ codepage:
 // z/OS UNIX file or MVS data set that contains the optimized XML schema.
 // xml-schema-name-1 must be associated with the external file name of the
 // schema by using the XML-SCHEMA clause. For more information about
-// the XML-SCHEMA clause, see ‚ÄúSPECIAL-NAMES paragraph‚Äù on page 112.
+// the XML-SCHEMA clause, see ìSPECIAL-NAMES paragraphî on page 112.
 // Restriction: XML validation using the FILE keyword is not supported
-// under CICS¬Æ.
+// under CICSÆ.
 // During parsing with validation, normal XML events are returned as for
 // nonvalidating parsing until an exception occurs due to a validation error
 // or other error in the document.
@@ -8478,7 +8446,7 @@ codepage:
 // statement or different XML statements simultaneously.
 // The processing procedure can terminate the run unit with a STOP RUN
 // statement.
-// For more details about the processing procedure, see ‚ÄúControl flow‚Äù on
+// For more details about the processing procedure, see ìControl flowî on
 // page 473.
 // ON EXCEPTION
 // The ON EXCEPTION phrase specifies imperative statements that are
@@ -8528,8 +8496,8 @@ codepage:
 // END-XML can also be used with an XML GENERATE or XML PARSE
 // statement that does not specify either the ON EXCEPTION or NOT ON
 // EXCEPTION phrase.
-// For more information about explicit scope terminators, see ‚ÄúDelimited
-// scope statements‚Äù on page 280.
+// For more information about explicit scope terminators, see ìDelimited
+// scope statementsî on page 280.
 // ... more information p473 Nested XML GENERATE or XML PARSE statements ...
 // ... more information p473->474 Control flow ...
 
@@ -8575,10 +8543,10 @@ xmlParseStatement:
 // - Certain restrictions on the use of COBOL language that apply when you use the
 //   precompile step do not apply when you use the DB2 coprocessor. With the
 //   coprocessor:
-//   ‚Äì You can use SQL statements in any nested program. (With the precompiler,
+//   ñ You can use SQL statements in any nested program. (With the precompiler,
 //     SQL statements are restricted to the outermost program.)
-//   ‚Äì You can use SQL statements in copybooks.
-//   ‚Äì REPLACE statements work in SQL statements.
+//   ñ You can use SQL statements in copybooks.
+//   ñ REPLACE statements work in SQL statements.
 
 // ... more details p427->429 Compiling with the SQL option ...
 
@@ -8693,8 +8661,8 @@ xmlParseStatement:
 // - In a COBOL program that uses elements in a multi-level structure as host
 //   variable names, the DB2 precompiler generates the lowest two-level names.
 // - To avoid truncating numeric values, use either of the following methods:
-//   ‚Äì Use the COMP-5 data type for binary integer host variables.
-//   ‚Äì Specify the COBOL compiler option:
+//   ñ Use the COMP-5 data type for binary integer host variables.
+//   ñ Specify the COBOL compiler option:
 //   - TRUNC(OPT) if you are certain that the data being moved to each binary
 //     variable by the application does not have a larger precision than is defined
 //     in the PICTURE clause of the binary variable.
@@ -8718,9 +8686,9 @@ xmlParseStatement:
 //   the name 1_TIME is not valid because it is not a valid SQL identifier or a valid
 //   COBOL word.
 // - Observe these rules for hyphens:
-//   ‚Äì Surround hyphens used as subtraction operators with spaces. DB2 usually
+//   ñ Surround hyphens used as subtraction operators with spaces. DB2 usually
 //     interprets a hyphen with no spaces around it as part of a host variable name.
-//   ‚Äì You can use hyphens in SQL identifiers under either of the following
+//   ñ You can use hyphens in SQL identifiers under either of the following
 //     circumstances:
 //     - The application program is a local application that runs on DB2 for z/OS
 //        Version 11 or later.
@@ -9123,15 +9091,15 @@ conditionNameCondition:
 //   or NATIONAL
 // The following relation condition formats are defined:
 // - A general relation condition, for comparisons that involve only data items,
-//   literals, index-names, or index data items. For details, see ‚ÄúGeneral relation
-//   conditions.‚Äù
-// - A data pointer relation condition. For details, see ‚ÄúData pointer relation
-//   conditions‚Äù on page 267.
+//   literals, index-names, or index data items. For details, see ìGeneral relation
+//   conditions.î
+// - A data pointer relation condition. For details, see ìData pointer relation
+//   conditionsî on page 267.
 // - A program pointer relation condition, for comparison of procedure pointers or
-//   function pointers. For details, see ‚ÄúProcedure-pointer and function-pointer
-//   relation conditions‚Äù on page 268.
-// - An object-reference relation condition. For details, see ‚ÄúObject-reference relation
-//   conditions‚Äù on page 269.
+//   function pointers. For details, see ìProcedure-pointer and function-pointer
+//   relation conditionsî on page 268.
+// - An object-reference relation condition. For details, see ìObject-reference relation
+//   conditionsî on page 269.
                    
 relationCondition:
                      generalRelationCondition |
@@ -9180,22 +9148,24 @@ relationCondition:
 // the row and column intersection for permitted comparisons, using the following
 // key:
 // Alph Comparison of alphanumeric characters (further described in
-// ‚ÄúAlphanumeric comparisons‚Äù on page 263)
-// DBCS Comparison of DBCS characters (further described in ‚ÄúDBCS comparisons‚Äù
+// ìAlphanumeric comparisonsî on page 263)
+// DBCS Comparison of DBCS characters (further described in ìDBCS comparisonsî
 // on page 265)
-// Nat Comparison of national characters (further described in ‚ÄúNational
-// comparisons‚Äù on page 265)
-// Num Comparison of algebraic value (further described in ‚ÄúNumeric
-// comparisons‚Äù on page 266)
+// Nat Comparison of national characters (further described in ìNational
+// comparisonsî on page 265)
+// Num Comparison of algebraic value (further described in ìNumeric
+// comparisonsî on page 266)
 // Group Comparison of alphanumeric characters involving an alphanumeric group
-// (further described in ‚ÄúGroup comparisons‚Äù on page 266)
+// (further described in ìGroup comparisonsî on page 266)
 // (Int) Integer items only (combined with comparison type Alph, Nat, Num, or
 // Group)
 // Blank Comparison is not allowed
 // For rules and restrictions for comparisons involving index-names and index data
-// items, see ‚ÄúComparison of index-names and index data items‚Äù on page 267. 
+// items, see ìComparison of index-names and index data itemsî on page 267. 
 
 // ... p262 to p267 : many more details on comparisons ...
+
+
 
 generalRelationCondition:
                             operand IS? relationalOperator operand 
@@ -9317,7 +9287,7 @@ signCondition:
 // The switch-status condition determines the on or off status of a UPSI switch.
 // condition-name
 // Must be defined in the special-names paragraph as associated with the on
-// or off value of an UPSI switch. (See ‚ÄúSPECIAL-NAMES paragraph‚Äù on
+// or off value of an UPSI switch. (See ìSPECIAL-NAMES paragraphî on
 // page 112.)
 // The switch-status condition tests the value associated with condition-name. (The
 // value is considered to be alphanumeric.) The result of the test is true if the UPSI
@@ -9364,7 +9334,7 @@ switchStatusCondition: conditionName;
 // - A combination of the preceding conditions that is specified according to the
 //  rules in the following table
 
-// ... p272: Table 26. Combined conditions‚Äîpermissible element sequences ...
+// ... p272: Table 26. Combined conditionsópermissible element sequences ...
 
 // p273: Order of evaluation of conditions
 // Parentheses, both explicit and implicit, define the level of inclusiveness within a
@@ -9565,28 +9535,13 @@ argument:
             identifier | literal | arithmeticExpression |
             functionIdentifier | specialRegister;
 
-// p67: References to DATA DIVISION names
-// This section discusses the following types of references.
-// - ‚ÄúSimple data reference‚Äù
-// - ‚ÄúIdentifiers‚Äù on page 68
-// Simple data reference
-// The most basic method of referencing data items in a COBOL program is simple
-// data reference, which is data-name-1 without qualification, subscripting, or reference
-// modification. Simple data reference is used to reference a single elementary or
-// group item.
-// data-name-1
-// Can be any data description entry.
-// data-name-1 must be unique in a program.
-
-dataName : UserDefinedWord;
-
 // p65: Uniqueness of reference
 // Every user-defined name in a COBOL program is assigned by the user to name a
 // resource for solving a data processing problem. To use a resource, a statement in a
 // COBOL program must contain a reference that uniquely identifies that resource.
 // To ensure uniqueness of reference, a user-defined name can be qualified. A
 // subscript is required for unique reference to a table element, except as specified in
-// ‚ÄúSubscripting‚Äù on page 71. A data-name or function-name, any subscripts, and the
+// ìSubscriptingî on page 71. A data-name or function-name, any subscripts, and the
 // specified reference-modifier uniquely reference a data item defined by reference
 // modification.
 // When the same name has been assigned in separate programs to two or more
@@ -9595,7 +9550,7 @@ dataName : UserDefinedWord;
 // identically named resources, then certain conventions that limit the scope of names
 // apply. The conventions ensure that the resource identified is that described in the
 // program containing the reference. For more information about resolving
-// program-names, see ‚ÄúResolution of names‚Äù on page 62.
+// program-names, see ìResolution of namesî on page 62.
 // Unless otherwise specified by the rules for a statement, any subscripts and
 // reference modification are evaluated only once as the first step in executing that
 // statement.
@@ -9632,26 +9587,166 @@ dataName : UserDefinedWord;
 // different types of user-defined words.
 // These same rules apply to classes and their contained methods.
 
+// p66: References to COPY libraries
+// If library-name-1 is not specified, SYSLIB is assumed as the library name.
+// For rules on referencing COPY libraries, see ìCOPY statementî on page 530.
+
+copyLibraryReference:
+                          textName ((IN | OF) libraryName)?;
+
+// p66: References to PROCEDURE DIVISION names
+// PROCEDURE DIVISION names that are explicitly referenced in a program must be
+// unique within a section.
+// A section-name is the highest and only qualifier available for a paragraph-name
+// and must be unique if referenced. (Section-names are described under
+// ìProceduresî on page 252.)
+// If explicitly referenced, a paragraph-name must not be duplicated within a section.
+// When a paragraph-name is qualified by a section-name, the word SECTION must
+// not appear. A paragraph-name need not be qualified when referred to within the
+// section in which it appears. A paragraph-name or section-name that appears in a
+// program cannot be referenced from any other program.
+
+procedureDivisionNameReference:
+                                    (paragraphName ((IN | OF) sectionName)?) |
+                                    sectionName;
+
+// p67: References to DATA DIVISION names
+// This section discusses the following types of references.
+// - ìSimple data referenceî
+// - ìIdentifiersî on page 68
+// Simple data reference
+// The most basic method of referencing data items in a COBOL program is simple
+// data reference, which is data-name-1 without qualification, subscripting, or reference
+// modification. Simple data reference is used to reference a single elementary or
+// group item.
+// data-name-1
+// Can be any data description entry.
+// data-name-1 must be unique in a program.
+
+dataDivisionNameReference:
+                              dataName | identifier;
+
+// p68: Identifiers
+// When used in a syntax diagram in this information, the term identifier refers to a
+// valid combination of a data-name or function-identifier with its qualifiers,
+// subscripts, and reference-modifiers as required for uniqueness of reference.
+// Rules for identifiers associated with a format can however specifically prohibit
+// qualification, subscripting, or reference modification.
+// The term data-name refers to a name that must not be qualified, subscripted, or
+// reference modified unless specifically permitted by the rules for the format.
+// - For a description of qualification, see ìQualificationî on page 65.
+// - For a description of subscripting, see ìSubscriptingî on page 71.
+// - For a description of reference modification, see ìReference modificationî on
+//   page 74.
+// p69: Duplication of data-names must not occur in those places where the data-names
+// cannot be made unique by qualification.
+// In the same program, the data-name specified as the subject of the entry whose
+// level-number is 01 that includes the EXTERNAL clause must not be the same
+// data-name specified for any other data description entry that includes the
+// EXTERNAL clause.
+// In the same DATA DIVISION, the data description entries for any two data items
+// for which the same data-name is specified must not include the GLOBAL clause.
+// DATA DIVISION names that are explicitly referenced must either be uniquely
+// defined or made unique through qualification. Unreferenced data items need not
+// be uniquely defined. The highest level in a data hierarchy (a data item associated
+// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
+// must be uniquely named if referenced. Data items associated with level-numbers
+// 02 through 49 are successively lower levels of the hierarchy.
+
+// p68: Format 1
+//identifier:
+//              dataName 
+//              ((IN | OF) dataName)* 
+//              ((IN | OF) fileName)?
+//              ('(' subscript+ ')')?
+//              ('(' leftMostCharacterPosition ':' length? ')')?;
+// data-name-1 , data-name-2
+// Can be a record-name.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// file-name-1 must be unique within this program.
+
+// p69: Format 2
+//identifier:
+//              (conditionName | dataName)
+//              ((IN | OF) dataName)* 
+//              ((IN | OF) fileName)?;
+// data-name-1 , data-name-2
+// Can be a record-name.
+// condition-name-1
+// Can be referenced by statements and entries either in the program that
+// contains the configuration section or in a program contained within that
+// program.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// Must be unique within this program.
+
+// p69: Format 3
+//identifier:
+//              LINAGE_COUNTER
+//              ((IN | OF) fileName)?
+// LINAGE-COUNTER
+// Must be qualified each time it is referenced if more than one file
+// description entry that contains a LINAGE clause has been specified in the
+// source unit.
+// file-name-2
+// Must be identified by the FD or SD entry in the DATA DIVISION.
+// file-name-2 must be unique within this program.
+
 qualifiedDataName:
                      dataName 
                      ((IN | OF) dataName)* 
                      ((IN | OF) fileName)?;
+identifier:
+              ( qualifiedDataName
+                (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
+                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?) |
+              
+              ( conditionName
+                ((IN | OF) dataName)* 
+                ((IN | OF) fileName)?) |
+              
+              ( LINAGE_COUNTER
+                ((IN | OF) fileName)?);
+              
+// p70: Condition-name
+// condition-name-1
+// Can be referenced by statements and entries either in the program that
+// contains the definition of condition-name-1, or in a program contained
+// within that program.
+// If explicitly referenced, a condition-name must be unique or be made
+// unique through qualification or subscripting (or both) except when the
+// scope of names by itself ensures uniqueness of reference.
+// If qualification is used to make a condition-name unique, the associated
+// conditional variable can be used as the first qualifier. If qualification is
+// used, the hierarchy of names associated with the conditional variable itself
+// must be used to make the condition-name unique.
+// If references to a conditional variable require subscripting, reference to any
+// of its condition-names also requires the same combination of subscripting.
+// In this information, condition-name refers to a condition-name qualified or
+// subscripted, as necessary.
+// data-name-1
+// Can be a record-name.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// file-name-1 must be unique within this program.
+// mnemonic-name-1
+// For information about acceptable values for mnemonic-name-1, see
+// ìSPECIAL-NAMES paragraphî on page 112.
 
-qualifiedConditionName:
-                          conditionName
+// p70: Format 1: condition-name in data division
+
+conditionNameReference:
+                          conditionName 
                           ((IN | OF) dataName)* 
-                          ((IN | OF) fileName)?;
+                          ((IN | OF) fileName)?
+                          (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
-// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
-// data-name or identifier that has the same definition as the implicit definition of the
-// special register can be used.
+// p70: Format 2: condition-name in SPECIAL-NAMES paragraph
 
-qualifiedDataNameOrSpecialRegister:
-                                      qualifiedDataName |
-                                      specialRegister |
-                                      (ADDRESS OF dataNameReference) |
-                                      (LENGTH OF dataNameReference) |
-                                      (LINAGE_COUNTER OF fileName);
+conditionNameReferenceInSpecialNamesParagraph:
+                                                 conditionName 
+                                                ((IN | OF) mnemonicForUPSISwitchName)*;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -9693,7 +9788,7 @@ qualifiedDataNameOrSpecialRegister:
 // a valid subscripted reference to TABLE-THREE is:
 // ELEMENT-THREE (2 2 1)
 // Subscripted references can also be reference modified. See the third example under
-// ‚ÄúReference modification examples‚Äù on page 76. A reference to an item must not be
+// ìReference modification examplesî on page 76. A reference to an item must not be
 // subscripted unless the item is a table element or an item or condition-name
 // associated with a table element.
 // Each table element reference must be subscripted except when such reference
@@ -9750,8 +9845,8 @@ qualifiedDataNameOrSpecialRegister:
 // To be valid during execution, an index value must correspond to a table element
 // occurrence of neither less than one, nor greater than the highest permissible
 // occurrence number.
-// For more information about index-names, see ‚ÄúIndex-name‚Äù on page 71 and
-// ‚ÄúINDEXED BY phrase‚Äù on page 194.
+// For more information about index-names, see ìIndex-nameî on page 71 and
+// ìINDEXED BY phraseî on page 194.
 
 // p74: Relative subscripting
 // In relative subscripting, the name of a table element is followed by a subscript of the
@@ -9766,47 +9861,6 @@ subscript:
              (IntegerLiteral | ALL)  |
              (dataName ((PlusOperator | MinusOperator) IntegerLiteral)?) |
              (indexName ((PlusOperator | MinusOperator) IntegerLiteral)?);
-
-dataNameReference:
-                     qualifiedDataNameOrSpecialRegister
-                     (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-// p70: Condition-name
-// condition-name-1
-// Can be referenced by statements and entries either in the program that
-// contains the definition of condition-name-1, or in a program contained
-// within that program.
-// If explicitly referenced, a condition-name must be unique or be made
-// unique through qualification or subscripting (or both) except when the
-// scope of names by itself ensures uniqueness of reference.
-// If qualification is used to make a condition-name unique, the associated
-// conditional variable can be used as the first qualifier. If qualification is
-// used, the hierarchy of names associated with the conditional variable itself
-// must be used to make the condition-name unique.
-// If references to a conditional variable require subscripting, reference to any
-// of its condition-names also requires the same combination of subscripting.
-// In this information, condition-name refers to a condition-name qualified or
-// subscripted, as necessary.
-// data-name-1
-// Can be a record-name.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// file-name-1 must be unique within this program.
-// mnemonic-name-1
-// For information about acceptable values for mnemonic-name-1, see
-// ‚ÄúSPECIAL-NAMES paragraph‚Äù on page 112.
-
-// p70: Format 1: condition-name in data division
-
-conditionNameReference:
-                          qualifiedConditionName
-                          (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-// p70: Format 2: condition-name in SPECIAL-NAMES paragraph
-
-conditionNameReferenceInSpecialNamesParagraph:
-                                                 conditionName 
-                                                ((IN | OF) mnemonicForUPSISwitchName)*;
 
 // p74: Reference modification
 // Reference modification defines a data item by specifying a leftmost character and
@@ -9892,85 +9946,87 @@ referenceModifier:
 leftMostCharacterPosition: arithmeticExpression;
 length: arithmeticExpression;
 
-// p68: Identifiers
-// When used in a syntax diagram in this information, the term identifier refers to a
-// valid combination of a data-name or function-identifier with its qualifiers,
-// subscripts, and reference-modifiers as required for uniqueness of reference.
-// Rules for identifiers associated with a format can however specifically prohibit
-// qualification, subscripting, or reference modification.
-// The term data-name refers to a name that must not be qualified, subscripted, or
-// reference modified unless specifically permitted by the rules for the format.
-// - For a description of qualification, see ‚ÄúQualification‚Äù on page 65.
-// - For a description of subscripting, see ‚ÄúSubscripting‚Äù on page 71.
-// - For a description of reference modification, see ‚ÄúReference modification‚Äù on
-//   page 74.
-// p69: Duplication of data-names must not occur in those places where the data-names
-// cannot be made unique by qualification.
-// In the same program, the data-name specified as the subject of the entry whose
-// level-number is 01 that includes the EXTERNAL clause must not be the same
-// data-name specified for any other data description entry that includes the
-// EXTERNAL clause.
-// In the same DATA DIVISION, the data description entries for any two data items
-// for which the same data-name is specified must not include the GLOBAL clause.
-// DATA DIVISION names that are explicitly referenced must either be uniquely
-// defined or made unique through qualification. Unreferenced data items need not
-// be uniquely defined. The highest level in a data hierarchy (a data item associated
-// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
-// must be uniquely named if referenced. Data items associated with level-numbers
-// 02 through 49 are successively lower levels of the hierarchy.
 
-// p68: Format 1
-//identifier:
-//              dataName 
-//              ((IN | OF) dataName)* 
-//              ((IN | OF) fileName)?
-//              ('(' subscript+ ')')?
-//              ('(' leftMostCharacterPosition ':' length? ')')?;
-// data-name-1 , data-name-2
-// Can be a record-name.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// file-name-1 must be unique within this program.
+// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
+// data-name or identifier that has the same definition as the implicit definition of the
+// special register can be used.
 
-// p69: Format 2
-//identifier:
-//              (conditionName | dataName)
-//              ((IN | OF) dataName)* 
-//              ((IN | OF) fileName)?;
-// data-name-1 , data-name-2
-// Can be a record-name.
-// condition-name-1
-// Can be referenced by statements and entries either in the program that
-// contains the configuration section or in a program contained within that
-// program.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// Must be unique within this program.
+dataValue : 
+                dataName |
+                (ADDRESS OF dataName) |
+                (LENGTH OF dataName) |
+                specialRegister;
 
-// p69: Format 3
-//identifier:
-//              LINAGE_COUNTER
-//              ((IN | OF) fileName)?
-// LINAGE-COUNTER
-// Must be qualified each time it is referenced if more than one file
-// description entry that contains a LINAGE clause has been specified in the
-// source unit.
-// file-name-2
-// Must be identified by the FD or SD entry in the DATA DIVISION.
-// file-name-2 must be unique within this program.
+dataName : UserDefinedWord;
 
-identifier:
-              ( dataNameReference
-                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)? 
-              ) |              
-              conditionNameReference;
-              
+// ****************
+// ADDITIONAL TOKENS
 
+// -- Syntax words found in grammar but not declared as keywords
 
+// EBCDIC : 'EBCDIC'; // found in alphabet clause
+// SYMBOL : 'SYMBOL'; // found in currencySignClause
+// UNBOUNDED : 'UNBOUNDED'; // found in occursClause
 
+// DATE_YYYYMMDD : 'DATE YYYYMMDD'; // found in acceptStatement
+// DAY_YYYYDDD : 'DAY YYYYDDD'; // found in acceptStatement
+// NEW : 'NEW'; // found in invokeStatement
 
+// ENCODING : 'ENCODING'; // found in xmlGenerateStatement
+// XML_DECLARATION : 'XML-DECLARATION'; // found in xmlGenerateStatement
+// ATTRIBUTES : 'ATTRIBUTES'; // found in xmlGenerateStatement
+// NAMESPACE : 'NAMESPACE'; // found in xmlGenerateStatement
+// NAMESPACE_PREFIX  : 'NAMESPACE-PREFIX'; // found in xmlGenerateStatement
+// NAME : 'NAME'; // found in xmlGenerateStatement
+// ATTRIBUTE : 'ATTRIBUTE'; // found in xmlGenerateStatement
+// ELEMENT : 'ELEMENT'; // found in xmlGenerateStatement
+// NONNUMERIC : 'NONNUMERIC'; // found in xmlGenerateStatement
+// PARSE : 'PARSE'; // found in xmlParseStatement
+// VALIDATING : 'VALIDATING'; // found in xmlParseStatement
 
+// -- Compiler directed statements
 
+// cblProcessStatement
+// PROCESS : 'PROCESS';
+// controlCblStatement
+// ASTERISK_CONTROL : '*CONTROL';
+// ASTERISK_CBL : '*CBL';
+// SOURCE : 'SOURCE';
+// NOSOURCE : 'NOSOURCE';
+// LIST : 'LIST';
+// NOLIST : 'NOLIST';
+// MAP : 'MAP';
+// NOMAP : 'NOMAP';
 
+// -- DB2 coprocessor
 
+// INCLUDE : 'INCLUDE'; // found in execSqlIncludeStatement
+// DECLARE : 'DECLARE'; // found in execSqlDeclareStatement
 
+// p433: Precompiler: With the DB2 precompiler, if you pass host variables that might be
+// located at different addresses when the program is called more than once, the
+// called program must reset SQL-INIT-FLAG. Resetting this flag indicates to DB2 that
+// storage must be initialized when the next SQL statement runs. To reset the flag,
+// insert the statement MOVE ZERO TO SQL-INIT-FLAG in the PROCEDURE DIVISION of the
+// called program ahead of any executable SQL statements that use those host
+// variables.
+// Coprocessor: With the DB2 coprocessor, the called program does not need to reset
+// SQL-INIT-FLAG. An SQL-INIT-FLAG is automatically defined in the program to aid
+// program portability. However, statements that modify SQL-INIT-FLAG, such as MOVE
+// ZERO TO SQL-INIT-FLAG, have no effect on the SQL processing in the program.
+
+// DB2 11 for zOs - Application Programming and SQL Guide p330:
+// If your program uses the DB2 precompiler and uses parameters that are
+// defined in LINKAGE SECTION as host variables to DB2 and the address of the
+// input parameter might change on subsequent invocations of your program, your
+// program must reset the variable SQL-INIT-FLAG. This flag is generated by the
+// DB2 precompiler. Resetting this flag indicates that the storage must initialize when
+// the next SQL statement executes. To reset the flag, insert the statement MOVE
+// ZERO TO SQL-INIT-FLAG in the called program's PROCEDURE DIVISION, ahead
+// of any executable SQL statements that use the host variables. If you use the
+// COBOL DB2 coprocessor, the called program does not need to reset
+// SQL-INIT-FLAG.
+
+// SQL_INIT_FLAG : 'SQL-INIT-FLAG';
+
+// ----

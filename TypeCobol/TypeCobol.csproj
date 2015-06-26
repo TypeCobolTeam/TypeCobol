@@ -348,7 +348,6 @@
     <None Include="Documentation\Studies\Lexical families.xlsx" />
     <None Include="Documentation\Studies\Literals and Identifiers in parser rules.xlsx" />
     <None Include="Documentation\Studies\Pipeline - compilation steps.docx" />
-    <None Include="Documentation\Studies\Text editors functions study.xlsx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
