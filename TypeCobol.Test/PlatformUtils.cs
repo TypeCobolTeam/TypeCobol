@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace TypeCobol.Test
 {
@@ -10,7 +9,7 @@ namespace TypeCobol.Test
         /// <summary>
         /// Relative path of the test project in VS solution
         /// </summary>
-        public const string RELATIVE_TEST_PROJECT_PATH = @"TypeCobol\TypeCobol.Test";
+        public const string RELATIVE_TEST_PROJECT_PATH = "TypeCobol.Test";
         
         static PlatformUtils()
         {
