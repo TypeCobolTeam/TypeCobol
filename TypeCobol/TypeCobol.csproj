@@ -274,6 +274,9 @@
     <Compile Include="Compiler\CompilationDocument.cs" />
     <Compile Include="Compiler\CompilationProject.cs" />
     <Compile Include="Compiler\CompilationUnit.cs" />
+    <Compile Include="Compiler\Concurrency\DocumentVersionProvider.cs" />
+    <Compile Include="Compiler\Concurrency\IDocumentSnapshot.cs" />
+    <Compile Include="Compiler\Concurrency\IDocumentVersion.cs" />
     <Compile Include="Compiler\Diagnostics\Diagnostic.cs" />
     <Compile Include="Compiler\Diagnostics\DiagnosticMessage.cs" />
     <Compile Include="Compiler\Diagnostics\MessageCode.cs" />
