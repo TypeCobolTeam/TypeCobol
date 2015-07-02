@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.Text
                 textChangedEventsSource.OnNext(documentClearedEvent);
 
                 // Send all new text lines
-                SendSocumentChangeEvent();
+                SendDocumentChangeEvent();
             }
         }
 
@@ -306,7 +306,7 @@ namespace TypeCobol.Compiler.Text
         public void StartSendingChangeEvents()
         {
             // Send an initial TextChangedEvent grouping all line insertions in one batch
-            SendSocumentChangeEvent();
+            SendDocumentChangeEvent();
 
             // Enable further notifications
             sendNextChangeEvents = true;
@@ -315,7 +315,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Send a change notification including all the text lines
         /// </summary>
-        private void SendSocumentChangeEvent()
+        private void SendDocumentChangeEvent()
         {
             TextChangedEvent textLoadedEvent = new TextChangedEvent();
             foreach (var line in lines)
