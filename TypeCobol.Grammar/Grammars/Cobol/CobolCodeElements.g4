@@ -4413,8 +4413,25 @@ acceptStatement:
 // For more information, see “Delimited scope statements” on page 280.
 
 addStatement:
-                ADD (CORRESPONDING | CORR)? (identifier | numericLiteral)+ TO ((identifier ROUNDED?)+ | numericLiteral)
-                (GIVING (identifier ROUNDED?)+)?;
+                ADD corresponding? firstAddOperand TO secondAddOperand givingPhrase?;
+
+firstAddOperand:
+				numericLiteralOrIdentifier+;
+
+secondAddOperand:
+				numericLiteralOrIdentifier+;
+
+numericLiteralOrIdentifier:
+				identifierRounded | numericLiteral;
+
+identifierRounded:
+				identifier ROUNDED?;
+
+corresponding:
+				CORRESPONDING | CORR;
+
+givingPhrase:
+				GIVING identifierRounded+;
 
 //addStatementConditional:
 //                           addStatement

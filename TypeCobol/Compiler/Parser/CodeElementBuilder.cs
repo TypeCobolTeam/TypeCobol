@@ -430,7 +430,50 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
         {
-            CodeElement = new AddStatement();
+            AddStatement statement = new AddStatement();
+
+            statement.Corresponding = (context.corresponding() != null);
+            foreach (var operandContext in context.firstAddOperand().numericLiteralOrIdentifier())
+            {
+                statement.First.Add(CreateOperand(operandContext));
+            }
+            bool literalsAllowedAsSecondOperand = false;
+            if (context.givingPhrase() != null)
+            {
+                literalsAllowedAsSecondOperand = true;
+                statement.Third = new List<Operand>();
+                foreach (var operandContext in context.givingPhrase().identifierRounded())
+                {
+                    statement.Third.Add(CreateOperand(operandContext));
+                }
+            }
+            foreach (var operandContext in context.secondAddOperand().numericLiteralOrIdentifier())
+            {
+                //TODO: if !literalsAllowedAsSecondOperand, do not allow literals :P
+                statement.Second.Add(CreateOperand(operandContext));
+            }
+
+            CodeElement = statement;
+        }
+        // These are factories, and should be in class Operand 
+        // Altough nice from a OOP POV, this would introduce dependencies between package
+        // TODO: Do we want to do this ?
+        private static Operand CreateOperand(CobolCodeElementsParser.NumericLiteralOrIdentifierContext operandContext)
+        {
+            if (operandContext.identifierRounded() != null)
+            {
+                return CreateOperand(operandContext.identifierRounded());
+            }
+            Token literal = ParseTreeUtils.GetFirstToken(operandContext.numericLiteral());
+            // TODO: how to represent literals ?
+            return new Operand() { Rounded = false, Value = literal };
+        }
+        private static Operand CreateOperand(CobolCodeElementsParser.IdentifierRoundedContext identifierRoundedContext)
+        {
+            Token identifier = ParseTreeUtils.GetFirstToken(identifierRoundedContext.identifier());
+            bool rounded = identifierRoundedContext.ROUNDED() != null;
+            // TODO: how to represent identifiers ?
+            return new Operand() { Rounded = rounded, Value = identifier };
         }
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
