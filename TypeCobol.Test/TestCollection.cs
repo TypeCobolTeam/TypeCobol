@@ -24,6 +24,8 @@ namespace TypeCobol.Test
             TestCobolFile.Check_ASCIICobolFile_ReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_LinuxReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_FreeTextFormat();
+
+            TestCobolFile.Check_UTF8File();
         }
 
         public static void CheckText()
