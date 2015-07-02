@@ -33,7 +33,7 @@ namespace TypeCobol.Test
         /// </summary>
         public static string GetPathForProjectFile(string relativeFilePath)
         {
-            return ABSOLUTE_TEST_PROJECT_PATH + "\\" + relativeFilePath;
+            return ABSOLUTE_TEST_PROJECT_PATH + Path.DirectorySeparatorChar + relativeFilePath;
         }
 
         /// <summary>
