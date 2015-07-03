@@ -430,50 +430,55 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
         {
-            AddStatement statement = new AddStatement();
-
-            statement.Corresponding = (context.corresponding() != null);
-            foreach (var operandContext in context.firstAddOperand().numericLiteralOrIdentifier())
+            CodeElement = new AddStatement();
+            if (context.addStatementFormat1() != null)
             {
-                statement.First.Add(CreateOperand(operandContext));
+                EnterAddStatementFormat1(context.addStatementFormat1());
             }
-            bool literalsAllowedAsSecondOperand = false;
-            if (context.givingPhrase() != null)
+            else
+            if (context.addStatementFormat2() != null)
             {
-                literalsAllowedAsSecondOperand = true;
-                statement.Third = new List<Operand>();
-                foreach (var operandContext in context.givingPhrase().identifierRounded())
+                EnterAddStatementFormat2(context.addStatementFormat2());
+            }
+            else
+            if (context.addStatementFormat3() != null)
+            {
+                EnterAddStatementFormat3(context.addStatementFormat3());
+            }
+        }
+
+        public override void EnterAddStatementFormat1(CobolCodeElementsParser.AddStatementFormat1Context context)
+        {
+            AddStatement statement = (AddStatement)CodeElement;
+            if (context.identifierOrLiteral() != null)
+            {
+                foreach (var operand in context.identifierOrLiteral())
                 {
-                    statement.Third.Add(CreateOperand(operandContext));
+                    // TODO
                 }
             }
-            foreach (var operandContext in context.secondAddOperand().numericLiteralOrIdentifier())
+            if (context.identifierRounded() != null)
             {
-                //TODO: if !literalsAllowedAsSecondOperand, do not allow literals :P
-                statement.Second.Add(CreateOperand(operandContext));
+                foreach (var operand in context.identifierRounded())
+                {
+                    // TODO
+                }
             }
+            
+        }
 
-            CodeElement = statement;
-        }
-        // These are factories, and should be in class Operand 
-        // Altough nice from a OOP POV, this would introduce dependencies between package
-        // TODO: Do we want to do this ?
-        private static Operand CreateOperand(CobolCodeElementsParser.NumericLiteralOrIdentifierContext operandContext)
+        public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
         {
-            if (operandContext.identifierRounded() != null)
-            {
-                return CreateOperand(operandContext.identifierRounded());
-            }
-            Token literal = ParseTreeUtils.GetFirstToken(operandContext.numericLiteral());
-            // TODO: how to represent literals ?
-            return new Operand() { Rounded = false, Value = literal };
+            AddStatement statement = (AddStatement)CodeElement;
         }
-        private static Operand CreateOperand(CobolCodeElementsParser.IdentifierRoundedContext identifierRoundedContext)
+
+        public override void EnterAddStatementFormat3(CobolCodeElementsParser.AddStatementFormat3Context context)
         {
-            Token identifier = ParseTreeUtils.GetFirstToken(identifierRoundedContext.identifier());
-            bool rounded = identifierRoundedContext.ROUNDED() != null;
-            // TODO: how to represent identifiers ?
-            return new Operand() { Rounded = rounded, Value = identifier };
+            AddStatement statement = (AddStatement)CodeElement;
+            statement.Corresponding = (context.corresponding() != null);
+            //TODO 
+            context.identifier(); //1st operands group
+            context.identifierRounded();//2nd operands group & result
         }
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)

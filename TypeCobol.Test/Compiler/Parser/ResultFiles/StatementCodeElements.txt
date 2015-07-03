@@ -1,0 +1,65 @@
+﻿--- Code Elements ---
+[[AddStatement]] [1,3:ADD]<ADD> --> [10,10:x]<UserDefinedWord>
+
+[[SentenceEnd]] [11,11+:.]<PeriodSeparator> --> [11,11+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [18,21:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [17,20:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [21,21+:.]<PeriodSeparator> --> [21,21+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [26,26:x]<UserDefinedWord>
+
+[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [10,10:x]<UserDefinedWord>
+
+[[SentenceEnd]] [11,11+:.]<PeriodSeparator> --> [11,11+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [12,15:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [16,16+:.]<PeriodSeparator> --> [16,16+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [16,19:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [19,19:x]<UserDefinedWord>
+
+[[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [25,28:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [29,29+:.]<PeriodSeparator> --> [29,29+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [26,29:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [19,19:x]<UserDefinedWord>
+
+[[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [21,21:y]<UserDefinedWord>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [21,21:x]<UserDefinedWord>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [26,29:toto]<UserDefinedWord>
+
+[[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [24,24:x]<UserDefinedWord>
+
+[[SentenceEnd]] [25,25+:.]<PeriodSeparator> --> [25,25+:.]<PeriodSeparator>
+
+[[AddStatement]] [1,3:ADD]<ADD> --> [15,15:x]<UserDefinedWord>
+
+[[SentenceEnd]] [16,16+:.]<PeriodSeparator> --> [16,16+:.]<PeriodSeparator>
+

@@ -10,6 +10,7 @@ namespace TypeCobol.Compiler.CodeElements
         { 
             First = new List<Operand>();
             Second = new List<Operand>();
+            Corresponding = false;
         }
 
         public bool Corresponding { get; set; }
