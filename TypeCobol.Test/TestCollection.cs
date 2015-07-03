@@ -98,7 +98,6 @@ namespace TypeCobol.Test
 
         public static void CheckParser()
         {
-            TestCodeElements.Check_StatementCodeElements();
             TestTokenSource.Check_CobolCharStream();
             TestTokenSource.Check_CobolTokenSource();
             TestTokenSource.Check_CobolTokenSource_WithStartToken();

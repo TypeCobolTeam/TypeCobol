@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -429,8 +430,8 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
-        {
-            CodeElement = new AddStatement();
+        {/*
+            //TODO? we don't need this as the 3 AddFormat methods will be visited, do we ?
             if (context.addStatementFormat1() != null)
             {
                 EnterAddStatementFormat1(context.addStatementFormat1());
@@ -445,40 +446,75 @@ namespace TypeCobol.Compiler.Parser
             {
                 EnterAddStatementFormat3(context.addStatementFormat3());
             }
+          */
         }
 
         public override void EnterAddStatementFormat1(CobolCodeElementsParser.AddStatementFormat1Context context)
         {
-            AddStatement statement = (AddStatement)CodeElement;
+            AddStatement statement = new AddStatement();
+            statement.operations = new List<Expression>();
+
+            Expression left = null;
             if (context.identifierOrLiteral() != null)
             {
+                // create the "left" operand of this addition
                 foreach (var operand in context.identifierOrLiteral())
                 {
-                    // TODO
+                    Expression tail = null;
+                    if (operand.identifier() != null)
+                    {
+                        tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
+                    }
+                    else
+                    if (operand.literal() != null)
+                    {
+                        tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
+                    }
+                    if (tail == null) continue;
+                    if (left == null)
+                    {
+                        // first element of the list that is the "left" operand
+                        left = tail;
+                    }
+                    else
+                    {
+                        // add this element to the others, to get the sum that is the "left" operand
+                        left = new Addition(left, tail);
+                    }
                 }
+
             }
             if (context.identifierRounded() != null)
             {
+                // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
+                // so add the "left" operand to all the elements of the "right" operand
                 foreach (var operand in context.identifierRounded())
                 {
-                    // TODO
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
+                    Expression right = new Identifier(token, operand.ROUNDED() != null);
+                    //TODO? question: do C# lists preserve order ?
+                    statement.operations.Add(new Addition(left, right));
                 }
             }
-            
+            CodeElement = statement;
         }
 
         public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
         {
-            AddStatement statement = (AddStatement)CodeElement;
+            AddStatement statement = new AddStatement();
+            statement.operations = new List<Expression>();
+            // TODO? is it mandatory to create named rules to differentiate between the "identifierOrLiteral"s ?
         }
 
         public override void EnterAddStatementFormat3(CobolCodeElementsParser.AddStatementFormat3Context context)
         {
-            AddStatement statement = (AddStatement)CodeElement;
-            statement.Corresponding = (context.corresponding() != null);
-            //TODO 
-            context.identifier(); //1st operands group
-            context.identifierRounded();//2nd operands group & result
+            AddStatement statement = new AddStatement();
+            statement.operations = new List<Expression>();
+
+            Expression left = new Identifier(ParseTreeUtils.GetFirstToken(context.identifier()));
+            Token token = ParseTreeUtils.GetFirstToken(context.identifierRounded());
+            Expression right = new Identifier(token, context.identifierRounded().ROUNDED() != null);
+            statement.operations.Add(new Addition(left, right));
         }
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
