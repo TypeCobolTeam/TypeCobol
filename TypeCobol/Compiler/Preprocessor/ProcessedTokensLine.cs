@@ -255,39 +255,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 return null;
             }
         }
-
-        /// <summary>
-        /// Tokens produced after parsing the compiler directives.
-        /// If a compiler directive is found, several tokens of the source text are grouped 
-        /// into one single CompilerDirectiveToken (which can be continued on several lines).
-        /// </summary>
-        public IEnumerable<Token> TokensAfterReplaceProcessing
-        {
-            get
-            {
-                if (ProcessingState <= PreprocessorState.NeedsCompilerDirectiveParsing)
-                {
-                    throw new InvalidOperationException("REPLACE directives on this line have not been processed yet");
-                }
-                if (tokensAfterReplaceProcessing == null)
-                {
-                    return TokensWithCompilerDirectives;
-                }
-                else
-                {
-                    return tokensAfterReplaceProcessing;
-                }
-            }
-        }
-
-        // Only needed if several source tokens must be grouped into a single CompilerDirectiveToken
-        private IList<Token> tokensAfterReplaceProcessing;
-
-        /// <summary>
-        /// True if compiler directives have been recognized on the current line
-        /// </summary>
-        public bool HasReplacedTokens { get { return tokensAfterReplaceProcessing != null; } }
-
+               
         /// <summary>
         /// True if this line contains one processed token continued from the previous line
         /// </summary>

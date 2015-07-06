@@ -129,6 +129,7 @@
     <Compile Include="Compiler\CodeElements\Entry\FileDescriptionEntry.cs" />
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxBoolean.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxInteger.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxProperty.cs" />
@@ -274,6 +275,9 @@
     <Compile Include="Compiler\CompilationDocument.cs" />
     <Compile Include="Compiler\CompilationProject.cs" />
     <Compile Include="Compiler\CompilationUnit.cs" />
+    <Compile Include="Compiler\Concurrency\DocumentVersionProvider.cs" />
+    <Compile Include="Compiler\Concurrency\IDocumentSnapshot.cs" />
+    <Compile Include="Compiler\Concurrency\IDocumentVersion.cs" />
     <Compile Include="Compiler\Diagnostics\Diagnostic.cs" />
     <Compile Include="Compiler\Diagnostics\DiagnosticMessage.cs" />
     <Compile Include="Compiler\Diagnostics\MessageCode.cs" />

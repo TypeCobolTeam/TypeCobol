@@ -1,34 +1,32 @@
 ﻿using System;
+using System.Text;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
     static class TestCodeElements
     {
-        // --- Tests the recognition of potentially ambiguous CodeElements which begin with the same first Token --- 
-
-        public static void Check_ATCodeElements()
+        private static void Check(string testName, DocumentFormat format = null)
         {
-            string testName = "ATCodeElements";
-
             // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName, format);
             // Check code elements
             string result = ParserUtils.DumpCodeElements(compilationUnit);
             ParserUtils.CheckWithResultFile(result, testName);
         }
 
+        // --- Tests the recognition of potentially ambiguous CodeElements which begin with the same first Token --- 
+
+        public static void Check_ATCodeElements()
+        {
+            Check("ATCodeElements");
+        }
+
         public static void Check_ENDCodeElements()
         {
-            string testName = "ENDCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("ENDCodeElements");
         }
 
         public static void Check_DISPLAYCodeElements()
@@ -45,148 +43,69 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_EXITCodeElements()
         {
-            string testName = "EXITCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("EXITCodeElements");
         }
 
         public static void Check_IDCodeElements()
         {
-            string testName = "IDCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("IDCodeElements");
         }
 
         public static void Check_NOTCodeElements()
         {
-            string testName = "NOTCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("NOTCodeElements");
         }
 
         public static void Check_ONCodeElements()
         {
-            string testName = "ONCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("ONCodeElements");
         }
 
         public static void Check_PERFORMCodeElements()
         {
-            string testName = "PERFORMCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("PERFORMCodeElements");
         }
 
         public static void Check_UDWCodeElements()
         {
-            string testName = "UDWCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("UDWCodeElements");
         }
 
         public static void Check_WHENCodeElements()
         {
-            string testName = "WHENCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("WHENCodeElements");
         }
 
         public static void Check_XMLCodeElements()
         {
-            string testName = "XMLCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("XMLCodeElements");
         }
 
         // --- Tests the correct parsing of all CodeElements ---
 
         public static void Check_HeaderCodeElements()
         {
-            string testName = "HeaderCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("HeaderCodeElements");
         }
 
         public static void Check_IdentificationCodeElements()
         {
-            string testName = "IdentificationCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("IdentificationCodeElements");
         }
 
         public static void Check_ParagraphCodeElements()
         {
-            string testName = "ParagraphCodeElements";
+            Check("ParagraphCodeElements");
+        }
 
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+        public static void Check_StatementCodeElements()
+        {
+            Check("StatementCodeElements", new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat));
         }
 
         public static void Check_EntryCodeElements()
         {
-            string testName = "EntryCodeElements";
-
-            // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
-
-            // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
-            ParserUtils.CheckWithResultFile(result, testName);
+            Check("EntryCodeElements");
         }
     }
 }
