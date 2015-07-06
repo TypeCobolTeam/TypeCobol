@@ -473,24 +473,26 @@ namespace TypeCobol.Compiler.Parser
         {
             var displayStement = new DisplayStatement();
 
-            Token advancingFlag = ParseTreeUtils.GetFirstToken(context.ADVANCING());
-            if (advancingFlag != null)
+            Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
+            if (withNoAdvancing != null)
             {
-                displayStement.IsWithNoAdvancing = new SyntaxBoolean(advancingFlag);
+                displayStement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
             }
 
-            Token uponFlag = ParseTreeUtils.GetFirstToken(context.UPON());
-            if (uponFlag != null)
+            if (context.uponEnvironmentName() != null)
             {
-                Token envName = ParseTreeUtils.GetFirstToken(context.environmentName());
+                Token envName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().environmentName());
                 if (envName != null)
                 {
+                    EnvironmentName envNameEnum = new EnvironmentName();
+                    Enum.TryParse(envName.Text, true, out envNameEnum);
+                   
                     //TODO
-                    //displayStement.UponEnvironmentName = new EnvironmentName(envName);
+                    displayStement.UponEnum = new SyntaxEnum<Enum>(envName, envNameEnum);
                 }
                 else
                 {
-                    Token mnemonicForEnvName = ParseTreeUtils.GetFirstToken(context.mnemonicForEnvironmentName());
+                    Token mnemonicForEnvName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicForEnvironmentName());
                     if (mnemonicForEnvName != null)
                     {
                         displayStement.UponMnemonicForEnvironmentName = new MnemonicForEnvironmentName(mnemonicForEnvName);

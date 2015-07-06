@@ -31,6 +31,18 @@ namespace TypeCobol.Test.Compiler.Parser
             ParserUtils.CheckWithResultFile(result, testName);
         }
 
+        public static void Check_DISPLAYCodeElements()
+        {
+            string testName = "DISPLAYCodeElements";
+
+            // Compile test file
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName);
+
+            // Check code elements
+            string result = ParserUtils.DumpCodeElements(compilationUnit);
+            ParserUtils.CheckWithResultFile(result, testName);
+        }
+
         public static void Check_EXITCodeElements()
         {
             string testName = "EXITCodeElements";

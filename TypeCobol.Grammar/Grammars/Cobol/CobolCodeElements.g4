@@ -4804,8 +4804,15 @@ deleteStatementEnd:
 
 displayStatement:
                     DISPLAY (identifier | literal)+
-                    (UPON (mnemonicForEnvironmentName | environmentName))?
-                    (WITH? NO ADVANCING)?;
+                    uponEnvironmentName?
+                    withNoAdvancing?;
+
+uponEnvironmentName:
+					(UPON (mnemonicForEnvironmentName | environmentName));
+
+withNoAdvancing:
+					(WITH? NO ADVANCING);
+
 
 // p325: DIVIDE statement
 // The DIVIDE statement divides one numeric data item into or by others and sets the values of data items equal to the quotient and remainder.
@@ -4889,6 +4896,9 @@ divideStatement:
                    DIVIDE (identifier | literal) (INTO | BY) ((identifier ROUNDED?)+ | literal)
                    (GIVING (identifier ROUNDED?)+)?
                    (REMAINDER identifier)?;
+
+
+
 
 //divideStatementConditional:
 //                              divideStatement

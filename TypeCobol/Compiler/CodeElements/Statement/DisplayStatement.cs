@@ -8,6 +8,9 @@ namespace TypeCobol.Compiler.CodeElements
         { }
 
 
+
+        //public IList<> varsToDisplay { get; set; }
+
         /// <summary>
         /// / UPON 
         /// environment-name-1 or the environment name associated with mnemonic-name-1 must be associated with an output device. See “SPECIAL-NAMES paragraph” on page 112. 
@@ -40,7 +43,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// When the UPON phrase is omitted, the system's logical output device is assumed. The list of valid environment-names in a DISPLAY statement is shown in Table 5 on page 114. 
         /// For details on routing DISPLAY output to stdout, see Displaying values on a screen or in a file (
         /// </summary>
-        public EnvironmentName UponEnvironmentName { get; set; }
+        public SyntaxEnum<Enum> UponEnum { get; set; }
 
         /// <summary>
         /// WITH NO ADVANCING 
