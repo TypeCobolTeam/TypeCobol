@@ -430,70 +430,61 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
-        {/*
-            //TODO? we don't need this as the 3 AddFormat methods will be visited, do we ?
-            if (context.addStatementFormat1() != null)
-            {
-                EnterAddStatementFormat1(context.addStatementFormat1());
+        {
+            //DO nothing: delegate to AddStatementFormatX methods
+        }
+
+        private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
+        {
+            Expression left = null;
+            foreach (var operand in operands) {
+                Expression tail = null;
+                if (operand.identifier() != null)
+                {
+                    tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
+                }
+                else
+                if (operand.literal() != null)
+                {
+                    tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
+                }
+                if (tail == null) continue;
+                if (left == null)
+                {
+                    // first element of the list that is the "left" operand
+                    left = tail;
+                }
+                else
+                {
+                    // add this element to the others, to get the sum that is the "left" operand
+                    left = new Addition(left, tail);
+                }
             }
-            else
-            if (context.addStatementFormat2() != null)
-            {
-                EnterAddStatementFormat2(context.addStatementFormat2());
-            }
-            else
-            if (context.addStatementFormat3() != null)
-            {
-                EnterAddStatementFormat3(context.addStatementFormat3());
-            }
-          */
+            return left;
         }
 
         public override void EnterAddStatementFormat1(CobolCodeElementsParser.AddStatementFormat1Context context)
         {
             AddStatement statement = new AddStatement();
-            statement.operations = new List<Expression>();
 
             Expression left = null;
             if (context.identifierOrLiteral() != null)
             {
                 // create the "left" operand of this addition
-                foreach (var operand in context.identifierOrLiteral())
-                {
-                    Expression tail = null;
-                    if (operand.identifier() != null)
-                    {
-                        tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
-                    }
-                    else
-                    if (operand.literal() != null)
-                    {
-                        tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
-                    }
-                    if (tail == null) continue;
-                    if (left == null)
-                    {
-                        // first element of the list that is the "left" operand
-                        left = tail;
-                    }
-                    else
-                    {
-                        // add this element to the others, to get the sum that is the "left" operand
-                        left = new Addition(left, tail);
-                    }
-                }
-
+                left = createLeftOperand(context.identifierOrLiteral());
             }
-            if (context.identifierRounded() != null)
+            if (left != null && context.identifierRounded() != null)
             {
                 // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
                 // so add the "left" operand to all the elements of the "right" operand
+                int c = 0;
                 foreach (var operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
                     //TODO? question: do C# lists preserve order ?
                     statement.operations.Add(new Addition(left, right));
+                    statement.affectations.Add(token, c++);
                 }
             }
             CodeElement = statement;
@@ -502,19 +493,37 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
         {
             AddStatement statement = new AddStatement();
-            statement.operations = new List<Expression>();
-            // TODO? is it mandatory to create named rules to differentiate between the "identifierOrLiteral"s ?
+
+            if (context.identifierOrLiteral() != null)
+            {
+                // here we add all abc..yz in "ADD ab..y TO z" without distinction between
+                // what is after the ADD and before the TO, and what is after the TO
+                statement.operations.Add(createLeftOperand(context.identifierOrLiteral()));
+            }
+            if (statement.operations.Count > 0 && context.identifierRounded() != null)
+            {
+                foreach (var operand in context.identifierRounded())
+                {
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
+                    Expression right = new Identifier(token, operand.ROUNDED() != null);
+                    statement.affectations.Add(token, 0);
+                }
+            }
+
+            CodeElement = statement;
         }
 
         public override void EnterAddStatementFormat3(CobolCodeElementsParser.AddStatementFormat3Context context)
         {
             AddStatement statement = new AddStatement();
-            statement.operations = new List<Expression>();
 
             Expression left = new Identifier(ParseTreeUtils.GetFirstToken(context.identifier()));
             Token token = ParseTreeUtils.GetFirstToken(context.identifierRounded());
             Expression right = new Identifier(token, context.identifierRounded().ROUNDED() != null);
             statement.operations.Add(new Addition(left, right));
+            statement.affectations.Add(token, 0);
+
+            CodeElement = statement;
         }
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)

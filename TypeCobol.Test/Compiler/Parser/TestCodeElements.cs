@@ -3,6 +3,7 @@ using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Test.Compiler.CodeElements;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -86,14 +87,39 @@ namespace TypeCobol.Test.Compiler.Parser
             Check("ParagraphCodeElements");
         }
 
-        public static void Check_StatementCodeElements()
-        {
-            Check("StatementCodeElements", new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat));
-        }
-
         public static void Check_EntryCodeElements()
         {
             Check("EntryCodeElements");
+        }
+
+        public static void Check_StatementCodeElements()
+        {
+            DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+            CompilationUnit unit = ParserUtils.ParseCobolFile("StatementCodeElements", format);
+            ArithmeticStatementTester tester = new ArithmeticStatementTester();
+            string[] rpn = { 
+                // format 1
+                "x = a x +",
+                "toto = titi tata + toto +",
+                "x = a b + ab + x +, toto = a b + ab + toto +",
+                "x = a x +",
+                "x = 1 x +",
+                "toto = 1 2 + toto +",
+                "x = 1 2 + 3 + x +, toto = 1 2 + 3 + toto +",
+                //format 2
+                "x = a m +",
+                "toto = titi tata +",
+                "x = a b + ab + m +, toto = a b + ab + m +",
+                "x = 1 m +",
+                "x = 1 m +, y = 1 m +",
+                "x = a 1 + 2 +",
+                "x = a b + ab + 1 +, toto = a b + ab + 1 +",
+                // format 3
+                "x = a x +",
+                "x = a x +",
+            };
+            tester.CompareWithRPN(unit.SyntaxDocument, rpn);
+            //Check("StatementCodeElements", new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat));
         }
     }
 }

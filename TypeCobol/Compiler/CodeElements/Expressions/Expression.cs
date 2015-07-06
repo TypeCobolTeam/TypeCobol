@@ -14,6 +14,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.left = left;
             this.right = right;
         }
+        public override string ToString() { //RPN
+            return left.ToString()+" "+right.ToString()+" +";
+        }
     }
     public class Identifier : Expression
     {
@@ -24,6 +27,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.token = token;
             this.rounded = rounded;
         }
+        public override string ToString() { return token.Text; }
     }
     public class Literal : Expression
     {
@@ -32,5 +36,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             this.token = token;
         }
+        public override string ToString() { return token.Text; }
     }
 }

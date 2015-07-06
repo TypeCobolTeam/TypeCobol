@@ -71,6 +71,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Compiler\CodeElements\ArithmeticStatementTester.cs" />
     <Compile Include="Compiler\File\TestCobolFile.cs" />
     <Compile Include="Compiler\File\TestIBMCodePages.cs" />
     <Compile Include="Compiler\Parser\ParserUtils.cs" />

@@ -119,7 +119,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_StatementCodeElements();
             TestCodeElements.Check_EntryCodeElements();
 
-            TestParser.Check_ParserIntegration(); 
+            TestParser.Check_ParserIntegration();
         }
 
         public static void CheckPipeline()
