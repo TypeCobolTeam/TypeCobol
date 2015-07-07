@@ -429,6 +429,31 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AcceptStatement();
         }
 
+
+        public SyntaxNumber createNumber(CobolCodeElementsParser.NumericLiteralContext context)
+        {
+            if (context.IntegerLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral());
+                return new SyntaxInteger(token);
+            }
+            if (context.DecimalLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral());
+                return new SyntaxDecimal(token);
+            }
+            if (context.FloatingPointLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral());
+                return new SyntaxFloat(token);
+            }
+            if (context.ZERO() != null || context.ZEROS() != null || context.ZEROES() != null)
+            {
+                throw new System.Exception("TODO!");
+            }
+            throw new System.Exception("This is not a number!");
+        }
+
         private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
         {
             Expression left = null;
@@ -441,7 +466,12 @@ namespace TypeCobol.Compiler.Parser
                 else
                 if (operand.literal() != null)
                 {
-                    tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
+                    SyntaxNumber number = null;
+                    if (operand.literal().numericLiteral() != null)
+                    {
+                        number = createNumber(operand.literal().numericLiteral());
+                        tail = new Number(number);
+                    }
                 }
                 if (tail == null) continue;
                 if (left == null)

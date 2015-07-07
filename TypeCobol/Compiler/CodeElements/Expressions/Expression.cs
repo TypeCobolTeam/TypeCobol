@@ -3,8 +3,9 @@
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
     public class Expression { }
+    public class ArithmeticExpression : Expression { }
 
-    public class Addition : Expression
+    public class Addition : ArithmeticExpression
     {
         public Expression left { get; set; }
         public Expression right { get; set; }
@@ -29,13 +30,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
         public override string ToString() { return token.Text; }
     }
-    public class Literal : Expression
+    public class Number : ArithmeticExpression
     {
-        public Token token { get; set; }
-        public Literal(Token token)
+        public SyntaxNumber number { get; set; }
+        public Number(SyntaxNumber number)
         {
-            this.token = token;
+            this.number = number;
         }
-        public override string ToString() { return token.Text; }
+        public override string ToString() { return number.ToString(); }
     }
 }
