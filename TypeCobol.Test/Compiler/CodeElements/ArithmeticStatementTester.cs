@@ -7,15 +7,13 @@ namespace TypeCobol.Test.Compiler.CodeElements
 {
     class ArithmeticStatementTester
     {
-        public string Dump(AddStatement statement)
+        public void Dump(StringBuilder output, AddStatement statement)
         {
-            StringBuilder s = new StringBuilder();
             foreach (var pair in statement.affectations)
             {
-                s.AppendFormat("{0} = {1}, ", pair.Key.Text, pair.Value.ToString());
+                output.AppendFormat("{0} = {1}, ", pair.Key.Text, pair.Value.ToString());
             }
-            if (statement.affectations.Count > 0) s.Length -= 2;
-            return s.ToString();
+            if (statement.affectations.Count > 0) output.Length -= 2;
         }
 
         public void CompareWithRPN(TypeCobol.Compiler.Parser.SyntaxDocument tree, string[] rpn)
@@ -26,7 +24,9 @@ namespace TypeCobol.Test.Compiler.CodeElements
             {
                 if (e.GetType() != typeof(AddStatement)) continue;
                 AddStatement add = (TypeCobol.Compiler.CodeElements.AddStatement)e;
-                string dump = Dump(add);
+                StringBuilder s = new StringBuilder();
+                Dump(s, add);
+                string dump = s.ToString();
                 if (c >= rpn.Length) errors.AppendFormat("RPN number {} not provided.", c);
                 else if (dump != rpn[c]) errors.AppendFormat("{0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn[c]);
                 c++;
