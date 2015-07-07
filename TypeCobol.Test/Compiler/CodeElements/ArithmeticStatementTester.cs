@@ -25,13 +25,15 @@ namespace TypeCobol.Test.Compiler.CodeElements
             string errors = "";
             foreach (TypeCobol.Compiler.CodeElements.CodeElement e in tree.CodeElements)
             {
-                if(e.GetType() == typeof(SentenceEnd)) continue;
+                if (e.GetType() != typeof(AddStatement)) continue;
                 AddStatement add = (TypeCobol.Compiler.CodeElements.AddStatement)e;
                 string dump = Dump(add);
-                if (dump != rpn[c]) errors += (c + ": \""+dump+", expected \""+rpn[c]+"\"\n");
+                if (c >= rpn.Length) errors += ("No "+c+"th rpn provided.");
+                else if (dump != rpn[c]) errors += (c + ": \""+dump+"\", expected \""+rpn[c]+"\"\n");
                 c++;
             }
             if (errors.Length > 0) throw new Exception(errors);
+            if (c != rpn.Length) throw new Exception("Number of checks expected "+rpn.Length+" vs "+c);
         }
     }
 }

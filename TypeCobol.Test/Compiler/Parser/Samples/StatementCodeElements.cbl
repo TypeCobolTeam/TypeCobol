@@ -16,12 +16,12 @@ ADD 1 TO x.
 ADD 1 2 TO toto.
 ADD 1 2 3 TO x toto.
 * SYNTAX ERRORS
-* litterals not allowed as 2nd operand
-*ADD 1 TO 1
-*ADD 1 2 TO 1 2
-*ADD x TO 1
-*ADD 1 x TO 1
-*ADD 1 x TO 1 2
+* literals not allowed as 2nd operand
+ADD 1 TO 1.
+ADD 1 2 TO 1 2.
+ADD x TO 1.
+ADD 1 x TO 1.
+ADD 1 x TO 1 2.
 * incomplete statement
 *ADD
 *ADD.
