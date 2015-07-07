@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.File;
@@ -94,8 +95,13 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_StatementCodeElements()
         {
+            Check_ADDCodeElements(); 
+        }
+
+        public static void Check_ADDCodeElements() {
+            string path = "Statements" + Path.DirectorySeparatorChar + "ADDCodeElements";
             DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-            CompilationUnit unit = ParserUtils.ParseCobolFile("StatementCodeElements", format);
+            CompilationUnit unit = ParserUtils.ParseCobolFile(path, format);
             ArithmeticStatementTester tester = new ArithmeticStatementTester();
             string[] rpn = { 
                 // format 1

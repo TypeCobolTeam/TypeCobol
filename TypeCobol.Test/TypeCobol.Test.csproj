@@ -100,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
-    <Content Include="Compiler\Parser\ResultFiles\StatementCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\ADDCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\ParagraphCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\EntryCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\IdentificationCodeElements.txt" />
@@ -179,7 +179,7 @@
     <None Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
     <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
-    <None Include="Compiler\Parser\Samples\StatementCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\ADDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ParagraphCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\EntryCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IdentificationCodeElements.cbl" />
