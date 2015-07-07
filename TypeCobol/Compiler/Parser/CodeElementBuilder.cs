@@ -429,11 +429,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AcceptStatement();
         }
 
-        public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
-        {
-            //DO nothing: delegate to AddStatementFormatX methods
-        }
-
         private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
         {
             Expression left = null;
