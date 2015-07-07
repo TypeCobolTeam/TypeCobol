@@ -8,10 +8,8 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public AddStatement() : base(CodeElementType.AddStatement)
         {
-            affectations = new Dictionary<Token, int>();
-            operations = new List<Expression>();
+            affectations = new Dictionary<Token, Expression>();
         }
-        public Dictionary<Token, int> affectations { get; set; }
-        public List<Expression> operations { get; set; }
+        public Dictionary<Token, Expression> affectations { get; set; }
     }
 }

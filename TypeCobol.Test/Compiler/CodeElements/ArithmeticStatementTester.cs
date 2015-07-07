@@ -12,7 +12,7 @@ namespace TypeCobol.Test.Compiler.CodeElements
             StringBuilder s = new StringBuilder();
             foreach (var pair in statement.affectations)
             {
-                s.AppendFormat("{0} = {1}, ", pair.Key.Text, statement.operations[pair.Value].ToString());
+                s.AppendFormat("{0} = {1}, ", pair.Key.Text, pair.Value.ToString());
             }
             if (statement.affectations.Count > 0) s.Length -= 2;
             return s.ToString();

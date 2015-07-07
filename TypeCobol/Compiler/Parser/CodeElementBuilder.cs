@@ -472,14 +472,12 @@ namespace TypeCobol.Compiler.Parser
             {
                 // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
                 // so add the "left" operand to all the elements of the "right" operand
-                int c = 0;
                 foreach (var operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
-                    //TODO? question: do C# lists preserve order ?
-                    statement.operations.Add(new Addition(left, right));
-                    statement.affectations.Add(token, c++);
+                    Expression operation = new Addition(left, right);
+                    statement.affectations.Add(token, operation);
                 }
             }
             CodeElement = statement;
@@ -489,19 +487,20 @@ namespace TypeCobol.Compiler.Parser
         {
             AddStatement statement = new AddStatement();
 
+            Expression operation = null;
             if (context.identifierOrLiteral() != null)
             {
                 // here we add all abc..yz in "ADD ab..y TO z" without distinction between
                 // what is after the ADD and before the TO, and what is after the TO
-                statement.operations.Add(createLeftOperand(context.identifierOrLiteral()));
+                operation = createLeftOperand(context.identifierOrLiteral());
             }
-            if (statement.operations.Count > 0 && context.identifierRounded() != null)
+            if (operation != null && context.identifierRounded() != null)
             {
                 foreach (var operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
-                    statement.affectations.Add(token, 0);
+                    statement.affectations.Add(token, operation);
                 }
             }
 
@@ -515,8 +514,8 @@ namespace TypeCobol.Compiler.Parser
             Expression left = new Identifier(ParseTreeUtils.GetFirstToken(context.identifier()));
             Token token = ParseTreeUtils.GetFirstToken(context.identifierRounded());
             Expression right = new Identifier(token, context.identifierRounded().ROUNDED() != null);
-            statement.operations.Add(new Addition(left, right));
-            statement.affectations.Add(token, 0);
+            Expression operation = new Addition(left, right);
+            statement.affectations.Add(token, operation);
 
             CodeElement = statement;
         }
