@@ -1,8 +1,13 @@
-﻿using TypeCobol.Compiler.Scanner;
+﻿using System.Text;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
-    public class Expression { }
+    public abstract class Expression
+    {
+
+        public abstract string TextValue();
+    }
 
     public class Addition : Expression
     {
@@ -14,6 +19,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.left = left;
             this.right = right;
         }
+
+        public override string TextValue()
+        {
+            return new StringBuilder(left.TextValue()).Append(" ").Append(right.TextValue()).ToString();
+        }
     }
     public class Identifier : Expression
     {
@@ -24,6 +34,23 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.token = token;
             this.rounded = rounded;
         }
+
+        public override string TextValue()
+        {
+            if (token == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return token.Text;
+            }
+        }
+
+        public override string ToString()
+        {
+            return TextValue();
+        }
     }
     public class Literal : Expression
     {
@@ -31,6 +58,23 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public Literal(Token token)
         {
             this.token = token;
+        }
+
+        public override string TextValue()
+        {
+            if (token == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return token.Text;
+            }
+        }
+
+        public override string ToString()
+        {
+            return TextValue();
         }
     }
 }

@@ -917,6 +917,8 @@ environmentName : UserDefinedWord;
 environmentNameClause : 
                           environmentName IS? mnemonicForEnvironmentName;
 
+
+
 // p115 : mnemonic-name-1 , mnemonic-name-2
 // mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
 // user-defined names. 
@@ -930,6 +932,10 @@ environmentNameClause :
 // mnemonic-name-2 can be referenced only in the SET statement. 
 
 mnemonicForEnvironmentName : UserDefinedWord;
+
+
+mnemonicOrEnvironmentName:
+						mnemonicForEnvironmentName | environmentName;
 
 // p 115 : The ALPHABET clause provides a means of relating an alphabet-name to a
 // specified character code set or collating sequence.
@@ -4357,7 +4363,7 @@ sentenceEnd:
 
 acceptStatement:
                    ACCEPT identifier (FROM 
-                                      ( mnemonicForEnvironmentName | environmentName ) |
+                                      ( mnemonicOrEnvironmentName ) |
                                       (   (DATE YYYYMMDD ?) |
                                           (DAY YYYYDDD ?) |
                                           (DAY_OF_WEEK |
@@ -4819,15 +4825,15 @@ deleteStatementEnd:
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-                    DISPLAY (identifier | literal)+
+                    DISPLAY identifierOrLiteral+
                     uponEnvironmentName?
                     withNoAdvancing?;
 
 uponEnvironmentName:
-					(UPON (mnemonicForEnvironmentName | environmentName));
+					UPON mnemonicOrEnvironmentName;
 
 withNoAdvancing:
-					(WITH? NO ADVANCING);
+					WITH? NO ADVANCING;
 
 
 // p325: DIVIDE statement

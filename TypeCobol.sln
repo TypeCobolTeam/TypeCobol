@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
@@ -10,6 +8,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobolStudio", "TypeCobolStudio\TypeCobolStudio.csproj", "{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B8D04DBA-931D-4DD5-8B55-E979AF171283}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

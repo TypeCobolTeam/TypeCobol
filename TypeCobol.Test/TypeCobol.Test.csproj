@@ -17,6 +17,8 @@
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
+    <Content Include="Compiler\Parser\ResultFiles\DISPLAYCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\StatementCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\ParagraphCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\EntryCodeElements.txt" />
@@ -178,6 +181,7 @@
     <None Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
     <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
+    <None Include="Compiler\Parser\Samples\DISPLAYCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\StatementCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ParagraphCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\EntryCodeElements.cbl" />
@@ -257,6 +261,13 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

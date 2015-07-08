@@ -1,18 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
     public class DisplayStatement : CodeElement
     {
         public DisplayStatement() : base(CodeElementType.DisplayStatement)
-        { }
+        {
 
+            VarsToDisplay = new List<Expression>();
+            IsWithNoAdvancing = SyntaxBoolean.False;
+        }
 
+        public IList<Expression> VarsToDisplay { get; set; }
 
-        //public IList<> varsToDisplay { get; set; }
 
         /// <summary>
-        /// / UPON 
+        /// UPON 
         /// environment-name-1 or the environment name associated with mnemonic-name-1 must be associated with an output device. See “SPECIAL-NAMES paragraph” on page 112. 
         /// A default logical record size is assumed for each device, as follows: 
         /// - The system logical output device 120 characters 
@@ -26,24 +32,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// When the UPON phrase is omitted, the system's logical output device is assumed. The list of valid environment-names in a DISPLAY statement is shown in Table 5 on page 114. 
         /// For details on routing DISPLAY output to stdout, see Displaying values on a screen or in a file (
         /// </summary>
-        public MnemonicForEnvironmentName UponMnemonicForEnvironmentName { get; set; }
-
-        /// <summary>
-        /// / UPON 
-        /// environment-name-1 or the environment name associated with mnemonic-name-1 must be associated with an output device. See “SPECIAL-NAMES paragraph” on page 112. 
-        /// A default logical record size is assumed for each device, as follows: 
-        /// - The system logical output device 120 characters 
-        /// - The system punch device 80 characters
-        /// - The console 100 characters
-        /// A maximum logical record size is allowed for each device, as follows: 
-        /// - The system logical output device 255 characters 
-        /// - The system punch device 255 characters 
-        /// - The console 100 characters
-        /// On the system punch device, the last eight characters are used for PROGRAM-ID name. 
-        /// When the UPON phrase is omitted, the system's logical output device is assumed. The list of valid environment-names in a DISPLAY statement is shown in Table 5 on page 114. 
-        /// For details on routing DISPLAY output to stdout, see Displaying values on a screen or in a file (
-        /// </summary>
-        public SyntaxEnum<Enum> UponEnum { get; set; }
+        public MnemonicOrEnvironmentName UponMnemonicOrEnvironmentName { get; set; }
 
         /// <summary>
         /// WITH NO ADVANCING 
@@ -58,5 +47,41 @@ namespace TypeCobol.Compiler.CodeElements
         /// ... more details on DBCS operands p324 ...
         /// </summary>
         public SyntaxBoolean IsWithNoAdvancing { get; set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            if (VarsToDisplay == null && IsWithNoAdvancing == null && UponMnemonicOrEnvironmentName == null )
+            {
+                return base.ToString();
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder(base.ToString());
+                if (VarsToDisplay != null)
+                {
+                    sb.Append("- variables =");
+                    foreach (var varToDisplay in VarsToDisplay)
+                    {
+                        sb.Append(' ');
+                        sb.Append(varToDisplay);
+                    }
+                    sb.AppendLine();
+                }
+
+                if (UponMnemonicOrEnvironmentName != null)
+                {
+                    sb.AppendLine("- UponMnemonicOrEnvironmentName = " + UponMnemonicOrEnvironmentName);
+                }
+
+                if (IsWithNoAdvancing != null)
+                {
+                    sb.AppendLine("- WithNoAdvancing = " + IsWithNoAdvancing.Value);
+                }
+                return sb.ToString();
+            }
+        }
     }
 }

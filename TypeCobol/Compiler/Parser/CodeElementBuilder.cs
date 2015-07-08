@@ -1,9 +1,8 @@
-﻿using Antlr4.Runtime.Tree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -14,36 +13,36 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
-    /// Build a CodeElement object while visiting its parse tree
+    ///     Build a CodeElement object while visiting its parse tree
     /// </summary>
     internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
         /// <summary>
-        /// CodeElement object resulting of the visit the parse tree
+        ///     CodeElement object resulting of the visit the parse tree
         /// </summary>
         public CodeElement CodeElement { get; private set; }
 
         /// <summary>
-        /// List of syntax diagnostics gathered while transversing the parse tree
+        ///     List of syntax diagnostics gathered while transversing the parse tree
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
         /// <summary>
-        /// Initialization code run before parsing each new CodeElement
+        ///     Initialization code run before parsing each new CodeElement
         /// </summary>
         public override void EnterCodeElement(CobolCodeElementsParser.CodeElementContext context)
         {
             CodeElement = null;
             Diagnostics = new List<Diagnostic>();
         }
-        
+
         // Code structure
 
         // -- Program --
 
         public override void EnterProgramIdentification(CobolCodeElementsParser.ProgramIdentificationContext context)
         {
-            ProgramIdentification programIdentification = new ProgramIdentification();
+            var programIdentification = new ProgramIdentification();
 
             Token programName = ParseTreeUtils.GetFirstToken(context.programName());
             if (programName != null)
@@ -51,14 +50,14 @@ namespace TypeCobol.Compiler.Parser
                 programIdentification.ProgramName = new ProgramName(programName);
             }
             Token commonFlag = ParseTreeUtils.GetFirstToken(context.COMMON());
-            if(commonFlag != null)
+            if (commonFlag != null)
             {
                 programIdentification.IsCommon = new SyntaxBoolean(commonFlag);
             }
             Token initialFlag = ParseTreeUtils.GetFirstToken(context.INITIAL());
             if (initialFlag != null)
             {
-                programIdentification.IsInitial = new SyntaxBoolean(initialFlag); 
+                programIdentification.IsInitial = new SyntaxBoolean(initialFlag);
             }
             Token recursiveFlag = ParseTreeUtils.GetFirstToken(context.RECURSIVE());
             if (recursiveFlag != null)
@@ -71,7 +70,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProgramEnd(CobolCodeElementsParser.ProgramEndContext context)
         {
-            ProgramEnd programEnd = new ProgramEnd();
+            var programEnd = new ProgramEnd();
 
             Token programName = ParseTreeUtils.GetFirstToken(context.programName());
             if (programName != null)
@@ -84,55 +83,60 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAuthoringProperties(CobolCodeElementsParser.AuthoringPropertiesContext context)
         {
-            AuthoringProperties authoringProperties = new AuthoringProperties();
+            var authoringProperties = new AuthoringProperties();
 
-            if(context.authorParagraph().Count > 0)
+            if (context.authorParagraph().Count > 0)
             {
-                authoringProperties.Author = BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Author =
+                    BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.dateCompiledParagraph().Count > 0)
             {
-                authoringProperties.DateCompiled = BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.DateCompiled =
+                    BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.dateWrittenParagraph().Count > 0)
             {
-                authoringProperties.DateWritten = BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.DateWritten =
+                    BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.installationParagraph().Count > 0)
             {
-                authoringProperties.Installation = BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Installation =
+                    BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.securityParagraph().Count > 0)
             {
-                authoringProperties.Security = BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Security =
+                    BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
             }
 
             if (CodeElement is ProgramIdentification)
             {
-                ((ProgramIdentification)CodeElement).AuthoringProperties = authoringProperties;
+                ((ProgramIdentification) CodeElement).AuthoringProperties = authoringProperties;
             }
             else if (CodeElement is ClassIdentification)
             {
-                ((ClassIdentification)CodeElement).AuthoringProperties = authoringProperties;
+                ((ClassIdentification) CodeElement).AuthoringProperties = authoringProperties;
             }
             else if (CodeElement is MethodIdentification)
             {
-                ((MethodIdentification)CodeElement).AuthoringProperties = authoringProperties;
+                ((MethodIdentification) CodeElement).AuthoringProperties = authoringProperties;
             }
         }
 
         private SyntaxProperty<string> BuildCommentEntriesProperty(IEnumerable<ITerminalNode> commentEntriesNodes)
         {
-            IList<Token> tokensList = new List<Token>();
-            StringBuilder sbCommentEntries = new StringBuilder();
+            var tokensList = new List<Token>();
+            var sbCommentEntries = new StringBuilder();
 
             bool isFirstLine = true;
-            foreach(ITerminalNode commentEntryNode in commentEntriesNodes)
+            foreach (ITerminalNode commentEntryNode in commentEntriesNodes)
             {
                 Token token = ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode);
                 tokensList.Add(token);
 
-                if(isFirstLine)
+                if (isFirstLine)
                 {
                     sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                     isFirstLine = false;
@@ -143,7 +147,7 @@ namespace TypeCobol.Compiler.Parser
                     sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                 }
             }
-                        
+
             return new SyntaxProperty<string>(sbCommentEntries.ToString(), tokensList);
         }
 
@@ -152,8 +156,8 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterClassIdentification(CobolCodeElementsParser.ClassIdentificationContext context)
         {
-            ClassIdentification classIdentification = new ClassIdentification();
-            
+            var classIdentification = new ClassIdentification();
+
             Token className = ParseTreeUtils.GetFirstToken(context.classId);
             if (className != null)
             {
@@ -162,7 +166,8 @@ namespace TypeCobol.Compiler.Parser
             Token inheritsFromClassName = ParseTreeUtils.GetFirstToken(context.inheritsFromClassName);
             if (inheritsFromClassName != null)
             {
-                classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
+                classIdentification.InheritsFromClassName =
+                    new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
             }
 
             CodeElement = classIdentification;
@@ -170,7 +175,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterClassEnd(CobolCodeElementsParser.ClassEndContext context)
         {
-            ClassEnd classEnd = new ClassEnd();
+            var classEnd = new ClassEnd();
 
             Token className = ParseTreeUtils.GetFirstToken(context.className());
             if (className != null)
@@ -203,7 +208,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMethodIdentification(CobolCodeElementsParser.MethodIdentificationContext context)
         {
-            MethodIdentification methodIdentification = new MethodIdentification();
+            var methodIdentification = new MethodIdentification();
 
             Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
             if (methodName != null)
@@ -216,7 +221,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMethodEnd(CobolCodeElementsParser.MethodEndContext context)
         {
-            MethodEnd methodEnd = new MethodEnd();
+            var methodEnd = new MethodEnd();
 
             Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
             if (methodName != null)
@@ -229,7 +234,8 @@ namespace TypeCobol.Compiler.Parser
 
         // -- Division --
 
-        public override void EnterEnvironmentDivisionHeader(CobolCodeElementsParser.EnvironmentDivisionHeaderContext context)
+        public override void EnterEnvironmentDivisionHeader(
+            CobolCodeElementsParser.EnvironmentDivisionHeaderContext context)
         {
             CodeElement = new EnvironmentDivisionHeader();
         }
@@ -241,23 +247,29 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProcedureDivisionHeader(CobolCodeElementsParser.ProcedureDivisionHeaderContext context)
         {
-            ProcedureDivisionHeader procedureDivisionHeader = new ProcedureDivisionHeader();
+            var procedureDivisionHeader = new ProcedureDivisionHeader();
 
-            if(context.usingPhrase() != null)
+            if (context.usingPhrase() != null)
             {
-                foreach(var inputParametersContext in context.usingPhrase().inputParameters())
+                foreach (var inputParametersContext in context.usingPhrase().inputParameters())
                 {
                     SyntaxProperty<ReceivingMode> receivingMode = null;
                     if (inputParametersContext.receivingMode() != null)
                     {
                         receivingMode = new SyntaxProperty<ReceivingMode>(
-                            inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext ? ReceivingMode.ByValue : ReceivingMode.ByReference, 
+                            inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext
+                                ? ReceivingMode.ByValue
+                                : ReceivingMode.ByReference,
                             ParseTreeUtils.GetTokensList(inputParametersContext.receivingMode()));
                     }
-                    foreach(var dataNameContext in inputParametersContext.dataName())
+                    foreach (var dataNameContext in inputParametersContext.dataName())
                     {
                         Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
-                        InputParameter inputParameter = new InputParameter() { ReceivingMode = receivingMode, DataName = new DataName(dataName) };
+                        var inputParameter = new InputParameter
+                        {
+                            ReceivingMode = receivingMode,
+                            DataName = new DataName(dataName)
+                        };
 
                         if (procedureDivisionHeader.UsingParameters == null)
                         {
@@ -268,10 +280,10 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            if(context.returningPhrase() != null)
+            if (context.returningPhrase() != null)
             {
                 Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataName());
-                if(dataName != null)
+                if (dataName != null)
                 {
                     procedureDivisionHeader.ReturningDataName = new DataName(dataName);
                 }
@@ -294,7 +306,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSectionHeader(CobolCodeElementsParser.SectionHeaderContext context)
         {
-            SectionHeader sectionHeader = new SectionHeader();
+            var sectionHeader = new SectionHeader();
 
             Token sectionName = ParseTreeUtils.GetFirstToken(context.sectionName());
             if (sectionName != null)
@@ -307,16 +319,18 @@ namespace TypeCobol.Compiler.Parser
             {
                 sectionHeader.PriorityNumber = new SyntaxInteger(priorityNumber);
             }
-            
+
             CodeElement = sectionHeader;
         }
 
-        public override void EnterConfigurationSectionHeader(CobolCodeElementsParser.ConfigurationSectionHeaderContext context)
+        public override void EnterConfigurationSectionHeader(
+            CobolCodeElementsParser.ConfigurationSectionHeaderContext context)
         {
             CodeElement = new ConfigurationSectionHeader();
         }
 
-        public override void EnterInputOutputSectionHeader(CobolCodeElementsParser.InputOutputSectionHeaderContext context)
+        public override void EnterInputOutputSectionHeader(
+            CobolCodeElementsParser.InputOutputSectionHeaderContext context)
         {
             CodeElement = new InputOutputSectionHeader();
         }
@@ -326,12 +340,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new FileSectionHeader();
         }
 
-        public override void EnterWorkingStorageSectionHeader(CobolCodeElementsParser.WorkingStorageSectionHeaderContext context)
+        public override void EnterWorkingStorageSectionHeader(
+            CobolCodeElementsParser.WorkingStorageSectionHeaderContext context)
         {
             CodeElement = new WorkingStorageSectionHeader();
         }
 
-        public override void EnterLocalStorageSectionHeader(CobolCodeElementsParser.LocalStorageSectionHeaderContext context)
+        public override void EnterLocalStorageSectionHeader(
+            CobolCodeElementsParser.LocalStorageSectionHeaderContext context)
         {
             CodeElement = new LocalStorageSectionHeader();
         }
@@ -345,23 +361,25 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterParagraphHeader(CobolCodeElementsParser.ParagraphHeaderContext context)
         {
-            ParagraphHeader paragraphHeader = new ParagraphHeader();
+            var paragraphHeader = new ParagraphHeader();
 
             Token paragraphName = ParseTreeUtils.GetFirstToken(context.paragraphName());
             if (paragraphName != null)
             {
                 paragraphHeader.ParagraphName = new ParagraphName(paragraphName);
             }
-            
+
             CodeElement = paragraphHeader;
         }
 
-        public override void EnterFileControlParagraphHeader(CobolCodeElementsParser.FileControlParagraphHeaderContext context)
+        public override void EnterFileControlParagraphHeader(
+            CobolCodeElementsParser.FileControlParagraphHeaderContext context)
         {
             CodeElement = new FileControlParagraphHeader();
         }
 
-        public override void EnterIoControlParagraphHeader(CobolCodeElementsParser.IoControlParagraphHeaderContext context)
+        public override void EnterIoControlParagraphHeader(
+            CobolCodeElementsParser.IoControlParagraphHeaderContext context)
         {
             CodeElement = new IOControlParagraphHeader();
         }
@@ -372,9 +390,9 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new SentenceEnd();
         }
-        
+
         // Entries
-        
+
         // -- Data Division --
 
         public override void EnterFileDescriptionEntry(CobolCodeElementsParser.FileDescriptionEntryContext context)
@@ -422,7 +440,7 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new RepositoryParagraph();
         }
-        
+
         // Statements
 
         public override void EnterAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
@@ -431,7 +449,8 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
-        {/*
+        {
+/*
             //TODO? we don't need this as the 3 AddFormat methods will be visited, do we ?
             if (context.addStatementFormat1() != null)
             {
@@ -452,7 +471,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAddStatementFormat1(CobolCodeElementsParser.AddStatementFormat1Context context)
         {
-            AddStatement statement = new AddStatement();
+            var statement = new AddStatement();
             statement.operations = new List<Expression>();
 
             Expression left = null;
@@ -466,8 +485,7 @@ namespace TypeCobol.Compiler.Parser
                     {
                         tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
                     }
-                    else
-                    if (operand.literal() != null)
+                    else if (operand.literal() != null)
                     {
                         tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
                     }
@@ -483,7 +501,6 @@ namespace TypeCobol.Compiler.Parser
                         left = new Addition(left, tail);
                     }
                 }
-
             }
             if (context.identifierRounded() != null)
             {
@@ -502,14 +519,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
         {
-            AddStatement statement = new AddStatement();
+            var statement = new AddStatement();
             statement.operations = new List<Expression>();
             // TODO? is it mandatory to create named rules to differentiate between the "identifierOrLiteral"s ?
         }
 
         public override void EnterAddStatementFormat3(CobolCodeElementsParser.AddStatementFormat3Context context)
         {
-            AddStatement statement = new AddStatement();
+            var statement = new AddStatement();
             statement.operations = new List<Expression>();
 
             Expression left = new Identifier(ParseTreeUtils.GetFirstToken(context.identifier()));
@@ -553,45 +570,79 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new DeleteStatement();
         }
 
+        public static Literal CreateLiteral(IParseTree node)
+        {
+            //TODO
+            //Dumb code just to avoid to return null
+            return new Literal(ParseTreeUtils.GetFirstToken(node));
+        }
+
+        public static Identifier CreateIdentifier(IParseTree node)
+        {
+            //TODO
+            //Dumb code just to avoid to return null
+            return new Identifier(ParseTreeUtils.GetFirstToken(node));
+        }
+
         public override void EnterDisplayStatement(CobolCodeElementsParser.DisplayStatementContext context)
         {
             var displayStement = new DisplayStatement();
 
-            Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
-            if (withNoAdvancing != null)
+            //Identifiers & literals
+            if (context.identifierOrLiteral() != null)
             {
-                displayStement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
+                var expressions = new List<Expression>();
+                foreach (var idOrLiteral in context.identifierOrLiteral())
+                {
+                    if (idOrLiteral.identifier() != null)
+                    {
+                        expressions.Add(CreateIdentifier(idOrLiteral));
+                    }
+                    else if (idOrLiteral.literal() != null)
+                    {
+                        expressions.Add(CreateLiteral(idOrLiteral));
+                    }
+                    else
+                    {
+                        //TODO
+                        // Register a new diagnostic
+                        ParserDiagnostic diagnostic = new ParserDiagnostic("Unknow symbol", ParseTreeUtils.GetFirstToken(idOrLiteral),
+                            "identifierOrLiteral: contains something other than an identifier or a literal");
+                        Diagnostics.Add(diagnostic);
+                    }
+                }
+                displayStement.VarsToDisplay = expressions;
+            }
+            else
+            {
+                //TODO / question: VarsToDisplay already initialized in DisplayStatement constructor but its others properties are not. Need to define a default behavior
+                displayStement.VarsToDisplay = new List<Expression>();
             }
 
+            //(mnemonic) Environment name
             if (context.uponEnvironmentName() != null)
             {
-                Token envName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().environmentName());
+                Token envName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName().environmentName());
                 if (envName != null)
                 {
-                    EnvironmentName envNameEnum = new EnvironmentName();
-                    Enum.TryParse(envName.Text, true, out envNameEnum);
-                   
-                    //TODO
-                    displayStement.UponEnum = new SyntaxEnum<Enum>(envName, envNameEnum);
+
+                    displayStement.UponMnemonicOrEnvironmentName = new EnvironmentName(envName);
                 }
                 else
                 {
-                    Token mnemonicForEnvName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicForEnvironmentName());
+                    Token mnemonicForEnvName =
+                        ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName().mnemonicForEnvironmentName());
                     if (mnemonicForEnvName != null)
                     {
-                        displayStement.UponMnemonicForEnvironmentName = new MnemonicForEnvironmentName(mnemonicForEnvName);
+                        displayStement.UponMnemonicOrEnvironmentName = new MnemonicForEnvironmentName(mnemonicForEnvName);
                     }
                 }
             }
 
-            //TODO literal and identifier
-//            if (context.literal() != null)
-//            {
-//                foreach (var literal in context.literal())
-//                {
-//
-//                }
-//            }
+            //With no advancing
+            Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
+            displayStement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
+
 
             CodeElement = displayStement;
         }
@@ -686,7 +737,8 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new OpenStatement();
         }
 
-        public override void EnterPerformProcedureStatement(CobolCodeElementsParser.PerformProcedureStatementContext context)
+        public override void EnterPerformProcedureStatement(
+            CobolCodeElementsParser.PerformProcedureStatementContext context)
         {
             CodeElement = new PerformProcedureStatement();
         }
@@ -775,7 +827,7 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new XmlParseStatement();
         }
-        
+
         // Statement conditions
 
         public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)
@@ -853,11 +905,12 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new WhenOtherCondition();
         }
 
-        public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
+        public override void EnterWhenConditionalExpression(
+            CobolCodeElementsParser.WhenConditionalExpressionContext context)
         {
             CodeElement = new WhenConditionalExpression();
         }
-        
+
         // Statement ends
 
         public override void EnterAddStatementEnd(CobolCodeElementsParser.AddStatementEndContext context)
@@ -958,6 +1011,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
-        } 
+        }
     }
 }

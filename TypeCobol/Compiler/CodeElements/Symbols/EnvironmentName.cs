@@ -11,10 +11,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// as a mnemonic-name will take precedence over its definition as an
     /// environment-name.
     /// </summary>
-    public class MnemonicForEnvironmentName : MnemonicOrEnvironmentName
+    public class EnvironmentName : MnemonicOrEnvironmentName
     {
-        public MnemonicForEnvironmentName(Token userDefinedWord) :
-            base(userDefinedWord, SymbolType.MnemonicForEnvironmentName)
+        public EnvironmentName(Token userDefinedWord) :
+            base(userDefinedWord, SymbolType.EnvironmentName)
         { }
     }
 }

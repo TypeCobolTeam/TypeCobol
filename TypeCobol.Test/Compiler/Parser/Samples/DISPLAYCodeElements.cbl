@@ -5,3 +5,4 @@
 000040 display no advancing with no advancing
 000040 display "no advancing" with no advancing
 000040 display 'no advancing' with no advancing
+000040 display var1 'lit1' var2 with no advancing

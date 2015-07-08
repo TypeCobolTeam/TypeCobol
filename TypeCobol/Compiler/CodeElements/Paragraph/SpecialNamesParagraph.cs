@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// System devices or standard system actions taken by the compiler.
     /// </summary>
-    public enum EnvironmentName
+    public enum EnvironmentNameEnum
     {
         // System logical input unit : ACCEPT
         SYSIN, SYSIPT,

@@ -22,6 +22,7 @@ namespace TypeCobol.Compiler.CodeElements
         ProgramName,
         SectionName,
         SymbolicCharacter,
-        XmlSchemaName
+        XmlSchemaName,
+        EnvironmentName
     }
 }

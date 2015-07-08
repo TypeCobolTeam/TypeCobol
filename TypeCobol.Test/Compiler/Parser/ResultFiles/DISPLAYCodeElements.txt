@@ -1,1 +1,26 @@
-﻿
+﻿--- Diagnostics ---
+[16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
+--- Code Elements ---
+[[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
+- variables = TypeCobol.Compiler.CodeElements.Expressions.Identifier
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21+:"toto"]<AlphanumericLiteral>(",Y,Y){toto}
+- variables = TypeCobol.Compiler.CodeElements.Expressions.Literal
+
+[[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,21+:'toto']<AlphanumericLiteral>(',Y,Y){toto}
+- variables = TypeCobol.Compiler.CodeElements.Expressions.Literal
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [26,34:advancing]<ADVANCING>
+- variables = TypeCobol.Compiler.CodeElements.Expressions.Literal
+- WithNoAdvancing = True
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [37,45:advancing]<ADVANCING>
+- variables =
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,47:advancing]<ADVANCING>
+- variables = TypeCobol.Compiler.CodeElements.Expressions.Literal
+- WithNoAdvancing = True
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,47:advancing]<ADVANCING>
+- variables = TypeCobol.Compiler.CodeElements.Expressions.Literal
+- WithNoAdvancing = True

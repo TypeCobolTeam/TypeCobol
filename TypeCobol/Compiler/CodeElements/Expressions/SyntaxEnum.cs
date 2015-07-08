@@ -6,8 +6,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Boolean value defined by a single Token in the Cobol syntax
     /// </summary>
-    public class SyntaxEnum<E>
+    public class SyntaxEnum<E> 
     {
+
         public SyntaxEnum(Token token, E envName)
         {
             Token = token;
