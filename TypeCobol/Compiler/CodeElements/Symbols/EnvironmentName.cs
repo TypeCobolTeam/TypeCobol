@@ -13,8 +13,15 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class EnvironmentName : MnemonicOrEnvironmentName
     {
+
         public EnvironmentName(Token userDefinedWord) :
             base(userDefinedWord, SymbolType.EnvironmentName)
-        { }
+        {
+            EnvironmentNameEnum envNameValue;
+            Enum.TryParse<EnvironmentNameEnum>(userDefinedWord.Text, true, out envNameValue);
+            EnvironmentNameValue = envNameValue;
+        }
+
+        public EnvironmentNameEnum EnvironmentNameValue { get; private set; }
     }
 }
