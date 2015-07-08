@@ -440,8 +440,13 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AcceptStatement();
         }
 
+        private static Identifier CreateIdentifier(IParseTree node) {
+            //TODO: effective identifier parsing, DON'T take only first Token
+            // (identifier can be like "ADDRESS OF myvar(10+3.14:20-101.42) OF mygroup")
+            return new Identifier(ParseTreeUtils.GetFirstToken(node));
+        }
 
-        public SyntaxNumber createNumber(CobolCodeElementsParser.NumericLiteralContext context)
+        private SyntaxNumber CreateNumberLiteral(CobolCodeElementsParser.NumericLiteralContext context)
         {
             if (context.IntegerLiteral() != null)
             {
@@ -460,7 +465,7 @@ namespace TypeCobol.Compiler.Parser
             }
             if (context.ZERO() != null || context.ZEROS() != null || context.ZEROES() != null)
             {
-                throw new System.Exception("TODO!");
+                throw new System.Exception("TODO: How do I represent a zero ?");
             }
             throw new System.Exception("This is not a number!");
         }
@@ -472,7 +477,7 @@ namespace TypeCobol.Compiler.Parser
                 Expression tail = null;
                 if (operand.identifier() != null)
                 {
-                    tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
+                    tail = CreateIdentifier(operand.identifier());
                 }
                 else
                 if (operand.literal() != null)
@@ -480,7 +485,8 @@ namespace TypeCobol.Compiler.Parser
                     SyntaxNumber number = null;
                     if (operand.literal().numericLiteral() != null)
                     {
-                        number = createNumber(operand.literal().numericLiteral());
+                        // TODO this will throw an exception if strings are added
+                        number = CreateNumberLiteral(operand.literal().numericLiteral());
                         tail = new Number(number);
                     }
                 }
@@ -515,10 +521,11 @@ namespace TypeCobol.Compiler.Parser
                 // so add the "left" operand to all the elements of the "right" operand
                 foreach (var operand in context.identifierRounded())
                 {
-                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
-                    Expression right = new Identifier(token, operand.ROUNDED() != null);
+                    Identifier right = CreateIdentifier(operand.identifier());
+                    right.rounded = operand.ROUNDED() != null;
                     Expression operation = new Addition(left, right);
-                    statement.affectations.Add(token, operation);
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());//TODO SymbolRef
+                    statement.affectations.Add(token, operation);//TODO SymbolRef
                 }
             }
             CodeElement = statement;
@@ -539,9 +546,10 @@ namespace TypeCobol.Compiler.Parser
             {
                 foreach (var operand in context.identifierRounded())
                 {
-                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
-                    Expression right = new Identifier(token, operand.ROUNDED() != null);
-                    statement.affectations.Add(token, operation);
+                    Identifier right = CreateIdentifier(operand.identifier());
+                    right.rounded = operand.ROUNDED() != null;
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());//TODO SymbolRef
+                    statement.affectations.Add(token, operation);//TODO SymbolRef
                 }
             }
 

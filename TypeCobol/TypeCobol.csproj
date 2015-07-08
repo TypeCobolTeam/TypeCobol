@@ -301,7 +301,6 @@
     <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
-    <Compile Include="Compiler\Parser\LiteralFactory.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
     <Compile Include="Compiler\Parser\SyntaxDocument.cs" />
     <Compile Include="Compiler\Parser\TracingCobolParser.cs" />
