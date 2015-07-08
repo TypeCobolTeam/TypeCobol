@@ -1,5 +1,6 @@
 ﻿using TypeCobol.Compiler.CodeElements.Expressions;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,8 +8,8 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public AddStatement() : base(CodeElementType.AddStatement)
         {
-            operations = new List<Expression>();
+            affectations = new Dictionary<Token, Expression>();
         }
-        public List<Expression> operations { get; set; }
+        public Dictionary<Token, Expression> affectations { get; set; }
     }
 }

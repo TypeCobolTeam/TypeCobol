@@ -40,7 +40,8 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null)
         {
-            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(@"Compiler\Parser\Samples"));
+            string samples = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
+            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(samples));
             if (!localDirectory.Exists)
             {
                 throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));

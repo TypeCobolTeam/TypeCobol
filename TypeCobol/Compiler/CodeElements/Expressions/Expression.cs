@@ -24,6 +24,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             return new StringBuilder(left.TextValue()).Append(" ").Append(right.TextValue()).ToString();
         }
+
+        public override string ToString() { //RPN
+            return left+" "+right+" +";
+        }
     }
     public class Identifier : Expression
     {
@@ -51,6 +55,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             return TextValue();
         }
+
     }
     public class Literal : Expression
     {
@@ -76,5 +81,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             return TextValue();
         }
+
     }
 }
