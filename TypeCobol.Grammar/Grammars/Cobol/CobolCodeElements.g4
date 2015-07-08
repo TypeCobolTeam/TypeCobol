@@ -4424,9 +4424,6 @@ acceptStatement:
 addStatement:
 		addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
 
-addStatementEnd:
-		END_ADD;
-
 addStatementFormat3:
 		ADD corresponding identifier TO identifierRounded;
 
@@ -4446,13 +4443,13 @@ corresponding:
 		CORRESPONDING | CORR;
 
 onSizeErrorCondition:
-		ON? SIZE ERROR imperativeStatement;
+		ON? SIZE ERROR;
 
 notOnSizeErrorCondition:
-		NOT ON? SIZE ERROR imperativeStatement;
+		NOT ON? SIZE ERROR;
 
-imperativeStatement:
-		TODO;
+addStatementEnd:
+		END_ADD;
 
 
 

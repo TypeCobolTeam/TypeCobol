@@ -3,13 +3,14 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
+
     public abstract class Expression
     {
-
         public abstract string TextValue();
     }
+    public abstract class ArithmeticExpression : Expression { }
 
-    public class Addition : Expression
+    public class Addition : ArithmeticExpression
     {
         public Expression left { get; set; }
         public Expression right { get; set; }
@@ -57,23 +58,23 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
 
     }
-    public class Literal : Expression
+    public class Number : ArithmeticExpression
     {
-        public Token token { get; set; }
-        public Literal(Token token)
+        public SyntaxNumber number { get; set; }
+        public Number(SyntaxNumber number)
         {
-            this.token = token;
+            this.number = number;
         }
 
         public override string TextValue()
         {
-            if (token == null)
+            if (number == null)
             {
                 return base.ToString();
             }
             else
             {
-                return token.Text;
+                return number.ToString();
             }
         }
 
@@ -81,6 +82,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             return TextValue();
         }
+
 
     }
 }

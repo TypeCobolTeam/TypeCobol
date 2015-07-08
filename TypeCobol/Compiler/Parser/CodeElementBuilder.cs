@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = null;
             Diagnostics = new List<Diagnostic>();
         }
-
+        
         // Code structure
 
         // -- Program --
@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.Parser
             Token initialFlag = ParseTreeUtils.GetFirstToken(context.INITIAL());
             if (initialFlag != null)
             {
-                programIdentification.IsInitial = new SyntaxBoolean(initialFlag);
+                programIdentification.IsInitial = new SyntaxBoolean(initialFlag); 
             }
             Token recursiveFlag = ParseTreeUtils.GetFirstToken(context.RECURSIVE());
             if (recursiveFlag != null)
@@ -147,7 +147,7 @@ namespace TypeCobol.Compiler.Parser
                     sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                 }
             }
-
+                        
             return new SyntaxProperty<string>(sbCommentEntries.ToString(), tokensList);
         }
 
@@ -156,8 +156,8 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterClassIdentification(CobolCodeElementsParser.ClassIdentificationContext context)
         {
-            var classIdentification = new ClassIdentification();
-
+            ClassIdentification classIdentification = new ClassIdentification();
+            
             Token className = ParseTreeUtils.GetFirstToken(context.classId);
             if (className != null)
             {
@@ -166,8 +166,7 @@ namespace TypeCobol.Compiler.Parser
             Token inheritsFromClassName = ParseTreeUtils.GetFirstToken(context.inheritsFromClassName);
             if (inheritsFromClassName != null)
             {
-                classIdentification.InheritsFromClassName =
-                    new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
+                classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
             }
 
             CodeElement = classIdentification;
@@ -175,7 +174,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterClassEnd(CobolCodeElementsParser.ClassEndContext context)
         {
-            var classEnd = new ClassEnd();
+            ClassEnd classEnd = new ClassEnd();
 
             Token className = ParseTreeUtils.GetFirstToken(context.className());
             if (className != null)
@@ -234,8 +233,7 @@ namespace TypeCobol.Compiler.Parser
 
         // -- Division --
 
-        public override void EnterEnvironmentDivisionHeader(
-            CobolCodeElementsParser.EnvironmentDivisionHeaderContext context)
+        public override void EnterEnvironmentDivisionHeader(CobolCodeElementsParser.EnvironmentDivisionHeaderContext context)
         {
             CodeElement = new EnvironmentDivisionHeader();
         }
@@ -247,29 +245,23 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProcedureDivisionHeader(CobolCodeElementsParser.ProcedureDivisionHeaderContext context)
         {
-            var procedureDivisionHeader = new ProcedureDivisionHeader();
+            ProcedureDivisionHeader procedureDivisionHeader = new ProcedureDivisionHeader();
 
-            if (context.usingPhrase() != null)
+            if(context.usingPhrase() != null)
             {
-                foreach (var inputParametersContext in context.usingPhrase().inputParameters())
+                foreach(var inputParametersContext in context.usingPhrase().inputParameters())
                 {
                     SyntaxProperty<ReceivingMode> receivingMode = null;
                     if (inputParametersContext.receivingMode() != null)
                     {
                         receivingMode = new SyntaxProperty<ReceivingMode>(
-                            inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext
-                                ? ReceivingMode.ByValue
-                                : ReceivingMode.ByReference,
+                            inputParametersContext.receivingMode() is CobolCodeElementsParser.ByValueContext ? ReceivingMode.ByValue : ReceivingMode.ByReference, 
                             ParseTreeUtils.GetTokensList(inputParametersContext.receivingMode()));
                     }
-                    foreach (var dataNameContext in inputParametersContext.dataName())
+                    foreach(var dataNameContext in inputParametersContext.dataName())
                     {
                         Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
-                        var inputParameter = new InputParameter
-                        {
-                            ReceivingMode = receivingMode,
-                            DataName = new DataName(dataName)
-                        };
+                        InputParameter inputParameter = new InputParameter() { ReceivingMode = receivingMode, DataName = new DataName(dataName) };
 
                         if (procedureDivisionHeader.UsingParameters == null)
                         {
@@ -319,7 +311,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 sectionHeader.PriorityNumber = new SyntaxInteger(priorityNumber);
             }
-
+            
             CodeElement = sectionHeader;
         }
 
@@ -361,14 +353,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterParagraphHeader(CobolCodeElementsParser.ParagraphHeaderContext context)
         {
-            var paragraphHeader = new ParagraphHeader();
+            ParagraphHeader paragraphHeader = new ParagraphHeader();
 
             Token paragraphName = ParseTreeUtils.GetFirstToken(context.paragraphName());
             if (paragraphName != null)
             {
                 paragraphHeader.ParagraphName = new ParagraphName(paragraphName);
             }
-
+            
             CodeElement = paragraphHeader;
         }
 
@@ -390,9 +382,9 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new SentenceEnd();
         }
-
+        
         // Entries
-
+        
         // -- Data Division --
 
         public override void EnterFileDescriptionEntry(CobolCodeElementsParser.FileDescriptionEntryContext context)
@@ -440,7 +432,7 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new RepositoryParagraph();
         }
-
+        
         // Statements
 
         public override void EnterAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
@@ -449,19 +441,48 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
+        public SyntaxNumber createNumber(CobolCodeElementsParser.NumericLiteralContext context)
+        {
+            if (context.IntegerLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral());
+                return new SyntaxInteger(token);
+            }
+            if (context.DecimalLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral());
+                return new SyntaxDecimal(token);
+            }
+            if (context.FloatingPointLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral());
+                return new SyntaxFloat(token);
+            }
+            if (context.ZERO() != null || context.ZEROS() != null || context.ZEROES() != null)
+            {
+                throw new System.Exception("TODO!");
+            }
+            throw new System.Exception("This is not a number!");
+        }
+
         private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
         {
             Expression left = null;
-            foreach (CobolCodeElementsParser.IdentifierOrLiteralContext operand in operands)
-            {
+            foreach (var operand in operands) {
                 Expression tail = null;
                 if (operand.identifier() != null)
                 {
                     tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
                 }
-                else if (operand.literal() != null)
+                else
+                if (operand.literal() != null)
                 {
-                    tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
+                    SyntaxNumber number = null;
+                    if (operand.literal().numericLiteral() != null)
+                    {
+                        number = createNumber(operand.literal().numericLiteral());
+                        tail = new Number(number);
+                    }
                 }
                 if (tail == null) continue;
                 if (left == null)
@@ -492,7 +513,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
                 // so add the "left" operand to all the elements of the "right" operand
-                foreach (CobolCodeElementsParser.IdentifierRoundedContext operand in context.identifierRounded())
+                foreach (var operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
@@ -516,7 +537,7 @@ namespace TypeCobol.Compiler.Parser
             }
             if (operation != null && context.identifierRounded() != null)
             {
-                foreach (CobolCodeElementsParser.IdentifierRoundedContext operand in context.identifierRounded())
+                foreach (var operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
@@ -844,7 +865,7 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new XmlParseStatement();
         }
-
+        
         // Statement conditions
 
         public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)
@@ -927,7 +948,7 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new WhenConditionalExpression();
         }
-
+        
         // Statement ends
 
         public override void EnterAddStatementEnd(CobolCodeElementsParser.AddStatementEndContext context)
@@ -1028,6 +1049,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
-        }
+        } 
     }
 }
