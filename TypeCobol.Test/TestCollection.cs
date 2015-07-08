@@ -116,7 +116,9 @@ namespace TypeCobol.Test
             TestCodeElements.Check_StatementCodeElements();
 //TODO            TestCodeElements.Check_EntryCodeElements();
 
-//            TestParser.Check_ParserIntegration(); // TODO statement: move
+            //This test use TypeChecker which is specific to TypeCobol
+            //As specifications of TypeCobol are not final yet this test can't be used
+//            TestParser.Check_ParserIntegration();
         }
 
         public static void CheckPipeline()

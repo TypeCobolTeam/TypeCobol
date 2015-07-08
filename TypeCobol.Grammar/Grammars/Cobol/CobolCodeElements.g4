@@ -934,8 +934,11 @@ environmentNameClause :
 mnemonicForEnvironmentName : UserDefinedWord;
 
 
-mnemonicOrEnvironmentName:
-						mnemonicForEnvironmentName | environmentName;
+//As environmentName and mnemonicForEnvironmentName are both defined as UserDefinedWord
+//ANTLR can't know which one is the good statement
+//So CodeElementBuilder need to check if the UserDefinedWord match an environmentName
+//if not, it's mnemonicForEnvironmentName
+mnemonicOrEnvironmentName:   UserDefinedWord;
 
 // p 115 : The ALPHABET clause provides a means of relating an alphabet-name to a
 // specified character code set or collating sequence.

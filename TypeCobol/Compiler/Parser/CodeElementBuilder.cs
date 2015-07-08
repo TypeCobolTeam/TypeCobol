@@ -452,14 +452,14 @@ namespace TypeCobol.Compiler.Parser
         private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
         {
             Expression left = null;
-            foreach (var operand in operands) {
+            foreach (CobolCodeElementsParser.IdentifierOrLiteralContext operand in operands)
+            {
                 Expression tail = null;
                 if (operand.identifier() != null)
                 {
                     tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.identifier()));
                 }
-                else
-                if (operand.literal() != null)
+                else if (operand.literal() != null)
                 {
                     tail = new Identifier(ParseTreeUtils.GetFirstToken(operand.literal()));
                 }
@@ -492,7 +492,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
                 // so add the "left" operand to all the elements of the "right" operand
-                foreach (var operand in context.identifierRounded())
+                foreach (CobolCodeElementsParser.IdentifierRoundedContext operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
@@ -516,7 +516,7 @@ namespace TypeCobol.Compiler.Parser
             }
             if (operation != null && context.identifierRounded() != null)
             {
-                foreach (var operand in context.identifierRounded())
+                foreach (CobolCodeElementsParser.IdentifierRoundedContext operand in context.identifierRounded())
                 {
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     Expression right = new Identifier(token, operand.ROUNDED() != null);
@@ -589,6 +589,30 @@ namespace TypeCobol.Compiler.Parser
             return new Identifier(ParseTreeUtils.GetFirstToken(node));
         }
 
+        /// <summary>
+        /// Create a MnemonicOrEnvironmentName from a token.
+        /// This method first check if the token match an environment name from EnvironmentNameEnum
+        /// If so, it's an EnvironmentName
+        /// otherwise, it's a mnemonic environment name
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="mnenoOrEnvName">a token corresponding to environment or a mnemonic environment name</param>
+        /// <returns>A MnemonicOrEnvironmentName of the correct CodeElementType: EnvironmentName or MnemonicForEnvironmentName</returns>
+        public static MnemonicOrEnvironmentName CreateMnemonicOrEnvironmentName(Token mnenoOrEnvName)
+        {
+            EnvironmentNameEnum envNameValue;
+            if (Enum.TryParse(mnenoOrEnvName.Text, true, out envNameValue))
+            {
+               return new EnvironmentName(mnenoOrEnvName, envNameValue);
+            }
+            else
+            {
+                //if this happens, it means it's a mnemonic environment name
+                return new MnemonicForEnvironmentName(mnenoOrEnvName);
+            }
+        }
+
         public override void EnterDisplayStatement(CobolCodeElementsParser.DisplayStatementContext context)
         {
             var displayStement = new DisplayStatement();
@@ -597,7 +621,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.identifierOrLiteral() != null)
             {
                 var expressions = new List<Expression>();
-                foreach (var idOrLiteral in context.identifierOrLiteral())
+                foreach (CobolCodeElementsParser.IdentifierOrLiteralContext idOrLiteral in context.identifierOrLiteral())
                 {
                     if (idOrLiteral.identifier() != null)
                     {
@@ -611,38 +635,26 @@ namespace TypeCobol.Compiler.Parser
                     {
                         //TODO
                         // Register a new diagnostic
-                        ParserDiagnostic diagnostic = new ParserDiagnostic("Unknow symbol", ParseTreeUtils.GetFirstToken(idOrLiteral),
+                        var diagnostic = new ParserDiagnostic("Unknow symbol", ParseTreeUtils.GetFirstToken(idOrLiteral),
                             "identifierOrLiteral: contains something other than an identifier or a literal");
                         Diagnostics.Add(diagnostic);
                     }
                 }
                 displayStement.VarsToDisplay = expressions;
             }
-            else
-            {
-                //TODO / question: VarsToDisplay already initialized in DisplayStatement constructor but its others properties are not. Need to define a default behavior
-                displayStement.VarsToDisplay = new List<Expression>();
-            }
+            //else don't set the displayStement. It will remains null
+
 
             //(mnemonic) Environment name
             if (context.uponEnvironmentName() != null)
             {
-                Token envName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName().environmentName());
-                if (envName != null)
+                Token mnenoOrEnvName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
+                if (mnenoOrEnvName != null)
                 {
+                    displayStement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnenoOrEnvName);
+                }
+            } //else don't set UponMnemonicOrEnvironmentName. it will remains null
 
-                    displayStement.UponMnemonicOrEnvironmentName = new EnvironmentName(envName);
-                }
-                else
-                {
-                    Token mnemonicForEnvName =
-                        ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName().mnemonicForEnvironmentName());
-                    if (mnemonicForEnvName != null)
-                    {
-                        displayStement.UponMnemonicOrEnvironmentName = new MnemonicForEnvironmentName(mnemonicForEnvName);
-                    }
-                }
-            }
 
             //With no advancing
             Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
