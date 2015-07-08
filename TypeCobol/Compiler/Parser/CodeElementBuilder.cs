@@ -604,18 +604,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new DeleteStatement();
         }
 
-        public static Literal CreateLiteral(IParseTree node)
+        public static LiteralForDisplay CreateLiteral(IParseTree node)
         {
             //TODO
             //Dumb code just to avoid to return null
-            return new Literal(ParseTreeUtils.GetFirstToken(node));
-        }
-
-        public static Identifier CreateIdentifier(IParseTree node)
-        {
-            //TODO
-            //Dumb code just to avoid to return null
-            return new Identifier(ParseTreeUtils.GetFirstToken(node));
+            return new LiteralForDisplay(ParseTreeUtils.GetFirstToken(node));
         }
 
         /// <summary>
