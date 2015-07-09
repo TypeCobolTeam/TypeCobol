@@ -470,7 +470,7 @@ namespace TypeCobol.Compiler.Parser
             throw new System.Exception("This is not a number!");
         }
 
-        private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
+        private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
         {
             Expression left = null;
             foreach (var operand in operands) {
@@ -480,15 +480,9 @@ namespace TypeCobol.Compiler.Parser
                     tail = CreateIdentifier(operand.identifier());
                 }
                 else
-                if (operand.literal() != null)
+                if (operand.numericLiteral() != null)
                 {
-                    SyntaxNumber number = null;
-                    if (operand.literal().numericLiteral() != null)
-                    {
-                        // TODO this will throw an exception if strings are added
-                        number = CreateNumberLiteral(operand.literal().numericLiteral());
-                        tail = new Number(number);
-                    }
+                    tail = new Number(CreateNumberLiteral(operand.numericLiteral()));
                 }
                 if (tail == null) continue;
                 if (left == null)
@@ -510,10 +504,10 @@ namespace TypeCobol.Compiler.Parser
             AddStatement statement = new AddStatement();
 
             Expression left = null;
-            if (context.identifierOrLiteral() != null)
+            if (context.identifierOrNumericLiteral() != null)
             {
                 // create the "left" operand of this addition
-                left = createLeftOperand(context.identifierOrLiteral());
+                left = createLeftOperand(context.identifierOrNumericLiteral());
             }
             if (left != null && context.identifierRounded() != null)
             {
@@ -536,11 +530,11 @@ namespace TypeCobol.Compiler.Parser
             AddStatement statement = new AddStatement();
 
             Expression operation = null;
-            if (context.identifierOrLiteral() != null)
+            if (context.identifierOrNumericLiteral() != null)
             {
                 // here we add all abc..yz in "ADD ab..y TO z" without distinction between
                 // what is after the ADD and before the TO, and what is after the TO
-                operation = createLeftOperand(context.identifierOrLiteral());
+                operation = createLeftOperand(context.identifierOrNumericLiteral());
             }
             if (operation != null && context.identifierRounded() != null)
             {
