@@ -4366,31 +4366,8 @@ acceptStatement:
 
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
-// p298: Format 1: ADD statement
-//addStatement:
-//                ADD (identifier | literal)+ TO (identifier ROUNDED?)+
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_ADD?;
-// All identifiers or literals that precede the keyword TO are added together, and this sum is added to and stored in identifier-2. 
-// This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
-//
-// p299: Format 2: ADD statement with GIVING phrase
-//addStatement:
-//                ADD (identifier | literal)+ TO (identifier | literal)
-//                GIVING (identifier ROUNDED?)+
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_ADD?;
-// The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
-//
-// p299: Format 3: ADD statement with CORRESPONDING phrase
-//addStatement:
-//                ADD (CORRESPONDING | CORR) identifier TO identifier ROUNDED?
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_ADD?;
-// Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
+addStatement:
+		addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
 //
 // For all formats:
 // identifier-1, identifier-2 
@@ -4402,43 +4379,47 @@ acceptStatement:
 // When the ARITH(COMPAT) compiler option is in effect, the composite of operands can contain a maximum of 30 digits.
 // When the ARITH(EXTEND) compiler option is in effect, the composite of operands can contain a maximum of 31 digits. 
 // For more information, see “Arithmetic statement operands” on page 284 and the details on arithmetic intermediate results in Appendix A. Intermediate results and arithmetic precision in the Enterprise COBOL Programming Guide. 
-// ROUNDED phrase
-// For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
-// SIZE ERROR phrases
-// For formats 1, 2, and 3, see “SIZE ERROR phrases” on page 283. 
-// CORRESPONDING phrase (format 3)
-// See “CORRESPONDING phrase” on page 281. 
-// END-ADD phrase
-// This explicit scope terminator serves to delimit the scope of the ADD statement. END-ADD permits a conditional ADD statement to be nested in another conditional statement. END-ADD can also be used with an imperative ADD statement.
-// For more information, see “Delimited scope statements” on page 280.
+		
+// p298: Format 1: ADD statement
+// All identifiers or literals that precede the keyword TO are added together, and this sum is added to and stored in identifier-2. 
+// This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
+addStatementFormat1:
+		ADD identifierOrNumericLiteral+ TO identifierRounded+;
 
-addStatement:
-		addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
+// p299: Format 2: ADD statement with GIVING phrase
+// The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
+addStatementFormat2:
+		ADD identifierOrNumericLiteral+ TO identifierOrNumericLiteral GIVING identifierRounded+;
 
+// p299: Format 3: ADD statement with CORRESPONDING phrase
+// Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 addStatementFormat3:
 		ADD corresponding identifier TO identifierRounded;
 
-addStatementFormat2:
-		ADD identifierOrLiteral+ TO identifierOrLiteral GIVING identifierRounded+;
-
-addStatementFormat1:
-		ADD identifierOrLiteral+ TO identifierRounded+;
-
-identifierOrLiteral:
-		identifier | literal;
-
+identifierOrNumericLiteral:
+		identifier | numericLiteral;
+		
+// ROUNDED phrase
+// For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
 identifierRounded:
 		identifier ROUNDED?;
-
+		
+// CORRESPONDING phrase (format 3)
+// See “CORRESPONDING phrase” on page 281. 
 corresponding:
 		CORRESPONDING | CORR;
-
+		
+// SIZE ERROR phrases
+// For formats 1, 2, and 3, see “SIZE ERROR phrases” on page 283. 
 onSizeErrorCondition:
 		ON? SIZE ERROR;
 
 notOnSizeErrorCondition:
 		NOT ON? SIZE ERROR;
-
+		
+// END-ADD phrase
+// This explicit scope terminator serves to delimit the scope of the ADD statement. END-ADD permits a conditional ADD statement to be nested in another conditional statement. END-ADD can also be used with an imperative ADD statement.
+// For more information, see “Delimited scope statements” on page 280.
 addStatementEnd:
 		END_ADD;
 
