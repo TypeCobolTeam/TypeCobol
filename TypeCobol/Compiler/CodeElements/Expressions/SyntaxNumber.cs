@@ -3,7 +3,6 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-
     /// <summary>
     /// Integer, Decimal or Floating Point value defined by a single Token in the Cobol syntax
     /// </summary>
@@ -18,68 +17,27 @@ namespace TypeCobol.Compiler.CodeElements
         /// Token defining the number value
         /// </summary>
         public Token Token { get; private set; }
-    }
-
-    /// <summary>
-    /// Integer value defined by a single Token in the Cobol syntax
-    /// </summary>
-    public class SyntaxInteger : SyntaxNumber
-    {
-        public SyntaxInteger(Token token)
-            : base(token)
-        { }
 
         /// <summary>
-        /// Integer value defined by the Token
+        /// Numeric value defined by the Token
         /// </summary>
-        public long Value
+        public object Value
         {
             get
             {
                 if (Token.TokenType == TokenType.IntegerLiteral)
                 {
                     return ((IntegerLiteralValue)Token.LiteralValue).Number;
-                }
-                else
-                {
-                    throw new InvalidOperationException("An integer value can not be defined by a token of type : " + Token.TokenType);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Decimal value defined by a single Token in the Cobol syntax
-    /// </summary>
-    public class SyntaxDecimal : SyntaxNumber
-    {
-        public SyntaxDecimal(Token token)
-            : base(token)
-        { }
-
-        /// <summary>
-        /// Integer value defined by the Token
-        /// </summary>
-        public double Value
-        {
-            get
-            {
+                } else
                 if (Token.TokenType == TokenType.DecimalLiteral)
                 {
                     return ((DecimalLiteralValue)Token.LiteralValue).Number;
-                }
-                else
+                } else
+                if (Token.TokenType == TokenType.FloatingPointLiteral)
                 {
-                    throw new InvalidOperationException("A decimal value can not be defined by a token of type : " + Token.TokenType);
+                    return ((FloatingPointLiteralValue)Token.LiteralValue).Number;
                 }
+                throw new InvalidOperationException("No numeric value can be defined by a token of type : " + Token.TokenType);
             }
         }
 
@@ -93,38 +51,29 @@ namespace TypeCobol.Compiler.CodeElements
     }
 
     /// <summary>
-    /// Decimal value defined by a single Token in the Cobol syntax
+    /// Zero defined by a single Token in the Cobol syntax
     /// </summary>
-    public class SyntaxFloat : SyntaxNumber
+    public class SyntaxZero : SyntaxNumber
     {
-        public SyntaxFloat(Token token)
-            : base(token)
-        { }
+        public SyntaxZero(Token token) : base(token) { }
 
         /// <summary>
-        /// Integer value defined by the Token
+        /// 0 as a long
         /// </summary>
-        public double Value
+        public long Value
         {
             get
             {
-                if (Token.TokenType == TokenType.FloatingPointLiteral)
-                {
-                    return ((DecimalLiteralValue)Token.LiteralValue).Number;
-                }
-                else
-                {
-                    throw new InvalidOperationException("A floating point value can not be defined by a token of type : " + Token.TokenType);
-                }
+                return 0;
             }
         }
 
         /// <summary>
-        /// Debug string
+        /// Debug string "0"
         /// </summary>
         public override string ToString()
         {
-            return Value.ToString();
+            return "0";
         }
     }
 }

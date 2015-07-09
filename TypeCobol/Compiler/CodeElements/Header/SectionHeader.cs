@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Segments with a priority-number of 50 through 99 are independent
         /// segments.
         /// </summary>
-        public SyntaxInteger PriorityNumber { get; set; }
+        public SyntaxNumber PriorityNumber { get; set; }
 
         /// <summary>
         /// Debug string

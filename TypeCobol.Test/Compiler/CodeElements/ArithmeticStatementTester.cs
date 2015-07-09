@@ -27,7 +27,7 @@ namespace TypeCobol.Test.Compiler.CodeElements
                 StringBuilder s = new StringBuilder();
                 Dump(s, add);
                 string dump = s.ToString();
-                if (c >= rpn.Length) errors.AppendFormat("RPN number {} not provided.", c);
+                if (c >= rpn.Length) errors.AppendFormat("RPN number {0} not provided.", c);
                 else if (dump != rpn[c]) errors.AppendFormat("{0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn[c]);
                 c++;
             }
