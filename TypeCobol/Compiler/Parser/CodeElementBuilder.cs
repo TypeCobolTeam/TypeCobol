@@ -1,8 +1,8 @@
-﻿using Antlr4.Runtime.Tree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -13,22 +13,22 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
-    /// Build a CodeElement object while visiting its parse tree
+    ///     Build a CodeElement object while visiting its parse tree
     /// </summary>
     internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
         /// <summary>
-        /// CodeElement object resulting of the visit the parse tree
+        ///     CodeElement object resulting of the visit the parse tree
         /// </summary>
         public CodeElement CodeElement { get; private set; }
 
         /// <summary>
-        /// List of syntax diagnostics gathered while transversing the parse tree
+        ///     List of syntax diagnostics gathered while transversing the parse tree
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
         /// <summary>
-        /// Initialization code run before parsing each new CodeElement
+        ///     Initialization code run before parsing each new CodeElement
         /// </summary>
         public override void EnterCodeElement(CobolCodeElementsParser.CodeElementContext context)
         {
@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProgramIdentification(CobolCodeElementsParser.ProgramIdentificationContext context)
         {
-            ProgramIdentification programIdentification = new ProgramIdentification();
+            var programIdentification = new ProgramIdentification();
 
             Token programName = ParseTreeUtils.GetFirstToken(context.programName());
             if (programName != null)
@@ -50,7 +50,7 @@ namespace TypeCobol.Compiler.Parser
                 programIdentification.ProgramName = new ProgramName(programName);
             }
             Token commonFlag = ParseTreeUtils.GetFirstToken(context.COMMON());
-            if(commonFlag != null)
+            if (commonFlag != null)
             {
                 programIdentification.IsCommon = new SyntaxBoolean(commonFlag);
             }
@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProgramEnd(CobolCodeElementsParser.ProgramEndContext context)
         {
-            ProgramEnd programEnd = new ProgramEnd();
+            var programEnd = new ProgramEnd();
 
             Token programName = ParseTreeUtils.GetFirstToken(context.programName());
             if (programName != null)
@@ -83,55 +83,60 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAuthoringProperties(CobolCodeElementsParser.AuthoringPropertiesContext context)
         {
-            AuthoringProperties authoringProperties = new AuthoringProperties();
+            var authoringProperties = new AuthoringProperties();
 
-            if(context.authorParagraph().Count > 0)
+            if (context.authorParagraph().Count > 0)
             {
-                authoringProperties.Author = BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Author =
+                    BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.dateCompiledParagraph().Count > 0)
             {
-                authoringProperties.DateCompiled = BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.DateCompiled =
+                    BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.dateWrittenParagraph().Count > 0)
             {
-                authoringProperties.DateWritten = BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.DateWritten =
+                    BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.installationParagraph().Count > 0)
             {
-                authoringProperties.Installation = BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Installation =
+                    BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
             }
             if (context.securityParagraph().Count > 0)
             {
-                authoringProperties.Security = BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
+                authoringProperties.Security =
+                    BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
             }
 
             if (CodeElement is ProgramIdentification)
             {
-                ((ProgramIdentification)CodeElement).AuthoringProperties = authoringProperties;
+                ((ProgramIdentification) CodeElement).AuthoringProperties = authoringProperties;
             }
             else if (CodeElement is ClassIdentification)
             {
-                ((ClassIdentification)CodeElement).AuthoringProperties = authoringProperties;
+                ((ClassIdentification) CodeElement).AuthoringProperties = authoringProperties;
             }
             else if (CodeElement is MethodIdentification)
             {
-                ((MethodIdentification)CodeElement).AuthoringProperties = authoringProperties;
+                ((MethodIdentification) CodeElement).AuthoringProperties = authoringProperties;
             }
         }
 
         private SyntaxProperty<string> BuildCommentEntriesProperty(IEnumerable<ITerminalNode> commentEntriesNodes)
         {
-            IList<Token> tokensList = new List<Token>();
-            StringBuilder sbCommentEntries = new StringBuilder();
+            var tokensList = new List<Token>();
+            var sbCommentEntries = new StringBuilder();
 
             bool isFirstLine = true;
-            foreach(ITerminalNode commentEntryNode in commentEntriesNodes)
+            foreach (ITerminalNode commentEntryNode in commentEntriesNodes)
             {
                 Token token = ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode);
                 tokensList.Add(token);
 
-                if(isFirstLine)
+                if (isFirstLine)
                 {
                     sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
                     isFirstLine = false;
@@ -202,7 +207,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMethodIdentification(CobolCodeElementsParser.MethodIdentificationContext context)
         {
-            MethodIdentification methodIdentification = new MethodIdentification();
+            var methodIdentification = new MethodIdentification();
 
             Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
             if (methodName != null)
@@ -215,7 +220,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMethodEnd(CobolCodeElementsParser.MethodEndContext context)
         {
-            MethodEnd methodEnd = new MethodEnd();
+            var methodEnd = new MethodEnd();
 
             Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
             if (methodName != null)
@@ -267,10 +272,10 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            if(context.returningPhrase() != null)
+            if (context.returningPhrase() != null)
             {
                 Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataName());
-                if(dataName != null)
+                if (dataName != null)
                 {
                     procedureDivisionHeader.ReturningDataName = new DataName(dataName);
                 }
@@ -293,7 +298,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSectionHeader(CobolCodeElementsParser.SectionHeaderContext context)
         {
-            SectionHeader sectionHeader = new SectionHeader();
+            var sectionHeader = new SectionHeader();
 
             Token sectionName = ParseTreeUtils.GetFirstToken(context.sectionName());
             if (sectionName != null)
@@ -310,12 +315,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = sectionHeader;
         }
 
-        public override void EnterConfigurationSectionHeader(CobolCodeElementsParser.ConfigurationSectionHeaderContext context)
+        public override void EnterConfigurationSectionHeader(
+            CobolCodeElementsParser.ConfigurationSectionHeaderContext context)
         {
             CodeElement = new ConfigurationSectionHeader();
         }
 
-        public override void EnterInputOutputSectionHeader(CobolCodeElementsParser.InputOutputSectionHeaderContext context)
+        public override void EnterInputOutputSectionHeader(
+            CobolCodeElementsParser.InputOutputSectionHeaderContext context)
         {
             CodeElement = new InputOutputSectionHeader();
         }
@@ -325,12 +332,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new FileSectionHeader();
         }
 
-        public override void EnterWorkingStorageSectionHeader(CobolCodeElementsParser.WorkingStorageSectionHeaderContext context)
+        public override void EnterWorkingStorageSectionHeader(
+            CobolCodeElementsParser.WorkingStorageSectionHeaderContext context)
         {
             CodeElement = new WorkingStorageSectionHeader();
         }
 
-        public override void EnterLocalStorageSectionHeader(CobolCodeElementsParser.LocalStorageSectionHeaderContext context)
+        public override void EnterLocalStorageSectionHeader(
+            CobolCodeElementsParser.LocalStorageSectionHeaderContext context)
         {
             CodeElement = new LocalStorageSectionHeader();
         }
@@ -355,12 +364,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = paragraphHeader;
         }
 
-        public override void EnterFileControlParagraphHeader(CobolCodeElementsParser.FileControlParagraphHeaderContext context)
+        public override void EnterFileControlParagraphHeader(
+            CobolCodeElementsParser.FileControlParagraphHeaderContext context)
         {
             CodeElement = new FileControlParagraphHeader();
         }
 
-        public override void EnterIoControlParagraphHeader(CobolCodeElementsParser.IoControlParagraphHeaderContext context)
+        public override void EnterIoControlParagraphHeader(
+            CobolCodeElementsParser.IoControlParagraphHeaderContext context)
         {
             CodeElement = new IOControlParagraphHeader();
         }
@@ -593,9 +604,86 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new DeleteStatement();
         }
 
+        public static LiteralForDisplay CreateLiteral(IParseTree node)
+        {
+            //TODO
+            //Dumb code just to avoid to return null
+            return new LiteralForDisplay(ParseTreeUtils.GetFirstToken(node));
+        }
+
+        /// <summary>
+        /// Create a MnemonicOrEnvironmentName from a token.
+        /// This method first check if the token match an environment name from EnvironmentNameEnum
+        /// If so, it's an EnvironmentName
+        /// otherwise, it's a mnemonic environment name
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="mnenoOrEnvName">a token corresponding to environment or a mnemonic environment name</param>
+        /// <returns>A MnemonicOrEnvironmentName of the correct CodeElementType: EnvironmentName or MnemonicForEnvironmentName</returns>
+        public static MnemonicOrEnvironmentName CreateMnemonicOrEnvironmentName(Token mnenoOrEnvName)
+        {
+            EnvironmentNameEnum envNameValue;
+            if (Enum.TryParse(mnenoOrEnvName.Text, true, out envNameValue))
+            {
+               return new EnvironmentName(mnenoOrEnvName, envNameValue);
+            }
+            else
+            {
+                //if this happens, it means it's a mnemonic environment name
+                return new MnemonicForEnvironmentName(mnenoOrEnvName);
+            }
+        }
+
         public override void EnterDisplayStatement(CobolCodeElementsParser.DisplayStatementContext context)
         {
-            CodeElement = new DisplayStatement();
+            var displayStement = new DisplayStatement();
+
+            //Identifiers & literals
+            if (context.identifierOrLiteral() != null)
+            {
+                var expressions = new List<Expression>();
+                foreach (CobolCodeElementsParser.IdentifierOrLiteralContext idOrLiteral in context.identifierOrLiteral())
+                {
+                    if (idOrLiteral.identifier() != null)
+                    {
+                        expressions.Add(CreateIdentifier(idOrLiteral));
+                    }
+                    else if (idOrLiteral.literal() != null)
+                    {
+                        expressions.Add(CreateLiteral(idOrLiteral));
+                    }
+                    else
+                    {
+                        //TODO
+                        // Register a new diagnostic
+                        var diagnostic = new ParserDiagnostic("Unknow symbol", ParseTreeUtils.GetFirstToken(idOrLiteral),
+                            "identifierOrLiteral: contains something other than an identifier or a literal");
+                        Diagnostics.Add(diagnostic);
+                    }
+                }
+                displayStement.VarsToDisplay = expressions;
+            }
+            //else don't set the displayStement. It will remains null
+
+
+            //(mnemonic) Environment name
+            if (context.uponEnvironmentName() != null)
+            {
+                Token mnenoOrEnvName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
+                if (mnenoOrEnvName != null)
+                {
+                    displayStement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnenoOrEnvName);
+                }
+            } //else don't set UponMnemonicOrEnvironmentName. it will remains null
+
+
+            //With no advancing
+            Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
+            displayStement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
+
+
+            CodeElement = displayStement;
         }
 
         public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
@@ -688,7 +776,8 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new OpenStatement();
         }
 
-        public override void EnterPerformProcedureStatement(CobolCodeElementsParser.PerformProcedureStatementContext context)
+        public override void EnterPerformProcedureStatement(
+            CobolCodeElementsParser.PerformProcedureStatementContext context)
         {
             CodeElement = new PerformProcedureStatement();
         }
@@ -855,7 +944,8 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new WhenOtherCondition();
         }
 
-        public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
+        public override void EnterWhenConditionalExpression(
+            CobolCodeElementsParser.WhenConditionalExpressionContext context)
         {
             CodeElement = new WhenConditionalExpression();
         }

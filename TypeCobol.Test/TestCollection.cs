@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Test.Compiler.File;
+﻿using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Compiler.Pipeline;
 using TypeCobol.Test.Compiler.Preprocessor;
@@ -103,12 +98,14 @@ namespace TypeCobol.Test
             TestTokenSource.Check_CobolTokenSource_WithStartToken();
 
             TestCodeElements.Check_ATCodeElements();
+            TestCodeElements.Check_DISPLAYCodeElements();
+
             TestCodeElements.Check_ENDCodeElements();
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_NOTCodeElements();
             TestCodeElements.Check_ONCodeElements();
-            TestCodeElements.Check_PERFORMCodeElements();
+//TODO      TestCodeElements.Check_PERFORMCodeElements();
             TestCodeElements.Check_UDWCodeElements();
             TestCodeElements.Check_WHENCodeElements();
             TestCodeElements.Check_XMLCodeElements();
@@ -119,7 +116,9 @@ namespace TypeCobol.Test
             TestCodeElements.Check_StatementCodeElements();
 //TODO            TestCodeElements.Check_EntryCodeElements();
 
-//            TestParser.Check_ParserIntegration(); // TODO statement: move
+            //This test use TypeChecker which is specific to TypeCobol
+            //As specifications of TypeCobol are not final yet this test can't be used
+//            TestParser.Check_ParserIntegration();
         }
 
         public static void CheckPipeline()

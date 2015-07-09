@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime;
+﻿using System.Collections.Specialized;
+using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -92,11 +93,51 @@ namespace TypeCobol.Test.Compiler.Parser
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
             {
                 string expectedResult = reader.ReadToEnd();
+                String[] expectedResultLines = expectedResult.Split(new[] { '\r', '\n' });
+                String[] resultLines = result.Split(new[] { '\r', '\n' });
+
+               
+                for (int resultIdx = 0, expectedResultIdx = 0; resultIdx < resultLines.Length && expectedResultIdx < expectedResultLines.Length; resultIdx++, expectedResultIdx++)
+                {
+                    if (expectedResultLines[expectedResultIdx] != resultLines[resultIdx])
+                    {
+                        throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result. " + expectedResultLines[expectedResultIdx] + "!=" + resultLines[resultIdx]);
+                    }
+                }
+                if (expectedResultLines.Length != resultLines.Length)
+                {
+                    throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result. Number of lines not equal: " + expectedResultLines.Length + "!=" + resultLines.Length);
+                }
+
+                /*
                 if (result != expectedResult)
                 {
                     throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result");
                 }
+                 * */
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static CompilationUnit CreateCompilationUnitForVirtualFile()
+        {
+            //Prepare
+            var textDocument = new TextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
+
+            var typeCobolOptions = new TypeCobolOptions();
+            var project = new CompilationProject("Empty project", ".", new[] { "*.cbl", "*.cpy" },
+                DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
+                DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
+
+            var compilationUnit = new CompilationUnit(textDocument,
+                DocumentFormat.RDZReferenceFormat.Encoding, project.SourceFileProvider, project, typeCobolOptions);
+            compilationUnit.SetupCodeAnalysisPipeline(null, 0);
+            compilationUnit.StartDocumentProcessing();
+
+            return compilationUnit;
         }
     }
 

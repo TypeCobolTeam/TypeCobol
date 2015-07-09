@@ -917,6 +917,8 @@ environmentName : UserDefinedWord;
 environmentNameClause : 
                           environmentName IS? mnemonicForEnvironmentName;
 
+
+
 // p115 : mnemonic-name-1 , mnemonic-name-2
 // mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
 // user-defined names. 
@@ -930,6 +932,13 @@ environmentNameClause :
 // mnemonic-name-2 can be referenced only in the SET statement. 
 
 mnemonicForEnvironmentName : UserDefinedWord;
+
+
+//As environmentName and mnemonicForEnvironmentName are both defined as UserDefinedWord
+//ANTLR can't know which one is the good statement
+//So CodeElementBuilder need to check if the UserDefinedWord match an environmentName
+//if not, it's mnemonicForEnvironmentName
+mnemonicOrEnvironmentName:   UserDefinedWord;
 
 // p 115 : The ALPHABET clause provides a means of relating an alphabet-name to a
 // specified character code set or collating sequence.
@@ -4357,7 +4366,7 @@ sentenceEnd:
 
 acceptStatement:
                    ACCEPT identifier (FROM 
-                                      ( mnemonicForEnvironmentName | environmentName ) |
+                                      ( mnemonicOrEnvironmentName ) |
                                       (   (DATE YYYYMMDD ?) |
                                           (DAY YYYYDDD ?) |
                                           (DAY_OF_WEEK |
@@ -4816,9 +4825,16 @@ deleteStatementEnd:
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-                    DISPLAY (identifier | literal)+
-                    (UPON (mnemonicForEnvironmentName | environmentName))?
-                    (WITH? NO ADVANCING)?;
+                    DISPLAY identifierOrLiteral+
+                    uponEnvironmentName?
+                    withNoAdvancing?;
+
+uponEnvironmentName:
+					UPON mnemonicOrEnvironmentName;
+
+withNoAdvancing:
+					WITH? NO ADVANCING;
+
 
 // p325: DIVIDE statement
 // The DIVIDE statement divides one numeric data item into or by others and sets the values of data items equal to the quotient and remainder.
@@ -4902,6 +4918,9 @@ divideStatement:
                    DIVIDE (identifier | literal) (INTO | BY) ((identifier ROUNDED?)+ | literal)
                    (GIVING (identifier ROUNDED?)+)?
                    (REMAINDER identifier)?;
+
+
+
 
 //divideStatementConditional:
 //                              divideStatement
