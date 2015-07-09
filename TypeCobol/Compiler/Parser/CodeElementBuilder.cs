@@ -513,8 +513,8 @@ namespace TypeCobol.Compiler.Parser
                     Identifier right = CreateIdentifier(operand.identifier());
                     right.rounded = operand.ROUNDED() != null;
                     Expression operation = new Addition(left, right);
-                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());//TODO SymbolRef
-                    statement.affectations.Add(token, operation);//TODO SymbolRef
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
+                    statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
                 }
             }
             CodeElement = statement;
@@ -537,8 +537,8 @@ namespace TypeCobol.Compiler.Parser
                 {
                     Identifier right = CreateIdentifier(operand.identifier());
                     right.rounded = operand.ROUNDED() != null;
-                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());//TODO SymbolRef
-                    statement.affectations.Add(token, operation);//TODO SymbolRef
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
+                    statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
                 }
             }
 
@@ -553,7 +553,7 @@ namespace TypeCobol.Compiler.Parser
             Token token = ParseTreeUtils.GetFirstToken(context.identifierRounded());
             Expression right = new Identifier(token, context.identifierRounded().ROUNDED() != null);
             Expression operation = new Addition(left, right);
-            statement.affectations.Add(token, operation);
+            statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
 
             CodeElement = statement;
         }
