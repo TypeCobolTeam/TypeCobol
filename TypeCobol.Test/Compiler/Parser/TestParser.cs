@@ -22,7 +22,6 @@ namespace TypeCobol.Test.Compiler.Parser
             {            
                 throw new Exception(compilationUnit.SyntaxDocument.Diagnostics.Count + " errors found while parsing " + textName);
             }
-
             // Check for semantic analysis errors
             if (compilationUnit.SemanticsDocument.Diagnostics.Count != 1 || compilationUnit.SemanticsDocument.Diagnostics[0].Message != "Data item W-TAB-LCC-CLE-DAT of type date can not be moved into data item W-TAB-LCC-CLE-RIB of type rib")
             {

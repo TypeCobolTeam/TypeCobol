@@ -256,6 +256,77 @@ namespace TypeCobol.Test.Compiler.File
                 throw new Exception("Error reading line 28 of the ASCII text source (free text format)");
             }
         }
+
+        public static void Check_UTF8File()
+        {
+            DocumentFormat docFormat = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+
+            SourceFileProvider fileProvider = new SourceFileProvider();
+            fileProvider.AddLocalDirectoryLibrary(
+                PlatformUtils.GetPathForProjectFile(@"Compiler\File\Samples"),
+                false, null,
+                docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength);
+
+            DummyTextSourceListener textSourceListener = new DummyTextSourceListener();
+
+            string filename = "UTF8Format.txt";
+            CobolFile cobolFile;
+            if (fileProvider.TryGetFile(filename, out cobolFile))
+            {
+                // Load the CobolFile in a TextDocument
+                TextDocument textDocument = new TextDocument(filename, docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                // Send all text lines in one batch to the test observer
+                textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
+                textDocument.StartSendingChangeEvents();
+            }
+
+            TextChangeMap tce;
+            tce = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges.First<TextChange>(), docFormat.ColumnsLayout);
+            CheckLine(filename, tce, 0, "english: hello, world");
+            tce = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges[1], docFormat.ColumnsLayout);
+            bool okay = false;
+            try { CheckLine(filename, tce, 1, "français: salut, tout le monde"); }
+            catch (Exception ex) { okay = true; }
+            if (!okay) throw new Exception("Exception should have been thrown!");
+            CheckLine(filename, tce, 1, "arabic: مرحبا بالعالم");
+            tce = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges[2], docFormat.ColumnsLayout);
+            CheckLine(filename, tce, 2, "japanese: こんにちは世界");
+        }
+
+        private static void CheckLine(string filename, TextChangeMap tce, int index, string expectedText, TextChangeType expectedTextChangeType = TextChangeType.LineInserted, string expectedSequenceNumber = null, string expectedComment = null)
+        {
+            bool hasError = false;
+            string error = filename + "," + index + ": ";
+            hasError = hasError | (tce.LineIndex != index);
+            if (hasError)
+            {
+                error += "[line index: " + tce.LineIndex + ", expected: " + index + "]";
+            }
+            hasError = hasError | (tce.Type != expectedTextChangeType);
+            if (hasError)
+            {
+                error += "[text change type: " + tce.Type + ", expected: " + expectedTextChangeType + "]";
+            }
+            hasError = hasError | (tce.NewLineMap.SequenceNumberText != expectedSequenceNumber);
+            if (hasError)
+            {
+                error += "[sequence number area: " + tce.NewLineMap.SequenceNumberText + ", expected: " + expectedSequenceNumber + "]";
+            }
+            hasError = hasError | (tce.NewLineMap.CommentText != expectedComment);
+            if (hasError)
+            {
+                error += "[comment area: " + tce.NewLineMap.CommentText + ", expected: " + expectedComment + "]";
+            }
+            hasError = hasError | (tce.NewLineMap.SourceText != expectedText);
+            if (hasError)
+            {
+                error += "[text: " + tce.NewLineMap.SourceText + ", expected: " + expectedText + "]";
+            }
+            if (hasError)
+            {
+                throw new Exception(error);
+            }
+        }
     }
 
     class DummyTextSourceListener : IObserver<TextChangedEvent>

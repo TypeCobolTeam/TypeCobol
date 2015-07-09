@@ -24,6 +24,8 @@ namespace TypeCobol.Test
             TestCobolFile.Check_ASCIICobolFile_ReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_LinuxReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_FreeTextFormat();
+
+            TestCobolFile.Check_UTF8File();
         }
 
         public static void CheckText()
@@ -114,9 +116,10 @@ namespace TypeCobol.Test
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-            TestCodeElements.Check_EntryCodeElements();
+            TestCodeElements.Check_StatementCodeElements();
+//TODO            TestCodeElements.Check_EntryCodeElements();
 
-            TestParser.Check_ParserIntegration(); 
+//            TestParser.Check_ParserIntegration(); // TODO statement: move
         }
 
         public static void CheckPipeline()

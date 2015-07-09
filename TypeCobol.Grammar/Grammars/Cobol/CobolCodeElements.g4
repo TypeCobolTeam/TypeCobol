@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------
 // Grammar for the FIRST step of the Cobol parser : flat view of the Cobol
 // syntax, useful for incremental parsing. The goal here is to produce a 
-// LIST of syntax nodes instead of TREE (beacause it is easier to reuse).
+// LIST of syntax nodes instead of TREE (because it is easier to reuse).
 // -----------------------------------------------------------------------
 
 grammar CobolCodeElements;
@@ -123,7 +123,7 @@ codeElement:
        addStatement |
            onSizeErrorCondition | // ... imperative statements ...
            notOnSizeErrorCondition | // ... imperative statements ...
-       addStatementEnd |                
+       addStatementEnd |
        callStatement |
            onExceptionCondition | // ... imperative statements ...
            notOnExceptionCondition | // ... imperative statements ...
@@ -4413,23 +4413,36 @@ acceptStatement:
 // For more information, see “Delimited scope statements” on page 280.
 
 addStatement:
-                ADD (CORRESPONDING | CORR)? (identifier | numericLiteral)+ TO ((identifier ROUNDED?)+ | numericLiteral)
-                (GIVING (identifier ROUNDED?)+)?;
+		addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
 
-//addStatementConditional:
-//                           addStatement
-//                           (onSizeErrorCondition imperativeStatement)?
-//                           (notOnSizeErrorCondition imperativeStatement)?
-//                           addStatementEnd?;
+addStatementFormat3:
+		ADD corresponding identifier TO identifierRounded;
+
+addStatementFormat2:
+		ADD identifierOrLiteral+ TO identifierOrLiteral GIVING identifierRounded+;
+
+addStatementFormat1:
+		ADD identifierOrLiteral+ TO identifierRounded+;
+
+identifierOrLiteral:
+		identifier | literal;
+
+identifierRounded:
+		identifier ROUNDED?;
+
+corresponding:
+		CORRESPONDING | CORR;
 
 onSizeErrorCondition:
-                        ON? SIZE ERROR;
+		ON? SIZE ERROR;
 
 notOnSizeErrorCondition:
-                           NOT ON? SIZE ERROR;
+		NOT ON? SIZE ERROR;
 
 addStatementEnd:
-                   END_ADD;
+		END_ADD;
+
+
 
 // p301: ALTER statement
 // The ALTER statement changes the transfer point specified in a GO TO statement.

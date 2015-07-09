@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -428,9 +429,133 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AcceptStatement();
         }
 
-        public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
+        private static Identifier CreateIdentifier(IParseTree node) {
+            //TODO: effective identifier parsing, DON'T take only first Token
+            // (identifier can be like "ADDRESS OF myvar(10+3.14:20-101.42) OF mygroup")
+            return new Identifier(ParseTreeUtils.GetFirstToken(node));
+        }
+
+        private SyntaxNumber CreateNumberLiteral(CobolCodeElementsParser.NumericLiteralContext context)
         {
-            CodeElement = new AddStatement();
+            if (context.IntegerLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral());
+                return new SyntaxInteger(token);
+            }
+            if (context.DecimalLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral());
+                return new SyntaxDecimal(token);
+            }
+            if (context.FloatingPointLiteral() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral());
+                return new SyntaxFloat(token);
+            }
+            if (context.ZERO() != null || context.ZEROS() != null || context.ZEROES() != null)
+            {
+                throw new System.Exception("TODO: How do I represent a zero ?");
+            }
+            throw new System.Exception("This is not a number!");
+        }
+
+        private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrLiteralContext> operands)
+        {
+            Expression left = null;
+            foreach (var operand in operands) {
+                Expression tail = null;
+                if (operand.identifier() != null)
+                {
+                    tail = CreateIdentifier(operand.identifier());
+                }
+                else
+                if (operand.literal() != null)
+                {
+                    SyntaxNumber number = null;
+                    if (operand.literal().numericLiteral() != null)
+                    {
+                        // TODO this will throw an exception if strings are added
+                        number = CreateNumberLiteral(operand.literal().numericLiteral());
+                        tail = new Number(number);
+                    }
+                }
+                if (tail == null) continue;
+                if (left == null)
+                {
+                    // first element of the list that is the "left" operand
+                    left = tail;
+                }
+                else
+                {
+                    // add this element to the others, to get the sum that is the "left" operand
+                    left = new Addition(left, tail);
+                }
+            }
+            return left;
+        }
+
+        public override void EnterAddStatementFormat1(CobolCodeElementsParser.AddStatementFormat1Context context)
+        {
+            AddStatement statement = new AddStatement();
+
+            Expression left = null;
+            if (context.identifierOrLiteral() != null)
+            {
+                // create the "left" operand of this addition
+                left = createLeftOperand(context.identifierOrLiteral());
+            }
+            if (left != null && context.identifierRounded() != null)
+            {
+                // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
+                // so add the "left" operand to all the elements of the "right" operand
+                foreach (var operand in context.identifierRounded())
+                {
+                    Identifier right = CreateIdentifier(operand.identifier());
+                    right.rounded = operand.ROUNDED() != null;
+                    Expression operation = new Addition(left, right);
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());//TODO SymbolRef
+                    statement.affectations.Add(token, operation);//TODO SymbolRef
+                }
+            }
+            CodeElement = statement;
+        }
+
+        public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
+        {
+            AddStatement statement = new AddStatement();
+
+            Expression operation = null;
+            if (context.identifierOrLiteral() != null)
+            {
+                // here we add all abc..yz in "ADD ab..y TO z" without distinction between
+                // what is after the ADD and before the TO, and what is after the TO
+                operation = createLeftOperand(context.identifierOrLiteral());
+            }
+            if (operation != null && context.identifierRounded() != null)
+            {
+                foreach (var operand in context.identifierRounded())
+                {
+                    Identifier right = CreateIdentifier(operand.identifier());
+                    right.rounded = operand.ROUNDED() != null;
+                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());//TODO SymbolRef
+                    statement.affectations.Add(token, operation);//TODO SymbolRef
+                }
+            }
+
+            CodeElement = statement;
+        }
+
+        public override void EnterAddStatementFormat3(CobolCodeElementsParser.AddStatementFormat3Context context)
+        {
+            AddStatement statement = new AddStatement();
+
+            Expression left = new Identifier(ParseTreeUtils.GetFirstToken(context.identifier()));
+            Token token = ParseTreeUtils.GetFirstToken(context.identifierRounded());
+            Expression right = new Identifier(token, context.identifierRounded().ROUNDED() != null);
+            Expression operation = new Addition(left, right);
+            statement.affectations.Add(token, operation);
+
+            CodeElement = statement;
         }
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)

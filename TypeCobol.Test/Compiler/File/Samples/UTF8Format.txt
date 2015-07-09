@@ -1,0 +1,3 @@
+﻿english: hello, world
+arabic: مرحبا بالعالم
+japanese: こんにちは世界

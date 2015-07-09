@@ -85,14 +85,7 @@ namespace TypeCobol.Compiler.Scanner
     {
         public IntegerLiteralValue(string sign, string number) : base(LiteralValueType.Integer)
         {
-            if(!String.IsNullOrEmpty(sign))
-            {
-                HasSign = true;
-            }
-            else
-            {
-                HasSign = false;
-            }
+            HasSign = !String.IsNullOrEmpty(sign);
             Number = Int64.Parse(number);
             if(sign == "-")
             {
