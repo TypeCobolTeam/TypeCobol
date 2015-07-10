@@ -36,6 +36,12 @@ namespace TypeCobol.Compiler.CodeElements
                 if (Token.TokenType == TokenType.FloatingPointLiteral)
                 {
                     return ((FloatingPointLiteralValue)Token.LiteralValue).Number;
+                } else
+                if (Token.TokenType == TokenType.ZERO
+                 || Token.TokenType == TokenType.ZEROS
+                 || Token.TokenType == TokenType.ZEROES)
+                {
+                    return 0;
                 }
                 throw new InvalidOperationException("No numeric value can be defined by a token of type : " + Token.TokenType);
             }
@@ -47,33 +53,6 @@ namespace TypeCobol.Compiler.CodeElements
         public override string ToString()
         {
             return Value.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Zero defined by a single Token in the Cobol syntax
-    /// </summary>
-    public class SyntaxZero : SyntaxNumber
-    {
-        public SyntaxZero(Token token) : base(token) { }
-
-        /// <summary>
-        /// 0 as a long
-        /// </summary>
-        public long Value
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Debug string "0"
-        /// </summary>
-        public override string ToString()
-        {
-            return "0";
         }
     }
 }

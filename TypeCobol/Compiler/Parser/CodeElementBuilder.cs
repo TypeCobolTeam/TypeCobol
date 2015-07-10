@@ -451,15 +451,15 @@ namespace TypeCobol.Compiler.Parser
             }
             if (context.ZERO() != null)
             {
-                return new SyntaxZero(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
             }
             if (context.ZEROS() != null)
             {
-                return new SyntaxZero(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
             }
             if (context.ZEROES() != null)
             {
-                return new SyntaxZero(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
             }
             throw new System.Exception("This is not a number!");
         }
