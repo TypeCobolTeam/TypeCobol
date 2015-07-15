@@ -4810,6 +4810,9 @@ displayStatement:
                     uponEnvironmentName?
                     withNoAdvancing?;
 
+identifierOrLiteral:
+		identifier | literal;
+
 uponEnvironmentName:
 					UPON mnemonicOrEnvironmentName;
 

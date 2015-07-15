@@ -105,7 +105,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_NOTCodeElements();
             TestCodeElements.Check_ONCodeElements();
-//TODO      TestCodeElements.Check_PERFORMCodeElements();
+            TestCodeElements.Check_PERFORMCodeElements();
             TestCodeElements.Check_UDWCodeElements();
             TestCodeElements.Check_WHENCodeElements();
             TestCodeElements.Check_XMLCodeElements();
