@@ -618,19 +618,19 @@ namespace TypeCobol.Compiler.Parser
         /// 
         /// 
         /// </summary>
-        /// <param name="mnenoOrEnvName">a token corresponding to environment or a mnemonic environment name</param>
+        /// <param name="mnemonicOrEnvironmentName">a token corresponding to environment or a mnemonic environment name</param>
         /// <returns>A MnemonicOrEnvironmentName of the correct CodeElementType: EnvironmentName or MnemonicForEnvironmentName</returns>
-        public static MnemonicOrEnvironmentName CreateMnemonicOrEnvironmentName(Token mnenoOrEnvName)
+        public static MnemonicOrEnvironmentName CreateMnemonicOrEnvironmentName(Token mnemonicOrEnvironmentName)
         {
             EnvironmentNameEnum envNameValue;
-            if (Enum.TryParse(mnenoOrEnvName.Text, true, out envNameValue))
+            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
             {
-               return new EnvironmentName(mnenoOrEnvName, envNameValue);
+                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
             }
             else
             {
                 //if this happens, it means it's a mnemonic environment name
-                return new MnemonicForEnvironmentName(mnenoOrEnvName);
+                return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
             }
         }
 
@@ -669,10 +669,10 @@ namespace TypeCobol.Compiler.Parser
             //(mnemonic) Environment name
             if (context.uponEnvironmentName() != null)
             {
-                Token mnenoOrEnvName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
-                if (mnenoOrEnvName != null)
+                Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
+                if (mnemonicOrEnvironmentName != null)
                 {
-                    displayStement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnenoOrEnvName);
+                    displayStement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
                 }
             } //else don't set UponMnemonicOrEnvironmentName. it will remains null
 
