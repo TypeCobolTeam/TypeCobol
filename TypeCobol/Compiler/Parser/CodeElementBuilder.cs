@@ -568,6 +568,79 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
         }
 
+
+
+        private void AddDataNameToCodeElement(CobolCodeElementsParser.InOrOfDataNameContext context)
+        {
+            Token token = ParseTreeUtils.GetFirstToken(context);
+            SymbolReference<DataName> dataname = new SymbolReference<DataName>(new DataName(token));
+            bool isIN = context.IN() != null;
+            bool isOF = context.OF() != null;
+            //TODO: I has dataname. What I do wif it?
+        }
+        private void AddFileNameToCodeElement(CobolCodeElementsParser.InOrOfFileNameContext context)
+        {
+            Token token = ParseTreeUtils.GetFirstToken(context);
+            SymbolReference<FileName> filename = new SymbolReference<FileName>(new FileName(token));
+            bool isIN = context.IN() != null;
+            bool isOF = context.OF() != null;
+            //TODO: I has filename. What I do wif it?
+        }
+
+        public override void EnterIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
+        {
+            if (context.dataName() != null)
+            {
+                Token token = ParseTreeUtils.GetFirstToken(context.dataName());
+                SymbolReference<DataName> data = new SymbolReference<DataName>(new DataName(token));
+                //TODO and ... now ?
+            }
+            if (context.inOrOfDataName() != null)
+            {
+                foreach (var inof in context.inOrOfDataName())
+                {
+                    AddDataNameToCodeElement(inof);
+                }
+            }
+            if (context.inOrOfFileName() != null)
+            {
+                AddFileNameToCodeElement(context.inOrOfFileName());
+            }
+            //TODO: subscripts
+            //TODO: reference modifiers
+        }
+
+        public override void EnterIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
+        {
+            var condition = context.conditionName(); //TODO
+            if (context.inOrOfDataName() != null)
+            {
+                foreach (var inof in context.inOrOfDataName())
+                {
+                    AddDataNameToCodeElement(inof);
+                }
+            }
+            if (context.inOrOfFileName() != null)
+            {
+                AddFileNameToCodeElement(context.inOrOfFileName());
+            }
+        }
+
+        public override void EnterIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
+        {
+            context.LINAGE_COUNTER();
+            if (context.inOrOfFileName() != null)
+            {
+                Token token = ParseTreeUtils.GetFirstToken(context.inOrOfFileName());
+                SymbolReference<FileName> filename = new SymbolReference<FileName>(new FileName(token));
+                bool isIN = context.inOrOfFileName().IN() != null;
+                bool isOF = context.inOrOfFileName().OF() != null;
+                //TODO: I has filename. What I do wif it?
+            }
+        }
+
+
+
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
         {
             CodeElement = new AlterStatement();
@@ -1049,21 +1122,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
-        }
-
-        public override void EnterIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
-        {
-            Console.WriteLine("IF1");
-        }
-
-        public override void EnterIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
-        {
-            Console.WriteLine("IF2");
-        }
-
-        public override void EnterIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
-        {
-            Console.WriteLine("IF3");
         }
     }
 }
