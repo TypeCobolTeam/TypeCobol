@@ -15,6 +15,7 @@ ADD
 ADD 1 TO x.
 ADD 1 2 TO toto.
 ADD 1 2 3 TO x toto.
+ADD 1 0 1 0 1 0 to x.
 * SYNTAX ERRORS
 * literals not allowed as 2nd operand
 ADD 1 TO 1.
@@ -39,6 +40,8 @@ ADD 1 TO m GIVING x.
 ADD 1 TO m GIVING x y.
 ADD a 1 TO 2 GIVING x.
 ADD a b ab TO 1 GIVING x toto.
+ADD 0 TO 0 GIVING x.
+ADD 1 0 1 0 1 TO 0 GIVING x.
 * SYNTAX ERRORS
 * only 1 identifier as 2nd operand
 *ADD a b ab TO x y xy GIVING titi toto.

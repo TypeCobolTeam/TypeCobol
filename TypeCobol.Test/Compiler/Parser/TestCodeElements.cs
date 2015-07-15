@@ -247,6 +247,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 "x = 1 x +",
                 "toto = 1 2 + toto +",
                 "x = 1 2 + 3 + x +, toto = 1 2 + 3 + toto +",
+                "x = 1 0 + 1 + 0 + 1 + 0 + x +",
                 "", "", "", "", "", // literals not allowed as 2nd operand
                 //format 2
                 "x = a m +",
@@ -256,6 +257,8 @@ namespace TypeCobol.Test.Compiler.Parser
                 "x = 1 m +, y = 1 m +",
                 "x = a 1 + 2 +",
                 "x = a b + ab + 1 +, toto = a b + ab + 1 +",
+                "x = 0 0 +",
+                "x = 1 0 + 1 + 0 + 1 + 0 +",
                 // format 3
                 "x = a x +",
                 "x = a x +",

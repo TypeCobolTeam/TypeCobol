@@ -309,7 +309,7 @@ namespace TypeCobol.Compiler.Parser
             Token priorityNumber = ParseTreeUtils.GetFirstToken(context.priorityNumber());
             if (priorityNumber != null)
             {
-                sectionHeader.PriorityNumber = new SyntaxInteger(priorityNumber);
+                sectionHeader.PriorityNumber = new SyntaxNumber(priorityNumber);
             }
             
             CodeElement = sectionHeader;
@@ -450,22 +450,27 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context.IntegerLiteral() != null)
             {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral());
-                return new SyntaxInteger(token);
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
             }
             if (context.DecimalLiteral() != null)
             {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral());
-                return new SyntaxDecimal(token);
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral()));
             }
             if (context.FloatingPointLiteral() != null)
             {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral());
-                return new SyntaxFloat(token);
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral()));
             }
-            if (context.ZERO() != null || context.ZEROS() != null || context.ZEROES() != null)
+            if (context.ZERO() != null)
             {
-                throw new System.Exception("TODO: How do I represent a zero ?");
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
+            }
+            if (context.ZEROS() != null)
+            {
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
+            }
+            if (context.ZEROES() != null)
+            {
+                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
             }
             throw new System.Exception("This is not a number!");
         }
