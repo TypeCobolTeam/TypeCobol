@@ -6,12 +6,16 @@
 [[PerformStatement]] [8,14:PERFORM]<PERFORM> --> [18,22:TIMES]<TIMES>
 
 [[DisplayStatement]] [8,14:DISPLAY]<DISPLAY> --> [16,22+:"Hello"]<AlphanumericLiteral>(",Y,Y){Hello}
+- variables = "Hello"
+- WithNoAdvancing = False
 
 [[PerformStatementEnd]] [8,18:END-PERFORM]<END_PERFORM> --> [8,18:END-PERFORM]<END_PERFORM>
 
 [[PerformStatement]] [8,14:PERFORM]<PERFORM> --> [60,61:10]<IntegerLiteral>{10}
 
 [[DisplayStatement]] [8,14:DISPLAY]<DISPLAY> --> [16,22+:"Hello"]<AlphanumericLiteral>(",Y,Y){Hello}
+- variables = "Hello"
+- WithNoAdvancing = False
 
 [[PerformStatementEnd]] [8,18:END-PERFORM]<END_PERFORM> --> [8,18:END-PERFORM]<END_PERFORM>
 
