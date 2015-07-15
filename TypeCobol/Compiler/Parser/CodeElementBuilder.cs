@@ -606,8 +606,39 @@ namespace TypeCobol.Compiler.Parser
             {
                 AddFileNameToCodeElement(context.inOrOfFileName());
             }
+
             //TODO: subscripts
+            if (context.subscript() != null)
+            {
+                foreach (var subscript in context.subscript())
+                {
+                    CreateSubscript(subscript);
+                }
+            }
+
             //TODO: reference modifiers
+        }
+
+        private void CreateSubscript(CobolCodeElementsParser.SubscriptContext subscript)
+        {
+            if (subscript.subscriptLine1() != null)
+            {
+                new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(subscript.subscriptLine1().IntegerLiteral())); // TODO
+            }
+            if (subscript.subscriptLine2() != null)
+            {
+                subscript.subscriptLine2().ALL();
+            }
+            if (subscript.subscriptLine3() != null)
+            {
+                Token token = ParseTreeUtils.GetFirstToken(subscript.subscriptLine3().dataName());
+                SymbolReference<DataName> dataname = new SymbolReference<DataName>(new DataName(token)); // TODO
+            }
+            if (subscript.subscriptLine4() != null)
+            {
+                Token token = ParseTreeUtils.GetFirstToken(subscript.subscriptLine4().indexName());
+                SymbolReference<IndexName> dataname = new SymbolReference<IndexName>(new IndexName(token)); // TODO
+            }
         }
 
         public override void EnterIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)

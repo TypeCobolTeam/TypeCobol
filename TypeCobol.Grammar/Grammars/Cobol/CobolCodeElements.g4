@@ -9760,9 +9760,21 @@ qualifiedDataNameOrSpecialRegister:
 // program to alter the value of the index.
 
 subscript:
-             (IntegerLiteral | ALL)  |
-             (dataName ((PlusOperator | MinusOperator) IntegerLiteral)?) |
-             (indexName ((PlusOperator | MinusOperator) IntegerLiteral)?);
+	subscriptLine1 | subscriptLine2 | subscriptLine3 | subscriptLine4;
+
+subscriptLine1:
+	PlusOperator? IntegerLiteral;
+
+subscriptLine2:
+	ALL;
+
+subscriptLine3:
+	dataName ((PlusOperator|MinusOperator) IntegerLiteral)?;
+
+subscriptLine4:
+	indexName ((PlusOperator|MinusOperator) IntegerLiteral)?;
+
+
 
 dataNameReference:
                      qualifiedDataNameOrSpecialRegister
@@ -9921,8 +9933,8 @@ identifier:
            
 // p68: Format 1   
 identifierFormat1:
-	dataName inOrOfDataName* inOrOfFileName?;
-//	(LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
+	dataName inOrOfDataName* inOrOfFileName?
+	(LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 //	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
 // check: leftMostCharacterPosition, length IN referenceModifier
