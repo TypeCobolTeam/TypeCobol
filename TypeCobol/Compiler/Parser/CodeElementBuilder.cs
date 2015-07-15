@@ -1049,6 +1049,21 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
-        } 
+        }
+
+        public override void EnterIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
+        {
+            Console.WriteLine("IF1");
+        }
+
+        public override void EnterIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
+        {
+            Console.WriteLine("IF2");
+        }
+
+        public override void EnterIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
+        {
+            Console.WriteLine("IF3");
+        }
     }
 }
