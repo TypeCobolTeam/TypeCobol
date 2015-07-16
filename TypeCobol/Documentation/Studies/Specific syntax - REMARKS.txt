@@ -1,0 +1,568 @@
+﻿
+1. utilisation des remarks, 
+
+       IDENTIFICATION division.
+       PROGRAM-ID. EXPADRDY.
+      *REMARKS. COPY=(YISCPAR YISCSIT).
+
+2. retrait du niveau 01, 
+
+01  PARAM-ISC. COPY YISCPAR.
+
+3. suffixage des copys
+
+* Nommage des zones / Naming of variables: http://wlib-SI.cm-cic.fr/?mnc=SRVIPX&typ=NAVIGATION&par=obj:0990023511;SiteCDM:99
+
+En cas d’usage multiple de la même description / même copie :
+En REMARKS, déclarer la copie autant de fois que nécessaire, en la suffixant pour un caractère (0 à 9, A à Z) è YXXXZZZC
+Les noms de zones de la copie seront modifiées ainsi : XXXZZZC-zone
+Prendre un suffixe si possible explicite (autant que possible sur 1 caractère), par exemple « F » pour une description de fichier
+
+------------------------
+1.1 REMARKS code samples
+------------------------
+
+002900*  REMARKS.                                                       0000000
+003000*    THE INPUT PREFIX AND MESSAGE OUTPUT DESCRIPTION NAME IS      0000000
+003100*    ONLY AVAILABLE FOR I/O PCB.                                  0000000
+
+000790*REMARKS.    COPY=(YI03PCB                                        01130028
+000800*                  YI50PCB                                        01140028
+000810*                  YFDLILS                                        01160028
+000820*                  YEDIENR                                        01170028
+000830*                 ).                                              01220010
+000840                                                                  01221002
+
+000200*REMARKS. COPY=(YACMERM YACMCTL).                                 00600000
+000210                                                                  00630000
+
+002310*REMARKS.  COPY=(                                                 02260000
+002320***              YADGHBF                                          02270000
+002330***              YADGBE1  YADGBS1                                 02280000
+002340***              YADGBE1L YADGBS1L                                02290000
+002350***              YADGBE2  YADGBS2                                 02300000
+002360***              YADGBE3  YADGBS3                                 02310000
+002370***              YADGBE4  YADGBS4                                 02320000
+002380***              YATMXAR  YATMXARL                                02330000
+002390***              YADCERR  YADCWNG                                 02340000
+002400***              YADPA92  YADPR92  YADPWNG                        02350000
+002410***              YZENVIR                                          02360000
+002420***              YGBRPOL  YGBRHST  YGBRGAR                        02370000
+002430***              YGBRPOLA YGBRHSTA YGBRGARA                       02380000
+002440***              YGBRLNX1 YGBRLNX2 YGBRLNX3 YGBRLNX4 YGBRLNX5     02390000
+002450***              YGBRLNX6 YACMPCB0                                02400000
+002460***              YACMPCBB YACMPCBT                                02410000
+002470***              YACMCTL  YTXTARG  YSTIEM1                        02420000
+002480***              YACMZPR  YSTIPC1  YTEXARG                        02430000
+002490***              YDATS20  YADPVCO                                 02440000
+002500***              YADCEPT  YADCSPT                                 02450000
+002510***              YADGBE7  YADGBS7                                 02460000
+002520***              YADGBE8  YADGBS8                                 02470000
+002530***              YADGBE8L YADGBS8L                                02480000
+002540***              YADGBE9  YADGBS9                                 02490000
+002550***              YADGBEA  YADGBSA                                 02500000
+002560***              YADGBEB  YADGBSB                                 02510000
+002570***              YADGBEC  YADGBSC                                 02520000
+002580***              YADGBED  YADGBSD                                 02530000
+002590***              YADGBEE  YADGBSE YADPDFB                         02540000
+002600***              YADGBEF  YADGBSF                                 02550000
+002610***              YADGBEG  YADGBSG                                 02560000
+002620***              YTEXT1X  YACMOUT                                 02570000
+002630***              YTEXMVT  YTEXTNX1                                02580000
+002640***              YTEXTNX                                          02590000
+002650*                YSTIED1  YSTISD1                                 02600000
+002660*                YSTIES1  YSTISS1                                 02610000
+002670*                YSTIEC1                                          02620000
+002680*                YSTISC1                                          02630000
+002690*                YSTIPC2                                          02640001
+002700***                      ).                                       02650000
+002710***                                                               02660000
+002720*=================================================================02670000
+002730 ENVIRONMENT DIVISION.                                            02680000
+
+000780*REMARKS.  COPY=(                                                 00570001
+000790*                YI50PCB                                          00580001
+000800*                YCCTEL0                                          00590001
+000810*                YCCTPHY                                          00600001
+000820*                YCCTEXT YCCTFAL YCCTFRE YCCTZON                  00610001
+000830*                YINIPGM         YCCTERR                          00620001
+000840*                       ).                                        00630001
+000850******************************************************************00640001
+000860 environment division.                                            00650001
+
+002020*REMARKS. COPY=(YCCTE30 YCCTERR YI03PCB                           00150000
+002030*               YCCTS30 YCCTCTW YI50PCB                           00160000
+002040*               YCCTSAS                                           00170000
+002050*               YCCTEXT                                           00180000
+002060*               YCCTFAL YCCTFALW                                  00190000
+002070*               YCCTZON                                           00200000
+002080*               YCCTFRE                                           00210000
+002090*               YCCTE01 YCCTS01                                   00220000
+002100*               YCPTCCO                                           00230000
+002110*               YCCTFCT YCCTREF                                   00240000
+002120*              ).                                                 00250000
+002130****                                                              00260000
+002140 ENVIRONMENT DIVISION.                                            00270000
+
+000920*REMARKS.  COPY=(YI99PCB                                          00780001
+000930*                YMSGCTL                                          00790001
+000940*                YBDDACE                                          00800001
+000950*                YEPLCPT                                          00810001
+000960*                YEPLCPTB                                         00820001
+000970*                YEPLCPTL                                         00830001
+000980*                YEPLZCM                                          00840001
+000990*                YEPLCST                                          00850001
+001000*                YDATS20                                          00860001
+001010*                YDPTIER                                          00870001
+001020*                YDPOTIE                                          00880001
+001030*                YTIEVAL                                          00890001
+001040*                YEPLSI1                                          00900001
+001050*                YEPLFRE                                          00910001
+001060*                YEPLSEL                                          00920001
+001070*                YEPLPTC                                          00930001
+001080*                YORGENT                                          00940001
+001090*                YORGS01                                          00950001
+001100*                YI99PCBC                                         00960001
+001110*                YEPLEDL                                          00970001
+001120*                YPSGXC1                                          00980001
+001130*                YMEMPAR                                          00990001
+001140*                YMEMLDS                                          01000001
+001150*                YMEMRES                                          01010001
+001160*                                                                 01020001
+001170*                YEPLTRF).                                        01030001
+001180                                                                  01040001
+
+000890*REMARKS.  COPY=YI99PCB                                           00890000
+000900*          COPY=YI99PCBA                                          00900000
+000910*          COPY=YI99PCBC                                          00910000
+000920*          COPY=YI99PCBD                                          00920000
+000930*          COPY=YI99PCBS                                          00930000
+000940*          COPY=YEPLHISW                                          00940000
+000950*          COPY=YEPLCPT                                           00950000
+000960*          COPY=YEPLCPTA                                          00960000
+000970*          COPY=YEPLCPTL                                          00970000
+000980*          COPY=YEPLCPTM                                          00980000
+000990*          COPY=YMSGCTL                                           00990000
+001000*          COPY=YDATS20                                           01000000
+001010*          COPY=YEPLPTC                                           01010000
+001020*          COPY=YEPLCST                                           01020000
+001030*          COPY=YINIPGM                                           01030000
+001040*          COPY=YJCPFLU                                           01040000
+001050*          COPY=YDEPIDD                                           01050000
+001060*          COPY=YESRUCE                                           01060000
+001070*          COPY=YESRCRT                                           01070000
+001080*          COPY=YESRRUB                                           01080000
+001090*          COPY=YORGENT                                           01090000
+001100*          COPY=YORGS01                                           01100000
+001110*          COPY=YJCPEVI                                           01110000
+001120*          COPY=YISCSIT                                           01120000
+001130*          COPY=YISCPAR                                           01130000
+001140*          COPY=YI50PCBB                                          01140000
+001150*          COPY=YI50PCBH                                          01150000
+001160*          COPY=YI50PCBI                                          01160000
+001170*          COPY=YI50PCBF                                          01170000
+001180*          COPY=YI50PCBG                                          01180000
+001190*          COPY=YI50PCBE                                          01190000
+001200*          COPY=YI50PCBJ                                          01200000
+001210*          COPY=YEPLAGE                                           01210000
+001220*          COPY=YEPLFRE                                           01220000
+001230*          COPY=YPFLREC                                           01230000
+001240*          COPY=YPDSDB2                                           01240000
+001250*          COPY=YBDDACE                                           01250000
+001260*          COPY=YPSGXC1                                           01260000
+001270*          COPY=YTIECIE                                           01270000
+001280*          COPY=YTIEFAL                                           01280000
+001290*          COPY=YTIEFRE.                                          01290000
+001300*                                                                 01300000
+001310 ENVIRONMENT DIVISION.                                            01310000
+
+000960*REMARKS.                                                         00530000
+000970*         COPY=(                                                  00540000
+000980*               YICCFAR                                           00550000
+000990*               YICCM08                                           00560000
+001000*               YICCM08L                                          00570000
+001010*               YICCEPL                                           00580000
+001020*               YICCEPLL                                          00590000
+001030*               YDB2DSP                                           00600000
+001040*               YDB2RET                                           00610000
+001050*              ).                                                 00620000
+001060                                                                  00630000
+
+000500*REMARKS.                                                         00300001
+000510*         COPY=(YLOGIMB                                           00310001
+000520*               YI03PCB1                                          00320001
+000530*               YI03PCB2                                          00330001
+000540*               YI03PCB3                                          00340001
+000550*               YI03PCB4                                          00350001
+000560*               YI30PCB                                           00360001
+000570*               YPAC830                                           00370001
+000580*               YPACFAL  YPACFRE                                  00380001
+000590*               YCEUFAL  YCEUFRE                                  00390001
+000600*               YCEUE62  YCEUS62                                  00400001
+000610*               YDATS20                                           00410001
+000620*               YMEMPAR                                           00420001
+000630*               YMEMLDS  YSASE00                                  00430001
+000640*               YMEMRES  YSASS00                                  00440001
+000650*               YLTNFAL  YLTNFRE                                  00450001
+000660*               YSASFAL  YSASFRE                                  00460001
+000670*              ).                                                 00470001
+000680                                                                  00480001
+
+000850*REMARKS.                                                         00010301
+000860*         COPY=(YI00COP                                           00010401
+000870*               YI50PCB                                           00010501
+000880*               YI30PCB                                           00010601
+000890*               YCOPDJO                                           00010701
+000900*               YINIPGM                                           00010801
+000910*               YPRTRRE                                           00010901
+000920*               YPRTRREW                                          00011001
+000930*               YREJCPB                                           00011101
+000940*               YRADFOL                                           00011201
+000950*               YRADFOLZ                                          00011301
+000960*               YSOLACC                                           00011401
+000970*               YSOLAC1                                           00011501
+000980*               YDATS20                                           00011601
+000990*               YMOVFAL  YMOVFRE                                  00011701
+001000*               YMOVE01  YMOVS01                                  00011801
+001010*               YI03PCB                                           00011901
+001020*               YCPTCCO                                           00012001
+001030*               YCPTCGE                                           00012101
+001040*               YCPTSDP                                           00012201
+001050*               YPDSDB2                                           00012301
+001060* DEB-DCH02     YPFTFAL  YPFTFRE                                  00012401
+001070* FIN-DCH02     YPFTE90  YPFTS90                                  00012501
+001080*               YISCSIT YISCPAR                                   00013001
+001090*               YFICVID                                           00014001
+001100*               ).                                                00015001
+001110******************************************************************00016001
+001120*                                                                 00017001
+001130*                                                                 00018001
+001140*----------------------------------------------------------------*00019001
+001150                                                                  00020001
+
+000570*REMARKS. COPY=(YI00COP YI02PCB YPARSPI                           00140000
+000580*                       YMSGCTL )                                 00150001
+000590                                                                  00160000
+
+000350*REMARKS. COPY=(YPACFAL  YPACFRE  YPACPRD  YPACONG  YDEPPLT       00230000
+000360*               YI30PCB  YI50PCB  YDEPIDD  YDPFAMI  YLOGIMB       00240000
+000370*               YDPOCTL  YDEPPR2  YEPLPR2                         00250001
+000380*               YTMCFAL                                           00281001
+000390*               YTMCFRE                                           00282001
+000400*               YTMCE00                                           00283001
+000410*               YLTNFAL                                           00284001
+000420*               YLTNFRE                                           00285001
+000430*              ).                                                 00290000
+000440                                                                  00300000
+
+000180*REMARKS.      COPY=(  YACMCTL YACMCTLX YGBRERR                           
+000190*                      YACMPCB                                            
+000200*                      YGBRPOL                                            
+000210*                      YGBRHST0                                           
+000220*                      YGBRPOL0                                           
+000230*                      YGBRHST                                            
+000240*                      YGBRHST1                                           
+000250*                      YGBRCAP                                            
+000260*                      YGBRGAR                                            
+000270*                      YGBRGAR1                                           
+000280*                      YGBRGAR0                                           
+000290*                      YGBRCOT                                            
+000300*                      YI00COP                                            
+000310*                      YACMFAL                                            
+000320*                      YACMFRE                                            
+000330*                      YASSDAD                                            
+000340*                      YASSDID                                            
+000350*                      YASSDTE                                            
+000360*                      YASSDVA                                            
+000370*                      YASSE12                                            
+000380*                      YASSS12                                            
+000390*                      YASSDFO                                            
+000400*                      YDATS20                                            
+000410*                      YATMXAR YATMXARD YATMXARL                          
+000420*                      YATMXARS                                           
+000430*                      YATMXARX                                           
+000440*                      YADBTIN                                            
+000450*                      YADBE07                                            
+000460*                      YADBS07                                            
+000470*                      YADBM05                                            
+000480*ChKPnt                YPDSDB2                                            
+000490*ChkPnt                YATQENV                                            
+000500*ChkPnt                YATQF00                                            
+000510*ChkPnt                YFINCPT                                            
+000520*ChkPnt                YINIPGM                                            
+000530*ChkPnt                YSYSDMP                                            
+000540*                      YADPERG                                            
+000550*                      YADPSRG                                            
+000560*                      YADPWNG                                            
+000570*                      YADGE01                                            
+000580*                      YADGS01                                            
+000590*                      YADAAAG                                            
+000600*                      YADARAG                                            
+000610*                      YADCINT                                            
+000620*                      YADCWNG                                            
+000630*                      YADPEIP                                            
+000640*                      YADPSIP                                            
+000650*                      YADBM01                                            
+000660*                      YADBM02                                            
+000670*                      YADBEGA                                            
+000680*                      YADBECO                                            
+000690*                      YADBECO2                                           
+000700*                      YADPA28                                            
+000710*                      YADPR28                                            
+000720*                      YACMZPR                                            
+000730****                   YACMFAL                                            
+000740*                      YGINE01                                            
+000750****                   YACMFRE                                            
+000760*                      YGINS01                                            
+000770*                      YGININT                                            
+000780*                      YGINCOP                                            
+000790*                      YADGGA1                                            
+000800*                      YADGGA2                                            
+000810*                      YADGGA3                                            
+000820*                      YADGGA4                                            
+000830*                      YADGTRA                                            
+000840*                      YADCTPZ                                            
+000850*                      YADCLPZ                                            
+000860*                      YADPA92                                            
+000870*                      YADPR92                                            
+000880*                   ). 
+000890 ENVIRONMENT DIVISION. 
+
+000340*REMARKS.                                                         0000000
+000350*         COPY=(YINIPGM, YSYSDMP)                                 0000000
+000360*         COPY=YPDSDB2                                            0000000
+000370*         COPY=(YAUCFAL)                                          0000000
+000380*         COPY=(YAUCFRE)                                          0000000
+000390*         COPY=(YI03PCBA                                          0000000
+000400*               YI03PCBA                                          0000000
+000410*               YI03PCBB)                                         0000000
+000420*         COPY=(YAUC1A2                                           0000000
+000430*               YAUC6A2                                           0000000
+000440*               YAUC1A1                                           0000000
+000450*               YAUC6A1                                           0000000
+000460*               YAUC1A4                                           0000000
+000470*               YAUC6A4                                           0000000
+000480*               YAUC3A3                                           0000000
+000490*               YAUC8A3                                           0000000
+000500*               YAUC3A2                                           0000000
+000510*               YAUC8A2                                           0000000
+000520*               YAUC3A5                                           0000000
+000530*               YAUC8A5                                           0000000
+000540*               YAUC3A6                                           0000000
+000550*               YAUC8A6                                           0000000
+000560*                      )                                          00188001
+000570*                                                                 00210001
+000580 ENVIRONMENT DIVISION.                                            00220001
+
+------------------
+1.2 REMARKS syntax
+------------------
+
+** SCANNER **
+
+Search for a '*REMARKS' keyword starting in column 7, like we already search for '*CBL'.
+When the keyword is found, enter a special state :
+- * in column 7 does not mark a full comment line anymore
+- * in column 7 and all following chars until the first space char are grouped as a comment TOKEN
+- the rest of the line is scanned like a source code line
+Exit this special state when :
+- a period separator token is encountered
+- a line without * in column 7 is encountered
+=> produce a pseudo token of type 'END-REMARKS' without underlying chars when either condition is found
+
+** PREPROCESSOR **
+
+Add a new type of compiler directive, with the following grammar :
+'*REMARKS' ( 'COPY' '=' ( UserDefinedName | ( '(' UserDefinedName+ ')' ) ) )+ '.'? 'END-REMARKS'
+
+The compiler directive object stores a list of user defined names, with two types :
+- text names (at most 7 characters)
+- text names with an alphanumeric suffix 0-9A-Z (8 characters)
+
+----------------------------------
+2.1 COPY from REMARKS code samples
+----------------------------------
+
+
+001950 01  IOPCB.      COPY YI03PCB     SUPPRESS.                       0000000
+
+003700 01  YTMCMAL.                      COPY YTMCMAL  SUPPRESS.        0000000
+
+003980 01  PCBRADCLI.                  COPY YACMPCB1 SUPPRESS.          0000000
+
+004100 01  ORGENT.                     COPY YORGENT   SUPPRESS.         0000000
+004110 01  ORGS01.                     COPY YORGS01   SUPPRESS.         0000000
+004120 01  ORGS03.                     COPY YORGS03   SUPPRESS.         0000000
+
+001710 01  IPXZPROD    PIC X(8)   VALUE 'IPXZPROD'.                     0000000
+001720 01  CTL.        copy ymsgctl suppress.                           0000000
+001730 01  IPXPRO.     COPY YIPXPRO SUPPRESS.                           0000000
+001740 01  IPPPRD.     COPY YIPPPRD SUPPRESS.                           0000000
+001750                                                                  0000000
+001760 01 w-refemp          pic x(1).                                   0000000
+001770    88  w-refemp-emprunteur  value 'e'.                           0000000
+001780    88  w-refemp-coempruntr  value 'c'.                           0000000
+
+002290 01 YACMPSB EXTERNAL. COPY YACMPSB SUPPRESS.                      0000000
+
+000470 01  phafct. copy yphafct.                                        0000000
+000480 01  phacte. copy yphacte.                                        0000000
+000490                                                                  0000000
+000500 01  phaclec1                        pic x(08) value 'PHACLEC1'.  0000000
+000510 01  phaelc. copy yphaelc.                                        0000000
+000520 01  phaslc. copy yphaslc.                                        0000000
+
+001740 01  PCB-ENR.                      COPY YI50PCB.                  0000000
+
+001710 01  YATMXAR.  COPY YATMXAR.                                      0000000
+001720 01   ATMXARA. COPY YATMXARA.                                     0000000
+001730 01  YATMX00.  COPY YATMX00.                                      0000000
+001740 01  YATCE05.  COPY YATCE05.                                      0000000
+
+001490 01  E-SEGM.                                                      0000000
+001500    02  PREMIER-PASSAGE PIC X.                                    0000000
+001510    02  E-NOM       PIC X(8).                                     0000000
+001520    02  FILLER      PIC X.                                        0000000
+001530    02  E-SEGMENT.                                                0000000
+001540        03  E-SEGMENT-SUITE    PIC X(3000).                       0000000
+001550*______ Redéfinitions en les copys de sortie des extractions      0000000
+001560        03  FILLER          REDEFINES E-SEGMENT-SUITE.            0000000
+001570            04 YADBS13.     COPY YADBS13  SUPPRESS.               0000000
+001580        03  FILLER          REDEFINES E-SEGMENT-SUITE.            0000000
+001590            04 YADBS14.     COPY YADBS14  SUPPRESS.               0000000
+001600        03  FILLER          REDEFINES E-SEGMENT-SUITE.            0000000
+001610            04 YADBS15.     COPY YADBS15  SUPPRESS.               0000000
+
+003200 01  IOPCB                  .   COPY YI03PCBA SUPPRESS.           0000000
+003210 01  PCB-ALT                .   COPY YI03PCBB SUPPRESS.           0000000
+
+---------------------------------
+2.2 COPY directive extended model
+---------------------------------
+
+When a COPY directive is built, check if the textName is listed in a previous REMARKS directive ?
+If it is :
+- in case of a simple textName
+  . add a flag "Remove 01 level" on the COPY directive
+- in case of a textName + one character suffix
+  . set textName without the suffix on the COPY directive
+  . add a flag "Remove 01 level" on the COPY directive
+  . add a flag "Insert suffix char before the first '-' in all user defined words", and store the suffix char
+
+------------------------------
+3.1 COPY contents code samples
+------------------------------
+
+// INCLUDE
+
+001570            04 YADBS13.     COPY YADBS13  SUPPRESS.               0000000
+
+// COPY
+
+000090 01  ADBS13.                                                      0000000
+000100***      Timestamp                                                0000000
+000110      05 ADBS13-L0103-TSP              PIC X(26).                 0000000
+000120***      Date clef                                                0000000
+000130      05 ADBS13-L0103-DATCLE           PIC 9(07).                 0000000
+000140***      Date de création                                         0000000
+000150      05 ADBS13-L0103-DATCRE           PIC X(10).                 0000000
+000160***      Identifiant de création                                  0000000
+000170      05 ADBS13-L0103-IDTCRE           PIC X(08).                 0000000
+000180***      Date de modification                                     0000000
+000190      05 ADBS13-L0103-DATMOF           PIC X(10).                 0000000
+000200***      Identifiant de modification                              0000000
+000210      05 ADBS13-L0103-IDTMOF           PIC X(08).                 0000000
+000220***      Date de début                                            0000000
+000230      05 ADBS13-L0103-DATDEBVLD        PIC X(10).                 0000000
+000240***      Date de fin                                              0000000
+000250      05 ADBS13-L0103-DATFINVLD        PIC X(10).                 0000000
+000260***      Code produit                                             0000000
+000270      05 ADBS13-L0103-CODPRD           PIC X(04).                 0000000
+000280***      Numéro de police                                         0000000
+000290      05 ADBS13-L0103-NUMPOL           PIC 9(15).                 0000000
+
+// PROGRAM
+
+002690     MOVE ADBS13-L0103-CODPRD      TO ADBE29-S0003-CODPRD         0000000
+002700     MOVE ADBS13-L0103-NUMPOL      TO ADBE29-S0003-NUMPOL         0000000
+
+// -- JARBSCA9.PGM --
+
+000190*REMARKS.      COPY=(  YACMCTL YACMCTLX YGBRERR                   0000000
+000240*                      YGBRHST                                    0000000
+000250*                      YGBRHST1                                   0000000
+000270*                      YGBRGAR                                    0000000
+000280*                      YGBRGAR1                                   0000000
+000290*                      YGBRGAR0                                   0000000
+000420*                      YATMXAR YATMXARD YATMXARL                  0000000
+000430*                      YATMXARS                                   0000000
+000440*                      YATMXARX                                   0000000
+000690*                      YADBECO                                    0000000
+000700*                      YADBECO2                                   0000000
+
+// INCLUDE
+
+005390 01  YATMXAR.    COPY YATMXAR  SUPPRESS.                          0000000
+005400 01  YATMXARL.   COPY YATMXARL SUPPRESS.                          0000000
+005410 01  YATMXARD.   COPY YATMXARD SUPPRESS.                          0000000
+005420 01  YATMXARS.   COPY YATMXARS SUPPRESS.                          0000000
+005430 01  YATMXARX.   COPY YATMXARX SUPPRESS.                          0000000
+
+// COPY
+
+000270 01  YATMXAR.                                                     0000000
+004060          15  ATMXAR-RTA-CODRETPMR            PIC X(004).         0000000
+004070             88  ATMXAR-CODRET-TRTCRF                             0000000
+004400             20  ATMXAR-RTA-CODRETSCD             PIC 9(004).     0000000
+004550             20  ATMXAR-RTA-MSGERRMET-RETPMR      PIC X(004).     0000000
+
+// PROGRAM
+
+046390     INITIALIZE                     YATMXARS                      0000000
+
+046400     SET ATMXARS-CODRET-TRTCRF   TO TRUE                          0000000
+046410     MOVE ZERO                   TO ATMXARS-RTA-CODRETSCD         0000000
+046420                                    ATMXARS-RTA-MSGERRMET-RETPMR  0000000
+
+047020     MOVE 'C0002'                TO ATMXARX-SCEDMD-FCT            0000000
+
+// -- ADGGBEDC.PGM --
+
+002360*REMARKS.  COPY=(                                                 0000000
+002470***              YGBRPOL  YGBRHST  YGBRGAR                        0000000
+002480***              YGBRPOLA YGBRHSTA YGBRGARA                       0000000
+
+// INCLUDE
+
+004070 01  YGBRGARA.                   COPY YGBRGARA SUPPRESS.          0000000
+
+// COPY
+
+000350 01  GBRGAR.                                                      0000000
+000880             15  GAR-CAPORIGU.                                    0000000
+003400             15  GAR-TAUXREVU.                                    0000000
+003360             15  GAR-RENTORIGU.                                   0000000
+
+
+// PROGRAM
+
+016000        MOVE GAR-CAPORIGU(1)          TO GARA-CAPORIGU(1)         0000000
+016010        MOVE GAR-TAUXREVU(1)          TO GARA-TAUXREVU(1)         0000000
+016170                MOVE GAR-RENTORIGU(1)          TO GARA-CAPORIGU(1)0000000
+
+-----------------------------------
+2.2 COPY iterator extended behavior
+-----------------------------------
+
+* Flag "Remove 01 level" on the COPY directive
+
+When encountering the first '01' numeric literal in the imported document :
+- skip all tokens in the imported document until the next period separator
+- return the first token after this period separator
+
+* Flag "Insert suffix char before the first '-' in all user defined words"
+
+Create a new InsertSuffixIterator, executed before any replacing clause.
+Each time this iterator finds a UserDefinedName in the imported document :
+- check if the name contains a '-' char
+- if it does, create a ReplacedToken by inserting the suffix char before the '-' in the original text

@@ -375,6 +375,7 @@
     <Content Include="Documentation\Studies\Lexical grammar.txt" />
     <Content Include="Documentation\Studies\Lexical study.txt" />
     <Content Include="Documentation\Studies\Parser rules ordering .txt" />
+    <Content Include="Documentation\Studies\Specific syntax - REMARKS.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">
