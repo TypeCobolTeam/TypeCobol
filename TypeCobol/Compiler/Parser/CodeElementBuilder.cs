@@ -440,11 +440,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AcceptStatement();
         }
 
-        private static Identifier CreateIdentifier(IParseTree node) {
-            //TODO: effective identifier parsing, DON'T take only first Token
-            // (identifier can be like "ADDRESS OF myvar(10+3.14:20-101.42) OF mygroup")
-            return new Identifier(ParseTreeUtils.GetFirstToken(node));
-        }
+
 
         private SyntaxNumber CreateNumberLiteral(CobolCodeElementsParser.NumericLiteralContext context)
         {
@@ -482,7 +478,7 @@ namespace TypeCobol.Compiler.Parser
                 Expression tail = null;
                 if (operand.identifier() != null)
                 {
-                    tail = CreateIdentifier(operand.identifier());
+                    tail = new Identifier(operand.identifier());
                 }
                 else
                 if (operand.numericLiteral() != null)
@@ -520,8 +516,7 @@ namespace TypeCobol.Compiler.Parser
                 // so add the "left" operand to all the elements of the "right" operand
                 foreach (var operand in context.identifierRounded())
                 {
-                    Identifier right = CreateIdentifier(operand.identifier());
-                    right.rounded = operand.ROUNDED() != null;
+                    Identifier right = new Identifier(operand);
                     Expression operation = new Addition(left, right);
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
@@ -545,8 +540,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 foreach (var operand in context.identifierRounded())
                 {
-                    Identifier right = CreateIdentifier(operand.identifier());
-                    right.rounded = operand.ROUNDED() != null;
+                    Identifier right = new Identifier(operand);
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
                 }
@@ -559,115 +553,13 @@ namespace TypeCobol.Compiler.Parser
         {
             AddStatement statement = new AddStatement();
 
-            Expression left = new Identifier(ParseTreeUtils.GetFirstToken(context.identifier()));
+            Expression left = new Identifier(context.identifier());
             Token token = ParseTreeUtils.GetFirstToken(context.identifierRounded());
-            Expression right = new Identifier(token, context.identifierRounded().ROUNDED() != null);
+            Expression right = new Identifier(context.identifierRounded());
             Expression operation = new Addition(left, right);
             statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
 
             CodeElement = statement;
-        }
-
-
-
-        private void AddDataNameToCodeElement(CobolCodeElementsParser.InOrOfDataNameContext context)
-        {
-            Token token = ParseTreeUtils.GetFirstToken(context);
-            SymbolReference<DataName> dataname = new SymbolReference<DataName>(new DataName(token));
-            bool isIN = context.IN() != null;
-            bool isOF = context.OF() != null;
-            //TODO: I has dataname. What I do wif it?
-        }
-        private void AddFileNameToCodeElement(CobolCodeElementsParser.InOrOfFileNameContext context)
-        {
-            Token token = ParseTreeUtils.GetFirstToken(context);
-            SymbolReference<FileName> filename = new SymbolReference<FileName>(new FileName(token));
-            bool isIN = context.IN() != null;
-            bool isOF = context.OF() != null;
-            //TODO: I has filename. What I do wif it?
-        }
-
-        public override void EnterIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
-        {
-            if (context.dataName() != null)
-            {
-                Token token = ParseTreeUtils.GetFirstToken(context.dataName());
-                SymbolReference<DataName> data = new SymbolReference<DataName>(new DataName(token));
-                //TODO and ... now ?
-            }
-            if (context.inOrOfDataName() != null)
-            {
-                foreach (var inof in context.inOrOfDataName())
-                {
-                    AddDataNameToCodeElement(inof);
-                }
-            }
-            if (context.inOrOfFileName() != null)
-            {
-                AddFileNameToCodeElement(context.inOrOfFileName());
-            }
-
-            //TODO: subscripts
-            if (context.subscript() != null)
-            {
-                foreach (var subscript in context.subscript())
-                {
-                    CreateSubscript(subscript);
-                }
-            }
-
-            //TODO: reference modifiers
-        }
-
-        private void CreateSubscript(CobolCodeElementsParser.SubscriptContext subscript)
-        {
-            if (subscript.subscriptLine1() != null)
-            {
-                new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(subscript.subscriptLine1().IntegerLiteral())); // TODO
-            }
-            if (subscript.subscriptLine2() != null)
-            {
-                subscript.subscriptLine2().ALL();
-            }
-            if (subscript.subscriptLine3() != null)
-            {
-                Token token = ParseTreeUtils.GetFirstToken(subscript.subscriptLine3().dataName());
-                SymbolReference<DataName> dataname = new SymbolReference<DataName>(new DataName(token)); // TODO
-            }
-            if (subscript.subscriptLine4() != null)
-            {
-                Token token = ParseTreeUtils.GetFirstToken(subscript.subscriptLine4().indexName());
-                SymbolReference<IndexName> dataname = new SymbolReference<IndexName>(new IndexName(token)); // TODO
-            }
-        }
-
-        public override void EnterIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
-        {
-            var condition = context.conditionName(); //TODO
-            if (context.inOrOfDataName() != null)
-            {
-                foreach (var inof in context.inOrOfDataName())
-                {
-                    AddDataNameToCodeElement(inof);
-                }
-            }
-            if (context.inOrOfFileName() != null)
-            {
-                AddFileNameToCodeElement(context.inOrOfFileName());
-            }
-        }
-
-        public override void EnterIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
-        {
-            context.LINAGE_COUNTER();
-            if (context.inOrOfFileName() != null)
-            {
-                Token token = ParseTreeUtils.GetFirstToken(context.inOrOfFileName());
-                SymbolReference<FileName> filename = new SymbolReference<FileName>(new FileName(token));
-                bool isIN = context.inOrOfFileName().IN() != null;
-                bool isOF = context.inOrOfFileName().OF() != null;
-                //TODO: I has filename. What I do wif it?
-            }
         }
 
 
@@ -750,7 +642,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     if (idOrLiteral.identifier() != null)
                     {
-                        expressions.Add(CreateIdentifier(idOrLiteral));
+                        expressions.Add(new Identifier(idOrLiteral.identifier()));
                     }
                     else if (idOrLiteral.literal() != null)
                     {

@@ -30,34 +30,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             return left+" "+right+" +";
         }
     }
-    public class Identifier : Expression
-    {
-        public Token token { get; set; }
-        public bool rounded { get; set; }
-        public Identifier(Token token, bool rounded = false)
-        {
-            this.token = token;
-            this.rounded = rounded;
-        }
 
-        public override string TextValue()
-        {
-            if (token == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                return token.Text;
-            }
-        }
-
-        public override string ToString()
-        {
-            return TextValue();
-        }
-
-    }
     public class Number : ArithmeticExpression
     {
         public SyntaxNumber number { get; set; }
