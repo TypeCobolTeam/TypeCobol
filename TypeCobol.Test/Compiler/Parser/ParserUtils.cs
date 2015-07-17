@@ -97,11 +97,11 @@ namespace TypeCobol.Test.Compiler.Parser
                 String[] resultLines = result.Split(new[] { '\r', '\n' });
 
                
-                for (int resultIdx = 0, expectedResultIdx = 0; resultIdx < resultLines.Length && expectedResultIdx < expectedResultLines.Length; resultIdx++, expectedResultIdx++)
+                for (int l = 0; l < resultLines.Length && l < expectedResultLines.Length; l++)
                 {
-                    if (expectedResultLines[expectedResultIdx] != resultLines[resultIdx])
+                    if (expectedResultLines[l] != resultLines[l])
                     {
-                        throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result. " + expectedResultLines[expectedResultIdx] + "!=" + resultLines[resultIdx]);
+                        throw new Exception("\"" + testName + "\"[" + l + "] mismatch: \"" + resultLines[l] + "\" vs expected: \"" + expectedResultLines[l] + "\"");
                     }
                 }
                 if (expectedResultLines.Length != resultLines.Length)
