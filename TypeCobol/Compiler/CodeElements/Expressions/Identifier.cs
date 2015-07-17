@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             }
         }
 
-        private void CreateSubscript(CobolCodeElementsParser.SubscriptContext subscript)
+        private void InitializeSubscript(CobolCodeElementsParser.SubscriptContext subscript)
         {
             if (subscript.subscriptLine1() != null)
             {
@@ -95,12 +95,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 AddFileNameToCodeElement(context.inOrOfFileName());
             }
 
-            //TODO: subscripts
             if (context.subscript() != null)
             {
                 foreach (var subscript in context.subscript())
                 {
-                    CreateSubscript(subscript);
+                    InitializeSubscript(subscript);
                 }
             }
 
