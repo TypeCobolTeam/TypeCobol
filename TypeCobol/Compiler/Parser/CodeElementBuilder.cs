@@ -441,7 +441,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private static Identifier CreateIdentifier(IParseTree node) {
-            //TODO: effective identifier parsing, DO NOT take only first Token
+            //TODO: effective identifier parsing, DON'T take only first Token
             // (identifier can be like "ADDRESS OF myvar(10+3.14:20-101.42) OF mygroup")
             return new Identifier(ParseTreeUtils.GetFirstToken(node));
         }
