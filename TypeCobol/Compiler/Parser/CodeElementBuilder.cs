@@ -527,7 +527,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     Identifier right = CreateIdentifier(operand.identifier());
                     right.rounded = operand.ROUNDED() != null;
-                    Expression operation = ArithmeticOperation.Create(left, '+', right);
+                    Expression operation = ArithmeticOperation.Create(left, op, right);
                     Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
                     statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
                 }
@@ -875,7 +875,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSubtractStatementFormat2(CobolCodeElementsParser.SubtractStatementFormat2Context context)
         {
             SubtractStatement statement = new SubtractStatement();
-            InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
+            InitializeFormat2Statement(statement, '-', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             CodeElement = statement;
         }
 
