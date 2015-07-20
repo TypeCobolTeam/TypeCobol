@@ -7467,40 +7467,35 @@ notOnOverflowCondition:
 stringStatementEnd:
                       END_STRING;
 
+
+
 // p438: SUBTRACT statement
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
-//
+subtractStatement:
+		subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
+
 // p438: Format 1: SUBTRACT statement
-//subtractStatement:
-//                SUBTRACT (identifier | literal)+ FROM (identifier ROUNDED?)+
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_SUBTRACT?;
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from and stored immediately in identifier-2. This process is
 // repeated for each successive occurrence of identifier-2, in the left-to-right order in
 // which identifier-2 is specified.
-//
+subtractStatementFormat1:
+		SUBTRACT identifierOrNumericLiteral+ FROM identifierRounded+;
+
 // p439: Format 2: SUBTRACT statement with GIVING phrase
-//subtractStatement:
-//                SUBTRACT (identifier | literal)+ FROM (identifier | literal)
-//                GIVING (identifier ROUNDED?)+
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_SUBTRACT?;
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from identifier-2 or literal-2. The result of the subtraction is
 // stored as the new value of each data item referenced by identifier-3.
-//
+subtractStatementFormat2:
+		SUBTRACT identifierOrNumericLiteral+ FROM identifierOrNumericLiteral GIVING identifierRounded+;
+
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
-//subtractStatement:
-//                SUBTRACT (CORRESPONDING | CORR) identifier FROM identifier ROUNDED?
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_SUBTRACT;
 // Elementary data items within identifier-1 are subtracted from, and the results are
 // stored in, the corresponding elementary data items within identifier-2.
+subtractStatementFormat3:
+		SUBTRACT corresponding identifier FROM identifierRounded;
+
 // When the ARITH(COMPAT) compiler option is in effect, the composite of operands
 // can contain a maximum of 30 digits. When the ARITH(EXTEND) compiler option
 // is in effect, the composite of operands can contain a maximum of 31 digits. For
@@ -7534,19 +7529,10 @@ stringStatementEnd:
 // nested in another conditional statement. END-SUBTRACT can also be used with
 // an imperative SUBTRACT statement.
 // For more information, see “Delimited scope statements” on page 280.
-
-subtractStatement:
-                SUBTRACT (CORRESPONDING | CORR)? (identifier | literal)+ FROM ((identifier ROUNDED?)+ | literal)
-                (GIVING (identifier ROUNDED?)+)?;
-
-//subtractStatementConditional:
-//                                subtractStatement
-//                                (onSizeErrorCondition imperativeStatement)?
-//                                (notOnSizeErrorCondition imperativeStatement)?
-//                                subtractStatementEnd?;
-
 subtractStatementEnd:
                         END_SUBTRACT;
+
+
 
 // p441: UNSTRING statement
 // The UNSTRING statement causes contiguous data in a sending field to be

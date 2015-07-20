@@ -10,15 +10,27 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     }
     public abstract class ArithmeticExpression : Expression { }
 
-    public class Addition : ArithmeticExpression
+    public class ArithmeticOperation : ArithmeticExpression
     {
         public Expression left { get; set; }
         public Expression right { get; set; }
+        public char op { get; set; }
 
-        public Addition(Expression left, Expression right)
+        public ArithmeticOperation(Expression left, char op, Expression right)
         {
             this.left = left;
             this.right = right;
+            this.op = op;
+        }
+
+        public static ArithmeticOperation Create(Expression left, char op, Expression right)
+        {
+            switch (op)
+            {
+                case '+': return new Addition(left, right);
+                case '-': return new Subtraction(left, right);
+                default: throw new System.ArgumentException("Illegal operator \""+op+"\"");
+            }
         }
 
         public override string TextValue()
@@ -27,9 +39,22 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
 
         public override string ToString() { //RPN
-            return left+" "+right+" +";
+            return new StringBuilder(left.ToString()).Append(" ").Append(right.ToString()).Append(" ").Append(op).ToString();
         }
     }
+
+    public class Addition : ArithmeticOperation
+    {
+        public Addition(Expression left, Expression right)
+            : base(left, '+', right) { }
+    }
+
+    public class Subtraction : ArithmeticOperation
+    {
+        public Subtraction(Expression left, Expression right)
+            : base(left, '-', right) { }
+    }
+
     public class Identifier : Expression
     {
         public Token token { get; set; }
