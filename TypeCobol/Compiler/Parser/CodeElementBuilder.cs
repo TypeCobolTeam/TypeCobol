@@ -512,25 +512,44 @@ namespace TypeCobol.Compiler.Parser
             return left;
         }
 
+        private void InitializeFormat1RightOperand(ArithmeticOperationStatement statement, char op, 
+            Expression left, 
+            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
+        {
+            // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
+            // note: "SUBTRACT a b FROM c d." gives c = c-a+b and d = d-a+b
+            // so add/subtract the "left" operand to all the elements of the "right" operand added together
+            foreach (var operand in rightContext)
+            {
+                Identifier right = CreateIdentifier(operand.identifier());
+                right.rounded = operand.ROUNDED() != null;
+                Expression operation = ArithmeticOperation.Create(left, op, right);
+                Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+            }
+        }
+
         private void InitializeFormat1Statement(ArithmeticOperationStatement statement, char op,
             IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> leftContext,
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
             Expression left = createLeftOperand(leftContext);
-
             if (left != null && rightContext != null)
             {
-                // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
-                // so add the "left" operand to all the elements of the "right" operand
-                foreach (var operand in rightContext)
-                {
-                    Identifier right = CreateIdentifier(operand.identifier());
-                    right.rounded = operand.ROUNDED() != null;
-                    Expression operation = ArithmeticOperation.Create(left, op, right);
-                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
-                    statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
-                }
+                InitializeFormat1RightOperand(statement, op, left, rightContext);
+            }
+        }
+
+        private void InitializeFormat1Statement(ArithmeticOperationStatement statement, char op,
+            CobolCodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
+            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
+        {
+            // create the "left" operand of this addition
+            Expression left = createOperand(leftContext);
+            if (left != null && rightContext != null)
+            {
+                InitializeFormat1RightOperand(statement, op, left, rightContext);
             }
         }
 
@@ -555,13 +574,36 @@ namespace TypeCobol.Compiler.Parser
 
             if (operation != null && resultContext != null)
             {
-                foreach (var operand in resultContext)
-                {
-                    Identifier right = CreateIdentifier(operand.identifier());
-                    right.rounded = operand.ROUNDED() != null;
-                    Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
-                    statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
-                }
+                InitializeFormat2Result(statement, resultContext, operation);
+            }
+        }
+
+        private void InitializeFormat2Statement(AddStatement statement, char op,
+            CobolCodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
+            CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
+            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
+        {
+            Expression operation = createOperand(leftContext);
+            if (operation != null && rightContext != null)
+            {
+                Expression right = createOperand(rightContext.identifierOrNumericLiteral());
+                operation = ArithmeticOperation.Create(operation, op, right);
+            }
+
+            if (operation != null && resultContext != null)
+            {
+                InitializeFormat2Result(statement, resultContext, operation);
+            }
+        }
+
+        private void InitializeFormat2Result(ArithmeticOperationStatement statement, IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext, Expression operation)
+        {
+            foreach (var operand in resultContext)
+            {
+                Identifier right = CreateIdentifier(operand.identifier());
+                right.rounded = operand.ROUNDED() != null;
+                Token token = ParseTreeUtils.GetFirstToken(operand.identifier());
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
             }
         }
 
@@ -789,9 +831,18 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new MoveStatement();
         }
 
-        public override void EnterMultiplyStatement(CobolCodeElementsParser.MultiplyStatementContext context)
+        public override void EnterMultiplyStatementFormat1(CobolCodeElementsParser.MultiplyStatementFormat1Context context)
         {
-            CodeElement = new MultiplyStatement();
+            AddStatement statement = new AddStatement();
+            InitializeFormat1Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierRounded());
+            CodeElement = statement;
+        }
+
+        public override void EnterMultiplyStatementFormat2(CobolCodeElementsParser.MultiplyStatementFormat2Context context)
+        {
+            AddStatement statement = new AddStatement();
+            InitializeFormat2Statement(statement, '*', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
+            CodeElement = statement;
         }
 
         public override void EnterNextSentenceStatement(CobolCodeElementsParser.NextSentenceStatementContext context)

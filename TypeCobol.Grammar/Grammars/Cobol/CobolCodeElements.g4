@@ -6001,29 +6001,25 @@ moveStatement:
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
-//
+multiplyStatement:
+		multiplyStatementFormat2 | multiplyStatementFormat1;
+
 // p376: Format 1: MULTIPLY statement
-//multiplyStatement:
-//                     MULTIPLY (identifier | literal) BY (identifier ROUNDED?)+
-//                     (ON? SIZE ERROR imperativeStatement)?
-//                     (NOT ON? SIZE ERROR imperativeStatement)?
-//                     END_MULTIPLY?;
 // In format 1, the value of identifier-1 or literal-1 is multiplied by the value of
 // identifier-2; the product is then placed in identifier-2. For each successive occurrence
 // of identifier-2, the multiplication takes place in the left-to-right order in which
 // identifier-2 is specified.
+multiplyStatementFormat1:
+		MULTIPLY identifierOrNumericLiteral BY identifierRounded+;
+
 //
 //// p377: Format 2: MULTIPLY statement with GIVING phrase
-//multiplyStatement:
-//                     MULTIPLY (identifier | literal) BY (identifier | literal)
-//                     GIVING (identifier ROUNDED?)+
-//                     (ON? SIZE ERROR imperativeStatement)?
-//                     (NOT ON? SIZE ERROR imperativeStatement)?
-//                     END_MULTIPLY?;
 // In format 2, the value of identifier-1 or literal-1 is multiplied by the value of
 // identifier-2 or literal-2. The product is then stored in the data items referenced by
 // identifier-3.
-//
+multiplyStatementFormat2:
+		MULTIPLY identifierOrNumericLiteral BY identifierOrNumericLiteralTmp GIVING identifierRounded+;
+
 // For all formats:
 // identifier-1 , identifier-2
 // Must name an elementary numeric item.
@@ -6051,16 +6047,6 @@ moveStatement:
 // nested in another conditional statement. END-MULTIPLY can also be used with an
 // imperative MULTIPLY statement.
 // For more information, see “Delimited scope statements” on page 280. 
-
-multiplyStatement:
-                     MULTIPLY (identifier | literal) BY ((identifier ROUNDED?)+ | literal)
-                     (GIVING (identifier ROUNDED?)+)?;
-
-//multiplyStatementConditional:
-//                                multiplyStatement
-//                                (onSizeErrorCondition imperativeStatement)?
-//                                (notOnSizeErrorCondition imperativeStatement)?
-//                                multiplyStatementEnd?;
 
 multiplyStatementEnd:
                         END_MULTIPLY;
