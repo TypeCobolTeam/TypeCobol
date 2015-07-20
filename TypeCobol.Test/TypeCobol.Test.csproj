@@ -110,6 +110,7 @@
     <Content Include="Compiler\Parser\ResultFiles\IDCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\ONCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\ADDRPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\XMLCodeElements.txt" />

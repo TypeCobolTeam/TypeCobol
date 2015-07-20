@@ -97,24 +97,17 @@ namespace TypeCobol.Test.Compiler.Parser
                 String[] resultLines = result.Split(new[] { '\r', '\n' });
 
                
-                for (int resultIdx = 0, expectedResultIdx = 0; resultIdx < resultLines.Length && expectedResultIdx < expectedResultLines.Length; resultIdx++, expectedResultIdx++)
+                for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
                 {
-                    if (expectedResultLines[expectedResultIdx] != resultLines[resultIdx])
+                    if (expectedResultLines[c] != resultLines[c])
                     {
-                        throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result. " + expectedResultLines[expectedResultIdx] + "!=" + resultLines[resultIdx]);
+                        throw new Exception("In test \"" + testName + "\": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
                     }
                 }
                 if (expectedResultLines.Length != resultLines.Length)
                 {
-                    throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result. Number of lines not equal: " + expectedResultLines.Length + "!=" + resultLines.Length);
+                    throw new Exception("In test \"" + testName + "\": lines to test=" + resultLines.Length + "; lines expected=" + expectedResultLines.Length);
                 }
-
-                /*
-                if (result != expectedResult)
-                {
-                    throw new Exception("Code elements produced by parser in test \"" + testName + "\" don't match the expected result");
-                }
-                 * */
             }
         }
 

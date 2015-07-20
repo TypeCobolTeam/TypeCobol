@@ -34,5 +34,21 @@ namespace TypeCobol.Test.Compiler.CodeElements
             if (errors.Length > 0) throw new Exception(errors.ToString());
             if (c != rpn.Length) throw new Exception("Number of checks expected "+rpn.Length+" vs "+c);
         }
+
+        public void CompareWithRPNFile(TypeCobol.Compiler.Parser.SyntaxDocument tree, string path)
+        {
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(PlatformUtils.GetStreamForProjectFile(path)))
+            {
+                System.Collections.Generic.List<string> lines = new System.Collections.Generic.List<string>();
+                string line = reader.ReadLine();
+                while (line != null)
+                {
+                    lines.Add(line);
+                    line = reader.ReadLine();
+                }
+                ArithmeticStatementTester tester = new ArithmeticStatementTester();
+                tester.CompareWithRPN(tree, lines.ToArray());
+            }
+        }
     }
 }
