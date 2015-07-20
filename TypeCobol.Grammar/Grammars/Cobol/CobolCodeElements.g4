@@ -4398,12 +4398,15 @@ addStatementFormat1:
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
 addStatementFormat2:
-		ADD identifierOrNumericLiteral+ TO identifierOrNumericLiteral GIVING identifierRounded+;
+		ADD identifierOrNumericLiteral+ TO identifierOrNumericLiteralTmp GIVING identifierRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 addStatementFormat3:
 		ADD corresponding identifier TO identifierRounded;
+
+identifierOrNumericLiteralTmp:
+		identifierOrNumericLiteral;
 
 identifierOrNumericLiteral:
 		identifier | numericLiteral;
@@ -7488,7 +7491,7 @@ subtractStatementFormat1:
 // their sum is subtracted from identifier-2 or literal-2. The result of the subtraction is
 // stored as the new value of each data item referenced by identifier-3.
 subtractStatementFormat2:
-		SUBTRACT identifierOrNumericLiteral+ FROM identifierOrNumericLiteral GIVING identifierRounded+;
+		SUBTRACT identifierOrNumericLiteral+ FROM identifierOrNumericLiteralTmp GIVING identifierRounded+;
 
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are subtracted from, and the results are

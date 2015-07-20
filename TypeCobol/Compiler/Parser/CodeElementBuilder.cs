@@ -475,22 +475,28 @@ namespace TypeCobol.Compiler.Parser
             throw new System.Exception("This is not a number!");
         }
 
+        private Expression createOperand(CobolCodeElementsParser.IdentifierOrNumericLiteralContext context)
+        {
+            if (context == null) return null;
+            if (context.identifier() != null)
+            {
+                return CreateIdentifier(context.identifier());
+            }
+            if (context.numericLiteral() != null)
+            {
+                return new Number(CreateNumberLiteral(context.numericLiteral()));
+            }
+            return null;
+        }
+
         private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
         {
             if (operands == null) return null;
 
             Expression left = null;
-            foreach (var operand in operands) {
-                Expression tail = null;
-                if (operand.identifier() != null)
-                {
-                    tail = CreateIdentifier(operand.identifier());
-                }
-                else
-                if (operand.numericLiteral() != null)
-                {
-                    tail = new Number(CreateNumberLiteral(operand.numericLiteral()));
-                }
+            foreach (var operand in operands)
+            {
+                Expression tail = createOperand(operand);
                 if (tail == null) continue;
                 if (left == null)
                 {
@@ -535,17 +541,21 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
         }
 
-        public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
+        private void InitializeFormat2Statement(ArithmeticOperationStatement statement, char op,
+            IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> leftContext,
+            CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext, 
+            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
         {
-            AddStatement statement = new AddStatement();
-
-            // here we add all abc..yz in "ADD ab..y TO z" without distinction between
-            // what is after the ADD and before the TO, and what is after the TO
-            Expression operation = createLeftOperand(context.identifierOrNumericLiteral());
-
-            if (operation != null && context.identifierRounded() != null)
+            Expression operation = createLeftOperand(leftContext);
+            if (operation != null && rightContext != null)
             {
-                foreach (var operand in context.identifierRounded())
+                Expression right = createOperand(rightContext.identifierOrNumericLiteral());
+                operation = ArithmeticOperation.Create(operation, op, right);
+            }
+
+            if (operation != null && resultContext != null)
+            {
+                foreach (var operand in resultContext)
                 {
                     Identifier right = CreateIdentifier(operand.identifier());
                     right.rounded = operand.ROUNDED() != null;
@@ -553,7 +563,12 @@ namespace TypeCobol.Compiler.Parser
                     statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
                 }
             }
+        }
 
+        public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
+        {
+            AddStatement statement = new AddStatement();
+            InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             CodeElement = statement;
         }
 
@@ -854,6 +869,13 @@ namespace TypeCobol.Compiler.Parser
         {
             SubtractStatement statement = new SubtractStatement();
             InitializeFormat1Statement(statement, '-', context.identifierOrNumericLiteral(), context.identifierRounded());
+            CodeElement = statement;
+        }
+
+        public override void EnterSubtractStatementFormat2(CobolCodeElementsParser.SubtractStatementFormat2Context context)
+        {
+            SubtractStatement statement = new SubtractStatement();
+            InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             CodeElement = statement;
         }
 
