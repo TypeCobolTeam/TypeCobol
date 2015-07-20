@@ -111,6 +111,8 @@
     <Content Include="Compiler\Parser\ResultFiles\ONCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ADDRPN.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTRPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\XMLCodeElements.txt" />
@@ -191,6 +193,7 @@
     <None Include="Compiler\Parser\Samples\HeaderCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ONCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\SUBTRACTCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\XMLCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />

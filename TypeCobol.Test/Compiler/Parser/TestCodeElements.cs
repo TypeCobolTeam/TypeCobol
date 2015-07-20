@@ -231,7 +231,8 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_StatementCodeElements()
         {
-            Check_ADDCodeElements(); 
+            Check_ADDCodeElements();
+            Check_SUBTRACTCodeElements();
         }
 
         public static void Check_ADDCodeElements()
@@ -245,6 +246,19 @@ namespace TypeCobol.Test.Compiler.Parser
 
             string result = ParserUtils.DumpCodeElements(unit);
             ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "ADDCodeElements");
+        }
+
+        public static void Check_SUBTRACTCodeElements()
+        {
+            DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+            CompilationUnit unit = ParserUtils.ParseCobolFile("Statements" + Path.DirectorySeparatorChar + "SUBTRACTCodeElements", format);
+
+            string path = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "ResultFiles" + Path.DirectorySeparatorChar + "Statements";
+            ArithmeticStatementTester tester = new ArithmeticStatementTester();
+            tester.CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "SUBTRACTRPN.txt");
+
+            string result = ParserUtils.DumpCodeElements(unit);
+            ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "SUBTRACTCodeElements");
         }
     }
 }
