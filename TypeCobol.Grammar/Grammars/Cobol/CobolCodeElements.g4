@@ -4398,12 +4398,15 @@ addStatementFormat1:
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
 addStatementFormat2:
-		ADD identifierOrNumericLiteral+ TO identifierOrNumericLiteral GIVING identifierRounded+;
+		ADD identifierOrNumericLiteral+ TO identifierOrNumericLiteralTmp GIVING identifierRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 addStatementFormat3:
 		ADD corresponding identifier TO identifierRounded;
+
+identifierOrNumericLiteralTmp:
+		identifierOrNumericLiteral;
 
 identifierOrNumericLiteral:
 		identifier | numericLiteral;
@@ -5998,29 +6001,25 @@ moveStatement:
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
-//
+multiplyStatement:
+		multiplyStatementFormat2 | multiplyStatementFormat1;
+
 // p376: Format 1: MULTIPLY statement
-//multiplyStatement:
-//                     MULTIPLY (identifier | literal) BY (identifier ROUNDED?)+
-//                     (ON? SIZE ERROR imperativeStatement)?
-//                     (NOT ON? SIZE ERROR imperativeStatement)?
-//                     END_MULTIPLY?;
 // In format 1, the value of identifier-1 or literal-1 is multiplied by the value of
 // identifier-2; the product is then placed in identifier-2. For each successive occurrence
 // of identifier-2, the multiplication takes place in the left-to-right order in which
 // identifier-2 is specified.
+multiplyStatementFormat1:
+		MULTIPLY identifierOrNumericLiteral BY identifierRounded+;
+
 //
 //// p377: Format 2: MULTIPLY statement with GIVING phrase
-//multiplyStatement:
-//                     MULTIPLY (identifier | literal) BY (identifier | literal)
-//                     GIVING (identifier ROUNDED?)+
-//                     (ON? SIZE ERROR imperativeStatement)?
-//                     (NOT ON? SIZE ERROR imperativeStatement)?
-//                     END_MULTIPLY?;
 // In format 2, the value of identifier-1 or literal-1 is multiplied by the value of
 // identifier-2 or literal-2. The product is then stored in the data items referenced by
 // identifier-3.
-//
+multiplyStatementFormat2:
+		MULTIPLY identifierOrNumericLiteral BY identifierOrNumericLiteralTmp GIVING identifierRounded+;
+
 // For all formats:
 // identifier-1 , identifier-2
 // Must name an elementary numeric item.
@@ -6048,16 +6047,6 @@ moveStatement:
 // nested in another conditional statement. END-MULTIPLY can also be used with an
 // imperative MULTIPLY statement.
 // For more information, see “Delimited scope statements” on page 280. 
-
-multiplyStatement:
-                     MULTIPLY (identifier | literal) BY ((identifier ROUNDED?)+ | literal)
-                     (GIVING (identifier ROUNDED?)+)?;
-
-//multiplyStatementConditional:
-//                                multiplyStatement
-//                                (onSizeErrorCondition imperativeStatement)?
-//                                (notOnSizeErrorCondition imperativeStatement)?
-//                                multiplyStatementEnd?;
 
 multiplyStatementEnd:
                         END_MULTIPLY;
@@ -7467,40 +7456,35 @@ notOnOverflowCondition:
 stringStatementEnd:
                       END_STRING;
 
+
+
 // p438: SUBTRACT statement
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
-//
+subtractStatement:
+		subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
+
 // p438: Format 1: SUBTRACT statement
-//subtractStatement:
-//                SUBTRACT (identifier | literal)+ FROM (identifier ROUNDED?)+
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_SUBTRACT?;
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from and stored immediately in identifier-2. This process is
 // repeated for each successive occurrence of identifier-2, in the left-to-right order in
 // which identifier-2 is specified.
-//
+subtractStatementFormat1:
+		SUBTRACT identifierOrNumericLiteral+ FROM identifierRounded+;
+
 // p439: Format 2: SUBTRACT statement with GIVING phrase
-//subtractStatement:
-//                SUBTRACT (identifier | literal)+ FROM (identifier | literal)
-//                GIVING (identifier ROUNDED?)+
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_SUBTRACT?;
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from identifier-2 or literal-2. The result of the subtraction is
 // stored as the new value of each data item referenced by identifier-3.
-//
+subtractStatementFormat2:
+		SUBTRACT identifierOrNumericLiteral+ FROM identifierOrNumericLiteralTmp GIVING identifierRounded+;
+
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
-//subtractStatement:
-//                SUBTRACT (CORRESPONDING | CORR) identifier FROM identifier ROUNDED?
-//                (ON? SIZE ERROR imperativeStatement)?
-//                (NOT ON? SIZE ERROR imperativeStatement)?
-//                END_SUBTRACT;
 // Elementary data items within identifier-1 are subtracted from, and the results are
 // stored in, the corresponding elementary data items within identifier-2.
+subtractStatementFormat3:
+		SUBTRACT corresponding identifier FROM identifierRounded;
+
 // When the ARITH(COMPAT) compiler option is in effect, the composite of operands
 // can contain a maximum of 30 digits. When the ARITH(EXTEND) compiler option
 // is in effect, the composite of operands can contain a maximum of 31 digits. For
@@ -7534,19 +7518,10 @@ stringStatementEnd:
 // nested in another conditional statement. END-SUBTRACT can also be used with
 // an imperative SUBTRACT statement.
 // For more information, see “Delimited scope statements” on page 280.
-
-subtractStatement:
-                SUBTRACT (CORRESPONDING | CORR)? (identifier | literal)+ FROM ((identifier ROUNDED?)+ | literal)
-                (GIVING (identifier ROUNDED?)+)?;
-
-//subtractStatementConditional:
-//                                subtractStatement
-//                                (onSizeErrorCondition imperativeStatement)?
-//                                (notOnSizeErrorCondition imperativeStatement)?
-//                                subtractStatementEnd?;
-
 subtractStatementEnd:
                         END_SUBTRACT;
+
+
 
 // p441: UNSTRING statement
 // The UNSTRING statement causes contiguous data in a sending field to be

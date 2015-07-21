@@ -207,7 +207,7 @@
     <Compile Include="Compiler\CodeElements\StatementEnd\WriteStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\XmlStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\Statement\AcceptStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\AddStatement.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\ArithmeticOperationStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\AlterStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\CallStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\CancelStatement.cs" />
@@ -246,7 +246,6 @@
     <Compile Include="Compiler\CodeElements\Statement\StartStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StopStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StringStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\SubtractStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\UnstringStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\UseStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\WriteStatement.cs" />
@@ -376,6 +375,7 @@
     <Content Include="Documentation\Studies\Lexical grammar.txt" />
     <Content Include="Documentation\Studies\Lexical study.txt" />
     <Content Include="Documentation\Studies\Parser rules ordering .txt" />
+    <Content Include="Documentation\Studies\Specific syntax - REMARKS.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">

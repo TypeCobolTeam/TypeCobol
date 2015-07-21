@@ -9,6 +9,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Test.Compiler.CodeElements;
+using System.Collections.Generic;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -230,41 +231,34 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_StatementCodeElements()
         {
-            Check_ADDCodeElements(); 
+            Check_ADDCodeElements();
+            Check_SUBTRACTCodeElements();
         }
 
-        public static void Check_ADDCodeElements() {
-            string path = "Statements" + Path.DirectorySeparatorChar + "ADDCodeElements";
+        public static void Check_ADDCodeElements()
+        {
             DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-            CompilationUnit unit = ParserUtils.ParseCobolFile(path, format);
+            CompilationUnit unit = ParserUtils.ParseCobolFile("Statements" + Path.DirectorySeparatorChar + "ADDCodeElements", format);
+
+            string path = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "ResultFiles" + Path.DirectorySeparatorChar + "Statements";
             ArithmeticStatementTester tester = new ArithmeticStatementTester();
-            string[] rpn = { 
-                // format 1
-                "x = a x +",
-                "toto = titi tata + toto +",
-                "x = a b + ab + x +, toto = a b + ab + toto +",
-                "x = a x +",
-                "x = 1 x +",
-                "toto = 1 2 + toto +",
-                "x = 1 2 + 3 + x +, toto = 1 2 + 3 + toto +",
-                "x = 1 0 + 1 + 0 + 1 + 0 + x +",
-                "", "", "", "", "", // literals not allowed as 2nd operand
-                //format 2
-                "x = a m +",
-                "toto = titi tata +",
-                "x = a b + ab + m +, toto = a b + ab + m +",
-                "x = 1 m +",
-                "x = 1 m +, y = 1 m +",
-                "x = a 1 + 2 +",
-                "x = a b + ab + 1 +, toto = a b + ab + 1 +",
-                "x = 0 0 +",
-                "x = 1 0 + 1 + 0 + 1 + 0 +",
-                // format 3
-                "x = a x +",
-                "x = a x +",
-            };
-            tester.CompareWithRPN(unit.SyntaxDocument, rpn);
-            //Check("StatementCodeElements", new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat));
+            tester.CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "ADDRPN.txt");
+
+            string result = ParserUtils.DumpCodeElements(unit);
+            ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "ADDCodeElements");
+        }
+
+        public static void Check_SUBTRACTCodeElements()
+        {
+            DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+            CompilationUnit unit = ParserUtils.ParseCobolFile("Statements" + Path.DirectorySeparatorChar + "SUBTRACTCodeElements", format);
+
+            string path = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "ResultFiles" + Path.DirectorySeparatorChar + "Statements";
+            ArithmeticStatementTester tester = new ArithmeticStatementTester();
+            tester.CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "SUBTRACTRPN.txt");
+
+            string result = ParserUtils.DumpCodeElements(unit);
+            ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "SUBTRACTCodeElements");
         }
     }
 }
