@@ -35,6 +35,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public Token LINAGE_COUNTER = null;
         public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
         public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
+        public List<Subscript> subscripts = new List<Subscript>();
 
         private void AddDataName(CobolCodeElementsParser.InOrOfDataNameContext context)
         {
@@ -53,26 +54,50 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             }
         }
 
-        private void AddSubscript(CobolCodeElementsParser.SubscriptContext subscript)
+
+        private void InitializeSubscriptOperatorAndLiteral(Subscript subscript,
+            Antlr4.Runtime.Tree.ITerminalNode plus,
+            Antlr4.Runtime.Tree.ITerminalNode minus,
+            Antlr4.Runtime.Tree.ITerminalNode integer)
         {
-            if (subscript.subscriptLine1() != null)
+            if (plus != null) subscript.op = '+';
+            if (minus != null) subscript.op = '-';
+            if (integer != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(integer));
+        }
+
+        private void AddSubscript(CobolCodeElementsParser.SubscriptContext context)
+        {
+            if (context == null) return;
+
+            Subscript subscript = new Subscript();
+            if (context.subscriptLine1() != null)
             {
-                new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(subscript.subscriptLine1().IntegerLiteral())); // TODO
+                InitializeSubscriptOperatorAndLiteral(subscript, null, null, context.subscriptLine1().IntegerLiteral());
             }
-            if (subscript.subscriptLine2() != null)
+            if (context.subscriptLine2() != null)
             {
-                subscript.subscriptLine2().ALL(); // TODO
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine2().ALL());
+                subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
             }
-            if (subscript.subscriptLine3() != null)
+            if (context.subscriptLine3() != null)
             {
-                Token token = ParseTreeUtils.GetFirstToken(subscript.subscriptLine3().dataName());
-                SymbolReference<DataName> dataname = new SymbolReference<DataName>(new DataName(token)); // TODO
+                if (context.subscriptLine3().dataName() != null)
+                {
+                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine3().dataName().UserDefinedWord());
+                    subscript.dataname = new SymbolReference<DataName>(new DataName(token));
+                }
+                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine3().PlusOperator(), context.subscriptLine3().MinusOperator(), context.subscriptLine3().IntegerLiteral());
             }
-            if (subscript.subscriptLine4() != null)
+            if (context.subscriptLine4() != null)
             {
-                Token token = ParseTreeUtils.GetFirstToken(subscript.subscriptLine4().indexName());
-                SymbolReference<IndexName> dataname = new SymbolReference<IndexName>(new IndexName(token)); // TODO
+                if (context.subscriptLine4().indexName() != null)
+                {
+                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine4().indexName().UserDefinedWord());
+                    subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
+                }
+                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine4().PlusOperator(), context.subscriptLine4().MinusOperator(), context.subscriptLine4().IntegerLiteral());
             }
+            subscripts.Add(subscript);
         }
 
         private void InitializeIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
@@ -135,6 +160,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public override string TextValue()
         {
+            return ToString();
+        }
+
+        public override string ToString()
+        {
             if (token == null)
             {
                 return base.ToString();
@@ -143,11 +173,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             {
                 return token.Text;
             }
-        }
-
-        public override string ToString()
-        {
-            return TextValue();
         }
     }
 
@@ -166,5 +191,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.IN = IN;
             this.OF = OF;
         }
+    }
+
+    public class Subscript
+    {
+        public SymbolReference<DataName> dataname { get; set; }
+        public SymbolReference<IndexName> indexname { get; set; }
+        public SyntaxNumber offset { get; set; }
+        public char op;
     }
 }
