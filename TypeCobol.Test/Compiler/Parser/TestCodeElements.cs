@@ -78,8 +78,8 @@ namespace TypeCobol.Test.Compiler.Parser
             ParseDisplayStatement(compilationUnit, "display 'treortiertertert  '' zerzerzerze' ", 1);
             ParseDisplayStatement(compilationUnit, "display 'treortiertertert  \" zerzerzerze' ", 1);
             ParseDisplayStatement(compilationUnit, "display 'treortiertertert  \"\" zerzerzerze' ", 1);
-            
-            Check("DISPLAYCodeElements");
+
+            Check("Statements" + Path.DirectorySeparatorChar + "DISPLAYCodeElements");
         }
 
 
@@ -245,6 +245,7 @@ namespace TypeCobol.Test.Compiler.Parser
             tester.CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "ADDRPN.txt");
 
             string result = ParserUtils.DumpCodeElements(unit);
+            Console.WriteLine(result);
             ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "ADDCodeElements");
         }
 
