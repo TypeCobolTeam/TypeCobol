@@ -84,17 +84,17 @@ namespace TypeCobol.Compiler.TypeChecker
                     Message = diag.Message
                 });
             }
-            foreach (ParserDiagnostic diag in SyntaxDocument.Diagnostics)
-            {
-                errors.Add(new CompilationError
+            foreach(TypeCobol.Compiler.CodeElements.CodeElement e in SyntaxDocument.CodeElements) {
+                foreach (ParserDiagnostic diag in e.Diagnostics)
                 {
-                    LineNumber = diag.OffendingSymbol != null ? diag.OffendingSymbol.Line /* temp patch -> */== 0 ? 1 : diag.OffendingSymbol.Line : 1,
-                    StartColumn = diag.ColumnStart,
-                    EndColumn = diag.ColumnEnd,
-                    Message = diag.Message
-                });
-
-                //TODO if an NullPointerException is thrown here, it causes problem when 2 successives TextDocument.LoadChars(string) are used
+                    errors.Add(new CompilationError {
+                        LineNumber = diag.OffendingSymbol != null ? diag.OffendingSymbol.Line /* temp patch -> */== 0 ? 1 : diag.OffendingSymbol.Line : 1,
+                        StartColumn = diag.ColumnStart,
+                        EndColumn = diag.ColumnEnd,
+                        Message = diag.Message
+                    });
+                    //TODO if an NullPointerException is thrown here, it causes problem when 2 successives TextDocument.LoadChars(string) are used
+                }
             }
             compilationErrorsEventsSource.OnNext(errors);
         }

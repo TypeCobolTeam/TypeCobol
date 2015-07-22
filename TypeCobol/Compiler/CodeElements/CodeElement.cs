@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -15,6 +16,7 @@ namespace TypeCobol.Compiler.CodeElements
         public CodeElement(CodeElementType type)
         {
             Type = type;
+            Diagnostics = new List<Diagnostic>();
         }
 
         /// <summary>
@@ -36,6 +38,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// Line index in the main document where the last consumed token is starting
         /// </summary>
         public int LastTokenLineIndexInMainDocument { get; set; }
+
+        /// <summary>
+        /// List of errors found on this CodeElement
+        /// </summary>
+        public IList<Diagnostic> Diagnostics { get; private set; }
         
         /// <summary>
         /// Debug string

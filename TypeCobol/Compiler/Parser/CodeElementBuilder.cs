@@ -602,7 +602,15 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
         {
             AddStatement statement = new AddStatement();
-            InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
+            if (context.GIVING() != null)
+            {
+                InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
+            } else {
+                string message = "Required: <identifier> after TO";
+                string rulestack = "TODO";
+                var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context.identifierOrNumericLiteralTmp()), rulestack);
+                statement.Diagnostics.Add(diagnostic);
+            }
             CodeElement = statement;
         }
 

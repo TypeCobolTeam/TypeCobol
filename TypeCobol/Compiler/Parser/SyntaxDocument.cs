@@ -38,9 +38,10 @@ namespace TypeCobol.Compiler.Parser
         public IList<CodeElement> CodeElements { get; private set; }
 
         /// <summary>
-        /// List of errors found while parsing the program
+        /// List of CodeElements found with at least one error while parsing
         /// </summary>
-        public IList<Diagnostic> Diagnostics { get; private set; }
+        public IList<CodeElement> CodeElementsInError { get; private set; }
+        public List<Diagnostic> Diagnostics { get; private set; }//TODO remove this
 
         public SyntaxDocument(ProcessedTokensDocument processedTokensDocument, TypeCobolOptions compilerOptions)
         {
@@ -69,7 +70,8 @@ namespace TypeCobol.Compiler.Parser
             cobolParser.ErrorHandler = cobolErrorStrategy;
 
             // Reset the erors list
-            Diagnostics = new List<Diagnostic>();
+            CodeElementsInError = new List<CodeElement>();
+            Diagnostics = new List<Diagnostic>();//TODO remove this
 
             // Register all parse errors in a list in memory
             DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
@@ -113,6 +115,12 @@ namespace TypeCobol.Compiler.Parser
 
                     // Add code element to the list
                     CodeElements.Add(codeElement);
+                    if (codeElement.Diagnostics.Count > 0)
+                    {
+                        CodeElementsInError.Add(codeElement);
+                        Diagnostics.AddRange(codeElement.Diagnostics);//TODO remove
+                        Console.WriteLine("Added CodeElement with " + codeElement.Diagnostics.Count + " error(s) ; \"old style\" errors=" + errorListener.Diagnostics.Count + "," + codeElementBuilder.Diagnostics.Count);
+                    }
                 }
 
                 // Register compiler directive parse errors
