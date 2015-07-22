@@ -29,6 +29,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             {
                 case '+': return new Addition(left, right);
                 case '-': return new Subtraction(left, right);
+                case '×': return new Multiplication(left, right);
                 default: throw new System.ArgumentException("Illegal operator \""+op+"\"");
             }
         }
@@ -53,6 +54,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         public Subtraction(Expression left, Expression right)
             : base(left, '-', right) { }
+    }
+
+    public class Multiplication : ArithmeticOperation
+    {
+        public Multiplication(Expression left, Expression right)
+            : base(left, '×', right) { }
     }
 
     public class Number : ArithmeticExpression

@@ -22,4 +22,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public SubtractStatement() : base(CodeElementType.SubtractStatement) { }
     }
+
+    public class MultiplyStatement : ArithmeticOperationStatement
+    {
+        public MultiplyStatement() : base(CodeElementType.MultiplyStatement) { }
+    }
 }

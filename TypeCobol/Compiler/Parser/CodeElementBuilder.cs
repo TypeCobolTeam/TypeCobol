@@ -519,8 +519,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 Identifier right = new Identifier(operand);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
-                Token token = ParseTreeUtils.GetFirstToken(operand);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
             }
         }
 
@@ -573,7 +572,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private void InitializeFormat2Statement(AddStatement statement, char op,
+        private void InitializeFormat2Statement(ArithmeticOperationStatement statement, char op,
             CobolCodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
             CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
@@ -596,8 +595,7 @@ namespace TypeCobol.Compiler.Parser
             foreach (var operand in resultContext)
             {
                 Identifier right = new Identifier(operand);
-                Token token = ParseTreeUtils.GetFirstToken(operand);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
             }
         }
 
@@ -619,10 +617,9 @@ namespace TypeCobol.Compiler.Parser
             }
             if (left != null && rightContext != null)
             {
-                Expression right = new Identifier(rightContext);
+                Identifier right = new Identifier(rightContext);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
-                Token token = ParseTreeUtils.GetFirstToken(rightContext);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
             }
         }
 
@@ -829,15 +826,15 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMultiplyStatementFormat1(CobolCodeElementsParser.MultiplyStatementFormat1Context context)
         {
-            AddStatement statement = new AddStatement();
-            InitializeFormat1Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierRounded());
+            MultiplyStatement statement = new MultiplyStatement();
+            InitializeFormat1Statement(statement, '×', context.identifierOrNumericLiteral(), context.identifierRounded());
             CodeElement = statement;
         }
 
         public override void EnterMultiplyStatementFormat2(CobolCodeElementsParser.MultiplyStatementFormat2Context context)
         {
-            AddStatement statement = new AddStatement();
-            InitializeFormat2Statement(statement, '*', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
+            MultiplyStatement statement = new MultiplyStatement();
+            InitializeFormat2Statement(statement, '×', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             CodeElement = statement;
         }
 

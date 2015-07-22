@@ -231,7 +231,6 @@
     <Compile Include="Compiler\CodeElements\Statement\InvokeStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\MergeStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\MoveStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\MultiplyStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\NextSentenceStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\OpenStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\PerformProcedureStatement.cs" />

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -15,7 +16,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public Identifier(CobolCodeElementsParser.IdentifierContext context)
         {
-            token = ParseTreeUtils.GetFirstToken(context); // TODO forget token altogether ? but then how ToString?
+            token = ParseTreeUtils.GetFirstToken(context);
             if (context.identifierFormat1() != null)
             {
                 InitializeIdentifierFormat1(context.identifierFormat1());
@@ -33,8 +34,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public Token token { get; private set; }
         public bool ROUNDED = false;
         public Token LINAGE_COUNTER = null;
-        public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
         public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
+        public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
         public List<Subscript> subscripts = new List<Subscript>();
 
         private void AddDataName(CobolCodeElementsParser.InOrOfDataNameContext context)
@@ -165,14 +166,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public override string ToString()
         {
-            if (token == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                return token.Text;
-            }
+            string token = this.token != null ? this.token.Text : base.ToString();
+            StringBuilder res = new StringBuilder(token);
+            foreach (var dataname in datanames) res.Append(dataname);
+            foreach (var filename in filenames) res.Append(filename);
+            return res.ToString();
         }
     }
 
@@ -190,6 +188,16 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.reference = new SymbolReference<S>(symbol);
             this.IN = IN;
             this.OF = OF;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder res = new StringBuilder("");
+            if (IN) res.Append(">");
+            if (OF) res.Append("<");
+            res.Append(reference);
+            if (res.Length > 0) return res.ToString();
+            return "?";
         }
     }
 
