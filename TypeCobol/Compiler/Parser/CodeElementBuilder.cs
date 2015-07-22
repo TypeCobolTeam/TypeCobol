@@ -23,17 +23,11 @@ namespace TypeCobol.Compiler.Parser
         public CodeElement CodeElement { get; private set; }
 
         /// <summary>
-        ///     List of syntax diagnostics gathered while transversing the parse tree
-        /// </summary>
-        public IList<Diagnostic> Diagnostics { get; private set; }
-
-        /// <summary>
         ///     Initialization code run before parsing each new CodeElement
         /// </summary>
         public override void EnterCodeElement(CobolCodeElementsParser.CodeElementContext context)
         {
             CodeElement = null;
-            Diagnostics = new List<Diagnostic>();
         }
         
         // Code structure
@@ -713,7 +707,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDisplayStatement(CobolCodeElementsParser.DisplayStatementContext context)
         {
-            var displayStement = new DisplayStatement();
+            var statement = new DisplayStatement();
 
             //Identifiers & literals
             if (context.identifierOrLiteral() != null)
@@ -733,12 +727,12 @@ namespace TypeCobol.Compiler.Parser
                     {
                         //TODO
                         // Register a new diagnostic
-                        var diagnostic = new ParserDiagnostic("Unknow symbol", ParseTreeUtils.GetFirstToken(idOrLiteral),
-                            "identifierOrLiteral: contains something other than an identifier or a literal");
-                        Diagnostics.Add(diagnostic);
+                        string message = "Required: <identifier> or <literal>";
+                        string rulestack = "TODO";
+                        statement.Diagnostics.Add(new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(idOrLiteral), rulestack));
                     }
                 }
-                displayStement.VarsToDisplay = expressions;
+                statement.VarsToDisplay = expressions;
             }
             //else don't set the displayStement. It will remains null
 
@@ -749,17 +743,17 @@ namespace TypeCobol.Compiler.Parser
                 Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
                 if (mnemonicOrEnvironmentName != null)
                 {
-                    displayStement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
+                    statement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
                 }
             } //else don't set UponMnemonicOrEnvironmentName. it will remains null
 
 
             //With no advancing
             Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
-            displayStement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
+            statement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
 
 
-            CodeElement = displayStement;
+            CodeElement = statement;
         }
 
         public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)

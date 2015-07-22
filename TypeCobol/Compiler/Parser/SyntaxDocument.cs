@@ -119,22 +119,14 @@ namespace TypeCobol.Compiler.Parser
                     {
                         CodeElementsInError.Add(codeElement);
                         Diagnostics.AddRange(codeElement.Diagnostics);//TODO remove
-                        Console.WriteLine("Added CodeElement with " + codeElement.Diagnostics.Count + " error(s) ; \"old style\" errors=" + errorListener.Diagnostics.Count + "," + codeElementBuilder.Diagnostics.Count);
+                        Console.WriteLine("Added CodeElement with " + codeElement.Diagnostics.Count + " error(s) ; \"old style\" errors=" + errorListener.Diagnostics.Count);
                     }
                 }
 
                 // Register compiler directive parse errors
-                bool errorFoundWhileParsingCodeElement = errorListener.Diagnostics.Count > 0 || codeElementBuilder.Diagnostics.Count > 0;
-                if (errorFoundWhileParsingCodeElement)
+                foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
                 {
-                    foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
-                    {
-                        Diagnostics.Add(parserDiag);
-                    }
-                    foreach (Diagnostic codeElementDiag in codeElementBuilder.Diagnostics)
-                    {
-                        Diagnostics.Add(codeElementDiag);
-                    }
+                    Diagnostics.Add(parserDiag);
                 }
             }
             while (codeElement != null && tokenStream.La(1) >= 0);
