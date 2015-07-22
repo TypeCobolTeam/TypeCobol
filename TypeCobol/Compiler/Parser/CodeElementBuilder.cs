@@ -601,7 +601,7 @@ namespace TypeCobol.Compiler.Parser
                 InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             } else {
                 string message = "Required: <identifier> after TO";
-                string rulestack = "codeElement>addStatementFormat2>identifierOrNumericLiteralTmp";//TODO how could I get this automatically?
+                string rulestack = "codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp";//TODO how could I get this automatically?
                 var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context.identifierOrNumericLiteralTmp()), rulestack);
                 statement.Diagnostics.Add(diagnostic);
             }

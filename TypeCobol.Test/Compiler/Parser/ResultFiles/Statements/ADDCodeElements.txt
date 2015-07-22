@@ -1,13 +1,13 @@
 ﻿--- Diagnostics ---
-[10,10]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[10,10:1]<IntegerLiteral>{1} on line 24)
+[10,10]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[10,10:1]<IntegerLiteral>{1} on line 24)
 [11,11]<28,Error,Syntax>Syntax error : mismatched input '.' expecting GIVING (RuleStack=codeElement>addStatement>addStatementFormat2, OffendingSymbol=[11,11+:.]<PeriodSeparator> on line 24)
-[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 25)
+[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 25)
 [14,14]<28,Error,Syntax>Syntax error : mismatched input '2' expecting GIVING (RuleStack=codeElement>addStatement>addStatementFormat2, OffendingSymbol=[14,14:2]<IntegerLiteral>{2} on line 25)
-[10,10]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[10,10:1]<IntegerLiteral>{1} on line 26)
+[10,10]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[10,10:1]<IntegerLiteral>{1} on line 26)
 [11,11]<28,Error,Syntax>Syntax error : mismatched input '.' expecting GIVING (RuleStack=codeElement>addStatement>addStatementFormat2, OffendingSymbol=[11,11+:.]<PeriodSeparator> on line 26)
-[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 27)
+[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 27)
 [13,13]<28,Error,Syntax>Syntax error : mismatched input '.' expecting GIVING (RuleStack=codeElement>addStatement>addStatementFormat2, OffendingSymbol=[13,13+:.]<PeriodSeparator> on line 27)
-[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 28)
+[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 28)
 [14,14]<28,Error,Syntax>Syntax error : mismatched input '2' expecting GIVING (RuleStack=codeElement>addStatement>addStatementFormat2, OffendingSymbol=[14,14:2]<IntegerLiteral>{2} on line 28)
 --- Code Elements ---
 [[AddStatement]] [1,3:ADD]<ADD> --> [10,10:x]<UserDefinedWord>
