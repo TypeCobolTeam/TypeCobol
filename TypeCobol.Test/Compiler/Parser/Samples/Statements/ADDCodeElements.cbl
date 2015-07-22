@@ -18,7 +18,7 @@ ADD 1 2 3 TO x toto.
 ADD 1 0 1 0 1 0 to x.
 * IDENTIFIERS
 ADD 42 TO mydata OF myfile.
-ADD 42 TO mydata IN myfile.
+ADD 42 TO mydata IN data1 OF data2 IN myfile.
 * SYNTAX ERRORS
 * literals not allowed as 2nd operand
 ADD 1 TO 1.

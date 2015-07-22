@@ -41,9 +41,9 @@
 
 [[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
 
-[[AddStatement]] [1,3:ADD]<ADD> --> [21,26:myfile]<UserDefinedWord>
+[[AddStatement]] [1,3:ADD]<ADD> --> [39,44:myfile]<UserDefinedWord>
 
-[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
+[[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
 
 [[AddStatement]] [1,3:ADD]<ADD> --> [11,11+:.]<PeriodSeparator>
 
