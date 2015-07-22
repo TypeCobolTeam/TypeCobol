@@ -83,6 +83,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 foreach (CodeElement codeElement in compilationUnit.SyntaxDocument.CodeElements)
                 {
                     sb.AppendLine(codeElement.ToString());
+                    //TODO log Diagnostics linked to codeElement directly after, to increase test readability
                 }
             }
             return sb.ToString();
