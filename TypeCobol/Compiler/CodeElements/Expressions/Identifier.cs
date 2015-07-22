@@ -170,6 +170,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             StringBuilder res = new StringBuilder(token);
             foreach (var dataname in datanames) res.Append(dataname);
             foreach (var filename in filenames) res.Append(filename);
+            if (subscripts.Count > 0)
+            {
+                res.Append("( ");
+                foreach (var subscript in subscripts) res.Append(subscript).Append(", ");
+                res.Append(')');
+            }
             return res.ToString();
         }
     }
@@ -206,6 +212,19 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public SymbolReference<DataName> dataname { get; set; }
         public SymbolReference<IndexName> indexname { get; set; }
         public SyntaxNumber offset { get; set; }
-        public char op;
+        public char op { get; set; }
+        public bool all { get; set; }
+
+        public override string ToString()
+        {
+            StringBuilder res = new StringBuilder("");
+            if (all) res.Append("all");
+            if (dataname != null) res.Append(dataname);
+            if (indexname != null) res.Append(indexname);
+            res.Append(op);
+            if (offset != null) res.Append(offset);
+            if (res.Length > 0) return res.ToString();
+            return "?";
+        }
     }
 }
