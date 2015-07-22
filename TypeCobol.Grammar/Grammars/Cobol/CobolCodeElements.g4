@@ -9735,9 +9735,21 @@ qualifiedDataNameOrSpecialRegister:
 // program to alter the value of the index.
 
 subscript:
-             (IntegerLiteral | ALL)  |
-             (dataName ((PlusOperator | MinusOperator) IntegerLiteral)?) |
-             (indexName ((PlusOperator | MinusOperator) IntegerLiteral)?);
+	subscriptLine1 | subscriptLine2 | subscriptLine3 | subscriptLine4;
+
+subscriptLine1:
+	PlusOperator? IntegerLiteral;
+
+subscriptLine2:
+	ALL;
+
+subscriptLine3:
+	dataName ((PlusOperator|MinusOperator) IntegerLiteral)?;
+
+subscriptLine4:
+	indexName ((PlusOperator|MinusOperator) IntegerLiteral)?;
+
+
 
 dataNameReference:
                      qualifiedDataNameOrSpecialRegister
@@ -9891,58 +9903,47 @@ length: arithmeticExpression;
 // must be uniquely named if referenced. Data items associated with level-numbers
 // 02 through 49 are successively lower levels of the hierarchy.
 
-// p68: Format 1
-//identifier:
-//              dataName 
-//              ((IN | OF) dataName)* 
-//              ((IN | OF) fileName)?
-//              ('(' subscript+ ')')?
-//              ('(' leftMostCharacterPosition ':' length? ')')?;
-// data-name-1 , data-name-2
-// Can be a record-name.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// file-name-1 must be unique within this program.
+identifier:
+	(identifierFormat3 | identifierFormat2 | identifierFormat1);
+           
+// p68: Format 1   
+identifierFormat1:
+	dataName inOrOfDataName* inOrOfFileName?
+	(LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+//	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+// check: leftMostCharacterPosition, length IN referenceModifier
 
 // p69: Format 2
-//identifier:
-//              (conditionName | dataName)
-//              ((IN | OF) dataName)* 
-//              ((IN | OF) fileName)?;
-// data-name-1 , data-name-2
+identifierFormat2:
+	conditionName inOrOfDataName* inOrOfFileName?;
+// > See, I know the grammar says THIS:
+// > identifierFormat2:
+// >	(dataName | conditionName) inOrOfDataName* inOrOfFileName?;
+// > However, if you don't take conditionName but dataName, it's like you took identifierFormat1
+// > as the types allowed for file-name-x and data-name-x in Format1 vs Format2  are the same.
+// > It's more explicit like that: no subscript and reference modifier stuff after conditionName.
+
+// p69: Format 3
+identifierFormat3:
+	LINAGE_COUNTER inOrOfFileName?;
+	
+inOrOfDataName: 
+	(IN | OF) dataName;
+
+inOrOfFileName: 
+	(IN | OF) fileName;
+
+// dataName: 
 // Can be a record-name.
-// condition-name-1
+// fileName: 
+// Must be identified by an FD or SD entry in the DATA DIVISION. 
+// Must be unique within this program.
+// conditionName:
 // Can be referenced by statements and entries either in the program that
 // contains the configuration section or in a program contained within that
 // program.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// Must be unique within this program.
-
-// p69: Format 3
-//identifier:
-//              LINAGE_COUNTER
-//              ((IN | OF) fileName)?
-// LINAGE-COUNTER
+// LINAGE-COUNTER: 
 // Must be qualified each time it is referenced if more than one file
 // description entry that contains a LINAGE clause has been specified in the
 // source unit.
-// file-name-2
-// Must be identified by the FD or SD entry in the DATA DIVISION.
-// file-name-2 must be unique within this program.
-
-identifier:
-              ( dataNameReference
-                (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)? 
-              ) |              
-              conditionNameReference;
-              
-
-
-
-
-
-
-
-
-

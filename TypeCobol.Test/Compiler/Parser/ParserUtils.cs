@@ -96,7 +96,6 @@ namespace TypeCobol.Test.Compiler.Parser
                 String[] expectedResultLines = expectedResult.Split(new[] { '\r', '\n' });
                 String[] resultLines = result.Split(new[] { '\r', '\n' });
 
-               
                 for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
                 {
                     if (expectedResultLines[c] != resultLines[c])

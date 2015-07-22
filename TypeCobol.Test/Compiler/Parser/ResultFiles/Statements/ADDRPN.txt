@@ -6,6 +6,8 @@ x = 1 x +
 toto = 1 2 + toto +
 x = 1 2 + 3 + x +, toto = 1 2 + 3 + toto +
 x = 1 0 + 1 + 0 + 1 + 0 + x +
+mydata = 42 mydata<myfile +
+mydata = 42 mydata>data1<data2>myfile +
 
 
 
