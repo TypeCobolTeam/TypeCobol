@@ -47,6 +47,7 @@ namespace TypeCobol.Compiler.CodeElements
             sb.Append("]] ");
             sb.Append(ConsumedTokens[0]).ToString();
             sb.Append(" --> ");
+            //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
             sb.AppendLine(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
             return sb.ToString();
         }
