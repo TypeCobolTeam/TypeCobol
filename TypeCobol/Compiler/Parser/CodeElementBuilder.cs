@@ -630,6 +630,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
         }
 
+        public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
+        {
+            CodeElement = new AddStatement();
+        }
+
 
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
@@ -838,6 +843,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
         }
 
+        public override void EnterMultiplyStatement(CobolCodeElementsParser.MultiplyStatementContext context)
+        {
+            CodeElement = new MultiplyStatement();
+        }
+
         public override void EnterNextSentenceStatement(CobolCodeElementsParser.NextSentenceStatementContext context)
         {
             CodeElement = new NextSentenceStatement();
@@ -928,6 +938,11 @@ namespace TypeCobol.Compiler.Parser
             SubtractStatement statement = new SubtractStatement();
             InitializeFormat3Statement(statement, '-', context.identifier(), context.identifierRounded());
             CodeElement = statement;
+        }
+
+        public override void EnterSubtractStatement(CobolCodeElementsParser.SubtractStatementContext context)
+        {
+            CodeElement = new SubtractStatement();
         }
 
         public override void EnterUnstringStatement(CobolCodeElementsParser.UnstringStatementContext context)
