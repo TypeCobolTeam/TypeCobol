@@ -26,7 +26,7 @@ var format = new TypeCobol.Compiler.DocumentFormat(
             foreach (var file in files)
             {
                 string filename = System.IO.Path.GetFileName(file);
-                var unit = ParserUtils.ParseCobolFile(filename, format, samples);
+                var unit = ParserUtils.ParseCobolFile(filename, null, samples);
                 tested++;
                 if(hasErrors(unit.SyntaxDocument)) {
                     Console.WriteLine(filename);
@@ -36,7 +36,8 @@ var format = new TypeCobol.Compiler.DocumentFormat(
                     if (errors >= STOP_AFTER_AS_MANY_ERRORS) break;
                 }
             }
-            Console.WriteLine("Files tested="+tested+"/"+files.Length+", errors="+errors);
+            string message = "Files tested="+tested+"/"+files.Length+", errors="+errors;
+            if (errors > 0) Assert.Fail("\n"+message);
         }
 
         private bool hasErrors(TypeCobol.Compiler.Parser.SyntaxDocument document)
