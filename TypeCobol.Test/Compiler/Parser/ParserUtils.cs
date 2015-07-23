@@ -38,20 +38,18 @@ namespace TypeCobol.Test.Compiler.Parser
             return compilationDoc;
         }
 
-        public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null)
+        public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null)
         {
-            string samples = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
-            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(samples));
+            if (folder == null) folder = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
+            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
             if (!localDirectory.Exists)
             {
                 throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
-
             if (documentFormat == null) documentFormat = DocumentFormat.RDZReferenceFormat;
             CompilationProject project = new CompilationProject("test",
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-
             CompilationUnit compilationUnit = new CompilationUnit(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions());
             compilationUnit.SetupCodeAnalysisPipeline(null, 0);
             compilationUnit.StartDocumentProcessing();
