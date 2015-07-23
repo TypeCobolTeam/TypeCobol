@@ -17,11 +17,6 @@ namespace TypeCobol.Test
             string path = PlatformUtils.GetPathForProjectFile(samples);
             string[] files = System.IO.Directory.GetFiles(path, regex, System.IO.SearchOption.AllDirectories);
 
-var format = new TypeCobol.Compiler.DocumentFormat(
-    System.Text.Encoding.UTF8,
-    TypeCobol.Compiler.File.EndOfLineDelimiter.CrLfCharacters,
-    0, TypeCobol.Compiler.Text.ColumnsLayout.FreeTextFormat);
-
             int tested = 0, errors = 0;
             foreach (var file in files)
             {

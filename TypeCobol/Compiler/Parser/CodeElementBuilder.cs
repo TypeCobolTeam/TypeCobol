@@ -601,7 +601,7 @@ namespace TypeCobol.Compiler.Parser
                 InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             } else {
                 string message = "Required: <identifier> after TO";
-                string rulestack = "codeElement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp";//TODO how could I get this automatically?
+                string rulestack = "codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp";//TODO how could I get this automatically?
                 var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context.identifierOrNumericLiteralTmp()), rulestack);
                 statement.Diagnostics.Add(diagnostic);
             }
@@ -728,7 +728,7 @@ namespace TypeCobol.Compiler.Parser
                         //TODO
                         // Register a new diagnostic
                         string message = "Required: <identifier> or <literal>";
-                        string rulestack = "codeElement>displayStatement>identifierOrLiteral";//TODO how could I get this automatically?
+                        string rulestack = "codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral";//TODO how could I get this automatically?
                         statement.Diagnostics.Add(new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(idOrLiteral), rulestack));
                     }
                 }
@@ -1034,11 +1034,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new NotOnSizeErrorCondition();
         }
 
-        public override void EnterElseCondition(CobolCodeElementsParser.ElseConditionContext context)
-        {
-            CodeElement = new ElseCondition();
-        }
-
         public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
         {
             CodeElement = new WhenEvaluateCondition();
@@ -1085,11 +1080,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
         {
             CodeElement = new EvaluateStatementEnd();
-        }
-
-        public override void EnterIfStatementEnd(CobolCodeElementsParser.IfStatementEndContext context)
-        {
-            CodeElement = new IfStatementEnd();
         }
 
         public override void EnterInvokeStatementEnd(CobolCodeElementsParser.InvokeStatementEndContext context)

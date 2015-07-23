@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[16,17]<28,Error,Syntax>Syntax error : Required: <identifier> or <literal> (RuleStack=codeElement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
-[16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
+[16,17]<28,Error,Syntax>Syntax error : Required: <identifier> or <literal> (RuleStack=codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
+[16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
 [49,52]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[49,52:with]<WITH> on line 13)
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>

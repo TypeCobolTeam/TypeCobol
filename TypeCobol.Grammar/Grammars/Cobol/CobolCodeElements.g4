@@ -96,108 +96,228 @@ codeElement:
            objectEnd |
        classEnd |
        // -- Cobol imperative statements --
-       acceptStatement |
-       alterStatement |
-       cancelStatement |
-       closeStatement |
+	   imperativeStatement |
        continueStatement |
-       displayStatement |
        entryStatement |
        execStatement |
-       exitStatement |
-       exitMethodStatement |
-       exitProgramStatement |
-       gobackStatement |
-       gotoStatement |
-       initializeStatement |
-       inspectStatement |
-       mergeStatement |
-       moveStatement |
-       openStatement |
+       exitMethodStatement |  //TODO
+       exitProgramStatement | //TODO
        performProcedureStatement |
-       releaseStatement |
-       setStatement |
-       sortStatement |
-       stopStatement |
        // -- Cobol conditional statements --
-       addStatement |
-           onSizeErrorCondition | // ... imperative statements ...
-           notOnSizeErrorCondition | // ... imperative statements ...
-       addStatementEnd |
-       callStatement |
+       //callStatement |
            onExceptionCondition | // ... imperative statements ...
            notOnExceptionCondition | // ... imperative statements ...
            onOverflowCondition | // ... imperative statements ...
        callStatementEnd |    
-       computeStatement |
+       //computeStatement |
            // ... size exception phrases..
        computeStatementEnd |
-       deleteStatement |
+       //deleteStatement |
            invalidKeyCondition | // ... imperative statements ...
            notInvalidKeyCondition | // ... imperative statements ...
        deleteStatementEnd |
-       divideStatement |
+       //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
-       evaluateStatement |
+       //evaluateStatement |
            whenConditionalExpression | // ... imperative statements ...
            whenEvaluateCondition | // ... imperative statements ...
            whenOtherCondition | // ... imperative statements ...
        evaluateStatementEnd |
-       ifStatement |
-           /* ... statements ... | */ nextSentenceStatement |
-       elseCondition // optional
-           // ... statements ... | nextSentenceStatement
-       ifStatementEnd |	
-       invokeStatement |
+       //invokeStatement |
            // ... exception phrases ...
        invokeStatementEnd |
-       multiplyStatement |
-           // ... size exception phrases ...
-       multiplyStatementEnd |
-       performStatement |
+       //performStatement |
            // ... imperative statements ...
        performStatementEnd |
-       readStatement |
+       //readStatement |
            atEndCondition | // ... imperative statements ...
            notAtEndCondition | // ... imperative statements ...
            // ... invalid key phrases ...
        readStatementEnd |
-       returnStatement |
+       //returnStatement |
            // ... at end phrases ...
        returnStatementEnd |
-       rewriteStatement |
+       //rewriteStatement |
            // ... invalid key phrases ...
        rewriteStatementEnd |
        searchStatement |
            // atEnd ... imperative statements ...
            // whenConditionalExpression ... imperativeStatements ... | nextSentence
        searchStatementEnd |
-       startStatement |
+       //startStatement |
            // ... invalid key phrases ...
        startStatementEnd |
-       stringStatement |
+       //stringStatement |
            // onOverflow ... imperative statements
            notOnOverflowCondition | // ... imperative statements ...
        stringStatementEnd |
-       subtractStatement |
-           // ... size exception phrases ...
-       subtractStatementEnd |
-       unstringStatement |
+       //unstringStatement |
            // ... on overflow phrases ...
        unstringStatementEnd |
-       writeStatement |
+       //writeStatement |
            atEndOfPageCondition  | // ... imperative statements ...
            notAtEndOfPageCondition  | // ... imperative statements ...
            // ... invalid key phrases ...
        writeStatementEnd |
-       xmlGenerateStatement |
+       //xmlGenerateStatement |
            // ... exception phrases ...
-       xmlStatementEnd |
-       xmlParseStatement
+       // xmlStatementEnd |
+       //xmlParseStatement
            // ... exceptionPhrases ...
-       // xmlStatementEnd
-           ;
+       xmlStatementEnd;
+
+
+
+	      ////////////////
+	     // IMPERATIVE //
+	    // STATEMENTS //
+	   ////////////////
+
+imperativeStatement:
+	  arithmeticStatement
+	| dataMovementStatement
+	| endingStatement
+	| ioStatement
+	| orderingStatement
+	| procedureBranchingStatement
+	| programOrMethodLinkageStatement
+	;
+
+arithmeticStatement:
+		// Arithmetic statements are imperative statements, but
+		// p277: Without the ON SIZE ERROR or the NOT ON SIZE ERROR phrase.
+	  addStatement
+	| computeStatement
+	| divideStatement
+	| multiplyStatement
+	| subtractStatement
+	;
+
+dataMovementStatement:
+	  acceptStatement // only with: (DATE, DAY, DAY-OF-WEEK, TIME)
+	| initializeStatement
+	| inspectStatement
+	| moveStatement
+	| setStatement // p278: SET is seen as a table-handling statement, too
+		// STRING and UNSTRING statements are imperative statements, but
+		// p277: Without the ON OVERFLOW or the NOT ON OVERFLOW phrase
+	| stringStatement
+	| unstringStatement
+		// XML GENERATE and XML PARSE statements are imperative statements, but
+		// p277: Without the ON EXCEPTION or the NOT ON EXCEPTION phrase
+	| xmlGenerateStatement
+	| xmlParseStatement;
+
+endingStatement:
+	  stopStatement // only STOP RUN
+//	| exitMethodStatement //TODO still declared up there, put it here
+//	| exitProgramStatement //TODO still declared up there, put it here
+	| gobackStatement;
+
+ioStatement:
+	  acceptStatement // with: identifier
+	| closeStatement
+		// DELETE, REWRITE and START statement are imperative statements, but
+		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
+	| deleteStatement
+	| displayStatement
+	| openStatement
+		// READ statement is an imperative statement, but
+		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
+	| readStatement
+	| rewriteStatement
+	| startStatement
+	| stopStatement // only with: <literal>
+		// WRITE statement is an imperative statement, but
+		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
+	| writeStatement
+	;
+
+orderingStatement:
+	  mergeStatement
+	| releaseStatement
+		// RETURN statement is an imperative statement, but
+		// p278: Without the AT END or NOT AT END phrase.
+	| returnStatement
+	| sortStatement
+	;
+
+procedureBranchingStatement:
+	  alterStatement
+	| exitStatement
+	| gotoStatement
+	| performStatement
+	;
+
+programOrMethodLinkageStatement:
+		// CALL statement is an imperative statement, but
+		// p278: Without the ON OVERFLOW phrase, and without the ON EXCEPTION or NOT ON EXCEPTION phrase.
+	  callStatement
+	| cancelStatement
+		// INVOKE statement is an imperative statement, but
+		// p279: Without the ON EXCEPTION or NOT ON EXCEPTION phrase.
+	| invokeStatement
+	;
+
+
+
+	   /////////////////
+	  // CONDITIONAL //
+	 // STATEMENTS  //
+	/////////////////
+
+conditionalStatement:
+	  arithmeticConditionalStatement
+//	| dataMovementConditionalStatement
+	| decisionStatement
+//	| ioConditionalStatement
+//	| orderingConditionalStatement
+//	| programOrMethodLinkageConditionalStatement
+//	| tableHandlingConditionalStatement
+	;
+
+arithmeticConditionalStatement:
+	  addConditionalStatement
+//	| computeConditionalStatement
+//	| divideConditionalStatement
+	| multiplyConditionalStatement
+	| subtractConditionalStatement
+	;
+
+//dataMovementConditionalStatement:
+//	  stringConditionalStatement
+//	| unstringConditionalStatement
+//	| xmlGenerateConditionalStatement
+//	| xmlParseConditionalStatement;
+
+decisionStatement:
+	  ifStatement
+	| evaluateStatement
+	;
+
+//ioConditionalStatement:
+//	  deleteConditionalStatement
+//	| readConditionalStatement
+//	| rewriteConditionalStatement
+//	| startConditionalStatement
+//	| writeConditionalStatement
+//	;
+
+//orderingConditionalStatement:
+//	  returnConditionalStatement
+//	;
+
+//programOrMethodLinkageConditionalStatement:
+//	  callConditionalStatement
+//	| invokeConditionalStatement
+//	;
+
+//tableHandlingConditionalStatement:
+//	  searchStatement
+//	;
+
+
 
 // --- Individual code elements syntax ---
 
@@ -4376,7 +4496,10 @@ acceptStatement:
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
 addStatement:
-		addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
+		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) addStatementEnd?;
+
+addConditionalStatement:
+		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) sizeErrorStatement+ addStatementEnd?;
 //
 // For all formats:
 // identifier-1, identifier-2 
@@ -4423,6 +4546,11 @@ corresponding:
 		
 // SIZE ERROR phrases
 // For formats 1, 2, and 3, see “SIZE ERROR phrases” on page 283. 
+sizeErrorStatement:
+	  onSizeErrorCondition imperativeStatement
+	| notOnSizeErrorCondition imperativeStatement
+	;
+
 onSizeErrorCondition:
 		ON? SIZE ERROR;
 
@@ -5150,25 +5278,20 @@ gotoStatement:
 // encountered is matched with the nearest preceding IF that has not been implicitly
 // or explicitly terminated.
 
-//ifStatementWithBody:
-//                ifStatement
-//                    (statement+ | nextSentenceStatement)
-//               (elseCondition 
-//                    (statement+ | nextSentenceStatement)
-//               )?
-//               ifStatementEnd?;
-
 ifStatement:
-               IF conditionalExpression THEN?;
+	IF conditionalExpression THEN? statementOrNextSentence elseStatement? END_IF?;
+
+statementOrNextSentence:
+	  imperativeStatement
+	| conditionalStatement
+	| imperativeStatement conditionalStatement
+	| nextSentenceStatement;
 
 nextSentenceStatement:
-                         NEXT SENTENCE;
+	NEXT SENTENCE;
 
-elseCondition:
-                 ELSE;
-
-ifStatementEnd:
-                  END_IF;
+elseStatement:
+	ELSE statementOrNextSentence;
 
 // p343: INITIALIZE statement
 // The INITIALIZE statement sets selected categories of data fields to predetermined
@@ -6002,7 +6125,10 @@ moveStatement:
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
 multiplyStatement:
-		multiplyStatementFormat2 | multiplyStatementFormat1;
+		( multiplyStatementFormat2 | multiplyStatementFormat1 ) multiplyStatementEnd?;
+
+multiplyConditionalStatement:
+		( multiplyStatementFormat2 | multiplyStatementFormat1 ) sizeErrorStatement+ multiplyStatementEnd?;
 
 // p376: Format 1: MULTIPLY statement
 // In format 1, the value of identifier-1 or literal-1 is multiplied by the value of
@@ -7462,7 +7588,10 @@ stringStatementEnd:
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
 subtractStatement:
-		subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
+		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) subtractStatementEnd?;
+
+subtractConditionalStatement:
+		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) sizeErrorStatement+ subtractStatementEnd?;
 
 // p438: Format 1: SUBTRACT statement
 // All identifiers or literals preceding the keyword FROM are added together and
