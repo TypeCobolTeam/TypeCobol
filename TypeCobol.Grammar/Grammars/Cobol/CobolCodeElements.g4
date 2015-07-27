@@ -10045,8 +10045,8 @@ identifier:
 // p68: Format 1   
 identifierFormat1:
 	dataName inOrOfDataName* inOrOfFileName?
-	(LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-//	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+	(LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
+	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
 // check: leftMostCharacterPosition, length IN referenceModifier
 
