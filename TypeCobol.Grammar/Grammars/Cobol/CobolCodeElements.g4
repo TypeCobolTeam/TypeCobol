@@ -6277,13 +6277,12 @@ openStatement:
 // procedure-name-1 is specified, imperative statements and the
 // END-PERFORM phrase must not be specified.
 // The PERFORM statement formats are:
-// - Basic PERFORM
-// - TIMES phrase PERFORM
-// - UNTIL phrase PERFORM
-// - VARYING phrase PERFORM
-
 performStatement:
-	performStatementFormat1;
+	  performStatementFormat1 // - Basic PERFORM
+	| performStatementFormat2 // - TIMES phrase PERFORM
+	| performStatementFormat3 // - UNTIL phrase PERFORM
+	| performStatementFormat4 // - VARYING phrase PERFORM
+	;
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
@@ -6294,10 +6293,10 @@ performStatement:
 // p384: Format 1: Basic PERFORM statement
 
 performStatementFormat1:
-	PERFORM (performProcedures | (imperativeStatement? END_PERFORM));
+	PERFORM (procedureName performThroughProcedure? | (imperativeStatement? END_PERFORM));
 
-performProcedures:
-	procedureName ((THROUGH |THRU) procedureName)?;
+performThroughProcedure:
+	(THROUGH |THRU) procedureName;
 
 // procedure-name-1 , procedure-name-2
 // Must name a section or paragraph in the procedure division.
@@ -6365,9 +6364,13 @@ performProcedures:
 // to a maximum of 999,999,999 times. Control then passes to the next executable
 // statement following the PERFORM statement.
 // p386: Format 2: PERFORM statement with TIMES phrase
-//performStatement:
-//                    PERFORM (procedureName ((THROUGH |THRU) procedureName)? (identifier | IntegerLiteral) TIMES) | 
-//                            ((identifier | IntegerLiteral) TIMES imperativeStatement? END_PERFORM);
+
+performStatementFormat2:
+	PERFORM (procedureName performThroughProcedure? performNTimes | (performNTimes imperativeStatement? END_PERFORM));
+
+performNTimes:
+	(identifier | numericLiteral) TIMES;
+
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified.
 // identifier-1
@@ -6385,9 +6388,13 @@ performProcedures:
 // condition specified by the UNTIL phrase is true. Control is then passed to the next
 // executable statement following the PERFORM statement.
 // p387: Format 3: PERFORM statement with UNTIL phrase
-//performStatement:
-//                    PERFORM (procedureName ((THROUGH |THRU) procedureName)? (WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression) | 
-//                            ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression (identifier | IntegerLiteral) TIMES imperativeStatement? END_PERFORM);
+
+performStatementFormat3:
+	PERFORM (procedureName performThroughProcedure performFormat3Phrase1 | performFormat3Phrase1 imperativeStatement* END_PERFORM);
+
+performFormat3Phrase1:
+	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
+
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified.
 // condition-1
@@ -6411,11 +6418,22 @@ performProcedures:
 // The format-4 VARYING phrase PERFORM statement can serially search an entire
 // seven-dimensional table.
 // p388: Format 4: PERFORM statement with VARYING phrase
-//performStatement:
-//                    PERFORM (procedureName ((THROUGH |THRU) procedureName)? 
-//                                 performVaryingPhrase performVaryingAfterPhrase* ) | 
-//                            (    performVaryingPhrase
-//                             imperativeStatement? END_PERFORM );
+
+performStatementFormat4:
+	PERFORM (procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2+ | performFormat4Phrase1 imperativeStatement* END_PERFORM);
+	
+performFormat4Phrase1:
+	(WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression;
+
+performVarying:
+	VARYING (identifier | indexName) FROM (identifier | indexName | numericLiteral) BY (identifier | numericLiteral);
+
+performFormat4Phrase2:
+	AFTER (identifier | indexName) FROM (identifier | indexName | numericLiteral) performFormat4Phrase3;
+
+performFormat4Phrase3:
+	BY (identifier | numericLiteral) UNTIL conditionalExpression;
+
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified. If procedure-name-1 is omitted, the AFTER phrase
 // must not be specified.
