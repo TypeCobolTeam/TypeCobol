@@ -5062,6 +5062,8 @@ entryStatement:
                   (USING (((BY? REFERENCE) | (BY? VALUE))? identifier+)+)?
                   /*PeriodSeparator*/;
 
+
+
 // p331: EVALUATE statement
 // The EVALUATE statement provides a shorthand notation for a series of nested IF statements. 
 // The EVALUATE statement can evaluate multiple conditions.
@@ -5087,26 +5089,6 @@ entryStatement:
 // This explicit scope terminator serves to delimit the scope of the EVALUATE statement. END-EVALUATE permits a conditional EVALUATE statement to be nested in another conditional statement.
 // For more information, see “Delimited scope statements” on page 280. 
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
-
-//evaluateStatementWithBody:
-//                     evaluateStatement
-//                     ((whenConditionalExpression | whenEvaluateCondition)+ imperativeStatement)+
-//                     (whenOtherCondition imperativeStatement)?
-//                     evaluateStatementEnd?;
-
-//evaluateStatement:
-//                     EVALUATE (identifier | literal | expression | (TRUE | FALSE)) (ALSO (identifier | literal | expression | (TRUE | FALSE)))*
-//                 ;
-//
-//whenEvaluateCondition:
-//                         WHEN (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)) 
-//                        (ALSO (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)))*;
-//
-//whenOtherCondition:
-//                      WHEN OTHER;
-//
-//evaluateStatementEnd:
-//                        END_EVALUATE;
 
 evaluateStatement:
 	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement)+ evaluateWhenOther? END_EVALUATE?;
@@ -5145,6 +5127,8 @@ evaluateWhenOther:
 expression:
               arithmeticExpression | conditionalExpression;              
            
+
+
 // p335: EXIT statement
 // The EXIT statement provides a common end point for a series of procedures.
 // The EXIT statement enables you to assign a procedure-name to a given point in a program.
