@@ -860,12 +860,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new OpenStatement();
         }
 
-        public override void EnterPerformProcedureStatement(
-            CobolCodeElementsParser.PerformProcedureStatementContext context)
-        {
-            CodeElement = new PerformProcedureStatement();
-        }
-
         public override void EnterPerformStatement(CobolCodeElementsParser.PerformStatementContext context)
         {
             CodeElement = new PerformStatement();
@@ -1075,11 +1069,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterMultiplyStatementEnd(CobolCodeElementsParser.MultiplyStatementEndContext context)
         {
             CodeElement = new MultiplyStatementEnd();
-        }
-
-        public override void EnterPerformStatementEnd(CobolCodeElementsParser.PerformStatementEndContext context)
-        {
-            CodeElement = new PerformStatementEnd();
         }
 
         public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)

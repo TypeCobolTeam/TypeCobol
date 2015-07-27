@@ -103,7 +103,6 @@ codeElement:
        execStatement |
        exitMethodStatement |  //TODO
        exitProgramStatement | //TODO
-       performProcedureStatement |
        // -- Cobol conditional statements --
        //callStatement |
            onExceptionCondition | // ... imperative statements ...
@@ -123,9 +122,6 @@ codeElement:
        //invokeStatement |
            // ... exception phrases ...
        invokeStatementEnd |
-       //performStatement |
-           // ... imperative statements ...
-       performStatementEnd |
        //readStatement |
            atEndCondition | // ... imperative statements ...
            notAtEndCondition | // ... imperative statements ...
@@ -6285,7 +6281,10 @@ openStatement:
 // - TIMES phrase PERFORM
 // - UNTIL phrase PERFORM
 // - VARYING phrase PERFORM
-//
+
+performStatement:
+	performStatementFormat1;
+
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
 // and control then passes to the next executable statement following the PERFORM
@@ -6293,9 +6292,13 @@ openStatement:
 // Note: A PERFORM statement must not cause itself to be executed. A recursive
 // PERFORM statement can cause unpredictable results.
 // p384: Format 1: Basic PERFORM statement
-//performStatement:
-//                    PERFORM (procedureName ((THROUGH |THRU) procedureName)?) | 
-//                            (imperativeStatement? END_PERFORM);
+
+performStatementFormat1:
+	PERFORM (performProcedures | (imperativeStatement? END_PERFORM));
+
+performProcedures:
+	procedureName ((THROUGH |THRU) procedureName)?;
+
 // procedure-name-1 , procedure-name-2
 // Must name a section or paragraph in the procedure division.
 // When both procedure-name-1 and procedure-name-2 are specified, if either is a
@@ -6462,44 +6465,38 @@ openStatement:
 //   BY phrases during execution changes the number of times the procedures are
 //   executed.
 
-performProcedureStatement:
-                             PERFORM procedureName ((THROUGH |THRU) procedureName)? 
-                                 ( performTimesPhrase | 
-                                   performUntilPhrase |
-                                  (performVaryingPhrase performVaryingAfterPhrase*) )?
-                            ;
-
-//performStatementWithBody:
-//                            performStatement
-//                            imperativeStatement? 
-//                            performStatementEnd 
+//performProcedureStatement:
+//                             PERFORM procedureName ((THROUGH |THRU) procedureName)? 
+//                                 ( performTimesPhrase | 
+//                                   performUntilPhrase |
+//                                  (performVaryingPhrase performVaryingAfterPhrase*) )?
 //                            ;
-
-performStatement:
-                    PERFORM   ( performTimesPhrase | 
-                                   performUntilPhrase |
-                                   performVaryingPhrase )?;
-
-performTimesPhrase:
-                      (identifier | IntegerLiteral) TIMES;
-
-performUntilPhrase:
-                      (WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
-
-performVaryingPhrase:
-                         (WITH? TEST (BEFORE | AFTER))? VARYING (identifier | indexName) 
-                         FROM (identifier | indexName | literal) 
-                         BY (identifier | literal)
-                         UNTIL conditionalExpression;
-
-performVaryingAfterPhrase:
-                          AFTER (identifier | indexName) 
-                          FROM (identifier | indexName | literal)
-                          BY (identifier | literal)
-                          UNTIL conditionalExpression;
-                        
-performStatementEnd:
-                       END_PERFORM;
+//
+//performStatement:
+//                    PERFORM   ( performTimesPhrase | 
+//                                   performUntilPhrase |
+//                                   performVaryingPhrase )?;
+//
+//performTimesPhrase:
+//                      (identifier | IntegerLiteral) TIMES;
+//
+//performUntilPhrase:
+//                      (WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
+//
+//performVaryingPhrase:
+//                         (WITH? TEST (BEFORE | AFTER))? VARYING (identifier | indexName) 
+//                         FROM (identifier | indexName | literal) 
+//                         BY (identifier | literal)
+//                         UNTIL conditionalExpression;
+//
+//performVaryingAfterPhrase:
+//                          AFTER (identifier | indexName) 
+//                          FROM (identifier | indexName | literal)
+//                          BY (identifier | literal)
+//                          UNTIL conditionalExpression;
+//                        
+//performStatementEnd:
+//                       END_PERFORM;
 
 // p393: READ statement
 // For sequential access, the READ statement makes the next logical record from a file
