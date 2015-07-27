@@ -5087,7 +5087,7 @@ entryStatement:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement)+ evaluateWhenOther? END_EVALUATE?;
+	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement+)+ evaluateWhenOther? END_EVALUATE?;
 
 evaluateWhat:
 	identifier | literal | expression | TRUE | FALSE;
@@ -5114,7 +5114,7 @@ evaluateThrough:
 	(THROUGH | THRU) (identifier | literal | arithmeticExpression);
 
 evaluateWhenOther:
-	WHEN OTHER imperativeStatement;
+	WHEN OTHER imperativeStatement+;
 
 // p333: Determining values
 // - Any selection subject in which expression-1, expression-2, ... is specified as an arithmetic expression
@@ -5288,9 +5288,9 @@ ifStatement:
 	IF conditionalExpression THEN? statementOrNextSentence elseStatement? END_IF?;
 
 statementOrNextSentence:
-	  imperativeStatement
+	  imperativeStatement+
 	| conditionalStatement
-	| imperativeStatement conditionalStatement
+	| imperativeStatement+ conditionalStatement
 	| nextSentenceStatement;
 
 nextSentenceStatement:
