@@ -21,6 +21,13 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName, format);
             // Check code elements
             string result = ParserUtils.DumpCodeElements(compilationUnit);
+            bool debug = false;
+            if (debug)
+            {
+                Console.WriteLine(compilationUnit.SyntaxDocument.CodeElements.Count+" CodeElements found:");
+                foreach (var e in compilationUnit.SyntaxDocument.CodeElements) Console.WriteLine("> "+e);
+                Console.WriteLine("result:\n" + result);
+            }
             ParserUtils.CheckWithResultFile(result, testName);
         }
 
@@ -231,8 +238,10 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_StatementCodeElements()
         {
+            // arithmetic
             Check_ADDCodeElements();
             Check_SUBTRACTCodeElements();
+
         }
 
         public static void Check_ADDCodeElements()
@@ -241,8 +250,7 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationUnit unit = ParserUtils.ParseCobolFile("Statements" + Path.DirectorySeparatorChar + "ADDCodeElements", format);
 
             string path = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "ResultFiles" + Path.DirectorySeparatorChar + "Statements";
-            ArithmeticStatementTester tester = new ArithmeticStatementTester();
-            tester.CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "ADDRPN.txt");
+            new ArithmeticStatementTester().CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "ADDRPN.txt");
 
             string result = ParserUtils.DumpCodeElements(unit);
             ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "ADDCodeElements");
@@ -254,8 +262,7 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationUnit unit = ParserUtils.ParseCobolFile("Statements" + Path.DirectorySeparatorChar + "SUBTRACTCodeElements", format);
 
             string path = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "ResultFiles" + Path.DirectorySeparatorChar + "Statements";
-            ArithmeticStatementTester tester = new ArithmeticStatementTester();
-            tester.CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "SUBTRACTRPN.txt");
+            new ArithmeticStatementTester().CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + "SUBTRACTRPN.txt");
 
             string result = ParserUtils.DumpCodeElements(unit);
             ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + "SUBTRACTCodeElements");

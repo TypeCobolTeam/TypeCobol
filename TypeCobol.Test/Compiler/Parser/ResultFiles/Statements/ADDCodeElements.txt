@@ -1,15 +1,4 @@
-﻿--- Diagnostics ---
-[10,10]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[10,10:1]<IntegerLiteral>{1} on line 24)
-[11,11]<28,Error,Syntax>Syntax error : mismatched input '.' expecting GIVING (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2, OffendingSymbol=[11,11+:.]<PeriodSeparator> on line 24)
-[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 25)
-[14,14]<28,Error,Syntax>Syntax error : mismatched input '2' expecting GIVING (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2, OffendingSymbol=[14,14:2]<IntegerLiteral>{2} on line 25)
-[10,10]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[10,10:1]<IntegerLiteral>{1} on line 26)
-[11,11]<28,Error,Syntax>Syntax error : mismatched input '.' expecting GIVING (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2, OffendingSymbol=[11,11+:.]<PeriodSeparator> on line 26)
-[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 27)
-[13,13]<28,Error,Syntax>Syntax error : mismatched input '.' expecting GIVING (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2, OffendingSymbol=[13,13+:.]<PeriodSeparator> on line 27)
-[12,12]<28,Error,Syntax>Syntax error : Required: <identifier> after TO (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp, OffendingSymbol=[12,12:1]<IntegerLiteral>{1} on line 28)
-[14,14]<28,Error,Syntax>Syntax error : mismatched input '2' expecting GIVING (RuleStack=codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2, OffendingSymbol=[14,14:2]<IntegerLiteral>{2} on line 28)
---- Code Elements ---
+﻿--- Code Elements ---
 [[AddStatement]] [1,3:ADD]<ADD> --> [10,10:x]<UserDefinedWord>
 
 [[SentenceEnd]] [11,11+:.]<PeriodSeparator> --> [11,11+:.]<PeriodSeparator>
@@ -49,16 +38,6 @@
 [[AddStatement]] [1,3:ADD]<ADD> --> [39,44:myfile]<UserDefinedWord>
 
 [[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
-
-[[AddStatement]] [1,3:ADD]<ADD> --> [11,11+:.]<PeriodSeparator>
-
-[[AddStatement]] [1,3:ADD]<ADD> --> [15,15+:.]<PeriodSeparator>
-
-[[AddStatement]] [1,3:ADD]<ADD> --> [11,11+:.]<PeriodSeparator>
-
-[[AddStatement]] [1,3:ADD]<ADD> --> [13,13+:.]<PeriodSeparator>
-
-[[AddStatement]] [1,3:ADD]<ADD> --> [15,15+:.]<PeriodSeparator>
 
 [[AddStatement]] [1,3:ADD]<ADD> --> [19,19:x]<UserDefinedWord>
 

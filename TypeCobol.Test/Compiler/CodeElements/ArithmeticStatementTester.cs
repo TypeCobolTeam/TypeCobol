@@ -46,8 +46,7 @@ namespace TypeCobol.Test.Compiler.CodeElements
                     lines.Add(line);
                     line = reader.ReadLine();
                 }
-                ArithmeticStatementTester tester = new ArithmeticStatementTester();
-                tester.CompareWithRPN(tree, lines.ToArray());
+                new ArithmeticStatementTester().CompareWithRPN(tree, lines.ToArray());
             }
         }
     }

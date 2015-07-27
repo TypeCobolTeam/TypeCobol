@@ -21,11 +21,11 @@ ADD 42 TO mydata OF myfile.
 ADD 42 TO mydata IN data1 OF data2 IN myfile.
 * SYNTAX ERRORS
 * literals not allowed as 2nd operand
-ADD 1 TO 1.
-ADD 1 2 TO 1 2.
-ADD x TO 1.
-ADD 1 x TO 1.
-ADD 1 x TO 1 2.
+*ADD 1 TO 1.
+*ADD 1 2 TO 1 2.
+*ADD x TO 1.
+*ADD 1 x TO 1.
+*ADD 1 x TO 1 2.
 * incomplete statement
 *ADD
 *ADD.

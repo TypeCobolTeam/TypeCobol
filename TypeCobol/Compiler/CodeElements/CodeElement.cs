@@ -54,8 +54,16 @@ namespace TypeCobol.Compiler.CodeElements
             sb.Append("]] ");
             sb.Append(ConsumedTokens[0]).ToString();
             sb.Append(" --> ");
-            //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
-            sb.AppendLine(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
+            sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
+            bool displayLineNumbers = false;
+            if (displayLineNumbers)
+            {
+                sb.Append(" on lines ");
+                sb.Append(FirstTokenLineIndexInMainDocument);
+                sb.Append(">");
+                sb.Append(LastTokenLineIndexInMainDocument);
+            }
+            sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
             return sb.ToString();
         }
 
