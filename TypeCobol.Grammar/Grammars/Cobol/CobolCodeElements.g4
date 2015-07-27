@@ -97,6 +97,7 @@ codeElement:
        classEnd |
        // -- Cobol imperative statements --
 	   imperativeStatement |
+	   conditionalStatement |
        continueStatement |
        entryStatement |
        execStatement |
@@ -119,11 +120,6 @@ codeElement:
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
-       //evaluateStatement |
-           whenConditionalExpression | // ... imperative statements ...
-           whenEvaluateCondition | // ... imperative statements ...
-           whenOtherCondition | // ... imperative statements ...
-       evaluateStatementEnd |
        //invokeStatement |
            // ... exception phrases ...
        invokeStatementEnd |
@@ -5098,19 +5094,49 @@ entryStatement:
 //                     (whenOtherCondition imperativeStatement)?
 //                     evaluateStatementEnd?;
 
+//evaluateStatement:
+//                     EVALUATE (identifier | literal | expression | (TRUE | FALSE)) (ALSO (identifier | literal | expression | (TRUE | FALSE)))*
+//                 ;
+//
+//whenEvaluateCondition:
+//                         WHEN (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)) 
+//                        (ALSO (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)))*;
+//
+//whenOtherCondition:
+//                      WHEN OTHER;
+//
+//evaluateStatementEnd:
+//                        END_EVALUATE;
+
 evaluateStatement:
-                     EVALUATE (identifier | literal | expression | (TRUE | FALSE)) (ALSO (identifier | literal | expression | (TRUE | FALSE)))*
-                 ;
+	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement)+ evaluateWhenOther? END_EVALUATE?;
 
-whenEvaluateCondition:
-                         WHEN (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)) 
-                        (ALSO (ANY | conditionalExpression | (TRUE | FALSE) | (NOT? (identifier | literal | arithmeticExpression) ((THROUGH | THRU) (identifier | literal | arithmeticExpression))?)))*;
+evaluateWhat:
+	identifier | literal | expression | TRUE | FALSE;
 
-whenOtherCondition:
-                      WHEN OTHER;
+evaluateWhatAlso:
+	ALSO evaluateWhat;
 
-evaluateStatementEnd:
-                        END_EVALUATE;
+evaluateWhen:
+	WHEN evaluatePhrase1 evaluateWhenAlso*;
+
+evaluateWhenAlso:
+	WHEN evaluatePhrase2*;
+
+evaluatePhrase1:
+	ALL | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4;
+
+evaluatePhrase2:
+	evaluatePhrase1;
+
+evaluatePhrase1Choice4:
+	NOT? (identifier | literal | arithmeticExpression) evaluateThrough?;
+
+evaluateThrough:
+	(THROUGH | THRU) (identifier | literal | arithmeticExpression);
+
+evaluateWhenOther:
+	WHEN OTHER imperativeStatement;
 
 // p333: Determining values
 // - Any selection subject in which expression-1, expression-2, ... is specified as an arithmetic expression

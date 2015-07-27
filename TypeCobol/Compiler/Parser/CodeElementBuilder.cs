@@ -1034,16 +1034,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new NotOnSizeErrorCondition();
         }
 
-        public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
-        {
-            CodeElement = new WhenEvaluateCondition();
-        }
-
-        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
-        {
-            CodeElement = new WhenOtherCondition();
-        }
-
         public override void EnterWhenConditionalExpression(
             CobolCodeElementsParser.WhenConditionalExpressionContext context)
         {
@@ -1075,11 +1065,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
         {
             CodeElement = new DivideStatementEnd();
-        }
-
-        public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
-        {
-            CodeElement = new EvaluateStatementEnd();
         }
 
         public override void EnterInvokeStatementEnd(CobolCodeElementsParser.InvokeStatementEndContext context)
