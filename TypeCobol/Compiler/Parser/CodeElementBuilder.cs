@@ -1047,12 +1047,6 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new NotOnSizeErrorCondition();
         }
-
-        public override void EnterWhenConditionalExpression(
-            CobolCodeElementsParser.WhenConditionalExpressionContext context)
-        {
-            CodeElement = new WhenConditionalExpression();
-        }
         
         // Statement ends
 
@@ -1104,11 +1098,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
         {
             CodeElement = new RewriteStatementEnd();
-        }
-
-        public override void EnterSearchStatementEnd(CobolCodeElementsParser.SearchStatementEndContext context)
-        {
-            CodeElement = new SearchStatementEnd();
         }
 
         public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)

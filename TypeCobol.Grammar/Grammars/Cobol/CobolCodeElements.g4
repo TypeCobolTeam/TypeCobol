@@ -133,10 +133,6 @@ codeElement:
        //rewriteStatement |
            // ... invalid key phrases ...
        rewriteStatementEnd |
-       searchStatement |
-           // atEnd ... imperative statements ...
-           // whenConditionalExpression ... imperativeStatements ... | nextSentence
-       searchStatementEnd |
        //startStatement |
            // ... invalid key phrases ...
        startStatementEnd |
@@ -266,7 +262,7 @@ conditionalStatement:
 //	| ioConditionalStatement
 //	| orderingConditionalStatement
 //	| programOrMethodLinkageConditionalStatement
-//	| tableHandlingConditionalStatement
+	| tableHandlingConditionalStatement
 	;
 
 arithmeticConditionalStatement:
@@ -305,9 +301,9 @@ decisionStatement:
 //	| invokeConditionalStatement
 //	;
 
-//tableHandlingConditionalStatement:
-//	  searchStatement
-//	;
+tableHandlingConditionalStatement:
+	  searchStatement
+	;
 
 
 
@@ -6864,21 +6860,34 @@ rewriteStatementEnd:
 // ... more details p412->414 Binary search ...
 // ... more details p414 Search statement considerations ...
 
-//searchStatementWithBody:
-//                   searchStatement
-//                   (atEndCondition imperativeStatement)?
-//                   (whenConditionalExpression (imperativeStatement | nextSentenceStatement))+
-//                   searchStatementEnd?;
-
 searchStatement:
-                   SEARCH ALL? identifier
-                   (VARYING (identifier | indexName))?;
+	searchStatementFormat1 | searchStatementFormat2;
 
-whenConditionalExpression:
-                       WHEN conditionalExpression;                       
+searchStatementFormat1:
+	SEARCH identifier searchStatementVarying? searchStatementAtEnd? searchStatementFormat1When+ END_SEARCH?;
 
-searchStatementEnd:
-                      END_SEARCH;
+searchStatementFormat2:
+	SEARCH ALL identifier searchStatementAtEnd? searchStatementFormat2When searchStatementFormat2And* (imperativeStatement+ | nextSentenceStatement) END_SEARCH?;
+
+searchStatementVarying:
+	VARYING (identifier | indexName);
+
+searchStatementAtEnd:
+	AT? END imperativeStatement+;
+
+searchStatementFormat1When:
+	WHEN conditionalExpression (imperativeStatement+ | nextSentenceStatement);
+
+searchStatementFormat2When:
+	WHEN (conditionalExpression | searchStatementDataEquality);
+
+searchStatementFormat2And:
+	AND (conditionalExpression | searchStatementDataEquality);
+
+searchStatementDataEquality:
+	dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression);
+
+
 
 // p415: SET statement
 // The SET statement is used to perform an operation as described in this topic.
