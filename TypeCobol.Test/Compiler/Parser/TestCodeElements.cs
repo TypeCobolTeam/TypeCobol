@@ -15,13 +15,12 @@ namespace TypeCobol.Test.Compiler.Parser
 {
     internal static class TestCodeElements
     {
-        private static void Check(string testName, DocumentFormat format = null)
+        private static void Check(string testName, bool debug = false)
         {
             // Compile test file
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName, format);
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName, null);
             // Check code elements
             string result = ParserUtils.DumpCodeElements(compilationUnit);
-            bool debug = testName == "Statements" + Path.DirectorySeparatorChar + "IFCodeElements";
             if (debug)
             {
                 Console.WriteLine(compilationUnit.SyntaxDocument.CodeElements.Count+" CodeElements found:");
@@ -244,7 +243,7 @@ namespace TypeCobol.Test.Compiler.Parser
             CheckArithmeticStatement("ADDCodeElements", "ADDRPN.txt");
             CheckArithmeticStatement("SUBTRACTCodeElements", "SUBTRACTRPN.txt");
             // procedure branching
-            CheckStatement("PERFORMCodeElements", true);
+            CheckStatement("PERFORMCodeElements");
         }
 
         public static CompilationUnit CheckStatement(string filename, bool debug = false)

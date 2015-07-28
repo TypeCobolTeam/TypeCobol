@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-[16,17]<28,Error,Syntax>Syntax error : Required: <identifier> or <literal> (RuleStack=codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
-[16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 5)
-[49,52]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[49,52:with]<WITH> on line 13)
+[16,17]<28,Error,Syntax>Syntax error : Required: <identifier> or <literal> (RuleStack=codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
+[16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
+[49,52]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[49,52:with]<WITH> on line 14)
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto
@@ -18,6 +18,10 @@
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [26,34:advancing]<ADVANCING>
 - variables = "toto"
 - WithNoAdvancing = True
+
+[[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [53,55+:'.']<AlphanumericLiteral>(',Y,Y){.}
+- variables = '*** WHATEVER *** : ' '.'
+- WithNoAdvancing = False
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [37,45:advancing]<ADVANCING>
 - variables =

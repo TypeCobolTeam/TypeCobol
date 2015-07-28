@@ -4930,7 +4930,7 @@ displayStatement:
                     withNoAdvancing?;
 
 identifierOrLiteral:
-		identifier | literal;
+		identifier | literal | specialRegister;
 
 uponEnvironmentName:
 					UPON mnemonicOrEnvironmentName;
@@ -6386,7 +6386,7 @@ performNTimes:
 // p387: Format 3: PERFORM statement with UNTIL phrase
 
 performStatementFormat3:
-	PERFORM (procedureName performThroughProcedure performFormat3Phrase1 | performFormat3Phrase1 imperativeStatement* END_PERFORM);
+	PERFORM ((procedureName performThroughProcedure performFormat3Phrase1) | (performFormat3Phrase1 imperativeStatement* END_PERFORM));
 
 performFormat3Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;

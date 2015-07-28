@@ -1,5 +1,10 @@
 
 *   //////////////
+*  // FORMAT 3 //
+* //////////////
+* PERFORM procedurename UNTIL conditionname.
+
+*   //////////////
 *  // FORMAT 4 //
 * //////////////
 * with simple condition
