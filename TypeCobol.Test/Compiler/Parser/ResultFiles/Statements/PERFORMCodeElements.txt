@@ -1,0 +1,9 @@
+﻿--- Code Elements ---
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [59,62:ZERO]<ZERO>
+
+[[SentenceEnd]] [63,64:. ]<PeriodSeparator> --> [63,64:. ]<PeriodSeparator>
+
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [29,40:pointername2]<UserDefinedWord>
+
+[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
+

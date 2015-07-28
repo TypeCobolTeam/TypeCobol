@@ -6420,7 +6420,8 @@ performFormat3Phrase1:
 // p388: Format 4: PERFORM statement with VARYING phrase
 
 performStatementFormat4:
-	PERFORM (procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2+ | performFormat4Phrase1 imperativeStatement* END_PERFORM);
+	PERFORM (procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2* | performFormat4Phrase1 imperativeStatement* END_PERFORM);
+// WARNING: according to p388, it should be "performFormat4Phrase2+" instead of "performFormat4Phrase2*"
 	
 performFormat4Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression;
@@ -9127,7 +9128,7 @@ expressionBase:
 // Simple conditions
 
 conditionalExpression:
-                         simpleCondition | complexCondition;
+	simpleCondition | complexCondition;
 
 // p256: There are five simple conditions.
 // The simple conditions are:
@@ -9324,29 +9325,36 @@ relationCondition:
 // ... p262 to p267 : many more details on comparisons ...
 
 generalRelationCondition:
-                            operand IS? relationalOperator operand 
-                            // p274: Abbreviated combined relation conditions
-                            ((AND |OR ) NOT? relationalOperator? operand)*;
+	operand IS? relationalOperator operand abbreviatedRelation*;
 
 relationalOperator:
-                      (NOT? 
-                            ((GREATER THAN?) |
-                             GreaterThanOperator |
-                             (LESS THAN?) |
-                             LessThanOperator |
-                             (EQUAL TO?) |
-                             EqualOperator)                ) |
-                      (GREATER THAN? OR EQUAL TO?) |
-                      GreaterThanOrEqualOperator |
-                      (LESS THAN? OR EQUAL TO?) |
-                      LessThanOrEqualOperator;
+	(NOT? strictRelation) | simpleRelation;
+	
+strictRelation:
+	  GREATER THAN?
+	| GreaterThanOperator
+	| LESS THAN?
+	| LessThanOperator
+	| EQUAL TO?
+	| EqualOperator
+	;
+
+simpleRelation:
+	  GREATER THAN? OR EQUAL TO?
+	| GreaterThanOrEqualOperator
+	| LESS THAN? OR EQUAL TO?
+	| LessThanOrEqualOperator
+	;
+	
+// p274: Abbreviated combined relation conditions
+abbreviatedRelation:
+	(AND | OR) NOT? relationalOperator? operand;
 
 // p260: The subject of the relation condition. Can be an identifier, literal,
 // function-identifier, arithmetic expression, or index-name.
 
 operand:
-           identifier | literal | functionIdentifier | 
-           arithmeticExpression | indexName;
+	identifier | literal | functionIdentifier | arithmeticExpression | indexName;
 
 // p267: Data pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9373,9 +9381,13 @@ operand:
 // ... p268: Table 24. Permissible comparisons for USAGE POINTER, NULL, and ADDRESS OF ...
 
 dataPointerRelationCondition:
-                                ((ADDRESS OF identifier) | identifier | (NULL | NULLS))
-                                IS? NOT? ((EQUAL TO?) | EqualOperator)
-                                ((ADDRESS OF identifier) | identifier | (NULL | NULLS));
+	dataPointer relationConditionEquality dataPointer;
+
+relationConditionEquality:
+	IS? NOT? ((EQUAL TO?) | EqualOperator);
+
+dataPointer:
+	(ADDRESS OF identifier) | identifier | NULL | NULLS;
                 
 // p268: Procedure-pointer and function-pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9399,9 +9411,10 @@ dataPointerRelationCondition:
 // NULL=NULL is not allowed.
 
 programPointerRelationCondition:
-                                   (identifier | (NULL | NULLS))
-                                   IS? NOT? ((EQUAL TO?) | EqualOperator)
-                                   (identifier | (NULL | NULLS));
+	procedureOrFunctionPointer relationConditionEquality procedureOrFunctionPointer;
+
+procedureOrFunctionPointer:
+	identifier | NULL | NULLS;
 
 // p269: Object-reference relation conditions
 // A data item of usage OBJECT REFERENCE can be compared for equality or
@@ -9412,9 +9425,10 @@ programPointerRelationCondition:
 // object.
 
 objectReferenceRelationCondition:
-                                    (identifier | (SELF | NULL | NULLS))
-                                    IS? NOT? ((EQUAL TO?) | EqualOperator)
-                                    (identifier | (SELF | NULL | NULLS));
+	objectReference relationConditionEquality objectReference;
+
+objectReference:
+	identifier | SELF | NULL | NULLS;
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -9438,6 +9452,7 @@ objectReferenceRelationCondition:
 
 signCondition:
                  operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
+//TODO p269: operand := numeric identifier or arithmetic expression that  contains at least one reference to a variable.
                  
 // p270: Switch-status condition
 // The switch-status condition determines the on or off status of a UPSI switch.

@@ -15,6 +15,14 @@ IF condition DISPLAY "OK".
 IF condition THEN DISPLAY "OK" ELSE DISPLAY "KO" END-IF.
 * no THEN
 IF condition DISPLAY "OK" ELSE DISPLAY "KO" END-IF.
+IF condition 
+  DISPLAY "ONE" 
+  DISPLAY "TWO" 
+  DISPLAY "THREE" 
+* a comment, just because
+ELSE 
+  DISPLAY "KO" 
+END-IF.
 * no END-IF
 IF condition THEN DISPLAY "OK" ELSE DISPLAY "KO".
 * neither THEN, nor END-IF

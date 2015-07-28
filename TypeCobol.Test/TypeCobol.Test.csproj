@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\IFCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\DISPLAYCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ADDCodeElements.txt" />
@@ -187,6 +188,7 @@
     <None Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
     <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
+    <None Include="Compiler\Parser\Samples\Statements\PERFORMCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IFCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\ADDCodeElements.cbl" />

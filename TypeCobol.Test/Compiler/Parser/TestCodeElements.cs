@@ -243,15 +243,22 @@ namespace TypeCobol.Test.Compiler.Parser
             // arithmetic
             CheckArithmeticStatement("ADDCodeElements", "ADDRPN.txt");
             CheckArithmeticStatement("SUBTRACTCodeElements", "SUBTRACTRPN.txt");
+            // procedure branching
+            CheckStatement("PERFORMCodeElements", true);
         }
 
-        public static CompilationUnit CheckStatement(string filename)
+        public static CompilationUnit CheckStatement(string filename, bool debug = false)
+        {
+            return CheckUTF8("Statements" + Path.DirectorySeparatorChar + filename, debug);
+        }
+
+        public static CompilationUnit CheckUTF8(string path, bool debug = false)
         {
             DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-            CompilationUnit unit = ParserUtils.ParseCobolFile("Statements" + Path.DirectorySeparatorChar + filename, format);
+            CompilationUnit unit = ParserUtils.ParseCobolFile(path, format);
             string result = ParserUtils.DumpCodeElements(unit);
-            Console.WriteLine("\""+filename+"\" result:\n"+result);
-            ParserUtils.CheckWithResultFile(result, "Statements" + Path.DirectorySeparatorChar + filename);
+            if (debug) Console.WriteLine("\"" + path + "\" result:\n" + result);
+            ParserUtils.CheckWithResultFile(result, path);
             return unit;
         }
 
