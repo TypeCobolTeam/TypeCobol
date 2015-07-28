@@ -723,10 +723,6 @@ namespace TypeCobol.Compiler.Parser
                     {
                         expressions.Add(CreateLiteral(idOrLiteral));
                     }
-                    else if (idOrLiteral.specialRegister() != null)
-                    {
-                        //TODO is this legal?
-                    }
                     else
                     {
                         //TODO

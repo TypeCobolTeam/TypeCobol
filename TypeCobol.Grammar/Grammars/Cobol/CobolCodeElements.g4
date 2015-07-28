@@ -4930,7 +4930,7 @@ displayStatement:
                     withNoAdvancing?;
 
 identifierOrLiteral:
-		identifier | literal | specialRegister;
+		identifier | literal;
 
 uponEnvironmentName:
 					UPON mnemonicOrEnvironmentName;
@@ -10082,7 +10082,7 @@ length: arithmeticExpression;
 // 02 through 49 are successively lower levels of the hierarchy.
 
 identifier:
-	(identifierFormat3 | identifierFormat2 | identifierFormat1);
+	(identifierFormat3 | identifierFormat2 | identifierFormat1 | specialRegister);
            
 // p68: Format 1   
 identifierFormat1:

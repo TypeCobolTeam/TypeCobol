@@ -20,7 +20,7 @@
 - WithNoAdvancing = True
 
 [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [53,55+:'.']<AlphanumericLiteral>(',Y,Y){.}
-- variables = '*** WHATEVER *** : ' '.'
+- variables = '*** WHATEVER *** : ' DEBUG-ITEM '.'
 - WithNoAdvancing = False
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [37,45:advancing]<ADVANCING>
