@@ -98,7 +98,6 @@ codeElement:
        // -- Cobol imperative statements --
 	   imperativeStatement |
 	   conditionalStatement |
-       continueStatement |
        entryStatement |
        execStatement |
        exitMethodStatement |  //TODO
@@ -170,6 +169,7 @@ imperativeStatement:
 	| orderingStatement
 	| procedureBranchingStatement
 	| programOrMethodLinkageStatement
+	| continueStatement
 	;
 
 arithmeticStatement:
