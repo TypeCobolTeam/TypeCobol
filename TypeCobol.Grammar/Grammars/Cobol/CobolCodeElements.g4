@@ -104,10 +104,6 @@ codeElement:
        //computeStatement |
            // ... size exception phrases..
        computeStatementEnd |
-       //deleteStatement |
-           invalidKeyCondition | // ... imperative statements ...
-           notInvalidKeyCondition | // ... imperative statements ...
-       deleteStatementEnd |
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
@@ -145,7 +141,7 @@ codeElement:
 statement:
 	  imperativeStatement
 	| conditionalStatement
-//	| delimitedScopeStatement
+	| delimitedScopeStatement
 //	| compilerDirectingStatement
 	;
 	      ////////////////
@@ -162,6 +158,13 @@ imperativeStatement:
 	| procedureBranchingStatement
 	| programOrMethodLinkageStatement
 	| continueStatement
+		// p280: In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
+		// turn a conditional statement into an imperative statement.
+		// The resulting imperative statement can then be nested. Explicit scope terminators
+		// can also be used to terminate the scope of an imperative statement.
+		// p280: Unless explicitly specified otherwise, a delimited scope statement can be specified
+		// wherever an imperative statement is allowed by the rules of the language.
+	| delimitedScopeStatement
 	;
 
 arithmeticStatement:
@@ -248,76 +251,134 @@ programOrMethodLinkageStatement:
 	/////////////////
 
 conditionalStatement:
-	  arithmeticConditionalStatement
-//	| dataMovementConditionalStatement
+	  arithmeticStatementConditional
+//	| dataMovementStatementConditional
 	| decisionStatement
-//	| ioConditionalStatement
-	| orderingConditionalStatement
-	| programOrMethodLinkageConditionalStatement
-	| tableHandlingConditionalStatement
+	| ioStatementConditional
+	| orderingStatementConditional
+	| programOrMethodLinkageStatementConditional
+	| tableHandlingStatementConditional
 	;
 
-arithmeticConditionalStatement:
-	  addConditionalStatement
-//	| computeConditionalStatement
-//	| divideConditionalStatement
-	| multiplyConditionalStatement
-	| subtractConditionalStatement
+arithmeticStatementConditional:
+	  addStatementConditional
+//	| computeStatementConditional
+//	| divideStatementConditional
+	| multiplyStatementConditional
+	| subtractStatementConditional
 	;
 
-//dataMovementConditionalStatement:
-//	  stringConditionalStatement
-//	| unstringConditionalStatement
-//	| xmlGenerateConditionalStatement
-//	| xmlParseConditionalStatement;
+//dataMovementStatementConditional:
+//	  stringStatementConditional
+//	| unstringStatementConditional
+//	| xmlGenerateStatementConditional
+//	| xmlParseStatementConditional;
 
 decisionStatement:
 	  ifStatement
 	| evaluateStatement
 	;
 
-//ioConditionalStatement:
-//	  deleteConditionalStatement
-//	| readConditionalStatement
-//	| rewriteConditionalStatement
-//	| startConditionalStatement
-//	| writeConditionalStatement
-//	;
-
-orderingConditionalStatement:
-	  returnConditionalStatement
+ioStatementConditional:
+	  deleteStatementConditional
+//	| readStatementConditional
+//	| rewriteStatementConditional
+//	| startStatementConditional
+//	| writeStatementConditional
 	;
 
-programOrMethodLinkageConditionalStatement:
-	  callConditionalStatement
-	| invokeConditionalStatement
+orderingStatementConditional:
+	  returnStatementConditional
 	;
 
-tableHandlingConditionalStatement:
+programOrMethodLinkageStatementConditional:
+	  callStatementConditional
+	| invokeStatementConditional
+	;
+
+tableHandlingStatementConditional:
 	  searchStatement
 	;
 
+
+
+	   /////////////////////
+	  // DELIMITED SCOPE //
+	 //   STATEMENTS    //
+	/////////////////////
+
+delimitedScopeStatement:
+	  addStatementConditionalWithScope
+	| callStatementConditionalWithScope
+//	| computeStatementConditionalWithScope
+	| deleteStatementConditionalWithScope
+//	| divideStatementConditionalWithScope
+	| evaluateStatementWithScope
+	| ifStatementWithScope
+	| invokeStatementConditionalWithScope
+	| multiplyStatementConditionalWithScope
+//	| performStatementConditionalWithScope
+//	| readStatementConditionalWithScope
+//	| returnStatementConditionalWithScope
+//	| rewriteStatementConditionalWithScope
+//	| searchStatementConditionalWithScope
+//	| startStatementConditionalWithScope
+//	| stringStatementConditionalWithScope
+	| subtractStatementConditionalWithScope
+//	| unstringStatementConditionalWithScope
+//	| writeStatementConditionalWithScope
+//	| xmlStatementConditionalWithScope
+	;
 
 
 	  ////////////////
 	 // EXCEPTIONS //
 	////////////////
 
-overflowException:
-	ON? OVERFLOW imperativeStatement;
+// AT END /////
+endException:
+	AT? END imperativeStatement;
 
+notEndException:
+	NOT AT? END imperativeStatement;
+
+atEndExceptions:
+	  endException
+	| notEndException
+	| (endException notEndException)
+	;
+
+// INVALID KEY /////
+invalidException:
+	INVALID KEY? imperativeStatement;
+
+notInvalidException:
+	NOT INVALID KEY? imperativeStatement;
+
+invalidKeyExceptions:
+	  invalidException
+	| notInvalidException
+	| (invalidException notInvalidException)
+	;
+
+// ON EXCEPTION /////
 exceptionException:
 	ON? EXCEPTION imperativeStatement;
 
 notExceptionException:
 	NOT ON? EXCEPTION imperativeStatement;
 
-endException:
-	AT? END imperativeStatement;
+onExceptionExceptions:
+	  exceptionException
+	| notExceptionException
+	| (exceptionException notExceptionException)
+	;
 
-notEndException:
-	NOY AT? END imperativeStatement;
+// ON OVERFLOW /////
+overflowException:
+	ON? OVERFLOW imperativeStatement;
 
+// ON SIZE ERROR /////
 sizeErrorException:
 	ON? SIZE ERROR imperativeStatement;
 
@@ -4503,10 +4564,17 @@ acceptStatementFormat2:
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
 addStatement:
-		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) END_ADD?;
+	addStatementCore END_ADD?;
 
-addConditionalStatement:
-		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) addStatementExceptions END_ADD?;
+addStatementConditional:
+	addStatementCore arithmeticExceptions;
+
+addStatementConditionalWithScope:
+	addStatementConditional END_ADD;
+
+addStatementCore:
+	addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
+
 //
 // For all formats:
 // identifier-1, identifier-2 
@@ -4553,8 +4621,12 @@ corresponding:
 		
 // SIZE ERROR phrases
 // For formats 1, 2, and 3, see “SIZE ERROR phrases” on page 283. 
-addStatementExceptions:
-	  sizeErrorException? notSizeErrorException?;
+arithmeticExceptions:
+	    sizeErrorException
+	  | notSizeErrorException
+	  | (sizeErrorException notSizeErrorException)
+	  | (notSizeErrorException sizeErrorException)
+	  ;
 
 
 
@@ -4710,10 +4782,16 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? END_CALL?;
+	callStatementCore END_CALL?;
 
-callConditionalStatement:
-	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? callStatementExceptions END_CALL?;
+callStatementConditional:
+	callStatementCore callStatementExceptions;
+
+callStatementConditionalWithScope:
+	callStatementConditional END_CALL;
+
+callStatementCore:
+	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning?;
 
 callStatementUsing:
 	USING callStatementWhat+;
@@ -4734,7 +4812,7 @@ callStatementReturning:
 	RETURNING identifier;
 
 callStatementExceptions:
-	  overflowException | (exceptionException? notExceptionException?);
+	  overflowException | onExceptionExceptions;
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
@@ -4868,22 +4946,16 @@ continueStatement:
 //For more information, see “Delimited scope statements” on page 280.
 
 deleteStatement:
+	deleteStatementCore END_DELETE?;
+
+deleteStatementConditional:
+	deleteStatementCore invalidKeyExceptions;
+
+deleteStatementConditionalWithScope:
+	deleteStatementConditional END_DELETE;
+
+deleteStatementCore:
                    DELETE fileName RECORD?;
-
-//deleteStatementConditional:
-//                              deleteStatement
-//                              (invalidKeyCondition imperativeStatement)?
-//                              (notInvalidKeyCondition imperativeStatement)?
-//                              deleteStatementEnd?;
-
-invalidKeyCondition:
-                       INVALID KEY?;
-
-notInvalidKeyCondition:
-                          NOT INVALID KEY?;
-
-deleteStatementEnd:
-                      END_DELETE;
 
 // p322: DISPLAY statement
 // DISPLAY statement transfers the contents of each operand to the output device. 
@@ -5087,7 +5159,13 @@ entryStatement:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ statement+)+ evaluateWhenOther? END_EVALUATE?;
+	evaluateStatementCore | evaluateStatementWithScope;
+
+evaluateStatementWithScope:
+	evaluateStatementCore END_EVALUATE;
+
+evaluateStatementCore:
+	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ statement+)+ evaluateWhenOther?;
 
 evaluateWhat:
 	identifier | literal | expression | TRUE | FALSE;
@@ -5285,7 +5363,13 @@ gotoStatement:
 // or explicitly terminated.
 
 ifStatement:
-	IF conditionalExpression THEN? statementOrNextSentence+ elseStatement? END_IF?;
+	ifStatementCore | ifStatementWithScope;
+
+ifStatementWithScope:
+	ifStatementCore END_IF;
+
+ifStatementCore:
+	IF conditionalExpression THEN? statementOrNextSentence+ elseStatement?;
 
 statementOrNextSentence:
 	statement+ | nextSentenceStatement;
@@ -5825,10 +5909,16 @@ inspectStatementPhrase1:
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing? END_INVOKE?;
+	invokeStatementCore END_INVOKE?;
 
-invokeConditionalStatement:
-	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing? invokeStatementExceptions END_INVOKE?;
+invokeStatementConditional:
+	invokeStatementCore onExceptionExceptions;
+
+invokeStatementConditionalWithScope:
+	invokeStatementConditional END_INVOKE;
+
+invokeStatementCore:
+	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing?;
 
 invokeStatementUsing:
 	USING invokeStatementUsingWhat+;
@@ -5838,9 +5928,6 @@ invokeStatementUsingWhat:
 
 invokeStatementReturing:
 	RETURNING identifier;
-
-invokeStatementExceptions:
-	exceptionException? notExceptionException?;
 
 // p364: MERGE statement
 // The MERGE statement combines two or more identically sequenced files (that is,
@@ -6131,11 +6218,18 @@ moveStatement:
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
-multiplyStatement:
-		( multiplyStatementFormat2 | multiplyStatementFormat1 ) END_MULTIPLY?;
 
-multiplyConditionalStatement:
-		( multiplyStatementFormat2 | multiplyStatementFormat1 ) multiplyStatementExceptions END_MULTIPLY?;
+multiplyStatement:
+	multiplyStatementCore END_MULTIPLY?;
+
+multiplyStatementConditional:
+	multiplyStatementCore arithmeticExceptions;
+
+multiplyStatementConditionalWithScope:
+	multiplyStatementConditional END_MULTIPLY;
+
+multiplyStatementCore:
+	 multiplyStatementFormat2 | multiplyStatementFormat1;
 
 // p376: Format 1: MULTIPLY statement
 // In format 1, the value of identifier-1 or literal-1 is multiplied by the value of
@@ -6181,8 +6275,7 @@ multiplyStatementFormat2:
 // imperative MULTIPLY statement.
 // For more information, see “Delimited scope statements” on page 280. 
 
-multiplyStatementExceptions:
-	  sizeErrorException? notSizeErrorException?;
+
 
 // p379: OPEN statement
 // The OPEN statement initiates the processing of files. It also checks or writes labels,
@@ -6742,22 +6835,16 @@ recordName:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-	RETURN fileName RECORD? (INTO identifier)? END_RETURN?;
+	returnStatementCore END_RETURN?;
 
-returnConditionalStatement:
-	RETURN fileName RECORD? (INTO identifier)? returnStatementExceptions END_RETURN?;
+returnStatementConditional:
+	returnStatementCore atEndExceptions;
 
-returnStatementExceptions:
-	endException? notEndException?;
+returnStatementConditionalWithScope:
+	returnStatementConditional END_RETURN;
 
-//returnStatementConditional:
-//                              returnStatement
-//                              (atEndCondition imperativeStatement)?
-//                              (notAtEndCondition imperativeStatement)?
-//                              returnStatementEnd?;
-
-returnStatementEnd:
-                      END_RETURN;
+returnStatementCore:
+	RETURN fileName RECORD? (INTO identifier)?;
 
 // p405: REWRITE statement
 // The REWRITE statement logically replaces an existing record in a direct-access file.
@@ -7631,10 +7718,16 @@ stringStatementEnd:
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
 subtractStatement:
-		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) END_SUBTRACT?;
+	subtractStatementCore END_SUBTRACT?;
 
-subtractConditionalStatement:
-		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) subtractStatementExceptions END_SUBTRACT?;
+subtractStatementConditional:
+	subtractStatementCore arithmeticExceptions;
+
+subtractStatementConditionalWithScope:
+	subtractStatementConditional END_SUBTRACT;
+
+subtractStatementCore:
+	 subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
 
 // p438: Format 1: SUBTRACT statement
 // All identifiers or literals preceding the keyword FROM are added together and
@@ -7690,9 +7783,6 @@ subtractStatementFormat3:
 // nested in another conditional statement. END-SUBTRACT can also be used with
 // an imperative SUBTRACT statement.
 // For more information, see “Delimited scope statements” on page 280.
-
-subtractStatementExceptions:
-	  sizeErrorException? notSizeErrorException?;
 
 
 

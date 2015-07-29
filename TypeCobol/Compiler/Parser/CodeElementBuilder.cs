@@ -1007,27 +1007,12 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new NotAtEndOfPageCondition();
         }
-
-        public override void EnterInvalidKeyCondition(CobolCodeElementsParser.InvalidKeyConditionContext context)
-        {
-            CodeElement = new InvalidKeyCondition();
-        }
-
-        public override void EnterNotInvalidKeyCondition(CobolCodeElementsParser.NotInvalidKeyConditionContext context)
-        {
-            CodeElement = new NotInvalidKeyCondition();
-        }
         
         // Statement ends
 
         public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
         {
             CodeElement = new ComputeStatementEnd();
-        }
-
-        public override void EnterDeleteStatementEnd(CobolCodeElementsParser.DeleteStatementEndContext context)
-        {
-            CodeElement = new DeleteStatementEnd();
         }
 
         public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
@@ -1038,11 +1023,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)
         {
             CodeElement = new ReadStatementEnd();
-        }
-
-        public override void EnterReturnStatementEnd(CobolCodeElementsParser.ReturnStatementEndContext context)
-        {
-            CodeElement = new ReturnStatementEnd();
         }
 
         public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
