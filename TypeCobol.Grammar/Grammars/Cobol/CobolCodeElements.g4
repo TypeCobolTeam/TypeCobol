@@ -103,11 +103,6 @@ codeElement:
        exitMethodStatement |  //TODO
        exitProgramStatement | //TODO
        // -- Cobol conditional statements --
-       //callStatement |
-           onExceptionCondition | // ... imperative statements ...
-           notOnExceptionCondition | // ... imperative statements ...
-           onOverflowCondition | // ... imperative statements ...
-       callStatementEnd |    
        //computeStatement |
            // ... size exception phrases..
        computeStatementEnd |
@@ -118,9 +113,6 @@ codeElement:
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
-       //invokeStatement |
-           // ... exception phrases ...
-       invokeStatementEnd |
        //readStatement |
            atEndCondition | // ... imperative statements ...
            notAtEndCondition | // ... imperative statements ...
@@ -137,7 +129,7 @@ codeElement:
        startStatementEnd |
        //stringStatement |
            // onOverflow ... imperative statements
-           notOnOverflowCondition | // ... imperative statements ...
+           //notOnOverflowCondition | // ... imperative statements ...
        stringStatementEnd |
        //unstringStatement |
            // ... on overflow phrases ...
@@ -261,7 +253,7 @@ conditionalStatement:
 	| decisionStatement
 //	| ioConditionalStatement
 //	| orderingConditionalStatement
-//	| programOrMethodLinkageConditionalStatement
+	| programOrMethodLinkageConditionalStatement
 	| tableHandlingConditionalStatement
 	;
 
@@ -296,10 +288,10 @@ decisionStatement:
 //	  returnConditionalStatement
 //	;
 
-//programOrMethodLinkageConditionalStatement:
-//	  callConditionalStatement
-//	| invokeConditionalStatement
-//	;
+programOrMethodLinkageConditionalStatement:
+	  callConditionalStatement
+	| invokeConditionalStatement
+	;
 
 tableHandlingConditionalStatement:
 	  searchStatement
@@ -4705,32 +4697,40 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-                 CALL (identifier | literal | procedurePointer | functionPointer)
-                 (USING (
-                            ((BY? REFERENCE)? (((ADDRESS OF)? identifier) | fileName | OMITTED)+) |
-                            (BY? CONTENT ((((ADDRESS OF) | (LENGTH OF))? identifier) | literal | OMITTED)+) |
-                            (BY? VALUE ((((ADDRESS OF) | (LENGTH OF))? identifier) | literal)+)
-                        )+)?
-                 (RETURNING identifier)?;
+	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? END_CALL?;
 
-//callStatementConditional:
-//                            callStatement
-//                            (((onExceptionCondition imperativeStatement)?
-//                            (notOnExceptionCondition imperativeStatement)?) |
-//                            (onOverflowCondition imperativeStatement)?)
-//                            callStatementEnd;
+callConditionalStatement:
+	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? callStatementExceptions? END_CALL?;
 
-onExceptionCondition:
-                        ON? EXCEPTION;
+callStatementUsing:
+	USING callStatementWhat+;
 
-notOnExceptionCondition:
-                           NOT ON? EXCEPTION;
+callStatementWhat:
+	callStatementByReference | callStatementByContent | callStatementByValue;
 
-onOverflowCondition:
-                       ON? OVERFLOW;
+callStatementByReference:
+	(BY? REFERENCE)? (((ADDRESS OF)? identifier) | fileName | OMITTED)+;
 
-callStatementEnd:
-                    END_CALL;
+callStatementByContent:
+	BY? CONTENT ((((ADDRESS OF)|(LENGTH OF))? identifier) | literal | OMITTED)+;
+
+callStatementByValue:
+	BY? VALUE ((((ADDRESS OF)|(LENGTH OF))? identifier) | literal)+;
+
+callStatementReturning:
+	RETURNING identifier;
+
+callStatementExceptions:
+	  overflowException | (exceptionException? notExceptionException?);
+
+overflowException:
+	ON? OVERFLOW imperativeStatement;
+	
+exceptionException:
+	ON? EXCEPTION imperativeStatement;
+
+notExceptionException:
+	NOT ON? EXCEPTION imperativeStatement;
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
@@ -5821,18 +5821,22 @@ inspectStatementPhrase1:
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-                   INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW)
-                   (USING (BY? VALUE (((LENGTH OF)? identifier) | literal)+)+)?
-                   (RETURNING identifier)?;
+	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing? END_INVOKE?;
 
-//invokeStatementConditional:
-//                              invokeStatement
-//                              (onExceptionCondition imperativeStatement)?
-//                              (notOnExceptionCondition imperativeStatement)?
-//                              invokeStatementEnd?;
+invokeConditionalStatement:
+	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing? invokeStatementExceptions END_INVOKE?;
 
-invokeStatementEnd:
-                      END_INVOKE;
+invokeStatementUsing:
+	USING invokeStatementUsingWhat+;
+
+invokeStatementUsingWhat:
+	BY? VALUE (((LENGTH OF)? identifier) | literal)+;
+
+invokeStatementReturing:
+	RETURNING identifier;
+
+invokeStatementExceptions:
+	exceptionException? notExceptionException?;
 
 // p364: MERGE statement
 // The MERGE statement combines two or more identically sequenced files (that is,
@@ -7607,9 +7611,6 @@ stringStatement:
 //                              (onOverflowCondition imperativeStatement)?
 //                              (notOnOverflowCondition imperativeStatement)?
 //                              stringStatementEnd?;
-
-notOnOverflowCondition:
-                          NOT ON? OVERFLOW;
 
 stringStatementEnd:
                       END_STRING;

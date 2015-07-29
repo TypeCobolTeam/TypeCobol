@@ -1008,26 +1008,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new NotAtEndOfPageCondition();
         }
 
-        public override void EnterOnExceptionCondition(CobolCodeElementsParser.OnExceptionConditionContext context)
-        {
-            CodeElement = new OnExceptionCondition();
-        }
-
-        public override void EnterNotOnExceptionCondition(CobolCodeElementsParser.NotOnExceptionConditionContext context)
-        {
-            CodeElement = new NotOnExceptionCondition();
-        }
-
-        public override void EnterOnOverflowCondition(CobolCodeElementsParser.OnOverflowConditionContext context)
-        {
-            CodeElement = new OnOverflowCondition();
-        }
-
-        public override void EnterNotOnOverflowCondition(CobolCodeElementsParser.NotOnOverflowConditionContext context)
-        {
-            CodeElement = new NotOnOverflowCondition();
-        }
-
         public override void EnterInvalidKeyCondition(CobolCodeElementsParser.InvalidKeyConditionContext context)
         {
             CodeElement = new InvalidKeyCondition();
@@ -1055,11 +1035,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AddStatementEnd();
         }
 
-        public override void EnterCallStatementEnd(CobolCodeElementsParser.CallStatementEndContext context)
-        {
-            CodeElement = new CallStatementEnd();
-        }
-
         public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
         {
             CodeElement = new ComputeStatementEnd();
@@ -1073,11 +1048,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
         {
             CodeElement = new DivideStatementEnd();
-        }
-
-        public override void EnterInvokeStatementEnd(CobolCodeElementsParser.InvokeStatementEndContext context)
-        {
-            CodeElement = new InvokeStatementEnd();
         }
 
         public override void EnterMultiplyStatementEnd(CobolCodeElementsParser.MultiplyStatementEndContext context)
