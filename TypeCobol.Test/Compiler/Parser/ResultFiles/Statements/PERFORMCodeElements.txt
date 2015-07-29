@@ -1,4 +1,16 @@
 ﻿--- Code Elements ---
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [9,21:procedurename]<UserDefinedWord>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [9,21:procedurename]<UserDefinedWord>
+
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
+
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [9,21:procedurename]<UserDefinedWord>
+
+[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
+
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [59,62:ZERO]<ZERO>
 
 [[SentenceEnd]] [63,64:. ]<PeriodSeparator> --> [63,64:. ]<PeriodSeparator>

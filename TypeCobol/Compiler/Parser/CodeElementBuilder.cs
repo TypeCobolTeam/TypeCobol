@@ -601,7 +601,7 @@ namespace TypeCobol.Compiler.Parser
                 InitializeFormat2Statement(statement, '+', context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             } else {
                 string message = "Required: <identifier> after TO";
-                string rulestack = "codeElement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp";//TODO how could I get this automatically?
+                string rulestack = "codeElement>statement>imperativeStatement>arithmeticStatement>addStatement>addStatementFormat2>identifierOrNumericLiteralTmp";//TODO how could I get this automatically?
                 var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context.identifierOrNumericLiteralTmp()), rulestack);
                 statement.Diagnostics.Add(diagnostic);
             }
@@ -728,7 +728,7 @@ namespace TypeCobol.Compiler.Parser
                         //TODO
                         // Register a new diagnostic
                         string message = "Required: <identifier> or <literal>";
-                        string rulestack = "codeElement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral";//TODO how could I get this automatically?
+                        string rulestack = "codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral";//TODO how could I get this automatically?
                         statement.Diagnostics.Add(new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(idOrLiteral), rulestack));
                     }
                 }

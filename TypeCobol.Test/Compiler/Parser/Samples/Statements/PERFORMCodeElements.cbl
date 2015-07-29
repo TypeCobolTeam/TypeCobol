@@ -1,8 +1,21 @@
+*   //////////////
+*  // FORMAT 1 //
+* //////////////
+PERFORM procedurename.
 
 *   //////////////
 *  // FORMAT 3 //
 * //////////////
-* PERFORM procedurename UNTIL conditionname.
+PERFORM procedurename
+PERFORM UNTIL conditionname
+  PERFORM procedurename
+  IF condition
+    PERFORM procedurename
+  END-IF
+  PERFORM procedurename
+END-PERFORM
+PERFORM procedurename
+.
 
 *   //////////////
 *  // FORMAT 4 //

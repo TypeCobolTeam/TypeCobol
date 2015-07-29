@@ -95,9 +95,7 @@ codeElement:
                    // ... method definitions ...
            objectEnd |
        classEnd |
-       // -- Cobol imperative statements --
-	   imperativeStatement |
-	   conditionalStatement |
+       statement |
        entryStatement |
        execStatement |
        exitMethodStatement |  //TODO
@@ -144,7 +142,10 @@ codeElement:
        xmlStatementEnd;
 
 
-
+statement:
+	  imperativeStatement
+	| conditionalStatement
+	;
 	      ////////////////
 	     // IMPERATIVE //
 	    // STATEMENTS //
@@ -5285,7 +5286,7 @@ ifStatement:
 	IF conditionalExpression THEN? statementOrNextSentence+ elseStatement? END_IF?;
 
 statementOrNextSentence:
-	(imperativeStatement | conditionalStatement)+ | nextSentenceStatement;
+	statement+ | nextSentenceStatement;
 
 nextSentenceStatement:
 	NEXT SENTENCE;
@@ -6291,7 +6292,7 @@ performStatement:
 // p384: Format 1: Basic PERFORM statement
 
 performStatementFormat1:
-	PERFORM (procedureName performThroughProcedure? | (imperativeStatement? END_PERFORM));
+	PERFORM (procedureName performThroughProcedure? | (statement* END_PERFORM));
 
 performThroughProcedure:
 	(THROUGH |THRU) procedureName;
@@ -6364,7 +6365,7 @@ performThroughProcedure:
 // p386: Format 2: PERFORM statement with TIMES phrase
 
 performStatementFormat2:
-	PERFORM (procedureName performThroughProcedure? performNTimes | (performNTimes imperativeStatement? END_PERFORM));
+	PERFORM (procedureName performThroughProcedure? performNTimes | (performNTimes statement* END_PERFORM));
 
 performNTimes:
 	(identifier | numericLiteral) TIMES;
@@ -6388,7 +6389,7 @@ performNTimes:
 // p387: Format 3: PERFORM statement with UNTIL phrase
 
 performStatementFormat3:
-	PERFORM ((procedureName performThroughProcedure performFormat3Phrase1) | (performFormat3Phrase1 imperativeStatement* END_PERFORM));
+	PERFORM ((procedureName performThroughProcedure performFormat3Phrase1) | (performFormat3Phrase1 statement* END_PERFORM));
 
 performFormat3Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
@@ -6418,7 +6419,7 @@ performFormat3Phrase1:
 // p388: Format 4: PERFORM statement with VARYING phrase
 
 performStatementFormat4:
-	PERFORM (procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2* | performFormat4Phrase1 imperativeStatement* END_PERFORM);
+	PERFORM (procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2* | performFormat4Phrase1 statement* END_PERFORM);
 // WARNING: according to p388, it should be "performFormat4Phrase2+" instead of "performFormat4Phrase2*"
 	
 performFormat4Phrase1:
