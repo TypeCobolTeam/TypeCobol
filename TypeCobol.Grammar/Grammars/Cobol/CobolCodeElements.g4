@@ -145,6 +145,8 @@ codeElement:
 statement:
 	  imperativeStatement
 	| conditionalStatement
+//	| delimitedScopeStatement
+//	| compilerDirectingStatement
 	;
 	      ////////////////
 	     // IMPERATIVE //
@@ -5085,7 +5087,7 @@ entryStatement:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement+)+ evaluateWhenOther? END_EVALUATE?;
+	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ statement+)+ evaluateWhenOther? END_EVALUATE?;
 
 evaluateWhat:
 	identifier | literal | expression | TRUE | FALSE;
@@ -9144,7 +9146,10 @@ expressionBase:
 // Simple conditions
 
 conditionalExpression:
-	simpleCondition | complexCondition;
+	  simpleCondition
+	| complexCondition
+	| (LeftParenthesisSeparator (simpleCondition | complexCondition) RightParenthesisSeparator)
+	;
 
 // p256: There are five simple conditions.
 // The simple conditions are:

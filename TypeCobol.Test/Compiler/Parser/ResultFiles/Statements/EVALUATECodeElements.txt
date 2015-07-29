@@ -1,0 +1,7 @@
+﻿--- Code Elements ---
+[[DisplayStatement]] [1,8:EVALUATE]<EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+- variables = "KO"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+

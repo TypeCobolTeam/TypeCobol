@@ -239,6 +239,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             // decision
             CheckStatement("IFCodeElements");
+            CheckStatement("EVALUATECodeElements");
             // arithmetic
             CheckArithmeticStatement("ADDCodeElements", "ADDRPN.txt");
             CheckArithmeticStatement("SUBTRACTCodeElements", "SUBTRACTRPN.txt");
