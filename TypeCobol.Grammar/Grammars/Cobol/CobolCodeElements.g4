@@ -118,9 +118,6 @@ codeElement:
            notAtEndCondition | // ... imperative statements ...
            // ... invalid key phrases ...
        readStatementEnd |
-       //returnStatement |
-           // ... at end phrases ...
-       returnStatementEnd |
        //rewriteStatement |
            // ... invalid key phrases ...
        rewriteStatementEnd |
@@ -252,7 +249,7 @@ conditionalStatement:
 //	| dataMovementConditionalStatement
 	| decisionStatement
 //	| ioConditionalStatement
-//	| orderingConditionalStatement
+	| orderingConditionalStatement
 	| programOrMethodLinkageConditionalStatement
 	| tableHandlingConditionalStatement
 	;
@@ -284,9 +281,9 @@ decisionStatement:
 //	| writeConditionalStatement
 //	;
 
-//orderingConditionalStatement:
-//	  returnConditionalStatement
-//	;
+orderingConditionalStatement:
+	  returnConditionalStatement
+	;
 
 programOrMethodLinkageConditionalStatement:
 	  callConditionalStatement
@@ -298,6 +295,31 @@ tableHandlingConditionalStatement:
 	;
 
 
+
+	  ////////////////
+	 // EXCEPTIONS //
+	////////////////
+
+overflowException:
+	ON? OVERFLOW imperativeStatement;
+
+exceptionException:
+	ON? EXCEPTION imperativeStatement;
+
+notExceptionException:
+	NOT ON? EXCEPTION imperativeStatement;
+
+endException:
+	AT? END imperativeStatement;
+
+notEndException:
+	NOY AT? END imperativeStatement;
+
+sizeErrorException:
+	ON? SIZE ERROR imperativeStatement;
+
+notSizeErrorException:
+	NOT ON? SIZE ERROR imperativeStatement;
 
 // --- Individual code elements syntax ---
 
@@ -4476,10 +4498,10 @@ acceptStatement:
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
 addStatement:
-		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) addStatementEnd?;
+		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) END_ADD?;
 
 addConditionalStatement:
-		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) sizeErrorStatement+ addStatementEnd?;
+		( addStatementFormat3 | addStatementFormat2 | addStatementFormat1 ) addStatementExceptions END_ADD?;
 //
 // For all formats:
 // identifier-1, identifier-2 
@@ -4526,22 +4548,8 @@ corresponding:
 		
 // SIZE ERROR phrases
 // For formats 1, 2, and 3, see “SIZE ERROR phrases” on page 283. 
-sizeErrorStatement:
-	  onSizeErrorCondition imperativeStatement
-	| notOnSizeErrorCondition imperativeStatement
-	;
-
-onSizeErrorCondition:
-		ON? SIZE ERROR;
-
-notOnSizeErrorCondition:
-		NOT ON? SIZE ERROR;
-		
-// END-ADD phrase
-// This explicit scope terminator serves to delimit the scope of the ADD statement. END-ADD permits a conditional ADD statement to be nested in another conditional statement. END-ADD can also be used with an imperative ADD statement.
-// For more information, see “Delimited scope statements” on page 280.
-addStatementEnd:
-		END_ADD;
+addStatementExceptions:
+	  sizeErrorException? notSizeErrorException?;
 
 
 
@@ -4700,7 +4708,7 @@ callStatement:
 	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? END_CALL?;
 
 callConditionalStatement:
-	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? callStatementExceptions? END_CALL?;
+	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning? callStatementExceptions END_CALL?;
 
 callStatementUsing:
 	USING callStatementWhat+;
@@ -4722,15 +4730,6 @@ callStatementReturning:
 
 callStatementExceptions:
 	  overflowException | (exceptionException? notExceptionException?);
-
-overflowException:
-	ON? OVERFLOW imperativeStatement;
-	
-exceptionException:
-	ON? EXCEPTION imperativeStatement;
-
-notExceptionException:
-	NOT ON? EXCEPTION imperativeStatement;
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
@@ -6128,10 +6127,10 @@ moveStatement:
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
 multiplyStatement:
-		( multiplyStatementFormat2 | multiplyStatementFormat1 ) multiplyStatementEnd?;
+		( multiplyStatementFormat2 | multiplyStatementFormat1 ) END_MULTIPLY?;
 
 multiplyConditionalStatement:
-		( multiplyStatementFormat2 | multiplyStatementFormat1 ) sizeErrorStatement+ multiplyStatementEnd?;
+		( multiplyStatementFormat2 | multiplyStatementFormat1 ) multiplyStatementExceptions END_MULTIPLY?;
 
 // p376: Format 1: MULTIPLY statement
 // In format 1, the value of identifier-1 or literal-1 is multiplied by the value of
@@ -6177,8 +6176,8 @@ multiplyStatementFormat2:
 // imperative MULTIPLY statement.
 // For more information, see “Delimited scope statements” on page 280. 
 
-multiplyStatementEnd:
-                        END_MULTIPLY;
+multiplyStatementExceptions:
+	  sizeErrorException? notSizeErrorException?;
 
 // p379: OPEN statement
 // The OPEN statement initiates the processing of files. It also checks or writes labels,
@@ -6738,7 +6737,13 @@ recordName:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-                   RETURN fileName RECORD? (INTO identifier)?;
+	RETURN fileName RECORD? (INTO identifier)? END_RETURN?;
+
+returnConditionalStatement:
+	RETURN fileName RECORD? (INTO identifier)? returnStatementExceptions END_RETURN?;
+
+returnStatementExceptions:
+	endException? notEndException?;
 
 //returnStatementConditional:
 //                              returnStatement
@@ -7621,10 +7626,10 @@ stringStatementEnd:
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
 subtractStatement:
-		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) subtractStatementEnd?;
+		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) END_SUBTRACT?;
 
 subtractConditionalStatement:
-		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) sizeErrorStatement+ subtractStatementEnd?;
+		( subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1 ) subtractStatementExceptions END_SUBTRACT?;
 
 // p438: Format 1: SUBTRACT statement
 // All identifiers or literals preceding the keyword FROM are added together and
@@ -7680,8 +7685,9 @@ subtractStatementFormat3:
 // nested in another conditional statement. END-SUBTRACT can also be used with
 // an imperative SUBTRACT statement.
 // For more information, see “Delimited scope statements” on page 280.
-subtractStatementEnd:
-                        END_SUBTRACT;
+
+subtractStatementExceptions:
+	  sizeErrorException? notSizeErrorException?;
 
 
 

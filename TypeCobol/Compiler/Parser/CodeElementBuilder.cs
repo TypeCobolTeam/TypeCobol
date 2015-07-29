@@ -1017,23 +1017,8 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new NotInvalidKeyCondition();
         }
-
-        public override void EnterOnSizeErrorCondition(CobolCodeElementsParser.OnSizeErrorConditionContext context)
-        {
-            CodeElement = new OnSizeErrorCondition();
-        }
-
-        public override void EnterNotOnSizeErrorCondition(CobolCodeElementsParser.NotOnSizeErrorConditionContext context)
-        {
-            CodeElement = new NotOnSizeErrorCondition();
-        }
         
         // Statement ends
-
-        public override void EnterAddStatementEnd(CobolCodeElementsParser.AddStatementEndContext context)
-        {
-            CodeElement = new AddStatementEnd();
-        }
 
         public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
         {
@@ -1048,11 +1033,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
         {
             CodeElement = new DivideStatementEnd();
-        }
-
-        public override void EnterMultiplyStatementEnd(CobolCodeElementsParser.MultiplyStatementEndContext context)
-        {
-            CodeElement = new MultiplyStatementEnd();
         }
 
         public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)
@@ -1078,11 +1058,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterStringStatementEnd(CobolCodeElementsParser.StringStatementEndContext context)
         {
             CodeElement = new StringStatementEnd();
-        }
-
-        public override void EnterSubtractStatementEnd(CobolCodeElementsParser.SubtractStatementEndContext context)
-        {
-            CodeElement = new SubtractStatementEnd();
         }
 
         public override void EnterUnstringStatementEnd(CobolCodeElementsParser.UnstringStatementEndContext context)
