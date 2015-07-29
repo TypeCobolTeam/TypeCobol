@@ -141,7 +141,6 @@ codeElement:
 statement:
 	  imperativeStatement
 	| conditionalStatement
-	| delimitedScopeStatement
 //	| compilerDirectingStatement
 	;
 	      ////////////////
