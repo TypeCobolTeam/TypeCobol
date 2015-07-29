@@ -137,3 +137,15 @@
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [1,2:IF]<IF> --> [41,44:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
+- variables = "KO"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [1,2:IF]<IF> --> [102,105:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
+- variables = "KO"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [106,106+:.]<PeriodSeparator> --> [106,106+:.]<PeriodSeparator>
+

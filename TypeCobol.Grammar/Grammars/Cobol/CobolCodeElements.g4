@@ -158,6 +158,8 @@ imperativeStatement:
 	| procedureBranchingStatement
 	| programOrMethodLinkageStatement
 	| continueStatement
+		// p276: A series of imperative statements can be specified wherever an imperative statement is allowed.
+		// p276: A conditional statement that is terminated by its explicit scope terminator is also classified as an imperative statement.
 		// p280: In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
 		// turn a conditional statement into an imperative statement.
 		// The resulting imperative statement can then be nested. Explicit scope terminators

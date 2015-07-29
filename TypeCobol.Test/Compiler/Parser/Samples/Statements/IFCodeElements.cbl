@@ -160,3 +160,5 @@ ELSE
 IF condition12
   DISPLAY "KO"
 END-IF.
+IF condition1 DISPLAY "OK" ELSE DISPLAY "KO".
+IF condition1 DISPLAY "1" ELSE IF condition2 DISPLAY "2" ELSE IF condition3 DISPLAY "3" ELSE DISPLAY "KO".
