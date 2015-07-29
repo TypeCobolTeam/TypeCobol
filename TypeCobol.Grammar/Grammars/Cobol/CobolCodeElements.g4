@@ -172,7 +172,7 @@ arithmeticStatement:
 	;
 
 dataMovementStatement:
-	  acceptStatement // only with: (DATE, DAY, DAY-OF-WEEK, TIME)
+	  acceptStatementFormat2 // only with: (DATE, DAY, DAY-OF-WEEK, TIME)
 	| initializeStatement
 	| inspectStatement
 	| moveStatement
@@ -193,7 +193,7 @@ endingStatement:
 	| gobackStatement;
 
 ioStatement:
-	  acceptStatement // with: identifier
+	  acceptStatementFormat1 // with: identifier
 	| closeStatement
 		// DELETE, REWRITE and START statement are imperative statements, but
 		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
@@ -4487,13 +4487,15 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement:
-                   ACCEPT identifier (FROM 
-                                      ( mnemonicOrEnvironmentName ) |
-                                      (   (DATE YYYYMMDD ?) |
-                                          (DAY YYYYDDD ?) |
-                                          (DAY_OF_WEEK |
-                                          TIME) )
-                                     )?;
+	acceptStatementFormat2 | acceptStatementFormat1;
+
+acceptStatementFormat1:
+	ACCEPT identifier (FROM mnemonicOrEnvironmentName)?;
+
+acceptStatementFormat2:
+	ACCEPT identifier FROM (DATE YYYYMMDD? | DAY YYYYDDD? | DAY_OF_WEEK | TIME);
+
+
 
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
