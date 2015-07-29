@@ -83,6 +83,12 @@
 
 [[SentenceEnd]] [55,55+:.]<PeriodSeparator> --> [55,55+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
+- variables = "3"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
+
 [[DisplayStatement]] [1,2:IF]<IF> --> [196,201:END-IF]<END_IF>
 - variables = "OK"
 - WithNoAdvancing = False
@@ -118,6 +124,12 @@
 - WithNoAdvancing = False
 
 [[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
+- variables = "252"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
 [[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 - variables = "KO"

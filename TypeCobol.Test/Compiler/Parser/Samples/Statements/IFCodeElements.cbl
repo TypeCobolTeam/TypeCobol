@@ -42,6 +42,14 @@ END-IF.
 IF condition1 IF condition2 THEN DISPLAY "OK" END-IF END-IF.
 IF condition1 THEN IF condition2 DISPLAY "OK" END-IF END-IF.
 IF condition1 IF condition2 DISPLAY "OK" END-IF END-IF.
+IF condition1
+  IF condition2
+    DISPLAY "2"
+  END-IF
+  IF condition3
+    DISPLAY "3"
+  END-IF
+END-IF.
 IF condition1 IF condition2 IF condition3 IF condition4 IF condition5 IF condition6 IF condition7 IF condition8 IF condition9 DISPLAY "OK" END-IF END-IF END-IF END-IF END-IF END-IF END-IF END-IF END-IF.
 IF condition1 
   IF condition2 
@@ -83,6 +91,29 @@ IF condition1
 *   //  NESTED   //
 *  // WITH ELSE //
 * ///////////////
+IF condition1
+  IF condition2
+    DISPLAY "121"
+  ELSE
+    DISPLAY "122"
+  END-IF
+  IF condition3
+    DISPLAY "131"
+  ELSE
+    DISPLAY "132"
+  END-IF
+ELSE
+  IF condition4
+    DISPLAY "241"
+  ELSE
+    DISPLAY "242"
+  END-IF
+  IF condition5
+    DISPLAY "251"
+  ELSE
+    DISPLAY "252"
+  END-IF
+END-IF.
 IF condition11 
   IF condition21 
     IF condition31 

@@ -5281,13 +5281,10 @@ gotoStatement:
 // or explicitly terminated.
 
 ifStatement:
-	IF conditionalExpression THEN? statementOrNextSentence elseStatement? END_IF?;
+	IF conditionalExpression THEN? statementOrNextSentence+ elseStatement? END_IF?;
 
 statementOrNextSentence:
-	  imperativeStatement+
-	| conditionalStatement
-	| imperativeStatement+ conditionalStatement
-	| nextSentenceStatement;
+	(imperativeStatement | conditionalStatement)+ | nextSentenceStatement;
 
 nextSentenceStatement:
 	NEXT SENTENCE;
