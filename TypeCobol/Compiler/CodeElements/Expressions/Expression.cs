@@ -3,11 +3,8 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
-    
-    public abstract class Expression
-    {
-        public abstract string TextValue();
-    }
+
+    public abstract class Expression { }
 
 
     //TODO this class is only use for display literals for now.
@@ -20,11 +17,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             this.token = token;
         }
-        public override string ToString() { return  TextValue();}
-
-        public override string TextValue()
-        {
-            return token.Text; 
-        }
+        public override string ToString() { return token.Text; }
     }
 }

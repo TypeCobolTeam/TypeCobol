@@ -5364,7 +5364,7 @@ ifStatementWithScope:
 	ifStatement END_IF;
 
 ifStatement:
-	IF conditionalExpression THEN? statementOrNextSentence+ elseStatement?;
+	IF conditionalExpression THEN? statementOrNextSentence elseStatement?;
 
 statementOrNextSentence:
 	statement+ | nextSentenceStatement;

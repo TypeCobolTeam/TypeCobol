@@ -29,11 +29,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             }
         }
 
-        public override string TextValue()
-        {
-            return new StringBuilder(left.TextValue()).Append(" ").Append(right.TextValue()).ToString();
-        }
-
         public override string ToString() { //RPN
             return new StringBuilder(left.ToString()).Append(" ").Append(right.ToString()).Append(" ").Append(op).ToString();
         }
@@ -65,7 +60,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.value = value;
         }
 
-        public override string TextValue()
+        public override string ToString()
         {
             if (value == null)
             {
@@ -75,11 +70,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             {
                 return value.ToString();
             }
-        }
-
-        public override string ToString()
-        {
-            return TextValue();
         }
     }
 }

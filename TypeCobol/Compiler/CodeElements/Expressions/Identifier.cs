@@ -159,11 +159,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-        public override string TextValue()
-        {
-            return ToString();
-        }
-
         public override string ToString()
         {
             string token = this.token != null ? this.token.Text : base.ToString();

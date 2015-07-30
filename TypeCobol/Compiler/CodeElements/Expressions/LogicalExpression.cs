@@ -18,22 +18,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.op = op;
         }
 
-        public static LogicOperation Create(Expression left, char op, Expression right)
-        {
-            switch (op)
-            {
-                case '|': return new OR(left, right);
-                case '&': return new AND(left, right);
-                case '!': return new NOT(left, right);
-                default: throw new System.ArgumentException("Illegal operator \""+op+"\"");
-            }
-        }
-
-        public override string TextValue()
-        {
-            return new StringBuilder(left.TextValue()).Append(" ").Append(right.TextValue()).ToString();
-        }
-
         public override string ToString() { //RPN
             return new StringBuilder(left.ToString()).Append(" ").Append(right.ToString()).Append(" ").Append(op).ToString();
         }
@@ -53,11 +37,22 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class NOT : LogicOperation
     {
-        public NOT(Expression left, Expression right)
-            : base(left, '×', right) { }
+        public NOT(Expression expression)
+            : base(expression, '!', null) { }
+
+        public override string ToString()
+        {
+            return new StringBuilder(left.ToString()).Append(" ").Append(op).ToString();
+        }
     }
 
-    public class Boolean : ArithmeticExpression
+    public class Relation : LogicOperation
+    {
+        public Relation(Expression left, char op, Expression right)
+            : base(left, op, right) { }
+    }
+
+    public class Boolean : LogicalExpression
     {
         public SyntaxBoolean value { get; set; }
         public Boolean(SyntaxBoolean value)
@@ -65,7 +60,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             this.value = value;
         }
 
-        public override string TextValue()
+        public override string ToString()
         {
             if (value == null)
             {
@@ -76,10 +71,31 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 return value.ToString();
             }
         }
+    }
 
+    public class Condition : LogicalExpression //TODO is this an Identifier?
+    {
+        public Token token { get; private set; }
+
+        public Condition(Token token)
+        {
+            this.token = token;
+        }
         public override string ToString()
         {
-            return TextValue();
+            if (token == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return token.Text;
+            }
         }
+    }
+
+    public class Empty : LogicalExpression
+    {
+        public override string ToString() { return "?LOGIC?"; }
     }
 }

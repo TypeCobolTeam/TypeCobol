@@ -162,3 +162,13 @@ IF condition12
 END-IF.
 IF condition1 DISPLAY "OK" ELSE DISPLAY "KO".
 IF condition1 DISPLAY "1" ELSE IF condition2 DISPLAY "2" ELSE IF condition3 DISPLAY "3" ELSE DISPLAY "KO".
+
+*IF x                   // OK
+*IF NOT x               // OK
+*IF (x)                 // OK
+*IF x y                 // OK
+*IF x (y) NOT = a (b)   // OK
+*IF x AND y             // OK
+*IF x (y) AND a         // KO, should be OK
+*IF a AND x (y)         // KO, should be OK
+*IF x (y)               // KO, should be OK I guess?

@@ -634,9 +634,34 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new GotoStatement();
         }
 
-        public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
+        public IfStatement CreateIfStatement(CobolCodeElementsParser.IfStatementContext context)
+        {
+            var statement = new IfStatement();
+            if (context.conditionalExpression() != null)
+            {
+                var condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
+            }
+            /*statement.pathIfTrue =*/CreateNestedStatements(context.statementOrNextSentence());
+            if (context.elseStatement() != null)
+            {
+                /*statement.pathIfFalse =*/CreateNestedStatements(context.elseStatement().statementOrNextSentence());
+            }
+            return statement;
+        }
+
+        private CodeElement CreateNestedStatements(CobolCodeElementsParser.StatementOrNextSentenceContext statements)
+        {
+            return null; // TODO? implement if nested statements
+        }
+
+        public override void EnterIfStatementWithScope(CobolCodeElementsParser.IfStatementWithScopeContext context)
         {
             CodeElement = new IfStatement();
+        }
+
+        public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
+        {
+            CodeElement = CreateIfStatement(context);
         }
 
         public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
