@@ -5159,13 +5159,10 @@ entryStatement:
 // For more information, see “Delimited scope statements” on page 280. 
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
-evaluateStatement:
-	evaluateStatementCore | evaluateStatementWithScope;
-
 evaluateStatementWithScope:
-	evaluateStatementCore END_EVALUATE;
+	evaluateStatement END_EVALUATE;
 
-evaluateStatementCore:
+evaluateStatement:
 	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ statement+)+ evaluateWhenOther?;
 
 evaluateWhat:
@@ -5363,13 +5360,10 @@ gotoStatement:
 // encountered is matched with the nearest preceding IF that has not been implicitly
 // or explicitly terminated.
 
-ifStatement:
-	ifStatementCore | ifStatementWithScope;
-
 ifStatementWithScope:
-	ifStatementCore END_IF;
+	ifStatement END_IF;
 
-ifStatementCore:
+ifStatement:
 	IF conditionalExpression THEN? statementOrNextSentence+ elseStatement?;
 
 statementOrNextSentence:
