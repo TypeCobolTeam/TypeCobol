@@ -11,6 +11,17 @@ namespace TypeCobol.Compiler.CodeElements
             affectations = new Dictionary<SymbolReference<DataName>, Expression>();
         }
         public Dictionary<SymbolReference<DataName>, Expression> affectations { get; set; }
+
+        public static ArithmeticOperationStatement Create(char op)
+        {
+            switch (op)
+            {
+                case '+': return new AddStatement();
+                case '-': return new SubtractStatement();
+                case '×': return new MultiplyStatement();
+                default: throw new System.ArgumentException("Illegal operator \"" + op + "\"");
+            }
+        }
     }
 
     public class AddStatement : ArithmeticOperationStatement
