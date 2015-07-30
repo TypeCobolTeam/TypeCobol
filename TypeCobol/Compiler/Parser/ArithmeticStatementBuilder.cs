@@ -10,77 +10,13 @@ namespace TypeCobol.Compiler.Parser
     {
         private char op;
         public ArithmeticOperationStatement statement { get; private set; }
+        private ArithmeticExpressionBuilder builder;
 
         public ArithmeticStatementBuilder(char op)
         {
             this.op = op;
             this.statement = ArithmeticOperationStatement.Create(op);
-        }
-
-        private SyntaxNumber CreateNumberLiteral(CobolCodeElementsParser.NumericLiteralContext context)
-        {
-            if (context.IntegerLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-            }
-            if (context.DecimalLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral()));
-            }
-            if (context.FloatingPointLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral()));
-            }
-            if (context.ZERO() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
-            }
-            if (context.ZEROS() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
-            }
-            if (context.ZEROES() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
-            }
-            throw new System.Exception("This is not a number!");
-        }
-
-        private Expression createOperand(CobolCodeElementsParser.IdentifierOrNumericLiteralContext context)
-        {
-            if (context == null) return null;
-            if (context.identifier() != null)
-            {
-                return new Identifier(context.identifier());
-            }
-            if (context.numericLiteral() != null)
-            {
-                return new Number(CreateNumberLiteral(context.numericLiteral()));
-            }
-            return null;
-        }
-
-        private Expression createLeftOperand(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
-        {
-            if (operands == null) return null;
-
-            Expression left = null;
-            foreach (var operand in operands)
-            {
-                Expression tail = createOperand(operand);
-                if (tail == null) continue;
-                if (left == null)
-                {
-                    // first element of the list that is the "left" operand
-                    left = tail;
-                }
-                else
-                {
-                    // add this element to the others, to get the sum that is the "left" operand
-                    left = new Addition(left, tail);
-                }
-            }
-            return left;
+            this.builder = new ArithmeticExpressionBuilder();
         }
 
         private void InitializeFormat1RightOperand(Expression left,
@@ -102,7 +38,7 @@ namespace TypeCobol.Compiler.Parser
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
-            Expression left = createLeftOperand(leftContext);
+            Expression left = builder.createAddition(leftContext);
             if (left != null && rightContext != null)
             {
                 InitializeFormat1RightOperand(left, rightContext);
@@ -114,7 +50,7 @@ namespace TypeCobol.Compiler.Parser
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
-            Expression left = createOperand(leftContext);
+            Expression left = builder.createNumberOrIdentifier(leftContext);
             if (left != null && rightContext != null)
             {
                 InitializeFormat1RightOperand(left, rightContext);
@@ -126,10 +62,10 @@ namespace TypeCobol.Compiler.Parser
             CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
         {
-            Expression operation = createLeftOperand(leftContext);
+            Expression operation = builder.createAddition(leftContext);
             if (operation != null && rightContext != null)
             {
-                Expression right = createOperand(rightContext.identifierOrNumericLiteral());
+                Expression right = builder.createNumberOrIdentifier(rightContext.identifierOrNumericLiteral());
                 operation = ArithmeticOperation.Create(operation, op, right);
             }
 
@@ -144,10 +80,10 @@ namespace TypeCobol.Compiler.Parser
             CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
         {
-            Expression operation = createOperand(leftContext);
+            Expression operation = builder.createNumberOrIdentifier(leftContext);
             if (operation != null && rightContext != null)
             {
-                Expression right = createOperand(rightContext.identifierOrNumericLiteral());
+                Expression right = builder.createNumberOrIdentifier(rightContext.identifierOrNumericLiteral());
                 operation = ArithmeticOperation.Create(operation, op, right);
             }
 
