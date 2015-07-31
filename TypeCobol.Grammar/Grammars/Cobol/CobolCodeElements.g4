@@ -6137,12 +6137,12 @@ mergeStatement:
 // areas.
 //
 // p369: Format 1: MOVE statement
-//moveStatement:
-//                 MOVE (identifier | literal) TO identifier+;
+//moveStatementFormat1:
+//	MOVE identifierOrLiteral TO identifier+;
 //
 // p369: Format 2: MOVE statement with CORRESPONDING phrase
-//moveStatement:
-//                 MOVE (CORRESPONDING | CORR) (identifier | literal) TO identifier;
+//moveStatementFormat2:
+//	MOVE corresponding identifier TO identifier;
 //
 // CORR is an abbreviation for, and is equivalent to, CORRESPONDING.
 // identifier-1 , literal-1
@@ -6208,7 +6208,7 @@ mergeStatement:
 // ... more details p374->375 Group moves ...
 
 moveStatement:
-                 MOVE (CORRESPONDING | CORR)? (identifier | literal) TO identifier+;
+	MOVE corresponding? identifierOrLiteral TO identifier+;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
@@ -10179,7 +10179,12 @@ length: arithmeticExpression;
 // 02 through 49 are successively lower levels of the hierarchy.
 
 identifier:
-	(identifierFormat3 | identifierFormat2 | identifierFormat1 | specialRegister);
+	  identifierFormat3
+	| identifierFormat2
+	| identifierFormat1
+	| specialRegister
+	| (LENGTH OF dataNameReference)
+	;
            
 // p68: Format 1   
 identifierFormat1:
