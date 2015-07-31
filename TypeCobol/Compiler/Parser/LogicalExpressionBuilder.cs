@@ -3,6 +3,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
+using System.Linq;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -133,14 +134,27 @@ namespace TypeCobol.Compiler.Parser
                 if (simple.GREATER() != null) return '≥';
                 if (simple.LESS() != null) return '≤';
             }
+            bool inverted = context.NOT() != null;
             var strict = context.strictRelation();
             if (strict != null) {
-                if (strict.GreaterThanOperator() != null) return '>';
-                if (strict.LessThanOperator() != null) return '<';
-                if (strict.GREATER() != null) return '>';
-                if (strict.LESS() != null) return '<';
-                if (strict.EqualOperator() != null) return '=';
-                if (strict.EQUAL() != null) return '=';
+                if (!inverted)
+                {
+                    if (strict.GreaterThanOperator() != null) return '>';
+                    if (strict.LessThanOperator() != null) return '<';
+                    if (strict.GREATER() != null) return '>';
+                    if (strict.LESS() != null) return '<';
+                    if (strict.EqualOperator() != null) return '=';
+                    if (strict.EQUAL() != null) return '=';
+                }
+                else
+                {
+                    if (strict.GreaterThanOperator() != null) return '≤';
+                    if (strict.LessThanOperator() != null) return '≥';
+                    if (strict.GREATER() != null) return '≤';
+                    if (strict.LESS() != null) return '≥';
+                    if (strict.EqualOperator() != null) return '!';
+                    if (strict.EQUAL() != null) return '!';
+                }
             }
             return '?';
         }
@@ -152,10 +166,10 @@ namespace TypeCobol.Compiler.Parser
             throw new System.NotImplementedException("operands not implemented");
         }
 
-        private LogicalExpression createAbbreviatedRelation(LogicalExpression relation, IReadOnlyList<CobolCodeElementsParser.AbbreviatedRelationContext> relations)
+        private LogicalExpression createAbbreviatedRelation(LogicalExpression relation, CobolCodeElementsParser.AbbreviatedRelationContext[] relations)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT ABBREVIATED RELATION CONDITIONS");
-            throw new System.NotImplementedException("AbbreviatedRelationCondition not implemented");
+            System.Console.WriteLine("TODO: "+ relations.Length + " abbreviated relations");
+            throw new System.NotImplementedException("abbreviated relations not implemented");
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context)
@@ -168,7 +182,7 @@ namespace TypeCobol.Compiler.Parser
                 Expression left = createOperand(operands[0]);
                 if (operands.Count > 1)
                 {
-                    Expression right = createOperand(operands[0]);
+                    Expression right = createOperand(operands[1]);
                     relation = new Relation(left, op, right);
                 }
                 else
@@ -185,9 +199,10 @@ namespace TypeCobol.Compiler.Parser
                     }
                 }
             }
-            if (context.abbreviatedRelation() != null)
+            var relations = context.abbreviatedRelation();
+            if (relations != null && relations.Count > 0)
             {
-                return createAbbreviatedRelation(relation, context.abbreviatedRelation());
+                return createAbbreviatedRelation(relation, relations.ToArray());
             }
             return relation;
         }

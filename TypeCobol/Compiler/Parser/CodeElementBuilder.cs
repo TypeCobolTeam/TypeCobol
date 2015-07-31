@@ -639,7 +639,7 @@ namespace TypeCobol.Compiler.Parser
             var statement = new IfStatement();
             if (context.conditionalExpression() != null)
             {
-                var condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
+                /*statement.condition =*/new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
             }
             /*statement.pathIfTrue =*/CreateNestedStatements(context.statementOrNextSentence());
             if (context.elseStatement() != null)

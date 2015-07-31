@@ -149,3 +149,9 @@
 
 [[SentenceEnd]] [106,106+:.]<PeriodSeparator> --> [106,106+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
+- variables = "KO"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
+

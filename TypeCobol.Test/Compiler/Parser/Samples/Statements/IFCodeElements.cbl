@@ -172,3 +172,8 @@ IF condition1 DISPLAY "1" ELSE IF condition2 DISPLAY "2" ELSE IF condition3 DISP
 *IF x (y) AND a         // KO, should be OK
 *IF a AND x (y)         // KO, should be OK
 *IF x (y)               // KO, should be OK I guess?
+*IF x0 < y0 OR x1 > y1 OR x2 < y2 AND x3 > y3 OR x4 < y4 OR x5 > y5 AND x6 < y6 OR x7 > y7
+*IF ( x1(y1) NOT = x2(y2)) AND NOT x3 (y3) THEN
+IF ( x1 NOT = x2) AND NOT x3 THEN
+  DISPLAY "KO"
+END-IF.
