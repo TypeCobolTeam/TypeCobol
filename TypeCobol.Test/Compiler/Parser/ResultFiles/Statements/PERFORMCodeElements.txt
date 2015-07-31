@@ -3,6 +3,10 @@
 
 [[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
 
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [29,41:conditionname]<UserDefinedWord>
+
+[[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
+
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [9,21:procedurename]<UserDefinedWord>
 
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>

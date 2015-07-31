@@ -6,6 +6,7 @@ PERFORM procedurename.
 *   //////////////
 *  // FORMAT 3 //
 * //////////////
+PERFORM procedurename UNTIL conditionname.
 PERFORM procedurename
 PERFORM UNTIL conditionname
   PERFORM procedurename

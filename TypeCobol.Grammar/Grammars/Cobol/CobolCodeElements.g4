@@ -6479,7 +6479,7 @@ performNTimes:
 // p387: Format 3: PERFORM statement with UNTIL phrase
 
 performStatementFormat3:
-	PERFORM ((procedureName performThroughProcedure performFormat3Phrase1) | (performFormat3Phrase1 statement* END_PERFORM));
+	PERFORM ((procedureName performThroughProcedure? performFormat3Phrase1) | (performFormat3Phrase1 statement* END_PERFORM));
 
 performFormat3Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
