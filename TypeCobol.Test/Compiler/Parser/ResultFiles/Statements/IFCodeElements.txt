@@ -11,6 +11,12 @@
 
 [[SentenceEnd]] [33,33+:.]<PeriodSeparator> --> [33,33+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [1,2:IF]<IF> --> [24,29:END-IF]<END_IF>
+- variables = "OK"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
+
 [[DisplayStatement]] [1,2:IF]<IF> --> [27,30:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 - variables = "OK"
 - WithNoAdvancing = False

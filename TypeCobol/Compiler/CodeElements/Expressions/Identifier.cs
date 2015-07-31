@@ -34,26 +34,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public Token token { get; private set; }
         public bool ROUNDED = false;
         public Token LINAGE_COUNTER = null;
-        public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
-        public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
+        public INOFList inof = new INOFList();
         public List<Subscript> subscripts = new List<Subscript>();
 
-        private void AddDataName(CobolCodeElementsParser.InOrOfDataNameContext context)
-        {
-            if (context.dataName() != null)
-            {
-                DataName dataname = new DataName(ParseTreeUtils.GetFirstToken(context.dataName().UserDefinedWord()));
-                datanames.Add(new INOF<DataName>(dataname, context.IN() != null, context.OF() != null));
-            }
-        }
-        private void AddFileName(CobolCodeElementsParser.InOrOfFileNameContext context)
-        {
-            if (context.fileName() != null)
-            {
-                FileName filename = new FileName(ParseTreeUtils.GetFirstToken(context.fileName().UserDefinedWord()));
-                filenames.Add(new INOF<FileName>(filename, context.IN() != null, context.OF() != null));
-            }
-        }
 
 
         private void InitializeSubscriptOperatorAndLiteral(Subscript subscript,
@@ -109,17 +92,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 SymbolReference<DataName> data = new SymbolReference<DataName>(new DataName(token));
                 //TODO and ... now ?
             }
-            if (context.inOrOfDataName() != null)
-            {
-                foreach (var inof in context.inOrOfDataName())
-                {
-                    AddDataName(inof);
-                }
-            }
-            if (context.inOrOfFileName() != null)
-            {
-                AddFileName(context.inOrOfFileName());
-            }
+            inof.AddDataNames(context.inOrOfDataName());
+            inof.AddFileName(context.inOrOfFileName());
 
             if (context.subscript() != null)
             {
@@ -135,26 +109,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         private void InitializeIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
         {
             var condition = context.conditionName(); //TODO
-            if (context.inOrOfDataName() != null)
-            {
-                foreach (var inof in context.inOrOfDataName())
-                {
-                    AddDataName(inof);
-                }
-            }
-            if (context.inOrOfFileName() != null)
-            {
-                AddFileName(context.inOrOfFileName());
-            }
+            inof.AddDataNames(context.inOrOfDataName());
+            inof.AddFileName(context.inOrOfFileName());
         }
 
         private void InitializeIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
         {
             LINAGE_COUNTER = ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER());
-            if (context.inOrOfFileName() != null)
-            {
-                AddFileName(context.inOrOfFileName());
-            }
+            inof.AddFileName(context.inOrOfFileName());
         }
 
 
@@ -163,8 +125,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             string token = this.token != null ? this.token.Text : base.ToString();
             StringBuilder res = new StringBuilder(token);
-            foreach (var dataname in datanames) res.Append(dataname);
-            foreach (var filename in filenames) res.Append(filename);
+            foreach (var dataname in inof.datanames) res.Append(dataname);
+            foreach (var filename in inof.filenames) res.Append(filename);
             if (subscripts.Count > 0)
             {
                 res.Append("( ");
@@ -199,6 +161,31 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             res.Append(reference);
             if (res.Length > 0) return res.ToString();
             return "?";
+        }
+    }
+
+    public class INOFList
+    {
+        public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
+        public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
+
+        public void AddDataNames(IReadOnlyList<CobolCodeElementsParser.InOrOfDataNameContext> context)
+        {
+            if (context == null) return;
+            foreach (var inof in context) AddDataName(inof);
+        }
+
+        public void AddDataName(CobolCodeElementsParser.InOrOfDataNameContext context)
+        {
+            if (context == null || context.dataName() == null) return;
+            DataName dataname = new DataName(ParseTreeUtils.GetFirstToken(context.dataName().UserDefinedWord()));
+            datanames.Add(new INOF<DataName>(dataname, context.IN() != null, context.OF() != null));
+        }
+        public void AddFileName(CobolCodeElementsParser.InOrOfFileNameContext context)
+        {
+            if (context == null || context.fileName() == null) return;
+            FileName filename = new FileName(ParseTreeUtils.GetFirstToken(context.fileName().UserDefinedWord()));
+            filenames.Add(new INOF<FileName>(filename, context.IN() != null, context.OF() != null));
         }
     }
 

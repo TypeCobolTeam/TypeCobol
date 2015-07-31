@@ -76,6 +76,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class Condition : LogicalExpression //TODO is this an Identifier?
     {
         public Token token { get; private set; }
+        public INOFList inof = new INOFList();
 
         public Condition(Token token)
         {

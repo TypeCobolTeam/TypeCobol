@@ -4,6 +4,7 @@
 IF condition THEN DISPLAY "OK" END-IF.
 * no THEN
 IF condition DISPLAY "OK" END-IF.
+IF x OF y DISPLAY "OK" END-IF.
 * no END-IF
 IF condition THEN DISPLAY "OK".
 * neither THEN, nor END-IF

@@ -9329,7 +9329,7 @@ classCondition :
 // execution are taken by the object program.
 
 conditionNameCondition:
-                          conditionName;
+	qualifiedConditionName;
 
 // p259: Relation conditions
 // A relation condition specifies the comparison of two operands. The relational
@@ -9880,14 +9880,10 @@ dataName : UserDefinedWord;
 // These same rules apply to classes and their contained methods.
 
 qualifiedDataName:
-                     dataName 
-                     ((IN | OF) dataName)* 
-                     ((IN | OF) fileName)?;
+	dataName inOrOfDataName* inOrOfFileName?;
 
 qualifiedConditionName:
-                          conditionName
-                          ((IN | OF) dataName)* 
-                          ((IN | OF) fileName)?;
+	conditionName inOrOfDataName* inOrOfFileName?;
 
 // p16: Unless otherwise explicitly restricted, a special register can be used wherever a
 // data-name or identifier that has the same definition as the implicit definition of the
