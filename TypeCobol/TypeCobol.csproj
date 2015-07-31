@@ -121,6 +121,7 @@
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\DiagnosticSyntaxErrorListener.cs" />
     <Compile Include="Compiler\AntlrUtils\ParseTreeUtils.cs" />
+    <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\AntlrUtils\TokensLinesTokenSource.cs" />
     <Compile Include="Compiler\AntlrUtils\TokensLinesTokenStream.cs" />
