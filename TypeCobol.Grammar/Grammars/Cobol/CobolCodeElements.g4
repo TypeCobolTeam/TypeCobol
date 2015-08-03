@@ -9233,7 +9233,6 @@ expressionBase:
 conditionalExpression:
 	  simpleCondition
 	| complexCondition
-	| (LeftParenthesisSeparator (simpleCondition | complexCondition) RightParenthesisSeparator)
 	;
 
 // p256: There are five simple conditions.
