@@ -171,15 +171,75 @@ namespace TypeCobol.Compiler.Parser
             throw new System.NotImplementedException("operands not implemented");
         }
 
-        private LogicalExpression createAbbreviatedRelation(LogicalExpression relation, CobolCodeElementsParser.AbbreviatedRelationContext[] relations)
+        private char createOperator(CobolCodeElementsParser.AbbreviatedRelationContext context)
         {
-            System.Console.WriteLine("TODO: "+ relations.Length + " abbreviated relations");
-            throw new System.NotImplementedException("abbreviated relations not implemented");
+            if (context.AND() != null) return '&';
+            if (context.OR() != null) return '|';
+            return '?';
+        }
+
+        private LogicOperation createAbbreviatedRelation(LogicOperation relation, CobolCodeElementsParser.AbbreviatedRelationContext[] relations)
+        {
+            if (relations.Length == 0) return relation;
+
+            LogicOperation left = relation;
+            LogicOperation right = null;
+            char rightoperator = '?';
+            for (int c = 0; c < relations.Length; c++)
+            {
+                var current = createRelation(relation, relations[c]);
+                if (right == null)
+                {
+                    right = current;
+                    rightoperator = createOperator(relations[c]);
+                }
+                else // relations[c].operator = AND
+                {
+                    right = LogicOperation.Create(right, createOperator(relations[c]), current);
+                }
+                if (c == relations.Length -1)
+                {
+                    left = LogicOperation.Create(left, rightoperator, right);
+                    right = null;
+                    break;
+                }
+                else
+                if (relations[c +1].OR() != null)
+                {
+                    left = LogicOperation.Create(left, rightoperator, right);
+                    right = null;
+                }
+            }
+            return left;
+        }
+
+        private LogicOperation createRelation(LogicOperation relation, CobolCodeElementsParser.AbbreviatedRelationContext context)
+        {
+            Expression right = null;
+            if (context.operand() != null)
+            {
+                right = createOperand(context.operand());
+            }
+            LogicOperation result = null;
+            if (context.relationalOperator() != null)
+            {
+                var op = createOperator(context.relationalOperator());
+                result = new Relation(relation.left, op, right);
+            }
+            else
+            {
+                result = new Relation(relation.left, relation.op, right);
+            }
+            if (context.NOT() != null)
+            {
+                return new NOT(result);
+            }
+            return result;
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context)
         {
-            LogicalExpression relation = null;
+            LogicOperation relation = null;
             char op = createOperator(context.relationalOperator());
             var operands = context.operand();
             if (operands != null && operands.Count > 0)
@@ -192,7 +252,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 else
                 {
-                    LogicalExpression logical = left as LogicalExpression;
+                    LogicOperation logical = left as LogicOperation;
                     if (logical != null)
                     {
                         relation = logical;

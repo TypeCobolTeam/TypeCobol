@@ -173,3 +173,21 @@
 
 [[SentenceEnd]] [62,62+:.]<PeriodSeparator> --> [62,62+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [1,2:IF]<IF> --> [62,67:END-IF]<END_IF>
+- variables = "ABBREVIATED RELATION"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [68,68+:.]<PeriodSeparator> --> [68,68+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [1,2:IF]<IF> --> [67,72:END-IF]<END_IF>
+- variables = "ABBREVIATED RELATION"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [73,73+:.]<PeriodSeparator> --> [73,73+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [1,2:IF]<IF> --> [70,75:END-IF]<END_IF>
+- variables = "ABBREVIATED RELATION"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [76,76+:.]<PeriodSeparator> --> [76,76+:.]<PeriodSeparator>
+

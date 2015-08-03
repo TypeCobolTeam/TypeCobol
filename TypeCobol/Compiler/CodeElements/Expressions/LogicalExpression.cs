@@ -21,18 +21,29 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public override string ToString() { //RPN
             return new StringBuilder(left.ToString()).Append(" ").Append(right.ToString()).Append(" ").Append(op).ToString();
         }
+
+        public static LogicOperation Create(Expression left, char op, Expression right)
+        {
+            switch (op)
+            {
+                case '|': return new OR(left, right);
+                case '&': return new AND(left, right);
+                case '!': return new NOT(left);
+                default: throw new System.ArgumentException("Illegal operator \"" + op + "\"");
+            }
+        }
     }
 
     public class OR : LogicOperation
     {
         public OR(Expression left, Expression right)
-            : base(left, '+', right) { }
+            : base(left, '|', right) { }
     }
 
     public class AND : LogicOperation
     {
         public AND(Expression left, Expression right)
-            : base(left, '-', right) { }
+            : base(left, '&', right) { }
     }
 
     public class NOT : LogicOperation
