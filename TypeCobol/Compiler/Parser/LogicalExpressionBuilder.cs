@@ -166,7 +166,8 @@ namespace TypeCobol.Compiler.Parser
         private Expression createOperand(CobolCodeElementsParser.OperandContext context)
         {
             if (context.identifier() != null) return new Identifier(context.identifier());
-            System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.functionIdentifier() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
+            if (context.literal() != null) return new Literal(context.literal());
+            System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER NON-LITERAL OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.functionIdentifier() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
             throw new System.NotImplementedException("operands not implemented");
         }
 

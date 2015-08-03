@@ -161,3 +161,15 @@
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [1,2:IF]<IF> --> [27,32:END-IF]<END_IF>
+- variables = "OK"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [33,33+:.]<PeriodSeparator> --> [33,33+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [1,2:IF]<IF> --> [29,34:END-IF]<END_IF>
+- variables = "OK"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [35,35+:.]<PeriodSeparator> --> [35,35+:.]<PeriodSeparator>
+

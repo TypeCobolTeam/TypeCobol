@@ -8,36 +8,6 @@ namespace TypeCobol.Compiler.Parser
 {
     class ArithmeticExpressionBuilder
     {
-
-        private SyntaxNumber CreateNumberLiteral(CobolCodeElementsParser.NumericLiteralContext context)
-        {
-            if (context.IntegerLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-            }
-            if (context.DecimalLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral()));
-            }
-            if (context.FloatingPointLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral()));
-            }
-            if (context.ZERO() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
-            }
-            if (context.ZEROS() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
-            }
-            if (context.ZEROES() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
-            }
-            throw new System.Exception("This is not a number!");
-        }
-
         public Expression createNumberOrIdentifier(CobolCodeElementsParser.IdentifierOrNumericLiteralContext context)
         {
             if (context == null) return null;
@@ -47,7 +17,7 @@ namespace TypeCobol.Compiler.Parser
             }
             if (context.numericLiteral() != null)
             {
-                return new Number(CreateNumberLiteral(context.numericLiteral()));
+                return new Number(SyntaxNumber.Create(context.numericLiteral()));
             }
             return null;
         }

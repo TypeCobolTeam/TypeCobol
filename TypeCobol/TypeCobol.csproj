@@ -133,6 +133,7 @@
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\ArithmeticExpression.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\SyntaxNational.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\LogicalExpression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Identifier.cs" />
@@ -305,6 +306,7 @@
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\ArithmeticStatementBuilder.cs" />
     <Compile Include="Compiler\Parser\ArithmeticExpressionBuilder.cs" />
+    <Compile Include="Compiler\Parser\Literal.cs" />
     <Compile Include="Compiler\Parser\LogicalExpressionBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
     <Compile Include="Compiler\Parser\SyntaxDocument.cs" />
