@@ -306,7 +306,6 @@
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\ArithmeticStatementBuilder.cs" />
     <Compile Include="Compiler\Parser\ArithmeticExpressionBuilder.cs" />
-    <Compile Include="Compiler\Parser\Literal.cs" />
     <Compile Include="Compiler\Parser\LogicalExpressionBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
     <Compile Include="Compiler\Parser\SyntaxDocument.cs" />
