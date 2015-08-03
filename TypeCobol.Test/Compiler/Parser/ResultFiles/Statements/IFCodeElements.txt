@@ -161,15 +161,15 @@
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [27,32:END-IF]<END_IF>
-- variables = "OK"
+[[DisplayStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
+- variables = "RELATION IDENTIFIER VS NUMBER"
 - WithNoAdvancing = False
 
-[[SentenceEnd]] [33,33+:.]<PeriodSeparator> --> [33,33+:.]<PeriodSeparator>
+[[SentenceEnd]] [60,60+:.]<PeriodSeparator> --> [60,60+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [29,34:END-IF]<END_IF>
-- variables = "OK"
+[[DisplayStatement]] [1,2:IF]<IF> --> [56,61:END-IF]<END_IF>
+- variables = "RELATION IDENTIFIER VS STRING"
 - WithNoAdvancing = False
 
-[[SentenceEnd]] [35,35+:.]<PeriodSeparator> --> [35,35+:.]<PeriodSeparator>
+[[SentenceEnd]] [62,62+:.]<PeriodSeparator> --> [62,62+:.]<PeriodSeparator>
 
