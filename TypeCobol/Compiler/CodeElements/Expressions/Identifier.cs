@@ -35,54 +35,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public bool ROUNDED = false;
         public Token LINAGE_COUNTER = null;
         public INOFList inof = new INOFList();
-        public List<Subscript> subscripts = new List<Subscript>();
-
-
-
-        private void InitializeSubscriptOperatorAndLiteral(Subscript subscript,
-            Antlr4.Runtime.Tree.ITerminalNode plus,
-            Antlr4.Runtime.Tree.ITerminalNode minus,
-            Antlr4.Runtime.Tree.ITerminalNode integer)
-        {
-            if (plus != null) subscript.op = '+';
-            if (minus != null) subscript.op = '-';
-            if (integer != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(integer));
-        }
-
-        private void AddSubscript(CobolCodeElementsParser.SubscriptContext context)
-        {
-            if (context == null) return;
-
-            Subscript subscript = new Subscript();
-            if (context.subscriptLine1() != null)
-            {
-                InitializeSubscriptOperatorAndLiteral(subscript, null, null, context.subscriptLine1().IntegerLiteral());
-            }
-            if (context.subscriptLine2() != null)
-            {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine2().ALL());
-                subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
-            }
-            if (context.subscriptLine3() != null)
-            {
-                if (context.subscriptLine3().dataName() != null)
-                {
-                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine3().dataName().UserDefinedWord());
-                    subscript.dataname = new SymbolReference<DataName>(new DataName(token));
-                }
-                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine3().PlusOperator(), context.subscriptLine3().MinusOperator(), context.subscriptLine3().IntegerLiteral());
-            }
-            if (context.subscriptLine4() != null)
-            {
-                if (context.subscriptLine4().indexName() != null)
-                {
-                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine4().indexName().UserDefinedWord());
-                    subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
-                }
-                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine4().PlusOperator(), context.subscriptLine4().MinusOperator(), context.subscriptLine4().IntegerLiteral());
-            }
-            subscripts.Add(subscript);
-        }
+        public SubscriptList subscripts = new SubscriptList();
 
         private void InitializeIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
         {
@@ -99,7 +52,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             {
                 foreach (var subscript in context.subscript())
                 {
-                    AddSubscript(subscript);
+                    subscripts.Add(subscript);
                 }
             }
 
@@ -125,14 +78,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             string token = this.token != null ? this.token.Text : base.ToString();
             StringBuilder res = new StringBuilder(token);
-            foreach (var dataname in inof.datanames) res.Append(dataname);
-            foreach (var filename in inof.filenames) res.Append(filename);
-            if (subscripts.Count > 0)
-            {
-                res.Append("( ");
-                foreach (var subscript in subscripts) res.Append(subscript).Append(", ");
-                res.Append(')');
-            }
+            res.Append(inof);
+            res.Append(subscripts);
             return res.ToString();
         }
     }
@@ -187,6 +134,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             FileName filename = new FileName(ParseTreeUtils.GetFirstToken(context.fileName().UserDefinedWord()));
             filenames.Add(new INOF<FileName>(filename, context.IN() != null, context.OF() != null));
         }
+
+        public override string ToString()
+        {
+            StringBuilder res = new StringBuilder();
+            foreach (var dataname in datanames) res.Append(dataname);
+            foreach (var filename in filenames) res.Append(filename);
+            return res.ToString();
+        }
     }
 
     public class Subscript
@@ -207,6 +162,68 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             if (offset != null) res.Append(offset);
             if (res.Length > 0) return res.ToString();
             return "?";
+        }
+    }
+
+    public class SubscriptList
+    {
+        private List<Subscript> subscripts = new List<Subscript>();
+
+        private void InitializeSubscriptOperatorAndLiteral(Subscript subscript,
+            Antlr4.Runtime.Tree.ITerminalNode plus,
+            Antlr4.Runtime.Tree.ITerminalNode minus,
+            Antlr4.Runtime.Tree.ITerminalNode integer)
+        {
+            if (plus != null) subscript.op = '+';
+            if (minus != null) subscript.op = '-';
+            if (integer != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(integer));
+        }
+
+        public void Add(CobolCodeElementsParser.SubscriptContext context)
+        {
+            if (context == null) return;
+
+            Subscript subscript = new Subscript();
+            if (context.subscriptLine1() != null)
+            {
+                InitializeSubscriptOperatorAndLiteral(subscript, null, null, context.subscriptLine1().IntegerLiteral());
+            }
+            if (context.subscriptLine2() != null)
+            {
+                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine2().ALL());
+                subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
+            }
+            if (context.subscriptLine3() != null)
+            {
+                if (context.subscriptLine3().dataName() != null)
+                {
+                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine3().dataName().UserDefinedWord());
+                    subscript.dataname = new SymbolReference<DataName>(new DataName(token));
+                }
+                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine3().PlusOperator(), context.subscriptLine3().MinusOperator(), context.subscriptLine3().IntegerLiteral());
+            }
+            if (context.subscriptLine4() != null)
+            {
+                if (context.subscriptLine4().indexName() != null)
+                {
+                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine4().indexName().UserDefinedWord());
+                    subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
+                }
+                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine4().PlusOperator(), context.subscriptLine4().MinusOperator(), context.subscriptLine4().IntegerLiteral());
+            }
+            subscripts.Add(subscript);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder res = new StringBuilder();
+            if (subscripts.Count > 0)
+            {
+                res.Append("( ");
+                foreach (var subscript in subscripts) res.Append(subscript).Append(", ");
+                res.Append(')');
+            }
+            return res.ToString();
         }
     }
 }

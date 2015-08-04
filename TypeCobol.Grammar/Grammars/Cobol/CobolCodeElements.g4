@@ -9404,7 +9404,7 @@ classCondition :
 // execution are taken by the object program.
 
 conditionNameCondition:
-	qualifiedConditionName;
+	conditionNameReference;
 
 // p259: Relation conditions
 // A relation condition specifies the comparison of two operands. The relational
@@ -10164,8 +10164,7 @@ dataNameReference:
 // p70: Format 1: condition-name in data division
 
 conditionNameReference:
-                          qualifiedConditionName
-                          (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+	qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p70: Format 2: condition-name in SPECIAL-NAMES paragraph
 

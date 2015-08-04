@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
@@ -84,10 +85,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class Condition : LogicalExpression //TODO is this an Identifier?
+    public class Condition : LogicalExpression //TODO is this an Identifier? 'seems so ...
     {
         public Token token { get; private set; }
         public INOFList inof = new INOFList();
+        public SubscriptList subscripts = new SubscriptList();
 
         public Condition(Token token)
         {

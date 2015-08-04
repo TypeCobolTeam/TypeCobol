@@ -105,11 +105,14 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context)
         {
-            if (context.qualifiedConditionName() == null) return new Empty();
+            if (context.conditionNameReference() == null) return new Empty();
+            var qualified = context.conditionNameReference().qualifiedConditionName();
+            if (qualified == null) return new Empty();
             // we can take first, as conditionName is a UserDefinedWord
-            var condition = new Condition(ParseTreeUtils.GetFirstToken(context.qualifiedConditionName().conditionName()));
-            condition.inof.AddDataNames(context.qualifiedConditionName().inOrOfDataName());
-            condition.inof.AddFileName(context.qualifiedConditionName().inOrOfFileName());
+            var condition = new Condition(ParseTreeUtils.GetFirstToken(qualified.conditionName()));
+            condition.inof.AddDataNames(qualified.inOrOfDataName());
+            condition.inof.AddFileName(qualified.inOrOfFileName());
+            // TODO add subscripts
             return condition;
         }
 

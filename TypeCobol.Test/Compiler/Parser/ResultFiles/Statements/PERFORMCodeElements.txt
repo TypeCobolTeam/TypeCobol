@@ -23,3 +23,15 @@
 
 [[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
 
+[[ContinueStatement]] [1,7:PERFORM]<PERFORM> --> [56,66:END-PERFORM]<END_PERFORM>
+
+[[SentenceEnd]] [67,67+:.]<PeriodSeparator> --> [67,67+:.]<PeriodSeparator>
+
+[[ContinueStatement]] [1,7:PERFORM]<PERFORM> --> [71,81:END-PERFORM]<END_PERFORM>
+
+[[SentenceEnd]] [82,82+:.]<PeriodSeparator> --> [82,82+:.]<PeriodSeparator>
+
+[[ContinueStatement]] [1,7:PERFORM]<PERFORM> --> [60,70:END-PERFORM]<END_PERFORM>
+
+[[SentenceEnd]] [71,71+:.]<PeriodSeparator> --> [71,71+:.]<PeriodSeparator>
+
