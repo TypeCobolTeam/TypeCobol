@@ -257,7 +257,6 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     tokensLine.ScanState.LastKeywordOrSymbolToken.CorrectType(TokenType.DELETE_CD);
                 }
-
                 tokensLine.AddToken(nextToken);
             }    
         }

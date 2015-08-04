@@ -685,7 +685,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = CodeElement as IfStatement;
             if (statement != null) statement.CloseScope();
-            else AddError(CodeElement, "Required: IF before END-IF", context);
+            //else AddError(CodeElement, "Required: IF before END-IF", context);
         }
 
         public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
