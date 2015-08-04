@@ -20,6 +20,13 @@ EVALUATE TRUE
   WHEN condition2
     CONTINUE
 END-EVALUATE.
+* when other
+EVALUATE TRUE
+  WHEN condition1
+    CONTINUE
+  WHEN OTHER
+    CONTINUE
+END-EVALUATE.
 * more alsos and more whens
 EVALUATE TRUE ALSO TRUE ALSO TRUE
   WHEN condition1 ALSO condition2
@@ -32,6 +39,8 @@ EVALUATE TRUE ALSO TRUE ALSO TRUE
     CONTINUE
   WHEN condition9
     CONTINUE
+  WHEN OTHER
+    CONTINUE
 END-EVALUATE.
 * nested IF
 EVALUATE TRUE
@@ -42,7 +51,20 @@ EVALUATE TRUE
   WHEN conditionname3
     DISPLAY "KO"
 END-EVALUATE.
-
+* nested perform
+EVALUATE TRUE
+  WHEN condition
+    PERFORM procedureName
+END-EVALUATE.
+* more nested statements
+* TODO: this should work !
+*EVALUATE TRUE
+*  WHEN condition
+*    CONTINUE
+*	CONTINUE
+*    CONTINUE
+*END-EVALUATE.
+* TODO: this should work !
 *EVALUATE identifier
 *  WHEN condition1
 *    PERFORM funcname1

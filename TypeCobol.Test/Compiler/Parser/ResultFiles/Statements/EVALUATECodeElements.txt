@@ -19,9 +19,17 @@
 
 [[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
 
+[[ContinueStatement]] [1,8:EVALUATE]<EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
 [[DisplayStatement]] [1,8:EVALUATE]<EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
 - variables = "KO"
 - WithNoAdvancing = False
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[PerformStatement]] [1,8:EVALUATE]<EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
 
 [[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
 

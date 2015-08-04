@@ -5163,7 +5163,7 @@ evaluateStatementWithScope:
 	evaluateStatement END_EVALUATE;
 
 evaluateStatement:
-	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ statement+)+ evaluateWhenOther?;
+	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement+)+ evaluateWhenOther?;
 
 evaluateWhat:
 	identifier | literal | expression | TRUE | FALSE;
