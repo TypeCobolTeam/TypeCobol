@@ -20,14 +20,14 @@ namespace TypeCobol.Test
             string[] files = System.IO.Directory.GetFiles(path, regex, System.IO.SearchOption.AllDirectories);
             string[] ignored = { };
 
-            var str = new System.Text.StringBuilder();
+            System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
             int tested = 0, errors = 0;
             foreach (var file in files)
             {
                 string filename = System.IO.Path.GetFileName(file);
-                str.Append(filename + ':');
+                System.IO.File.AppendAllText("CheckGrammarResults.txt", (filename + ':'));
                 if (ignored.Contains(filename)) {
-                    str.AppendLine(" ignored.");
+                    System.IO.File.AppendAllText("CheckGrammarResults.txt", " ignored.\n");
                     continue;
                 }
                 Stopwatch watch = new Stopwatch();
@@ -36,7 +36,7 @@ namespace TypeCobol.Test
                 watch.Stop();
                 TimeSpan elapsed = watch.Elapsed;
                 string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-                str.AppendLine(" parsed in "+formatted);
+                System.IO.File.AppendAllText("CheckGrammarResults.txt", (" parsed in " + formatted + "\n"));
 
                 tested++;
                 if(hasErrors(unit.SyntaxDocument)) {
@@ -48,7 +48,7 @@ namespace TypeCobol.Test
                 }
             }
             string message = "Files tested=" + tested + "/" + files.Length + ", errors=" + errors;
-            System.IO.File.WriteAllText("CheckGrammarResults.txt", str.AppendLine(message).ToString());
+            System.IO.File.AppendAllText("CheckGrammarResults.txt", message);
             if (errors > 0) Assert.Fail('\n'+message);
         }
 
