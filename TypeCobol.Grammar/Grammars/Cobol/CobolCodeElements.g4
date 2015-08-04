@@ -7190,11 +7190,68 @@ searchStatementDataEquality:
 // of a method. object-reference-id-1 is set to reference the object upon which the
 // currently executing method was invoked.
 
+///setStatement:
+///                SET ( ((indexName | identifier | (ADDRESS OF identifier))+ TO (indexName | identifier | IntegerLiteral | (ADDRESS OF identifier) | (ENTRY_ARG (identifier | literal)) | (NULL | NULLS | SELF))) |
+///                      ((indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral)) |
+///                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
+///                      (conditionName+ TO TRUE) );
+
 setStatement:
-                SET ( ((indexName | identifier | (ADDRESS OF identifier))+ TO (indexName | identifier | IntegerLiteral | (ADDRESS OF identifier) | (ENTRY_ARG (identifier | literal)) | (NULL | NULLS | SELF))) |
-                      ((indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral)) |
-                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
-                      (conditionName+ TO TRUE) );
+	  setStatementFormat1
+	| setStatementFormat2
+//	| setStatementFormat3
+	| setStatementFormat4
+	| setStatementFormat5
+//	| setStatementFormat6
+//	| setStatementFormat7
+	;
+
+setStatementFormat1:
+	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
+setStatementFormat1Receiving:
+	indexName | identifier;
+setStatementFormat1Sending:
+	indexName | identifier | IntegerLiteral;
+
+setStatementFormat2:
+	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
+
+setStatementFormat3:
+	SET setStatementFormat3What+;
+setStatementFormat3What:
+	mnemonicForUPSISwitchName+ TO (ON | OFF);
+
+setStatementFormat4:
+	SET identifier+ TO TRUE;
+
+setStatementFormat5:
+	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
+setStatementFormat5Receiving:
+	(ADDRESS OF)? identifier;
+setStatementFormat5Sending:
+	((ADDRESS OF)? identifier) | (NULL | NULLS);
+
+setStatementFormat6:
+	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
+setStatementFormat6Receiving:
+	  procedurePointer
+	| functionPointer
+	;
+setStatementFormat6Sending:
+	  procedurePointer
+	| functionPointer
+	| (ENTRY (identifier | alphanumericLiteral))
+	| (NULL | NULLS)
+	| pointerDataItem
+	;
+
+setStatementFormat7:
+	SET objectReferenceId TO setStatementFormat7Sending;
+setStatementFormat7Sending:
+	objectReference | NULL | SELF;
+
+pointerDataItem:   identifier; // do these SET items
+objectReferenceId: identifier;// really work like that?
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according
