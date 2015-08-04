@@ -114,6 +114,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
+            TestCodeElements.Check_Expressions();
             TestCodeElements.Check_StatementCodeElements();
 //TODO            TestCodeElements.Check_EntryCodeElements();
 

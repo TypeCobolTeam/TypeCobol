@@ -235,6 +235,71 @@ namespace TypeCobol.Test.Compiler.Parser
             Check("EntryCodeElements");
         }
 
+        public static void Check_Expressions()
+        {
+            TestDirectory("Expressions");
+        }
+
+        private static void TestDirectory(string subdir = null, bool debug = false)
+        {
+            string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
+            if (subdir == null) subdir = "";
+            if (subdir.Length > 0) subdir = Path.DirectorySeparatorChar + subdir;
+            string samples = PlatformUtils.GetPathForProjectFile(root + "Samples" + subdir);
+            string[] paths = Directory.GetFiles(samples, "*.cbl", SearchOption.AllDirectories);
+            for (int c = 0; c < paths.Length; c++)
+            {
+                System.Console.WriteLine("sample=" + paths[c]);
+                string filename = Path.GetFileNameWithoutExtension(paths[c]);
+                string expr = subdir + Path.DirectorySeparatorChar + filename;
+                string path = PlatformUtils.GetPathForProjectFile(root + "ResultFiles" + expr + ".txt");
+                if (!System.IO.File.Exists(path)) continue;
+                TestFile("Samples" + expr + ".cbl", "ResultFiles" + expr + ".txt", root, debug);
+            }
+        }
+
+        private static void TestFile(string sample, string result, string root, bool debug = false)
+        {
+            System.Console.WriteLine("Test \""+sample+"\" vs \""+result+"\"");
+            CompilationUnit unit = ParseUTF8File(sample, root);
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(PlatformUtils.GetStreamForProjectFile(root + result)))
+            {
+                TestLineByLine(unit.SyntaxDocument.CodeElements, reader);
+            }
+        }
+
+        private static void TestLineByLine(IList<CodeElement> elements, StreamReader reader)
+        {
+            foreach (var e in elements)
+            {
+                if (e.GetType() == typeof(SentenceEnd)) continue;
+                string line = reader.ReadLine();
+                TestLine(e, line);
+            }
+        }
+
+        private static void TestLine(CodeElement e, string line)
+        {
+            Console.WriteLine("TODO TestLine( "+e+" , \""+line+"\")" );
+        }
+
+        private static CompilationUnit ParseUTF8File(string path, string root)
+        {
+            DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+            DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName(PlatformUtils.GetPathForProjectFile(root + path)));
+            TypeCobolOptions options = new TypeCobolOptions();
+            CompilationProject project = new CompilationProject("TEST",
+                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
+                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+            string filename = Path.GetFileName(path);
+            CompilationUnit unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions());
+            unit.SetupCodeAnalysisPipeline(null, 0);
+            unit.StartDocumentProcessing();
+            return unit;
+        }
+
+
+
         public static void Check_StatementCodeElements()
         {
             // decision
