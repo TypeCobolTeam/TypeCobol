@@ -21,12 +21,13 @@ namespace TypeCobol.Test
             string[] ignored = { };
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
-            int tested = 0, errors = 0;
+            int tested = 0, errors = 0, ignores = 0;
             foreach (var file in files)
             {
                 string filename = System.IO.Path.GetFileName(file);
                 System.IO.File.AppendAllText("CheckGrammarResults.txt", (filename + ':'));
                 if (ignored.Contains(filename)) {
+                    ignores++;
                     System.IO.File.AppendAllText("CheckGrammarResults.txt", " ignored.\n");
                     continue;
                 }
@@ -47,7 +48,7 @@ namespace TypeCobol.Test
                     if (errors >= STOP_AFTER_AS_MANY_ERRORS) break;
                 }
             }
-            string message = "Files tested=" + tested + "/" + files.Length + ", errors=" + errors;
+            string message = "Files tested=" + tested + "/" + files.Length + ", errors=" + errors + ", ignored=" + ignores;
             System.IO.File.AppendAllText("CheckGrammarResults.txt", message);
             if (errors > 0) Assert.Fail('\n'+message);
         }
