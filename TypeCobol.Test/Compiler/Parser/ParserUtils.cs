@@ -87,6 +87,8 @@ namespace TypeCobol.Test.Compiler.Parser
             return sb.ToString();
         }
 
+        private static int line(int line) { return line / 2 + 1; }
+
         public static void CheckWithResultFile(string result, string testName)
         {
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
@@ -99,12 +101,12 @@ namespace TypeCobol.Test.Compiler.Parser
                 {
                     if (expectedResultLines[c] != resultLines[c])
                     {
-                        throw new Exception("In test \"" + testName + "\": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
+                        throw new Exception("In test \"" + testName + "\", line "+line(c)+": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
                     }
                 }
                 if (expectedResultLines.Length != resultLines.Length)
                 {
-                    throw new Exception("In test \"" + testName + "\": lines to test=" + resultLines.Length + "; lines expected=" + expectedResultLines.Length);
+                    throw new Exception("In test \"" + testName + "\": lines to test=" + resultLines.Length + "; lines expected=" + line(expectedResultLines.Length));
                 }
             }
         }
