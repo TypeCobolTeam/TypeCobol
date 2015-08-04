@@ -7199,7 +7199,7 @@ searchStatementDataEquality:
 setStatement:
 	  setStatementFormat1
 	| setStatementFormat2
-//	| setStatementFormat3
+	| setStatementFormat3
 	| setStatementFormat4
 	| setStatementFormat5
 //	| setStatementFormat6
