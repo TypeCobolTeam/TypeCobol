@@ -1,193 +1,129 @@
 ﻿--- Code Elements ---
-[[DisplayStatement]] [1,2:IF]<IF> --> [32,37:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [32,37:END-IF]<END_IF>
 
 [[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [27,32:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [27,32:END-IF]<END_IF>
 
 [[SentenceEnd]] [33,33+:.]<PeriodSeparator> --> [33,33+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [24,29:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [24,29:END-IF]<END_IF>
 
 [[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [27,30:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [27,30:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 
 [[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [22,25:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [22,25:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 
 [[SentenceEnd]] [26,26+:.]<PeriodSeparator> --> [26,26+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [50,55:END-IF]<END_IF>
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [50,55:END-IF]<END_IF>
 
 [[SentenceEnd]] [56,56+:.]<PeriodSeparator> --> [56,56+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [45,50:END-IF]<END_IF>
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [45,50:END-IF]<END_IF>
 
 [[SentenceEnd]] [51,51+:.]<PeriodSeparator> --> [51,51+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [45,48:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [45,48:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
 
 [[SentenceEnd]] [49,49+:.]<PeriodSeparator> --> [49,49+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [40,43:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [40,43:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
 
 [[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [59,64:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [59,64:END-IF]<END_IF>
 
 [[SentenceEnd]] [65,65+:.]<PeriodSeparator> --> [65,65+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
 
 [[SentenceEnd]] [60,60+:.]<PeriodSeparator> --> [60,60+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
 
 [[SentenceEnd]] [60,60+:.]<PeriodSeparator> --> [60,60+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [49,54:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [49,54:END-IF]<END_IF>
 
 [[SentenceEnd]] [55,55+:.]<PeriodSeparator> --> [55,55+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "3"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [196,201:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [196,201:END-IF]<END_IF>
 
 [[SentenceEnd]] [202,202+:.]<PeriodSeparator> --> [202,202+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [37,40:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [37,40:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 
 [[SentenceEnd]] [41,41+:.]<PeriodSeparator> --> [41,41+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [13,16:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [13,16:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 
 [[SentenceEnd]] [17,17+:.]<PeriodSeparator> --> [17,17+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [135,138:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [135,138:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 
 [[SentenceEnd]] [139,139+:.]<PeriodSeparator> --> [139,139+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [27,30:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
-- variables = "OK"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [27,30:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 
 [[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "252"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [41,44:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [41,44:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
 
 [[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [102,105:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [102,105:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
 
 [[SentenceEnd]] [106,106+:.]<PeriodSeparator> --> [106,106+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
-- variables = "KO"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
-- variables = "RELATION IDENTIFIER VS NUMBER"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [54,59:END-IF]<END_IF>
 
 [[SentenceEnd]] [60,60+:.]<PeriodSeparator> --> [60,60+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [56,61:END-IF]<END_IF>
-- variables = "RELATION IDENTIFIER VS STRING"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [56,61:END-IF]<END_IF>
 
 [[SentenceEnd]] [62,62+:.]<PeriodSeparator> --> [62,62+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [62,67:END-IF]<END_IF>
-- variables = "ABBREVIATED RELATION"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [62,67:END-IF]<END_IF>
 
 [[SentenceEnd]] [68,68+:.]<PeriodSeparator> --> [68,68+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [67,72:END-IF]<END_IF>
-- variables = "ABBREVIATED RELATION"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [67,72:END-IF]<END_IF>
 
 [[SentenceEnd]] [73,73+:.]<PeriodSeparator> --> [73,73+:.]<PeriodSeparator>
 
-[[DisplayStatement]] [1,2:IF]<IF> --> [70,75:END-IF]<END_IF>
-- variables = "ABBREVIATED RELATION"
-- WithNoAdvancing = False
+[[IfStatement]] [1,2:IF]<IF> --> [70,75:END-IF]<END_IF>
 
 [[SentenceEnd]] [76,76+:.]<PeriodSeparator> --> [76,76+:.]<PeriodSeparator>
 

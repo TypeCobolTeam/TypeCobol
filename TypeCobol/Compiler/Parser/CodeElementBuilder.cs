@@ -17,10 +17,27 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
+        private CodeElement _codeElement = null;
         /// <summary>
         ///     CodeElement object resulting of the visit the parse tree
         /// </summary>
-        public CodeElement CodeElement { get; private set; }
+        public CodeElement CodeElement
+        {
+            get { return this._codeElement; }
+            private set
+            {
+                bool done = false;
+                if (this._codeElement != null)
+                {
+                    FlowControl c = this._codeElement as FlowControl;
+                    if (c != null)
+                    {
+                        done = c.AddNestedElement(value);
+                    }
+                }
+                if (!done) this._codeElement = value;
+            }
+        }
 
         /// <summary>
         ///     Initialization code run before parsing each new CodeElement
@@ -446,14 +463,10 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterAddStatementFormat2(CobolCodeElementsParser.AddStatementFormat2Context context)
         {
             var builder = new ArithmeticStatementBuilder('+');
-            if (context.GIVING() != null)
-            {
+            if (context.GIVING() != null) {
                 builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(), context.identifierRounded());
             } else {
-                string message = "Required: <identifier> after TO";
-                string rulestack = new RuleStackBuilder().GetRuleStack(context.identifierOrNumericLiteralTmp());
-                var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context.identifierOrNumericLiteralTmp()), rulestack);
-                builder.statement.Diagnostics.Add(diagnostic);
+                AddError(builder.statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
             }
             CodeElement = builder.statement;
         }
@@ -467,7 +480,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
         {
-            CodeElement = new AddStatement();
+            //CodeElement = new AddStatement();
         }
 
 
@@ -555,14 +568,11 @@ namespace TypeCobol.Compiler.Parser
                     else if (idOrLiteral.literal() != null)
                     {
                         expressions.Add(CreateLiteral(idOrLiteral));
+                        //expressions.Add(new Literal(idOrLiteral.literal()));
                     }
                     else
                     {
-                        //TODO
-                        // Register a new diagnostic
-                        string message = "Required: <identifier> or <literal>";
-                        string rulestack = new RuleStackBuilder().GetRuleStack(idOrLiteral);
-                        statement.Diagnostics.Add(new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(idOrLiteral), rulestack));
+                        AddError(statement, "Required: <identifier> or <literal>", idOrLiteral);
                     }
                 }
                 statement.VarsToDisplay = expressions;
@@ -656,12 +666,26 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterIfStatementWithScope(CobolCodeElementsParser.IfStatementWithScopeContext context)
         {
-            CodeElement = new IfStatement();
+            //CodeElement = new IfStatement();
         }
 
         public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
         {
             CodeElement = CreateIfStatement(context);
+        }
+
+        public override void EnterElseStatement(CobolCodeElementsParser.ElseStatementContext context)
+        {
+            var statement = CodeElement as IfStatement;
+            if (statement != null) statement.isIF = false;
+            else AddError(CodeElement, "Required: IF before ELSE", context);
+        }
+
+        public override void ExitIfStatement(CobolCodeElementsParser.IfStatementContext context)
+        {
+            var statement = CodeElement as IfStatement;
+            if (statement != null) statement.CloseScope();
+            else AddError(CodeElement, "Required: IF before END-IF", context);
         }
 
         public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
@@ -705,7 +729,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMultiplyStatement(CobolCodeElementsParser.MultiplyStatementContext context)
         {
-            CodeElement = new MultiplyStatement();
+            //CodeElement = new MultiplyStatement();
         }
 
         public override void EnterNextSentenceStatement(CobolCodeElementsParser.NextSentenceStatementContext context)
@@ -816,7 +840,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSubtractStatement(CobolCodeElementsParser.SubtractStatementContext context)
         {
-            CodeElement = new SubtractStatement();
+            //CodeElement = new SubtractStatement();
         }
 
         public override void EnterUnstringStatement(CobolCodeElementsParser.UnstringStatementContext context)
@@ -911,6 +935,15 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
+        }
+
+
+
+        private void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context)
+        {
+            string rulestack = new RuleStackBuilder().GetRuleStack(context);
+            var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context), rulestack);
+            e.Diagnostics.Add(diagnostic);
         }
     }
 }

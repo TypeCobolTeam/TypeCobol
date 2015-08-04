@@ -227,6 +227,7 @@
     <Compile Include="Compiler\CodeElements\Statement\ExitMethodStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ExitProgramStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ExitStatement.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\FlowControl.cs" />
     <Compile Include="Compiler\CodeElements\Statement\GobackStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\GotoStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\IfStatement.cs" />
