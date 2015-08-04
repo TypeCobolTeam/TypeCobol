@@ -230,10 +230,6 @@ namespace TypeCobol.Compiler.Parser
             {
                 result = new Relation(relation.left, relation.op, right);
             }
-            if (context.NOT() != null)
-            {
-                return new NOT(result);
-            }
             return result;
         }
 
