@@ -7202,8 +7202,8 @@ setStatement:
 	| setStatementFormat3
 	| setStatementFormat4
 	| setStatementFormat5
-//	| setStatementFormat6
-//	| setStatementFormat7
+	| setStatementFormat6
+	| setStatementFormat7
 	;
 
 setStatementFormat1:
