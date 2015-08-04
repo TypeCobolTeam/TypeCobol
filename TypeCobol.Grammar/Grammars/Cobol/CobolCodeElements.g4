@@ -5178,7 +5178,7 @@ evaluateWhenAlso:
 	ALSO evaluatePhrase2*;
 
 evaluatePhrase1:
-	ALL | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4;
+	ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4;
 
 evaluatePhrase2:
 	evaluatePhrase1;
