@@ -318,7 +318,7 @@ delimitedScopeStatement:
 	| ifStatementWithScope
 	| invokeStatementConditionalWithScope
 	| multiplyStatementConditionalWithScope
-//	| performStatementConditionalWithScope
+	| performStatementWithScope
 //	| readStatementConditionalWithScope
 //	| returnStatementConditionalWithScope
 //	| rewriteStatementConditionalWithScope
@@ -6373,6 +6373,13 @@ performStatement:
 	| performStatementFormat4 // - VARYING phrase PERFORM
 	;
 
+performStatementWithScope:
+	  performStatementFormat1WithScope // - Basic PERFORM
+	| performStatementFormat2WithScope // - TIMES phrase PERFORM
+	| performStatementFormat3WithScope // - UNTIL phrase PERFORM
+	| performStatementFormat4WithScope // - VARYING phrase PERFORM
+	;
+
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
 // and control then passes to the next executable statement following the PERFORM
@@ -6382,7 +6389,10 @@ performStatement:
 // p384: Format 1: Basic PERFORM statement
 
 performStatementFormat1:
-	PERFORM (procedureName performThroughProcedure? | (statement* END_PERFORM));
+	PERFORM procedureName performThroughProcedure?;
+
+performStatementFormat1WithScope:
+	PERFORM statement* END_PERFORM;
 
 performThroughProcedure:
 	(THROUGH |THRU) procedureName;
@@ -6455,7 +6465,10 @@ performThroughProcedure:
 // p386: Format 2: PERFORM statement with TIMES phrase
 
 performStatementFormat2:
-	PERFORM (procedureName performThroughProcedure? performNTimes | (performNTimes statement* END_PERFORM));
+	PERFORM procedureName performThroughProcedure? performNTimes;
+
+performStatementFormat2WithScope:
+	PERFORM performNTimes statement* END_PERFORM;
 
 performNTimes:
 	(identifier | numericLiteral) TIMES;
@@ -6479,7 +6492,10 @@ performNTimes:
 // p387: Format 3: PERFORM statement with UNTIL phrase
 
 performStatementFormat3:
-	PERFORM ((procedureName performThroughProcedure? performFormat3Phrase1) | (performFormat3Phrase1 statement* END_PERFORM));
+	PERFORM procedureName performThroughProcedure? performFormat3Phrase1;
+
+performStatementFormat3WithScope:
+	PERFORM performFormat3Phrase1 statement* END_PERFORM;
 
 performFormat3Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
@@ -6509,8 +6525,11 @@ performFormat3Phrase1:
 // p388: Format 4: PERFORM statement with VARYING phrase
 
 performStatementFormat4:
-	PERFORM (procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2* | performFormat4Phrase1 statement* END_PERFORM);
+	PERFORM procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2*;
 // WARNING: according to p388, it should be "performFormat4Phrase2+" instead of "performFormat4Phrase2*"
+
+performStatementFormat4WithScope:
+	PERFORM performFormat4Phrase1 statement* END_PERFORM;
 	
 performFormat4Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression;
