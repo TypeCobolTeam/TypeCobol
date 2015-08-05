@@ -105,8 +105,6 @@ namespace TypeCobol.Test
             TestCodeElements.Check_IDCodeElements();
 //            TestCodeElements.Check_NOTCodeElements(); //TODO: these cannot be parsed alone anymore since today
 //            TestCodeElements.Check_ONCodeElements();  //TODO: these cannot be parsed alone anymore since today
-//            TestCodeElements.Check_PERFORMCodeElements(); // TODO: grammar explicits that phrase2 is NOT optional in PERFORM .. VARYING
-                                                            // this seems awkward however, and this tests is written as it wasn't mandatory ..?
             TestCodeElements.Check_UDWCodeElements();
 //            TestCodeElements.Check_WHENCodeElements(); //TODO: these cannot be parsed alone anymore since today
             TestCodeElements.Check_XMLCodeElements();
@@ -115,7 +113,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
             TestCodeElements.Check_Expressions();
-            TestCodeElements.Check_StatementCodeElements();
+            TestCodeElements.Check_Statements();
 //TODO            TestCodeElements.Check_EntryCodeElements();
 
             //This test use TypeChecker which is specific to TypeCobol

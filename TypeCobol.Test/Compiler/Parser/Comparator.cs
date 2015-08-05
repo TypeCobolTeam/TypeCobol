@@ -52,19 +52,28 @@ namespace TypeCobol.Test.Compiler.Parser
         public System.Type comparator = typeof(FilesComparator);
         public Names resultnames;
 
-        internal FolderTester() : this(null, null, null) { }
-        internal FolderTester(string folder) : this(folder, null, null) { }
-        internal FolderTester(string[] ignored) : this(null, ignored, null) { }
-        internal FolderTester(string folder, string[] ignored) : this(folder, ignored, null) { }
-        internal FolderTester(string folder, Names namecreator) : this(folder, null, namecreator) { }
-        internal FolderTester(string[] ignored, Names namecreator) : this(null, ignored, namecreator) { }
-        internal FolderTester(string folder, string[] ignored, Names namecreator)
+        internal FolderTester() : this(null, null, null, true) { }
+        internal FolderTester(string folder) : this(folder, null, null, true) { }
+        internal FolderTester(string[] ignored) : this(null, ignored, null, true) { }
+        internal FolderTester(Names resultnames) : this(null, null, resultnames, true) { }
+        internal FolderTester(bool deep) : this(null, null, null, deep) { }
+        internal FolderTester(string folder, string[] ignored) : this(folder, ignored, null, true) { }
+        internal FolderTester(string folder, Names namecreator) : this(folder, null, namecreator, true) { }
+        internal FolderTester(string folder, bool deep) : this(folder, null, null, deep) { }
+        internal FolderTester(string[] ignored, Names resultnames) : this(null, ignored, resultnames, true) { }
+        internal FolderTester(string[] ignored, bool deep) : this(null, ignored, null, deep) { }
+        internal FolderTester(Names resultnames, bool deep) : this(null, null, resultnames, deep) { }
+        internal FolderTester(string folder, string[] ignored, Names resultnames) : this(folder, ignored, resultnames, true) { }
+        internal FolderTester(string folder, string[] ignored, bool deep) : this(folder, ignored, null, deep) { }
+        internal FolderTester(string folder, Names resultnames, bool deep) : this(folder, null, resultnames, deep) { }
+        internal FolderTester(string[] ignored, Names resultnames, bool deep) : this(null, ignored, resultnames, deep) { }
+        internal FolderTester(string folder, string[] ignored, Names resultnames, bool deep)
         {
-            this.resultnames = namecreator;
+            this.resultnames = resultnames;
             if(this.resultnames == null) this.resultnames = new DummyNames();
 
             string root = CreateSamplesRoot(folder);
-            string[] paths = Directory.GetFiles(root, "*.cbl", SearchOption.AllDirectories);
+            string[] paths = Directory.GetFiles(root, "*.cbl", (deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
             this.samples = Filter(paths, (ignored != null ? ignored : new string[0]), folder);
         }
 
@@ -81,7 +90,8 @@ namespace TypeCobol.Test.Compiler.Parser
             for (int c = 0; c < paths.Length; c++)
             {
                 string name = GetName(paths[c]);
-                string shortname = name.Remove(0, folder.Length +1);
+                string shortname = name;
+                if (folder != null) shortname = name.Remove(0, folder.Length + 1);
                 if (!ignored.Contains(shortname)) names.Add(name);
             }
             return names;

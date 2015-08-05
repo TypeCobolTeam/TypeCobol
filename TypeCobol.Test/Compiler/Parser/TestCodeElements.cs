@@ -236,7 +236,7 @@ namespace TypeCobol.Test.Compiler.Parser
             tester.Test();
         }
 
-        public static void Check_StatementCodeElements()
+        public static void Check_Statements()
         {
             var ignored = new string[] { "DISPLAYCodeElements" };
             new FolderTester("Statements", ignored).Test();
