@@ -232,8 +232,8 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void Check_Expressions()
         {
             var tester = new FolderTester("Expressions");
-            tester.comparator = typeof(Outputter);
-            tester.Test();
+            tester.comparator = typeof(NYComparator);
+            tester.Test(true);
         }
 
         public static void Check_Statements()

@@ -108,6 +108,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             System.Reflection.ConstructorInfo c = comparator.GetConstructor(new[] { typeof(string), typeof(Names), typeof(bool) });
 
+            if (this.samples.Count < 1) throw new System.Exception("No sample file!");
             foreach (var sample in this.samples)
             {
                 var unit = new TestUnit(sample, debug);
@@ -181,6 +182,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
+            if (elements.Count < 1) throw new System.Exception("No CodeElements found!");
             foreach (var e in elements)
             {
                 var statement = e as ArithmeticOperationStatement;
@@ -191,8 +193,8 @@ namespace TypeCobol.Test.Compiler.Parser
                 if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn);
                 c++;
             }
+            if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
             if (errors.Length > 0) throw new System.Exception(errors.ToString());
-            if (expected.ReadLine() != null) throw new System.Exception("Number of CodeElements (" + c + ") lesser than expected.");
         }
 
         private string ToString(ArithmeticOperationStatement statement)
@@ -204,6 +206,37 @@ namespace TypeCobol.Test.Compiler.Parser
             }
             if (statement.affectations.Count > 0) builder.Length -= 2;
             return builder.ToString();
+        }
+    }
+
+    internal class NYComparator : FilesComparator
+    {
+        public NYComparator(string name) : this(name, null, false) { }
+        public NYComparator(string name, Names resultnames) : this(name, resultnames, false) { }
+        public NYComparator(string name, bool debug) : this(name, null, debug) { }
+        public NYComparator(string name, Names resultnames = null, bool debug = false)
+            : base(name, resultnames, debug) { }
+
+        public override void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
+        {
+            int c = 0;
+            StringBuilder errors = new StringBuilder();
+            System.Console.WriteLine("ELEMENTS="+elements.Count+" ERRORS="+diagnostics.Count);
+            foreach (var e in elements)
+            {
+                if ((e as SentenceEnd) != null) continue;
+                string line = expected.ReadLine();
+                if (line != "Y") errors.AppendFormat("line {0}: \"{1}\", expected \"Y\"\n", c, line);
+                c++;
+            }
+            foreach (var d in diagnostics)
+            {
+                string line = expected.ReadLine();
+                if (line != "N") errors.AppendFormat("line {0}: \"{1}\", expected \"N\"\n", c, line);
+                c++;
+            }
+            if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
+            if (errors.Length > 0) throw new System.Exception(errors.ToString());
         }
     }
 
