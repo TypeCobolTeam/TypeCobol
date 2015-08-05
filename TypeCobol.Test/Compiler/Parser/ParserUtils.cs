@@ -57,34 +57,42 @@ namespace TypeCobol.Test.Compiler.Parser
             return compilationUnit;
         }
 
-        public static string DumpCodeElements(CompilationUnit compilationUnit)
+        public static string DumpCodeElements(CompilationUnit unit)
         {
-            StringBuilder sb = new StringBuilder();
-            if (compilationUnit.SyntaxDocument.Diagnostics != null && compilationUnit.SyntaxDocument.Diagnostics.Count > 0)
+            return DumpResult(unit.SyntaxDocument.CodeElements, unit.SyntaxDocument.Diagnostics);
+        }
+
+        public static string DumpResult(IList<CodeElement> elements, IList<Diagnostic> diagnostics)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(DiagnosticsToString(diagnostics));
+            builder.Append(CodeElementsToString(elements));
+            return builder.ToString();
+        }
+
+        public static string DiagnosticsToString(IList<Diagnostic> diagnostics)
+        {
+            if (diagnostics == null || diagnostics.Count < 1) return "";
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("--- Diagnostics ---");
+            foreach (Diagnostic d in diagnostics)
             {
-                sb.AppendLine("--- Diagnostics ---");
-                foreach (Diagnostic diag in compilationUnit.SyntaxDocument.Diagnostics)
-                {
-                    if (diag is ParserDiagnostic)
-                    {
-                        sb.AppendLine(((ParserDiagnostic)diag).ToStringWithRuleStack());
-                    }
-                    else
-                    {
-                        sb.AppendLine(diag.ToString());
-                    }
-                }
+                if (d is ParserDiagnostic)
+                     builder.AppendLine(((ParserDiagnostic)d).ToStringWithRuleStack());
+                else builder.AppendLine(d.ToString());
             }
-            if (compilationUnit.SyntaxDocument.CodeElements != null && compilationUnit.SyntaxDocument.CodeElements.Count > 0)
-            {
-                sb.AppendLine("--- Code Elements ---");
-                foreach (CodeElement codeElement in compilationUnit.SyntaxDocument.CodeElements)
-                {
-                    sb.AppendLine(codeElement.ToString());
-                    //TODO log Diagnostics linked to codeElement directly after, to increase test readability
-                }
-            }
-            return sb.ToString();
+            return builder.ToString();
+        }
+
+
+        public static string CodeElementsToString(IList<CodeElement> elements)
+        {
+            if (elements == null || elements.Count < 1) return "";
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("--- Code Elements ---");
+            foreach (CodeElement e in elements) builder.AppendLine(e.ToString());
+            //TODO log Diagnostics linked to codeElement directly after, to increase test readability
+            return builder.ToString();
         }
 
         private static int line(int line) { return line / 2 + 1; }
@@ -93,6 +101,12 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
             {
+                CheckWithResultReader(testName, result, reader);
+            }
+        }
+
+        public static void CheckWithResultReader(string testName, string result, StreamReader reader)
+        {
                 string expectedResult = reader.ReadToEnd();
                 String[] expectedResultLines = expectedResult.Split(new[] { '\r', '\n' });
                 String[] resultLines = result.Split(new[] { '\r', '\n' });
@@ -106,9 +120,8 @@ namespace TypeCobol.Test.Compiler.Parser
                 }
                 if (expectedResultLines.Length != resultLines.Length)
                 {
-                    throw new Exception("In test \"" + testName + "\": lines to test=" + resultLines.Length + "; lines expected=" + line(expectedResultLines.Length));
+                    throw new Exception("In test \"" + testName + "\", lines to test=" + resultLines.Length + "; lines expected=" + line(expectedResultLines.Length));
                 }
-            }
         }
 
         /// <summary>
