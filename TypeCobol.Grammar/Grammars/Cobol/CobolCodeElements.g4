@@ -2281,6 +2281,73 @@ linkageSectionHeader:
 // FD is the file description level indicator and SD is the sort-merge file description level indicator.
 // levelIndicator : (FD | SD);
 
+//fileDescriptionEntry:
+//	fdFormat1 | fdFormat2 | fdFormat3 | fdFormat4;
+
+fdFormat1:
+	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel1? fdValue? fdData? fdLineage? fdRecording? fdCodeset? PeriodSeparator;
+
+fdFormat2:
+	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel2? fdValue? fdData? PeriodSeparator;
+
+fdFormat3:
+	FD fileName fdExternal? fdGlobal? (fdRecord1 | fdRecord3)? PeriodSeparator;
+
+fdFormat4:
+	SD fileName (fdRecord1 | fdRecord2 | fdRecord3)? fdData? fdBlock? fdLabel1? fdValue? fdLineage? fdCodeset? PeriodSeparator;
+
+fdExternal:
+	IS? EXTERNAL;
+fdGlobal:
+	IS? GLOBAL;
+
+fdBlock:
+	BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS);
+
+fdRecord1:
+	RECORD CONTAINS? IntegerLiteral CHARACTERS?;
+fdRecord2:
+	RECORD CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?;
+fdRecord3:
+	RECORD fdClause1 (DEPENDING ON? dataName)?;
+fdClause1:
+	IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS?;
+
+fdLabel1:
+	LABEL fdRecordVerb (fdStandardOrOmitted | dataName+);
+fdLabel2:
+	LABEL fdRecordVerb fdStandardOrOmitted;
+
+fdRecordVerb: (RECORD IS?) | (RECORDS ARE?);
+
+fdStandardOrOmitted: STANDARD | OMITTED;
+
+fdValue:
+	VALUE OF (systemName IS? (dataName | literal))+;
+
+fdData:
+	DATA fdRecordVerb dataName+;
+
+fdLineage:
+	LINEAGE IS? (dataName | IntegerLiteral) LINES? fdClause2;
+
+fdClause2:
+	fdFooting? fdTop? fdBottom?;
+fdFooting:
+	WITH? FOOTING AT? (dataName | IntegerLiteral);
+fdTop:
+	LINES? AT? TOP (dataName | IntegerLiteral);
+fdBottom:
+	LINES? AT? BOTTOM (dataName | IntegerLiteral);
+
+fdRecording:
+	RECORDING MODE? IS? recordingMode;
+
+fdCodeset:
+	CODE_SET IS? alphabetName;
+
+
+
 fileDescriptionEntry : 
                     (FD | SD) fileName 
                    (externalClause |
@@ -2402,7 +2469,7 @@ globalClause:
 // clause.
 
 blockContainsClause:
-                       BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS);
+                       BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS)?;
 
 // p177: When the RECORD clause is used, the record size must be specified as the number
 // of bytes needed to store the record internally, regardless of the USAGE of the data
