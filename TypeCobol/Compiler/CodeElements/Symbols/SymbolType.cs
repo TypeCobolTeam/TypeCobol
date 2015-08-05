@@ -23,6 +23,12 @@ namespace TypeCobol.Compiler.CodeElements
         SectionName,
         SymbolicCharacter,
         XmlSchemaName,
-        EnvironmentName
+        EnvironmentName,
+
+        /// <summary>
+        /// Type to use when the parser can't determiner the exact SymbolType.
+        /// The actual type will be resolved in a next compiler phase
+        /// </summary>
+        Unknown
     }
 }

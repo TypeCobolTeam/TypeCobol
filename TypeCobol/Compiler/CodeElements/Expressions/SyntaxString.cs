@@ -32,7 +32,8 @@ namespace TypeCobol.Compiler.CodeElements
                 }
                 else if (Token.TokenFamily == TokenFamily.AlphanumericLiteral)
                 {
-                    return ((AlphanumericLiteralValue)Token.LiteralValue).Text;
+                    return Token.Text;
+//                    return ((AlphanumericLiteralValue)Token.LiteralValue).Text;
                 }
                 else
                 {

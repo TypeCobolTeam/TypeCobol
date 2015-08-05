@@ -567,18 +567,17 @@ namespace TypeCobol.Compiler.Parser
                     }
                     else if (idOrLiteral.literal() != null)
                     {
-                        expressions.Add(CreateLiteral(idOrLiteral));
-                        //expressions.Add(new Literal(idOrLiteral.literal()));
+                        expressions.Add(new Literal(idOrLiteral.literal()));
                     }
                     else
                     {
-                        AddError(statement, "Required: <identifier> or <literal>", idOrLiteral);
+                        AddError(statement, "Display: required <identifier> or <literal>", idOrLiteral);
+
                     }
                 }
-                statement.VarsToDisplay = expressions;
+                statement.IdentifierOrLiteral = expressions;
             }
             //else don't set the displayStement. It will remains null
-
 
             //(mnemonic) Environment name
             if (context.uponEnvironmentName() != null)
@@ -586,7 +585,17 @@ namespace TypeCobol.Compiler.Parser
                 Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
                 if (mnemonicOrEnvironmentName != null)
                 {
-                    statement.UponMnemonicOrEnvironmentName = CreateMnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
+                    statement.UponMnemonicOrEnvironmentName = new MnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
+//            EnvironmentNameEnum envNameValue;
+//            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
+//            {
+//                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
+//            }
+//            else
+//            {
+//                //if this happens, it means it's a mnemonic environment name
+//                return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
+//            }
                 }
             } //else don't set UponMnemonicOrEnvironmentName. it will remains null
 
