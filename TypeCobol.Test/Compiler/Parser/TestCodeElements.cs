@@ -1,15 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Compiler.CodeElements;
-using System.Collections.Generic;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -237,75 +231,23 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_Expressions()
         {
-            //Test("Expressions");
+            var tester = new FolderTester("Expressions");
+            tester.comparator = typeof(Outputter);
+            tester.Test();
         }
-
-        private static void Test(string folder = null, bool debug = false)
-        {
-            var finder = new FilesComparator("whatever");
-            string root = finder.sample.full.folder;
-            string samples = root;
-            if (folder != null) samples += Path.DirectorySeparatorChar + folder;
-            string[] paths = Directory.GetFiles(samples, "*.cbl", SearchOption.AllDirectories);
-            for (int c = 0; c < paths.Length; c++)
-            {
-                string name = paths[c].Remove(0, root.Length +1);
-                name = name.Remove(name.Length - finder.sextension.Length);
-                var unit = new TestUnit(name, true);
-                unit.Parse();
-                unit.Compare();
-            }
-        }
-
-        private static CompilationUnit ParseUTF8File(string path, string root)
-        {
-            DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-            DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName(PlatformUtils.GetPathForProjectFile(root + path)));
-            TypeCobolOptions options = new TypeCobolOptions();
-            CompilationProject project = new CompilationProject("TEST",
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
-                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
-            string filename = Path.GetFileName(path);
-            CompilationUnit unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions());
-            unit.SetupCodeAnalysisPipeline(null, 0);
-            unit.StartDocumentProcessing();
-            return unit;
-        }
-
-
 
         public static void Check_StatementCodeElements()
         {
             var ignored = new string[] { "DISPLAYCodeElements" };
             new FolderTester("Statements", ignored).Test();
             // arithmetic
-            CheckArithmeticStatement("ADDCodeElements", "ADDRPN.txt");
-            CheckArithmeticStatement("SUBTRACTCodeElements", "SUBTRACTRPN.txt");
+            CheckArithmeticStatements();
         }
 
-        public static CompilationUnit CheckStatement(string filename, bool debug = false)
-        {
-            return CheckUTF8("Statements" + Path.DirectorySeparatorChar + filename, debug);
-        }
-
-        public static CompilationUnit CheckUTF8(string name, bool debug = false)
-        {
-            System.Console.WriteLine("CheckUTF8: " + name);
-            DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-            CompilationUnit unit = ParserUtils.ParseCobolFile(name, format);
-            string result = ParserUtils.DumpResult(unit.SyntaxDocument.CodeElements, unit.SyntaxDocument.Diagnostics);
-            if (debug) Console.WriteLine("\"" + name + "\" result:\n" + result);
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + name + ".txt")))
-            {
-                ParserUtils.CheckWithResultReader(name, result, reader);
-            }
-            return unit;
-        }
-
-        public static void CheckArithmeticStatement(string filename, string rpnfilename) {
-            CompilationUnit unit = CheckStatement(filename);
-            string path = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "ResultFiles" + Path.DirectorySeparatorChar + "Statements";
-            new ArithmeticStatementTester().CompareWithRPNFile(unit.SyntaxDocument, path + Path.DirectorySeparatorChar + rpnfilename);
+        public static void CheckArithmeticStatements() {
+            var tester = new FolderTester("Statements", new RPNNames());
+            tester.comparator = typeof(ArithmeticComparator);
+            tester.Test();
         }
     }
 }

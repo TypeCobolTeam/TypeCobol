@@ -1,18 +1,12 @@
-﻿using System.Collections.Specialized;
-using Antlr4.Runtime;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Parser
@@ -55,9 +49,20 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         private IList<string> samples;
         private FilesComparator finder = new FilesComparator("whatever");
+        public System.Type comparator = typeof(FilesComparator);
+        public Names resultnames;
 
-        internal FolderTester(string folder = null, string[] ignored = null)
+        internal FolderTester() : this(null, null, null) { }
+        internal FolderTester(string folder) : this(folder, null, null) { }
+        internal FolderTester(string[] ignored) : this(null, ignored, null) { }
+        internal FolderTester(string folder, string[] ignored) : this(folder, ignored, null) { }
+        internal FolderTester(string folder, Names namecreator) : this(folder, null, namecreator) { }
+        internal FolderTester(string[] ignored, Names namecreator) : this(null, ignored, namecreator) { }
+        internal FolderTester(string folder, string[] ignored, Names namecreator)
         {
+            this.resultnames = namecreator;
+            if(this.resultnames == null) this.resultnames = new DummyNames();
+
             string root = CreateSamplesRoot(folder);
             string[] paths = Directory.GetFiles(root, "*.cbl", SearchOption.AllDirectories);
             this.samples = Filter(paths, (ignored != null ? ignored : new string[0]), folder);
@@ -91,10 +96,16 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public void Test(bool debug = false)
         {
+            System.Reflection.ConstructorInfo c = comparator.GetConstructor(new[] { typeof(string), typeof(Names), typeof(bool) });
+
             foreach (var sample in this.samples)
             {
                 var unit = new TestUnit(sample, debug);
-                //unit.comparator = new Outputter(name);
+                unit.comparator = (FilesComparator)c.Invoke(new object[] { sample, this.resultnames, debug });
+                if (!System.IO.File.Exists(unit.comparator.result.full.path))
+                    if (resultnames.ErrorOnMissingResultFile())
+                        throw new System.IO.FileNotFoundException("Missing file \"" + unit.comparator.result.project.path + "\"");
+                    else continue; // SKIP test because there is no result file
                 unit.Parse();
                 unit.Compare();
             }
@@ -112,12 +123,18 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class FilesComparator : Comparator
     {
+        internal Names resultnames;
         internal string name;
         internal bool debug;
         internal string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
 
-        internal FilesComparator(string name, bool debug = false)
+        public FilesComparator(string name) : this(name, null, false) { }
+        public FilesComparator(string name, Names resultnames) : this(name, resultnames, false) { }
+        public FilesComparator(string name, bool debug) : this(name, null, debug) { }
+        public FilesComparator(string name, Names resultnames = null, bool debug = false)
         {
+            this.resultnames = resultnames;
+            if (this.resultnames == null) this.resultnames = new DummyNames();
             this.name = name;
             this.debug = debug;
         }
@@ -130,22 +147,63 @@ namespace TypeCobol.Test.Compiler.Parser
         }
         internal AbstractPath result
         {
-            get { return new AbstractPath(root + "ResultFiles" + Path.DirectorySeparatorChar, name, rextension); }
+            get { return new AbstractPath(root + "ResultFiles" + Path.DirectorySeparatorChar, resultnames.CreateName(name), rextension); }
             set { throw new System.InvalidOperationException("Can't touch this!"); }
         }
 
         public virtual void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
         {
             string result = ParserUtils.DumpResult(elements, diagnostics);
-            if (this.debug) Console.WriteLine("\"" + this.name + "\" result:\n" + result);
+            if (this.debug) System.Console.WriteLine("\"" + this.name + "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(this.name, result, expected);
+        }
+    }
+
+    internal class ArithmeticComparator : FilesComparator
+    {
+        public ArithmeticComparator(string name) : this(name, null, false) { }
+        public ArithmeticComparator(string name, Names resultnames) : this(name, resultnames, false) { }
+        public ArithmeticComparator(string name, bool debug) : this(name, null, debug) { }
+        public ArithmeticComparator(string name, Names resultnames = null, bool debug = false)
+            : base(name, resultnames, debug) { }
+
+        public override void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
+        {
+            int c = 0;
+            StringBuilder errors = new StringBuilder();
+            foreach (var e in elements)
+            {
+                var statement = e as ArithmeticOperationStatement;
+                if (statement == null) continue;
+                string rpn = expected.ReadLine();
+                if (rpn == null) errors.AppendFormat("RPN number {0} not provided.", c);
+                string dump = ToString(statement);
+                if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn);
+                c++;
+            }
+            if (errors.Length > 0) throw new System.Exception(errors.ToString());
+            if (expected.ReadLine() != null) throw new System.Exception("Number of CodeElements (" + c + ") lesser than expected.");
+        }
+
+        private string ToString(ArithmeticOperationStatement statement)
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach (var pair in statement.affectations)
+            {
+                builder.AppendFormat("{0} = {1}, ", pair.Key.Symbol.NameToken.Text, pair.Value.ToString());
+            }
+            if (statement.affectations.Count > 0) builder.Length -= 2;
+            return builder.ToString();
         }
     }
 
     internal class Outputter : FilesComparator
     {
-        internal Outputter(string name, bool debug = false)
-            : base(name, debug) {}
+        public Outputter(string name) : this(name, null, false) { }
+        public Outputter(string name, Names resultnames) : this(name, resultnames, false) { }
+        public Outputter(string name, bool debug) : this(name, null, debug) { }
+        public Outputter(string name, Names resultnames = null, bool debug = false)
+            : base(name, resultnames, debug) { }
 
         public override void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
         {
@@ -159,9 +217,31 @@ namespace TypeCobol.Test.Compiler.Parser
 
         private static void TestLine(CodeElement e, string line)
         {
-            Console.WriteLine("TODO TestLine( " + e + " , \"" + line + "\")");
+            System.Console.WriteLine("TODO TestLine( " + e + " , \"" + line + "\")");
         }
     }
+
+
+
+    internal interface Names
+    {
+        string CreateName(string name);
+        bool ErrorOnMissingResultFile();
+    }
+
+    internal class DummyNames : Names
+    {
+        public string CreateName(string name) { return name; }
+        public bool ErrorOnMissingResultFile() { return true; }
+    }
+
+    internal class RPNNames : Names
+    {
+        public string CreateName(string name) { return name + "RPN"; }
+        public bool ErrorOnMissingResultFile() { return false; }
+    }
+
+
 
     internal class AbstractPath
     {

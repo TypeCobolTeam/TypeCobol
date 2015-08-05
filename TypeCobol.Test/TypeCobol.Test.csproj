@@ -73,7 +73,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Compiler\CodeElements\ArithmeticStatementTester.cs" />
     <Compile Include="Compiler\File\TestCobolFile.cs" />
     <Compile Include="Compiler\File\TestIBMCodePages.cs" />
     <Compile Include="Compiler\Parser\Comparator.cs" />
@@ -105,11 +104,12 @@
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATECodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\IFCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\DISPLAYCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\ADDCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\ADD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\ParagraphCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\EntryCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\IdentificationCodeElements.txt" />
@@ -117,7 +117,7 @@
     <Content Include="Compiler\Parser\ResultFiles\ONCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ADDRPN.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACT.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTRPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
@@ -192,18 +192,19 @@
     <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
+    <None Include="Compiler\Parser\Samples\FD.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATECodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\PERFORMCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IFCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\ADDCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\ADD.cbl" />
     <None Include="Compiler\Parser\Samples\ParagraphCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\EntryCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IdentificationCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\HeaderCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ONCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\SUBTRACTCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\SUBTRACT.cbl" />
     <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\XMLCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />
