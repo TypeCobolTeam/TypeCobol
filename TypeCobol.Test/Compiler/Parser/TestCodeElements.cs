@@ -237,50 +237,24 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_Expressions()
         {
-            TestDirectory("Expressions");
+            //Test("Expressions");
         }
 
-        private static void TestDirectory(string subdir = null, bool debug = false)
+        private static void Test(string folder = null, bool debug = false)
         {
-            string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
-            if (subdir == null) subdir = "";
-            if (subdir.Length > 0) subdir = Path.DirectorySeparatorChar + subdir;
-            string samples = PlatformUtils.GetPathForProjectFile(root + "Samples" + subdir);
+            var finder = new FilesComparator("whatever");
+            string root = finder.sample.full.folder;
+            string samples = root;
+            if (folder != null) samples += Path.DirectorySeparatorChar + folder;
             string[] paths = Directory.GetFiles(samples, "*.cbl", SearchOption.AllDirectories);
             for (int c = 0; c < paths.Length; c++)
             {
-                System.Console.WriteLine("sample=" + paths[c]);
-                string filename = Path.GetFileNameWithoutExtension(paths[c]);
-                string expr = subdir + Path.DirectorySeparatorChar + filename;
-                string path = PlatformUtils.GetPathForProjectFile(root + "ResultFiles" + expr + ".txt");
-                if (!System.IO.File.Exists(path)) continue;
-                TestFile("Samples" + expr + ".cbl", "ResultFiles" + expr + ".txt", root, debug);
+                string name = paths[c].Remove(0, root.Length +1);
+                name = name.Remove(name.Length - finder.sextension.Length);
+                var unit = new TestUnit(name, true);
+                unit.Parse();
+                unit.Compare();
             }
-        }
-
-        private static void TestFile(string sample, string result, string root, bool debug = false)
-        {
-            System.Console.WriteLine("Test \""+sample+"\" vs \""+result+"\"");
-            CompilationUnit unit = ParseUTF8File(sample, root);
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(PlatformUtils.GetStreamForProjectFile(root + result)))
-            {
-                TestLineByLine(unit.SyntaxDocument.CodeElements, reader);
-            }
-        }
-
-        private static void TestLineByLine(IList<CodeElement> elements, StreamReader reader)
-        {
-            foreach (var e in elements)
-            {
-                if (e.GetType() == typeof(SentenceEnd)) continue;
-                string line = reader.ReadLine();
-                TestLine(e, line);
-            }
-        }
-
-        private static void TestLine(CodeElement e, string line)
-        {
-            Console.WriteLine("TODO TestLine( "+e+" , \""+line+"\")" );
         }
 
         private static CompilationUnit ParseUTF8File(string path, string root)
@@ -302,14 +276,11 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_StatementCodeElements()
         {
-            // decision
-            CheckStatement("IFCodeElements");
-            CheckStatement("EVALUATECodeElements");
+            var ignored = new string[] { "DISPLAYCodeElements" };
+            new FolderTester("Statements", ignored).Test();
             // arithmetic
             CheckArithmeticStatement("ADDCodeElements", "ADDRPN.txt");
             CheckArithmeticStatement("SUBTRACTCodeElements", "SUBTRACTRPN.txt");
-            // procedure branching
-            CheckStatement("PERFORMCodeElements");
         }
 
         public static CompilationUnit CheckStatement(string filename, bool debug = false)
@@ -317,13 +288,17 @@ namespace TypeCobol.Test.Compiler.Parser
             return CheckUTF8("Statements" + Path.DirectorySeparatorChar + filename, debug);
         }
 
-        public static CompilationUnit CheckUTF8(string path, bool debug = false)
+        public static CompilationUnit CheckUTF8(string name, bool debug = false)
         {
+            System.Console.WriteLine("CheckUTF8: " + name);
             DocumentFormat format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-            CompilationUnit unit = ParserUtils.ParseCobolFile(path, format);
-            string result = ParserUtils.DumpCodeElements(unit);
-            if (debug) Console.WriteLine("\"" + path + "\" result:\n" + result);
-            ParserUtils.CheckWithResultFile(result, path);
+            CompilationUnit unit = ParserUtils.ParseCobolFile(name, format);
+            string result = ParserUtils.DumpResult(unit.SyntaxDocument.CodeElements, unit.SyntaxDocument.Diagnostics);
+            if (debug) Console.WriteLine("\"" + name + "\" result:\n" + result);
+            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + name + ".txt")))
+            {
+                ParserUtils.CheckWithResultReader(name, result, reader);
+            }
             return unit;
         }
 
