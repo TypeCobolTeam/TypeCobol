@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
+using System.Globalization;
 
 namespace TypeCobol.Test
 {
@@ -21,6 +23,7 @@ namespace TypeCobol.Test
         [TestMethod]
         public void CheckScanner()
         {
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             TestCollection.CheckScanner();
         }
 
