@@ -123,6 +123,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\STRING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACT.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTRPN.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\UNSTRING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\XMLCodeElements.txt" />
@@ -213,6 +214,7 @@
     <None Include="Compiler\Parser\Samples\ONCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STRING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SUBTRACT.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\UNSTRING.cbl" />
     <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\XMLCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />

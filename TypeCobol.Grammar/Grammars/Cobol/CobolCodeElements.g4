@@ -8130,19 +8130,38 @@ subtractStatementEnd: END_SUBTRACT;
 // ... more details p447->448 Example of the UNSTRING statement ...
 
 unstringStatement:
-                     UNSTRING identifier
-                     (DELIMITED BY? ALL? (identifier |literal) (OR ALL? (identifier | literal))*)?
-                     INTO (identifier (DELIMITER IN? identifier)? (COUNT IN? identifier)?)+
-                     (WITH? POINTER identifier)? 
-                     (TALLYING IN? identifier)?;
+	unstringStatementCore unstringStatementEnd?;
 
-//unstringStatementConditional:
-//                                unstringStatement
-//                                (onOverflowCondition imperativeStatement)?
-//                                (notOnOverflowCondition imperativeStatement)?
-//                                unstringStatementEnd?;
+unstringStatementConditional:
+	unstringStatementCore overflowExceptions;
+
+unstringStatementConditionalWithScope:
+	unstringStatementConditional unstringStatementEnd;
+
+unstringStatementCore:
+	UNSTRING identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
+
+unstringDelimited:
+	DELIMITED BY? ALL? identifierOrLiteral (OR ALL? identifierOrLiteral)*;
+
+unstringReceiver:
+	identifier unstringDelimiter? unstringCount?;
+
+unstringDelimiter:
+	DELIMITER IN? identifier;
+
+unstringCount:
+	COUNT IN? identifier;
+
+unstringPointer:
+	WITH? POINTER identifier;
+
+unstringTallying:
+	TALLYING IN? identifier;
 
 unstringStatementEnd: END_UNSTRING;
+
+
 
 // p449: WRITE statement
 // The WRITE statement releases a logical record to an output or input/output file.
