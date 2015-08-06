@@ -10355,7 +10355,8 @@ identifier:
 	| identifierFormat2
 	| identifierFormat1
 	| specialRegister
-	| (LENGTH OF dataNameReference)
+	| functionIdentifier
+	| (LENGTH OF dataNameReference) //TODO: is this a functionIdentifier?
 	;
            
 // p68: Format 1   

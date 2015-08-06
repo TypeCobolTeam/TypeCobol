@@ -1,0 +1,1 @@
+﻿MOVE FUNCTION fun TO x.
