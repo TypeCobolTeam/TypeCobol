@@ -105,6 +105,7 @@
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EXEC.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
@@ -195,6 +196,7 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\COMPUTE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\MOVE.cbl" />

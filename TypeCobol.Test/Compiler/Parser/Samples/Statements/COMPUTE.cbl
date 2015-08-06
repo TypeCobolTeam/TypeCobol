@@ -1,0 +1,7 @@
+﻿IF x < 24
+  COMPUTE
+    y = 24 - x
+  END-COMPUTE
+ELSE
+  CONTINUE
+END-IF.

@@ -1,0 +1,5 @@
+﻿--- Code Elements ---
+[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
+
+[[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
+

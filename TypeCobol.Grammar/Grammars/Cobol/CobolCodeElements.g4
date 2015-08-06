@@ -347,6 +347,7 @@ atEndExceptions:
 	  endException
 	| notEndException
 	| (endException notEndException)
+	| (notEndException endException)
 	;
 
 // INVALID KEY /////
@@ -360,6 +361,7 @@ invalidKeyExceptions:
 	  invalidException
 	| notInvalidException
 	| (invalidException notInvalidException)
+	| (notInvalidException invalidException)
 	;
 
 // ON EXCEPTION /////
@@ -373,6 +375,7 @@ onExceptionExceptions:
 	  exceptionException
 	| notExceptionException
 	| (exceptionException notExceptionException)
+	| (notExceptionException exceptionException)
 	;
 
 // ON OVERFLOW /////
@@ -385,6 +388,13 @@ sizeErrorException:
 
 notSizeErrorException:
 	NOT ON? SIZE ERROR imperativeStatement;
+
+sizeErrorExceptions:
+	  sizeErrorException
+	| notSizeErrorException
+	| (sizeErrorException notSizeErrorException)
+	| (notSizeErrorException sizeErrorException)
+	;
 
 // --- Individual code elements syntax ---
 
@@ -4632,16 +4642,18 @@ acceptStatementFormat2:
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
 addStatement:
-	addStatementCore END_ADD?;
+	addStatementCore addStatementEnd?;
 
 addStatementConditional:
-	addStatementCore arithmeticExceptions;
+	addStatementCore sizeErrorExceptions;
 
 addStatementConditionalWithScope:
-	addStatementConditional END_ADD;
+	addStatementConditional addStatementEnd;
 
 addStatementCore:
 	addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
+
+addStatementEnd: END_ADD;
 
 //
 // For all formats:
@@ -4686,15 +4698,6 @@ identifierRounded:
 // See “CORRESPONDING phrase” on page 281. 
 corresponding:
 		CORRESPONDING | CORR;
-		
-// SIZE ERROR phrases
-// For formats 1, 2, and 3, see “SIZE ERROR phrases” on page 283. 
-arithmeticExceptions:
-	    sizeErrorException
-	  | notSizeErrorException
-	  | (sizeErrorException notSizeErrorException)
-	  | (notSizeErrorException sizeErrorException)
-	  ;
 
 
 
@@ -4975,22 +4978,26 @@ closeStatement:
 // For more information, see “Delimited scope statements” on page 280.
 
 computeStatement:
-                    COMPUTE (identifier ROUNDED?)+ (EqualOperator | EQUAL) arithmeticExpression;
+	computeStatementCore computeStatementEnd?;
 
-//computeStatementConditional:
-//                               computeStatement
-//                               (onSizeErrorCondition imperativeStatement)?
-//                               (notOnSizeErrorCondition imperativeStatement)?
-//                               computeStatementEnd?;
+computeStatementConditional:
+	computeStatementCore sizeErrorExceptions;
 
-computeStatementEnd:
-                       END_COMPUTE;
+computeStatementConditionalWithScope:
+	computeStatementConditional computeStatementEnd;
+
+computeStatementCore:
+	COMPUTE identifierRounded+ (EqualOperator | EQUAL) arithmeticExpression;
+
+computeStatementEnd: END_COMPUTE;
+
+
 
 // p319: CONTINUE statement
 // The CONTINUE statement is a no operation statement. CONTINUE indicates that no executable instruction is present.
 
 continueStatement:
-                     CONTINUE;
+	CONTINUE;
 
 // p320: DELETE statement
 // The DELETE statement removes a record from an indexed or relative file. 
@@ -6282,16 +6289,18 @@ moveStatement:
 // items equal to the results.
 
 multiplyStatement:
-	multiplyStatementCore END_MULTIPLY?;
+	multiplyStatementCore multiplyStatementEnd?;
 
 multiplyStatementConditional:
-	multiplyStatementCore arithmeticExceptions;
+	multiplyStatementCore sizeErrorExceptions;
 
 multiplyStatementConditionalWithScope:
-	multiplyStatementConditional END_MULTIPLY;
+	multiplyStatementConditional multiplyStatementEnd;
 
 multiplyStatementCore:
 	 multiplyStatementFormat2 | multiplyStatementFormat1;
+
+multiplyStatementEnd: END_MULTIPLY;
 
 // p376: Format 1: MULTIPLY statement
 // In format 1, the value of identifier-1 or literal-1 is multiplied by the value of
@@ -7856,13 +7865,13 @@ stringStatementEnd:
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
 subtractStatement:
-	subtractStatementCore END_SUBTRACT?;
+	subtractStatementCore subtractStatement?;
 
 subtractStatementConditional:
-	subtractStatementCore arithmeticExceptions;
+	subtractStatementCore sizeErrorExceptions;
 
 subtractStatementConditionalWithScope:
-	subtractStatementConditional END_SUBTRACT;
+	subtractStatementConditional subtractStatement;
 
 subtractStatementCore:
 	 subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
@@ -7887,6 +7896,8 @@ subtractStatementFormat2:
 // stored in, the corresponding elementary data items within identifier-2.
 subtractStatementFormat3:
 		SUBTRACT corresponding identifier FROM identifierRounded;
+
+subtractStatementEnd: END_SUBTRACT;
 
 // When the ARITH(COMPAT) compiler option is in effect, the composite of operands
 // can contain a maximum of 30 digits. When the ARITH(EXTEND) compiler option
