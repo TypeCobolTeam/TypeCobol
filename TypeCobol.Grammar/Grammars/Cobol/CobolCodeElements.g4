@@ -101,9 +101,6 @@ codeElement:
        exitMethodStatement |  //TODO
        exitProgramStatement | //TODO
        // -- Cobol conditional statements --
-       //computeStatement |
-           // ... size exception phrases..
-       computeStatementEnd |
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
@@ -118,13 +115,6 @@ codeElement:
        //startStatement |
            // ... invalid key phrases ...
        startStatementEnd |
-       //stringStatement |
-           // onOverflow ... imperative statements
-           //notOnOverflowCondition | // ... imperative statements ...
-       stringStatementEnd |
-       //unstringStatement |
-           // ... on overflow phrases ...
-       unstringStatementEnd |
        //writeStatement |
            atEndOfPageCondition  | // ... imperative statements ...
            notAtEndOfPageCondition  | // ... imperative statements ...
@@ -253,7 +243,7 @@ programOrMethodLinkageStatement:
 
 conditionalStatement:
 	  arithmeticStatementConditional
-//	| dataMovementStatementConditional
+	| dataMovementStatementConditional
 	| decisionStatement
 	| ioStatementConditional
 	| orderingStatementConditional
@@ -263,17 +253,18 @@ conditionalStatement:
 
 arithmeticStatementConditional:
 	  addStatementConditional
-//	| computeStatementConditional
+	| computeStatementConditional
 //	| divideStatementConditional
 	| multiplyStatementConditional
 	| subtractStatementConditional
 	;
 
-//dataMovementStatementConditional:
-//	  stringStatementConditional
+dataMovementStatementConditional:
+	  stringStatementConditional
 //	| unstringStatementConditional
 //	| xmlGenerateStatementConditional
-//	| xmlParseStatementConditional;
+//	| xmlParseStatementConditional
+	;
 
 decisionStatement:
 	  ifStatement
@@ -311,7 +302,7 @@ tableHandlingStatementConditional:
 delimitedScopeStatement:
 	  addStatementConditionalWithScope
 	| callStatementConditionalWithScope
-//	| computeStatementConditionalWithScope
+	| computeStatementConditionalWithScope
 	| deleteStatementConditionalWithScope
 //	| divideStatementConditionalWithScope
 	| evaluateStatementWithScope
@@ -324,7 +315,7 @@ delimitedScopeStatement:
 //	| rewriteStatementConditionalWithScope
 //	| searchStatementConditionalWithScope
 //	| startStatementConditionalWithScope
-//	| stringStatementConditionalWithScope
+	| stringStatementConditionalWithScope
 	| subtractStatementConditionalWithScope
 //	| unstringStatementConditionalWithScope
 //	| writeStatementConditionalWithScope
@@ -381,6 +372,16 @@ onExceptionExceptions:
 // ON OVERFLOW /////
 overflowException:
 	ON? OVERFLOW imperativeStatement;
+
+notOverflowException:
+	NOT ON? OVERFLOW imperativeStatement;
+
+overflowExceptions:
+	  overflowException
+	| notOverflowException
+	| (overflowException notOverflowException)
+	| (notOverflowException overflowException)
+	;
 
 // ON SIZE ERROR /////
 sizeErrorException:
@@ -7857,15 +7858,22 @@ stopStatement:
 // ... more details p435->437 Data flow / Example of the STRING statement ...
 
 stringStatement:
-                   STRING ((identifier |literal )+ 
-                   DELIMITED BY? (identifier | literal | SIZE))+
-                   INTO identifier (WITH? POINTER identifier)?;
+	stringStatementCore stringStatementEnd?;
 
-//stringStatementConditional:
-//                              stringStatement
-//                              (onOverflowCondition imperativeStatement)?
-//                              (notOnOverflowCondition imperativeStatement)?
-//                              stringStatementEnd?;
+stringStatementConditional:
+	stringStatementCore overflowExceptions;
+
+stringStatementConditionalWithScope:
+	stringStatementConditional stringStatementEnd;
+
+stringStatementCore:
+	STRING stringStatementWhat+ INTO identifier stringStatementWith?;
+
+stringStatementWhat:
+	identifierOrLiteral+ DELIMITED BY? (identifierOrLiteral | SIZE);
+
+stringStatementWith:
+	WITH? POINTER identifier;
 
 stringStatementEnd: END_STRING;
 
