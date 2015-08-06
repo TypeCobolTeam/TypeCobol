@@ -3,6 +3,16 @@
 
 [[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
 
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [26,30:TIMES]<TIMES>
+
+[[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [1,7:PERFORM]<PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
+- variables = "HELLO"
+- WithNoAdvancing = False
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [29,41:conditionname]<UserDefinedWord>
 
 [[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>

@@ -4,6 +4,14 @@
 PERFORM procedurename.
 
 *   //////////////
+*  // FORMAT 1 //
+* //////////////
+PERFORM procedurename 10 TIMES.
+PERFORM 10 TIMES
+  DISPLAY "HELLO"
+END-PERFORM.
+
+*   //////////////
 *  // FORMAT 3 //
 * //////////////
 PERFORM procedurename UNTIL conditionname.
