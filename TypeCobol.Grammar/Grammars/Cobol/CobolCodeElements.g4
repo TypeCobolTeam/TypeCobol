@@ -4853,13 +4853,13 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	callStatementCore END_CALL?;
+	callStatementCore callStatementEnd?;
 
 callStatementConditional:
 	callStatementCore callStatementExceptions;
 
 callStatementConditionalWithScope:
-	callStatementConditional END_CALL;
+	callStatementConditional callStatementEnd;
 
 callStatementCore:
 	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning?;
@@ -4883,7 +4883,9 @@ callStatementReturning:
 	RETURNING identifier;
 
 callStatementExceptions:
-	  overflowException | onExceptionExceptions;
+	overflowException | onExceptionExceptions;
+
+callStatementEnd: END_CALL;
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
@@ -5021,16 +5023,18 @@ continueStatement:
 //For more information, see “Delimited scope statements” on page 280.
 
 deleteStatement:
-	deleteStatementCore END_DELETE?;
+	deleteStatementCore deleteStatementEnd?;
 
 deleteStatementConditional:
 	deleteStatementCore invalidKeyExceptions;
 
 deleteStatementConditionalWithScope:
-	deleteStatementConditional END_DELETE;
+	deleteStatementConditional deleteStatementEnd;
 
 deleteStatementCore:
-                   DELETE fileName RECORD?;
+	DELETE fileName RECORD?;
+
+deleteStatementEnd: END_DELETE;
 
 // p322: DISPLAY statement
 // DISPLAY statement transfers the contents of each operand to the output device. 
@@ -5182,8 +5186,7 @@ divideStatement:
 //                              (notOnSizeErrorCondition imperativeStatement)?
 //                              divideStatementEnd?;
 
-divideStatementEnd:
-                      END_DIVIDE;
+divideStatementEnd: END_DIVIDE;
 
 // p330: ENTRY statement
 // The ENTRY statement establishes an alternate entry point into a COBOL called subprogram.
@@ -5234,7 +5237,7 @@ entryStatement:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatementWithScope:
-	evaluateStatement END_EVALUATE;
+	evaluateStatement evaluateStatementEnd;
 
 evaluateStatement:
 	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement+)+ evaluateWhenOther?;
@@ -5265,6 +5268,8 @@ evaluateThrough:
 
 evaluateWhenOther:
 	WHEN OTHER imperativeStatement+;
+
+evaluateStatementEnd: END_EVALUATE;
 
 // p333: Determining values
 // - Any selection subject in which expression-1, expression-2, ... is specified as an arithmetic expression
@@ -5435,7 +5440,7 @@ gotoStatement:
 // or explicitly terminated.
 
 ifStatementWithScope:
-	ifStatement END_IF;
+	ifStatement ifStatementEnd;
 
 ifStatement:
 	IF conditionalExpression THEN? statementOrNextSentence elseStatement?;
@@ -5448,6 +5453,8 @@ nextSentenceStatement:
 
 elseStatement:
 	ELSE statementOrNextSentence;
+
+ifStatementEnd: END_IF;
 
 // p343: INITIALIZE statement
 // The INITIALIZE statement sets selected categories of data fields to predetermined
@@ -5978,13 +5985,13 @@ inspectStatementPhrase1:
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	invokeStatementCore END_INVOKE?;
+	invokeStatementCore invokeStatementEnd?;
 
 invokeStatementConditional:
 	invokeStatementCore onExceptionExceptions;
 
 invokeStatementConditionalWithScope:
-	invokeStatementConditional END_INVOKE;
+	invokeStatementConditional invokeStatementEnd;
 
 invokeStatementCore:
 	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing?;
@@ -5997,6 +6004,8 @@ invokeStatementUsingWhat:
 
 invokeStatementReturing:
 	RETURNING identifier;
+
+invokeStatementEnd: END_INVOKE;
 
 // p364: MERGE statement
 // The MERGE statement combines two or more identically sequenced files (that is,
@@ -6468,7 +6477,7 @@ performStatementFormat1:
 	PERFORM procedureName performThroughProcedure?;
 
 performStatementFormat1WithScope:
-	PERFORM statement* END_PERFORM;
+	PERFORM statement* performStatementEnd;
 
 performThroughProcedure:
 	(THROUGH |THRU) procedureName;
@@ -6544,7 +6553,7 @@ performStatementFormat2:
 	PERFORM procedureName performThroughProcedure? performNTimes;
 
 performStatementFormat2WithScope:
-	PERFORM performNTimes statement* END_PERFORM;
+	PERFORM performNTimes statement* performStatementEnd;
 
 performNTimes:
 	(identifier | numericLiteral) TIMES;
@@ -6571,7 +6580,7 @@ performStatementFormat3:
 	PERFORM procedureName performThroughProcedure? performFormat3Phrase1;
 
 performStatementFormat3WithScope:
-	PERFORM performFormat3Phrase1 statement* END_PERFORM;
+	PERFORM performFormat3Phrase1 statement* performStatementEnd;
 
 performFormat3Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
@@ -6605,7 +6614,7 @@ performStatementFormat4:
 // WARNING: according to p388, it should be "performFormat4Phrase2+" instead of "performFormat4Phrase2*"
 
 performStatementFormat4WithScope:
-	PERFORM performFormat4Phrase1 statement* END_PERFORM;
+	PERFORM performFormat4Phrase1 statement* performStatementEnd;
 	
 performFormat4Phrase1:
 	(WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression;
@@ -6698,8 +6707,9 @@ performFormat4Phrase3:
 //                          BY (identifier | literal)
 //                          UNTIL conditionalExpression;
 //                        
-//performStatementEnd:
-//                       END_PERFORM;
+performStatementEnd: END_PERFORM;
+
+
 
 // p393: READ statement
 // For sequential access, the READ statement makes the next logical record from a file
@@ -6805,8 +6815,7 @@ atEndCondition:
 notAtEndCondition:
                      NOT AT? END;
 
-readStatementEnd:
-                    END_READ;
+readStatementEnd: END_READ;
 
 // p401: RELEASE statement
 // The RELEASE statement transfers records from an input/output area to the initial
@@ -6925,16 +6934,18 @@ recordName:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-	returnStatementCore END_RETURN?;
+	returnStatementCore returnStatementEnd?;
 
 returnStatementConditional:
 	returnStatementCore atEndExceptions;
 
 returnStatementConditionalWithScope:
-	returnStatementConditional END_RETURN;
+	returnStatementConditional returnStatementEnd;
 
 returnStatementCore:
 	RETURN fileName RECORD? (INTO identifier)?;
+
+returnStatementEnd: END_RETURN;
 
 // p405: REWRITE statement
 // The REWRITE statement logically replaces an existing record in a direct-access file.
@@ -6991,8 +7002,7 @@ rewriteStatement:
 //                             (notInvalidKeyCondition imperativeStatement)?
 //                             rewriteStatementEnd?;
 
-rewriteStatementEnd:
-                       END_REWRITE;
+rewriteStatementEnd: END_REWRITE;
 
 // p408: SEARCH statement
 // The SEARCH statement searches a table for an element that satisfies the specified
@@ -7052,10 +7062,10 @@ searchStatement:
 	searchStatementFormat1 | searchStatementFormat2;
 
 searchStatementFormat1:
-	SEARCH identifier searchStatementVarying? searchStatementAtEnd? searchStatementFormat1When+ END_SEARCH?;
+	SEARCH identifier searchStatementVarying? searchStatementAtEnd? searchStatementFormat1When+ searchStatementEnd?;
 
 searchStatementFormat2:
-	SEARCH ALL identifier searchStatementAtEnd? searchStatementFormat2When searchStatementFormat2And* (imperativeStatement+ | nextSentenceStatement) END_SEARCH?;
+	SEARCH ALL identifier searchStatementAtEnd? searchStatementFormat2When searchStatementFormat2And* (imperativeStatement+ | nextSentenceStatement) searchStatementEnd?;
 
 searchStatementVarying:
 	VARYING (identifier | indexName);
@@ -7074,6 +7084,8 @@ searchStatementFormat2And:
 
 searchStatementDataEquality:
 	dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression);
+
+searchStatementEnd: END_SEARCH;
 
 
 
@@ -7700,8 +7712,7 @@ startStatement:
 //                             (notInvalidKeyCondition imperativeStatement)?
 //                             startStatementEnd?;
 
-startStatementEnd:
-                     END_START;
+startStatementEnd: END_START;
 
 // p432: STOP statement
 // The STOP statement halts execution of the object program either permanently or
@@ -7856,8 +7867,7 @@ stringStatement:
 //                              (notOnOverflowCondition imperativeStatement)?
 //                              stringStatementEnd?;
 
-stringStatementEnd:
-                      END_STRING;
+stringStatementEnd: END_STRING;
 
 
 
@@ -8124,8 +8134,7 @@ unstringStatement:
 //                                (notOnOverflowCondition imperativeStatement)?
 //                                unstringStatementEnd?;
 
-unstringStatementEnd:
-                        END_UNSTRING;
+unstringStatementEnd: END_UNSTRING;
 
 // p449: WRITE statement
 // The WRITE statement releases a logical record to an output or input/output file.
@@ -8350,8 +8359,9 @@ atEndOfPageCondition:
 notAtEndOfPageCondition:
                   NOT AT? (END_OF_PAGE | EOP);
 
-writeStatementEnd:
-                     END_WRITE;
+writeStatementEnd: END_WRITE;
+
+
 
 // p457: XML GENERATE statement
 // The XML GENERATE statement converts data to XML format.
@@ -8711,8 +8721,7 @@ whenPhrase:
 //                                   (notOnExceptionCondition imperativeStatement)?
 //                                   xmlStatementEnd?;
 
-xmlStatementEnd:
-                   END_XML;
+xmlStatementEnd: END_XML;
 
 // codepage
 // Must be an unsigned integer data item or unsigned integer literal
@@ -9269,7 +9278,9 @@ xmlParseStatement:
 execStatement:
                  (EXEC | EXECUTE) ExecTranslatorName 
                  ExecStatementText* 
-                 END_EXEC;
+                 execStatementEnd;
+
+execStatementEnd: END_EXEC;
 
 // ------------------------------
 // End of DB2 coprocessor
