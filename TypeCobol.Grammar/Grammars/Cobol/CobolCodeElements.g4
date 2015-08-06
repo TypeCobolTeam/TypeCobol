@@ -9965,6 +9965,13 @@ functionIdentifier:
 
 // ... detailed description of each intrinsic function p484 -> p524 ...
 
+intrinsicFunction:
+	whenCompiled
+	;
+
+whenCompiled:
+	FUNCTION WHEN_COMPILED;
+
  //Function names
  //               ACOS |
  //               ANNUITY |
@@ -10401,6 +10408,7 @@ identifier:
 	| identifierFormat1
 	| specialRegister
 	| functionIdentifier
+	| intrinsicFunction
 	| (LENGTH OF dataNameReference) //TODO: is this a functionIdentifier?
 	;
            
