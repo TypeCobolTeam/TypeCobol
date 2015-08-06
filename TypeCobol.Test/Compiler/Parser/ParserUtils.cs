@@ -111,17 +111,20 @@ namespace TypeCobol.Test.Compiler.Parser
                 String[] expectedResultLines = expectedResult.Split(new[] { '\r', '\n' });
                 String[] resultLines = result.Split(new[] { '\r', '\n' });
 
+                StringBuilder errors = new StringBuilder();
                 for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
                 {
                     if (expectedResultLines[c] != resultLines[c])
                     {
-                        throw new Exception("In test \"" + testName + "\", line "+line(c)+": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
+                        errors.AppendLine("In test \"" + testName + "\", line "+line(c)+": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
                     }
                 }
+                if (errors.Length > 0) errors.AppendLine("====================\n" + result + "====================");
                 if (expectedResultLines.Length != resultLines.Length)
                 {
-                    throw new Exception("In test \"" + testName + "\", lines to test=" + resultLines.Length + "; lines expected=" + line(expectedResultLines.Length));
+                    errors.AppendLine("In test \"" + testName + "\", lines to test=" + resultLines.Length + "; lines expected=" + line(expectedResultLines.Length));
                 }
+                if (errors.Length > 0) throw new Exception(errors.ToString());
         }
 
         /// <summary>
