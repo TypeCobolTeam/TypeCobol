@@ -221,7 +221,6 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
-            System.Console.WriteLine("ELEMENTS="+elements.Count+" ERRORS="+diagnostics.Count);
             foreach (var e in elements)
             {
                 if ((e as SentenceEnd) != null) continue;
