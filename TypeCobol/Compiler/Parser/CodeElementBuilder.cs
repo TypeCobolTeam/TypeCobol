@@ -870,16 +870,6 @@ namespace TypeCobol.Compiler.Parser
         
         // Statement conditions
 
-        public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)
-        {
-            CodeElement = new AtEndCondition();
-        }
-
-        public override void EnterNotAtEndCondition(CobolCodeElementsParser.NotAtEndConditionContext context)
-        {
-            CodeElement = new NotAtEndCondition();
-        }
-
         public override void EnterAtEndOfPageCondition(CobolCodeElementsParser.AtEndOfPageConditionContext context)
         {
             CodeElement = new AtEndOfPageCondition();

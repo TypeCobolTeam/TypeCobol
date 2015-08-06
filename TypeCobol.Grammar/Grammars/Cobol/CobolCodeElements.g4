@@ -104,11 +104,6 @@ codeElement:
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
-       //readStatement |
-           atEndCondition | // ... imperative statements ...
-           notAtEndCondition | // ... imperative statements ...
-           // ... invalid key phrases ...
-       readStatementEnd |
        //rewriteStatement |
            // ... invalid key phrases ...
        rewriteStatementEnd |
@@ -273,7 +268,7 @@ decisionStatement:
 
 ioStatementConditional:
 	  deleteStatementConditional
-//	| readStatementConditional
+	| readStatementConditional
 //	| rewriteStatementConditional
 //	| startStatementConditional
 //	| writeStatementConditional
@@ -310,7 +305,7 @@ delimitedScopeStatement:
 	| invokeStatementConditionalWithScope
 	| multiplyStatementConditionalWithScope
 	| performStatementWithScope
-//	| readStatementConditionalWithScope
+	| readStatementConditionalWithScope
 //	| returnStatementConditionalWithScope
 //	| rewriteStatementConditionalWithScope
 //	| searchStatementConditionalWithScope
@@ -329,10 +324,10 @@ delimitedScopeStatement:
 
 // AT END /////
 endException:
-	AT? END imperativeStatement;
+	AT? END imperativeStatement+;
 
 notEndException:
-	NOT AT? END imperativeStatement;
+	NOT AT? END imperativeStatement+;
 
 atEndExceptions:
 	  endException
@@ -343,10 +338,10 @@ atEndExceptions:
 
 // INVALID KEY /////
 invalidException:
-	INVALID KEY? imperativeStatement;
+	INVALID KEY? imperativeStatement+;
 
 notInvalidException:
-	NOT INVALID KEY? imperativeStatement;
+	NOT INVALID KEY? imperativeStatement+;
 
 invalidKeyExceptions:
 	  invalidException
@@ -357,10 +352,10 @@ invalidKeyExceptions:
 
 // ON EXCEPTION /////
 exceptionException:
-	ON? EXCEPTION imperativeStatement;
+	ON? EXCEPTION imperativeStatement+;
 
 notExceptionException:
-	NOT ON? EXCEPTION imperativeStatement;
+	NOT ON? EXCEPTION imperativeStatement+;
 
 onExceptionExceptions:
 	  exceptionException
@@ -371,10 +366,10 @@ onExceptionExceptions:
 
 // ON OVERFLOW /////
 overflowException:
-	ON? OVERFLOW imperativeStatement;
+	ON? OVERFLOW imperativeStatement+;
 
 notOverflowException:
-	NOT ON? OVERFLOW imperativeStatement;
+	NOT ON? OVERFLOW imperativeStatement+;
 
 overflowExceptions:
 	  overflowException
@@ -385,10 +380,10 @@ overflowExceptions:
 
 // ON SIZE ERROR /////
 sizeErrorException:
-	ON? SIZE ERROR imperativeStatement;
+	ON? SIZE ERROR imperativeStatement+;
 
 notSizeErrorException:
-	NOT ON? SIZE ERROR imperativeStatement;
+	NOT ON? SIZE ERROR imperativeStatement+;
 
 sizeErrorExceptions:
 	  sizeErrorException
@@ -6799,22 +6794,23 @@ performStatementEnd: END_PERFORM;
 // ... more details p399->400 : READ statement notes ...
 
 readStatement:
-                 READ fileName NEXT? RECORD? (INTO identifier)?
-                 (KEY IS? dataName)?;
+	readStatementCore readStatementEnd?;
 
-//readStatementConditional:
-//                            readStatement
-//                            (atEndCondition imperativeStatement)?
-//                            (notAtEndCondition imperativeStatement)?                 
-//                            (invalidKeyCondition imperativeStatement)?
-//                            (notInvalidKeyCondition imperativeStatement)?
-//                            readStatementEnd?;
+readStatementConditional:
+	  (readStatementFormat1 atEndExceptions)
+	| (readStatementFormat2 invalidKeyExceptions);
 
-atEndCondition:
-                  AT? END;
+readStatementConditionalWithScope:
+	readStatementConditional readStatementEnd;
 
-notAtEndCondition:
-                     NOT AT? END;
+readStatementCore:
+	readStatementFormat1 | readStatementFormat2;
+
+readStatementFormat1:
+	READ fileName NEXT? RECORD? (INTO identifier)?;
+
+readStatementFormat2:
+	READ fileName RECORD? (INTO identifier)? (KEY IS? dataName)?;
 
 readStatementEnd: END_READ;
 

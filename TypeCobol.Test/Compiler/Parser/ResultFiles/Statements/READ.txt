@@ -1,0 +1,3 @@
+﻿--- Code Elements ---
+[[ReadStatementEnd]] [1,7:PERFORM]<PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
+
