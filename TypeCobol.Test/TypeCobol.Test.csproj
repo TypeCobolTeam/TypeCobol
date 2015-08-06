@@ -106,6 +106,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATECodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\EXEC.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\IFCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\DISPLAYCodeElements.txt" />
@@ -193,6 +194,7 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATECodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\PERFORMCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IFCodeElements.cbl" />
