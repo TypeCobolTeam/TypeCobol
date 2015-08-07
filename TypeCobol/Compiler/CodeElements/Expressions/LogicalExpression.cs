@@ -85,6 +85,23 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
+    public class ClassCondition : LogicalExpression
+    {
+        public Expression expression { get; set; }
+        public Symbol type { get; set; }
+
+        public ClassCondition(Expression expression, Symbol type)
+        {
+            this.expression = expression;
+            this.type = type;
+        }
+
+        public override string ToString()
+        {
+            return new StringBuilder(type.ToString()).Append(" ").Append(type).Append(" ?").ToString();
+        }
+    }
+
     public class Condition : LogicalExpression //TODO is this an Identifier? 'seems so ...
     {
         public Token token { get; private set; }

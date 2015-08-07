@@ -99,8 +99,17 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ClassConditionContext context)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT CLASS CONDITIONS");
-            return new Empty();
+            Symbol type = null;
+            if (context.charsetClassName() != null) type = new CharsetClassName(ParseTreeUtils.GetFirstToken(context.charsetClassName()));
+            if (context.NUMERIC() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.NUMERIC()));
+            if (context.ALPHABETIC() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC()));
+            if (context.ALPHABETIC_LOWER() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC_LOWER()));
+            if (context.ALPHABETIC_UPPER() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC_UPPER()));
+            if (context.DBCS() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.DBCS()));
+            if (context.KANJI() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.KANJI()));
+            LogicalExpression condition = new ClassCondition(new Identifier(context.identifier()), type);
+            if (context.NOT() != null) condition = new NOT(condition);
+            return condition;
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context)
