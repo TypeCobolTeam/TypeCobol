@@ -170,8 +170,8 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context.identifier() != null) return new Identifier(context.identifier());
             if (context.literal() != null) return new Literal(context.literal());
-            System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER NON-LITERAL OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.functionIdentifier() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
-            throw new System.NotImplementedException("operands not implemented");
+            System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER NON-LITERAL OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.intrinsicFunction() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
+            return new Empty();
         }
 
         private char createOperator(CobolCodeElementsParser.AbbreviatedRelationContext context)

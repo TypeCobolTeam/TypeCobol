@@ -9716,7 +9716,7 @@ simpleRelation:
 // function-identifier, arithmetic expression, or index-name.
 
 operand:
-	identifier | literal | functionIdentifier | arithmeticExpression | indexName;
+	identifier | literal | intrinsicFunction | arithmeticExpression | indexName;
 
 // p267: Data pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9986,10 +9986,6 @@ conditionBase:
 // identifier in that same position would be evaluated.
 
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p
-
-functionIdentifier:
-                FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
-
 // p477: function-name-1 must be one of the intrinsic function names.
 // argument-1
 
@@ -10000,66 +9996,99 @@ functionIdentifier:
 // ... detailed description of each intrinsic function p484 -> p524 ...
 
 intrinsicFunction:
-	whenCompiled
+//	intrinsicFunctionFormat1 | intrinsicFunctionFormat2;
+	FUNCTION (FunctionName | intrinsicFunctionWhichIsIncidentallyAlreadyReserved) fArgN? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+intrinsicFunctionWhichIsIncidentallyAlreadyReserved:
+	WHEN_COMPILED | RANDOM;
+
+intrinsicFunctionFormat1:
+	tU | tN | tI | tX;
+
+intrinsicFunctionFormat2:
+	(tU | tX) LeftParenthesisSeparator referenceModifier RightParenthesisSeparator;
+
+tU:	  ( FUNCTION LOWER_CASE fArg1 ) // only if argument is of type U
+	| ( FUNCTION MAX fArgN ) // only if arguments are of type U
+	| ( FUNCTION MIN fArgN ) // only if arguments are of type U
+	| ( FUNCTION NATIONAL_OF fArg12 )
+	| ( FUNCTION REVERSE fArg1 ) // only if argument is of type U
+	| ( FUNCTION UPPER_CASE fArg1 ) // only if argument is of type U
 	;
 
-whenCompiled:
-	FUNCTION WHEN_COMPILED;
+tN:	  ( FUNCTION ACOS fArg1 )
+	| ( FUNCTION ANNUITY fArg1 )
+	| ( FUNCTION ASIN fArg1 )
+	| ( FUNCTION ATAN fArg1 )
+	| ( FUNCTION COS fArg1 )
+	| ( FUNCTION LOG fArg1 )
+	| ( FUNCTION LOG10 fArg1 )
+	| ( FUNCTION MAX fArgN ) // only if arguments are of type N
+	| ( FUNCTION MIN fArgN ) // only if arguments are of type N
+	| ( FUNCTION MEAN fArgN )
+	| ( FUNCTION MEDIAN fArgN )
+	| ( FUNCTION MIDRANGE fArgN )
+//	| ( FUNCTION NUMVAL LeftParenthesisOperator ... RightParenthesisOperator ) // TODO
+//	| ( FUNCTION NUMVAL_C LeftParenthesisOperator ... RightParenthesisOperator ) // TODO
+	| ( FUNCTION PRESENT_VALUE fArgN ) //TODO there's a twist
+	| ( FUNCTION RANDOM fArg1? )
+	| ( FUNCTION RANGE fArgN ) // only if arguments are of type N
+	| ( FUNCTION REM fArg2 )
+	| ( FUNCTION SIN fArg1 )
+	| ( FUNCTION SQRT fArg1 )
+	| ( FUNCTION STANDARD_DEVIATION fArgN )
+	| ( FUNCTION SUM fArgN ) // only if arguments are of type N
+	| ( FUNCTION TAN fArg1 )
+	| ( FUNCTION VARIANCE fArgN )
+	;
 
- //Function names
- //               ACOS |
- //               ANNUITY |
- //               ASIN |
- //               ATAN |
- //               CHAR |
- //               COS |
- //               CURRENT_DATE |
- //               DATE_OF_INTEGER |
- //               DATE_TO_YYYYMMDD |
- //               DAY_OF_INTEGER |
- //               DAY_TO_YYYYDDD |
- //               DISPLAY_OF |
- //               FACTORIAL |
- //               INTEGER |
- //               INTEGER_OF_DATE |
- //               INTEGER_OF_DAY |
- //               INTEGER_PART |
- //               LENGTH |
- //               LOG |
- //               LOG10 |
- //               LOWER_CASE |   
- //               MAX |
- //               MEAN |
- //               MEDIAN |
- //               MIDRANGE |
- //               MIN |
- //               MOD |
- //               NATIONAL_OF |
- //               NUMVAL |
- //               NUMVAL_C |
- //               ORD |
- //               ORD_MAX |
- //               ORD_MIN |
- //               PRESENT_VALUE |
- //               RANDOM |
- //               RANGE |
- //               REM |
- //               REVERSE |
- //               SIN |
- //               SQRT |
- //               STANDARD_DEVIATION |
- //               SUM |
- //               TAN |
- //               ULENGTH |
- //               UPOS |
- //               UPPER_CASE |
- //               USUBSTR |
- //               USUPPLEMENTARY |
- //               UVALID |
- //               UWIDTH |
- //               VARIANCE |
- //               WHEN_COMPILED |
- //               YEAR_TO_YYYY;
+tI:	  ( FUNCTION DATE_OF_INTEGER fArg1 )
+	| ( FUNCTION DATE_TO_YYYYMMDD fArg12 )
+	| ( FUNCTION DAY_OF_INTEGER fArg1 )
+	| ( FUNCTION DAY_TO_YYYYMMDD fArg12 )
+	| ( FUNCTION FACTORIAL fArg1 )
+	| ( FUNCTION INTEGER fArg1 )
+	| ( FUNCTION INTEGER_OF_DATE fArg1 )
+	| ( FUNCTION INTEGER_OF_DAY fArg1 )
+	| ( FUNCTION INTEGER_PART fArg1 )
+	| ( FUNCTION MAX fArgN ) // only if arguments are of type I
+	| ( FUNCTION MIN fArgN ) // only if arguments are of type I
+	| ( FUNCTION LENGTH fArg1 )
+	| ( FUNCTION MOD fArg2 )
+	| ( FUNCTION ORD fArg1 )
+	| ( FUNCTION ORD_MAX fArgN )
+	| ( FUNCTION ORD_MIN fArgN )
+	| ( FUNCTION RANGE fArgN ) // only if arguments are of type I
+	| ( FUNCTION SUM fArgN ) // only if arguments are of type I
+	| ( FUNCTION ULENGTH fArg1 )
+	| ( FUNCTION UPOS fArg2 )
+	| ( FUNCTION USUPPLEMENTARY fArg1 )
+	| ( FUNCTION UVALID fArg1 )
+	| ( FUNCTION UWIDTH fArg2 )
+	| ( FUNCTION YEAR_TO_YYYY fArg12 )
+	;
+
+tX:	  FUNCTION (
+	  ( CHAR fArg1 )
+	| ( CURRENT_DATE )
+	| ( DISPLAY_OF fArg12 )
+	| ( LOWER_CASE fArg1 )
+	| ( USUBSTR fArg3 )
+	| ( WHEN_COMPILED )
+// only if arguments are of type A or X
+	| ( MAX fArgN )
+	| ( MIN fArgN )
+	| ( REVERSE fArg1 )
+	| ( UPPER_CASE fArg1 )
+	);
+
+fArg1: LeftParenthesisOperator argument RightParenthesisOperator;
+fArg12: LeftParenthesisOperator argument argument? RightParenthesisOperator;
+fArg2: LeftParenthesisOperator argument argument RightParenthesisOperator;
+fArg3: LeftParenthesisOperator argument argument argument RightParenthesisOperator;
+fArgN: LeftParenthesisOperator argument+ RightParenthesisOperator;
+
+
                         
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -10073,7 +10102,7 @@ whenCompiled:
 
 argument:
             identifier | literal | arithmeticExpression |
-            functionIdentifier | specialRegister;
+            intrinsicFunction | specialRegister;
 
 // p67: References to DATA DIVISION names
 // This section discusses the following types of references.
@@ -10441,9 +10470,8 @@ identifier:
 	| identifierFormat2
 	| identifierFormat1
 	| specialRegister
-	| functionIdentifier
 	| intrinsicFunction
-	| (LENGTH OF dataNameReference) //TODO: is this a functionIdentifier?
+	| (LENGTH OF dataNameReference) //TODO: is this a intrinsicFunction?
 	;
            
 // p68: Format 1   
