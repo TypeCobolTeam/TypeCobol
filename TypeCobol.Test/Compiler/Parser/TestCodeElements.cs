@@ -43,31 +43,31 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void Check_DISPLAYCodeElements()
         {
             CompilationUnit compilationUnit = ParserUtils.CreateCompilationUnitForVirtualFile();
-            
+
             Tuple<SyntaxDocument, DisplayStatement> tuple;
 
             //Test using the generic method which parse a single CodeElement
             tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, "display 'toto'");
-            Assert.IsTrue(tuple.Item2.VarsToDisplay.Count == 1);
+            Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
             Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing.Value == false);
 
             tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, "display toto no advancing no advancing", false);
-            Assert.IsTrue(tuple.Item2.VarsToDisplay.Count == 1);
+            Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
             Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing.Value);
 
 
             ParseDisplayStatement(compilationUnit, "display toto", 1);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata", 3);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon mnemo", 3, SymbolType.MnemonicForEnvironmentName);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon zeiruzrzioeruzoieruziosdfsdfsdfe ", 3, SymbolType.MnemonicForEnvironmentName);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon SYSIN", 3, SymbolType.EnvironmentName);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon C06", 3, SymbolType.EnvironmentName);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon SYSIN with no advancing", 3, SymbolType.EnvironmentName, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon C06  no advancing", 3, SymbolType.EnvironmentName, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon mnemo no advancing", 3, SymbolType.MnemonicForEnvironmentName, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon toto with no advancing", 3, SymbolType.MnemonicForEnvironmentName, true);
+            ParseDisplayStatement(compilationUnit, "display toto  'titi' tata", 3);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon mnemo", 3, SymbolType.Unknown);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon zeiruzrzioeruzoieruziosdfsdfsdfe ", 3, SymbolType.Unknown);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon SYSIN", 3, SymbolType.Unknown);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon C06", 3, SymbolType.Unknown);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon SYSIN with no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon C06  no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon mnemo no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon toto with no advancing", 3, SymbolType.Unknown, true);
             ParseDisplayStatement(compilationUnit, "display toto 'titi' tata no advancing", 3, null, true);
             ParseDisplayStatement(compilationUnit, "display toto 'titi' tata with no advancing", 3, null, true);
 
@@ -112,7 +112,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public static Tuple<SyntaxDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
         {
             Tuple<SyntaxDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, textToParse, correctSyntax);
-            Assert.IsTrue(tuple.Item2.VarsToDisplay.Count == nbrOfVarToDisplay);
+            Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == nbrOfVarToDisplay);
             if (uponMnemonicOrEnvName == null)
             {
                 Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
