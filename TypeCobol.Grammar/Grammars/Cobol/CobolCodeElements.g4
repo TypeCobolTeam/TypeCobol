@@ -96,6 +96,7 @@ codeElement:
            objectEnd |
        classEnd |
        statement |
+	   orphanScopeTerminator |
        entryStatement |
        execStatement |
        exitMethodStatement |  //TODO
@@ -317,6 +318,38 @@ delimitedScopeStatement:
 //	| xmlStatementConditionalWithScope
 	;
 
+
+
+	   /////////////////
+	  // STATEMENT   //
+	 // TERMINATORS //
+	/////////////////
+
+orphanScopeTerminator:
+		// p280: explicit scope terminators
+	  addStatementEnd
+	| callStatementEnd
+	| computeStatementEnd
+	| deleteStatementEnd
+	| divideStatementEnd
+	| evaluateStatementEnd
+	| ifStatementEnd
+	| invokeStatementEnd
+	| multiplyStatementEnd
+	| performStatementEnd
+	| readStatementEnd
+	| returnStatementEnd
+	| rewriteStatementEnd
+	| searchStatementEnd
+	| startStatementEnd
+	| stringStatementEnd
+	| subtractStatementEnd
+	| unstringStatementEnd
+	| writeStatementEnd
+	| xmlStatementEnd
+		// other statement terminators
+	| execStatementEnd
+	;
 
 	  ////////////////
 	 // EXCEPTIONS //
@@ -4882,6 +4915,7 @@ callStatementExceptions:
 	overflowException | onExceptionExceptions;
 
 callStatementEnd: END_CALL;
+
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
