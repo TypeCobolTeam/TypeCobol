@@ -13,7 +13,25 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class MnemonicOrEnvironmentName : Symbol
     {
-        public MnemonicOrEnvironmentName(Token userDefinedWord, SymbolType symbolType) :
+
+        /// <summary>
+        /// As a MnemonicForEnvironmentName can use the same name as an EnvironmentName, 
+        /// this constructor allow to create a MnemonicOrEnvironmentName whose type will be know only
+        /// after the parsing phase.
+        /// 
+        /// The SymbolType is unknown and will be changed later.
+        /// </summary>
+        /// <param name="userDefinedWord"></param>
+        public MnemonicOrEnvironmentName(Token userDefinedWord) :
+            base(userDefinedWord, SymbolType.Unknown)
+        { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userDefinedWord"></param>
+        /// <param name="symbolType"></param>
+        protected MnemonicOrEnvironmentName(Token userDefinedWord, SymbolType symbolType) :
             base(userDefinedWord, symbolType)
         { }
     }

@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
             //CodeElementBuilder will set all properties of this CodElement
             
             
-            //VarsToDisplay = new List<Expression>();
+            //IdentifierOrLiteral = new List<Expression>();
             //IsWithNoAdvancing = SyntaxBoolean.False;
         }
 
@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Can be any literal or any figurative constant as specified in “Figurative constants” on page 13. 
         /// When a figurative constant is specified, only a single occurrence of that figurative constant is displayed
         /// </summary>
-        public IList<Expression> VarsToDisplay { get; set; }
+        public IList<Expression> IdentifierOrLiteral { get; set; }
 
 
         /// <summary>
@@ -83,17 +83,17 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            if (VarsToDisplay == null && IsWithNoAdvancing == null && UponMnemonicOrEnvironmentName == null )
+            if (IdentifierOrLiteral == null && IsWithNoAdvancing == null && UponMnemonicOrEnvironmentName == null )
             {
                 return base.ToString();
             }
             else
             {
                 var sb = new StringBuilder(base.ToString());
-                if (VarsToDisplay != null)
+                if (IdentifierOrLiteral != null)
                 {
                     sb.Append("- variables =");
-                    foreach (var varToDisplay in VarsToDisplay)
+                    foreach (var varToDisplay in IdentifierOrLiteral)
                     {
                         sb.Append(' ');
                         sb.Append(varToDisplay);
