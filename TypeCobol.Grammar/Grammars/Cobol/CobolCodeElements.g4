@@ -96,7 +96,7 @@ codeElement:
            objectEnd |
        classEnd |
        statement |
-	   orphanScopeTerminator |
+//	   orphanScopeTerminator |
        entryStatement |
        execStatement |
        exitMethodStatement |  //TODO
