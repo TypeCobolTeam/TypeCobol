@@ -87,7 +87,6 @@ namespace TypeCobol.Compiler.Parser
 
                 // TO DO -- Iterate over the code elements which need to be refreshed
                 CodeElements = new List<CodeElement>();
-                CodeElement codeElement = null;
                 do
                 {
                     // TO DO -- Seek just before the next code element starting token
@@ -97,7 +96,7 @@ namespace TypeCobol.Compiler.Parser
                     //tokenStream.SetTokenSource(tokenSource);
 
                     // Reset parsing error diagnostics
-                    cobolErrorStrategy.Reset(cobolParser);
+                    //cobolErrorStrategy.Reset(cobolParser);
                     errorListener.Diagnostics.Clear();
 
                     // Reset parser traces (consumed tokens)
@@ -108,7 +107,7 @@ namespace TypeCobol.Compiler.Parser
 
                     // Visit the parse tree to build a first class object representing the code elements
                     walker.Walk(codeElementBuilder, codeElementParseTree);
-                    codeElement = codeElementBuilder.CodeElement;
+                    CodeElement codeElement = codeElementBuilder.CodeElement;
                     if (codeElement != null)
                     {
                         // Attach consumed tokens and main document line numbers information to the code element
@@ -121,8 +120,8 @@ namespace TypeCobol.Compiler.Parser
                         if (codeElement.Diagnostics.Count > 0)
                         {
                             CodeElementsInError.Add(codeElement);
-                            Diagnostics.AddRange(codeElement.Diagnostics);//TODO remove
-                            Console.WriteLine("Added CodeElement with " + codeElement.Diagnostics.Count + " error(s) ; \"old style\" errors=" + errorListener.Diagnostics.Count);
+                            Diagnostics.AddRange(codeElement.Diagnostics); //TODO remove
+                            //Console.WriteLine("Added CodeElement with " + codeElement.Diagnostics.Count + " error(s) ; \"old style\" errors=" + errorListener.Diagnostics.Count);
                         }
                     }
 
@@ -132,7 +131,7 @@ namespace TypeCobol.Compiler.Parser
                         Diagnostics.Add(parserDiag);
                     }
                 }
-                while (codeElement != null && tokenStream.La(1) >= 0);
+                while (tokenStream.La(1) >= 0);
 
                 // Trigger ParseNodeChanged event
                 CodeElementChangedEvent parseEvent = new CodeElementChangedEvent();
