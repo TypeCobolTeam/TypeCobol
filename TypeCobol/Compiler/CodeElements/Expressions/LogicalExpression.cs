@@ -129,4 +129,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         public override string ToString() { return "?LOGIC?"; }
     }
+
+    public class Null : LogicalExpression
+    {
+        public override string ToString() { return "NIL"; }
+    }
+
+    public class Self : LogicalExpression
+    {
+        public override string ToString() { return "SELF"; }
+    }
 }

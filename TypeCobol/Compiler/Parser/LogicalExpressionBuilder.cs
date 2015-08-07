@@ -115,7 +115,11 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context)
         {
             if (context.conditionNameReference() == null) return new Empty();
-            var qualified = context.conditionNameReference().qualifiedConditionName();
+            return createCondition(context.conditionNameReference().qualifiedConditionName());
+        }
+
+        private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext qualified)
+        {
             if (qualified == null) return new Empty();
             // we can take first, as conditionName is a UserDefinedWord
             var condition = new Condition(ParseTreeUtils.GetFirstToken(qualified.conditionName()));
@@ -376,8 +380,7 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.SwitchStatusConditionContext context)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT SWITCH STATUS CONDITIONS");
-            return new Empty();
+            return createCondition(context.qualifiedConditionName());
         }
     }
 }
