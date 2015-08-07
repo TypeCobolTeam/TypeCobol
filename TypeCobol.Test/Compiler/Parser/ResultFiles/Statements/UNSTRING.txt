@@ -1,0 +1,5 @@
+﻿--- Code Elements ---
+[[UnstringStatement]] [1,8:UNSTRING]<UNSTRING> --> [66,75:WS-NUM-POL]<UserDefinedWord>
+
+[[SentenceEnd]] [76,76+:.]<PeriodSeparator> --> [76,76+:.]<PeriodSeparator>
+

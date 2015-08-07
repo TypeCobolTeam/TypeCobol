@@ -1,0 +1,9 @@
+﻿--- Code Elements ---
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [22,22:x]<UserDefinedWord>
+
+[[SentenceEnd]] [23,23+:.]<PeriodSeparator> --> [23,23+:.]<PeriodSeparator>
+
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [32,32:x]<UserDefinedWord>
+
+[[SentenceEnd]] [33,33+:.]<PeriodSeparator> --> [33,33+:.]<PeriodSeparator>
+

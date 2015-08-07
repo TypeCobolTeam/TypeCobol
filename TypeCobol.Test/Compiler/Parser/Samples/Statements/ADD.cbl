@@ -38,6 +38,7 @@ ADD 42 TO mydata IN data1 OF data2 IN myfile.
 ADD a TO m GIVING x.
 ADD titi TO tata GIVING toto.
 ADD a b ab TO m GIVING x toto.
+ADD a m GIVING x.
 * LITERALS
 ADD 1 TO m GIVING x.
 ADD 1 TO m GIVING x y.
