@@ -9826,7 +9826,7 @@ signCondition:
 // value is considered to be alphanumeric.) The result of the test is true if the UPSI
 // switch is set to the value (0 or 1) corresponding to condition-name.
                  
-switchStatusCondition: conditionName;
+switchStatusCondition: qualifiedConditionName;
                  
 // p270: Complex conditions 
 // A complex condition is formed by combining simple conditions, combined
