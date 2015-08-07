@@ -13,7 +13,7 @@ namespace TypeCobol.Test
         [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
         public void CheckGrammarCorrectness()
         {
-            int STOP_AFTER_AS_MANY_ERRORS = 1;
+            int STOP_AFTER_AS_MANY_ERRORS = 1000;
             string regex = "*.PGM";
             string samples = @"Samples";
             string path = PlatformUtils.GetPathForProjectFile(samples);
@@ -21,8 +21,9 @@ namespace TypeCobol.Test
             string[] ignored = { };
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
-            int tested = 0, errors = 0, ignores = 0;
+            int tested = 0, nbFilesInError = 0, ignores = 0;
             TimeSpan sum = new TimeSpan(0);
+            int totalNumberOfErrors = 0;
             foreach (var file in files)
             {
                 string filename = System.IO.Path.GetFileName(file);
@@ -45,16 +46,17 @@ namespace TypeCobol.Test
                 if(hasErrors(unit.SyntaxDocument)) {
                     Console.WriteLine(filename);
                     string result = ParserUtils.DiagnosticsToString(unit.SyntaxDocument.Diagnostics);
+                    totalNumberOfErrors += unit.SyntaxDocument.Diagnostics.Count;
                     Console.WriteLine(result);
                     System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
-                    errors++;
-                    if (errors >= STOP_AFTER_AS_MANY_ERRORS) break;
+                    nbFilesInError++;
+                    if (nbFilesInError >= STOP_AFTER_AS_MANY_ERRORS) break;
                 }
             }
             string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);
-            string message = "Files tested=" + tested + "/" + files.Length + ", errors=" + errors + ", ignored=" + ignores + "\ntotal time: " + total;
+            string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\nTotal number of errors: "+ totalNumberOfErrors+  "\ntotal time: " + total;
             System.IO.File.AppendAllText("CheckGrammarResults.txt", message);
-            if (errors > 0) Assert.Fail('\n'+message);
+            if (nbFilesInError > 0) Assert.Fail('\n'+message);
         }
 
         private bool hasErrors(TypeCobol.Compiler.Parser.SyntaxDocument document)
