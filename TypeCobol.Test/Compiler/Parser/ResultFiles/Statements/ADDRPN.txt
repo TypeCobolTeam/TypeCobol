@@ -11,6 +11,7 @@ mydata = 42 mydata>data1<data2>myfile +
 x = a m +
 toto = titi tata +
 x = a b + ab + m +, toto = a b + ab + m +
+x = a m +
 x = 1 m +
 x = 1 m +, y = 1 m +
 x = a 1 + 2 +

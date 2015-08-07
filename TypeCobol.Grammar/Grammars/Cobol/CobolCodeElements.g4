@@ -4672,7 +4672,7 @@ addStatementFormat1:
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
 addStatementFormat2:
-		ADD identifierOrNumericLiteral+ TO identifierOrNumericLiteralTmp GIVING identifierRounded+;
+		ADD identifierOrNumericLiteral+ TO? identifierOrNumericLiteralTmp GIVING identifierRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
