@@ -22,6 +22,7 @@ namespace TypeCobol.Test
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
             int tested = 0, errors = 0, ignores = 0;
+            TimeSpan sum = new TimeSpan(0);
             foreach (var file in files)
             {
                 string filename = System.IO.Path.GetFileName(file);
@@ -36,19 +37,22 @@ namespace TypeCobol.Test
                 var unit = ParserUtils.ParseCobolFile(filename, null, samples);
                 watch.Stop();
                 TimeSpan elapsed = watch.Elapsed;
+                sum += elapsed;
                 string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
                 System.IO.File.AppendAllText("CheckGrammarResults.txt", (" parsed in " + formatted + "\n"));
 
                 tested++;
                 if(hasErrors(unit.SyntaxDocument)) {
                     Console.WriteLine(filename);
-                    string result = ParserUtils.DumpCodeElements(unit);
+                    string result = ParserUtils.DiagnosticsToString(unit.SyntaxDocument.Diagnostics);
                     Console.WriteLine(result);
+                    System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
                     errors++;
                     if (errors >= STOP_AFTER_AS_MANY_ERRORS) break;
                 }
             }
-            string message = "Files tested=" + tested + "/" + files.Length + ", errors=" + errors + ", ignored=" + ignores;
+            string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);
+            string message = "Files tested=" + tested + "/" + files.Length + ", errors=" + errors + ", ignored=" + ignores + "\ntotal time: " + total;
             System.IO.File.AppendAllText("CheckGrammarResults.txt", message);
             if (errors > 0) Assert.Fail('\n'+message);
         }
