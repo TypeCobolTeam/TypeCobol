@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CobolCodeElementsParser.ClassConditionContext context)
         {
             System.Console.WriteLine("TODO: IMPLEMENT CLASS CONDITIONS");
-            throw new System.NotImplementedException("ClassCondition not implemented");
+            return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context)
@@ -274,31 +274,31 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CobolCodeElementsParser.DataPointerRelationConditionContext context)
         {
             System.Console.WriteLine("TODO: IMPLEMENT DATA POINTER RELATION CONDITIONS");
-            throw new System.NotImplementedException("RelationCondition not implemented");
+            return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ProgramPointerRelationConditionContext context)
         {
             System.Console.WriteLine("TODO: IMPLEMENT PROGRAM POINTER RELATION CONDITIONS");
-            throw new System.NotImplementedException("RelationCondition not implemented");
+            return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ObjectReferenceRelationConditionContext context)
         {
             System.Console.WriteLine("TODO: IMPLEMENT OBJECT REFERENCE RELATION CONDITIONS");
-            throw new System.NotImplementedException("RelationCondition not implemented");
+            return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.SignConditionContext context)
         {
             System.Console.WriteLine("TODO: IMPLEMENT SIGN CONDITIONS");
-            throw new System.NotImplementedException("SignCondition not implemented");
+            return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.SwitchStatusConditionContext context)
         {
             System.Console.WriteLine("TODO: IMPLEMENT SWITCH STATUS CONDITIONS");
-            throw new System.NotImplementedException("SwitchStatusCondition not implemented");
+            return new Empty();
         }
     }
 }
