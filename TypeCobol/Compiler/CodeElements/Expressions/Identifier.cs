@@ -6,6 +6,18 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
+    class Pointer : Expression
+    {
+        public Identifier identifier { get; private set; }
+        public Pointer(Identifier identifier)
+        {
+            this.identifier = identifier;
+        }
+        public override string ToString()
+        {
+            return ("->( " + identifier + ")");
+        }
+    }
     class Identifier : Expression
     {
         public Identifier(CobolCodeElementsParser.IdentifierRoundedContext context)

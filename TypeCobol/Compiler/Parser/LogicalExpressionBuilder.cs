@@ -282,19 +282,89 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.DataPointerRelationConditionContext context)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT DATA POINTER RELATION CONDITIONS");
+            if (context.dataPointer() != null && context.dataPointer().Count > 0)
+            {
+                var first = context.dataPointer().ElementAt(0);
+                Expression left = createOperand(context.dataPointer().ElementAt(0));
+                if (first.ADDRESS() != null) left = new Pointer((Identifier)left);
+
+                char op = createOperator(context.relationConditionEquality());
+
+                Expression right = null;
+                if (context.dataPointer().Count > 1)
+                {
+                    var second = context.dataPointer().ElementAt(1);
+                    right = createOperand(second);
+                    if (second.ADDRESS() != null) right = new Pointer((Identifier)right);
+                }
+                return LogicOperation.Create(left, op, right);
+            }
+            return new Empty();
+        }
+
+        private char createOperator(CobolCodeElementsParser.RelationConditionEqualityContext context)
+        {
+            if (context == null) return '?';
+            if (context.NOT() != null) return '!';
+            if (context.EqualOperator() != null || context.EQUAL() != null) return '=';
+            return '?';
+        }
+
+        private Expression createOperand(CobolCodeElementsParser.DataPointerContext context)
+        {
+            if (context.NULL() != null || context.NULLS() != null) return new Null();
+            if (context.identifier() != null) return new Identifier(context.identifier());
             return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ProgramPointerRelationConditionContext context)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT PROGRAM POINTER RELATION CONDITIONS");
+            if (context.procedureOrFunctionPointer() != null && context.procedureOrFunctionPointer().Count > 0)
+            {
+                Expression left = createOperand(context.procedureOrFunctionPointer().ElementAt(0));
+
+                char op = createOperator(context.relationConditionEquality());
+
+                Expression right = null;
+                if (context.procedureOrFunctionPointer().Count > 1)
+                {
+                    right = createOperand(context.procedureOrFunctionPointer().ElementAt(1));
+                }
+                return LogicOperation.Create(left, op, right);
+            }
+            return new Empty();
+        }
+
+        private Expression createOperand(CobolCodeElementsParser.ProcedureOrFunctionPointerContext context)
+        {
+            if (context.identifier() != null) return new Identifier(context.identifier());
+            if (context.NULL() != null || context.NULLS() != null) return new Null();
             return new Empty();
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ObjectReferenceRelationConditionContext context)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT OBJECT REFERENCE RELATION CONDITIONS");
+            if (context.objectReference() != null && context.objectReference().Count > 0)
+            {
+                Expression left = createOperand(context.objectReference().ElementAt(0));
+
+                char op = createOperator(context.relationConditionEquality());
+
+                Expression right = null;
+                if (context.objectReference().Count > 1)
+                {
+                    right = createOperand(context.objectReference().ElementAt(1));
+                }
+                return LogicOperation.Create(left, op, right);
+            }
+            return new Empty();
+        }
+
+        private Expression createOperand(CobolCodeElementsParser.ObjectReferenceContext context)
+        {
+            if (context.identifier() != null) return new Identifier(context.identifier());
+            if (context.NULL() != null || context.NULLS() != null) return new Null();
+            if (context.SELF() != null) return new Self();
             return new Empty();
         }
 
