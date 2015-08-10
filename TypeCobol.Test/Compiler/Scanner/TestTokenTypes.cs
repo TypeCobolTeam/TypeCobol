@@ -197,7 +197,9 @@ namespace TypeCobol.Test.Compiler.Scanner
             testName = "UserDefinedWords";
             testLines = new string[] {
                 "laurent_prud-on10",
-                "!super-_@#1254540.10azfdaedf99*8:tshg; prud'hon'=="
+                "!super-_@#1254540.10azfdaedf99*8:tshg; prud'hon'==",
+                "123ABC-01 123 123a 123-abc",
+                " -123ABC-01 _123ABC-01_ 123ABC- 123- 123-456 123E-06 123-4X"
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
@@ -341,7 +343,7 @@ namespace TypeCobol.Test.Compiler.Scanner
             string[] testLines = new string[] {
                 "CBL NOADATA AFP(VOLATILE) ARCH(6) CODEPAGE(1140) BUFSIZE(1K)",
                 "  CBL CICS(’string2’),CICS(\"string3\"),CURRENCY(X\"0AB2\"),  BLOCK0",
-                "0120PROCESS EXIT( INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2) )",
+                "    PROCESS EXIT( INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2) )",
                 "PROCESS FLAG(I,I) FLAGSTD(x[yy][,0]) ",
                 "CBL TOTO",
                 "CBL ARCH.",

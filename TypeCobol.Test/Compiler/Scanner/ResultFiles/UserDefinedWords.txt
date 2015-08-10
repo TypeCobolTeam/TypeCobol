@@ -15,3 +15,33 @@
 [49,50:==]<PseudoTextDelimiter>
 [31,31]<5,Error,Tokens>Invalid character found after * : expecting space, *, > or C
 
+-- Line 3 --
+[1,9:123ABC-01]<UserDefinedWord>
+[10,10: ]<SpaceSeparator>
+[11,13:123]<IntegerLiteral>{123}
+[14,14: ]<SpaceSeparator>
+[15,18:123a]<UserDefinedWord>
+[19,19: ]<SpaceSeparator>
+[20,26:123-abc]<UserDefinedWord>
+
+-- Line 4 --
+[1,1: ]<SpaceSeparator>
+[2,5:-123]<DecimalLiteral>{-123|0>-123}
+[6,11:ABC-01]<UserDefinedWord>
+[12,12: ]<SpaceSeparator>
+[13,23:_123ABC-01_]<UserDefinedWord>
+[24,24: ]<SpaceSeparator>
+[25,31:123ABC-]<UserDefinedWord>
+[32,32: ]<SpaceSeparator>
+[33,35:123]<IntegerLiteral>{123}
+[36,37:- ]<MinusOperator>
+[38,40:123]<IntegerLiteral>{123}
+[41,44:-456]<DecimalLiteral>{-456|0>-456}
+[45,45: ]<SpaceSeparator>
+[46,52:123E-06]<FloatingPointLiteral>{123|0>123E-6>0,000123}
+[53,53: ]<SpaceSeparator>
+[54,56:123]<IntegerLiteral>{123}
+[57,58:-4]<DecimalLiteral>{-4|0>-4}
+[59,59:X]<UserDefinedWord>
+[46,52]<17,Error,Tokens>Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
+
