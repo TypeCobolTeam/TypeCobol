@@ -161,9 +161,17 @@ namespace TypeCobol.Compiler.Scanner
         internal void RemoveDiagnosticsForLastSourceToken()
         {
             Token lastToken = SourceTokens.Last();
-            if(lastToken != null)
+            RemoveDiagnosticsForToken(lastToken);
+        }
+
+        /// <summary>
+        /// Remove all diagnostics already registered for a given token 
+        /// </summary>
+        internal void RemoveDiagnosticsForToken(Token token)
+        {
+            if (token != null)
             {
-                foreach(Diagnostic diag in GetDiagnosticsForToken(lastToken).ToArray())
+                foreach (Diagnostic diag in GetDiagnosticsForToken(token).ToArray())
                 {
                     ScannerDiagnostics.Remove(diag);
                 }

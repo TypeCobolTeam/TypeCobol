@@ -725,6 +725,49 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         return ScanCharacterString(startIndex);
                     }
+
+                // p9: COBOL words with single-byte characters
+                // A COBOL word is a character-string that forms a user-defined word, a system-name, or a reserved word. 
+                // Each character of a COBOL word is selected from the following set: 
+                // - Latin uppercase letters A through Z, latin lowercase letters a through z 
+                // - digits 0 through 9 
+                // - (hyphen) - , (underscore) _
+                // The hyphen cannot appear as the first or last character in such words.
+                // The underscore cannot appear as the first character in such words.
+                // Most user - defined words(all except section - names, paragraph - names) must contain at least one alphabetic character.
+
+                // PROBLEMS : 
+                // 123 is a valid user defined word (for section & paragraph names) AND a valid numeric literal.
+                // 123E-4 is a valid user defined word (for any type of name) AND a valid numeric literal (floating point format).
+                // 123-456 is a valid user defined word (fol section & paragraph names), AND it could be interpreted as two numeric literals,
+                //   NB: it is NOT a valid subtraction (minus must be preceded and followedf by space) but we would like to display a nice error 
+                //   message informing the user that these spaces are mandatory, because a subtraction was most likey intended in this case.
+                // 000010-000050 should be interpreted as a range of numbers (indicated by separating the two bounding numbers of the range 
+                //   by a hyphen) in sequence-number-fields of compiler directive statements (ex: DELETE).
+                
+                // CURRENT behavior of method ScanNumericLiteral :
+                // This method matches chars as long as they are characters allowed in a numeric literal.
+                // Then, it checks the format of the matched string, and returns either a NumericLiteral or Invalid token.
+                // If we write 123ABC, ScanNumericLiteral will match only 123, return a perfectly valid numeric literal,
+                // and place the currentIndex to match the next token on the char A.
+                
+                // PROPOSED SOLUTION :
+                // * in the Scanner :
+                // If a token is starting with a digit, we first try to scan it as a numeric literal (most common case).
+                // Then we check if the character directly following the numeric literal is a valid character for a user defined word.
+                // We also check as a special case if this character is not '-', followed by a digit or an invalid char, because we need 
+                // to interpret 123-456 as two numeric literals without separator (notably for range of numbers)and 123- is not valid.
+                // If it is not valid (space, separator ...), we simply return the numeric literal token.
+                // If it is valid, we reset the state of the scanner and try to scan this word as a character string 
+                // (keyword, user defined word ...).
+                // * in the Grammar :
+                // We must allow numeric literal tokens (in addition to user defind words) in section and paragraph name rules.
+                
+                // LIMITATIONS :
+                // User defined words of the form 123E-4 or 123-4X are valid according to the spec but will not be supported 
+                // by this compiler. 
+                // These cases are considered highly improbable, but we will have to ckeck on a large body of existing programs.
+
                 case '0':
                 case '1':
                 case '2':
@@ -735,10 +778,41 @@ namespace TypeCobol.Compiler.Scanner
                 case '7':
                 case '8':
                 case '9':
+                    
+                    // 1. First try to scan a numeric literal
                     //IntegerLiteral = 27,
                     //DecimalLiteral = 28,
                     //FloatingPointLiteral = 29,
-                    return ScanNumericLiteral(startIndex);
+                    int saveCurrentIndex = currentIndex;
+                    Token numericLiteralToken = ScanNumericLiteral(startIndex);
+
+                    // 2. Then check to see if the next char would be valid inside a CobolWord
+                    bool nextCharIsACobolWordChar = (currentIndex <= lastIndex) && CobolChar.IsCobolWordChar(line[currentIndex]);
+                    if(nextCharIsACobolWordChar && line[currentIndex] == '-')
+                    {
+                        nextCharIsACobolWordChar = nextCharIsACobolWordChar && currentIndex < lastIndex
+                            && CobolChar.IsCobolWordChar(line[currentIndex + 1])
+                            && !Char.IsDigit(line[currentIndex + 1]);
+                    }
+
+                    // 3.1. Return a numeric literal token
+                    if (!nextCharIsACobolWordChar)
+                    {
+                        return numericLiteralToken;
+                    }
+                    else
+                    {
+                        // Reset scanner state
+                        currentIndex = saveCurrentIndex;
+                        if (numericLiteralToken.TokenType == TokenType.InvalidToken)
+                        {
+                            tokensLine.RemoveDiagnosticsForToken(numericLiteralToken);
+                        }
+
+                        // 3.2 Try to scan a Cobol character string
+                        //UserDefinedWord = 36,
+                        return ScanCharacterString(startIndex);
+                    }
                 default:
                     //UserDefinedWord = 36,
                     return ScanCharacterString(startIndex);
@@ -1387,9 +1461,9 @@ namespace TypeCobol.Compiler.Scanner
             // p45: Table 4. Separators
 
             // consume any char until a separator char is encountered
-            for (; currentIndex <= lastIndex && line[currentIndex] < 256 && !CobolChar.IsCobolWordSeparator(line[currentIndex]); currentIndex++) { }
+            for (; currentIndex <= lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex]); currentIndex++) { }
             int endIndex = (currentIndex == lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex])) ? lastIndex : currentIndex - 1;
-
+            
             // The COPY statement with REPLACING phrase can be used to replace parts of words. 
             // By inserting a dummy operand delimited by colons into the program text, the compiler will replace the dummy operand with the desired text. 
             if(endIndex + 3 <= lastIndex && line[endIndex + 1] == ':')
@@ -1400,6 +1474,17 @@ namespace TypeCobol.Compiler.Scanner
                     return ScanPartialCobolWord(startIndex, patternEndIndex);
                 }
             }
+
+            /* The restriction below can not be p^roperly implemented, because we need to suport statements such as
+               REPLACING ==:TAG:== BY ==EXEC-==
+
+            // a COBOL word can not end with a hyphen => exlude the hyphen from the matched word
+            if (line[endIndex] == '-')
+            {
+                currentIndex--;
+                endIndex--;
+            }
+            */
 
             // p12: A reserved word is a character-string with a predefined meaning in a COBOL source
             // unit.
@@ -1543,7 +1628,7 @@ namespace TypeCobol.Compiler.Scanner
                 }
                 else
                 {
-                    for (; currentIndex <= lastIndex && line[currentIndex] < 256 && !CobolChar.IsCobolWordSeparator(line[currentIndex]); currentIndex++) { }
+                    for (; currentIndex <= lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex]); currentIndex++) { }
                     int nameEndIndex = (currentIndex == lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex])) ? lastIndex : currentIndex - 1;
                     string optionWord = line.Substring(nameStartIndex, nameEndIndex - nameStartIndex + 1);
 
@@ -1668,7 +1753,7 @@ namespace TypeCobol.Compiler.Scanner
                 int searchIndex = endIndex + 1;
 
                 // consume any char until a separator char is encountered
-                for (; searchIndex <= lastIndex && line[searchIndex] < 256 && !CobolChar.IsCobolWordSeparator(line[searchIndex]); searchIndex++) { }
+                for (; searchIndex <= lastIndex && !CobolChar.IsCobolWordSeparator(line[searchIndex]); searchIndex++) { }
                 searchIndex = (searchIndex == lastIndex && !CobolChar.IsCobolWordSeparator(line[searchIndex])) ? lastIndex : searchIndex - 1;
                 if (!CobolChar.IsCobolWordSeparator(line[searchIndex]))
                 {
