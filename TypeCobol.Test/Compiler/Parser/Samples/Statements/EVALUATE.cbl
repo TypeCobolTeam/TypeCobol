@@ -57,13 +57,12 @@ EVALUATE TRUE
     PERFORM procedureName
 END-EVALUATE.
 * more nested statements
-* TODO: this should work !
-*EVALUATE TRUE
-*  WHEN condition
-*    CONTINUE
-*	CONTINUE
-*    CONTINUE
-*END-EVALUATE.
+EVALUATE TRUE
+  WHEN condition
+    CONTINUE
+    CONTINUE
+    CONTINUE
+END-EVALUATE.
 * TODO: this should work !
 *EVALUATE identifier
 *  WHEN condition1

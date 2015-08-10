@@ -17,27 +17,10 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
-        private CodeElement _codeElement = null;
         /// <summary>
         ///     CodeElement object resulting of the visit the parse tree
         /// </summary>
-        public CodeElement CodeElement
-        {
-            get { return this._codeElement; }
-            private set
-            {
-                bool done = false;
-                if (this._codeElement != null)
-                {
-                    FlowControl c = this._codeElement as FlowControl;
-                    if (c != null)
-                    {
-                        done = c.AddNestedElement(value);
-                    }
-                }
-                if (!done) this._codeElement = value;
-            }
-        }
+        public CodeElement CodeElement = null;
 
         /// <summary>
         ///     Initialization code run before parsing each new CodeElement
@@ -618,11 +601,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new EntryStatement();
         }
 
-        public override void EnterEvaluateStatement(CobolCodeElementsParser.EvaluateStatementContext context)
-        {
-            CodeElement = new EvaluateStatement();
-        }
-
         public override void EnterExecStatement(CobolCodeElementsParser.ExecStatementContext context)
         {
             CodeElement = new ExecStatement();
@@ -653,49 +631,57 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new GotoStatement();
         }
 
-        public IfStatement CreateIfStatement(CobolCodeElementsParser.IfStatementContext context)
+
+
+
+
+        public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
         {
             var statement = new IfStatement();
             if (context.conditionalExpression() != null)
             {
-                /*statement.condition =*/new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
+                statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
             }
-            /*statement.pathIfTrue =*/CreateNestedStatements(context.statementOrNextSentence());
-            if (context.elseStatement() != null)
-            {
-                /*statement.pathIfFalse =*/CreateNestedStatements(context.elseStatement().statementOrNextSentence());
-            }
-            return statement;
+            CodeElement = statement;
         }
 
-        private CodeElement CreateNestedStatements(CobolCodeElementsParser.StatementOrNextSentenceContext statements)
+        public override void EnterElseCondition(CobolCodeElementsParser.ElseConditionContext context)
         {
-            return null; // TODO? implement if nested statements
+            CodeElement = new ElseCondition();
         }
 
-        public override void EnterIfStatementWithScope(CobolCodeElementsParser.IfStatementWithScopeContext context)
+        public override void EnterIfStatementEnd(CobolCodeElementsParser.IfStatementEndContext context)
         {
-            //CodeElement = new IfStatement();
+            CodeElement = new IfStatementEnd();
         }
 
-        public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
+
+
+
+
+        public override void EnterEvaluateStatement(CobolCodeElementsParser.EvaluateStatementContext context)
         {
-            CodeElement = CreateIfStatement(context);
+            CodeElement = new EvaluateStatement();
         }
 
-        public override void EnterElseStatement(CobolCodeElementsParser.ElseStatementContext context)
+        public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
         {
-            var statement = CodeElement as IfStatement;
-            if (statement != null) statement.isIF = false;
-            else AddError(CodeElement, "Required: IF before ELSE", context);
+            CodeElement = new WhenEvaluateCondition();
         }
 
-        public override void ExitIfStatement(CobolCodeElementsParser.IfStatementContext context)
+        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
         {
-            var statement = CodeElement as IfStatement;
-            if (statement != null) statement.CloseScope();
-            //else AddError(CodeElement, "Required: IF before END-IF", context);
+            CodeElement = new WhenOtherCondition();
         }
+
+        public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
+        {
+            CodeElement = new EvaluateStatementEnd();
+        }
+
+
+
+
 
         public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
         {

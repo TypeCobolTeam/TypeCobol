@@ -101,7 +101,34 @@ codeElement:
        execStatement |
        exitMethodStatement |  //TODO
        exitProgramStatement | //TODO
-       // -- Cobol conditional statements --
+
+	     ///////////////////////////
+	    // IMPERATIVE STATEMENTS //
+	   ///////////////////////////
+
+	continueStatement |
+
+		// --- Arithmetic statements ---
+	computeStatement |
+	computeStatementEnd |
+
+	  ////////////////////////////
+	 // CONDITIONAL STATEMENTS //
+	////////////////////////////
+
+	// --- Decision statements ---
+	evaluateStatement |
+		whenEvaluateCondition |
+		whenOtherCondition |
+	evaluateStatementEnd |
+
+	ifStatement |
+		/* ... statements ... | */ nextSentenceStatement |
+	elseCondition | // optional
+		// ... statements ... | nextSentenceStatement
+	ifStatementEnd |
+
+
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
@@ -142,7 +169,6 @@ imperativeStatement:
 	| orderingStatement
 	| procedureBranchingStatement
 	| programOrMethodLinkageStatement
-	| continueStatement
 		// p276: A series of imperative statements can be specified wherever an imperative statement is allowed.
 		// p276: A conditional statement that is terminated by its explicit scope terminator is also classified as an imperative statement.
 		// p280: In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
@@ -158,7 +184,7 @@ arithmeticStatement:
 		// Arithmetic statements are imperative statements, but
 		// p277: Without the ON SIZE ERROR or the NOT ON SIZE ERROR phrase.
 	  addStatement
-	| computeStatement
+///	| computeStatement
 	| divideStatement
 	| multiplyStatement
 	| subtractStatement
@@ -240,7 +266,6 @@ programOrMethodLinkageStatement:
 conditionalStatement:
 	  arithmeticStatementConditional
 	| dataMovementStatementConditional
-	| decisionStatement
 	| ioStatementConditional
 	| orderingStatementConditional
 	| programOrMethodLinkageStatementConditional
@@ -249,7 +274,7 @@ conditionalStatement:
 
 arithmeticStatementConditional:
 	  addStatementConditional
-	| computeStatementConditional
+///	| computeStatementConditional
 //	| divideStatementConditional
 	| multiplyStatementConditional
 	| subtractStatementConditional
@@ -260,11 +285,6 @@ dataMovementStatementConditional:
 //	| unstringStatementConditional
 //	| xmlGenerateStatementConditional
 //	| xmlParseStatementConditional
-	;
-
-decisionStatement:
-	  ifStatement
-	| evaluateStatement
 	;
 
 ioStatementConditional:
@@ -298,11 +318,11 @@ tableHandlingStatementConditional:
 delimitedScopeStatement:
 	  addStatementConditionalWithScope
 	| callStatementConditionalWithScope
-	| computeStatementConditionalWithScope
+///	| computeStatementConditionalWithScope
 	| deleteStatementConditionalWithScope
 //	| divideStatementConditionalWithScope
-	| evaluateStatementWithScope
-	| ifStatementWithScope
+///	| evaluateStatementWithScope
+///	| ifStatementWithScope
 	| invokeStatementConditionalWithScope
 	| multiplyStatementConditionalWithScope
 	| performStatementWithScope
@@ -329,11 +349,11 @@ orphanScopeTerminator:
 		// p280: explicit scope terminators
 	  addStatementEnd
 	| callStatementEnd
-	| computeStatementEnd
+///	| computeStatementEnd
 	| deleteStatementEnd
 	| divideStatementEnd
-	| evaluateStatementEnd
-	| ifStatementEnd
+///	| evaluateStatementEnd
+///	| ifStatementEnd
 	| invokeStatementEnd
 	| multiplyStatementEnd
 	| performStatementEnd
@@ -5009,16 +5029,10 @@ closeStatement:
 // This explicit scope terminator serves to delimit the scope of the COMPUTE statement. END-COMPUTE permits a conditional COMPUTE statement to be nested in another conditional statement. END-COMPUTE can also be used with an imperative COMPUTE statement.
 // For more information, see “Delimited scope statements” on page 280.
 
+///computeStatementConditional:
+///	computeStatementCore sizeErrorExceptions;
+
 computeStatement:
-	computeStatementCore computeStatementEnd?;
-
-computeStatementConditional:
-	computeStatementCore sizeErrorExceptions;
-
-computeStatementConditionalWithScope:
-	computeStatementConditional computeStatementEnd;
-
-computeStatementCore:
 	COMPUTE identifierRounded+ (EqualOperator | EQUAL) arithmeticExpression;
 
 computeStatementEnd: END_COMPUTE;
@@ -5266,29 +5280,13 @@ entryStatement:
 // For more information, see “Delimited scope statements” on page 280. 
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
-evaluateStatementWithScope:
-	evaluateStatement evaluateStatementEnd;
-
 evaluateStatement:
-	EVALUATE evaluateWhat evaluateWhatAlso* (evaluateWhen+ imperativeStatement+)+ evaluateWhenOther?;
+	EVALUATE (identifier | literal | expression | TRUE | FALSE)
+	  ( ALSO (identifier | literal | expression | TRUE | FALSE) )*;
 
-evaluateWhat:
-	identifier | literal | expression | TRUE | FALSE;
-
-evaluateWhatAlso:
-	ALSO evaluateWhat;
-
-evaluateWhen:
-	WHEN evaluatePhrase1 evaluateWhenAlso*;
-
-evaluateWhenAlso:
-	ALSO evaluatePhrase2*;
-
-evaluatePhrase1:
-	ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4;
-
-evaluatePhrase2:
-	evaluatePhrase1;
+whenEvaluateCondition:
+	WHEN    (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4)
+	 ( ALSO (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) )*;
 
 evaluatePhrase1Choice4:
 	NOT? (identifier | literal | arithmeticExpression) evaluateThrough?;
@@ -5296,8 +5294,8 @@ evaluatePhrase1Choice4:
 evaluateThrough:
 	(THROUGH | THRU) (identifier | literal | arithmeticExpression);
 
-evaluateWhenOther:
-	WHEN OTHER imperativeStatement+;
+whenOtherCondition:
+	WHEN OTHER;
 
 evaluateStatementEnd: END_EVALUATE;
 
@@ -5469,22 +5467,27 @@ gotoStatement:
 // encountered is matched with the nearest preceding IF that has not been implicitly
 // or explicitly terminated.
 
-ifStatementWithScope:
-	ifStatement ifStatementEnd;
-
 ifStatement:
-	IF conditionalExpression THEN? statementOrNextSentence elseStatement?;
+	IF conditionalExpression THEN?;
 
-statementOrNextSentence:
-	statement+ | nextSentenceStatement;
+elseCondition:
+	ELSE;
 
 nextSentenceStatement:
 	NEXT SENTENCE;
 
-elseStatement:
-	ELSE statementOrNextSentence;
+ifStatementEnd:
+	END_IF;
 
-ifStatementEnd: END_IF;
+///ifStatementWithScope:
+///	ifStatement ifStatementEnd;
+///ifStatement:
+///	IF conditionalExpression THEN? statementOrNextSentence elseStatement?;
+///statementOrNextSentence:
+///	statement+ | nextSentenceStatement;
+///elseStatement:
+///	ELSE statementOrNextSentence;
+
 
 // p343: INITIALIZE statement
 // The INITIALIZE statement sets selected categories of data fields to predetermined

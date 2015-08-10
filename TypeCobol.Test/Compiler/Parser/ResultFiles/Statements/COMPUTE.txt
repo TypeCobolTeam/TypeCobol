@@ -1,5 +1,15 @@
 ﻿--- Code Elements ---
-[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
+[[IfStatement]] [1,2:IF]<IF> --> [8,9:24]<IntegerLiteral>{24}
+
+[[ComputeStatement]] [3,9:COMPUTE]<COMPUTE> --> [14,14:x]<UserDefinedWord>
+
+[[ComputeStatementEnd]] [3,13:END-COMPUTE]<END_COMPUTE> --> [3,13:END-COMPUTE]<END_COMPUTE>
+
+[[ElseCondition]] [1,4:ELSE]<ELSE> --> [1,4:ELSE]<ELSE>
+
+[[ContinueStatement]] [3,10:CONTINUE]<CONTINUE> --> [3,10:CONTINUE]<CONTINUE>
+
+[[IfStatementEnd]] [1,6:END-IF]<END_IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 
