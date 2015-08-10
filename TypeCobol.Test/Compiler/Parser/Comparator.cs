@@ -194,7 +194,11 @@ namespace TypeCobol.Test.Compiler.Parser
                 c++;
             }
             if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
-            if (errors.Length > 0) throw new System.Exception(errors.ToString());
+            if (errors.Length > 0)
+            {
+                errors.Insert(0, name+":\n");
+                throw new System.Exception(errors.ToString());
+            }
         }
 
         private string ToString(ArithmeticOperationStatement statement)
@@ -235,7 +239,11 @@ namespace TypeCobol.Test.Compiler.Parser
                 c++;
             }
             if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
-            if (errors.Length > 0) throw new System.Exception(errors.ToString());
+            if (errors.Length > 0)
+            {
+                errors.Insert(0, name + ":\n");
+                throw new System.Exception(errors.ToString());
+            }
         }
     }
 
