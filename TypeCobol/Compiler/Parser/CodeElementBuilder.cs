@@ -508,13 +508,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new DeleteStatement();
         }
 
-        public static LiteralForDisplay CreateLiteral(IParseTree node)
-        {
-            //TODO
-            //Dumb code just to avoid to return null
-            return new LiteralForDisplay(ParseTreeUtils.GetFirstToken(node));
-        }
-
         /// <summary>
         /// Create a MnemonicOrEnvironmentName from a token.
         /// This method first check if the token match an environment name from EnvironmentNameEnum
@@ -549,18 +542,10 @@ namespace TypeCobol.Compiler.Parser
                 var expressions = new List<Expression>();
                 foreach (CobolCodeElementsParser.IdentifierOrLiteralContext idOrLiteral in context.identifierOrLiteral())
                 {
-                    if (idOrLiteral.identifier() != null)
+                    var identifier = CreateIdentifierOrLiteral(idOrLiteral, statement, "Display");
+                    if (identifier != null)
                     {
-                        expressions.Add(new Identifier(idOrLiteral.identifier()));
-                    }
-                    else if (idOrLiteral.literal() != null)
-                    {
-                        expressions.Add(new Literal(idOrLiteral.literal()));
-                    }
-                    else
-                    {
-                        AddError(statement, "Display: required <identifier> or <literal>", idOrLiteral);
-
+                        expressions.Add(identifier);
                     }
                 }
                 statement.IdentifierOrLiteral = expressions;
@@ -594,6 +579,23 @@ namespace TypeCobol.Compiler.Parser
 
 
             CodeElement = statement;
+        }
+
+        public Expression CreateIdentifierOrLiteral(CobolCodeElementsParser.IdentifierOrLiteralContext idOrLiteral, CodeElement statement, string statementName)
+        {
+            if (idOrLiteral.identifier() != null)
+            {
+                return new Identifier(idOrLiteral.identifier());
+            }
+            else if (idOrLiteral.literal() != null)
+            {
+                return new Literal(idOrLiteral.literal());
+            }
+            else
+            {
+                AddError(statement, statementName + ": required <identifier> or <literal>", idOrLiteral);
+                return null;
+            }
         }
 
         public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
