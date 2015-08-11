@@ -7884,13 +7884,13 @@ stringStatementEnd: END_STRING;
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
 subtractStatement:
-	subtractStatementCore subtractStatement?;
+	subtractStatementCore subtractStatementEnd?;
 
 subtractStatementConditional:
 	subtractStatementCore sizeErrorExceptions;
 
 subtractStatementConditionalWithScope:
-	subtractStatementConditional subtractStatement;
+	subtractStatementConditional subtractStatementEnd;
 
 subtractStatementCore:
 	 subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
