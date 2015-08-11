@@ -63,10 +63,9 @@ EVALUATE TRUE
     CONTINUE
     CONTINUE
 END-EVALUATE.
-* TODO: this should work !
-*EVALUATE identifier
-*  WHEN condition1
-*    PERFORM funcname1
-*  WHEN ('whatever')
-*    PERFORM funcname2
-*END-EVALUATE.
+EVALUATE identifier
+  WHEN condition1
+    PERFORM funcname1
+  WHEN ('whatever')
+    PERFORM funcname2
+END-EVALUATE.

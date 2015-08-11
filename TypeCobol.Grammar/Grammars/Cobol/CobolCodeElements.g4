@@ -5187,8 +5187,8 @@ evaluateStatement:
 	  ( ALSO (identifier | literal | expression | TRUE | FALSE) )*;
 
 whenEvaluateCondition:
-	WHEN    (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4)
-	 ( ALSO (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) )*;
+	WHEN    LeftParenthesisSeparator? (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) RightParenthesisSeparator?
+	 ( ALSO LeftParenthesisSeparator? (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
 
 evaluatePhrase1Choice4:
 	NOT? (identifier | literal | arithmeticExpression) evaluateThrough?;

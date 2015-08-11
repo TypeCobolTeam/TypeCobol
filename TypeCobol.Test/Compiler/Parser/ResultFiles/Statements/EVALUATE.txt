@@ -133,3 +133,17 @@
 
 [[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
 
+[[EvaluateStatement]] [1,8:EVALUATE]<EVALUATE> --> [10,19:identifier]<UserDefinedWord>
+
+[[WhenConditionalExpression]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
+
+[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname1]<UserDefinedWord>
+
+[[WhenEvaluateCondition]] [3,6:WHEN]<WHEN> --> [19,19:)]<RightParenthesisSeparator>
+
+[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname2]<UserDefinedWord>
+
+[[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
