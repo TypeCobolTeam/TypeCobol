@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.Scanner
                             else
                             {
                                 // If it was the first line : initialize a new scan state
-                                insertedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, TextSourceInfo, CompilerOptions);
+                                insertedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, false, TextSourceInfo, CompilerOptions);
                             }
                             // Insert a new line in the immutable list
                             insertTokensLineAtIndex(textChange.LineIndex, insertedLine);
@@ -178,7 +178,7 @@ namespace TypeCobol.Compiler.Scanner
                             else
                             {
                                 // If it was the first line : initialize a new scan state
-                                updatedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, TextSourceInfo, CompilerOptions);
+                                updatedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, false, TextSourceInfo, CompilerOptions);
                             }
                             // Update the line in the immutable list
                             setTokensLineAtIndex(textChange.LineIndex, updatedLine);                            
@@ -262,7 +262,7 @@ namespace TypeCobol.Compiler.Scanner
                     else
                     {
                         // If it was the first line : initialize a new scan state
-                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLineMap.TextLine, false, false, TextSourceInfo, CompilerOptions);
+                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLineMap.TextLine, false, false, false, TextSourceInfo, CompilerOptions);
                     }
                     // Update the line in the immutable list
                     setTokensLineAtIndex(lineIndex, updatedLine);

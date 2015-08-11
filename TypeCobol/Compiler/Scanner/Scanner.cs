@@ -15,10 +15,10 @@ namespace TypeCobol.Compiler.Scanner
     {
         // --- Entry points and fast path for trivial cases ---
 
-        public static TokensLine ScanFirstLine(ITextLine textLine, bool insideDataDivision, bool decimalPointIsComma, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
+        public static TokensLine ScanFirstLine(ITextLine textLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
             TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
-            TokensLine tokensLine = new TokensLine(textLineMap, insideDataDivision, decimalPointIsComma, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals);
+            TokensLine tokensLine = new TokensLine(textLineMap, insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals);
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
         }
@@ -42,7 +42,9 @@ namespace TypeCobol.Compiler.Scanner
             int lastIndex = textLineMap.Source.EndIndex;
                         
             // Comment line => return only one token with type CommentLine
-            if(textLineMap.Type == TextLineType.Comment)
+            // Debug line => treated as a comment line if debugging mode was not activated
+            if(textLineMap.Type == TextLineType.Comment ||
+               (textLineMap.Type == TextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
                 Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, textLineMap.TextLine);
                 tokensLine.AddToken(commentToken);
@@ -265,12 +267,13 @@ namespace TypeCobol.Compiler.Scanner
         /// Scan an isolated token in the following "default" context :
         /// - insideDataDivision = true
         /// - decimalPointIsComma = false
+        /// - withDebuggingMode = false
         /// - encodingForHexadecimalAlphanumericLiterals = IBM 1147
         /// - default compiler options
         /// </summary>
         public static Token ScanIsolatedTokenInDefaultContext(string tokenText, out Diagnostic error)
         {
-            TokensLine tempTokensLine = new TokensLine(TextLineMap.Create(tokenText), true, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
+            TokensLine tempTokensLine = new TokensLine(TextLineMap.Create(tokenText), true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions());
             Token candidateToken = tempScanner.GetNextToken();
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
