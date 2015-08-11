@@ -158,7 +158,9 @@ codeElement:
 
 	// --- Decision statements ---
 	evaluateStatement |
-		whenEvaluateCondition |
+		whenConditionalExpression | // this rule is a subset of
+		whenEvaluateCondition |    // this one --> can be ambiguous
+		                          // declare subset first to make it default
 		whenOtherCondition |
 	evaluateStatementEnd |
 
@@ -167,6 +169,13 @@ codeElement:
 	elseCondition | // optional
 		// ... statements ... | nextSentenceStatement
 	ifStatementEnd |
+
+	// --- Table handling statements ---
+	searchStatement |
+		// atEndCondition ... imperative statements ...
+		// whenConditionalExpression |
+		whenSearchCondition |
+	searchStatementEnd |
 
 	  ////////////////
 	 // EXCEPTIONS //
@@ -209,7 +218,6 @@ codeElement:
 
 statement:
 	  imperativeStatement
-	| conditionalStatement
 //	| compilerDirectingStatement
 	;
 	      ////////////////
@@ -271,16 +279,6 @@ ioStatement:
 		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
 	| writeStatement
 	;
-
-
-
-	   /////////////////
-	  // CONDITIONAL //
-	 // STATEMENTS  //
-	/////////////////
-
-conditionalStatement:
-	searchStatement;
 
 
 
@@ -6917,31 +6915,14 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p414 Search statement considerations ...
 
 searchStatement:
-	searchStatementFormat1 | searchStatementFormat2;
+	SEARCH ((ALL identifier) | (identifier (VARYING (identifier | indexName))?));
 
-searchStatementFormat1:
-	SEARCH identifier searchStatementVarying? searchStatementAtEnd? searchStatementFormat1When+ searchStatementEnd?;
+whenConditionalExpression:
+	WHEN conditionalExpression;
 
-searchStatementFormat2:
-	SEARCH ALL identifier searchStatementAtEnd? searchStatementFormat2When searchStatementFormat2And* (imperativeStatement+ | nextSentenceStatement) searchStatementEnd?;
-
-searchStatementVarying:
-	VARYING (identifier | indexName);
-
-searchStatementAtEnd:
-	AT? END imperativeStatement+;
-
-searchStatementFormat1When:
-	WHEN conditionalExpression (imperativeStatement+ | nextSentenceStatement);
-
-searchStatementFormat2When:
-	WHEN (conditionalExpression | searchStatementDataEquality);
-
-searchStatementFormat2And:
-	AND (conditionalExpression | searchStatementDataEquality);
-
-searchStatementDataEquality:
-	dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression);
+whenSearchCondition:
+	WHEN  dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)
+	(AND (dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionalExpression)*;
 
 searchStatementEnd: END_SEARCH;
 

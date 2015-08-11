@@ -106,6 +106,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SEARCH.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EXEC.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
@@ -133,6 +134,7 @@
     <Content Include="Compiler\Parser\ResultFiles\EXITCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\END.txt" />
     <Content Include="Compiler\Parser\ResultFiles\AT.txt" />
+    <None Include="Compiler\Parser\Samples\Statements\SEARCH.cbl" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
     <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />

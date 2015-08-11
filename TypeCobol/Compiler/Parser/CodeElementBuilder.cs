@@ -878,8 +878,13 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new XmlParseStatement();
         }
-        
+
         // Statement conditions
+
+        public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
+        {
+            CodeElement = new WhenConditionalExpression();
+        }
 
         public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)
         {
