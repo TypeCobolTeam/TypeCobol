@@ -16,7 +16,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             return ("->( " + identifier + ")");
         }
     }
-    class IdentifierOld : Expression
+
+    public class IdentifierOld : Expression
     {
         public Token token { get; set; }
         public bool ROUNDED = false;

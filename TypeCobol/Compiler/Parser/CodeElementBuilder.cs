@@ -6,7 +6,6 @@ using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -842,7 +841,61 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterStringStatement(CobolCodeElementsParser.StringStatementContext context)
         {
-            CodeElement = new StringStatement();
+            var statement = new StringStatement();
+            
+            if (context.stringStatementWhat() != null)
+            {
+                var statementWhatList = new List<StringStatementWhat>();
+                foreach (CobolCodeElementsParser.StringStatementWhatContext stringStatementWhatContext in context.stringStatementWhat())
+                {
+                    var stringStatementWhat = new StringStatementWhat();
+
+                    if (stringStatementWhatContext.identifierToConcat != null)
+                    {
+                        var identifierToConcat = new List<Expression>();
+                        foreach (CobolCodeElementsParser.IdentifierOrLiteralContext idOrLiteral in stringStatementWhatContext.identifierOrLiteral())
+                        {
+                            identifierToConcat.Add(CreateIdentifierOrLiteral(idOrLiteral, statement, "String"));
+                        }
+                        stringStatementWhat.IdentifierToConcat = identifierToConcat;
+                    }
+                    //else don't set IdentifierToConcat. It will remains null
+
+
+                    if (stringStatementWhatContext.stringStatementDelimiter() != null)
+                    {
+                        if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null)
+                        {
+                            stringStatementWhat.DelimiterIdentifier =
+                                CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(), statement, "String");
+                        }
+                        else if (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null) 
+                        {
+                            Token sizeToken = ParseTreeUtils.GetFirstToken(stringStatementWhatContext.stringStatementDelimiter().SIZE());
+                            stringStatementWhat.Size = new SyntaxBoolean(sizeToken);
+                        }
+                    }
+                    statementWhatList.Add(stringStatementWhat);
+                }
+
+                statement.StringStatementWhat = statementWhatList;
+            }
+            //else don't set statement.StringStatementWhat
+
+
+            if (context.identifierInto != null)
+            {
+                statement.IntoIdentifier = new Identifier(context.identifierInto);
+            }//else don't set statement.IntoIdentifier
+
+
+            if (context.stringStatementWith() != null)
+            {
+                statement.PointerIdentifier = new Identifier(context.stringStatementWith().identifier());
+            }//else don't set statement.PointerIdentifier
+
+            CodeElement = statement;
+            
         }
 
         public override void EnterSubtractStatementFormat1(CobolCodeElementsParser.SubtractStatementFormat1Context context)

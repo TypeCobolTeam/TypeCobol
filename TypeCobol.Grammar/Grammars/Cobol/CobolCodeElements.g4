@@ -7702,10 +7702,14 @@ stopStatement:
 // ... more details p435->437 Data flow / Example of the STRING statement ...
 
 stringStatement:
-	STRING stringStatementWhat+ INTO identifier stringStatementWith?;
+	STRING stringStatementWhat+ INTO identifierInto=identifier stringStatementWith?;
+
 
 stringStatementWhat:
-	identifierOrLiteral+ DELIMITED BY? (identifierOrLiteral | SIZE);
+	identifierToConcat=identifierOrLiteral+ DELIMITED BY? stringStatementDelimiter;
+
+stringStatementDelimiter:
+	identifierOrLiteral | SIZE;
 
 stringStatementWith:
 	WITH? POINTER identifier;
