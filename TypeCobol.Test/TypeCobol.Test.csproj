@@ -117,7 +117,7 @@
     <Content Include="Compiler\Parser\ResultFiles\EntryCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\IdentificationCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\IDCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\ONCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\ON.txt" />
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ADDRPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\READ.txt" />
@@ -129,10 +129,10 @@
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\XMLCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\UDWCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\NOTCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\NOT.txt" />
     <Content Include="Compiler\Parser\ResultFiles\EXITCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\ENDCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\ATCodeElements.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\END.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\AT.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
     <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />
@@ -212,7 +212,7 @@
     <None Include="Compiler\Parser\Samples\IdentificationCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\HeaderCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\ONCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\ON.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\READ.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STRING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SUBTRACT.cbl" />
@@ -221,11 +221,11 @@
     <None Include="Compiler\Parser\Samples\XMLCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\PERFORMCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\NOTCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\NOT.cbl" />
     <None Include="Compiler\Parser\Samples\EXITCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\ENDCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\END.cbl" />
     <None Include="Compiler\Parser\Samples\MSVCOUT.cpy" />
-    <None Include="Compiler\Parser\Samples\ATCodeElements.cbl" />
+    <None Include="Compiler\Parser\Samples\AT.cbl" />
     <None Include="Compiler\Parser\Samples\TESTPGM1.cbl" />
     <None Include="Compiler\Preprocessor\CopyTestFiles\CPY1.cpy" />
     <None Include="Compiler\Preprocessor\CopyTestFiles\CPY2.cpy" />

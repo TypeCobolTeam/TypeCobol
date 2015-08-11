@@ -9,7 +9,7 @@ namespace TypeCobol.Test.Compiler.Parser
 {
     internal static class TestCodeElements
     {
-        private static void Check(string testName, bool debug = false)
+        internal static void Check(string testName, bool debug = false)
         {
             // Compile test file
             CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName, null);
@@ -23,19 +23,6 @@ namespace TypeCobol.Test.Compiler.Parser
             }
             ParserUtils.CheckWithResultFile(result, testName);
         }
-
-        // --- Tests the recognition of potentially ambiguous CodeElements which begin with the same first Token --- 
-
-        public static void Check_ATCodeElements()
-        {
-            Check("ATCodeElements");
-        }
-
-        public static void Check_ENDCodeElements()
-        {
-            Check("ENDCodeElements");
-        }
-
 
         /// <summary>
         /// 
@@ -174,16 +161,6 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void Check_IDCodeElements()
         {
             Check("IDCodeElements");
-        }
-
-        public static void Check_NOTCodeElements()
-        {
-            Check("NOTCodeElements");
-        }
-
-        public static void Check_ONCodeElements()
-        {
-            Check("ONCodeElements");
         }
 
         public static void Check_PERFORMCodeElements()

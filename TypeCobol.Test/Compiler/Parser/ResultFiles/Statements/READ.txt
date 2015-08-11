@@ -1,7 +1,21 @@
 ﻿--- Code Elements ---
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [30,30:y]<UserDefinedWord>
 
-[[ReadStatementEnd]] [1,4:READ]<READ> --> [1,8:END-READ]<END_READ>
+[[ReadStatement]] [1,4:READ]<READ> --> [20,26:W-PARAM]<UserDefinedWord>
+
+[[AtEndCondition]] [3,4:AT]<AT> --> [6,8:END]<END>
+
+[[MoveStatement]] [5,8:MOVE]<MOVE> --> [15,15:x]<UserDefinedWord>
+
+[[NotAtEndCondition]] [3,5:NOT]<NOT> --> [10,12:END]<END>
+
+[[AddStatement]] [5,7:ADD]<ADD> --> [14,14:z]<UserDefinedWord>
+
+[[AddStatementEnd]] [16,22:END-ADD]<END_ADD> --> [16,22:END-ADD]<END_ADD>
+
+[[MoveStatement]] [5,8:MOVE]<MOVE> --> [19,19:x]<UserDefinedWord>
+
+[[ReadStatementEnd]] [1,8:END-READ]<END_READ> --> [1,8:END-READ]<END_READ>
 
 [[PerformStatementEnd]] [1,11:END-PERFORM]<END_PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
 

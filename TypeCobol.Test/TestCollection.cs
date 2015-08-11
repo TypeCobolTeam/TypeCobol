@@ -97,14 +97,14 @@ namespace TypeCobol.Test
             TestTokenSource.Check_CobolTokenSource();
             TestTokenSource.Check_CobolTokenSource_WithStartToken();
 
-            TestCodeElements.Check_ATCodeElements();
+            // Test the recognition of potentially ambiguous CodeElements which begin with the same first Token
+            TestCodeElements.Check("AT");
+            TestCodeElements.Check("END");
+            TestCodeElements.Check("NOT");
+            TestCodeElements.Check("ON");
             TestCodeElements.Check_DISPLAYCodeElements();
-
-            TestCodeElements.Check_ENDCodeElements();
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
-//            TestCodeElements.Check_NOTCodeElements(); //TODO: these cannot be parsed alone anymore since today
-//            TestCodeElements.Check_ONCodeElements();  //TODO: these cannot be parsed alone anymore since today
             TestCodeElements.Check_UDWCodeElements();
 //            TestCodeElements.Check_WHENCodeElements(); //TODO: these cannot be parsed alone anymore since today
             TestCodeElements.Check_XMLCodeElements();
@@ -112,7 +112,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-            TestCodeElements.Check_Expressions();
+//            TestCodeElements.Check_Expressions();
             TestCodeElements.Check_Statements();
 //TODO            TestCodeElements.Check_EntryCodeElements();
 

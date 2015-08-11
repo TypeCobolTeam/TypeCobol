@@ -109,13 +109,48 @@ codeElement:
 	continueStatement |
 
 		// --- Arithmetic statements ---
+	addStatement |
+	addStatementEnd |
 	computeStatement |
 	computeStatementEnd |
+	divideStatement |
+	divideStatementEnd |
+	multiplyStatement |
+	multiplyStatementEnd |
+	subtractStatement |
+	subtractStatementEnd |
+
+		// --- Data movement statements ---
+	stringStatement |
+	stringStatementEnd |
+	unstringStatement |
+	unstringStatementEnd |
+
+		// --- I/O statements ---
+	readStatement |
+	readStatementEnd |
+
+		// --- Ordering statements ---
+	mergeStatement |
+	releaseStatement |
+	returnStatement |
+	returnStatementEnd |
+	sortStatement |
 
 		// --- Procedure branching statements ---
+	alterStatement |
+	exitStatement |
+	gotoStatement |
 	performStatement |
 	performProcedureStatement |
 	performStatementEnd |
+
+		// --- Program or Method linkage statements ---
+	callStatement |
+	callStatementEnd |
+	cancelStatement |
+	invokeStatement |
+	invokeStatementEnd |
 
 	  ////////////////////////////
 	 // CONDITIONAL STATEMENTS //
@@ -132,6 +167,22 @@ codeElement:
 	elseCondition | // optional
 		// ... statements ... | nextSentenceStatement
 	ifStatementEnd |
+
+	  ////////////////
+	 // EXCEPTIONS //
+	////////////////
+
+	atEndCondition |
+	notAtEndCondition |
+	invalidKeyCondition |
+	notInvalidKeyCondition |
+	onExceptionCondition |
+	notOnExceptionCondition |
+	onOverflowCondition |
+	notOnOverflowCondition |
+	onSizeErrorCondition |
+	notOnSizeErrorCondition |
+
 
 
        //divideStatement |
@@ -167,13 +218,9 @@ statement:
 	   ////////////////
 
 imperativeStatement:
-	  arithmeticStatement
-	| dataMovementStatement
+	  dataMovementStatement
 	| endingStatement
 	| ioStatement
-	| orderingStatement
-	| procedureBranchingStatement
-	| programOrMethodLinkageStatement
 		// p276: A series of imperative statements can be specified wherever an imperative statement is allowed.
 		// p276: A conditional statement that is terminated by its explicit scope terminator is also classified as an imperative statement.
 		// p280: In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
@@ -182,17 +229,7 @@ imperativeStatement:
 		// can also be used to terminate the scope of an imperative statement.
 		// p280: Unless explicitly specified otherwise, a delimited scope statement can be specified
 		// wherever an imperative statement is allowed by the rules of the language.
-	| delimitedScopeStatement
-	;
-
-arithmeticStatement:
-		// Arithmetic statements are imperative statements, but
-		// p277: Without the ON SIZE ERROR or the NOT ON SIZE ERROR phrase.
-	  addStatement
-///	| computeStatement
-	| divideStatement
-	| multiplyStatement
-	| subtractStatement
+//	| delimitedScopeStatement
 	;
 
 dataMovementStatement:
@@ -203,8 +240,8 @@ dataMovementStatement:
 	| setStatement // p278: SET is seen as a table-handling statement, too
 		// STRING and UNSTRING statements are imperative statements, but
 		// p277: Without the ON OVERFLOW or the NOT ON OVERFLOW phrase
-	| stringStatement
-	| unstringStatement
+///	| stringStatement
+///	| unstringStatement
 		// XML GENERATE and XML PARSE statements are imperative statements, but
 		// p277: Without the ON EXCEPTION or the NOT ON EXCEPTION phrase
 	| xmlGenerateStatement
@@ -221,44 +258,18 @@ ioStatement:
 	| closeStatement
 		// DELETE, REWRITE and START statement are imperative statements, but
 		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
-	| deleteStatement
+///	| deleteStatement
 	| displayStatement
 	| openStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-	| readStatement
+///	| readStatement
 	| rewriteStatement
 	| startStatement
 	| stopStatement // only with: <literal>
 		// WRITE statement is an imperative statement, but
 		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
 	| writeStatement
-	;
-
-orderingStatement:
-	  mergeStatement
-	| releaseStatement
-		// RETURN statement is an imperative statement, but
-		// p278: Without the AT END or NOT AT END phrase.
-	| returnStatement
-	| sortStatement
-	;
-
-procedureBranchingStatement:
-	  alterStatement
-	| exitStatement
-	| gotoStatement
-///	| performStatement
-	;
-
-programOrMethodLinkageStatement:
-		// CALL statement is an imperative statement, but
-		// p278: Without the ON OVERFLOW phrase, and without the ON EXCEPTION or NOT ON EXCEPTION phrase.
-	  callStatement
-	| cancelStatement
-		// INVOKE statement is an imperative statement, but
-		// p279: Without the ON EXCEPTION or NOT ON EXCEPTION phrase.
-	| invokeStatement
 	;
 
 
@@ -269,49 +280,7 @@ programOrMethodLinkageStatement:
 	/////////////////
 
 conditionalStatement:
-	  arithmeticStatementConditional
-	| dataMovementStatementConditional
-	| ioStatementConditional
-	| orderingStatementConditional
-	| programOrMethodLinkageStatementConditional
-	| tableHandlingStatementConditional
-	;
-
-arithmeticStatementConditional:
-	  addStatementConditional
-///	| computeStatementConditional
-//	| divideStatementConditional
-	| multiplyStatementConditional
-	| subtractStatementConditional
-	;
-
-dataMovementStatementConditional:
-	  stringStatementConditional
-//	| unstringStatementConditional
-//	| xmlGenerateStatementConditional
-//	| xmlParseStatementConditional
-	;
-
-ioStatementConditional:
-	  deleteStatementConditional
-	| readStatementConditional
-//	| rewriteStatementConditional
-//	| startStatementConditional
-//	| writeStatementConditional
-	;
-
-orderingStatementConditional:
-	  returnStatementConditional
-	;
-
-programOrMethodLinkageStatementConditional:
-	  callStatementConditional
-	| invokeStatementConditional
-	;
-
-tableHandlingStatementConditional:
-	  searchStatement
-	;
+	searchStatement;
 
 
 
@@ -320,28 +289,28 @@ tableHandlingStatementConditional:
 	 //   STATEMENTS    //
 	/////////////////////
 
-delimitedScopeStatement:
-	  addStatementConditionalWithScope
-	| callStatementConditionalWithScope
-///	| computeStatementConditionalWithScope
-	| deleteStatementConditionalWithScope
+//delimitedScopeStatement:
+//	  addStatementConditionalWithScope
+//	| callStatementConditionalWithScope
+//	| computeStatementConditionalWithScope
+//	| deleteStatementConditionalWithScope
 //	| divideStatementConditionalWithScope
-///	| evaluateStatementWithScope
-///	| ifStatementWithScope
-	| invokeStatementConditionalWithScope
-	| multiplyStatementConditionalWithScope
-///	| performStatementWithScope
-	| readStatementConditionalWithScope
+//	| evaluateStatementWithScope
+//	| ifStatementWithScope
+//	| invokeStatementConditionalWithScope
+//	| multiplyStatementConditionalWithScope
+//	| performStatementWithScope
+//	| readStatementConditionalWithScope
 //	| returnStatementConditionalWithScope
 //	| rewriteStatementConditionalWithScope
 //	| searchStatementConditionalWithScope
 //	| startStatementConditionalWithScope
-	| stringStatementConditionalWithScope
-	| subtractStatementConditionalWithScope
+//	| stringStatementConditionalWithScope
+//	| subtractStatementConditionalWithScope
 //	| unstringStatementConditionalWithScope
 //	| writeStatementConditionalWithScope
 //	| xmlStatementConditionalWithScope
-	;
+//	;
 
 
 
@@ -354,14 +323,14 @@ orphanScopeTerminator:
 		// p280: explicit scope terminators
 	  addStatementEnd
 	| callStatementEnd
-///	| computeStatementEnd
+	| computeStatementEnd
 	| deleteStatementEnd
 	| divideStatementEnd
-///	| evaluateStatementEnd
-///	| ifStatementEnd
+	| evaluateStatementEnd
+	| ifStatementEnd
 	| invokeStatementEnd
 	| multiplyStatementEnd
-///	| performStatementEnd
+	| performStatementEnd
 	| readStatementEnd
 	| returnStatementEnd
 	| rewriteStatementEnd
@@ -380,75 +349,35 @@ orphanScopeTerminator:
 	 // EXCEPTIONS //
 	////////////////
 
-// AT END /////
-endException:
-	AT? END imperativeStatement+;
+atEndCondition:
+	AT? END;
 
-notEndException:
-	NOT AT? END imperativeStatement+;
+notAtEndCondition:
+	NOT AT? END;
 
-atEndExceptions:
-	  endException
-	| notEndException
-	| (endException notEndException)
-	| (notEndException endException)
-	;
+invalidKeyCondition:
+	INVALID KEY?;
 
-// INVALID KEY /////
-invalidException:
-	INVALID KEY? imperativeStatement+;
+notInvalidKeyCondition:
+	NOT INVALID KEY?;
 
-notInvalidException:
-	NOT INVALID KEY? imperativeStatement+;
+onExceptionCondition:
+	ON? EXCEPTION;
 
-invalidKeyExceptions:
-	  invalidException
-	| notInvalidException
-	| (invalidException notInvalidException)
-	| (notInvalidException invalidException)
-	;
+notOnExceptionCondition:
+	NOT ON? EXCEPTION;
 
-// ON EXCEPTION /////
-exceptionException:
-	ON? EXCEPTION imperativeStatement+;
+onOverflowCondition:
+	ON? OVERFLOW;
 
-notExceptionException:
-	NOT ON? EXCEPTION imperativeStatement+;
+notOnOverflowCondition:
+	NOT ON? OVERFLOW;
 
-onExceptionExceptions:
-	  exceptionException
-	| notExceptionException
-	| (exceptionException notExceptionException)
-	| (notExceptionException exceptionException)
-	;
+onSizeErrorCondition:
+	ON? SIZE ERROR;
 
-// ON OVERFLOW /////
-overflowException:
-	ON? OVERFLOW imperativeStatement+;
-
-notOverflowException:
-	NOT ON? OVERFLOW imperativeStatement+;
-
-overflowExceptions:
-	  overflowException
-	| notOverflowException
-	| (overflowException notOverflowException)
-	| (notOverflowException overflowException)
-	;
-
-// ON SIZE ERROR /////
-sizeErrorException:
-	ON? SIZE ERROR imperativeStatement+;
-
-notSizeErrorException:
-	NOT ON? SIZE ERROR imperativeStatement+;
-
-sizeErrorExceptions:
-	  sizeErrorException
-	| notSizeErrorException
-	| (sizeErrorException notSizeErrorException)
-	| (notSizeErrorException sizeErrorException)
-	;
+notOnSizeErrorCondition:
+	NOT ON? SIZE ERROR;
 
 // --- Individual code elements syntax ---
 
@@ -4696,15 +4625,6 @@ acceptStatementFormat2:
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
 addStatement:
-	addStatementCore addStatementEnd?;
-
-addStatementConditional:
-	addStatementCore sizeErrorExceptions;
-
-addStatementConditionalWithScope:
-	addStatementConditional addStatementEnd;
-
-addStatementCore:
 	addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
 
 addStatementEnd: END_ADD;
@@ -4907,15 +4827,6 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	callStatementCore callStatementEnd?;
-
-callStatementConditional:
-	callStatementCore callStatementExceptions;
-
-callStatementConditionalWithScope:
-	callStatementConditional callStatementEnd;
-
-callStatementCore:
 	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning?;
 
 callStatementUsing:
@@ -4935,9 +4846,6 @@ callStatementByValue:
 
 callStatementReturning:
 	RETURNING identifier;
-
-callStatementExceptions:
-	overflowException | onExceptionExceptions;
 
 callStatementEnd: END_CALL;
 
@@ -5072,15 +4980,6 @@ continueStatement:
 //For more information, see “Delimited scope statements” on page 280.
 
 deleteStatement:
-	deleteStatementCore deleteStatementEnd?;
-
-deleteStatementConditional:
-	deleteStatementCore invalidKeyExceptions;
-
-deleteStatementConditionalWithScope:
-	deleteStatementConditional deleteStatementEnd;
-
-deleteStatementCore:
 	DELETE fileName RECORD?;
 
 deleteStatementEnd: END_DELETE;
@@ -6023,15 +5922,6 @@ inspectStatementPhrase1:
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	invokeStatementCore invokeStatementEnd?;
-
-invokeStatementConditional:
-	invokeStatementCore onExceptionExceptions;
-
-invokeStatementConditionalWithScope:
-	invokeStatementConditional invokeStatementEnd;
-
-invokeStatementCore:
 	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing?;
 
 invokeStatementUsing:
@@ -6336,15 +6226,6 @@ moveStatement:
 // items equal to the results.
 
 multiplyStatement:
-	multiplyStatementCore multiplyStatementEnd?;
-
-multiplyStatementConditional:
-	multiplyStatementCore sizeErrorExceptions;
-
-multiplyStatementConditionalWithScope:
-	multiplyStatementConditional multiplyStatementEnd;
-
-multiplyStatementCore:
 	 multiplyStatementFormat2 | multiplyStatementFormat1;
 
 multiplyStatementEnd: END_MULTIPLY;
@@ -6799,22 +6680,6 @@ performStatementEnd: END_PERFORM;
 // ... more details p399->400 : READ statement notes ...
 
 readStatement:
-	readStatementCore readStatementEnd?;
-
-readStatementConditional:
-	  (readStatementFormat1 atEndExceptions)
-	| (readStatementFormat2 invalidKeyExceptions);
-
-readStatementConditionalWithScope:
-	readStatementConditional readStatementEnd;
-
-readStatementCore:
-	readStatementFormat1 | readStatementFormat2;
-
-readStatementFormat1:
-	READ fileName NEXT? RECORD? (INTO identifier)?;
-
-readStatementFormat2:
 	READ fileName RECORD? (INTO identifier)? (KEY IS? dataName)?;
 
 readStatementEnd: END_READ;
@@ -6936,15 +6801,6 @@ recordName:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-	returnStatementCore returnStatementEnd?;
-
-returnStatementConditional:
-	returnStatementCore atEndExceptions;
-
-returnStatementConditionalWithScope:
-	returnStatementConditional returnStatementEnd;
-
-returnStatementCore:
 	RETURN fileName RECORD? (INTO identifier)?;
 
 returnStatementEnd: END_RETURN;
@@ -7859,15 +7715,6 @@ stopStatement:
 // ... more details p435->437 Data flow / Example of the STRING statement ...
 
 stringStatement:
-	stringStatementCore stringStatementEnd?;
-
-stringStatementConditional:
-	stringStatementCore overflowExceptions;
-
-stringStatementConditionalWithScope:
-	stringStatementConditional stringStatementEnd;
-
-stringStatementCore:
 	STRING stringStatementWhat+ INTO identifier stringStatementWith?;
 
 stringStatementWhat:
@@ -7884,15 +7731,6 @@ stringStatementEnd: END_STRING;
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
 subtractStatement:
-	subtractStatementCore subtractStatementEnd?;
-
-subtractStatementConditional:
-	subtractStatementCore sizeErrorExceptions;
-
-subtractStatementConditionalWithScope:
-	subtractStatementConditional subtractStatementEnd;
-
-subtractStatementCore:
 	 subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
 
 // p438: Format 1: SUBTRACT statement
@@ -8131,15 +7969,6 @@ subtractStatementEnd: END_SUBTRACT;
 // ... more details p447->448 Example of the UNSTRING statement ...
 
 unstringStatement:
-	unstringStatementCore unstringStatementEnd?;
-
-unstringStatementConditional:
-	unstringStatementCore overflowExceptions;
-
-unstringStatementConditionalWithScope:
-	unstringStatementConditional unstringStatementEnd;
-
-unstringStatementCore:
 	UNSTRING identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
 
 unstringDelimited:
