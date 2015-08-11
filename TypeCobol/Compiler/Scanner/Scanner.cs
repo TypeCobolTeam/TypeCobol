@@ -744,13 +744,13 @@ namespace TypeCobol.Compiler.Scanner
                 //   message informing the user that these spaces are mandatory, because a subtraction was most likey intended in this case.
                 // 000010-000050 should be interpreted as a range of numbers (indicated by separating the two bounding numbers of the range 
                 //   by a hyphen) in sequence-number-fields of compiler directive statements (ex: DELETE).
-                
+
                 // CURRENT behavior of method ScanNumericLiteral :
                 // This method matches chars as long as they are characters allowed in a numeric literal.
                 // Then, it checks the format of the matched string, and returns either a NumericLiteral or Invalid token.
                 // If we write 123ABC, ScanNumericLiteral will match only 123, return a perfectly valid numeric literal,
                 // and place the currentIndex to match the next token on the char A.
-                
+
                 // PROPOSED SOLUTION :
                 // * in the Scanner :
                 // If a token is starting with a digit, we first try to scan it as a numeric literal (most common case).
@@ -762,11 +762,18 @@ namespace TypeCobol.Compiler.Scanner
                 // (keyword, user defined word ...).
                 // * in the Grammar :
                 // We must allow numeric literal tokens (in addition to user defind words) in section and paragraph name rules.
-                
+
+                // => additional PROBLEM after test : 
+                // 123. is already matched by the grammar in the reference documentation as a valid dataDescriptionEntry.
+                // But according to the same spec, 123. is also a valid paragraphHeader.
+                // TO DO : check which one of the two alternatives must be favored in the real world ?
+                // In the meantime, nothing was changed in the grammar file : purely numeric paragraph identifiers are not supported.
+
                 // LIMITATIONS :
                 // User defined words of the form 123E-4 or 123-4X are valid according to the spec but will not be supported 
                 // by this compiler. 
-                // These cases are considered highly improbable, but we will have to ckeck on a large body of existing programs.
+                // These cases are considered highly improbable, but we will have to check on a large body of existing programs.
+                // Purely numeric aragraph and section names are not supported.
 
                 case '0':
                 case '1':
@@ -1475,7 +1482,7 @@ namespace TypeCobol.Compiler.Scanner
                 }
             }
 
-            /* The restriction below can not be p^roperly implemented, because we need to suport statements such as
+            /* The restriction below can not be prroperly implemented, because we need to suport statements such as
                REPLACING ==:TAG:== BY ==EXEC-==
 
             // a COBOL word can not end with a hyphen => exlude the hyphen from the matched word
