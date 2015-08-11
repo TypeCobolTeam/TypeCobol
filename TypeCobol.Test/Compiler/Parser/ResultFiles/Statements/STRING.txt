@@ -1,5 +1,9 @@
 ﻿--- Code Elements ---
-[[IfStatement]] [1,2:IF]<IF> --> [1,6:END-IF]<END_IF>
+[[IfStatement]] [1,2:IF]<IF> --> [8,16:condition]<UserDefinedWord>
+
+[[StringStatementEnd]] [3,8:STRING]<STRING> --> [3,12:END-STRING]<END_STRING>
+
+[[IfStatementEnd]] [1,6:END-IF]<END_IF> --> [1,6:END-IF]<END_IF>
 
 [[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
 

@@ -112,6 +112,11 @@ codeElement:
 	computeStatement |
 	computeStatementEnd |
 
+		// --- Procedure branching statements ---
+	performStatement |
+	performProcedureStatement |
+	performStatementEnd |
+
 	  ////////////////////////////
 	 // CONDITIONAL STATEMENTS //
 	////////////////////////////
@@ -243,7 +248,7 @@ procedureBranchingStatement:
 	  alterStatement
 	| exitStatement
 	| gotoStatement
-	| performStatement
+///	| performStatement
 	;
 
 programOrMethodLinkageStatement:
@@ -325,7 +330,7 @@ delimitedScopeStatement:
 ///	| ifStatementWithScope
 	| invokeStatementConditionalWithScope
 	| multiplyStatementConditionalWithScope
-	| performStatementWithScope
+///	| performStatementWithScope
 	| readStatementConditionalWithScope
 //	| returnStatementConditionalWithScope
 //	| rewriteStatementConditionalWithScope
@@ -356,7 +361,7 @@ orphanScopeTerminator:
 ///	| ifStatementEnd
 	| invokeStatementEnd
 	| multiplyStatementEnd
-	| performStatementEnd
+///	| performStatementEnd
 	| readStatementEnd
 	| returnStatementEnd
 	| rewriteStatementEnd
@@ -6484,19 +6489,29 @@ openStatement:
 // procedure-name-1 is specified, imperative statements and the
 // END-PERFORM phrase must not be specified.
 // The PERFORM statement formats are:
-performStatement:
-	  performStatementFormat1 // - Basic PERFORM
-	| performStatementFormat2 // - TIMES phrase PERFORM
-	| performStatementFormat3 // - UNTIL phrase PERFORM
-	| performStatementFormat4 // - VARYING phrase PERFORM
-	;
 
-performStatementWithScope:
-	  performStatementFormat1WithScope // - Basic PERFORM
-	| performStatementFormat2WithScope // - TIMES phrase PERFORM
-	| performStatementFormat3WithScope // - UNTIL phrase PERFORM
-	| performStatementFormat4WithScope // - VARYING phrase PERFORM
-	;
+performStatement:
+	PERFORM (
+		((identifier | numericLiteral) TIMES)											   // - TIMES phrase PERFORM
+	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)					  // - UNTIL phrase PERFORM
+	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression )	 // - VARYING phrase PERFORM
+		)?;																				// (nothing) - Basic PERFORM
+
+
+
+performProcedureStatement:
+	PERFORM procedureName ((THROUGH |THRU) procedureName)? (			  // - Basic PERFORM
+		((identifier | numericLiteral) TIMES)							 // - TIMES phrase PERFORM
+	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
+	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
+		  ( AFTER (identifier | indexName) FROM (identifier | indexName | numericLiteral)	 // - VARYING phrase PERFORM
+			BY (identifier | numericLiteral) UNTIL conditionalExpression )* )				//
+		)?;															// (nothing) - Basic PERFORM
+
+performVarying:
+	VARYING (identifier | indexName) FROM (identifier | indexName | numericLiteral) BY (identifier | numericLiteral);
+
+performStatementEnd: END_PERFORM;
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
@@ -6505,15 +6520,6 @@ performStatementWithScope:
 // Note: A PERFORM statement must not cause itself to be executed. A recursive
 // PERFORM statement can cause unpredictable results.
 // p384: Format 1: Basic PERFORM statement
-
-performStatementFormat1:
-	PERFORM procedureName performThroughProcedure?;
-
-performStatementFormat1WithScope:
-	PERFORM statement* performStatementEnd;
-
-performThroughProcedure:
-	(THROUGH |THRU) procedureName;
 
 // procedure-name-1 , procedure-name-2
 // Must name a section or paragraph in the procedure division.
@@ -6582,15 +6588,6 @@ performThroughProcedure:
 // statement following the PERFORM statement.
 // p386: Format 2: PERFORM statement with TIMES phrase
 
-performStatementFormat2:
-	PERFORM procedureName performThroughProcedure? performNTimes;
-
-performStatementFormat2WithScope:
-	PERFORM performNTimes statement* performStatementEnd;
-
-performNTimes:
-	(identifier | numericLiteral) TIMES;
-
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified.
 // identifier-1
@@ -6608,15 +6605,6 @@ performNTimes:
 // condition specified by the UNTIL phrase is true. Control is then passed to the next
 // executable statement following the PERFORM statement.
 // p387: Format 3: PERFORM statement with UNTIL phrase
-
-performStatementFormat3:
-	PERFORM procedureName performThroughProcedure? performFormat3Phrase1;
-
-performStatementFormat3WithScope:
-	PERFORM performFormat3Phrase1 statement* performStatementEnd;
-
-performFormat3Phrase1:
-	(WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
 
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified.
@@ -6641,25 +6629,6 @@ performFormat3Phrase1:
 // The format-4 VARYING phrase PERFORM statement can serially search an entire
 // seven-dimensional table.
 // p388: Format 4: PERFORM statement with VARYING phrase
-
-performStatementFormat4:
-	PERFORM procedureName performThroughProcedure? performFormat4Phrase1 performFormat4Phrase2*;
-// WARNING: according to p388, it should be "performFormat4Phrase2+" instead of "performFormat4Phrase2*"
-
-performStatementFormat4WithScope:
-	PERFORM performFormat4Phrase1 statement* performStatementEnd;
-	
-performFormat4Phrase1:
-	(WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression;
-
-performVarying:
-	VARYING (identifier | indexName) FROM (identifier | indexName | numericLiteral) BY (identifier | numericLiteral);
-
-performFormat4Phrase2:
-	AFTER (identifier | indexName) FROM (identifier | indexName | numericLiteral) performFormat4Phrase3;
-
-performFormat4Phrase3:
-	BY (identifier | numericLiteral) UNTIL conditionalExpression;
 
 // If procedure-name-1 is specified, imperative-statement-1 and the END-PERFORM
 // phrase must not be specified. If procedure-name-1 is omitted, the AFTER phrase
@@ -6740,7 +6709,6 @@ performFormat4Phrase3:
 //                          BY (identifier | literal)
 //                          UNTIL conditionalExpression;
 //                        
-performStatementEnd: END_PERFORM;
 
 
 

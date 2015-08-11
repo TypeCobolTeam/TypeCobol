@@ -1,3 +1,7 @@
 ﻿--- Code Elements ---
-[[ReadStatementEnd]] [1,7:PERFORM]<PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
+[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [30,30:y]<UserDefinedWord>
+
+[[ReadStatementEnd]] [1,4:READ]<READ> --> [1,8:END-READ]<END_READ>
+
+[[PerformStatementEnd]] [1,11:END-PERFORM]<END_PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
 
