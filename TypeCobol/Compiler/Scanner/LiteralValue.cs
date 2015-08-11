@@ -105,7 +105,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public override string ToString()
         {
-            return Number.ToString();
+            return Number.ToString(NumberFormatInfo.InvariantInfo);
         }
     }
 
@@ -142,7 +142,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public override string ToString()
         {
-            return IntegerValue + "|" + DecimalDigits + ">" + Number;
+            return IntegerValue + "|" + DecimalDigits + ">" + Number.ToString(NumberFormatInfo.InvariantInfo);
         }
     }
 
@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public override string ToString()
         {
-            return Mantissa.IntegerValue + "|" +  Mantissa.DecimalDigits + ">" + Mantissa.Number + "E" + Exponent.Number + ">" + Number;
+            return Mantissa.IntegerValue + "|" +  Mantissa.DecimalDigits + ">" + Mantissa.Number.ToString(NumberFormatInfo.InvariantInfo) + "E" + Exponent.Number + ">" + Number.ToString(NumberFormatInfo.InvariantInfo);
         }
     }
 }
