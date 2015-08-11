@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Test.Compiler.Parser;
 
 namespace TypeCobol.Test.Compiler.Scanner
 {
@@ -127,10 +129,8 @@ namespace TypeCobol.Test.Compiler.Scanner
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Scanner\ResultFiles\" + testName + ".txt")))
             {
                 string expectedResult = reader.ReadToEnd();
-                if (result != expectedResult)
-                {
-                    throw new Exception("Tokens and diagnostics produced by test \"" + testName + "\" don't match the expected result");
-                }
+                
+                TestUtils.compareLines(testName, result, expectedResult); 
             }
         }
     }

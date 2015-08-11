@@ -100,6 +100,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCollection.cs" />
     <Compile Include="TestLauncher.cs" />
+    <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />

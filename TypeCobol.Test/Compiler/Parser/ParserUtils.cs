@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Test.Compiler.Scanner;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -95,7 +97,6 @@ namespace TypeCobol.Test.Compiler.Parser
             return builder.ToString();
         }
 
-        private static int line(int line) { return line / 2 + 1; }
 
         public static void CheckWithResultFile(string result, string testName)
         {
@@ -107,24 +108,9 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void CheckWithResultReader(string testName, string result, StreamReader reader)
         {
-                string expectedResult = reader.ReadToEnd();
-                String[] expectedResultLines = expectedResult.Split(new[] { '\r', '\n' });
-                String[] resultLines = result.Split(new[] { '\r', '\n' });
+            string expectedResult = reader.ReadToEnd();
 
-                StringBuilder errors = new StringBuilder();
-                for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
-                {
-                    if (expectedResultLines[c] != resultLines[c])
-                    {
-                        errors.AppendLine("In test \"" + testName + "\", line "+line(c)+": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
-                    }
-                }
-                if (errors.Length > 0) errors.AppendLine("====================\n" + result + "====================");
-                if (expectedResultLines.Length != resultLines.Length)
-                {
-                    errors.AppendLine("In test \"" + testName + "\", lines to test=" + resultLines.Length + "; lines expected=" + line(expectedResultLines.Length));
-                }
-                if (errors.Length > 0) throw new Exception(errors.ToString());
+            TestUtils.compareLines(testName, result, expectedResult);
         }
 
         /// <summary>
