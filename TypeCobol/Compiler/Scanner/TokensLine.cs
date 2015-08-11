@@ -16,14 +16,14 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Constructor used for the first tokens line
         /// </summary>
-        internal TokensLine(TextLineMap textLineMap, bool insideDataDivision, bool decimalPointIsComma, Encoding encodingForHexadecimalAlphanumericLiterals)
+        internal TokensLine(TextLineMap textLineMap, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForHexadecimalAlphanumericLiterals)
         {
             TextLineMap = textLineMap;
             lastSourceIndex = textLineMap.Source.EndIndex;
 
             SourceTokens = new List<Token>();
             ScannerDiagnostics = new List<Diagnostic>();
-            InitialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, encodingForHexadecimalAlphanumericLiterals);
+            InitialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForHexadecimalAlphanumericLiterals);
             ScanState = InitialScanState.Clone();
         }
 

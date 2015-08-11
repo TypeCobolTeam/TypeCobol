@@ -47,6 +47,14 @@ namespace TypeCobol.Test.Compiler.Scanner
             string testLine = "01 TOTO *> Comment until end of line 1.";
             result = ScannerUtils.ScanLine(testLine);
             ScannerUtils.CheckWithResultFile(result, testName);
+
+            testName = "CommentsDebugging";
+            string[] testLines = new string[] {
+                "D CONFIGURATION SECTION.",
+                "SOURCE-COMPUTER. IBM-392 WITH DEBUGGING MODE.",
+                "D DISPLAY TOTO" };
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
         }
 
         public static void CheckOperators()

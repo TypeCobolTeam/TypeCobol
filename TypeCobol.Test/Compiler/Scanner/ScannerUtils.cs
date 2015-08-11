@@ -54,7 +54,7 @@ namespace TypeCobol.Test.Compiler.Scanner
             IList <TokensLine> tokensLines = new List<TokensLine>();
 
             ITextLine firstTextLine = new TestTextLine(testLines[0]);
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, TextSourceInfo, CompilerOptions);
+            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, false, TextSourceInfo, CompilerOptions);
             tokensLines.Add(tokensLine);
 
             for (int i = 1; i < testLines.Length; i++)
@@ -77,7 +77,7 @@ namespace TypeCobol.Test.Compiler.Scanner
 
         public static string ScanTextLine(ITextLine textLine)
         {
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(textLine, false, false, TextSourceInfo, CompilerOptions);
+            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(textLine, false, false, false, TextSourceInfo, CompilerOptions);
             return BuildResultString(tokensLine);
         }
         
@@ -86,7 +86,7 @@ namespace TypeCobol.Test.Compiler.Scanner
             IList<TokensLine> tokensLines = new List<TokensLine>();
 
             ITextLine firstTextLine = textLines[0];
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, TextSourceInfo, CompilerOptions);
+            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, false, TextSourceInfo, CompilerOptions);
             tokensLines.Add(tokensLine);
 
             for (int i = 1; i < textLines.Length; i++)

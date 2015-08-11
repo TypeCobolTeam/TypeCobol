@@ -169,6 +169,7 @@
     <Content Include="Compiler\Scanner\ResultFiles\CommentEntry.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\Comments-continuations.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\Comments1.txt" />
+    <Content Include="Compiler\Scanner\ResultFiles\CommentsDebugging.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\Comments2.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\ContextSensitiveKeywords.txt" />
     <Content Include="Compiler\Scanner\ResultFiles\ExecStatement.txt" />

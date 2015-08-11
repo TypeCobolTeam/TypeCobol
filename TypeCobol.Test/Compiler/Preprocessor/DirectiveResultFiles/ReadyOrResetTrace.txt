@@ -20,12 +20,10 @@
 
 -- Line 7 --
 *** DIRECTIVE INVALID SYNTAX -> RESET_TRACE ([8,12:reset]<RESET>[13,13: ]<SpaceSeparator>[14,18:TRACE]<TRACE>) ***
-[8,8]<28,Error,Syntax>Syntax error : mismatched input 'Y' expecting PeriodSeparator
+[8,12]<28,Error,Syntax>Syntax error : mismatched input 'ready' expecting PeriodSeparator
 
 -- Line 8 --
-[8,8:Y]<UserDefinedWord>
-[9,9: ]<SpaceSeparator>
-[10,14:trace]<TRACE>
+[8,14:Y trace]<CommentLine>
 
 -- Line 9 --
 [8,14:t TRACE]<InvalidToken>

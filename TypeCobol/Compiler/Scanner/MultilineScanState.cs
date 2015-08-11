@@ -23,6 +23,11 @@ namespace TypeCobol.Compiler.Scanner
         public bool DecimalPointIsComma { get; private set; }
 
         /// <summary>
+        /// True as soon as the keywords DEBUGGING MODE have been encountered
+        /// </summary>
+        public bool WithDebuggingMode { get; private set; }
+
+        /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
         /// </summary>
         public Encoding EncodingForHexadecimalAlphanumericLiterals { get; private set; }
@@ -65,10 +70,11 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, Encoding encodingForHexadecimalAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForHexadecimalAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             DecimalPointIsComma = decimalPointIsComma;
+            WithDebuggingMode = withDebuggingMode;
             EncodingForHexadecimalAlphanumericLiterals = encodingForHexadecimalAlphanumericLiterals;
             KeywordsState = KeywordsSequenceState.Default;
         }
@@ -78,7 +84,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, EncodingForHexadecimalAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForHexadecimalAlphanumericLiterals);
             if(SymbolicCharacters != null)
             {
                 clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
@@ -141,6 +147,7 @@ namespace TypeCobol.Compiler.Scanner
                 // 0 -> SAME -> 14.
                 // 0 -> SYMBOLIC -> 15.
                 // 0 -> PseudoTextDelimiter -> 17.
+                // 0 -> DEBUGGING -> 18.
                 case KeywordsSequenceState.Default:
                     switch (newToken.TokenType)
                     {
@@ -182,6 +189,9 @@ namespace TypeCobol.Compiler.Scanner
                             break;
                         case TokenType.PseudoTextDelimiter:
                             KeywordsState = KeywordsSequenceState.InsidePseudoText;
+                            break;
+                        case TokenType.DEBUGGING:
+                            KeywordsState = KeywordsSequenceState.After_DEBUGGING;
                             break;
                     }
                     break;
@@ -326,6 +336,15 @@ namespace TypeCobol.Compiler.Scanner
                         KeywordsState = KeywordsSequenceState.Default;
                     }
                     break;
+                // 18 -> MODE : WithDebuggingMode = true -> 0. 
+                // 1/ -> any other -> 0. 
+                case KeywordsSequenceState.After_DEBUGGING:
+                    if (newToken.TokenType == TokenType.MODE)
+                    {
+                        WithDebuggingMode = true;
+                    }
+                    KeywordsState = KeywordsSequenceState.Default;
+                    break;
             }
         }
 
@@ -351,6 +370,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 return InsideDataDivision == otherScanState.InsideDataDivision &&
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
+                    WithDebuggingMode == otherScanState.WithDebuggingMode &&
                     EncodingForHexadecimalAlphanumericLiterals == otherScanState.EncodingForHexadecimalAlphanumericLiterals &&
                     ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) || 
                      (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count)) &&
@@ -369,6 +389,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Suitable nullity checks etc, of course :)
                 hash = hash * 23 + InsideDataDivision.GetHashCode();
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();
+                hash = hash * 23 + WithDebuggingMode.GetHashCode();
                 hash = hash * 23 + EncodingForHexadecimalAlphanumericLiterals.GetHashCode();
                 if (SymbolicCharacters != null)
                 {
@@ -403,6 +424,7 @@ namespace TypeCobol.Compiler.Scanner
         After_SAME = 14,
         After_SYMBOLIC = 15,
         After_SYMBOLIC_SymbolicCharacters = 16,
-        InsidePseudoText = 17
+        InsidePseudoText = 17,
+        After_DEBUGGING = 18
     }
 }
