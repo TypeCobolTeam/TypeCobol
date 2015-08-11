@@ -1,7 +1,8 @@
 ﻿--- Diagnostics ---
 [16,17]<28,Error,Syntax>Syntax error : Display: required <identifier> or <literal> (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
 [16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
-[49,52]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[49,52:with]<WITH> on line 17)
+[53,56]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[53,56:with]<WITH> on line 16)
+[28,28]<28,Error,Syntax>Syntax error : no viable alternative at input '(' (RuleStack=codeElement, OffendingSymbol=[28,28:(]<LeftParenthesisSeparator> on line 19)
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto
@@ -59,11 +60,6 @@
 - UponMnemonicOrEnvironmentName[Unknown] = toto
 - WithNoAdvancing = True
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
-- variables = var1 'lit1' var2
-- UponMnemonicOrEnvironmentName[Unknown] = var2
-- WithNoAdvancing = True
-
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:"C'est à dire"]<AlphanumericLiteral>(",Y,Y){C'est à dire}
 - variables = "C'est à dire"
 - WithNoAdvancing = False
@@ -72,8 +68,21 @@
 - variables = 'C"est à dire'
 - WithNoAdvancing = False
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [38,42:SYSIN]<UserDefinedWord>
-- variables = var1 'lit1' var2
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [42,46:SYSIN]<UserDefinedWord>
+- variables = var1 'litError' var2
 - UponMnemonicOrEnvironmentName[Unknown] = SYSIN
+- WithNoAdvancing = False
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
+- variables = var1 'lit2' var2
+- UponMnemonicOrEnvironmentName[Unknown] = var2
+- WithNoAdvancing = True
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,28:when-compiled]<WHEN_COMPILED>
+- variables = when-compiled
+- WithNoAdvancing = False
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [25,27:max]<FunctionName>
+- variables = function
 - WithNoAdvancing = False
 
