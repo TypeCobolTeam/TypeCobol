@@ -16,4 +16,5 @@
 000040 display var1 'litError' var2 upon SYSIN toto with no advancing
 000040 display var1 'lit2' var2 upon var2 with no advancing
 000000 display when-compiled
-000000 display function max(1, 5)
+000000 display function max(1 5)
+000000 display toto(1:5) toto toto of mycopy

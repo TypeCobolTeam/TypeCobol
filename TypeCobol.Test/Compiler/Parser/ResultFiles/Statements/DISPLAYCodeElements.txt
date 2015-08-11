@@ -86,3 +86,7 @@
 - variables = function
 - WithNoAdvancing = False
 
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,44:mycopy]<UserDefinedWord>
+- variables = toto toto toto<mycopy
+- WithNoAdvancing = False
+
