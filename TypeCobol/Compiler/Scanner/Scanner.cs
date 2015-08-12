@@ -1485,93 +1485,88 @@ namespace TypeCobol.Compiler.Scanner
                 }
             }
 
-            /* The restriction below can not be prroperly implemented, because we need to suport statements such as
-               REPLACING ==:TAG:== BY ==EXEC-==
+            // Compute token type : keyword, fonction name, symbolic character or user defined word ?
+            TokenType tokenType = TokenType.UserDefinedWord;
 
-            // a COBOL word can not end with a hyphen => exlude the hyphen from the matched word
-            if (line[endIndex] == '-')
+            //FunctionName = 34,
+            // p477: function-name-1 must be one of the intrinsic function names.
+            // ACOS | ANNUITY | ASIN | ATAN | CHAR | COS | CURRENT_DATE | DATE_OF_INTEGER | DATE_TO_YYYYMMDD |
+            // DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF | FACTORIAL | INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY |
+            // INTEGER_PART | LENGTH | LOG | LOG10 | LOWER_CASE | MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
+            // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
+            // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR | 
+            // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
+            if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_FUNCTION)
             {
-                currentIndex--;
-                endIndex--;
+                tokenType = TokenType.FunctionName;
             }
-            */
-
-            // p12: A reserved word is a character-string with a predefined meaning in a COBOL source
-            // unit.
-
-            // p13: Keywords
-            // Keywords are reserved words that are required within a given clause,
-            // entry, or statement. Within each format, such words appear in uppercase
-            // on the main path.
-
-            // p9: In COBOL words (but not in the content of alphanumeric, DBCS, and national
-            // literals), each lowercase single-byte alphabetic letter is considered to be equivalent
-            // to its corresponding single-byte uppercase alphabetic letter.
-
-            // p9: The following rules apply for all COBOL words:
-            // - A reserved word cannot be used as a user-defined word or as a system-name.
-            // - The same COBOL word, however, can be used as both a user-defined word and
-            //   as a system-name. 
-
-            // Try to match keyword text 
-            string tokenText = line.Substring(startIndex, endIndex - startIndex + 1);
-            TokenType tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText);
-
-            // Correct token type for context-sensitive tokens
-            switch(tokenType)
+            else
             {
-                // Inside DATA DIVISION, the DISPLAY keyword is an argument of the PICTURE clause 
-                case TokenType.DISPLAY:
-                    if(tokensLine.ScanState.InsideDataDivision)
-                    {
-                        tokenType = TokenType.DISPLAY_ARG;
-                    }
-                    break;
-                case TokenType.ENTRY:
-                    if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_TO)
-                    {
-                        tokenType = TokenType.ENTRY_ARG;
-                    }
-                    break;
-                case TokenType.SORT:
-                    if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SAME)
-                    {
-                        tokenType = TokenType.SORT_ARG;
-                    }
-                    break;
-                case TokenType.UserDefinedWord:                    
-                    //FunctionName = 34,
-                    // p477: function-name-1 must be one of the intrinsic function names.
-                    // ACOS | ANNUITY | ASIN | ATAN | CHAR | COS | CURRENT_DATE | DATE_OF_INTEGER | DATE_TO_YYYYMMDD |
-                    // DAY_OF_INTEGER | DAY_TO_YYYYDDD | DISPLAY_OF | FACTORIAL | INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY |
-                    // INTEGER_PART | LENGTH | LOG | LOG10 | LOWER_CASE | MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
-                    // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
-                    // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR | 
-                    // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
-                    if(tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_FUNCTION)
-                    {
-                        tokenType = TokenType.FunctionName;
-                    }
-                    // p117: SYMBOLIC CHARACTERS clause 
-                    // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character. 
-                    // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause. 
-                    // The symbolic character can be a DBCS user-defined word. 
-                    else if(tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SYMBOLIC ||
-                            tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SYMBOLIC_SymbolicCharacters)
-                    {
-                        // Symbolic character definition
-                        tokenType = TokenType.SymbolicCharacter;
-                        tokensLine.ScanState.AddSymbolicCharacter(tokenText);
-                    }
-                    else if (tokensLine.ScanState.SymbolicCharacters != null)
-                    {
-                        // Try to match a previously defined SymbolicCharacter
-                        if (tokensLine.ScanState.SymbolicCharacters.Contains(tokenText))
+                // p12: A reserved word is a character-string with a predefined meaning in a COBOL source
+                // unit.
+
+                // p13: Keywords
+                // Keywords are reserved words that are required within a given clause,
+                // entry, or statement. Within each format, such words appear in uppercase
+                // on the main path.
+
+                // p9: In COBOL words (but not in the content of alphanumeric, DBCS, and national
+                // literals), each lowercase single-byte alphabetic letter is considered to be equivalent
+                // to its corresponding single-byte uppercase alphabetic letter.
+
+                // p9: The following rules apply for all COBOL words:
+                // - A reserved word cannot be used as a user-defined word or as a system-name.
+                // - The same COBOL word, however, can be used as both a user-defined word and
+                //   as a system-name. 
+
+                // Try to match keyword text 
+                string tokenText = line.Substring(startIndex, endIndex - startIndex + 1);
+                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText);
+
+                // Correct token type for context-sensitive tokens
+                switch (tokenType)
+                {
+                    // Inside DATA DIVISION, the DISPLAY keyword is an argument of the PICTURE clause 
+                    case TokenType.DISPLAY:
+                        if (tokensLine.ScanState.InsideDataDivision)
                         {
-                            tokenType = TokenType.SymbolicCharacter;
+                            tokenType = TokenType.DISPLAY_ARG;
                         }
-                    }
-                    break;
+                        break;
+                    case TokenType.ENTRY:
+                        if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_TO)
+                        {
+                            tokenType = TokenType.ENTRY_ARG;
+                        }
+                        break;
+                    case TokenType.SORT:
+                        if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SAME)
+                        {
+                            tokenType = TokenType.SORT_ARG;
+                        }
+                        break;
+                    case TokenType.UserDefinedWord:
+                        // p117: SYMBOLIC CHARACTERS clause 
+                        // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character. 
+                        // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause. 
+                        // The symbolic character can be a DBCS user-defined word. 
+                        if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SYMBOLIC ||
+                                tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SYMBOLIC_SymbolicCharacters)
+                        {
+                            // Symbolic character definition
+                            tokenType = TokenType.SymbolicCharacter;
+                            tokensLine.ScanState.AddSymbolicCharacter(tokenText);
+                        }
+                        else if (tokensLine.ScanState.SymbolicCharacters != null)
+                        {
+                            // Try to match a previously defined SymbolicCharacter
+                            if (tokensLine.ScanState.SymbolicCharacters.Contains(tokenText))
+                            {
+                                tokenType = TokenType.SymbolicCharacter;
+                            }
+                        }
+                        break;
+                }
             }
 
             // Special case : CBL/PROCESS compiler directives
@@ -1583,7 +1578,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 return ScanCblProcessCompilerDirective(startIndex, tokenType);
             }
-
+            
             // p11: The maximum length of a user-defined word is 30 bytes, except for level-numbers
             // and priority-numbers. Level-numbers and priority numbers must each be a
             // one-digit or two-digit integer.
