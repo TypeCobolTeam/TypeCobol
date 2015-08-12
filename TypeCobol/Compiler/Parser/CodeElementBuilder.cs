@@ -584,6 +584,13 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idOrLiteral"></param>
+        /// <param name="statement">Only used in case of error to link the error with the current statement</param>
+        /// <param name="statementName">Only used in case of error to have the name of the current statement</param>
+        /// <returns></returns>
         public Expression CreateIdentifierOrLiteral(CobolCodeElementsParser.IdentifierOrLiteralContext idOrLiteral, CodeElement statement, string statementName)
         {
             if (idOrLiteral.identifier() != null)
@@ -594,6 +601,8 @@ namespace TypeCobol.Compiler.Parser
             {
                 return SyntaxElementBuilder.CreateLiteral(idOrLiteral.literal());
             }
+                //TODO manage figurativeConstant here or as a literal ?
+
             else
             {
                 AddError(statement, statementName + ": required <identifier> or <literal>", idOrLiteral);
@@ -885,13 +894,13 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.identifierInto != null)
             {
-                statement.IntoIdentifier = new Identifier(context.identifierInto);
+                statement.IntoIdentifier = SyntaxElementBuilder.CreateIdentifier(context.identifierInto);
             }//else don't set statement.IntoIdentifier
 
 
             if (context.stringStatementWith() != null)
             {
-                statement.PointerIdentifier = new Identifier(context.stringStatementWith().identifier());
+                statement.PointerIdentifier = SyntaxElementBuilder.CreateIdentifier(context.stringStatementWith().identifier());
             }//else don't set statement.PointerIdentifier
 
             CodeElement = statement;
@@ -931,7 +940,66 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterUnstringStatement(CobolCodeElementsParser.UnstringStatementContext context)
         {
-            CodeElement = new UnstringStatement();
+            var statement = new UnstringStatement();
+
+            if (context.unstringIdentifier != null)
+            {
+                statement.UnstringIdentifier = SyntaxElementBuilder.CreateIdentifier(context.unstringIdentifier);
+            }
+
+            if (context.unstringDelimited() != null)
+            {
+                if (context.unstringDelimited().delimitedBy != null)
+                {
+                    statement.DelimitedBy = CreateIdentifierOrLiteral(context.unstringDelimited().delimitedBy, statement, "unstring");
+                }
+
+                if (context.unstringDelimited().ustringOthersDelimiters() != null)
+                {
+                    var otherDelimiters = new List<Expression>();
+                    foreach (var ustringOthersDelimitersContext in context.unstringDelimited().ustringOthersDelimiters())
+                    {
+                        otherDelimiters.Add(CreateIdentifierOrLiteral(ustringOthersDelimitersContext.identifierOrLiteral(), statement, "Unstring"));
+                    }
+                    statement.OtherDelimiters = otherDelimiters;
+                }
+            }
+
+            if (context.unstringReceiver() != null)
+            {
+                var unstringReceiverList = new List<UnstringReceiver>();
+                foreach (var unstringReceiverContext in context.unstringReceiver())
+                {
+                    var unstringReceiver = new UnstringReceiver();
+                    if (unstringReceiverContext.intoIdentifier != null)
+                    {
+                        unstringReceiver.IntoIdentifier = SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.intoIdentifier);
+                    }
+                    if (unstringReceiverContext.unstringDelimiter() != null &&
+                        unstringReceiverContext.unstringDelimiter().identifier() != null)
+                    {
+                        unstringReceiver.DelimiterIdentifier = SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.unstringDelimiter().identifier());
+                    }
+                    if (unstringReceiverContext.unstringCount() != null && unstringReceiverContext.unstringCount().identifier() != null)
+                    {
+                        unstringReceiver.CountIdentifier = SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.unstringCount().identifier());
+                    }
+                    unstringReceiverList.Add(unstringReceiver);
+                }
+                statement.UnstringReceivers = unstringReceiverList;
+            }
+
+            if (context.unstringPointer() != null && context.unstringPointer().identifier() != null)
+            {
+                statement.WithPointer = SyntaxElementBuilder.CreateIdentifier(context.unstringPointer().identifier());
+            }
+
+            if (context.unstringTallying() != null && context.unstringTallying().identifier() != null)
+            {
+                statement.Tallying = SyntaxElementBuilder.CreateIdentifier(context.unstringTallying().identifier());
+            }
+
+            CodeElement = statement;
         }
 
         public override void EnterUseStatement(CobolCodeElementsParser.UseStatementContext context)

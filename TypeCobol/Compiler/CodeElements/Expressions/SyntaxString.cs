@@ -35,6 +35,11 @@ namespace TypeCobol.Compiler.CodeElements
                     return Token.Text;
 //                    return ((AlphanumericLiteralValue)Token.LiteralValue).Text;
                 }
+                else if (Token.TokenFamily == TokenFamily.FigurativeConstantKeyword)
+                {
+                    return Token.Text;
+//                    return ((AlphanumericLiteralValue)Token.LiteralValue).Text;
+                }
                 else
                 {
                     throw new InvalidOperationException("A string value can not be defined by a token of type : " + Token.TokenType);

@@ -1,5 +1,14 @@
 ﻿--- Code Elements ---
-[[UnstringStatement]] [1,8:UNSTRING]<UNSTRING> --> [66,75:WS-NUM-POL]<UserDefinedWord>
+unstring toto
+INTO  result
 
-[[SentenceEnd]] [76,76+:.]<PeriodSeparator> --> [76,76+:.]<PeriodSeparator>
+unstring toto2
+ delimited by "toto2"
+INTO  result
+
+unstring toto
+ delimited by var1 or var2 or var3
+INTO  result result2
+ WITH POINTER ptr1
+ TALLYING IN tallyingVar
 

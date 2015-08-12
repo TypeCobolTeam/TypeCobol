@@ -4,7 +4,7 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
-    class Pointer : Expression
+    public class Pointer : Expression
     {
         public IdentifierOld identifier { get; private set; }
         public Pointer(IdentifierOld identifier)

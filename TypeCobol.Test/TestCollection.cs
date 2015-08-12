@@ -102,7 +102,8 @@ namespace TypeCobol.Test
             TestCodeElements.Check("END");
             TestCodeElements.Check("NOT");
             TestCodeElements.Check("ON");
-            // TO DO -> fix new identifier parsing :  TestCodeElements.Check_DISPLAYCodeElements();
+            // TO DO -> fix new identifier parsing :  
+            TestCodeElements.Check_DISPLAYCodeElements();
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_UDWCodeElements();

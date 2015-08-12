@@ -49,6 +49,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 return CreateSyntaxString(context.alphanumOrNationalLiteralBase());
             }
+
             throw new InvalidOperationException("This is not a string!");
         }
 
@@ -61,6 +62,63 @@ namespace TypeCobol.Compiler.Parser
             if (context.HexadecimalAlphanumericLiteral() != null)
             {
                 return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalAlphanumericLiteral()));
+            }
+
+            if (context.figurativeConstant() != null)
+            {
+                if (context.figurativeConstant().HIGH_VALUE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().HIGH_VALUE()));
+                }
+                if (context.figurativeConstant().HIGH_VALUES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().HIGH_VALUES()));
+                }
+                if (context.figurativeConstant().LOW_VALUE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().LOW_VALUE()));
+                }
+                if (context.figurativeConstant().LOW_VALUES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().LOW_VALUES()));
+                }
+                if (context.figurativeConstant().NULL() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().NULL()));
+                }
+                if (context.figurativeConstant().NULLS() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().NULLS()));
+                }
+                if (context.figurativeConstant().QUOTE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().QUOTE()));
+                }
+                if (context.figurativeConstant().QUOTES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().QUOTES()));
+                }
+                if (context.figurativeConstant().SPACE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().SPACE()));
+                }
+                if (context.figurativeConstant().SPACES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().SPACES()));
+                }
+                if (context.figurativeConstant().ZERO() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZERO()));
+                }
+                if (context.figurativeConstant().ZEROES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZEROES()));
+                }
+                if (context.figurativeConstant().ZEROS() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZEROS()));
+                }
+                throw new InvalidOperationException("Figurative constant not recognised");
             }
             throw new InvalidOperationException("This is not a string!");
         }
@@ -75,6 +133,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 return new SyntaxNational(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalNationalLiteral()));
             }
+            //TODO figurative constant
             throw new InvalidOperationException("This is not a national!");
         }
 

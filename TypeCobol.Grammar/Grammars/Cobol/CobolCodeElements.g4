@@ -7149,15 +7149,16 @@ searchStatementEnd: END_SEARCH;
 ///                      (conditionName+ TO TRUE) );
 
 setStatement:
-	  setStatementFormat1
-	| setStatementFormat2
-	| setStatementFormat3
-	| setStatementFormat4
-	| setStatementFormat5
-	| setStatementFormat6
-	| setStatementFormat7
+	  setStatementFormat1	//SET for basic table handling
+	| setStatementFormat2	//SET for adjusting indexes
+	| setStatementFormat3	//SET for external switches
+	| setStatementFormat4	//SET for condition-names
+	| setStatementFormat5	//SET for USAGE IS POINTER
+	| setStatementFormat6	//SET for procedure-pointer and function-pointer data items
+	| setStatementFormat7	//SET for USAGE OBJECT REFERENCE data items
 	;
 
+//SET for basic table handling
 setStatementFormat1:
 	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
 setStatementFormat1Receiving:
@@ -7165,17 +7166,21 @@ setStatementFormat1Receiving:
 setStatementFormat1Sending:
 	indexName | identifier | IntegerLiteral;
 
+//SET for adjusting indexes
 setStatementFormat2:
 	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
 
+//SET for external switches
 setStatementFormat3:
 	SET setStatementFormat3What+;
 setStatementFormat3What:
 	mnemonicForUPSISwitchName+ TO (ON | OFF);
 
+//SET for condition-names
 setStatementFormat4:
 	SET identifier+ TO TRUE;
 
+//SET for USAGE IS POINTER
 setStatementFormat5:
 	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
 setStatementFormat5Receiving:
@@ -7183,6 +7188,7 @@ setStatementFormat5Receiving:
 setStatementFormat5Sending:
 	((ADDRESS OF)? identifier) | (NULL | NULLS);
 
+//SET for procedure-pointer and function-pointer data items
 setStatementFormat6:
 	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
 setStatementFormat6Receiving:
@@ -7197,6 +7203,7 @@ setStatementFormat6Sending:
 	| pointerDataItem
 	;
 
+//SET for USAGE OBJECT REFERENCE data items
 setStatementFormat7:
 	SET objectReferenceId TO setStatementFormat7Sending;
 setStatementFormat7Sending:
@@ -7959,14 +7966,23 @@ subtractStatementEnd: END_SUBTRACT;
 // ... more details p447 Values at the end of execution of the UNSTRING statement ...
 // ... more details p447->448 Example of the UNSTRING statement ...
 
+//unstringStatement:
+//	UNSTRING identifier INTO identifier;
+
 unstringStatement:
-	UNSTRING identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
+	UNSTRING unstringIdentifier=identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
 
 unstringDelimited:
-	DELIMITED BY? ALL? identifierOrLiteral (OR ALL? identifierOrLiteral)*;
+	DELIMITED BY? ALL? delimitedBy=identifierOrLiteral ustringOthersDelimiters*;
 
+ustringOthersDelimiters:
+	OR ALL? identifierOrLiteral;
+
+//unstringReceiver:
+//	identifier unstringDelimiter? unstringCount?;
+	
 unstringReceiver:
-	identifier unstringDelimiter? unstringCount?;
+	intoIdentifier=identifier unstringDelimiter? unstringCount?;
 
 unstringDelimiter:
 	DELIMITER IN? identifier;

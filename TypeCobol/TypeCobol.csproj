@@ -245,6 +245,9 @@
     <Compile Include="Compiler\CodeElements\Statement\RewriteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SearchStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SetStatement.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\SetStatementForCondition.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\SetStatementForIndex.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\SetStatementForPointer.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SortStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StartStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StopStatement.cs" />
