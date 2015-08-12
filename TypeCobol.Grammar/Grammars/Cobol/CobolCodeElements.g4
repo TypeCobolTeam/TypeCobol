@@ -10107,7 +10107,7 @@ addressOfSpecialRegisterDecl:
 			ADDRESS OF dataNameReference;
 			
 lengthOfSpecialRegisterDecl:						 
-			LENGTH OF dataNameReference;
+			LENGTH OF? dataNameReference;
 
 linageCounterSpecialRegisterDecl:
 			LINAGE_COUNTER OF fileName;
