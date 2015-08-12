@@ -90,3 +90,11 @@
 - variables = toto toto toto<mycopy
 - WithNoAdvancing = False
 
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,25:high-value]<HIGH_VALUE>
+- variables = high-value
+- WithNoAdvancing = False
+
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,21:spaces]<SPACES>
+- variables = spaces
+- WithNoAdvancing = False
+
