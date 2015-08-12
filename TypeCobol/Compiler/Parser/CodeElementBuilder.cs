@@ -585,11 +585,11 @@ namespace TypeCobol.Compiler.Parser
         {
             if (idOrLiteral.identifier() != null)
             {
-                return new Identifier(idOrLiteral.identifier());
+                return SyntaxElementBuilder.CreateIdentifier(idOrLiteral.identifier());
             }
             else if (idOrLiteral.literal() != null)
             {
-                return new Literal(idOrLiteral.literal());
+                return SyntaxElementBuilder.CreateLiteral(idOrLiteral.literal());
             }
             else
             {

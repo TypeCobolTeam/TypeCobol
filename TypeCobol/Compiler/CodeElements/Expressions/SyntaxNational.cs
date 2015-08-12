@@ -1,6 +1,4 @@
 ﻿using System;
-using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -45,19 +43,6 @@ namespace TypeCobol.Compiler.CodeElements
         public override string ToString()
         {
             return Value.ToString();
-        }
-
-        public static SyntaxNational Create(CobolCodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
-        {
-            if (context.NationalLiteral() != null)
-            {
-                return new SyntaxNational(ParseTreeUtils.GetTokenFromTerminalNode(context.NationalLiteral()));
-            }
-            if (context.HexadecimalNationalLiteral() != null)
-            {
-                return new SyntaxNational(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalNationalLiteral()));
-            }
-            throw new InvalidOperationException("This is not a national!");
         }
     }
 }

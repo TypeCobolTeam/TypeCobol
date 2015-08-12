@@ -12,16 +12,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         private SyntaxNumber numberValue;
         private SyntaxString stringValue;
 
-        public Literal(Parser.Generated.CobolCodeElementsParser.LiteralContext context)
+        public Literal(SyntaxNumber numberValue)
         {
-            if (context.numericLiteral() != null)
-            {
-                numberValue = SyntaxNumber.Create(context.numericLiteral());
-            }
-            if (context.alphanumOrNationalLiteral() != null)
-            {
-                stringValue = SyntaxString.Create(context.alphanumOrNationalLiteral());
-            }
+            this.numberValue = numberValue;
+        }
+
+        public Literal(SyntaxString stringValue)
+        {
+            this.stringValue = stringValue;
         }
 
         /// <summary>

@@ -1,6 +1,4 @@
 ﻿using System;
-using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -55,35 +53,6 @@ namespace TypeCobol.Compiler.CodeElements
         public override string ToString()
         {
             return Value.ToString();
-        }
-
-        public static SyntaxNumber Create(CobolCodeElementsParser.NumericLiteralContext context)
-        {
-            if (context.IntegerLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-            }
-            if (context.DecimalLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral()));
-            }
-            if (context.FloatingPointLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral()));
-            }
-            if (context.ZERO() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
-            }
-            if (context.ZEROS() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
-            }
-            if (context.ZEROES() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
-            }
-            throw new InvalidOperationException("This is not a number!");
         }
     }
 }

@@ -107,7 +107,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ALPHABETIC_UPPER() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC_UPPER()));
             if (context.DBCS() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.DBCS()));
             if (context.KANJI() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.KANJI()));
-            LogicalExpression condition = new ClassCondition(new Identifier(context.identifier()), type);
+            LogicalExpression condition = new ClassCondition(SyntaxElementBuilder.CreateIdentifier(context.identifier()), type);
             if (context.NOT() != null) condition = new NOT(condition);
             return condition;
         }
@@ -123,8 +123,8 @@ namespace TypeCobol.Compiler.Parser
             if (qualified == null) return new Empty();
             // we can take first, as conditionName is a UserDefinedWord
             var condition = new Condition(ParseTreeUtils.GetFirstToken(qualified.conditionName()));
-            condition.inof.AddDataNames(qualified.inOrOfDataName());
-            condition.inof.AddFileName(qualified.inOrOfFileName());
+            // TODO condition.inof.AddDataNames(qualified.inOrOfDataName());
+            // TODO condition.inof.AddFileName(qualified.inOrOfFileName());
             // TODO add subscripts
             return condition;
         }
@@ -181,9 +181,9 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CobolCodeElementsParser.OperandContext context)
         {
-            if (context.identifier() != null) return new Identifier(context.identifier());
-            if (context.literal() != null) return new Literal(context.literal());
-            System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER NON-LITERAL OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.intrinsicFunction() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
+            System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER NON-LITERAL OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
             return new Empty();
         }
 
@@ -317,7 +317,7 @@ namespace TypeCobol.Compiler.Parser
         private Expression createOperand(CobolCodeElementsParser.DataPointerContext context)
         {
             if (context.NULL() != null || context.NULLS() != null) return new Null();
-            if (context.identifier() != null) return new Identifier(context.identifier());
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             return new Empty();
         }
 
@@ -341,7 +341,7 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CobolCodeElementsParser.ProcedureOrFunctionPointerContext context)
         {
-            if (context.identifier() != null) return new Identifier(context.identifier());
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.NULL() != null || context.NULLS() != null) return new Null();
             return new Empty();
         }
@@ -366,7 +366,7 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CobolCodeElementsParser.ObjectReferenceContext context)
         {
-            if (context.identifier() != null) return new Identifier(context.identifier());
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.NULL() != null || context.NULLS() != null) return new Null();
             if (context.SELF() != null) return new Self();
             return new Empty();
