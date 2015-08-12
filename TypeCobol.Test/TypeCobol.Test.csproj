@@ -224,7 +224,6 @@
     <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\XMLCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\PERFORMCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\NOT.cbl" />
     <None Include="Compiler\Parser\Samples\EXITCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\END.cbl" />
