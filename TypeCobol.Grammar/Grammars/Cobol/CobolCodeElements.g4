@@ -10036,10 +10036,9 @@ qualifiedConditionName:
 // program to alter the value of the index.
 
 subscript:
-             IntegerLiteral | 
-			 ALL  |
-             dataName withRelativeSubscripting? |
-             indexName withRelativeSubscripting?;
+	IntegerLiteral | ALL  |
+	(dataName withRelativeSubscripting?) |
+	(indexName withRelativeSubscripting?);
 
 withRelativeSubscripting:
 			(PlusOperator | MinusOperator) IntegerLiteral;
