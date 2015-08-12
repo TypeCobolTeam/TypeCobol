@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.Parser
 
         public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierRoundedContext context)
         {
-            Identifier identifier = CreateIdentifier(context);
+            Identifier identifier = new Identifier();
             identifier.ROUNDED = context.ROUNDED() != null;
             return identifier;
         }
