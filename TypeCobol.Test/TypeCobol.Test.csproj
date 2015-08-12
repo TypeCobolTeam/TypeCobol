@@ -112,7 +112,6 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\SEARCH.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EXEC.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\PERFORM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\IF.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\DISPLAYCodeElements.txt" />
@@ -208,7 +207,6 @@
     <None Include="Compiler\Parser\Samples\Statements\COMPUTE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\MOVE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\PERFORM.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IF.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />
