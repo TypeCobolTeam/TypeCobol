@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     }
     class Identifier : Expression
     {
-        public Token token { get; private set; }
+        public Token token { get; set; }
         public bool ROUNDED = false;
         public Token LINAGE_COUNTER = null;
         public INOFList inof = new INOFList();
@@ -37,21 +37,16 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class INOF<S> where S : Symbol
     {
         public SymbolReference<S> reference { get; private set; }
-        public bool IN { get; private set; }
-        public bool OF { get; private set; }
 
-        public INOF(S symbol, bool IN, bool OF)
+        public INOF(S symbol)
         {
             this.reference = new SymbolReference<S>(symbol);
-            this.IN = IN;
-            this.OF = OF;
         }
 
         public override string ToString()
         {
             StringBuilder res = new StringBuilder("");
-            if (IN) res.Append(">");
-            if (OF) res.Append("<");
+            res.Append("<");
             res.Append(reference);
             if (res.Length > 0) return res.ToString();
             return "?";
@@ -63,14 +58,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
         public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
 
-        public void AddDataName(DataName dataName, bool withIN, bool withOF)
+        public void AddDataName(DataName dataName)
         {
-            datanames.Add(new INOF<DataName>(dataName, withIN, withOF));
+            datanames.Add(new INOF<DataName>(dataName));
         }
 
-        public void AddFileName(FileName fileName, bool withIN, bool withOF)
+        public void AddFileName(FileName fileName)
         {
-            filenames.Add(new INOF<FileName>(fileName, withIN, withOF));
+            filenames.Add(new INOF<FileName>(fileName));
         }
 
         public override string ToString()

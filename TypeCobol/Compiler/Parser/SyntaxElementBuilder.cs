@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.Parser
 
         public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierRoundedContext context)
         {
-            Identifier identifier = new Identifier();
+            Identifier identifier = CreateIdentifier(context.identifier());
             identifier.ROUNDED = context.ROUNDED() != null;
             return identifier;
         }
@@ -106,8 +106,15 @@ namespace TypeCobol.Compiler.Parser
         public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
         {
             Identifier identifier = new Identifier();
-            /*identifier.token = ParseTreeUtils.GetFirstToken(context);
-            if (context.identifierFormat1() != null)
+            identifier.token = ParseTreeUtils.GetFirstToken(context);
+            if (context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier() != null)
+            {
+                if (context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier().dataNameReference() != null)
+                {
+                    InitializeIdentifier(identifier, context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier().dataNameReference());
+                }
+            }
+            /*if (context.identifierFormat1() != null)
             {
                 InitializeIdentifierFormat1(context.identifierFormat1());
             }
@@ -122,6 +129,46 @@ namespace TypeCobol.Compiler.Parser
                 InitializeIdentifierFormat3(context.identifierFormat3());
             }*/
             return identifier;
+        }
+
+        private static void InitializeIdentifier(Identifier identifier, CobolCodeElementsParser.DataNameReferenceContext context)
+        {
+            if (context == null) return;
+
+            InitializeDataNames(identifier, context.qualifiedDataName());
+
+            if (context.subscript() != null)
+            {
+                foreach (var subscript in context.subscript())
+                {
+                    identifier.subscripts.AddSubscript(CreateSubscript(subscript));
+                }
+            }
+        }
+
+        private static void InitializeDataNames(Identifier identifier, CobolCodeElementsParser.QualifiedDataNameContext context)
+        {
+            if (context == null) return;
+            if (context.dataName().Count > 1)
+            {
+                int c = 0;
+                foreach (var d in context.dataName())
+                {
+                    c++;
+                    if (c > 1 && d != null)
+                        identifier.inof.AddDataName(CreateDataName(d));
+                }
+            }
+            if (context.fileName() != null) identifier.inof.AddFileName(CreateFileName(context.fileName()));
+        }
+
+        private static DataName CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        {
+            return new DataName(ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
+        }
+        public static FileName CreateFileName(CobolCodeElementsParser.FileNameContext context)
+        {
+            return new FileName(ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
         }
 
         /*
@@ -160,19 +207,6 @@ namespace TypeCobol.Compiler.Parser
             inof.AddFileName(context.inOrOfFileName());
         }
         */
-
-        /*public static DataName CreateDataName(CobolCodeElementsParser.InOrOfDataNameContext context)
-        {
-            if (context == null || context.dataName() == null) return null;
-            DataName dataname = new DataName(ParseTreeUtils.GetFirstToken(context.dataName().UserDefinedWord()));
-            return dataname;
-        }
-        public static FileName CreateFileName(CobolCodeElementsParser.InOrOfFileNameContext context)
-        {
-            if (context == null || context.fileName() == null) return null;
-            FileName filename = new FileName(ParseTreeUtils.GetFirstToken(context.fileName().UserDefinedWord()));
-            return filename;
-        }*/
 
         public static Subscript CreateSubscript(CobolCodeElementsParser.SubscriptContext context)
         {
