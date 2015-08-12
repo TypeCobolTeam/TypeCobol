@@ -290,7 +290,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var first = context.dataPointer().ElementAt(0);
                 Expression left = createOperand(context.dataPointer().ElementAt(0));
-                if (first.ADDRESS() != null) left = new Pointer((Identifier)left);
+                if (first.ADDRESS() != null) left = new Pointer((IdentifierOld)left);
 
                 char op = createOperator(context.relationConditionEquality());
 
@@ -299,7 +299,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     var second = context.dataPointer().ElementAt(1);
                     right = createOperand(second);
-                    if (second.ADDRESS() != null) right = new Pointer((Identifier)right);
+                    if (second.ADDRESS() != null) right = new Pointer((IdentifierOld)right);
                 }
                 return LogicOperation.Create(left, op, right);
             }

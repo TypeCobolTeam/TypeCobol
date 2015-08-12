@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Parser
             // so add/subtract the "left" operand to all the elements of the "right" operand added together
             foreach (var operand in rightContext)
             {
-                Identifier right = SyntaxElementBuilder.CreateIdentifier(operand);
+                IdentifierOld right = SyntaxElementBuilder.CreateIdentifier(operand);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
                 statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
             }
@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler.Parser
         {
             foreach (var operand in resultContext)
             {
-                Identifier right = SyntaxElementBuilder.CreateIdentifier(operand);
+                IdentifierOld right = SyntaxElementBuilder.CreateIdentifier(operand);
                 statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
             }
         }
@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Parser
             }
             if (left != null && rightContext != null)
             {
-                Identifier right = SyntaxElementBuilder.CreateIdentifier(rightContext);
+                IdentifierOld right = SyntaxElementBuilder.CreateIdentifier(rightContext);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
                 statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
             }

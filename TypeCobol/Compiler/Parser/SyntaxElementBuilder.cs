@@ -96,16 +96,16 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierRoundedContext context)
+        public static IdentifierOld CreateIdentifier(CobolCodeElementsParser.IdentifierRoundedContext context)
         {
-            Identifier identifier = CreateIdentifier(context.identifier());
+            IdentifierOld identifier = CreateIdentifier(context.identifier());
             identifier.ROUNDED = context.ROUNDED() != null;
             return identifier;
         }
 
-        public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
+        public static IdentifierOld CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
         {
-            Identifier identifier = new Identifier();
+            IdentifierOld identifier = new IdentifierOld();
             identifier.token = ParseTreeUtils.GetFirstToken(context);
             if (context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier() != null)
             {
@@ -131,7 +131,7 @@ namespace TypeCobol.Compiler.Parser
             return identifier;
         }
 
-        private static void InitializeIdentifier(Identifier identifier, CobolCodeElementsParser.DataNameReferenceContext context)
+        private static void InitializeIdentifier(IdentifierOld identifier, CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return;
 
@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private static void InitializeDataNames(Identifier identifier, CobolCodeElementsParser.QualifiedDataNameContext context)
+        private static void InitializeDataNames(IdentifierOld identifier, CobolCodeElementsParser.QualifiedDataNameContext context)
         {
             if (context == null) return;
             if (context.dataName().Count > 1)

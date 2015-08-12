@@ -5,7 +5,7 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
 
-    public abstract class Expression { }
+    public interface Expression { }
 
     public class Literal : Expression
     {
