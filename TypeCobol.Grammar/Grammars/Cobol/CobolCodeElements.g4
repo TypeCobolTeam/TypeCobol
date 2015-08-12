@@ -10224,7 +10224,5 @@ length: arithmeticExpression;
 // 02 through 49 are successively lower levels of the hierarchy.
 
 identifier:
-			dataNameReferenceOrSpecialRegisterOrFunctionIdentifier 
-			   (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)? 
-			 |
-			conditionNameReference;
+	  (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?)
+	| conditionNameReference;
