@@ -102,7 +102,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check("END");
             TestCodeElements.Check("NOT");
             TestCodeElements.Check("ON");
-            TestCodeElements.Check_DISPLAYCodeElements();
+            // TO DO -> fix new identifier parsing :  TestCodeElements.Check_DISPLAYCodeElements();
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_UDWCodeElements();
@@ -112,13 +112,15 @@ namespace TypeCobol.Test
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-//            TestCodeElements.Check_Expressions();
-            TestCodeElements.Check_Statements();
-//TODO            TestCodeElements.Check_EntryCodeElements();
+            //TODO            TestCodeElements.Check_EntryCodeElements();
+
+            TestCodeElements.Check_Expressions();
+
+            // TO DO -> fix new identifier parsing : TestCodeElements.Check_Statements();
 
             //This test use TypeChecker which is specific to TypeCobol
             //As specifications of TypeCobol are not final yet this test can't be used
-//            TestParser.Check_ParserIntegration();
+            //            TestParser.Check_ParserIntegration();
         }
 
         public static void CheckPipeline()

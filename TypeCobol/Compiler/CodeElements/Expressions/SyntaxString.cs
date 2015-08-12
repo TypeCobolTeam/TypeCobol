@@ -49,32 +49,5 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return Value;
         }
-
-        internal static SyntaxString Create(Parser.Generated.CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
-        {
-            bool all = context.ALL() != null;//TODO
-            if (context.NullTerminatedAlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.NullTerminatedAlphanumericLiteral()));
-            }
-            if (context.alphanumOrNationalLiteralBase() != null)
-            {
-                return Create(context.alphanumOrNationalLiteralBase());
-            }
-            throw new InvalidOperationException("This is not a string!");
-        }
-
-        private static SyntaxString Create(Parser.Generated.CobolCodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
-        {
-            if (context.AlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral()));
-            }
-            if (context.HexadecimalAlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalAlphanumericLiteral()));
-            }
-            throw new InvalidOperationException("This is not a string!");
-        }
     }
 }

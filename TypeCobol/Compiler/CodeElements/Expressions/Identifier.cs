@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
@@ -20,72 +18,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     }
     class Identifier : Expression
     {
-        public Identifier(CobolCodeElementsParser.IdentifierRoundedContext context)
-            : this(context.identifier())
-        {
-            ROUNDED = context.ROUNDED() != null;
-        }
-
-        public Identifier(CobolCodeElementsParser.IdentifierContext context)
-        {
-            token = ParseTreeUtils.GetFirstToken(context);
-            if (context.identifierFormat1() != null)
-            {
-                InitializeIdentifierFormat1(context.identifierFormat1());
-            } else
-            if (context.identifierFormat2() != null)
-            {
-                InitializeIdentifierFormat2(context.identifierFormat2());
-            } else
-            if (context.identifierFormat3() != null)
-            {
-                InitializeIdentifierFormat3(context.identifierFormat3());
-            }
-        }
-
         public Token token { get; private set; }
         public bool ROUNDED = false;
         public Token LINAGE_COUNTER = null;
         public INOFList inof = new INOFList();
         public SubscriptList subscripts = new SubscriptList();
-
-        private void InitializeIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
-        {
-            if (context.dataName() != null)
-            {
-                Token token = ParseTreeUtils.GetFirstToken(context.dataName());
-                SymbolReference<DataName> data = new SymbolReference<DataName>(new DataName(token));
-                //TODO and ... now ?
-            }
-            inof.AddDataNames(context.inOrOfDataName());
-            inof.AddFileName(context.inOrOfFileName());
-
-            if (context.subscript() != null)
-            {
-                foreach (var subscript in context.subscript())
-                {
-                    subscripts.Add(subscript);
-                }
-            }
-
-            //TODO: reference modifiers
-        }
-
-        private void InitializeIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
-        {
-            var condition = context.conditionName(); //TODO
-            inof.AddDataNames(context.inOrOfDataName());
-            inof.AddFileName(context.inOrOfFileName());
-        }
-
-        private void InitializeIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
-        {
-            LINAGE_COUNTER = ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER());
-            inof.AddFileName(context.inOrOfFileName());
-        }
-
-
-
+        
         public override string ToString()
         {
             string token = this.token != null ? this.token.Text : base.ToString();
@@ -95,10 +33,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             return res.ToString();
         }
     }
-
-
-
-
+    
     public class INOF<S> where S : Symbol
     {
         public SymbolReference<S> reference { get; private set; }
@@ -128,23 +63,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
         public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
 
-        public void AddDataNames(IReadOnlyList<CobolCodeElementsParser.InOrOfDataNameContext> context)
+        public void AddDataName(DataName dataName, bool withIN, bool withOF)
         {
-            if (context == null) return;
-            foreach (var inof in context) AddDataName(inof);
+            datanames.Add(new INOF<DataName>(dataName, withIN, withOF));
         }
 
-        public void AddDataName(CobolCodeElementsParser.InOrOfDataNameContext context)
+        public void AddFileName(FileName fileName, bool withIN, bool withOF)
         {
-            if (context == null || context.dataName() == null) return;
-            DataName dataname = new DataName(ParseTreeUtils.GetFirstToken(context.dataName().UserDefinedWord()));
-            datanames.Add(new INOF<DataName>(dataname, context.IN() != null, context.OF() != null));
-        }
-        public void AddFileName(CobolCodeElementsParser.InOrOfFileNameContext context)
-        {
-            if (context == null || context.fileName() == null) return;
-            FileName filename = new FileName(ParseTreeUtils.GetFirstToken(context.fileName().UserDefinedWord()));
-            filenames.Add(new INOF<FileName>(filename, context.IN() != null, context.OF() != null));
+            filenames.Add(new INOF<FileName>(fileName, withIN, withOF));
         }
 
         public override string ToString()
@@ -179,50 +105,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class SubscriptList
     {
-        private List<Subscript> subscripts = new List<Subscript>();
+        private List<Subscript> subscripts = new List<Subscript>();       
 
-        private void InitializeSubscriptOperatorAndLiteral(Subscript subscript,
-            Antlr4.Runtime.Tree.ITerminalNode plus,
-            Antlr4.Runtime.Tree.ITerminalNode minus,
-            Antlr4.Runtime.Tree.ITerminalNode integer)
+        public void AddSubscript(Subscript subscript)
         {
-            if (plus != null) subscript.op = '+';
-            if (minus != null) subscript.op = '-';
-            if (integer != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(integer));
-        }
-
-        public void Add(CobolCodeElementsParser.SubscriptContext context)
-        {
-            if (context == null) return;
-
-            Subscript subscript = new Subscript();
-            if (context.subscriptLine1() != null)
-            {
-                InitializeSubscriptOperatorAndLiteral(subscript, null, null, context.subscriptLine1().IntegerLiteral());
-            }
-            if (context.subscriptLine2() != null)
-            {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine2().ALL());
-                subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
-            }
-            if (context.subscriptLine3() != null)
-            {
-                if (context.subscriptLine3().dataName() != null)
-                {
-                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine3().dataName().UserDefinedWord());
-                    subscript.dataname = new SymbolReference<DataName>(new DataName(token));
-                }
-                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine3().PlusOperator(), context.subscriptLine3().MinusOperator(), context.subscriptLine3().IntegerLiteral());
-            }
-            if (context.subscriptLine4() != null)
-            {
-                if (context.subscriptLine4().indexName() != null)
-                {
-                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine4().indexName().UserDefinedWord());
-                    subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
-                }
-                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine4().PlusOperator(), context.subscriptLine4().MinusOperator(), context.subscriptLine4().IntegerLiteral());
-            }
             subscripts.Add(subscript);
         }
 

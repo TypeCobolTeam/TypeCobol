@@ -77,6 +77,7 @@
     <Compile Include="Compiler\File\TestIBMCodePages.cs" />
     <Compile Include="Compiler\Parser\Comparator.cs" />
     <Compile Include="Compiler\Parser\ParserUtils.cs" />
+    <None Include="Compiler\Parser\Samples\Expressions\FunctionIdentifiers.cbl" />
     <Compile Include="Compiler\Parser\TestCodeElements.cs" />
     <Compile Include="Compiler\Parser\TestParser.cs" />
     <Compile Include="Compiler\Parser\TestTokenSource.cs" />
@@ -104,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
+    <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiers.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />

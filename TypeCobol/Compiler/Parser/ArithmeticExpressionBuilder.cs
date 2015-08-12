@@ -13,11 +13,11 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             if (context.identifier() != null)
             {
-                return new Identifier(context.identifier());
+                return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             }
             if (context.numericLiteral() != null)
             {
-                return new Number(SyntaxNumber.Create(context.numericLiteral()));
+                return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
             }
             return null;
         }

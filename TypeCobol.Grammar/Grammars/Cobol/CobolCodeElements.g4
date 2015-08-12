@@ -9494,10 +9494,10 @@ simpleRelation:
 ///	LeftParenthesisSeparator abbreviatedObjectPhrase RightParenthesisSeparator;
 
 // p260: The subject of the relation condition. Can be an identifier, literal,
-// function-identifier, arithmetic expression, or index-name.
+// function-identifier (already included in identifier), arithmetic expression, or index-name.
 
 operand:
-	identifier | literal | intrinsicFunction | arithmeticExpression | indexName;
+	identifier | literal | arithmeticExpression | indexName;
 
 // p267: Data pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9766,111 +9766,11 @@ conditionBase:
 // at the same time as any reference modification or subscripting associated with an
 // identifier in that same position would be evaluated.
 
-// ... more detail on functions (types, usage rules, arguments ...) p478 to p
-// p477: function-name-1 must be one of the intrinsic function names.
-// argument-1
+// ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
-// p484: Function definitions
-// This section provides an overview of the argument type, function type, and value
-// returned for each of the intrinsic functions.
+functionIdentifier:
+	FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
-// ... detailed description of each intrinsic function p484 -> p524 ...
-
-intrinsicFunction:
-//	intrinsicFunctionFormat1 | intrinsicFunctionFormat2;
-	FUNCTION (FunctionName | intrinsicFunctionWhichIsIncidentallyAlreadyReserved) fArgN? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
-
-intrinsicFunctionWhichIsIncidentallyAlreadyReserved:
-	WHEN_COMPILED | RANDOM;
-
-intrinsicFunctionFormat1:
-	tU | tN | tI | tX;
-
-intrinsicFunctionFormat2:
-	(tU | tX) LeftParenthesisSeparator referenceModifier RightParenthesisSeparator;
-
-tU:	  ( FUNCTION LOWER_CASE fArg1 ) // only if argument is of type U
-	| ( FUNCTION MAX fArgN ) // only if arguments are of type U
-	| ( FUNCTION MIN fArgN ) // only if arguments are of type U
-	| ( FUNCTION NATIONAL_OF fArg12 )
-	| ( FUNCTION REVERSE fArg1 ) // only if argument is of type U
-	| ( FUNCTION UPPER_CASE fArg1 ) // only if argument is of type U
-	;
-
-tN:	  ( FUNCTION ACOS fArg1 )
-	| ( FUNCTION ANNUITY fArg1 )
-	| ( FUNCTION ASIN fArg1 )
-	| ( FUNCTION ATAN fArg1 )
-	| ( FUNCTION COS fArg1 )
-	| ( FUNCTION LOG fArg1 )
-	| ( FUNCTION LOG10 fArg1 )
-	| ( FUNCTION MAX fArgN ) // only if arguments are of type N
-	| ( FUNCTION MIN fArgN ) // only if arguments are of type N
-	| ( FUNCTION MEAN fArgN )
-	| ( FUNCTION MEDIAN fArgN )
-	| ( FUNCTION MIDRANGE fArgN )
-//	| ( FUNCTION NUMVAL LeftParenthesisOperator ... RightParenthesisOperator ) // TODO
-//	| ( FUNCTION NUMVAL_C LeftParenthesisOperator ... RightParenthesisOperator ) // TODO
-	| ( FUNCTION PRESENT_VALUE fArgN ) //TODO there's a twist
-	| ( FUNCTION RANDOM fArg1? )
-	| ( FUNCTION RANGE fArgN ) // only if arguments are of type N
-	| ( FUNCTION REM fArg2 )
-	| ( FUNCTION SIN fArg1 )
-	| ( FUNCTION SQRT fArg1 )
-	| ( FUNCTION STANDARD_DEVIATION fArgN )
-	| ( FUNCTION SUM fArgN ) // only if arguments are of type N
-	| ( FUNCTION TAN fArg1 )
-	| ( FUNCTION VARIANCE fArgN )
-	;
-
-tI:	  ( FUNCTION DATE_OF_INTEGER fArg1 )
-	| ( FUNCTION DATE_TO_YYYYMMDD fArg12 )
-	| ( FUNCTION DAY_OF_INTEGER fArg1 )
-	| ( FUNCTION DAY_TO_YYYYMMDD fArg12 )
-	| ( FUNCTION FACTORIAL fArg1 )
-	| ( FUNCTION INTEGER fArg1 )
-	| ( FUNCTION INTEGER_OF_DATE fArg1 )
-	| ( FUNCTION INTEGER_OF_DAY fArg1 )
-	| ( FUNCTION INTEGER_PART fArg1 )
-	| ( FUNCTION MAX fArgN ) // only if arguments are of type I
-	| ( FUNCTION MIN fArgN ) // only if arguments are of type I
-	| ( FUNCTION LENGTH fArg1 )
-	| ( FUNCTION MOD fArg2 )
-	| ( FUNCTION ORD fArg1 )
-	| ( FUNCTION ORD_MAX fArgN )
-	| ( FUNCTION ORD_MIN fArgN )
-	| ( FUNCTION RANGE fArgN ) // only if arguments are of type I
-	| ( FUNCTION SUM fArgN ) // only if arguments are of type I
-	| ( FUNCTION ULENGTH fArg1 )
-	| ( FUNCTION UPOS fArg2 )
-	| ( FUNCTION USUPPLEMENTARY fArg1 )
-	| ( FUNCTION UVALID fArg1 )
-	| ( FUNCTION UWIDTH fArg2 )
-	| ( FUNCTION YEAR_TO_YYYY fArg12 )
-	;
-
-tX:	  FUNCTION (
-	  ( CHAR fArg1 )
-	| ( CURRENT_DATE )
-	| ( DISPLAY_OF fArg12 )
-	| ( LOWER_CASE fArg1 )
-	| ( USUBSTR fArg3 )
-	| ( WHEN_COMPILED )
-// only if arguments are of type A or X
-	| ( MAX fArgN )
-	| ( MIN fArgN )
-	| ( REVERSE fArg1 )
-	| ( UPPER_CASE fArg1 )
-	);
-
-fArg1: LeftParenthesisOperator argument RightParenthesisOperator;
-fArg12: LeftParenthesisOperator argument argument? RightParenthesisOperator;
-fArg2: LeftParenthesisOperator argument argument RightParenthesisOperator;
-fArg3: LeftParenthesisOperator argument argument argument RightParenthesisOperator;
-fArgN: LeftParenthesisOperator argument+ RightParenthesisOperator;
-
-
-                        
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
 // specified function.
@@ -9882,8 +9782,76 @@ fArgN: LeftParenthesisOperator argument+ RightParenthesisOperator;
 // - A special-register
 
 argument:
-            identifier | literal | arithmeticExpression |
-            intrinsicFunction | specialRegister;
+            identifier | // an identifier can be a special register or a functionIdentifier
+			literal | 
+			arithmeticExpression;
+
+// NB : Because FunctionNames are not reserved words,
+// and because the exact list of the instrinsic functions, their types and their arguments are more a library matter than a language matter,
+// we do not try to check the validity of the number of arguments, the types of arguments alowed, and the referenceModifier pertinence
+// at the grammar level.                      
+// All these rules will be check at a later time by looking at an independent table of instrinsic functions.
+
+// p484: Function definitions
+// This section provides an overview of the argument type, function type, and value
+// returned for each of the intrinsic functions.
+
+// ... detailed description of each intrinsic function p484 -> p524 ...
+
+//Function names
+//               ACOS |
+//               ANNUITY |
+//               ASIN |
+//               ATAN |
+//               CHAR |
+//               COS |
+//               CURRENT_DATE |
+//               DATE_OF_INTEGER |
+//               DATE_TO_YYYYMMDD |
+//               DAY_OF_INTEGER |
+//               DAY_TO_YYYYDDD |
+//               DISPLAY_OF |
+//               FACTORIAL |
+//               INTEGER |
+//               INTEGER_OF_DATE |
+//               INTEGER_OF_DAY |
+//               INTEGER_PART |
+//               LENGTH |
+//               LOG |
+//               LOG10 |
+//               LOWER_CASE |   
+//               MAX |
+//               MEAN |
+//               MEDIAN |
+//               MIDRANGE |
+//               MIN |
+//               MOD |
+//               NATIONAL_OF |
+//               NUMVAL |
+//               NUMVAL_C |
+//               ORD |
+//               ORD_MAX |
+//               ORD_MIN |
+//               PRESENT_VALUE |
+//               RANDOM |
+//               RANGE |
+//               REM |
+//               REVERSE |
+//               SIN |
+//               SQRT |
+//               STANDARD_DEVIATION |
+//               SUM |
+//               TAN |
+//               ULENGTH |
+//               UPOS |
+//               UPPER_CASE |
+//               USUBSTR |
+//               USUPPLEMENTARY |
+//               UVALID |
+//               UWIDTH |
+//               VARIANCE |
+//               WHEN_COMPILED |
+//               YEAR_TO_YYYY;
 
 // p67: References to DATA DIVISION names
 // This section discusses the following types of references.
@@ -9953,21 +9921,10 @@ dataName : UserDefinedWord;
 // These same rules apply to classes and their contained methods.
 
 qualifiedDataName:
-	dataName inOrOfDataName* inOrOfFileName?;
+	dataName ((IN | OF) dataName)* ((IN | OF) fileName)?;
 
 qualifiedConditionName:
-	conditionName inOrOfDataName* inOrOfFileName?;
-
-// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
-// data-name or identifier that has the same definition as the implicit definition of the
-// special register can be used.
-
-qualifiedDataNameOrSpecialRegister:
-                                      qualifiedDataName |
-                                      specialRegister |
-                                      (ADDRESS OF dataNameReference) |
-                                      (LENGTH OF dataNameReference) |
-                                      (LINAGE_COUNTER OF fileName);
+	conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -10079,25 +10036,19 @@ qualifiedDataNameOrSpecialRegister:
 // program to alter the value of the index.
 
 subscript:
-	subscriptLine1 | subscriptLine2 | subscriptLine3 | subscriptLine4;
+             IntegerLiteral | 
+			 ALL  |
+             dataName withRelativeSubscripting? |
+             indexName withRelativeSubscripting?;
 
-subscriptLine1:
-	PlusOperator? IntegerLiteral;
-
-subscriptLine2:
-	ALL;
-
-subscriptLine3:
-	dataName ((PlusOperator|MinusOperator) IntegerLiteral)?;
-
-subscriptLine4:
-	indexName ((PlusOperator|MinusOperator) IntegerLiteral)?;
-
-
+withRelativeSubscripting:
+			(PlusOperator | MinusOperator) IntegerLiteral;
 
 dataNameReference:
-                     qualifiedDataNameOrSpecialRegister
-                     (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+                     qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+					 
+conditionNameReference:
+                          qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p70: Condition-name
 // condition-name-1
@@ -10126,14 +10077,41 @@ dataNameReference:
 
 // p70: Format 1: condition-name in data division
 
-conditionNameReference:
-	qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+// => cf conditionNameReference above
 
 // p70: Format 2: condition-name in SPECIAL-NAMES paragraph
 
 conditionNameReferenceInSpecialNamesParagraph:
                                                  conditionName 
                                                 ((IN | OF) mnemonicForUPSISwitchName)*;
+
+// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
+// data-name or identifier that has the same definition as the implicit definition of the
+// special register can be used.
+
+// p77: A function-identifier that makes reference to an alphanumeric or national function
+// can be specified anywhere that a data item of category alphanumeric or category
+// national, respectively, can be referenced and where references to functions are not
+// specifically prohibited.
+// A function-identifier that makes reference to an integer or numeric function can be
+// used wherever an arithmetic expression can be used.
+
+dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
+            dataNameReference |
+            specialRegister |
+            addressOfSpecialRegisterDecl |
+            lengthOfSpecialRegisterDecl |
+            linageCounterSpecialRegisterDecl |
+			functionIdentifier;
+			
+addressOfSpecialRegisterDecl:
+			ADDRESS OF dataNameReference;
+			
+lengthOfSpecialRegisterDecl:						 
+			LENGTH OF dataNameReference;
+
+linageCounterSpecialRegisterDecl:
+			LINAGE_COUNTER OF fileName;
 
 // p74: Reference modification
 // Reference modification defines a data item by specifying a leftmost character and
@@ -10247,52 +10225,7 @@ length: arithmeticExpression;
 // 02 through 49 are successively lower levels of the hierarchy.
 
 identifier:
-	  identifierFormat3
-	| identifierFormat2
-	| identifierFormat1
-	| specialRegister
-	| intrinsicFunction
-	| (LENGTH OF dataNameReference) //TODO: is this a intrinsicFunction?
-	;
-           
-// p68: Format 1   
-identifierFormat1:
-	dataName inOrOfDataName* inOrOfFileName?
-	(LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
-	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
-
-// check: leftMostCharacterPosition, length IN referenceModifier
-
-// p69: Format 2
-identifierFormat2:
-	conditionName inOrOfDataName* inOrOfFileName?;
-// > See, I know the grammar says THIS:
-// > identifierFormat2:
-// >	(dataName | conditionName) inOrOfDataName* inOrOfFileName?;
-// > However, if you don't take conditionName but dataName, it's like you took identifierFormat1
-// > as the types allowed for file-name-x and data-name-x in Format1 vs Format2  are the same.
-// > It's more explicit like that: no subscript and reference modifier stuff after conditionName.
-
-// p69: Format 3
-identifierFormat3:
-	LINAGE_COUNTER inOrOfFileName?;
-	
-inOrOfDataName: 
-	(IN | OF) dataName;
-
-inOrOfFileName: 
-	(IN | OF) fileName;
-
-// dataName: 
-// Can be a record-name.
-// fileName: 
-// Must be identified by an FD or SD entry in the DATA DIVISION. 
-// Must be unique within this program.
-// conditionName:
-// Can be referenced by statements and entries either in the program that
-// contains the configuration section or in a program contained within that
-// program.
-// LINAGE-COUNTER: 
-// Must be qualified each time it is referenced if more than one file
-// description entry that contains a LINAGE clause has been specified in the
-// source unit.
+			dataNameReferenceOrSpecialRegisterOrFunctionIdentifier 
+			   (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)? 
+			 |
+			conditionNameReference;

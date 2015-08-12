@@ -206,6 +206,11 @@ namespace TypeCobol.Test.Compiler.Parser
             Check("EntryCodeElements");
         }
 
+        public static void Check_FunctionIdentifiers()
+        {
+            Check("FunctionIdentifiers");
+        }
+
         public static void Check_Expressions()
         {
             var tester = new FolderTester("Expressions");

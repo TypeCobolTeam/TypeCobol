@@ -3,7 +3,7 @@
 
 -- Line 2 --
 [1,17:!super-_@#1254540]<UserDefinedWord>
-[18,20:.10]<DecimalLiteral>{10|2>0,1}
+[18,20:.10]<DecimalLiteral>{10|2>0.1}
 [21,30:azfdaedf99]<UserDefinedWord>
 [31,31:*]<MultiplyOperator>
 [32,32:8]<IntegerLiteral>{8}
@@ -38,7 +38,7 @@
 [38,40:123]<IntegerLiteral>{123}
 [41,44:-456]<DecimalLiteral>{-456|0>-456}
 [45,45: ]<SpaceSeparator>
-[46,52:123E-06]<FloatingPointLiteral>{123|0>123E-6>0,000123}
+[46,52:123E-06]<FloatingPointLiteral>{123|0>123E-6>0.000123}
 [53,53: ]<SpaceSeparator>
 [54,56:123]<IntegerLiteral>{123}
 [57,58:-4]<DecimalLiteral>{-4|0>-4}

@@ -14,11 +14,11 @@
 [14,15:IS]<IS>
 [16,16: ]<SpaceSeparator>
 [17,17:Y]<PictureCharacterString>
-=>continued:[18,18+:.3]<DecimalLiteral>{3|1>0,3}
+=>continued:[18,18+:.3]<DecimalLiteral>{3|1>0.3}
 
 -- Line 3 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,6:.3]<DecimalLiteral>{3|1>0,3}
+=>continuation:[6,6:.3]<DecimalLiteral>{3|1>0.3}
 [7,8:. ]<PeriodSeparator>
 [9,15:PICTURE]<PICTURE>
 [6,6]<25,Warning,Tokens>The continuation computed for this picture character string could be wrong : be aware that this compiler does not support continuations like PIC 999.|999 or PIC 999,|999 - please move the period/comma char at the beginning of the continuation line

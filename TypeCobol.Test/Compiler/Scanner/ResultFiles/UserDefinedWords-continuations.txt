@@ -13,11 +13,11 @@
 -- Line 4 --
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,15:!super-_@#1254540]<UserDefinedWord>
-=>continued:[16,16+:.10]<DecimalLiteral>{10|2>0,1}
+=>continued:[16,16+:.10]<DecimalLiteral>{10|2>0.1}
 
 -- Line 5 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,7:.10]<DecimalLiteral>{10|2>0,1}
+=>continuation:[6,7:.10]<DecimalLiteral>{10|2>0.1}
 [8,17:azfdaedf99]<UserDefinedWord>
 [18,18:*]<MultiplyOperator>
 [19,19:8]<IntegerLiteral>{8}
