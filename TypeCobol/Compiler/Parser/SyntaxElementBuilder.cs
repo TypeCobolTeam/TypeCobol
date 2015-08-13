@@ -96,164 +96,176 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static IdentifierOld CreateIdentifier(CobolCodeElementsParser.IdentifierRoundedContext context)
+
+
+
+
+        public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
         {
-            IdentifierOld identifier = CreateIdentifier(context.identifier());
-            identifier.ROUNDED = context.ROUNDED() != null;
+            if (context == null) return null;
+            Identifier identifier = CreateIdentifier(context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier());
+            identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
 
-        public static IdentifierOld CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
+
+        private static Identifier CreateIdentifier(CobolCodeElementsParser.DataNameReferenceOrSpecialRegisterOrFunctionIdentifierContext context)
         {
-            IdentifierOld identifier = new IdentifierOld();
-            identifier.token = ParseTreeUtils.GetFirstToken(context);
-            if (context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier() != null)
-            {
-                if (context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier().dataNameReference() != null)
-                {
-                    InitializeIdentifier(identifier, context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier().dataNameReference());
-                }
-            }
-            /*if (context.identifierFormat1() != null)
-            {
-                InitializeIdentifierFormat1(context.identifierFormat1());
-            }
-            else
-            if (context.identifierFormat2() != null)
-            {
-                InitializeIdentifierFormat2(context.identifierFormat2());
-            }
-            else
-            if (context.identifierFormat3() != null)
-            {
-                InitializeIdentifierFormat3(context.identifierFormat3());
-            }*/
-            return identifier;
+            if (context == null) return null;
+            Identifier identifier = CreateDataNameReference(context.dataNameReference());
+            if (identifier != null ) return identifier;
+            // TODO addressOfSpecialRegisterDecl lengthOfSpecialRegisterDecl linageCounterSpecialRegisterDecl
+            identifier = CreateSpecialRegister(context.specialRegister());
+            if (identifier != null) return identifier;
+            identifier = CreateFunctionReference(context.functionIdentifier());
+            if (identifier != null) return identifier;
+            return null;
         }
 
-        private static void InitializeIdentifier(IdentifierOld identifier, CobolCodeElementsParser.DataNameReferenceContext context)
+        private static Identifier CreateFunctionReference(CobolCodeElementsParser.FunctionIdentifierContext context)
         {
-            if (context == null) return;
-
-            InitializeDataNames(identifier, context.qualifiedDataName());
-
-            if (context.subscript() != null)
-            {
-                foreach (var subscript in context.subscript())
-                {
-                    identifier.subscripts.AddSubscript(CreateSubscript(subscript));
-                }
-            }
+            if (context == null) return null;
+            var symbol = new FunctionName(ParseTreeUtils.GetTokenFromTerminalNode(context.FunctionName()));
+            var parameters = CreateFunctionParameters(context.argument());
+            if (symbol != null || parameters != null) return new FunctionReference(symbol, parameters);
+            return null;
         }
 
-        private static void InitializeDataNames(IdentifierOld identifier, CobolCodeElementsParser.QualifiedDataNameContext context)
+        private static IList<FunctionParameter> CreateFunctionParameters(IReadOnlyList<CobolCodeElementsParser.ArgumentContext> context)
         {
-            if (context == null) return;
-            if (context.dataName().Count > 1)
-            {
-                int c = 0;
-                foreach (var d in context.dataName())
-                {
-                    c++;
-                    if (c > 1 && d != null)
-                        identifier.inof.AddDataName(CreateDataName(d));
-                }
-            }
-            if (context.fileName() != null) identifier.inof.AddFileName(CreateFileName(context.fileName()));
+            if (context == null) return null;
+            IList<FunctionParameter> parameters = new List<FunctionParameter>();
+            foreach (var argument in context) parameters.Add(CreateFunctionParameter(argument));
+            return parameters;
         }
 
-        private static DataName CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        private static FunctionParameter CreateFunctionParameter(CobolCodeElementsParser.ArgumentContext context)
         {
-            return new DataName(ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
-        }
-        public static FileName CreateFileName(CobolCodeElementsParser.FileNameContext context)
-        {
-            return new FileName(ParseTreeUtils.GetFirstToken(context.UserDefinedWord()));
-        }
-
-        /*
-        private void InitializeIdentifierFormat1(CobolCodeElementsParser.IdentifierFormat1Context context)
-        {
-            if (context.dataName() != null)
-            {
-                Token token = ParseTreeUtils.GetFirstToken(context.dataName());
-                SymbolReference<DataName> data = new SymbolReference<DataName>(new DataName(token));
-                //TODO and ... now ?
-            }
-            inof.AddDataNames(context.inOrOfDataName());
-            inof.AddFileName(context.inOrOfFileName());
-
-            if (context.subscript() != null)
-            {
-                foreach (var subscript in context.subscript())
-                {
-                    subscripts.Add(subscript);
-                }
-            }
-
-            //TODO: reference modifiers
+            if (context.literal() != null) return new FunctionParameter(CreateLiteral(context.literal()));
+            if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
+            if (context.identifier() != null) return new FunctionParameter(CreateIdentifier(context.identifier()));
+            return null;
         }
 
-        private void InitializeIdentifierFormat2(CobolCodeElementsParser.IdentifierFormat2Context context)
+        private static Identifier CreateSpecialRegister(CobolCodeElementsParser.SpecialRegisterContext context)
         {
-            var condition = context.conditionName(); //TODO
-            inof.AddDataNames(context.inOrOfDataName());
-            inof.AddFileName(context.inOrOfFileName());
+            if (context == null) return null;
+            return new SpecialRegister(new SpecialRegisterName(ParseTreeUtils.GetFirstToken(context)));
         }
 
-        private void InitializeIdentifierFormat3(CobolCodeElementsParser.IdentifierFormat3Context context)
+        private static Identifier CreateDataNameReference(CobolCodeElementsParser.DataNameReferenceContext context)
         {
-            LINAGE_COUNTER = ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER());
-            inof.AddFileName(context.inOrOfFileName());
+            if (context == null) return null;
+            QualifiedDataName name = CreateQualifiedName(context);
+            IList<Subscript> subscripts = CreateSubscripts(context);
+            if (name != null || subscripts != null) return new DataReference(name, subscripts);
+            return null;
         }
-        */
+
+        private static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.DataNameReferenceContext context)
+        {
+            if (context == null) return null;
+            return CreateQualifiedName(context.qualifiedDataName());
+        }
+
+        private static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
+        {
+            SymbolReference<DataName> dataname = null;
+            if (context.dataNameBase() != null) dataname = CreateDataName(context.dataNameBase().dataName());
+            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            SymbolReference<FileName> filename = CreateFileName(context.fileName());
+            return new QualifiedDataName(dataname, datanames, filename);
+        }
+
+        private static List<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        {
+            if (context == null) return null;
+            List<SymbolReference<DataName>> datanames = new List<SymbolReference<DataName>>();
+            foreach (var dataname in context) datanames.Add(CreateDataName(dataname));
+            datanames.Reverse();
+            return datanames;
+        }
+
+        private static SymbolReference<DataName> CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+        public static SymbolReference<FileName> CreateFileName(CobolCodeElementsParser.FileNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<FileName>(new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+        private static SymbolReference<IndexName> CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<IndexName>(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        private static IList<Subscript> CreateSubscripts(CobolCodeElementsParser.DataNameReferenceContext context)
+        {
+            if (context == null) return null;
+            return CreateSubscripts(context.subscript());
+        }
+
+        private static IList<Subscript> CreateSubscripts(IReadOnlyList<CobolCodeElementsParser.SubscriptContext> context)
+        {
+            if (context == null) return null;
+            var subscripts = new List<Subscript>();
+            foreach (var subscript in context) subscripts.Add(CreateSubscript(subscript));
+            return subscripts;
+        }
+
 
         public static Subscript CreateSubscript(CobolCodeElementsParser.SubscriptContext context)
         {
             if (context == null) return null;
 
             Subscript subscript = new Subscript();
-            /*
-            if (context.subscriptLine1() != null)
+            if (context.IntegerLiteral() != null)
             {
-                InitializeSubscriptOperatorAndLiteral(subscript, null, null, context.subscriptLine1().IntegerLiteral());
+                subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
             }
-            if (context.subscriptLine2() != null)
+            if (context.ALL() != null)
             {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine2().ALL());
+                var token = ParseTreeUtils.GetTokenFromTerminalNode(context.ALL());
                 subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
             }
-            if (context.subscriptLine3() != null)
+            if (context.dataName() != null)
             {
-                if (context.subscriptLine3().dataName() != null)
-                {
-                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine3().dataName().UserDefinedWord());
-                    subscript.dataname = new SymbolReference<DataName>(new DataName(token));
-                }
-                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine3().PlusOperator(), context.subscriptLine3().MinusOperator(), context.subscriptLine3().IntegerLiteral());
+                subscript.dataname = CreateDataName(context.dataName());
+                InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
             }
-            if (context.subscriptLine4() != null)
+            if (context.indexName() != null)
             {
-                if (context.subscriptLine4().indexName() != null)
-                {
-                    Token token = ParseTreeUtils.GetTokenFromTerminalNode(context.subscriptLine4().indexName().UserDefinedWord());
-                    subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
-                }
-                InitializeSubscriptOperatorAndLiteral(subscript, context.subscriptLine4().PlusOperator(), context.subscriptLine4().MinusOperator(), context.subscriptLine4().IntegerLiteral());
+                subscript.indexname = CreateIndexName(context.indexName());
+                InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
             }
-            */
             return subscript;
         }
 
-        private static void InitializeSubscriptOperatorAndLiteral(Subscript subscript,
-            Antlr4.Runtime.Tree.ITerminalNode plus,
-            Antlr4.Runtime.Tree.ITerminalNode minus,
-            Antlr4.Runtime.Tree.ITerminalNode integer)
+        private static void InitializeSubscriptOperatorAndLiteral(Subscript subscript, CobolCodeElementsParser.WithRelativeSubscriptingContext context)
         {
-            if (plus != null) subscript.op = '+';
-            if (minus != null) subscript.op = '-';
-            if (integer != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(integer));
+            if (context.PlusOperator() != null) subscript.op = '+';
+            if (context.MinusOperator() != null) subscript.op = '-';
+            if (context.IntegerLiteral() != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
         }
+
+        private static Substring CreateReferenceModifier(CobolCodeElementsParser.ReferenceModifierContext context)
+        {
+            if (context == null) return null;
+            var builder = new ArithmeticExpressionBuilder();
+            ArithmeticExpression left = null, right = null;
+            if (context.leftMostCharacterPosition() != null)
+                left = builder.CreateArithmeticExpression(context.leftMostCharacterPosition().arithmeticExpression());
+            if (context.length() != null)
+                right = builder.CreateArithmeticExpression(context.length().arithmeticExpression());
+            if (left == null && right == null) return null;
+            return new Substring(left, right);
+        }
+
+
+
     }
 
     

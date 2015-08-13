@@ -52,6 +52,17 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             : base(left, '×', right) { }
     }
 
+    public class Rounded : ArithmeticOperation
+    {
+        public Rounded(Expression expression)
+            : base(expression, '°', null) { }
+
+        public override string ToString()
+        { //RPN
+            return new StringBuilder(left.ToString()).Append(" ").Append(op).ToString();
+        }
+    }
+
     public class Number : ArithmeticExpression
     {
         public SyntaxNumber value { get; set; }

@@ -27,9 +27,10 @@ namespace TypeCobol.Compiler.Parser
             // so add/subtract the "left" operand to all the elements of the "right" operand added together
             foreach (var operand in rightContext)
             {
-                IdentifierOld right = SyntaxElementBuilder.CreateIdentifier(operand);
+                var token = ParseTreeUtils.GetFirstToken(operand);
+                Expression right = CreateIdentifierRounded(operand);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
             }
         }
 
@@ -38,7 +39,7 @@ namespace TypeCobol.Compiler.Parser
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
-            Expression left = builder.createAddition(leftContext);
+            Expression left = builder.CreateAddition(leftContext);
             if (left != null && rightContext != null)
             {
                 InitializeFormat1RightOperand(left, rightContext);
@@ -50,7 +51,7 @@ namespace TypeCobol.Compiler.Parser
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
-            Expression left = builder.createNumberOrIdentifier(leftContext);
+            Expression left = builder.CreateNumberOrIdentifier(leftContext);
             if (left != null && rightContext != null)
             {
                 InitializeFormat1RightOperand(left, rightContext);
@@ -62,10 +63,10 @@ namespace TypeCobol.Compiler.Parser
             CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
         {
-            Expression operation = builder.createAddition(leftContext);
+            Expression operation = builder.CreateAddition(leftContext);
             if (operation != null && rightContext != null)
             {
-                Expression right = builder.createNumberOrIdentifier(rightContext.identifierOrNumericLiteral());
+                Expression right = builder.CreateNumberOrIdentifier(rightContext.identifierOrNumericLiteral());
                 operation = ArithmeticOperation.Create(operation, op, right);
             }
 
@@ -80,10 +81,10 @@ namespace TypeCobol.Compiler.Parser
             CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
             IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
         {
-            Expression operation = builder.createNumberOrIdentifier(leftContext);
+            Expression operation = builder.CreateNumberOrIdentifier(leftContext);
             if (operation != null && rightContext != null)
             {
-                Expression right = builder.createNumberOrIdentifier(rightContext.identifierOrNumericLiteral());
+                Expression right = builder.CreateNumberOrIdentifier(rightContext.identifierOrNumericLiteral());
                 operation = ArithmeticOperation.Create(operation, op, right);
             }
 
@@ -97,8 +98,8 @@ namespace TypeCobol.Compiler.Parser
         {
             foreach (var operand in resultContext)
             {
-                IdentifierOld right = SyntaxElementBuilder.CreateIdentifier(operand);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
+                var token = ParseTreeUtils.GetFirstToken(operand);
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
             }
         }
 
@@ -113,10 +114,18 @@ namespace TypeCobol.Compiler.Parser
             }
             if (left != null && rightContext != null)
             {
-                IdentifierOld right = SyntaxElementBuilder.CreateIdentifier(rightContext);
+                var token = ParseTreeUtils.GetFirstToken(rightContext);
+                Expression right = CreateIdentifierRounded(rightContext);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(right.token)), operation);
+                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
             }
+        }
+
+        private Expression CreateIdentifierRounded(CobolCodeElementsParser.IdentifierRoundedContext operand)
+        {
+            Expression identifier = SyntaxElementBuilder.CreateIdentifier(operand.identifier());
+            if (operand.ROUNDED() != null) identifier = new Rounded(identifier);
+            return identifier;
         }
     }
 }

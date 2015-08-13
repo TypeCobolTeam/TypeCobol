@@ -122,87 +122,81 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-    public interface Identifier : Expression { }
+    public interface Identifier : Expression {
+        void SetReferenceModifier(Substring substring);
+    }
 
     public class DataReference : Identifier
     {
-        public QualifiedDataName name { get; private set; }
-        public List<Subscript> subscripts { get; private set; }
-        public Substring substring { get; private set; }
+        public QualifiedDataName Name { get; private set; }
+        public IList<Subscript> Subscripts { get; private set; }
+        public Substring Substring { get; set; }
 
-        public DataReference(QualifiedDataName name, List<Subscript> subscripts = null, Substring substring = null)
+        public DataReference(QualifiedDataName name, IList<Subscript> subscripts = null, Substring substring = null)
         {
-            this.name = name;
-            this.subscripts = this.subscripts != null? subscripts : new List<Subscript>();
-            this.substring = substring;
+            this.Name = name;
+            this.Subscripts = this.Subscripts != null? subscripts : new List<Subscript>();
+            this.Substring = substring;
         }
+
+        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
 
         public override string ToString()
         {
             var str = new StringBuilder();
-            str.Append(name.ToString());
-            if (this.subscripts.Count > 0)
+            str.Append(this.Name.ToString());
+            if (this.Subscripts.Count > 0)
             {
                 str.Append("( ");
-                foreach (var subscript in this.subscripts) str.Append(subscript).Append(", ");
+                foreach (var subscript in this.Subscripts) str.Append(subscript).Append(", ");
                 if (str[str.Length - 2] == ',') str.Length -= 2;
                 str.Append(')');
             }
-            if (this.substring != null) str.Append(this.substring.ToString());
+            if (this.Substring != null) str.Append(this.Substring.ToString());
             return str.ToString();
         }
     }
 
     public class QualifiedDataName
     {
-        public SymbolReference<DataName> dataname { get; private set; }
-        public List<SymbolReference<DataName>> datanames { get; private set; }
-        public SymbolReference<FileName> filename { get; private set; }
+        public SymbolReference<DataName> DataName { get; private set; }
+        public List<SymbolReference<DataName>> DataNames { get; private set; }
+        public SymbolReference<FileName> FileName { get; private set; }
 
         public QualifiedDataName(SymbolReference<DataName> dataname, List<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
         {
-            this.dataname = dataname;
-            this.datanames = this.datanames != null? datanames : new List<SymbolReference<DataName>>();
-            this.filename = filename;
-        }
-
-        public void InsertParentData(int index, DataName dataname)
-        {
-            this.datanames.Insert(index, new SymbolReference<DataName>(dataname));
-        }
-
-        public void SetParentFileName(FileName filename)
-        {
-            this.filename = new SymbolReference<FileName>(filename);
+            this.DataName = dataname;
+            this.DataNames = datanames != null ? datanames : new List<SymbolReference<DataName>>();
+            this.FileName = filename;
         }
 
         public override string ToString()
         {
             var str = new StringBuilder();
-            if (this.filename != null) str.Append(this.filename).Append('.');
-            foreach (var dataname in this.datanames) str.Append(dataname).Append('.');
-            str.Append(this.dataname);
+            if (this.FileName != null) str.Append(this.FileName).Append('.');
+            foreach (var dataname in this.DataNames) str.Append(dataname).Append('.');
+            str.Append(this.DataName);
             return str.ToString();
         }
     }
 
     public class Substring
     {
-        public ArithmeticExpression left  { get; private set; }
-        public ArithmeticExpression right { get; private set; }
+        public ArithmeticExpression Left  { get; private set; }
+        public ArithmeticExpression Right { get; private set; }
 
         public Substring(ArithmeticExpression left, ArithmeticExpression right)
         {
-            this.left = left;
-            this.right = right;
+            this.Left = left;
+            this.Right = right;
         }
 
         public override string ToString()
         {
             var str = new StringBuilder();
-            str.Append(left != null?  left.ToString() : "?");
+            str.Append(this.Left != null?  this.Left.ToString() : "?");
             str.Append(":");
-            str.Append(right!= null? right.ToString() : "?");
+            str.Append(this.Right!= null? this.Right.ToString() : "?");
             return base.ToString();
         }
     }
@@ -211,21 +205,26 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class SpecialRegister : Identifier
     {
-        public Token token { get; private set; }
-        public Substring substring { get; private set; }
+        /// <summary>
+        /// Reference to the special register symbol in the source text
+        /// </summary>
+        public Symbol Symbol { get; private set; }
 
-        public SpecialRegister(Token token, Substring substring = null)
+        public Substring Substring { get; set; }
+
+        public SpecialRegister(Symbol symbol, Substring substring = null)
         {
-            this.token = token;
-            this.substring = substring;
+            this.Symbol = symbol;
+            this.Substring = substring;
         }
+
+        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
 
         public override string ToString()
         {
             var str = new StringBuilder();
-            if (token != null) str.Append(token.Text);
-            else str.Append('?');
-            if (this.substring != null) str.Append(this.substring.ToString());
+            str.Append(Symbol != null ? Symbol.ToString() : "?");
+            if (this.Substring != null) str.Append(this.Substring.ToString());
             return str.ToString();
         }
     }
@@ -234,27 +233,33 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class FunctionReference : Identifier
     {
-        public Token token { get; private set; }
-        public List<FunctionParameter> parameters { get; private set; }
+        /// <summary>
+        /// Reference to the intrinsic function symbol in the source text
+        /// </summary>
+        public Symbol Symbol { get; private set; }
+        public Substring Substring { get; set; }
+        public IList<FunctionParameter> Parameters { get; private set; }
 
-        public FunctionReference(Token token, List<FunctionParameter> parameters = null)
+        public FunctionReference(Symbol symbol, IList<FunctionParameter> parameters = null)
         {
-            this.token = token;
-            this.parameters = this.parameters != null? parameters : new List<FunctionParameter>();
+            this.Symbol = symbol;
+            this.Parameters = parameters != null ? parameters : new List<FunctionParameter>();
         }
+
+        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
 
         public override string ToString()
         {
             var str = new StringBuilder();
-            if (token != null) str.Append(token.Text);
-            else str.Append('?');
-            if (this.parameters.Count > 0)
+            str.Append(Symbol != null ? Symbol.ToString() : "?");
+            if (this.Parameters.Count > 0)
             {
                 str.Append("( ");
-                foreach (var parameter in this.parameters) str.Append(parameter).Append(", ");
+                foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
                 if (str[str.Length - 2] == ',') str.Length -= 2;
                 str.Append(')');
             }
+            if (this.Substring != null) str.Append(this.Substring.ToString());
             return str.ToString();
         }
     }
@@ -263,7 +268,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         public FunctionParameter(Identifier identifier) { this.Value = identifier; }
         public FunctionParameter(Literal literal) { this.Value = literal; }
-        public FunctionParameter(FunctionReference function) { this.Value = function; }
+        public FunctionParameter(ArithmeticExpression expression) { this.Value = expression; }
 
         public Expression Value;
 

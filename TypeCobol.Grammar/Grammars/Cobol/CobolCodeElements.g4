@@ -9769,7 +9769,7 @@ conditionBase:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier:
-	FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)? (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+	FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -9921,7 +9921,9 @@ dataName : UserDefinedWord;
 // These same rules apply to classes and their contained methods.
 
 qualifiedDataName:
-	dataName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+	dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
+
+dataNameBase: dataName;
 
 qualifiedConditionName:
 	conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;

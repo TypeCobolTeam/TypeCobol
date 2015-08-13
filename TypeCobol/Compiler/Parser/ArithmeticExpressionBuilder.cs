@@ -6,9 +6,9 @@ using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.Parser
 {
-    class ArithmeticExpressionBuilder
+    internal class ArithmeticExpressionBuilder
     {
-        public Expression createNumberOrIdentifier(CobolCodeElementsParser.IdentifierOrNumericLiteralContext context)
+        internal Expression CreateNumberOrIdentifier(CobolCodeElementsParser.IdentifierOrNumericLiteralContext context)
         {
             if (context == null) return null;
             if (context.identifier() != null)
@@ -22,14 +22,14 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        public Expression createAddition(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
+        internal Expression CreateAddition(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
         {
             if (operands == null) return null;
 
             Expression head = null;
             foreach (var operand in operands)
             {
-                Expression tail = createNumberOrIdentifier(operand);
+                Expression tail = CreateNumberOrIdentifier(operand);
                 if (tail == null) continue;
                 if (head == null)
                 {
@@ -43,6 +43,11 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
             return head;
+        }
+
+        internal ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ArithmeticExpressionContext context)
+        {
+            return null; //TODO
         }
     }
 }

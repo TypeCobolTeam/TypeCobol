@@ -13,6 +13,8 @@ namespace TypeCobol.Compiler.CodeElements
         CharsetClassName,
         ConditionName,
         DataName,
+        FunctionName,
+        SpecialRegisterName,
         IndexName,
         FileName,
         MethodName,
