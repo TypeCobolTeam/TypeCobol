@@ -278,4 +278,26 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             return "?";
         }
     }
+
+    public class LinageCounter : SymbolReference<FileName>, Identifier
+    {
+        public LinageCounter(FileName filename) : base(filename) { }
+
+        public Substring Substring { get; set; }
+        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
+    }
+
+    public class Address : Identifier
+    {
+        public DataReference Identifier { get; set; }
+        public Address(DataReference identifier) { this.Identifier = identifier; }
+        public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
+    }
+
+    public class Length : Identifier
+    {
+        public DataReference Identifier { get; set; }
+        public Length(DataReference identifier) { this.Identifier = identifier; }
+        public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
+    }
 }

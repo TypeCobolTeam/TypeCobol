@@ -114,10 +114,15 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             Identifier identifier = CreateDataNameReference(context.dataNameReference());
             if (identifier != null ) return identifier;
-            // TODO addressOfSpecialRegisterDecl lengthOfSpecialRegisterDecl linageCounterSpecialRegisterDecl
             identifier = CreateSpecialRegister(context.specialRegister());
             if (identifier != null) return identifier;
             identifier = CreateFunctionReference(context.functionIdentifier());
+            if (identifier != null) return identifier;
+            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+            if (identifier != null) return identifier;
+            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+            if (identifier != null) return identifier;
+            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
             if (identifier != null) return identifier;
             return null;
         }
@@ -153,7 +158,7 @@ namespace TypeCobol.Compiler.Parser
             return new SpecialRegister(new SpecialRegisterName(ParseTreeUtils.GetFirstToken(context)));
         }
 
-        private static Identifier CreateDataNameReference(CobolCodeElementsParser.DataNameReferenceContext context)
+        private static DataReference CreateDataNameReference(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
             QualifiedDataName name = CreateQualifiedName(context);
@@ -266,9 +271,24 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+        private static Address CreateAddressOf(CobolCodeElementsParser.AddressOfSpecialRegisterDeclContext context)
+        {
+            if (context.dataNameReference() == null) return null;
+            return new Address(CreateDataNameReference(context.dataNameReference()));
+        }
+
+        private static Length CreateLengthOf(CobolCodeElementsParser.LengthOfSpecialRegisterDeclContext context)
+        {
+            if (context.dataNameReference() == null) return null;
+            return new Length(CreateDataNameReference(context.dataNameReference()));
+        }
+
+        private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context)
+        {
+            if (context.fileName() == null) return null;
+            return new LinageCounter(CreateFileName(context.fileName()).Symbol);
+        }
+
     }
 
-    
-
-    
 }
