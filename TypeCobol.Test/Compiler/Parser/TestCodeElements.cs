@@ -208,23 +208,13 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_Expressions()
         {
-            var tester = new FolderTester("Expressions");
-            tester.comparator = typeof(NYComparator);
-            tester.Test(true);
+            new FolderTester("Expressions").Test();
         }
 
         public static void Check_Statements()
         {
             var ignored = new string[] { "DISPLAYCodeElements" };
             new FolderTester("Statements", ignored).Test();
-            // arithmetic
-            CheckArithmeticStatements();
-        }
-
-        public static void CheckArithmeticStatements() {
-            var tester = new FolderTester("Statements", new RPNNames());
-            tester.comparator = typeof(ArithmeticComparator);
-            tester.Test();
         }
     }
 }

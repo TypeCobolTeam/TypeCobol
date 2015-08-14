@@ -25,12 +25,12 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public void Parse()
         {
-            DirectoryInfo localDirectory = new DirectoryInfo(comparator.sample.full.folder);
+            DirectoryInfo localDirectory = new DirectoryInfo(comparator.paths.sample.full.folder);
             TypeCobolOptions options = new TypeCobolOptions();
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 this.format.Encoding, this.format.EndOfLineDelimiter, this.format.FixedLineLength, this.format.ColumnsLayout, options);
-            string filename = comparator.sample.project.file;
+            string filename = comparator.paths.sample.project.file;
             this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, this.format.ColumnsLayout, new TypeCobolOptions());
             this.unit.SetupCodeAnalysisPipeline(null, 0);
             this.unit.StartDocumentProcessing();
@@ -38,7 +38,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public void Compare()
         {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.result.project.path)))
+            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path)))
             {
                 this.comparator.Compare(this.unit.SyntaxDocument.CodeElements, this.unit.SyntaxDocument.Diagnostics, reader);
             }
@@ -47,10 +47,16 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class FolderTester
     {
+        private static readonly IList<Names> Names = new List<Names>
+            {
+                new EmptyName(),
+                new CodeElementName(),
+                new RPNName(),
+                new NYName(),
+            };
+
         private IList<string> samples;
         private FilesComparator finder = new FilesComparator("whatever");
-        public System.Type comparator = typeof(FilesComparator);
-        public Names resultnames;
 
         internal FolderTester() : this(null, null, null, true) { }
         internal FolderTester(string folder) : this(folder, null, null, true) { }
@@ -69,9 +75,6 @@ namespace TypeCobol.Test.Compiler.Parser
         internal FolderTester(string[] ignored, Names resultnames, bool deep) : this(null, ignored, resultnames, deep) { }
         internal FolderTester(string folder, string[] ignored, Names resultnames, bool deep)
         {
-            this.resultnames = resultnames;
-            if(this.resultnames == null) this.resultnames = new DummyNames();
-
             string root = CreateSamplesRoot(folder);
             string[] paths = Directory.GetFiles(root, "*.cbl", (deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
             this.samples = Filter(paths, (ignored != null ? ignored : new string[0]), folder);
@@ -79,7 +82,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
         private string CreateSamplesRoot(string folder)
         {
-            string root = finder.sample.full.folder;
+            string root = finder.paths.sample.full.folder;
             if (folder != null) root += Path.DirectorySeparatorChar + folder;
             return root;
         }
@@ -99,27 +102,50 @@ namespace TypeCobol.Test.Compiler.Parser
 
         private string GetName(string path)
         {
-            string root = finder.sample.full.folder;
+            string root = finder.paths.sample.full.folder;
             string name = path.Remove(0, root.Length + 1);
-            return name.Remove(name.Length - finder.sextension.Length);
+            return name.Remove(name.Length - finder.paths.sextension.Length);
         }
 
         public void Test(bool debug = false)
         {
-            System.Reflection.ConstructorInfo c = comparator.GetConstructor(new[] { typeof(string), typeof(Names), typeof(bool) });
-
             if (this.samples.Count < 1) throw new System.Exception("No sample file!");
+            var errors = new StringBuilder();
             foreach (var sample in this.samples)
             {
-                var unit = new TestUnit(sample, debug);
-                unit.comparator = (FilesComparator)c.Invoke(new object[] { sample, this.resultnames, debug });
-                if (!System.IO.File.Exists(unit.comparator.result.full.path))
-                    if (resultnames.ErrorOnMissingResultFile())
-                        throw new System.IO.FileNotFoundException("Missing file \"" + unit.comparator.result.project.path + "\"");
-                    else continue; // SKIP test because there is no result file
-                unit.Parse();
-                unit.Compare();
+                IList<FilesComparator> comparators = GetComparators(sample, debug);
+                if (comparators.Count < 1)
+                {
+                    System.Console.WriteLine("ERROR: Missing result file \"" + sample + "\"");
+                    errors.Append("\"" + sample + "\"");
+                    continue;
+                }
+                foreach (var comparator in comparators)
+                {
+                    System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+                    var unit = new TestUnit(sample, debug);
+                    unit.comparator = comparator;
+                    unit.Parse();
+                    unit.Compare();
+                }
             }
+            if (errors.Length > 0) throw new System.IO.FileNotFoundException("No result files for: " + errors.ToString());
+        }
+
+        private IList<FilesComparator> GetComparators(string sample, bool debug)
+        {
+            IList<FilesComparator> comparators = new List<FilesComparator>();
+            foreach (var names in Names)
+            {
+                var paths = new Paths(sample, names);
+                if (System.IO.File.Exists(paths.result.full.path))
+                {
+                    System.Type type = names.GetComparatorType();
+                    System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(string), typeof(Names), typeof(bool) });
+                    comparators.Add((FilesComparator)constructor.Invoke(new object[] { sample, names, debug }));
+                }
+            }
+            return comparators;
         }
     }
 
@@ -134,39 +160,23 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class FilesComparator : Comparator
     {
-        internal Names resultnames;
-        internal string name;
+        internal Paths paths;
         internal bool debug;
-        internal string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
 
         public FilesComparator(string name) : this(name, null, false) { }
         public FilesComparator(string name, Names resultnames) : this(name, resultnames, false) { }
         public FilesComparator(string name, bool debug) : this(name, null, debug) { }
         public FilesComparator(string name, Names resultnames = null, bool debug = false)
         {
-            this.resultnames = resultnames;
-            if (this.resultnames == null) this.resultnames = new DummyNames();
-            this.name = name;
+            this.paths = new Paths(name, resultnames != null? resultnames : new EmptyName());
             this.debug = debug;
-        }
-        internal string sextension = ".cbl";
-        internal string rextension = ".txt";
-        internal AbstractPath sample
-        {
-            get { return new AbstractPath(root + "Samples" + Path.DirectorySeparatorChar, name, sextension); }
-            set { throw new System.InvalidOperationException("Can't touch this!"); }
-        }
-        internal AbstractPath result
-        {
-            get { return new AbstractPath(root + "ResultFiles" + Path.DirectorySeparatorChar, resultnames.CreateName(name), rextension); }
-            set { throw new System.InvalidOperationException("Can't touch this!"); }
         }
 
         public virtual void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
         {
             string result = ParserUtils.DumpResult(elements, diagnostics);
-            if (this.debug) System.Console.WriteLine("\"" + this.name + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(this.name, result, expected);
+            if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
         }
     }
 
@@ -196,7 +206,7 @@ namespace TypeCobol.Test.Compiler.Parser
             if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
             if (errors.Length > 0)
             {
-                errors.Insert(0, name+":\n");
+                errors.Insert(0, this.paths.name + ":\n");
                 throw new System.Exception(errors.ToString());
             }
         }
@@ -241,7 +251,7 @@ namespace TypeCobol.Test.Compiler.Parser
             if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
             if (errors.Length > 0)
             {
-                errors.Insert(0, name + ":\n");
+                errors.Insert(0, this.paths.name + ":\n");
                 throw new System.Exception(errors.ToString());
             }
         }
@@ -276,22 +286,32 @@ namespace TypeCobol.Test.Compiler.Parser
     internal interface Names
     {
         string CreateName(string name);
-        bool ErrorOnMissingResultFile();
+        System.Type GetComparatorType();
     }
 
-    internal class DummyNames : Names
+    internal class EmptyName : Names
     {
         public string CreateName(string name) { return name; }
-        public bool ErrorOnMissingResultFile() { return true; }
+        public System.Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class RPNNames : Names
+    internal class CodeElementName : Names
+    {
+        public string CreateName(string name) { return name + "CodeElements"; }
+        public System.Type GetComparatorType() { return typeof(FilesComparator); }
+    }
+
+    internal class RPNName : Names
     {
         public string CreateName(string name) { return name + "RPN"; }
-        public bool ErrorOnMissingResultFile() { return false; }
+        public System.Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
-
+    internal class NYName : Names
+    {
+        public string CreateName(string name) { return name + "NY"; }
+        public System.Type GetComparatorType() { return typeof(NYComparator); }
+    }
 
     internal class AbstractPath
     {
@@ -340,5 +360,31 @@ namespace TypeCobol.Test.Compiler.Parser
             set { throw new System.InvalidOperationException("Can't touch this!"); }
         }
         public override string ToString() { return path; }
+    }
+
+
+    internal class Paths
+    {
+        private readonly string Root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
+        internal string name;
+        private Names resultnames;
+
+        public Paths(string name, Names resultnames)
+        {
+            this.name = name;
+            this.resultnames = resultnames;
+        }
+        internal string sextension = ".cbl";
+        internal string rextension = ".txt";
+        internal AbstractPath sample
+        {
+            get { return new AbstractPath(Root + "Samples" + Path.DirectorySeparatorChar, name, sextension); }
+            set { throw new System.InvalidOperationException("Can't touch this!"); }
+        }
+        internal AbstractPath result
+        {
+            get { return new AbstractPath(Root + "ResultFiles" + Path.DirectorySeparatorChar, resultnames.CreateName(name), rextension); }
+            set { throw new System.InvalidOperationException("Can't touch this!"); }
+        }
     }
 }

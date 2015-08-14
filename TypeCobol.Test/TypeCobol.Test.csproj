@@ -105,8 +105,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
-    <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiers.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
