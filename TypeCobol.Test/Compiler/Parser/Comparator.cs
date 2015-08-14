@@ -239,13 +239,13 @@ namespace TypeCobol.Test.Compiler.Parser
             {
                 if ((e as SentenceEnd) != null) continue;
                 string line = expected.ReadLine();
-                if (line != "Y") errors.AppendFormat("line {0}: \"{1}\", expected \"Y\"\n", c, line);
+                if (line != "Y") errors.AppendFormat("line {0}: \"Y\", expected \"{1}\"\n", c, line);
                 c++;
             }
             foreach (var d in diagnostics)
             {
                 string line = expected.ReadLine();
-                if (line != "N") errors.AppendFormat("line {0}: \"{1}\", expected \"N\"\n", c, line);
+                if (line != "N") errors.AppendFormat("line {0}: \"N\", expected \"{1}\"\n", c, line);
                 c++;
             }
             if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
