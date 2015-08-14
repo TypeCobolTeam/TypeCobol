@@ -6349,10 +6349,11 @@ multiplyStatementFormat2:
 // ... more details p382->383 OPEN statement notes ...
 
 openStatement:
-                 OPEN ( (INPUT (fileName (REVERSED | (WITH? NO REWIND))?)+) |
-                        (OUTPUT (fileName (WITH? NO REWIND)?)+) |
-                        (I_O fileName+) |
-                        (EXTEND fileName+) )+;
+	OPEN ( ( INPUT  (fileName ((WITH? NO REWIND) | REVERSED)?)+ )
+		  |( OUTPUT (fileName  (WITH? NO REWIND)?)+ )
+		  |( I_O fileName+ )
+		  |( EXTEND fileName+ )
+		 )+;
 
 // p384: PERFORM statement
 // The PERFORM statement transfers control explicitly to one or more procedures
@@ -9431,6 +9432,11 @@ relationCondition:
 // items, see “Comparison of index-names and index data items” on page 267. 
 
 // ... p262 to p267 : many more details on comparisons ...
+
+//generalRelationCondition:
+//	operand relationalOperator operand abbreviatedRelation*;
+//abbreviatedRelation:
+//	(AND | OR) NOT? relationalOperator? operand;
 
 generalRelationCondition:
 	operand relationalOperator abbreviatedOR;
