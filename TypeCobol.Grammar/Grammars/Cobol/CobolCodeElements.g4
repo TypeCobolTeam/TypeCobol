@@ -6678,7 +6678,7 @@ performStatementEnd: END_PERFORM;
 // ... more details p399->400 : READ statement notes ...
 
 readStatement:
-	READ fileName RECORD? (INTO identifier)? (KEY IS? dataName)?;
+	READ fileName NEXT? RECORD? (INTO identifier)? (KEY IS? dataName)?;
 
 readStatementEnd: END_READ;
 
