@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.Parser
             System.Console.WriteLine("TODO: IMPLEMENT NON-IDENTIFIER NON-LITERAL OPERANDS "+(context.identifier() != null) + " " + (context.literal() != null) + " " + (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
             return new Empty();
         }
-
+        /*
         private char createOperator(CobolCodeElementsParser.AbbreviatedRelationContext context)
         {
             if (context.AND() != null) return '&';
@@ -248,11 +248,12 @@ namespace TypeCobol.Compiler.Parser
             }
             return result;
         }
-
+        */
         private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context)
         {
             LogicOperation relation = null;
             char op = createOperator(context.relationalOperator());
+            /*
             var operands = context.operand();
             if (operands != null && operands.Count > 0)
             {
@@ -276,11 +277,13 @@ namespace TypeCobol.Compiler.Parser
                     }
                 }
             }
+            *//*
             var relations = context.abbreviatedRelation();
             if (relations != null && relations.Count > 0)
             {
                 return createAbbreviatedRelation(relation, relations.ToArray());
             }
+            */
             return relation;
         }
 

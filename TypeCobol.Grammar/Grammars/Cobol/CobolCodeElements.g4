@@ -9433,11 +9433,16 @@ relationCondition:
 // ... p262 to p267 : many more details on comparisons ...
 
 generalRelationCondition:
-	operand relationalOperator operand abbreviatedRelation*;
+	operand relationalOperator abbreviatedOR;
 
 // p274: Abbreviated combined relation conditions
-abbreviatedRelation:
-	(AND | OR) NOT? relationalOperator? operand;
+abbreviatedOR:  abbreviatedAND (OR abbreviatedAND)*;
+abbreviatedAND: abbreviatedNOT (AND abbreviatedNOT)*;
+abbreviatedNOT: NOT? abbreviatedExpression;
+abbreviatedExpression: abbreviatedOperand | (LeftParenthesisSeparator abbreviatedOR RightParenthesisSeparator);
+
+abbreviatedOperand:
+	relationalOperator? operand;
 
 relationalOperator:
 	IS? ((NOT? strictRelation) | simpleRelation);
@@ -9457,41 +9462,6 @@ simpleRelation:
 	| LESS THAN? OR EQUAL TO?
 	| LessThanOrEqualOperator
 	;
-
-	
-///generalRelationCondition:
-///	(operand relationalOperator operand) | abbreviatedRelationCondition;
-
-///abbreviatedRelationCondition:
-///	abbreviatedSubject abbreviatedObjectPhrase;
-
-///abbreviatedObjectPhrase:
-///	abbreviatedObject abbreviatedLogic*;
-
-// here is "A"
-// A op B AND C      <-- (A op B) AND (A op C),  with "op" defined here
-// NOT A op B AND C  <-- (NOT(A op B)) AND (A op C), with "op" defined in here
-// NOT(A op B AND C) <-- NOT((A op B) AND (A op C)), with "op" defined in here
-///abbreviatedSubject:
-///	operand abbreviatedRelationalOperator;
-
-///abbreviatedLogic:
-///	(AND|OR) abbreviatedObject;
-
-// here is "C"
-// op C, NOT op C    <-- A op C,  with "op" defined here
-// NOT C             <-- NOT(A op C), with "op" defined in A
-///abbreviatedRelation:
-///	abbreviatedRelationalOperator? abbreviatedObject;
-
-///abbreviatedObject:
-///	operand | abbreviatedParentheses;
-
-///abbreviatedRelationalOperator:
-///	NOT | relationalOperator;
-
-///abbreviatedParentheses:
-///	LeftParenthesisSeparator abbreviatedObjectPhrase RightParenthesisSeparator;
 
 // p260: The subject of the relation condition. Can be an identifier, literal,
 // function-identifier (already included in identifier), arithmetic expression, or index-name.

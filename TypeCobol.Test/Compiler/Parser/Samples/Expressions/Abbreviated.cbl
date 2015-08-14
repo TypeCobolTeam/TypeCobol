@@ -2,6 +2,8 @@ IF (A)
 IF (A = 1)
 IF (A = B)
 IF (A = 'B')
-* KO, should be OK
-*IF (A = B OR C) CONTINUE.
-*IF (A = (B OR <C)) CONTINUE.
+IF (A = B OR C)
+IF (A = (B OR <C))
+IF (NOT A = (B AND <C))
+IF (NOT (A = (B AND <C)))
+IF NOT (x = ('a' OR 'b')) AND NOT ( (y = 'c') AND ( z = ('d' OR 'f' AND NOT < 'g' AND 'h' OR NOT >'i' OR 'j' AND 'k' OR NOT 'l') ) )
