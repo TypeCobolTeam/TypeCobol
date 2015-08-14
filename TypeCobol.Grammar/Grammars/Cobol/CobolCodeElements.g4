@@ -131,6 +131,8 @@ codeElement:
 	openStatement |
 	readStatement |
 	readStatementEnd |
+	writeStatement |
+	writeStatementEnd |
 
 		// --- Ordering statements ---
 	mergeStatement |
@@ -185,6 +187,8 @@ codeElement:
 
 	atEndCondition |
 	notAtEndCondition |
+	atEndOfPageCondition |
+	notAtEndOfPageCondition |
 	invalidKeyCondition |
 	notInvalidKeyCondition |
 	onExceptionCondition |
@@ -205,11 +209,6 @@ codeElement:
        //startStatement |
            // ... invalid key phrases ...
        startStatementEnd |
-       //writeStatement |
-           atEndOfPageCondition  | // ... imperative statements ...
-           notAtEndOfPageCondition  | // ... imperative statements ...
-           // ... invalid key phrases ...
-       writeStatementEnd |
        //xmlGenerateStatement |
            // ... exception phrases ...
        // xmlStatementEnd |
@@ -271,13 +270,11 @@ ioStatement:
 	| displayStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-///	| readStatement
 	| rewriteStatement
 	| startStatement
 	| stopStatement // only with: <literal>
 		// WRITE statement is an imperative statement, but
 		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
-	| writeStatement
 	;
 
 
@@ -352,6 +349,12 @@ atEndCondition:
 
 notAtEndCondition:
 	NOT AT? END;
+
+atEndOfPageCondition:
+	AT? (END_OF_PAGE | EOP);
+
+notAtEndOfPageCondition:
+	NOT AT? (END_OF_PAGE | EOP);
 
 invalidKeyCondition:
 	INVALID KEY?;
@@ -8180,22 +8183,8 @@ unstringStatementEnd: END_UNSTRING;
 // ... more details p456 WRITE for relative files ...
 
 writeStatement:
-                  WRITE recordName (FROM identifier)?
-                  ((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE |LINES)?) | mnemonicForEnvironmentName | PAGE))?;
-
-//writeStatementConditional:
-//                             writeStatement
-//                             (atEndOfPageCondition imperativeStatement)? 
-//                             (notAtEndOfPageCondition imperativeStatement)? 
-//                             (invalidKeyCondition imperativeStatement)?
-//                             (notInvalidKeyCondition imperativeStatement)? 
-//                             writeStatementEnd?;
-
-atEndOfPageCondition:
-               AT? (END_OF_PAGE | EOP);
-
-notAtEndOfPageCondition:
-                  NOT AT? (END_OF_PAGE | EOP);
+	WRITE recordName (FROM identifier)?
+	((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
 
 writeStatementEnd: END_WRITE;
 
