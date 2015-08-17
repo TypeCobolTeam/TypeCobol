@@ -27,22 +27,33 @@ namespace TypeCobol.Test
             String[] expectedResultLines = expectedResult.Split('\r', '\n' );
             String[] resultLines = result.Split('\r', '\n');
 
-            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
-            {
-                if (expectedResultLines[c] != resultLines[c])
-                {
-                    errors.AppendLine("Line " + c + ": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
-                }
-            }
 
-            if (expectedResultLines.Length != resultLines.Length)
-            {
-                errors.AppendLine("result lines=" + resultLines.Length + "; lines expected=" + expectedResultLines.Length);
-            }
+//            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
+//            {
+//                if (expectedResultLines[c] != resultLines[c])
+//                {
+//                    errors.AppendLine("Line " + c + ": result=\n>>> " + resultLines[c] + "\n vs expected=\n>>> " + expectedResultLines[c] );
+//                }
+//            }
 
-            if (errors.Length > 0)
+
+//            if (expectedResultLines.Length != resultLines.Length)
+//            {
+//                errors.AppendLine("result lines=" + resultLines.Length + "; lines expected=" + expectedResultLines.Length);
+//            }
+
+//            if (errors.Length > 0)
+//            {
+//                errors.Insert(0, "In test:" + testName + "\n");
+//                errors.AppendLine("====================\n" + result + "====================");
+//                throw new Exception(errors.ToString());
+//            }
+
+
+
+            if (result != expectedResult)
             {
-                errors.Insert(0, "In test:" + testName + "\n");
+                errors.Insert(0, "result != expectedResult  In test:" + testName + "\n");
                 errors.Append("=== RESULT ==========\n" + result + "====================");
                 throw new Exception(errors.ToString());
             }
