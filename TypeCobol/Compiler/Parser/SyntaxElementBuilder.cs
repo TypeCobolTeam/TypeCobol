@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -260,7 +261,8 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             return new SymbolReference<FileName>(new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
-        private static SymbolReference<IndexName> CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
+
+        public static SymbolReference<IndexName> CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
         {
             if (context == null) return null;
             return new SymbolReference<IndexName>(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
@@ -332,21 +334,22 @@ namespace TypeCobol.Compiler.Parser
 
         private static Address CreateAddressOf(CobolCodeElementsParser.AddressOfSpecialRegisterDeclContext context)
         {
-            if (context.dataNameReference() == null) return null;
+            if (context == null || context.dataNameReference() == null) return null;
             return new Address(CreateDataNameReference(context.dataNameReference()));
         }
 
         private static Length CreateLengthOf(CobolCodeElementsParser.LengthOfSpecialRegisterDeclContext context)
         {
-            if (context.dataNameReference() == null) return null;
+            if (context == null || context.dataNameReference() == null) return null;
             return new Length(CreateDataNameReference(context.dataNameReference()));
         }
 
         private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context)
         {
-            if (context.fileName() == null) return null;
+            if (context == null || context.fileName() == null) return null;
             return new LinageCounter(CreateFileName(context.fileName()).Symbol);
         }
+
 
 
 
@@ -354,6 +357,41 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(context));
+        }
+
+        public static Index CreateIndex(CobolCodeElementsParser.IndexNameContext indexName)
+        {
+            if (indexName == null) return null;
+            return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(indexName.UserDefinedWord())));
+        }
+
+        public static Expression CreateProcedurePointer(CobolCodeElementsParser.ProcedurePointerContext procedurePointer)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreateFunctionPointer(CobolCodeElementsParser.FunctionPointerContext functionPointer)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreatePointerDataItem(CobolCodeElementsParser.PointerDataItemContext pointerDataItem)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreateObjectReferenceId(CobolCodeElementsParser.ObjectReferenceIdContext objectReferenceId)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreateAddressOfIdentifier(ITerminalNode address, CobolCodeElementsParser.IdentifierContext identifier)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -3,9 +3,9 @@
 
 [[AtEndCondition]] [3,4:AT]<AT> --> [6,8:END]<END>
 
-[[SetStatement]] [5,7:SET]<SET> --> [26,29:TRUE]<TRUE>
+Set  fatalError TO TRUE
 
-[[SetStatement]] [5,7:SET]<SET> --> [26,29:TRUE]<TRUE>
+Set  otherVariable TO TRUE
 
 [[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,26:errorProcedure]<UserDefinedWord>
 

@@ -7148,69 +7148,106 @@ searchStatementEnd: END_SEARCH;
 ///                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
 ///                      (conditionName+ TO TRUE) );
 
-setStatement:
-	  setStatementFormat1	//SET for basic table handling
-	| setStatementFormat2	//SET for adjusting indexes
-	| setStatementFormat3	//SET for external switches
-	| setStatementFormat4	//SET for condition-names
-	| setStatementFormat5	//SET for USAGE IS POINTER
-	| setStatementFormat6	//SET for procedure-pointer and function-pointer data items
-	| setStatementFormat7	//SET for USAGE OBJECT REFERENCE data items
-	;
+//setStatement:
+//	  setStatementFormat1	//SET for basic table handling
+//	| setStatementFormat2	//SET for adjusting indexes
+//	| setStatementFormat3	//SET for external switches
+//	| setStatementFormat4	//SET for condition-names
+//	| setStatementFormat5	//SET for USAGE IS POINTER
+//	| setStatementFormat6	//SET for procedure-pointer and function-pointer data items
+//	| setStatementFormat7	//SET for USAGE OBJECT REFERENCE data items
+//	;
 
-//SET for basic table handling
-setStatementFormat1:
-	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
-setStatementFormat1Receiving:
-	indexName | identifier;
-setStatementFormat1Sending:
-	indexName | identifier | IntegerLiteral;
 
-//SET for adjusting indexes
-setStatementFormat2:
-	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
 
-//SET for external switches
-setStatementFormat3:
-	SET setStatementFormat3What+;
-setStatementFormat3What:
-	mnemonicForUPSISwitchName+ TO (ON | OFF);
-
-//SET for condition-names
-setStatementFormat4:
-	SET identifier+ TO TRUE;
-
-//SET for USAGE IS POINTER
-setStatementFormat5:
-	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
-setStatementFormat5Receiving:
-	(ADDRESS OF)? identifier;
-setStatementFormat5Sending:
-	((ADDRESS OF)? identifier) | (NULL | NULLS);
-
-//SET for procedure-pointer and function-pointer data items
-setStatementFormat6:
-	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
-setStatementFormat6Receiving:
-	  procedurePointer
-	| functionPointer
-	;
-setStatementFormat6Sending:
-	  procedurePointer
-	| functionPointer
-	| (ENTRY (identifier | alphanumericLiteral))
-	| (NULL | NULLS)
-	| pointerDataItem
-	;
-
-//SET for USAGE OBJECT REFERENCE data items
-setStatementFormat7:
-	SET objectReferenceId TO setStatementFormat7Sending;
-setStatementFormat7Sending:
-	objectReference | NULL | SELF;
-
+////Format 1: SET for basic table handling
+//setStatementFormat1:
+//	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
+//setStatementFormat1Receiving:
+//	indexName | identifier;
+//setStatementFormat1Sending:
+//	indexName | identifier | IntegerLiteral;
+//
+////Format 2: SET for adjusting indexes
+//setStatementFormat2:
+//	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
+//
+////Format 3: SET for external switches
+//setStatementFormat3:
+//	SET setStatementFormat3What+;
+//setStatementFormat3What:
+//	mnemonicForUPSISwitchName+ TO (ON | OFF);
+//
+////Format 4: SET for condition-names
+//setStatementFormat4:
+//	SET identifier+ TO TRUE;
+//
+////Format 5: SET for USAGE IS POINTER
+//setStatementFormat5:
+//	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
+//setStatementFormat5Receiving:
+//	(ADDRESS OF)? identifier;
+//setStatementFormat5Sending:
+//	((ADDRESS OF)? identifier) | (NULL | NULLS);
+//
+////Format 6: SET for procedure-pointer and function-pointer data items
+//setStatementFormat6:
+//	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
+//setStatementFormat6Receiving:
+//	  procedurePointer
+//	| functionPointer
+//	;
+//setStatementFormat6Sending:
+//	  procedurePointer
+//	| functionPointer
+//	| (ENTRY (identifier | alphanumericLiteral))
+//	| (NULL | NULLS)
+//	| pointerDataItem
+//	;
+//
+////Format 7: SET for USAGE OBJECT REFERENCE data items
+//setStatementFormat7:
+//	SET objectReferenceId TO setStatementFormat7Sending;
+//setStatementFormat7Sending:
+//	objectReference | NULL | SELF;
+//
 pointerDataItem:   identifier; // do these SET items
 objectReferenceId: identifier;// really work like that?
+
+
+
+setStatement:
+	setStatementForAssignation	//SET format 1 for basic table handling
+								//SET format 4 for condition-names
+								//SET format 5 for USAGE IS POINTER
+								//SET format 6 for procedure-pointer and function-pointer data items
+								//SET format 7 for USAGE OBJECT REFERENCE data items
+	| setStatementForIndexes	//SET format 2 for adjusting indexes
+	| setStatementForSwitches;	//SET format 3 for external switches
+
+setStatementForAssignation:
+	SET setStatementForAssignationReceiving+ TO setStatementForAssignationSending;
+
+setStatementForAssignationReceiving:
+	indexName | identifier | procedurePointer | functionPointer | objectReferenceId;					
+
+setStatementForAssignationSending:
+	indexName | identifier | IntegerLiteral																		//Format 1 + 5
+	| TRUE																										//Format 4
+	| (NULL | NULLS)																							//Format 5 + 6 + 7
+	| procedurePointer | functionPointer | (ENTRY (identifier | alphanumericLiteral)) 	| pointerDataItem		//Format 6 (+NULL | NULLS)
+	|objectReferenceId | SELF		;																			//Format 7 (+NULL)
+
+//Format 2: SET for adjusting indexes
+setStatementForIndexes:
+	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
+
+//Format 3: SET for external switches
+setStatementForSwitches:
+	SET setStatementForSwitchesWhat+;
+setStatementForSwitchesWhat:
+	mnemonicForUPSISwitchName+ TO (ON | OFF);
+
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according

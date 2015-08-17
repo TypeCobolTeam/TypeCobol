@@ -110,6 +110,8 @@
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CONTINUENY.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SEARCH.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATE.txt" />
@@ -126,6 +128,7 @@
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ADDRPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\READ.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SET.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\STRING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACT.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTRPN.txt" />
@@ -141,6 +144,8 @@
     <None Include="Compiler\Parser\Samples\Statements\CONTINUE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SETForPointer.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SetForExternalSwitches.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\SET.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\SETForExternalSwitches.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SETForIndexes.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\MOVE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SEARCH.cbl" />

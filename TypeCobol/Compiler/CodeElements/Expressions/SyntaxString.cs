@@ -1,5 +1,5 @@
 ﻿using System;
-using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// String value defined by a single Token in the Cobol syntax
     /// </summary>
-    public class SyntaxString
+    public class SyntaxString : Expression
     {
         public SyntaxString(Token token)
         {
@@ -26,7 +26,8 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                if (Token.TokenFamily == TokenFamily.Symbol)
+                if (Token.TokenFamily == TokenFamily.Symbol ||
+                    Token.TokenFamily == TokenFamily.SyntaxKeyword)
                 {
                     return Token.Text;
                 }

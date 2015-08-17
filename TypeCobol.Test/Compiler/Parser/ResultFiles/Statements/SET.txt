@@ -1,0 +1,30 @@
+﻿--- Diagnostics ---
+[24,27]<28,Error,Syntax>Syntax error : missing UserDefinedWord at 'null' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement>setStatementForAssignation>setStatementForAssignationSending>identifier>dataNameReferenceOrSpecialRegisterOrFunctionIdentifier>addressOfSpecialRegisterDecl>dataNameReference>qualifiedDataName>dataNameBase>dataName, OffendingSymbol=[24,27:null]<NULL> on line 7)
+[1,0]<28,Error,Syntax>Syntax error : no viable alternative at input 'set ... ' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement, OffendingSymbol=[1,0:]<EndOfFile> on line 0)
+--- Code Elements ---
+Set  var1 TO var2
+
+Set  var1 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+
+Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO var2
+
+Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO TypeCobol.Compiler.CodeElements.Expressions.Address
+
+Set  var1 TO null
+
+Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO null
+
+Set  var1 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+
+Set  var1 TO nulls
+
+Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO nulls
+
+Set  var1 var2 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+
+Set  var1 var2 TO var3
+
+Set  var1 TypeCobol.Compiler.CodeElements.Expressions.Address var3 TO var4
+
+Set  var1 TypeCobol.Compiler.CodeElements.Expressions.Address var3 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+

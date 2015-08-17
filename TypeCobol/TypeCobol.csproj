@@ -133,6 +133,7 @@
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\ArithmeticExpression.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\Index.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxNational.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\LogicalExpression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
@@ -217,6 +218,8 @@
     <Compile Include="Compiler\CodeElements\Statement\CancelStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\CloseStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ContinueStatement.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\SetStatementForAssignation.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\SetStatementForSwitches.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DeleteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DisplayStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DivideStatement.cs" />
@@ -247,7 +250,6 @@
     <Compile Include="Compiler\CodeElements\Statement\SetStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SetStatementForCondition.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SetStatementForIndex.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\SetStatementForPointer.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SortStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StartStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StopStatement.cs" />
