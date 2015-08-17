@@ -131,6 +131,8 @@ codeElement:
 	openStatement |
 	readStatement |
 	readStatementEnd |
+	rewriteStatement |
+	rewriteStatementEnd |
 	writeStatement |
 	writeStatementEnd |
 
@@ -203,9 +205,6 @@ codeElement:
        //divideStatement |
            // ... size exception phrases ...
        divideStatementEnd |
-       //rewriteStatement |
-           // ... invalid key phrases ...
-       rewriteStatementEnd |
        //startStatement |
            // ... invalid key phrases ...
        startStatementEnd |
@@ -270,7 +269,6 @@ ioStatement:
 	| displayStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-	| rewriteStatement
 	| startStatement
 	| stopStatement // only with: <literal>
 		// WRITE statement is an imperative statement, but
