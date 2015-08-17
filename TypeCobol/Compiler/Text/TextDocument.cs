@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Text
             {
                 // Send document cleared event
                 TextChangedEvent documentClearedEvent = new TextChangedEvent();
-                documentClearedEvent.TextChanges.Add(new TextChange(TextChangeType.DocumentCleared, 0, null));
+                documentClearedEvent.TextChanges.Add(new TextChange(DocumentChangeType.DocumentCleared, 0, null));
                 textChangedEventsSource.OnNext(documentClearedEvent);
 
                 // Send all new text lines
@@ -320,7 +320,7 @@ namespace TypeCobol.Compiler.Text
             TextChangedEvent textLoadedEvent = new TextChangedEvent();
             foreach (var line in lines)
             {
-                TextChange textChange = new TextChange(TextChangeType.LineInserted, line.LineIndex, line);
+                TextChange textChange = new TextChange(DocumentChangeType.LineInserted, line.LineIndex, line);
                 textLoadedEvent.TextChanges.Add(textChange);
             }
             textChangedEventsSource.OnNext(textLoadedEvent);

@@ -2,6 +2,9 @@
 // https://github.com/icsharpcode/AvalonEdit/tree/master/ICSharpCode.AvalonEdit/Document
 // Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 
+// DO NOT FORGET to inlcude credit to the SharpDevelop team and a copy of the MIT license 
+// in any distribution of the compiler. 
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -92,74 +95,9 @@ namespace TypeCobol.Compiler.Concurrency
         // --- Track document changes in versions ---
 
         // Current document version : accessible only via a document snapshot
-        private Version<DocumentChangeType> currentVersion;
+        private Version currentVersion;
 
-        /// <summary>
-        /// Implementation of a linked list of document versions
-        /// </summary>
-        [DebuggerDisplay("Version #{id}")]
-        sealed class Version<DocumentChangeType> : IDocumentVersion<DocumentChangeType>
-        {
-            // Reference back to the provider.
-            // Used to determine if two checkpoints belong to the same document.
-            readonly object provider;
-            // ID used for CompareAge()
-            readonly int id;
-
-            // the change from this version to the next version
-            internal DocumentChangeType change;
-            internal Version<DocumentChangeType> next;
-
-            internal Version(object provider)
-            {
-                this.provider = provider;
-            }
-
-            internal Version(Version<DocumentChangeType> prev)
-            {
-                this.provider = prev.provider;
-                this.id = unchecked(prev.id + 1);
-            }
-
-            public bool BelongsToSameDocumentAs(IDocumentVersion<DocumentChangeType> other)
-            {
-                Version<DocumentChangeType> o = other as Version<DocumentChangeType>;
-                return o != null && provider == o.provider;
-            }
-
-            public int CompareAge(IDocumentVersion<DocumentChangeType> other)
-            {
-                if (other == null)
-                    throw new ArgumentNullException("other");
-                Version<DocumentChangeType> o = other as Version<DocumentChangeType>;
-                if (o == null || provider != o.provider)
-                    throw new ArgumentException("Versions do not belong to the same document");
-                // We will allow overflows, but assume that the maximum distance between checkpoints is 2^31-1.
-                // This is guaranteed on x86 because so many checkpoints don't fit into memory.
-                return Math.Sign(unchecked(this.id - o.id));
-            }
-
-            public IEnumerable<DocumentChangeType> GetChangesTo(IDocumentVersion<DocumentChangeType> other)
-            {
-                int result = CompareAge(other);
-                Version<DocumentChangeType> o = (Version<DocumentChangeType>)other;
-                if (result < 0)
-                    return GetForwardChanges(o);
-                else if (result > 0)
-                    throw new ArgumentException("'other' version is older than this checkpoint");
-                else
-                    return null;
-            }
-
-            IEnumerable<DocumentChangeType> GetForwardChanges(Version<DocumentChangeType> other)
-            {
-                // Return changes from this(inclusive) to other(exclusive).
-                for (Version<DocumentChangeType> node = this; node != other; node = node.next)
-                {
-                    yield return node.change;
-                }
-            }
-        }
+        
 
         // --- Provide an immutable document snapshot for each version ---
 

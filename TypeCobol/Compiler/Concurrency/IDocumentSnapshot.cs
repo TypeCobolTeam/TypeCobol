@@ -9,11 +9,13 @@ namespace TypeCobol.Compiler.Concurrency
     /// <remarks>
     /// Documents snapshots enable one thread to consume information concurrently produced by another thread.
     /// </remarks>
-    public interface IDocumentSnapshot<DocumentChangeType>
+    public abstract class DocumentSnapshot
     {
         /// <summary>
         /// Document version identifier for this snapshot
         /// </summary>
-        IDocumentVersion<DocumentChangeType> Version { get; }
+        DocumentVersion Version { get; }
+
+        IReadOnlyList<IDocumentLine>
     }
 }

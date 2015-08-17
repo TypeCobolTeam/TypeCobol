@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Compiler.Concurrency;
+using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
@@ -104,11 +104,11 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         TextChange nextTextChange = textChangedEvent.TextChanges[textChangeIndex + 1];
 
-                        if( ((textChange.Type == TextChangeType.LineInserted || textChange.Type == TextChangeType.LineUpdated) && 
+                        if( ((textChange.Type == DocumentChangeType.LineInserted || textChange.Type == DocumentChangeType.LineUpdated) && 
                              (nextTextChange.LineIndex == textChange.LineIndex || nextTextChange.LineIndex == (textChange.LineIndex + 1))) ||
-                            ( textChange.Type == TextChangeType.LineRemoved &&
+                            ( textChange.Type == DocumentChangeType.LineRemoved &&
                              (nextTextChange.LineIndex == (textChange.LineIndex - 1) || nextTextChange.LineIndex == textChange.LineIndex)) ||
-                            nextTextChange.Type == TextChangeType.DocumentCleared)
+                            nextTextChange.Type == DocumentChangeType.DocumentCleared)
                         {
                             propagateChangeToFollowingLines = false;
                         }
@@ -117,14 +117,14 @@ namespace TypeCobol.Compiler.Scanner
                     switch (textChange.Type)
                     {
                         // --- Case 1 : text document cleared ---
-                        case TextChangeType.DocumentCleared:
+                        case DocumentChangeType.DocumentCleared:
                             // Reset the immutable list
                             clearTokensLines();
                             // Register a DocumentCleared change
                             tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.DocumentCleared, 0, null));
                             break;
                         // --- Case 2 : line inserted in the text document ---
-                        case TextChangeType.LineInserted:
+                        case DocumentChangeType.LineInserted:
                             // Scan the newly inserted line
                             TokensLine insertedLine = null;
                             if (textChange.LineIndex > 0)
@@ -148,7 +148,7 @@ namespace TypeCobol.Compiler.Scanner
                                 PropagateChangeAfterLine(textChange.LineIndex, insertedLine.ScanState, getTokensLineAtIndex, setTokensLineAtIndex, tokensChangedEvent);
                             }
                             break;
-                        case TextChangeType.LineUpdated:
+                        case DocumentChangeType.LineUpdated:
                             // Scan the updated line
                             TokensLine updatedLine = null;
                             if (textChange.LineIndex > 0)
@@ -190,7 +190,7 @@ namespace TypeCobol.Compiler.Scanner
                                 PropagateChangeAfterLine(textChange.LineIndex, updatedLine.ScanState, getTokensLineAtIndex, setTokensLineAtIndex, tokensChangedEvent);
                             }
                             break;
-                        case TextChangeType.LineRemoved:
+                        case DocumentChangeType.LineRemoved:
                             // Remove the line from the immutable list
                             TokensLine removedLine = getTokensLineAtIndex(textChange.LineIndex);
                             removeTokensLine(removedLine);
