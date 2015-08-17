@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,24 +6,12 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class OpenStatement : CodeElement
     {
-        IList<OpenElement> Objects;
+        Dictionary<OpenMode, IList<OpenFileName>> FileNames;
 
-        public OpenStatement(IList<OpenElement> objects)
+        public OpenStatement(Dictionary<OpenMode, IList<OpenFileName>> filenames)
             : base(CodeElementType.OpenStatement)
         {
-            this.Objects = (objects != null ? objects : new List<OpenElement>());
-        }
-    }
-
-    public class OpenElement
-    {
-        OpenMode Mode;
-        IList<OpenFileName> FileNames;
-
-        public OpenElement(OpenMode mode, IList<OpenFileName> filenames)
-        {
-            this.Mode = mode;
-            this.FileNames = (filenames != null ? filenames : new List<OpenFileName>());
+            this.FileNames = (filenames != null ? filenames : new Dictionary<OpenMode, IList<OpenFileName>>());
         }
     }
 

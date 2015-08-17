@@ -11,43 +11,51 @@ namespace TypeCobol.Compiler.Parser
     {
         internal OpenStatement CreateOpenStatement(CobolCodeElementsParser.OpenStatementContext context)
         {
-            var elements = new List<OpenElement>();
+            var filenames = new Dictionary<OpenMode, IList<OpenFileName>>();
+            var list = new List<OpenFileName>();
             if (context.openInput() != null)
             {
                 foreach (var c in context.openInput())
                 {
-                    OpenElement e = CreateOpenElement(c);
-                    if (e != null) elements.Add(e);
+                    IList<OpenFileName> l = CreateOpenFileNames(c);
+                    if (l != null) list.AddRange(l);
                 }
             }
+            filenames.Add(OpenMode.INPUT, list);
+            list = new List<OpenFileName>();
             if (context.openOutput() != null)
             {
                 foreach (var c in context.openOutput())
                 {
-                    OpenElement e = CreateOpenElement(c);
-                    if (e != null) elements.Add(e);
+                    IList<OpenFileName> l = CreateOpenFileNames(c);
+                    if (l != null) list.AddRange(l);
                 }
             }
+            filenames.Add(OpenMode.OUTPUT, list);
+            list = new List<OpenFileName>();
             if (context.openIO() != null)
             {
                 foreach (var c in context.openIO())
                 {
-                    OpenElement e = CreateOpenElement(c);
-                    if (e != null) elements.Add(e);
+                    IList<OpenFileName> l = CreateOpenFileNames(c);
+                    if (l != null) list.AddRange(l);
                 }
             }
+            filenames.Add(OpenMode.IO, list);
+            list = new List<OpenFileName>();
             if (context.openExtend() != null)
             {
                 foreach (var c in context.openExtend())
                 {
-                    OpenElement e = CreateOpenElement(c);
-                    if (e != null) elements.Add(e);
+                    IList<OpenFileName> l = CreateOpenFileNames(c);
+                    if (l != null) list.AddRange(l);
                 }
             }
-            return new OpenStatement(elements);
+            filenames.Add(OpenMode.EXTEND, list);
+            return new OpenStatement(filenames);
         }
 
-        private OpenElement CreateOpenElement(CobolCodeElementsParser.OpenInputContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenInputContext context)
         {
             if (context.fileNameWithNoRewindOrReversed() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -58,10 +66,10 @@ namespace TypeCobol.Compiler.Parser
                 bool reversed = filename.REVERSED() != null;
                 if (f != null) filenames.Add(new OpenFileName(f, norewind, reversed));
             }
-            return new OpenElement(OpenMode.INPUT, filenames);
+            return filenames;
         }
 
-        private OpenElement CreateOpenElement(CobolCodeElementsParser.OpenOutputContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenOutputContext context)
         {
             if (context.fileNameWithNoRewind() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -71,10 +79,10 @@ namespace TypeCobol.Compiler.Parser
                 bool norewind = filename.NO() != null;
                 if (f != null) filenames.Add(new OpenFileName(f, norewind));
             }
-            return new OpenElement(OpenMode.OUTPUT, filenames);
+            return filenames;
         }
 
-        private OpenElement CreateOpenElement(CobolCodeElementsParser.OpenIOContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenIOContext context)
         {
             if (context.fileName() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -83,10 +91,10 @@ namespace TypeCobol.Compiler.Parser
                 var f = SyntaxElementBuilder.CreateFileName(filename);
                 if (f != null) filenames.Add(new OpenFileName(f));
             }
-            return new OpenElement(OpenMode.IO, filenames);
+            return filenames;
         }
 
-        private OpenElement CreateOpenElement(CobolCodeElementsParser.OpenExtendContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenExtendContext context)
         {
             if (context.fileName() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -95,7 +103,7 @@ namespace TypeCobol.Compiler.Parser
                 var f = SyntaxElementBuilder.CreateFileName(filename);
                 if (f != null) filenames.Add(new OpenFileName(f));
             }
-            return new OpenElement(OpenMode.EXTEND, filenames);
+            return filenames;
         }
 
         internal CloseStatement CreateCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
@@ -109,6 +117,8 @@ namespace TypeCobol.Compiler.Parser
             }
             return new CloseStatement(filenames);
         }
+
+
 
         private CloseFileName CreateCloseFileName(CobolCodeElementsParser.CloseFileNameContext context)
         {
