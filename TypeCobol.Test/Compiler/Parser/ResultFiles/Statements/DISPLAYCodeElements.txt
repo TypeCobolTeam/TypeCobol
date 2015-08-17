@@ -2,7 +2,6 @@
 [16,17]<28,Error,Syntax>Syntax error : Display: required <identifier> or <literal> (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
 [16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
 [53,56]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[53,56:with]<WITH> on line 16)
-[28,28]<28,Error,Syntax>Syntax error : no viable alternative at input '(' (RuleStack=codeElement, OffendingSymbol=[28,28:(]<LeftParenthesisSeparator> on line 19)
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto
@@ -82,12 +81,12 @@
 - variables = when-compiled
 - WithNoAdvancing = False
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [25,27:max]<FunctionName>
-- variables = function
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [32,32:)]<RightParenthesisSeparator>
+- variables = max( 1, 5)
 - WithNoAdvancing = False
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,44:mycopy]<UserDefinedWord>
-- variables = toto toto toto<mycopy
+- variables = toto toto mycopy.toto
 - WithNoAdvancing = False
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,25:high-value]<HIGH_VALUE>
