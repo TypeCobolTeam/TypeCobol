@@ -31,7 +31,7 @@ namespace TypeCobol.Test
             {
                 if (expectedResultLines[c] != resultLines[c])
                 {
-                    errors.AppendLine("Line " + c + ": result=\n>>> " + resultLines[c] + "\n vs expected=\n>>> " + expectedResultLines[c] );
+                    errors.AppendLine("Line " + c + ": result=\"" + resultLines[c] + "\" vs expected=\"" + expectedResultLines[c] + "\"");
                 }
             }
 
@@ -43,7 +43,7 @@ namespace TypeCobol.Test
             if (errors.Length > 0)
             {
                 errors.Insert(0, "In test:" + testName + "\n");
-                errors.AppendLine("====================\n" + result + "====================");
+                errors.Append("=== RESULT ==========\n" + result + "====================");
                 throw new Exception(errors.ToString());
             }
         }

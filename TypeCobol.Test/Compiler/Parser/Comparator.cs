@@ -16,14 +16,16 @@ namespace TypeCobol.Test.Compiler.Parser
         private CompilationUnit unit = null;
         public FilesComparator comparator;
         public DocumentFormat format;
+        public TestObserver observer;
 
         public TestUnit(string name, bool debug = false)
         {
             this.format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
             this.comparator = new FilesComparator(name, debug);
+            this.observer = new TestObserver();
         }
 
-        public void Parse()
+        public void Init()
         {
             DirectoryInfo localDirectory = new DirectoryInfo(comparator.paths.sample.full.folder);
             TypeCobolOptions options = new TypeCobolOptions();
@@ -33,6 +35,11 @@ namespace TypeCobol.Test.Compiler.Parser
             string filename = comparator.paths.sample.project.file;
             this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, this.format.ColumnsLayout, new TypeCobolOptions());
             this.unit.SetupCodeAnalysisPipeline(null, 0);
+            this.unit.SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(this.observer);
+        }
+
+        public void Parse()
+        {
             this.unit.StartDocumentProcessing();
         }
 
@@ -43,6 +50,24 @@ namespace TypeCobol.Test.Compiler.Parser
                 this.comparator.Compare(this.unit.SyntaxDocument.CodeElements, this.unit.SyntaxDocument.Diagnostics, reader);
             }
         }
+    }
+
+    internal class TestObserver : System.IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent>
+    {
+        private IList<System.Exception> errors = new List<System.Exception>();
+        public bool HasErrors
+        {
+            get { return errors.Count > 0; }
+        }
+        public string DumpErrors()
+        {
+            var str = new StringBuilder();
+            foreach (var error in errors) str.AppendLine(error.ToString());
+            return str.ToString();
+        }
+        public void OnCompleted() { }
+        public void OnError(System.Exception error) { errors.Add(error); }
+        public void OnNext(TypeCobol.Compiler.Parser.CodeElementChangedEvent value) { }
     }
 
     internal class FolderTester
@@ -125,11 +150,21 @@ namespace TypeCobol.Test.Compiler.Parser
                     System.Console.Write("\nCheck result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
                     var unit = new TestUnit(sample, debug);
                     unit.comparator = comparator;
-                    try { unit.Parse(); unit.Compare(); }
+                    unit.Init();
+                    try
+                    {
+                        unit.Parse();
+                        if (unit.observer.HasErrors)
+                        {
+                            System.Console.Write(" --- EXCEPTION\n" + unit.observer.DumpErrors());
+                            errors.AppendLine(unit.observer.DumpErrors());
+                        }
+                        unit.Compare();
+                    }
                     catch (System.Exception ex)
                     {
-                        System.Console.Write(" --- EXCEPTION");
-                        errors.AppendLine(ex.ToString());
+                        System.Console.Write(" --- MISMATCH\n" + ex.Message);
+                        errors.Append("E");
                     }
                 }
             }
