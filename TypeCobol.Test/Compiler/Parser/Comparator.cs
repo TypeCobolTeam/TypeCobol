@@ -116,20 +116,24 @@ namespace TypeCobol.Test.Compiler.Parser
                 IList<FilesComparator> comparators = GetComparators(sample, debug);
                 if (comparators.Count < 1)
                 {
-                    System.Console.WriteLine("ERROR: Missing result file \"" + sample + "\"");
-                    errors.Append("\"" + sample + "\"");
+                    System.Console.Write("\nERROR: Missing result file \"" + sample + "\"");
+                    errors.AppendLine("Missing result file \"" + sample + "\"");
                     continue;
                 }
                 foreach (var comparator in comparators)
                 {
-                    System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+                    System.Console.Write("\nCheck result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
                     var unit = new TestUnit(sample, debug);
                     unit.comparator = comparator;
-                    unit.Parse();
-                    unit.Compare();
+                    try { unit.Parse(); unit.Compare(); }
+                    catch (System.Exception ex)
+                    {
+                        System.Console.Write(" --- EXCEPTION");
+                        errors.AppendLine(ex.ToString());
+                    }
                 }
             }
-            if (errors.Length > 0) throw new System.IO.FileNotFoundException("No result files for: " + errors.ToString());
+            if (errors.Length > 0) throw new System.Exception(errors.ToString());
         }
 
         private IList<FilesComparator> GetComparators(string sample, bool debug)
