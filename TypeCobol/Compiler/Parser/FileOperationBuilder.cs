@@ -141,6 +141,20 @@ namespace TypeCobol.Compiler.Parser
                 );
         }
 
+        internal WriteStatement CreateWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
+        {
+            if (context == null) return null;
+            return new WriteStatement(
+                SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName()),
+                SyntaxElementBuilder.CreateIdentifier(context.identifier()),
+                context.BEFORE() != null,
+                context.AFTER() != null,
+                new ArithmeticExpressionBuilder().CreateNumberOrIdentifier(context.identifierOrInteger()),
+                SyntaxElementBuilder.CreateMnemonic(context.mnemonicForEnvironmentName()),
+                context.PAGE() != null
+                );
+        }
+
         internal RewriteStatement CreateRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
         {
             if (context == null) return null;

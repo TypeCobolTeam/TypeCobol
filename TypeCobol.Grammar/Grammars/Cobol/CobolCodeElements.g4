@@ -8189,7 +8189,9 @@ unstringStatementEnd: END_UNSTRING;
 
 writeStatement:
 	WRITE qualifiedDataName (FROM identifier)?
-	((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
+	((BEFORE | AFTER) ADVANCING? ((identifierOrInteger (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
+
+identifierOrInteger: identifier | IntegerLiteral;
 
 writeStatementEnd: END_WRITE;
 

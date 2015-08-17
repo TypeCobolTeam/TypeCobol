@@ -763,7 +763,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
         {
-            CodeElement = new WriteStatement();
+            CodeElement = new FileOperationBuilder().CreateWriteStatement(context);
         }
 
         public override void EnterWriteStatementEnd(CobolCodeElementsParser.WriteStatementEndContext context)

@@ -22,6 +22,21 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
+        internal Expression CreateNumberOrIdentifier(CobolCodeElementsParser.IdentifierOrIntegerContext context)
+        {
+            if (context == null) return null;
+            if (context.identifier() != null)
+            {
+                return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            }
+            if (context.IntegerLiteral() != null)
+            {
+                var number = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
+                return new Number(number);
+            }
+            return null;
+        }
+
         internal Expression CreateAddition(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
         {
             if (operands == null) return null;

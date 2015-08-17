@@ -289,6 +289,13 @@ namespace TypeCobol.Compiler.Parser
             return new LinageCounter(CreateFileName(context.fileName()).Symbol);
         }
 
+
+
+        internal static MnemonicForEnvironmentName CreateMnemonic(CobolCodeElementsParser.MnemonicForEnvironmentNameContext context)
+        {
+            if (context == null) return null;
+            return new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(context));
+        }
     }
 
 }
