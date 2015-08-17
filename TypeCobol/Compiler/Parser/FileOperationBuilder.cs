@@ -97,6 +97,25 @@ namespace TypeCobol.Compiler.Parser
             }
             return new OpenElement(OpenMode.EXTEND, filenames);
         }
+
+        internal CloseStatement CreateCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
+        {
+            if (context.closeFileName() == null) return null;
+            var filenames = new List<CloseFileName>();
+            foreach (var filename in context.closeFileName())
+            {
+                CloseFileName f = CreateCloseFileName(filename);
+                if (f != null) filenames.Add(f);
+            }
+            return new CloseStatement(filenames);
+        }
+
+        private CloseFileName CreateCloseFileName(CobolCodeElementsParser.CloseFileNameContext context)
+        {
+            if (context == null) return null;
+            var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
+            return new CloseFileName(filename, context.REEL() != null, context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
+        }
     }
 
 }

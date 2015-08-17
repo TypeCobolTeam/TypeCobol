@@ -4922,7 +4922,9 @@ cancelStatement:
 // ... p314->p315 : more details on the Effect of CLOSE statement on file types  / The permissible combinations of CLOSE statement phrases ...
 
 closeStatement:
-	CLOSE (fileName ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?)+;
+	CLOSE closeFileName+;
+
+closeFileName: fileName ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?;
 
 // p317: COMPUTE statement
 // The COMPUTE statement assigns the value of an arithmetic expression to one or more data items.

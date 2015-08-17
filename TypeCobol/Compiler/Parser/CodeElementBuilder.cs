@@ -488,11 +488,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new CancelStatement();
         }
 
-        public override void EnterCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
-        {
-            CodeElement = new CloseStatement();
-        }
-
         public override void EnterComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
         {
             CodeElement = new ComputeStatement();
@@ -749,6 +744,11 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterOpenStatement(CobolCodeElementsParser.OpenStatementContext context)
         {
             CodeElement = new FileOperationBuilder().CreateOpenStatement(context);
+        }
+
+        public override void EnterCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
+        {
+            CodeElement = new FileOperationBuilder().CreateCloseStatement(context);
         }
 
 
