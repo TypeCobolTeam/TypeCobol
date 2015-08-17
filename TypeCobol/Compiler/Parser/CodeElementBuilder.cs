@@ -748,7 +748,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterOpenStatement(CobolCodeElementsParser.OpenStatementContext context)
         {
-            CodeElement = new OpenStatement();
+            CodeElement = new FileOperationBuilder().CreateOpenStatement(context);
         }
 
 

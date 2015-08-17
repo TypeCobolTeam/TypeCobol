@@ -6351,11 +6351,15 @@ multiplyStatementFormat2:
 // ... more details p382->383 OPEN statement notes ...
 
 openStatement:
-	OPEN ( ( INPUT  (fileName ((WITH? NO REWIND) | REVERSED)?)+ )
-		  |( OUTPUT (fileName  (WITH? NO REWIND)?)+ )
-		  |( I_O fileName+ )
-		  |( EXTEND fileName+ )
-		 )+;
+	OPEN (openInput | openOutput | openIO | openExtend)+;
+
+openInput: INPUT fileNameWithNoRewindOrReversed+;
+openOutput: OUTPUT fileNameWithNoRewind+;
+openIO: I_O fileName+;
+openExtend: EXTEND fileName+;
+
+fileNameWithNoRewindOrReversed: fileName ((WITH? NO REWIND) | REVERSED)?;
+fileNameWithNoRewind: fileName (WITH? NO REWIND)?;
 
 // p384: PERFORM statement
 // The PERFORM statement transfers control explicitly to one or more procedures
