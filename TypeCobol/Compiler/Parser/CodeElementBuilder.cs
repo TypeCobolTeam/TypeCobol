@@ -436,6 +436,10 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          ///////////////////////////
+         // ARITHMETIC STATEMENTS //
+        ///////////////////////////
+
         public override void EnterAddStatementFormat1(CobolCodeElementsParser.AddStatementFormat1Context context)
         {
             var builder = new ArithmeticStatementBuilder('+');
@@ -472,6 +476,16 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
+        public override void EnterComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
+        {
+            CodeElement = new ComputeStatementBuilder().CreateComputeStatement(context);
+        }
+        public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
+        {
+            CodeElement = new ComputeStatementEnd();
+        }
+
+
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
         {
@@ -486,11 +500,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterCancelStatement(CobolCodeElementsParser.CancelStatementContext context)
         {
             CodeElement = new CancelStatement();
-        }
-
-        public override void EnterComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
-        {
-            CodeElement = new ComputeStatement();
         }
 
         public override void EnterContinueStatement(CobolCodeElementsParser.ContinueStatementContext context)
@@ -955,11 +964,6 @@ namespace TypeCobol.Compiler.Parser
         }
         
         // Statement ends
-
-        public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
-        {
-            CodeElement = new ComputeStatementEnd();
-        }
 
         public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
         {

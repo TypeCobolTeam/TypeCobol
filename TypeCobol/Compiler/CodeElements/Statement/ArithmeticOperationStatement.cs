@@ -38,4 +38,12 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public MultiplyStatement() : base(CodeElementType.MultiplyStatement) { }
     }
+
+    public class ComputeStatement : ArithmeticOperationStatement
+    {
+        public Dictionary<Expression, Expression> Affectations { get; set; }
+        public ComputeStatement() : base(CodeElementType.ComputeStatement) {
+            Affectations = new Dictionary<Expression, Expression>();
+        }
+    }
 }

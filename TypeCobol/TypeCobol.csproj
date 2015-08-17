@@ -216,7 +216,6 @@
     <Compile Include="Compiler\CodeElements\Statement\CallStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\CancelStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\CloseStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\ComputeStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ContinueStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DeleteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DisplayStatement.cs" />

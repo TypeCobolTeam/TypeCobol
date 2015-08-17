@@ -121,11 +121,30 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private Expression CreateIdentifierRounded(CobolCodeElementsParser.IdentifierRoundedContext operand)
+        internal static Expression CreateIdentifierRounded(CobolCodeElementsParser.IdentifierRoundedContext operand)
         {
             Expression identifier = SyntaxElementBuilder.CreateIdentifier(operand.identifier());
             if (operand.ROUNDED() != null) identifier = new Rounded(identifier);
             return identifier;
+        }
+    }
+
+    class ComputeStatementBuilder
+    {
+        internal ComputeStatement CreateComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
+        {
+            if (context == null) return null;
+            var statement = new ComputeStatement();
+            var right = new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
+            if (context.identifierRounded() != null)
+            {
+                foreach (var identifier in context.identifierRounded())
+                {
+                    var left = ArithmeticStatementBuilder.CreateIdentifierRounded(identifier);
+                    statement.Affectations.Add(left, right);
+                }
+            }
+            return statement;
         }
     }
 }
