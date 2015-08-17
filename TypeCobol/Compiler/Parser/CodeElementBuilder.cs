@@ -751,6 +751,16 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new FileOperationBuilder().CreateCloseStatement(context);
         }
 
+        public override void EnterReadStatement(CobolCodeElementsParser.ReadStatementContext context)
+        {
+            CodeElement = new FileOperationBuilder().CreateReadStatement(context);
+        }
+
+        public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)
+        {
+            CodeElement = new ReadStatementEnd();
+        }
+
 
 
         public override void EnterPerformStatement(CobolCodeElementsParser.PerformStatementContext context)
@@ -770,15 +780,6 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public override void EnterReadStatement(CobolCodeElementsParser.ReadStatementContext context)
-        {
-            CodeElement = new ReadStatement();
-        }
-
-        public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)
-        {
-            CodeElement = new ReadStatementEnd();
-        }
 
         public override void EnterReleaseStatement(CobolCodeElementsParser.ReleaseStatementContext context)
         {

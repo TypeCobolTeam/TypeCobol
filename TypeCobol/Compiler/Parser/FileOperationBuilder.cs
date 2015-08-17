@@ -106,6 +106,8 @@ namespace TypeCobol.Compiler.Parser
             return filenames;
         }
 
+
+
         internal CloseStatement CreateCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
         {
             if (context.closeFileName() == null) return null;
@@ -118,13 +120,25 @@ namespace TypeCobol.Compiler.Parser
             return new CloseStatement(filenames);
         }
 
-
-
         private CloseFileName CreateCloseFileName(CobolCodeElementsParser.CloseFileNameContext context)
         {
             if (context == null) return null;
             var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
             return new CloseFileName(filename, context.REEL() != null, context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
+        }
+
+
+
+        internal ReadStatement CreateReadStatement(CobolCodeElementsParser.ReadStatementContext context)
+        {
+            if (context == null) return null;
+            return new ReadStatement(
+                SyntaxElementBuilder.CreateFileName(context.fileName()),
+                SyntaxElementBuilder.CreateIdentifier(context.identifier()),
+                SyntaxElementBuilder.CreateDataName(context.dataName()),
+                context.NEXT() != null,
+                context.RECORD() != null
+                );
         }
     }
 

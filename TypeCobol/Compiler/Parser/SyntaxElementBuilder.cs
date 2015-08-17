@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.Parser
             return datanames;
         }
 
-        private static SymbolReference<DataName> CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        public static SymbolReference<DataName> CreateDataName(CobolCodeElementsParser.DataNameContext context)
         {
             if (context == null) return null;
             return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
