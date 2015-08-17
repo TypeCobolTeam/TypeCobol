@@ -6734,13 +6734,12 @@ readStatementEnd: END_READ;
 // those records placed in it by execution of RELEASE statements.
 
 releaseStatement:
-                    RELEASE recordName (FROM identifier)?;
+                    RELEASE qualifiedDataName (FROM identifier)?;
 
 // record-name-1
 // Must specify the name of a logical record in a sort-merge file description
 // entry (SD). record-name-1 can be qualified.
-recordName:
-              qualifiedDataName;
+//recordName: qualifiedDataName;
 
 // p403: RETURN statement
 // The RETURN statement transfers records from the final phase of a sorting or
@@ -6859,7 +6858,7 @@ returnStatementEnd: END_RETURN;
 // ... more details p406->407 Reusing a logical record, Sequential / Indexed / Relative files ...
 
 rewriteStatement:
-                    REWRITE recordName (FROM identifier)?;
+                    REWRITE qualifiedDataName (FROM identifier)?;
 
 //rewriteStatementConditional:
 //                             rewriteStatement
@@ -8189,7 +8188,7 @@ unstringStatementEnd: END_UNSTRING;
 // ... more details p456 WRITE for relative files ...
 
 writeStatement:
-	WRITE recordName (FROM identifier)?
+	WRITE qualifiedDataName (FROM identifier)?
 	((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
 
 writeStatementEnd: END_WRITE;

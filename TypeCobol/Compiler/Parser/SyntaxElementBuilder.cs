@@ -173,7 +173,7 @@ namespace TypeCobol.Compiler.Parser
             return CreateQualifiedName(context.qualifiedDataName());
         }
 
-        private static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
+        public static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
         {
             SymbolReference<DataName> dataname = null;
             if (context.dataNameBase() != null) dataname = CreateDataName(context.dataNameBase().dataName());

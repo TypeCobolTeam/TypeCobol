@@ -761,6 +761,21 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new ReadStatementEnd();
         }
 
+        public override void EnterWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
+        {
+            CodeElement = new WriteStatement();
+        }
+
+        public override void EnterWriteStatementEnd(CobolCodeElementsParser.WriteStatementEndContext context)
+        {
+            CodeElement = new WriteStatementEnd();
+        }
+
+        public override void EnterRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
+        {
+            CodeElement = new FileOperationBuilder().CreateRewriteStatement(context);
+        }
+
 
 
         public override void EnterPerformStatement(CobolCodeElementsParser.PerformStatementContext context)
@@ -789,11 +804,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterReturnStatement(CobolCodeElementsParser.ReturnStatementContext context)
         {
             CodeElement = new ReturnStatement();
-        }
-
-        public override void EnterRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
-        {
-            CodeElement = new RewriteStatement();
         }
 
         public override void EnterSearchStatement(CobolCodeElementsParser.SearchStatementContext context)
@@ -865,11 +875,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterUseStatement(CobolCodeElementsParser.UseStatementContext context)
         {
             CodeElement = new UseStatement();
-        }
-
-        public override void EnterWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
-        {
-            CodeElement = new WriteStatement();
         }
 
         public override void EnterXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)
@@ -979,11 +984,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterUnstringStatementEnd(CobolCodeElementsParser.UnstringStatementEndContext context)
         {
             CodeElement = new UnstringStatementEnd();
-        }
-
-        public override void EnterWriteStatementEnd(CobolCodeElementsParser.WriteStatementEndContext context)
-        {
-            CodeElement = new WriteStatementEnd();
         }
 
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)

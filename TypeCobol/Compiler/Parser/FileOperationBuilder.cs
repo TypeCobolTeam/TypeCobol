@@ -140,6 +140,15 @@ namespace TypeCobol.Compiler.Parser
                 context.RECORD() != null
                 );
         }
+
+        internal RewriteStatement CreateRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
+        {
+            if (context == null) return null;
+            return new RewriteStatement(
+                SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName()),
+                SyntaxElementBuilder.CreateIdentifier(context.identifier())
+                );
+        }
     }
 
 }
