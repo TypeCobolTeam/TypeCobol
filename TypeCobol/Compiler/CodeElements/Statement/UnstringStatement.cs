@@ -47,7 +47,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// transferred to the end of the STRING statement or, if the ON OVERFLOW
         /// phrase is specified, to imperative-statement-1.
         /// </summary>
-        public List<CodeElement> OnOverflowStatement { get; set; }
+        public List<OnOverflowCondition> OnOverflowStatement { get; set; }
 
         /// <summary>
         /// If at the time of execution of a STRING statement, conditions that would
@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Control is then transferred to the end of the STRING statement, or if the
         /// NOT ON OVERFLOW phrase is specified, to imperative-statement-2.
         /// </summary>
-        public List<CodeElement> NotOnOverflowStatement { get; set; }
+        public List<NotOnOverflowCondition> NotOnOverflowStatement { get; set; }
 
         public UnstringStatement() : base(CodeElementType.UnstringStatement)
         { }
