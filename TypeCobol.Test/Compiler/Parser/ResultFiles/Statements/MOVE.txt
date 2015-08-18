@@ -11,3 +11,5 @@
 
 [[SentenceEnd]] [19,19+:.]<PeriodSeparator> --> [19,19+:.]<PeriodSeparator>
 
+[[MoveStatement]] [18,21:MOVE]<MOVE> --> [46,54:SOMEWHERE]<UserDefinedWord>
+

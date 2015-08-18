@@ -271,9 +271,19 @@ namespace TypeCobol.Compiler.Scanner
         
         internal void CorrectType(TokenType tokenType)
         {
+            // Copy token type and family from the continuation token
             TokenType = tokenType;
             TokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
-            SetInitialChannelFromTokenFamily();
+
+            // If it is the first continued token on the top of a list of continuation lines
+            // => set its channel according to the global token type
+            if (Channel != CHANNEL_ContinuationTokens)
+            {
+                SetInitialChannelFromTokenFamily();
+            }
+            // If it is a continued ContinuationToken, a token in the middle of a list of continuation lines
+            // => leave its channel to the original value CHANNEL_ContinuationTokens 
+            //    because it should be filtered at the parser stage
         }
 
         // --- Continuation lines & multiline tokens ---

@@ -147,6 +147,12 @@ namespace TypeCobol.Test.Compiler.Scanner
                 new TestTextLine('-',"= ="),
                 new TestTextLine('-',"=cool="),
                 new TestTextLine('-',"=."),
+                new TestTextLine(" "),
+                new TestTextLine('*',"Issue 60"),
+                new TestTextLine(' ',"                MOVE 'Lorem ipsum dolor sit amet, consectetur adi"),
+                new TestTextLine('-',"               'piscing elit, sed do eiusmod tempor incididunt ut"),
+                new TestTextLine('-',"               'labore et dolore magna aliqua                 '  "),
+                new TestTextLine(' ',"                                         TO  SOMEWHERE           ")
             };
             string result = ScannerUtils.ScanLines(textLines);
             ScannerUtils.CheckWithResultFile(result, testName);
