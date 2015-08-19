@@ -8,9 +8,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ArithmeticOperationStatement(CodeElementType type)
             : base(type) {
-            affectations = new Dictionary<SymbolReference<DataName>, Expression>();
+            this.Affectations = new Dictionary<Expression, Expression>();
         }
-        public Dictionary<SymbolReference<DataName>, Expression> affectations { get; set; }
+        public Dictionary<Expression, Expression> Affectations { get; set; }
 
         public static ArithmeticOperationStatement Create(char op)
         {
@@ -41,18 +41,11 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class ComputeStatement : ArithmeticOperationStatement
     {
-        public Dictionary<Expression, Expression> Affectations { get; set; }
-        public ComputeStatement() : base(CodeElementType.ComputeStatement) {
-            Affectations = new Dictionary<Expression, Expression>();
-        }
+        public ComputeStatement() : base(CodeElementType.ComputeStatement) { }
     }
 
     public class DivideStatement : ArithmeticOperationStatement
     {
-        public Dictionary<Expression, Expression> Affectations { get; set; }
-        public DivideStatement() : base(CodeElementType.DivideStatement)
-        {
-            Affectations = new Dictionary<Expression, Expression>();
-        }
+        public DivideStatement() : base(CodeElementType.DivideStatement) { }
     }
 }

@@ -253,11 +253,11 @@ namespace TypeCobol.Test.Compiler.Parser
         private string ToString(ArithmeticOperationStatement statement)
         {
             StringBuilder builder = new StringBuilder();
-            foreach (var pair in statement.affectations)
+            foreach (var pair in statement.Affectations)
             {
-                builder.AppendFormat("{0} = {1}, ", pair.Key.Symbol.NameToken.Text, pair.Value.ToString());
+                builder.AppendFormat("{0} = {1}, ", pair.Key.ToString(), pair.Value.ToString());
             }
-            if (statement.affectations.Count > 0) builder.Length -= 2;
+            if (statement.Affectations.Count > 0) builder.Length -= 2;
             return builder.ToString();
         }
     }

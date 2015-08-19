@@ -27,10 +27,9 @@ namespace TypeCobol.Compiler.Parser
             // so add/subtract the "left" operand to all the elements of the "right" operand added together
             foreach (var operand in rightContext)
             {
-                var token = ParseTreeUtils.GetFirstToken(operand);
                 Expression right = CreateIdentifierRounded(operand);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+                statement.Affectations.Add(right, operation);
             }
         }
 
@@ -98,8 +97,8 @@ namespace TypeCobol.Compiler.Parser
         {
             foreach (var operand in resultContext)
             {
-                var token = ParseTreeUtils.GetFirstToken(operand);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+                Expression result = CreateIdentifierRounded(operand);
+                statement.Affectations.Add(result, operation);
             }
         }
 
@@ -114,10 +113,9 @@ namespace TypeCobol.Compiler.Parser
             }
             if (left != null && rightContext != null)
             {
-                var token = ParseTreeUtils.GetFirstToken(rightContext);
                 Expression right = CreateIdentifierRounded(rightContext);
                 Expression operation = ArithmeticOperation.Create(left, op, right);
-                statement.affectations.Add(new SymbolReference<DataName>(new DataName(token)), operation);
+                statement.Affectations.Add(right, operation);
             }
         }
 
