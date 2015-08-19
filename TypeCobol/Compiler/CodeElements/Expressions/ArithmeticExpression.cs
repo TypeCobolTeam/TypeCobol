@@ -25,6 +25,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 case '+': return new Addition(left, right);
                 case '-': return new Subtraction(left, right);
                 case '×': return new Multiplication(left, right);
+                case '÷': return new Quotient(left, right);
+                case '/': return new Remainder(left, right);
                 default: throw new System.ArgumentException("Illegal operator \""+op+"\"");
             }
         }
@@ -50,6 +52,18 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         public Multiplication(Expression left, Expression right)
             : base(left, '×', right) { }
+    }
+
+    public class Quotient : ArithmeticOperation
+    {
+        public Quotient(Expression left, Expression right)
+            : base(left, '÷', right) { }
+    }
+
+    public class Remainder : ArithmeticOperation
+    {
+        public Remainder(Expression left, Expression right)
+            : base(left, '/', right) { }
     }
 
     public class Rounded : ArithmeticOperation
