@@ -460,7 +460,7 @@ namespace TypeCobol.Compiler.Parser
             }
             else
             {
-                AddError(builder.statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
+                DiagnosticUtils.AddError(builder.statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
             }
             CodeElement = builder.statement;
         }
@@ -482,7 +482,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AddStatementEnd();
         }
 
-
         public override void EnterComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
         {
             CodeElement = new ComputeStatementBuilder().CreateComputeStatement(context);
@@ -491,6 +490,17 @@ namespace TypeCobol.Compiler.Parser
         {
             CodeElement = new ComputeStatementEnd();
         }
+
+        public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
+        {
+            CodeElement = new DivideStatementBuilder().CreateStatement(context);
+        }
+        public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
+        {
+            CodeElement = new DivideStatementEnd();
+        }
+
+
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
         {
@@ -604,13 +614,8 @@ namespace TypeCobol.Compiler.Parser
             }
                 //TODO manage figurativeConstant here or as a literal ?
 
-            AddError(statement, statementName + ": required <identifier> or <literal>", idOrLiteral);
+            DiagnosticUtils.AddError(statement, statementName + ": required <identifier> or <literal>", idOrLiteral);
             return null;
-        }
-
-        public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
-        {
-            CodeElement = new DivideStatement();
         }
 
         public override void EnterEntryStatement(CobolCodeElementsParser.EntryStatementContext context)
@@ -848,8 +853,7 @@ namespace TypeCobol.Compiler.Parser
                     }
                     else
                     {
-                        //Error
-                        AddError(statement, "Set: Receiving fields missing or type unknown before TO", receivingContext);
+                        DiagnosticUtils.AddError(statement, "Set: Receiving fields missing or type unknown before TO", receivingContext);
                         break;
                     }
                     receivginList.Add(receiving);
@@ -906,8 +910,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 else
                 {
-                    //Error
-                    AddError(statement, "Set: Sending field missing or type unknown after TO", context.setStatementForAssignationSending());
+                    DiagnosticUtils.AddError(statement, "Set: Sending field missing or type unknown after TO", context.setStatementForAssignationSending());
                 }
             }
 
@@ -947,8 +950,7 @@ namespace TypeCobol.Compiler.Parser
             } 
             else
             {
-                 //Error
-                 AddError(statement, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
+                DiagnosticUtils.AddError(statement, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
 
             CodeElement = statement;
@@ -1252,11 +1254,6 @@ namespace TypeCobol.Compiler.Parser
 
         // Statement ends
 
-        public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
-        {
-            CodeElement = new DivideStatementEnd();
-        }
-
         public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
         {
             CodeElement = new RewriteStatementEnd();
@@ -1280,14 +1277,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
             CodeElement = new XmlStatementEnd();
-        }
-
-
-        private void AddError(CodeElement e, string message, RuleContext context)
-        {
-            string rulestack = new RuleStackBuilder().GetRuleStack(context);
-            var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context), rulestack);
-            e.Diagnostics.Add(diagnostic);
         }
     }
 }

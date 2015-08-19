@@ -46,4 +46,13 @@ namespace TypeCobol.Compiler.CodeElements
             Affectations = new Dictionary<Expression, Expression>();
         }
     }
+
+    public class DivideStatement : ArithmeticOperationStatement
+    {
+        public Dictionary<Expression, Expression> Affectations { get; set; }
+        public DivideStatement() : base(CodeElementType.DivideStatement)
+        {
+            Affectations = new Dictionary<Expression, Expression>();
+        }
+    }
 }

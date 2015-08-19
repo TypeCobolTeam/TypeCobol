@@ -5121,12 +5121,21 @@ withNoAdvancing:
 // This explicit scope terminator serves to delimit the scope of the DIVIDE statement. END-DIVIDE turns a conditional DIVIDE statement into an imperative statement that can be nested in another conditional statement. END-DIVIDE can also be used with an imperative DIVIDE statement.
 
 divideStatement:
-                   DIVIDE (identifier | literal) (INTO | BY) ((identifier ROUNDED?)+ | literal)
-                   (GIVING (identifier ROUNDED?)+)?
-                   (REMAINDER identifier)?;
+	divideGiving | divideSimple;
 
+divideSimple:
+	DIVIDE dDivisor INTO identifierRounded+;
+divideGiving:
+	DIVIDE ((dDivisor INTO dDividend) | (dDividend BY dDivisor)) GIVING ((identifierRounded REMAINDER identifier) | identifierRounded+);
 
+//DIVIDE dDivisor  INTO                  identifierRounded+                       Format 1: identifierRoundedi = dDivisor/dQuotienti
+//DIVIDE dDivisor  INTO dDividend GIVING identifierRounded+                       Format 2: identifierRoundedi = dDivisor/dDividend
+//DIVIDE dDividend BY   dDivisor  GIVING identifierRounded+                       Format 3: identifierRoundedi = dDivisor/dDividend
+//DIVIDE dDivisor  INTO dDividend GIVING identifierRounded REMAINDER identifier   Format 4: identifierRounded  = dDivisor/dDividend    identifier = remainder
+//DIVIDE dDividend BY   dDivisor  GIVING identifierRounded REMAINDER identifier   Format 5: identifierRounded  = dDivisor/dDividend    identifier = remainder
 
+dDivisor:  identifierOrNumericLiteral;
+dDividend: identifierOrNumericLiteral;
 
 //divideStatementConditional:
 //                              divideStatement

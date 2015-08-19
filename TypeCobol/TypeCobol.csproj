@@ -222,7 +222,6 @@
     <Compile Include="Compiler\CodeElements\Statement\SetStatementForSwitches.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DeleteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DisplayStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\DivideStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\EntryStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\EvaluateStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ExecStatement.cs" />
@@ -313,6 +312,7 @@
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\ArithmeticStatementBuilder.cs" />
     <Compile Include="Compiler\Parser\ArithmeticExpressionBuilder.cs" />
+    <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
     <Compile Include="Compiler\Parser\FileOperationBuilder.cs" />
     <Compile Include="Compiler\Parser\LogicalExpressionBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />

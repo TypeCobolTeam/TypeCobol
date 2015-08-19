@@ -127,6 +127,13 @@ namespace TypeCobol.Compiler.Parser
             if (operand.ROUNDED() != null) identifier = new Rounded(identifier);
             return identifier;
         }
+
+        internal static IList<Expression> CreateIdentifiersRounded(IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> operands)
+        {
+            var expressions = new List<Expression>();
+            foreach (var operand in operands) expressions.Add(CreateIdentifierRounded(operand));
+            return expressions;
+        }
     }
 
     class ComputeStatementBuilder
@@ -147,4 +154,72 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
     }
+
+    class DivideStatementBuilder
+    {
+        internal DivideStatement CreateStatement(CobolCodeElementsParser.DivideStatementContext context)
+        {
+            if (context != null)
+            {
+                if (context.divideSimple() != null) return CreateStatement(context.divideSimple());
+                if (context.divideGiving() != null) return CreateStatement(context.divideGiving());
+            }
+            return new DivideStatement();
+        }
+
+        private DivideStatement CreateStatement(CobolCodeElementsParser.DivideSimpleContext context)
+        {
+            var statement = new DivideStatement();
+
+            if (context.dDivisor() == null)
+                DiagnosticUtils.AddError(statement, "Missing: <identifier> or <literal> divisor", context);
+            if (context.identifierRounded() == null)
+                DiagnosticUtils.AddError(statement, "Missing: <identifier> dividend", context);
+
+            var builder = new ArithmeticExpressionBuilder();
+            var divisor = context.dDivisor();
+            Expression denominator = divisor == null ? null : builder.CreateNumberOrIdentifier(divisor.identifierOrNumericLiteral());
+
+            var quotients = ArithmeticStatementBuilder.CreateIdentifiersRounded(context.identifierRounded());
+            foreach (var q in quotients)
+                statement.Affectations.Add(q, ArithmeticOperation.Create(q, '÷', denominator));
+
+            return statement;
+        }
+
+        private DivideStatement CreateStatement(CobolCodeElementsParser.DivideGivingContext context)
+        {
+            var statement = new DivideStatement();
+
+            if (context.dDividend() == null)
+                DiagnosticUtils.AddError(statement, "Missing: <identifier> or <literal> dividend", context);
+            if (context.dDivisor() == null)
+                DiagnosticUtils.AddError(statement, "Missing: <identifier> or <literal> divisor", context);
+            var builder = new ArithmeticExpressionBuilder();
+            var dividend = context.dDividend();
+            var divisor = context.dDivisor();
+            Expression numerator = dividend == null ? null : builder.CreateNumberOrIdentifier(dividend.identifierOrNumericLiteral());
+            Expression denominator = divisor == null ? null : builder.CreateNumberOrIdentifier(divisor.identifierOrNumericLiteral());
+            var quotient = ArithmeticOperation.Create(numerator, '÷', denominator);
+            var quotients = ArithmeticStatementBuilder.CreateIdentifiersRounded(context.identifierRounded());
+            foreach (var q in quotients) statement.Affectations.Add(q, quotient);
+
+            if (context.REMAINDER() != null && context.identifier() == null)
+                DiagnosticUtils.AddError(statement, "Missing: <identifier> after REMAINDER", context);
+            if (context.REMAINDER() == null && context.identifier() != null)
+                DiagnosticUtils.AddError(statement, "Missing: REMAINDER", context);
+            if (context.identifier() != null)
+            {
+                if (quotients.Count > 1 && context.REMAINDER() != null)
+                    DiagnosticUtils.AddError(statement, "Error: only one <identifier> allowed before REMAINDER", context);
+                var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                var remainder = ArithmeticOperation.Create(numerator, '/', denominator);
+                statement.Affectations.Add(identifier, remainder);
+            }
+            return statement;
+        }
+
+    }
+
+
 }
