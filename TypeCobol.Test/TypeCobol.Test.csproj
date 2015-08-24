@@ -110,6 +110,7 @@
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CONTINUENY.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\File\CLOSE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
@@ -141,14 +142,14 @@
     <Content Include="Compiler\Parser\ResultFiles\EXITCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\END.txt" />
     <Content Include="Compiler\Parser\ResultFiles\AT.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\OPEN.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\File\OPEN.txt" />
     <Content Include="Compiler\Parser\Samples\Statements\CONTINUE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SET.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SETForExternalSwitches.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SETForIndexes.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\MOVE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SEARCH.cbl" />
-    <Content Include="Compiler\Parser\Samples\Statements\OPEN.cbl" />
+    <Content Include="Compiler\Parser\Samples\Statements\File\OPEN.cbl" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
     <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />
@@ -219,6 +220,7 @@
     <None Include="Compiler\Parser\Samples\Statements\COMPUTE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
+    <Content Include="Compiler\Parser\Samples\Statements\File\CLOSE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\PERFORM.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IF.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />
