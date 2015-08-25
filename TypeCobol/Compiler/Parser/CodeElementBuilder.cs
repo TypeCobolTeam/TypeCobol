@@ -509,7 +509,11 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterCallStatement(CobolCodeElementsParser.CallStatementContext context)
         {
-            CodeElement = new CallStatement();
+            CodeElement = new StatementsBuilder().CreateCallStatement(context);
+        }
+        public override void EnterCallStatementEnd(CobolCodeElementsParser.CallStatementEndContext context)
+        {
+            CodeElement = new CallStatementEnd();
         }
 
         public override void EnterCancelStatement(CobolCodeElementsParser.CancelStatementContext context)

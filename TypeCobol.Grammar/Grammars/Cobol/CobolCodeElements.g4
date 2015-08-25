@@ -4826,24 +4826,12 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning?;
+	CALL (identifier | literal | procedurePointer | functionPointer) (USING callBy+)? callReturning?;
 
-callStatementUsing:
-	USING callStatementWhat+;
+callBy:
+	(BY? (REFERENCE | CONTENT | VALUE))? (identifier | literal | fileName | OMITTED)+;
 
-callStatementWhat:
-	callStatementByReference | callStatementByContent | callStatementByValue;
-
-callStatementByReference:
-	(BY? REFERENCE)? (((ADDRESS OF)? identifier) | fileName | OMITTED)+;
-
-callStatementByContent:
-	BY? CONTENT ((((ADDRESS OF)|(LENGTH OF))? identifier) | literal | OMITTED)+;
-
-callStatementByValue:
-	BY? VALUE ((((ADDRESS OF)|(LENGTH OF))? identifier) | literal)+;
-
-callStatementReturning:
+callReturning:
 	RETURNING identifier;
 
 callStatementEnd: END_CALL;
