@@ -812,7 +812,11 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterReturnStatement(CobolCodeElementsParser.ReturnStatementContext context)
         {
-            CodeElement = new ReturnStatement();
+            CodeElement = new StatementsBuilder().CreateReturnStatement(context);
+        }
+        public override void EnterReturnStatementEnd(CobolCodeElementsParser.ReturnStatementEndContext context)
+        {
+            CodeElement = new ReturnStatementEnd();
         }
 
         public override void EnterSearchStatement(CobolCodeElementsParser.SearchStatementContext context)

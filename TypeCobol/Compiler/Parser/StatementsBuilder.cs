@@ -28,5 +28,14 @@ namespace TypeCobol.Compiler.Parser
             }
             return statement;
         }
+
+        internal ReturnStatement CreateReturnStatement(Generated.CobolCodeElementsParser.ReturnStatementContext context)
+        {
+            if (context == null) return null;
+            var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
+            var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            var statement = new ReturnStatement(filename, identifier);
+            return statement;
+        }
     }
 }
