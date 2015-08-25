@@ -160,11 +160,23 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CobolCodeElementsParser.IdentifierContext> context)
+        {
+            IList<Identifier> identifiers = new List<Identifier>();
+            if (context != null)
+                foreach (var identifier in context)
+                {
+                   var i = CreateIdentifier(identifier);
+                    if (i != null) identifiers.Add(i);
+                }
+            return identifiers;
+        }
+
         public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
         {
             if (context == null) return null;
             Identifier identifier = CreateIdentifier(context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier());
-            identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+            if (identifier != null ) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
 
@@ -189,8 +201,8 @@ namespace TypeCobol.Compiler.Parser
 
         private static Identifier CreateFunctionReference(CobolCodeElementsParser.FunctionIdentifierContext context)
         {
-            if (context == null) return null;
-            var symbol = new FunctionName(ParseTreeUtils.GetTokenFromTerminalNode(context.FunctionName()));
+            if (context == null || context.FUNCTION() == null) return null;
+            var symbol = new FunctionName(ParseTreeUtils.GetFirstToken(context.intrinsicFunctionName()));
             var parameters = CreateFunctionParameters(context.argument());
             if (symbol != null || parameters != null) return new FunctionReference(symbol, parameters);
             return null;
@@ -393,6 +405,17 @@ namespace TypeCobol.Compiler.Parser
         {
             throw new NotImplementedException();
         }
+
+
+
+        public static Expression CreateIdentifierOrLiteral(CobolCodeElementsParser.IdentifierOrLiteralContext context)
+        {
+            if (context == null) return null;
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
+            return null;
+        }
+
     }
 
 }

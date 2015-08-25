@@ -718,7 +718,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMoveStatement(CobolCodeElementsParser.MoveStatementContext context)
         {
-            CodeElement = new MoveStatement();
+            CodeElement = new StatementsBuilder().CreateMoveStatement(context);
         }
 
         public override void EnterMultiplyStatementFormat1(CobolCodeElementsParser.MultiplyStatementFormat1Context context)

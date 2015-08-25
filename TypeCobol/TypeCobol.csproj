@@ -316,6 +316,7 @@
     <Compile Include="Compiler\Parser\FileOperationBuilder.cs" />
     <Compile Include="Compiler\Parser\LogicalExpressionBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
+    <Compile Include="Compiler\Parser\StatementsBuilder.cs" />
     <Compile Include="Compiler\Parser\SyntaxElementBuilder.cs" />
     <Compile Include="Compiler\Parser\SyntaxDocument.cs" />
     <Compile Include="Compiler\Parser\TracingCobolParser.cs" />

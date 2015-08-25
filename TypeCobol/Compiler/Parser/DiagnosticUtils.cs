@@ -7,8 +7,12 @@ namespace TypeCobol.Compiler.Parser
     {
         internal static void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context)
         {
-            string rulestack = new RuleStackBuilder().GetRuleStack(context);
-            var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context), rulestack);
+            AddError(e, message, ParseTreeUtils.GetFirstToken(context), new RuleStackBuilder().GetRuleStack(context));
+        }
+
+        internal static void AddError(CodeElement e, string message, Scanner.Token token, string rulestack)
+        {
+            var diagnostic = new ParserDiagnostic(message, token, rulestack);
             e.Diagnostics.Add(diagnostic);
         }
     }
