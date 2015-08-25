@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.Parser
 {
     class StatementsBuilder
     {
-        internal CodeElements.MoveStatement CreateMoveStatement(Generated.CobolCodeElementsParser.MoveStatementContext context)
+        internal MoveStatement CreateMoveStatement(Generated.CobolCodeElementsParser.MoveStatementContext context)
         {
             var sending   = SyntaxElementBuilder.CreateIdentifierOrLiteral(context.identifierOrLiteral());
             var receiving = SyntaxElementBuilder.CreateIdentifiers(context.identifier());
