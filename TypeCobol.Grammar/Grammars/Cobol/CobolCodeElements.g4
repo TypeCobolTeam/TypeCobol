@@ -9804,7 +9804,9 @@ conditionBase:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier:
-	FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+
+intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
