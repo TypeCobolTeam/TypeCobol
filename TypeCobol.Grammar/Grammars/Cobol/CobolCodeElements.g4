@@ -5485,12 +5485,10 @@ ifStatementEnd:
 //    the same data description entry.
 
 initializeStatement:
-                       INITIALIZE identifier+
-                       (REPLACING ( (ALPHABETIC |
-                                     ALPHANUMERIC | ALPHANUMERIC_EDITED |
-                                     NATIONAL | NATIONAL_EDITED |
-                                     NUMERIC | NUMERIC_EDITED |
-                                     DBCS |EGCS ) DATA? BY (identifier | literal) )+)?;
+	INITIALIZE identifier+ (REPLACING initializeReplacing+)?;
+
+initializeReplacing:
+	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS |EGCS) DATA? BY identifierOrLiteral;
 
 // p346: INSPECT statement
 // The INSPECT statement examines characters or groups of characters in a data

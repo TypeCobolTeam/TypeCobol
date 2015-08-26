@@ -1,0 +1,11 @@
+﻿--- Code Elements ---
+[[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [12,12:x]<UserDefinedWord>
+
+[[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [16,16:z]<UserDefinedWord>
+
+[[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [35,35:x]<UserDefinedWord>
+
+[[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [40,40:x]<UserDefinedWord>
+
+[[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [40,40:1]<IntegerLiteral>{1}
+

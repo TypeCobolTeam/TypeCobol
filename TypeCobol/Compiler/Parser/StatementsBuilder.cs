@@ -110,6 +110,24 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          //////////////////////////
+         // INITIALIZE STATEMENT //
+        //////////////////////////
+
+        internal InitializeStatement CreateInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
+        {
+            var statement = new InitializeStatement();
+            statement.Receiving = SyntaxElementBuilder.CreateIdentifiers(context.identifier());
+            foreach (var sending in context.initializeReplacing())
+            {
+                var expression = SyntaxElementBuilder.CreateIdentifierOrLiteral(sending.identifierOrLiteral());
+                statement.Sending.Add(new InitializeStatement.Replacing(expression));
+            }
+            return statement;
+        }
+
+
+
           ////////////////////
          // MOVE STATEMENT //
         ////////////////////
@@ -190,5 +208,6 @@ namespace TypeCobol.Compiler.Parser
                 DiagnosticUtils.AddError(statement, "Illegal VARYING after SEARCH ALL", context);
             return statement;
         }
+
     }
 }

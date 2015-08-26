@@ -702,7 +702,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
         {
-            CodeElement = new InitializeStatement();
+            CodeElement = new StatementsBuilder().CreateInitializeStatement(context);
         }
 
         public override void EnterInspectStatement(CobolCodeElementsParser.InspectStatementContext context)

@@ -113,6 +113,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CONTINUENY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\CLOSE.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\INITIALIZE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.ok.txt" />
@@ -227,6 +228,7 @@
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\File\CLOSE.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\INITIALIZE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\PERFORM.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IF.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />
