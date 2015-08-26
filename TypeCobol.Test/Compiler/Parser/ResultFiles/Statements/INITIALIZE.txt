@@ -1,4 +1,6 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+[24,27]<28,Error,Syntax>Syntax error : mismatched input 'DTCS' expecting {ALPHABETIC, ALPHANUMERIC, ALPHANUMERIC_EDITED, DBCS, EGCS, NATIONAL, NATIONAL_EDITED, NUMERIC, NUMERIC_EDITED} (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>initializeStatement>initializeReplacing, OffendingSymbol=[24,27:DTCS]<UserDefinedWord> on line 7)
+--- Code Elements ---
 [[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [12,12:x]<UserDefinedWord>
 
 [[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [16,16:z]<UserDefinedWord>
@@ -8,4 +10,6 @@
 [[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [40,40:x]<UserDefinedWord>
 
 [[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [40,40:1]<IntegerLiteral>{1}
+
+[[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [32,32:x]<UserDefinedWord>
 

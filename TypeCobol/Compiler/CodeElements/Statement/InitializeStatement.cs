@@ -84,6 +84,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public class Replacing
         {
+            public enum Mode
+            {
+                ALPHABETIC,
+                ALPHANUMERIC,
+                ALPHANUMERIC_EDITED,
+                NATIONAL,
+                NATIONAL_EDITED,
+                NUMERIC,
+                NUMERIC_EDITED,
+                DBCS,
+                EGCS,
+                UNKNOWN,
+            }
             /// <summary>
             /// pp343-344:
             /// Sending areas
@@ -101,10 +114,12 @@ namespace TypeCobol.Compiler.CodeElements
             /// statements.
             /// </summary>
             public Expression Receiving;
+            public Mode ReceivingMode;
 
-            public Replacing(Expression receiving)
+            public Replacing(Expression receiving, Mode mode)
             {
                 this.Receiving = receiving;
+                this.ReceivingMode = mode;
             }
         }
     }

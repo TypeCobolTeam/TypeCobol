@@ -121,9 +121,23 @@ namespace TypeCobol.Compiler.Parser
             foreach (var sending in context.initializeReplacing())
             {
                 var expression = SyntaxElementBuilder.CreateIdentifierOrLiteral(sending.identifierOrLiteral());
-                statement.Sending.Add(new InitializeStatement.Replacing(expression));
+                statement.Sending.Add(new InitializeStatement.Replacing(expression, CreateInitializeMode(sending)));
             }
             return statement;
+        }
+
+        private InitializeStatement.Replacing.Mode CreateInitializeMode(CobolCodeElementsParser.InitializeReplacingContext context)
+        {
+            if (context.ALPHABETIC() != null) return InitializeStatement.Replacing.Mode.ALPHABETIC;
+            if (context.ALPHANUMERIC() != null) return InitializeStatement.Replacing.Mode.ALPHANUMERIC;
+            if (context.ALPHANUMERIC_EDITED() != null) return InitializeStatement.Replacing.Mode.ALPHANUMERIC_EDITED;
+            if (context.NATIONAL() != null) return InitializeStatement.Replacing.Mode.NATIONAL;
+            if (context.NATIONAL_EDITED() != null) return InitializeStatement.Replacing.Mode.NATIONAL_EDITED;
+            if (context.NUMERIC() != null) return InitializeStatement.Replacing.Mode.NUMERIC;
+            if (context.NUMERIC_EDITED() != null) return InitializeStatement.Replacing.Mode.NUMERIC_EDITED;
+            if (context.DBCS() != null) return InitializeStatement.Replacing.Mode.DBCS;
+            if (context.EGCS() != null) return InitializeStatement.Replacing.Mode.EGCS;
+            return InitializeStatement.Replacing.Mode.UNKNOWN;
         }
 
 
