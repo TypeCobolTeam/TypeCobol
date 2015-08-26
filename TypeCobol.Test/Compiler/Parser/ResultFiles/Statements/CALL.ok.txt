@@ -1,0 +1,29 @@
+﻿--- Code Elements ---
+[[CallStatement]] [1,4:CALL]<CALL> --> [6,6:f]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [18,18:x]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [14,14:a]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [18,18:c]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [26,26:x]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [30,30:x]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [29,29:b]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [29,29:j]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [29,29:n]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [57,57:n]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [50,50:f]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [38,38:l]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [42,42:p]<UserDefinedWord>
+
+[[CallStatement]] [1,4:CALL]<CALL> --> [118,118:x]<UserDefinedWord>
+

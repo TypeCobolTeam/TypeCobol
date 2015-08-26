@@ -18,6 +18,8 @@ namespace TypeCobol.Compiler.Parser
             if (context.callReturning() != null)
             {
                 statement.Returning = SyntaxElementBuilder.CreateIdentifier(context.callReturning().identifier());
+                if (statement.Returning == null)
+                    DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callReturning());
             }
             return statement;
         }
@@ -99,9 +101,10 @@ namespace TypeCobol.Compiler.Parser
             if (context.REFERENCE() != null) return CallStatement.Using.Mode.REFERENCE;
             if (context.BY() == null) return CallStatement.Using.Mode.REFERENCE;
 
-            var rulestack = new TypeCobol.Compiler.AntlrUtils.RuleStackBuilder().GetRuleStack(context);
-            var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(context.BY());
-            DiagnosticUtils.AddError(statement, "CALL .. USING: Required REFERENCE, VALUE, or CONTENT after BY", token, rulestack);
+            // This error is already covered by the grammar ; no use of sending the same error twice
+            //var rulestack = new TypeCobol.Compiler.AntlrUtils.RuleStackBuilder().GetRuleStack(context);
+            //var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(context.BY());
+            //DiagnosticUtils.AddError(statement, "CALL .. USING: Required REFERENCE, VALUE, or CONTENT after BY", token, rulestack);
             return CallStatement.Using.Mode.UNKNOWN;
         }
 
