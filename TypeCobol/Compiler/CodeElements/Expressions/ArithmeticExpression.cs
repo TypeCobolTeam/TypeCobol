@@ -3,6 +3,7 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
+
     public abstract class ArithmeticExpression : Expression { }
 
     public class ArithmeticOperation : ArithmeticExpression
@@ -27,6 +28,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 case '×': return new Multiplication(left, right);
                 case '÷': return new Quotient(left, right);
                 case '/': return new Remainder(left, right);
+                case '^': return new Power(left, right);
                 default: throw new System.ArgumentException("Illegal operator \""+op+"\"");
             }
         }
@@ -66,6 +68,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             : base(left, '/', right) { }
     }
 
+    public class Power : ArithmeticOperation
+    {
+        public Power(Expression left, Expression right)
+            : base(left, '^', right) { }
+    }
+
     public class Rounded : ArithmeticOperation
     {
         public Rounded(Expression expression)
@@ -81,6 +89,34 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         public SyntaxNumber value { get; set; }
         public Number(SyntaxNumber value)
+        {
+            this.value = value;
+        }
+
+        public override string ToString()
+        {
+            if (value == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return value.ToString();
+            }
+        }
+    }
+
+    public class Zero : ArithmeticExpression
+    {
+        public Zero() { }
+
+        public override string ToString() { return "0";  }
+    }
+
+    public class ArithmeticIdentifier : ArithmeticExpression
+    {
+        public Identifier value { get; set; }
+        public ArithmeticIdentifier(Identifier value)
         {
             this.value = value;
         }

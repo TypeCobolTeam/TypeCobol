@@ -86,7 +86,7 @@
 - WithNoAdvancing = False
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,44:mycopy]<UserDefinedWord>
-- variables = toto toto mycopy.toto
+- variables = toto(1:5) toto mycopy.toto
 - WithNoAdvancing = False
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,25:high-value]<HIGH_VALUE>
