@@ -6918,7 +6918,7 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p414 Search statement considerations ...
 
 searchStatement:
-	SEARCH ((ALL identifier) | (identifier (VARYING (identifier | indexName))?));
+	SEARCH ALL? identifier (VARYING (identifier | indexName))?;
 
 whenConditionalExpression:
 	WHEN conditionalExpression;

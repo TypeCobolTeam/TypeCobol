@@ -825,7 +825,11 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSearchStatement(CobolCodeElementsParser.SearchStatementContext context)
         {
-            CodeElement = new SearchStatement();
+            CodeElement = new StatementsBuilder().CreateSearchStatement(context);
+        }
+        public override void EnterSearchStatementEnd(CobolCodeElementsParser.SearchStatementEndContext context)
+        {
+            CodeElement = new SearchStatementEnd();
         }
 
         public override void EnterSetStatementForAssignation(CobolCodeElementsParser.SetStatementForAssignationContext context)

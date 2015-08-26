@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public DataReference(QualifiedDataName name, IList<Subscript> subscripts = null, Substring substring = null)
         {
             this.Name = name;
-            this.Subscripts = this.Subscripts != null? subscripts : new List<Subscript>();
+            this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
             this.ReferenceModifier = substring;
         }
 

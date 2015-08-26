@@ -152,5 +152,43 @@ namespace TypeCobol.Compiler.Parser
             var statement = new ReturnStatement(filename, identifier);
             return statement;
         }
+
+
+
+          //////////////////////
+         // SEARCH STATEMENT //
+        //////////////////////
+
+        internal SearchStatement CreateSearchStatement(CobolCodeElementsParser.SearchStatementContext context)
+        {
+            var statement = new SearchStatement();
+            statement.All = context.ALL() != null;
+            var identifiers = context.identifier();
+            if (identifiers != null)
+            {
+                int c = 0;
+                foreach (var identifier in identifiers)
+                {
+                    if (c == 0) // SEARCH ALL? identifier
+                    {
+                        statement.Element = SyntaxElementBuilder.CreateIdentifier(identifier);
+                        if (IdentifierUtils.IsSubscripted(statement.Element))
+                            DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", context);
+                        if (IdentifierUtils.IsReferenceModified(statement.Element))
+                            DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", context);
+                    } else
+                    if (c == 1) // SEARCH ... VARYING identifier
+                    {
+                        statement.VaryingIdentifier = SyntaxElementBuilder.CreateIdentifier(identifier);
+                    } else
+                        DiagnosticUtils.AddError(statement, "SEARCH: wtf identifier?", context);
+                    c++;
+                }
+            }
+            if (context.indexName() != null) statement.VaryingIndex = SyntaxElementBuilder.CreateIndexName(context.indexName());
+            if (statement.All && statement.IsVarying)
+                DiagnosticUtils.AddError(statement, "Illegal VARYING after SEARCH ALL", context);
+            return statement;
+        }
     }
 }

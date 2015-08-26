@@ -1,4 +1,24 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+[1,6]<28,Error,Syntax>Syntax error : Illegal VARYING after SEARCH ALL (RuleStack=codeElement>searchStatement, OffendingSymbol=[1,6:SEARCH]<SEARCH> on line 5)
+[1,6]<28,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement, OffendingSymbol=[1,6:SEARCH]<SEARCH> on line 7)
+[1,6]<28,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement, OffendingSymbol=[1,6:SEARCH]<SEARCH> on line 8)
+[1,6]<28,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement, OffendingSymbol=[1,6:SEARCH]<SEARCH> on line 9)
+[1,6]<28,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement, OffendingSymbol=[1,6:SEARCH]<SEARCH> on line 9)
+--- Code Elements ---
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [8,8:x]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [12,12:x]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [18,18:y]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [22,22:y]<UserDefinedWord>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [24,24:)]<RightParenthesisSeparator>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [24,24:)]<RightParenthesisSeparator>
+
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [29,29:)]<RightParenthesisSeparator>
+
 [[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [12,25:someIdentifier]<UserDefinedWord>
 
 [[AtEndCondition]] [3,4:AT]<AT> --> [6,8:END]<END>
@@ -13,5 +33,5 @@ Set  otherVariable TO TRUE
 
 [[MoveStatement]] [5,8:MOVE]<MOVE> --> [15,15:y]<UserDefinedWord>
 
-[[SentenceEnd]] [11,11+:.]<PeriodSeparator> --> [11,11+:.]<PeriodSeparator>
+[[SearchStatementEnd]] [1,10:END-SEARCH]<END_SEARCH> --> [1,10:END-SEARCH]<END_SEARCH>
 
