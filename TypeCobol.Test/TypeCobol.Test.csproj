@@ -113,7 +113,8 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\CLOSE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.ok.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SEARCH.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\EXEC.txt" />
@@ -147,7 +148,8 @@
     <Content Include="Compiler\Parser\Samples\Statements\SET.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SETForExternalSwitches.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SETForIndexes.cbl" />
-    <Content Include="Compiler\Parser\Samples\Statements\MOVE.cbl" />
+    <Content Include="Compiler\Parser\Samples\Statements\MOVE.ok.cbl" />
+    <Content Include="Compiler\Parser\Samples\Statements\MOVE.ko.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\SEARCH.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\File\OPEN.cbl" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
