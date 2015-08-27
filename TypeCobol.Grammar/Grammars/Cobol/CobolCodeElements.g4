@@ -122,6 +122,7 @@ codeElement:
 
 		// --- Data movement statements ---
 	acceptStatement | // only with (DATE, DAY, DAY-OF-WEEK, TIME)
+	inspectStatement |
 	stringStatement |
 	stringStatementEnd |
 	unstringStatement |
@@ -244,7 +245,6 @@ imperativeStatement:
 
 dataMovementStatement:
 	initializeStatement
-	| inspectStatement
 	| moveStatement
 	| setStatement // p278: SET is seen as a table-handling statement, too
 		// STRING and UNSTRING statements are imperative statements, but
@@ -5687,19 +5687,33 @@ initializeReplacing:
 // ... more details p354->355 : Example of the INSPECT statement ...
 
 inspectStatement:
-                    INSPECT identifier 
-                   (TALLYING
-                    (identifier FOR ( (CHARACTERS inspectStatementPhrase1) |
-                                      ((ALL | LEADING) ((identifier | literal) inspectStatementPhrase1)+) )+ )+)?
-                   (REPLACING
-                    ( (CHARACTERS BY (identifier| literal) inspectStatementPhrase1) |
-                      ((ALL | LEADING | FIRST) ((identifier | literal) BY (identifier | literal) inspectStatementPhrase1)+) )+)?
-                   (CONVERTING
-                    (identifier | literal) TO (identifier | literal)
-                    inspectStatementPhrase1)?;
+	INSPECT identifier ((TALLYING inspectTallying+)?
+		// not allowed: "inspectBy" in inspectCharacters
+		// not allowed: "FIRST" in inspectIdentifiers
+		// not allowed: "inspectBy" in inspectIdentifiers>inspectByIdentifiers
+						REPLACING (inspectCharacters | inspectIdentifiers)+)
+		// mandatory: "inspectBy" in inspectCharacters
+		// mandatory: "inspectBy" in inspectByIdentifiers
+					| (CONVERTING identifierOrLiteral TO identifierOrLiteral inspectPhrase1*);
 
-inspectStatementPhrase1:
-                          ((BEFORE | AFTER) INITIAL? (identifier | literal))*;
+inspectTallying:
+	identifier FOR (inspectCharacters | inspectIdentifiers);
+
+inspectCharacters:
+	CHARACTERS inspectBy? inspectPhrase1*;
+
+inspectIdentifiers:
+	(ALL | LEADING | FIRST) inspectByIdentifiers+;
+
+inspectByIdentifiers:
+	identifierOrLiteral inspectBy? inspectPhrase1*;
+
+inspectPhrase1:
+	(BEFORE | AFTER) INITIAL? identifierOrLiteral;
+
+inspectBy: BY identifierOrLiteral;
+
+
 
 // p356: INVOKE statement 
 // The INVOKE statement can create object instances of a COBOL or Java class and

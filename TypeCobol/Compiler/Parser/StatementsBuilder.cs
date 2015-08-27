@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -189,6 +190,127 @@ namespace TypeCobol.Compiler.Parser
             if (context.DBCS() != null) return InitializeStatement.Replacing.Mode.DBCS;
             if (context.EGCS() != null) return InitializeStatement.Replacing.Mode.EGCS;
             return InitializeStatement.Replacing.Mode.UNKNOWN;
+        }
+
+
+
+          ///////////////////////
+         // INSPECT STATEMENT //
+        ///////////////////////
+
+        internal CodeElement CreateInspectStatement(CobolCodeElementsParser.InspectStatementContext context)
+        {
+            var statement = new InspectStatement();
+            statement.Item = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            //TALLYING
+            foreach (var t in context.inspectTallying())
+            {
+                var tallying = new InspectStatement.Tallying();
+                tallying.Count = SyntaxElementBuilder.CreateIdentifier(t.identifier());
+                tallying.Container.CharactersPhrase = CreateInspectSubject(t.inspectCharacters(), statement, false);
+                tallying.Container.IdentifiersPhrase = CreateInspectIdentifier(t.inspectIdentifiers(), statement, false, false);
+                statement.TallyingList.Add(tallying);
+            }
+            // REPLACING
+            foreach (var c in context.inspectCharacters())
+                statement.ReplacingCharacters.Add(CreateInspectSubject(c, statement, true));
+            foreach (var c in context.inspectIdentifiers())
+                statement.ReplacingIdentifiers.Add(CreateInspectIdentifier(c, statement, true, true));
+            // CONVERTING
+            var converting = new InspectStatement.Converting();
+            if (context.identifierOrLiteral().Count > 0)
+            {
+                int c = 0;
+                foreach (var i in context.identifierOrLiteral())
+                {
+                    if (c == 0) converting.Replaced = SyntaxElementBuilder.CreateIdentifierOrLiteral(i);
+                    if (c == 1) converting.Replacing = SyntaxElementBuilder.CreateIdentifierOrLiteral(i);
+                    c++;
+                }
+            }
+            converting.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
+            if (converting.Replacing != null || converting.Replaced != null || converting.Delimiters.Count > 0)
+                statement.Format4 = converting;
+
+            return statement;
+        }
+
+        private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectCharactersContext context, InspectStatement statement, bool meWantsBy)
+        {
+            var result = new InspectStatement.Subject();
+            result.SubstitutionField = CreateInspectBy(context.inspectBy());
+            if (!meWantsBy && result.SubstitutionField != null)
+                DiagnosticUtils.AddError(statement, "INSPECT: illegal CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+            if (meWantsBy && result.SubstitutionField == null)
+                DiagnosticUtils.AddError(statement, "INSPECT: Missing CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+            result.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
+            return result;
+        }
+
+        private InspectStatement.ALF CreateInspectIdentifier(CobolCodeElementsParser.InspectIdentifiersContext context, InspectStatement statement, bool meWantsBy, bool isFirstAllowed)
+        {
+            var alf = new InspectStatement.ALF();
+            alf.All = context.ALL() != null;
+            alf.Leading = context.LEADING() != null;
+            alf.First = context.FIRST() != null;
+            if (alf.First && !isFirstAllowed)
+                DiagnosticUtils.AddError(statement, "INSPECT TALLYING: illegal FIRST", context);
+            foreach (var c in context.inspectByIdentifiers())
+            {
+                var sub = CreateInspectSubject(c, statement, meWantsBy);
+                if (sub != null) alf.Subjects.Add(sub);
+            }
+            return alf;
+        }
+
+        private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectByIdentifiersContext context, InspectStatement statement, bool meWantsBy)
+        {
+            var result = new InspectStatement.Subject();
+            result.SubstitutionField = CreateInspectBy(context.inspectBy());
+            if (!meWantsBy && result.SubstitutionField != null)
+                DiagnosticUtils.AddError(statement, "INSPECT REPLACING: illegal CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+            if (meWantsBy && result.SubstitutionField == null)
+                DiagnosticUtils.AddError(statement, "INSPECT: Missing CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+            result.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
+            return result;
+        }
+
+        private IList<InspectStatement.Delimiter> CreateDelimiters(IReadOnlyList<CobolCodeElementsParser.InspectPhrase1Context> context, InspectStatement statement)
+        {
+            var delimiters = new List<InspectStatement.Delimiter>();
+            bool seenBefore = false, seenAfter = false;
+            foreach (var phrase in context)
+            {
+                var delimiter = CreateDelimiter(phrase);
+                if (delimiter.Before)
+                {
+                    if (seenBefore) DiagnosticUtils.AddError(statement, "INSPECT: Maximum one BEFORE phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase", phrase);
+                    seenBefore = true;
+                }
+                if (delimiter.After)
+                {
+                    if (seenAfter) DiagnosticUtils.AddError(statement, "INSPECT: Maximum one AFTER phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase", phrase);
+                    seenAfter = true;
+                }
+                delimiters.Add(delimiter);
+            }
+            return delimiters;
+        }
+
+        private InspectStatement.Delimiter CreateDelimiter(CobolCodeElementsParser.InspectPhrase1Context context)
+        {
+            var delimiter = new InspectStatement.Delimiter();
+            delimiter.Initial = context.INITIAL() != null;
+            delimiter.Before = context.BEFORE() != null;
+            delimiter.After = context.AFTER() != null;
+            delimiter.Item = SyntaxElementBuilder.CreateIdentifierOrLiteral(context.identifierOrLiteral());
+            return delimiter;
+        }
+
+        private Expression CreateInspectBy(CobolCodeElementsParser.InspectByContext context)
+        {
+            if (context == null) return null;
+            return SyntaxElementBuilder.CreateIdentifierOrLiteral(context.identifierOrLiteral());
         }
 
 

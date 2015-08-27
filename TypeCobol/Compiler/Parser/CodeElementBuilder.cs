@@ -707,7 +707,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterInspectStatement(CobolCodeElementsParser.InspectStatementContext context)
         {
-            CodeElement = new InspectStatement();
+            CodeElement = new StatementsBuilder().CreateInspectStatement(context);
         }
 
         public override void EnterInvokeStatement(CobolCodeElementsParser.InvokeStatementContext context)
