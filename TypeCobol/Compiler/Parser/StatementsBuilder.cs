@@ -110,6 +110,31 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          ////////////////////
+         // GOTO STATEMENT //
+        ////////////////////
+
+        internal GotoStatement CreateGotoStatement(CobolCodeElementsParser.GotoStatementContext context)
+        {
+            var statement = new GotoStatement();
+            foreach (var procedure in context.procedureName())
+            {
+                QualifiedProcedureName procedurename = SyntaxElementBuilder.CreateProcedureName(procedure);
+                if (procedurename != null) statement.Procedures.Add(procedurename);
+            }
+            if (context.identifier() != null)
+                statement.DependingOn = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (statement.Procedures.Count > 1 && statement.DependingOn == null)
+                DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
+            if (statement.Procedures.Count < 1 && statement.DependingOn != null)
+                DiagnosticUtils.AddError(statement, "Conditional GO TO: Required <procedure name>", context);
+            if (statement.Procedures.Count > 255)
+                DiagnosticUtils.AddError(statement, "Conditional GO TO: Maximum 255 <procedure name> allowed", context);
+            return statement;
+        }
+
+
+
           //////////////////////////
          // INITIALIZE STATEMENT //
         //////////////////////////
@@ -290,7 +315,7 @@ namespace TypeCobol.Compiler.Parser
                 foreach (var procedure in context.procedureName())
                 {
                     QualifiedProcedureName procedurename = SyntaxElementBuilder.CreateProcedureName(procedure);
-                    if (procedurename != null) statement.procedures.Add(procedurename);
+                    if (procedurename != null) statement.Procedures.Add(procedurename);
                 }
             }
             // already covered by grammar

@@ -5299,8 +5299,7 @@ gobackStatement:
 // When an ALTER statement refers to a paragraph, the paragraph can consist only of the paragraph-name followed by an unconditional or altered GO TO statement.
 
 gotoStatement:
-                 GO TO? /*(*/(procedureName+ (DEPENDING ON? identifier)?)? /*|
-                          PeriodSeparator)*/;
+                 GO TO? procedureName* (DEPENDING ON? identifier)?;
 
 // p341: IF statement
 // The IF statement evaluates a condition and provides for alternative actions in the

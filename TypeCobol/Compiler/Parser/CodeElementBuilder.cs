@@ -654,7 +654,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterGotoStatement(CobolCodeElementsParser.GotoStatementContext context)
         {
-            CodeElement = new GotoStatement();
+            CodeElement = new StatementsBuilder().CreateGotoStatement(context);
         }
 
 

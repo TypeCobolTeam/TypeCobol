@@ -185,7 +185,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// DEBUGGING sentence, and only once in that sentence. All procedures
         /// must appear in the outermost program.
         /// </summary>
-        public IList<QualifiedProcedureName> procedures = new List<QualifiedProcedureName>();
+        public IList<QualifiedProcedureName> Procedures = new List<QualifiedProcedureName>();
 
         /// <summary>
         /// p550:
