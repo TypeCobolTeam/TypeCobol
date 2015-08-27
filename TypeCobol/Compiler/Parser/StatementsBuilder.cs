@@ -6,6 +6,32 @@ namespace TypeCobol.Compiler.Parser
 {
     class StatementsBuilder
     {
+          //////////////////////
+         // ACCEPT STATEMENT //
+        //////////////////////
+
+        internal AcceptStatement CreateAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
+        {
+            var statement = new AcceptStatement();
+            statement.Receiving = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            statement.Input = SyntaxElementBuilder.CreateMnemonic(context.mnemonicOrEnvironmentName());
+            statement.Mode = CreateDateMode(context);
+            return statement;
+        }
+
+        private DateMode CreateDateMode(CobolCodeElementsParser.AcceptStatementContext context)
+        {
+            if (context.YYYYMMDD() != null) return DateMode.DATE_YYYYMMDD;
+            if (context.DATE() != null) return DateMode.DATE_YYMMDD;
+            if (context.YYYYDDD() != null) return DateMode.DAY_YYYYDDD;
+            if (context.DAY() != null) return DateMode.DAY_YYDDD;
+            if (context.DAY_OF_WEEK() != null) return DateMode.DAY_OF_WEEK;
+            if (context.TIME() != null) return DateMode.TIME;
+            return DateMode.UNKNOWN;
+        }
+
+
+
           ////////////////////
          // CALL STATEMENT //
         ////////////////////

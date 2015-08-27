@@ -121,12 +121,14 @@ codeElement:
 	subtractStatementEnd |
 
 		// --- Data movement statements ---
+	acceptStatement | // only with (DATE, DAY, DAY-OF-WEEK, TIME)
 	stringStatement |
 	stringStatementEnd |
 	unstringStatement |
 	unstringStatementEnd |
 
 		// --- I/O statements ---
+//	acceptStatement | // only with identifier
 	closeStatement |
 	openStatement |
 	readStatement |
@@ -241,8 +243,7 @@ imperativeStatement:
 	;
 
 dataMovementStatement:
-	  acceptStatementFormat2 // only with: (DATE, DAY, DAY-OF-WEEK, TIME)
-	| initializeStatement
+	initializeStatement
 	| inspectStatement
 	| moveStatement
 	| setStatement // p278: SET is seen as a table-handling statement, too
@@ -262,11 +263,10 @@ endingStatement:
 	| gobackStatement;
 
 ioStatement:
-	  acceptStatementFormat1 // with: identifier
 		// DELETE, REWRITE and START statement are imperative statements, but
 		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
 ///	| deleteStatement
-	| displayStatement
+	displayStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
 	| startStatement
@@ -4608,13 +4608,7 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement:
-	acceptStatementFormat2 | acceptStatementFormat1;
-
-acceptStatementFormat1:
-	ACCEPT identifier (FROM mnemonicOrEnvironmentName)?;
-
-acceptStatementFormat2:
-	ACCEPT identifier FROM (DATE YYYYMMDD? | DAY YYYYDDD? | DAY_OF_WEEK | TIME);
+	ACCEPT identifier (FROM (mnemonicOrEnvironmentName | (DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME))?;
 
 
 

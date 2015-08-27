@@ -392,6 +392,12 @@ namespace TypeCobol.Compiler.Parser
             return new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(context));
         }
 
+        internal static MnemonicOrEnvironmentName CreateMnemonic(CobolCodeElementsParser.MnemonicOrEnvironmentNameContext context)
+        {
+            if (context == null) return null;
+            return new MnemonicOrEnvironmentName(ParseTreeUtils.GetFirstToken(context));
+        }
+
         public static Index CreateIndex(CobolCodeElementsParser.IndexNameContext indexName)
         {
             if (indexName == null) return null;

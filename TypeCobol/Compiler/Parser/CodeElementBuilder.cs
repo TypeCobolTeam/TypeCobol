@@ -434,7 +434,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
         {
-            CodeElement = new AcceptStatement();
+            CodeElement = new StatementsBuilder().CreateAcceptStatement(context);
         }
 
 
