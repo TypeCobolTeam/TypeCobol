@@ -223,5 +223,84 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
+
+
+          ///////////////////
+         // USE STATEMENT //
+        ///////////////////
+
+
+        internal UseErrorsStatement CreateUseStatement(CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context)
+        {
+            var statement = new UseErrorsStatement();
+            if (context.fileName() != null)
+            {
+                foreach (var file in context.fileName())
+                {
+                    var filename = SyntaxElementBuilder.CreateFileName(file);
+                    if (filename != null) statement.FileNames.Add(filename);
+                }
+            }
+            statement.Mode = CreateOpenMode(context, statement);
+            return statement;
+        }
+
+        private OpenMode CreateOpenMode(CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context, UseErrorsStatement statement)
+        {
+            if (context.INPUT() != null)
+            {
+                // already covered by grammar
+                //if (statement.FileNames.Count > 0) AddError(statement, "INPUT", context, context.INPUT());
+                return OpenMode.INPUT;
+            }
+            if (context.OUTPUT() != null)
+            {
+                // already covered by grammar
+                //if (statement.FileNames.Count > 0) AddError(statement, "OUTPUT", context, context.OUTPUT());
+                return OpenMode.OUTPUT;
+            }
+            if (context.I_O() != null)
+            {
+                // already covered by grammar
+                //if (statement.FileNames.Count > 0) AddError(statement, "I-O", context, context.I_O());
+                return OpenMode.IO;
+            }
+            if (context.EXTEND() != null)
+            {
+                // already covered by grammar
+                //if (statement.FileNames.Count > 0) AddError(statement, "EXTEND", context, context.EXTEND());
+                return OpenMode.EXTEND;
+            }
+            return OpenMode.NONE;
+        }
+        /*
+        private void AddError(UseErrorsStatement statement, string mode, CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context, Antlr4.Runtime.Tree.ITerminalNode node)
+        {
+            var rulestack = new TypeCobol.Compiler.AntlrUtils.RuleStackBuilder().GetRuleStack(context);
+            var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(node);
+            DiagnosticUtils.AddError(statement, "USE AFTER ERROR: Illegal <filename list> with "+mode, token, rulestack);
+        }
+        */
+        internal UseDebuggingStatement CreateUseStatement(CobolCodeElementsParser.UseStatementForDebuggingDeclarativeContext context)
+        {
+            var statement = new UseDebuggingStatement();
+            if (context.ALL() != null) statement.AllProcedures = true;
+            if (context.procedureName() != null)
+            {
+                foreach (var procedure in context.procedureName())
+                {
+                    QualifiedProcedureName procedurename = SyntaxElementBuilder.CreateProcedureName(procedure);
+                    if (procedurename != null) statement.procedures.Add(procedurename);
+                }
+            }
+            // already covered by grammar
+            //if (statement.AllProcedures && statement.procedures.Count > 0)
+            //{
+            //    var rulestack = new TypeCobol.Compiler.AntlrUtils.RuleStackBuilder().GetRuleStack(context);
+            //    var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(context.ALL());
+            //    DiagnosticUtils.AddError(statement, "USE FOR DEBUGGING: Illegal <procedure list> with ALL PROCEDURES", token, rulestack);
+            //}
+            return statement;
+        }
     }
 }

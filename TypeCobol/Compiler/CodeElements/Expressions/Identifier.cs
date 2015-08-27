@@ -181,6 +181,30 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
+    public class QualifiedProcedureName
+    {
+        public SymbolReference<ParagraphName> ParagraphName { get; private set; }
+        public SymbolReference<SectionName>   SectionName   { get; private set; }
+
+        public QualifiedProcedureName(SymbolReference<ParagraphName> paragraphname, SymbolReference<SectionName> sectionname)
+        {
+            this.ParagraphName = paragraphname;
+            this.SectionName = sectionname;
+        }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            if (this.ParagraphName != null)
+            {
+                str.Append(this.ParagraphName);
+                if (this.SectionName != null) str.Append('.');
+            }
+            if (this.SectionName != null) str.Append(this.SectionName);
+            return str.ToString();
+        }
+    }
+
     public class Substring
     {
         public ArithmeticExpression Left  { get; private set; }

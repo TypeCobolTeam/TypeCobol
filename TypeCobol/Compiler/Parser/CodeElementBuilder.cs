@@ -1184,7 +1184,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterUseStatement(CobolCodeElementsParser.UseStatementContext context)
         {
-            CodeElement = new UseStatement();
+            var builder = new StatementsBuilder();
+            if (context.useStatementForExceptionDeclarative() != null)
+                CodeElement = builder.CreateUseStatement(context.useStatementForExceptionDeclarative());
+            else
+            if (context.useStatementForDebuggingDeclarative() != null)
+                CodeElement = builder.CreateUseStatement(context.useStatementForDebuggingDeclarative());
+            else
+                Console.WriteLine("?TODO: USE?");
         }
 
         public override void EnterXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)

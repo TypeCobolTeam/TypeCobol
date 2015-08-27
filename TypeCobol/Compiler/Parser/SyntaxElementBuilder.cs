@@ -280,6 +280,27 @@ namespace TypeCobol.Compiler.Parser
             return new SymbolReference<IndexName>(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
+        internal static QualifiedProcedureName CreateProcedureName(CobolCodeElementsParser.ProcedureNameContext context)
+        {
+            SymbolReference<ParagraphName> paragraphname = null;
+            if (context.paragraphName() != null) paragraphname = CreateParagraphName(context.paragraphName());
+            SymbolReference<SectionName> sectionname = null;
+            if (context.sectionName() != null) sectionname = CreateSectionName(context.sectionName());
+            return new QualifiedProcedureName(paragraphname, sectionname);
+        }
+
+        public static SymbolReference<ParagraphName> CreateParagraphName(CobolCodeElementsParser.ParagraphNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<ParagraphName>(new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        public static SymbolReference<SectionName> CreateSectionName(CobolCodeElementsParser.SectionNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<SectionName>(new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
         private static IList<Subscript> CreateSubscripts(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;

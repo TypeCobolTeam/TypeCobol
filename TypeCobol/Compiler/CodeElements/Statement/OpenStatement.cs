@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// SELECT OPTIONAL clause before opening the file in EXTEND mode. The
     /// file will be created or appended to, depending on whether the file exists.
     /// </summary>
-    public enum OpenMode { INPUT, OUTPUT, IO, EXTEND };
+    public enum OpenMode { INPUT, OUTPUT, IO, EXTEND, NONE };
 
     /// <summary>
     /// p379:

@@ -4194,9 +4194,7 @@ useStatement:
 // “Common processing facilities” on page 286.
 
 useStatementForExceptionDeclarative:
-                USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE 
-                ON? (fileName+ | (INPUT | OUTPUT | I_O | EXTEND))
-                PeriodSeparator;
+	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileName+ | (INPUT | OUTPUT | I_O | EXTEND));
 
 // p548: ... more rules that appky to declarative procedures until page 549 ...
 
@@ -4252,8 +4250,7 @@ useStatementForExceptionDeclarative:
 // program (except ALTER statements in declarative procedures) 
 
 useStatementForDebuggingDeclarative:
-                USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES))
-                PeriodSeparator;
+	USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES));
 
 // p252: Procedures
 // Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
