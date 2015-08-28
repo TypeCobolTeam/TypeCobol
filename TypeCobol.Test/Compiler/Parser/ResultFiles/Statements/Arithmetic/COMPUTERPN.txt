@@ -1,0 +1,9 @@
+﻿x = a b +
+x ° = a b ÷
+x = a b +
+x = a b -
+x = a b ×
+x = a b ÷
+x = a b ^
+x = a b c d ^ × + e 0 f - g + × h ÷ -
+x = a b c d ^ × + e 0 f - g + × h ÷ -

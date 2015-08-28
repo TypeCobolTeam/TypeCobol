@@ -108,6 +108,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\COMPUTERPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ok.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
@@ -235,6 +236,7 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\Arithmetic\COMPUTE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ok.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\COMPUTE.cbl" />

@@ -9255,10 +9255,16 @@ execStatementEnd: END_EXEC;
 // ...
 
 arithmeticExpression :
-                         multiplicationAndDivision ((PlusOperator | MinusOperator) multiplicationAndDivision)*;
+	multiplicationAndDivision arithMADTail*;
+
+arithMADTail:
+	(PlusOperator | MinusOperator) multiplicationAndDivision;
 
 multiplicationAndDivision:
-                             exponentiation ((MultiplyOperator | DivideOperator) exponentiation)*;
+	exponentiation arithEXPTail*;
+
+arithEXPTail:
+	(MultiplyOperator | DivideOperator) exponentiation;
               
 exponentiation:
                   unaryOperator (PowerOperator unaryOperator)*;

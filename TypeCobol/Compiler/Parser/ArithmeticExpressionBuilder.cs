@@ -64,36 +64,36 @@ namespace TypeCobol.Compiler.Parser
 
         internal ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ArithmeticExpressionContext context)
         {
-            char op = '?';
-            if (context.PlusOperator() != null)  op = '+';
-            if (context.MinusOperator() != null) op = '-';
             ArithmeticExpression current = null;
             ArithmeticExpression result = null;
             if (context.multiplicationAndDivision() != null)
+                result =  CreateArithmeticExpression(context.multiplicationAndDivision());
+
+            foreach (var tail in context.arithMADTail())
             {
-                foreach (var operation in context.multiplicationAndDivision())
-                {
-                    current = CreateArithmeticExpression(operation);
-                    result = CreateResult(result, op, current);
-                }
+                char op = '?';
+                if (tail.PlusOperator() != null) op = '+';
+                if (tail.MinusOperator() != null) op = '-';
+                current = CreateArithmeticExpression(tail.multiplicationAndDivision());
+                result = CreateResult(result, op, current);
             }
             return result;
         }
 
         private ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.MultiplicationAndDivisionContext context)
         {
-            char op = '?';
-            if (context.MultiplyOperator() != null) op = '×';
-            if (context.DivideOperator() != null)   op = '÷';
             ArithmeticExpression current = null;
             ArithmeticExpression result = null;
             if (context.exponentiation() != null)
+                result = CreateArithmeticExpression(context.exponentiation());
+
+            foreach (var tail in context.arithEXPTail())
             {
-                foreach (var operation in context.exponentiation())
-                {
-                    current = CreateArithmeticExpression(operation);
-                    result = CreateResult(result, op, current);
-                }
+                char op = '?';
+                if (tail.MultiplyOperator() != null) op = '×';
+                if (tail.DivideOperator() != null) op = '÷';
+                current = CreateArithmeticExpression(tail.exponentiation());
+                result = CreateResult(result, op, current);
             }
             return result;
         }
