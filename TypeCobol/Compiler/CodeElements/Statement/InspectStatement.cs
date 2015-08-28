@@ -3,6 +3,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
+
     /// <summary>
     /// p346:
     /// The INSPECT statement examines characters or groups of characters in a data item.
@@ -31,7 +32,6 @@ namespace TypeCobol.Compiler.CodeElements
         public IList<Tallying> TallyingList = new List<Tallying>();
         public IList<Subject> ReplacingCharacters  = new List<Subject>();
         public IList<ALF> ReplacingIdentifiers = new List<ALF>();
-        public Converting Format4 = null;
 
         public InspectStatement() : base(CodeElementType.InspectStatement) { }
 
@@ -63,58 +63,6 @@ namespace TypeCobol.Compiler.CodeElements
             /// </summary>
             public Identifier Count;
 
-            public ImOutOfClassNames Container = new ImOutOfClassNames();
-        }
-
-        /// <summary>
-        /// p352:
-        /// CONVERTING phrase (format 4)
-        /// This phrase converts all occurrences of a specific character or string of characters in
-        /// a data item (identifier-1) to user-supplied replacement characters.
-        ///
-        /// A format-4 INSPECT statement is interpreted and executed as if a format-2
-        /// INSPECT statement had been written with a series of ALL phrases (one for each
-        /// character of literal-4), specifying the same identifier-1. The effect is as if each single
-        /// character of literal-4 were referenced as literal-1, and the corresponding single
-        /// character of literal-5 referenced as literal-3. Correspondence between the characters
-        /// of literal-4 and the characters of literal-5 is by ordinal position within the data item.
-        ///
-        /// If identifier-4, identifier-6, or identifier-7 occupies the same storage area as identifier-1,
-        /// the result of the execution of this statement is undefined, even if they are defined
-        /// by the same data description entry.
-        /// </summary>
-        public class Converting
-        {
-            /// <summary>
-            /// p352:
-            /// identifier-7 or literal-5
-            /// Specifies the replacing character string.
-            /// The replacing character string (identifier-7 or literal-5) must be the same size
-            /// as the replaced character string (identifier-6 or literal-4).
-            /// </summary>
-            public Expression Replacing;
-            /// <summary>
-            /// p352:
-            /// identifier-6 or literal-4
-            /// Specifies the character string to be replaced.
-            /// The same character must not appear more than once in either literal-4 or
-            /// identifier-6.
-            /// </summary>
-            public Expression Replaced;
-
-            /// <summary>
-            /// p351:
-            /// BEFORE and AFTER phrases (all formats)
-            /// This phrase narrows the set of items being tallied or replaced.
-            ///
-            /// No more than one BEFORE phrase and one AFTER phrase can be specified for any
-            /// one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase.
-            /// </summary>
-            public IList<Delimiter> Delimiters;
-        }
-
-        public class ImOutOfClassNames
-        {
             public Subject CharactersPhrase;
             public ALF IdentifiersPhrase;
         }
@@ -198,6 +146,43 @@ namespace TypeCobol.Compiler.CodeElements
             /// </summary>
             public IList<Delimiter> Delimiters;
         }
+    }
+
+    /// <summary>
+    /// p352:
+    /// CONVERTING phrase (format 4)
+    /// This phrase converts all occurrences of a specific character or string of characters in
+    /// a data item (identifier-1) to user-supplied replacement characters.
+    ///
+    /// A format-4 INSPECT statement is interpreted and executed as if a format-2
+    /// INSPECT statement had been written with a series of ALL phrases (one for each
+    /// character of literal-4), specifying the same identifier-1. The effect is as if each single
+    /// character of literal-4 were referenced as literal-1, and the corresponding single
+    /// character of literal-5 referenced as literal-3. Correspondence between the characters
+    /// of literal-4 and the characters of literal-5 is by ordinal position within the data item.
+    ///
+    /// If identifier-4, identifier-6, or identifier-7 occupies the same storage area as identifier-1,
+    /// the result of the execution of this statement is undefined, even if they are defined
+    /// by the same data description entry.
+    /// </summary>
+    public class InspectConvertingStatement : CodeElement
+    {
+        /// <summary>
+        /// p352:
+        /// identifier-7 or literal-5
+        /// Specifies the replacing character string.
+        /// The replacing character string (identifier-7 or literal-5) must be the same size
+        /// as the replaced character string (identifier-6 or literal-4).
+        /// </summary>
+        public Expression Replacing;
+        /// <summary>
+        /// p352:
+        /// identifier-6 or literal-4
+        /// Specifies the character string to be replaced.
+        /// The same character must not appear more than once in either literal-4 or
+        /// identifier-6.
+        /// </summary>
+        public Expression Replaced;
 
         /// <summary>
         /// p351:
@@ -207,40 +192,54 @@ namespace TypeCobol.Compiler.CodeElements
         /// No more than one BEFORE phrase and one AFTER phrase can be specified for any
         /// one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase.
         /// </summary>
-        public class Delimiter
-        {
-            /// <summary>
-            /// p351:
-            /// INITIAL
-            /// The first occurrence of a specified item.
-            /// </summary>
-            public bool Initial = false;
-            /// <summary>
-            /// The BEFORE and AFTER phrases change how counting and replacing are done:
-            /// p352:
-            /// * When BEFORE is specified, counting or replacing of the inspected item
-            /// (identifier-1) begins at the leftmost character position and continues until the first
-            /// occurrence of the delimiter is encountered. If no delimiter is present in the
-            /// inspected item, counting or replacing continues toward the rightmost character
-            /// position.
-            /// </summary>
-            public bool Before = false;
-            /// <summary>
-            /// The BEFORE and AFTER phrases change how counting and replacing are done:
-            /// p352:
-            /// * When AFTER is specified, counting or replacing of the inspected item
-            /// (identifier-1) begins with the first character position to the right of the delimiter
-            /// and continues toward the rightmost character position in the inspected item. If
-            /// no delimiter is present in the inspected item, no counting or replacement takes
-            /// place.
-            /// </summary>
-            public bool After = false;
-            /// <summary>
-            /// identifier-4 or literal-2
-            /// Is the delimiter.
-            /// Delimiters are not counted or replaced.
-            /// </summary>
-            public Expression Item;
-        }
+        public IList<Delimiter> Delimiters;
+
+        public InspectConvertingStatement() : base(CodeElementType.InspectStatement) { }
+    }
+
+
+
+    /// <summary>
+    /// p351:
+    /// BEFORE and AFTER phrases (all formats)
+    /// This phrase narrows the set of items being tallied or replaced.
+    ///
+    /// No more than one BEFORE phrase and one AFTER phrase can be specified for any
+    /// one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase.
+    /// </summary>
+    public class Delimiter
+    {
+        /// <summary>
+        /// p351:
+        /// INITIAL
+        /// The first occurrence of a specified item.
+        /// </summary>
+        public bool Initial = false;
+        /// <summary>
+        /// The BEFORE and AFTER phrases change how counting and replacing are done:
+        /// p352:
+        /// * When BEFORE is specified, counting or replacing of the inspected item
+        /// (identifier-1) begins at the leftmost character position and continues until the first
+        /// occurrence of the delimiter is encountered. If no delimiter is present in the
+        /// inspected item, counting or replacing continues toward the rightmost character
+        /// position.
+        /// </summary>
+        public bool Before = false;
+        /// <summary>
+        /// The BEFORE and AFTER phrases change how counting and replacing are done:
+        /// p352:
+        /// * When AFTER is specified, counting or replacing of the inspected item
+        /// (identifier-1) begins with the first character position to the right of the delimiter
+        /// and continues toward the rightmost character position in the inspected item. If
+        /// no delimiter is present in the inspected item, no counting or replacement takes
+        /// place.
+        /// </summary>
+        public bool After = false;
+        /// <summary>
+        /// identifier-4 or literal-2
+        /// Is the delimiter.
+        /// Delimiters are not counted or replaced.
+        /// </summary>
+        public Expression Item;
     }
 }

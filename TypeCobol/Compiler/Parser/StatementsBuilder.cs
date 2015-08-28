@@ -200,39 +200,62 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateInspectStatement(CobolCodeElementsParser.InspectStatementContext context)
         {
+            var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+
+            // CONVERTING
+            if (context.inspectConverting() != null)
+                return CreateInspectConverting(context.inspectConverting(), identifier);
+
             var statement = new InspectStatement();
-            statement.Item = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            statement.Item = identifier;
+
             //TALLYING
             foreach (var t in context.inspectTallying())
             {
                 var tallying = new InspectStatement.Tallying();
                 tallying.Count = SyntaxElementBuilder.CreateIdentifier(t.identifier());
-                tallying.Container.CharactersPhrase = CreateInspectSubject(t.inspectCharacters(), statement, false);
-                tallying.Container.IdentifiersPhrase = CreateInspectIdentifier(t.inspectIdentifiers(), statement, false, false);
+                if (t.inspectCharacters() != null)
+                    tallying.CharactersPhrase = CreateInspectSubject(t.inspectCharacters(), statement, false);
+                if (t.inspectIdentifiers() != null)
+                    tallying.IdentifiersPhrase = CreateInspectIdentifier(t.inspectIdentifiers(), statement, false, false);
                 statement.TallyingList.Add(tallying);
             }
+
             // REPLACING
             foreach (var c in context.inspectCharacters())
                 statement.ReplacingCharacters.Add(CreateInspectSubject(c, statement, true));
             foreach (var c in context.inspectIdentifiers())
                 statement.ReplacingIdentifiers.Add(CreateInspectIdentifier(c, statement, true, true));
-            // CONVERTING
-            var converting = new InspectStatement.Converting();
+            return statement;
+        }
+
+        private InspectConvertingStatement CreateInspectConverting(CobolCodeElementsParser.InspectConvertingContext context, Identifier identifier)
+        {
+            var statement = new InspectConvertingStatement();
             if (context.identifierOrLiteral().Count > 0)
             {
                 int c = 0;
                 foreach (var i in context.identifierOrLiteral())
                 {
-                    if (c == 0) converting.Replaced = SyntaxElementBuilder.CreateIdentifierOrLiteral(i);
-                    if (c == 1) converting.Replacing = SyntaxElementBuilder.CreateIdentifierOrLiteral(i);
+                    if (c == 0) statement.Replaced = SyntaxElementBuilder.CreateIdentifierOrLiteral(i);
+                    if (c == 1) statement.Replacing = SyntaxElementBuilder.CreateIdentifierOrLiteral(i);
                     c++;
                 }
             }
-            converting.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
-            if (converting.Replacing != null || converting.Replaced != null || converting.Delimiters.Count > 0)
-                statement.Format4 = converting;
-
+            statement.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
             return statement;
+        }
+
+        private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectByIdentifiersContext context, InspectStatement statement, bool meWantsBy)
+        {
+            var result = new InspectStatement.Subject();
+            result.SubstitutionField = CreateInspectBy(context.inspectBy());
+            if (!meWantsBy && result.SubstitutionField != null)
+                DiagnosticUtils.AddError(statement, "INSPECT  TALLYING: illegal CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+            if (meWantsBy && result.SubstitutionField == null)
+                DiagnosticUtils.AddError(statement, "INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal>", context);
+            result.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
+            return result;
         }
 
         private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectCharactersContext context, InspectStatement statement, bool meWantsBy)
@@ -240,9 +263,9 @@ namespace TypeCobol.Compiler.Parser
             var result = new InspectStatement.Subject();
             result.SubstitutionField = CreateInspectBy(context.inspectBy());
             if (!meWantsBy && result.SubstitutionField != null)
-                DiagnosticUtils.AddError(statement, "INSPECT: illegal CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+                DiagnosticUtils.AddError(statement, "INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal>", context.inspectBy());
             if (meWantsBy && result.SubstitutionField == null)
-                DiagnosticUtils.AddError(statement, "INSPECT: Missing CHARACTERS BY <identifier> or <literal>", context.inspectBy());
+                DiagnosticUtils.AddError(statement, "INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal>", context);
             result.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
             return result;
         }
@@ -263,33 +286,21 @@ namespace TypeCobol.Compiler.Parser
             return alf;
         }
 
-        private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectByIdentifiersContext context, InspectStatement statement, bool meWantsBy)
+        private IList<Delimiter> CreateDelimiters(IReadOnlyList<CobolCodeElementsParser.InspectPhrase1Context> context, CodeElement e)
         {
-            var result = new InspectStatement.Subject();
-            result.SubstitutionField = CreateInspectBy(context.inspectBy());
-            if (!meWantsBy && result.SubstitutionField != null)
-                DiagnosticUtils.AddError(statement, "INSPECT REPLACING: illegal CHARACTERS BY <identifier> or <literal>", context.inspectBy());
-            if (meWantsBy && result.SubstitutionField == null)
-                DiagnosticUtils.AddError(statement, "INSPECT: Missing CHARACTERS BY <identifier> or <literal>", context.inspectBy());
-            result.Delimiters = CreateDelimiters(context.inspectPhrase1(), statement);
-            return result;
-        }
-
-        private IList<InspectStatement.Delimiter> CreateDelimiters(IReadOnlyList<CobolCodeElementsParser.InspectPhrase1Context> context, InspectStatement statement)
-        {
-            var delimiters = new List<InspectStatement.Delimiter>();
+            var delimiters = new List<Delimiter>();
             bool seenBefore = false, seenAfter = false;
             foreach (var phrase in context)
             {
                 var delimiter = CreateDelimiter(phrase);
                 if (delimiter.Before)
                 {
-                    if (seenBefore) DiagnosticUtils.AddError(statement, "INSPECT: Maximum one BEFORE phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase", phrase);
+                    if (seenBefore) DiagnosticUtils.AddError(e, "INSPECT: Maximum one BEFORE phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase", phrase);
                     seenBefore = true;
                 }
                 if (delimiter.After)
                 {
-                    if (seenAfter) DiagnosticUtils.AddError(statement, "INSPECT: Maximum one AFTER phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase", phrase);
+                    if (seenAfter) DiagnosticUtils.AddError(e, "INSPECT: Maximum one AFTER phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase", phrase);
                     seenAfter = true;
                 }
                 delimiters.Add(delimiter);
@@ -297,9 +308,9 @@ namespace TypeCobol.Compiler.Parser
             return delimiters;
         }
 
-        private InspectStatement.Delimiter CreateDelimiter(CobolCodeElementsParser.InspectPhrase1Context context)
+        private Delimiter CreateDelimiter(CobolCodeElementsParser.InspectPhrase1Context context)
         {
-            var delimiter = new InspectStatement.Delimiter();
+            var delimiter = new Delimiter();
             delimiter.Initial = context.INITIAL() != null;
             delimiter.Before = context.BEFORE() != null;
             delimiter.After = context.AFTER() != null;

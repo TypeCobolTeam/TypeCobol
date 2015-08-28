@@ -115,6 +115,9 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\CLOSE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\GOTO.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INITIALIZE.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.CONVERTING.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.ko.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.ok.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.ok.txt" />
@@ -233,6 +236,9 @@
     <Content Include="Compiler\Parser\Samples\Statements\File\CLOSE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\GOTO.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\INITIALIZE.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\INSPECT.ko.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\INSPECT.ok.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\INSPECT.CONVERTING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\PERFORM.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\IF.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />

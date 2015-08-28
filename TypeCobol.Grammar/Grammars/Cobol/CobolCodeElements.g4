@@ -5687,14 +5687,10 @@ initializeReplacing:
 // ... more details p354->355 : Example of the INSPECT statement ...
 
 inspectStatement:
-	INSPECT identifier ((TALLYING inspectTallying+)?
-		// not allowed: "inspectBy" in inspectCharacters
-		// not allowed: "FIRST" in inspectIdentifiers
-		// not allowed: "inspectBy" in inspectIdentifiers>inspectByIdentifiers
-						REPLACING (inspectCharacters | inspectIdentifiers)+)
-		// mandatory: "inspectBy" in inspectCharacters
-		// mandatory: "inspectBy" in inspectByIdentifiers
-					| (CONVERTING identifierOrLiteral TO identifierOrLiteral inspectPhrase1*);
+	INSPECT identifier (inspectConverting | ((TALLYING inspectTallying+)? (REPLACING (inspectCharacters | inspectIdentifiers)+)?));
+
+inspectConverting:
+	CONVERTING identifierOrLiteral TO identifierOrLiteral inspectPhrase1*;
 
 inspectTallying:
 	identifier FOR (inspectCharacters | inspectIdentifiers);
