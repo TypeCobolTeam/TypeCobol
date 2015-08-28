@@ -114,6 +114,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\CONTINUENY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\CLOSE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\READ.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\File\REWRITE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\GOTO.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INITIALIZE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.CONVERTING.txt" />
@@ -236,6 +237,7 @@
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\File\CLOSE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\File\READ.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\File\REWRITE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\GOTO.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\INITIALIZE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\INSPECT.ko.cbl" />
