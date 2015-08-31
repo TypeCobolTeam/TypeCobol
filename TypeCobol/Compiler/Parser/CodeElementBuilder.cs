@@ -1017,7 +1017,15 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterStopStatement(CobolCodeElementsParser.StopStatementContext context)
         {
-            CodeElement = new StopStatement();
+            var statement = new StopStatement();
+            if (context.literal() != null)
+            {
+                statement.Literal = SyntaxElementBuilder.CreateLiteral(context.literal());
+                if (statement.Literal != null && statement.Literal.All)
+                    DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
+            }
+            statement.IsStopRun = context.RUN() != null;
+            CodeElement = statement;
         }
 
         public override void EnterStringStatement(CobolCodeElementsParser.StringStatementContext context)

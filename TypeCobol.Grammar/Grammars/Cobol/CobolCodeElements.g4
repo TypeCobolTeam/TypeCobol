@@ -128,8 +128,13 @@ codeElement:
 	unstringStatement |
 	unstringStatementEnd |
 
+		// --- Ending statements ---
+	stopStatement | // only STOP RUN
+	gobackStatement |
+
 		// --- I/O statements ---
-//	acceptStatement | // only with identifier
+//	acceptStatement | // only with <identifier>
+//	stopStatement | // only with <literal>
 	closeStatement |
 	openStatement |
 	readStatement |
@@ -230,7 +235,6 @@ statement:
 
 imperativeStatement:
 	  dataMovementStatement
-	| endingStatement
 	| ioStatement
 		// p276: A series of imperative statements can be specified wherever an imperative statement is allowed.
 		// p276: A conditional statement that is terminated by its explicit scope terminator is also classified as an imperative statement.
@@ -256,12 +260,6 @@ dataMovementStatement:
 	| xmlGenerateStatement
 	| xmlParseStatement;
 
-endingStatement:
-	  stopStatement // only STOP RUN
-//	| exitMethodStatement //TODO still declared up there, put it here
-//	| exitProgramStatement //TODO still declared up there, put it here
-	| gobackStatement;
-
 ioStatement:
 		// DELETE, REWRITE and START statement are imperative statements, but
 		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
@@ -270,7 +268,6 @@ ioStatement:
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
 	| startStatement
-	| stopStatement // only with: <literal>
 		// WRITE statement is an imperative statement, but
 		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
 	;

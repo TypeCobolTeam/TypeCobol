@@ -134,6 +134,7 @@
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\READ.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SET.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\STOP.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\STRING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\UNSTRING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\USE.DEBUGGING.txt" />
@@ -263,6 +264,7 @@
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ON.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\READ.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\STOP.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STRING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\UNSTRING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\USE.DEBUGGING.cbl" />

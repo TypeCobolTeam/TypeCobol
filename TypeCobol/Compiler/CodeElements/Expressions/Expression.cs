@@ -11,6 +11,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         private SyntaxNumber numberValue;
         private SyntaxString stringValue;
+        public bool All = false;
 
         public Literal(SyntaxNumber numberValue)
         {
@@ -29,14 +30,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             get
             {
-                if (numberValue != null)
-                {
-                    return numberValue.Value;
-                }
-                if (stringValue != null)
-                {
-                    return stringValue.Value;
-                }
+                if (numberValue != null) return numberValue.Value;
+                if (stringValue != null) return stringValue.Value;
                 throw new InvalidOperationException("Malformed literal");
             }
         }

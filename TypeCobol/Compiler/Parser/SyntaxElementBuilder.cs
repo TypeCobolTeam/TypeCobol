@@ -41,7 +41,6 @@ namespace TypeCobol.Compiler.Parser
 
         public static SyntaxString CreateSyntaxString(CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
         {
-            bool all = context.ALL() != null;//TODO
             if (context.NullTerminatedAlphanumericLiteral() != null)
             {
                 return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.NullTerminatedAlphanumericLiteral()));
@@ -50,7 +49,6 @@ namespace TypeCobol.Compiler.Parser
             {
                 return CreateSyntaxString(context.alphanumOrNationalLiteralBase());
             }
-
             throw new InvalidOperationException("This is not a string!");
         }
 
@@ -148,12 +146,11 @@ namespace TypeCobol.Compiler.Parser
             else if (context.alphanumOrNationalLiteral() != null)
             {
                 SyntaxString stringValue = CreateSyntaxString(context.alphanumOrNationalLiteral());
-                return new Literal(stringValue);
+                var literal = new Literal(stringValue);
+                literal.All = context.alphanumOrNationalLiteral().ALL() != null;
+                return literal;
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
 
