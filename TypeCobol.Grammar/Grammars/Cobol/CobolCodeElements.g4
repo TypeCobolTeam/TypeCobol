@@ -143,6 +143,8 @@ codeElement:
 	rewriteStatementEnd |
 	writeStatement |
 	writeStatementEnd |
+	deleteStatement |
+	deleteStatementEnd |
 
 		// --- Ordering statements ---
 	mergeStatement |
@@ -263,7 +265,6 @@ dataMovementStatement:
 ioStatement:
 		// DELETE, REWRITE and START statement are imperative statements, but
 		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
-///	| deleteStatement
 	displayStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.

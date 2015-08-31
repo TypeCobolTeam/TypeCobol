@@ -537,7 +537,13 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDeleteStatement(CobolCodeElementsParser.DeleteStatementContext context)
         {
-            CodeElement = new DeleteStatement();
+            var statement = new DeleteStatement();
+            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            CodeElement = statement;
+        }
+        public override void EnterDeleteStatementEnd(CobolCodeElementsParser.DeleteStatementEndContext context)
+        {
+            CodeElement = new DeleteStatementEnd();
         }
 
         /// <summary>

@@ -160,11 +160,13 @@
     <Content Include="Compiler\Parser\Samples\Statements\File\READ.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\File\WRITE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\File\REWRITE.cbl" />
+    <Content Include="Compiler\Parser\Samples\Statements\File\DELETE.cbl" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\OPEN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\CLOSE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\READ.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\WRITE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\File\REWRITE.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\File\DELETE.txt" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\ADD.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\SUBTRACT.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\MULTIPLY.cbl" />
