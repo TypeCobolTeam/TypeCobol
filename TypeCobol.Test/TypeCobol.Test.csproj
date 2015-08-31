@@ -166,6 +166,7 @@
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\ADD.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\SUBTRACT.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\MULTIPLY.cbl" />
+    <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\DIVIDE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\COMPUTE.cbl" />
     <Content Include="Compiler\Parser\Samples\Statements\Arithmetic\COMPUTE.nested.cbl" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\ADD.txt" />
@@ -173,6 +174,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\SUBTRACT.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\SUBTRACTRPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\MULTIPLYRPN.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\DIVIDERPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\COMPUTERPN.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\Arithmetic\COMPUTE.nested.txt" />
     <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
