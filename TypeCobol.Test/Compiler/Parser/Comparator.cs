@@ -15,12 +15,10 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         private CompilationUnit unit = null;
         public FilesComparator comparator;
-        public DocumentFormat format;
         public TestObserver observer;
 
         public TestUnit(string name, bool debug = false)
         {
-            this.format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
             this.comparator = new FilesComparator(name, debug);
             this.observer = new TestObserver();
         }
@@ -28,12 +26,13 @@ namespace TypeCobol.Test.Compiler.Parser
         public void Init()
         {
             DirectoryInfo localDirectory = new DirectoryInfo(comparator.paths.sample.full.folder);
+            DocumentFormat format = comparator.getSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
-                this.format.Encoding, this.format.EndOfLineDelimiter, this.format.FixedLineLength, this.format.ColumnsLayout, options);
+                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = comparator.paths.sample.project.file;
-            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, this.format.ColumnsLayout, new TypeCobolOptions());
+            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions());
             this.unit.SetupCodeAnalysisPipeline(null, 0);
             this.unit.SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(this.observer);
         }
@@ -216,6 +215,13 @@ namespace TypeCobol.Test.Compiler.Parser
             string result = ParserUtils.DumpResult(elements, diagnostics);
             if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
+        }
+
+        internal DocumentFormat getSampleFormat()
+        {
+            if (paths.sample.name.Contains(".rdz"))
+                return DocumentFormat.RDZReferenceFormat;
+            return new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
         }
     }
 
