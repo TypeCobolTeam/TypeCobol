@@ -518,7 +518,16 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterCancelStatement(CobolCodeElementsParser.CancelStatementContext context)
         {
-            CodeElement = new CancelStatement();
+            var statement = new CancelStatement();
+            foreach (var c in context.identifierOrLiteral())
+            {
+                var item = SyntaxElementBuilder.CreateIdentifierOrLiteral(c);
+                var literal = item as Literal;
+                if (literal != null && (literal.Value is double || literal.Value is long))
+                    DiagnosticUtils.AddError(statement, "CANCEL: <literal> must be alphanumeric", c);
+                if (item != null) statement.Items.Add(item);
+            }
+            CodeElement = statement;
         }
 
         public override void EnterContinueStatement(CobolCodeElementsParser.ContinueStatementContext context)

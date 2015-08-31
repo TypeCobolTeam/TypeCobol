@@ -4867,7 +4867,7 @@ functionPointer:
 // For example: A calls B and B calls C (When A receives control, it can cancel C.) A calls B and A calls C (When C receives control, it can cancel B.)
 
 cancelStatement:
-                   CANCEL (identifier | literal)+;
+	CANCEL identifierOrLiteral+;
 
 // p313: CLOSE statement
 // The CLOSE statement terminates the processing of volumes and files.
