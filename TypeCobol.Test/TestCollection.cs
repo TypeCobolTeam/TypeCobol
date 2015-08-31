@@ -108,7 +108,6 @@ namespace TypeCobol.Test
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_UDWCodeElements();
 //            TestCodeElements.Check_WHENCodeElements(); //TODO: these cannot be parsed alone anymore since today
-            TestCodeElements.Check_XMLCodeElements();
 
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();

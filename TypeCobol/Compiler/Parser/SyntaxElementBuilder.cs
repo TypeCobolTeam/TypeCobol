@@ -301,6 +301,12 @@ namespace TypeCobol.Compiler.Parser
             return new SymbolReference<SectionName>(new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
+        public static SymbolReference<XmlSchemaName> CreateXmlSchemaName(CobolCodeElementsParser.XmlSchemaNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<XmlSchemaName>(new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
         private static IList<Subscript> CreateSubscripts(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
@@ -443,6 +449,16 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
+
+        internal static Expression CreateEncoding(CobolCodeElementsParser.CodepageContext context)
+        {
+            if (context == null) return null;
+            if (context.identifier() != null)
+                return CreateIdentifier(context.identifier());
+            if (context.IntegerLiteral() != null)
+                return new Literal(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
+            return null;
+        }
     }
 
 }

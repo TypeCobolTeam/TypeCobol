@@ -413,7 +413,6 @@ namespace TypeCobol.Compiler.Parser
          // USE STATEMENT //
         ///////////////////
 
-
         internal UseErrorsStatement CreateUseStatement(CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context)
         {
             var statement = new UseErrorsStatement();
@@ -484,6 +483,33 @@ namespace TypeCobol.Compiler.Parser
             //    var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(context.ALL());
             //    DiagnosticUtils.AddError(statement, "USE FOR DEBUGGING: Illegal <procedure list> with ALL PROCEDURES", token, rulestack);
             //}
+            return statement;
+        }
+
+
+
+          /////////////////////////
+         // XML PARSE STATEMENT //
+        /////////////////////////
+
+        internal XmlParseStatement CreateXmlParseStatement(CobolCodeElementsParser.XmlParseStatementContext context)
+        {
+            var statement = new XmlParseStatement();
+            int c = 0;
+            foreach (var identifier in context.identifier())
+            {
+                if (c == 0) statement.Identifier = SyntaxElementBuilder.CreateIdentifier(identifier);
+                if (c == 1) statement.ValidatingIdentifier = SyntaxElementBuilder.CreateIdentifier(identifier);
+                c++;
+            }
+            statement.Encoding = SyntaxElementBuilder.CreateEncoding(context.codepage());
+            statement.IsReturningNational = context.RETURNING() != null;
+            statement.ValidatingFile = SyntaxElementBuilder.CreateXmlSchemaName(context.xmlSchemaName());
+            foreach (var procedure in context.procedureName())
+            {
+                var procedurename = SyntaxElementBuilder.CreateProcedureName(procedure);
+                if (procedurename != null) statement.Procedures.Add(procedurename);
+            }
             return statement;
         }
     }

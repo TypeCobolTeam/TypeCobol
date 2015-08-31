@@ -1201,7 +1201,12 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterXmlParseStatement(CobolCodeElementsParser.XmlParseStatementContext context)
         {
-            CodeElement = new XmlParseStatement();
+            CodeElement = new StatementsBuilder().CreateXmlParseStatement(context);
+        }
+
+        public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
+        {
+            CodeElement = new XmlStatementEnd();
         }
 
         // Statement conditions
@@ -1291,11 +1296,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterUnstringStatementEnd(CobolCodeElementsParser.UnstringStatementEndContext context)
         {
             CodeElement = new UnstringStatementEnd();
-        }
-
-        public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
-        {
-            CodeElement = new XmlStatementEnd();
         }
     }
 }
