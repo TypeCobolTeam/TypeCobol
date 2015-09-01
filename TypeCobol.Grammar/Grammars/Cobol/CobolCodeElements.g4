@@ -5131,9 +5131,10 @@ divideStatementEnd: END_DIVIDE;
 // For a discussion of the USING phrase, see “The PROCEDURE DIVISION header” on page 247.
 
 entryStatement:
-                  ENTRY literal
-                  (USING (((BY? REFERENCE) | (BY? VALUE))? identifier+)+)?
-                  /*PeriodSeparator*/;
+	ENTRY literal (USING byReferenceOrByValueIdentifiers+)? /*PeriodSeparator*/;
+
+byReferenceOrByValueIdentifiers:
+	(BY? (REFERENCE | VALUE))? identifier+;
 
 
 

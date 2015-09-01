@@ -112,6 +112,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ok.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CANCEL.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CONTINUENY.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\ENTRY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\GOTO.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INITIALIZE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.CONVERTING.txt" />
@@ -253,6 +254,7 @@
     <None Include="Compiler\Parser\Samples\Statements\CALL.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ok.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CANCEL.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\ENTRY.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\GOTO.cbl" />

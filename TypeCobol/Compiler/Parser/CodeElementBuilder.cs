@@ -639,7 +639,16 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterEntryStatement(CobolCodeElementsParser.EntryStatementContext context)
         {
-            CodeElement = new EntryStatement();
+            var statement = new EntryStatement();
+            statement.ProgramName = SyntaxElementBuilder.CreateLiteral(context.literal());
+            foreach(var by in context.byReferenceOrByValueIdentifiers()) {
+                var u = new EntryStatement.Using<Identifier>();
+                var identifiers = SyntaxElementBuilder.CreateIdentifiers(by.identifier());
+                foreach (var i in identifiers) u.Add(i);
+                u.ByValue = by.VALUE() != null;
+                statement.Usings.Add(u);
+            }
+            CodeElement = statement;
         }
 
         public override void EnterExecStatement(CobolCodeElementsParser.ExecStatementContext context)

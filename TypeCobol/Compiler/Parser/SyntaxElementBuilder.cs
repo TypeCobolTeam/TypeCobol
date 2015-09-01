@@ -138,6 +138,7 @@ namespace TypeCobol.Compiler.Parser
 
         public static Literal CreateLiteral(CobolCodeElementsParser.LiteralContext context)
         {
+            if (context == null) return null;
             if (context.numericLiteral() != null)
             {
                 SyntaxNumber numberValue = CreateSyntaxNumber(context.numericLiteral());
