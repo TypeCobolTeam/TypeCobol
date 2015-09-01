@@ -826,7 +826,10 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterReleaseStatement(CobolCodeElementsParser.ReleaseStatementContext context)
         {
-            CodeElement = new ReleaseStatement();
+            var statement = new ReleaseStatement();
+            statement.RecordName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
+            statement.From = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            CodeElement = statement;
         }
 
         public override void EnterReturnStatement(CobolCodeElementsParser.ReturnStatementContext context)

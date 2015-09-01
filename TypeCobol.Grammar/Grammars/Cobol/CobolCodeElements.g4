@@ -6718,7 +6718,7 @@ readStatementEnd: END_READ;
 // those records placed in it by execution of RELEASE statements.
 
 releaseStatement:
-                    RELEASE qualifiedDataName (FROM identifier)?;
+	RELEASE qualifiedDataName (FROM identifier)?;
 
 // record-name-1
 // Must specify the name of a logical record in a sort-merge file description

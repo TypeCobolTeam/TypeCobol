@@ -117,6 +117,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.CONVERTING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.ok.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\RELEASE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.ok.txt" />
@@ -269,6 +270,7 @@
     <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\ON.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\READ.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\RELEASE.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\START.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STOP.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STRING.cbl" />
