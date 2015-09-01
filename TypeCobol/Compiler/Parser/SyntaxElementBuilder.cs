@@ -144,14 +144,16 @@ namespace TypeCobol.Compiler.Parser
                 SyntaxNumber numberValue = CreateSyntaxNumber(context.numericLiteral());
                 return new Literal(numberValue);
             }
-            else if (context.alphanumOrNationalLiteral() != null)
-            {
-                SyntaxString stringValue = CreateSyntaxString(context.alphanumOrNationalLiteral());
-                var literal = new Literal(stringValue);
-                literal.All = context.alphanumOrNationalLiteral().ALL() != null;
-                return literal;
-            }
-            return null;
+            return CreateLiteral(context.alphanumOrNationalLiteral());
+        }
+
+        internal static Literal CreateLiteral(CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
+        {
+            if (context == null) return null;
+            SyntaxString stringValue = CreateSyntaxString(context);
+            var literal = new Literal(stringValue);
+            literal.All = context.ALL() != null;
+            return literal;
         }
 
 
@@ -457,6 +459,41 @@ namespace TypeCobol.Compiler.Parser
             if (context.IntegerLiteral() != null)
                 return new Literal(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
             return null;
+        }
+
+        internal static IList<FigurativeConstant> CreateFigurativeConstants(IReadOnlyList<CobolCodeElementsParser.FigurativeConstantContext> context)
+        {
+            IList<FigurativeConstant> constants = new List<FigurativeConstant>();
+            foreach (var c in context)
+            {
+                var constant = CreateFigurativeConstant(c);
+                if (constant != null) constants.Add(constant);
+            }
+            return constants;
+        }
+
+        internal static FigurativeConstant CreateFigurativeConstant(CobolCodeElementsParser.FigurativeConstantContext context)
+        {
+            if (context.HIGH_VALUE()  != null) return CreateFigurativeConstant(context.HIGH_VALUE());
+            if (context.HIGH_VALUES() != null) return CreateFigurativeConstant(context.HIGH_VALUES());
+            if (context.LOW_VALUE()  != null) return CreateFigurativeConstant(context.LOW_VALUE());
+            if (context.LOW_VALUES() != null) return CreateFigurativeConstant(context.LOW_VALUES());
+            if (context.NULL()  != null) return CreateFigurativeConstant(context.NULL());
+            if (context.NULLS() != null) return CreateFigurativeConstant(context.NULLS());
+            if (context.SPACE()  != null) return CreateFigurativeConstant(context.SPACE());
+            if (context.SPACES() != null) return CreateFigurativeConstant(context.SPACES());
+            if (context.QUOTE()  != null) return CreateFigurativeConstant(context.QUOTE());
+            if (context.QUOTES() != null) return CreateFigurativeConstant(context.QUOTES());
+            if (context.ZERO()   != null) return CreateFigurativeConstant(context.ZERO());
+            if (context.ZEROS()  != null) return CreateFigurativeConstant(context.ZEROS());
+            if (context.ZEROES() != null) return CreateFigurativeConstant(context.ZEROES());
+            if (context.SymbolicCharacter() != null) return CreateFigurativeConstant(context.SymbolicCharacter());
+            return null;
+        }
+
+        private static FigurativeConstant CreateFigurativeConstant(ITerminalNode node)
+        {
+            return new FigurativeConstant(new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(node)));
         }
     }
 

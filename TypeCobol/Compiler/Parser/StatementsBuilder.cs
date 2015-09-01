@@ -488,6 +488,134 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          ////////////////////////////
+         // XML GENERATE STATEMENT //
+        ////////////////////////////
+
+        internal XmlGenerateStatement CreateXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)
+        {
+            var statement = new XmlGenerateStatement();
+            statement.Encoding = SyntaxElementBuilder.CreateEncoding(context.codepage());
+            int c = 0;
+            foreach (var identifier in context.identifier()) // context.identifier().Count is 2 outside of syntax errors
+            {
+                if (c == 0) statement.Receiving = SyntaxElementBuilder.CreateIdentifier(identifier);
+                if (c == 1) statement.Data = SyntaxElementBuilder.CreateIdentifier(identifier);
+                c++;
+            }
+            if (context.xmlCount() != null) statement.Count = SyntaxElementBuilder.CreateIdentifier(context.xmlCount().identifier());
+            statement.Encoding = SyntaxElementBuilder.CreateEncoding(context.codepage());
+            statement.IsXMLDeclaration = context.XML_DECLARATION() != null;
+            statement.IsAttributes = context.ATTRIBUTES() != null;
+            if (context.xmlNamespace() != null)
+            {
+                statement.Namespace = CreateIdentifierOrAlphanumericOrNationalLiteral(
+                    context.xmlNamespace().identifier(), context.xmlNamespace().alphanumOrNationalLiteral());
+            }
+            if (context.xmlNamespacePrefix() != null)
+            {
+                statement.NamespacePrefix = CreateIdentifierOrAlphanumericOrNationalLiteral(
+                    context.xmlNamespacePrefix().identifier(), context.xmlNamespacePrefix().alphanumOrNationalLiteral());
+            }
+            foreach (var namecontext in context.xmlName())
+            {
+                var x = CreateXmlName(namecontext);
+                if (x != null) statement.Names.Add(x);
+            }
+            foreach (var typecontext in context.xmlType())
+            {
+                var x = CreateXmlType(typecontext);
+                if (x != null) statement.Types.Add(x);
+            }
+            foreach (var suppresscontext in context.xmlSuppress())
+            {
+                var x = CreateXmlSuppression(statement, suppresscontext);
+                if (x != null) statement.Suppressions.Add(x);
+            }
+            return statement;
+        }
+
+        private static Expression CreateIdentifierOrAlphanumericOrNationalLiteral(CobolCodeElementsParser.IdentifierContext identifier, 
+                                                                                   CobolCodeElementsParser.AlphanumOrNationalLiteralContext literal) {
+            Expression result = SyntaxElementBuilder.CreateIdentifier(identifier);
+            if (result != null) return result;
+            return SyntaxElementBuilder.CreateLiteral(literal);
+        }
+
+        private XmlGenerateStatement.Name CreateXmlName(CobolCodeElementsParser.XmlNameContext context)
+        {
+            if (context == null) return null;
+            var result = new XmlGenerateStatement.Name();
+            result.Old = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            result.New = SyntaxElementBuilder.CreateLiteral(context.alphanumOrNationalLiteral());
+            return result;
+        }
+
+        private XmlGenerateStatement.Type CreateXmlType(CobolCodeElementsParser.XmlTypeContext context)
+        {
+            if (context == null) return null;
+            var result = new XmlGenerateStatement.Type();
+            result.Data = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.ATTRIBUTE() != null) result.DataType = XmlGenerateStatement.Type.Mode.ATTRIBUTE;
+            if (context.ELEMENT()   != null) result.DataType = XmlGenerateStatement.Type.Mode.ELEMENT;
+            if (context.CONTENT()   != null) result.DataType = XmlGenerateStatement.Type.Mode.CONTENT;
+            return result;
+        }
+
+        private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElement e, CobolCodeElementsParser.XmlSuppressContext context)
+        {
+            XmlGenerateStatement.Suppression result = new XmlGenerateStatement.Suppression();
+            result.Specific = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            result.Generic = CreateXmlSuppressionMode(context.xmlSuppressGeneric());
+            result.When = new List<FigurativeConstant>();
+            if (context.whenPhrase() != null)
+            {
+                string[] allowed = { "ZERO", "ZEROES", "ZEROS", "SPACE", "SPACES", "LOW-VALUE", "LOW-VALUES", "HIGH-VALUE", "HIGH-VALUES" };
+                foreach (var c in context.whenPhrase().figurativeConstant())
+                {
+                    var constant = SyntaxElementBuilder.CreateFigurativeConstant(c);
+                    if (constant != null)
+                    {
+                        if (System.Array.IndexOf(allowed, constant.Value) < 0)
+                            DiagnosticUtils.AddError(e, "XML GENERATE: Illegal figurative constant " + constant.Value, c);
+                        result.When.Add(constant);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private XmlGenerateStatement.Suppression.Mode CreateXmlSuppressionMode(CobolCodeElementsParser.XmlSuppressGenericContext context)
+        {
+            if (context == null) return XmlGenerateStatement.Suppression.Mode.UNKNOWN;
+            var result = XmlGenerateStatement.Suppression.Mode.UNKNOWN;
+            if (context.ATTRIBUTE() != null)
+            {
+                if (context.NUMERIC() != null) {
+                    result = XmlGenerateStatement.Suppression.Mode.NUMERIC_ATTRIBUTE;
+                }
+                else
+                if (context.NONNUMERIC() != null) {
+                    result = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ATTRIBUTE;
+                }
+                else result = XmlGenerateStatement.Suppression.Mode.ATTRIBUTE;
+            }
+            if (context.ELEMENT() != null)
+            {
+                if (context.NUMERIC() != null) {
+                    result = XmlGenerateStatement.Suppression.Mode.NUMERIC_ELEMENT;
+                }
+                else
+                if (context.NONNUMERIC() != null) {
+                    result = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ELEMENT;
+                }
+                else result = XmlGenerateStatement.Suppression.Mode.ELEMENT;
+            }
+            return result;
+        }
+
+
+
           /////////////////////////
          // XML PARSE STATEMENT //
         /////////////////////////

@@ -147,6 +147,8 @@
     <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\XML\XML.rdz.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\XML\SUPPRESS.ko.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\XML\SUPPRESS.ok.txt" />
     <Content Include="Compiler\Parser\ResultFiles\UDWCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\NOT.txt" />
     <Content Include="Compiler\Parser\ResultFiles\EXITCodeElements.txt" />
@@ -283,6 +285,8 @@
     <None Include="Compiler\Parser\Samples\Statements\USE.ERRORS.cbl" />
     <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\XML\XML.rdz.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\XML\SUPPRESS.ko.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\XML\SUPPRESS.ok.cbl" />
     <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\NOT.cbl" />
     <None Include="Compiler\Parser\Samples\EXITCodeElements.cbl" />

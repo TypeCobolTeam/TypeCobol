@@ -1258,7 +1258,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)
         {
-            CodeElement = new XmlGenerateStatement();
+            CodeElement = new StatementsBuilder().CreateXmlGenerateStatement(context);
         }
 
         public override void EnterXmlParseStatement(CobolCodeElementsParser.XmlParseStatementContext context)

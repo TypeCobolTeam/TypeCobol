@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class Literal : Expression
     {
         private SyntaxNumber numberValue;
-        private SyntaxString stringValue;
+        internal SyntaxString stringValue;
         public bool All = false;
 
         public Literal(SyntaxNumber numberValue)
@@ -48,6 +48,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             }
             throw new InvalidOperationException("Malformed literal");
         }
+    }
+
+    public class FigurativeConstant : Literal
+    {
+        public FigurativeConstant(SyntaxString value) : base(value) { }
     }
 
 }

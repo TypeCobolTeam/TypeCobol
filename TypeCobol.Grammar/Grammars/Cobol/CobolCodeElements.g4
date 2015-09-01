@@ -8563,23 +8563,40 @@ writeStatementEnd: END_WRITE;
 // ... more details p468 XML element name and attribute name formation ...
 
 xmlGenerateStatement:
-                        XML GENERATE identifier FROM identifier 
-                        (COUNT IN? identifier)?
-                        (WITH? ENCODING codepage)? 
-                        (WITH? XML_DECLARATION)?
-                        (WITH? ATTRIBUTES)?
-                        ((NAMESPACE IS? (identifier | literal))
-                        (NAMESPACE_PREFIX IS? (identifier | literal))?)?
-                        (NAME OF? (identifier IS? literal)+)?
-                        (TYPE OF? (identifier IS? (ATTRIBUTE | ELEMENT | CONTENT))+)?
-                        (SUPPRESS ((identifier whenPhrase) | 
-                                   ((EVERY ((NUMERIC (ATTRIBUTE | ELEMENT)?) |
-                                            (NONNUMERIC (ATTRIBUTE | ELEMENT)?) |
-                                            (ATTRIBUTE | ELEMENT)))? whenPhrase) )+)?;
+	XML GENERATE identifier FROM identifier
+		xmlCount?
+		(WITH? ENCODING codepage)?
+		(WITH? XML_DECLARATION)?
+		(WITH? ATTRIBUTES)?
+		(xmlNamespace xmlNamespacePrefix?)?
+		(NAME OF? xmlName+)?
+		(TYPE OF? xmlType+)?
+		(SUPPRESS xmlSuppress+)?;
+
+xmlCount:
+	COUNT IN? identifier;
+
+xmlNamespace:
+	NAMESPACE IS? (identifier | alphanumOrNationalLiteral);
+
+xmlNamespacePrefix:
+	NAMESPACE_PREFIX IS? (identifier | alphanumOrNationalLiteral);
+
+xmlName:
+	identifier IS? alphanumOrNationalLiteral;
+
+xmlType:
+	identifier IS? (ATTRIBUTE | ELEMENT | CONTENT);
+
+xmlSuppress:
+	(identifier | xmlSuppressGeneric)? whenPhrase;
+
+xmlSuppressGeneric:
+	EVERY ((NUMERIC (ATTRIBUTE | ELEMENT)?) | (NONNUMERIC (ATTRIBUTE | ELEMENT)?) | ATTRIBUTE | ELEMENT);
 
 whenPhrase:
-              WHEN (ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES)
-              (OR? (ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES))*;
+	WHEN figurativeConstant (OR? figurativeConstant)*;
+// only figurative constants allowed: ZERO  ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 
 //xmlGenerateStatementConditional:
 //                                   xmlGenerateStatement
