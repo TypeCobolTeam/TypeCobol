@@ -1027,7 +1027,20 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterStartStatement(CobolCodeElementsParser.StartStatementContext context)
         {
-            CodeElement = new StartStatement();
+            var statement = new StartStatement();
+            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            statement.DataName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
+            if (context.relationalOperator() != null)
+            {
+                statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
+                if (statement.Operator != '=' && statement.Operator != '>' && statement.Operator != '≥')
+                    DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.Operator, context.relationalOperator());
+            }
+            CodeElement = statement;
+        }
+        public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)
+        {
+            CodeElement = new StartStatementEnd();
         }
 
         public override void EnterStopStatement(CobolCodeElementsParser.StopStatementContext context)
@@ -1304,11 +1317,6 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
         {
             CodeElement = new RewriteStatementEnd();
-        }
-
-        public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)
-        {
-            CodeElement = new StartStatementEnd();
         }
 
         public override void EnterStringStatementEnd(CobolCodeElementsParser.StringStatementEndContext context)

@@ -134,6 +134,8 @@ codeElement:
 
 		// --- I/O statements ---
 //	acceptStatement | // only with <identifier>
+	startStatement |
+	startStatementEnd |
 //	stopStatement | // only with <literal>
 	closeStatement |
 	openStatement |
@@ -210,14 +212,6 @@ codeElement:
 	onSizeErrorCondition |
 	notOnSizeErrorCondition |
 
-
-
-       //divideStatement |
-           // ... size exception phrases ...
-       divideStatementEnd |
-       //startStatement |
-           // ... invalid key phrases ...
-       startStatementEnd |
        //xmlGenerateStatement |
            // ... exception phrases ...
        // xmlStatementEnd |
@@ -268,7 +262,6 @@ ioStatement:
 	displayStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-	| startStatement
 		// WRITE statement is an imperative statement, but
 		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
 	;
@@ -7582,17 +7575,7 @@ sortStatement:
 // the specified comparison.
 
 startStatement:
-                  START fileName
-                  (KEY IS? ((EQUAL TO?) | EqualOperator |
-                            (GREATER THAN?) | GreaterThanOperator |
-                            (NOT LESS THAN?) | (NOT LessThanOperator) |
-                            (GREATER THAN? OR EQUAL TO?) | GreaterThanOrEqualOperator) dataName)?;
-
-//startStatementConditional:
-//                             startStatement
-//                             (invalidKeyCondition imperativeStatement)?
-//                             (notInvalidKeyCondition imperativeStatement)?
-//                             startStatementEnd?;
+	START fileName (KEY IS? relationalOperator qualifiedDataName)?;
 
 startStatementEnd: END_START;
 

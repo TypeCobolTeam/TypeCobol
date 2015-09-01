@@ -244,6 +244,7 @@ namespace TypeCobol.Compiler.Parser
 
         public static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
         {
+            if (context == null) return null;
             SymbolReference<DataName> dataname = null;
             if (context.dataNameBase() != null) dataname = CreateDataName(context.dataNameBase().dataName());
             List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
