@@ -504,7 +504,21 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
         {
-            CodeElement = new AlterStatement();
+            var statement = new AlterStatement();
+            // context.procedureName().Count %2 != 0 can never happen outside of syntax errors
+            AlterStatement.Alter alter = null;
+            foreach (var p in context.procedureName())
+            {
+                if (alter == null) {
+                    alter = new AlterStatement.Alter();
+                    alter.Procedure1 = SyntaxElementBuilder.CreateProcedureName(p);
+                } else {
+                    alter.Procedure2 = SyntaxElementBuilder.CreateProcedureName(p);
+                    statement.Items.Add(alter);
+                    alter = null;
+                }
+            }
+            CodeElement = statement;
         }
 
         public override void EnterCallStatement(CobolCodeElementsParser.CallStatementContext context)
