@@ -5909,15 +5909,15 @@ inspectBy: BY identifierOrLiteral;
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing?;
+	INVOKE invokeObject (alphanumOrNationalLiteral | identifier | NEW) (USING invokeUsing+)? invokeReturning?;
 
-invokeStatementUsing:
-	USING invokeStatementUsingWhat+;
+invokeObject:
+	identifier | className | SELF | SUPER;
 
-invokeStatementUsingWhat:
-	BY? VALUE (((LENGTH OF)? identifier) | literal)+;
+invokeUsing:
+	BY? VALUE (identifier | literal)+;
 
-invokeStatementReturing:
+invokeReturning:
 	RETURNING identifier;
 
 invokeStatementEnd: END_INVOKE;

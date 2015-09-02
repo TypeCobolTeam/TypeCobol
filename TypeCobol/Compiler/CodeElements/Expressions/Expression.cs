@@ -55,4 +55,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public FigurativeConstant(SyntaxString value) : base(value) { }
     }
 
+    public class New : Expression { }
+
 }

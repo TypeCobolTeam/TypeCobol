@@ -272,6 +272,12 @@ namespace TypeCobol.Compiler.Parser
             return new SymbolReference<AlphabetName>(new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
+        internal static SymbolReference<ClassName> CreateClassName(CobolCodeElementsParser.ClassNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<ClassName>(new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
         private static IList<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
         {
             List<SymbolReference<DataName>> datanames = new List<SymbolReference<DataName>>();

@@ -760,7 +760,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterInvokeStatement(CobolCodeElementsParser.InvokeStatementContext context)
         {
-            CodeElement = new InvokeStatement();
+            CodeElement = new StatementsBuilder().CreateInvokeStatement(context);
         }
 
         public override void EnterMoveStatement(CobolCodeElementsParser.MoveStatementContext context)

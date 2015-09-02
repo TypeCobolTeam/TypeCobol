@@ -326,6 +326,64 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          //////////////////////
+         // INVOKE STATEMENT //
+        //////////////////////
+
+        internal InvokeStatement CreateInvokeStatement(CobolCodeElementsParser.InvokeStatementContext context)
+        {
+            var statement = new InvokeStatement();
+
+            // object name
+            if (context.invokeObject() != null)
+            {
+                statement.Instance = SyntaxElementBuilder.CreateIdentifier(context.invokeObject().identifier());
+                statement.ClassName = SyntaxElementBuilder.CreateClassName(context.invokeObject().className());
+                statement.IsSelf = context.invokeObject().SELF() != null;
+                statement.IsSuper = context.invokeObject().SUPER() != null;
+            }
+
+            // method name
+            if (context.NEW() != null)
+                statement.MethodName = new New();
+            else
+            if (context.identifier() != null)
+                statement.MethodName = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            else
+            if (context.alphanumOrNationalLiteral() != null)
+                statement.MethodName = SyntaxElementBuilder.CreateLiteral(context.alphanumOrNationalLiteral());
+
+            // usings
+            statement.Usings = new List<Expression>();
+            if (context.invokeUsing() != null)
+                foreach (var use in context.invokeUsing())
+                {
+                    foreach (var c in use.literal())
+                    {
+                        var e = SyntaxElementBuilder.CreateLiteral(c);
+                        if (e != null) statement.Usings.Add(e);
+                    }
+                    foreach (var c in use.identifier())
+                    {
+                        var e = SyntaxElementBuilder.CreateIdentifier(c);
+                        // TODO: "(LENGTH OF)? identifier" only
+                        if (e != null) statement.Usings.Add(e);
+                    }
+                }
+
+            // returning
+            if (context.invokeReturning() != null)
+            {
+                statement.Returning = SyntaxElementBuilder.CreateIdentifier(context.invokeReturning().identifier());
+                if (IdentifierUtils.IsReferenceModified(statement.Returning))
+                    DiagnosticUtils.AddError(statement, "INVOKE: Illegal <identifier> reference modification", context.invokeReturning().identifier());
+            }
+
+            return statement;
+        }
+
+
+
           ////////////////////
          // MOVE STATEMENT //
         ////////////////////
