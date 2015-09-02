@@ -667,7 +667,17 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterExecStatement(CobolCodeElementsParser.ExecStatementContext context)
         {
-            CodeElement = new ExecStatement();
+            var statement = new ExecStatement();
+            var node = ParseTreeUtils.GetTokenFromTerminalNode(context.ExecTranslatorName());
+            if (node != null) statement.Compiler = node.Text;
+            var str = new StringBuilder();
+            foreach (var line in context.ExecStatementText())
+            {
+                node = ParseTreeUtils.GetTokenFromTerminalNode(line);
+                if (node != null) str.Append(node.Text);
+            }
+            statement.Code = str.ToString();
+            CodeElement = statement;
         }
 
         public override void EnterExitMethodStatement(CobolCodeElementsParser.ExitMethodStatementContext context)
