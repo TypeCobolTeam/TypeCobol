@@ -409,6 +409,49 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          ////////////////////
+         // SORT STATEMENT //
+        ////////////////////
+
+        internal SortStatement CreateSortStatement(CobolCodeElementsParser.SortStatementContext context)
+        {
+            var statement = new SortStatement();
+            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            statement.Keys = CreateSortKeys(context.sortKey());
+            statement.IsDuplicates = context.DUPLICATES() != null// each of these words is only
+                                  || context.WITH() != null     // used for DUPLICATES phrase,
+                                  || context.IN() != null      // so the presence of any one
+                                  || context.ORDER() != null; // shows us the writer's intent
+            statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetName());
+            if (context.sortUsing()  != null) statement.Using  = SyntaxElementBuilder.CreateFileNames(context.sortUsing().fileName());
+            if (context.sortGiving() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.sortGiving().fileName());
+            if (context.sortInput()  != null) statement.Input  = SyntaxElementBuilder.CreateProcedureNames(context.sortInput().procedureName());
+            if (context.sortOutput() != null) statement.Output = SyntaxElementBuilder.CreateProcedureNames(context.sortOutput().procedureName());
+            return statement;
+        }
+
+        private IList<SortStatement.Key> CreateSortKeys(IReadOnlyList<CobolCodeElementsParser.SortKeyContext> context)
+        {
+            var keys = new List<SortStatement.Key>();
+            foreach (var key in context)
+            {
+                SortStatement.Key x = CreateSortKey(key);
+                if (x != null) keys.Add(x);
+            }
+            return keys;
+        }
+
+        private SortStatement.Key CreateSortKey(CobolCodeElementsParser.SortKeyContext context)
+        {
+            if (context == null) return null;
+            var key = new SortStatement.Key();
+            key.IsAscending = context.DESCENDING() == null;
+            key.Data = SyntaxElementBuilder.CreateQualifiedNames(context.qualifiedDataName());
+            return key;
+        }
+
+
+
           ///////////////////
          // USE STATEMENT //
         ///////////////////

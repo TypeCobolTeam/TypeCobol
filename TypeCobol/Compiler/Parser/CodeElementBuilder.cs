@@ -1048,7 +1048,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSortStatement(CobolCodeElementsParser.SortStatementContext context)
         {
-            CodeElement = new SortStatement();
+            CodeElement = new StatementsBuilder().CreateSortStatement(context);
         }
 
         public override void EnterStartStatement(CobolCodeElementsParser.StartStatementContext context)

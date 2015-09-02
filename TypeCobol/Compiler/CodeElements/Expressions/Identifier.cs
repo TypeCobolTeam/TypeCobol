@@ -161,10 +161,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class QualifiedDataName
     {
         public SymbolReference<DataName> DataName { get; private set; }
-        public List<SymbolReference<DataName>> DataNames { get; private set; }
+        public IList<SymbolReference<DataName>> DataNames { get; private set; }
         public SymbolReference<FileName> FileName { get; private set; }
 
-        public QualifiedDataName(SymbolReference<DataName> dataname, List<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
+        public QualifiedDataName(SymbolReference<DataName> dataname, IList<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
         {
             this.DataName = dataname;
             this.DataNames = datanames != null ? datanames : new List<SymbolReference<DataName>>();

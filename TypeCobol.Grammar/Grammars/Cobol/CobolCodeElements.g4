@@ -7497,11 +7497,17 @@ setStatementForSwitchesWhat:
 // statement.
 
 sortStatement:
-                 SORT fileName (ON? (ASCENDING | DESCENDING) KEY? dataName+)+
-                 (WITH? DUPLICATES IN? ORDER?)?
-                 (COLLATING? SEQUENCE IS? alphabetName)?
-                 ((USING fileName+) | (INPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?))
-                 ((GIVING fileName+) | (OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?));
+	SORT fileName sortKey+
+		(WITH? DUPLICATES IN? ORDER?)?
+		(COLLATING? SEQUENCE IS? alphabetName)?
+		(sortUsing  | sortInput)
+		(sortGiving | sortOutput);
+
+sortKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
+sortUsing:  USING  fileName+;
+sortGiving: GIVING fileName+;
+sortInput:  INPUT  PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
+sortOutput: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
 
 // p429: START statement
 // The START statement provides a means of positioning within an indexed or

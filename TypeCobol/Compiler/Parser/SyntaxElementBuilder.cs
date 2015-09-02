@@ -250,16 +250,37 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             SymbolReference<DataName> dataname = null;
             if (context.dataNameBase() != null) dataname = CreateDataName(context.dataNameBase().dataName());
-            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            IList<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
             SymbolReference<FileName> filename = CreateFileName(context.fileName());
             return new QualifiedDataName(dataname, datanames, filename);
         }
 
-        private static List<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        internal static IList<QualifiedDataName> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
+        {
+            var names = new List<QualifiedDataName>();
+            foreach (var name in context)
+            {
+                var x = CreateQualifiedName(name);
+                if (x != null) names.Add(x);
+            }
+            return names;
+        }
+
+        internal static SymbolReference<AlphabetName> CreateAlphabetName(CobolCodeElementsParser.AlphabetNameContext context)
         {
             if (context == null) return null;
+            return new SymbolReference<AlphabetName>(new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        private static IList<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        {
             List<SymbolReference<DataName>> datanames = new List<SymbolReference<DataName>>();
-            foreach (var dataname in context) datanames.Add(CreateDataName(dataname));
+            if (context != null)
+                foreach (var dataname in context)
+                {
+                    var name = CreateDataName(dataname);
+                    if (name != null) datanames.Add(name);
+                }
             datanames.Reverse();
             return datanames;
         }
@@ -269,6 +290,20 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
+
+        internal static IList<SymbolReference<FileName>> CreateFileNames(IReadOnlyList<CobolCodeElementsParser.FileNameContext> context)
+        {
+            List<SymbolReference<FileName>> filenames = new List<SymbolReference<FileName>>();
+            if (context != null)
+                foreach (var filename in context)
+                {
+                    var name = CreateFileName(filename);
+                    if (name != null) filenames.Add(name);
+                }
+            filenames.Reverse();
+            return filenames;
+        }
+
         public static SymbolReference<FileName> CreateFileName(CobolCodeElementsParser.FileNameContext context)
         {
             if (context == null) return null;
@@ -279,6 +314,19 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new SymbolReference<IndexName>(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CobolCodeElementsParser.ProcedureNameContext> context)
+        {
+            List<QualifiedProcedureName> procedurenames = new List<QualifiedProcedureName>();
+            if (context != null)
+                foreach (var procedurename in context)
+                {
+                    var name = CreateProcedureName(procedurename);
+                    if (name != null) procedurenames.Add(name);
+                }
+            procedurenames.Reverse();
+            return procedurenames;
         }
 
         internal static QualifiedProcedureName CreateProcedureName(CobolCodeElementsParser.ProcedureNameContext context)
