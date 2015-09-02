@@ -409,6 +409,27 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+          /////////////////////
+         // MERGE STATEMENT //
+        /////////////////////
+
+        internal MergeStatement CreateMergeStatement(CobolCodeElementsParser.MergeStatementContext context)
+        {
+            var statement = new MergeStatement();
+            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            statement.Keys = CreateKeyDataItems(context.onAscendingDescendingKey());
+            statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetName());
+            if (context.usingFilenames() != null)
+            {
+                statement.Using = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
+                if (statement.Using.Count < 2)
+                    DiagnosticUtils.AddError(statement, "MERGE: USING <filename> <filename>+", context.usingFilenames());
+            }
+            if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileName());
+            if (context.outputProcedure() != null) statement.Output = SyntaxElementBuilder.CreateProcedureNames(context.outputProcedure().procedureName());
+            return statement;
+        }
+
           ////////////////////
          // SORT STATEMENT //
         ////////////////////
@@ -417,34 +438,34 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new SortStatement();
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
-            statement.Keys = CreateSortKeys(context.sortKey());
+            statement.Keys = CreateKeyDataItems(context.onAscendingDescendingKey());
             statement.IsDuplicates = context.DUPLICATES() != null// each of these words is only
                                   || context.WITH() != null     // used for DUPLICATES phrase,
                                   || context.IN() != null      // so the presence of any one
                                   || context.ORDER() != null; // shows us the writer's intent
             statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetName());
-            if (context.sortUsing()  != null) statement.Using  = SyntaxElementBuilder.CreateFileNames(context.sortUsing().fileName());
-            if (context.sortGiving() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.sortGiving().fileName());
-            if (context.sortInput()  != null) statement.Input  = SyntaxElementBuilder.CreateProcedureNames(context.sortInput().procedureName());
-            if (context.sortOutput() != null) statement.Output = SyntaxElementBuilder.CreateProcedureNames(context.sortOutput().procedureName());
+            if (context.usingFilenames()  != null) statement.Using  = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
+            if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileName());
+            if (context.inputProcedure()  != null) statement.Input  = SyntaxElementBuilder.CreateProcedureNames(context.inputProcedure().procedureName());
+            if (context.outputProcedure() != null) statement.Output = SyntaxElementBuilder.CreateProcedureNames(context.outputProcedure().procedureName());
             return statement;
         }
 
-        private IList<SortStatement.Key> CreateSortKeys(IReadOnlyList<CobolCodeElementsParser.SortKeyContext> context)
+        private IList<KeyDataItem> CreateKeyDataItems(IReadOnlyList<CobolCodeElementsParser.OnAscendingDescendingKeyContext> context)
         {
-            var keys = new List<SortStatement.Key>();
+            var keys = new List<KeyDataItem>();
             foreach (var key in context)
             {
-                SortStatement.Key x = CreateSortKey(key);
+                KeyDataItem x = CreateKeyDataItem(key);
                 if (x != null) keys.Add(x);
             }
             return keys;
         }
 
-        private SortStatement.Key CreateSortKey(CobolCodeElementsParser.SortKeyContext context)
+        private KeyDataItem CreateKeyDataItem(CobolCodeElementsParser.OnAscendingDescendingKeyContext context)
         {
             if (context == null) return null;
-            var key = new SortStatement.Key();
+            var key = new KeyDataItem();
             key.IsAscending = context.DESCENDING() == null;
             key.Data = SyntaxElementBuilder.CreateQualifiedNames(context.qualifiedDataName());
             return key;

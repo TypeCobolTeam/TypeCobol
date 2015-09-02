@@ -6124,11 +6124,14 @@ invokeStatementEnd: END_INVOKE;
 // statement.
 
 mergeStatement:
-                  MERGE fileName (ON? (ASCENDING | DESCENDING) KEY? dataName+)+
-                  (COLLATING? SEQUENCE IS? alphabetName)?
-                  USING fileName fileName+
-                  ( (OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?) |
-                    (GIVING fileName+) );
+
+	MERGE fileName onAscendingDescendingKey+
+		(COLLATING? SEQUENCE IS? alphabetName)?
+		usingFilenames
+//		USING fileName fileName+
+		(givingFilenames | outputProcedure);
+
+
 
 // p369: MOVE statement
 // The MOVE statement transfers data from one area of storage to one or more other
@@ -7497,17 +7500,17 @@ setStatementForSwitchesWhat:
 // statement.
 
 sortStatement:
-	SORT fileName sortKey+
+	SORT fileName onAscendingDescendingKey+
 		(WITH? DUPLICATES IN? ORDER?)?
 		(COLLATING? SEQUENCE IS? alphabetName)?
-		(sortUsing  | sortInput)
-		(sortGiving | sortOutput);
+		(usingFilenames  | inputProcedure)
+		(givingFilenames | outputProcedure);
 
-sortKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
-sortUsing:  USING  fileName+;
-sortGiving: GIVING fileName+;
-sortInput:  INPUT  PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
-sortOutput: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
+onAscendingDescendingKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
+usingFilenames:  USING  fileName+;
+givingFilenames: GIVING fileName+;
+inputProcedure:  INPUT  PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
+outputProcedure: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
 
 // p429: START statement
 // The START statement provides a means of positioning within an indexed or

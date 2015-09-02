@@ -753,11 +753,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new InvokeStatement();
         }
 
-        public override void EnterMergeStatement(CobolCodeElementsParser.MergeStatementContext context)
-        {
-            CodeElement = new MergeStatement();
-        }
-
         public override void EnterMoveStatement(CobolCodeElementsParser.MoveStatementContext context)
         {
             CodeElement = new StatementsBuilder().CreateMoveStatement(context);
@@ -1045,6 +1040,12 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = statement;
         }
 
+
+
+        public override void EnterMergeStatement(CobolCodeElementsParser.MergeStatementContext context)
+        {
+            CodeElement = new StatementsBuilder().CreateMergeStatement(context);
+        }
 
         public override void EnterSortStatement(CobolCodeElementsParser.SortStatementContext context)
         {
