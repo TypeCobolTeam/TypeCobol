@@ -65,8 +65,6 @@ namespace TypeCobol.Test.Compiler.Parser
             ParseDisplayStatement(compilationUnit, "display 'treortiertertert  '' zerzerzerze' ", 1);
             ParseDisplayStatement(compilationUnit, "display 'treortiertertert  \" zerzerzerze' ", 1);
             ParseDisplayStatement(compilationUnit, "display 'treortiertertert  \"\" zerzerzerze' ", 1);
-
-            Check("Statements" + Path.DirectorySeparatorChar + "DISPLAYCodeElements");
         }
 
 
@@ -179,11 +177,6 @@ namespace TypeCobol.Test.Compiler.Parser
             Check("WHENCodeElements");
         }
 
-        public static void Check_XMLCodeElements()
-        {
-            Check("XMLCodeElements");
-        }
-
         // --- Tests the correct parsing of all CodeElements ---
 
         public static void Check_HeaderCodeElements()
@@ -213,8 +206,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_Statements()
         {
-            var ignored = new string[] { "DISPLAYCodeElements" };
-            new FolderTester("Statements", ignored).Test();
+            new FolderTester("Statements").Test();
         }
     }
 }

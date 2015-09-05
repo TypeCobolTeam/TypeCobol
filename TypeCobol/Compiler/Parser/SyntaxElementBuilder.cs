@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -40,7 +41,6 @@ namespace TypeCobol.Compiler.Parser
 
         public static SyntaxString CreateSyntaxString(CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
         {
-            bool all = context.ALL() != null;//TODO
             if (context.NullTerminatedAlphanumericLiteral() != null)
             {
                 return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.NullTerminatedAlphanumericLiteral()));
@@ -62,6 +62,63 @@ namespace TypeCobol.Compiler.Parser
             {
                 return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalAlphanumericLiteral()));
             }
+
+            if (context.figurativeConstant() != null)
+            {
+                if (context.figurativeConstant().HIGH_VALUE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().HIGH_VALUE()));
+                }
+                if (context.figurativeConstant().HIGH_VALUES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().HIGH_VALUES()));
+                }
+                if (context.figurativeConstant().LOW_VALUE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().LOW_VALUE()));
+                }
+                if (context.figurativeConstant().LOW_VALUES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().LOW_VALUES()));
+                }
+                if (context.figurativeConstant().NULL() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().NULL()));
+                }
+                if (context.figurativeConstant().NULLS() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().NULLS()));
+                }
+                if (context.figurativeConstant().QUOTE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().QUOTE()));
+                }
+                if (context.figurativeConstant().QUOTES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().QUOTES()));
+                }
+                if (context.figurativeConstant().SPACE() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().SPACE()));
+                }
+                if (context.figurativeConstant().SPACES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().SPACES()));
+                }
+                if (context.figurativeConstant().ZERO() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZERO()));
+                }
+                if (context.figurativeConstant().ZEROES() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZEROES()));
+                }
+                if (context.figurativeConstant().ZEROS() != null)
+                {
+                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZEROS()));
+                }
+                throw new InvalidOperationException("Figurative constant not recognised");
+            }
             throw new InvalidOperationException("This is not a string!");
         }
 
@@ -75,36 +132,51 @@ namespace TypeCobol.Compiler.Parser
             {
                 return new SyntaxNational(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalNationalLiteral()));
             }
+            //TODO figurative constant
             throw new InvalidOperationException("This is not a national!");
         }
 
         public static Literal CreateLiteral(CobolCodeElementsParser.LiteralContext context)
         {
+            if (context == null) return null;
             if (context.numericLiteral() != null)
             {
                 SyntaxNumber numberValue = CreateSyntaxNumber(context.numericLiteral());
                 return new Literal(numberValue);
             }
-            else if (context.alphanumOrNationalLiteral() != null)
-            {
-                SyntaxString stringValue = CreateSyntaxString(context.alphanumOrNationalLiteral());
-                return new Literal(stringValue);
-            }
-            else
-            {
-                return null;
-            }
+            return CreateLiteral(context.alphanumOrNationalLiteral());
+        }
+
+        internal static Literal CreateLiteral(CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
+        {
+            if (context == null) return null;
+            SyntaxString stringValue = CreateSyntaxString(context);
+            var literal = new Literal(stringValue);
+            literal.All = context.ALL() != null;
+            return literal;
         }
 
 
 
 
 
+        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CobolCodeElementsParser.IdentifierContext> context)
+        {
+            IList<Identifier> identifiers = new List<Identifier>();
+            if (context != null)
+                foreach (var identifier in context)
+                {
+                   var i = CreateIdentifier(identifier);
+                    if (i != null) identifiers.Add(i);
+                }
+            return identifiers;
+        }
+
         public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
         {
             if (context == null) return null;
             Identifier identifier = CreateIdentifier(context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier());
-            identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+            if (identifier != null ) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
 
@@ -129,8 +201,8 @@ namespace TypeCobol.Compiler.Parser
 
         private static Identifier CreateFunctionReference(CobolCodeElementsParser.FunctionIdentifierContext context)
         {
-            if (context == null) return null;
-            var symbol = new FunctionName(ParseTreeUtils.GetTokenFromTerminalNode(context.FunctionName()));
+            if (context == null || context.FUNCTION() == null) return null;
+            var symbol = new FunctionName(ParseTreeUtils.GetFirstToken(context.intrinsicFunctionName()));
             var parameters = CreateFunctionParameters(context.argument());
             if (symbol != null || parameters != null) return new FunctionReference(symbol, parameters);
             return null;
@@ -173,38 +245,121 @@ namespace TypeCobol.Compiler.Parser
             return CreateQualifiedName(context.qualifiedDataName());
         }
 
-        private static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
+        public static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
         {
+            if (context == null) return null;
             SymbolReference<DataName> dataname = null;
             if (context.dataNameBase() != null) dataname = CreateDataName(context.dataNameBase().dataName());
-            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            IList<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
             SymbolReference<FileName> filename = CreateFileName(context.fileName());
             return new QualifiedDataName(dataname, datanames, filename);
         }
 
-        private static List<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        internal static IList<QualifiedDataName> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
+        {
+            var names = new List<QualifiedDataName>();
+            foreach (var name in context)
+            {
+                var x = CreateQualifiedName(name);
+                if (x != null) names.Add(x);
+            }
+            return names;
+        }
+
+        internal static SymbolReference<AlphabetName> CreateAlphabetName(CobolCodeElementsParser.AlphabetNameContext context)
         {
             if (context == null) return null;
+            return new SymbolReference<AlphabetName>(new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        internal static SymbolReference<ClassName> CreateClassName(CobolCodeElementsParser.ClassNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<ClassName>(new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        private static IList<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        {
             List<SymbolReference<DataName>> datanames = new List<SymbolReference<DataName>>();
-            foreach (var dataname in context) datanames.Add(CreateDataName(dataname));
+            if (context != null)
+                foreach (var dataname in context)
+                {
+                    var name = CreateDataName(dataname);
+                    if (name != null) datanames.Add(name);
+                }
             datanames.Reverse();
             return datanames;
         }
 
-        private static SymbolReference<DataName> CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        public static SymbolReference<DataName> CreateDataName(CobolCodeElementsParser.DataNameContext context)
         {
             if (context == null) return null;
             return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
+
+        internal static IList<SymbolReference<FileName>> CreateFileNames(IReadOnlyList<CobolCodeElementsParser.FileNameContext> context)
+        {
+            List<SymbolReference<FileName>> filenames = new List<SymbolReference<FileName>>();
+            if (context != null)
+                foreach (var filename in context)
+                {
+                    var name = CreateFileName(filename);
+                    if (name != null) filenames.Add(name);
+                }
+            filenames.Reverse();
+            return filenames;
+        }
+
         public static SymbolReference<FileName> CreateFileName(CobolCodeElementsParser.FileNameContext context)
         {
             if (context == null) return null;
             return new SymbolReference<FileName>(new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
-        private static SymbolReference<IndexName> CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
+
+        public static SymbolReference<IndexName> CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
         {
             if (context == null) return null;
             return new SymbolReference<IndexName>(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CobolCodeElementsParser.ProcedureNameContext> context)
+        {
+            List<QualifiedProcedureName> procedurenames = new List<QualifiedProcedureName>();
+            if (context != null)
+                foreach (var procedurename in context)
+                {
+                    var name = CreateProcedureName(procedurename);
+                    if (name != null) procedurenames.Add(name);
+                }
+            procedurenames.Reverse();
+            return procedurenames;
+        }
+
+        internal static QualifiedProcedureName CreateProcedureName(CobolCodeElementsParser.ProcedureNameContext context)
+        {
+            SymbolReference<ParagraphName> paragraphname = null;
+            if (context.paragraphName() != null) paragraphname = CreateParagraphName(context.paragraphName());
+            SymbolReference<SectionName> sectionname = null;
+            if (context.sectionName() != null) sectionname = CreateSectionName(context.sectionName());
+            return new QualifiedProcedureName(paragraphname, sectionname);
+        }
+
+        public static SymbolReference<ParagraphName> CreateParagraphName(CobolCodeElementsParser.ParagraphNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<ParagraphName>(new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        public static SymbolReference<SectionName> CreateSectionName(CobolCodeElementsParser.SectionNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<SectionName>(new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        public static SymbolReference<XmlSchemaName> CreateXmlSchemaName(CobolCodeElementsParser.XmlSchemaNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<XmlSchemaName>(new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
         private static IList<Subscript> CreateSubscripts(CobolCodeElementsParser.DataNameReferenceContext context)
@@ -273,22 +428,127 @@ namespace TypeCobol.Compiler.Parser
 
         private static Address CreateAddressOf(CobolCodeElementsParser.AddressOfSpecialRegisterDeclContext context)
         {
-            if (context.dataNameReference() == null) return null;
+            if (context == null || context.dataNameReference() == null) return null;
             return new Address(CreateDataNameReference(context.dataNameReference()));
         }
 
         private static Length CreateLengthOf(CobolCodeElementsParser.LengthOfSpecialRegisterDeclContext context)
         {
-            if (context.dataNameReference() == null) return null;
+            if (context == null || context.dataNameReference() == null) return null;
             return new Length(CreateDataNameReference(context.dataNameReference()));
         }
 
         private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context)
         {
-            if (context.fileName() == null) return null;
+            if (context == null || context.fileName() == null) return null;
             return new LinageCounter(CreateFileName(context.fileName()).Symbol);
         }
 
+
+
+
+        internal static MnemonicForEnvironmentName CreateMnemonic(CobolCodeElementsParser.MnemonicForEnvironmentNameContext context)
+        {
+            if (context == null) return null;
+            return new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(context));
+        }
+
+        internal static MnemonicOrEnvironmentName CreateMnemonic(CobolCodeElementsParser.MnemonicOrEnvironmentNameContext context)
+        {
+            if (context == null) return null;
+            return new MnemonicOrEnvironmentName(ParseTreeUtils.GetFirstToken(context));
+        }
+
+        public static Index CreateIndex(CobolCodeElementsParser.IndexNameContext indexName)
+        {
+            if (indexName == null) return null;
+            return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(indexName.UserDefinedWord())));
+        }
+
+        public static Expression CreateProcedurePointer(CobolCodeElementsParser.ProcedurePointerContext procedurePointer)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreateFunctionPointer(CobolCodeElementsParser.FunctionPointerContext functionPointer)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreatePointerDataItem(CobolCodeElementsParser.PointerDataItemContext pointerDataItem)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreateObjectReferenceId(CobolCodeElementsParser.ObjectReferenceIdContext objectReferenceId)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public static Expression CreateAddressOfIdentifier(ITerminalNode address, CobolCodeElementsParser.IdentifierContext identifier)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        public static Expression CreateIdentifierOrLiteral(CobolCodeElementsParser.IdentifierOrLiteralContext context)
+        {
+            if (context == null) return null;
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
+            return null;
+        }
+
+
+        internal static Expression CreateEncoding(CobolCodeElementsParser.CodepageContext context)
+        {
+            if (context == null) return null;
+            if (context.identifier() != null)
+                return CreateIdentifier(context.identifier());
+            if (context.IntegerLiteral() != null)
+                return new Literal(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
+            return null;
+        }
+
+        internal static IList<FigurativeConstant> CreateFigurativeConstants(IReadOnlyList<CobolCodeElementsParser.FigurativeConstantContext> context)
+        {
+            IList<FigurativeConstant> constants = new List<FigurativeConstant>();
+            foreach (var c in context)
+            {
+                var constant = CreateFigurativeConstant(c);
+                if (constant != null) constants.Add(constant);
+            }
+            return constants;
+        }
+
+        internal static FigurativeConstant CreateFigurativeConstant(CobolCodeElementsParser.FigurativeConstantContext context)
+        {
+            if (context.HIGH_VALUE()  != null) return CreateFigurativeConstant(context.HIGH_VALUE());
+            if (context.HIGH_VALUES() != null) return CreateFigurativeConstant(context.HIGH_VALUES());
+            if (context.LOW_VALUE()  != null) return CreateFigurativeConstant(context.LOW_VALUE());
+            if (context.LOW_VALUES() != null) return CreateFigurativeConstant(context.LOW_VALUES());
+            if (context.NULL()  != null) return CreateFigurativeConstant(context.NULL());
+            if (context.NULLS() != null) return CreateFigurativeConstant(context.NULLS());
+            if (context.SPACE()  != null) return CreateFigurativeConstant(context.SPACE());
+            if (context.SPACES() != null) return CreateFigurativeConstant(context.SPACES());
+            if (context.QUOTE()  != null) return CreateFigurativeConstant(context.QUOTE());
+            if (context.QUOTES() != null) return CreateFigurativeConstant(context.QUOTES());
+            if (context.ZERO()   != null) return CreateFigurativeConstant(context.ZERO());
+            if (context.ZEROS()  != null) return CreateFigurativeConstant(context.ZEROS());
+            if (context.ZEROES() != null) return CreateFigurativeConstant(context.ZEROES());
+            if (context.SymbolicCharacter() != null) return CreateFigurativeConstant(context.SymbolicCharacter());
+            return null;
+        }
+
+        private static FigurativeConstant CreateFigurativeConstant(ITerminalNode node)
+        {
+            return new FigurativeConstant(new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(node)));
+        }
     }
 
 }

@@ -1,0 +1,11 @@
+﻿--- Code Elements ---
+SET  toto TO ON
+
+SET  toto TO OFF
+
+SET  toto toto2 toto3 TO ON
+
+SET  toto toto2 toto3 TO ON
+ toto4 toto5 TO OFF
+ toto6 TO ON
+

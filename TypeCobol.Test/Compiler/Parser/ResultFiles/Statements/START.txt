@@ -1,0 +1,62 @@
+﻿--- Diagnostics ---
+[13,14]<28,Error,Syntax>Syntax error : START: Illegal operator < (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,14:< ]<LessThanOperator> on line 20)
+[13,16]<28,Error,Syntax>Syntax error : START: Illegal operator < (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,16:LESS]<LESS> on line 21)
+[13,15]<28,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 22)
+[13,15]<28,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 23)
+[13,14]<28,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,14:<=]<LessThanOrEqualOperator> on line 24)
+[13,16]<28,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,16:LESS]<LESS> on line 25)
+[13,15]<28,Error,Syntax>Syntax error : START: Illegal operator ! (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 26)
+[13,15]<28,Error,Syntax>Syntax error : START: Illegal operator ! (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 27)
+--- Code Elements ---
+[[StartStatement]] [1,5:START]<START> --> [7,7:f]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [7,7:f]<UserDefinedWord>
+
+[[StartStatementEnd]] [9,17:END-START]<END_START> --> [9,17:END-START]<END_START>
+
+[[StartStatement]] [1,5:START]<START> --> [7,7:f]<UserDefinedWord>
+
+[[InvalidKeyCondition]] [3,9:INVALID]<INVALID> --> [11,13:KEY]<KEY>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[NotInvalidKeyCondition]] [3,5:NOT]<NOT> --> [15,17:KEY]<KEY>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[StartStatementEnd]] [1,9:END-START]<END_START> --> [1,9:END-START]<END_START>
+
+[[StartStatement]] [1,5:START]<START> --> [19,19:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [29,29:c]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [15,15:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [21,21:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [15,15:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [22,22:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [19,19:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [30,30:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [16,16:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [15,15:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [18,18:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [19,19:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [25,25:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [16,16:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [27,27:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [19,19:a]<UserDefinedWord>
+
+[[StartStatement]] [1,5:START]<START> --> [23,23:a]<UserDefinedWord>
+

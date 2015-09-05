@@ -1,0 +1,29 @@
+--- Code Elements ---
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [7,14:filename]<UserDefinedWord>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [16,19:REEL]<REEL>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [16,19:UNIT]<UNIT>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [21,27:REMOVAL]<REMOVAL>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [25,31:REMOVAL]<REMOVAL>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [21,27:REMOVAL]<REMOVAL>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [25,31:REMOVAL]<REMOVAL>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [29,34:REWIND]<REWIND>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [29,34:REWIND]<REWIND>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [19,24:REWIND]<REWIND>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [24,29:REWIND]<REWIND>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [16,19:LOCK]<LOCK>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [21,24:LOCK]<LOCK>
+
+[[CloseStatement]] [1,5:CLOSE]<CLOSE> --> [11,14:LOCK]<LOCK>
+

@@ -15,24 +15,30 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         private CompilationUnit unit = null;
         public FilesComparator comparator;
-        public DocumentFormat format;
+        public TestObserver observer;
 
         public TestUnit(string name, bool debug = false)
         {
-            this.format = new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
             this.comparator = new FilesComparator(name, debug);
+            this.observer = new TestObserver();
+        }
+
+        public void Init()
+        {
+            DirectoryInfo localDirectory = new DirectoryInfo(comparator.paths.sample.full.folder);
+            DocumentFormat format = comparator.getSampleFormat();
+            TypeCobolOptions options = new TypeCobolOptions();
+            CompilationProject project = new CompilationProject("TEST",
+                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
+                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+            string filename = comparator.paths.sample.project.file;
+            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions());
+            this.unit.SetupCodeAnalysisPipeline(null, 0);
+            this.unit.SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(this.observer);
         }
 
         public void Parse()
         {
-            DirectoryInfo localDirectory = new DirectoryInfo(comparator.paths.sample.full.folder);
-            TypeCobolOptions options = new TypeCobolOptions();
-            CompilationProject project = new CompilationProject("TEST",
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
-                this.format.Encoding, this.format.EndOfLineDelimiter, this.format.FixedLineLength, this.format.ColumnsLayout, options);
-            string filename = comparator.paths.sample.project.file;
-            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, this.format.ColumnsLayout, new TypeCobolOptions());
-            this.unit.SetupCodeAnalysisPipeline(null, 0);
             this.unit.StartDocumentProcessing();
         }
 
@@ -43,6 +49,24 @@ namespace TypeCobol.Test.Compiler.Parser
                 this.comparator.Compare(this.unit.SyntaxDocument.CodeElements, this.unit.SyntaxDocument.Diagnostics, reader);
             }
         }
+    }
+
+    internal class TestObserver : System.IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent>
+    {
+        private IList<System.Exception> errors = new List<System.Exception>();
+        public bool HasErrors
+        {
+            get { return errors.Count > 0; }
+        }
+        public string DumpErrors()
+        {
+            var str = new StringBuilder();
+            foreach (var error in errors) str.AppendLine(error.ToString());
+            return str.ToString();
+        }
+        public void OnCompleted() { }
+        public void OnError(System.Exception error) { errors.Add(error); }
+        public void OnNext(TypeCobol.Compiler.Parser.CodeElementChangedEvent value) { }
     }
 
     internal class FolderTester
@@ -116,20 +140,34 @@ namespace TypeCobol.Test.Compiler.Parser
                 IList<FilesComparator> comparators = GetComparators(sample, debug);
                 if (comparators.Count < 1)
                 {
-                    System.Console.WriteLine("ERROR: Missing result file \"" + sample + "\"");
-                    errors.Append("\"" + sample + "\"");
+                    System.Console.Write("\nERROR: Missing result file \"" + sample + "\"");
+                    errors.AppendLine("Missing result file \"" + sample + "\"");
                     continue;
                 }
                 foreach (var comparator in comparators)
                 {
-                    System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+                    System.Console.Write("\nCheck result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
                     var unit = new TestUnit(sample, debug);
                     unit.comparator = comparator;
-                    unit.Parse();
-                    unit.Compare();
+                    unit.Init();
+                    try
+                    {
+                        unit.Parse();
+                        if (unit.observer.HasErrors)
+                        {
+                            System.Console.Write(" --- EXCEPTION\n" + unit.observer.DumpErrors());
+                            errors.AppendLine(unit.observer.DumpErrors());
+                        }
+                        unit.Compare();
+                    }
+                    catch (System.Exception ex)
+                    {
+                        System.Console.Write(" --- MISMATCH\n" + ex.Message);
+                        errors.Append("E");
+                    }
                 }
             }
-            if (errors.Length > 0) throw new System.IO.FileNotFoundException("No result files for: " + errors.ToString());
+            if (errors.Length > 0) throw new System.Exception(errors.ToString());
         }
 
         private IList<FilesComparator> GetComparators(string sample, bool debug)
@@ -178,6 +216,13 @@ namespace TypeCobol.Test.Compiler.Parser
             if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
         }
+
+        internal DocumentFormat getSampleFormat()
+        {
+            if (paths.sample.name.Contains(".rdz"))
+                return DocumentFormat.RDZReferenceFormat;
+            return new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+        }
     }
 
     internal class ArithmeticComparator : FilesComparator
@@ -214,11 +259,11 @@ namespace TypeCobol.Test.Compiler.Parser
         private string ToString(ArithmeticOperationStatement statement)
         {
             StringBuilder builder = new StringBuilder();
-            foreach (var pair in statement.affectations)
+            foreach (var pair in statement.Affectations)
             {
-                builder.AppendFormat("{0} = {1}, ", pair.Key.Symbol.NameToken.Text, pair.Value.ToString());
+                builder.AppendFormat("{0} = {1}, ", pair.Key.ToString(), pair.Value.ToString());
             }
-            if (statement.affectations.Count > 0) builder.Length -= 2;
+            if (statement.Affectations.Count > 0) builder.Length -= 2;
             return builder.ToString();
         }
     }

@@ -1,0 +1,32 @@
+﻿--- Diagnostics ---
+[38,43]<28,Error,Syntax>Syntax error : INSPECT: Maximum one BEFORE phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase (RuleStack=codeElement>inspectStatement>inspectConverting>inspectPhrase1, OffendingSymbol=[38,43:BEFORE]<BEFORE> on line 13)
+[38,42]<28,Error,Syntax>Syntax error : INSPECT: Maximum one AFTER phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase (RuleStack=codeElement>inspectStatement>inspectConverting>inspectPhrase1, OffendingSymbol=[38,42:AFTER]<AFTER> on line 14)
+[47,52]<28,Error,Syntax>Syntax error : INSPECT: Maximum one BEFORE phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase (RuleStack=codeElement>inspectStatement>inspectConverting>inspectPhrase1, OffendingSymbol=[47,52:BEFORE]<BEFORE> on line 15)
+[64,68]<28,Error,Syntax>Syntax error : INSPECT: Maximum one AFTER phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase (RuleStack=codeElement>inspectStatement>inspectConverting>inspectPhrase1, OffendingSymbol=[64,68:AFTER]<AFTER> on line 15)
+--- Code Elements ---
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [27,27:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [27,27:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [27,27:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [27,27:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [44,44:a]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [44,44:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [36,36:a]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [36,36:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [44,44:b]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [44,44:b]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [45,45:b]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [45,45:b]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [78,78:d]<UserDefinedWord>
+

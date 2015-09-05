@@ -1,0 +1,19 @@
+﻿using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
+
+namespace TypeCobol.Compiler.Parser
+{
+    internal static class DiagnosticUtils
+    {
+        internal static void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context)
+        {
+            AddError(e, message, ParseTreeUtils.GetFirstToken(context), new RuleStackBuilder().GetRuleStack(context));
+        }
+
+        internal static void AddError(CodeElement e, string message, Scanner.Token token, string rulestack)
+        {
+            var diagnostic = new ParserDiagnostic(message, token, rulestack);
+            e.Diagnostics.Add(diagnostic);
+        }
+    }
+}

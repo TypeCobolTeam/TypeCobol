@@ -26,7 +26,8 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                if(NameToken.TokenFamily == TokenFamily.Symbol)
+                if(NameToken.TokenFamily == TokenFamily.Symbol || 
+                        NameToken.TokenFamily == TokenFamily.SpecialRegisterKeyword )
                 {
                     return NameToken.Text;
                 }

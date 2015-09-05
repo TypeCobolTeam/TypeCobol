@@ -18,3 +18,5 @@
 000000 display when-compiled
 000000 display function max(1 5)
 000000 display toto(1:5) toto toto of mycopy
+000000 display high-value
+000000 display spaces

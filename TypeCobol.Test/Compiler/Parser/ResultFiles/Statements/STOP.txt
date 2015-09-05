@@ -1,0 +1,39 @@
+﻿--- Diagnostics ---
+[6,8]<28,Error,Syntax>Syntax error : STOP: Illegal ALL (RuleStack=codeElement>stopStatement>literal, OffendingSymbol=[6,8:ALL]<ALL> on line 22)
+--- Code Elements ---
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,8:RUN]<RUN>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,7:42]<IntegerLiteral>{42}
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,7:-1]<DecimalLiteral>{-1|0>-1}
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,11+:"STOP"]<AlphanumericLiteral>(",Y,Y){STOP}
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,9:ZERO]<ZERO>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,10:ZEROS]<ZEROS>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,11:ZEROES]<ZEROES>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,10:SPACE]<SPACE>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,11:SPACES]<SPACES>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,15:HIGH-VALUE]<HIGH_VALUE>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,16:HIGH-VALUES]<HIGH_VALUES>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,14:LOW-VALUE]<LOW_VALUE>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,15:LOW-VALUES]<LOW_VALUES>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,10:QUOTE]<QUOTE>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,11:QUOTES]<QUOTES>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,9:NULL]<NULL>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,10:NULLS]<NULLS>
+
+[[StopStatement]] [1,4:STOP]<STOP> --> [10,15+:"STOP"]<AlphanumericLiteral>(",Y,Y){STOP}
+

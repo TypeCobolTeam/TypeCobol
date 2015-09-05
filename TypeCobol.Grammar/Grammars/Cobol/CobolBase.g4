@@ -558,20 +558,13 @@ alphanumOrNationalLiteralBase:
 // except where explicitly prohibited.
 
 figurativeConstant:
-                      HIGH_VALUE |
-                      HIGH_VALUES |
-                      LOW_VALUE |
-                      LOW_VALUES |
-                      NULL |
-                      NULLS |
-                      QUOTE |
-                      QUOTES |
-                      SPACE |
-                      SPACES |
-                      ZERO |
-                      ZEROES |
-                      ZEROS |
-                      SymbolicCharacter;
+	HIGH_VALUE | HIGH_VALUES |
+	LOW_VALUE  | LOW_VALUES |
+	NULL  | NULLS |
+	QUOTE | QUOTES |
+	SPACE | SPACES |
+	ZERO  | ZEROS  | ZEROES |
+	SymbolicCharacter;
 
 // p13: ALL literal
 // literal can be an alphanumeric literal, a DBCS literal, a national literal, or a

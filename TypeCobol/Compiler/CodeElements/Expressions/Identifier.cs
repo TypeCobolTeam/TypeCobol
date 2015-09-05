@@ -4,7 +4,7 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
-    class Pointer : Expression
+    public class Pointer : Expression
     {
         public IdentifierOld identifier { get; private set; }
         public Pointer(IdentifierOld identifier)
@@ -16,7 +16,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             return ("->( " + identifier + ")");
         }
     }
-    class IdentifierOld : Expression
+
+    public class IdentifierOld : Expression
     {
         public Token token { get; set; }
         public bool ROUNDED = false;
@@ -130,16 +131,16 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     {
         public QualifiedDataName Name { get; private set; }
         public IList<Subscript> Subscripts { get; private set; }
-        public Substring Substring { get; set; }
+        public Substring ReferenceModifier { get; set; }
 
         public DataReference(QualifiedDataName name, IList<Subscript> subscripts = null, Substring substring = null)
         {
             this.Name = name;
-            this.Subscripts = this.Subscripts != null? subscripts : new List<Subscript>();
-            this.Substring = substring;
+            this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
+            this.ReferenceModifier = substring;
         }
 
-        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
+        public void SetReferenceModifier(Substring substring) { this.ReferenceModifier = substring; }
 
         public override string ToString()
         {
@@ -152,7 +153,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 if (str[str.Length - 2] == ',') str.Length -= 2;
                 str.Append(')');
             }
-            if (this.Substring != null) str.Append(this.Substring.ToString());
+            if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
             return str.ToString();
         }
     }
@@ -160,10 +161,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class QualifiedDataName
     {
         public SymbolReference<DataName> DataName { get; private set; }
-        public List<SymbolReference<DataName>> DataNames { get; private set; }
+        public IList<SymbolReference<DataName>> DataNames { get; private set; }
         public SymbolReference<FileName> FileName { get; private set; }
 
-        public QualifiedDataName(SymbolReference<DataName> dataname, List<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
+        public QualifiedDataName(SymbolReference<DataName> dataname, IList<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
         {
             this.DataName = dataname;
             this.DataNames = datanames != null ? datanames : new List<SymbolReference<DataName>>();
@@ -176,6 +177,30 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             if (this.FileName != null) str.Append(this.FileName).Append('.');
             foreach (var dataname in this.DataNames) str.Append(dataname).Append('.');
             str.Append(this.DataName);
+            return str.ToString();
+        }
+    }
+
+    public class QualifiedProcedureName
+    {
+        public SymbolReference<ParagraphName> ParagraphName { get; private set; }
+        public SymbolReference<SectionName>   SectionName   { get; private set; }
+
+        public QualifiedProcedureName(SymbolReference<ParagraphName> paragraphname, SymbolReference<SectionName> sectionname)
+        {
+            this.ParagraphName = paragraphname;
+            this.SectionName = sectionname;
+        }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            if (this.ParagraphName != null)
+            {
+                str.Append(this.ParagraphName);
+                if (this.SectionName != null) str.Append('.');
+            }
+            if (this.SectionName != null) str.Append(this.SectionName);
             return str.ToString();
         }
     }
@@ -193,11 +218,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public override string ToString()
         {
-            var str = new StringBuilder();
+            var str = new StringBuilder("(");
             str.Append(this.Left != null?  this.Left.ToString() : "?");
-            str.Append(":");
+            str.Append(':');
             str.Append(this.Right!= null? this.Right.ToString() : "?");
-            return base.ToString();
+            return str.Append(')').ToString();
         }
     }
 
@@ -299,5 +324,34 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public DataReference Identifier { get; set; }
         public Length(DataReference identifier) { this.Identifier = identifier; }
         public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
+    }
+
+    public static class IdentifierUtils
+    {
+        public static bool IsSubscripted(Identifier identifier) {
+            DataReference data = identifier as DataReference;
+            if (data != null) return data.Subscripts != null && data.Subscripts.Count > 0;
+            Address address = identifier as Address;
+            if (address != null) return address.Identifier.Subscripts != null && address.Identifier.Subscripts.Count > 0;
+            Length len = identifier as Length;
+            if (len != null) return len.Identifier.Subscripts != null && len.Identifier.Subscripts.Count > 0;
+            return false;
+        }
+        public static bool IsReferenceModified(Identifier identifier)
+        {
+            DataReference data = identifier as DataReference;
+            if (data != null) return data.ReferenceModifier != null;
+            SpecialRegister reg = identifier as SpecialRegister;
+            if (reg != null) return reg.Substring != null;
+            FunctionReference fun = identifier as FunctionReference;
+            if (fun != null) return fun.Substring != null;
+            LinageCounter linage = identifier as LinageCounter;
+            if (linage != null) return linage.Substring != null;
+            Address address = identifier as Address;
+            if (address != null) return address.Identifier.ReferenceModifier != null;
+            Length len = identifier as Length;
+            if (len != null) return len.Identifier.ReferenceModifier != null;
+            return false;
+        }
     }
 }

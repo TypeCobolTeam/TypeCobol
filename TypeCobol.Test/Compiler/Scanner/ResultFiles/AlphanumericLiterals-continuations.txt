@@ -201,3 +201,31 @@
 [3,3+:.]<PeriodSeparator>
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
+-- Line 47 --
+[1,1: ]<SpaceSeparator>
+
+-- Line 48 --
+[2,9:Issue 60]<CommentLine>
+
+-- Line 49 --
+[1,17:                 ]<SpaceSeparator>
+[18,21:MOVE]<MOVE>
+[22,22: ]<SpaceSeparator>
+=>continued:[23,66:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 ']<AlphanumericLiteral>(',Y,N){Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 }
+
+-- Line 50 --
+[2,16:               ]<SpaceSeparator>
+=>continuation:=>continued:[17,66:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 ']<AlphanumericLiteral>(',Y,N){Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 }
+
+-- Line 51 --
+[2,16:               ]<SpaceSeparator>
+=>continuation:[17,64:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 ']<AlphanumericLiteral>(',Y,Y){Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua                 }
+[65,66:  ]<SpaceSeparator>
+
+-- Line 52 --
+[1,42:                                          ]<SpaceSeparator>
+[43,44:TO]<TO>
+[45,46:  ]<SpaceSeparator>
+[47,55:SOMEWHERE]<UserDefinedWord>
+[56,66:           ]<SpaceSeparator>
+

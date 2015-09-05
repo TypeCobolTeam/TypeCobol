@@ -1,0 +1,25 @@
+﻿--- Code Elements ---
+[[EntryStatement]] [1,5:ENTRY]<ENTRY> --> [7,15:'program']<AlphanumericLiteral>(',Y,Y){program}
+
+[[SentenceEnd]] [16,16+:.]<PeriodSeparator> --> [16,16+:.]<PeriodSeparator>
+
+[[EntryStatement]] [1,5:ENTRY]<ENTRY> --> [23,23:a]<UserDefinedWord>
+
+[[SentenceEnd]] [24,24+:.]<PeriodSeparator> --> [24,24+:.]<PeriodSeparator>
+
+[[EntryStatement]] [1,5:ENTRY]<ENTRY> --> [27,27:c]<UserDefinedWord>
+
+[[SentenceEnd]] [28,28+:.]<PeriodSeparator> --> [28,28+:.]<PeriodSeparator>
+
+[[EntryStatement]] [1,5:ENTRY]<ENTRY> --> [36,36:c]<UserDefinedWord>
+
+[[SentenceEnd]] [37,37+:.]<PeriodSeparator> --> [37,37+:.]<PeriodSeparator>
+
+[[EntryStatement]] [1,5:ENTRY]<ENTRY> --> [49,49:e]<UserDefinedWord>
+
+[[SentenceEnd]] [50,50+:.]<PeriodSeparator> --> [50,50+:.]<PeriodSeparator>
+
+[[EntryStatement]] [1,5:ENTRY]<ENTRY> --> [77,77:h]<UserDefinedWord>
+
+[[SentenceEnd]] [78,78+:.]<PeriodSeparator> --> [78,78+:.]<PeriodSeparator>
+

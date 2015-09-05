@@ -1,0 +1,25 @@
+CLOSE filename
+CLOSE filename REEL
+CLOSE filename UNIT
+CLOSE filename REEL REMOVAL
+CLOSE filename REEL FOR REMOVAL
+CLOSE filename UNIT REMOVAL
+CLOSE filename UNIT FOR REMOVAL
+CLOSE filename REEL WITH NO REWIND
+CLOSE filename UNIT WITH NO REWIND
+CLOSE filename NO REWIND
+CLOSE filename WITH NO REWIND
+CLOSE filename LOCK
+CLOSE filename WITH LOCK
+CLOSE f01
+      f02 REEL
+      f03 UNIT
+	  f04
+	  f05 UNIT
+      f06 REEL FOR REMOVAL
+	  f07 LOCK
+      f08 NO REWIND
+      f09 WITH NO REWIND
+	  f10
+      f11 WITH LOCK
+      f12 LOCK

@@ -1,0 +1,25 @@
+﻿--- Code Elements ---
+[[DeleteStatement]] [1,6:DELETE]<DELETE> --> [8,8:f]<UserDefinedWord>
+
+[[DeleteStatement]] [1,6:DELETE]<DELETE> --> [10,15:RECORD]<RECORD>
+
+[[DeleteStatement]] [1,6:DELETE]<DELETE> --> [8,8:f]<UserDefinedWord>
+
+[[DeleteStatementEnd]] [10,19:END-DELETE]<END_DELETE> --> [10,19:END-DELETE]<END_DELETE>
+
+[[DeleteStatement]] [1,6:DELETE]<DELETE> --> [10,15:RECORD]<RECORD>
+
+[[DeleteStatementEnd]] [17,26:END-DELETE]<END_DELETE> --> [17,26:END-DELETE]<END_DELETE>
+
+[[DeleteStatement]] [1,6:DELETE]<DELETE> --> [10,15:RECORD]<RECORD>
+
+[[InvalidKeyCondition]] [3,9:INVALID]<INVALID> --> [11,13:KEY]<KEY>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[NotInvalidKeyCondition]] [3,5:NOT]<NOT> --> [15,17:KEY]<KEY>
+
+[[ContinueStatement]] [5,12:CONTINUE]<CONTINUE> --> [5,12:CONTINUE]<CONTINUE>
+
+[[DeleteStatementEnd]] [1,10:END-DELETE]<END_DELETE> --> [1,10:END-DELETE]<END_DELETE>
+

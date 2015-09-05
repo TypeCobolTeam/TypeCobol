@@ -121,18 +121,32 @@ codeElement:
 	subtractStatementEnd |
 
 		// --- Data movement statements ---
+	acceptStatement | // only with (DATE, DAY, DAY-OF-WEEK, TIME)
+	inspectStatement |
 	stringStatement |
 	stringStatementEnd |
 	unstringStatement |
 	unstringStatementEnd |
 
+		// --- Ending statements ---
+	stopStatement | // only STOP RUN
+	gobackStatement |
+
 		// --- I/O statements ---
+//	acceptStatement | // only with <identifier>
+	startStatement |
+	startStatementEnd |
+//	stopStatement | // only with <literal>
 	closeStatement |
 	openStatement |
 	readStatement |
 	readStatementEnd |
+	rewriteStatement |
+	rewriteStatementEnd |
 	writeStatement |
 	writeStatementEnd |
+	deleteStatement |
+	deleteStatementEnd |
 
 		// --- Ordering statements ---
 	mergeStatement |
@@ -198,17 +212,6 @@ codeElement:
 	onSizeErrorCondition |
 	notOnSizeErrorCondition |
 
-
-
-       //divideStatement |
-           // ... size exception phrases ...
-       divideStatementEnd |
-       //rewriteStatement |
-           // ... invalid key phrases ...
-       rewriteStatementEnd |
-       //startStatement |
-           // ... invalid key phrases ...
-       startStatementEnd |
        //xmlGenerateStatement |
            // ... exception phrases ...
        // xmlStatementEnd |
@@ -228,7 +231,6 @@ statement:
 
 imperativeStatement:
 	  dataMovementStatement
-	| endingStatement
 	| ioStatement
 		// p276: A series of imperative statements can be specified wherever an imperative statement is allowed.
 		// p276: A conditional statement that is terminated by its explicit scope terminator is also classified as an imperative statement.
@@ -242,9 +244,7 @@ imperativeStatement:
 	;
 
 dataMovementStatement:
-	  acceptStatementFormat2 // only with: (DATE, DAY, DAY-OF-WEEK, TIME)
-	| initializeStatement
-	| inspectStatement
+	initializeStatement
 	| moveStatement
 	| setStatement // p278: SET is seen as a table-handling statement, too
 		// STRING and UNSTRING statements are imperative statements, but
@@ -256,23 +256,12 @@ dataMovementStatement:
 	| xmlGenerateStatement
 	| xmlParseStatement;
 
-endingStatement:
-	  stopStatement // only STOP RUN
-//	| exitMethodStatement //TODO still declared up there, put it here
-//	| exitProgramStatement //TODO still declared up there, put it here
-	| gobackStatement;
-
 ioStatement:
-	  acceptStatementFormat1 // with: identifier
 		// DELETE, REWRITE and START statement are imperative statements, but
 		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
-///	| deleteStatement
-	| displayStatement
+	displayStatement
 		// READ statement is an imperative statement, but
 		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-	| rewriteStatement
-	| startStatement
-	| stopStatement // only with: <literal>
 		// WRITE statement is an imperative statement, but
 		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
 	;
@@ -4196,9 +4185,7 @@ useStatement:
 // “Common processing facilities” on page 286.
 
 useStatementForExceptionDeclarative:
-                USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE 
-                ON? (fileName+ | (INPUT | OUTPUT | I_O | EXTEND))
-                PeriodSeparator;
+	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileName+ | (INPUT | OUTPUT | I_O | EXTEND));
 
 // p548: ... more rules that appky to declarative procedures until page 549 ...
 
@@ -4254,8 +4241,7 @@ useStatementForExceptionDeclarative:
 // program (except ALTER statements in declarative procedures) 
 
 useStatementForDebuggingDeclarative:
-                USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES))
-                PeriodSeparator;
+	USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES));
 
 // p252: Procedures
 // Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
@@ -4613,13 +4599,7 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement:
-	acceptStatementFormat2 | acceptStatementFormat1;
-
-acceptStatementFormat1:
-	ACCEPT identifier (FROM mnemonicOrEnvironmentName)?;
-
-acceptStatementFormat2:
-	ACCEPT identifier FROM (DATE YYYYMMDD? | DAY YYYYDDD? | DAY_OF_WEEK | TIME);
+	ACCEPT identifier (FROM (mnemonicOrEnvironmentName | (DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME))?;
 
 
 
@@ -4828,24 +4808,12 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	CALL (identifier | literal | procedurePointer | functionPointer) callStatementUsing? callStatementReturning?;
+	CALL (identifier | literal | procedurePointer | functionPointer) (USING callBy+)? callReturning?;
 
-callStatementUsing:
-	USING callStatementWhat+;
+callBy:
+	(BY? (REFERENCE | CONTENT | VALUE))? (identifier | literal | fileName | OMITTED)+;
 
-callStatementWhat:
-	callStatementByReference | callStatementByContent | callStatementByValue;
-
-callStatementByReference:
-	(BY? REFERENCE)? (((ADDRESS OF)? identifier) | fileName | OMITTED)+;
-
-callStatementByContent:
-	BY? CONTENT ((((ADDRESS OF)|(LENGTH OF))? identifier) | literal | OMITTED)+;
-
-callStatementByValue:
-	BY? VALUE ((((ADDRESS OF)|(LENGTH OF))? identifier) | literal)+;
-
-callStatementReturning:
+callReturning:
 	RETURNING identifier;
 
 callStatementEnd: END_CALL;
@@ -4893,7 +4861,7 @@ functionPointer:
 // For example: A calls B and B calls C (When A receives control, it can cancel C.) A calls B and A calls C (When C receives control, it can cancel B.)
 
 cancelStatement:
-                   CANCEL (identifier | literal)+;
+	CANCEL identifierOrLiteral+;
 
 // p313: CLOSE statement
 // The CLOSE statement terminates the processing of volumes and files.
@@ -4922,7 +4890,9 @@ cancelStatement:
 // ... p314->p315 : more details on the Effect of CLOSE statement on file types  / The permissible combinations of CLOSE statement phrases ...
 
 closeStatement:
-	CLOSE (fileName ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?)+;
+	CLOSE closeFileName+;
+
+closeFileName: fileName ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?;
 
 // p317: COMPUTE statement
 // The COMPUTE statement assigns the value of an arithmetic expression to one or more data items.
@@ -5121,12 +5091,21 @@ withNoAdvancing:
 // This explicit scope terminator serves to delimit the scope of the DIVIDE statement. END-DIVIDE turns a conditional DIVIDE statement into an imperative statement that can be nested in another conditional statement. END-DIVIDE can also be used with an imperative DIVIDE statement.
 
 divideStatement:
-                   DIVIDE (identifier | literal) (INTO | BY) ((identifier ROUNDED?)+ | literal)
-                   (GIVING (identifier ROUNDED?)+)?
-                   (REMAINDER identifier)?;
+	divideGiving | divideSimple;
 
+divideSimple:
+	DIVIDE dDivisor INTO identifierRounded+;
+divideGiving:
+	DIVIDE ((dDivisor INTO dDividend) | (dDividend BY dDivisor)) GIVING ((identifierRounded REMAINDER identifier) | identifierRounded+);
 
+//DIVIDE dDivisor  INTO                  identifierRounded+                       Format 1: identifierRoundedi = dDivisor/dQuotienti
+//DIVIDE dDivisor  INTO dDividend GIVING identifierRounded+                       Format 2: identifierRoundedi = dDivisor/dDividend
+//DIVIDE dDividend BY   dDivisor  GIVING identifierRounded+                       Format 3: identifierRoundedi = dDivisor/dDividend
+//DIVIDE dDivisor  INTO dDividend GIVING identifierRounded REMAINDER identifier   Format 4: identifierRounded  = dDivisor/dDividend    identifier = remainder
+//DIVIDE dDividend BY   dDivisor  GIVING identifierRounded REMAINDER identifier   Format 5: identifierRounded  = dDivisor/dDividend    identifier = remainder
 
+dDivisor:  identifierOrNumericLiteral;
+dDividend: identifierOrNumericLiteral;
 
 //divideStatementConditional:
 //                              divideStatement
@@ -5152,9 +5131,10 @@ divideStatementEnd: END_DIVIDE;
 // For a discussion of the USING phrase, see “The PROCEDURE DIVISION header” on page 247.
 
 entryStatement:
-                  ENTRY literal
-                  (USING (((BY? REFERENCE) | (BY? VALUE))? identifier+)+)?
-                  /*PeriodSeparator*/;
+	ENTRY literal (USING byReferenceOrByValueIdentifiers+)? /*PeriodSeparator*/;
+
+byReferenceOrByValueIdentifiers:
+	(BY? (REFERENCE | VALUE))? identifier+;
 
 
 
@@ -5305,8 +5285,7 @@ gobackStatement:
 // When an ALTER statement refers to a paragraph, the paragraph can consist only of the paragraph-name followed by an unconditional or altered GO TO statement.
 
 gotoStatement:
-                 GO TO? /*(*/(procedureName+ (DEPENDING ON? identifier)?)? /*|
-                          PeriodSeparator)*/;
+                 GO TO? procedureName* (DEPENDING ON? identifier)?;
 
 // p341: IF statement
 // The IF statement evaluates a condition and provides for alternative actions in the
@@ -5488,12 +5467,10 @@ ifStatementEnd:
 //    the same data description entry.
 
 initializeStatement:
-                       INITIALIZE identifier+
-                       (REPLACING ( (ALPHABETIC |
-                                     ALPHANUMERIC | ALPHANUMERIC_EDITED |
-                                     NATIONAL | NATIONAL_EDITED |
-                                     NUMERIC | NUMERIC_EDITED |
-                                     DBCS |EGCS ) DATA? BY (identifier | literal) )+)?;
+	INITIALIZE identifier+ (REPLACING initializeReplacing+)?;
+
+initializeReplacing:
+	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS |EGCS) DATA? BY identifierOrLiteral;
 
 // p346: INSPECT statement
 // The INSPECT statement examines characters or groups of characters in a data
@@ -5702,19 +5679,29 @@ initializeStatement:
 // ... more details p354->355 : Example of the INSPECT statement ...
 
 inspectStatement:
-                    INSPECT identifier 
-                   (TALLYING
-                    (identifier FOR ( (CHARACTERS inspectStatementPhrase1) |
-                                      ((ALL | LEADING) ((identifier | literal) inspectStatementPhrase1)+) )+ )+)?
-                   (REPLACING
-                    ( (CHARACTERS BY (identifier| literal) inspectStatementPhrase1) |
-                      ((ALL | LEADING | FIRST) ((identifier | literal) BY (identifier | literal) inspectStatementPhrase1)+) )+)?
-                   (CONVERTING
-                    (identifier | literal) TO (identifier | literal)
-                    inspectStatementPhrase1)?;
+	INSPECT identifier (inspectConverting | ((TALLYING inspectTallying+)? (REPLACING (inspectCharacters | inspectIdentifiers)+)?));
 
-inspectStatementPhrase1:
-                          ((BEFORE | AFTER) INITIAL? (identifier | literal))*;
+inspectConverting:
+	CONVERTING identifierOrLiteral TO identifierOrLiteral inspectPhrase1*;
+
+inspectTallying:
+	identifier FOR (inspectCharacters | inspectIdentifiers);
+
+inspectCharacters:
+	CHARACTERS inspectBy? inspectPhrase1*;
+
+inspectIdentifiers:
+	(ALL | LEADING | FIRST) inspectByIdentifiers+;
+
+inspectByIdentifiers:
+	identifierOrLiteral inspectBy? inspectPhrase1*;
+
+inspectPhrase1:
+	(BEFORE | AFTER) INITIAL? identifierOrLiteral;
+
+inspectBy: BY identifierOrLiteral;
+
+
 
 // p356: INVOKE statement 
 // The INVOKE statement can create object instances of a COBOL or Java class and
@@ -5922,15 +5909,15 @@ inspectStatementPhrase1:
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (identifier | className | (SELF | SUPER)) (literal | identifier | NEW) invokeStatementUsing? invokeStatementReturing?;
+	INVOKE invokeObject (alphanumOrNationalLiteral | identifier | NEW) (USING invokeUsing+)? invokeReturning?;
 
-invokeStatementUsing:
-	USING invokeStatementUsingWhat+;
+invokeObject:
+	identifier | className | SELF | SUPER;
 
-invokeStatementUsingWhat:
-	BY? VALUE (((LENGTH OF)? identifier) | literal)+;
+invokeUsing:
+	BY? VALUE (identifier | literal)+;
 
-invokeStatementReturing:
+invokeReturning:
 	RETURNING identifier;
 
 invokeStatementEnd: END_INVOKE;
@@ -6137,11 +6124,14 @@ invokeStatementEnd: END_INVOKE;
 // statement.
 
 mergeStatement:
-                  MERGE fileName (ON? (ASCENDING | DESCENDING) KEY? dataName+)+
-                  (COLLATING? SEQUENCE IS? alphabetName)?
-                  USING fileName fileName+
-                  ( (OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?) |
-                    (GIVING fileName+) );
+
+	MERGE fileName onAscendingDescendingKey+
+		(COLLATING? SEQUENCE IS? alphabetName)?
+		usingFilenames
+//		USING fileName fileName+
+		(givingFilenames | outputProcedure);
+
+
 
 // p369: MOVE statement
 // The MOVE statement transfers data from one area of storage to one or more other
@@ -6351,11 +6341,15 @@ multiplyStatementFormat2:
 // ... more details p382->383 OPEN statement notes ...
 
 openStatement:
-	OPEN ( ( INPUT  (fileName ((WITH? NO REWIND) | REVERSED)?)+ )
-		  |( OUTPUT (fileName  (WITH? NO REWIND)?)+ )
-		  |( I_O fileName+ )
-		  |( EXTEND fileName+ )
-		 )+;
+	OPEN (openInput | openOutput | openIO | openExtend)+;
+
+openInput: INPUT fileNameWithNoRewindOrReversed+;
+openOutput: OUTPUT fileNameWithNoRewind+;
+openIO: I_O fileName+;
+openExtend: EXTEND fileName+;
+
+fileNameWithNoRewindOrReversed: fileName ((WITH? NO REWIND) | REVERSED)?;
+fileNameWithNoRewind: fileName (WITH? NO REWIND)?;
 
 // p384: PERFORM statement
 // The PERFORM statement transfers control explicitly to one or more procedures
@@ -6728,13 +6722,12 @@ readStatementEnd: END_READ;
 // those records placed in it by execution of RELEASE statements.
 
 releaseStatement:
-                    RELEASE recordName (FROM identifier)?;
+	RELEASE qualifiedDataName (FROM identifier)?;
 
 // record-name-1
 // Must specify the name of a logical record in a sort-merge file description
 // entry (SD). record-name-1 can be qualified.
-recordName:
-              qualifiedDataName;
+//recordName: qualifiedDataName;
 
 // p403: RETURN statement
 // The RETURN statement transfers records from the final phase of a sorting or
@@ -6853,7 +6846,7 @@ returnStatementEnd: END_RETURN;
 // ... more details p406->407 Reusing a logical record, Sequential / Indexed / Relative files ...
 
 rewriteStatement:
-                    REWRITE recordName (FROM identifier)?;
+                    REWRITE qualifiedDataName (FROM identifier)?;
 
 //rewriteStatementConditional:
 //                             rewriteStatement
@@ -6918,7 +6911,7 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p414 Search statement considerations ...
 
 searchStatement:
-	SEARCH ((ALL identifier) | (identifier (VARYING (identifier | indexName))?));
+	SEARCH ALL? identifier (VARYING (identifier | indexName))?;
 
 whenConditionalExpression:
 	WHEN conditionalExpression;
@@ -7145,62 +7138,106 @@ searchStatementEnd: END_SEARCH;
 ///                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
 ///                      (conditionName+ TO TRUE) );
 
-setStatement:
-	  setStatementFormat1
-	| setStatementFormat2
-	| setStatementFormat3
-	| setStatementFormat4
-	| setStatementFormat5
-	| setStatementFormat6
-	| setStatementFormat7
-	;
+//setStatement:
+//	  setStatementFormat1	//SET for basic table handling
+//	| setStatementFormat2	//SET for adjusting indexes
+//	| setStatementFormat3	//SET for external switches
+//	| setStatementFormat4	//SET for condition-names
+//	| setStatementFormat5	//SET for USAGE IS POINTER
+//	| setStatementFormat6	//SET for procedure-pointer and function-pointer data items
+//	| setStatementFormat7	//SET for USAGE OBJECT REFERENCE data items
+//	;
 
-setStatementFormat1:
-	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
-setStatementFormat1Receiving:
-	indexName | identifier;
-setStatementFormat1Sending:
-	indexName | identifier | IntegerLiteral;
 
-setStatementFormat2:
-	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
 
-setStatementFormat3:
-	SET setStatementFormat3What+;
-setStatementFormat3What:
-	mnemonicForUPSISwitchName+ TO (ON | OFF);
-
-setStatementFormat4:
-	SET identifier+ TO TRUE;
-
-setStatementFormat5:
-	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
-setStatementFormat5Receiving:
-	(ADDRESS OF)? identifier;
-setStatementFormat5Sending:
-	((ADDRESS OF)? identifier) | (NULL | NULLS);
-
-setStatementFormat6:
-	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
-setStatementFormat6Receiving:
-	  procedurePointer
-	| functionPointer
-	;
-setStatementFormat6Sending:
-	  procedurePointer
-	| functionPointer
-	| (ENTRY (identifier | alphanumericLiteral))
-	| (NULL | NULLS)
-	| pointerDataItem
-	;
-
-setStatementFormat7:
-	SET objectReferenceId TO setStatementFormat7Sending;
-setStatementFormat7Sending:
-	objectReference | NULL | SELF;
-
+////Format 1: SET for basic table handling
+//setStatementFormat1:
+//	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
+//setStatementFormat1Receiving:
+//	indexName | identifier;
+//setStatementFormat1Sending:
+//	indexName | identifier | IntegerLiteral;
+//
+////Format 2: SET for adjusting indexes
+//setStatementFormat2:
+//	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
+//
+////Format 3: SET for external switches
+//setStatementFormat3:
+//	SET setStatementFormat3What+;
+//setStatementFormat3What:
+//	mnemonicForUPSISwitchName+ TO (ON | OFF);
+//
+////Format 4: SET for condition-names
+//setStatementFormat4:
+//	SET identifier+ TO TRUE;
+//
+////Format 5: SET for USAGE IS POINTER
+//setStatementFormat5:
+//	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
+//setStatementFormat5Receiving:
+//	(ADDRESS OF)? identifier;
+//setStatementFormat5Sending:
+//	((ADDRESS OF)? identifier) | (NULL | NULLS);
+//
+////Format 6: SET for procedure-pointer and function-pointer data items
+//setStatementFormat6:
+//	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
+//setStatementFormat6Receiving:
+//	  procedurePointer
+//	| functionPointer
+//	;
+//setStatementFormat6Sending:
+//	  procedurePointer
+//	| functionPointer
+//	| (ENTRY (identifier | alphanumericLiteral))
+//	| (NULL | NULLS)
+//	| pointerDataItem
+//	;
+//
+////Format 7: SET for USAGE OBJECT REFERENCE data items
+//setStatementFormat7:
+//	SET objectReferenceId TO setStatementFormat7Sending;
+//setStatementFormat7Sending:
+//	objectReference | NULL | SELF;
+//
 pointerDataItem:   identifier; // do these SET items
 objectReferenceId: identifier;// really work like that?
+
+
+
+setStatement:
+	setStatementForAssignation	//SET format 1 for basic table handling
+								//SET format 4 for condition-names
+								//SET format 5 for USAGE IS POINTER
+								//SET format 6 for procedure-pointer and function-pointer data items
+								//SET format 7 for USAGE OBJECT REFERENCE data items
+	| setStatementForIndexes	//SET format 2 for adjusting indexes
+	| setStatementForSwitches;	//SET format 3 for external switches
+
+setStatementForAssignation:
+	SET setStatementForAssignationReceiving+ TO setStatementForAssignationSending;
+
+setStatementForAssignationReceiving:
+	indexName | identifier | procedurePointer | functionPointer | objectReferenceId;					
+
+setStatementForAssignationSending:
+	indexName | identifier | IntegerLiteral																		//Format 1 + 5
+	| TRUE																										//Format 4
+	| (NULL | NULLS)																							//Format 5 + 6 + 7
+	| procedurePointer | functionPointer | (ENTRY (identifier | alphanumericLiteral)) 	| pointerDataItem		//Format 6 (+NULL | NULLS)
+	|objectReferenceId | SELF		;																			//Format 7 (+NULL)
+
+//Format 2: SET for adjusting indexes
+setStatementForIndexes:
+	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
+
+//Format 3: SET for external switches
+setStatementForSwitches:
+	SET setStatementForSwitchesWhat+;
+setStatementForSwitchesWhat:
+	mnemonicForUPSISwitchName+ TO (ON | OFF);
+
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according
@@ -7463,11 +7500,17 @@ objectReferenceId: identifier;// really work like that?
 // statement.
 
 sortStatement:
-                 SORT fileName (ON? (ASCENDING | DESCENDING) KEY? dataName+)+
-                 (WITH? DUPLICATES IN? ORDER?)?
-                 (COLLATING? SEQUENCE IS? alphabetName)?
-                 ((USING fileName+) | (INPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?))
-                 ((GIVING fileName+) | (OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?));
+	SORT fileName onAscendingDescendingKey+
+		(WITH? DUPLICATES IN? ORDER?)?
+		(COLLATING? SEQUENCE IS? alphabetName)?
+		(usingFilenames  | inputProcedure)
+		(givingFilenames | outputProcedure);
+
+onAscendingDescendingKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
+usingFilenames:  USING  fileName+;
+givingFilenames: GIVING fileName+;
+inputProcedure:  INPUT  PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
+outputProcedure: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
 
 // p429: START statement
 // The START statement provides a means of positioning within an indexed or
@@ -7542,17 +7585,7 @@ sortStatement:
 // the specified comparison.
 
 startStatement:
-                  START fileName
-                  (KEY IS? ((EQUAL TO?) | EqualOperator |
-                            (GREATER THAN?) | GreaterThanOperator |
-                            (NOT LESS THAN?) | (NOT LessThanOperator) |
-                            (GREATER THAN? OR EQUAL TO?) | GreaterThanOrEqualOperator) dataName)?;
-
-//startStatementConditional:
-//                             startStatement
-//                             (invalidKeyCondition imperativeStatement)?
-//                             (notInvalidKeyCondition imperativeStatement)?
-//                             startStatementEnd?;
+	START fileName (KEY IS? relationalOperator qualifiedDataName)?;
 
 startStatementEnd: END_START;
 
@@ -7699,10 +7732,14 @@ stopStatement:
 // ... more details p435->437 Data flow / Example of the STRING statement ...
 
 stringStatement:
-	STRING stringStatementWhat+ INTO identifier stringStatementWith?;
+	STRING stringStatementWhat+ INTO identifierInto=identifier stringStatementWith?;
+
 
 stringStatementWhat:
-	identifierOrLiteral+ DELIMITED BY? (identifierOrLiteral | SIZE);
+	identifierToConcat=identifierOrLiteral+ DELIMITED BY? stringStatementDelimiter;
+
+stringStatementDelimiter:
+	identifierOrLiteral | SIZE;
 
 stringStatementWith:
 	WITH? POINTER identifier;
@@ -7952,14 +7989,23 @@ subtractStatementEnd: END_SUBTRACT;
 // ... more details p447 Values at the end of execution of the UNSTRING statement ...
 // ... more details p447->448 Example of the UNSTRING statement ...
 
+//unstringStatement:
+//	UNSTRING identifier INTO identifier;
+
 unstringStatement:
-	UNSTRING identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
+	UNSTRING unstringIdentifier=identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
 
 unstringDelimited:
-	DELIMITED BY? ALL? identifierOrLiteral (OR ALL? identifierOrLiteral)*;
+	DELIMITED BY? ALL? delimitedBy=identifierOrLiteral ustringOthersDelimiters*;
 
+ustringOthersDelimiters:
+	OR ALL? identifierOrLiteral;
+
+//unstringReceiver:
+//	identifier unstringDelimiter? unstringCount?;
+	
 unstringReceiver:
-	identifier unstringDelimiter? unstringCount?;
+	intoIdentifier=identifier unstringDelimiter? unstringCount?;
 
 unstringDelimiter:
 	DELIMITER IN? identifier;
@@ -8183,8 +8229,10 @@ unstringStatementEnd: END_UNSTRING;
 // ... more details p456 WRITE for relative files ...
 
 writeStatement:
-	WRITE recordName (FROM identifier)?
-	((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
+	WRITE qualifiedDataName (FROM identifier)?
+	((BEFORE | AFTER) ADVANCING? ((identifierOrInteger (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
+
+identifierOrInteger: identifier | IntegerLiteral;
 
 writeStatementEnd: END_WRITE;
 
@@ -8524,23 +8572,40 @@ writeStatementEnd: END_WRITE;
 // ... more details p468 XML element name and attribute name formation ...
 
 xmlGenerateStatement:
-                        XML GENERATE identifier FROM identifier 
-                        (COUNT IN? identifier)?
-                        (WITH? ENCODING codepage)? 
-                        (WITH? XML_DECLARATION)?
-                        (WITH? ATTRIBUTES)?
-                        ((NAMESPACE IS? (identifier | literal))
-                        (NAMESPACE_PREFIX IS? (identifier | literal))?)?
-                        (NAME OF? (identifier IS? literal)+)?
-                        (TYPE OF? (identifier IS? (ATTRIBUTE | ELEMENT | CONTENT))+)?
-                        (SUPPRESS ((identifier whenPhrase) | 
-                                   ((EVERY ((NUMERIC (ATTRIBUTE | ELEMENT)?) |
-                                            (NONNUMERIC (ATTRIBUTE | ELEMENT)?) |
-                                            (ATTRIBUTE | ELEMENT)))? whenPhrase) )+)?;
+	XML GENERATE identifier FROM identifier
+		xmlCount?
+		(WITH? ENCODING codepage)?
+		(WITH? XML_DECLARATION)?
+		(WITH? ATTRIBUTES)?
+		(xmlNamespace xmlNamespacePrefix?)?
+		(NAME OF? xmlName+)?
+		(TYPE OF? xmlType+)?
+		(SUPPRESS xmlSuppress+)?;
+
+xmlCount:
+	COUNT IN? identifier;
+
+xmlNamespace:
+	NAMESPACE IS? (identifier | alphanumOrNationalLiteral);
+
+xmlNamespacePrefix:
+	NAMESPACE_PREFIX IS? (identifier | alphanumOrNationalLiteral);
+
+xmlName:
+	identifier IS? alphanumOrNationalLiteral;
+
+xmlType:
+	identifier IS? (ATTRIBUTE | ELEMENT | CONTENT);
+
+xmlSuppress:
+	(identifier | xmlSuppressGeneric)? whenPhrase;
+
+xmlSuppressGeneric:
+	EVERY ((NUMERIC (ATTRIBUTE | ELEMENT)?) | (NONNUMERIC (ATTRIBUTE | ELEMENT)?) | ATTRIBUTE | ELEMENT);
 
 whenPhrase:
-              WHEN (ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES)
-              (OR? (ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES))*;
+	WHEN figurativeConstant (OR? figurativeConstant)*;
+// only figurative constants allowed: ZERO  ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 
 //xmlGenerateStatementConditional:
 //                                   xmlGenerateStatement
@@ -9198,10 +9263,16 @@ execStatementEnd: END_EXEC;
 // ...
 
 arithmeticExpression :
-                         multiplicationAndDivision ((PlusOperator | MinusOperator) multiplicationAndDivision)*;
+	multiplicationAndDivision arithMADTail*;
+
+arithMADTail:
+	(PlusOperator | MinusOperator) multiplicationAndDivision;
 
 multiplicationAndDivision:
-                             exponentiation ((MultiplyOperator | DivideOperator) exponentiation)*;
+	exponentiation arithEXPTail*;
+
+arithEXPTail:
+	(MultiplyOperator | DivideOperator) exponentiation;
               
 exponentiation:
                   unaryOperator (PowerOperator unaryOperator)*;
@@ -9733,7 +9804,9 @@ conditionBase:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier:
-	FUNCTION FunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+
+intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the

@@ -142,15 +142,14 @@ namespace TypeCobol.Compiler.Parser
             return new Empty();
         }
 
-        private char createOperator(CobolCodeElementsParser.RelationalOperatorContext context)
+        internal char CreateOperator(CobolCodeElementsParser.RelationalOperatorContext context)
         {
+            if (context == null) return '?';
             var simple = context.simpleRelation();
             if (simple != null)
             {
                 if (simple.GreaterThanOrEqualOperator() != null) return '≥';
                 if (simple.LessThanOrEqualOperator() != null) return '≤';
-                if (simple.OR() == null) ;//TODO diagnostic about missing word
-                if (simple.EQUAL() == null) ;//TODO diagnostic about missing word
                 if (simple.GREATER() != null) return '≥';
                 if (simple.LESS() != null) return '≤';
             }
@@ -252,7 +251,7 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context)
         {
             LogicOperation relation = null;
-            char op = createOperator(context.relationalOperator());
+            char op = CreateOperator(context.relationalOperator());
             /*
             var operands = context.operand();
             if (operands != null && operands.Count > 0)

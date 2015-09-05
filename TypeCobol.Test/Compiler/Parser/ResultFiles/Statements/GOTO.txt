@@ -1,0 +1,37 @@
+﻿--- Diagnostics ---
+[1,2]<28,Error,Syntax>Syntax error : no viable alternative at input 'i2 ... GO' (RuleStack=codeElement, OffendingSymbol=[1,2:GO]<GO> on line 45)
+[1,2]<28,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 45)
+[1,2]<28,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 46)
+[1,2]<28,Error,Syntax>Syntax error : Conditional GO TO: Required <procedure name> (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 48)
+[1,2]<28,Error,Syntax>Syntax error : Conditional GO TO: Maximum 255 <procedure name> allowed (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 50)
+--- Code Elements ---
+[[GotoStatement]] [1,2:GO]<GO> --> [7,19:procedurename]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [4,16:procedurename]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [29,38:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [26,35:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [26,35:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [23,32:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [34,43:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [14,23:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [4,5:TO]<TO>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [1,2:GO]<GO>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [34,35:i1]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [13,14:p3]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [10,11:p3]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [20,29:identifier]<UserDefinedWord>
+
+[[GotoStatement]] [1,2:GO]<GO> --> [14,23:identifier]<UserDefinedWord>
+
