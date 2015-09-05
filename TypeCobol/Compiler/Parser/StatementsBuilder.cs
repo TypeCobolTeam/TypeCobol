@@ -232,7 +232,7 @@ namespace TypeCobol.Compiler.Parser
         private InspectConvertingStatement CreateInspectConverting(CobolCodeElementsParser.InspectConvertingContext context, Identifier identifier)
         {
             var statement = new InspectConvertingStatement();
-            if (context.identifierOrLiteral().Count > 0)
+            if (context.identifierOrLiteral().Length > 0)
             {
                 int c = 0;
                 foreach (var i in context.identifierOrLiteral())

@@ -80,27 +80,27 @@ namespace TypeCobol.Compiler.Parser
         {
             var authoringProperties = new AuthoringProperties();
 
-            if (context.authorParagraph().Count > 0)
+            if (context.authorParagraph().Length > 0)
             {
                 authoringProperties.Author =
                     BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.dateCompiledParagraph().Count > 0)
+            if (context.dateCompiledParagraph().Length > 0)
             {
                 authoringProperties.DateCompiled =
                     BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.dateWrittenParagraph().Count > 0)
+            if (context.dateWrittenParagraph().Length > 0)
             {
                 authoringProperties.DateWritten =
                     BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.installationParagraph().Count > 0)
+            if (context.installationParagraph().Length > 0)
             {
                 authoringProperties.Installation =
                     BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
             }
-            if (context.securityParagraph().Count > 0)
+            if (context.securityParagraph().Length > 0)
             {
                 authoringProperties.Security =
                     BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
@@ -505,7 +505,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterAlterStatement(CobolCodeElementsParser.AlterStatementContext context)
         {
             var statement = new AlterStatement();
-            // context.procedureName().Count %2 != 0 can never happen outside of syntax errors
+            // context.procedureName().Length %2 != 0 can never happen outside of syntax errors
             AlterStatement.Alter alter = null;
             foreach (var p in context.procedureName())
             {
