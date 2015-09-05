@@ -2268,7 +2268,7 @@ linkageSectionHeader:
 //	fdFormat1 | fdFormat2 | fdFormat3 | fdFormat4;
 
 fdFormat1:
-	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel1? fdValue? fdData? fdLineage? fdRecording? fdCodeset? PeriodSeparator;
+	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel1? fdValue? fdData? fdLinage? fdRecording? fdCodeset? PeriodSeparator;
 
 fdFormat2:
 	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel2? fdValue? fdData? PeriodSeparator;
@@ -2277,7 +2277,7 @@ fdFormat3:
 	FD fileName fdExternal? fdGlobal? (fdRecord1 | fdRecord3)? PeriodSeparator;
 
 fdFormat4:
-	SD fileName (fdRecord1 | fdRecord2 | fdRecord3)? fdData? fdBlock? fdLabel1? fdValue? fdLineage? fdCodeset? PeriodSeparator;
+	SD fileName (fdRecord1 | fdRecord2 | fdRecord3)? fdData? fdBlock? fdLabel1? fdValue? fdLinage? fdCodeset? PeriodSeparator;
 
 fdExternal:
 	IS? EXTERNAL;
@@ -2311,8 +2311,8 @@ fdValue:
 fdData:
 	DATA fdRecordVerb dataName+;
 
-fdLineage:
-	LINEAGE IS? (dataName | IntegerLiteral) LINES? fdClause2;
+fdLinage:
+	LINAGE IS? (dataName | IntegerLiteral) LINES? fdClause2;
 
 fdClause2:
 	fdFooting? fdTop? fdBottom?;

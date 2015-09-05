@@ -24,10 +24,10 @@ namespace TypeCobol.Compiler.Parser
             if (context.andCondition() != null)
             {
                 var conditions = context.andCondition();
-                if (conditions.Count > 0)
+                if (conditions.Length > 0)
                 {
                     LogicalExpression left = createCondition(conditions[0]);
-                    if (conditions.Count > 1)
+                    if (conditions.Length > 1)
                     {
                         LogicalExpression right = createCondition(conditions[1]);
                         return new OR(left, right);
@@ -43,10 +43,10 @@ namespace TypeCobol.Compiler.Parser
             if (context.notCondition() != null)
             {
                 var conditions = context.notCondition();
-                if (conditions.Count > 0)
+                if (conditions.Length > 0)
                 {
                     LogicalExpression left = createCondition(conditions[0]);
-                    if (conditions.Count > 1)
+                    if (conditions.Length > 1)
                     {
                         LogicalExpression right = createCondition(conditions[1]);
                         return new AND(left, right);
@@ -254,10 +254,10 @@ namespace TypeCobol.Compiler.Parser
             char op = CreateOperator(context.relationalOperator());
             /*
             var operands = context.operand();
-            if (operands != null && operands.Count > 0)
+            if (operands != null && operands.Length > 0)
             {
                 Expression left = createOperand(operands[0]);
-                if (operands.Count > 1)
+                if (operands.Length > 1)
                 {
                     Expression right = createOperand(operands[1]);
                     relation = new Relation(left, op, right);
@@ -278,7 +278,7 @@ namespace TypeCobol.Compiler.Parser
             }
             *//*
             var relations = context.abbreviatedRelation();
-            if (relations != null && relations.Count > 0)
+            if (relations != null && relations.Length > 0)
             {
                 return createAbbreviatedRelation(relation, relations.ToArray());
             }
@@ -288,7 +288,7 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.DataPointerRelationConditionContext context)
         {
-            if (context.dataPointer() != null && context.dataPointer().Count > 0)
+            if (context.dataPointer() != null && context.dataPointer().Length > 0)
             {
                 var first = context.dataPointer().ElementAt(0);
                 Expression left = createOperand(context.dataPointer().ElementAt(0));
@@ -297,7 +297,7 @@ namespace TypeCobol.Compiler.Parser
                 char op = createOperator(context.relationConditionEquality());
 
                 Expression right = null;
-                if (context.dataPointer().Count > 1)
+                if (context.dataPointer().Length > 1)
                 {
                     var second = context.dataPointer().ElementAt(1);
                     right = createOperand(second);
@@ -325,14 +325,14 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ProgramPointerRelationConditionContext context)
         {
-            if (context.procedureOrFunctionPointer() != null && context.procedureOrFunctionPointer().Count > 0)
+            if (context.procedureOrFunctionPointer() != null && context.procedureOrFunctionPointer().Length > 0)
             {
                 Expression left = createOperand(context.procedureOrFunctionPointer().ElementAt(0));
 
                 char op = createOperator(context.relationConditionEquality());
 
                 Expression right = null;
-                if (context.procedureOrFunctionPointer().Count > 1)
+                if (context.procedureOrFunctionPointer().Length > 1)
                 {
                     right = createOperand(context.procedureOrFunctionPointer().ElementAt(1));
                 }
@@ -350,14 +350,14 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.ObjectReferenceRelationConditionContext context)
         {
-            if (context.objectReference() != null && context.objectReference().Count > 0)
+            if (context.objectReference() != null && context.objectReference().Length > 0)
             {
                 Expression left = createOperand(context.objectReference().ElementAt(0));
 
                 char op = createOperator(context.relationConditionEquality());
 
                 Expression right = null;
-                if (context.objectReference().Count > 1)
+                if (context.objectReference().Length > 1)
                 {
                     right = createOperand(context.objectReference().ElementAt(1));
                 }

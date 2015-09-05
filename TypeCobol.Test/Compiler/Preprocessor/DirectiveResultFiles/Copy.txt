@@ -78,7 +78,7 @@
 [32,33]<28,Error,Syntax>Syntax error : mismatched input 'IN' expecting PeriodSeparator
 
 -- Line 24 --
-*** DIRECTIVE INVALID SYNTAX -> COPY TEXTNAME6 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME6]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:OF]<OF>[25,25: ]<SpaceSeparator>[26,33:SUPPRESS]<SUPPRESS>[34,34+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME6 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME6]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:OF]<OF>[25,25: ]<SpaceSeparator>[26,33:SUPPRESS]<SUPPRESS>[34,34+:.]<PeriodSeparator>) ***
 [26,33]<28,Error,Syntax>Syntax error : missing {AlphanumericLiteral, UserDefinedWord} at 'SUPPRESS'
 
 -- Line 25 --
