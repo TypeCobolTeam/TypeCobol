@@ -16,6 +16,6 @@ namespace TypeCobol.Compiler.Concurrency
         /// </summary>
         DocumentVersion Version { get; }
 
-        IReadOnlyList<IDocumentLine>
+        //IReadOnlyList<IDocumentLine>
     }
 }

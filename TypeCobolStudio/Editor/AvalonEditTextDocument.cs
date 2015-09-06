@@ -18,16 +18,16 @@ namespace TypeCobolStudio.Editor
         private WeakLineTracker _weakLineTracker;
 
         public AvalonEditTextDocument(ICSharpCode.AvalonEdit.Document.TextDocument avalonEditTextDocument, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout)
-        { 
+        {
             // Document source name and text format
             Source = new TextSourceInfo(_avalonEditTextDocument.FileName, encodingForHexadecimalAlphanumericLiterals, columnsLayout);
 
             _avalonEditTextDocument = avalonEditTextDocument;
             // Listen to all line changes in the editor
             _avalonEditTextDocument.VerifyAccess();
-            _weakLineTracker = WeakLineTracker.Register(_avalonEditTextDocument, this); 
+            _weakLineTracker = WeakLineTracker.Register(_avalonEditTextDocument, this);
         }
-        
+
         /// <summary>
         /// Reloads the text document with new chars
         /// </summary>
@@ -35,7 +35,7 @@ namespace TypeCobolStudio.Editor
         {
             // TO DO : find a more efficient implementation if necessary
             StringBuilder sb = new StringBuilder();
-            foreach(char chr in textSource)
+            foreach (char chr in textSource)
             {
                 sb.Append(chr);
             }
@@ -144,7 +144,7 @@ namespace TypeCobolStudio.Editor
                 return _avalonEditTextDocument.LineCount;
             }
         }
-        
+
         // Tracks the current state
         private bool sendNextChangeEvents = false;
 
@@ -168,7 +168,7 @@ namespace TypeCobolStudio.Editor
             TextChangedEvent initialEvent = new TextChangedEvent();
             foreach (ITextLine textLine in Lines)
             {
-                TextChange lineAdded = new TextChange(DocumentChangeType.LineInserted, textLine.LineIndex, textLine);
+                TextChange lineAdded = new TextChange(TextChangeType.LineInserted, textLine.LineIndex, textLine);
                 initialEvent.TextChanges.Add(lineAdded);
             }
             textChangedEventsSource.OnNext(initialEvent);
@@ -185,7 +185,7 @@ namespace TypeCobolStudio.Editor
         {
             if (_weakLineTracker != null)
                 _weakLineTracker.Deregister();
-        }        
+        }
 
         // --- ILineTracker interface ---
 
@@ -196,7 +196,7 @@ namespace TypeCobolStudio.Editor
             if (sendNextChangeEvents)
             {
                 int lineIndex = line.LineNumber - 1;
-                textChangedEvent.TextChanges.Add(new TextChange(DocumentChangeType.LineRemoved, lineIndex, null));
+                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineRemoved, lineIndex, null));
             }
         }
 
@@ -215,7 +215,7 @@ namespace TypeCobolStudio.Editor
                         newTextLine = BuildTextLineFromDocumentLine(line, newTotalLength - 2);
                     }
                 }
-                textChangedEvent.TextChanges.Add(new TextChange(DocumentChangeType.LineUpdated, lineIndex, newTextLine));
+                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineUpdated, lineIndex, newTextLine));
             }
         }
 
@@ -233,7 +233,7 @@ namespace TypeCobolStudio.Editor
                         newTextLine = BuildTextLineFromDocumentLine(newLine, newLine.TotalLength - 2);
                     }
                 }
-                textChangedEvent.TextChanges.Add(new TextChange(DocumentChangeType.LineInserted, lineIndex, newTextLine));
+                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, lineIndex, newTextLine));
             }
         }
 
@@ -257,10 +257,10 @@ namespace TypeCobolStudio.Editor
 
             if (sendNextChangeEvents)
             {
-                textChangedEvent.TextChanges.Add(new TextChange(DocumentChangeType.DocumentCleared, 0, null));
+                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.DocumentCleared, 0, null));
                 foreach (ITextLine line in Lines)
                 {
-                    textChangedEvent.TextChanges.Add(new TextChange(DocumentChangeType.LineInserted, line.LineIndex, line));
+                    textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, line.LineIndex, line));
                 }
             }
         }

@@ -12,6 +12,7 @@ using System.Reactive.Subjects;
 
 namespace TypeCobol.Compiler.Concurrency
 {   
+    /*
     /// <summary>
     /// Base class used to implement immutable snapshots and versioning on top of a mutable document.
     /// The document changes are triggered by InputChangeType events.
@@ -25,7 +26,7 @@ namespace TypeCobol.Compiler.Concurrency
         public DocumentVersionProvider()
         {
             // First version
-            currentVersion = new Version<DocumentChangeType>(this);
+            currentVersion = new DocumentVersion<DocumentChangeType>(this);
 
             // !! Constructors of derived classes MUST initialize an empty document snapshot !!
         }
@@ -130,4 +131,5 @@ namespace TypeCobol.Compiler.Concurrency
             get { return documentChangedEventsSource; }
         }
     }
+    */
 }

@@ -1,6 +1,5 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using Compiler.Concurrency;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor.Generated;

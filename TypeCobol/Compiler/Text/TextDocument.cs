@@ -96,11 +96,11 @@ namespace TypeCobol.Compiler.Text
             }
 
             // Send a notification of the change if enabled
-            if(sendNextChangeEvents)
+            if (sendNextChangeEvents)
             {
                 // Send document cleared event
                 TextChangedEvent documentClearedEvent = new TextChangedEvent();
-                documentClearedEvent.TextChanges.Add(new TextChange(DocumentChangeType.DocumentCleared, 0, null));
+                documentClearedEvent.TextChanges.Add(new TextChange(TextChangeType.DocumentCleared, 0, null));
                 textChangedEventsSource.OnNext(documentClearedEvent);
 
                 // Send all new text lines
@@ -117,13 +117,13 @@ namespace TypeCobol.Compiler.Text
         /// Iterator over the document chars
         /// (without line delimiters)
         /// </summary>
-        public IEnumerable<char> Chars 
-        { 
+        public IEnumerable<char> Chars
+        {
             get
             {
-                foreach(ITextLine line in lines)
+                foreach (ITextLine line in lines)
                 {
-                    foreach(char c in line.Text)
+                    foreach (char c in line.Text)
                     {
                         yield return c;
                     }
@@ -162,9 +162,9 @@ namespace TypeCobol.Compiler.Text
                 throw new InvalidOperationException("endOffset must be a number between 0 and " + charsCount);
             }
 
-            int indexOfCharInLineStart; 
+            int indexOfCharInLineStart;
             ITextLine lineStart = GetLineByOffset(startOffset, out indexOfCharInLineStart);
-            if(endOffset - startOffset + indexOfCharInLineStart < lineStart.Length)
+            if (endOffset - startOffset + indexOfCharInLineStart < lineStart.Length)
             {
                 return lineStart.TextSegment(indexOfCharInLineStart, indexOfCharInLineStart + endOffset - startOffset);
             }
@@ -175,16 +175,16 @@ namespace TypeCobol.Compiler.Text
 
                 StringBuilder sbSegment = new StringBuilder();
                 // First line
-                sbSegment.Append(lineStart.TextSegment(indexOfCharInLineStart, lineStart.Length-1));
+                sbSegment.Append(lineStart.TextSegment(indexOfCharInLineStart, lineStart.Length - 1));
                 // Intermediate lines
-                for (int index = lineStart.LineIndex + 1; index < lineEnd.LineIndex; index++ )
+                for (int index = lineStart.LineIndex + 1; index < lineEnd.LineIndex; index++)
                 {
                     sbSegment.Append(lines[index].Text);
                 }
                 // Last line
                 sbSegment.Append(lineEnd.TextSegment(0, indexOfCharInLineEnd));
                 return sbSegment.ToString();
-            }            
+            }
         }
 
         /// <summary>
@@ -240,14 +240,14 @@ namespace TypeCobol.Compiler.Text
 
             // Optimization : fast path for fixed length lines of 80 characters
             int lineIndexMid = offset / 80;
-            if(lineIndexMid >= lines.Count)
+            if (lineIndexMid >= lines.Count)
             {
-                lineIndexMid = lineIndexStart + (lineIndexEnd - lineIndexStart) / 2;  
+                lineIndexMid = lineIndexStart + (lineIndexEnd - lineIndexStart) / 2;
             }
-            
+
             // Execute binary search
             ITextLine line = null;
-            while(lineIndexEnd > lineIndexStart)
+            while (lineIndexEnd > lineIndexStart)
             {
                 line = lines[lineIndexMid];
                 if (offset >= line.StartOffset)
@@ -266,9 +266,9 @@ namespace TypeCobol.Compiler.Text
                 {
                     lineIndexEnd = lineIndexMid - 1;
                 }
-                lineIndexMid = lineIndexStart + (lineIndexEnd - lineIndexStart) / 2;                
+                lineIndexMid = lineIndexStart + (lineIndexEnd - lineIndexStart) / 2;
             }
-            
+
             // Line found
             line = lines[lineIndexStart];
             indexOfCharInLine = offset - line.StartOffset;
@@ -278,8 +278,8 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Total number of lines in the document
         /// </summary>
-        public int LineCount 
-        { 
+        public int LineCount
+        {
             get
             {
                 return lines.Count;
@@ -320,7 +320,7 @@ namespace TypeCobol.Compiler.Text
             TextChangedEvent textLoadedEvent = new TextChangedEvent();
             foreach (var line in lines)
             {
-                TextChange textChange = new TextChange(DocumentChangeType.LineInserted, line.LineIndex, line);
+                TextChange textChange = new TextChange(TextChangeType.LineInserted, line.LineIndex, line);
                 textLoadedEvent.TextChanges.Add(textChange);
             }
             textChangedEventsSource.OnNext(textLoadedEvent);

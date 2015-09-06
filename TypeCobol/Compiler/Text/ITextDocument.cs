@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Text
         int Length { get; }
 
         // -- Document lines --
-                
+
         /// <summary>
         /// Iterator over the document lines
         /// </summary>
@@ -85,6 +85,6 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Call this method only after all observers have been chained to form the compilation pipeline
         /// </summary>
-        void StartSendingChangeEvents();       
+        void StartSendingChangeEvents();
     }
 }

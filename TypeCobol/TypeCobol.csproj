@@ -285,7 +285,6 @@
     <Compile Include="Compiler\CompilationDocument.cs" />
     <Compile Include="Compiler\CompilationProject.cs" />
     <Compile Include="Compiler\CompilationUnit.cs" />
-    <Compile Include="Compiler\Concurrency\Document.cs" />
     <Compile Include="Compiler\Concurrency\DocumentVersionProvider.cs" />
     <Compile Include="Compiler\Concurrency\IDocumentLine.cs" />
     <Compile Include="Compiler\Concurrency\IDocumentSnapshot.cs" />
@@ -330,6 +329,8 @@
     <Compile Include="Compiler\Text\ColumnsLayout.cs" />
     <Compile Include="Compiler\Text\TextArea.cs" />
     <Compile Include="Compiler\Concurrency\DocumentChange.cs" />
+    <Compile Include="Compiler\Text\TextChange.cs" />
+    <Compile Include="Compiler\Text\TextChangedEvent.cs" />
     <Compile Include="Compiler\Text\TextSourceInfo.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
