@@ -1,16 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Text
-{    
+{
     /// <summary>
-    /// Interface enabling the integration of the Cobol compiler with any kind of text editor.
+    /// Snapshot of a text line in the source document
     /// </summary>
-    public interface ITextLine
+    public class TextLineSnapshot : ITextLine
     {
+        public TextLineSnapshot(int initialLineIndex, string text, object lineTrackingReferenceInSourceDocument)
+        {
+            InitialLineIndex = initialLineIndex;
+            Text = text;
+            LineTrackingReferenceInSourceDocument = lineTrackingReferenceInSourceDocument;
+        }
+        
         /// <summary>
         /// Index of this line when it first appeared in the document.
         /// WARNING : if lines are later inserted or removed in the document before it,
@@ -19,22 +22,31 @@ namespace TypeCobol.Compiler.Text
         /// in a snapshot of the document at a given point in time.
         /// When a line is created outside of a document, InitialLineIndex = -1.
         /// </summary>
-        int InitialLineIndex { get; }
+        public int InitialLineIndex { get; private set; } 
 
         /// <summary>
         /// Text of the line, without the end of line delimiters
         /// </summary>
-        string Text { get; }
+        public string Text { get; private set; }
 
         /// <summary>
         /// Part of the text of the line, from start index to end index (included)
         /// </summary>
-        string TextSegment(int startIndex, int endIndexInclusive);
+        public string TextSegment(int startIndex, int endIndexInclusive)
+        {
+            return Text.Substring(startIndex, endIndexInclusive - startIndex + 1);
+        }
 
         /// <summary>
         /// Number of characters in the line, end of line delimiters excluded
         /// </summary>
-        int Length { get; }
+        public int Length
+        {
+            get
+            {
+                return Text.Length;
+            }
+        }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document
@@ -56,6 +68,6 @@ namespace TypeCobol.Compiler.Text
         /// This property returns an opaque reference to a line tracking object from the live text document,
         /// which will enable an efficient retrieval of the line number for this line in the document.
         /// </summary>
-        object LineTrackingReferenceInSourceDocument { get; }
+        public object LineTrackingReferenceInSourceDocument { get; private set; }
     }
 }

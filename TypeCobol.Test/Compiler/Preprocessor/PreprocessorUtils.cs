@@ -43,15 +43,17 @@ namespace TypeCobol.Test.Compiler.Preprocessor
             ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(null, testName);
 
             StringBuilder sbResult = new StringBuilder();
+            int lineNumber = 1;
             foreach (var line in processedDoc.ProcessedTokensLines)
             {
-                sbResult.AppendLine("-- Line " + (line.TextLineMap.TextLine.LineIndex+1) + " --");
+                sbResult.AppendLine("-- Line " + lineNumber + " --");
                 sbResult.AppendLine(BuildResultString(line));
+                lineNumber++;
             }
             return sbResult.ToString();
         }
 
-        private static string BuildResultString(ProcessedTokensLine line)
+        private static string BuildResultString(IProcessedTokensLine line)
         {
             StringBuilder tokensText = new StringBuilder();
             foreach (Token token in line.TokensWithCompilerDirectives)
@@ -118,17 +120,19 @@ namespace TypeCobol.Test.Compiler.Preprocessor
             sbDiagnostics.AppendLine();
             sbDiagnostics.AppendLine("++ Preprocessor diagnostics ++");
             bool hasDiagnostic = false;
+            int lineNumber = 1;
             foreach(var line in processedDoc.ProcessedTokensLines)
             {
                 if (line.PreprocessorDiagnostics != null)
                 {
-                    sbDiagnostics.AppendLine("-- Line " + (line.TextLineMap.TextLine.LineIndex + 1) + " --");
+                    sbDiagnostics.AppendLine("-- Line " + lineNumber + " --");
                     foreach (Diagnostic diagnostic in line.PreprocessorDiagnostics)
                     {
                         hasDiagnostic = true;
                         sbDiagnostics.AppendLine(diagnostic.ToString());
                     }
                 }
+                lineNumber++;
             }
 
             return sbTokens.ToString() + (hasDiagnostic ? sbDiagnostics.ToString() : "");

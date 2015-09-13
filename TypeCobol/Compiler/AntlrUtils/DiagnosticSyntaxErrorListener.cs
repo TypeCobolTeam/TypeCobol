@@ -74,6 +74,8 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         public string ToStringWithRuleStack()
         {
+            // TO DO - IMPORTANT : OffendingSymbol.Line below returns the INITIAL line number, and not the CURRENT line number
+            // This is enough to pass all unit tests, but will return false informations in real usage !
             return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + OffendingSymbol.Line + ")";
         }
     }

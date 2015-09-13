@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 Token currentToken = tokensIterator.CurrentToken;
                 if (currentToken != null)
                 {
-                    ITextLine currentTextLine = currentToken.TextLine;
+                    ITextLine currentTextLine = currentToken.TokensLine;
                     return new TextLineCharStream(currentTextLine);
                 }
                 else
@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             public IToken Create(int type, string text)
             {
                 if (text == null) text = String.Empty;
-                Token token = new Token((TokenType)type, 0, text.Length - 1, new TextLine(0, -1, text));
+                Token token = new Token((TokenType)type, 0, text.Length - 1, TokensLine.CreateVirtualLineForInsertedToken(-1, text));
                 token.SetAntlrSource(null);
                 SetTokenLiteralValue(token, text);
                 return token;
@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             public IToken Create(Tuple<ITokenSource, ICharStream> source, int type, string text, int channel, int start, int stop, int line, int charPositionInLine)
             {
                 if (text == null) text = String.Empty;
-                Token token = new Token((TokenType)type, 0, text.Length - 1, new TextLine(line - 1, -1, text));
+                Token token = new Token((TokenType)type, 0, text.Length - 1, TokensLine.CreateVirtualLineForInsertedToken(line -1, text));
                 token.SetAntlrSource(source.Item1);
                 token.Channel = channel;
                 SetTokenLiteralValue(token, text);

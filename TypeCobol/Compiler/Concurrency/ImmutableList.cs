@@ -209,7 +209,7 @@ namespace TypeCobol.Compiler.Concurrency
     /// An interface that describes the methods that the <see cref="ImmutableList{T}"/> and <see cref="ImmutableList{T}.Builder"/> types have in common.
     /// </summary>
     /// <typeparam name="T">The type of element in the collection.</typeparam>
-    internal interface IImmutableListQueries<T> : IReadOnlyList<T>
+    /*UPDATE to MICROSOFT code ->*/ public/*internal*/ interface ISearchableReadOnlyList<T> : IReadOnlyList<T>
     {
         /// <summary>
         /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
@@ -527,6 +527,40 @@ namespace TypeCobol.Compiler.Concurrency
         /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
         /// </exception>
         int BinarySearch(int index, int count, T item, IComparer<T> comparer);
+
+        // --- START of EXTENSION to MICROSOFT code ---
+        // --- Methods added for TypeCobol ---
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <param name="startIndex">The index of the first element to enumerate.</param>
+        /// <param name="count">The number of elements in this collection.</param>
+        /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
+        IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed);
+
+        /// <summary>
+        /// Searches for the specified object around the initial index of the object 
+        /// in the first version of the immutable list.
+        /// This method is useful only when the two following conditions are true :
+        /// - the searched item is present only once in the list
+        /// - the probability that the searched item did not move far from its initial position is very high
+        /// </summary>
+        /// <param name="item">
+        /// The object to locate in the <see cref="ImmutableList{T}"/>. The value
+        /// can be null for reference types.
+        /// </param>
+        /// <param name="initialIndex">
+        /// The zero-based index of the serached object in the first version of the immutable list.
+        /// </param>
+        /// <returns>
+        /// The zero-based index of the first occurrence of <paramref name="item"/> within the range of
+        /// elements in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and
+        /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
+        /// </returns>
+        int IndexOf(T item, int initialIndex);
+
+        // --- END of EXTENSION to MICROSOFT code ---
     }
 
     /// <summary>
@@ -983,7 +1017,7 @@ namespace TypeCobol.Compiler.Concurrency
     /// <typeparam name="T">The type of elements in the set.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(ImmutableListDebuggerProxy<>))]
-    public sealed partial class ImmutableList<T> : IImmutableList<T>, IList<T>, IList, IOrderedCollection<T>, IImmutableListQueries<T>, IStrongEnumerable<T, ImmutableList<T>.Enumerator>
+    public sealed partial class ImmutableList<T> : IImmutableList<T>, IList<T>, IList, IOrderedCollection<T>, ISearchableReadOnlyList<T>, IStrongEnumerable<T, ImmutableList<T>.Enumerator>
     {
         /// <summary>
         /// An empty immutable list.
@@ -2332,6 +2366,47 @@ namespace TypeCobol.Compiler.Concurrency
             return new Enumerator(_root);
         }
 
+        // --- START of EXTENSION to MICROSOFT code ---
+        // --- Methods added for TypeCobol ---
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <param name="startIndex">The index of the first element to enumerate.</param>
+        /// <param name="count">The number of elements in this collection.</param>
+        /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
+        public IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed)
+        {
+            return _root.GetEnumerator(startIndex, count, reversed);
+        }
+
+        /// <summary>
+        /// Searches for the specified object around the initial index of the object 
+        /// in the first version of the immutable list.
+        /// This method is useful only when the two following conditions are true :
+        /// - the searched item is present only once in the list
+        /// - the probability that the searched item did not move far from its initial position is very high
+        /// </summary>
+        /// <param name="item">
+        /// The object to locate in the <see cref="ImmutableList{T}"/>. The value
+        /// can be null for reference types.
+        /// </param>
+        /// <param name="initialIndex">
+        /// The zero-based index of the serached object in the first version of the immutable list.
+        /// </param>
+        /// <returns>
+        /// The zero-based index of the first occurrence of <paramref name="item"/> within the range of
+        /// elements in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and
+        /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
+        /// </returns>
+        [Pure]
+        public int IndexOf(T item, int initialIndex)
+        {
+            return _root.IndexOf(item, initialIndex);
+        }
+
+        // --- END of EXTENSION to MICROSOFT code ---
+
         /// <summary>
         /// Returns the root <see cref="Node"/> of the list
         /// </summary>
@@ -2983,6 +3058,116 @@ namespace TypeCobol.Compiler.Concurrency
             {
                 return new Enumerator(this, builder);
             }
+
+            // --- START of EXTENSION to MICROSOFT code ---
+            // --- Methods added for TypeCobol ---
+
+            /// <summary>
+            /// Returns an enumerator that iterates through the collection.
+            /// </summary>
+            /// <param name="startIndex">The index of the first element to enumerate.</param>
+            /// <param name="count">The number of elements in this collection.</param>
+            /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
+            internal Enumerator GetEnumerator(int startIndex, int count, bool reversed)
+            {
+                return new Enumerator(this, null, startIndex, count, reversed);
+            }
+
+            /// <summary>
+            /// Searches for the specified object around the initial index of the object 
+            /// in the first version of the immutable list.
+            /// This method is useful only when the two following conditions are true :
+            /// - the searched item is present only once in the list
+            /// - the probability that the searched item did not move far from its initial position is very high
+            /// </summary>
+            /// <param name="item">
+            /// The object to locate in the <see cref="ImmutableList{T}"/>. The value
+            /// can be null for reference types.
+            /// </param>
+            /// <param name="initialIndex">
+            /// The zero-based index of the serached object in the first version of the immutable list.
+            /// </param>
+            /// <returns>
+            /// The zero-based index of the first occurrence of <paramref name="item"/> within the range of
+            /// elements in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and
+            /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
+            /// </returns>
+            [Pure]
+            public int IndexOf(T item, int initialIndex)
+            {
+                IEqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
+
+                // Force the initial index into the bounds of the current version of the list
+                if (initialIndex < 0)
+                {
+                    initialIndex = 0;
+                }
+                if (initialIndex >= this.Count)
+                {
+                    initialIndex = this.Count - 1;
+                }
+
+                // First try : check if the item did not move since the first version
+                T candidateItem = this[initialIndex];
+                if (equalityComparer.Equals(item, candidateItem))
+                {
+                    return initialIndex;
+                }
+
+                // If the element moved since the first version, 
+                // there is a high probability it is still located "near" its initial position.
+                // The value below defines what "near" means in number of lines
+                int proximitySpanSize = 50;
+
+                // Second try : check if less than 'proximitySpanSize' elements were added before the item
+                int elementsCountAfterInitialIndex = this.Count - initialIndex - 1;
+                if (elementsCountAfterInitialIndex > 0)
+                {
+                    Enumerator enumerator = GetEnumerator(initialIndex + 1, elementsCountAfterInitialIndex, false);
+                    for (int i = 1; i <= Math.Min(elementsCountAfterInitialIndex, proximitySpanSize); i++)
+                    {
+                        enumerator.MoveNext();
+                        if (equalityComparer.Equals(item, enumerator.Current))
+                        {
+                            return initialIndex + i;
+                        }
+                    }
+                }
+
+                // Third try : check if less than 'proximitySpanSize' elements were removed before the item
+                int elementsCountBeforeInitialIndex = initialIndex;
+                if (elementsCountBeforeInitialIndex > 0)
+                {
+                    Enumerator enumerator = GetEnumerator(initialIndex - 1, elementsCountBeforeInitialIndex, true);
+                    for (int i = 1; i <= Math.Min(elementsCountBeforeInitialIndex, proximitySpanSize); i++)
+                    {
+                        enumerator.MoveNext();
+                        if (equalityComparer.Equals(item, enumerator.Current))
+                        {
+                            return initialIndex - i;
+                        }
+                    }
+                }
+
+                // If the list was small, we already know that the serached item is not in the list
+                if (this.Count <= (2 * proximitySpanSize + 1))
+                {
+                    return -1;
+                }
+
+                // Last try : we can do no better than to scan the entire list
+                // - from the beginning if the line was initially located in the first half
+                if (initialIndex <= (this.Count / 2))
+                {
+                    return this.IndexOf(item, equalityComparer);
+                }
+                else
+                {
+                    return this.LastIndexOf(item, this.Count - 1, this.Count, equalityComparer);
+                }
+            }
+
+            // --- END of EXTENSION to MICROSOFT code ---
 
             /// <summary>
             /// Creates a node tree that contains the contents of a list.
@@ -4231,7 +4416,7 @@ namespace TypeCobol.Compiler.Concurrency
         [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Ignored")]
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(ImmutableListBuilderDebuggerProxy<>))]
-        public sealed class Builder : IList<T>, IList, IOrderedCollection<T>, IImmutableListQueries<T>, IReadOnlyList<T>
+        public sealed class Builder : IList<T>, IList, IOrderedCollection<T>, ISearchableReadOnlyList<T>, IReadOnlyList<T>
         {
             /// <summary>
             /// The binary tree used to store the contents of the list.  Contents are typically not entirely frozen.
@@ -4454,6 +4639,47 @@ namespace TypeCobol.Compiler.Concurrency
             }
 
             #endregion
+
+            // --- START of EXTENSION to MICROSOFT code ---
+            // --- Methods added for TypeCobol ---
+
+            /// <summary>
+            /// Returns an enumerator that iterates through the collection.
+            /// </summary>
+            /// <param name="startIndex">The index of the first element to enumerate.</param>
+            /// <param name="count">The number of elements in this collection.</param>
+            /// <param name="reversed"><c>true</c> if the list should be enumerated in reverse order.</param>
+            public IEnumerator<T> GetEnumerator(int startIndex, int count, bool reversed)
+            {
+                return this.Root.GetEnumerator(startIndex, count, reversed);
+            }
+
+            /// <summary>
+            /// Searches for the specified object around the initial index of the object 
+            /// in the first version of the immutable list.
+            /// This method is useful only when the two following conditions are true :
+            /// - the searched item is present only once in the list
+            /// - the probability that the searched item did not move far from its initial position is very high
+            /// </summary>
+            /// <param name="item">
+            /// The object to locate in the <see cref="ImmutableList{T}"/>. The value
+            /// can be null for reference types.
+            /// </param>
+            /// <param name="initialIndex">
+            /// The zero-based index of the serached object in the first version of the immutable list.
+            /// </param>
+            /// <returns>
+            /// The zero-based index of the first occurrence of <paramref name="item"/> within the range of
+            /// elements in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and
+            /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
+            /// </returns>
+            [Pure]
+            public int IndexOf(T item, int initialIndex)
+            {
+                return this.Root.IndexOf(item, initialIndex);
+            }
+
+            // --- END of EXTENSION to MICROSOFT code ---
 
             #region IImmutableListQueries<T> methods
 
@@ -4771,6 +4997,8 @@ namespace TypeCobol.Compiler.Concurrency
                 return _root.FindLastIndex(startIndex, count, match);
             }
 
+            /* UPDATE to MICROSOFT code : conflicts with method added for TypeCobol 
+
             /// <summary>
             /// Searches for the specified object and returns the zero-based index of the
             /// first occurrence within the range of elements in the ImmutableList&lt;T&gt;
@@ -4794,6 +5022,7 @@ namespace TypeCobol.Compiler.Concurrency
             {
                 return _root.IndexOf(item, index, this.Count - index, EqualityComparer<T>.Default);
             }
+            */
 
             /// <summary>
             /// Searches for the specified object and returns the zero-based index of the

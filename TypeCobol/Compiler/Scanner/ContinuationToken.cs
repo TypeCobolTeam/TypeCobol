@@ -12,8 +12,8 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class ContinuationToken : Token
     {
-        internal ContinuationToken(Token virtualConcatenatedToken, int startIndex, int offsetForLiteralContinuation, int stopIndex, ITextLine textLine, Token continuedToken) :
-            base(virtualConcatenatedToken.TokenType, startIndex, stopIndex, virtualConcatenatedToken.UsesVirtualSpaceAtEndOfLine, textLine)
+        internal ContinuationToken(Token virtualConcatenatedToken, int startIndex, int offsetForLiteralContinuation, int stopIndex, ITokensLine tokensLine, Token continuedToken) :
+            base(virtualConcatenatedToken.TokenType, startIndex, stopIndex, virtualConcatenatedToken.UsesVirtualSpaceAtEndOfLine, tokensLine)
         {
             // Copy the delimiter properties
             if (virtualConcatenatedToken.UsesDelimiters)

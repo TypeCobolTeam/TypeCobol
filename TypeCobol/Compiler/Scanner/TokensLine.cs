@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// List of tokens and diagnostics found by scanning one line of text
     /// </summary>
-    public class TokensLine
+    public class TokensLine : ITokensLine
     {
         /// <summary>
         /// Constructor used for the first tokens line
@@ -64,9 +64,22 @@ namespace TypeCobol.Compiler.Scanner
                 ScanState = previousLine.ScanState.Clone();
             }
         }
-        
+
         /// <summary>
-        /// Source text line
+        /// Factory method used by the parser when it inserts a missing token
+        /// in the tokens stream to recover from the error and continue
+        /// </summary>
+        internal static ITokensLine CreateVirtualLineForInsertedToken(int initialLineIndex, string text)
+        {
+            return new TokensLine(
+                new TextLineMap(
+                    new TextLineSnapshot(initialLineIndex, text, null),
+                    ColumnsLayout.FreeTextFormat),
+                false, false, false, Encoding.Unicode);
+        }
+
+        /// <summary>
+        /// Partition of the source text line into reference format areas
         /// </summary>
         public TextLineMap TextLineMap { get; private set; }
 
@@ -75,7 +88,7 @@ namespace TypeCobol.Compiler.Scanner
 
         /// <summary>
         /// Tokens found while scanning the raw source text line
-        /// (before text manipulation phase)
+        /// (before the text manipulation phase)
         /// </summary>
         public IList<Token> SourceTokens { get; private set; }
 
@@ -207,7 +220,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
         internal MultilineScanState ScanState { get; private set; }
-
+        
         /// <summary>
         /// Call this method when a continuation is discovered on the current line
         /// </summary>
@@ -236,7 +249,123 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        // --- temp temp ---
 
+        public TextLineType Type
+        {
+            get
+            {
+                return TextLineMap.Type;
+            }
+
+            set
+            {
+                TextLineMap.Type = value;
+            }
+        }
+
+        public TextArea SequenceNumber
+        {
+            get
+            {
+                return TextLineMap.SequenceNumber;
+            }
+        }
+
+        public string SequenceNumberText
+        {
+            get
+            {
+                return TextLineMap.SequenceNumberText;
+            }
+        }
+
+        public TextArea Indicator
+        {
+            get
+            {
+                return TextLineMap.Indicator;
+            }
+        }
+
+        public char IndicatorChar
+        {
+            get
+            {
+                return TextLineMap.IndicatorChar;
+            }
+        }
+
+        public TextArea Source
+        {
+            get
+            {
+                return TextLineMap.Source;
+            }
+        }
+
+        public string SourceText
+        {
+            get
+            {
+                return TextLineMap.SourceText;
+            }
+        }
+
+        public TextArea Comment
+        {
+            get
+            {
+                return TextLineMap.Comment;
+            }
+        }
+
+        public string CommentText
+        {
+            get
+            {
+                return TextLineMap.CommentText;
+            }
+        }
+
+        public int InitialLineIndex
+        {
+            get
+            {
+                return TextLineMap.TextLine.InitialLineIndex;
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                return TextLineMap.TextLine.Text;
+            }
+        }
+
+        public int Length
+        {
+            get
+            {
+                return TextLineMap.TextLine.Length;
+            }
+        }
+
+        public object LineTrackingReferenceInSourceDocument
+        {
+            get
+            {
+                return TextLineMap.TextLine.LineTrackingReferenceInSourceDocument;
+            }
+        }
+
+        public string TextSegment(int startIndex, int endIndexInclusive)
+        {
+            return TextLineMap.TextLine.TextSegment(startIndex, endIndexInclusive);
+        }
+
+        // --- temp temp ---
     }    
 
     /// <summary>

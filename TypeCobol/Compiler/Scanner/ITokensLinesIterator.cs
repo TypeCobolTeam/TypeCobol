@@ -36,13 +36,7 @@ namespace TypeCobol.Compiler.Scanner
         /// (in the text document identified by DocumentPath)
         /// </summary>
         int LineIndex { get; }
-
-        /// <summary>
-        /// Current character offset 
-        /// (in the text document identified by DocumentPath)
-        /// </summary>
-        int Offset { get; }
-
+        
         /// <summary>
         /// Get next token or EndOfFile
         /// </summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -15,7 +16,7 @@ namespace TypeCobol.Compiler.Scanner
     {
         // Source data
         private string textName;
-        private IReadOnlyList<TokensLine> tokensLines;
+        private ISearchableReadOnlyList<ITokensLine> tokensLines;
 
         // Start conditions
         private Token startToken;
@@ -32,7 +33,7 @@ namespace TypeCobol.Compiler.Scanner
         private TokensLineIteratorPosition currentPosition;
 
         // Current line and token
-        private TokensLine currentLine;
+        private ITokensLine currentLine;
         private Token currentToken;
 
         // Previous snapshot position
@@ -42,7 +43,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Set the initial position of the iterator with startToken.
         /// Filter 
         /// </summary>
-        public TokensLinesIterator(string textName, IReadOnlyList<TokensLine> tokensLines, Token startToken, int channelFilter)
+        public TokensLinesIterator(string textName, ISearchableReadOnlyList<ITokensLine> tokensLines, Token startToken, int channelFilter)
         {
             this.textName = textName;
             this.tokensLines = tokensLines;
@@ -117,22 +118,6 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Current character offset in the document
-        /// </summary>
-        public int Offset
-        {
-            get
-            {
-                int currentOffset = 0;
-                if (currentLine != null && currentToken != null)
-                {
-                    currentOffset = currentLine.TextLineMap.TextLine.StartOffset + currentToken.StartIndex;
-                }
-                return currentOffset;
-            }
-        }
-
-        /// <summary>
         /// Resets the iterator position : before the first token of the document
         /// </summary>
         public void Reset()
@@ -153,8 +138,8 @@ namespace TypeCobol.Compiler.Scanner
         public void SeekToToken(Token startToken)
         {
             // Find line for the start token
-            currentPosition.LineIndex = startToken.Line - 1;
-            currentLine = tokensLines[currentPosition.LineIndex];
+            currentPosition.LineIndex = tokensLines.IndexOf(startToken.TokensLine, startToken.TokensLine.InitialLineIndex);
+            currentLine = startToken.TokensLine;
             // Find index in line for the start token
             currentPosition.TokenIndexInLine = currentLine.SourceTokens.IndexOf(startToken);
             currentToken = startToken;
@@ -201,6 +186,7 @@ namespace TypeCobol.Compiler.Scanner
                     currentPosition.TokenIndexInLine = 0;
                     if (currentPosition.LineIndex < tokensLines.Count)
                     {
+                        // TO DO - OPTIMIZATION - IMPORTANT : here, we should use an Enumerator on tokensLines
                         currentLine = tokensLines[currentPosition.LineIndex];
                     }
                     // and if we reached the last line of the document ...
@@ -264,6 +250,7 @@ namespace TypeCobol.Compiler.Scanner
                         while (currentPosition.LineIndex > 0)
                         {
                             currentPosition.LineIndex = currentPosition.LineIndex - 1;
+                            // TO DO - OPTIMIZATION - IMPORTANT : here, we should use an Enumerator on tokensLines
                             currentLine = tokensLines[currentPosition.LineIndex];
                             if (currentLine.SourceTokens.Count > 0) break;
                         }
@@ -358,10 +345,12 @@ namespace TypeCobol.Compiler.Scanner
         public MultilineTokensGroupSelection SelectAllTokensBetween(Token startToken, Token stopToken)
         {
             // Check parameters
-            int startLineIndex = startToken.LineIndex;
-            int stopLineIndex = stopToken.LineIndex;
-            if(startLineIndex < 0 || stopLineIndex < 0 || stopLineIndex < startLineIndex || 
-                ((startToken.LineIndex == stopToken.LineIndex) && (stopToken.StartIndex < startToken.StartIndex)))
+            ITokensLine startLine = startToken.TokensLine;
+            int startLineIndex = tokensLines.IndexOf(startLine, startLine.InitialLineIndex);
+            ITokensLine stopLine = stopToken.TokensLine;
+            int stopLineIndex = tokensLines.IndexOf(stopLine, stopLine.InitialLineIndex);
+            if (startLineIndex < 0 || stopLineIndex < 0 || stopLineIndex < startLineIndex || 
+                ((startLineIndex == stopLineIndex) && (stopToken.StartIndex < startToken.StartIndex)))
             {
                 throw new InvalidOperationException("Invalid start or stop token : line or columns number do not define a valid selection interval");
             }
@@ -371,7 +360,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Seek to the first token at the start of the line where startToken appears
             currentPosition.LineIndex = startLineIndex;
-            currentLine = tokensLines[currentPosition.LineIndex];
+            currentLine = startToken.TokensLine;
             currentPosition.TokenIndexInLine = 0;
             currentToken = currentLine.SourceTokens[0]; 
 
@@ -388,7 +377,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // List of tokens selected ...
-            int numberOfSelectedLines = stopToken.LineIndex - startToken.LineIndex + 1;
+            int numberOfSelectedLines = stopLineIndex - startLineIndex + 1;
             IList<Token>[] selectedTokensOnSeveralLines = new IList<Token>[numberOfSelectedLines];
             // ... on the first line
             IList<Token> tokensSelectedOnFirstLine = new List<Token>();
@@ -416,7 +405,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     tokensSelectedOnFirstLine.Add(currentToken);
                 }
-                while (NextToken(false).LineIndex == startLineIndex);
+                while (NextToken(false).TokensLine == startLine);
             }
             // ... on intermediate lines
             // => optimization : reuse the complete lists of the source lines
@@ -424,6 +413,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 for(int intermediateLineIndex = startLineIndex+1 ; intermediateLineIndex < stopLineIndex ; intermediateLineIndex++)
                 {
+                    // TO DO - OPTIMIZATION - IMPORTANT : here, we should use an Enumerator on tokensLines
                     selectedTokensOnSeveralLines[intermediateLineIndex - startLineIndex] = tokensLines[intermediateLineIndex].SourceTokens;
                 }
                 currentPosition.LineIndex = stopLineIndex;
@@ -454,7 +444,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // List of tokens not selected on the last line after stopToken
             IList<Token> tokensOnLastLineAfterStopToken = null;
-            if (currentToken != null && currentToken.LineIndex == stopToken.LineIndex)
+            if (currentToken != null && currentToken.TokensLine == stopToken.TokensLine)
             {
                 Token lastTokenOfLastLine = currentLine.SourceTokens[currentLine.SourceTokens.Count - 1];
                 if (stopToken != lastTokenOfLastLine)

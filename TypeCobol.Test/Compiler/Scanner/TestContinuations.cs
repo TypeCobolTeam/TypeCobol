@@ -12,7 +12,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckSeparators()
         {
             string testName = "Separators-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 // .     , ; ():.
                 new TestTextLine("."),
                 new TestTextLine('-',"    "),
@@ -44,7 +44,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckComments()
         {
             string testName = "Comments-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 // Comment lines
                 // Floating comments
                 // Blank lines
@@ -64,7 +64,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckOperators()
         {
             string testName = "Operators-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 // + - * / **
                 // < > <= >= = 
                 new TestTextLine("1 +"),
@@ -99,7 +99,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckAlphanumericLiterals()
         {
             string testName = "AlphanumericLiterals-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 // " N" G" Z" X" NX" 
                 new TestTextLine("\"toto  "),
                 new TestTextLine('-',"    \"and titi1\"."),    
@@ -161,7 +161,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckNumericLiterals()
         {
             string testName = "NumericLiterals-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 new TestTextLine("1"),
                 new TestTextLine('*', "This is a comment line ! ***"),
                 new TestTextLine('-',"    23456"),
@@ -229,7 +229,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckKeywordsAndUserDefinedWords()
         {
             string testName = "Keywords-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 new TestTextLine("REPLACE *"),
                 new TestTextLine('-',"    CONTROL BASIS COP"),
                 new TestTextLine('-',"    Y ALT"),
@@ -256,7 +256,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckPictureCharacterString()
         {
             string testName = "PictureCharacterString-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 new TestTextLine("PICTURE IS X"),
                 new TestTextLine('-',"    .4. PIC IS Y."),
                 new TestTextLine('-',"    3. PICTURE"),
@@ -272,7 +272,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckCommentEntry()
         {
             string testName = "CommentEntry-continuations";
-            TextLine[] textLines = new TestTextLine[] {
+            TextLineSnapshot[] textLines = new TestTextLine[] {
                 new TestTextLine("AUTHOR comment on several"),
                 new TestTextLine('-',"    lines without delimiter"),
                 new TestTextLine("INSTALLATION"),

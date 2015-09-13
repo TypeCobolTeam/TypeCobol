@@ -137,7 +137,7 @@ namespace TypeCobol.Test.Compiler.Parser
             }
 
             IToken token = tokenSource.TokenFactory.Create((int)TokenType.ACCEPT, "AccePt");
-            if (token.Channel != Token.CHANNEL_SourceTokens || token.Column != 1 || token.Line != 1 || 
+            if (token.Channel != Token.CHANNEL_SourceTokens || token.Column != 1 || token.Line != 0 || 
                 token.StartIndex != 0 || token.StopIndex != 5 || token.Text != "AccePt" || 
                 token.TokenIndex != -1 || token.InputStream == null || token.TokenSource !=null ||
                 token.Type != (int)TokenType.ACCEPT)

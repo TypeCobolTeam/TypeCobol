@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Lines of the source text file viewed as lists of processed tokens and error messages
         /// </summary>
-        public IReadOnlyList<ProcessedTokensLine> ProcessedTokensLines { get { return processedTokensLines; } }
+        public IReadOnlyList<IProcessedTokensLine> ProcessedTokensLines { get { return processedTokensLines; } }
 
         // Implement this as an immutable list to protect consumers from changes happening on the producer side
         private ImmutableList<ProcessedTokensLine> processedTokensLines;
@@ -259,7 +259,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // 7. Register compiler directive parse errors
                     if (errorFoundWhileParsingDirective)
                     {
-                        ProcessedTokensLine compilerDirectiveLine = ProcessedTokensLines[tokensSelection.FirstLineIndex];
+                        ProcessedTokensLine compilerDirectiveLine = processedTokensLines[tokensSelection.FirstLineIndex];
                         foreach(ParserDiagnostic parserDiag in errorListener.Diagnostics)
                         {
                             compilerDirectiveLine.AddDiagnostic(parserDiag);

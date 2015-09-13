@@ -103,14 +103,14 @@ namespace TypeCobolStudio.Editor
             }
         }
 
-        private TextLine BuildTextLineFromDocumentLine(IDocumentLine documentLine)
+        private TextLineSnapshot BuildTextLineFromDocumentLine(IDocumentLine documentLine)
         {
-            return new TextLine(documentLine.LineNumber - 1, documentLine.Offset, _avalonEditTextDocument.GetText(documentLine.Offset, documentLine.Length));
+            return new TextLineSnapshot(documentLine.LineNumber - 1, _avalonEditTextDocument.GetText(documentLine.Offset, documentLine.Length), documentLine);
         }
 
-        private TextLine BuildTextLineFromDocumentLine(IDocumentLine documentLine, int newLength)
+        private TextLineSnapshot BuildTextLineFromDocumentLine(IDocumentLine documentLine, int newLength)
         {
-            return new TextLine(documentLine.LineNumber - 1, documentLine.Offset, _avalonEditTextDocument.GetText(documentLine.Offset, newLength));
+            return new TextLineSnapshot(documentLine.LineNumber - 1, _avalonEditTextDocument.GetText(documentLine.Offset, newLength), documentLine);
         }
 
         /// <summary>
@@ -145,6 +145,38 @@ namespace TypeCobolStudio.Editor
             }
         }
 
+        /// <summary>
+        /// The first line has the index 0
+        /// </summary>
+        public int FindIndexOfLine(ITextLine line)
+        {
+            IDocumentLine docLine = line.LineTrackingReferenceInSourceDocument as IDocumentLine;
+            if (docLine != null)
+            {
+                return docLine.LineNumber;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Offset of the first char of this line in the document 
+        /// </summary>
+        public int FindStartOffsetOfLine(ITextLine line)
+        {
+            IDocumentLine docLine = line.LineTrackingReferenceInSourceDocument as IDocumentLine;
+            if (docLine != null)
+            {
+                return docLine.Offset;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         // Tracks the current state
         private bool sendNextChangeEvents = false;
 
@@ -166,10 +198,12 @@ namespace TypeCobolStudio.Editor
         private void SendSocumentChangeEvent()
         {
             TextChangedEvent initialEvent = new TextChangedEvent();
+            int lineIndex = 0;
             foreach (ITextLine textLine in Lines)
             {
-                TextChange lineAdded = new TextChange(TextChangeType.LineInserted, textLine.LineIndex, textLine);
+                TextChange lineAdded = new TextChange(TextChangeType.LineInserted, lineIndex, textLine);
                 initialEvent.TextChanges.Add(lineAdded);
+                lineIndex++;
             }
             textChangedEventsSource.OnNext(initialEvent);
         }
@@ -258,9 +292,11 @@ namespace TypeCobolStudio.Editor
             if (sendNextChangeEvents)
             {
                 textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.DocumentCleared, 0, null));
+                int lineIndex = 0;
                 foreach (ITextLine line in Lines)
                 {
-                    textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, line.LineIndex, line));
+                    textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, lineIndex, line));
+                    lineIndex++;
                 }
             }
         }

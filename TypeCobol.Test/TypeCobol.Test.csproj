@@ -94,7 +94,7 @@
     <Compile Include="Compiler\Scanner\TestContinuations.cs" />
     <Compile Include="Compiler\Scanner\TestRealPrograms.cs" />
     <Compile Include="Compiler\Scanner\TestTokenTypes.cs" />
-    <Compile Include="Compiler\Text\TestTextDocument.cs" />
+    <Compile Include="Compiler\Text\TestReadOnlyTextDocument.cs" />
     <Compile Include="GrammarTest.cs" />
     <Compile Include="PlatformUtils.cs" />
     <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />

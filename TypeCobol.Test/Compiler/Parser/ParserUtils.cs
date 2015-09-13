@@ -120,7 +120,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public static CompilationUnit CreateCompilationUnitForVirtualFile()
         {
             //Prepare
-            var textDocument = new TextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
+            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
 
             var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("Empty project", ".", new[] { "*.cbl", "*.cpy" },

@@ -120,8 +120,8 @@ namespace TypeCobol.Compiler.TypeChecker
     /// </summary>
     public class TypeDiagnostic
     {
-        public IToken StartToken { get; set; }
-        public IToken EndToken { get; set; }
+        public Token StartToken { get; set; }
+        public Token EndToken { get; set; }
 
         public string Message { get; set; }
     }

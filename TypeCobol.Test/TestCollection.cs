@@ -25,11 +25,11 @@ namespace TypeCobol.Test
 
         public static void CheckText()
         {
-            TestTextDocument.Check_DocumentFormatExceptions();
+            TestReadOnlyTextDocument.Check_DocumentFormatExceptions();
 
-            TestTextDocument.Check_EmptyDocument();
-            TestTextDocument.Check_ReferenceFormatDocument();
-            TestTextDocument.Check_FreeFormatDocument();
+            TestReadOnlyTextDocument.Check_EmptyDocument();
+            TestReadOnlyTextDocument.Check_ReferenceFormatDocument();
+            TestReadOnlyTextDocument.Check_FreeFormatDocument();
         }
         
         public static void CheckScanner()

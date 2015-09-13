@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <param name="type">Type of change applied to the line</param>
         /// <param name="lineIndex">Index of the line which was changed</param>
         /// <param name="newLine">New line content after the update (null in case of a LineRemoved event)</param>
-        public TokensChange(TokensChangeType type, int lineIndex, TokensLine newLine)
+        public TokensChange(TokensChangeType type, int lineIndex, ITokensLine newLine)
         {
             Type = type;
             LineIndex = lineIndex;
@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// New line content after the update (null in case of a LineRemoved event)
         /// </summary>
-        public TokensLine NewLine { get; private set; }
+        public ITokensLine NewLine { get; private set; }
     }
 
     /// <summary>

@@ -64,7 +64,7 @@ namespace TypeCobol.Compiler
         { 
             get 
             {
-                foreach(TokensLine line in TokensDocument.TokensLines)
+                foreach(ITokensLine line in TokensDocument.TokensLines)
                 {
                     if (line.ScannerDiagnostics != null && line.ScannerDiagnostics.Count > 0)
                     {
@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler
             }
 
             // 2. Load it in a new text document in memory
-            TextDocument = new TextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
+            TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
 
             // 3. Prepare to scan the contents of the TextDocument to build TokensLines
             TokensDocument = new TokensDocument(TextDocument.Source, compilerOptions);

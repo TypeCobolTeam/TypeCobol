@@ -17,12 +17,12 @@ namespace TypeCobol.Test.Compiler.Scanner
     /// <summary>
     /// Test implementation of the ITextLine interface
     /// </summary>
-    internal class TestTextLine : TextLine
+    internal class TestTextLine : TextLineSnapshot
     {
-        public TestTextLine(string text) : base(-1, 0, text)
+        public TestTextLine(string text) : base(-1, text, null)
         { }
 
-        public TestTextLine(char indicator, string text) : base(-1, 0, indicator + text)
+        public TestTextLine(char indicator, string text) : base(-1, indicator + text, null)
         { }
     }
 
@@ -51,7 +51,7 @@ namespace TypeCobol.Test.Compiler.Scanner
 
         public static string ScanLines(string[] testLines)
         {
-            IList <TokensLine> tokensLines = new List<TokensLine>();
+            IList <ITokensLine> tokensLines = new List<ITokensLine>();
 
             ITextLine firstTextLine = new TestTextLine(testLines[0]);
             TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, false, TextSourceInfo, CompilerOptions);
@@ -59,7 +59,7 @@ namespace TypeCobol.Test.Compiler.Scanner
 
             for (int i = 1; i < testLines.Length; i++)
             {
-                TextLine textLine = new TestTextLine(testLines[i]);
+                TextLineSnapshot textLine = new TestTextLine(testLines[i]);
                 tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanTextLine(textLine, tokensLine, TextSourceInfo, CompilerOptions);
                 tokensLines.Add(tokensLine);
             }
@@ -77,13 +77,13 @@ namespace TypeCobol.Test.Compiler.Scanner
 
         public static string ScanTextLine(ITextLine textLine)
         {
-            TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(textLine, false, false, false, TextSourceInfo, CompilerOptions);
+            ITokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(textLine, false, false, false, TextSourceInfo, CompilerOptions);
             return BuildResultString(tokensLine);
         }
         
         public static string ScanLines(ITextLine[] textLines) 
         {
-            IList<TokensLine> tokensLines = new List<TokensLine>();
+            IList<ITokensLine> tokensLines = new List<ITokensLine>();
 
             ITextLine firstTextLine = textLines[0];
             TokensLine tokensLine = TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(firstTextLine, false, false, false, TextSourceInfo, CompilerOptions);
@@ -107,7 +107,7 @@ namespace TypeCobol.Test.Compiler.Scanner
             return sbResult.ToString();
         }
         
-        public static string BuildResultString(TokensLine tokensLine)
+        public static string BuildResultString(ITokensLine tokensLine)
         {
             StringBuilder tokensText = new StringBuilder();
             foreach (Token token in tokensLine.SourceTokens)

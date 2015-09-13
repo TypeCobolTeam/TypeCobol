@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 namespace TypeCobol.Compiler.Text
 {
     /// <summary>
-    /// Immutable Cobol document for batch compilation.
+    /// Read-only text document for batch compilation.
     /// Document loaded once from a file and never modified.
     /// </summary>
-    public class TextDocument : ITextDocument
+    public class ReadOnlyTextDocument : ITextDocument
     {
-        // This document simply maintains an immutable list of text lines
-        private IList<ITextLine> lines = new List<ITextLine>();
+        // This document simply maintains a list of read-only text lines
+        private IList<ReadOnlyTextLine> lines = new List<ReadOnlyTextLine>();
 
         // Total number of chars (without line delimiters)
         private int charsCount;
@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Text
         /// </summary> 
         /// <param name="fileName">Name of the file the document is stored in</param>
         /// <param name="textSource">Sequence of unicode characters with line delimiters (Cr? Lf)</param>
-        public TextDocument(string fileName, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout, IEnumerable<char> textSource)
+        public ReadOnlyTextDocument(string fileName, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout, IEnumerable<char> textSource)
         {
             // Document source name and text format
             Source = new TextSourceInfo(fileName, encodingForHexadecimalAlphanumericLiterals, columnsLayout);
@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.Text
                 if (chr == '\r')
                 {
                     // If an end of line char is encountered, create a new line
-                    TextLine line = new TextLine(lineIndex, charsCount, currentLineText.ToString());
+                    ReadOnlyTextLine line = new ReadOnlyTextLine(lineIndex, charsCount, currentLineText.ToString(), null);
                     lines.Add(line);
                     lineIndex++;
                     charsCount += line.Length;
@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Text
                     if (!previousCharWasCr)
                     {
                         // If an end of line char is encountered, create a new line
-                        TextLine line = new TextLine(lineIndex, charsCount, currentLineText.ToString());
+                        ReadOnlyTextLine line = new ReadOnlyTextLine(lineIndex, charsCount, currentLineText.ToString(), null);
                         lines.Add(line);
                         lineIndex++;
                         charsCount += line.Length;
@@ -90,7 +90,7 @@ namespace TypeCobol.Compiler.Text
             // If the last line was not terminated with end of line chars
             if (currentLineText.Length > 0)
             {
-                TextLine line = new TextLine(lineIndex, charsCount, currentLineText.ToString());
+                ReadOnlyTextLine line = new ReadOnlyTextLine(lineIndex, charsCount, currentLineText.ToString(), null);
                 lines.Add(line);
                 charsCount += line.Length;
             }
@@ -163,7 +163,7 @@ namespace TypeCobol.Compiler.Text
             }
 
             int indexOfCharInLineStart;
-            ITextLine lineStart = GetLineByOffset(startOffset, out indexOfCharInLineStart);
+            ReadOnlyTextLine lineStart = (ReadOnlyTextLine)GetLineByOffset(startOffset, out indexOfCharInLineStart);
             if (endOffset - startOffset + indexOfCharInLineStart < lineStart.Length)
             {
                 return lineStart.TextSegment(indexOfCharInLineStart, indexOfCharInLineStart + endOffset - startOffset);
@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler.Text
             else
             {
                 int indexOfCharInLineEnd;
-                ITextLine lineEnd = GetLineByOffset(endOffset, out indexOfCharInLineEnd);
+                ReadOnlyTextLine lineEnd = (ReadOnlyTextLine)GetLineByOffset(endOffset, out indexOfCharInLineEnd);
 
                 StringBuilder sbSegment = new StringBuilder();
                 // First line
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Text
             }
 
             // Execute binary search
-            ITextLine line = null;
+            ReadOnlyTextLine line = null;
             while (lineIndexEnd > lineIndexStart)
             {
                 line = lines[lineIndexMid];
@@ -283,6 +283,38 @@ namespace TypeCobol.Compiler.Text
             get
             {
                 return lines.Count;
+            }
+        }
+
+        /// <summary>
+        /// The first line has the index 0
+        /// </summary>
+        public int FindIndexOfLine(ITextLine line)
+        {
+            ReadOnlyTextLine roTextLine = line as ReadOnlyTextLine;
+            if (roTextLine != null)
+            {
+                return roTextLine.LineIndex;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Offset of the first char of this line in the document 
+        /// </summary>
+        public int FindStartOffsetOfLine(ITextLine line)
+        {
+            ReadOnlyTextLine roTextLine = line as ReadOnlyTextLine;
+            if (roTextLine != null)
+            {
+                return roTextLine.StartOffset;
+            }
+            else
+            {
+                return -1;
             }
         }
 
@@ -324,6 +356,6 @@ namespace TypeCobol.Compiler.Text
                 textLoadedEvent.TextChanges.Add(textChange);
             }
             textChangedEventsSource.OnNext(textLoadedEvent);
-        }
+        }               
     }
 }

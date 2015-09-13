@@ -34,9 +34,9 @@ namespace TypeCobol.Compiler.Text
     }
     
     /// <summary>
-    /// Partition of a COBOL source line into reference format areas
+    /// Partition of a COBOL text line into reference format areas
     /// </summary>
-    public class TextLineMap
+    public class TextLineMap : ICobolLine
     {
         public TextLineMap(ITextLine textLine, ColumnsLayout columnsLayout)
         {
@@ -257,7 +257,7 @@ namespace TypeCobol.Compiler.Text
         }
 
         /// <summary>
-        /// Source, Debug, Comment or Continuation
+        /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
         public TextLineType Type { get; set; }
 
@@ -271,6 +271,9 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public TextArea SequenceNumber { get; private set; }
 
+        /// <summary>
+        /// Sequence number text : Columns 1 through 6
+        /// </summary>
         public string SequenceNumberText
         {
             get
@@ -284,6 +287,9 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public TextArea Indicator { get; private set; }
 
+        /// <summary>
+        /// Indicator char : Column 7
+        /// </summary>
         public char IndicatorChar
         {
             get
@@ -307,10 +313,13 @@ namespace TypeCobol.Compiler.Text
         }
 
         /// <summary>
-        /// Comment Area : Columns 73 through 80+
+        /// Comment area : Columns 73 through 80+
         /// </summary>
         public TextArea Comment { get; private set; }
 
+        /// <summary>
+        /// Comment text : Columns 73 through 80+
+        /// </summary>
         public string CommentText
         {
             get
@@ -318,7 +327,7 @@ namespace TypeCobol.Compiler.Text
                 return Comment.IsEmpty ? null : TextLine.TextSegment(Comment.StartIndex, Comment.EndIndex);
             }
         }
-
+        
         public override string ToString()
         {
             return "SequenceNumber" + SequenceNumber + " Indicator" + Indicator + " Source" + Source + " Comment" + Comment;
@@ -330,8 +339,49 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public static TextLineMap Create(string text)
         {
-            ITextLine isolatedTextLine = new TextLine(0, 0, text);
+            ITextLine isolatedTextLine = new TextLineSnapshot(-1, text, null);
             return new TextLineMap(isolatedTextLine, ColumnsLayout.FreeTextFormat);
         }
+
+        // --- temp temp ---
+
+        public int InitialLineIndex
+        {
+            get
+            {
+                return TextLine.InitialLineIndex;
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                return TextLine.Text;
+            }
+        }
+
+        public int Length
+        {
+            get
+            {
+                return TextLine.Length;
+            }
+        }
+
+        public object LineTrackingReferenceInSourceDocument
+        {
+            get
+            {
+                return TextLine.LineTrackingReferenceInSourceDocument;
+            }
+        }
+
+        public string TextSegment(int startIndex, int endIndexInclusive)
+        {
+            return TextLine.TextSegment(startIndex, endIndexInclusive);
+        }
+
+        // --- temp temp ---
     }
 }

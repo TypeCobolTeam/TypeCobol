@@ -36,9 +36,9 @@ namespace TypeCobol.Compiler.AntlrUtils
             lastErrorStates.Add(recognizer.State);
 
             // Consume until next compiler directive / statement starting keyword (excluded), PeriodSeparator (included), or the end of line
-            IToken lastConsumedToken = ((ITokenStream)recognizer.InputStream).Lt(-1);
-            IToken currentInvalidToken = ((ITokenStream)recognizer.InputStream).Lt(1);
-            while ((lastConsumedToken == null || currentInvalidToken.Line == lastConsumedToken.Line) && currentInvalidToken.Type != TokenConstants.Eof)
+            Token lastConsumedToken = (Token)((ITokenStream)recognizer.InputStream).Lt(-1);
+            Token currentInvalidToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
+            while ((lastConsumedToken == null || currentInvalidToken.TokensLine == lastConsumedToken.TokensLine) && currentInvalidToken.Type != TokenConstants.Eof)
             {
                 if (((Token)currentInvalidToken).TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || ((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementStartingKeyword || 
                     ((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementEndingKeyword || ((Token)currentInvalidToken).TokenFamily == TokenFamily.CodeElementStartingKeyword)
@@ -50,7 +50,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                 {
                     break;
                 }
-                currentInvalidToken = ((ITokenStream)recognizer.InputStream).Lt(1);
+                currentInvalidToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
             }
         }
 

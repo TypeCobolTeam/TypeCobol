@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Scanner
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
 
-            tokensLines = ImmutableList<TokensLine>.Empty;
+            tokensLines = ImmutableList<ITokensLine>.Empty;
         }
 
         /// <summary>
@@ -38,10 +38,10 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
-        public IReadOnlyList<TokensLine> TokensLines { get { return tokensLines; } }
+        public ISearchableReadOnlyList<ITokensLine> TokensLines { get { return tokensLines; } }
 
         // Implement this as an immutable list to protect consumers from changes happening on the producer side
-        private ImmutableList<TokensLine> tokensLines;
+        private ImmutableList<ITokensLine> tokensLines;
 
         /// <summary>
         /// Iterator over all the source tokens 
@@ -70,16 +70,16 @@ namespace TypeCobol.Compiler.Scanner
                 TokensChangedEvent tokensChangedEvent = new TokensChangedEvent();
 
                 // Optimization : use a builder to update the immutable list in case of a big update                
-                ImmutableList<TokensLine>.Builder tokensLinesBuilder = null;
+                ImmutableList<ITokensLine>.Builder tokensLinesBuilder = null;
                 if (textChangedEvent.TextChanges.Count > 4)
                 {
                     tokensLinesBuilder = tokensLines.ToBuilder();
                 }
-                Func<int, TokensLine> getTokensLineAtIndex = index => { if (tokensLinesBuilder != null) { return tokensLinesBuilder[index]; } else { return tokensLines[index]; } };
+                Func<int, TokensLine> getTokensLineAtIndex = index => { if (tokensLinesBuilder != null) { return (TokensLine)tokensLinesBuilder[index]; } else { return (TokensLine)tokensLines[index]; } };
                 Action<int, TokensLine> setTokensLineAtIndex = (index, updatedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder[index] = updatedLine; } else { tokensLines = tokensLines.SetItem(index, updatedLine); } };
                 Action<int, TokensLine> insertTokensLineAtIndex = (index, insertedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Insert(index, insertedLine); } else { tokensLines = tokensLines.Insert(index, insertedLine); } };
                 Action<TokensLine> removeTokensLine = removedLine => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Remove(removedLine); } else { tokensLines = tokensLines.Remove(removedLine); } };
-                Action clearTokensLines = () => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Clear(); } else { tokensLines = ImmutableList<TokensLine>.Empty; } };
+                Action clearTokensLines = () => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Clear(); } else { tokensLines = ImmutableList<ITokensLine>.Empty; } };
 
                 // Analyze all text changes
                 int lastTextChangeIndex = textChangedEvent.TextChanges.Count - 1;
@@ -242,7 +242,7 @@ namespace TypeCobol.Compiler.Scanner
             // Study all the lines following one line change
             for (int lineIndex = updatedLineIndex + 1; lineIndex < tokensLines.Count; lineIndex++)
             {
-                TokensLine currentLine = tokensLines[lineIndex];
+                TokensLine currentLine = (TokensLine)tokensLines[lineIndex];
                 // As soon as we find a line where the initial scan state is not modified
                 if (currentLine.InitialScanState.Equals(lastScanState))
                 {

@@ -9,7 +9,7 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Text
 {
-    static class TestTextDocument
+    static class TestReadOnlyTextDocument
     {
         public static void Check_DocumentFormatExceptions()
         {
@@ -47,7 +47,7 @@ namespace TypeCobol.Test.Compiler.Text
 
         public static void Check_EmptyDocument()
         {
-            TextDocument textDocument = new TextDocument("empty", Encoding.Default, ColumnsLayout.CobolReferenceFormat, String.Empty);
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("empty", Encoding.Default, ColumnsLayout.CobolReferenceFormat, String.Empty);
 
             Exception resultException = null;
             try
@@ -174,7 +174,7 @@ namespace TypeCobol.Test.Compiler.Text
             }
                 
             // Load the CobolFile in a TextDocument
-            TextDocument textDocument = new TextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
             
             if(textDocument.CharAt(0) != '0')
             {
@@ -198,19 +198,19 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Character enumerator after 88 iterations should return M");
             }
 
-            ITextLine line = textDocument.GetLineByIndex(0);
+            ReadOnlyTextLine line = (ReadOnlyTextLine)textDocument.GetLineByIndex(0);
             if(line.Length != 80 || line.LineIndex != 0 || line.StartOffset != 0 ||
                 line.Text != "000010*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  00001001")
             {
                 throw new Exception("Incorrect line at index 0");
             }
-            line = textDocument.GetLineByIndex(1);
+            line = (ReadOnlyTextLine)textDocument.GetLineByIndex(1);
             if (line.Length != 80 || line.LineIndex != 1 || line.StartOffset != 80 ||
                 line.Text != "000020*-Maintenance frame - Created on 14 Oct 2013 at 17:27:08          00002001")
             {
                 throw new Exception("Incorrect line at index 1");
             }
-            line = textDocument.GetLineByIndex(223);
+            line = (ReadOnlyTextLine)textDocument.GetLineByIndex(223);
             if (line.Length != 80 || line.LineIndex != 223 || line.StartOffset != 17840 ||
                 line.Text != "002240     05                             PIC X(08) VALUE '/MSVCOUT'.   02010001")
             {
@@ -218,17 +218,17 @@ namespace TypeCobol.Test.Compiler.Text
             }
 
             int indexOfCharInLine = -1;
-            line = textDocument.GetLineByOffset(12, out indexOfCharInLine);
+            line = (ReadOnlyTextLine)textDocument.GetLineByOffset(12, out indexOfCharInLine);
             if (line.LineIndex != 0 || indexOfCharInLine != 12)
             {
                 throw new Exception("Incorrect line at offset 12");
             }
-            line = textDocument.GetLineByOffset(159, out indexOfCharInLine);
+            line = (ReadOnlyTextLine)textDocument.GetLineByOffset(159, out indexOfCharInLine);
             if (line.LineIndex != 1 || indexOfCharInLine != 79)
             {
                 throw new Exception("Incorrect line at offset 79");
             }
-            line = textDocument.GetLineByOffset(17899, out indexOfCharInLine);
+            line = (ReadOnlyTextLine)textDocument.GetLineByOffset(17899, out indexOfCharInLine);
             if (line.LineIndex != 223 || indexOfCharInLine != 59)
             {
                 throw new Exception("Incorrect line at offset 17899");
@@ -267,7 +267,7 @@ namespace TypeCobol.Test.Compiler.Text
             }
 
             // Load the CobolFile in a TextDocument
-            TextDocument textDocument = new TextDocument("MSVCINP free format.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+            ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCINP free format.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
 
             if (textDocument.CharAt(0) != '/')
             {
@@ -291,19 +291,19 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Character enumerator after 90 iterations should return a");
             }
 
-            ITextLine line = textDocument.GetLineByIndex(0);
+            ReadOnlyTextLine line = (ReadOnlyTextLine)textDocument.GetLineByIndex(0);
             if (line.Length != 65 || line.LineIndex != 0 || line.StartOffset != 0 ||
                 line.Text != "/----------------------------------------------------------------")
             {
                 throw new Exception("Incorrect line at index 0");
             }
-            line = textDocument.GetLineByIndex(1);
+            line = (ReadOnlyTextLine)textDocument.GetLineByIndex(1);
             if (line.Length != 96 || line.LineIndex != 1 || line.StartOffset != 65 ||
                 line.Text != "* MSVCINP               partie ALLER FIXE des MESSAGES échangés avec tout SERVICE APPLICATIF C14")
             {
                 throw new Exception("Incorrect line at index 1");
             }
-            line = textDocument.GetLineByIndex(36);
+            line = (ReadOnlyTextLine)textDocument.GetLineByIndex(36);
             if (line.Length != 66 || line.LineIndex != 36 || line.StartOffset != 2457 ||
                 line.Text != "d    05                            PIC X(008) VALUE '/MSVCINP'.   ")
             {
@@ -311,17 +311,17 @@ namespace TypeCobol.Test.Compiler.Text
             }
 
             int indexOfCharInLine = -1;
-            line = textDocument.GetLineByOffset(12, out indexOfCharInLine);
+            line = (ReadOnlyTextLine)textDocument.GetLineByOffset(12, out indexOfCharInLine);
             if (line.LineIndex != 0 || indexOfCharInLine != 12)
             {
                 throw new Exception("Incorrect line at offset 12");
             }
-            line = textDocument.GetLineByOffset(881, out indexOfCharInLine);
+            line = (ReadOnlyTextLine)textDocument.GetLineByOffset(881, out indexOfCharInLine);
             if (line.LineIndex != 12 || indexOfCharInLine != 5)
             {
                 throw new Exception("Incorrect line at offset 981");
             }
-            line = textDocument.GetLineByOffset(2509, out indexOfCharInLine);
+            line = (ReadOnlyTextLine)textDocument.GetLineByOffset(2509, out indexOfCharInLine);
             if (line.LineIndex != 36 || indexOfCharInLine != 52)
             {
                 throw new Exception("Incorrect line at offset 2509");

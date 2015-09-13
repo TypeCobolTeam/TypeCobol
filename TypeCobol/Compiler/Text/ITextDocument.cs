@@ -74,6 +74,16 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         int LineCount { get; }
 
+        /// <summary>
+        /// The first line has the index 0
+        /// </summary>
+        int FindIndexOfLine(ITextLine line);
+
+        /// <summary>
+        /// Offset of the first char of this line in the document 
+        /// </summary>
+        int FindStartOffsetOfLine(ITextLine line);
+
         // -- Document changes --
 
         /// <summary>
