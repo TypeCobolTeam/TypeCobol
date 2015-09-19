@@ -281,16 +281,11 @@ namespace TypeCobol.Compiler.Preprocessor
 
         // --- temp temp ---
 
-        public TextLineType Type
+        public CobolTextLineType Type
         {
             get
             {
                 return TokensLine.Type;
-            }
-
-            set
-            {
-                TokensLine.Type = value;
             }
         }
 

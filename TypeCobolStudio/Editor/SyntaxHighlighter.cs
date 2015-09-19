@@ -31,11 +31,11 @@ namespace TypeCobolStudio.Editor
                     }
                     if (!tokensLine.Indicator.IsEmpty)
                     {
-                        if (tokensLine.Type == TextLineType.Comment)
+                        if (tokensLine.Type == CobolTextLineType.Comment)
                         {
                             ApplyTextAreaStyle(lineStartOffset, tokensLine.Indicator, TokenStyles.GetAreaStyle(TextAreaType.Comment));
                         }
-                        else if (tokensLine.Type == TextLineType.Debug || tokensLine.Type == TextLineType.Continuation)
+                        else if (tokensLine.Type == CobolTextLineType.Debug || tokensLine.Type == CobolTextLineType.Continuation)
                         {
                             ApplyTextAreaStyle(lineStartOffset, tokensLine.Indicator, TokenStyles.GetAreaStyle(TextAreaType.Indicator));
                         }

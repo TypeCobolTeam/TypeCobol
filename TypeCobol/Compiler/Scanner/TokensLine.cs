@@ -16,24 +16,24 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Constructor used for the first tokens line
         /// </summary>
-        internal TokensLine(TextLineMap textLineMap, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForHexadecimalAlphanumericLiterals)
+        internal TokensLine(ICobolTextLine textLine, MultilineScanState initialScanState)
         {
-            TextLineMap = textLineMap;
-            lastSourceIndex = textLineMap.Source.EndIndex;
+            this.textLine = textLine;
+            lastSourceIndex = textLine.Source.EndIndex;
 
             SourceTokens = new List<Token>();
             ScannerDiagnostics = new List<Diagnostic>();
-            InitialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForHexadecimalAlphanumericLiterals);
-            ScanState = InitialScanState.Clone();
+            InitialScanState = initialScanState;
+            ScanState = initialScanState.Clone();
         }
 
         /// <summary>
         /// Constructor used to link a previous tokens line to the following tokens line
         /// </summary>
-        internal TokensLine(TextLineMap textLineMap, TokensLine previousLine)
+        internal TokensLine(CobolTextLine textLine, TokensLine previousLine)
         {
-            TextLineMap = textLineMap;
-            lastSourceIndex = textLineMap.Source.EndIndex;
+            this.textLine = textLine;
+            lastSourceIndex = textLine.Source.EndIndex;
 
             SourceTokens = new List<Token>();
             ScannerDiagnostics = new List<Diagnostic>();
@@ -45,10 +45,10 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Constructor used to compute a continuation between two lines
         /// </summary>
-        internal TokensLine(TextLineMap textLineMap, TokensLine previousLine, bool revertToPreviousState)
+        internal TokensLine(CobolTextLine textLine, TokensLine previousLine, bool revertToPreviousState)
         {
-            TextLineMap = textLineMap;
-            lastSourceIndex = textLineMap.Source.EndIndex;
+            this.textLine = textLine;
+            lastSourceIndex = textLine.Source.EndIndex;
 
             SourceTokens = new List<Token>();
             ScannerDiagnostics = new List<Diagnostic>();
@@ -72,16 +72,12 @@ namespace TypeCobol.Compiler.Scanner
         internal static ITokensLine CreateVirtualLineForInsertedToken(int initialLineIndex, string text)
         {
             return new TokensLine(
-                new TextLineMap(
+                new CobolTextLine(
                     new TextLineSnapshot(initialLineIndex, text, null),
                     ColumnsLayout.FreeTextFormat),
-                false, false, false, Encoding.Unicode);
+                new MultilineScanState(false, false, false, Encoding.Unicode));
         }
 
-        /// <summary>
-        /// Partition of the source text line into reference format areas
-        /// </summary>
-        public TextLineMap TextLineMap { get; private set; }
 
         // Cache last index of a source char on this line
         private int lastSourceIndex;
@@ -123,7 +119,7 @@ namespace TypeCobol.Compiler.Scanner
             SourceTokens.Add(token);
 
             // Advance MultilineScanState
-            if (TextLineMap.Type != TextLineType.Blank) // see p54 : for continuation, blank lines are treated like comment lines
+            if (textLine.Type != CobolTextLineType.Blank) // see p54 : for continuation, blank lines are treated like comment lines
             {
                 ScanState.AdvanceToNextState(token);
             }
@@ -249,123 +245,111 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        // --- temp temp ---
+        // --- ICobolTextLine wrapper ---
 
-        public TextLineType Type
-        {
-            get
-            {
-                return TextLineMap.Type;
-            }
+        // Underlying Cobol text line
+        private ICobolTextLine textLine;
 
-            set
-            {
-                TextLineMap.Type = value;
-            }
-        }
+        /// <summary>
+        /// Reference to the underlying Cobol text line, reusable in several TokensLines when the context changes
+        /// </summary>
+        public ICobolTextLine TextLine { get { return textLine; } }
 
-        public TextArea SequenceNumber
-        {
-            get
-            {
-                return TextLineMap.SequenceNumber;
-            }
-        }
+        /// <summary>
+        /// Text of the line, without the end of line delimiters
+        /// </summary>
+        public string Text { get { return textLine.Text; } }
 
-        public string SequenceNumberText
-        {
-            get
-            {
-                return TextLineMap.SequenceNumberText;
-            }
-        }
+        /// <summary>
+        /// Part of the text of the line, from start index to end index (included)
+        /// </summary>
+        public string TextSegment(int startIndex, int endIndexInclusive) { return textLine.TextSegment(startIndex, endIndexInclusive); }
 
-        public TextArea Indicator
-        {
-            get
-            {
-                return TextLineMap.Indicator;
-            }
-        }
+        /// <summary>
+        /// Number of characters in the line, end of line delimiters excluded
+        /// </summary>
+        public int Length { get { return textLine.Length; } }
 
-        public char IndicatorChar
-        {
-            get
-            {
-                return TextLineMap.IndicatorChar;
-            }
-        }
+        // Position of the text line in the source text document
 
-        public TextArea Source
-        {
-            get
-            {
-                return TextLineMap.Source;
-            }
-        }
+        /// <summary>
+        /// Index of this line when it first appeared in the document.
+        /// WARNING : if lines are later inserted or removed in the document before it,
+        /// InitialLineIndex no longer reflects the current position of the line.
+        /// It can however provide a good starting point to start searching for a line
+        /// in a snapshot of the document at a given point in time.
+        /// When a line is created outside of a document, InitialLineIndex = -1.
+        /// </summary>
+        public int InitialLineIndex { get { return textLine.InitialLineIndex; } }
 
-        public string SourceText
-        {
-            get
-            {
-                return TextLineMap.SourceText;
-            }
-        }
+        /// <summary>
+        /// A text line instance can be reused simultaneously in different snapshots of the document
+        /// (if it wasn't modified between two versions).
+        /// You can NOT get a line number from an isolated text line, because this line instance can
+        /// have different positions in two different snapshots of the document (if other lines were 
+        /// inserted or removed before).
+        /// 
+        /// The line number is only defined :
+        /// 
+        /// 1. In a specific snapshot of the document :
+        /// - pass the ITextLine object to the IndexOf method on the list of lines in a document snapshot 
+        ///   (WARNING : expensive O(n) operation !)
+        /// 
+        /// 2. In the live text document (for example a text editor accessed in the specific thread where it lives) :
+        /// - pass the property LineTrackingReferenceInSourceDocument to a dedicated method of the text source 
+        ///   (much less expensive O(log n) operation)
+        /// 
+        /// This property returns an opaque reference to a line tracking object from the live text document,
+        /// which will enable an efficient retrieval of the line number for this line in the document.
+        /// </summary>
+        public object LineTrackingReferenceInSourceDocument { get { return textLine.LineTrackingReferenceInSourceDocument; } }
 
-        public TextArea Comment
-        {
-            get
-            {
-                return TextLineMap.Comment;
-            }
-        }
+        /// <summary>
+        /// Cobol text line type : Source, Debug, Comment or Continuation
+        /// </summary>
+        public CobolTextLineType Type { get { return textLine.Type; } }
 
-        public string CommentText
-        {
-            get
-            {
-                return TextLineMap.CommentText;
-            }
-        }
+        /// <summary>
+        /// Sequence number area : Columns 1 through 6
+        /// </summary>
+        public TextArea SequenceNumber { get { return textLine.SequenceNumber; } }
 
-        public int InitialLineIndex
-        {
-            get
-            {
-                return TextLineMap.TextLine.InitialLineIndex;
-            }
-        }
+        /// <summary>
+        /// Sequence number text : Columns 1 through 6
+        /// </summary>
+        public string SequenceNumberText { get { return textLine.SequenceNumberText; } }
 
-        public string Text
-        {
-            get
-            {
-                return TextLineMap.TextLine.Text;
-            }
-        }
+        /// <summary>
+        /// Indicator area : Column 7
+        /// </summary>
+        public TextArea Indicator { get { return textLine.Indicator; } }
 
-        public int Length
-        {
-            get
-            {
-                return TextLineMap.TextLine.Length;
-            }
-        }
+        /// <summary>
+        /// Indicator char : Column 7
+        /// </summary>
+        public char IndicatorChar { get { return textLine.IndicatorChar; } }
 
-        public object LineTrackingReferenceInSourceDocument
-        {
-            get
-            {
-                return TextLineMap.TextLine.LineTrackingReferenceInSourceDocument;
-            }
-        }
+        /// <summary>
+        /// Area A : Columns 8 through 11 
+        /// Area B : Columns 12 through 72 
+        /// </summary>
+        public TextArea Source { get { return textLine.Source; } }
 
-        public string TextSegment(int startIndex, int endIndexInclusive)
-        {
-            return TextLineMap.TextLine.TextSegment(startIndex, endIndexInclusive);
-        }
+        /// <summary>
+        /// Area A text : Columns 8 through 11 
+        /// Area B text : Columns 12 through 72 
+        /// </summary>
+        public string SourceText { get { return textLine.SourceText; } }
 
-        // --- temp temp ---
+        /// <summary>
+        /// Comment area : Columns 73 through 80+
+        /// </summary>
+        public TextArea Comment { get { return textLine.Comment; } }
+
+        /// <summary>
+        /// Comment text : Columns 73 through 80+
+        /// </summary>
+        public string CommentText { get { return textLine.CommentText; } }        
     }    
 
     /// <summary>

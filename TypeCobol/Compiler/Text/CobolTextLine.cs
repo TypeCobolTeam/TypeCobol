@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.Text
     /// <summary>
     /// Line types defined in the Cobol reference format
     /// </summary>
-    public enum TextLineType
+    public enum CobolTextLineType
     {
         /// <summary>
         /// Blank indicator in column 7
@@ -24,30 +24,31 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         Continuation,
         /// <summary>
-        /// Any other indicator char is invalid
-        /// </summary>
-        Invalid,
-        /// <summary>
         /// A blank line contains nothing but spaces in column 7 through column 72
         /// </summary>
-        Blank
+        Blank,
+        /// <summary>
+        /// Any other indicator char is invalid
+        /// </summary>
+        Invalid
     }
     
     /// <summary>
     /// Partition of a COBOL text line into reference format areas
     /// </summary>
-    public class TextLineMap : ICobolLine
-    {
-        public TextLineMap(ITextLine textLine, ColumnsLayout columnsLayout)
+    public class CobolTextLine : ICobolTextLine
+    {       
+        public CobolTextLine(ITextLine textLine, ColumnsLayout columnsLayout)
         {
-            TextLine = textLine;
+            this.textLine = textLine;
 
             // Scan the line to find the indexes of the different areas
+            // - 72 columns reference format
             if (columnsLayout == ColumnsLayout.CobolReferenceFormat)
             {
                 MapVariableLengthLineWithReferenceFormat();
             }
-            // unlimited length lines
+            // - free format and unlimited line length
             else
             {
                 MapVariableLengthLineWithFreeFormat();
@@ -57,9 +58,21 @@ namespace TypeCobol.Compiler.Text
             ComputeLineTypeFromIndicator();
         }
 
+        /// <summary>
+        /// Create an isolated CobolTextLine, not based on a real line of a TextDocument.
+        /// Useful only for unit tests, or to compute intermediate results.
+        /// </summary>
+        public static CobolTextLine Create(string text)
+        {
+            ITextLine isolatedTextLine = new TextLineSnapshot(-1, text, null);
+            return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
+        }
+
+        // --- Cobol text line scanner
+
         private void MapVariableLengthLineWithReferenceFormat()
         {
-            string line = TextLine.Text;
+            string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
 
             // Test for free format compiler directives embedded in a reference format file
@@ -67,45 +80,45 @@ namespace TypeCobol.Compiler.Text
             if (compilerDirectiveIndex >= 0)
             {
                 // Free text format line embedded in reference format file
-                SequenceNumber = new TextArea(0, compilerDirectiveIndex - 1);
-                Indicator = new TextArea(compilerDirectiveIndex, compilerDirectiveIndex - 1);
-                Source = new TextArea(compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
-                Comment = new TextArea(lastIndexOfLine > 71 ? 72 : lastIndexOfLine + 1, lastIndexOfLine);
+                SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, compilerDirectiveIndex - 1);
+                Indicator = new TextArea(TextAreaType.Indicator, compilerDirectiveIndex, compilerDirectiveIndex - 1);
+                Source = new TextArea(TextAreaType.Source, compilerDirectiveIndex, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine > 71 ? 72 : lastIndexOfLine + 1, lastIndexOfLine);
             }
             else
             {
                 // Cobol reference format
                 if (lastIndexOfLine >= 7)
                 {
-                    SequenceNumber = new TextArea(0, 5);
-                    Indicator = new TextArea(6, 6);
-                    Source = new TextArea(7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
-                    Comment = new TextArea(lastIndexOfLine > 71 ? 72 : lastIndexOfLine + 1, lastIndexOfLine);
+                    SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, 5);
+                    Indicator = new TextArea(TextAreaType.Indicator, 6, 6);
+                    Source = new TextArea(TextAreaType.Source, 7, lastIndexOfLine > 71 ? 71 : lastIndexOfLine);
+                    Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine > 71 ? 72 : lastIndexOfLine + 1, lastIndexOfLine);
                 }
                 else if (lastIndexOfLine == 6)
                 {
-                    SequenceNumber = new TextArea(0, 5);
-                    Indicator = new TextArea(6, 6);
-                    Source = new TextArea(7, 6);
-                    Comment = new TextArea(7, 6);
+                    SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, 5);
+                    Indicator = new TextArea(TextAreaType.Indicator, 6, 6);
+                    Source = new TextArea(TextAreaType.Source, 7, 6);
+                    Comment = new TextArea(TextAreaType.Comment, 7, 6);
                 }
                 else
                 {
-                    SequenceNumber = new TextArea(0, lastIndexOfLine);
-                    Indicator = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
-                    Source = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
-                    Comment = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
+                    SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, lastIndexOfLine);
+                    Indicator = new TextArea(TextAreaType.Indicator, lastIndexOfLine + 1, lastIndexOfLine);
+                    Source = new TextArea(TextAreaType.Source, lastIndexOfLine + 1, lastIndexOfLine);
+                    Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine + 1, lastIndexOfLine);
                 }
             }
         }
 
         private void MapVariableLengthLineWithFreeFormat()
         {
-            string line = TextLine.Text;
+            string line = textLine.Text;
             int lastIndexOfLine = line.Length - 1;
 
             // No SequenceNumber area in free format text 
-            SequenceNumber = new TextArea(0, -1);
+            SequenceNumber = new TextArea(TextAreaType.SequenceNumber, 0, -1);
 
             // In free format source text :
             // - a line starting with char * is a comment line or a compiler directive            
@@ -115,13 +128,13 @@ namespace TypeCobol.Compiler.Text
                 if ((line.Length >= 5 && line.StartsWith("*CBL ")) ||
                     (line.Length >= 9 && line.StartsWith("*CONTROL ")))
                 {
-                    Indicator = new TextArea(0, -1);
-                    Source = new TextArea(0, lastIndexOfLine);
+                    Indicator = new TextArea(TextAreaType.Indicator, 0, -1);
+                    Source = new TextArea(TextAreaType.Source, 0, lastIndexOfLine);
                 }
                 else
                 {
-                    Indicator = new TextArea(0, 0);
-                    Source = new TextArea(1, lastIndexOfLine);
+                    Indicator = new TextArea(TextAreaType.Indicator, 0, 0);
+                    Source = new TextArea(TextAreaType.Source, 1, lastIndexOfLine);
                 }
             }
             // - a line starting with char / is a comment line 
@@ -129,23 +142,23 @@ namespace TypeCobol.Compiler.Text
             // => a free format program line cannot start with one of these three chars, insert a space before if needed
             else if (lastIndexOfLine >= 0 && (line[0] == '/' || line[0] == '-'))
             {
-                Indicator = new TextArea(0, 0);
-                Source = new TextArea(1, lastIndexOfLine);
+                Indicator = new TextArea(TextAreaType.Indicator, 0, 0);
+                Source = new TextArea(TextAreaType.Source, 1, lastIndexOfLine);
             }
             // - a line starting with d or D + space char is a debug ligne
             else if (lastIndexOfLine >= 1 && ((line[0] == 'd' || line[0] == 'D') & line[1] == ' '))
             {
-                Indicator = new TextArea(0, 1);
-                Source = new TextArea(2, lastIndexOfLine);
+                Indicator = new TextArea(TextAreaType.Indicator, 0, 1);
+                Source = new TextArea(TextAreaType.Source, 2, lastIndexOfLine);
             }
             else // no indicator
             {
-                Indicator = new TextArea(0, -1);
-                Source = new TextArea(0, lastIndexOfLine);
+                Indicator = new TextArea(TextAreaType.Indicator, 0, -1);
+                Source = new TextArea(TextAreaType.Source, 0, lastIndexOfLine);
             }
 
             // No Comment area in free format text
-            Comment = new TextArea(lastIndexOfLine + 1, lastIndexOfLine);
+            Comment = new TextArea(TextAreaType.Comment, lastIndexOfLine + 1, lastIndexOfLine);
         }
 
         // List of compiler directives keywords which can be encountered before column 8
@@ -230,42 +243,39 @@ namespace TypeCobol.Compiler.Text
             switch (IndicatorChar)
             {
                 case ' ':
-                    Type = TextLineType.Source;
+                    Type = CobolTextLineType.Source;
                     break;
                 case '*':
                 case '/':
-                    Type = TextLineType.Comment;
+                    Type = CobolTextLineType.Comment;
                     break;
                 case 'D':
                 case 'd':
-                    Type = TextLineType.Debug;
+                    Type = CobolTextLineType.Debug;
                     break;
                 case '-':
-                    Type = TextLineType.Continuation;
+                    Type = CobolTextLineType.Continuation;
                     break;
                 default:
-                    Type = TextLineType.Invalid;
+                    Type = CobolTextLineType.Invalid;
                     break;
             }
 
             // Detect blank lines
-            if((Type == TextLineType.Source || Type == TextLineType.Debug || Type == TextLineType.Continuation) &&
+            if((Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation) &&
                (Source.IsEmpty || String.IsNullOrWhiteSpace(SourceText)))
             {
-                Type = TextLineType.Blank;
+                Type = CobolTextLineType.Blank;
             }
         }
+
+        // --- Cobol text line properties ---
 
         /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
-        public TextLineType Type { get; set; }
-
-        /// <summary>
-        /// Underlying text line
-        /// </summary>
-        public ITextLine TextLine { get; private set; }
-        
+        public CobolTextLineType Type { get; private set; }
+                
         /// <summary>
         /// Sequence number area : Columns 1 through 6
         /// </summary>
@@ -278,7 +288,7 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return SequenceNumber.IsEmpty ? null : TextLine.TextSegment(SequenceNumber.StartIndex, SequenceNumber.EndIndex);
+                return SequenceNumber.IsEmpty ? null : textLine.TextSegment(SequenceNumber.StartIndex, SequenceNumber.EndIndex);
             }
         }
 
@@ -294,7 +304,7 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return Indicator.IsEmpty ? ' ' : TextLine.TextSegment(Indicator.StartIndex, Indicator.EndIndex)[0];
+                return Indicator.IsEmpty ? ' ' : textLine.TextSegment(Indicator.StartIndex, Indicator.EndIndex)[0];
             }
         }
 
@@ -308,7 +318,7 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return Source.IsEmpty ? null : TextLine.TextSegment(Source.StartIndex, Source.EndIndex);
+                return Source.IsEmpty ? null : textLine.TextSegment(Source.StartIndex, Source.EndIndex);
             }
         }
 
@@ -324,7 +334,7 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
-                return Comment.IsEmpty ? null : TextLine.TextSegment(Comment.StartIndex, Comment.EndIndex);
+                return Comment.IsEmpty ? null : textLine.TextSegment(Comment.StartIndex, Comment.EndIndex);
             }
         }
         
@@ -333,55 +343,56 @@ namespace TypeCobol.Compiler.Text
             return "SequenceNumber" + SequenceNumber + " Indicator" + Indicator + " Source" + Source + " Comment" + Comment;
         }
 
+        // --- ITextLine wrapper ---
+
+        // Underlying text line
+        public ITextLine textLine;
+
         /// <summary>
-        /// Create an isolated TextLineMap object, not based on a real line of a TextDocument.
-        /// Useful only for unit tests, or to compute intermediary results.
+        /// Text of the line, without the end of line delimiters
         /// </summary>
-        public static TextLineMap Create(string text)
-        {
-            ITextLine isolatedTextLine = new TextLineSnapshot(-1, text, null);
-            return new TextLineMap(isolatedTextLine, ColumnsLayout.FreeTextFormat);
-        }
+        public string Text { get { return textLine.Text; } }
 
-        // --- temp temp ---
+        /// <summary>
+        /// Part of the text of the line, from start index to end index (included)
+        /// </summary>
+        public string TextSegment(int startIndex, int endIndexInclusive) { return textLine.TextSegment(startIndex, endIndexInclusive); }
 
-        public int InitialLineIndex
-        {
-            get
-            {
-                return TextLine.InitialLineIndex;
-            }
-        }
+        /// <summary>
+        /// Number of characters in the line, end of line delimiters excluded
+        /// </summary>
+        public int Length { get { return textLine.Length; } }
 
-        public string Text
-        {
-            get
-            {
-                return TextLine.Text;
-            }
-        }
+        /// <summary>
+        /// Index of this line when it first appeared in the document.
+        /// WARNING : if lines are later inserted or removed in the document before it,
+        /// InitialLineIndex no longer reflects the current position of the line.
+        /// It can however provide a good starting point to start searching for a line
+        /// in a snapshot of the document at a given point in time.
+        /// When a line is created outside of a document, InitialLineIndex = -1.
+        /// </summary>
+        public int InitialLineIndex { get { return textLine.InitialLineIndex; } }
 
-        public int Length
-        {
-            get
-            {
-                return TextLine.Length;
-            }
-        }
-
-        public object LineTrackingReferenceInSourceDocument
-        {
-            get
-            {
-                return TextLine.LineTrackingReferenceInSourceDocument;
-            }
-        }
-
-        public string TextSegment(int startIndex, int endIndexInclusive)
-        {
-            return TextLine.TextSegment(startIndex, endIndexInclusive);
-        }
-
-        // --- temp temp ---
+        /// <summary>
+        /// A text line instance can be reused simultaneously in different snapshots of the document
+        /// (if it wasn't modified between two versions).
+        /// You can NOT get a line number from an isolated text line, because this line instance can
+        /// have different positions in two different snapshots of the document (if other lines were 
+        /// inserted or removed before).
+        /// 
+        /// The line number is only defined :
+        /// 
+        /// 1. In a specific snapshot of the document :
+        /// - pass the ITextLine object to the IndexOf method on the list of lines in a document snapshot 
+        ///   (WARNING : expensive O(n) operation !)
+        /// 
+        /// 2. In the live text document (for example a text editor accessed in the specific thread where it lives) :
+        /// - pass the property LineTrackingReferenceInSourceDocument to a dedicated method of the text source 
+        ///   (much less expensive O(log n) operation)
+        /// 
+        /// This property returns an opaque reference to a line tracking object from the live text document,
+        /// which will enable an efficient retrieval of the line number for this line in the document.
+        /// </summary>
+        public object LineTrackingReferenceInSourceDocument { get { return textLine.LineTrackingReferenceInSourceDocument; } }
     }
 }

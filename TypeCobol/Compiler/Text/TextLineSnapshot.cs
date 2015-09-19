@@ -13,16 +13,6 @@ namespace TypeCobol.Compiler.Text
             Text = text;
             LineTrackingReferenceInSourceDocument = lineTrackingReferenceInSourceDocument;
         }
-        
-        /// <summary>
-        /// Index of this line when it first appeared in the document.
-        /// WARNING : if lines are later inserted or removed in the document before it,
-        /// InitialLineIndex no longer reflects the current position of the line.
-        /// It can however provide a good starting point to start searching for a line
-        /// in a snapshot of the document at a given point in time.
-        /// When a line is created outside of a document, InitialLineIndex = -1.
-        /// </summary>
-        public int InitialLineIndex { get; private set; } 
 
         /// <summary>
         /// Text of the line, without the end of line delimiters
@@ -47,6 +37,18 @@ namespace TypeCobol.Compiler.Text
                 return Text.Length;
             }
         }
+
+        // Position of the text line in the source text document
+
+        /// <summary>
+        /// Index of this line when it first appeared in the document.
+        /// WARNING : if lines are later inserted or removed in the document before it,
+        /// InitialLineIndex no longer reflects the current position of the line.
+        /// It can however provide a good starting point to start searching for a line
+        /// in a snapshot of the document at a given point in time.
+        /// When a line is created outside of a document, InitialLineIndex = -1.
+        /// </summary>
+        public int InitialLineIndex { get; private set; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document

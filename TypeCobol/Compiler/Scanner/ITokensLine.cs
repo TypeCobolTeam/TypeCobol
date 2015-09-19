@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// List of tokens and diagnostics found by scanning one line of text
     /// </summary>
-    public interface ITokensLine : ICobolLine
+    public interface ITokensLine : ICobolTextLine
     {
         /// <summary>
         /// Tokens found while scanning the raw source text line

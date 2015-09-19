@@ -3,12 +3,12 @@
     /// <summary>
     /// Partition of a COBOL text line into reference format areas
     /// </summary>
-    public interface ICobolLine : ITextLine
+    public interface ICobolTextLine : ITextLine
     {
         /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
-        TextLineType Type { get; set; }
+        CobolTextLineType Type { get; }
 
         /// <summary>
         /// Sequence number area : Columns 1 through 6

@@ -28,12 +28,12 @@ namespace TypeCobol.Test.Compiler.Scanner
 
     internal class TextChangeMap : TextChange
     {
-        public TextLineMap NewLineMap { get; private set; }
+        public CobolTextLine NewLineMap { get; private set; }
 
         public TextChangeMap(TextChange change, ColumnsLayout columnsLayout) :
             base(change.Type, change.LineIndex, change.NewLine)
         {
-            NewLineMap = new TextLineMap(NewLine, columnsLayout);
+            NewLineMap = new CobolTextLine(NewLine, columnsLayout);
         }
     }
 

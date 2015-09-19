@@ -283,8 +283,10 @@
     <Compile Include="Compiler\CodeModel\Program.cs" />
     <Compile Include="Compiler\CodeModel\SymbolTable.cs" />
     <Compile Include="Compiler\CompilationDocument.cs" />
+    <Compile Include="Compiler\CompilationDocumentLine.cs" />
     <Compile Include="Compiler\CompilationProject.cs" />
     <Compile Include="Compiler\CompilationUnit.cs" />
+    <Compile Include="Compiler\CompilationUnitLine.cs" />
     <Compile Include="Compiler\Concurrency\DocumentVersionProvider.cs" />
     <Compile Include="Compiler\Concurrency\IDocumentLine.cs" />
     <Compile Include="Compiler\Concurrency\IDocumentSnapshot.cs" />
@@ -329,7 +331,7 @@
     <Compile Include="Compiler\Preprocessor\ReplaceTokensLinesIterator.cs" />
     <Compile Include="Compiler\Scanner\ITokensLine.cs" />
     <Compile Include="Compiler\Text\ColumnsLayout.cs" />
-    <Compile Include="Compiler\Text\ICobolLine.cs" />
+    <Compile Include="Compiler\Text\ICobolTextLine.cs" />
     <Compile Include="Compiler\Text\TextArea.cs" />
     <Compile Include="Compiler\Concurrency\DocumentChange.cs" />
     <Compile Include="Compiler\Text\TextChange.cs" />
@@ -353,15 +355,13 @@
     <Compile Include="Compiler\Scanner\TokensLinesIterator.cs" />
     <Compile Include="Compiler\Scanner\TokenType.cs" />
     <Compile Include="Compiler\Scanner\TokenUtils.cs" />
-    <Compile Include="Compiler\Text\CharacterType.cs" />
     <Compile Include="Compiler\Text\CobolChar.cs" />
     <Compile Include="Compiler\Text\ITextDocument.cs" />
     <Compile Include="Compiler\Text\ITextLine.cs" />
-    <Compile Include="Compiler\Text\SourceTextArea.cs" />
     <Compile Include="Compiler\Concurrency\DocumentChangedEvent.cs" />
     <Compile Include="Compiler\Text\ReadOnlyTextDocument.cs" />
     <Compile Include="Compiler\Text\TextLineSnapshot.cs" />
-    <Compile Include="Compiler\Text\TextLineMap.cs" />
+    <Compile Include="Compiler\Text\CobolTextLine.cs" />
     <Compile Include="Compiler\TypeChecker\CobolTypeChecker.cs" />
     <Compile Include="Compiler\TypeChecker\CodeModelChangedEvent.cs" />
     <Compile Include="Compiler\TypeChecker\SemanticsDocument.cs" />

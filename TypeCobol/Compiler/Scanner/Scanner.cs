@@ -17,15 +17,15 @@ namespace TypeCobol.Compiler.Scanner
 
         public static TokensLine ScanFirstLine(ITextLine textLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
-            TokensLine tokensLine = new TokensLine(textLineMap, insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals);
+            CobolTextLine textLineMap = new CobolTextLine(textLine, textSourceInfo.ColumnsLayout);
+            TokensLine tokensLine = new TokensLine(textLineMap, new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals));
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
         }
 
         public static TokensLine ScanTextLine(ITextLine textLine, TokensLine previousLine, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
+            CobolTextLine textLineMap = new CobolTextLine(textLine, textSourceInfo.ColumnsLayout);
             TokensLine tokensLine = new TokensLine(textLineMap, previousLine);
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
@@ -34,27 +34,27 @@ namespace TypeCobol.Compiler.Scanner
         private static void ScanTokensLine(TokensLine tokensLine, TypeCobolOptions compilerOptions)
         {
             // Shorter aliases for tokensLine properties
-            TextLineMap textLineMap = tokensLine.TextLineMap;
+            ICobolTextLine textLine = tokensLine.TextLine;
             
             // The source section of is line of text must be split into tokens    
             string line = tokensLine.Text;
-            int startIndex = textLineMap.Source.StartIndex;
-            int lastIndex = textLineMap.Source.EndIndex;
+            int startIndex = textLine.Source.StartIndex;
+            int lastIndex = textLine.Source.EndIndex;
                         
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if(textLineMap.Type == TextLineType.Comment ||
-               (textLineMap.Type == TextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
+            if(textLine.Type == CobolTextLineType.Comment ||
+               (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
                 Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(commentToken);
                 return;
             }
             // Invalid indicator, the line type is unknown => the whole line text is handled as a single invalid token
-            else if (textLineMap.Type == TextLineType.Invalid)
+            else if (textLine.Type == CobolTextLineType.Invalid)
             {
                 // Invalid indicator => register an error
-                tokensLine.AddDiagnostic(MessageCode.InvalidIndicatorCharacter, textLineMap.Indicator.StartIndex, textLineMap.Indicator.EndIndex, textLineMap.Indicator);
+                tokensLine.AddDiagnostic(MessageCode.InvalidIndicatorCharacter, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
 
                 Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(invalidToken);
@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.Scanner
             }
             // Empty line => return immediately an empty list of tokens
             // Blank line => return only one token with type SpaceSeparator
-            if(textLineMap.Type == TextLineType.Blank)
+            if(textLine.Type == CobolTextLineType.Blank)
             {
                 if(!String.IsNullOrEmpty(line))
                 {
@@ -72,7 +72,7 @@ namespace TypeCobol.Compiler.Scanner
                 return;
             }            
             // Handle continuation from the previous line
-            else if (textLineMap.Type == TextLineType.Continuation && 
+            else if (textLine.Type == CobolTextLineType.Continuation && 
                         tokensLine.InitialScanState.LastToken != null && // no continuation is possible if there is no previous token
                         tokensLine.InitialScanState.LastToken.TokenType != TokenType.SpaceSeparator  && // no continuation is possible after a space separator
                         tokensLine.InitialScanState.LastToken.TokenType != TokenType.CommentEntry // no continuation is allowed after a comment-entry (p105 : A hyphen in the indicator area (column 7) is not permitted in comment-entries)
@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.Scanner
                 string concatenatedLine = continuedTextFromPreviousLine + line.Substring(startOfContinuationStringIndex, lastIndex - startOfContinuationStringIndex + 1);
 
                 // Create a temporary scanner over the concatenated line (continued token + continuation line)
-                TokensLine virtualConcatenatedTokensLine = new TokensLine(TextLineMap.Create(concatenatedLine), tokensLine.PreviousLine, true);
+                TokensLine virtualConcatenatedTokensLine = new TokensLine(CobolTextLine.Create(concatenatedLine), tokensLine.PreviousLine, true);
                 Scanner tempScanner = new Scanner(concatenatedLine, 0, concatenatedLine.Length - 1, virtualConcatenatedTokensLine, compilerOptions);
 
                 // Check if the first token of the concatenated line really is a continuation of the previous line,
@@ -215,7 +215,7 @@ namespace TypeCobol.Compiler.Scanner
                         if ((lastTokenTypeFromPreviousLine == TokenType.PeriodSeparator || lastTokenTypeFromPreviousLine == TokenType.PlusOperator || lastTokenTypeFromPreviousLine == TokenType.MinusOperator) &&
                             continuationToken.TokenFamily == TokenFamily.NumericLiteral)
                         {
-                            string previousLineText = tokensLine.PreviousLine.TextLineMap.SourceText;
+                            string previousLineText = tokensLine.PreviousLine.SourceText;
                             if (previousLineText.Length >= 2)
                             {
                                 char lastCharBeforeSeparatorOrOperator = previousLineText[previousLineText.Length - 2];
@@ -273,7 +273,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public static Token ScanIsolatedTokenInDefaultContext(string tokenText, out Diagnostic error)
         {
-            TokensLine tempTokensLine = new TokensLine(TextLineMap.Create(tokenText), true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
+            TokensLine tempTokensLine = new TokensLine(CobolTextLine.Create(tokenText), new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions());
             Token candidateToken = tempScanner.GetNextToken();
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
@@ -1366,7 +1366,7 @@ namespace TypeCobol.Compiler.Scanner
             int firstCharIndex = startIndex;
             for (; firstCharIndex <= lastIndex && line[firstCharIndex] == ' '; firstCharIndex++) { }
             // Check if it is in area A
-            if(line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.TextLineMap.Source.StartIndex + 4))
+            if(line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.Source.StartIndex + 4))
             {
                 // Reset scanner state and retry scanning
                 tokensLine.ScanState.ResetKeywordsState();

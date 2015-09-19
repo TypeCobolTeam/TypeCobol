@@ -36,7 +36,8 @@ namespace TypeCobol.Compiler.Text
         }
 
         /// <summary>
-        /// Reloads the text document with new chars
+        /// Reloads the text document with new chars.
+        /// The text source must be normalized as a sequence of Unicode chars with \r and/or \n end of line chars.
         /// </summary>
         public void LoadChars(IEnumerable<char> textSource)
         {
@@ -58,7 +59,7 @@ namespace TypeCobol.Compiler.Text
                     lineIndex++;
                     charsCount += line.Length;
 
-                    // Reset StringBuffer contents for next line
+                    // Reset StringBuilder contents for next line
                     currentLineText = new StringBuilder();
 
                     previousCharWasCr = true;
@@ -73,7 +74,7 @@ namespace TypeCobol.Compiler.Text
                         lineIndex++;
                         charsCount += line.Length;
 
-                        // Reset StringBuffer contents for next line
+                        // Reset StringBuilder contents for next line
                         currentLineText = new StringBuilder();
                     }
 

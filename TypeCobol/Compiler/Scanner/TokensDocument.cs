@@ -159,7 +159,7 @@ namespace TypeCobol.Compiler.Scanner
 
                                 // If the updated line is a continuation line, the last token of previous line may also
                                 // have been updated as part of the continuation => signal this change
-                                if (updatedLine.TextLineMap.Type == TextLineType.Continuation)
+                                if (updatedLine.Type == CobolTextLineType.Continuation)
                                 {
                                     for (int previousLineIndex = textChange.LineIndex - 1; previousLineIndex >= 0; previousLineIndex--)
                                     {
@@ -168,7 +168,7 @@ namespace TypeCobol.Compiler.Scanner
                                         // Signal change on the previous line
                                         tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineRescanned, previousLineIndex, previousLine));
                                         // Continue to iterate backward until the end of the continuation set
-                                        if (previousLine.TextLineMap.Type != TextLineType.Continuation)
+                                        if (previousLine.Type != CobolTextLineType.Continuation)
                                         {
                                             break;
                                         }
@@ -257,12 +257,12 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // If it was not the first line : continue with the scan state of the previous line
                         TokensLine previousLine = getTokensLineAtIndex(lineIndex - 1);
-                        updatedLine = Scanner.ScanTextLine(currentLine.TextLineMap.TextLine, previousLine, TextSourceInfo, CompilerOptions);
+                        updatedLine = Scanner.ScanTextLine(currentLine.TextLine, previousLine, TextSourceInfo, CompilerOptions);
                     }
                     else
                     {
                         // If it was the first line : initialize a new scan state
-                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLineMap.TextLine, false, false, false, TextSourceInfo, CompilerOptions);
+                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLine, false, false, false, TextSourceInfo, CompilerOptions);
                     }
                     // Update the line in the immutable list
                     setTokensLineAtIndex(lineIndex, updatedLine);
