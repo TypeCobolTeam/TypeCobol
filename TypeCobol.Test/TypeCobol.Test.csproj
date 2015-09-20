@@ -104,6 +104,7 @@
     <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Compiler\File\Samples\EbcdicRefFormatWithBadChars.TXT" />
     <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />

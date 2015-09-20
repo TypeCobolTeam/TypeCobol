@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Scanner
         public static TokensLine ScanFirstLine(ITextLine textLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
             CobolTextLine textLineMap = new CobolTextLine(textLine, textSourceInfo.ColumnsLayout);
-            TokensLine tokensLine = new TokensLine(textLineMap, new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals));
+            TokensLine tokensLine = new TokensLine(textLineMap, new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForAlphanumericLiterals));
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
         }
@@ -268,7 +268,7 @@ namespace TypeCobol.Compiler.Scanner
         /// - insideDataDivision = true
         /// - decimalPointIsComma = false
         /// - withDebuggingMode = false
-        /// - encodingForHexadecimalAlphanumericLiterals = IBM 1147
+        /// - encodingForAlphanumericLiterals = IBM 1147
         /// - default compiler options
         /// </summary>
         public static Token ScanIsolatedTokenInDefaultContext(string tokenText, out Diagnostic error)
@@ -1219,7 +1219,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
                 }
-                value = new AlphanumericLiteralValue(hexadecimalChars, tokensLine.ScanState.EncodingForHexadecimalAlphanumericLiterals);
+                value = new AlphanumericLiteralValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
             }
             else if (tokenType == TokenType.HexadecimalNationalLiteral)
             {

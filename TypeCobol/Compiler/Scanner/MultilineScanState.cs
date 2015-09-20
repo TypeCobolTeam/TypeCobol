@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
         /// </summary>
-        public Encoding EncodingForHexadecimalAlphanumericLiterals { get; private set; }
+        public Encoding EncodingForAlphanumericLiterals { get; private set; }
 
         /// <summary>
         /// Symbolic character names previously defined in the source file
@@ -70,12 +70,12 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForHexadecimalAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
-            EncodingForHexadecimalAlphanumericLiterals = encodingForHexadecimalAlphanumericLiterals;
+            EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             KeywordsState = KeywordsSequenceState.Default;
         }
 
@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForHexadecimalAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if(SymbolicCharacters != null)
             {
                 clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
@@ -371,7 +371,7 @@ namespace TypeCobol.Compiler.Scanner
                 return InsideDataDivision == otherScanState.InsideDataDivision &&
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
-                    EncodingForHexadecimalAlphanumericLiterals == otherScanState.EncodingForHexadecimalAlphanumericLiterals &&
+                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
                     ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) || 
                      (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count)) &&
                     KeywordsState == otherScanState.KeywordsState;
@@ -390,7 +390,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideDataDivision.GetHashCode();
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();
-                hash = hash * 23 + EncodingForHexadecimalAlphanumericLiterals.GetHashCode();
+                hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
                 if (SymbolicCharacters != null)
                 {
                     hash = hash * 23 + SymbolicCharacters.Count;

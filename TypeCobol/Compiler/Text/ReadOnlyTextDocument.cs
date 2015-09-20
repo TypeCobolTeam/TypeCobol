@@ -26,10 +26,10 @@ namespace TypeCobol.Compiler.Text
         /// </summary> 
         /// <param name="fileName">Name of the file the document is stored in</param>
         /// <param name="textSource">Sequence of unicode characters with line delimiters (Cr? Lf)</param>
-        public ReadOnlyTextDocument(string fileName, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout, IEnumerable<char> textSource)
+        public ReadOnlyTextDocument(string fileName, Encoding encodingForAlphanumericLiterals, ColumnsLayout columnsLayout, IEnumerable<char> textSource)
         {
             // Document source name and text format
-            Source = new TextSourceInfo(fileName, encodingForHexadecimalAlphanumericLiterals, columnsLayout);
+            Source = new TextSourceInfo(fileName, encodingForAlphanumericLiterals, columnsLayout);
 
             // Initialize document text lines
             LoadChars(textSource);

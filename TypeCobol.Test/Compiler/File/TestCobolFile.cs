@@ -68,6 +68,41 @@ namespace TypeCobol.Test.Compiler.File
             }
         }
 
+        public static void Check_EBCDICCobolFileWithUnsupportedChar()
+        {
+            DocumentFormat docFormat = DocumentFormat.ZOsReferenceFormat;
+
+            SourceFileProvider fileProvider = new SourceFileProvider();
+            fileProvider.AddLocalDirectoryLibrary(
+                PlatformUtils.GetPathForProjectFile(@"Compiler\File\Samples"),
+                false, new string[] { ".txt" },
+                docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength);
+            
+            bool exceptionWasThrownWithCorrectMessage = false;
+
+            CobolFile cobolFile;
+            if (fileProvider.TryGetFile("EbcdicRefFormatWithBadChars", out cobolFile))
+            {
+                try
+                {
+                    // Load the CobolFile in a TextDocument
+                    ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                }
+                catch(Exception e)
+                {
+                    if (e.Message == "The character code 13 in source encoding IBM EBCDIC (France-Euro) found at position 3072 can not be safely converted to the internal Unicode representation : please replace it with the alphanumeric hexadecimal literal X'0D' in the source text")
+                    {
+                        exceptionWasThrownWithCorrectMessage = true;
+                    }
+                }
+            }
+
+            if(!exceptionWasThrownWithCorrectMessage)
+            {
+                throw new Exception("Unsupported chars in fixed length EBCDIC source file were not correctly filtered");
+            }
+        }
+
         public static void Check_ASCIICobolFile_ReferenceFormat()
         {
             DocumentFormat docFormat = DocumentFormat.RDZReferenceFormat;

@@ -94,8 +94,8 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Initialize the compilation unit from an existing text document, not yet associated with a Cobol file
         /// </summary>
-        public CompilationUnit(ITextDocument textDocument, Encoding encodingForHexadecimalAlphanumericLiterals, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions) :
-            base(textDocument, encodingForHexadecimalAlphanumericLiterals, sourceFileProvider, documentProvider, compilerOptions)
+        public CompilationUnit(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions) :
+            base(textDocument, sourceFileProvider, documentProvider, compilerOptions)
         {
             CompilerOptions = compilerOptions;
 

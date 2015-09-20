@@ -17,10 +17,10 @@ namespace TypeCobolStudio.Editor
         private ICSharpCode.AvalonEdit.Document.TextDocument _avalonEditTextDocument;
         private WeakLineTracker _weakLineTracker;
 
-        public AvalonEditTextDocument(ICSharpCode.AvalonEdit.Document.TextDocument avalonEditTextDocument, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout)
+        public AvalonEditTextDocument(ICSharpCode.AvalonEdit.Document.TextDocument avalonEditTextDocument, Encoding encodingForAlphanumericLiterals, ColumnsLayout columnsLayout)
         {
             // Document source name and text format
-            Source = new TextSourceInfo(_avalonEditTextDocument.FileName, encodingForHexadecimalAlphanumericLiterals, columnsLayout);
+            Source = new TextSourceInfo(_avalonEditTextDocument.FileName, encodingForAlphanumericLiterals, columnsLayout);
 
             _avalonEditTextDocument = avalonEditTextDocument;
             // Listen to all line changes in the editor

@@ -141,7 +141,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Initialize the compilation document from an existing text document, not yet associated with a Cobol file
         /// </summary>
-        public CompilationDocument(ITextDocument textDocument, Encoding encodingForHexadecimalAlphanumericLiterals, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions)
+        public CompilationDocument(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions)
         {
             this.sourceFileProvider = sourceFileProvider;
             TextDocument = textDocument;

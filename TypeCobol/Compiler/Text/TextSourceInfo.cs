@@ -8,10 +8,10 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public class TextSourceInfo
     {
-        public TextSourceInfo(string name, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout)
+        public TextSourceInfo(string name, Encoding encodingForAlphanumericLiterals, ColumnsLayout columnsLayout)
         {
             Name = name;
-            EncodingForHexadecimalAlphanumericLiterals = encodingForHexadecimalAlphanumericLiterals;
+            EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             ColumnsLayout = columnsLayout;
         }
 
@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Character set used to encode the hexadecimal alphanumeric literals in the text document
         /// </summary>
-        public Encoding EncodingForHexadecimalAlphanumericLiterals { get; private set; }
+        public Encoding EncodingForAlphanumericLiterals { get; private set; }
 
         /// <summary>
         /// Format of the text document lines : Cobol reference format on 72 columns, or free text format

@@ -39,7 +39,7 @@ namespace TypeCobolStudio
             }
             else
             {
-                CompilationUnit = new CompilationUnit(TextDocument, DocumentFormat.RDZReferenceFormat.Encoding, project.SourceFileProvider, project, compilerOptions);
+                CompilationUnit = new CompilationUnit(TextDocument, project.SourceFileProvider, project, compilerOptions);
             }
 
             // Compile in the background every 500 ms

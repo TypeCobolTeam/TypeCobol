@@ -127,8 +127,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
                 DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
 
-            var compilationUnit = new CompilationUnit(textDocument,
-                DocumentFormat.RDZReferenceFormat.Encoding, project.SourceFileProvider, project, typeCobolOptions);
+            var compilationUnit = new CompilationUnit(textDocument, project.SourceFileProvider, project, typeCobolOptions);
             compilationUnit.SetupCodeAnalysisPipeline(null, 0);
             compilationUnit.StartDocumentProcessing();
 

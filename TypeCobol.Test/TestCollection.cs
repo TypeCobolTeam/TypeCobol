@@ -16,6 +16,7 @@ namespace TypeCobol.Test
             TestIBMCodePages.Check_DBCSCodePageNotSupported();
 
             TestCobolFile.Check_EBCDICCobolFile();
+            TestCobolFile.Check_EBCDICCobolFileWithUnsupportedChar();
             TestCobolFile.Check_ASCIICobolFile_ReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_LinuxReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_FreeTextFormat();
