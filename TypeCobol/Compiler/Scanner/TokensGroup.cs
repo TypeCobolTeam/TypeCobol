@@ -55,7 +55,7 @@ namespace TypeCobol.Compiler.Scanner
         // *******
 
         public TokensGroup(TokenType tokenType, IList<Token> originalTokens) :
-            base(tokenType, originalTokens[0].StartIndex, originalTokens[originalTokens.Count - 1].StopIndex, originalTokens[originalTokens.Count - 1].UsesVirtualSpaceAtEndOfLine, originalTokens[0].TextLine)
+            base(tokenType, originalTokens[0].StartIndex, originalTokens[originalTokens.Count - 1].StopIndex, originalTokens[originalTokens.Count - 1].UsesVirtualSpaceAtEndOfLine, originalTokens[0].TokensLine)
         {
             OriginalTokens = originalTokens;
         }

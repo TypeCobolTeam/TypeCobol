@@ -125,15 +125,6 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
-        /// Current character offset 
-        /// (in the text document identified by DocumentPath)
-        /// </summary>
-        public int Offset
-        {
-            get { return sourceIterator.Offset; }
-        }
-
-        /// <summary>
         /// Get next token after REPLACE processing or EndOfFile
         /// </summary>
         public Token NextToken()

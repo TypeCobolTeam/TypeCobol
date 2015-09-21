@@ -15,21 +15,21 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class Token : Antlr4.Runtime.IToken
     {
-        private ITextLine textLine;
+        private ITokensLine tokensLine;
         private int startIndex;
         private int stopIndex;
 
         /// <summary>
         /// Constructor for tokens without delimiters
         /// </summary>
-        internal Token(TokenType tokenType, int startIndex, int stopIndex, ITextLine textLine) :
-            this(tokenType, startIndex, stopIndex, false, textLine)
+        internal Token(TokenType tokenType, int startIndex, int stopIndex, ITokensLine tokensLine) :
+            this(tokenType, startIndex, stopIndex, false, tokensLine)
         { }
 
         /// <summary>
         /// Constructor for tokens without delimiters, using the virtual space at the end of the line
         /// </summary>
-        internal Token(TokenType tokenType, int startIndex, int stopIndex, bool usesVirtualSpaceAtEndOfLine, ITextLine textLine)
+        internal Token(TokenType tokenType, int startIndex, int stopIndex, bool usesVirtualSpaceAtEndOfLine, ITokensLine tokensLine)
         {
             TokenType = tokenType;
             TokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.Scanner
 
             this.startIndex = startIndex;
             this.stopIndex = stopIndex;
-            this.textLine = textLine;
+            this.tokensLine = tokensLine;
 
             UsesDelimiters = false;
             HasClosingDelimiter = false;
@@ -49,14 +49,14 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Constructor for tokens with delimiters
         /// </summary>
-        internal Token(TokenType tokenType, int startIndex, int stopIndex, ITextLine textLine, bool hasOpeningDelimiter, bool hasClosingDelimiter, char expectedClosingDelimiter) :
-            this(tokenType, startIndex, stopIndex, false, textLine, hasOpeningDelimiter, hasClosingDelimiter, expectedClosingDelimiter)
+        internal Token(TokenType tokenType, int startIndex, int stopIndex, ITokensLine tokensLine, bool hasOpeningDelimiter, bool hasClosingDelimiter, char expectedClosingDelimiter) :
+            this(tokenType, startIndex, stopIndex, false, tokensLine, hasOpeningDelimiter, hasClosingDelimiter, expectedClosingDelimiter)
         { }
 
         /// <summary>
         /// Constructor for tokens with delimiters, using the virtual space at the end of the line
         /// </summary>
-        internal Token(TokenType tokenType, int startIndex, int stopIndex, bool usesVirtualSpaceAtEndOfLine, ITextLine textLine, bool hasOpeningDelimiter, bool hasClosingDelimiter, char expectedClosingDelimiter)
+        internal Token(TokenType tokenType, int startIndex, int stopIndex, bool usesVirtualSpaceAtEndOfLine, ITokensLine tokensLine, bool hasOpeningDelimiter, bool hasClosingDelimiter, char expectedClosingDelimiter)
         {
             TokenType = tokenType;
             TokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Scanner
 
             this.startIndex = startIndex;
             this.stopIndex = stopIndex;
-            this.textLine = textLine;
+            this.tokensLine = tokensLine;
 
             UsesDelimiters = true;
             HasOpeningDelimiter = hasOpeningDelimiter;
@@ -140,15 +140,10 @@ namespace TypeCobol.Compiler.Scanner
         public bool HasError { get; set; }
 
         /// <summary>
-        /// Internal access to the underlying text line
+        /// Underlying text line
         /// </summary>
-        internal ITextLine TextLine { get { return textLine; } }
-
-        /// <summary>
-        /// The line index (starting at 0) on which the 1st character of this token was matched.
-        /// </summary>
-        public int LineIndex { get { return textLine.LineIndex; } }
-
+        public ITokensLine TokensLine { get { return tokensLine; } }
+        
         /// <summary>
         /// First character index of the token on the line
         /// In case of a token with delimiters (like an alphanumeric literal), the StartColumn is the column of the first delimiter char. 
@@ -164,9 +159,13 @@ namespace TypeCobol.Compiler.Scanner
         public int StopIndex { get { return stopIndex; } }
 
         /// <summary>
-        /// The line number (starting count at 1) on which the 1st character of this token was matched.
+        /// --- Necessary implementation of the interface Antlr4.Runtime.IToken ---
+        /// WARNING, this property always returns the INITIAL line number, before any change was applied to the current document :
+        /// => this.TokensLine.InitialLineIndex + 1 
+        /// The CURRENT line index is only defined in the context of a snapshot of the source document :
+        /// => ISearchableReandOnlyList.IndexOf(token.TokensLine, token.TokensLine.InitialLineIndex)
         /// </summary>
-        public int Line { get { return textLine.LineIndex + 1; } }
+        public int Line { get { return this.TokensLine.InitialLineIndex + 1; } }
 
         /// <summary>
         /// Column number (starting count at 1) where the first character of the token was found in the source text.
@@ -210,7 +209,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             get
             {
-                return textLine.TextSegment(startIndex, stopIndex);
+                return tokensLine.TextSegment(startIndex, stopIndex);
             }
         }
 
@@ -350,7 +349,7 @@ namespace TypeCobol.Compiler.Scanner
         private Antlr4.Runtime.ITokenSource tokenSource;
 
         /// <summary>
-        /// Always returns null
+        /// Returns null until SetAntlrTokenSource() is called
         /// </summary>
         public Antlr4.Runtime.ITokenSource TokenSource
         {
@@ -358,11 +357,11 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Always returns null
+        /// Returns a AntlrUtils.TextLineCharStream
         /// </summary>
         public Antlr4.Runtime.ICharStream InputStream
         {
-            get { return new AntlrUtils.TextLineCharStream(textLine); }
+            get { return new AntlrUtils.TextLineCharStream(tokensLine); }
         }
 
         /// <summary>
@@ -374,7 +373,7 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         // Common token for End of file
-        public static Token END_OF_FILE = new Token(TokenType.EndOfFile, 0, -1, new TextLine(-1, 0, String.Empty));
+        public static Token END_OF_FILE = new Token(TokenType.EndOfFile, 0, -1, TypeCobol.Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, String.Empty));
 
         // --- Token comparison for REPLACE directive ---
 

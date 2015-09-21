@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Preprocessor
     {
         // Source data
         private string sourceFileName;
-        private IReadOnlyList<ProcessedTokensLine> tokensLines;
+        private IReadOnlyList<IProcessedTokensLine> tokensLines;
 
         // Start conditions
         private int channelFilter;
@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.Preprocessor
         private CopyTokensLinesIteratorPosition currentPosition;
 
         // Main document line / token
-        private ProcessedTokensLine currentLine;
+        private IProcessedTokensLine currentLine;
         private Token currentTokenInMainDocument;
 
         // Previous snapshot position
@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Set the initial position of the iterator with startToken.
         /// </summary>
-        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<ProcessedTokensLine> tokensLines, int channelFilter)
+        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<IProcessedTokensLine> tokensLines, int channelFilter)
         {
             this.sourceFileName = sourceFileName;
             this.tokensLines = tokensLines;
@@ -159,29 +159,6 @@ namespace TypeCobol.Compiler.Preprocessor
                 {
                     return currentPosition.ImportedDocumentIterator.LineIndex;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Current character offset in the document
-        /// </summary>
-        public int Offset
-        {
-            get
-            {
-                if (currentPosition.ImportedDocumentIterator == null)
-                {
-                    int currentOffset = 0;
-                    if (currentLine != null && currentTokenInMainDocument != null)
-                    {
-                        currentOffset = currentLine.TextLineMap.TextLine.StartOffset + currentTokenInMainDocument.StartIndex;
-                    }
-                    return currentOffset;
-                }
-                else
-                {
-                    return currentPosition.ImportedDocumentIterator.LineIndex;
-                }   
             }
         }        
 

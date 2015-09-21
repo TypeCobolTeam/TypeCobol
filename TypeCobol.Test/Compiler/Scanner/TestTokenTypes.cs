@@ -39,7 +39,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckComments()
         {
             string testName = "Comments1";
-            TextLine testTextLine =  new TestTextLine('*',"This is a comment line ! ***");
+            TextLineSnapshot testTextLine =  new TestTextLine('*',"This is a comment line ! ***");
             string result = ScannerUtils.ScanTextLine(testTextLine);
             ScannerUtils.CheckWithResultFile(result, testName);
 

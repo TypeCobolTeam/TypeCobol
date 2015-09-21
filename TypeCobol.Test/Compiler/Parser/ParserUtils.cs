@@ -120,15 +120,14 @@ namespace TypeCobol.Test.Compiler.Parser
         public static CompilationUnit CreateCompilationUnitForVirtualFile()
         {
             //Prepare
-            var textDocument = new TextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
+            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
 
             var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("Empty project", ".", new[] { "*.cbl", "*.cpy" },
                 DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
                 DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
 
-            var compilationUnit = new CompilationUnit(textDocument,
-                DocumentFormat.RDZReferenceFormat.Encoding, project.SourceFileProvider, project, typeCobolOptions);
+            var compilationUnit = new CompilationUnit(textDocument, project.SourceFileProvider, project, typeCobolOptions);
             compilationUnit.SetupCodeAnalysisPipeline(null, 0);
             compilationUnit.StartDocumentProcessing();
 

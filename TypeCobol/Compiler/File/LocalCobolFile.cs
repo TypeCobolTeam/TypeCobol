@@ -34,23 +34,15 @@ namespace TypeCobol.Compiler.File
         /// <summary>
         /// This version of the constructor is called by LocalDirectoryLibrary only
         /// </summary>
-        internal LocalCobolFile(LocalDirectoryLibrary parentCobolLibrary, string name, string fullPath, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength)
+        internal LocalCobolFile(LocalDirectoryLibrary parentCobolLibrary, string name, string fullPath, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength) :
+            base(name, encoding, endOfLineDelimiter, fixedLineLength)
         {
-            Name = name;
-            
             localFileInfo = new FileInfo(fullPath);
             if(!localFileInfo.Exists)
             {
                 throw new ArgumentException(String.Format("Full path for local Cobol file is invalid : {0}"), fullPath);
             }
             FullPath = localFileInfo.FullName;
-
-            Encoding = encoding;
-            EndOfLineDelimiter = endOfLineDelimiter;
-            if (endOfLineDelimiter == EndOfLineDelimiter.FixedLengthLines)
-            {
-                FixedLineLength = fixedLineLength;
-            }
 
             this.parentCobolLibrary = parentCobolLibrary;
         }

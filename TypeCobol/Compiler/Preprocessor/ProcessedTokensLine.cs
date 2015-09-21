@@ -13,11 +13,11 @@ namespace TypeCobol.Compiler.Preprocessor
     /// <summary>
     /// Line of tokens after preprocessor execution
     /// </summary>
-    public class ProcessedTokensLine
+    public class ProcessedTokensLine : IProcessedTokensLine
     {
-        public ProcessedTokensLine(TokensLine tokensLine)
+        public ProcessedTokensLine(ITokensLine tokensLine)
         {
-            TextLineMap = tokensLine.TextLineMap;
+            TokensLine = tokensLine;
             SourceTokens = tokensLine.SourceTokens;
             ScannerDiagnostics = tokensLine.ScannerDiagnostics;
 
@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
         internal ProcessedTokensLine(ProcessedTokensLine processedTokensLine)
         {
-            TextLineMap = processedTokensLine.TextLineMap;
+            TokensLine = processedTokensLine.TokensLine;
             SourceTokens = processedTokensLine.SourceTokens;
             ScannerDiagnostics = processedTokensLine.ScannerDiagnostics;
 
@@ -36,9 +36,9 @@ namespace TypeCobol.Compiler.Preprocessor
         // --- Reference to source line properties ---
 
         /// <summary>
-        /// Source text line
+        /// Underlying TokensLine
         /// </summary>
-        public TextLineMap TextLineMap { get; private set; }
+        public ITokensLine TokensLine { get; private set; }
 
         /// <summary>
         /// Tokens found while scanning the raw source text line
@@ -278,5 +278,118 @@ namespace TypeCobol.Compiler.Preprocessor
             }
             PreprocessorDiagnostics.Add(diag);
         }
+
+        // --- temp temp ---
+
+        public CobolTextLineType Type
+        {
+            get
+            {
+                return TokensLine.Type;
+            }
+        }
+
+        public TextArea SequenceNumber
+        {
+            get
+            {
+                return TokensLine.SequenceNumber;
+            }
+        }
+
+        public string SequenceNumberText
+        {
+            get
+            {
+                return TokensLine.SequenceNumberText;
+            }
+        }
+
+        public TextArea Indicator
+        {
+            get
+            {
+                return TokensLine.Indicator;
+            }
+        }
+
+        public char IndicatorChar
+        {
+            get
+            {
+                return TokensLine.IndicatorChar;
+            }
+        }
+
+        public TextArea Source
+        {
+            get
+            {
+                return TokensLine.Source;
+            }
+        }
+
+        public string SourceText
+        {
+            get
+            {
+                return TokensLine.SourceText;
+            }
+        }
+
+        public TextArea Comment
+        {
+            get
+            {
+                return TokensLine.Comment;
+            }
+        }
+
+        public string CommentText
+        {
+            get
+            {
+                return TokensLine.CommentText;
+            }
+        }
+
+        public int InitialLineIndex
+        {
+            get
+            {
+                return TokensLine.InitialLineIndex;
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                return TokensLine.Text;
+            }
+        }
+
+        public int Length
+        {
+            get
+            {
+                return TokensLine.Length;
+            }
+        }
+
+        public object LineTrackingReferenceInSourceDocument
+        {
+            get
+            {
+                return TokensLine.LineTrackingReferenceInSourceDocument;
+            }
+        }
+
+        public string TextSegment(int startIndex, int endIndexInclusive)
+        {
+            return TokensLine.TextSegment(startIndex, endIndexInclusive);
+        }
+
+        // --- temp temp ---
     }
 }

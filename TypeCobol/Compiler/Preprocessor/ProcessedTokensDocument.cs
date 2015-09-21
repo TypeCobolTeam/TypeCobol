@@ -2,12 +2,12 @@
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor.Generated;
@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Lines of the source text file viewed as lists of processed tokens and error messages
         /// </summary>
-        public IReadOnlyList<ProcessedTokensLine> ProcessedTokensLines { get { return processedTokensLines; } }
+        public IReadOnlyList<IProcessedTokensLine> ProcessedTokensLines { get { return processedTokensLines; } }
 
         // Implement this as an immutable list to protect consumers from changes happening on the producer side
         private ImmutableList<ProcessedTokensLine> processedTokensLines;
@@ -259,7 +259,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // 7. Register compiler directive parse errors
                     if (errorFoundWhileParsingDirective)
                     {
-                        ProcessedTokensLine compilerDirectiveLine = ProcessedTokensLines[tokensSelection.FirstLineIndex];
+                        ProcessedTokensLine compilerDirectiveLine = processedTokensLines[tokensSelection.FirstLineIndex];
                         foreach(ParserDiagnostic parserDiag in errorListener.Diagnostics)
                         {
                             compilerDirectiveLine.AddDiagnostic(parserDiag);

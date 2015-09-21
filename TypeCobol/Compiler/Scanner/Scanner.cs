@@ -17,15 +17,15 @@ namespace TypeCobol.Compiler.Scanner
 
         public static TokensLine ScanFirstLine(ITextLine textLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
-            TokensLine tokensLine = new TokensLine(textLineMap, insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForHexadecimalAlphanumericLiterals);
+            CobolTextLine textLineMap = new CobolTextLine(textLine, textSourceInfo.ColumnsLayout);
+            TokensLine tokensLine = new TokensLine(textLineMap, new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, textSourceInfo.EncodingForAlphanumericLiterals));
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
         }
 
         public static TokensLine ScanTextLine(ITextLine textLine, TokensLine previousLine, TextSourceInfo textSourceInfo, TypeCobolOptions compilerOptions)
         {
-            TextLineMap textLineMap = new TextLineMap(textLine, textSourceInfo.ColumnsLayout);
+            CobolTextLine textLineMap = new CobolTextLine(textLine, textSourceInfo.ColumnsLayout);
             TokensLine tokensLine = new TokensLine(textLineMap, previousLine);
             ScanTokensLine(tokensLine, compilerOptions);
             return tokensLine;
@@ -34,45 +34,45 @@ namespace TypeCobol.Compiler.Scanner
         private static void ScanTokensLine(TokensLine tokensLine, TypeCobolOptions compilerOptions)
         {
             // Shorter aliases for tokensLine properties
-            TextLineMap textLineMap = tokensLine.TextLineMap;
+            ICobolTextLine textLine = tokensLine.TextLine;
             
             // The source section of is line of text must be split into tokens    
-            string line = textLineMap.TextLine.Text;
-            int startIndex = textLineMap.Source.StartIndex;
-            int lastIndex = textLineMap.Source.EndIndex;
+            string line = tokensLine.Text;
+            int startIndex = textLine.Source.StartIndex;
+            int lastIndex = textLine.Source.EndIndex;
                         
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if(textLineMap.Type == TextLineType.Comment ||
-               (textLineMap.Type == TextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
+            if(textLine.Type == CobolTextLineType.Comment ||
+               (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
-                Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, textLineMap.TextLine);
+                Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(commentToken);
                 return;
             }
             // Invalid indicator, the line type is unknown => the whole line text is handled as a single invalid token
-            else if (textLineMap.Type == TextLineType.Invalid)
+            else if (textLine.Type == CobolTextLineType.Invalid)
             {
                 // Invalid indicator => register an error
-                tokensLine.AddDiagnostic(MessageCode.InvalidIndicatorCharacter, textLineMap.Indicator.StartIndex, textLineMap.Indicator.EndIndex, textLineMap.Indicator);
+                tokensLine.AddDiagnostic(MessageCode.InvalidIndicatorCharacter, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
 
-                Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, textLineMap.TextLine);
+                Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(invalidToken);
                 return;
             }
             // Empty line => return immediately an empty list of tokens
             // Blank line => return only one token with type SpaceSeparator
-            if(textLineMap.Type == TextLineType.Blank)
+            if(textLine.Type == CobolTextLineType.Blank)
             {
                 if(!String.IsNullOrEmpty(line))
                 {
-                    Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, lastIndex, textLineMap.TextLine);
+                    Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, lastIndex, tokensLine);
                     tokensLine.AddToken(whitespaceToken);
                 }
                 return;
             }            
             // Handle continuation from the previous line
-            else if (textLineMap.Type == TextLineType.Continuation && 
+            else if (textLine.Type == CobolTextLineType.Continuation && 
                         tokensLine.InitialScanState.LastToken != null && // no continuation is possible if there is no previous token
                         tokensLine.InitialScanState.LastToken.TokenType != TokenType.SpaceSeparator  && // no continuation is possible after a space separator
                         tokensLine.InitialScanState.LastToken.TokenType != TokenType.CommentEntry // no continuation is allowed after a comment-entry (p105 : A hyphen in the indicator area (column 7) is not permitted in comment-entries)
@@ -91,7 +91,7 @@ namespace TypeCobol.Compiler.Scanner
                 for (; startOfContinuationIndex <= lastIndex && line[startOfContinuationIndex] == ' '; startOfContinuationIndex++) { }
                 if(startOfContinuationIndex > startIndex)
                 {
-                    Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, startOfContinuationIndex - 1, textLineMap.TextLine);
+                    Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, startOfContinuationIndex - 1, tokensLine);
                     tokensLine.AddToken(whitespaceToken);
                     startIndex = startOfContinuationIndex;
                 }
@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.Scanner
                 string concatenatedLine = continuedTextFromPreviousLine + line.Substring(startOfContinuationStringIndex, lastIndex - startOfContinuationStringIndex + 1);
 
                 // Create a temporary scanner over the concatenated line (continued token + continuation line)
-                TokensLine virtualConcatenatedTokensLine = new TokensLine(TextLineMap.Create(concatenatedLine), tokensLine.PreviousLine, true);
+                TokensLine virtualConcatenatedTokensLine = new TokensLine(CobolTextLine.Create(concatenatedLine), tokensLine.PreviousLine, true);
                 Scanner tempScanner = new Scanner(concatenatedLine, 0, concatenatedLine.Length - 1, virtualConcatenatedTokensLine, compilerOptions);
 
                 // Check if the first token of the concatenated line really is a continuation of the previous line,
@@ -189,7 +189,7 @@ namespace TypeCobol.Compiler.Scanner
                         int endOfContinuationIndex = virtualConcatenatedToken.Length - continuedTextFromPreviousLine.Length - 1 + startOfContinuationIndex + offsetForLiteralContinuation;
 
                         // Create a continuation token : copy of the first token, with different line and index properties
-                        ContinuationToken continuationToken = new ContinuationToken(virtualConcatenatedToken, startOfContinuationIndex, offsetForLiteralContinuation, endOfContinuationIndex, textLineMap.TextLine, lastTokenFromPreviousLine);
+                        ContinuationToken continuationToken = new ContinuationToken(virtualConcatenatedToken, startOfContinuationIndex, offsetForLiteralContinuation, endOfContinuationIndex, tokensLine, lastTokenFromPreviousLine);
                         
                         // Adjust the scanner state of the previous and current line : 
                         // the effect of the last token of the previous line must be canceled because it is in fact continued on the current line
@@ -215,7 +215,7 @@ namespace TypeCobol.Compiler.Scanner
                         if ((lastTokenTypeFromPreviousLine == TokenType.PeriodSeparator || lastTokenTypeFromPreviousLine == TokenType.PlusOperator || lastTokenTypeFromPreviousLine == TokenType.MinusOperator) &&
                             continuationToken.TokenFamily == TokenFamily.NumericLiteral)
                         {
-                            string previousLineText = tokensLine.PreviousLine.TextLineMap.SourceText;
+                            string previousLineText = tokensLine.PreviousLine.SourceText;
                             if (previousLineText.Length >= 2)
                             {
                                 char lastCharBeforeSeparatorOrOperator = previousLineText[previousLineText.Length - 2];
@@ -268,12 +268,12 @@ namespace TypeCobol.Compiler.Scanner
         /// - insideDataDivision = true
         /// - decimalPointIsComma = false
         /// - withDebuggingMode = false
-        /// - encodingForHexadecimalAlphanumericLiterals = IBM 1147
+        /// - encodingForAlphanumericLiterals = IBM 1147
         /// - default compiler options
         /// </summary>
         public static Token ScanIsolatedTokenInDefaultContext(string tokenText, out Diagnostic error)
         {
-            TokensLine tempTokensLine = new TokensLine(TextLineMap.Create(tokenText), true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
+            TokensLine tempTokensLine = new TokensLine(CobolTextLine.Create(tokenText), new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions());
             Token candidateToken = tempScanner.GetNextToken();
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
@@ -290,7 +290,6 @@ namespace TypeCobol.Compiler.Scanner
         // --- State machine ---
 
         private TokensLine tokensLine;
-        private ITextLine textLine;
         private string line;
         private int currentIndex;
         private int lastIndex;
@@ -300,7 +299,6 @@ namespace TypeCobol.Compiler.Scanner
         private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
         {
             this.tokensLine = tokensLine;
-            this.textLine = tokensLine.TextLineMap.TextLine;
             this.line = line;
             this.currentIndex = startIndex;
             this.lastIndex = lastIndex;
@@ -419,13 +417,13 @@ namespace TypeCobol.Compiler.Scanner
                         // consume the * char
                         currentIndex++;
                         // use the virtual space at end of line
-                        return new Token(TokenType.MultiplyOperator, startIndex, startIndex, true, textLine);
+                        return new Token(TokenType.MultiplyOperator, startIndex, startIndex, true, tokensLine);
                     }
                     else if(line[currentIndex + 1] == ' ')
                     {
                         // consume the * char and the space char
                         currentIndex += 2;
-                        return new Token(TokenType.MultiplyOperator, startIndex, startIndex + 1, textLine);
+                        return new Token(TokenType.MultiplyOperator, startIndex, startIndex + 1, tokensLine);
                     }
                     //PowerOperator=15,
                     // p254: These operators are represented by specific characters that
@@ -449,7 +447,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // match 4 chars
                         currentIndex += 4;
-                        return new Token(TokenType.ASTERISK_CBL, startIndex, startIndex + 3, textLine);
+                        return new Token(TokenType.ASTERISK_CBL, startIndex, startIndex + 3, tokensLine);
                     }
                     // ASTERISK_CONTROL = "*CONTROL"
                     else if ((line[currentIndex + 1] == 'C' || line[currentIndex + 1] == 'c') &&
@@ -458,13 +456,13 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // match 8 chars                       
                         currentIndex += 8;
-                        return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, textLine);
+                        return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
                     }
                     else
                     {
                         // consume * char and try to match it as a multiply operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.MultiplyOperator, startIndex, startIndex, textLine);
+                        Token invalidToken = new Token(TokenType.MultiplyOperator, startIndex, startIndex, tokensLine);
                         tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterAsterisk, invalidToken);
                         return invalidToken;
                     }
@@ -535,13 +533,13 @@ namespace TypeCobol.Compiler.Scanner
                         // consume the < char
                         currentIndex++;
                         // use the virtual space at end of line
-                        return new Token(TokenType.LessThanOperator, startIndex, startIndex, true, textLine);
+                        return new Token(TokenType.LessThanOperator, startIndex, startIndex, true, tokensLine);
                     }
                     else if (line[currentIndex + 1] == ' ')
                     {
                         // consume the < char and the space char
                         currentIndex += 2;
-                        return new Token(TokenType.LessThanOperator, startIndex, startIndex + 1, textLine);
+                        return new Token(TokenType.LessThanOperator, startIndex, startIndex + 1, tokensLine);
                     }
                     else if (line[currentIndex + 1] == '=')
                     {
@@ -554,7 +552,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume < char and try to match it as a less than operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.LessThanOperator, startIndex, startIndex, textLine);
+                        Token invalidToken = new Token(TokenType.LessThanOperator, startIndex, startIndex, tokensLine);
                         tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterLessThan, invalidToken);
                         return invalidToken;
                     }
@@ -568,13 +566,13 @@ namespace TypeCobol.Compiler.Scanner
                         // consume the > char
                         currentIndex++;
                         // use the virtual space at end of line
-                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, true, textLine);
+                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, true, tokensLine);
                     }
                     else if (line[currentIndex + 1] == ' ')
                     {
                         // consume the > char and the space char
                         currentIndex += 2;
-                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex + 1, textLine);
+                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex + 1, tokensLine);
                     }
                     else if (line[currentIndex + 1] == '=')
                     {
@@ -587,7 +585,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume > char and try to match it as a greater than operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.GreaterThanOperator, startIndex, startIndex, textLine);
+                        Token invalidToken = new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
                         tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterGreaterThan, invalidToken);
                         return invalidToken;
                     }
@@ -600,13 +598,13 @@ namespace TypeCobol.Compiler.Scanner
                         // consume the = char
                         currentIndex++;
                         // use the virtual space at end of line
-                        return new Token(TokenType.EqualOperator, startIndex, startIndex, true, textLine);
+                        return new Token(TokenType.EqualOperator, startIndex, startIndex, true, tokensLine);
                     }
                     else if (line[currentIndex + 1] == ' ')
                     {
                         // consume the = char and the space char
                         currentIndex += 2;
-                        return new Token(TokenType.EqualOperator, startIndex, startIndex + 1, textLine);
+                        return new Token(TokenType.EqualOperator, startIndex, startIndex + 1, tokensLine);
                     }
                     //PseudoTextDelimiter = 11,                    
                     else if (line[currentIndex + 1] == '=')
@@ -625,7 +623,7 @@ namespace TypeCobol.Compiler.Scanner
                         // Case 1. Opening delimiter
                         if (tokensLine.ScanState.KeywordsState != KeywordsSequenceState.InsidePseudoText)
                         {
-                            delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, textLine);
+                            delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, tokensLine);
                         }
                         // Case 2. Closing delimiter
                         else
@@ -643,7 +641,7 @@ namespace TypeCobol.Compiler.Scanner
                                 followingChar = line[currentIndex];
                             }
 
-                            delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, textLine);
+                            delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
                             if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
                             {
                                 tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
@@ -655,7 +653,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume = char and try to match it as an equal operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.EqualOperator, startIndex, startIndex, textLine);
+                        Token invalidToken = new Token(TokenType.EqualOperator, startIndex, startIndex, tokensLine);
                         tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterEquals, invalidToken);
                         return invalidToken;
                     }
@@ -863,14 +861,14 @@ namespace TypeCobol.Compiler.Scanner
             // consume all whitespace chars available
             for (; currentIndex <= lastIndex && line[currentIndex] == ' '; currentIndex++) { }
             int endIndex = currentIndex - 1;
-            return new Token(TokenType.SpaceSeparator, startIndex, endIndex, textLine);
+            return new Token(TokenType.SpaceSeparator, startIndex, endIndex, tokensLine);
         }
 
         private Token ScanOneChar(int startIndex, TokenType tokenType)
         {
             // consume one char
             currentIndex++;
-            return new Token(tokenType, startIndex, startIndex, textLine);
+            return new Token(tokenType, startIndex, startIndex, tokensLine);
         }
 
         private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode)
@@ -879,13 +877,13 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // consume one char and use the virtual space at end of line
                 currentIndex++;
-                return new Token(tokenType, startIndex, startIndex, true, textLine);
+                return new Token(tokenType, startIndex, startIndex, true, tokensLine);
             }
             else if (line[currentIndex + 1] == ' ')
             {
                 // consume one char and consume the space char
                 currentIndex += 2;
-                return new Token(tokenType, startIndex, startIndex + 1, textLine);
+                return new Token(tokenType, startIndex, startIndex + 1, tokensLine);
             }
             else
             {
@@ -893,7 +891,7 @@ namespace TypeCobol.Compiler.Scanner
                 // even if the space is missing, try to match the expected tokenType
                 currentIndex++;
                 int endIndex = (tokenType == TokenType.PowerOperator || tokenType == TokenType.LessThanOrEqualOperator || tokenType == TokenType.GreaterThanOrEqualOperator) ? startIndex + 1 : startIndex;
-                Token invalidToken = new Token(tokenType, startIndex, endIndex, textLine);
+                Token invalidToken = new Token(tokenType, startIndex, endIndex, tokensLine);
                 tokensLine.AddDiagnostic(messageCode, invalidToken);
                 return invalidToken;
             }
@@ -905,13 +903,13 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // consume one char and use the virtual space at end of line
                 currentIndex++;
-                return new Token(tokenType, startIndex, startIndex, true, textLine);
+                return new Token(tokenType, startIndex, startIndex, true, tokensLine);
             }
             else if (line[currentIndex + 1] == ' ')
             {
                 // consume one char and consume the space char
                 currentIndex += 2;
-                return new Token(tokenType, startIndex, startIndex + 1, textLine);
+                return new Token(tokenType, startIndex, startIndex + 1, tokensLine);
             }
             else if (Char.IsDigit(line[currentIndex + 1]))
             {
@@ -927,7 +925,7 @@ namespace TypeCobol.Compiler.Scanner
                 // consume one char and register an error because the following char is missing
                 // even if the space is missing, try to match the expected tokenType
                 currentIndex++;
-                Token invalidToken = new Token(tokenType, startIndex, startIndex, textLine);
+                Token invalidToken = new Token(tokenType, startIndex, startIndex, tokensLine);
                 tokensLine.AddDiagnostic(messageCode, invalidToken);
                 return invalidToken;
             }
@@ -954,7 +952,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // consume all chars until the end of line
             currentIndex = lastIndex + 1;
-            return new Token(TokenType.FloatingComment, startIndex, lastIndex, textLine, true, true, ' ');
+            return new Token(TokenType.FloatingComment, startIndex, lastIndex, tokensLine, true, true, ' ');
         }
 
         private Token ScanNumericLiteral(int startIndex)
@@ -1011,7 +1009,7 @@ namespace TypeCobol.Compiler.Scanner
                     // if it is not the case, assume this is the end of a simple integer literal
                     currentIndex = fstCurrentIndex;
                     int endIndex = fstCurrentIndex - 1;
-                    Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, textLine);
+                    Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
                     token.LiteralValue = new IntegerLiteralValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
                     return token;
                 }
@@ -1061,7 +1059,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     currentIndex += fpMatch.Length;
                     int endIndex = startIndex + fpMatch.Length - 1;
-                    Token token = new Token(TokenType.FloatingPointLiteral, startIndex, endIndex, textLine);
+                    Token token = new Token(TokenType.FloatingPointLiteral, startIndex, endIndex, tokensLine);
                     string mantissaDecimalPart = fpMatch.Groups[3].Value;
                     if (string.IsNullOrEmpty(mantissaDecimalPart))
                     {
@@ -1079,7 +1077,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     // consume all lookup chars
                     currentIndex = lookupEndIndex + 1;
-                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, textLine);
+                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, tokensLine);
                     tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
                     return invalidToken;
                 }
@@ -1092,7 +1090,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     currentIndex += decMatch.Length;
                     int endIndex = startIndex + decMatch.Length - 1;
-                    Token token = new Token(TokenType.DecimalLiteral, startIndex, endIndex, textLine);
+                    Token token = new Token(TokenType.DecimalLiteral, startIndex, endIndex, tokensLine);
                     token.LiteralValue = new DecimalLiteralValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
                     return token;
                 }
@@ -1100,7 +1098,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     // consume all lookup chars
                     currentIndex = lookupEndIndex + 1;
-                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, textLine);
+                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lookupEndIndex, tokensLine);
                     tokensLine.AddDiagnostic(MessageCode.InvalidNumericLiteralFormat, invalidToken);
                     return invalidToken;
                 }
@@ -1194,7 +1192,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // create an alphanumeric literal token
             int endIndex = (currentIndex > lastIndex) ? lastIndex : currentIndex - 1;
-            Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, textLine, true, closingDelimiterFound, delimiter);
+            Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, tokensLine, true, closingDelimiterFound, delimiter);
             
             // compute the value of the literal, depending on the exact literal type            
             AlphanumericLiteralValue value = null;
@@ -1221,7 +1219,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
                 }
-                value = new AlphanumericLiteralValue(hexadecimalChars, tokensLine.ScanState.EncodingForHexadecimalAlphanumericLiterals);
+                value = new AlphanumericLiteralValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
             }
             else if (tokenType == TokenType.HexadecimalNationalLiteral)
             {
@@ -1335,17 +1333,17 @@ namespace TypeCobol.Compiler.Scanner
             if(value.Equals("SYMBOL", StringComparison.InvariantCultureIgnoreCase))
             {
                 // Return a keyword
-                return new Token(TokenType.SYMBOL, startIndex, endIndex, textLine);
+                return new Token(TokenType.SYMBOL, startIndex, endIndex, tokensLine);
             }
             else if (value.Equals("IS", StringComparison.InvariantCultureIgnoreCase))
             {
                 // Return a keyword
-                return new Token(TokenType.IS, startIndex, endIndex, textLine);
+                return new Token(TokenType.IS, startIndex, endIndex, tokensLine);
             }
             else
             {
                 // Return a picture character string
-                return new Token(TokenType.PictureCharacterString, startIndex, endIndex, textLine);
+                return new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
             }
         }
 
@@ -1368,7 +1366,7 @@ namespace TypeCobol.Compiler.Scanner
             int firstCharIndex = startIndex;
             for (; firstCharIndex <= lastIndex && line[firstCharIndex] == ' '; firstCharIndex++) { }
             // Check if it is in area A
-            if(line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.TextLineMap.Source.StartIndex + 4))
+            if(line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.Source.StartIndex + 4))
             {
                 // Reset scanner state and retry scanning
                 tokensLine.ScanState.ResetKeywordsState();
@@ -1378,7 +1376,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // Consume the entire line as a comment entry
                 currentIndex = lastIndex + 1;
-                return new Token(TokenType.CommentEntry, startIndex, lastIndex, textLine);
+                return new Token(TokenType.CommentEntry, startIndex, lastIndex, tokensLine);
             }
 
         }
@@ -1403,7 +1401,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
             }
             
-            return new Token(TokenType.ExecTranslatorName, startIndex, endIndex, textLine);
+            return new Token(TokenType.ExecTranslatorName, startIndex, endIndex, tokensLine);
         }
 
         private Token ScanExecStatementTextOrExecSqlInclude(int startIndex)
@@ -1423,7 +1421,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     // Consume 7 chars
                     currentIndex = startIndex + 7;
-                    return new Token(TokenType.EXEC_SQL_INCLUDE, startIndex, startIndex + 6, textLine);
+                    return new Token(TokenType.EXEC_SQL_INCLUDE, startIndex, startIndex + 6, tokensLine);
                 }
             }
 
@@ -1460,7 +1458,7 @@ namespace TypeCobol.Compiler.Scanner
             // Consume all chars
             currentIndex = endIndex + 1;
 
-            return new Token(TokenType.ExecStatementText, startIndex, endIndex, textLine);
+            return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
         }
 
         private Token ScanKeywordOrUserDefinedWord(int startIndex)
@@ -1584,7 +1582,7 @@ namespace TypeCobol.Compiler.Scanner
             // one-digit or two-digit integer.
 
             // Return a keyword or user defined word
-            return new Token(tokenType, startIndex, endIndex, textLine);
+            return new Token(tokenType, startIndex, endIndex, tokensLine);
         }
 
         /// <summary>
@@ -1706,7 +1704,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Create a single token including all the chars participating in the CBL/PROCESS directive 
             int stopIndex = currentIndex - 1;
-            Token sourceToken = new Token(TokenType.CompilerDirective, startIndex, stopIndex, textLine);
+            Token sourceToken = new Token(TokenType.CompilerDirective, startIndex, stopIndex, tokensLine);
             
             // Wrap the source token in a CompilerDirectiveToken (which is a GroupToken by defaut)
             IList<Token> originalTokens = new List<Token>();
@@ -1780,7 +1778,7 @@ namespace TypeCobol.Compiler.Scanner
             // Consume the entire the partial Cobol word
             currentIndex = endIndex + 1;
 
-            return new Token(TokenType.PartialCobolWord, startIndex, endIndex, textLine);
+            return new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
         }        
     }
 }

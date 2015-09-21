@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.TypeChecker
             {
                 errors.Add(new CompilationError
                 {
-                    LineNumber = diag.StartToken.Line,
+                    LineNumber = SyntaxDocument.ProcessedTokensDocument.TokensDocument.TokensLines.IndexOf(diag.StartToken.TokensLine, diag.StartToken.TokensLine.InitialLineIndex),
                     StartColumn = diag.StartToken.Column,
                     Message = diag.Message
                 });
@@ -87,8 +87,17 @@ namespace TypeCobol.Compiler.TypeChecker
             foreach(TypeCobol.Compiler.CodeElements.CodeElement e in SyntaxDocument.CodeElements) {
                 foreach (ParserDiagnostic diag in e.Diagnostics)
                 {
+                    int lineNumber = 1;
+                    if(diag.OffendingSymbol != null)
+                    {
+                        lineNumber = SyntaxDocument.ProcessedTokensDocument.TokensDocument.TokensLines.IndexOf(
+                                diag.OffendingSymbol.TokensLine,
+                                diag.OffendingSymbol.TokensLine.InitialLineIndex
+                            );
+                    }
+
                     errors.Add(new CompilationError {
-                        LineNumber = diag.OffendingSymbol != null ? diag.OffendingSymbol.Line /* temp patch -> */== 0 ? 1 : diag.OffendingSymbol.Line : 1,
+                        LineNumber = /* temp patch -> */ lineNumber <= 0 ? 1 : lineNumber,
                         StartColumn = diag.ColumnStart,
                         EndColumn = diag.ColumnEnd,
                         Message = diag.Message

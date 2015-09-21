@@ -19,7 +19,7 @@ namespace TypeCobol.Test.Compiler.File
 
             SourceFileProvider fileProvider = new SourceFileProvider();
             fileProvider.AddLocalDirectoryLibrary(
-                PlatformUtils.GetPathForProjectFile(@"Compiler\File\Samples"), 
+                PlatformUtils.GetPathForProjectFile(@"Compiler\File\Samples"),
                 false, new string[] { ".txt" },
                 docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength);
 
@@ -29,16 +29,16 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("EbcdicRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("EbcdicRefFormat.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormat.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
             }
 
             TextChangeMap tce1 = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges.First<TextChange>(), docFormat.ColumnsLayout);
-            if(tce1.LineIndex != 0 || tce1.Type != TextChangeType.LineInserted ||
+            if (tce1.LineIndex != 0 || tce1.Type != TextChangeType.LineInserted ||
                tce1.NewLineMap.SequenceNumberText != "000010" || tce1.NewLineMap.IndicatorChar != ' ' ||
-               tce1.NewLineMap.SourceText != "CBL DATA(31)                                                      " || tce1.NewLineMap.CommentText != "        ") 
+               tce1.NewLineMap.SourceText != "CBL DATA(31)                                                      " || tce1.NewLineMap.CommentText != "        ")
             {
                 throw new Exception("Error reading line 1 of the EBCDIC text source");
             }
@@ -68,8 +68,43 @@ namespace TypeCobol.Test.Compiler.File
             }
         }
 
+        public static void Check_EBCDICCobolFileWithUnsupportedChar()
+        {
+            DocumentFormat docFormat = DocumentFormat.ZOsReferenceFormat;
+
+            SourceFileProvider fileProvider = new SourceFileProvider();
+            fileProvider.AddLocalDirectoryLibrary(
+                PlatformUtils.GetPathForProjectFile(@"Compiler\File\Samples"),
+                false, new string[] { ".txt" },
+                docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength);
+            
+            bool exceptionWasThrownWithCorrectMessage = false;
+
+            CobolFile cobolFile;
+            if (fileProvider.TryGetFile("EbcdicRefFormatWithBadChars", out cobolFile))
+            {
+                try
+                {
+                    // Load the CobolFile in a TextDocument
+                    ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                }
+                catch(Exception e)
+                {
+                    if (e.Message == "The character code 13 in source encoding IBM EBCDIC (France-Euro) found at position 3072 can not be safely converted to the internal Unicode representation : please replace it with the alphanumeric hexadecimal literal X'0D' in the source text")
+                    {
+                        exceptionWasThrownWithCorrectMessage = true;
+                    }
+                }
+            }
+
+            if(!exceptionWasThrownWithCorrectMessage)
+            {
+                throw new Exception("Unsupported chars in fixed length EBCDIC source file were not correctly filtered");
+            }
+        }
+
         public static void Check_ASCIICobolFile_ReferenceFormat()
-        {            
+        {
             DocumentFormat docFormat = DocumentFormat.RDZReferenceFormat;
 
             SourceFileProvider fileProvider = new SourceFileProvider();
@@ -79,12 +114,12 @@ namespace TypeCobol.Test.Compiler.File
                 docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength);
 
             DummyTextSourceListener textSourceListener = new DummyTextSourceListener();
-            
+
             CobolFile cobolFile;
             if (fileProvider.TryGetFile("AsciiRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
@@ -139,7 +174,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("AsciiLinuxFormat.14", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("AsciiLinuxFormat.14", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiLinuxFormat.14", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
@@ -176,7 +211,7 @@ namespace TypeCobol.Test.Compiler.File
             {
                 throw new Exception("Error reading line 14 of the ASCII Linux text source (reference format)");
             }
-        }       
+        }
 
         public static void Check_ASCIICobolFile_FreeTextFormat()
         {
@@ -194,7 +229,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile("AsciiFreeFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument("AsciiFreeFormat.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiFreeFormat.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();
@@ -274,7 +309,7 @@ namespace TypeCobol.Test.Compiler.File
             if (fileProvider.TryGetFile(filename, out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                TextDocument textDocument = new TextDocument(filename, docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument(filename, docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
                 textDocument.StartSendingChangeEvents();

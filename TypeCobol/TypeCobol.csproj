@@ -43,10 +43,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
@@ -287,11 +283,15 @@
     <Compile Include="Compiler\CodeModel\Program.cs" />
     <Compile Include="Compiler\CodeModel\SymbolTable.cs" />
     <Compile Include="Compiler\CompilationDocument.cs" />
+    <Compile Include="Compiler\CompilationDocumentLine.cs" />
     <Compile Include="Compiler\CompilationProject.cs" />
     <Compile Include="Compiler\CompilationUnit.cs" />
+    <Compile Include="Compiler\CompilationUnitLine.cs" />
     <Compile Include="Compiler\Concurrency\DocumentVersionProvider.cs" />
+    <Compile Include="Compiler\Concurrency\IDocumentLine.cs" />
     <Compile Include="Compiler\Concurrency\IDocumentSnapshot.cs" />
-    <Compile Include="Compiler\Concurrency\IDocumentVersion.cs" />
+    <Compile Include="Compiler\Concurrency\DocumentVersion.cs" />
+    <Compile Include="Compiler\Concurrency\ImmutableList.cs" />
     <Compile Include="Compiler\Diagnostics\Diagnostic.cs" />
     <Compile Include="Compiler\Diagnostics\DiagnosticMessage.cs" />
     <Compile Include="Compiler\Diagnostics\MessageCode.cs" />
@@ -324,13 +324,19 @@
     <Compile Include="Compiler\Preprocessor\CopyTokensLinesIterator.cs" />
     <Compile Include="Compiler\Preprocessor\ImportedTokensDocument.cs" />
     <Compile Include="Compiler\Preprocessor\IProcessedTokensDocumentProvider.cs" />
+    <Compile Include="Compiler\Preprocessor\IProcessedTokensLine.cs" />
     <Compile Include="Compiler\Preprocessor\ProcessedTokensDocument.cs" />
     <Compile Include="Compiler\Preprocessor\ProcessedTokensLine.cs" />
     <Compile Include="Compiler\Preprocessor\ReplacedToken.cs" />
     <Compile Include="Compiler\Preprocessor\ReplaceTokensLinesIterator.cs" />
+    <Compile Include="Compiler\Scanner\ITokensLine.cs" />
     <Compile Include="Compiler\Text\ColumnsLayout.cs" />
+    <Compile Include="Compiler\Text\ICobolTextLine.cs" />
     <Compile Include="Compiler\Text\TextArea.cs" />
+    <Compile Include="Compiler\Concurrency\DocumentChange.cs" />
     <Compile Include="Compiler\Text\TextChange.cs" />
+    <Compile Include="Compiler\Text\TextChangedEvent.cs" />
+    <Compile Include="Compiler\Text\ReadOnlyTextLine.cs" />
     <Compile Include="Compiler\Text\TextSourceInfo.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -349,15 +355,13 @@
     <Compile Include="Compiler\Scanner\TokensLinesIterator.cs" />
     <Compile Include="Compiler\Scanner\TokenType.cs" />
     <Compile Include="Compiler\Scanner\TokenUtils.cs" />
-    <Compile Include="Compiler\Text\CharacterType.cs" />
     <Compile Include="Compiler\Text\CobolChar.cs" />
     <Compile Include="Compiler\Text\ITextDocument.cs" />
     <Compile Include="Compiler\Text\ITextLine.cs" />
-    <Compile Include="Compiler\Text\SourceTextArea.cs" />
-    <Compile Include="Compiler\Text\TextChangedEvent.cs" />
-    <Compile Include="Compiler\Text\TextDocument.cs" />
-    <Compile Include="Compiler\Text\TextLine.cs" />
-    <Compile Include="Compiler\Text\TextLineMap.cs" />
+    <Compile Include="Compiler\Concurrency\DocumentChangedEvent.cs" />
+    <Compile Include="Compiler\Text\ReadOnlyTextDocument.cs" />
+    <Compile Include="Compiler\Text\TextLineSnapshot.cs" />
+    <Compile Include="Compiler\Text\CobolTextLine.cs" />
     <Compile Include="Compiler\TypeChecker\CobolTypeChecker.cs" />
     <Compile Include="Compiler\TypeChecker\CodeModelChangedEvent.cs" />
     <Compile Include="Compiler\TypeChecker\SemanticsDocument.cs" />

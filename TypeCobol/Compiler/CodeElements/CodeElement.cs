@@ -95,7 +95,8 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                return ConsumedTokens[0].Line;
+                throw new NotImplementedException();
+                //return ConsumedTokens[0].Line;
             }
         }
 

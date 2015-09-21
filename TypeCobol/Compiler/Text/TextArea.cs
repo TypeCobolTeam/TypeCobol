@@ -18,11 +18,17 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public class TextArea
     {
-        internal TextArea(int startIndex, int endIndex)
+        public TextArea(TextAreaType type, int startIndex, int endIndex)
         {
+            Type = type;
             StartIndex = startIndex;
             EndIndex = endIndex;
         }
+
+        /// <summary>
+        /// SequenceNumber, Indicator, Source, Comment
+        /// </summary>
+        public TextAreaType Type { get; private set; }
 
         /// <summary>
         /// Index of the first char of the area
@@ -34,13 +40,14 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public int EndIndex { get; private set; }
 
-        // True if EndIndex < StartIndex : no char in the area
+        /// <summary>
+        /// True if EndIndex < StartIndex : no char in the area
+        /// </summary>
         public bool IsEmpty
         {
             get { return EndIndex < StartIndex; }
         }
-
-
+        
         public override string ToString()
         {
             return "[" + StartIndex + "," + EndIndex + "]";

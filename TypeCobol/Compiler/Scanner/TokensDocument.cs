@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Scanner
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
 
-            tokensLines = ImmutableList<TokensLine>.Empty;
+            tokensLines = ImmutableList<ITokensLine>.Empty;
         }
 
         /// <summary>
@@ -34,15 +34,15 @@ namespace TypeCobol.Compiler.Scanner
         /// Compiler options directing the scanner operations
         /// </summary>
         public TypeCobolOptions CompilerOptions { get; private set; }
-        
+
         /// <summary>
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
-        public IReadOnlyList<TokensLine> TokensLines { get { return tokensLines; } }
+        public ISearchableReadOnlyList<ITokensLine> TokensLines { get { return tokensLines; } }
 
         // Implement this as an immutable list to protect consumers from changes happening on the producer side
-        private ImmutableList<TokensLine> tokensLines;
-        
+        private ImmutableList<ITokensLine> tokensLines;
+
         /// <summary>
         /// Iterator over all the source tokens 
         /// </summary>
@@ -70,20 +70,20 @@ namespace TypeCobol.Compiler.Scanner
                 TokensChangedEvent tokensChangedEvent = new TokensChangedEvent();
 
                 // Optimization : use a builder to update the immutable list in case of a big update                
-                ImmutableList<TokensLine>.Builder tokensLinesBuilder = null;
+                ImmutableList<ITokensLine>.Builder tokensLinesBuilder = null;
                 if (textChangedEvent.TextChanges.Count > 4)
                 {
                     tokensLinesBuilder = tokensLines.ToBuilder();
                 }
-                Func<int, TokensLine> getTokensLineAtIndex = index => { if (tokensLinesBuilder != null) { return tokensLinesBuilder[index]; } else { return tokensLines[index]; } };
-                Action<int,TokensLine> setTokensLineAtIndex = (index, updatedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder[index] = updatedLine; } else { tokensLines = tokensLines.SetItem(index, updatedLine); } };
+                Func<int, TokensLine> getTokensLineAtIndex = index => { if (tokensLinesBuilder != null) { return (TokensLine)tokensLinesBuilder[index]; } else { return (TokensLine)tokensLines[index]; } };
+                Action<int, TokensLine> setTokensLineAtIndex = (index, updatedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder[index] = updatedLine; } else { tokensLines = tokensLines.SetItem(index, updatedLine); } };
                 Action<int, TokensLine> insertTokensLineAtIndex = (index, insertedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Insert(index, insertedLine); } else { tokensLines = tokensLines.Insert(index, insertedLine); } };
                 Action<TokensLine> removeTokensLine = removedLine => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Remove(removedLine); } else { tokensLines = tokensLines.Remove(removedLine); } };
-                Action clearTokensLines = () => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Clear(); } else { tokensLines = ImmutableList<TokensLine>.Empty; } };
+                Action clearTokensLines = () => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Clear(); } else { tokensLines = ImmutableList<ITokensLine>.Empty; } };
 
                 // Analyze all text changes
                 int lastTextChangeIndex = textChangedEvent.TextChanges.Count - 1;
-                for(int textChangeIndex = 0 ; textChangeIndex <= lastTextChangeIndex  ; textChangeIndex++)
+                for (int textChangeIndex = 0; textChangeIndex <= lastTextChangeIndex; textChangeIndex++)
                 {
                     // Get the current text change
                     TextChange textChange = textChangedEvent.TextChanges[textChangeIndex];
@@ -100,13 +100,13 @@ namespace TypeCobol.Compiler.Scanner
                     // It is not useful to propagate immediately the current change if we know that the following change
                     // will update either the last scan state of the first line or the initial state of the second line to compare.
                     bool propagateChangeToFollowingLines = true;
-                    if(textChangeIndex < lastTextChangeIndex)
+                    if (textChangeIndex < lastTextChangeIndex)
                     {
                         TextChange nextTextChange = textChangedEvent.TextChanges[textChangeIndex + 1];
 
-                        if( ((textChange.Type == TextChangeType.LineInserted || textChange.Type == TextChangeType.LineUpdated) && 
+                        if (((textChange.Type == TextChangeType.LineInserted || textChange.Type == TextChangeType.LineUpdated) &&
                              (nextTextChange.LineIndex == textChange.LineIndex || nextTextChange.LineIndex == (textChange.LineIndex + 1))) ||
-                            ( textChange.Type == TextChangeType.LineRemoved &&
+                            (textChange.Type == TextChangeType.LineRemoved &&
                              (nextTextChange.LineIndex == (textChange.LineIndex - 1) || nextTextChange.LineIndex == textChange.LineIndex)) ||
                             nextTextChange.Type == TextChangeType.DocumentCleared)
                         {
@@ -159,16 +159,16 @@ namespace TypeCobol.Compiler.Scanner
 
                                 // If the updated line is a continuation line, the last token of previous line may also
                                 // have been updated as part of the continuation => signal this change
-                                if(updatedLine.TextLineMap.Type == TextLineType.Continuation)
+                                if (updatedLine.Type == CobolTextLineType.Continuation)
                                 {
                                     for (int previousLineIndex = textChange.LineIndex - 1; previousLineIndex >= 0; previousLineIndex--)
                                     {
                                         // Get previous line
-                                        previousLine = getTokensLineAtIndex(previousLineIndex);                                        
+                                        previousLine = getTokensLineAtIndex(previousLineIndex);
                                         // Signal change on the previous line
                                         tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineRescanned, previousLineIndex, previousLine));
                                         // Continue to iterate backward until the end of the continuation set
-                                        if(previousLine.TextLineMap.Type != TextLineType.Continuation)
+                                        if (previousLine.Type != CobolTextLineType.Continuation)
                                         {
                                             break;
                                         }
@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.Scanner
                                 updatedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, false, TextSourceInfo, CompilerOptions);
                             }
                             // Update the line in the immutable list
-                            setTokensLineAtIndex(textChange.LineIndex, updatedLine);                            
+                            setTokensLineAtIndex(textChange.LineIndex, updatedLine);
                             // Register a LineUpdated change
                             tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineUpdated, textChange.LineIndex, updatedLine));
                             // See if the following lines need to be scanned again because the scan state changed
@@ -240,11 +240,11 @@ namespace TypeCobol.Compiler.Scanner
         private void PropagateChangeAfterLine(int updatedLineIndex, MultilineScanState lastScanState, Func<int, TokensLine> getTokensLineAtIndex, Action<int, TokensLine> setTokensLineAtIndex, TokensChangedEvent tokensChangedEvent)
         {
             // Study all the lines following one line change
-            for(int lineIndex = updatedLineIndex + 1; lineIndex < tokensLines.Count ; lineIndex++)
+            for (int lineIndex = updatedLineIndex + 1; lineIndex < tokensLines.Count; lineIndex++)
             {
-                TokensLine currentLine = tokensLines[lineIndex];
+                TokensLine currentLine = (TokensLine)tokensLines[lineIndex];
                 // As soon as we find a line where the initial scan state is not modified
-                if(currentLine.InitialScanState.Equals(lastScanState))
+                if (currentLine.InitialScanState.Equals(lastScanState))
                 {
                     // -> STOP the propagation of the change
                     break;
@@ -257,12 +257,12 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // If it was not the first line : continue with the scan state of the previous line
                         TokensLine previousLine = getTokensLineAtIndex(lineIndex - 1);
-                        updatedLine = Scanner.ScanTextLine(currentLine.TextLineMap.TextLine, previousLine, TextSourceInfo, CompilerOptions);
+                        updatedLine = Scanner.ScanTextLine(currentLine.TextLine, previousLine, TextSourceInfo, CompilerOptions);
                     }
                     else
                     {
                         // If it was the first line : initialize a new scan state
-                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLineMap.TextLine, false, false, false, TextSourceInfo, CompilerOptions);
+                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLine, false, false, false, TextSourceInfo, CompilerOptions);
                     }
                     // Update the line in the immutable list
                     setTokensLineAtIndex(lineIndex, updatedLine);
@@ -321,5 +321,5 @@ namespace TypeCobol.Compiler.Scanner
 
             return sbResult.ToString();
         }
-    }   
+    }
 }
