@@ -1,62 +1,22 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Preprocessor;
-using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.TypeChecker;
 
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
-    /// Incremental parsing of a ProcessedTokensDocument
+    /// Incrementally parse CodeElements from a set of pre-processed tokens changes
     /// </summary>
-    public class SyntaxDocument : IObserver<TokensChangedEvent>
+    static class CodeElementsParserStep
     {
-        /// <summary>
-        /// Underlying ProcessedTokensDocument
-        /// </summary>
-        public ProcessedTokensDocument ProcessedTokensDocument { get; private set; }
-
-        /// <summary>
-        /// Compiler options directing the parser operations
-        /// </summary>
-        public TypeCobolOptions CompilerOptions { get; private set; }
-
-        /// <summary>
-        /// List of code elements found in the parse tree
-        /// </summary>
-        public IList<CodeElement> CodeElements { get; private set; }
-
-        /// <summary>
-        /// List of CodeElements found with at least one error while parsing
-        /// </summary>
-        public IList<CodeElement> CodeElementsInError { get; private set; }
-        public List<Diagnostic> Diagnostics { get; private set; }//TODO remove this
-
-        public SyntaxDocument(ProcessedTokensDocument processedTokensDocument, TypeCobolOptions compilerOptions)
-        {
-            ProcessedTokensDocument = processedTokensDocument;
-            CompilerOptions = compilerOptions;
-        }
-
-        // -- Should incrementally parse a set of tokens changes --
-
         public void OnNext(TokensChangedEvent tokensChangedEvent)
         {
 
             try
             {
-// Create a token iterator on top of pre-processed tokens lines
+                // Create a token iterator on top of pre-processed tokens lines
                 ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetTokensIterator();
 
                 // Create an Antlr compatible token source on top a the token iterator
@@ -154,19 +114,5 @@ namespace TypeCobol.Compiler.Parser
         {
             // to do
         }
-
-        // Debug only
-        public Exception LastException { get; private set; }
-
-        // --- Implement IObservable<ParseNodeChangedEvent>
-
-        private ISubject<CodeElementChangedEvent> parseNodeChangedEventsSource = new Subject<CodeElementChangedEvent>();
-
-        public IObservable<CodeElementChangedEvent> ParseNodeChangedEventsSource
-        {
-            get { return parseNodeChangedEventsSource; }
-        }
     }
 }
-
- 

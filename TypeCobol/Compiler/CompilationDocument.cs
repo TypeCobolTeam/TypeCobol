@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
+using System.Threading;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -13,24 +18,475 @@ using TypeCobol.Compiler.Text;
 namespace TypeCobol.Compiler
 {
     /// <summary>
-    /// Partial compilation pipeline : from file to preprocessor, used for COPY text
+    /// Partial compilation pipeline : from text to preprocessor, used for COPY text
     /// </summary>
     public class CompilationDocument
     {
         /// <summary>
-        /// Cobol source file
+        /// Text source name and format
         /// </summary>
-        public CobolFile CobolFile { get; private set; }
+        public TextSourceInfo TextSourceInfo { get; private set; }
 
         /// <summary>
-        /// Raw source text
+        /// TypeCobol compiler options
         /// </summary>
-        public ITextDocument TextDocument { get; private set; }
+        public TypeCobolOptions CompilerOptions { get; private set; }
 
         /// <summary>
-        /// True if the current source text in TextDocument is different from the CobolFile content 
+        /// The build system implements an efficient way to retrieve ProcessedTokensDocuments
+        /// for all COPY compiler directives
         /// </summary>
-        public bool HasSourceTextChangesToSave { get; private set; }
+        private IProcessedTokensDocumentProvider processedTokensDocumentProvider;
+
+        // Internal storage of the document lines :
+        // - the document lines are stored in a tree structure, allowing efficient updates
+        // - the tree nodes do not store a pointer to their father node, enabling efficient snapshots of the tree
+        // - iterating on the elements of this list requires the allocation of an external stack object, which is retrieved from a pool
+        // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
+        private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
+
+        // --- Initialization ---
+
+        /// <summary>
+        /// Initializes a new compilation document from a list of text lines.
+        /// This method does not scan the inserted text lines to produce tokens.
+        /// You must explicitely call Synchronize
+        /// </summary>
+        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider)
+        {
+            TextSourceInfo = textSourceInfo;
+            CompilerOptions = compilerOptions;
+            this.processedTokensDocumentProvider = processedTokensDocumentProvider;
+
+            // Initialize the compilation document lines
+            compilationDocumentLines = ImmutableList<CodeElementsLine>.Empty.ToBuilder();
+
+            // ... with the initial list of text lines received as a parameter
+            if (initialTextLines != null)
+            {
+                // Insert Cobol text lines in the internal tree structure
+                compilationDocumentLines.AddRange(initialTextLines.Select(textLine => CreateNewDocumentLine(textLine, textSourceInfo.ColumnsLayout)));
+            }
+
+            // Initialize document views versions
+            currentTextLinesVersion = new DocumentVersion<ICobolTextLine>(this);
+            currentTokensLinesVersion = new DocumentVersion<ITokensLine>(this);
+        }
+
+        /// <summary>
+        /// Document line factory for the compiler processing steps : create new line from text
+        /// </summary>
+        protected CodeElementsLine CreateNewDocumentLine(ITextLine textLine, ColumnsLayout columnsLayout)
+        {
+            // Ensure all document lines are read-only snapshots
+            ITextLine textLineSnapshot;
+            if (!textLine.IsReadOnly)
+            {
+                textLineSnapshot = new TextLineSnapshot(textLine);
+            }
+            else
+            {
+                textLineSnapshot = textLine;
+            }
+
+            return new CodeElementsLine(textLineSnapshot, columnsLayout);
+        }
+
+        /// <summary>
+        /// Document line factory for the compiler processing steps : create new version of a line by copy before an update
+        /// </summary>
+        protected CodeElementsLine CreateNewDocumentLineForUpdate(CodeElementsLine previousLineVersion, CompilationStep compilationStep)
+        {
+            return new CodeElementsLine(previousLineVersion, compilationStep);
+        }
+
+        // --- Text lines ---
+
+        /// <summary>
+        /// Current list of text lines.
+        /// NOT thread-safe : this property can only be accessed from the owner thread.
+        /// </summary>
+        public IReadOnlyList<ICobolTextLine> CobolTextLines
+        {
+            get
+            {
+                VerifyAccess();
+                return compilationDocumentLines;
+            }
+        }
+
+        /// <summary>
+        /// Update the text lines of the document after a text change event.
+        /// NOT thread-safe : this method can only be called from the owner thread.
+        /// </summary>
+        public void UpdateTextLines(TextChangedEvent textChangedEvent)
+        {
+            // This method can only be called by the document owner thread
+            if (documentOwnerThread == null)
+            {
+                documentOwnerThread = Thread.CurrentThread;
+            }
+            else
+            {
+                VerifyAccess();
+            }
+
+            // Make sure we don't update the document while taking a snapshot
+            DocumentChangedEvent<ICobolTextLine> documentChangedEvent = null;
+            lock (lockObjectForDocumentLines)
+            {
+                // Apply text changes to the compilation document
+                IList<DocumentChange<ICobolTextLine>> documentChanges = new List<DocumentChange<ICobolTextLine>>(textChangedEvent.TextChanges.Count);
+                foreach (TextChange textChange in textChangedEvent.TextChanges)
+                {
+                    DocumentChange<ICobolTextLine> appliedChange = null;
+                    CodeElementsLine newLine = null;
+                    switch (textChange.Type)
+                    {
+                        case TextChangeType.DocumentCleared:
+                            compilationDocumentLines.Clear();
+                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.DocumentCleared, 0, null);
+                            // Ignore all previous document changes : they are meaningless now that the document was completely cleared
+                            documentChanges.Clear();
+                            break;
+                        case TextChangeType.LineInserted:
+                            newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
+                            compilationDocumentLines.Insert(textChange.LineIndex, newLine);
+                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
+                            // Recompute the line indexes of all the changes prevously applied
+                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+                            {
+                                if(documentChangeToAdjust.LineIndex >= textChange.LineIndex)
+                                {
+                                    documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex + 1;
+                                }
+                            }
+                            break;
+                        case TextChangeType.LineUpdated:
+                            newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
+                            compilationDocumentLines[textChange.LineIndex] = newLine;
+                            // Check to see if this change can be merged with a previous one
+                            bool changeAlreadyApplied = false;
+                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+                            {
+                                if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
+                                {
+                                    changeAlreadyApplied = true;
+                                    break;
+                                }
+                            }
+                            if (!changeAlreadyApplied)
+                            {
+                                appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineUpdated, textChange.LineIndex, newLine);
+                            }
+                            // Line indexes are not impacted
+                            break;
+                        case TextChangeType.LineRemoved:
+                            compilationDocumentLines.RemoveAt(textChange.LineIndex);
+                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null);
+                            // Recompute the line indexes of all the changes prevously applied
+                            IList<DocumentChange<ICobolTextLine>> documentChangesToRemove = null;
+                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+                            {
+                                if (documentChangeToAdjust.LineIndex > textChange.LineIndex)
+                                {
+                                    documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex - 1;
+                                }
+                                else if(documentChangeToAdjust.LineIndex == textChange.LineIndex)
+                                {
+                                    if(documentChangesToRemove == null)
+                                    {
+                                        documentChangesToRemove = new List<DocumentChange<ICobolTextLine>>(1);
+                                    }
+                                    documentChangesToRemove.Add(documentChangeToAdjust);
+                                }
+                            }
+                            // Ignore all previous changes applied to a line now removed
+                            if(documentChangesToRemove != null)
+                            {
+                                foreach (DocumentChange<ICobolTextLine> documentChangeToRemove in documentChangesToRemove)
+                                {
+                                    documentChanges.Remove(documentChangeToRemove);
+                                }
+                            }
+                            break;
+                    }
+                    if (appliedChange != null)
+                    {
+                        documentChanges.Add(appliedChange);
+                    }
+                }
+
+                // Create a new version of the document to track these changes
+                currentTextLinesVersion.changes = documentChanges;
+                currentTextLinesVersion.next = new DocumentVersion<ICobolTextLine>(currentTextLinesVersion);
+
+                // Prepare an event to signal document change to all listeners
+                documentChangedEvent = new DocumentChangedEvent<ICobolTextLine>(currentTextLinesVersion, currentTextLinesVersion.next);
+                currentTextLinesVersion = currentTextLinesVersion.next;
+            }
+           
+            // Send events to all listeners
+            textLinesChangedEventsSource.OnNext(documentChangedEvent);
+        }
+
+        // Linked list of changes applied to the document text lines
+        private DocumentVersion<ICobolTextLine> currentTextLinesVersion;
+
+        /// <summary>
+        /// Current version of the text lines of the document.
+        /// NOT thread-safe : this method can only be called from the owner thread.
+        /// </summary>
+        public DocumentVersion<ICobolTextLine> CobolTextLinesVersion
+        {
+            get
+            {
+                VerifyAccess();
+                return currentTextLinesVersion;
+            }
+        }
+
+        // Broadcast document text lines changes to all listeners
+        private ISubject<DocumentChangedEvent<ICobolTextLine>> textLinesChangedEventsSource = new Subject<DocumentChangedEvent<ICobolTextLine>>();
+
+        /// <summary>
+        /// Subscribe to this events source to be notified of all changes in the text lines of the document
+        /// </summary>
+        public IObservable<DocumentChangedEvent<ICobolTextLine>> TextLinesChangedEventsSource
+        {
+            get { return textLinesChangedEventsSource; }
+        }
+
+        // --- Tokens lines ---
+        
+        /// <summary>
+        /// Current list of tokens lines.
+        /// NOT thread-safe : can only be accessed from the owner thread.
+        /// </summary>
+        public IReadOnlyList<ITokensLine> TokensLines
+        {
+            get
+            {
+                VerifyAccess();
+                return compilationDocumentLines;
+            }
+        }
+
+        /// <summary>
+        /// Update the tokens lines of the document if the text lines changed since the last time this method was called.
+        /// NOT thread-safe : this method can only be called from the owner thread.
+        /// </summary>
+        public void UpdateTokensLines()
+        {
+            // This method can only be called by the document owner thread
+            if (documentOwnerThread == null)
+            {
+                documentOwnerThread = Thread.CurrentThread;
+            }
+            else
+            {
+                VerifyAccess();
+            }
+
+            // Check if an update is necessary and compute changes to apply since last version
+            bool scanAllDocumentLines = false;
+            IEnumerable<DocumentChange<ICobolTextLine>> textLineChanges = null;
+            if(textLinesVersionForCurrentTokensLines == null)
+            {
+                scanAllDocumentLines = true;
+            }
+            else if(currentTextLinesVersion == textLinesVersionForCurrentTokensLines)
+            {
+                // Text lines did not change since last update => nothing to do
+                return;
+            }
+            else
+            {
+                textLineChanges = textLinesVersionForCurrentTokensLines.GetReducedAndOrderedChangesInNewerVersion(currentTextLinesVersion);
+            }
+
+            // Make sure we don't update the document while taking a snapshot
+            DocumentChangedEvent<ITokensLine> documentChangedEvent = null;
+            lock (lockObjectForDocumentLines)
+            {
+                // Apply text changes to the compilation document
+                if (scanAllDocumentLines)
+                {
+                    ScannerStep.ScanDocument();
+                }
+                else
+                {
+                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanDocumentChanges(textLineChanges);
+
+                    // Create a new version of the document to track these changes
+                    currentTokensLinesVersion.changes = documentChanges;
+                    currentTokensLinesVersion.next = new DocumentVersion<ITokensLine>(currentTokensLinesVersion);
+
+                    // Prepare an event to signal document change to all listeners
+                    documentChangedEvent = new DocumentChangedEvent<ITokensLine>(currentTokensLinesVersion, currentTokensLinesVersion.next);
+                    currentTokensLinesVersion = currentTokensLinesVersion.next;
+
+                    // Register that the tokens lines were synchronized with the current text lines version
+                    textLinesVersionForCurrentTokensLines = currentTextLinesVersion;
+                }
+            }
+
+            // Send events to all listeners
+            tokensLinesChangedEventsSource.OnNext(documentChangedEvent);
+        }
+
+        // Linked list of changes applied to the document text lines
+        private DocumentVersion<ICobolTextLine> textLinesVersionForCurrentTokensLines;
+        private DocumentVersion<ITokensLine> currentTokensLinesVersion;
+
+        /// <summary>
+        /// Current version of the text lines of the document.
+        /// NOT thread-safe : this method can only be called from the owner thread.
+        /// </summary>
+        public DocumentVersion<ITokensLine> TokensLinesVersion
+        {
+            get
+            {
+                VerifyAccess();
+                return currentTokensLinesVersion;
+            }
+        }
+
+        // Broadcast document text lines changes to all listeners
+        private ISubject<DocumentChangedEvent<ITokensLine>> tokensLinesChangedEventsSource = new Subject<DocumentChangedEvent<ITokensLine>>();
+
+        /// <summary>
+        /// Subscribe to this events source to be notified of all changes in the text lines of the document
+        /// </summary>
+        public IObservable<DocumentChangedEvent<ITokensLine>> TokensLinesChangedEventsSource
+        {
+            get { return tokensLinesChangedEventsSource; }
+        }
+
+        // --- Document snapshots ---
+
+        /// <summary>
+        /// Creates a new snapshot of the document viewed as tokens BEFORE compiler directives processing.
+        /// Thread-safe : this method can be called from any thread.
+        /// </summary>
+        public void RefreshTokensDocumentSnapshot()
+        {
+            // Make sure we don't update the document while taking a snapshot
+            lock (lockObjectForDocumentLines)
+            {
+                // Create a new snapshot only if things changed since last snapshot
+                if (TokensDocumentSnapshot == null || TokensDocumentSnapshot.CurrentVersion != currentTokensLinesVersion)
+                {
+                    TokensDocumentSnapshot = new TokensDocument(TextSourceInfo, textLinesVersionForCurrentTokensLines, currentTokensLinesVersion, compilationDocumentLines.ToImmutable());
+                }
+            }
+        }
+
+        /// <summary>
+        /// Last snapshot of the compilation document viewed as a raw set of tokens, before processing the compiler directives.
+        /// Tread-safe : accessible from any thread, returns an immutable object tree.
+        /// </summary>
+        public TokensDocument TokensDocumentSnapshot { get; private set; }
+
+        /// <summary>
+        /// Creates a new snapshot of the document viewed as tokens AFTER compiler directives processing.
+        /// (if the tokens lines changed since the last time this method was called)
+        /// Thread-safe : this method can be called from any thread.
+        /// </summary>
+        public void RefreshProcessedTokensDocumentSnapshot()
+        {
+            // Make sure two thread don't try to update this snapshot at the same time
+            lock(lockObjectForProcessedTokensDocumentSnapshot)
+            {
+                // Capture previous snapshots at a point in time
+                TokensDocument tokensDocument = TokensDocumentSnapshot;
+                ProcessedTokensDocument previousProcessedTokensDocument = ProcessedTokensDocumentSnapshot;
+
+                // Create a new snapshot only if things changed since last snapshot
+                if (previousProcessedTokensDocument == null || tokensDocument.CurrentVersion != previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion)
+                {
+                    PreprocessorStep.ProcessLines();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Last snapshot of the compilation document viewed as a final set of tokens, after processing the compiler directives (COPY & REPLACE).
+        /// Tread-safe : accessible from any thread, returns an immutable object tree.
+        /// </summary>
+        public ProcessedTokensDocument ProcessedTokensDocumentSnapshot { get; private set; }
+
+        #region Thread ownership
+        // Inspired from ICSharpCode.AvalonEdit.Document.TextDocument
+        // Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+
+        // Synchronize accesses during compilationDocumentLines updates 
+        Thread documentOwnerThread;
+        protected readonly object lockObjectForDocumentLines = new object();
+
+        // Synchronize accesses during snapshots updates
+        protected readonly object lockObjectForProcessedTokensDocumentSnapshot = new object();
+
+        /// <summary>
+        /// Verifies that the current thread is the documents owner thread.
+        /// Throws an <see cref="InvalidOperationException"/> if the wrong thread accesses the CompilationDocument.
+        /// </summary>
+        /// <remarks>
+        /// <para>The CompilationDocument class is not thread-safe. A document instance expects to have a single owner thread
+        /// and will throw an <see cref="InvalidOperationException"/> when accessed from another thread.
+        /// It is possible to change the owner thread using the <see cref="SetOwnerThread"/> method.</para>
+        /// </remarks>
+        public void VerifyAccess()
+        {
+            #if DEBUG
+            if (Thread.CurrentThread != documentOwnerThread)
+                throw new InvalidOperationException("CompilationDocument can be accessed only from the thread that owns it.");
+            #endif
+        }
+
+        /// <summary>
+        /// Transfers ownership of the document to another thread. This method can be used to load
+        /// a file into a TextDocument on a background thread and then transfer ownership to the UI thread
+        /// for displaying the document.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="VerifyAccess"/>
+        /// <para>
+        /// The owner can be set to null, which means that no thread can access the document. But, if the document
+        /// has no owner thread, any thread may take ownership by calling <see cref="SetOwnerThread"/>.
+        /// </para>
+        /// </remarks>
+        public void SetOwnerThread(Thread newOwner)
+        {
+            // We need to lock here to ensure that in the null owner case,
+            // only one thread succeeds in taking ownership.
+            lock (lockObjectForDocumentLines)
+            {
+                if (documentOwnerThread != null)
+                {
+                    VerifyAccess();
+                }
+                documentOwnerThread = newOwner;
+            }
+        }
+        #endregion
+    }
+    /*
+    /// <summary>
+    /// Source text file on disk
+    /// </summary>
+    public CobolFile CobolFile { get; private set; }
+
+    /// <summary>
+    /// Source text buffer in memory
+    /// </summary>
+    public ITextDocument TextDocument { get; private set; }
+
+    /// <summary>
+    /// True if the source text buffer in memory (TextDocument) is different from the source text file (CobolFile) on disk 
+    /// </summary>
+    public bool HasTextChangesToSave { get; private set; }
+    
 
         /// <summary>
         /// View of a source document as lines of tokens after the lexical analysis stage 
@@ -303,5 +759,5 @@ namespace TypeCobol.Compiler
         public static DocumentFormat ZOsReferenceFormat = new DocumentFormat(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), EndOfLineDelimiter.FixedLengthLines, 80, ColumnsLayout.CobolReferenceFormat);
         public static DocumentFormat RDZReferenceFormat = new DocumentFormat(Encoding.GetEncoding(1252) , EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
         public static DocumentFormat FreeTextFormat = new DocumentFormat(Encoding.GetEncoding(1252), EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
-    }
+    }*/
 }

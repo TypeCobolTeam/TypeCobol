@@ -13,44 +13,12 @@ namespace TypeCobol.Compiler.Preprocessor
     /// <summary>
     /// Line of tokens after preprocessor execution
     /// </summary>
-    public class ProcessedTokensLine : IProcessedTokensLine
+    public class ProcessedTokensLine : TokensLine, IProcessedTokensLine
     {
-        public ProcessedTokensLine(ITokensLine tokensLine)
+        internal ProcessedTokensLine(ITextLine textLine, ColumnsLayout columnsLayout) : base(textLine, columnsLayout)
         {
-            TokensLine = tokensLine;
-            SourceTokens = tokensLine.SourceTokens;
-            ScannerDiagnostics = tokensLine.ScannerDiagnostics;
-
             ProcessingState = PreprocessorState.NeedsCompilerDirectiveParsing;
         }
-
-        internal ProcessedTokensLine(ProcessedTokensLine processedTokensLine)
-        {
-            TokensLine = processedTokensLine.TokensLine;
-            SourceTokens = processedTokensLine.SourceTokens;
-            ScannerDiagnostics = processedTokensLine.ScannerDiagnostics;
-
-            ProcessingState = PreprocessorState.NeedsCompilerDirectiveParsing;
-        }
-
-        // --- Reference to source line properties ---
-
-        /// <summary>
-        /// Underlying TokensLine
-        /// </summary>
-        public ITokensLine TokensLine { get; private set; }
-
-        /// <summary>
-        /// Tokens found while scanning the raw source text line
-        /// (before text manipulation phase)
-        /// </summary>
-        public IList<Token> SourceTokens { get; private set; }
-
-        /// <summary>
-        /// Error and warning messages produced while scanning the raw source text line
-        /// (before text manipulation phase)
-        /// </summary>
-        public IList<Diagnostic> ScannerDiagnostics { get; private set; }
 
         // --- Computed line properties after preprocessor execution ---
 
@@ -279,117 +247,19 @@ namespace TypeCobol.Compiler.Preprocessor
             PreprocessorDiagnostics.Add(diag);
         }
 
-        // --- temp temp ---
+        // --- Incremental compilation process ---
 
-        public CobolTextLineType Type
+        protected void CopyProcessedTokensLineProperties(ProcessedTokensLine previousLineVersion)
         {
-            get
-            {
-                return TokensLine.Type;
-            }
-        }
+            this.CompilerListingControlDirective = previousLineVersion.CompilerListingControlDirective;
+            this.ImportedDocuments = previousLineVersion.ImportedDocuments;
+            this.IsContinuedFromPreviousLine = previousLineVersion.IsContinuedFromPreviousLine;
+            this.PreprocessorDiagnostics = previousLineVersion.PreprocessorDiagnostics;
+            this.ProcessingState = previousLineVersion.ProcessingState;
+            this.ReplaceDirective = previousLineVersion.ReplaceDirective;
+            this.tokensWithCompilerDirectives = previousLineVersion.tokensWithCompilerDirectives;
 
-        public TextArea SequenceNumber
-        {
-            get
-            {
-                return TokensLine.SequenceNumber;
-            }
+            CompilationStep = Concurrency.CompilationStep.Scanner;
         }
-
-        public string SequenceNumberText
-        {
-            get
-            {
-                return TokensLine.SequenceNumberText;
-            }
-        }
-
-        public TextArea Indicator
-        {
-            get
-            {
-                return TokensLine.Indicator;
-            }
-        }
-
-        public char IndicatorChar
-        {
-            get
-            {
-                return TokensLine.IndicatorChar;
-            }
-        }
-
-        public TextArea Source
-        {
-            get
-            {
-                return TokensLine.Source;
-            }
-        }
-
-        public string SourceText
-        {
-            get
-            {
-                return TokensLine.SourceText;
-            }
-        }
-
-        public TextArea Comment
-        {
-            get
-            {
-                return TokensLine.Comment;
-            }
-        }
-
-        public string CommentText
-        {
-            get
-            {
-                return TokensLine.CommentText;
-            }
-        }
-
-        public int InitialLineIndex
-        {
-            get
-            {
-                return TokensLine.InitialLineIndex;
-            }
-        }
-
-        public string Text
-        {
-            get
-            {
-                return TokensLine.Text;
-            }
-        }
-
-        public int Length
-        {
-            get
-            {
-                return TokensLine.Length;
-            }
-        }
-
-        public object LineTrackingReferenceInSourceDocument
-        {
-            get
-            {
-                return TokensLine.LineTrackingReferenceInSourceDocument;
-            }
-        }
-
-        public string TextSegment(int startIndex, int endIndexInclusive)
-        {
-            return TokensLine.TextSegment(startIndex, endIndexInclusive);
-        }
-
-        // --- temp temp ---
     }
 }

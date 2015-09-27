@@ -22,10 +22,41 @@ using TypeCobol.Compiler.TypeChecker;
 namespace TypeCobol.Compiler
 {
     /// <summary>
-    /// Complete compilation pipeline : from file to syntax tree and code model, used for programs or classes
+    /// Complete compilation pipeline : from text to syntax tree and code model, used for programs or classes
     /// </summary>
     public class CompilationUnit : CompilationDocument
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public CompilationUnit(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider) :
+            base(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider)
+        { }
+
+        /// <summary>
+        /// Creates a new snapshot of the document viewed as CodeElement objects after parsing.
+        /// (if the processed tokens lines changed since the last time this method was called)
+        /// Thread-safe : this method can be called from any thread.
+        /// </summary>
+        public void RefreshCodeElementsDocumentSnapshot()
+        {
+            lock(lockObjectForCodeElementsDocumentSnapshot)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Last snapshot of the compilation document viewed as a set of code elements, after parsing the processed tokens.
+        /// Tread-safe : accessible from any thread, returns an immutable object tree.
+        /// </summary>                        
+        public CodeElementsDocument CodeElementsDocumentSnapshot { get; private set; }
+
+        // Synchronize accesses during snapshots updates
+        protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
+    }
+
+    /*
         /// <summary>
         /// Syntax tree produced by the parsing phase
         /// </summary>
@@ -155,5 +186,5 @@ namespace TypeCobol.Compiler
                     ObserveOn(textGenerationScheduler).Subscribe(generator);
             }
         } 
-    }
+    }*/
 }

@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Concurrency
     /// </remarks>
     /// </summary>
     [DebuggerDisplay("Version #{id}")]
-    public sealed class DocumentVersion
+    public sealed class DocumentVersion<T>
     {
         // Reference back to the document version provider.
         // Used to determine if two checkpoints belong to the same document.
@@ -29,10 +29,10 @@ namespace TypeCobol.Compiler.Concurrency
         readonly int id;
 
         // Changes from this version to the next version
-        internal IEnumerable<DocumentChange> changes;
+        internal IEnumerable<DocumentChange<T>> changes;
 
         // Linked list of successive document versions
-        internal DocumentVersion next;
+        internal DocumentVersion<T> next;
 
         /// <summary>
         /// Initial version
@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// New version of an existing document
         /// </summary>
-        internal DocumentVersion(DocumentVersion prev)
+        internal DocumentVersion(DocumentVersion<T> prev)
         {
             this.provider = prev.provider;
             this.id = unchecked(prev.id + 1);
@@ -57,9 +57,9 @@ namespace TypeCobol.Compiler.Concurrency
         /// <remarks>
         /// Returns false when given <c>null</c>.
         /// </remarks>
-        public bool BelongsToSameDocumentAs(DocumentVersion other)
+        public bool BelongsToSameDocumentAs(DocumentVersion<T> other)
         {
-            DocumentVersion o = other as DocumentVersion;
+            DocumentVersion<T> o = other as DocumentVersion<T>;
             return o != null && provider == o.provider;
         }
 
@@ -71,25 +71,27 @@ namespace TypeCobol.Compiler.Concurrency
         /// <returns>-1 if this version is older than <paramref name="other"/>.
         /// 0 if <c>this</c> version instance represents the same version as <paramref name="other"/>.
         /// 1 if this version is newer than <paramref name="other"/>.</returns>
-        public int CompareAge(DocumentVersion other)
+        public int CompareAge(DocumentVersion<T> other)
         {
             if (other == null)
                 throw new ArgumentNullException("other");
-            DocumentVersion o = other as DocumentVersion;
+            DocumentVersion<T> o = other as DocumentVersion<T>;
             if (o == null || provider != o.provider)
                 throw new ArgumentException("Versions do not belong to the same document");
             // We will allow overflows, but assume that the maximum distance between checkpoints is 2^31-1.
             // This is guaranteed on x86 because so many checkpoints don't fit into memory.
             return Math.Sign(unchecked(this.id - o.id));
         }
-       
+        
+        private static DocumentChange<T>[] NO_CHANGES = new DocumentChange<T>[] { };
+
         /// <summary>
         /// Gets the changes from this checkpoint to the other checkpoint.
         /// If 'other' is older than this checkpoint, an exception is thrown.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
         /// <exception cref="ArgumentException">Raised if 'other' belongs to a different document than this checkpoint, or 'other' is older than this checkpoint.</exception>
-        public IEnumerable<DocumentChange> GetChangesTo(DocumentVersion other)
+        public IEnumerable<DocumentChange<T>> GetChangesTo(DocumentVersion<T> other)
         {
             int result = CompareAge(other);
             if (result < 0)
@@ -99,37 +101,100 @@ namespace TypeCobol.Compiler.Concurrency
             else
                 return NO_CHANGES;
         }
-
-        private static DocumentChange[] NO_CHANGES = new DocumentChange[] { };
         
-        /*
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="other"></param>
-        /// <param name="oldOffset"></param>
-        /// <param name="movement"></param>
-        public int FindLineIndexInOtherVersion(ITextSourceVersion other, int oldOffset)
-        {
-            int offset = oldOffset;
-            foreach (var e in GetChangesTo(other))
-            {
-                offset = e.GetNewOffset(offset, movement);
-            }
-            return offset;
-        }
-        */
-
-        private IEnumerable<DocumentChange> GetForwardChanges(DocumentVersion other)
+        private IEnumerable<DocumentChange<T>> GetForwardChanges(DocumentVersion<T> other)
         {
             // Return changes from this(inclusive) to other(exclusive).
-            for (DocumentVersion node = this; node != other; node = node.next)
+            for (DocumentVersion<T> node = this; node != other; node = node.next)
             {
-                foreach (DocumentChange change in node.changes)
+                foreach (DocumentChange<T> change in node.changes)
                 {
                     yield return change;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get changes between older version v1 and more recent version v2 :
+        /// - with redundant changes applied on the same line merged in one single change
+        /// - with line indexes translated to be valid in the v2 document
+        /// - with changes sorted in the order of the line indexes in the v2 document
+        /// </summary>
+        public IOrderedEnumerable<DocumentChange<T>> GetReducedAndOrderedChangesInNewerVersion(DocumentVersion<T> other)
+        {
+            // Ensure the version received as parameter is more recent than teh current version
+            int result = CompareAge(other);
+            if (result >= 0)
+            {
+                throw new InvalidOperationException("other version must be more recent than this version");
+            }
+
+            // Merge the redundant changes and translate the line indexes to the last version
+            IList<DocumentChange<T>> reducedDocumentChanges = new List<DocumentChange<T>>();
+            foreach (DocumentChange<T> documentChange in GetChangesTo(other))
+            {
+                switch (documentChange.Type)
+                {
+                    case DocumentChangeType.DocumentCleared:
+                        // Ignore all previous document changes : they are meaningless now that the document was completely cleared
+                        reducedDocumentChanges.Clear();
+                        // Add the clear event
+                        reducedDocumentChanges.Add(documentChange);
+                        break;
+                    case DocumentChangeType.LineInserted:
+                        // Recompute the line indexes of all the changes prevously applied
+                        foreach (DocumentChange<T> documentChangeToAdjust in reducedDocumentChanges)
+                        {
+                            if (documentChangeToAdjust.LineIndex >= documentChange.LineIndex)
+                            {
+                                documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex + 1;
+                            }
+                        }
+                        // Add the insert change
+                        reducedDocumentChanges.Add(documentChange);
+                        break;
+                    case DocumentChangeType.LineUpdated:
+                        // Check to see if this change can be merged with a previous one
+                        bool changeAlreadyApplied = false;
+                        foreach (DocumentChange<T> documentChangeToAdjust in reducedDocumentChanges)
+                        {
+                            if (documentChangeToAdjust.LineIndex == documentChange.LineIndex)
+                            {
+                                changeAlreadyApplied = true;
+                                break;
+                            }
+                        }
+                        if (!changeAlreadyApplied)
+                        {
+                            // Add the update change
+                            reducedDocumentChanges.Add(documentChange);
+                        }
+                        break;
+                    case DocumentChangeType.LineRemoved:
+                        // Recompute the line indexes of all the changes prevously applied
+                        DocumentChange<T> documentChangeToRemove = null;
+                        foreach (DocumentChange<T> documentChangeToAdjust in reducedDocumentChanges)
+                        {
+                            if (documentChangeToAdjust.LineIndex > documentChange.LineIndex)
+                            {
+                                documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex - 1;
+                            }
+                            else if (documentChangeToAdjust.LineIndex == documentChange.LineIndex)
+                            {
+                                documentChangeToRemove = documentChangeToAdjust;
+                            }
+                        }
+                        // Ignore all previous changes applied to a line now removed
+                        if (documentChangeToRemove != null)
+                        {
+                            reducedDocumentChanges.Remove(documentChangeToRemove);
+                        }
+                        break;
+                }
+            }
+
+            // Sort all changes by line index
+            return reducedDocumentChanges.OrderBy(documentChange => documentChange.LineIndex);
         }
     }
 }

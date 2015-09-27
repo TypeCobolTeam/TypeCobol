@@ -26,6 +26,11 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         int Length { get; }
 
+        /// <summary>
+        /// True if the implementation of the text line is read-only and can be used as a snapshot
+        /// </summary>
+        bool IsReadOnly { get; }
+
         // Position of the text line in the source text document
 
         /// <summary>

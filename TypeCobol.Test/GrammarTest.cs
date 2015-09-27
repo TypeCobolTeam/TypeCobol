@@ -59,7 +59,7 @@ namespace TypeCobol.Test
             if (nbFilesInError > 0) Assert.Fail('\n'+message);
         }
 
-        private bool hasErrors(TypeCobol.Compiler.Parser.SyntaxDocument document)
+        private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document)
         {
             return document != null && document.Diagnostics != null && document.Diagnostics.Count > 0;
         }

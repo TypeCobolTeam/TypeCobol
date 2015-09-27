@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.TypeChecker
         private readonly ISubject<CodeModelChangedEvent> codeModelChangedEventsSource = new Subject<CodeModelChangedEvent>();
         private readonly ISubject<IList<CompilationError>> compilationErrorsEventsSource = new Subject<IList<CompilationError>>();
 
-        public SemanticsDocument(SyntaxDocument parseTree, TypeCobolOptions compilerOptions)
+        public SemanticsDocument(CodeElementsDocument parseTree, TypeCobolOptions compilerOptions)
         {
             SyntaxDocument = parseTree;
             CompilerOptions = compilerOptions;
@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.TypeChecker
         /// <summary>
         ///     Underlying SyntaxTree
         /// </summary>
-        public SyntaxDocument SyntaxDocument { get; private set; }
+        public CodeElementsDocument SyntaxDocument { get; private set; }
 
         /// <summary>
         ///     Root object representing the Cobol program

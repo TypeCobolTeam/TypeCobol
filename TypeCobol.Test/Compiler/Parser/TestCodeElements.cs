@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             CompilationUnit compilationUnit = ParserUtils.CreateCompilationUnitForVirtualFile();
 
-            Tuple<SyntaxDocument, DisplayStatement> tuple;
+            Tuple<CodeElementsDocument, DisplayStatement> tuple;
 
             //Test using the generic method which parse a single CodeElement
             tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, "display 'toto'");
@@ -68,12 +68,12 @@ namespace TypeCobol.Test.Compiler.Parser
         }
 
 
-        public static Tuple<SyntaxDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse,
+        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse,
             int nbrOfVarToDisplay)
         {
             return ParseDisplayStatement(compilationUnit, textToParse, nbrOfVarToDisplay, null, false, true);
         }
-        public static Tuple<SyntaxDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse,
+        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse,
             int nbrOfVarToDisplay, bool correctSyntax)
         {
             return ParseDisplayStatement(compilationUnit, textToParse, nbrOfVarToDisplay, null, false, correctSyntax);
@@ -94,9 +94,9 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <param name="correctSyntax"></param>
         /// <param name="varsToDisplay"></param>
         /// <returns></returns>
-        public static Tuple<SyntaxDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
+        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
         {
-            Tuple<SyntaxDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, textToParse, correctSyntax);
+            Tuple<CodeElementsDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, textToParse, correctSyntax);
             Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == nbrOfVarToDisplay);
             if (uponMnemonicOrEnvName == null)
             {
@@ -129,13 +129,13 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <param name="compilationUnit"></param>
         /// <param name="textToParse"></param>
         /// <param name="correctSyntax"></param>
-        public static Tuple<SyntaxDocument, T> ParseOneCodeElement<T>(CompilationUnit compilationUnit, string textToParse, bool correctSyntax = true) where T : CodeElement
+        public static Tuple<CodeElementsDocument, T> ParseOneCodeElement<T>(CompilationUnit compilationUnit, string textToParse, bool correctSyntax = true) where T : CodeElement
         {
 //            compilationUnit.SyntaxDocument.Diagnostics.Clear();
 //            compilationUnit.SyntaxDocument.CodeElements.Clear();
             compilationUnit.TextDocument.LoadChars(textToParse);
 
-            SyntaxDocument syntaxDocument = compilationUnit.SyntaxDocument;
+            CodeElementsDocument syntaxDocument = compilationUnit.SyntaxDocument;
             Assert.IsTrue(syntaxDocument.CodeElements.Count == 1);
             Assert.IsTrue(syntaxDocument.CodeElements[0].GetType() == typeof(T));
 
@@ -148,7 +148,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 Assert.IsFalse(syntaxDocument.Diagnostics.Count == 0);
             }
 
-            return new Tuple<SyntaxDocument, T>(syntaxDocument, (T) syntaxDocument.CodeElements[0]);
+            return new Tuple<CodeElementsDocument, T>(syntaxDocument, (T) syntaxDocument.CodeElements[0]);
         }
 
         public static void Check_EXITCodeElements()

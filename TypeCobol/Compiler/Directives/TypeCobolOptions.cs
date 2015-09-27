@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Directives
     /// </summary>
     public class TypeCobolOptions : IBMCompilerOptions
     {
-        // insert options here ...
+        // insert options specific to TypeCobol here ...
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file
