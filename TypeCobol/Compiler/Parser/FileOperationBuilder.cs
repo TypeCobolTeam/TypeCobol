@@ -124,7 +124,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
-            return new CloseFileName(filename, context.REEL() != null, context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
+            return new CloseFileName(filename, context.REEL() != null || context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
         }
 
 

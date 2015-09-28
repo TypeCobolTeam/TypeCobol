@@ -52,16 +52,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// p313:
         /// The REEL, UNIT, and NO REWIND phrases are not valid for VSAM files.
         /// </summary>
-        bool IsReel;
-        /// <summary>
-        /// p314:
-        /// REEL and UNIT
-        /// You can specify these phrases only for QSAM multivolume or single
-        /// volume files. The terms REEL and UNIT are interchangeable.
-        /// p313:
-        /// The REEL, UNIT, and NO REWIND phrases are not valid for VSAM files.
-        /// </summary>
-        bool IsUnit;
+        bool IsReelUnit;
         /// <summary>
         /// p314:
         /// WITH NO REWIND and FOR REMOVAL
@@ -81,15 +72,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         bool IsNoRewind;
         /// <summary>
-        /// TODO: Meaning not found in documentation.
+        /// issue #62: LOCK is notified when you don't want the file can be opened again during the execution of program.
         /// </summary>
         bool IsLock;
 
-        public CloseFileName(SymbolReference<FileName> filename, bool reel, bool unit, bool forremoval, bool norewind, bool lock_)
+        public CloseFileName(SymbolReference<FileName> filename, bool reelunit, bool forremoval, bool norewind, bool lock_)
         {
             this.FileName = filename;
-            this.IsReel = reel;
-            this.IsUnit = unit;
+            this.IsReelUnit = reelunit;
             this.IsForRemoval = forremoval;
             this.IsNoRewind = norewind;
             this.IsLock = lock_;
