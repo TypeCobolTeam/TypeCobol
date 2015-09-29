@@ -1,4 +1,5 @@
-﻿using TypeCobol.Test.Compiler.File;
+﻿using System.IO;
+using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Compiler.Pipeline;
 using TypeCobol.Test.Compiler.Preprocessor;
@@ -115,9 +116,16 @@ namespace TypeCobol.Test
             TestCodeElements.Check_ParagraphCodeElements();
             //TODO            TestCodeElements.Check_EntryCodeElements();
 
-            TestCodeElements.Check_Expressions();
-
-            TestCodeElements.Check_Statements();
+            string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
+            foreach (string directory in Directory.GetDirectories(PlatformUtils.GetPathForProjectFile(root)))
+            {
+                var dirname = Path.GetFileName(directory);
+                System.Console.Write("Entering directory \""+dirname+"\":");
+                new FolderTester(dirname).Test();
+                System.Console.Write("\n\n");
+            }
+//            TestCodeElements.Check_Expressions();
+//            TestCodeElements.Check_Statements();
 
             //This test use TypeChecker which is specific to TypeCobol
             //As specifications of TypeCobol are not final yet this test can't be used

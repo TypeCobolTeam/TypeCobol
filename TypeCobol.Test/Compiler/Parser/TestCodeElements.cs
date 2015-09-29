@@ -198,15 +198,5 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             Check("EntryCodeElements");
         }
-
-        public static void Check_Expressions()
-        {
-            new FolderTester("Expressions").Test();
-        }
-
-        public static void Check_Statements()
-        {
-            new FolderTester("Statements").Test();
-        }
     }
 }
