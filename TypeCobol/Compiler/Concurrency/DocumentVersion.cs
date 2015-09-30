@@ -123,13 +123,15 @@ namespace TypeCobol.Compiler.Concurrency
         private IEnumerable<DocumentChange> GetForwardChanges(DocumentVersion other)
         {
             // Return changes from this(inclusive) to other(exclusive).
+            IList<DocumentChange> result = new List<DocumentChange>();
             for (DocumentVersion node = this; node != other; node = node.next)
             {
                 foreach (DocumentChange change in node.changes)
                 {
-                    yield return change;
+                    result.Add(change);
                 }
             }
+            return result;
         }
     }
 }
