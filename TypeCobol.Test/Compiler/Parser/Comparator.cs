@@ -42,6 +42,11 @@ namespace TypeCobol.Test.Compiler.Parser
             this.unit.StartDocumentProcessing();
         }
 
+        public void ToJSON()
+        {
+            string json = new TestJSONSerializer().ToJSON(this.unit.SyntaxDocument.CodeElements);
+        }
+
         public void Compare()
         {
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path)))
@@ -158,6 +163,7 @@ namespace TypeCobol.Test.Compiler.Parser
                             System.Console.Write(" --- EXCEPTION\n" + unit.observer.DumpErrors());
                             errors.AppendLine(unit.observer.DumpErrors());
                         }
+                        unit.ToJSON();
                         unit.Compare();
                     }
                     catch (System.Exception ex)

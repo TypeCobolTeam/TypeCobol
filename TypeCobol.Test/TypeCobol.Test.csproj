@@ -79,6 +79,7 @@
     <Compile Include="Compiler\Parser\ParserUtils.cs" />
     <None Include="Compiler\Parser\Samples\Expressions\FunctionIdentifiers.cbl" />
     <Compile Include="Compiler\Parser\TestCodeElements.cs" />
+    <Compile Include="Compiler\Parser\TestJSONSerializer.cs" />
     <Compile Include="Compiler\Parser\TestParser.cs" />
     <Compile Include="Compiler\Parser\TestTokenSource.cs" />
     <Compile Include="Compiler\Pipeline\TestFileWatcher.cs" />
