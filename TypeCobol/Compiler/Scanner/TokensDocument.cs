@@ -50,13 +50,15 @@ namespace TypeCobol.Compiler.Scanner
         {
             get
             {
+                IList<Token> tokens = new List<Token>();
                 TokensLinesIterator tokenSource = new TokensLinesIterator(TextSourceInfo.Name, TokensLines, null, Token.CHANNEL_SourceTokens);
                 Token token = null;
                 do
                 {
                     token = (Token)tokenSource.NextToken();
-                    yield return token;
+                    tokens.Add(token);
                 } while (token.Type != (int)TokenType.EndOfFile);
+                return tokens;
             }
         }
 
