@@ -122,13 +122,15 @@ namespace TypeCobol.Compiler.Text
         {
             get
             {
+                IList<char> chars = new List<char>();
                 foreach (ITextLine line in lines)
                 {
                     foreach (char c in line.Text)
                     {
-                        yield return c;
+                        chars.Add(c);
                     }
                 }
+                return chars;
             }
         }
 
