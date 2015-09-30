@@ -195,18 +195,11 @@ namespace TypeCobol.Compiler.Preprocessor
                     if (TryMatchReplaceOperation(nextToken, currentPosition.ReplaceOperation, out originalMatchingTokens))
                     {
                         // REPLACE pattern matched => return the first replaced token
-                        Token replacedToken = CreateReplacedTokens(nextToken, currentPosition.ReplaceOperation, originalMatchingTokens);
-                        if (replacedToken != null)
-                        {
-                            currentPosition.CurrentToken = replacedToken;
-                            return replacedToken;
-                        }
+                        Token replacedToken = TryToReplace(nextToken, currentPosition.ReplaceOperation, originalMatchingTokens);
+                        if (replacedToken != null) return replacedToken;
                         // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
-                        else
-                        {
-                            nextToken = sourceIterator.NextToken();
-                            goto tryReplaceToken;
-                        }
+                        nextToken = sourceIterator.NextToken();
+                        goto tryReplaceToken;
                     }
                 }
                 // More general case : several replace operations in effect
@@ -218,18 +211,11 @@ namespace TypeCobol.Compiler.Preprocessor
                         if (TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
                         {
                             // REPLACE pattern matched => return the first replaced token
-                            Token replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
-                            if (replacedToken != null)
-                            {
-                                currentPosition.CurrentToken = replacedToken;
-                                return replacedToken;
-                            }
+                            Token replacedToken = TryToReplace(nextToken, replaceOperation, originalMatchingTokens);
+                            if (replacedToken != null) return replacedToken;
                             // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
-                            else
-                            {
-                                nextToken = sourceIterator.NextToken();
-                                goto tryReplaceToken;
-                            }
+                            nextToken = sourceIterator.NextToken();
+                            goto tryReplaceToken;
                         }
                     }
                 }
@@ -238,6 +224,15 @@ namespace TypeCobol.Compiler.Preprocessor
                 currentPosition.CurrentToken = nextToken;
                 return nextToken;
             }
+        }
+
+        private Token TryToReplace(Token nextToken, ReplaceOperation replaceOperation, IList<Token> originalMatchingTokens) {
+            Token replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
+            if (replacedToken != null) {
+                currentPosition.CurrentToken = replacedToken;
+                return replacedToken;
+            }
+            return null;
         }
 
         /// <summary>
