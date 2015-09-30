@@ -64,16 +64,18 @@ namespace TypeCobol.Compiler
         { 
             get 
             {
+                IList<Diagnostic> diagnostics = new List<Diagnostic>();
                 foreach(ITokensLine line in TokensDocument.TokensLines)
                 {
                     if (line.ScannerDiagnostics != null && line.ScannerDiagnostics.Count > 0)
                     {
                         foreach (Diagnostic diagnostic in line.ScannerDiagnostics)
                         {
-                            yield return diagnostic;
+                            diagnostics.Add(diagnostic);
                         }
                     }
                 }
+                return diagnostics;
             } 
         }
 
