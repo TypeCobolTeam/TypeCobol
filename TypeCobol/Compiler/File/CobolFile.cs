@@ -150,6 +150,7 @@ namespace TypeCobol.Compiler.File
         /// </summary>    
         public IEnumerable<char> ReadChars()
         {
+            IList<char> chars = new List<char>();
             using (Stream inputStream = OpenInputStream())
             {
                 Stream safeInputStream = (unsupportedSourceCharCodes == null) ? inputStream : new FilteringStream(inputStream, Encoding, unsupportedSourceCharCodes);
@@ -164,12 +165,12 @@ namespace TypeCobol.Compiler.File
                         {
                             for (int i = 0; i < charsCount; i++)
                             {
-                                yield return lineBuffer[i];
+                                chars.Add(lineBuffer[i]);
                             }
                             if (charsCount == lineLength)
                             {
-                                yield return '\r';
-                                yield return '\n';
+                                chars.Add('\r');
+                                chars.Add('\n');
                             }
                         }
                     }
@@ -178,11 +179,12 @@ namespace TypeCobol.Compiler.File
                         int chr = -1;
                         while ((chr = inputStreamReader.Read()) >= 0)
                         {
-                            yield return (char)chr;
+                            chars.Add((char)chr);
                         }
                     }
                 }
             }
+            return chars;
         }
 
         /// <summary>
