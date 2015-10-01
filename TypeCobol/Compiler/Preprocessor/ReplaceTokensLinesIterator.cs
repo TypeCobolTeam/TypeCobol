@@ -189,31 +189,23 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // If a replace directive is in effect, check if the next token can match the replace pattern              
                 // Optimization : only one replace operation in effect
-                if (currentPosition.ReplaceOperation != null)
+                ReplaceResult next = TryAndReplace(nextToken, currentPosition.ReplaceOperation);
+                if (next.replacedToken != null) return next.replacedToken;
+                if (next.icanhasGOTO)
                 {
-                    IList<Token> originalMatchingTokens;
-                    if (TryMatchReplaceOperation(nextToken, currentPosition.ReplaceOperation, out originalMatchingTokens))
-                    {
-                        // REPLACE pattern matched => return the first replaced token
-                        Token replacedToken = TryToReplace(nextToken, currentPosition.ReplaceOperation, originalMatchingTokens);
-                        if (replacedToken != null) return replacedToken;
-                        // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
-                        nextToken = sourceIterator.NextToken();
-                        goto tryReplaceToken;
-                    }
+                    nextToken = sourceIterator.NextToken();
+                    goto tryReplaceToken;
                 }
+
                 // More general case : several replace operations in effect
-                else if (currentPosition.ReplaceOperations != null)
+                if (currentPosition.ReplaceOperations != null)
                 {
                     foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
                     {
-                        IList<Token> originalMatchingTokens;
-                        if (TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
+                        next = TryAndReplace(nextToken, replaceOperation);
+                        if (next.replacedToken != null) return next.replacedToken;
+                        if (next.icanhasGOTO)
                         {
-                            // REPLACE pattern matched => return the first replaced token
-                            Token replacedToken = TryToReplace(nextToken, replaceOperation, originalMatchingTokens);
-                            if (replacedToken != null) return replacedToken;
-                            // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
                             nextToken = sourceIterator.NextToken();
                             goto tryReplaceToken;
                         }
@@ -226,13 +218,30 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        private Token TryToReplace(Token nextToken, ReplaceOperation replaceOperation, IList<Token> originalMatchingTokens) {
-            Token replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
-            if (replacedToken != null) {
-                currentPosition.CurrentToken = replacedToken;
-                return replacedToken;
+        private class ReplaceResult {
+            public bool icanhasGOTO = false;
+            public Token replacedToken = null;
+        }
+
+        private ReplaceResult TryAndReplace(Token nextToken, ReplaceOperation replaceOperation)
+        {
+            ReplaceResult result = new ReplaceResult();
+            IList<Token> originalMatchingTokens;
+            if (replaceOperation != null && TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
+            {
+                result.replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
+                if (result.replacedToken != null)
+                {
+                    // REPLACE pattern matched => return the first replaced token
+                    currentPosition.CurrentToken = result.replacedToken;
+                }
+                else
+                {
+                    // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
+                    result.icanhasGOTO = true;
+                }
             }
-            return null;
+            return result;
         }
 
         /// <summary>
