@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Editor
@@ -38,11 +38,19 @@ namespace TypeCobol.Editor
             Unit.StartDocumentProcessing();
         }
 
-        public IEnumerable<Token> Tokens
+        public IEnumerable<CodeElement> CodeElements
         {
-            get {
-                // TODO test if compilation is done
-                return Unit.SyntaxDocument.ProcessedTokensDocument.TokensDocument.SourceTokens;
+            get
+            {
+                return Unit.SyntaxDocument.CodeElements; // TODO test if compilation is done
+            }
+        }
+
+        public IEnumerable<CodeElement> Errors
+        {
+            get
+            {
+                return Unit.SyntaxDocument.CodeElementsInError; // TODO test if compilation is done
             }
         }
     }

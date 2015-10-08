@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
+using TypeCobol.Editor.util;
 
 namespace TypeCobol.Editor
 {
@@ -16,11 +17,27 @@ namespace TypeCobol.Editor
     {
         public CobolInvalidClassificationFormat()
         {
-            //this.DisplayName = "cobol.invalid";
             this.ForegroundColor = Colors.BlueViolet;
-            //this.BackgroundColor = Colors.BlueViolet;
-            //this.TextDecorations = System.Windows.TextDecorations.Underline;
         }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.error")]
+    [Name("cobol.error")]
+    internal sealed class CobolErrorClassificationFormat : ClassificationFormatDefinition
+    {
+        // A red   wavy underline identifies a syntax error, such as a missing semicolon or mismatched braces, or a semantic error.
+        // A green wavy underline identifies a potential compiler warning.
+        // A blue wavy underline identifies compiler errors.
+        public CobolErrorClassificationFormat() {
+            var underline = new System.Windows.TextDecoration();
+            underline.Pen = Pens.CompileError;
+            underline.PenThicknessUnit = System.Windows.TextDecorationUnit.FontRecommended;
+            if (this.TextDecorations == null )
+                this.TextDecorations = new System.Windows.TextDecorationCollection();
+            this.TextDecorations.Add(underline);
+        }
+
     }
 
     [Export(typeof(EditorFormatDefinition))]

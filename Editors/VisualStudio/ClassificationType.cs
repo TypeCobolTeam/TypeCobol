@@ -89,5 +89,9 @@ namespace TypeCobol.Editor
         [Export(typeof(ClassificationTypeDefinition))]
         [Name("cobol.internal")]
         internal static ClassificationTypeDefinition CobolInternalClassificationDefinition = null;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name("cobol.error")]
+        internal static ClassificationTypeDefinition CobolErrorClassificationDefinition = null;
     }
 }
