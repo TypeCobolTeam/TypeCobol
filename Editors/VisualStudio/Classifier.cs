@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Editor
 {
@@ -39,11 +40,13 @@ namespace TypeCobol.Editor
     /// </summary>
     class Classifier : IClassifier
     {
-        IClassificationTypeRegistryService registry;
+        private IClassificationTypeRegistryService registry;
+        private Parser parser;
 
         internal Classifier(IClassificationTypeRegistryService registry)
         {
             this.registry = registry;
+            this.parser = new Parser("V$");
         }
 
         /// <summary>
@@ -54,10 +57,13 @@ namespace TypeCobol.Editor
         /// <returns>A list of ClassificationSpans that represent spans identified to be of this classification</returns>
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
         {
-            //Console.WriteLine("GetClassificationSpans("+span.ToString()+")");
             List<ClassificationSpan> spans = new List<ClassificationSpan>();
-            IClassificationType type = GetClassificationType(TokenFamily.ArithmeticOperator);
-            spans.Add(new ClassificationSpan(new SnapshotSpan(span.Snapshot, new Span(span.Start, span.Length)), type));
+            parser.Parse(new TextString(span.GetText()));
+            foreach (var token in parser.Tokens)
+            {
+                IClassificationType type = GetClassificationType(token.TokenFamily);
+                spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+token.StartIndex, token.Length), type));
+            }
             return spans;
         }
 
@@ -82,7 +88,7 @@ namespace TypeCobol.Editor
             { TokenFamily.SyntaxLiteral, "cobol.literal.syntax" },
             { TokenFamily.Symbol, "cobol.symbol" },
             { TokenFamily.CompilerDirectiveStartingKeyword, "cobol.keyword.directive.start" },
-            { TokenFamily.CodeElementStartingKeyword, "cobol.keyword.codelement.start" },
+            { TokenFamily.CodeElementStartingKeyword, "cobol.keyword.codeelement.start" },
             { TokenFamily.StatementStartingKeyword, "cobol.keyword.statement.start" },
             { TokenFamily.StatementEndingKeyword, "cobol.keyword.statement.end" },
             { TokenFamily.SpecialRegisterKeyword, "cobol.keyword.specialregister" },

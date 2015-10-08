@@ -32,7 +32,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = comparator.paths.sample.project.file;
-            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions());
+            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options);
             this.unit.SetupCodeAnalysisPipeline(null, 0);
             this.unit.SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(this.observer);
         }
@@ -227,7 +227,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             if (paths.sample.name.Contains(".rdz"))
                 return DocumentFormat.RDZReferenceFormat;
-            return new DocumentFormat(Encoding.UTF8, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.FreeTextFormat);
+            return DocumentFormat.FreeUTF8Format;
         }
     }
 

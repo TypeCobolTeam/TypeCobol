@@ -60,24 +60,96 @@ namespace TypeCobol.Editor
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = "cobol.literal")]
-    [Name("cobol.literal")]
-    internal sealed class CobolLiteralClassificationFormat : ClassificationFormatDefinition {
-        public CobolLiteralClassificationFormat() { this.ForegroundColor = Colors.BlueViolet; }
+    [ClassificationType(ClassificationTypeNames = "cobol.literal.alphanumeric")]
+    [Name("cobol.literal.alphanumeric")]
+    internal sealed class CobolLiteralAlphanumericClassificationFormat : ClassificationFormatDefinition {
+        public CobolLiteralAlphanumericClassificationFormat() { this.ForegroundColor = Colors.Green; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.literal.numeric")]
+    [Name("cobol.literal.numeric")]
+    internal sealed class CobolLiteralNumericClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolLiteralNumericClassificationFormat() { this.ForegroundColor = Colors.Green; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.literal.syntax")]
+    [Name("cobol.literal.syntax")]
+    internal sealed class CobolLiteralSyntaxClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolLiteralSyntaxClassificationFormat() { this.ForegroundColor = Colors.Green; }
     }
 
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "cobol.symbol")]
     [Name("cobol.symbol")]
     internal sealed class CobolSymbolClassificationFormat : ClassificationFormatDefinition {
-        public CobolSymbolClassificationFormat() { this.ForegroundColor = Colors.BlueViolet; }
+        public CobolSymbolClassificationFormat() { this.ForegroundColor = Colors.DarkBlue; }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = "cobol.keyword")]
-    [Name("cobol.keyword")]
-    internal sealed class CobolKeywordClassificationFormat : ClassificationFormatDefinition {
-        public CobolKeywordClassificationFormat() { this.ForegroundColor = Colors.BlueViolet; }
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.directive.start")]
+    [Name("cobol.keyword.directive.start")]
+    internal sealed class CobolKeywordDirectiveStartClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordDirectiveStartClassificationFormat() { this.ForegroundColor = Colors.DarkRed; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.codeelement.start")]
+    [Name("cobol.keyword.codeelement.start")]
+    internal sealed class CobolKeywordCodeElementStartClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordCodeElementStartClassificationFormat() { this.ForegroundColor = Colors.DarkRed; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.statement.start")]
+    [Name("cobol.keyword.statement.start")]
+    internal sealed class CobolKeywordStatementStartClassificationFormat : ClassificationFormatDefinition {
+        public CobolKeywordStatementStartClassificationFormat() { this.ForegroundColor = Colors.Crimson; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.statement.end")]
+    [Name("cobol.keyword.statement.end")]
+    internal sealed class CobolKeywordStatementEndClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordStatementEndClassificationFormat() { this.ForegroundColor = Colors.Crimson; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.specialregister")]
+    [Name("cobol.keyword.specialregister")]
+    internal sealed class CobolKeywordSpecialRegisterClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordSpecialRegisterClassificationFormat() { this.ForegroundColor = Colors.DarkRed; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.figurativeconstant")]
+    [Name("cobol.keyword.figurativeconstant")]
+    internal sealed class CobolKeywordFigurativeConstantClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordFigurativeConstantClassificationFormat() { this.ForegroundColor = Colors.DarkRed; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.specialobjectidentifier")]
+    [Name("cobol.keyword.specialobjectidentifier")]
+    internal sealed class CobolKeywordSpecialObjectIdentifierClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordSpecialObjectIdentifierClassificationFormat() { this.ForegroundColor = Colors.DarkRed; }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "cobol.keyword.syntax")]
+    [Name("cobol.keyword.syntax")]
+    internal sealed class CobolKeywordSyntaxClassificationFormat : ClassificationFormatDefinition
+    {
+        public CobolKeywordSyntaxClassificationFormat() { this.ForegroundColor = Colors.IndianRed; }
     }
 
     [Export(typeof(EditorFormatDefinition))]

@@ -124,8 +124,6 @@ namespace TypeCobol.Test
                 new FolderTester(dirname).Test();
                 System.Console.Write("\n\n");
             }
-//            TestCodeElements.Check_Expressions();
-//            TestCodeElements.Check_Statements();
 
             //This test use TypeChecker which is specific to TypeCobol
             //As specifications of TypeCobol are not final yet this test can't be used
