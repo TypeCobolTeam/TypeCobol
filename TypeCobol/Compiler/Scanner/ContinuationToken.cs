@@ -45,6 +45,11 @@ namespace TypeCobol.Compiler.Scanner
         public string MultilineContinuationText { get; private set; }
 
         /// <summary>
+        /// True if this token continues a token found on the previous line
+        /// </summary>
+        public bool IsContinuationFromPreviousLine { get; protected set; }
+
+        /// <summary>
         /// True if a token found on the next line continues the current token 
         /// </summary>
         public bool IsContinuedOnNextLine { get; private set; }

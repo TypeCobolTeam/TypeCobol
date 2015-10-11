@@ -1,9 +1,15 @@
-﻿using System;
+﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Preprocessor.Generated;
+using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -15,257 +21,208 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Initial preprocessing of a complete document
         /// </summary>
-        internal static void PreprocessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions)
+        internal static void ProcessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider)
         {
-            MultilineScanState lastScanState = null;
-            foreach (ITokensLine documentLine in documentLines)
-            {
-                TokensLine tokensLine = (TokensLine)documentLines;
-                if (lastScanState == null)
-                {
-                    Scanner.ScanFirstLine(tokensLine, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions);
-                }
-                else
-                {
-                    Scanner.ScanTokensLine(tokensLine, lastScanState, compilerOptions);
-                }
-                lastScanState = tokensLine.ScanState;
-            }
+            ProcessTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions, processedTokensDocumentProvider);
         }
 
         /// <summary>
-        /// Incremental scan of a set of text lines changes
+        /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<ITokensLine>> ScanTextLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, IList<DocumentChange<ICobolTextLine>> textLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions)
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider)
         {
-            // Collect all changes applied to the tokens lines during the incremental scan
-            IList<DocumentChange<ITokensLine>> tokensLinesChanges = new List<DocumentChange<ITokensLine>>();
+            // Collect all changes applied to the processed tokens lines during the incremental scan
+            IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges = new List<DocumentChange<IProcessedTokensLine>>();
 
-            // There are 3 reasons to scan a line after a text change :
-            // 1. New text lines which were just inserted or updated must be scanned for the first time
-            // 2. Text lines must be scanned again if their initial scan state changed : a new scan of the previous line can alter the scan state at the beginning of the following line  
-            // 3. Continuation lines and multiline tokens : if a line participates in a continuation on several lines, scan the group of lines as a whole
+            // There are 2 reasons to a preprocess a tokens line after a change :
+            // 1. A tokens line changed : these lines were already reset during the previous steps
+            // 2. If a tokens line that changed was involved in the parsing of a multiline compiler directive, the whole group of lines must be parsed again
+            // Then, if a new COPY directive was parsed : the CompilationDocument to include must be prepared
 
-            TokensChangedEvent processedTokensChangedEvent = new TokensChangedEvent();
+            // --- PREPARATION PHASE : reset all processed tokens lines which were involved in a multiline compiler directive where at least one line changed  ---
 
-                // --- PREPARATION PHASE : Initialize missing lines and include all lines involved in a processed Token continuation ---
-
-                // Init. Optimization : use a builder to update the immutable list in case of a big update                
-                ImmutableList<ProcessedTokensLine>.Builder tokensLinesBuilder = null;
-                if (tokensChangedEvent.TokensChanges.Count > 4)
+            // Iterate over all tokens changes detected by the ScannerStep :
+            // refresh all the adjacent lines participating in a ContinuationTokensGroup
+            if (tokensLinesChanges != null)
+            {
+                int lastLineIndexReset = -1;
+                foreach (DocumentChange<ITokensLine> tokensChange in tokensLinesChanges)
                 {
-                    tokensLinesBuilder = processedTokensLines.ToBuilder();
-                }
-                Func<int, ProcessedTokensLine> getTokensLineAtIndex = index => { if (tokensLinesBuilder != null) { return tokensLinesBuilder[index]; } else { return processedTokensLines[index]; } };
-                Action<int, ProcessedTokensLine> setTokensLineAtIndex = (index, updatedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder[index] = updatedLine; } else { processedTokensLines = processedTokensLines.SetItem(index, updatedLine); } };
-                Action<int, ProcessedTokensLine> insertTokensLineAtIndex = (index, insertedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Insert(index, insertedLine); } else { processedTokensLines = processedTokensLines.Insert(index, insertedLine); } };
-                Action<ProcessedTokensLine> removeTokensLine = removedLine => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Remove(removedLine); } else { processedTokensLines = processedTokensLines.Remove(removedLine); } };
-                Action clearTokensLines = () => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Clear(); } else { processedTokensLines = ImmutableList<ProcessedTokensLine>.Empty; } };
-
-                // 1. Iterate over all tokens changes detected by the Scanner:
-                // - refresh and reset all changed ProcessedTokensLines accordingly
-                // - refresh all the adjacent lines participating in a ContinuationTokensGroup
-                foreach (TokensChange tokensChange in tokensChangedEvent.TokensChanges)
-                {
-                    switch (tokensChange.Type)
+                    processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(tokensChange.Type, tokensChange.LineIndex, (IProcessedTokensLine)tokensChange.NewLine));
+                    if (tokensChange.LineIndex > lastLineIndexReset)
                     {
-                        case TokensChangeType.DocumentCleared:
-                            // Reset the immutable list
-                            clearTokensLines();
-                            // Register a DocumentCleared change 
-                            processedTokensChangedEvent.TokensChanges.Add(tokensChange);
-                            break;
-                        case TokensChangeType.LineInserted:
-                            // Insert a new line in the immutable list
-                            ProcessedTokensLine processedTokensLine = new ProcessedTokensLine(tokensChange.NewLine);
-                            insertTokensLineAtIndex(tokensChange.LineIndex, processedTokensLine);
-                            // Also reset adjacent lines in case of continuation
-                            CheckIfAdjacentLinesNeedRefresh(tokensChange.Type, tokensChange.LineIndex, setTokensLineAtIndex);
-                            break;
-                        case TokensChangeType.LineUpdated:
-                        case TokensChangeType.LineRescanned:
-                            // Replace an existing line in the immutable list 
-                            processedTokensLine = new ProcessedTokensLine(tokensChange.NewLine);
-                            setTokensLineAtIndex(tokensChange.LineIndex, processedTokensLine);
-                            // Also reset adjacent lines in case of continuation
-                            CheckIfAdjacentLinesNeedRefresh(tokensChange.Type, tokensChange.LineIndex, setTokensLineAtIndex);
-                            break;
-                        case TokensChangeType.LineRemoved:
-                            // Remove an existing line in the immutable list
-                            processedTokensLine = getTokensLineAtIndex(tokensChange.LineIndex);
-                            removeTokensLine(processedTokensLine);
-                            // Also reset adjacent lines in case of continuation
-                            CheckIfAdjacentLinesNeedRefresh(tokensChange.Type, tokensChange.LineIndex, setTokensLineAtIndex);
-                            break;
+                        lastLineIndexReset = CheckIfAdjacentLinesNeedRefresh(tokensChange.Type, tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, processedTokensLinesChanges, lastLineIndexReset);
                     }
                 }
+            }
 
-                // Term. End of optimization : revert the builder to an immutable list
-                if (tokensLinesBuilder != null)
+            // --- COMPILER DIRECTIVES PHASE : Find and parse all compiler directives ---
+
+            // Init. Prepare a compiler directive parser
+
+            // Create a token iterator on top of tokens lines
+            TokensLinesIterator tokensIterator = new TokensLinesIterator(
+                textSourceInfo.Name,
+                documentLines,
+                null,
+                Token.CHANNEL_SourceTokens);
+
+            // Crate an Antlr compatible token source on top a the token iterator
+            TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                textSourceInfo.Name,
+                tokensIterator);
+
+            // Init a compiler directive parser
+            CommonTokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
+            CobolCompilerDirectivesParser directivesParser = new CobolCompilerDirectivesParser(tokenStream);
+            IAntlrErrorStrategy compilerDirectiveErrorStrategy = new CompilerDirectiveErrorStrategy();
+            directivesParser.ErrorHandler = compilerDirectiveErrorStrategy;
+
+            // Register all parse errors in a list in memory
+            DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
+            directivesParser.RemoveErrorListeners();
+            directivesParser.AddErrorListener(errorListener);
+
+            // Prepare to analyze the parse tree
+            ParseTreeWalker walker = new ParseTreeWalker();
+            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder();
+
+            // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
+            foreach (Token compilerDirectiveStartingToken in documentLines
+                .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                .SelectMany(line => line.SourceTokens)
+                .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword))
+            {
+                // 2. Reset the compiler directive parser state
+
+                // Reset tokens iterator position before parsing
+                // -> seek just before the compiler directive starting token
+                tokensIterator.SeekToToken(compilerDirectiveStartingToken);
+                tokensIterator.PreviousToken();
+                // Special case : for efficiency reasons, in EXEC SQL INCLUDE directives
+                // only the third token INCLUDE is recognized as a compiler directive
+                // starting keyword by the scanner. In this case, we must rewind the 
+                // iterator two tokens backwards to start parsing just before the EXEC token.
+                if (compilerDirectiveStartingToken.TokenType == TokenType.EXEC_SQL_INCLUDE)
                 {
-                    processedTokensLines = tokensLinesBuilder.ToImmutable();
-                }
-
-                // --- COMPILER DIRECTIVES PHASE : Find and parse all compiler directives ---
-
-                // Init. Prepare a compiler directive parser
-
-                // Create a token iterator on top of tokens lines
-                TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                    TokensDocument.TextSourceInfo.Name,
-                    TokensDocument.TokensLines,
-                    null,
-                    Token.CHANNEL_SourceTokens);
-
-                // Crate an Antlr compatible token source on top a the token iterator
-                TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
-                   TokensDocument.TextSourceInfo.Name,
-                   tokensIterator);
-
-                // Init a compiler directive parser
-                CommonTokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
-                CobolCompilerDirectivesParser directivesParser = new CobolCompilerDirectivesParser(tokenStream);
-                IAntlrErrorStrategy compilerDirectiveErrorStrategy = new CompilerDirectiveErrorStrategy();
-                directivesParser.ErrorHandler = compilerDirectiveErrorStrategy;
-
-                // Register all parse errors in a list in memory
-                DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
-                directivesParser.RemoveErrorListeners();
-                directivesParser.AddErrorListener(errorListener);
-
-                // Prepare to analyze the parse tree
-                ParseTreeWalker walker = new ParseTreeWalker();
-                CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder();
-
-                // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
-                foreach (Token compilerDirectiveStartingToken in processedTokensLines
-                    .Where(line => line.ProcessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
-                    .SelectMany(line => line.SourceTokens)
-                    .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword))
-                {
-                    // 2. Reset the compiler directive parser state
-
-                    // Reset tokens iterator position before parsing
-                    // -> seek just before the compiler directive starting token
-                    tokensIterator.SeekToToken(compilerDirectiveStartingToken);
                     tokensIterator.PreviousToken();
-                    // Special case : for efficiency reasons, in EXEC SQL INCLUDE directives
-                    // only the third token INCLUDE is recognized as a compiler directive
-                    // starting keyword by the scanner. In this case, we must rewind the 
-                    // iterator two tokens backwards to start parsing just before the EXEC token.
-                    if (compilerDirectiveStartingToken.TokenType == TokenType.EXEC_SQL_INCLUDE)
+                    tokensIterator.PreviousToken();
+                }
+
+                // Reset Antlr BufferedTokenStream position
+                tokenStream.SetTokenSource(tokenSource);
+
+                // Reset parsing error diagnostics
+                compilerDirectiveErrorStrategy.Reset(directivesParser);
+                errorListener.Diagnostics.Clear();
+
+                // 3. Try to parse a compiler directive starting with the current token
+                CobolCompilerDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
+
+                // 4. Visit the parse tree to build a first class object representing the compiler directive
+                walker.Walk(directiveBuilder, directiveParseTree);
+                CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
+                bool errorFoundWhileParsingDirective = errorListener.Diagnostics.Count > 0 || directiveBuilder.Diagnostics.Count > 0;
+
+                // 5. Get all tokens consumed while parsing the compiler directive
+                //    and partition them line by line 
+                Token startToken = (Token)directiveParseTree.Start;
+                Token stopToken = (Token)directiveParseTree.Stop;
+                if (stopToken == null) stopToken = startToken;
+                MultilineTokensGroupSelection tokensSelection = tokensIterator.SelectAllTokensBetween(startToken, stopToken);
+
+                if (compilerDirective != null)
+                {
+                    // 6. Replace all matched tokens by :
+                    // - a CompilerDirectiveToken on the first line
+                    ProcessedTokensLine firstProcessedTokensLine = documentLines[tokensSelection.FirstLineIndex];
+                    if (tokensSelection.SelectedTokensOnSeveralLines.Length == 1)
                     {
-                        tokensIterator.PreviousToken();
-                        tokensIterator.PreviousToken();
+                        firstProcessedTokensLine.InsertCompilerDirectiveTokenOnFirstLine(
+                            tokensSelection.TokensOnFirstLineBeforeStartToken,
+                            compilerDirective, errorFoundWhileParsingDirective,
+                            tokensSelection.SelectedTokensOnSeveralLines[0],
+                            tokensSelection.TokensOnLastLineAfterStopToken, false);
                     }
-
-                    // Reset Antlr BufferedTokenStream position
-                    tokenStream.SetTokenSource(tokenSource);
-
-                    // Reset parsing error diagnostics
-                    compilerDirectiveErrorStrategy.Reset(directivesParser);
-                    errorListener.Diagnostics.Clear();
-
-                    // 3. Try to parse a compiler directive starting with the current token
-                    CobolCompilerDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
-
-                    // 4. Visit the parse tree to build a first class object representing the compiler directive
-                    walker.Walk(directiveBuilder, directiveParseTree);
-                    CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
-                    bool errorFoundWhileParsingDirective = errorListener.Diagnostics.Count > 0 || directiveBuilder.Diagnostics.Count > 0;
-
-                    // 5. Get all tokens consumed while parsing the compiler directive
-                    //    and partition them line by line 
-                    Token startToken = (Token)directiveParseTree.Start;
-                    Token stopToken = (Token)directiveParseTree.Stop;
-                    if (stopToken == null) stopToken = startToken;
-                    MultilineTokensGroupSelection tokensSelection = tokensIterator.SelectAllTokensBetween(startToken, stopToken);
-
-                    if (compilerDirective != null)
+                    else
                     {
-                        // 6. Replace all matched tokens by :
-                        // - a CompilerDirectiveToken on the first line
-                        ProcessedTokensLine firstProcessedTokensLine = getTokensLineAtIndex(tokensSelection.FirstLineIndex);
-                        if (tokensSelection.SelectedTokensOnSeveralLines.Length == 1)
-                        {
-                            firstProcessedTokensLine.InsertCompilerDirectiveTokenOnFirstLine(
-                                tokensSelection.TokensOnFirstLineBeforeStartToken,
-                                compilerDirective, errorFoundWhileParsingDirective,
-                                tokensSelection.SelectedTokensOnSeveralLines[0],
-                                tokensSelection.TokensOnLastLineAfterStopToken);
-                        }
-                        else
-                        {
-                            TokensGroup continuedTokensGroup = firstProcessedTokensLine.InsertCompilerDirectiveTokenOnFirstLine(
-                                tokensSelection.TokensOnFirstLineBeforeStartToken,
-                                compilerDirective, errorFoundWhileParsingDirective,
-                                tokensSelection.SelectedTokensOnSeveralLines[0],
-                                null);
+                        TokensGroup continuedTokensGroup = firstProcessedTokensLine.InsertCompilerDirectiveTokenOnFirstLine(
+                            tokensSelection.TokensOnFirstLineBeforeStartToken,
+                            compilerDirective, errorFoundWhileParsingDirective,
+                            tokensSelection.SelectedTokensOnSeveralLines[0],
+                            null, true);
 
-                            // - a ContinuationTokensGroup on the following lines
-                            int selectionLineIndex = 1;
-                            int lastLineIndex = tokensSelection.FirstLineIndex + tokensSelection.SelectedTokensOnSeveralLines.Length - 1;
-                            for (int nextLineIndex = tokensSelection.FirstLineIndex + 1; nextLineIndex <= lastLineIndex; nextLineIndex++, selectionLineIndex++)
+                        // - a ContinuationTokensGroup on the following lines
+                        int selectionLineIndex = 1;
+                        int lastLineIndex = tokensSelection.FirstLineIndex + tokensSelection.SelectedTokensOnSeveralLines.Length - 1;
+                        for (int nextLineIndex = tokensSelection.FirstLineIndex + 1; nextLineIndex <= lastLineIndex; nextLineIndex++, selectionLineIndex++)
+                        {
+                            IList<Token> compilerDirectiveTokensOnNextLine = tokensSelection.SelectedTokensOnSeveralLines[selectionLineIndex];
+                            if (compilerDirectiveTokensOnNextLine.Count > 0)
                             {
-                                IList<Token> compilerDirectiveTokensOnNextLine = tokensSelection.SelectedTokensOnSeveralLines[selectionLineIndex];
-                                if (compilerDirectiveTokensOnNextLine.Count > 0)
+                                ProcessedTokensLine nextProcessedTokensLine = documentLines[nextLineIndex];
+                                if (nextLineIndex != lastLineIndex)
                                 {
-                                    ProcessedTokensLine nextProcessedTokensLine = getTokensLineAtIndex(nextLineIndex);
-                                    if (nextLineIndex != lastLineIndex)
-                                    {
-                                        continuedTokensGroup = nextProcessedTokensLine.InsertCompilerDirectiveTokenOnNextLine(
-                                            continuedTokensGroup,
-                                            compilerDirectiveTokensOnNextLine,
-                                            null);
-                                    }
-                                    else
-                                    {
-                                        continuedTokensGroup = nextProcessedTokensLine.InsertCompilerDirectiveTokenOnNextLine(
-                                            continuedTokensGroup,
-                                            compilerDirectiveTokensOnNextLine,
-                                            tokensSelection.TokensOnLastLineAfterStopToken);
-                                    }
+                                    continuedTokensGroup = nextProcessedTokensLine.InsertCompilerDirectiveTokenOnNextLine(
+                                        continuedTokensGroup,
+                                        compilerDirectiveTokensOnNextLine,
+                                        null, true);
+                                }
+                                else
+                                {
+                                    continuedTokensGroup = nextProcessedTokensLine.InsertCompilerDirectiveTokenOnNextLine(
+                                        continuedTokensGroup,
+                                        compilerDirectiveTokensOnNextLine,
+                                        tokensSelection.TokensOnLastLineAfterStopToken, false);
                                 }
                             }
                         }
                     }
-
-                    // 7. Register compiler directive parse errors
-                    if (errorFoundWhileParsingDirective)
-                    {
-                        ProcessedTokensLine compilerDirectiveLine = processedTokensLines[tokensSelection.FirstLineIndex];
-                        foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
-                        {
-                            compilerDirectiveLine.AddDiagnostic(parserDiag);
-                        }
-                        foreach (Diagnostic directiveDiag in directiveBuilder.Diagnostics)
-                        {
-                            compilerDirectiveLine.AddDiagnostic(directiveDiag);
-                        }
-                    }
                 }
 
-                // 8. Advance the state off all ProcessedTokensLines : 
-                // NeedsCompilerDirectiveParsing => NeedsCopyDirectiveProcessing if it contains a COPY directive
-                // 
-                foreach (ProcessedTokensLine parsedLine in processedTokensLines
-                    .Where(line => line.ProcessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing))
+                // 7. Register compiler directive parse errors
+                if (errorFoundWhileParsingDirective)
                 {
-                    if (parsedLine.ImportedDocuments != null)
+                    ProcessedTokensLine compilerDirectiveLine = documentLines[tokensSelection.FirstLineIndex];
+                    foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
                     {
-                        parsedLine.ProcessingState = ProcessedTokensLine.PreprocessorState.NeedsCopyDirectiveProcessing;
+                        compilerDirectiveLine.AddDiagnostic(parserDiag);
                     }
-                    else
+                    foreach (Diagnostic directiveDiag in directiveBuilder.Diagnostics)
                     {
-                        parsedLine.ProcessingState = ProcessedTokensLine.PreprocessorState.NeedsReplaceDirectiveProcessing;
+                        compilerDirectiveLine.AddDiagnostic(directiveDiag);
                     }
                 }
+            }
 
-                // --- COPY IMPORT PHASE : Process COPY (REPLACING) directives ---
+            // 8. Advance the state off all ProcessedTokensLines : 
+            // NeedsCompilerDirectiveParsing => NeedsCopyDirectiveProcessing if it contains a COPY directive
+            IList<ProcessedTokensLine> parsedLinesWithCopyDirectives = null;
+            // NeedsCompilerDirectiveParsing => Ready otherwise
+            foreach (ProcessedTokensLine parsedLine in documentLines
+                .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing))
+            {
+                if (parsedLine.ImportedDocuments != null)
+                {
+                    if(parsedLinesWithCopyDirectives == null)
+                    {
+                        parsedLinesWithCopyDirectives = new List<ProcessedTokensLine>();
+                    }
+                    parsedLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.NeedsCopyDirectiveProcessing;
+                    parsedLinesWithCopyDirectives.Add(parsedLine);
+                }
+                else
+                {
+                    parsedLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.Ready;
+                }
+            }
 
-                // 1. Iterate over all updated lines containing a new COPY directive
-                foreach (ProcessedTokensLine tokensLineWithCopyDirective in processedTokensLines
-                    .Where(line => line.ProcessingState == ProcessedTokensLine.PreprocessorState.NeedsCopyDirectiveProcessing))
+            // --- COPY IMPORT PHASE : Process COPY (REPLACING) directives ---
+
+            // 1. Iterate over all updated lines containing a new COPY directive
+            if (parsedLinesWithCopyDirectives != null)
+            {
+                foreach (ProcessedTokensLine tokensLineWithCopyDirective in parsedLinesWithCopyDirectives)
                 {
                     // Iterate over all COPY directives found on one updated line
                     foreach (CopyDirective copyDirective in tokensLineWithCopyDirective.ImportedDocuments.Keys.ToArray<CopyDirective>())
@@ -295,139 +252,145 @@ namespace TypeCobol.Compiler.Preprocessor
                     }
 
                     // Advance processing status of the line
-                    tokensLineWithCopyDirective.ProcessingState = ProcessedTokensLine.PreprocessorState.NeedsReplaceDirectiveProcessing;
+                    tokensLineWithCopyDirective.PreprocessingState = ProcessedTokensLine.PreprocessorState.Ready;
                 }
-
-                // --- REPLACE PHASE : Process REPLACE directives ---
-
-                /* Algorithm :
-                 * 
-                 * one REPLACE directive can express several replacement operations
-                 * one replacement operation can be of several types (distinguished for optimization purposes)
-                 * - SimpleTokenReplace : one source token / zero or one replacement token
-                 * - PartialWordReplace : one pure partial word / zero or one replacement token
-                 * - SimpleToMultipleTokenReplace : one source token / several replacement tokens
-                 * - MultipleTokenReplace : one first + several following source tokens / zero to many replacement tokens
-                 * 
-                 * an iterator maintains a current set of replacement operations
-                 * 
-                 * if nextToken is replace directive
-                 *    the current set of replacement operations is updated
-                 * else 
-                 *    nextToken is compared to each replacement operation in turn
-                 *       if single -> single source token operation : return replacement token
-                 *       if single -> multiple operation : setup a secondary iterator with the list of replacement tokens
-                 *       if multiple -> multiple operation
-                 *          snapshot of the underlying iterator
-                 *          try to match all of the following source tokens
-                 *          if failure : restore snapshot and try next operation
-                 *          if success : setup a secondary iterator
-                 * 
-                 * token comparison sourceToken / replacementCandidate :
-                 * 1. Compare Token type
-                 * 2. If same token type and for families
-                 *   AlphanumericLiteral
-                 *   NumericLiteral
-                 *   SyntaxLiteral
-                 *   Symbol
-                 *  => compare also Token text
-                 *  
-                 * PartialCobolWord replacement :
-                 * p535 : The COPY statement with REPLACING phrase can be used to replace parts of words.
-                 * By inserting a dummy operand delimited by colons into the program text, 
-                 * the compiler will replace the dummy operand with the required text. 
-                 * Example 3 shows how this is used with the dummy operand :TAG:. 
-                 * The colons serve as separators and make TAG a stand-alone operand. 
-                 */
-
-                // 1. Find all lines which could be affected
-
-
-
-
-
-                tokensChangedEventsSource.OnNext(processedTokensChangedEvent);
             }
-            catch (Exception ex)
-            {
-                // Register and forward errors
-                LastException = ex;
-                tokensChangedEventsSource.OnError(ex);
-            }
+
+            // --- REPLACE PHASE : REPLACE directives are implemented in ReplaceTokensLinesIterator ---
+
+            /* Algorithm :
+             * 
+             * one REPLACE directive can express several replacement operations
+             * one replacement operation can be of several types (distinguished for optimization purposes)
+             * - SimpleTokenReplace : one source token / zero or one replacement token
+             * - PartialWordReplace : one pure partial word / zero or one replacement token
+             * - SimpleToMultipleTokenReplace : one source token / several replacement tokens
+             * - MultipleTokenReplace : one first + several following source tokens / zero to many replacement tokens
+             * 
+             * an iterator maintains a current set of replacement operations
+             * 
+             * if nextToken is replace directive
+             *    the current set of replacement operations is updated
+             * else 
+             *    nextToken is compared to each replacement operation in turn
+             *       if single -> single source token operation : return replacement token
+             *       if single -> multiple operation : setup a secondary iterator with the list of replacement tokens
+             *       if multiple -> multiple operation
+             *          snapshot of the underlying iterator
+             *          try to match all of the following source tokens
+             *          if failure : restore snapshot and try next operation
+             *          if success : setup a secondary iterator
+             * 
+             * token comparison sourceToken / replacementCandidate :
+             * 1. Compare Token type
+             * 2. If same token type and for families
+             *   AlphanumericLiteral
+             *   NumericLiteral
+             *   SyntaxLiteral
+             *   Symbol
+             *  => compare also Token text
+             *  
+             * PartialCobolWord replacement :
+             * p535 : The COPY statement with REPLACING phrase can be used to replace parts of words.
+             * By inserting a dummy operand delimited by colons into the program text, 
+             * the compiler will replace the dummy operand with the required text. 
+             * Example 3 shows how this is used with the dummy operand :TAG:. 
+             * The colons serve as separators and make TAG a stand-alone operand. 
+             */
+
+            return processedTokensLinesChanges;
         }
 
         /// <summary>
-        /// Illustration : lines with directives continued from previous line are marked with a cross
+        /// Illustration : lines with directives continued from previous line or with a continuation on next line (before update) are marked with a cross
         /// [     ]
-        /// [x    ]
+        /// [    x]
+        /// [x   x]
         /// [x    ]
         /// [     ]
-        /// Insert : 
-        /// - a line inserted at lineIndex intersects with an existing continuation if lineIndex+1 is continuation
-        /// Update / Remove :
-        /// - a line update at lineIndex intersects with an existing continuation if lineIndex is continuation (before update) or if lineIndex+1 is continuation
-        /// All cases :
-        ///  - refresh lineIndex - n until no continuation (included) and lineIndex + n until no continuation (excluded)
+        /// A DocumentChange intersects with a previously parsed multiline compiler directive if : 
+        /// * LineInserted :
+        ///   - the next line was a continuation
+        /// * LineUpdated / LineRemoved :
+        ///   - the previous line was continued
+        ///   - the next line was a continuation
+        /// When navigating to previous or next line searching for a continuation, we must ignore all fresh insertions / updates.
+        /// We must then reset all processed tokens lines involved in a multiline compiler directive.
         /// </summary>
-        private void CheckIfAdjacentLinesNeedRefresh(TokensChangeType changeType, int lineIndex, Action<int, ProcessedTokensLine> setTokensLineAtIndex)
+        private static int CheckIfAdjacentLinesNeedRefresh(DocumentChangeType changeType, int lineIndex, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges, int lastLineIndexReset)
         {
-            int lastIndex = processedTokensLines.Count - 1;
-            if ((changeType == TokensChangeType.LineInserted && lineIndex < lastIndex && processedTokensLines[lineIndex + 1].IsContinuedFromPreviousLine) ||
-              ((changeType == TokensChangeType.LineUpdated || changeType == TokensChangeType.LineRemoved) &&
-               (processedTokensLines[lineIndex + 1].IsContinuedFromPreviousLine || (lineIndex < lastIndex && processedTokensLines[lineIndex + 1].IsContinuedFromPreviousLine))))
+            // Navigate backwards to the start of the multiline compiler directive
+            if (lineIndex > 0)
             {
-                // Mark previous lines for refresh
-                if (lineIndex > 0)
+                int previousLineIndex = lineIndex;
+                IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
+                while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
                 {
-                    bool exitAfterCurrentLine = !processedTokensLines[lineIndex].IsContinuedFromPreviousLine;
-                    for (int i = lineIndex - 1; i >= 0; i--)
+                    // Get the previous line until a non reset and non continued line is encountered
+                    ProcessedTokensLine previousLine = reversedEnumerator.Current;
+
+                    // A reset line tells nothing about the previous state : continue searching
+                    if(previousLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                     {
-                        ProcessedTokensLine currentLine = processedTokensLines[i];
-                        if (currentLine.ProcessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing // previous lines already marked for refresh
-                            || exitAfterCurrentLine)
+                        continue;
+                    }
+                    // Previous line is a continuation : reset this line and continue navigating backwards
+                    // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
+                    else if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
+                    {
+                        previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
+                        processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
+                        if(!previousLine.HasDirectiveTokenContinuationFromPreviousLine)
                         {
                             break;
-                        }
-                        ProcessedTokensLine freshTokensLine = new ProcessedTokensLine(currentLine);
-                        setTokensLineAtIndex(i, freshTokensLine);
-                        if (!currentLine.IsContinuedFromPreviousLine)
-                        {
-                            exitAfterCurrentLine = true;
                         }
                     }
-                }
-                // Mark next lines for refresh
-                if (lineIndex < lastIndex)
-                {
-                    for (int i = lineIndex + 1; i <= lastIndex; i++)
+                    // Previous line not involved in a multiline compiler directive : stop searching
+                    else
                     {
-                        ProcessedTokensLine currentLine = processedTokensLines[i];
-                        if (currentLine.ProcessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing) // next lines already marked for refresh
-                        {
-                            break;
-                        }
-                        if (currentLine.IsContinuedFromPreviousLine)
-                        {
-                            ProcessedTokensLine freshTokensLine = new ProcessedTokensLine(currentLine);
-                            setTokensLineAtIndex(i, freshTokensLine);
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        break;
                     }
                 }
             }
-        }
 
-        public void OnCompleted()
-        {
-            // do nothing here
-        }
+            // Navigate forwards to the end of the multiline compiler directive 
+            if (lineIndex < (documentLines.Count - 1))
+            {
+                int nextLineIndex = lineIndex;
+                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
+                while (enumerator.MoveNext())
+                {
+                    // Get the next line until a non reset and non continuation line is encountered
+                    nextLineIndex++;
+                    ProcessedTokensLine nextLine = enumerator.Current;
 
-        public void OnError(Exception error)
-        {
-            // do nothing here
+                    // A reset line tells nothing about the previous state : continue searching
+                    if (nextLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    {
+                        lastLineIndexReset = nextLineIndex;
+                        continue;
+                    }
+                    // Next line is a continuation and is continued: reset this line and continue navigating backwards
+                    // Next line is a continuation but is not continued : reset this line and stop navigating backwards
+                    else if (nextLine.HasDirectiveTokenContinuationFromPreviousLine)
+                    {
+                        nextLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.Preprocessor);
+                        processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
+                        lastLineIndexReset = nextLineIndex;
+                        if (!nextLine.HasDirectiveTokenContinuedOnNextLine)
+                        {
+                            break;
+                        }
+                    }
+                    // Previous line not involved in a multiline compiler directive : stop searching
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return lastLineIndexReset > lineIndex ? lastLineIndexReset : lineIndex;
         }
     }
 }

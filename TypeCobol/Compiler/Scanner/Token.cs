@@ -285,11 +285,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public virtual bool IsContinuationToken { get { return false; } }
 
-        /// <summary>
-        /// True if this token continues a token found on the previous line
-        /// </summary>
-        public bool IsContinuationFromPreviousLine { get; protected set; }
-
         internal void CorrectTokensLine(ITokensLine tokensLine, int startIndex, int stopIndex)
         {
             this.tokensLine = tokensLine;

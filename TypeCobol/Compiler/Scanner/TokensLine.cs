@@ -47,6 +47,16 @@ namespace TypeCobol.Compiler.Scanner
         public IList<Token> SourceTokens { get; private set; }
 
         /// <summary>
+        /// True if the first token on the next line continues the last token of this line
+        /// </summary>
+        public bool HasTokenContinuedOnNextLine { get; private set; }
+
+        /// <summary>
+        /// True if the first token on this line continues the last token of the previous line
+        /// </summary>
+        public bool HasTokenContinuationFromPreviousLine { get; private set; }
+
+        /// <summary>
         /// Always use this method add new token to this line (never call directly Tokens.Add)
         /// </summary>
         internal void AddToken(Token token)
@@ -65,8 +75,16 @@ namespace TypeCobol.Compiler.Scanner
             {
                 ScanState.AdvanceToNextState(token);
             }
+
+            // Register multiline continuation tokens
+            if (token.IsContinuationToken)
+            {
+                ContinuationToken continuationToken = (ContinuationToken)token;
+                HasTokenContinuationFromPreviousLine = HasTokenContinuationFromPreviousLine || continuationToken.IsContinuationFromPreviousLine;
+                HasTokenContinuedOnNextLine = HasTokenContinuedOnNextLine || continuationToken.IsContinuedOnNextLine;
+            }
         }
-        
+
         /// <summary>
         /// Error and warning messages produced while scanning the raw source text line
         /// (before text manipulation phase)
@@ -128,16 +146,6 @@ namespace TypeCobol.Compiler.Scanner
                 }
             }
         }
-
-        /// <summary>
-        /// True if the first token on the next line continues the last token of this line
-        /// </summary>
-        public bool HasTokenContinuedOnNextLine { get; private set; }
-
-        /// <summary>
-        /// True if the first token on this line continues the last token of the previous line
-        /// </summary>
-        public bool HasTokenContinuationFromPreviousLine { get; private set; }
 
         // --- State for context-sensitive tokens ---
 

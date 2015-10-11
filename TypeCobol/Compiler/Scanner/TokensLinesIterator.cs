@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.Scanner
                     currentPosition.TokenIndexInLine = 0;
                     if (currentPosition.LineIndex < tokensLines.Count)
                     {
-                        // TO DO - OPTIMIZATION - IMPORTANT : here, we should use an Enumerator on tokensLines
+                        // TO DO - OPTIMIZATION : should we use here an Enumerator on tokensLines ?
                         currentLine = tokensLines[currentPosition.LineIndex];
                     }
                     // and if we reached the last line of the document ...

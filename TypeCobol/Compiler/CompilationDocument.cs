@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
 using System.Threading;
 using TypeCobol.Compiler.Concurrency;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
@@ -349,6 +345,8 @@ namespace TypeCobol.Compiler
 
         // Linked list of changes applied to the document text lines
         private DocumentVersion<ICobolTextLine> textLinesVersionForCurrentTokensLines;
+
+        // Linked list of changes applied to the document tokens lines
         private DocumentVersion<ITokensLine> currentTokensLinesVersion;
 
         /// <summary>
@@ -364,11 +362,11 @@ namespace TypeCobol.Compiler
             }
         }
 
-        // Broadcast document text lines changes to all listeners
+        // Broadcast document tokens lines changes to all listeners
         private ISubject<DocumentChangedEvent<ITokensLine>> tokensLinesChangedEventsSource = new Subject<DocumentChangedEvent<ITokensLine>>();
 
         /// <summary>
-        /// Subscribe to this events source to be notified of all changes in the text lines of the document
+        /// Subscribe to this events source to be notified of all changes in the tokens lines of the document
         /// </summary>
         public IObservable<DocumentChangedEvent<ITokensLine>> TokensLinesChangedEventsSource
         {
@@ -399,7 +397,7 @@ namespace TypeCobol.Compiler
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary>
         public TokensDocument TokensDocumentSnapshot { get; private set; }
-
+        
         /// <summary>
         /// Creates a new snapshot of the document viewed as tokens AFTER compiler directives processing.
         /// (if the tokens lines changed since the last time this method was called)
@@ -410,15 +408,56 @@ namespace TypeCobol.Compiler
             // Make sure two threads don't try to update this snapshot at the same time
             lock(lockObjectForProcessedTokensDocumentSnapshot)
             {
-                // Capture previous snapshots at a point in time
+                // Capture previous snapshots at one point in time
                 TokensDocument tokensDocument = TokensDocumentSnapshot;
                 ProcessedTokensDocument previousProcessedTokensDocument = ProcessedTokensDocumentSnapshot;
-
-                // Create a new snapshot only if things changed since last snapshot
-                if (previousProcessedTokensDocument == null || tokensDocument.CurrentVersion != previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion)
+                
+                // Check if an update is necessary and compute changes to apply since last version
+                bool scanAllDocumentLines = false;
+                IList<DocumentChange<ITokensLine>> tokensLineChanges = null;
+                if (previousProcessedTokensDocument == null)
                 {
-                    PreprocessorStep.ProcessLines();
+                    scanAllDocumentLines = true;
                 }
+                else if (tokensDocument.CurrentVersion == previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion)
+                {
+                    // Tokens lines did not change since last update => nothing to do
+                    return;
+                }
+                else
+                {
+                    DocumentVersion<ITokensLine> previousTokensDocumentVersion = previousProcessedTokensDocument.PreviousStepSnapshot.CurrentVersion;
+                    tokensLineChanges = previousTokensDocumentVersion.GetReducedAndOrderedChangesInNewerVersion(tokensDocument.CurrentVersion);
+                }
+
+                // Track all changes applied to the document while updating this snapshot
+                DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
+               
+                // Apply text changes to the compilation document
+                if (scanAllDocumentLines)
+                {
+                    PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)previousProcessedTokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider);
+                }
+                else
+                {
+                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>)previousProcessedTokensDocument.Lines).ToBuilder();
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider);
+
+                    // Create a new version of the document to track these changes
+                    DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
+                    currentProcessedTokensLineVersion.changes = documentChanges;
+                    currentProcessedTokensLineVersion.next = new DocumentVersion<IProcessedTokensLine>(currentProcessedTokensLineVersion);
+
+                    // Prepare an event to signal document change to all listeners
+                    documentChangedEvent = new DocumentChangedEvent<IProcessedTokensLine>(currentProcessedTokensLineVersion, currentProcessedTokensLineVersion.next);
+                    currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
+
+                    // Update the processed tokens document snapshot
+                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines);
+                }
+
+                // Send events to all listeners
+                processedTokensLinesChangedEventsSource.OnNext(documentChangedEvent);
             }
         }
 
@@ -427,6 +466,17 @@ namespace TypeCobol.Compiler
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary>
         public ProcessedTokensDocument ProcessedTokensDocumentSnapshot { get; private set; }
+
+        // Broadcast document processed tokens lines changes to all listeners
+        private ISubject<DocumentChangedEvent<IProcessedTokensLine>> processedTokensLinesChangedEventsSource = new Subject<DocumentChangedEvent<IProcessedTokensLine>>();
+
+        /// <summary>
+        /// Subscribe to this events source to be notified of all changes in the processed tokens lines of the document
+        /// </summary>
+        public IObservable<DocumentChangedEvent<IProcessedTokensLine>> ProcessedTokensLinesChangedEventsSource
+        {
+            get { return processedTokensLinesChangedEventsSource; }
+        }
 
         #region Thread ownership
         // Inspired from ICSharpCode.AvalonEdit.Document.TextDocument

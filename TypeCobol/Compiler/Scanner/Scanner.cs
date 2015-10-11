@@ -280,7 +280,7 @@ namespace TypeCobol.Compiler.Scanner
 
                         ContinuationToken continuationToken = new ContinuationToken(token, startIndexInOriginalLine, stopIndexInOriginalLine, 
                             originalLine, isContinuationFromPreviousLine, isContinuedOnNextLine);
-                        originalLine.AddToken(continuationToken);
+                        originalLine.AddToken(continuationToken);                        
 
                         // Copy diagnostics on the first line only
                         if(!isContinuationFromPreviousLine)
