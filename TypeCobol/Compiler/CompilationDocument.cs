@@ -93,11 +93,23 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Document line factory for the compiler processing steps : create new version of a line by copy before an update
+        /// Document line factory for the compiler processing steps : create new version of a line by copy if necessary before an update
         /// </summary>
-        protected CodeElementsLine CreateNewDocumentLineForUpdate(CodeElementsLine previousLineVersion, CompilationStep compilationStep)
+        protected object PrepareDocumentLineForUpdate(int index, object previousLineVersion, CompilationStep compilationStep)
         {
-            return new CodeElementsLine(previousLineVersion, compilationStep);
+            CodeElementsLine originalLine = (CodeElementsLine)previousLineVersion;
+            // If the compilation step was not yet applied to this line, we don't need a new version of the line
+            if (originalLine.CanStillBeUpdatedBy(compilationStep))
+            {
+                return originalLine;
+            }
+            // If the compilation step was previously applied to this line, we need to create a new version of the line
+            else
+            {
+                CodeElementsLine newLinePreparedForUpdate = new CodeElementsLine(originalLine, compilationStep);
+                compilationDocumentLines[index] = newLinePreparedForUpdate;
+                return newLinePreparedForUpdate;
+            }
         }
 
         // --- Text lines ---
@@ -290,7 +302,7 @@ namespace TypeCobol.Compiler
 
             // Check if an update is necessary and compute changes to apply since last version
             bool scanAllDocumentLines = false;
-            IEnumerable<DocumentChange<ICobolTextLine>> textLineChanges = null;
+            IList<DocumentChange<ICobolTextLine>> textLineChanges = null;
             if(textLinesVersionForCurrentTokensLines == null)
             {
                 scanAllDocumentLines = true;
@@ -312,11 +324,11 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    ScannerStep.ScanDocument();
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions);
                 }
                 else
                 {
-                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanDocumentChanges(textLineChanges);
+                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions);
 
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;
@@ -395,7 +407,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshProcessedTokensDocumentSnapshot()
         {
-            // Make sure two thread don't try to update this snapshot at the same time
+            // Make sure two threads don't try to update this snapshot at the same time
             lock(lockObjectForProcessedTokensDocumentSnapshot)
             {
                 // Capture previous snapshots at a point in time

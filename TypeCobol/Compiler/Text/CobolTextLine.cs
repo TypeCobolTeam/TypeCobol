@@ -416,14 +416,14 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Indicates which compiler step last updated the properties of this line
         /// </summary>
-        internal CompilationStep CompilationStep { get; set; }
+        public CompilationStep CompilationStep { get; set; }
 
         /// <summary>
         /// A line is freezed after the completion of each compiler step to enable reliable snapshots.
         /// If we need to update the properties of the line later, a new line must be allocated.
         /// This method returns true if the line can be updated in place, false if a new copy of the line must be allocated.
         /// </summary>
-        internal bool CanStillBeUpdatedBy(CompilationStep updatingStep)
+        public bool CanStillBeUpdatedBy(CompilationStep updatingStep)
         {
             if(CompilationStep >= updatingStep)
             {

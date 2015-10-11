@@ -31,11 +31,9 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidFirstCharForContinuationLine = 21,
         InvalidFirstTwoCharsForContinuationLine = 22,
         AreaAOfContinuationLineMustBeBlank = 23,
-        ContinuationInsideDecimalLiteralCouldBeWrong = 24,
-        ContinuationInsidePictureCharacterStringCouldBeWrong = 25,
-        InvalidCblProcessCompilerDirective = 26,
-        InvalidControlCblCompilerStatementOption = 27,
-        SyntaxErrorInParser = 28,
-        FailedToLoadTextDocumentReferencedByCopyDirective = 29
+        InvalidCblProcessCompilerDirective = 24,
+        InvalidControlCblCompilerStatementOption = 25,
+        SyntaxErrorInParser = 26,
+        FailedToLoadTextDocumentReferencedByCopyDirective = 27
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -11,11 +12,41 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     static class PreprocessorStep
     {
-        public void OnNext(TokensChangedEvent tokensChangedEvent)
+        /// <summary>
+        /// Initial preprocessing of a complete document
+        /// </summary>
+        internal static void PreprocessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions)
         {
-            try
+            MultilineScanState lastScanState = null;
+            foreach (ITokensLine documentLine in documentLines)
             {
-                TokensChangedEvent processedTokensChangedEvent = new TokensChangedEvent();
+                TokensLine tokensLine = (TokensLine)documentLines;
+                if (lastScanState == null)
+                {
+                    Scanner.ScanFirstLine(tokensLine, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions);
+                }
+                else
+                {
+                    Scanner.ScanTokensLine(tokensLine, lastScanState, compilerOptions);
+                }
+                lastScanState = tokensLine.ScanState;
+            }
+        }
+
+        /// <summary>
+        /// Incremental scan of a set of text lines changes
+        /// </summary>
+        internal static IList<DocumentChange<ITokensLine>> ScanTextLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, IList<DocumentChange<ICobolTextLine>> textLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions)
+        {
+            // Collect all changes applied to the tokens lines during the incremental scan
+            IList<DocumentChange<ITokensLine>> tokensLinesChanges = new List<DocumentChange<ITokensLine>>();
+
+            // There are 3 reasons to scan a line after a text change :
+            // 1. New text lines which were just inserted or updated must be scanned for the first time
+            // 2. Text lines must be scanned again if their initial scan state changed : a new scan of the previous line can alter the scan state at the beginning of the following line  
+            // 3. Continuation lines and multiline tokens : if a line participates in a continuation on several lines, scan the group of lines as a whole
+
+            TokensChangedEvent processedTokensChangedEvent = new TokensChangedEvent();
 
                 // --- PREPARATION PHASE : Initialize missing lines and include all lines involved in a processed Token continuation ---
 

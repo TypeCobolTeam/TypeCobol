@@ -247,6 +247,16 @@ namespace TypeCobol.Compiler.Preprocessor
             PreprocessorDiagnostics.Add(diag);
         }
 
+        /// <summary>
+        /// True if the first compiler directive token on the next line continues the last compiler directive token of this line
+        /// </summary>
+        public bool HasDirectiveTokenContinuedOnNextLine { get; private set; }
+
+        /// <summary>
+        /// True if the first compiler directive token on this line continues the last compiler directive token of the previous line
+        /// </summary>
+        public bool HasDirectiveTokenContinuationFromPreviousLine { get; private set; }
+
         // --- Incremental compilation process ---
 
         protected void CopyProcessedTokensLineProperties(ProcessedTokensLine previousLineVersion)

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -13,221 +12,256 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     static class ScannerStep
     {
-        internal static void ScanDocument()
+        /// <summary>
+        /// Initial scan of a complete document
+        /// </summary>
+        internal static void ScanDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions)
         {
-            throw new NotImplementedException();
-        }
-
-        internal static IList<DocumentChange<ITokensLine>> ScanDocumentChanges(IEnumerable<DocumentChange<ICobolTextLine>> textLineChanges)
-        {
-            try
+            MultilineScanState lastScanState = null;
+            foreach (ITokensLine documentLine in documentLines)
             {
-                TokensChangedEvent tokensChangedEvent = new TokensChangedEvent();
-
-                // Optimization : use a builder to update the immutable list in case of a big update                
-                ImmutableList<ITokensLine>.Builder tokensLinesBuilder = null;
-                if (textChangedEvent.TextChanges.Count > 4)
+                TokensLine tokensLine = (TokensLine)documentLines;
+                if (lastScanState == null)
                 {
-                    tokensLinesBuilder = tokensLines.ToBuilder();
+                    Scanner.ScanFirstLine(tokensLine, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions);
                 }
-                Func<int, TokensLine> getTokensLineAtIndex = index => { if (tokensLinesBuilder != null) { return (TokensLine)tokensLinesBuilder[index]; } else { return (TokensLine)tokensLines[index]; } };
-                Action<int, TokensLine> setTokensLineAtIndex = (index, updatedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder[index] = updatedLine; } else { tokensLines = tokensLines.SetItem(index, updatedLine); } };
-                Action<int, TokensLine> insertTokensLineAtIndex = (index, insertedLine) => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Insert(index, insertedLine); } else { tokensLines = tokensLines.Insert(index, insertedLine); } };
-                Action<TokensLine> removeTokensLine = removedLine => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Remove(removedLine); } else { tokensLines = tokensLines.Remove(removedLine); } };
-                Action clearTokensLines = () => { if (tokensLinesBuilder != null) { tokensLinesBuilder.Clear(); } else { tokensLines = ImmutableList<ITokensLine>.Empty; } };
-
-                // Analyze all text changes
-                int lastTextChangeIndex = textChangedEvent.TextChanges.Count - 1;
-                for (int textChangeIndex = 0; textChangeIndex <= lastTextChangeIndex; textChangeIndex++)
+                else
                 {
-                    // Get the current text change
-                    TextChange textChange = textChangedEvent.TextChanges[textChangeIndex];
-
-                    // Check if it is useful to propagate change to the following lines ?
-                    // Principle of the propagation :
-                    // - the initial scan state at the beginning of each line must be initialized with the last scan state at the end of the previous line 
-                    // - when a line is inserted or updated (at index i)
-                    //   => the initial state of the following line (at index i+1) must be updated 
-                    //      with the last scan state of the newly modified line (at index i)
-                    // - when a line is removed (at index i)
-                    //   => the initial state of the following line (now replacing the removed line at index i) must be updated 
-                    //      with the last scan state of the previous line (at index i-1)
-                    // It is not useful to propagate immediately the current change if we know that the following change
-                    // will update either the last scan state of the first line or the initial state of the second line to compare.
-                    bool propagateChangeToFollowingLines = true;
-                    if (textChangeIndex < lastTextChangeIndex)
-                    {
-                        TextChange nextTextChange = textChangedEvent.TextChanges[textChangeIndex + 1];
-
-                        if (((textChange.Type == TextChangeType.LineInserted || textChange.Type == TextChangeType.LineUpdated) &&
-                             (nextTextChange.LineIndex == textChange.LineIndex || nextTextChange.LineIndex == (textChange.LineIndex + 1))) ||
-                            (textChange.Type == TextChangeType.LineRemoved &&
-                             (nextTextChange.LineIndex == (textChange.LineIndex - 1) || nextTextChange.LineIndex == textChange.LineIndex)) ||
-                            nextTextChange.Type == TextChangeType.DocumentCleared)
-                        {
-                            propagateChangeToFollowingLines = false;
-                        }
-                    }
-
-                    switch (textChange.Type)
-                    {
-                        // --- Case 1 : text document cleared ---
-                        case TextChangeType.DocumentCleared:
-                            // Reset the immutable list
-                            clearTokensLines();
-                            // Register a DocumentCleared change
-                            tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.DocumentCleared, 0, null));
-                            break;
-                        // --- Case 2 : line inserted in the text document ---
-                        case TextChangeType.LineInserted:
-                            // Scan the newly inserted line
-                            TokensLine insertedLine = null;
-                            if (textChange.LineIndex > 0)
-                            {
-                                // If it was not the first line : continue with the scan state of the previous line
-                                TokensLine previousLine = getTokensLineAtIndex(textChange.LineIndex - 1);
-                                insertedLine = Scanner.ScanTextLine(textChange.NewLine, previousLine, TextSourceInfo, CompilerOptions);
-                            }
-                            else
-                            {
-                                // If it was the first line : initialize a new scan state
-                                insertedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, false, TextSourceInfo, CompilerOptions);
-                            }
-                            // Insert a new line in the immutable list
-                            insertTokensLineAtIndex(textChange.LineIndex, insertedLine);
-                            // Register a LineInserted change
-                            tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineInserted, textChange.LineIndex, insertedLine));
-                            // See if the following lines need to be scanned again because the scan state changed
-                            if (propagateChangeToFollowingLines)
-                            {
-                                PropagateChangeAfterLine(textChange.LineIndex, insertedLine.ScanState, getTokensLineAtIndex, setTokensLineAtIndex, tokensChangedEvent);
-                            }
-                            break;
-                        case TextChangeType.LineUpdated:
-                            // Scan the updated line
-                            TokensLine updatedLine = null;
-                            if (textChange.LineIndex > 0)
-                            {
-                                // If it was not the first line : continue with the scan state of the previous line
-                                TokensLine previousLine = getTokensLineAtIndex(textChange.LineIndex - 1);
-                                updatedLine = Scanner.ScanTextLine(textChange.NewLine, previousLine, TextSourceInfo, CompilerOptions);
-
-                                // If the updated line is a continuation line, the last token of previous line may also
-                                // have been updated as part of the continuation => signal this change
-                                if (updatedLine.Type == CobolTextLineType.Continuation)
-                                {
-                                    for (int previousLineIndex = textChange.LineIndex - 1; previousLineIndex >= 0; previousLineIndex--)
-                                    {
-                                        // Get previous line
-                                        previousLine = getTokensLineAtIndex(previousLineIndex);
-                                        // Signal change on the previous line
-                                        tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineRescanned, previousLineIndex, previousLine));
-                                        // Continue to iterate backward until the end of the continuation set
-                                        if (previousLine.Type != CobolTextLineType.Continuation)
-                                        {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // If it was the first line : initialize a new scan state
-                                updatedLine = Scanner.ScanFirstLine(textChange.NewLine, false, false, false, TextSourceInfo, CompilerOptions);
-                            }
-                            // Update the line in the immutable list
-                            setTokensLineAtIndex(textChange.LineIndex, updatedLine);
-                            // Register a LineUpdated change
-                            tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineUpdated, textChange.LineIndex, updatedLine));
-                            // See if the following lines need to be scanned again because the scan state changed
-                            if (propagateChangeToFollowingLines)
-                            {
-                                PropagateChangeAfterLine(textChange.LineIndex, updatedLine.ScanState, getTokensLineAtIndex, setTokensLineAtIndex, tokensChangedEvent);
-                            }
-                            break;
-                        case TextChangeType.LineRemoved:
-                            // Remove the line from the immutable list
-                            TokensLine removedLine = getTokensLineAtIndex(textChange.LineIndex);
-                            removeTokensLine(removedLine);
-                            // Register a LineRemoved change
-                            tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineRemoved, textChange.LineIndex, removedLine));
-                            // See if the following lines need to be scanned again because the scan state changed                            
-                            if (propagateChangeToFollowingLines)
-                            {
-                                MultilineScanState previousScanState = null;
-                                if (textChange.LineIndex > 0)
-                                {
-                                    // If it was not the first line : get the scan state of the previous line
-                                    TokensLine previousLine = getTokensLineAtIndex(textChange.LineIndex - 1);
-                                    previousScanState = previousLine.ScanState;
-                                }
-                                else
-                                {
-                                    // If it was the first line : get the initial scan state for the file
-                                    previousScanState = removedLine.InitialScanState;
-                                }
-                                PropagateChangeAfterLine(textChange.LineIndex - 1, previousScanState, getTokensLineAtIndex, setTokensLineAtIndex, tokensChangedEvent);
-                            }
-                            break;
-                    }
+                    Scanner.ScanTokensLine(tokensLine, lastScanState, compilerOptions);
                 }
-
-                // End of optimization : revert the builder to an immutable list
-                if (tokensLinesBuilder != null)
-                {
-                    tokensLines = tokensLinesBuilder.ToImmutable();
-                }
-
-                // Send all the events in one batch to the next step of the pipeline
-                tokensChangedEventsSource.OnNext(tokensChangedEvent);
-            }
-            catch (Exception ex)
-            {
-                // Register and forward errors
-                LastException = ex;
-                tokensChangedEventsSource.OnError(ex);
+                lastScanState = tokensLine.ScanState;
             }
         }
 
         /// <summary>
-        /// Rescan all the lines for which the initial scan state has been modified by a text update on a previous line
+        /// Incremental scan of a set of text lines changes
         /// </summary>
-        private void PropagateChangeAfterLine(int updatedLineIndex, MultilineScanState lastScanState, Func<int, TokensLine> getTokensLineAtIndex, Action<int, TokensLine> setTokensLineAtIndex, TokensChangedEvent tokensChangedEvent)
+        internal static IList<DocumentChange<ITokensLine>> ScanTextLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, IList<DocumentChange<ICobolTextLine>> textLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions)
         {
-            // Study all the lines following one line change
-            for (int lineIndex = updatedLineIndex + 1; lineIndex < tokensLines.Count; lineIndex++)
+            // Collect all changes applied to the tokens lines during the incremental scan
+            IList<DocumentChange<ITokensLine>> tokensLinesChanges = new List<DocumentChange<ITokensLine>>();
+
+            // There are 3 reasons to scan a line after a text change :
+            // 1. New text lines which were just inserted or updated must be scanned for the first time
+            // 2. Text lines must be scanned again if their initial scan state changed : a new scan of the previous line can alter the scan state at the beginning of the following line  
+            // 3. Continuation lines and multiline tokens : if a line participates in a continuation on several lines, scan the group of lines as a whole
+
+            // IMPORTANT : the text changes are ordered in increasing order of line index
+            for (int textChangeIndex = 0; textChangeIndex < textLinesChanges.Count; textChangeIndex++)
             {
-                TokensLine currentLine = (TokensLine)tokensLines[lineIndex];
-                // As soon as we find a line where the initial scan state is not modified
-                if (currentLine.InitialScanState.Equals(lastScanState))
+                // Local variables used to optimize navigation in the document
+                int nextLineToScanIndex = -1;
+                TokensLine nextLineToScan = null;
+
+                // Update tokens depending on the current text change
+                DocumentChange<ICobolTextLine> textChange = textLinesChanges[textChangeIndex];
+                if (textChange.Type == DocumentChangeType.DocumentCleared)
                 {
-                    // -> STOP the propagation of the change
+                    continue;
+                }
+                else if (textChange.Type == DocumentChangeType.LineInserted || textChange.Type == DocumentChangeType.LineUpdated)
+                {
+                    // Text lines which were inserted or updated must be scanned again
+                    ScanTokensLineWithMultilineScanState(textChange.LineIndex, (TokensLine)textChange.NewLine, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, tokensLinesChanges, out nextLineToScanIndex, out nextLineToScan);
+                }
+                else if (textChange.Type == DocumentChangeType.LineRemoved)
+                {
+                    // Get the last line just before the line that was removed
+                    TokensLine previousLine = null;
+                    if (textChange.LineIndex > 0)
+                    {
+                        previousLine = documentLines[textChange.LineIndex - 1];
+                    }
+
+                    // When a text line is removed :
+                    // - the previous line must be scanned again if the line which was removed was a member of a multiline continuation group
+                    if (previousLine != null && previousLine.HasTokenContinuedOnNextLine)
+                    {
+                        ScanTokensLineWithMultilineScanState(textChange.LineIndex - 1, previousLine, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, tokensLinesChanges, out nextLineToScanIndex, out nextLineToScan);
+                    }
+                    if (nextLineToScan == null && textChange.LineIndex < documentLines.Count)
+                    {
+                        nextLineToScanIndex = textChange.LineIndex;
+                        nextLineToScan = documentLines[nextLineToScanIndex];
+                    }
+                    // - the next line must be scanned again if the scan state at the end of the previous line is different from the scan state at the beginning of the next line
+                    if (nextLineToScan != null && nextLineToScanIndex == textChange.LineIndex && previousLine != null &&
+                        nextLineToScan.InitialScanState.Equals(previousLine.ScanState))
+                    {
+                        ScanTokensLineWithMultilineScanState(textChange.LineIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, tokensLinesChanges, out nextLineToScanIndex, out nextLineToScan);
+                    }
+                }
+
+                // We can skip all text changes with an index smaller than the index of the last line which was already scanned
+                if (nextLineToScan == null)
+                {
                     break;
+                }
+                else if (textChangeIndex < (textLinesChanges.Count - 1))
+                {
+                    int nextTextChangeIndex = textChangeIndex;
+                    DocumentChange<ICobolTextLine> nextTextChange = null;
+                    do
+                    {
+                        nextTextChangeIndex++;
+                        nextTextChange = textLinesChanges[nextTextChangeIndex];
+                    }
+                    while (nextTextChangeIndex < (textLinesChanges.Count - 1) &&
+                           nextTextChange.LineIndex <= nextLineToScanIndex);
+                    textChangeIndex = nextTextChangeIndex - 1;
+                }
+            }
+
+            return tokensLinesChanges;
+        }
+
+        private static void ScanTokensLineWithMultilineScanState(int lineToScanIndex, TokensLine lineToScan, TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IList<DocumentChange<ITokensLine>> tokensLinesChanges, out int nextLineToScanIndex, out TokensLine nextLineToScan)
+        {
+            // Scan the current line (or continuation lines group)
+            MultilineScanState scanState = ScanTokensLineWithContinuations(lineToScanIndex, lineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, tokensLinesChanges, out nextLineToScanIndex, out nextLineToScan);
+            
+            // Scan the following lines until we find that the scan state at the beginning of the next line has been updated
+            while(nextLineToScan != null && !nextLineToScan.InitialScanState.Equals(scanState))
+            {
+                scanState = ScanTokensLineWithContinuations(nextLineToScanIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, tokensLinesChanges, out nextLineToScanIndex, out nextLineToScan);
+            }
+        }
+
+        private static MultilineScanState ScanTokensLineWithContinuations(int lineToScanIndex, TokensLine lineToScan, TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IList<DocumentChange<ITokensLine>> tokensLinesChanges, out int nextLineToScanIndex, out TokensLine nextLineToScan)
+        {
+            // Initialize out parameters
+            if (lineToScanIndex < (documentLines.Count - 1))
+            {
+                nextLineToScanIndex = lineToScanIndex + 1;
+                nextLineToScan = documentLines[nextLineToScanIndex];
+            }
+            else
+            {
+                nextLineToScanIndex = -1;
+                nextLineToScan = null;
+            }
+
+            // Check if the line to scan participates in a multiline continuation
+            // - because it is itself a continuation line
+            bool partOfMultilineContinuation = lineToScan.Type == CobolTextLineType.Continuation;
+            // - or because the following line is a continuation line
+            if (!partOfMultilineContinuation && lineToScanIndex < (documentLines.Count - 1))
+            {
+                nextLineToScanIndex = lineToScanIndex + 1;
+                nextLineToScan = documentLines[nextLineToScanIndex];
+                partOfMultilineContinuation = nextLineToScan.Type == CobolTextLineType.Continuation;
+            }
+            // - LIMITATION : we don't support the case where one or more comment lines follow the current line before a continuation line 
+
+            // Case 1 : the line is not part of a multiline continuation => we can parse it as as a standalone line
+            if (!partOfMultilineContinuation)
+            {
+                // Create a new copy of the line before the update if necessary
+                lineToScan = (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner);
+                if (lineToScanIndex == 0)
+                {
+                    // Scan the first line of the document
+                    Scanner.ScanFirstLine(lineToScan, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions);
                 }
                 else
                 {
-                    // Else we need to re-scan the line with a new initial state
-                    TokensLine updatedLine = null;
-                    if (lineIndex > 0)
-                    {
-                        // If it was not the first line : continue with the scan state of the previous line
-                        TokensLine previousLine = getTokensLineAtIndex(lineIndex - 1);
-                        updatedLine = Scanner.ScanTextLine(currentLine.TextLine, previousLine, TextSourceInfo, CompilerOptions);
-                    }
-                    else
-                    {
-                        // If it was the first line : initialize a new scan state
-                        updatedLine = Scanner.ScanFirstLine(currentLine.TextLine, false, false, false, TextSourceInfo, CompilerOptions);
-                    }
-                    // Update the line in the immutable list
-                    setTokensLineAtIndex(lineIndex, updatedLine);
-
-                    // Adjust the last scan state
-                    lastScanState = updatedLine.ScanState;
-
-                    // Register a LineRescanned change
-                    tokensChangedEvent.TokensChanges.Add(new TokensChange(TokensChangeType.LineRescanned, lineIndex, updatedLine));
+                    // Get the scan state at the end of the previous line
+                    TokensLine previousLine = documentLines[lineToScanIndex - 1];
+                    // Scan the current line with this initial scan state 
+                    Scanner.ScanTokensLine(lineToScan, previousLine.ScanState, compilerOptions);
                 }
+                tokensLinesChanges.Add(new DocumentChange<ITokensLine>(DocumentChangeType.LineUpdated, lineToScanIndex, lineToScan));
+                return lineToScan.ScanState;
+            }
+            // Case 2 : the line is part of a multiline continuation => we must parse all continuation lines as a group
+            else
+            {
+                // Build a list of the lines we will have to scan as a group :
+                IList<TokensLine> continuationLinesGroup = new List<TokensLine>();
+                int firstLineIndex = lineToScanIndex;
+                continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
+
+                // Navigate backwards to the start of the multiline continuation 
+                if (lineToScan.Type == CobolTextLineType.Continuation && lineToScanIndex > 0)
+                {
+                    int revLineToScanIndex = lineToScanIndex;
+                    IEnumerator<TokensLine> reversedEnumerator = documentLines.GetEnumerator(lineToScanIndex - 1, -1, true);
+                    while(reversedEnumerator.MoveNext())
+                    {
+                        // Get the previous line until a non continuation and non comment line is encountered
+                        revLineToScanIndex--;
+                        lineToScan = reversedEnumerator.Current;
+
+                        if(lineToScan.Type != CobolTextLineType.Continuation &&
+                           lineToScan.Type != CobolTextLineType.Comment && lineToScan.Type != CobolTextLineType.Blank) // see p54 : for continuation, blank lines are treated like comment lines
+                        { 
+                            firstLineIndex = revLineToScanIndex;
+                            continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                // Reuse our knowledge of the next line if it is available and if it is a continuation
+                if (nextLineToScan != null && nextLineToScan.Type == CobolTextLineType.Continuation)
+                {
+                    lineToScanIndex++;
+                    lineToScan = nextLineToScan;
+                    continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
+
+                    nextLineToScanIndex = -1;
+                    nextLineToScan = null;
+                }
+
+                // Navigate forwards to the end of the multiline continuation 
+                if (lineToScanIndex < (documentLines.Count - 1))
+                {
+                    IEnumerator<TokensLine> enumerator = documentLines.GetEnumerator(lineToScanIndex + 1, -1, false);
+                    while (enumerator.MoveNext())
+                    {
+                        // Get the next line until a non continuation and non comment line is encountered
+                        lineToScanIndex++;
+                        lineToScan = enumerator.Current;
+
+                        if (lineToScan.Type == CobolTextLineType.Continuation ||
+                           lineToScan.Type == CobolTextLineType.Comment || lineToScan.Type == CobolTextLineType.Blank) // see p54 : for continuation, blank lines are treated like comment lines
+                        {
+                            // Add this line at the end of the list of continuation lines
+                            continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
+                        }
+                        else
+                        {
+                            // Save the knowledge of the next line and exit the loop
+                            nextLineToScanIndex = lineToScanIndex;
+                            nextLineToScan = lineToScan;
+                            break;
+                        }
+                    }
+                }
+
+                // Scan the group of continuation lines
+                if (firstLineIndex == 0)
+                {
+                    // Scan the first line group of the document
+                    Scanner.ScanFirstLineContinuationGroup(continuationLinesGroup, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions);
+                }
+                else
+                {
+                    // Get the scan state at the end of the previous line
+                    TokensLine previousLine = documentLines[firstLineIndex - 1];
+                    // Scan the current line group with this initial scan state 
+                    Scanner.ScanTokensLineContinuationGroup(continuationLinesGroup, previousLine.ScanState, compilerOptions);
+                }
+                int updatedLineIndex = firstLineIndex;
+                foreach(TokensLine updatedLine in continuationLinesGroup)
+                {
+                    tokensLinesChanges.Add(new DocumentChange<ITokensLine>(DocumentChangeType.LineUpdated, updatedLineIndex, updatedLine));
+                    updatedLineIndex++;
+                }
+                return continuationLinesGroup[continuationLinesGroup.Count - 1].ScanState;
             }
         }
     }

@@ -28,4 +28,9 @@ namespace TypeCobol.Compiler.Concurrency
         /// </summary>
         ProgramClassParser
     }
+
+    /// <summary>
+    /// Method used by a compilation step to update a line of the document during the incremental compilation process
+    /// </summary>
+    public delegate object PrepareDocumentLineForUpdate(int index, object previousLineVersion, CompilationStep compilationStep);
 }

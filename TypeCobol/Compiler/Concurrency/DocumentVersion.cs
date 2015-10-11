@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// - with line indexes translated to be valid in the v2 document
         /// - with changes sorted in the order of the line indexes in the v2 document
         /// </summary>
-        public IOrderedEnumerable<DocumentChange<T>> GetReducedAndOrderedChangesInNewerVersion(DocumentVersion<T> other)
+        public IList<DocumentChange<T>> GetReducedAndOrderedChangesInNewerVersion(DocumentVersion<T> other)
         {
             // Ensure the version received as parameter is more recent than teh current version
             int result = CompareAge(other);
@@ -130,7 +130,7 @@ namespace TypeCobol.Compiler.Concurrency
             }
 
             // Merge the redundant changes and translate the line indexes to the last version
-            IList<DocumentChange<T>> reducedDocumentChanges = new List<DocumentChange<T>>();
+            List<DocumentChange<T>> reducedDocumentChanges = new List<DocumentChange<T>>();
             foreach (DocumentChange<T> documentChange in GetChangesTo(other))
             {
                 switch (documentChange.Type)
@@ -194,7 +194,8 @@ namespace TypeCobol.Compiler.Concurrency
             }
 
             // Sort all changes by line index
-            return reducedDocumentChanges.OrderBy(documentChange => documentChange.LineIndex);
+            reducedDocumentChanges.Sort((documentChange1, documentChange2) => documentChange2.LineIndex - documentChange1.LineIndex);
+            return reducedDocumentChanges;
         }
     }
 }

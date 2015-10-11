@@ -20,5 +20,15 @@ namespace TypeCobol.Compiler.Scanner
         /// (before text manipulation phase)
         /// </summary>
         IList<Diagnostic> ScannerDiagnostics { get; }
+
+        /// <summary>
+        /// True if the first token on the next line continues the last token of this line
+        /// </summary>
+        bool HasTokenContinuedOnNextLine { get; }
+
+        /// <summary>
+        /// True if the first token on this line continues the last token of the previous line
+        /// </summary>
+        bool HasTokenContinuationFromPreviousLine { get; }
     }
 }

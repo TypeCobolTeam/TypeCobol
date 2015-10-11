@@ -216,20 +216,13 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Text returned to the parser :
         /// - SourceText if the token is not continued on the next line
-        /// - ContinuationToken.Text if the token IsContinuedOnTheNextLine
+        /// - MultilineContinuationText if the token IsContinuationToken
         /// </summary>
         public virtual string Text
         {
             get
             {
-                if (!IsContinuedOnTheNextLine)
-                {
-                    return SourceText;
-                }
-                else
-                {
-                    return ContinuationToken.Text;
-                }
+                return SourceText;
             }
         }
 
@@ -287,34 +280,22 @@ namespace TypeCobol.Compiler.Scanner
 
         // --- Continuation lines & multiline tokens ---
 
-        internal void LinkToContinuationToken(ContinuationToken continuationToken)
+        /// <summary>
+        /// True if this token participates in a multiline continuation
+        /// </summary>
+        public virtual bool IsContinuationToken { get { return false; } }
+
+        /// <summary>
+        /// True if this token continues a token found on the previous line
+        /// </summary>
+        public bool IsContinuationFromPreviousLine { get; protected set; }
+
+        internal void CorrectTokensLine(ITokensLine tokensLine, int startIndex, int stopIndex)
         {
-            // Register continuation token
-            IsContinuedOnTheNextLine = true;
-            ContinuationToken = continuationToken;
-
-            // Recursively inherit the token type from the continuation token
-            SetPropertiesFromContinuationToken();
+            this.tokensLine = tokensLine;
+            this.startIndex = startIndex;
+            this.stopIndex = stopIndex;
         }
-
-        /// <summary>
-        /// Recursively set the type of the continued tokens to the same type as the continuation token
-        /// </summary>
-        internal virtual void SetPropertiesFromContinuationToken()
-        {
-            CorrectType(ContinuationToken.TokenType);
-            LiteralValue = ContinuationToken.LiteralValue;       
-        }
-
-        /// <summary>
-        /// True if a token found on the next line continues the current token 
-        /// </summary>
-        public bool IsContinuedOnTheNextLine { get; private set; }
-
-        /// <summary>
-        /// Token found on the next line which continues the current token 
-        /// </summary>
-        public ContinuationToken ContinuationToken { get; private set; }
 
         // --- Debugging
 
@@ -331,10 +312,6 @@ namespace TypeCobol.Compiler.Scanner
             if(TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral)
             {
                 tokenText += "{" + (LiteralValue == null ? "NULL" : LiteralValue.ToString()) + "}";
-            }
-            if(IsContinuedOnTheNextLine)
-            {
-                tokenText = "=>continued:" + tokenText;
             }
             return tokenText;
         }
