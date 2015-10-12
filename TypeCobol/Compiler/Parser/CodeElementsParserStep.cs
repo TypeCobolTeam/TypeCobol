@@ -1,8 +1,15 @@
-﻿using System;
+﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -11,108 +18,96 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class CodeElementsParserStep
     {
-        public void OnNext(TokensChangedEvent tokensChangedEvent)
+        /// <summary>
+        /// Initial parsing of a complete document
+        /// </summary>
+        internal static void ParseDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> documentLines, TypeCobolOptions compilerOptions)
         {
+            ParseProcessedTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions);
+        }
 
-            try
+        /// <summary>
+        /// Incremental parsing of a set of processed tokens lines changes
+        /// </summary>
+        internal static IList<DocumentChange<ICodeElementsLine>> ParseProcessedTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> documentLines, IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions)
+        {
+            // Collect all changes applied to the processed tokens lines during the incremental scan
+            IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges = new List<DocumentChange<ICodeElementsLine>>();
+            
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // TO DO : Implement the incremental parsing with COPY & REPLACE
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            // Create a token iterator on top of pre-processed tokens lines
+            ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetProcessedTokensIterator(textSourceInfo, documentLines);
+
+            // Create an Antlr compatible token source on top a the token iterator
+            TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
+                textSourceInfo.Name,
+                tokensIterator);
+
+            // Init parser
+            ITokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
+            TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
+            // -> activate full ambiguities detection
+            //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
+            IAntlrErrorStrategy cobolErrorStrategy = new CobolErrorStrategy();
+            cobolParser.ErrorHandler = cobolErrorStrategy;
+
+            // Register all parse errors in a list in memory
+            DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
+            cobolParser.RemoveErrorListeners();
+            cobolParser.AddErrorListener(errorListener);
+
+            // Prepare to analyze the parse tree
+            ParseTreeWalker walker = new ParseTreeWalker();
+            CodeElementBuilder codeElementBuilder = new CodeElementBuilder();
+
+            // TO DO -- Iterate only over the code elements which need to be refreshed
+            do
             {
-                // Create a token iterator on top of pre-processed tokens lines
-                ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetTokensIterator();
+                // TO DO -- Seek just before the next code element starting token
+                // tokensIterator.SeekToToken(codeElementStartingToken);
 
-                // Create an Antlr compatible token source on top a the token iterator
-                TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
-                    ProcessedTokensDocument.TokensDocument.TextSourceInfo.Name,
-                    tokensIterator);
+                // !! Do not reset the Antlr BufferedTokenStream position while iterating on adjacent code elements
+                //tokenStream.SetTokenSource(tokenSource);
 
-                // Init parser
-                ITokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
-                TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
-                // -> activate full ambiguities detection
-                //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
-                IAntlrErrorStrategy cobolErrorStrategy = new CobolErrorStrategy();
-                cobolParser.ErrorHandler = cobolErrorStrategy;
+                // Reset parsing error diagnostics
+                //cobolErrorStrategy.Reset(cobolParser);
+                errorListener.Diagnostics.Clear();
 
-                // Reset the erors list
-                CodeElementsInError = new List<CodeElement>();
-                Diagnostics = new List<Diagnostic>();//TODO remove this
+                // Reset parser traces (consumed tokens)
+                cobolParser.ResetTraces();
 
-                // Register all parse errors in a list in memory
-                DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
-                cobolParser.RemoveErrorListeners();
-                cobolParser.AddErrorListener(errorListener);
+                // Try to parse a code element starting with the current token
+                CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
 
-                // Prepare to analyze the parse tree
-                ParseTreeWalker walker = new ParseTreeWalker();
-                CodeElementBuilder codeElementBuilder = new CodeElementBuilder();
+                // Get the first line that was parsed                
+                CodeElementsLine codeElementsLine = documentLines[cobolParser.FirstTokenLineIndexInMainDocument];
 
-                // TO DO -- Iterate over the code elements which need to be refreshed
-                CodeElements = new List<CodeElement>();
-                do
+                // Visit the parse tree to build a first class object representing the code elements
+                walker.Walk(codeElementBuilder, codeElementParseTree);
+                CodeElement codeElement = codeElementBuilder.CodeElement;
+                if (codeElement != null)
                 {
-                    // TO DO -- Seek just before the next code element starting token
-                    // tokensIterator.SeekToToken(codeElementStartingToken);
+                    // Attach consumed tokens and main document line numbers information to the code element
+                    codeElement.ConsumedTokens = cobolParser.ConsumedTokens;
+                    codeElement.FirstTokenLineIndexInMainDocument = cobolParser.FirstTokenLineIndexInMainDocument;
+                    codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
 
-                    // !! Do not reset the Antlr BufferedTokenStream position while iterating on adjacent code elements
-                    //tokenStream.SetTokenSource(tokenSource);
-
-                    // Reset parsing error diagnostics
-                    //cobolErrorStrategy.Reset(cobolParser);
-                    errorListener.Diagnostics.Clear();
-
-                    // Reset parser traces (consumed tokens)
-                    cobolParser.ResetTraces();
-
-                    // Try to parse a code element starting with the current token
-                    CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
-
-                    // Visit the parse tree to build a first class object representing the code elements
-                    walker.Walk(codeElementBuilder, codeElementParseTree);
-                    CodeElement codeElement = codeElementBuilder.CodeElement;
-                    if (codeElement != null)
-                    {
-                        // Attach consumed tokens and main document line numbers information to the code element
-                        codeElement.ConsumedTokens = cobolParser.ConsumedTokens;
-                        codeElement.FirstTokenLineIndexInMainDocument = cobolParser.FirstTokenLineIndexInMainDocument;
-                        codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
-
-                        // Add code element to the list
-                        CodeElements.Add(codeElement);
-                        if (codeElement.Diagnostics.Count > 0)
-                        {
-                            CodeElementsInError.Add(codeElement);
-                            Diagnostics.AddRange(codeElement.Diagnostics); //TODO remove
-                            //Console.WriteLine("Added CodeElement with " + codeElement.Diagnostics.Count + " error(s) ; \"old style\" errors=" + errorListener.Diagnostics.Count);
-                        }
-                    }
-
-                    // Register compiler directive parse errors
-                    foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
-                    {
-                        Diagnostics.Add(parserDiag);
-                    }
+                    // Add code element to the list                    
+                    codeElementsLine.CodeElements.Add(codeElement);
                 }
-                while (tokenStream.La(1) >= 0);
 
-                // Trigger ParseNodeChanged event
-                CodeElementChangedEvent parseEvent = new CodeElementChangedEvent();
-                parseNodeChangedEventsSource.OnNext(parseEvent);
+                // Register compiler directive parse errors
+                foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
+                {
+                    codeElementsLine.AddDiagnostic(parserDiag);
+                }
             }
-            catch (Exception ex)
-            {
-                // Register and forward errors
-                LastException = ex;
-                parseNodeChangedEventsSource.OnError(ex);
-            }
-        }
+            while (tokenStream.La(1) >= 0);
 
-        public void OnCompleted()
-        {
-            // to do
-        }
-
-        public void OnError(Exception e)
-        {
-            // to do
+            return codeElementsLinesChanges;
         }
     }
 }

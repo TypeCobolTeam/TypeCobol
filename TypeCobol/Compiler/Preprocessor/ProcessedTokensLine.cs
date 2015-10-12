@@ -260,7 +260,8 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             this.CompilerListingControlDirective = previousLineVersion.CompilerListingControlDirective;
             this.ImportedDocuments = previousLineVersion.ImportedDocuments;
-            this.IsContinuedFromPreviousLine = previousLineVersion.IsContinuedFromPreviousLine;
+            this.HasDirectiveTokenContinuationFromPreviousLine = previousLineVersion.HasDirectiveTokenContinuationFromPreviousLine;
+            this.HasDirectiveTokenContinuedOnNextLine = previousLineVersion.HasDirectiveTokenContinuedOnNextLine;
             this.PreprocessorDiagnostics = previousLineVersion.PreprocessorDiagnostics;
             this.PreprocessingState = previousLineVersion.PreprocessingState;
             this.ReplaceDirective = previousLineVersion.ReplaceDirective;
