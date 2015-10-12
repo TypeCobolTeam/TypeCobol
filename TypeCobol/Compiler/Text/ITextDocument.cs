@@ -90,7 +90,7 @@ namespace TypeCobol.Compiler.Text
         /// A TextChangedEvent is sent to all observers each time a line 
         /// is inserted, updated, or removed in the document
         /// </summary>
-        IObservable<TextChangedEvent> TextChangedEventsSource { get; }
+        event EventHandler<TextChangedEvent> TextChangedEvent;
 
         /// <summary>
         /// Call this method only after all observers have been chained to form the compilation pipeline

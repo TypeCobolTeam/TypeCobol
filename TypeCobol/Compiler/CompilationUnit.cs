@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Subjects;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
@@ -84,7 +83,11 @@ namespace TypeCobol.Compiler
                 }
 
                 // Send events to all listeners
-                codeElementsLinesChangedEventsSource.OnNext(documentChangedEvent);
+                EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
+                if (codeElementsLinesChanged != null)
+                {
+                    codeElementsLinesChanged(this, documentChangedEvent);
+                }
             }
         }
 
@@ -94,207 +97,66 @@ namespace TypeCobol.Compiler
         /// </summary>                        
         public CodeElementsDocument CodeElementsDocumentSnapshot { get; private set; }
 
-        // Broadcast document code elements lines changes to all listeners
-        private ISubject<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChangedEventsSource = new Subject<DocumentChangedEvent<ICodeElementsLine>>();
-
         /// <summary>
-        /// Subscribe to this events source to be notified of all changes in the processed tokens lines of the document
+        /// Subscribe to this event to be notified of all changes in the code elements lines of the document
         /// </summary>
-        public IObservable<DocumentChangedEvent<ICodeElementsLine>> CodeElementsLinesChangedEventsSource
-        {
-            get { return codeElementsLinesChangedEventsSource; }
-        }
+        public event EventHandler<DocumentChangedEvent<ICodeElementsLine>> CodeElementsLinesChanged;
 
         /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// (if the code elements lines changed since the last time this method was called)
         /// Thread-safe : this method can be called from any thread.
         /// </summary>
-        public void RefreshProgramOrClassSnapshot()
+        public void RefreshProgramClassDocumentSnapshot()
         {
             // Make sure two threads don't try to update this snapshot at the same time
-            lock (lockObjectForProgramOrClass)
+            lock (lockObjectForProgramClassDocumentSnapshot)
             {
-                // Capture previous snapshots at one point in time
+                // Capture previous snapshot at one point in time
                 CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
 
                 // Check if an update is necessary and compute changes to apply since last version
-                if (codeElementsLinesVersionForCurrentProgramOrClass == null || codeElementsLinesVersionForCurrentProgramOrClass != codeElementsDocument.CurrentVersion)
+                if (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion)
                 {
-                    codeElementsLinesVersionForCurrentProgramOrClass = codeElementsDocument.CurrentVersion;
-
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     Program newProgram;
                     Class newClass;
                     IList<ParserDiagnostic> newDiagnostics;
                     ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, out newProgram, out newClass, out newDiagnostics);
-                    Program = newProgram;
-                    Class = newClass;
-                    Diagnostics = newDiagnostics;
+
+                    // Capture the result of the parse in a new snapshot
+                    ProgramClassDocumentSnapshot = new ProgramClassDocument(
+                        codeElementsDocument,  ProgramClassDocumentSnapshot.CurrentVersion +1,
+                        newProgram, newClass, newDiagnostics);
                 }
+            }
+
+            // Send events to all listeners
+            EventHandler<int> programClassChanged = ProgramClassChanged; // avoid race condition
+            if (programClassChanged != null)
+            {
+                programClassChanged(this, ProgramClassDocumentSnapshot.CurrentVersion);
             }
         }
 
-        // Update Program or Class only when code elements changed
-        private DocumentVersion<ICodeElementsLine> codeElementsLinesVersionForCurrentProgramOrClass;
-
         /// <summary>
-        /// Last snapshot of the compilation unit viewed as a complete Cobol program, after parsing the code elements.
+        /// Last snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
         /// Only one of the two properties Program or Class can be not null.
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary> 
-        public Program Program { get; private set; }
+        public ProgramClassDocument ProgramClassDocumentSnapshot { get; private set; }
 
         /// <summary>
-        /// Last snapshot of the compilation unit viewed as a complete Cobol class, after parsing the code elements.
-        /// Only one of the two properties Program or Class can be not null.
-        /// Tread-safe : accessible from any thread, returns an immutable object tree.
-        /// </summary> 
-        public Class Class { get; private set; }
-
-        /// <summary>
-        /// Errors found while parsing Program or Class
+        /// Subscribe to this event to be notified of all changes in the complete program or class view of the document
         /// </summary>
-        public IList<ParserDiagnostic> Diagnostics { get; private set; }
-        
+        public event EventHandler<int> ProgramClassChanged;
+
         #region Thread ownership and synchronization
 
         // Synchronize accesses during snapshots updates
         protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
-        protected readonly object lockObjectForProgramOrClass = new object();
+        protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
 
         #endregion
     }
-
-    /*
-        /// <summary>
-        /// Syntax tree produced by the parsing phase
-        /// </summary>
-        public SyntaxDocument SyntaxDocument     { get; private set; }
-
-        /// <summary>
-        /// Object oriented model of the Cobol program
-        /// </summary>
-        public SemanticsDocument SemanticsDocument      { get; private set; }
-
-        /// <summary>     
-        /// List of all external programs called from the current program 
-        /// </summary>
-        public IList<CompilationUnit> CallReferences { get; private set; }
-
-        /// <summary>
-        /// TextDocument where the target Cobol code will be generated
-        /// </summary>
-        public ITextDocument GeneratedTextDocument { get; private set; }
-
-        /// <summary>
-        /// True if the current generated text in GeneratedTextDocument is different from the GeneratedCobolFile content 
-        /// </summary>
-        public bool HasGeneratedTextChangesToSave { get; private set; }
-
-        /// <summary>
-        /// CobolFile used to save the results of the Cobol code generation
-        /// </summary>
-        public CobolFile GeneratedCobolFile { get; private set; }
-
-        /// <summary>
-        /// Compiler options 
-        /// </summary>
-        public TypeCobolOptions CompilerOptions { get; private set; }
-
-        /// <summary>
-        /// Load a Cobol source file in memory
-        /// </summary>
-        public CompilationUnit(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions) :
-            base(libraryName, textName, sourceFileProvider, documentProvider, columnsLayout, compilerOptions)
-        {
-            CompilerOptions = compilerOptions;
-
-            // 5. Parse the processed tokens
-            SyntaxDocument = new SyntaxDocument(ProcessedTokensDocument, compilerOptions);
-
-            // 6. Build a code model from the parse tree, after symbol resolution
-            SemanticsDocument = new SemanticsDocument(SyntaxDocument, compilerOptions);
-        }
-
-        /// <summary>
-        /// Load a Cobol source file in an existing text document
-        /// </summary>
-        public CompilationUnit(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ITextDocument textDocument, TypeCobolOptions compilerOptions) :
-            base(libraryName, textName, sourceFileProvider, documentProvider, textDocument, compilerOptions)
-        {
-            CompilerOptions = compilerOptions;
-
-            // 5. Parse the processed tokens
-            SyntaxDocument = new SyntaxDocument(ProcessedTokensDocument, compilerOptions);
-
-            // 6. Build a code model from the parse tree, after symbol resolution
-            SemanticsDocument = new SemanticsDocument(SyntaxDocument, compilerOptions);
-        }
-
-        /// <summary>
-        /// Initialize the compilation unit from an existing text document, not yet associated with a Cobol file
-        /// </summary>
-        public CompilationUnit(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions) :
-            base(textDocument, sourceFileProvider, documentProvider, compilerOptions)
-        {
-            CompilerOptions = compilerOptions;
-
-            // 5. Parse the processed tokens
-            SyntaxDocument = new SyntaxDocument(ProcessedTokensDocument, compilerOptions);
-
-            // 6. Build a code model from the parse tree, after symbol resolution
-            SemanticsDocument = new SemanticsDocument(SyntaxDocument, compilerOptions);
-        }
-
-        /// <summary>
-        /// Initialize the compilation unit from an existing text document, already initialized from a Cobol file
-        /// </summary>
-        public CompilationUnit(ITextDocument textDocument, CobolFile cobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions) :
-            base(textDocument, cobolFile, sourceFileProvider, documentProvider, compilerOptions)
-        {
-            // 5. Parse the processed tokens
-            SyntaxDocument = new SyntaxDocument(ProcessedTokensDocument, compilerOptions);
-
-            // 6. Build a code model from the parse tree, after symbol resolution
-            SemanticsDocument = new SemanticsDocument(SyntaxDocument, compilerOptions);
-        }
-
-        /// <summary>
-        /// Configure the compilation unit to only parse the source and build a code model, without exécuting the code generation phase
-        /// </summary>
-        public void SetupCodeAnalysisPipeline(IScheduler backgroundParsingScheduler, int bufferingDelayMillisecond)
-        {
-            base.SetupDocumentProcessingPipeline(backgroundParsingScheduler, bufferingDelayMillisecond); 
-
-            // Parser always operates on the same thread as Preprocessor
-            ProcessedTokensDocument.TokensChangedEventsSource.Subscribe(SyntaxDocument);
-
-            // TypeChecker alway operates on the same thread as Parser
-            SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(SemanticsDocument);
-        }
-
-        /// <summary>
-        /// Configure the compilation unit to parse the source, build a code model, and then generate Cobol code
-        /// </summary>
-        public void SetupTextGenerationPipeline(IScheduler backgroundParsingScheduler, int bufferingDelayMillisecond, IScheduler textGenerationScheduler)
-        {
-            SetupCodeAnalysisPipeline(backgroundParsingScheduler, bufferingDelayMillisecond);
-
-            // TypeCobolGenerator always operates on the same thread as TypeChecker
-            TypeCobolGenerator generator = new TypeCobolGenerator(SemanticsDocument, GeneratedTextDocument);
-
-            // Mono thread configuration : Generated code is written to the TextDocument in the same thread
-            if (textGenerationScheduler == null)
-            {
-                SemanticsDocument.CodeModelChangedEventsSource.Subscribe(generator);
-            }
-            // Multi-thread configuration : generator could need to update the TextDocument on the UI thread
-            else
-            {
-                SemanticsDocument.CodeModelChangedEventsSource.
-                    ObserveOn(textGenerationScheduler).Subscribe(generator);
-            }
-        } 
-    }*/
 }

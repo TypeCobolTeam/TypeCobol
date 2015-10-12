@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public IDocumentSnapshot<ITokensLine> PreviousStepSnapshot { get; private set; }
 
         /// <summary>
-        /// Document version identifier for the snapshot of the previous document
+        /// Document version identifier for the current document
         /// </summary>
         public DocumentVersion<IProcessedTokensLine> CurrentVersion { get; private set; }
 

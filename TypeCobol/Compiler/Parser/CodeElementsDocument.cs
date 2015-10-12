@@ -1,5 +1,4 @@
 ﻿using System;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
@@ -25,12 +24,12 @@ namespace TypeCobol.Compiler.Parser
         public TextSourceInfo TextSourceInfo { get; private set; }
 
         /// <summary>
-        /// Snapshot of the tokens document which was used to compute the current step
+        /// Snapshot of the processed tokens document which was used to compute the current step
         /// </summary>
         public IDocumentSnapshot<IProcessedTokensLine> PreviousStepSnapshot { get; private set; }
 
         /// <summary>
-        /// Document version identifier for the snapshot of the previous document
+        /// Document version identifier for the current document
         /// </summary>
         public DocumentVersion<ICodeElementsLine> CurrentVersion { get; private set; }
 

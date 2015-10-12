@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Text
 {
@@ -102,7 +97,12 @@ namespace TypeCobol.Compiler.Text
                 // Send document cleared event
                 TextChangedEvent documentClearedEvent = new TextChangedEvent();
                 documentClearedEvent.TextChanges.Add(new TextChange(TextChangeType.DocumentCleared, 0, null));
-                textChangedEventsSource.OnNext(documentClearedEvent);
+
+                EventHandler<TextChangedEvent> textChangedEvent = TextChangedEvent;
+                if (textChangedEvent != null)
+                {
+                    textChangedEvent(this, documentClearedEvent);
+                }
 
                 // Send all new text lines
                 SendDocumentChangeEvent();
@@ -319,16 +319,11 @@ namespace TypeCobol.Compiler.Text
             }
         }
 
-        private ISubject<TextChangedEvent> textChangedEventsSource = new Subject<TextChangedEvent>();
-
         /// <summary>
         /// A TextChangedEvent is sent to all observers each time a line 
         /// is inserted, updated, or removed in the document
         /// </summary>
-        public IObservable<TextChangedEvent> TextChangedEventsSource
-        {
-            get { return textChangedEventsSource; }
-        }
+        public event EventHandler<TextChangedEvent> TextChangedEvent;
 
         // Tracks the current state
         private bool sendNextChangeEvents = false;
@@ -356,7 +351,12 @@ namespace TypeCobol.Compiler.Text
                 TextChange textChange = new TextChange(TextChangeType.LineInserted, line.LineIndex, line);
                 textLoadedEvent.TextChanges.Add(textChange);
             }
-            textChangedEventsSource.OnNext(textLoadedEvent);
+
+            EventHandler<TextChangedEvent> textChangedEvent = TextChangedEvent;
+            if (textChangedEvent != null)
+            {
+                textChangedEvent(this, textLoadedEvent);
+            }
         }               
     }
 }

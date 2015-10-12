@@ -26,12 +26,12 @@ namespace TypeCobol.Compiler.Scanner
         public TextSourceInfo TextSourceInfo { get; private set; }
 
         /// <summary>
-        /// Document version identifier for the list of source lines used as a basis to compute the current step
+        /// Document version identifier for the list of cobol text lines used as a basis to compute the current step
         /// </summary>
         public DocumentVersion<ICobolTextLine> SourceLinesVersion { get; private set; }
 
         /// <summary>
-        /// Document version identifier for the snapshot of the previous document
+        /// Document version identifier for the current document
         /// </summary>
         public DocumentVersion<ITokensLine> CurrentVersion { get; private set; }
         
