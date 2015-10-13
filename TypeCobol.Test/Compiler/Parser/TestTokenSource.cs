@@ -27,14 +27,14 @@ namespace TypeCobol.Test.Compiler.Parser
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                compilationDocument.TextDocument.Source.Name,
-                compilationDocument.TokensDocument.TokensLines,
+                compilationDocument.TokensDocumentSnapshot.TextSourceInfo.Name,
+                compilationDocument.TokensDocumentSnapshot.Lines,
                 null,
                 Token.CHANNEL_SourceTokens);
 
             // Crate an Antlr compatible token source on top a the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
-                compilationDocument.TextDocument.Source.Name,
+                compilationDocument.TokensDocumentSnapshot.TextSourceInfo.Name,
                 tokensIterator);
             tokenSource.NextToken();
 
@@ -121,14 +121,14 @@ namespace TypeCobol.Test.Compiler.Parser
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                compilationDocument.TextDocument.Source.Name,
-                compilationDocument.TokensDocument.TokensLines,
+                compilationDocument.TokensDocumentSnapshot.TextSourceInfo.Name,
+                compilationDocument.TokensDocumentSnapshot.Lines,
                 null,
                 Token.CHANNEL_SourceTokens);
 
             // Crate an Antlr compatible token source on top a the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
-                compilationDocument.TextDocument.Source.Name,
+                compilationDocument.TokensDocumentSnapshot.TextSourceInfo.Name,
                 tokensIterator);
 
             if (tokenSource.SourceName != "MSVCOUT")
@@ -192,18 +192,18 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, docFormat);
 
             // Search for first level 88 as a start token
-            Token startToken = compilationDocument.TokensDocument.SourceTokens.First(t => (t.TokenType == TokenType.IntegerLiteral && ((IntegerLiteralValue)t.LiteralValue).Number == 88));
+            Token startToken = compilationDocument.TokensDocumentSnapshot.SourceTokens.First(t => (t.TokenType == TokenType.IntegerLiteral && ((IntegerLiteralValue)t.LiteralValue).Number == 88));
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
-                compilationDocument.TextDocument.Source.Name,
-                compilationDocument.TokensDocument.TokensLines,
+                compilationDocument.TokensDocumentSnapshot.TextSourceInfo.Name,
+                compilationDocument.TokensDocumentSnapshot.Lines,
                 startToken,
                 Token.CHANNEL_SourceTokens);
 
             // Crate an Antlr compatible token source on top a the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
-                compilationDocument.TextDocument.Source.Name,
+                compilationDocument.TokensDocumentSnapshot.TextSourceInfo.Name,
                 tokensIterator);
 
             IToken token = null;

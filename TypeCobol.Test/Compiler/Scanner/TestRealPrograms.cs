@@ -3,6 +3,7 @@ using System.IO;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Scanner
@@ -23,23 +24,24 @@ namespace TypeCobol.Test.Compiler.Scanner
                 string textName = Path.GetFileNameWithoutExtension(fileName);
 
                 // Initialize a CompilationDocument
-                CompilationDocument compilationDocument = new CompilationDocument(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions());
-                // Setup a synchronous compilation pipeline
-                compilationDocument.SetupDocumentProcessingPipeline(null, 0);
+                FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions(), true);
 
                 // Start compilation
-                //chrono.Start();
-               compilationDocument.StartDocumentProcessing();
-                //chrono.Stop();
-
-                // Stats and errors
-                //filesCount++;
-                //linesCount += compilationDocument.TokensDocument.TokensLines.Count;
-                if (compilationDocument.TokensDocument.LastException != null)
+                try
                 {
-                    throw new Exception("Error while scanning file " + fileName, compilationDocument.TokensDocument.LastException);
+                    //chrono.Start();
+                    compiler.CompileOnce();
+                    //chrono.Stop();
                 }
-                //string result = compilationDocument.TokensDocument.GetDebugString();
+                catch(Exception e)
+                {
+                    throw new Exception("Error while scanning file " + fileName, e);
+                }
+
+                // Stats
+                //filesCount++;
+                //linesCount += compiler.CompilationResultsForCopy.TokensDocumentSnapshot.Lines.Count;
+                //string result = compiler.CompilationResultsForCopy.TokensDocumentSnapshot.GetDebugString();
             }
             // throw new Exception("Test OK for " + filesCount + " files and " + linesCount + " lines : " + chrono.ElapsedMilliseconds + " ms");
         }

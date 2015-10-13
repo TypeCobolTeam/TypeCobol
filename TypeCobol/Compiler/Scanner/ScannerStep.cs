@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
@@ -10,12 +9,12 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Incrementally scan a set of text changes
     /// </summary>
-    static class ScannerStep
+    public static class ScannerStep
     {
         /// <summary>
         /// Initial scan of a complete document
         /// </summary>
-        internal static void ScanDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions)
+        public static void ScanDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, TypeCobolOptions compilerOptions)
         {
             TokensLine tokensLine = null;            
             TokensLine nextTokensLine = null;

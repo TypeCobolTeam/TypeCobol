@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,13 +8,14 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
     internal class TestUnit
     {
-        private CompilationUnit unit = null;
+        private FileCompiler compiler = null;
         public FilesComparator comparator;
         public TestObserver observer;
 
@@ -32,26 +34,32 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = comparator.paths.sample.project.file;
-            this.unit = new CompilationUnit(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions());
-            this.unit.SetupCodeAnalysisPipeline(null, 0);
-            this.unit.SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(this.observer);
+            this.compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, new TypeCobolOptions(), false);
         }
 
         public void Parse()
         {
-            this.unit.StartDocumentProcessing();
+            try
+            {
+                this.compiler.CompileOnce();
+            }
+            catch(Exception e)
+            {
+                this.observer.OnError(e);
+            }
         }
 
         public void Compare()
         {
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path)))
             {
-                this.comparator.Compare(this.unit.SyntaxDocument.CodeElements, this.unit.SyntaxDocument.Diagnostics, reader);
+                CodeElementsDocument parserResult = this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot;
+                this.comparator.Compare(parserResult.CodeElements, parserResult.ParserDiagnostics, reader);
             }
         }
     }
 
-    internal class TestObserver : System.IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent>
+    internal class TestObserver
     {
         private IList<System.Exception> errors = new List<System.Exception>();
         public bool HasErrors
@@ -64,9 +72,7 @@ namespace TypeCobol.Test.Compiler.Parser
             foreach (var error in errors) str.AppendLine(error.ToString());
             return str.ToString();
         }
-        public void OnCompleted() { }
         public void OnError(System.Exception error) { errors.Add(error); }
-        public void OnNext(TypeCobol.Compiler.Parser.CodeElementChangedEvent value) { }
     }
 
     internal class FolderTester
@@ -193,7 +199,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal interface Comparator
     {
-        void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected);
+        void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected);
     }
 
     internal class FilesComparator : Comparator
@@ -210,7 +216,7 @@ namespace TypeCobol.Test.Compiler.Parser
             this.debug = debug;
         }
 
-        public virtual void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
+        public virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             string result = ParserUtils.DumpResult(elements, diagnostics);
             if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
@@ -233,13 +239,14 @@ namespace TypeCobol.Test.Compiler.Parser
         public ArithmeticComparator(string name, Names resultnames = null, bool debug = false)
             : base(name, resultnames, debug) { }
 
-        public override void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
+        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
-            if (elements.Count < 1) throw new System.Exception("No CodeElements found!");
+            bool elementsFound = false;
             foreach (var e in elements)
             {
+                elementsFound = true;
                 var statement = e as ArithmeticOperationStatement;
                 if (statement == null) continue;
                 string rpn = expected.ReadLine();
@@ -248,6 +255,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn);
                 c++;
             }
+            if(!elementsFound) throw new System.Exception("No CodeElements found!");
             if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
             if (errors.Length > 0)
             {
@@ -276,7 +284,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public NYComparator(string name, Names resultnames = null, bool debug = false)
             : base(name, resultnames, debug) { }
 
-        public override void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
+        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
@@ -310,7 +318,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public Outputter(string name, Names resultnames = null, bool debug = false)
             : base(name, resultnames, debug) { }
 
-        public override void Compare(IList<CodeElement> elements, IList<Diagnostic> diagnostics, StreamReader expected)
+        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             foreach (var e in elements)
             {

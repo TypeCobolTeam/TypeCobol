@@ -6,16 +6,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Compiler.Scanner;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -33,11 +30,10 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
 
-            CompilationDocument compilationDoc = new CompilationDocument(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            compilationDoc.SetupDocumentProcessingPipeline(null, 0);
-            compilationDoc.StartDocumentProcessing();
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), true);
+            compiler.CompileOnce();
 
-            return compilationDoc;
+            return compiler.CompilationResultsForCopy;
         }
 
         public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null)
@@ -52,19 +48,35 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationProject project = new CompilationProject("test",
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            CompilationUnit compilationUnit = new CompilationUnit(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            compilationUnit.SetupCodeAnalysisPipeline(null, 0);
-            compilationUnit.StartDocumentProcessing();
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), false);
+            compiler.CompileOnce();
 
-            return compilationUnit;
+            return compiler.CompilationResultsForProgram;
         }
 
-        public static string DumpCodeElements(CompilationUnit unit)
+        public static CompilationUnit ParseCobolString(string cobolString)
         {
-            return DumpResult(unit.SyntaxDocument.CodeElements, unit.SyntaxDocument.Diagnostics);
+            //Prepare
+            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
+            textDocument.LoadChars(cobolString);
+
+            var typeCobolOptions = new TypeCobolOptions();
+            var project = new CompilationProject("Empty project", ".", new[] { "*.cbl", "*.cpy" },
+                DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
+                DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
+
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false);
+            compiler.CompileOnce();
+
+            return compiler.CompilationResultsForProgram;
         }
 
-        public static string DumpResult(IList<CodeElement> elements, IList<Diagnostic> diagnostics)
+        public static string DumpCodeElements(CodeElementsDocument result)
+        {
+            return DumpResult(result.CodeElements, result.ParserDiagnostics);
+        }
+
+        public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(DiagnosticsToString(diagnostics));
@@ -72,29 +84,53 @@ namespace TypeCobol.Test.Compiler.Parser
             return builder.ToString();
         }
 
-        public static string DiagnosticsToString(IList<Diagnostic> diagnostics)
+        public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics)
         {
-            if (diagnostics == null || diagnostics.Count < 1) return "";
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("--- Diagnostics ---");
+            bool hasDiagnostic = false;
             foreach (Diagnostic d in diagnostics)
             {
                 if (d is ParserDiagnostic)
-                     builder.AppendLine(((ParserDiagnostic)d).ToStringWithRuleStack());
-                else builder.AppendLine(d.ToString());
+                {
+                    builder.AppendLine(((ParserDiagnostic)d).ToStringWithRuleStack());
+                }
+                else
+                {
+                    builder.AppendLine(d.ToString());
+                }
+                hasDiagnostic = true;
             }
-            return builder.ToString();
+            if(hasDiagnostic)
+            {
+                builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
+                return builder.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
         }
 
 
-        public static string CodeElementsToString(IList<CodeElement> elements)
+        public static string CodeElementsToString(IEnumerable<CodeElement> elements)
         {
-            if (elements == null || elements.Count < 1) return "";
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("--- Code Elements ---");
-            foreach (CodeElement e in elements) builder.AppendLine(e.ToString());
+            bool hasCodeElement = false;
+            foreach (CodeElement e in elements)
+            {
+                builder.AppendLine(e.ToString());
+                hasCodeElement = true;
+            }
             //TODO log Diagnostics linked to codeElement directly after, to increase test readability
-            return builder.ToString();
+            if (hasCodeElement)
+            {
+                builder.Insert(0, "--- Code Elements ---" + Environment.NewLine);
+                return builder.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
         }
 
 
@@ -111,27 +147,6 @@ namespace TypeCobol.Test.Compiler.Parser
             string expectedResult = reader.ReadToEnd();
 
             TestUtils.compareLines(testName, result, expectedResult);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public static CompilationUnit CreateCompilationUnitForVirtualFile()
-        {
-            //Prepare
-            var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
-
-            var typeCobolOptions = new TypeCobolOptions();
-            var project = new CompilationProject("Empty project", ".", new[] { "*.cbl", "*.cpy" },
-                DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
-                DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
-
-            var compilationUnit = new CompilationUnit(textDocument, project.SourceFileProvider, project, typeCobolOptions);
-            compilationUnit.SetupCodeAnalysisPipeline(null, 0);
-            compilationUnit.StartDocumentProcessing();
-
-            return compilationUnit;
         }
     }
 

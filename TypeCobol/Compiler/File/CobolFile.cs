@@ -235,6 +235,15 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         public event EventHandler<CobolFileChangedEvent> CobolFileChanged;
 
+        internal void RaiseCobolFileChanged(CobolFileChangedEvent fileEvent)
+        {
+            EventHandler<CobolFileChangedEvent> cobolFileChanged = CobolFileChanged;
+            if(cobolFileChanged != null)
+            {
+                cobolFileChanged(this, fileEvent);
+            }
+        }
+
         /// <summary>
         /// Starts monitoring the external changes applied to the Cobol file (service stopped by default)
         /// </summary>

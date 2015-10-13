@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class TokensLine : CobolTextLine, ITokensLine
     {
-        internal TokensLine(ITextLine textLine, ColumnsLayout columnsLayout) : base(textLine, columnsLayout)
+        public TokensLine(ITextLine textLine, ColumnsLayout columnsLayout) : base(textLine, columnsLayout)
         {
             lastSourceIndex = Source.EndIndex;
             SourceTokens = new List<Token>();

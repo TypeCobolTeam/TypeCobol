@@ -109,5 +109,17 @@ namespace TypeCobol.Compiler.Parser
 
             return codeElementsLinesChanges;
         }
+
+        /// <summary>
+        /// Iterator over the tokens contained in the parameter "lines" after
+        /// - COPY directives text imports
+        /// - REPLACE directive token remplacements
+        /// </summary>
+        public static ITokensLinesIterator GetProcessedTokensIterator(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<IProcessedTokensLine> lines)
+        {
+            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(textSourceInfo.Name, lines, Token.CHANNEL_SourceTokens);
+            ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator);
+            return replaceIterator;
+        }
     }
 }

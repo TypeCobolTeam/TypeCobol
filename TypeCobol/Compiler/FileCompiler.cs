@@ -250,7 +250,16 @@ namespace TypeCobol.Compiler
                 WaitHandle.WaitAll(waitHandles);
             }
         }
-
+        
+        /// <summary>
+        /// Start listening to document change events
+        /// </summary>
+        public virtual void StartDocumentProcessing()
+        {
+            // Start compilation process
+            TextDocument.StartSendingChangeEvents();
+        }
+        
         /// <summary>
         /// Monitor changes to the source Cobol file and automatically update TextDocument contents after each file update
         /// </summary>
@@ -258,7 +267,7 @@ namespace TypeCobol.Compiler
         {
             // Reload text document each time an external change is applied to the cobol file
             ObserverTextDocument observerTextDocument = new ObserverTextDocument(CobolFile, TextDocument);
-            CobolFile.CobolFileChangedEventsSource.Subscribe(observerTextDocument);
+            CobolFile.CobolFileChanged += observerTextDocument.OnCobolFileChanged;
 
             // Start compilation process
             TextDocument.StartSendingChangeEvents();
@@ -268,7 +277,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Reload the entire file content in the text document each time the file is updated
         /// </summary>
-        private class ObserverTextDocument : IObserver<CobolFileChangedEvent>
+        private class ObserverTextDocument
         {
             private CobolFile cobolFile;
             private ITextDocument textDocument;
@@ -279,26 +288,16 @@ namespace TypeCobol.Compiler
                 this.textDocument = textDocument;
             }
 
-            public void OnNext(CobolFileChangedEvent value)
+            public void OnCobolFileChanged(object sender, CobolFileChangedEvent fileEvent)
             {
-                if (value.Type == CobolFileChangeType.FileChanged)
+                if (fileEvent.Type == CobolFileChangeType.FileChanged)
                 {
                     textDocument.LoadChars(cobolFile.ReadChars());
                 }
                 else
                 {
-                    throw new InvalidOperationException("File change type " + value.Type + " is not supported in this configuration");
+                    throw new InvalidOperationException("File change type " + fileEvent.Type + " is not supported in this configuration");
                 }
-            }
-
-            public void OnCompleted()
-            {
-                // Do nothing
-            }
-
-            public void OnError(Exception error)
-            {
-                // Do nothing
             }
         }        
     }

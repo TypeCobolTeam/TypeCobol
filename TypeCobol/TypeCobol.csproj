@@ -341,7 +341,6 @@
     <Compile Include="Compiler\Scanner\MultilineScanState.cs" />
     <Compile Include="Compiler\Scanner\Scanner.cs" />
     <Compile Include="Compiler\Scanner\Token.cs" />
-    <Compile Include="Compiler\Scanner\TokensChangedEvent.cs" />
     <Compile Include="Compiler\Scanner\TokensDocument.cs" />
     <Compile Include="Compiler\Scanner\TokensGroup.cs" />
     <Compile Include="Compiler\Scanner\TokensLine.cs" />

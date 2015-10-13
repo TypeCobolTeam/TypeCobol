@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
+using System.Linq;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -14,11 +14,11 @@ namespace TypeCobol.Test.Compiler.Parser
             // Compile test file
             CompilationUnit compilationUnit = ParserUtils.ParseCobolFile(testName, null);
             // Check code elements
-            string result = ParserUtils.DumpCodeElements(compilationUnit);
+            string result = ParserUtils.DumpCodeElements(compilationUnit.CodeElementsDocumentSnapshot);
             if (debug)
             {
-                Console.WriteLine(compilationUnit.SyntaxDocument.CodeElements.Count+" CodeElements found:");
-                foreach (var e in compilationUnit.SyntaxDocument.CodeElements) Console.WriteLine("> "+e);
+                //Console.WriteLine(compilationUnit.CodeElementsDocumentSnapshot.CodeElements.Count+" CodeElements found:");
+                foreach (var e in compilationUnit.CodeElementsDocumentSnapshot.CodeElements) Console.WriteLine("> "+e);
                 Console.WriteLine("result:\n" + result);
             }
             ParserUtils.CheckWithResultFile(result, testName);
@@ -29,54 +29,52 @@ namespace TypeCobol.Test.Compiler.Parser
         /// </summary>
         public static void Check_DISPLAYCodeElements()
         {
-            CompilationUnit compilationUnit = ParserUtils.CreateCompilationUnitForVirtualFile();
-
             Tuple<CodeElementsDocument, DisplayStatement> tuple;
 
             //Test using the generic method which parse a single CodeElement
-            tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, "display 'toto'");
+            tuple = ParseOneCodeElement<DisplayStatement>("display 'toto'");
             Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
             Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing.Value == false);
 
-            tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, "display toto no advancing no advancing", false);
+            tuple = ParseOneCodeElement<DisplayStatement>("display toto no advancing no advancing", false);
             Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
             Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing.Value);
 
 
-            ParseDisplayStatement(compilationUnit, "display toto", 1);
-            ParseDisplayStatement(compilationUnit, "display toto  'titi' tata", 3);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon mnemo", 3, SymbolType.Unknown);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon zeiruzrzioeruzoieruziosdfsdfsdfe ", 3, SymbolType.Unknown);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon SYSIN", 3, SymbolType.Unknown);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon C06", 3, SymbolType.Unknown);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon SYSIN with no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon C06  no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon mnemo no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata upon toto with no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata no advancing", 3, null, true);
-            ParseDisplayStatement(compilationUnit, "display toto 'titi' tata with no advancing", 3, null, true);
+            ParseDisplayStatement("display toto", 1);
+            ParseDisplayStatement("display toto  'titi' tata", 3);
+            ParseDisplayStatement("display toto 'titi' tata upon mnemo", 3, SymbolType.Unknown);
+            ParseDisplayStatement("display toto 'titi' tata upon zeiruzrzioeruzoieruziosdfsdfsdfe ", 3, SymbolType.Unknown);
+            ParseDisplayStatement("display toto 'titi' tata upon SYSIN", 3, SymbolType.Unknown);
+            ParseDisplayStatement("display toto 'titi' tata upon C06", 3, SymbolType.Unknown);
+            ParseDisplayStatement("display toto 'titi' tata upon SYSIN with no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement("display toto 'titi' tata upon C06  no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement("display toto 'titi' tata upon mnemo no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement("display toto 'titi' tata upon toto with no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement("display toto 'titi' tata no advancing", 3, null, true);
+            ParseDisplayStatement("display toto 'titi' tata with no advancing", 3, null, true);
 
-            ParseDisplayStatement(compilationUnit, "display ", 0, false);
-            ParseDisplayStatement(compilationUnit, "display", 0, false);
-            ParseDisplayStatement(compilationUnit, "display 'fsdf  \\ sdf'", 1);
-            ParseDisplayStatement(compilationUnit, "display \"treortiertertert  zerzerzerze\" ", 1);
-            ParseDisplayStatement(compilationUnit, "display 'treortiertertert  '' zerzerzerze' ", 1);
-            ParseDisplayStatement(compilationUnit, "display 'treortiertertert  \" zerzerzerze' ", 1);
-            ParseDisplayStatement(compilationUnit, "display 'treortiertertert  \"\" zerzerzerze' ", 1);
+            ParseDisplayStatement("display ", 0, false);
+            ParseDisplayStatement("display", 0, false);
+            ParseDisplayStatement("display 'fsdf  \\ sdf'", 1);
+            ParseDisplayStatement("display \"treortiertertert  zerzerzerze\" ", 1);
+            ParseDisplayStatement("display 'treortiertertert  '' zerzerzerze' ", 1);
+            ParseDisplayStatement("display 'treortiertertert  \" zerzerzerze' ", 1);
+            ParseDisplayStatement("display 'treortiertertert  \"\" zerzerzerze' ", 1);
         }
 
 
-        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse,
+        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(string textToParse,
             int nbrOfVarToDisplay)
         {
-            return ParseDisplayStatement(compilationUnit, textToParse, nbrOfVarToDisplay, null, false, true);
+            return ParseDisplayStatement(textToParse, nbrOfVarToDisplay, null, false, true);
         }
-        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse,
+        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(string textToParse,
             int nbrOfVarToDisplay, bool correctSyntax)
         {
-            return ParseDisplayStatement(compilationUnit, textToParse, nbrOfVarToDisplay, null, false, correctSyntax);
+            return ParseDisplayStatement(textToParse, nbrOfVarToDisplay, null, false, correctSyntax);
         }
 
 
@@ -94,9 +92,9 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <param name="correctSyntax"></param>
         /// <param name="varsToDisplay"></param>
         /// <returns></returns>
-        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(CompilationUnit compilationUnit, string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
+        public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
         {
-            Tuple<CodeElementsDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(compilationUnit, textToParse, correctSyntax);
+            Tuple<CodeElementsDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(textToParse, correctSyntax);
             Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == nbrOfVarToDisplay);
             if (uponMnemonicOrEnvName == null)
             {
@@ -129,26 +127,24 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <param name="compilationUnit"></param>
         /// <param name="textToParse"></param>
         /// <param name="correctSyntax"></param>
-        public static Tuple<CodeElementsDocument, T> ParseOneCodeElement<T>(CompilationUnit compilationUnit, string textToParse, bool correctSyntax = true) where T : CodeElement
+        public static Tuple<CodeElementsDocument, T> ParseOneCodeElement<T>(string textToParse, bool correctSyntax = true) where T : CodeElement
         {
-//            compilationUnit.SyntaxDocument.Diagnostics.Clear();
-//            compilationUnit.SyntaxDocument.CodeElements.Clear();
-            compilationUnit.TextDocument.LoadChars(textToParse);
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolString(textToParse);
 
-            CodeElementsDocument syntaxDocument = compilationUnit.SyntaxDocument;
-            Assert.IsTrue(syntaxDocument.CodeElements.Count == 1);
-            Assert.IsTrue(syntaxDocument.CodeElements[0].GetType() == typeof(T));
+            CodeElementsDocument codeElementsDocument = compilationUnit.CodeElementsDocumentSnapshot;
+            Assert.IsTrue(codeElementsDocument.CodeElements.Count() == 1);
+            Assert.IsTrue(codeElementsDocument.CodeElements.First().GetType() == typeof(T));
 
             if (correctSyntax)
             {
-                Assert.IsTrue(syntaxDocument.Diagnostics.Count == 0);
+                Assert.IsTrue(codeElementsDocument.ParserDiagnostics.Count() == 0);
             }
             else
             {
-                Assert.IsFalse(syntaxDocument.Diagnostics.Count == 0);
+                Assert.IsFalse(codeElementsDocument.ParserDiagnostics.Count() == 0);
             }
 
-            return new Tuple<CodeElementsDocument, T>(syntaxDocument, (T) syntaxDocument.CodeElements[0]);
+            return new Tuple<CodeElementsDocument, T>(codeElementsDocument, (T) codeElementsDocument.CodeElements.First());
         }
 
         public static void Check_EXITCodeElements()

@@ -28,9 +28,8 @@ namespace TypeCobol.Tools.CommandLine
             {
                 string textName = args[0];
 
-                CompilationUnit compilationUnit = new CompilationUnit(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, compilerOptions.Clone());
-                compilationUnit.SetupTextGenerationPipeline(null, 0, null);
-                compilationUnit.StartDocumentProcessing();
+                FileCompiler fileCompiler = new FileCompiler(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, compilerOptions.Clone(), false);
+                fileCompiler.CompileOnce();
             }
             // - gets an optional "-continuous" flag as the first argument to activate source file monitoring and automatic recompilation
             else if (args.Length == 2)
@@ -39,11 +38,11 @@ namespace TypeCobol.Tools.CommandLine
                 {
                     string textName = args[1];
 
-                    CompilationUnit compilationUnit = new CompilationUnit(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, compilerOptions.Clone());
-                    compilationUnit.SetupTextGenerationPipeline(null, 0, null);
+                    FileCompiler fileCompiler = new FileCompiler(null, textName, project.SourceFileProvider, project, ColumnsLayout.CobolReferenceFormat, compilerOptions.Clone(), false);
+                    fileCompiler.StartContinuousBackgroundCompilation(400, 400, 900, 2000);
 
                     Console.WriteLine("Processing, press enter to stop ...");
-                    compilationUnit.StartContinuousFileProcessing();
+                    fileCompiler.StartContinuousFileProcessing();
 
                     Console.ReadLine();
                 }

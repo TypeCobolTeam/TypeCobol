@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
@@ -176,13 +172,13 @@ namespace TypeCobol.Compiler
             }
             else
             {
-                resultDocument = new CompilationDocument(libraryName, textName, SourceFileProvider, this, defaultColumnsLayout, defaultCompilationOptions);
-                resultDocument.SetupDocumentProcessingPipeline(null, 0);
-                resultDocument.StartDocumentProcessing();
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, defaultColumnsLayout, defaultCompilationOptions, true);
+                fileCompiler.CompileOnce();
+                resultDocument = fileCompiler.CompilationResultsForCopy;
 
                 importedCompilationDocumentsCache[cacheKey] = resultDocument;
             }
-            return resultDocument.ProcessedTokensDocument;
+            return resultDocument.ProcessedTokensDocumentSnapshot;
         }
     } 
 }

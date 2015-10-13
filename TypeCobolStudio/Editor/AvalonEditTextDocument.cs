@@ -1,7 +1,6 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reactive.Subjects;
 using System.Text;
 using TypeCobol.Compiler.Text;
@@ -205,14 +204,18 @@ namespace TypeCobolStudio.Editor
                 initialEvent.TextChanges.Add(lineAdded);
                 lineIndex++;
             }
-            textChangedEventsSource.OnNext(initialEvent);
+            RaiseTextChanged(initialEvent);
         }
 
-        private ISubject<TextChangedEvent> textChangedEventsSource = new Subject<TextChangedEvent>();
+        public event EventHandler<TextChangedEvent> TextChanged;
 
-        public IObservable<TextChangedEvent> TextChangedEventsSource
+        private void RaiseTextChanged(TextChangedEvent textEvent)
         {
-            get { return textChangedEventsSource; }
+            EventHandler<TextChangedEvent> textChanged = TextChanged;
+            if (textChanged != null)
+            {
+                textChanged(this, textEvent);
+            }
         }
 
         public void Dispose()
@@ -275,7 +278,7 @@ namespace TypeCobolStudio.Editor
         {
             if (sendNextChangeEvents)
             {
-                textChangedEventsSource.OnNext(textChangedEvent);
+                RaiseTextChanged(textChangedEvent);
                 textChangedEvent = new TextChangedEvent();
             }
         }

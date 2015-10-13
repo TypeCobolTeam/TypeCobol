@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.Text
                 TextChangedEvent documentClearedEvent = new TextChangedEvent();
                 documentClearedEvent.TextChanges.Add(new TextChange(TextChangeType.DocumentCleared, 0, null));
 
-                EventHandler<TextChangedEvent> textChangedEvent = TextChangedEvent;
+                EventHandler<TextChangedEvent> textChangedEvent = TextChanged;
                 if (textChangedEvent != null)
                 {
                     textChangedEvent(this, documentClearedEvent);
@@ -323,7 +323,7 @@ namespace TypeCobol.Compiler.Text
         /// A TextChangedEvent is sent to all observers each time a line 
         /// is inserted, updated, or removed in the document
         /// </summary>
-        public event EventHandler<TextChangedEvent> TextChangedEvent;
+        public event EventHandler<TextChangedEvent> TextChanged;
 
         // Tracks the current state
         private bool sendNextChangeEvents = false;
@@ -352,7 +352,7 @@ namespace TypeCobol.Compiler.Text
                 textLoadedEvent.TextChanges.Add(textChange);
             }
 
-            EventHandler<TextChangedEvent> textChangedEvent = TextChangedEvent;
+            EventHandler<TextChangedEvent> textChangedEvent = TextChanged;
             if (textChangedEvent != null)
             {
                 textChangedEvent(this, textLoadedEvent);

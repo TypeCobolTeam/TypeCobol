@@ -44,7 +44,7 @@ namespace TypeCobol.Test.Compiler.Preprocessor
 
             StringBuilder sbResult = new StringBuilder();
             int lineNumber = 1;
-            foreach (var line in processedDoc.ProcessedTokensLines)
+            foreach (var line in processedDoc.Lines)
             {
                 sbResult.AppendLine("-- Line " + lineNumber + " --");
                 sbResult.AppendLine(BuildResultString(line));
@@ -92,7 +92,7 @@ namespace TypeCobol.Test.Compiler.Preprocessor
         {
             // Tokens
             StringBuilder sbTokens = new StringBuilder();    
-            ITokensLinesIterator tokens = processedDoc.GetTokensIterator();
+            ITokensLinesIterator tokens = processedDoc.ProcessedTokens;
             Token token = tokens.NextToken();
             if(token != Token.END_OF_FILE)
             {
@@ -121,7 +121,7 @@ namespace TypeCobol.Test.Compiler.Preprocessor
             sbDiagnostics.AppendLine("++ Preprocessor diagnostics ++");
             bool hasDiagnostic = false;
             int lineNumber = 1;
-            foreach(var line in processedDoc.ProcessedTokensLines)
+            foreach(var line in processedDoc.Lines)
             {
                 if (line.PreprocessorDiagnostics != null)
                 {
