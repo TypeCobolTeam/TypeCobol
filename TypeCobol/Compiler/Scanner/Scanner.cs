@@ -140,7 +140,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (startOfContinuationIndex > startIndex)
                 {
                     Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, startOfContinuationIndex - 1, continuationLine);
-                    continuationLine.AddToken(whitespaceToken);
+                    continuationLine.SourceTokens.Add(whitespaceToken);
                     startIndex = startOfContinuationIndex;
                 }
                 if (startOfContinuationIndex <= lastIndex)
@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.Scanner
 
                 // Scan the continuation text, and get its last token so far
                 TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
-                Scanner temporaryScanner = new Scanner(concatenatedLine, 0, concatenatedLine.Length - 1, temporaryTokensLine, compilerOptions);
+                Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions);
                 Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count -1];
 
                 // Check if the last token so far is an alphanumeric or national literal
@@ -221,21 +221,25 @@ namespace TypeCobol.Compiler.Scanner
                 // Concatenate the continuation text so far with the text of the current continuation line
                 int startIndexOfContinuationStringInContinuationLine = startOfContinuationIndex + offsetForLiteralContinuation;
                 int lengthOfContinuationStringInContinuationLine = lastIndex - startIndexOfContinuationStringInContinuationLine + 1;                
-                concatenatedLine += line.Substring(startIndexOfContinuationStringInContinuationLine, lengthOfContinuationStringInContinuationLine);
-
+                
                 textAreasForOriginalLinesInConcatenatedLine[i] = new TextArea(TextAreaType.Source, concatenatedLine.Length, concatenatedLine.Length + lengthOfContinuationStringInContinuationLine - 1);
                 startIndexForTextAreasInOriginalLines[i] = startIndexOfContinuationStringInContinuationLine;
                 offsetForLiteralContinuationInOriginalLines[i] = offsetForLiteralContinuation;
+
+                concatenatedLine += line.Substring(startIndexOfContinuationStringInContinuationLine, lengthOfContinuationStringInContinuationLine);
             }
 
             // Scan the complete continuation text as a whole
             TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
-            Scanner continuationScanner = new Scanner(concatenatedLine, 0, concatenatedLine.Length - 1, virtualContinuationTokensLine, compilerOptions);
+            Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions);
 
             // Then attribute each token and diagnostic to its corresponding tokens line
-            for (int i = 1; i < continuationLinesGroup.Count; i++)
+            MultilineScanState scanState = initialScanState;
+            for (int i = 0; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine originalLine = continuationLinesGroup[i];
+                originalLine.InitializeScanState(scanState);
+
                 TextArea textAreaForOriginalLine = textAreasForOriginalLinesInConcatenatedLine[i];
                 int concatenatedLineToOriginalLineOffset = startIndexForTextAreasInOriginalLines[i] - textAreaForOriginalLine.StartIndex;
                 
@@ -252,7 +256,7 @@ namespace TypeCobol.Compiler.Scanner
                         continue;
                     }
                     // Token completely completely included inside the current line
-                    else if(token.StartIndex >= textAreaForOriginalLine.StartIndex && token.StartIndex <= textAreaForOriginalLine.EndIndex)
+                    else if(token.StartIndex >= textAreaForOriginalLine.StartIndex && token.StopIndex <= textAreaForOriginalLine.EndIndex)
                     {                        
                         int startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
                         int stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
@@ -270,13 +274,25 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         bool isContinuationFromPreviousLine = token.StartIndex < textAreaForOriginalLine.StartIndex;
                         bool isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
-                        
-                        int startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
+
+                        int startIndexInOriginalLine = 0; 
                         if (isContinuationFromPreviousLine)
                         {
-                            startIndexInOriginalLine -= offsetForLiteralContinuationInOriginalLines[i];
+                            startIndexInOriginalLine = startIndexForTextAreasInOriginalLines[i] - offsetForLiteralContinuationInOriginalLines[i];
                         }
-                        int stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
+                        else
+                        {
+                            startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
+                        }
+                        int stopIndexInOriginalLine = 0;
+                        if (isContinuedOnNextLine)
+                        {
+                            stopIndexInOriginalLine = originalLine.Source.EndIndex;
+                        }
+                        else
+                        {
+                            stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
+                        }
 
                         ContinuationToken continuationToken = new ContinuationToken(token, startIndexInOriginalLine, stopIndexInOriginalLine, 
                             originalLine, isContinuationFromPreviousLine, isContinuedOnNextLine);
@@ -292,6 +308,8 @@ namespace TypeCobol.Compiler.Scanner
                         }
                     }
                 }
+
+                scanState = originalLine.ScanState;
             }
         }
 

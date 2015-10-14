@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.Scanner
                     // Add next line
                     tokensLine = nextTokensLine;
                     nextTokensLine = null;
-                    continuationLinesGroup.Add(nextTokensLine);
+                    continuationLinesGroup.Add(tokensLine);
 
                     // Navigate forwards to the end of the multiline continuation 
                     while (documentLinesEnumerator.MoveNext())

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -72,14 +73,17 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public override string ToString()
         {
-            if (!IsContinuationFromPreviousLine)
+            StringBuilder sb = new StringBuilder();
+            if (IsContinuationFromPreviousLine)
             {
-                return "=>continued:" + base.ToString();
+                sb.Append("=>continuation:");
             }
-            else
+            if(IsContinuedOnNextLine)
             {
-                return "=>continuation:" + base.ToString();
+                sb.Append("=>continued:");
             }
+            sb.Append(base.ToString());
+            return sb.ToString();
         }
     }
 }
