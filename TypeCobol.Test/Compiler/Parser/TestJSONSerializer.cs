@@ -24,7 +24,7 @@ namespace TypeCobol.Test.Compiler.Parser
             newline(b, a+1, "");
             kv(b, "Type", "\"" + t.Type + "\"");
             newline(b, a+1, ",");
-            kv(b, "Text", "\"" + t.Text + "\"");
+            kv(b, "Text", "\"" + escape(t.Text) + "\"");
             newline(b, a+1, ",");
             kv(b, "Line", ""+t.Line);
             newline(b, a+1, ",");
@@ -32,9 +32,16 @@ namespace TypeCobol.Test.Compiler.Parser
             newline(b, a+1, ",");
             kv(b, "EndColumn", ""+t.EndColumn);
             newline(b, a+1, ",");
-            kv(b, "UsesVirtualSpaceAtEndOfLine", ""+t.UsesVirtualSpaceAtEndOfLine);
+            kv(b, "UsesVirtualSpaceAtEndOfLine", ""+t.UsesVirtualSpaceAtEndOfLine.ToString().ToLower());
             newline(b, a, "");
             return b.Append("}").ToString();
+        }
+
+        private string escape(string text)
+        {
+            text = text.Replace("\"", "\\\"");
+            text = text.Replace("\'", "\\\'");
+            return text;
         }
 
         private string ToJSON(int a, Diagnostic d)
@@ -101,12 +108,12 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             if (elements == null) return "";
             int a = 3;
-            var buffer = new StringBuilder("\n").Append(i(a)).Append("\"CodeElements\": [");
+            var buffer = new StringBuilder("{\n").Append(i(a)).Append("\"CodeElements\": [");
             foreach (var element in elements)
             {
                 buffer.Append(ToJSON(a+1, element)).Append(",");
             }
-            return buffer.Append("\n").Append(i(a)).Append("]").ToString();
+            return buffer.Append("\n").Append(i(a)).Append("]\n}").ToString();
         }
 
         private string i(int alinea)
