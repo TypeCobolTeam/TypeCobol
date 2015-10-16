@@ -42,10 +42,11 @@ namespace TypeCobol.Test.Compiler.Parser
             this.unit.StartDocumentProcessing();
         }
 
-        public void ToJSON()
+        public string ToJSON()
         {
-            string json = new TestJSONSerializer().ToJSON(this.unit.SyntaxDocument.CodeElements);
+            return new TestJSONSerializer().ToJSON(this.unit.SyntaxDocument.CodeElements);
         }
+
 
         public void Compare()
         {
@@ -136,7 +137,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return name.Remove(name.Length - finder.paths.sextension.Length);
         }
 
-        public void Test(bool debug = false)
+        public void Test(bool debug = false, bool json = false)
         {
             if (this.samples.Count < 1) throw new System.Exception("No sample file!");
             var errors = new StringBuilder();
@@ -163,7 +164,17 @@ namespace TypeCobol.Test.Compiler.Parser
                             System.Console.Write(" --- EXCEPTION\n" + unit.observer.DumpErrors());
                             errors.AppendLine(unit.observer.DumpErrors());
                         }
-                        unit.ToJSON();
+
+                        if (json)
+                        {
+                            string filename = comparator.paths.result.full.ToString();
+                            string name = System.IO.Path.GetFileName(filename);
+                            string extension = System.IO.Path.GetExtension(filename);
+                            filename = filename.Substring(0, filename.Length - extension.Length);
+                            string[] lines = { unit.ToJSON() };
+                            System.IO.File.WriteAllLines(filename + ".json", lines);
+                        }
+
                         unit.Compare();
                     }
                     catch (System.Exception ex)

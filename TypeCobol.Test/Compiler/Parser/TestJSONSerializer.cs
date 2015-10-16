@@ -22,7 +22,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             var b = new StringBuilder("{");
             newline(b, a+1, "");
-            kv(b, "Type", "\"" + t.Type + "\"");
+            kv(b, "Type", "\"" + t.TokenType + "\"");
             newline(b, a+1, ",");
             kv(b, "Text", "\"" + escape(t.Text) + "\"");
             newline(b, a+1, ",");
@@ -122,6 +122,13 @@ namespace TypeCobol.Test.Compiler.Parser
             string unit = "  ";
             for (int i = 0; i < alinea; i++) buffer.Append(unit);
             return buffer.ToString();
+        }
+
+        public static void DumpAsJSON(IList<CodeElement> elements, string filename)
+        {
+            string json = new TestJSONSerializer().ToJSON(elements);
+            string[] lines = { json };
+            System.IO.File.WriteAllLines(filename + ".json", lines);
         }
     }
 }

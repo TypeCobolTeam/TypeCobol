@@ -18,6 +18,7 @@ namespace TypeCobol.Test
             string samples = @"Samples";
             string path = PlatformUtils.GetPathForProjectFile(samples);
             string[] files = System.IO.Directory.GetFiles(path, regex, System.IO.SearchOption.AllDirectories);
+            string[] filtered = { };
             string[] ignored = { };
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
@@ -28,7 +29,9 @@ namespace TypeCobol.Test
             {
                 string filename = System.IO.Path.GetFileName(file);
                 System.IO.File.AppendAllText("CheckGrammarResults.txt", (filename + ':'));
-                if (ignored.Contains(filename)) {
+                bool ignore = filtered.Length > 0 && !filtered.Contains(filename);
+                if (!ignore) ignore = ignored.Contains(filename);
+                if (ignore) {
                     ignores++;
                     System.IO.File.AppendAllText("CheckGrammarResults.txt", " ignored.\n");
                     continue;
@@ -37,6 +40,7 @@ namespace TypeCobol.Test
                 watch.Start();
                 var unit = ParserUtils.ParseCobolFile(filename, null, samples);
                 watch.Stop();
+                //TestJSONSerializer.DumpAsJSON(unit.SyntaxDocument.CodeElements, filename);
                 TimeSpan elapsed = watch.Elapsed;
                 sum += elapsed;
                 string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
