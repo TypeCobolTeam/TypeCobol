@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-[16,17]<28,Error,Syntax>Syntax error : Display: required <identifier> or <literal> (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
-[16,17]<28,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
-[53,56]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[53,56:with]<WITH> on line 16)
+[16,17]<27,Error,Syntax>Syntax error : Display: required <identifier> or <literal> (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
+[16,17]<27,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>statement>imperativeStatement>ioStatement>displayStatement>identifierOrLiteral, OffendingSymbol=[16,17:no]<NO> on line 6)
+[53,56]<27,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[53,56:with]<WITH> on line 16)
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto

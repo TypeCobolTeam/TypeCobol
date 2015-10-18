@@ -62,7 +62,11 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)previousCodeElementsDocument.Lines), CompilerOptions);
+                    // Parse the whole document for the first time
+                    CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines), CompilerOptions);
+
+                    // Create the first code elements document snapshot
+                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
                 }
                 else
                 {
@@ -84,7 +88,7 @@ namespace TypeCobol.Compiler
 
                 // Send events to all listeners
                 EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
-                if (codeElementsLinesChanged != null)
+                if (documentChangedEvent != null && codeElementsLinesChanged != null)
                 {
                     codeElementsLinesChanged(this, documentChangedEvent);
                 }
@@ -110,6 +114,7 @@ namespace TypeCobol.Compiler
         public void RefreshProgramClassDocumentSnapshot()
         {
             // Make sure two threads don't try to update this snapshot at the same time
+            bool snapshotWasUpdated = false;
             lock (lockObjectForProgramClassDocumentSnapshot)
             {
                 // Capture previous snapshot at one point in time
@@ -126,14 +131,15 @@ namespace TypeCobol.Compiler
 
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
-                        codeElementsDocument,  ProgramClassDocumentSnapshot.CurrentVersion +1,
+                        codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion +1,
                         newProgram, newClass, newDiagnostics);
+                    snapshotWasUpdated = true;
                 }
             }
 
             // Send events to all listeners
             EventHandler<int> programClassChanged = ProgramClassChanged; // avoid race condition
-            if (programClassChanged != null)
+            if (snapshotWasUpdated && programClassChanged != null)
             {
                 programClassChanged(this, ProgramClassDocumentSnapshot.CurrentVersion);
             }

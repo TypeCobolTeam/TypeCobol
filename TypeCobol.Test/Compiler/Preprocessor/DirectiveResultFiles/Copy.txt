@@ -59,14 +59,14 @@
 
 -- Line 20 --
 *** DIRECTIVE INVALID SYNTAX -> COPY TEXTNAME1 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME1]<UserDefinedWord>) ***
-[8,11]<28,Error,Syntax>Syntax error : mismatched input 'COPY' expecting PeriodSeparator
+[8,11]<27,Error,Syntax>Syntax error : mismatched input 'COPY' expecting PeriodSeparator
 
 -- Line 21 --
 *** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME2 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME2]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,30:SUPPRESS]<SUPPRESS>) ***
 [31,31: ]<SpaceSeparator>
 *** DIRECTIVE INVALID SYNTAX -> COPY TEXTNAME13 ([32,35:COPY]<COPY>[36,36: ]<SpaceSeparator>) ***
-[32,35]<28,Error,Syntax>Syntax error : mismatched input 'COPY' expecting PeriodSeparator
-[19,22]<28,Error,Syntax>Syntax error : mismatched input 'COPY' expecting PeriodSeparator
+[32,35]<27,Error,Syntax>Syntax error : mismatched input 'COPY' expecting PeriodSeparator
+[19,22]<27,Error,Syntax>Syntax error : mismatched input 'COPY' expecting PeriodSeparator
 
 -- Line 22 --
 +++ CONTINUATION OF CopyImportDirective ([8,17:TEXTNAME13]<UserDefinedWord>) +++
@@ -75,25 +75,25 @@
 
 -- Line 23 --
 *** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME4 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME4]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,30:SUPPRESS]<SUPPRESS>[31,31: ]<SpaceSeparator>[32,33:IN]<IN>[34,34: ]<SpaceSeparator>[35,42:LIBRARY2]<UserDefinedWord>[43,43+:.]<PeriodSeparator>) ***
-[32,33]<28,Error,Syntax>Syntax error : mismatched input 'IN' expecting PeriodSeparator
+[32,33]<27,Error,Syntax>Syntax error : mismatched input 'IN' expecting PeriodSeparator
 
 -- Line 24 --
 *** DIRECTIVE INVALID SYNTAX -> COPY.SUPPRESS TEXTNAME6 ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME6]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,24:OF]<OF>[25,25: ]<SpaceSeparator>[26,33:SUPPRESS]<SUPPRESS>[34,34+:.]<PeriodSeparator>) ***
-[26,33]<28,Error,Syntax>Syntax error : missing {AlphanumericLiteral, UserDefinedWord} at 'SUPPRESS'
+[26,33]<27,Error,Syntax>Syntax error : missing {AlphanumericLiteral, UserDefinedWord} at 'SUPPRESS'
 
 -- Line 25 --
 *** DIRECTIVE INVALID SYNTAX -> COPY TEXTNAME7 <REPLACE-MultipleTokens:[36,40:TOTO1]<UserDefinedWord>[42,43:= ]<EqualOperator>[44,45:BY]<BY>><BY:[49,53:TITI1]<UserDefinedWord>> <REPLACE-SingleToken:><BY:[8,11:COPY]<COPY>> <REPLACE-SingleToken:[13,22:TEXTNAME11]<UserDefinedWord>><BY:[8,16:REPLACING]<REPLACING>> <REPLACE-SingleToken:[18,22:TOTO5]<UserDefinedWord>><BY:[24,28:TITI6]<UserDefinedWord>> <REPLACE-SingleToMultipleTokens:[8,16:REPLACING]<REPLACING>><BY:[11,15:TOTO6]<UserDefinedWord>[17,21:TOTO7]<UserDefinedWord>> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME7]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,31:REPLACING]<REPLACING>[32,32: ]<SpaceSeparator>[33,34:==]<PseudoTextDelimiter>[35,35: ]<SpaceSeparator>[36,40:TOTO1]<UserDefinedWord>[41,41: ]<SpaceSeparator>[42,43:= ]<EqualOperator>[44,45:BY]<BY>[46,46: ]<SpaceSeparator>[47,48:==]<PseudoTextDelimiter>[49,53:TITI1]<UserDefinedWord>[54,55:==]<PseudoTextDelimiter>) ***
-[49,53]<28,Error,Syntax>Syntax error : missing BY at 'TITI1'
-[8,11]<28,Error,Syntax>Syntax error : missing PseudoTextDelimiter at 'COPY'
-[8,16]<28,Error,Syntax>Syntax error : missing BY at 'REPLACING'
-[24,28]<28,Error,Syntax>Syntax error : missing BY at 'TITI6'
-[8,9]<28,Error,Syntax>Syntax error : missing BY at '=='
+[49,53]<27,Error,Syntax>Syntax error : missing BY at 'TITI1'
+[8,11]<27,Error,Syntax>Syntax error : missing PseudoTextDelimiter at 'COPY'
+[8,16]<27,Error,Syntax>Syntax error : missing BY at 'REPLACING'
+[24,28]<27,Error,Syntax>Syntax error : missing BY at 'TITI6'
+[8,9]<27,Error,Syntax>Syntax error : missing BY at '=='
 
 -- Line 26 --
 +++ CONTINUATION OF CopyImportDirective ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME11]<UserDefinedWord>) +++
 *** DIRECTIVE INVALID SYNTAX -> COPY TEXTNAME11 <REPLACE-SingleToken:[18,22:TOTO5]<UserDefinedWord>><BY:[24,28:TITI6]<UserDefinedWord>> <REPLACE-SingleToMultipleTokens:[8,16:REPLACING]<REPLACING>><BY:[11,15:TOTO6]<UserDefinedWord>[17,21:TOTO7]<UserDefinedWord>> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME11]<UserDefinedWord>) ***
-[24,28]<28,Error,Syntax>Syntax error : missing BY at 'TITI6'
-[8,9]<28,Error,Syntax>Syntax error : missing BY at '=='
+[24,28]<27,Error,Syntax>Syntax error : missing BY at 'TITI6'
+[8,9]<27,Error,Syntax>Syntax error : missing BY at '=='
 
 -- Line 27 --
 +++ CONTINUATION OF CopyImportDirective ([8,16:REPLACING]<REPLACING>[17,17: ]<SpaceSeparator>[18,22:TOTO5]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,28:TITI6]<UserDefinedWord>) +++

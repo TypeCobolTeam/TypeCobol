@@ -1,9 +1,9 @@
 ﻿--- Diagnostics ---
-[36,40]<28,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement, OffendingSymbol=[36,40:INPUT]<INPUT> on line 12)
-[36,41]<28,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[36,41:OUTPUT]<OUTPUT> on line 13)
-[36,38]<28,Error,Syntax>Syntax error : no viable alternative at input 'I-O' (RuleStack=codeElement, OffendingSymbol=[36,38:I-O]<I_O> on line 14)
-[36,41]<28,Error,Syntax>Syntax error : no viable alternative at input 'EXTEND' (RuleStack=codeElement, OffendingSymbol=[36,41:EXTEND]<EXTEND> on line 15)
-[33,38]<28,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[33,38:OUTPUT]<OUTPUT> on line 16)
+[36,40]<27,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement, OffendingSymbol=[36,40:INPUT]<INPUT> on line 12)
+[36,41]<27,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[36,41:OUTPUT]<OUTPUT> on line 13)
+[36,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'I-O' (RuleStack=codeElement, OffendingSymbol=[36,38:I-O]<I_O> on line 14)
+[36,41]<27,Error,Syntax>Syntax error : no viable alternative at input 'EXTEND' (RuleStack=codeElement, OffendingSymbol=[36,41:EXTEND]<EXTEND> on line 15)
+[33,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[33,38:OUTPUT]<OUTPUT> on line 16)
 --- Code Elements ---
 [[UseStatement]] [1,3:USE]<USE> --> [50,57:filename]<UserDefinedWord>
 

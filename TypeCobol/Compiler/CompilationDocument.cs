@@ -328,16 +328,16 @@ namespace TypeCobol.Compiler
 
                     // Prepare an event to signal document change to all listeners
                     documentChangedEvent = new DocumentChangedEvent<ITokensLine>(currentTokensLinesVersion, currentTokensLinesVersion.next);
-                    currentTokensLinesVersion = currentTokensLinesVersion.next;
-
-                    // Register that the tokens lines were synchronized with the current text lines version
-                    textLinesVersionForCurrentTokensLines = currentTextLinesVersion;
+                    currentTokensLinesVersion = currentTokensLinesVersion.next;                    
                 }
+
+                // Register that the tokens lines were synchronized with the current text lines version
+                textLinesVersionForCurrentTokensLines = currentTextLinesVersion;
             }
 
             // Send events to all listeners
             EventHandler<DocumentChangedEvent<ITokensLine>> tokensLinesChanged = TokensLinesChanged; // avoid race condition
-            if (tokensLinesChanged != null)
+            if (documentChangedEvent != null && tokensLinesChanged != null)
             {
                 tokensLinesChanged(this, documentChangedEvent);
             }
@@ -430,7 +430,11 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
+                    // Process all lines of the document for the first time
                     PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider);
+
+                    // Create the first processed tokens document snapshot
+                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines));
                 }
                 else
                 {
@@ -452,7 +456,7 @@ namespace TypeCobol.Compiler
 
                 // Send events to all listeners
                 EventHandler<DocumentChangedEvent<IProcessedTokensLine>> processedTokensLinesChangedEventsSource = ProcessedTokensLinesChangedEventsSource; // avoid race condition
-                if (processedTokensLinesChangedEventsSource != null)
+                if (documentChangedEvent != null && processedTokensLinesChangedEventsSource != null)
                 {
                     processedTokensLinesChangedEventsSource(this, documentChangedEvent);
                 }
