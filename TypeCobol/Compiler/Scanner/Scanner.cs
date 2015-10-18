@@ -120,7 +120,16 @@ namespace TypeCobol.Compiler.Scanner
 
             // Initialize the continuation text with the complete source text of the first line
             TokensLine firstLine = continuationLinesGroup[0];
-            string concatenatedLine = firstLine.SourceText;
+            string concatenatedLine = null;
+            if (firstLine.Type == CobolTextLineType.Source || (firstLine.Type == CobolTextLineType.Debug && initialScanState.WithDebuggingMode))
+            {
+                concatenatedLine = firstLine.SourceText;
+            }
+            else
+            {
+                concatenatedLine = String.Empty;
+                Scanner.ScanTokensLine(firstLine, initialScanState, compilerOptions);
+            }
             textAreasForOriginalLinesInConcatenatedLine[0] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
             startIndexForTextAreasInOriginalLines[0] = firstLine.Source.StartIndex;
             offsetForLiteralContinuationInOriginalLines[0] = 0;
@@ -179,36 +188,58 @@ namespace TypeCobol.Compiler.Scanner
                 // delimiters.                
                 // ... p55 -> p56: examples of continuations and expected behavior ...
 
-                // Scan the continuation text, and get its last token so far
-                TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
-                Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions);
-                Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count -1];
-
-                // Check if the last token so far is an alphanumeric or national literal
                 int offsetForLiteralContinuation = 0;
-                if (lastTokenOfConcatenatedLineSoFar.TokenFamily == TokenFamily.AlphanumericLiteral)
+                if (concatenatedLine.Length > 0)
                 {
-                    // The continuation line must contain a hyphen in the indicator area, and the first nonblank character must be a quotation mark
-                    if (line[startOfContinuationIndex] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
-                    {
-                        continuationLine.AddDiagnostic(MessageCode.InvalidFirstCharForContinuationLine, startOfContinuationIndex, startOfContinuationIndex, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
-                    }
-                    // The continuation of the literal begins with the character immediately following the quotation mark.
-                    else
-                    {
-                        offsetForLiteralContinuation = 1;
+                    // Scan the continuation text, and get its last token so far
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
+                    Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions);
+                    Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
-                        // If an alphanumeric literal that is to be continued on the next line has as its last character a quotation mark in column 72, 
-                        // the continuation line must start with two consecutive quotation marks.
-                        if (lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
+                    // Check if the last token so far is an alphanumeric or national literal
+                    if (lastTokenOfConcatenatedLineSoFar.TokenFamily == TokenFamily.AlphanumericLiteral)
+                    {
+                        // The continuation line must contain a hyphen in the indicator area, and the first nonblank character must be a quotation mark
+                        if (line[startOfContinuationIndex] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
                         {
-                            if ((startOfContinuationIndex + 1) > lastIndex || line[startOfContinuationIndex + 1] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
+                            continuationLine.AddDiagnostic(MessageCode.InvalidFirstCharForContinuationLine, startOfContinuationIndex, startOfContinuationIndex, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                        }
+                        // The continuation of the literal begins with the character immediately following the quotation mark.
+                        else
+                        {
+                            offsetForLiteralContinuation = 1;
+
+                            // If an alphanumeric literal that is to be continued on the next line has as its last character a quotation mark in column 72, 
+                            // the continuation line must start with two consecutive quotation marks.
+                            if (lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                             {
-                                continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
-                                // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
-                                offsetForLiteralContinuation = 0;
+                                if ((startOfContinuationIndex + 1) > lastIndex || line[startOfContinuationIndex + 1] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
+                                {
+                                    continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                    // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
+                                    offsetForLiteralContinuation = 0;
+                                }
                             }
                         }
+                    }
+                    // Check if the last token so far is a floating comment 
+                    else if (lastTokenOfConcatenatedLineSoFar.TokenType == TokenType.FloatingComment)
+                    {
+                        // => remove the floating comment from the text of the continuation
+                        concatenatedLine = concatenatedLine.Substring(0, concatenatedLine.Length - lastTokenOfConcatenatedLineSoFar.Length);
+                        textAreasForOriginalLinesInConcatenatedLine[i - 1] = new TextArea(TextAreaType.Source, textAreasForOriginalLinesInConcatenatedLine[i - 1].StartIndex, textAreasForOriginalLinesInConcatenatedLine[i - 1].EndIndex - lastTokenOfConcatenatedLineSoFar.Length);
+                        TokensLine lineWithFloatingComment = continuationLinesGroup[i - 1];
+                        Token floatingCommentToken = new Token(TokenType.FloatingComment, lineWithFloatingComment.Length - lastTokenOfConcatenatedLineSoFar.Length, lineWithFloatingComment.Length - 1, lineWithFloatingComment);
+                        lineWithFloatingComment.SourceTokens.Add(floatingCommentToken);
+                    }
+                    // Check if the last token so far is a comment entry
+                    else if (lastTokenOfConcatenatedLineSoFar.TokenType == TokenType.CommentEntry)
+                    {
+                        // p105: A hyphen in the indicator area (column 7) is not permitted in comment - entries.
+                        // => impossible to ignore the continuation indicator here, it is too late 
+                        //    (we can not know there is a comment entry before scanning the continuation lines groups)
+                        // => register an error message
+                        continuationLine.AddDiagnostic(MessageCode.HyphenIndicatorNotPermittedInCommenEntries, continuationLine.Indicator.StartIndex + 1, continuationLine.Indicator.EndIndex + 1);
                     }
                 }
 
@@ -288,6 +319,11 @@ namespace TypeCobol.Compiler.Scanner
                         if (isContinuedOnNextLine)
                         {
                             stopIndexInOriginalLine = originalLine.Source.EndIndex;
+                            // If a continued line ends with a floating comment, the continued token ends just before the floating comment
+                            if (originalLine.SourceTokens.Count > 0 && originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].TokenType == TokenType.FloatingComment)
+                            {
+                                stopIndexInOriginalLine -= originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].Length;
+                            }
                         }
                         else
                         {
@@ -930,21 +966,20 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // consume one char and use the virtual space at end of line
                 currentIndex++;
-                return new Token(tokenType, startIndex, startIndex, true, tokensLine);
+                return new Token(tokenType, startIndex, currentIndex - 1, true, tokensLine);
             }
             else if (line[currentIndex + 1] == ' ')
             {
                 // consume one char and consume the space char
                 currentIndex += 2;
-                return new Token(tokenType, startIndex, startIndex + 1, tokensLine);
+                return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
             }
             else
             {
                 // consume one char and register an error because the following char is missing
                 // even if the space is missing, try to match the expected tokenType
                 currentIndex++;
-                int endIndex = (tokenType == TokenType.PowerOperator || tokenType == TokenType.LessThanOrEqualOperator || tokenType == TokenType.GreaterThanOrEqualOperator) ? startIndex + 1 : startIndex;
-                Token invalidToken = new Token(tokenType, startIndex, endIndex, tokensLine);
+                Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                 tokensLine.AddDiagnostic(messageCode, invalidToken);
                 return invalidToken;
             }
@@ -956,13 +991,13 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // consume one char and use the virtual space at end of line
                 currentIndex++;
-                return new Token(tokenType, startIndex, startIndex, true, tokensLine);
+                return new Token(tokenType, startIndex, currentIndex - 1, true, tokensLine);
             }
             else if (line[currentIndex + 1] == ' ')
             {
                 // consume one char and consume the space char
                 currentIndex += 2;
-                return new Token(tokenType, startIndex, startIndex + 1, tokensLine);
+                return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
             }
             else if (Char.IsDigit(line[currentIndex + 1]))
             {
@@ -978,7 +1013,7 @@ namespace TypeCobol.Compiler.Scanner
                 // consume one char and register an error because the following char is missing
                 // even if the space is missing, try to match the expected tokenType
                 currentIndex++;
-                Token invalidToken = new Token(tokenType, startIndex, startIndex, tokensLine);
+                Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
                 tokensLine.AddDiagnostic(messageCode, invalidToken);
                 return invalidToken;
             }
