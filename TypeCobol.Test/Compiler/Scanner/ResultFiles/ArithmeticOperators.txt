@@ -13,7 +13,7 @@
 [15,16:/ ]<DivideOperator>
 [17,17:5]<IntegerLiteral>{5}
 [18,18: ]<SpaceSeparator>
-[19,20:**]<PowerOperator>
+[19,21:** ]<PowerOperator>
 [22,22:6]<IntegerLiteral>{6}
 
 -- Line 2 --
@@ -87,7 +87,7 @@
 [6,7:**]<PowerOperator>
 [8,8:5]<IntegerLiteral>{5}
 [9,9: ]<SpaceSeparator>
-[10,10+:*]<PowerOperator>
+[10,11+:**]<PowerOperator>
 [2,3]<4,Error,Tokens>Power operator ** should be followed by a space
 [6,7]<4,Error,Tokens>Power operator ** should be followed by a space
 

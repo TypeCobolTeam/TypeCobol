@@ -200,7 +200,7 @@ namespace TypeCobol.Compiler.File
              if(filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
              {
                  CobolFileChangedEvent deletedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileDeleted, DateTime.Now, null);
-                 localCobolFile.CobolFileChangedSubject.OnNext(deletedEvent);
+                 localCobolFile.RaiseCobolFileChanged(deletedEvent);
              }
          }
 
@@ -210,7 +210,7 @@ namespace TypeCobol.Compiler.File
              if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
              {
                  CobolFileChangedEvent renamedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileRenamed, DateTime.Now, e.FullPath);
-                 localCobolFile.CobolFileChangedSubject.OnNext(renamedEvent);
+                 localCobolFile.RaiseCobolFileChanged(renamedEvent);
              }
          }
 
@@ -220,7 +220,7 @@ namespace TypeCobol.Compiler.File
              if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
              {
                  CobolFileChangedEvent changedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileChanged, DateTime.Now, null);
-                 localCobolFile.CobolFileChangedSubject.OnNext(changedEvent);
+                 localCobolFile.RaiseCobolFileChanged(changedEvent);
              }
          }
 

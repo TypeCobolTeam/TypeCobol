@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
 namespace TypeCobol.Compiler.Concurrency
 {
     /// <summary>
@@ -9,13 +7,41 @@ namespace TypeCobol.Compiler.Concurrency
     /// <remarks>
     /// Documents snapshots enable one thread to consume information concurrently produced by another thread.
     /// </remarks>
-    public abstract class DocumentSnapshot
+    public interface IDocumentSnapshot<T>
     {
         /// <summary>
         /// Document version identifier for this snapshot
         /// </summary>
-        DocumentVersion Version { get; set; }
+        DocumentVersion<T> CurrentVersion { get; }
 
-        //IReadOnlyList<IDocumentLine>
+        /// <summary>
+        /// Immutable list of document lines
+        /// </summary>
+        ISearchableReadOnlyList<T> Lines { get; }
     }
+
+    /// <summary>
+    /// Represents an immutable snapshot for the first document in the compilation pipeline.
+    /// </summary>
+    public interface IFirstStepDocumentSnapshot<TSourceLines, TCurrentStep> : IDocumentSnapshot<TCurrentStep>
+    {
+        /// <summary>
+        /// Document version identifier for the list of source lines used as a basis to compute the current step
+        /// </summary>
+        DocumentVersion<TSourceLines> SourceLinesVersion { get; }
+    }
+
+    public interface INextStepDocumentSnapshot<T>
+    { 
+        /// <summary>
+        /// Snapshot of the document at the previous step used as a basis to compute the current step
+        /// </summary>
+        IDocumentSnapshot<T> PreviousStepSnapshot { get; }
+    }
+
+    /// <summary>
+    /// Represents an immutable snapshot for the following documents in the compilation pipeline.
+    /// </summary>
+    public interface ICompilerStepDocumentSnapshot<TPreviousStep,TCurrentStep> : IDocumentSnapshot<TCurrentStep>, INextStepDocumentSnapshot<TPreviousStep>
+    { }    
 }

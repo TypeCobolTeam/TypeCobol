@@ -22,7 +22,7 @@
 
 -- Line 7 --
 *** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:INSERT]<INSERT>) ***
-[1,6]<28,Error,Syntax>Syntax error : mismatched input 'INSERT' expecting IntegerLiteral
+[1,6]<27,Error,Syntax>Syntax error : mismatched input 'INSERT' expecting IntegerLiteral
 
 -- Line 8 --
 *** DIRECTIVE INSERT 1 ([1,6:INSERT]<INSERT>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
@@ -45,5 +45,5 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:INSERT]<INSERT>[7,7: ]<SpaceSeparator>[8,14:-000002]<DecimalLiteral>{-2|0>-2}) ***
-[8,14]<28,Error,Syntax>Syntax error : mismatched input '-000002' expecting IntegerLiteral
+[8,14]<27,Error,Syntax>Syntax error : mismatched input '-000002' expecting IntegerLiteral
 

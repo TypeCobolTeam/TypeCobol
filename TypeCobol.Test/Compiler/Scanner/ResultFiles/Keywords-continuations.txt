@@ -1,7 +1,7 @@
 ﻿-- Line 1 --
 [1,7:REPLACE]<REPLACE>
 [8,8: ]<SpaceSeparator>
-=>continued:[9,9+:*CONTROL]<ASTERISK_CONTROL>
+=>continued:[9,9:*CONTROL]<ASTERISK_CONTROL>
 
 -- Line 2 --
 [2,5:    ]<SpaceSeparator>

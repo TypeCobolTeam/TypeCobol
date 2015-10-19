@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[33,34]<28,Error,Syntax>Syntax error : no viable alternative at input 'p1 ... p2' (RuleStack=codeElement, OffendingSymbol=[33,34:p2]<UserDefinedWord> on line 8)
-[24,26]<28,Error,Syntax>Syntax error : no viable alternative at input 'ALL' (RuleStack=codeElement, OffendingSymbol=[24,26:ALL]<ALL> on line 9)
+[33,34]<27,Error,Syntax>Syntax error : no viable alternative at input 'p1 ... p2' (RuleStack=codeElement, OffendingSymbol=[33,34:p2]<UserDefinedWord> on line 8)
+[24,26]<27,Error,Syntax>Syntax error : no viable alternative at input 'ALL' (RuleStack=codeElement, OffendingSymbol=[24,26:ALL]<ALL> on line 9)
 --- Code Elements ---
 [[UseStatement]] [1,3:USE]<USE> --> [22,22:p]<UserDefinedWord>
 

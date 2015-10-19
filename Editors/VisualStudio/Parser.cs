@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -14,7 +15,7 @@ namespace TypeCobol.Editor
         public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
         private CompilationProject Project;
         private TypeCobolOptions Options;
-        private CompilationUnit Unit;
+        private FileCompiler Compiler = null;
 
         public Parser(string name)
         {
@@ -30,27 +31,27 @@ namespace TypeCobol.Editor
 
         public void Parse(ITextDocument document)
         {
-            // TODO this could go in constructor if document could be set after a CopilationUnit creation
-            Unit = new CompilationUnit(document, Project.SourceFileProvider, Project, Options);
-            Unit.SetupCodeAnalysisPipeline(null, 0);
-            Unit.SyntaxDocument.ParseNodeChangedEventsSource.Subscribe(this.Observer);
-
-            Unit.StartDocumentProcessing();
+            // TODO this could go in constructor if document could be set after a FileCompiler creation
+            Compiler = new FileCompiler(document, Project.SourceFileProvider, Project, Options, false);
+            try { Compiler.CompileOnce(); }
+            catch(Exception ex) { Observer.OnError(ex); }
         }
 
         public IEnumerable<CodeElement> CodeElements
         {
             get
             {
-                return Unit.SyntaxDocument.CodeElements; // TODO test if compilation is done
+                // TODO test if compilation is done
+                return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements;
             }
         }
 
-        public IEnumerable<CodeElement> Errors
+        public IEnumerable<Diagnostic> Errors
         {
             get
             {
-                return Unit.SyntaxDocument.CodeElementsInError; // TODO test if compilation is done
+                // TODO test if compilation is done
+                return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.ParserDiagnostics;
             }
         }
     }

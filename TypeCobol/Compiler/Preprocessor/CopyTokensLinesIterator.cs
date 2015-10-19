@@ -277,7 +277,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 ImportedTokensDocument importedDocument = currentLine.ImportedDocuments[(CopyDirective)((CompilerDirectiveToken)currentTokenInMainDocument).CompilerDirective];
                 if (importedDocument != null)
                 {
-                    ITokensLinesIterator importedDocumentIterator = importedDocument.GetTokensIterator();
+                    ITokensLinesIterator importedDocumentIterator = importedDocument.GetProcessedTokensIterator();
                     Token nextTokenCandidate = importedDocumentIterator.NextToken();
 
                     // No suitable next token found in the imported document

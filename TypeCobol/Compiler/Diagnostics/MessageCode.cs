@@ -31,11 +31,10 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidFirstCharForContinuationLine = 21,
         InvalidFirstTwoCharsForContinuationLine = 22,
         AreaAOfContinuationLineMustBeBlank = 23,
-        ContinuationInsideDecimalLiteralCouldBeWrong = 24,
-        ContinuationInsidePictureCharacterStringCouldBeWrong = 25,
-        InvalidCblProcessCompilerDirective = 26,
-        InvalidControlCblCompilerStatementOption = 27,
-        SyntaxErrorInParser = 28,
-        FailedToLoadTextDocumentReferencedByCopyDirective = 29
+        HyphenIndicatorNotPermittedInCommenEntries = 24,
+        InvalidCblProcessCompilerDirective = 25,
+        InvalidControlCblCompilerStatementOption = 26,
+        SyntaxErrorInParser = 27,
+        FailedToLoadTextDocumentReferencedByCopyDirective = 28
     }
 }

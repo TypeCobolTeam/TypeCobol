@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Text
+﻿using TypeCobol.Compiler.Concurrency;
+
+namespace TypeCobol.Compiler.Text
 {
     /// <summary>
     /// Partition of a COBOL text line into reference format areas
@@ -51,5 +53,19 @@
         /// Comment text : Columns 73 through 80+
         /// </summary>
         string CommentText { get; }
+
+        // --- Incremental compilation process ---
+
+        /// <summary>
+        /// Indicates which compiler step last updated the properties of this line
+        /// </summary>
+        CompilationStep CompilationStep { get; set; }
+
+        /// <summary>
+        /// A line is freezed after the completion of each compiler step to enable reliable snapshots.
+        /// If we need to update the properties of the line later, a new line must be allocated.
+        /// This method returns true if the line can be updated in place, false if a new copy of the line must be allocated.
+        /// </summary>
+        bool CanStillBeUpdatedBy(CompilationStep updatingStep);
     }
 }

@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Internal Scanner state propagated from one line to the other when compiling a complete source file
     /// </summary>
-    internal class MultilineScanState
+    public class MultilineScanState
     {
         /// <summary>
         /// True if we know from the keyword stream that we are inside a DATA DIVISION.
@@ -55,17 +55,17 @@ namespace TypeCobol.Compiler.Scanner
         /// Interesting positions in the sequence of keywords recognized by the scanner,
         /// used to disambiguate context-sensitive keywords
         /// </summary>
-        public KeywordsSequenceState KeywordsState { get; private set; }
+        internal KeywordsSequenceState KeywordsState { get; private set; }
 
         /// <summary>
         /// Last token encountered in the text file, including whitespace but excluding comments
         /// </summary>
-        public Token LastToken { get; private set; }
+        internal Token LastToken { get; private set; }
 
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        public Token LastKeywordOrSymbolToken { get; private set; }
+        internal Token LastKeywordOrSymbolToken { get; private set; }
 
         /// <summary>
         /// Initialize scanner state for the first line

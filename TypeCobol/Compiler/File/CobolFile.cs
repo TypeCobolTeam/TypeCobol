@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.File
 {    
@@ -236,9 +233,18 @@ namespace TypeCobol.Compiler.File
         }
 
         /// <summary>
-        /// Observers can subscribe to be notified of any external change applied to the Cobol file 
+        /// Observers can subscribe to this event to be notified of any external change applied to the Cobol file 
         /// </summary>
-        public abstract IObservable<CobolFileChangedEvent> CobolFileChangedEventsSource { get; }
+        public event EventHandler<CobolFileChangedEvent> CobolFileChanged;
+
+        internal void RaiseCobolFileChanged(CobolFileChangedEvent fileEvent)
+        {
+            EventHandler<CobolFileChangedEvent> cobolFileChanged = CobolFileChanged;
+            if(cobolFileChanged != null)
+            {
+                cobolFileChanged(this, fileEvent);
+            }
+        }
 
         /// <summary>
         /// Starts monitoring the external changes applied to the Cobol file (service stopped by default)

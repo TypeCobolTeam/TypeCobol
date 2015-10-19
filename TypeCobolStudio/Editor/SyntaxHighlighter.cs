@@ -19,9 +19,9 @@ namespace TypeCobolStudio.Editor
             if (compilerService != null)
             {
                 int lineIndex = line.LineNumber - 1;
-                if (compilerService.CompilationUnit.TokensDocument.TokensLines.Count > lineIndex)
+                if (compilerService.CompilationUnit.TokensDocumentSnapshot.Lines.Count > lineIndex)
                 {
-                    ITokensLine tokensLine = compilerService.CompilationUnit.TokensDocument.TokensLines[lineIndex];
+                    ITokensLine tokensLine = compilerService.CompilationUnit.TokensDocumentSnapshot.Lines[lineIndex];
                     int lineStartOffset = line.Offset;
 
                     // Areas

@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Compiler.File
                 // Load the CobolFile in a TextDocument
                 ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormat.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
-                textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
+                textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
             }
 
@@ -121,7 +121,7 @@ namespace TypeCobol.Test.Compiler.File
                 // Load the CobolFile in a TextDocument
                 ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
-                textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
+                textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
             }
 
@@ -176,7 +176,7 @@ namespace TypeCobol.Test.Compiler.File
                 // Load the CobolFile in a TextDocument
                 ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiLinuxFormat.14", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
-                textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
+                textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
             }
 
@@ -231,7 +231,7 @@ namespace TypeCobol.Test.Compiler.File
                 // Load the CobolFile in a TextDocument
                 ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiFreeFormat.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
-                textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
+                textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
             }
 
@@ -311,7 +311,7 @@ namespace TypeCobol.Test.Compiler.File
                 // Load the CobolFile in a TextDocument
                 ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument(filename, docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
-                textDocument.TextChangedEventsSource.Subscribe(textSourceListener);
+                textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
             }
 
@@ -364,22 +364,11 @@ namespace TypeCobol.Test.Compiler.File
         }
     }
 
-    class DummyTextSourceListener : IObserver<TextChangedEvent>
+    class DummyTextSourceListener
     {
         public TextChangedEvent LastTextChangedEvent;
 
-        public void OnCompleted()
-        {
-            // Do nothing
-        }
-
-        public void OnError(Exception error)
-        {
-            // Propagate errors
-            throw error;
-        }
-
-        public void OnNext(TextChangedEvent textChangedEvent)
+        public void OnTextChanged(object sender, TextChangedEvent textChangedEvent)
         {
             LastTextChangedEvent = textChangedEvent;
         }

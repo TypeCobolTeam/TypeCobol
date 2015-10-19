@@ -47,10 +47,10 @@ namespace TypeCobol.Test
                 System.IO.File.AppendAllText("CheckGrammarResults.txt", (" parsed in " + formatted + "\n"));
 
                 tested++;
-                if(hasErrors(unit.SyntaxDocument)) {
+                if(hasErrors(unit.CodeElementsDocumentSnapshot)) {
                     Console.WriteLine(filename);
-                    string result = ParserUtils.DiagnosticsToString(unit.SyntaxDocument.Diagnostics);
-                    totalNumberOfErrors += unit.SyntaxDocument.Diagnostics.Count;
+                    string result = ParserUtils.DiagnosticsToString(unit.CodeElementsDocumentSnapshot.ParserDiagnostics);
+                    totalNumberOfErrors += unit.CodeElementsDocumentSnapshot.ParserDiagnostics.Count();
                     Console.WriteLine(result);
                     System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
                     nbFilesInError++;
@@ -63,9 +63,9 @@ namespace TypeCobol.Test
             if (nbFilesInError > 0) Assert.Fail('\n'+message);
         }
 
-        private bool hasErrors(TypeCobol.Compiler.Parser.SyntaxDocument document)
+        private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document)
         {
-            return document != null && document.Diagnostics != null && document.Diagnostics.Count > 0;
+            return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
         }
     }
 }

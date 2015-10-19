@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reactive.Subjects;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.File
 {
@@ -85,20 +81,7 @@ namespace TypeCobol.Compiler.File
         {
             return new FileStream(FullPath, FileMode.Create);
         }
-
-        /// <summary>
-        /// Used by LocalDirectoryLibrary to notify file changes when monitoring is turned on
-        /// </summary>
-        internal ISubject<CobolFileChangedEvent> CobolFileChangedSubject = new Subject<CobolFileChangedEvent>();
-
-        /// <summary>
-        /// Observers can subscribe to be notified of any external change applied to the Cobol file 
-        /// </summary>
-        public override IObservable<CobolFileChangedEvent> CobolFileChangedEventsSource
-        {
-            get { return CobolFileChangedSubject; }
-        }
-
+        
         /// <summary>
         /// Starts monitoring the external changes applied to the Cobol file (service stopped by default)
         /// </summary>

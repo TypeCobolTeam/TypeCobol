@@ -70,10 +70,8 @@ namespace TypeCobol.Editor
             foreach (var e in parser.Errors)
             {
                 IClassificationType type = registry.GetClassificationType("cobol.error");
-                int end = e.StartIndex;
-                foreach (var token in e.ConsumedTokens) end = token.StopIndex;
-                System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start + e.StartIndex, span.Start + end + 1).GetText()+"\"");
-                spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.StartIndex, span.Start+end+1), type));
+                System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start+e.ColumnStart, span.Start+e.ColumnEnd+1).GetText()+"\"");
+                spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.ColumnStart, span.Start+e.ColumnEnd+1), type));
             }
             return spans;
         }

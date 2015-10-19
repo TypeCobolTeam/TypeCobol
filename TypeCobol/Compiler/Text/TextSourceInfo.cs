@@ -4,7 +4,7 @@ using System.Text;
 namespace TypeCobol.Compiler.Text
 {
     /// <summary>
-    /// Informations on the source file on disk (or the buffer in memory) from which a text document was loaded
+    /// Informations on the source file on disk, or the buffer in memory, from which a text document was loaded
     /// </summary>
     public class TextSourceInfo
     {
