@@ -14,6 +14,13 @@ namespace TypeCobol.Compiler.Text
             LineTrackingReferenceInSourceDocument = lineTrackingReferenceInSourceDocument;
         }
 
+        public TextLineSnapshot(ITextLine mutableTextLine)
+        {
+            InitialLineIndex = mutableTextLine.InitialLineIndex;
+            Text = mutableTextLine.Text;
+            LineTrackingReferenceInSourceDocument = mutableTextLine.LineTrackingReferenceInSourceDocument;
+        }
+
         /// <summary>
         /// Text of the line, without the end of line delimiters
         /// </summary>
@@ -36,6 +43,14 @@ namespace TypeCobol.Compiler.Text
             {
                 return Text.Length;
             }
+        }
+
+        /// <summary>
+        /// True if the implementation of the text line is read-only and can be used as a snapshot
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get { return true; }
         }
 
         // Position of the text line in the source text document

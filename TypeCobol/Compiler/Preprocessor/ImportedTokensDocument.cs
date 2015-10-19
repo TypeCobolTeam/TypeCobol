@@ -40,9 +40,9 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Iterator over the tokens contained in this imported document after
         /// - REPLACING directive processing if necessary
         /// </summary>
-        public ITokensLinesIterator GetTokensIterator()
+        public ITokensLinesIterator GetProcessedTokensIterator()
         {
-            ITokensLinesIterator sourceIterator = SourceDocument.GetTokensIterator();
+            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines);
             if (HasReplacingDirective)
             {
                 ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective);

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Compiler.TypeChecker;
 
 namespace TypeCobol.Compiler.Generator
 {
@@ -13,42 +9,35 @@ namespace TypeCobol.Compiler.Generator
     /// <summary>
     /// Code transformation tool which generates Cobol code from a TypeCobol source program
     /// </summary>
-    internal class TypeCobolGenerator : IObserver<CodeModelChangedEvent>
+    internal class TypeCobolGenerator
     {
         /// <summary>
         /// Source TypeCobol code model
         /// </summary>
-        public SemanticsDocument SourceCodeModel { get; private set; }
+        public ProgramClassDocument InputTypeCobolProgram { get; private set; }
 
         /// <summary>
-        /// TextDocument where the target Cobol code will be generated
+        /// Output text document where Cobol code will be generated
         /// </summary>
-        public ITextDocument GeneratedTextDocument { get; private set; }
+        public ITextDocument OutputCobolTextDocument { get; private set; }
 
         /// <summary>
         /// Initialize a TypeCobol to Cobol transformation 
         /// </summary>
         /// <param name="sourceCodeModel">Source TypeCobol code model</param>
-        /// <param name="generatedTextDocument">TextDocument where the target Cobol code will be generated</param>
-        public TypeCobolGenerator(SemanticsDocument sourceCodeModel, ITextDocument generatedTextDocument)
+        /// <param name="generatedTextDocument">Ouput text document where Cobol code will be generated</param>
+        public TypeCobolGenerator(ProgramClassDocument inputTypeCobolProgram, ITextDocument outputCobolTextDocument)
         {
-            SourceCodeModel = sourceCodeModel;
-            GeneratedTextDocument = generatedTextDocument;
+            InputTypeCobolProgram = inputTypeCobolProgram;
+            OutputCobolTextDocument = outputCobolTextDocument;
         }
     
-        public void OnCompleted()
+        /// <summary>
+        /// Generatea Cobol program corresponding to the TypeCobol source
+        /// </summary>
+        public void GenerateCobolText()
         {
  	        // GeneratedTextDocument.Write ...
-        }
-
-        public void OnError(Exception error)
-        {
- 	        throw new NotImplementedException();
-        }
-
-        public void OnNext(CodeModelChangedEvent value)
-        {
- 	        throw new NotImplementedException();
-        }
+        }        
     }
 }

@@ -209,31 +209,8 @@ namespace TypeCobol.Compiler.Concurrency
     /// An interface that describes the methods that the <see cref="ImmutableList{T}"/> and <see cref="ImmutableList{T}.Builder"/> types have in common.
     /// </summary>
     /// <typeparam name="T">The type of element in the collection.</typeparam>
-    /*UPDATE to MICROSOFT code ->*/ public/*internal*/ interface ISearchableReadOnlyList<T> : IReadOnlyList<T>
+    internal interface IImmutableListQueries<T> : ISearchableReadOnlyList<T>
     {
-        /// <summary>
-        /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
-        /// another type, and returns a list containing the converted elements.
-        /// </summary>
-        /// <param name="converter">
-        /// A <see cref="Func{T, TResult}"/> delegate that converts each element from
-        /// one type to another type.
-        /// </param>
-        /// <typeparam name="TOutput">
-        /// The type of the elements of the target array.
-        /// </typeparam>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> of the target type containing the converted
-        /// elements from the current <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter);
-
-        /// <summary>
-        /// Performs the specified action on each element of the list.
-        /// </summary>
-        /// <param name="action">The <see cref="Action{T}"/> delegate to perform on each element of the list.</param>
-        void ForEach(Action<T> action);
-
         /// <summary>
         /// Creates a shallow copy of a range of elements in the source <see cref="ImmutableList{T}"/>.
         /// </summary>
@@ -291,7 +268,119 @@ namespace TypeCobol.Compiler.Concurrency
         /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
         /// <param name="count">The number of elements to copy.</param>
         void CopyTo(int index, T[] array, int arrayIndex, int count);
+        
+        /// <summary>
+        /// Retrieves all the elements that match the conditions defined by the specified
+        /// predicate.
+        /// </summary>
+        /// <param name="match">
+        /// The <see cref="Predicate{T}"/> delegate that defines the conditions of the elements
+        /// to search for.
+        /// </param>
+        /// <returns>
+        /// A <see cref="ImmutableList{T}"/> containing all the elements that match
+        /// the conditions defined by the specified predicate, if found; otherwise, an
+        /// empty <see cref="ImmutableList{T}"/>.
+        /// </returns>
+        ImmutableList<T> FindAll(Predicate<T> match);
 
+        /// <summary>
+        /// Searches the entire sorted <see cref="IReadOnlyList{T}"/> for an element
+        /// using the default comparer and returns the zero-based index of the element.
+        /// </summary>
+        /// <param name="item">The object to locate. The value can be null for reference types.</param>
+        /// <returns>
+        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
+        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
+        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
+        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// The default comparer <see cref="Comparer{T}.Default"/> cannot
+        /// find an implementation of the <see cref="IComparable{T}"/> generic interface or
+        /// the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
+        /// </exception>
+        int BinarySearch(T item);
+
+        /// <summary>
+        ///  Searches the entire sorted <see cref="IReadOnlyList{T}"/> for an element
+        ///  using the specified comparer and returns the zero-based index of the element.
+        /// </summary>
+        /// <param name="item">The object to locate. The value can be null for reference types.</param>
+        /// <param name="comparer">
+        /// The <see cref="IComparer{T}"/> implementation to use when comparing
+        /// elements.-or-null to use the default comparer <see cref="Comparer{T}.Default"/>.
+        /// </param>
+        /// <returns>
+        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
+        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
+        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
+        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
+        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
+        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
+        /// </exception>
+        int BinarySearch(T item, IComparer<T> comparer);
+
+        /// <summary>
+        /// Searches a range of elements in the sorted <see cref="IReadOnlyList{T}"/>
+        /// for an element using the specified comparer and returns the zero-based index
+        /// of the element.
+        /// </summary>
+        /// <param name="index">The zero-based starting index of the range to search.</param>
+        /// <param name="count"> The length of the range to search.</param>
+        /// <param name="item">The object to locate. The value can be null for reference types.</param>
+        /// <param name="comparer">
+        /// The <see cref="IComparer{T}"/> implementation to use when comparing
+        /// elements, or null to use the default comparer <see cref="Comparer{T}.Default"/>.
+        /// </param>
+        /// <returns>
+        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
+        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
+        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
+        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0.-or-<paramref name="count"/> is less than 0.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="index"/> and <paramref name="count"/> do not denote a valid range in the <see cref="IReadOnlyList{T}"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
+        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
+        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
+        /// </exception>
+        int BinarySearch(int index, int count, T item, IComparer<T> comparer);
+    }
+
+    /*UPDATE to MICROSOFT code ->*/ public interface ISearchableReadOnlyList<out T> : IReadOnlyList<T>
+    {
+        /// <summary>
+        /// Converts the elements in the current <see cref="ImmutableList{T}"/> to
+        /// another type, and returns a list containing the converted elements.
+        /// </summary>
+        /// <param name="converter">
+        /// A <see cref="Func{T, TResult}"/> delegate that converts each element from
+        /// one type to another type.
+        /// </param>
+        /// <typeparam name="TOutput">
+        /// The type of the elements of the target array.
+        /// </typeparam>
+        /// <returns>
+        /// A <see cref="ImmutableList{T}"/> of the target type containing the converted
+        /// elements from the current <see cref="ImmutableList{T}"/>.
+        /// </returns>
+        ImmutableList<TOutput> ConvertAll<TOutput>(Func<T, TOutput> converter);
+
+        /// <summary>
+        /// Performs the specified action on each element of the list.
+        /// </summary>
+        /// <param name="action">The <see cref="Action{T}"/> delegate to perform on each element of the list.</param>
+        void ForEach(Action<T> action);
+        
         /// <summary>
         /// Determines whether the <see cref="ImmutableList{T}"/> contains elements
         /// that match the conditions defined by the specified predicate.
@@ -320,22 +409,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// if found; otherwise, the default value for type <typeparamref name="T"/>.
         /// </returns>
         T Find(Predicate<T> match);
-
-        /// <summary>
-        /// Retrieves all the elements that match the conditions defined by the specified
-        /// predicate.
-        /// </summary>
-        /// <param name="match">
-        /// The <see cref="Predicate{T}"/> delegate that defines the conditions of the elements
-        /// to search for.
-        /// </param>
-        /// <returns>
-        /// A <see cref="ImmutableList{T}"/> containing all the elements that match
-        /// the conditions defined by the specified predicate, if found; otherwise, an
-        /// empty <see cref="ImmutableList{T}"/>.
-        /// </returns>
-        ImmutableList<T> FindAll(Predicate<T> match);
-
+        
         /// <summary>
         /// Searches for an element that matches the conditions defined by the specified
         /// predicate, and returns the zero-based index of the first occurrence within
@@ -455,78 +529,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// conditions defined by the specified predicate; otherwise, false. If the list
         /// has no elements, the return value is true.
         /// </returns>
-        bool TrueForAll(Predicate<T> match);
-
-        /// <summary>
-        /// Searches the entire sorted <see cref="IReadOnlyList{T}"/> for an element
-        /// using the default comparer and returns the zero-based index of the element.
-        /// </summary>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <returns>
-        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
-        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
-        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// The default comparer <see cref="Comparer{T}.Default"/> cannot
-        /// find an implementation of the <see cref="IComparable{T}"/> generic interface or
-        /// the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        int BinarySearch(T item);
-
-        /// <summary>
-        ///  Searches the entire sorted <see cref="IReadOnlyList{T}"/> for an element
-        ///  using the specified comparer and returns the zero-based index of the element.
-        /// </summary>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <param name="comparer">
-        /// The <see cref="IComparer{T}"/> implementation to use when comparing
-        /// elements.-or-null to use the default comparer <see cref="Comparer{T}.Default"/>.
-        /// </param>
-        /// <returns>
-        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
-        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
-        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
-        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
-        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        int BinarySearch(T item, IComparer<T> comparer);
-
-        /// <summary>
-        /// Searches a range of elements in the sorted <see cref="IReadOnlyList{T}"/>
-        /// for an element using the specified comparer and returns the zero-based index
-        /// of the element.
-        /// </summary>
-        /// <param name="index">The zero-based starting index of the range to search.</param>
-        /// <param name="count"> The length of the range to search.</param>
-        /// <param name="item">The object to locate. The value can be null for reference types.</param>
-        /// <param name="comparer">
-        /// The <see cref="IComparer{T}"/> implementation to use when comparing
-        /// elements, or null to use the default comparer <see cref="Comparer{T}.Default"/>.
-        /// </param>
-        /// <returns>
-        /// The zero-based index of <paramref name="item"/> in the sorted <see cref="IReadOnlyList{T}"/>,
-        /// if <paramref name="item"/> is found; otherwise, a negative number that is the bitwise complement
-        /// of the index of the next element that is larger than <paramref name="item"/> or, if there is
-        /// no larger element, the bitwise complement of <see cref="IReadOnlyCollection{T}.Count"/>.
-        /// </returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0.-or-<paramref name="count"/> is less than 0.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="index"/> and <paramref name="count"/> do not denote a valid range in the <see cref="IReadOnlyList{T}"/>.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// <paramref name="comparer"/> is null, and the default comparer <see cref="Comparer{T}.Default"/>
-        /// cannot find an implementation of the <see cref="IComparable{T}"/> generic interface
-        /// or the <see cref="IComparable"/> interface for type <typeparamref name="T"/>.
-        /// </exception>
-        int BinarySearch(int index, int count, T item, IComparer<T> comparer);
+        bool TrueForAll(Predicate<T> match);        
 
         // --- START of EXTENSION to MICROSOFT code ---
         // --- Methods added for TypeCobol ---
@@ -558,7 +561,7 @@ namespace TypeCobol.Compiler.Concurrency
         /// elements in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and
         /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
         /// </returns>
-        int IndexOf(T item, int initialIndex);
+        int IndexOf(object item, int initialIndex);
 
         // --- END of EXTENSION to MICROSOFT code ---
     }
@@ -1017,7 +1020,7 @@ namespace TypeCobol.Compiler.Concurrency
     /// <typeparam name="T">The type of elements in the set.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(ImmutableListDebuggerProxy<>))]
-    public sealed partial class ImmutableList<T> : IImmutableList<T>, IList<T>, IList, IOrderedCollection<T>, ISearchableReadOnlyList<T>, IStrongEnumerable<T, ImmutableList<T>.Enumerator>
+    public sealed partial class ImmutableList<T> : IImmutableList<T>, IList<T>, IList, IOrderedCollection<T>, IImmutableListQueries<T>, IStrongEnumerable<T, ImmutableList<T>.Enumerator>
     {
         /// <summary>
         /// An empty immutable list.
@@ -2400,9 +2403,9 @@ namespace TypeCobol.Compiler.Concurrency
         /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
         /// </returns>
         [Pure]
-        public int IndexOf(T item, int initialIndex)
+        public int IndexOf(object item, int initialIndex)
         {
-            return _root.IndexOf(item, initialIndex);
+            return _root.IndexOf((T)item, initialIndex);
         }
 
         // --- END of EXTENSION to MICROSOFT code ---
@@ -4416,7 +4419,7 @@ namespace TypeCobol.Compiler.Concurrency
         [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Ignored")]
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(ImmutableListBuilderDebuggerProxy<>))]
-        public sealed class Builder : IList<T>, IList, IOrderedCollection<T>, ISearchableReadOnlyList<T>, IReadOnlyList<T>
+        public sealed class Builder : IList<T>, IList, IOrderedCollection<T>, IImmutableListQueries<T>, IReadOnlyList<T>
         {
             /// <summary>
             /// The binary tree used to store the contents of the list.  Contents are typically not entirely frozen.
@@ -4674,9 +4677,9 @@ namespace TypeCobol.Compiler.Concurrency
             /// contains <paramref name="count"/> number of elements, if found; otherwise, -1.
             /// </returns>
             [Pure]
-            public int IndexOf(T item, int initialIndex)
+            public int IndexOf(object item, int initialIndex)
             {
-                return this.Root.IndexOf(item, initialIndex);
+                return this.Root.IndexOf((T)item, initialIndex);
             }
 
             // --- END of EXTENSION to MICROSOFT code ---

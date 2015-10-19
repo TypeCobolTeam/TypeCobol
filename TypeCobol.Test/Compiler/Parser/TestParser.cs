@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TypeCobol.Compiler;
 
 namespace TypeCobol.Test.Compiler.Parser
@@ -18,12 +19,12 @@ namespace TypeCobol.Test.Compiler.Parser
             //errorListener.ErrorLog  
 
             // Check for parsing errors
-            if(compilationUnit.SyntaxDocument.Diagnostics.Count > 0)
+            if(compilationUnit.CodeElementsDocumentSnapshot.ParserDiagnostics.Count() > 0)
             {            
-                throw new Exception(compilationUnit.SyntaxDocument.Diagnostics.Count + " errors found while parsing " + textName);
+                throw new Exception(compilationUnit.CodeElementsDocumentSnapshot.ParserDiagnostics.Count() + " errors found while parsing " + textName);
             }
             // Check for semantic analysis errors
-            if (compilationUnit.SemanticsDocument.Diagnostics.Count != 1 || compilationUnit.SemanticsDocument.Diagnostics[0].Message != "Data item W-TAB-LCC-CLE-DAT of type date can not be moved into data item W-TAB-LCC-CLE-RIB of type rib")
+            if (compilationUnit.CodeElementsDocumentSnapshot.ParserDiagnostics.Count() != 1 || compilationUnit.CodeElementsDocumentSnapshot.ParserDiagnostics.First().Message != "Data item W-TAB-LCC-CLE-DAT of type date can not be moved into data item W-TAB-LCC-CLE-RIB of type rib")
             {
                 throw new Exception("Parser and type checker with TypeCobol extension KO");
             }

@@ -31,7 +31,7 @@
 -- Line 8 --
 [8,11:    ]<SpaceSeparator>
 *** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD  ([12,18:service]<SERVICE>[19,19: ]<SpaceSeparator>[20,25:RELOAD]<RELOAD>[26,26+:.]<PeriodSeparator>) ***
-[26,26]<28,Error,Syntax>Syntax error : mismatched input '.' expecting UserDefinedWord
+[26,26]<27,Error,Syntax>Syntax error : mismatched input '.' expecting UserDefinedWord
 
 -- Line 9 --
 [8,13:RELOAD]<RELOAD>
@@ -41,12 +41,12 @@
 [15,15: ]<SpaceSeparator>
 [16,20:Test3]<UserDefinedWord>
 [21,21+:.]<PeriodSeparator>
-[16,20]<28,Error,Syntax>Syntax error : no viable alternative at input 'service ... Test3'
+[16,20]<27,Error,Syntax>Syntax error : no viable alternative at input 'service ... Test3'
 
 -- Line 11 --
 [8,17:ICE RELOAD]<InvalidToken>
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD <missing UserDefinedWord> ([8,14:service]<SERVICE>[15,15: ]<SpaceSeparator>[16,21:reload]<RELOAD>) ***
-[1,0]<28,Error,Syntax>Syntax error : missing UserDefinedWord at ''
+[1,0]<27,Error,Syntax>Syntax error : missing UserDefinedWord at ''
 

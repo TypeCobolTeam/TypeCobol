@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[8,9]<28,Error,Syntax>Syntax error : CANCEL: <literal> must be alphanumeric (RuleStack=codeElement>cancelStatement>identifierOrLiteral, OffendingSymbol=[8,9:42]<IntegerLiteral>{42} on line 4)
-[14,19]<28,Error,Syntax>Syntax error : CANCEL: <literal> must be alphanumeric (RuleStack=codeElement>cancelStatement>identifierOrLiteral, OffendingSymbol=[14,19:101010]<IntegerLiteral>{101010} on line 4)
+[8,9]<27,Error,Syntax>Syntax error : CANCEL: <literal> must be alphanumeric (RuleStack=codeElement>cancelStatement>identifierOrLiteral, OffendingSymbol=[8,9:42]<IntegerLiteral>{42} on line 4)
+[14,19]<27,Error,Syntax>Syntax error : CANCEL: <literal> must be alphanumeric (RuleStack=codeElement>cancelStatement>identifierOrLiteral, OffendingSymbol=[14,19:101010]<IntegerLiteral>{101010} on line 4)
 --- Code Elements ---
 [[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [8,8:x]<UserDefinedWord>
 

@@ -32,49 +32,49 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,19:toto]<UserDefinedWord>[20,20: ]<SpaceSeparator>[21,22:by]<BY>[23,23: ]<SpaceSeparator>[24,27:titi]<UserDefinedWord>[28,28+:.]<PeriodSeparator>) ***
-[16,19]<28,Error,Syntax>Syntax error : no viable alternative at input 'toto'
+[16,19]<27,Error,Syntax>Syntax error : no viable alternative at input 'toto'
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE <REPLACE-SingleToken:[19,22:toto]<UserDefinedWord>><BY:[33,36:titi]<UserDefinedWord>> ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39+:==]<PseudoTextDelimiter>) ***
-[8,14]<28,Error,Syntax>Syntax error : mismatched input 'REPLACE' expecting PeriodSeparator
+[8,14]<27,Error,Syntax>Syntax error : mismatched input 'REPLACE' expecting PeriodSeparator
 
 -- Line 14 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:= ]<EqualOperator>[26,27:by]<BY>[28,28: ]<SpaceSeparator>[29,30:==]<PseudoTextDelimiter>[31,31: ]<SpaceSeparator>[32,35:titi]<UserDefinedWord>[36,36: ]<SpaceSeparator>[37,38:==]<PseudoTextDelimiter>[39,39+:.]<PeriodSeparator>) ***
-[32,35]<28,Error,Syntax>Syntax error : mismatched input 'titi' expecting BY
+[32,35]<27,Error,Syntax>Syntax error : mismatched input 'titi' expecting BY
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26+:.]<PeriodSeparator>) ***
-[26,26]<28,Error,Syntax>Syntax error : mismatched input '.' expecting BY
+[26,26]<27,Error,Syntax>Syntax error : mismatched input '.' expecting BY
 
 -- Line 16 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE <REPLACE-SingleToken:[19,22:toto]<UserDefinedWord>><BY:[33,36:titi]<UserDefinedWord>> ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,45:tutu1]<UserDefinedWord>[46,46+:.]<PeriodSeparator>) ***
-[41,45]<28,Error,Syntax>Syntax error : extraneous input 'tutu1' expecting PeriodSeparator
+[41,45]<27,Error,Syntax>Syntax error : extraneous input 'tutu1' expecting PeriodSeparator
 
 -- Line 17 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE <REPLACE-SingleToken:[19,22:toto]<UserDefinedWord>><BY:[33,36:titi]<UserDefinedWord>> ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[43,43: ]<SpaceSeparator>[44,48:tutu2]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51+:.]<PeriodSeparator>) ***
-[51,51]<28,Error,Syntax>Syntax error : mismatched input '.' expecting BY
+[51,51]<27,Error,Syntax>Syntax error : mismatched input '.' expecting BY
 
 -- Line 18 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE <REPLACE-SingleToken:[19,22:toto]<UserDefinedWord>><BY:[33,36:titi]<UserDefinedWord>> <REPLACE-SingleToMultipleTokens:[44,48:tutu3]<UserDefinedWord>><BY:[54,54+:.]<PeriodSeparator>[8,14:REPLACE]<REPLACE>> ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:==]<PseudoTextDelimiter>[43,43: ]<SpaceSeparator>[44,48:tutu3]<UserDefinedWord>[49,50:==]<PseudoTextDelimiter>[51,51: ]<SpaceSeparator>[52,53:by]<BY>[54,54+:.]<PeriodSeparator>) ***
-[54,54]<28,Error,Syntax>Syntax error : missing PseudoTextDelimiter at '.'
-[19,22]<28,Error,Syntax>Syntax error : mismatched input 'toto' expecting PeriodSeparator
+[54,54]<27,Error,Syntax>Syntax error : missing PseudoTextDelimiter at '.'
+[19,22]<27,Error,Syntax>Syntax error : mismatched input 'toto' expecting PeriodSeparator
 
 -- Line 19 --
 +++ CONTINUATION OF ReplaceDirective ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:by]<BY>[43,43: ]<SpaceSeparator>[44,45:==]<PseudoTextDelimiter>[46,46: ]<SpaceSeparator>[47,51:tutu4]<UserDefinedWord>[52,53:==]<PseudoTextDelimiter>[54,54: ]<SpaceSeparator>[55,55+:.]<PeriodSeparator>) +++
 *** DIRECTIVE INVALID SYNTAX -> REPLACE <REPLACE-SingleToken:[19,22:toto]<UserDefinedWord>><BY:[33,36:titi]<UserDefinedWord>> ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40: ]<SpaceSeparator>[41,42:by]<BY>[43,43: ]<SpaceSeparator>[44,45:==]<PseudoTextDelimiter>[46,46: ]<SpaceSeparator>[47,51:tutu4]<UserDefinedWord>[52,53:==]<PseudoTextDelimiter>[54,54: ]<SpaceSeparator>[55,55+:.]<PeriodSeparator>) ***
-[41,42]<28,Error,Syntax>Syntax error : mismatched input 'by' expecting PeriodSeparator
+[41,42]<27,Error,Syntax>Syntax error : mismatched input 'by' expecting PeriodSeparator
 
 -- Line 20 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE ([8,14:REPLACE]<REPLACE>) ***
-[8,14]<28,Error,Syntax>Syntax error : no viable alternative at input 'REPLACE'
+[8,14]<27,Error,Syntax>Syntax error : no viable alternative at input 'REPLACE'
 
 -- Line 21 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:off]<OFF>) ***
-[8,14]<28,Error,Syntax>Syntax error : mismatched input 'REPLACE' expecting PeriodSeparator
+[8,14]<27,Error,Syntax>Syntax error : mismatched input 'REPLACE' expecting PeriodSeparator
 
 -- Line 22 --
 *** DIRECTIVE INVALID SYNTAX -> REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:off]<OFF>[19,19: ]<SpaceSeparator>[20,21:==]<PseudoTextDelimiter>[22,22: ]<SpaceSeparator>[23,26:toto]<UserDefinedWord>[27,27: ]<SpaceSeparator>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,32:by]<BY>[33,33: ]<SpaceSeparator>[34,35:==]<PseudoTextDelimiter>[36,39:titi]<UserDefinedWord>[40,41:==]<PseudoTextDelimiter>[42,42+:.]<PeriodSeparator>) ***
-[20,21]<28,Error,Syntax>Syntax error : mismatched input '==' expecting PeriodSeparator
+[20,21]<27,Error,Syntax>Syntax error : mismatched input '==' expecting PeriodSeparator
 
 -- Line 23 --
 

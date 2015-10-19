@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.Text
 {
@@ -40,7 +41,9 @@ namespace TypeCobol.Compiler.Text
     {       
         public CobolTextLine(ITextLine textLine, ColumnsLayout columnsLayout)
         {
+            // Reuse the external text line object
             this.textLine = textLine;
+            ColumnsLayout = columnsLayout;
 
             // Scan the line to find the indexes of the different areas
             // - 72 columns reference format
@@ -56,6 +59,9 @@ namespace TypeCobol.Compiler.Text
 
             // Study the indicator char to determine the type of the line
             ComputeLineTypeFromIndicator();
+
+            // First text analysis phase of the incremental compilation process
+            CompilationStep = CompilationStep.Text;
         }
 
         /// <summary>
@@ -272,6 +278,11 @@ namespace TypeCobol.Compiler.Text
         // --- Cobol text line properties ---
 
         /// <summary>
+        /// Format of the Cobol text line
+        /// </summary>
+        public ColumnsLayout ColumnsLayout { get; private set; }
+
+        /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
         public CobolTextLineType Type { get; private set; }
@@ -346,7 +357,7 @@ namespace TypeCobol.Compiler.Text
         // --- ITextLine wrapper ---
 
         // Underlying text line
-        public ITextLine textLine;
+        protected ITextLine textLine;
 
         /// <summary>
         /// Text of the line, without the end of line delimiters
@@ -362,6 +373,11 @@ namespace TypeCobol.Compiler.Text
         /// Number of characters in the line, end of line delimiters excluded
         /// </summary>
         public int Length { get { return textLine.Length; } }
+
+        /// <summary>
+        /// True if the implementation of the text line is read-only and can be used as a snapshot
+        /// </summary>
+        public bool IsReadOnly { get { return textLine.IsReadOnly; } }
 
         /// <summary>
         /// Index of this line when it first appeared in the document.
@@ -394,5 +410,29 @@ namespace TypeCobol.Compiler.Text
         /// which will enable an efficient retrieval of the line number for this line in the document.
         /// </summary>
         public object LineTrackingReferenceInSourceDocument { get { return textLine.LineTrackingReferenceInSourceDocument; } }
+
+        // --- Incremental compilation process ---
+        
+        /// <summary>
+        /// Indicates which compiler step last updated the properties of this line
+        /// </summary>
+        public CompilationStep CompilationStep { get; set; }
+
+        /// <summary>
+        /// A line is freezed after the completion of each compiler step to enable reliable snapshots.
+        /// If we need to update the properties of the line later, a new line must be allocated.
+        /// This method returns true if the line can be updated in place, false if a new copy of the line must be allocated.
+        /// </summary>
+        public bool CanStillBeUpdatedBy(CompilationStep updatingStep)
+        {
+            if(CompilationStep >= updatingStep)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

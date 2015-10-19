@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[31,34]<28,Error,Syntax>Syntax error : no viable alternative at input 'INTO' (RuleStack=codeElement, OffendingSymbol=[31,34:INTO]<INTO> on line 12)
+[31,34]<27,Error,Syntax>Syntax error : no viable alternative at input 'INTO' (RuleStack=codeElement, OffendingSymbol=[31,34:INTO]<INTO> on line 12)
 --- Code Elements ---
 [[ReadStatement]] [1,4:READ]<READ> --> [6,13:filename]<UserDefinedWord>
 

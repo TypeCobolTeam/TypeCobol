@@ -5,7 +5,7 @@ using ICSharpCode.AvalonEdit.Search;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
-using TypeCobol.Compiler;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -85,14 +85,13 @@ namespace TypeCobolStudio.Editor
 
         // --- Handle Scanner and error events ---
 
-        public void OnNext(TokensChangedEvent tokensChangedEvent)
+        public void OnNext(DocumentChangedEvent<ITokensLine> tokensLinesChangedEvent)
         {
             // Refresh the display of all the lines which were not directly modified
             // but which were rescanned because of a scanner state change on a previous or following line
-            IList<int> indexesOfRescannedLines = tokensChangedEvent.GetIndexesOfLinesUpdatedAfterThisEvent(TokensChangeType.LineRescanned);
-            foreach (int rescannedLineIndex in indexesOfRescannedLines)
+            foreach (var documentChange in tokensLinesChangedEvent.DocumentChanges)
             {
-                DocumentLine rescannedLine = Document.GetLineByNumber(rescannedLineIndex);
+                DocumentLine rescannedLine = Document.GetLineByNumber(documentChange.LineIndex);
                 TextArea.TextView.Redraw(rescannedLine.Offset, rescannedLine.Length);
             }
         }

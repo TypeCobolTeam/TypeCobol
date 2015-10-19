@@ -1,18 +1,22 @@
 ﻿-- Line 1 --
 [1,6:AUTHOR]<AUTHOR>
 [7,7: ]<SpaceSeparator>
-[8,25:comment on several]<CommentEntry>
+=>continued:[8,25:comment on severallines without delimiter]<CommentEntry>
 
 -- Line 2 --
-[2,28:    lines without delimiter]<CommentEntry>
+[2,5:    ]<SpaceSeparator>
+=>continuation:[6,28:comment on severallines without delimiter]<CommentEntry>
+[1,1]<24,Error,TextFormat>A hyphen indicator (continuation line) is not permitted in comment entries
 
 -- Line 3 --
 [1,12:INSTALLATION]<INSTALLATION>
 
 -- Line 4 --
 [1,5:     ]<SpaceSeparator>
-[6,13:comment1]<CommentEntry>
+=>continued:[6,13:comment1comment2]<CommentEntry>
 
 -- Line 5 --
-[2,9:comment2]<UserDefinedWord>
+=>continuation:[2,9:comment1comment2]<CommentEntry>
+[1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+[1,1]<24,Error,TextFormat>A hyphen indicator (continuation line) is not permitted in comment entries
 

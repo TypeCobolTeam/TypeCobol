@@ -104,7 +104,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return b.Append("}").ToString();
         }
 
-        internal string ToJSON(IList<CodeElement> elements)
+        internal string ToJSON(IEnumerable<CodeElement> elements)
         {
             if (elements == null) return "";
             int a = 3;

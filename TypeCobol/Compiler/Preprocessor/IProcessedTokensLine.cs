@@ -40,5 +40,15 @@ namespace TypeCobol.Compiler.Preprocessor
         /// (before text manipulation phase)
         /// </summary>
         IList<Diagnostic> PreprocessorDiagnostics { get; }
+
+        /// <summary>
+        /// True if the first compiler directive token on the next line continues the last compiler directive token of this line
+        /// </summary>
+        bool HasDirectiveTokenContinuedOnNextLine { get; }
+
+        /// <summary>
+        /// True if the first compiler directive token on this line continues the last compiler directive token of the previous line
+        /// </summary>
+        bool HasDirectiveTokenContinuationFromPreviousLine { get; }
     }
 }
