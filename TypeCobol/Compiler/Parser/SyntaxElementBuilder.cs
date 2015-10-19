@@ -406,6 +406,7 @@ namespace TypeCobol.Compiler.Parser
 
         private static void InitializeSubscriptOperatorAndLiteral(Subscript subscript, CobolCodeElementsParser.WithRelativeSubscriptingContext context)
         {
+            if (context == null) return;
             if (context.PlusOperator() != null) subscript.op = '+';
             if (context.MinusOperator() != null) subscript.op = '-';
             if (context.IntegerLiteral() != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
