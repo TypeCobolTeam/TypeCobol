@@ -42,6 +42,7 @@ namespace TypeCobol.Editor
             get
             {
                 // TODO test if compilation is done
+                if (Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot == null) return new List<CodeElement>();
                 return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements;
             }
         }
@@ -51,6 +52,7 @@ namespace TypeCobol.Editor
             get
             {
                 // TODO test if compilation is done
+                if (Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot == null) return new List<Diagnostic>();
                 return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.ParserDiagnostics;
             }
         }

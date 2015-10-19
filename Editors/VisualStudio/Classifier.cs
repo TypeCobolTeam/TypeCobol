@@ -34,7 +34,6 @@ namespace TypeCobol.Editor
     }
     #endregion //provider def
 
-    #region Classifier
     /// <summary>
     /// Classifier that classifies all text as an instance of the OrinaryClassifierType
     /// </summary>
@@ -70,8 +69,8 @@ namespace TypeCobol.Editor
             foreach (var e in parser.Errors)
             {
                 IClassificationType type = registry.GetClassificationType("cobol.error");
-                System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start+e.ColumnStart, span.Start+e.ColumnEnd+1).GetText()+"\"");
-                spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.ColumnStart, span.Start+e.ColumnEnd+1), type));
+                System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd).GetText()+"\"");
+                spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd), type));
             }
             return spans;
         }
@@ -115,5 +114,4 @@ namespace TypeCobol.Editor
         public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 #pragma warning restore 67
     }
-    #endregion //Classifier
 }
