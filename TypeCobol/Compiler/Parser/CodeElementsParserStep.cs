@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Preprocessor;
@@ -83,7 +84,7 @@ namespace TypeCobol.Compiler.Parser
                 CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
 
                 // Get the first line that was parsed                
-                CodeElementsLine codeElementsLine = documentLines[cobolParser.FirstTokenLineIndexInMainDocument];
+                CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
 
                 // Visit the parse tree to build a first class object representing the code elements
                 walker.Walk(codeElementBuilder, codeElementParseTree);
@@ -96,13 +97,20 @@ namespace TypeCobol.Compiler.Parser
                     codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
 
                     // Add code element to the list                    
-                    codeElementsLine.CodeElements.Add(codeElement);
+                    codeElementsLine.AddCodeElement(codeElement);
+                    if(codeElement.Diagnostics != null)
+                    {
+                        foreach (Diagnostic diag in codeElement.Diagnostics)
+                        {
+                            codeElementsLine.AddParserDiagnostic(diag);
+                        }
+                    }
                 }
 
                 // Register compiler directive parse errors
                 foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
                 {
-                    codeElementsLine.AddDiagnostic(parserDiag);
+                    codeElementsLine.AddParserDiagnostic(parserDiag);
                 }
             }
             while (tokenStream.La(1) >= 0);

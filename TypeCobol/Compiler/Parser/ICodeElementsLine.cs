@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Compiler.Parser
@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Error and warning messages produced while parsing the source text line
         /// </summary>
-        IList<ParserDiagnostic> ParserDiagnostics { get; }
+        IList<Diagnostic> ParserDiagnostics { get; }
 
         /// <summary>
         /// True if a code element was parsed from tokens on this line and continues with tokens on the next line

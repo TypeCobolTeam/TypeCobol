@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 
@@ -68,17 +68,17 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Error and warning messages produced while parsing the source text line
         /// </summary>
-        public IList<ParserDiagnostic> ParserDiagnostics { get; private set; }
+        public IList<Diagnostic> ParserDiagnostics { get; private set; }
 
         /// <summary>
         /// Lazy initialization of diagnostics list
         /// </summary>
-        internal void AddDiagnostic(ParserDiagnostic diag)
+        internal void AddParserDiagnostic(Diagnostic diag)
         {
             // Lazy list instantiation
             if (ParserDiagnostics == null)
             {
-                ParserDiagnostics = new List<ParserDiagnostic>();
+                ParserDiagnostics = new List<Diagnostic>();
             }
 
             ParserDiagnostics.Add(diag);

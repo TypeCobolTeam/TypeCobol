@@ -3,7 +3,7 @@
 [13,16]<27,Error,Syntax>Syntax error : START: Illegal operator < (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,16:LESS]<LESS> on line 21)
 [13,15]<27,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 22)
 [13,15]<27,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 23)
-[13,14]<27,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,14:<=]<LessThanOrEqualOperator> on line 24)
+[13,15]<27,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:<= ]<LessThanOrEqualOperator> on line 24)
 [13,16]<27,Error,Syntax>Syntax error : START: Illegal operator ≤ (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,16:LESS]<LESS> on line 25)
 [13,15]<27,Error,Syntax>Syntax error : START: Illegal operator ! (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 26)
 [13,15]<27,Error,Syntax>Syntax error : START: Illegal operator ! (RuleStack=codeElement>startStatement>relationalOperator, OffendingSymbol=[13,15:NOT]<NOT> on line 27)
