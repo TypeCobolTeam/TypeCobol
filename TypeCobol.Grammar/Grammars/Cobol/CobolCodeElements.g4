@@ -9307,7 +9307,7 @@ conditionalExpression:
 // - Switch-status condition
 // A simple condition has a truth value of either true or false.   
 
-simpleCondition :
+simpleCondition:
                     classCondition         |
                     conditionNameCondition |
                     relationCondition      |
@@ -10076,7 +10076,7 @@ qualifiedConditionName:
 
 subscript:
 	IntegerLiteral | ALL  |
-	(dataName withRelativeSubscripting?) |
+	(qualifiedDataName withRelativeSubscripting?) |
 	(indexName withRelativeSubscripting?);
 
 withRelativeSubscripting:

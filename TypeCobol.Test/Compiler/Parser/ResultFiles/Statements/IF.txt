@@ -655,3 +655,35 @@
 
 [[SentenceEnd]] [76,76+:.]<PeriodSeparator> --> [76,76+:.]<PeriodSeparator>
 
+[[IfStatement]] [1,2:IF]<IF> --> [22,22:)]<RightParenthesisSeparator>
+
+[[ContinueStatement]] [24,31:CONTINUE]<CONTINUE> --> [24,31:CONTINUE]<CONTINUE>
+
+[[IfStatementEnd]] [33,38:END-IF]<END_IF> --> [33,38:END-IF]<END_IF>
+
+[[SentenceEnd]] [39,39+:.]<PeriodSeparator> --> [39,39+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:IF]<IF> --> [27,27:)]<RightParenthesisSeparator>
+
+[[ContinueStatement]] [29,36:CONTINUE]<CONTINUE> --> [29,36:CONTINUE]<CONTINUE>
+
+[[IfStatementEnd]] [38,43:END-IF]<END_IF> --> [38,43:END-IF]<END_IF>
+
+[[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:IF]<IF> --> [29,32:THEN]<THEN>
+
+[[ContinueStatement]] [34,41:CONTINUE]<CONTINUE> --> [34,41:CONTINUE]<CONTINUE>
+
+[[IfStatementEnd]] [43,48:END-IF]<END_IF> --> [43,48:END-IF]<END_IF>
+
+[[SentenceEnd]] [49,49+:.]<PeriodSeparator> --> [49,49+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:IF]<IF> --> [34,37:THEN]<THEN>
+
+[[ContinueStatement]] [39,46:CONTINUE]<CONTINUE> --> [39,46:CONTINUE]<CONTINUE>
+
+[[IfStatementEnd]] [48,53:END-IF]<END_IF> --> [48,53:END-IF]<END_IF>
+
+[[SentenceEnd]] [54,54+:.]<PeriodSeparator> --> [54,54+:.]<PeriodSeparator>
+

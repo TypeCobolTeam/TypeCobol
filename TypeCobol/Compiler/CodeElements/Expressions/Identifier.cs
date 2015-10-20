@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class Subscript
     {
-        public SymbolReference<DataName> dataname { get; set; }
+        public QualifiedDataName dataname { get; set; }
         public SymbolReference<IndexName> indexname { get; set; }
         public SyntaxNumber offset { get; set; }
         public char op { get; set; }

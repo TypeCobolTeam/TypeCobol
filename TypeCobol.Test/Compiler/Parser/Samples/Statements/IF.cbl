@@ -193,3 +193,8 @@ IF (x < 1 OR 2 AND 3 OR 4 AND 5 OR 6) DISPLAY "ABBREVIATED RELATION" END-IF.
 *IF NOT (x  =  ('1' OR '2'))
 *  DISPLAY "OK"
 *END-IF.
+
+IF ( x ( y ) = 'OK'  ) CONTINUE END-IF.
+IF ( a OF b ( x ) = 'OK'  ) CONTINUE END-IF.
+IF ( a ( x OF y ) = 'OK'  ) THEN CONTINUE END-IF.
+IF ( a OF b ( x OF y ) = 'OK'  ) THEN CONTINUE END-IF.

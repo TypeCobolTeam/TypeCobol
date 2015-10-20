@@ -391,9 +391,9 @@ namespace TypeCobol.Compiler.Parser
                 var token = ParseTreeUtils.GetTokenFromTerminalNode(context.ALL());
                 subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
             }
-            if (context.dataName() != null)
+            if (context.qualifiedDataName() != null)
             {
-                subscript.dataname = CreateDataName(context.dataName());
+                subscript.dataname = CreateQualifiedName(context.qualifiedDataName());
                 InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
             }
             if (context.indexName() != null)
