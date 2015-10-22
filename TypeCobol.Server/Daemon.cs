@@ -2,6 +2,7 @@
 using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using System.Collections.Generic;
 using MsgPack.Serialization;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Server
 {
@@ -12,29 +13,22 @@ namespace TypeCobol.Server
 //   they are always serialized by msgpack in alphabetical order,
 //   excepted if one uses [MessagePackMemberAttribute(<0-based position>)]
 // - wheter or not the field to serialize is a C# property
-public class DummyCodeElement {
+
+public class MsgPackCodeElement {
 	[MessagePackMemberAttribute(0)]
-	public DummyType Type = DummyType.Unknown;
+	public CodeElementType Type;
 	[MessagePackMemberAttribute(1)]
 	public int Begin;
 	[MessagePackMemberAttribute(2)]
 	public int End { get; set; }
 	[MessagePackMemberAttribute(3)]
 	public string Text;
-	//[NonSerializedAttribute]
-	public string Tmp;
-}
-
-public enum DummyType {
-	First,
-	Second,
-	Last,
-	Unknown,
 }
 
 class Server {
 
 	static void Main(string[] args) {
+        Parser parser = new Parser("TypeCobol.Server");
 		while (true) {
 			var pipe = new NamedPipeServerStream("testpipe", PipeDirection.InOut, 4);
 			System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect ...");
@@ -44,27 +38,28 @@ class Server {
 			try {
 				var imarshaller = MessagePackSerializer.Get<int>();
 				var smarshaller = MessagePackSerializer.Get<string>();
-				var tmarshaller = MessagePackSerializer.Get<List<DummyCodeElement>>();
+				var tmarshaller = MessagePackSerializer.Get<List<MsgPackCodeElement>>();
 				int code = imarshaller.Unpack(pipe);
 				System.Console.WriteLine("Order "+code);
 				if (code == 66) { // let's parse!
 					string text = smarshaller.Unpack(pipe);
-					System.Console.WriteLine("Parse text: "+text);
-
-					var e1 = new DummyCodeElement {
-							Begin = 0,
-							End = 10,
-							Text = text.Substring(0,10),
-							Tmp = "won't be",
-						};
-					var e2 = new DummyCodeElement {
-							Tmp = "packed at all",
-							End = 20,
-							Text = text.Substring(12,20),
-							Begin = 12,
-							Type = DummyType.Second,
-						};
-					var list = new List<DummyCodeElement>() {e1, e2};
+					parser.Parse(new TypeCobol.Compiler.Text.TextString(text));
+					List<MsgPackCodeElement> list = new List<MsgPackCodeElement>();
+                    foreach(CodeElement e in parser.CodeElements) {
+                        // okay, we know it: this conversion is ugly
+                        // reason of it: MsgPack.Cli won't let us get a Serializer on CodeElement because it is abstract
+                        // so we have to explore other ways to solve this:
+                        // - use a concrete class somewhere
+                        // - try SimpleMessagePack
+                        // - ... ?
+                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"");
+                        list.Add(new MsgPackCodeElement {
+                                Type = e.Type,
+                                Begin = e.ConsumedTokens[0].StartIndex,
+                                End = e.ConsumedTokens[e.ConsumedTokens.Count-1].StopIndex,
+                                Text = e.Text,
+                            });
+                    }
 					tmarshaller.Pack(pipe, list);
 					System.Console.WriteLine(list.Count+" CodeElements sent.");
 				}
