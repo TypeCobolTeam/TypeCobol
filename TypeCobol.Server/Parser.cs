@@ -8,9 +8,9 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
-namespace TypeCobol.Editor
+namespace TypeCobol.Server
 {
-    internal class Parser
+    public class Parser
     {
         public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
         private CompilationProject Project;
