@@ -52,11 +52,11 @@ class Server {
                         // - use a concrete class somewhere
                         // - try SimpleMessagePack
                         // - ... ?
-                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"");
+                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\"");
                         list.Add(new MsgPackCodeElement {
                                 Type = e.Type,
-                                Begin = e.ConsumedTokens[0].StartIndex,
-                                End = e.ConsumedTokens[e.ConsumedTokens.Count-1].StopIndex,
+                                Begin = e.ConsumedTokens[0].Column,
+                                End = e.ConsumedTokens[e.ConsumedTokens.Count-1].EndColumn,
                                 Text = e.Text,
                             });
                     }

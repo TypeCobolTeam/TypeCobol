@@ -1,5 +1,10 @@
 package typecobol.editors.eclipse.cobol;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.List;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
@@ -7,6 +12,8 @@ import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
+import typecobol.client.Client;
+import typecobol.client.CodeElement;
 import typecobol.editors.eclipse.ColorMap;
 import typecobol.editors.eclipse.WhitespaceDetector;
 
@@ -15,11 +22,11 @@ public class Scanner implements ITokenScanner {
 	private final WhitespaceDetector detector = new WhitespaceDetector();
 	private ColorMap colors;
 	private String text;
-	private int baseOffset;
-	private int range;
-	private int offset;
-	private int length;
+	private int index;
+	private int offsetEndOfLastLine;
+	private int offsetInLine;
 	private int color = 0;
+	private List<CodeElement> elements;
 
 	public Scanner(final ColorMap colors) {
 		this.colors = colors;
@@ -27,29 +34,32 @@ public class Scanner implements ITokenScanner {
 
 	@Override //ITokenScanner
 	public int getTokenLength() {
-		return length;
+		final CodeElement e = elements.get(index);
+		System.out.println("getTokenLength("+index+"): "+e.end+"-"+e.begin+"+1="+(e.end-e.begin+1));
+		return e.end-e.begin +1;
 	}
 
 	@Override //ITokenScanner
 	public int getTokenOffset() {
-		return baseOffset + offset-length;
+		System.out.println("getTokenOffset="+offsetEndOfLastLine+"+"+offsetInLine+"="+(offsetEndOfLastLine + offsetInLine));
+		return offsetEndOfLastLine + offsetInLine;
 	}
 
 	@Override //ITokenScanner
 	public IToken nextToken() {
-		if (offset >= range) return Token.EOF;
-		length = 0;
-		char c = text.charAt(offset);
-		boolean spaaace = detector.isWhitespace(c);
-		while (detector.isWhitespace(c) == spaaace) {
-			length++;
-			if (offset+length >= range) break;
-			c = text.charAt(offset+length);
+		index ++;
+		if (index >= elements.size()) return Token.EOF;
+		final CodeElement e = elements.get(index);
+		if (index == 0) {
+			offsetEndOfLastLine = 0;
+		} else {
+			if (e.begin <= offsetInLine) {
+				offsetEndOfLastLine += elements.get(index-1).end+1;
+			}
 		}
-		//System.out.println("("+(baseOffset+offset)+","+(baseOffset+offset+length)+"): \""+text.substring(baseOffset+offset, baseOffset+offset+length)+"\"");
-		offset += length;
-		//System.out.println("nextToken(): "+(offset-length)+">"+offset+"("+length+") \""+text.substring(offset-length, offset)+"\"");
-		return new Token(new TextAttribute(colors.getColor(spaaace? hex2rgb("#ffffff") : generate()), null, SWT.ITALIC));
+		offsetInLine = e.begin;
+		System.out.println("nextToken(): ["+index+"] "+e);
+		return new Token(new TextAttribute(colors.getColor(generate()), null, SWT.ITALIC));
 	}
 
 	private RGB generate() {
@@ -75,12 +85,43 @@ public class Scanner implements ITokenScanner {
 	@Override //ITokenScanner
 	public void setRange(final IDocument document, final int offset, final int range) {
 		//System.out.println("setRange(.., "+offset+", "+range+")");
-		this.baseOffset = offset;
-		this.offset = 0;
-		this.range = range;
 		this.text = null;
+		this.index = -1;
+
 		try { this.text = document.get(offset, range); }
 		catch (BadLocationException ex) { ex.printStackTrace(); return; }
+		System.out.println(">>>>>>>>>>>>>>>>>>>>\n"+text+"\n<<<<<<<<<<<<<<<<<<<<");
+		if (text != null) parse(text);
+	}
+
+
+
+	private boolean parse(final String text) {
+		elements = null;
+		final String pipename = "testpipe";
+
+		RandomAccessFile pipe = null;
+		try { // connect to pipe
+			final String path = "\\\\.\\pipe\\"+pipename;
+			pipe = new RandomAccessFile(path, "rw"); //FNFException
+		} catch (final FileNotFoundException ex) {
+			System.err.println("Pipe \""+pipename+"\" not found.");
+			return false;
+		}
+
+		boolean status = true;
+		try { elements = new Client(pipe).sendrcv(text); }
+		catch (final Exception ex) {
+			System.err.println("Error sending/receiving data.");
+			ex.printStackTrace();
+			status = false;
+		}
+		try { pipe.close(); }
+		catch (final IOException ex) {
+			System.err.println("Error closing pipe \""+pipename+"\".");
+			ex.printStackTrace();
+		}
+		return status;
 	}
 
 }
