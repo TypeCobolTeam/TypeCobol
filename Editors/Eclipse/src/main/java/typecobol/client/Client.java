@@ -37,9 +37,6 @@ public class Client {
 		final Unpacker unpacker = msgpack.createUnpacker(in);
 		final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.tToken);
 		List<CodeElement> result = unpacker.read(ctemplate);
-		System.out.println("--------------------\n"+data);
-		System.out.println("----- Got: "+result.size()+" tokens.\n--------------------");
-		//for(final Token t: result) System.out.println(t);
 		unpacker.close();
 		in.close();
 

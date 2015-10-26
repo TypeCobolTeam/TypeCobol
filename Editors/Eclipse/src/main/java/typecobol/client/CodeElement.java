@@ -46,8 +46,6 @@ public class CodeElement {
 
 			final Template<java.util.List<Error>> etemplate = tList(Error.tError);
 			List<Error> errors = unpacker.read(etemplate);
-			if (errors.size() > 0 ) System.out.println("Got: "+errors.size()+" error(s) on CodeElement: "+token);
-			for(final Error e: errors) System.out.println(e);
 			token.errors = errors;
 
 			unpacker.readArrayEnd();

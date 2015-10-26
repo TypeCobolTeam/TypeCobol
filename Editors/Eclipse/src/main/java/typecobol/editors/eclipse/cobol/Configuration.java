@@ -7,14 +7,11 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
-import typecobol.editors.eclipse.ColorMap;
-import typecobol.editors.eclipse.MarkerHandler;
-
 public class Configuration extends SourceViewerConfiguration {
 	private Scanner scanner;
 
-	public Configuration(final MarkerHandler handler, final ColorMap colors) {
-		this.scanner = new Scanner(handler, colors);
+	public Configuration(final Scanner scanner) {
+		this.scanner = scanner;
 	}
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {

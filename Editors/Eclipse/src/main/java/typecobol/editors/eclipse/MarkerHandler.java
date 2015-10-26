@@ -36,8 +36,9 @@ public class MarkerHandler {
 
 	public void error(final CodeElement element, final int offset) {
 		for(final typecobol.client.Error error: element.errors) {
+			// TODO don't re-add error if it already exists
 			error(offset+error.begin, offset+error.end, error.message);
-			System.out.println("ERROR("+(offset+error.begin)+";"+(offset+error.end)+"): "+error+" on CodeElement: "+element);
+			System.err.println("NEW ERROR("+(offset+error.begin)+";"+(offset+error.end)+"): "+error+" on CodeElement: "+element);
 		}
 	}
 }
