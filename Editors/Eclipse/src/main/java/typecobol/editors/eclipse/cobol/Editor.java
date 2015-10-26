@@ -16,7 +16,7 @@ public class Editor extends TextEditor {
 	public Editor() {
 		super();
 		colors = new ColorMap();
-		setSourceViewerConfiguration(new Configuration(colors));
+		setSourceViewerConfiguration(new Configuration(handler, colors));
 		setDocumentProvider(new FileDocumentProvider());
 	}
 
@@ -32,11 +32,6 @@ public class Editor extends TextEditor {
 		super.doSetInput(input);
 		IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(input);
 		handler.input = file;
-
 		handler.deleteMarkers();
-		//TODO PARSE ALL THE THINGS!!!
-		// syntax highlighting will be covered by Scanner
-		// error handling has to be done after parsing
-		handler.error(25,55);
 	}
 }

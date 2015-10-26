@@ -15,17 +15,20 @@ import org.eclipse.swt.graphics.RGB;
 import typecobol.client.Client;
 import typecobol.client.CodeElement;
 import typecobol.editors.eclipse.ColorMap;
+import typecobol.editors.eclipse.MarkerHandler;
 
 public class Scanner implements ITokenScanner {
 
-	private ColorMap colors;
+	private final MarkerHandler handler;
+	private final ColorMap colors;
 	private String text;
 	private int color = 0;
 	private List<CodeElement> elements;
 	private int index;
 	private CodeElement current;
 
-	public Scanner(final ColorMap colors) {
+	public Scanner(final MarkerHandler handler, final ColorMap colors) {
+		this.handler = handler;
 		this.colors = colors;
 	}
 
@@ -73,7 +76,7 @@ public class Scanner implements ITokenScanner {
 
 	@Override //ITokenScanner
 	public void setRange(final IDocument document, final int offset, final int range) {
-		//System.out.println("setRange(.., "+offset+", "+range+")");
+		System.out.println(">>>>> setRange(.., "+offset+", "+range+")");
 		this.text = null;
 		this.index = -1;
 		this.current = null;
@@ -82,6 +85,11 @@ public class Scanner implements ITokenScanner {
 		catch (BadLocationException ex) { ex.printStackTrace(); return; }
 		//System.out.println(">>>>>>>>>>>>>>>>>>>>\n"+text+"\n<<<<<<<<<<<<<<<<<<<<");
 		if (text != null) parse(text);
+		for(final CodeElement e: elements)
+			if (e.errors.size() > 0) {
+				System.out.println("Line "+e.lineFirst+": ");
+				handler.error(e, getLineOffset(e.lineFirst));}
+		System.out.println("<<<<<");
 	}
 
 	private int getLineOffset(final int line) {

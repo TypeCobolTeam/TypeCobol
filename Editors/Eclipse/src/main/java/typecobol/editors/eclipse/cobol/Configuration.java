@@ -8,12 +8,13 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 import typecobol.editors.eclipse.ColorMap;
+import typecobol.editors.eclipse.MarkerHandler;
 
 public class Configuration extends SourceViewerConfiguration {
 	private Scanner scanner;
 
-	public Configuration(final ColorMap colors) {
-		this.scanner = new Scanner(colors);
+	public Configuration(final MarkerHandler handler, final ColorMap colors) {
+		this.scanner = new Scanner(handler, colors);
 	}
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {

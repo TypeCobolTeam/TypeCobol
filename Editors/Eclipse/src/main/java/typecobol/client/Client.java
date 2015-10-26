@@ -19,6 +19,7 @@ public class Client {
 
 	public List<CodeElement> sendrcv(final String data) throws IOException {
 		final MessagePack msgpack = new MessagePack();
+		msgpack.register(Error.class);
 		msgpack.register(CodeElementType.class);// if A has a field of class B,
 		msgpack.register(CodeElement.class);   // B must be registered before A
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -34,9 +35,10 @@ public class Client {
 		// read response
 		final InputStream in = java.nio.channels.Channels.newInputStream(pipe.getChannel());
 		final Unpacker unpacker = msgpack.createUnpacker(in);
-		final Template<java.util.List<CodeElement>> template = tList(CodeElement.tToken);
-		List<CodeElement> result = unpacker.read(template);
-		System.out.println("Got: "+result.size()+" tokens.");
+		final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.tToken);
+		List<CodeElement> result = unpacker.read(ctemplate);
+		System.out.println("--------------------\n"+data);
+		System.out.println("----- Got: "+result.size()+" tokens.\n--------------------");
 		//for(final Token t: result) System.out.println(t);
 		unpacker.close();
 		in.close();

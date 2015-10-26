@@ -2,7 +2,6 @@
 using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using System.Collections.Generic;
 using MsgPack.Serialization;
-using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Server
 {
@@ -16,7 +15,7 @@ namespace TypeCobol.Server
 
 public class MsgPackCodeElement {
 	[MessagePackMemberAttribute(0)]
-	public CodeElementType Type;
+	public TypeCobol.Compiler.CodeElements.CodeElementType Type;
 	[MessagePackMemberAttribute(1)]
 	public int Begin;
 	[MessagePackMemberAttribute(2)]
@@ -27,6 +26,23 @@ public class MsgPackCodeElement {
 	public int LineFirst;
 	[MessagePackMemberAttribute(4)]
 	public int LineLast;
+	[MessagePackMemberAttribute(6)]
+    public List<MsgPackError> Errors;
+}
+
+public class MsgPackError {
+	[MessagePackMemberAttribute(0)]
+    public int Begin;
+	[MessagePackMemberAttribute(1)]
+    public int End;
+	[MessagePackMemberAttribute(2)]
+    public string Message;
+	[MessagePackMemberAttribute(3)]
+    public int Severity;
+	[MessagePackMemberAttribute(4)]
+    public int Category;
+	[MessagePackMemberAttribute(5)]
+    public int Code;
 }
 
 class Server {
@@ -43,31 +59,48 @@ class Server {
 				var imarshaller = MessagePackSerializer.Get<int>();
 				var smarshaller = MessagePackSerializer.Get<string>();
 				var tmarshaller = MessagePackSerializer.Get<List<MsgPackCodeElement>>();
+				var emarshaller = MessagePackSerializer.Get<List<MsgPackError>>();
 				int code = imarshaller.Unpack(pipe);
 				System.Console.WriteLine("Order "+code);
 				if (code == 66) { // let's parse!
 					string text = smarshaller.Unpack(pipe);
 					parser.Parse(new TypeCobol.Compiler.Text.TextString(text));
 					List<MsgPackCodeElement> list = new List<MsgPackCodeElement>();
-                    foreach(CodeElement e in parser.CodeElements) {
+                    foreach(TypeCobol.Compiler.CodeElements.CodeElement e in parser.CodeElements) {
                         // okay, we know it: this conversion is ugly
                         // reason of it: MsgPack.Cli won't let us get a Serializer on CodeElement because it is abstract
                         // so we have to explore other ways to solve this:
                         // - use a concrete class somewhere
                         // - try SimpleMessagePack
                         // - ... ?
-                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\"");
-                        list.Add(new MsgPackCodeElement {
+                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\", Errors="+e.Diagnostics.Count);
+                        var element = new MsgPackCodeElement {
                                 Type = e.Type,
                                 Begin = e.ConsumedTokens[0].Column-1,
                                 End = e.ConsumedTokens[e.ConsumedTokens.Count-1].EndColumn,
                                 Text = e.Text,
                                 LineFirst = e.ConsumedTokens[0].Line-1,
                                 LineLast  = e.ConsumedTokens[e.ConsumedTokens.Count-1].Line-1,
-                            });
+                            };
+                        element.Errors = new List<MsgPackError>();
+                        foreach(TypeCobol.Compiler.Diagnostics.Diagnostic error in e.Diagnostics) {
+                            element.Errors.Add(new MsgPackError {
+                                    Begin = error.ColumnStart-1,
+                                    End = error.ColumnEnd,
+                                    Message = error.Message,
+                                    Severity = (int)error.Info.Severity,
+                                    Category = (int)error.Info.Category,
+                                    Code = error.Info.Code,
+                                });
+                            foreach(MsgPackError err in element.Errors) System.Console.WriteLine("Error: "+error);
+                        }
+					    if (element.Errors.Count > 0 ) System.Console.WriteLine(element.Errors.Count+" Error(s) to send.");
+                        list.Add(element);
                     }
 					tmarshaller.Pack(pipe, list);
 					System.Console.WriteLine(list.Count+" CodeElements sent.");
+					//List<MsgPackError> errors = new List<MsgPackError>();
+					//emarshaller.Pack(pipe, errors);
 				}
 
 				pipe.Disconnect();

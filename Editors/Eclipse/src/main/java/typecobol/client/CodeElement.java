@@ -5,6 +5,8 @@ import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
 import static org.msgpack.template.Templates.*;
 
+import java.util.List;
+
 // this annotation is necessary only if you don't
 // use MessagePack.register(<this class>)
 //@org.msgpack.annotation.Message
@@ -15,6 +17,7 @@ public class CodeElement {
 	public int lineFirst;
 	public int lineLast;
 	public String text;
+	public List<Error> errors;
 
 	@Override
 	public String toString() {
@@ -33,12 +36,20 @@ public class CodeElement {
 				throws java.io.IOException {
 			token = new CodeElement();
 			unpacker.readArrayBegin();
+
 			token.type  = CodeElementType.asEnum(TString.read(unpacker, null, required));
 			token.begin = TInteger.read(unpacker, null, required);
 			token.end   = TInteger.read(unpacker, null, required);
 			token.lineFirst = TInteger.read(unpacker, null, required);
 			token.lineLast  = TInteger.read(unpacker, null, required);
 			token.text  = TString.read(unpacker, null, required);
+
+			final Template<java.util.List<Error>> etemplate = tList(Error.tError);
+			List<Error> errors = unpacker.read(etemplate);
+			if (errors.size() > 0 ) System.out.println("Got: "+errors.size()+" error(s) on CodeElement: "+token);
+			for(final Error e: errors) System.out.println(e);
+			token.errors = errors;
+
 			unpacker.readArrayEnd();
 			return token;
 		}
