@@ -22,11 +22,10 @@ public class Scanner implements ITokenScanner {
 	private final WhitespaceDetector detector = new WhitespaceDetector();
 	private ColorMap colors;
 	private String text;
-	private int index;
-	private int offsetEndOfLastLine;
-	private int offsetInLine;
 	private int color = 0;
 	private List<CodeElement> elements;
+	private int index;
+	private CodeElement current;
 
 	public Scanner(final ColorMap colors) {
 		this.colors = colors;
@@ -34,31 +33,22 @@ public class Scanner implements ITokenScanner {
 
 	@Override //ITokenScanner
 	public int getTokenLength() {
-		final CodeElement e = elements.get(index);
-		System.out.println("getTokenLength("+index+"): "+e.end+"-"+e.begin+"+1="+(e.end-e.begin+1));
-		return e.end-e.begin +1;
+		//System.out.println("getTokenLength("+index+"): "+current.end+"-"+current.begin+"="+(current.end-current.begin));
+		return current.end-current.begin;
 	}
 
 	@Override //ITokenScanner
 	public int getTokenOffset() {
-		System.out.println("getTokenOffset="+offsetEndOfLastLine+"+"+offsetInLine+"="+(offsetEndOfLastLine + offsetInLine));
-		return offsetEndOfLastLine + offsetInLine;
+		//System.out.println("getTokenOffset(): getLineOffset("+current.lineFirst+")="+getLineOffset(current.lineFirst)+"  +"+current.begin+" = "+(getLineOffset(current.lineFirst)+current.begin));
+		return getLineOffset(current.lineFirst)+current.begin;
 	}
 
 	@Override //ITokenScanner
 	public IToken nextToken() {
 		index ++;
 		if (index >= elements.size()) return Token.EOF;
-		final CodeElement e = elements.get(index);
-		if (index == 0) {
-			offsetEndOfLastLine = 0;
-		} else {
-			if (e.begin <= offsetInLine) {
-				offsetEndOfLastLine += elements.get(index-1).end+1;
-			}
-		}
-		offsetInLine = e.begin;
-		System.out.println("nextToken(): ["+index+"] "+e);
+		current =  elements.get(index);
+		//System.out.println("nextToken(): ["+index+"] "+current);
 		return new Token(new TextAttribute(colors.getColor(generate()), null, SWT.ITALIC));
 	}
 
@@ -87,11 +77,22 @@ public class Scanner implements ITokenScanner {
 		//System.out.println("setRange(.., "+offset+", "+range+")");
 		this.text = null;
 		this.index = -1;
+		this.current = null;
 
 		try { this.text = document.get(offset, range); }
 		catch (BadLocationException ex) { ex.printStackTrace(); return; }
-		System.out.println(">>>>>>>>>>>>>>>>>>>>\n"+text+"\n<<<<<<<<<<<<<<<<<<<<");
+		//System.out.println(">>>>>>>>>>>>>>>>>>>>\n"+text+"\n<<<<<<<<<<<<<<<<<<<<");
 		if (text != null) parse(text);
+	}
+
+	private int getLineOffset(final int line) {
+		int l = 0;
+		int os = 0;
+		while (l < line) {
+			os = text.indexOf('\n', os)+1;
+			l++;
+		}
+		return os;
 	}
 
 

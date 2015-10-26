@@ -21,8 +21,12 @@ public class MsgPackCodeElement {
 	public int Begin;
 	[MessagePackMemberAttribute(2)]
 	public int End { get; set; }
-	[MessagePackMemberAttribute(3)]
+	[MessagePackMemberAttribute(5)]
 	public string Text;
+	[MessagePackMemberAttribute(3)]
+	public int LineFirst;
+	[MessagePackMemberAttribute(4)]
+	public int LineLast;
 }
 
 class Server {
@@ -55,9 +59,11 @@ class Server {
                         System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\"");
                         list.Add(new MsgPackCodeElement {
                                 Type = e.Type,
-                                Begin = e.ConsumedTokens[0].Column,
+                                Begin = e.ConsumedTokens[0].Column-1,
                                 End = e.ConsumedTokens[e.ConsumedTokens.Count-1].EndColumn,
                                 Text = e.Text,
+                                LineFirst = e.ConsumedTokens[0].Line-1,
+                                LineLast  = e.ConsumedTokens[e.ConsumedTokens.Count-1].Line-1,
                             });
                     }
 					tmarshaller.Pack(pipe, list);

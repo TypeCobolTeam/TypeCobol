@@ -12,11 +12,13 @@ public class CodeElement {
 	public CodeElementType type;
 	public int begin;
 	public int end;
+	public int lineFirst;
+	public int lineLast;
 	public String text;
 
 	@Override
 	public String toString() {
-		return "("+begin+","+end+") ["+type+": \""+text+"\"]";
+		return "("+begin+"["+lineFirst+"]; "+end+"["+lineLast+"]) ["+type+": \""+text+"\"]";
 	}
 
 	public static class TokenTemplate implements Template<CodeElement> {
@@ -34,6 +36,8 @@ public class CodeElement {
 			token.type  = CodeElementType.asEnum(TString.read(unpacker, null, required));
 			token.begin = TInteger.read(unpacker, null, required);
 			token.end   = TInteger.read(unpacker, null, required);
+			token.lineFirst = TInteger.read(unpacker, null, required);
+			token.lineLast  = TInteger.read(unpacker, null, required);
 			token.text  = TString.read(unpacker, null, required);
 			unpacker.readArrayEnd();
 			return token;
