@@ -15,11 +15,9 @@ import org.eclipse.swt.graphics.RGB;
 import typecobol.client.Client;
 import typecobol.client.CodeElement;
 import typecobol.editors.eclipse.ColorMap;
-import typecobol.editors.eclipse.WhitespaceDetector;
 
 public class Scanner implements ITokenScanner {
 
-	private final WhitespaceDetector detector = new WhitespaceDetector();
 	private ColorMap colors;
 	private String text;
 	private int color = 0;
