@@ -43,6 +43,7 @@ public class Scanner implements ITokenScanner {
 
 	@Override //ITokenScanner
 	public IToken nextToken() {
+		if (elements == null) return Token.EOF;
 		index ++;
 		if (index >= elements.size()) return Token.EOF;
 		current =  elements.get(index);
