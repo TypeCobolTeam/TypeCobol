@@ -35,6 +35,7 @@ public class Scanner implements ITokenScanner {
 		int offset = -1;
 		try { offset = document.getLineOffset(current.lineFirst); }
 		catch (final BadLocationException ex) { }
+		//System.out.println("getTokenOffset(["+index+"] "+current+"): los("+current.lineFirst+"):"+offset+" +"+current.begin+" = "+(offset+current.begin));
 		return offset + current.begin;
 	}
 

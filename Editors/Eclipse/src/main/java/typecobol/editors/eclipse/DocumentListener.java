@@ -23,6 +23,8 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public void documentChanged(final DocumentEvent event) {
 		parser.parse(event.fDocument.get());
+		System.out.println("parsed.");
+
 		if (parser.elements != null) {
 			for (final CodeElement e: parser.elements) {
 				if (e.errors.size() < 1) continue;
@@ -33,7 +35,7 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 				handler.error(e, offset);
 			}
 		}
-		else ;//TODO error marker parsing failed
+		//else ;//TODO error marker parsing failed
 	}
 
 	@Override
