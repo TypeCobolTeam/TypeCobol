@@ -11,9 +11,9 @@ import org.eclipse.jface.text.*;
 public class DocumentListener implements IDocumentListener, IDocumentPartitioningListener, CodeElementsProvider {
 
 	private final Parser parser = new Parser();
-	private final MarkerHandler handler;
+	private final MarkerCreator handler;
 
-	public DocumentListener(final MarkerHandler handler) {
+	public DocumentListener(final MarkerCreator handler) {
 		this.handler = handler;
 	}
 
@@ -23,7 +23,6 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public void documentChanged(final DocumentEvent event) {
 		parser.parse(event.fDocument.get());
-		System.out.println("parsed.");
 
 		if (parser.elements != null) {
 			for (final CodeElement e: parser.elements) {

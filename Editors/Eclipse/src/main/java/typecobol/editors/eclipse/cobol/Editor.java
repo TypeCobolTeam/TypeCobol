@@ -10,25 +10,25 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.editors.text.TextEditor;
 import typecobol.editors.eclipse.ColorMap;
 import typecobol.editors.eclipse.DocumentListener;
-import typecobol.editors.eclipse.MarkerHandler;
-import typecobol.editors.eclipse.MarkersListener;
+import typecobol.editors.eclipse.MarkerCreator;
+import typecobol.editors.eclipse.MarkersCleaner;
 
 public class Editor extends TextEditor {
 
 	private final ColorMap colors;
-	private final MarkerHandler handler = new MarkerHandler();
-	private final DocumentListener dlistener = new DocumentListener(handler);
-	private final MarkersListener listener = new MarkersListener();
+	private final MarkerCreator handler = new MarkerCreator();
+	private final DocumentListener listener = new DocumentListener(handler);
+	private final MarkersCleaner cleaner = new MarkersCleaner();
 	private final Scanner scanner;
 
 	public Editor() {
 		super();
 		colors = new ColorMap();
-		scanner = new Scanner(dlistener, colors);
+		scanner = new Scanner(listener, colors);
 		setSourceViewerConfiguration(new Configuration(scanner));
 		setDocumentProvider(new FileDocumentProvider());
 		
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(cleaner);
 	}
 
 	@Override
@@ -41,13 +41,12 @@ public class Editor extends TextEditor {
 	protected void doSetInput(final IEditorInput input) throws CoreException
 	{
 		super.doSetInput(input);
-		IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(input);
-		handler.input = file;
-		handler.deleteMarkers();
-
 		final IDocument document = getDocumentProvider().getDocument(input);
-		document.addDocumentListener(dlistener);
-		//document.addDocumentPartitioningListener(dlistener);
-		dlistener.documentChanged(new DocumentEvent(document, 0, document.get().length(), document.get()));
+		final IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(input);
+		handler.input = file;
+		MarkersCleaner.deleteMarkers(file);
+
+		document.addDocumentListener(listener);
+		listener.documentChanged(new DocumentEvent(document, 0, document.get().length(), document.get()));
 	}
 }

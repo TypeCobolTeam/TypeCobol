@@ -17,7 +17,6 @@ public class Parser {
 
 	public boolean parse(final String text) {
 		elements = null;
-
 		RandomAccessFile pipe = null;
 		try { // connect to pipe
 			final String path = "\\\\.\\pipe\\"+pipename;
