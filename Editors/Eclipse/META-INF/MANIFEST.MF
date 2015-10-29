@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- lib/msgpack-0.6.12.jar,
- lib/javassist.jar
+ msgpack-0.6.12.jar,
+ javassist-3.18.1-GA.jar
