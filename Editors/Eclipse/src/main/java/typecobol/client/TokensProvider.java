@@ -1,5 +1,5 @@
 package typecobol.client;
 
-public interface CodeElementsProvider {
+public interface TokensProvider {
 	java.util.List<Token> getTokens();
 }

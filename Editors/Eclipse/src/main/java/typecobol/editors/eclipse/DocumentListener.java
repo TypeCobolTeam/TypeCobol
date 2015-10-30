@@ -1,14 +1,14 @@
 package typecobol.editors.eclipse;
 
 import typecobol.client.CodeElement;
-import typecobol.client.CodeElementsProvider;
+import typecobol.client.TokensProvider;
 import typecobol.client.Parser;
 
 import java.util.List;
 
 import org.eclipse.jface.text.*;
 
-public class DocumentListener implements IDocumentListener, IDocumentPartitioningListener, CodeElementsProvider {
+public class DocumentListener implements IDocumentListener, IDocumentPartitioningListener, TokensProvider {
 
 	private final Parser parser = new Parser();
 	private final MarkerCreator handler;

@@ -7,7 +7,7 @@ import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
-import typecobol.client.CodeElementsProvider;
+import typecobol.client.TokensProvider;
 import typecobol.editors.eclipse.ColorMap;
 
 public class Scanner implements ITokenScanner {
@@ -16,10 +16,10 @@ public class Scanner implements ITokenScanner {
 	private int color = 0;
 	private int index;
 	private typecobol.client.Token current;
-	private final CodeElementsProvider provider;
+	private final TokensProvider provider;
 	private IDocument document;
 
-	public Scanner(final CodeElementsProvider provider, final ColorMap colors) {
+	public Scanner(final TokensProvider provider, final ColorMap colors) {
 		this.provider = provider;
 		this.colors = colors;
 	}
