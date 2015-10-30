@@ -43,8 +43,8 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public List<typecobol.client.Token> getTokens() {
 		final List<typecobol.client.Token> tokens = new java.util.ArrayList<typecobol.client.Token>();
-		for (final CodeElement e: parser.elements)
-			tokens.addAll(e.tokens);
+		if (parser.elements == null) return tokens;
+		for (final CodeElement e: parser.elements) tokens.addAll(e.tokens);
 		return tokens;
 	}
 

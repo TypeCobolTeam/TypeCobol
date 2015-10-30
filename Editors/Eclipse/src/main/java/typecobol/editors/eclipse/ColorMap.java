@@ -22,4 +22,15 @@ public class ColorMap {
 		}
 		return color;
 	}
+	public Color getColor(final String rgb) {
+		return getColor(hex2rgb(rgb));
+	}
+
+	public static RGB hex2rgb(final String code) {
+	    final java.awt.Color color = new java.awt.Color(
+	            Integer.valueOf(code.substring(1,3), 16),
+	            Integer.valueOf(code.substring(3,5), 16),
+	            Integer.valueOf(code.substring(5,7), 16));
+	    return new RGB(color.getRed(), color.getGreen(), color.getBlue());
+	}
 }
