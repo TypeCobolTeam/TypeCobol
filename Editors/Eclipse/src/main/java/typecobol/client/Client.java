@@ -19,7 +19,9 @@ public class Client {
 
 	public List<CodeElement> sendrcv(final String data) throws IOException {
 		final MessagePack msgpack = new MessagePack();
-		msgpack.register(Error.class);
+		msgpack.register(Error.class);             //
+		msgpack.register(TokenFamily.class);      //
+		msgpack.register(Token.class);           //
 		msgpack.register(CodeElementType.class);// if A has a field of class B,
 		msgpack.register(CodeElement.class);   // B must be registered before A
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();

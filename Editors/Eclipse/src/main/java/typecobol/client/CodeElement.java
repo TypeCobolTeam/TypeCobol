@@ -17,6 +17,7 @@ public class CodeElement {
 	public int lineFirst;
 	public int lineLast;
 	public String text;
+	public List<Token> tokens;
 	public List<Error> errors;
 
 	@Override
@@ -44,7 +45,11 @@ public class CodeElement {
 			token.lineLast  = TInteger.read(unpacker, null, required);
 			token.text  = TString.read(unpacker, null, required);
 
-			final Template<java.util.List<Error>> etemplate = tList(Error.tError);
+			final Template<List<Token>> ttemplate = tList(Token.tToken);
+			List<Token> tokens = unpacker.read(ttemplate);
+			token.tokens = tokens;
+
+			final Template<List<Error>> etemplate = tList(Error.tError);
 			List<Error> errors = unpacker.read(etemplate);
 			token.errors = errors;
 

@@ -27,7 +27,20 @@ public class MsgPackCodeElement {
 	[MessagePackMemberAttribute(4)]
 	public int LineLast;
 	[MessagePackMemberAttribute(6)]
+    public IList<MsgPackToken> Tokens;
+	[MessagePackMemberAttribute(7)]
     public List<MsgPackError> Errors;
+}
+
+public class MsgPackToken {
+	[MessagePackMemberAttribute(0)]
+    public int Type;
+	[MessagePackMemberAttribute(1)]
+    public int Begin;
+	[MessagePackMemberAttribute(2)]
+    public int Length;
+	[MessagePackMemberAttribute(3)]
+    public int Line;
 }
 
 public class MsgPackError {
@@ -82,6 +95,15 @@ class Server {
                                 LineFirst = e.ConsumedTokens[0].Line-1,
                                 LineLast  = e.ConsumedTokens[e.ConsumedTokens.Count-1].Line-1,
                             };
+                        element.Tokens = new List<MsgPackToken>();
+                        foreach(TypeCobol.Compiler.Scanner.Token token in e.ConsumedTokens) {
+                            element.Tokens.Add(new MsgPackToken {
+                                    Type = (int)token.TokenFamily,
+                                    Begin = token.Column-1,
+                                    Length = token.Length,
+                                    Line = token.Line-1,
+                                });
+                        }
                         element.Errors = new List<MsgPackError>();
                         foreach(TypeCobol.Compiler.Diagnostics.Diagnostic error in e.Diagnostics) {
                             element.Errors.Add(new MsgPackError {
