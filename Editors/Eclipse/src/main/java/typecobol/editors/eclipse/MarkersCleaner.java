@@ -12,9 +12,10 @@ import org.eclipse.core.runtime.jobs.Job;
 public class MarkersCleaner implements IResourceChangeListener {
 
 	public static void deleteMarkers(final IResource input) {
-		int depth = IResource.DEPTH_INFINITE;
-		try { input.deleteMarkers(IMarker.PROBLEM, true, depth); }
-		catch (CoreException ex) { ex.printStackTrace(); }
+		if (input != null) {
+			try { input.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE); }
+			catch (CoreException ex) { ex.printStackTrace(); }
+		}
 	}
 
 

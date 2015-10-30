@@ -46,7 +46,9 @@ public class Editor extends TextEditor {
 		handler.input = file;
 		MarkersCleaner.deleteMarkers(file);
 
-		document.addDocumentListener(listener);
-		listener.documentChanged(new DocumentEvent(document, 0, document.get().length(), document.get()));
+		if (document != null) {
+			document.addDocumentListener(listener);
+			listener.documentChanged(new DocumentEvent(document, 0, document.get().length(), document.get()));
+		}
 	}
 }
