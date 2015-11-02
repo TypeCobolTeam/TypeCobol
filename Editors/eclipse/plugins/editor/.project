@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TypeCobol.Eclipse</name>
+	<name>TypeCobol.Editor</name>
 	<comment>TypeCobol editor plugin for Eclipse IDE</comment>
 	<projects>
 	</projects>
