@@ -39,6 +39,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
         private string escape(string text)
         {
+            text = text.Replace("\\", "\\\\");
             text = text.Replace("\"", "\\\"");
             text = text.Replace("\'", "\\\'");
             return text;
