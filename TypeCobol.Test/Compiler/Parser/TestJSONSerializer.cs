@@ -124,7 +124,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return buffer.ToString();
         }
 
-        public static void DumpAsJSON(IList<CodeElement> elements, string filename)
+        public static void DumpAsJSON(IEnumerable<CodeElement> elements, string filename)
         {
             string json = new TestJSONSerializer().ToJSON(elements);
             string[] lines = { json };
