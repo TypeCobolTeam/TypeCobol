@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/typecobol.editor.feature_1.0.0.jar" id="typecobol.editor.feature" version="1.0.0">
+      <category name="typecobol"/>
+   </feature>
+   <category-def name="typecobol" label="TypeCobol">
+      <description>
+         TypeCobol plugins.
+      </description>
+   </category-def>
+</site>
