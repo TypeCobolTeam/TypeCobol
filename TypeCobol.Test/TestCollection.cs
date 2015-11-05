@@ -114,7 +114,8 @@ namespace TypeCobol.Test
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-            //TODO            TestCodeElements.Check_EntryCodeElements();
+            //TODO  TestCodeElements.Check_EntryCodeElements();// RefreshProgramClassDocumentSnapshot
+            //TODO  TestParser.Check_BeforeAfterInsertion();  // breaks when calling these <-- FIXME
 
             string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
             foreach (string directory in Directory.GetDirectories(PlatformUtils.GetPathForProjectFile(root)))

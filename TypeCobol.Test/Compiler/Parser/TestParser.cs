@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -28,6 +29,49 @@ namespace TypeCobol.Test.Compiler.Parser
             {
                 throw new Exception("Parser and type checker with TypeCobol extension KO");
             }
+        }
+
+        public static void Check_BeforeAfterInsertion() {
+            TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
+            TextChangedEvent e;
+            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Empty");
+            unit.comparator = new Multipass(unit.comparator.paths.name);
+            unit.Init();
+            unit.compiler.CompileOnce();//unit.Parse();
+            names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
+            names.index = 0;
+            unit.Compare();//with Empty.0.txt
+
+            // explicitely close program by adding END PROGRAM line
+            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Empty.");
+            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.compiler.CompileOnce();//unit.Parse();
+            names.index++;
+            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            unit.Compare();//with Empty.1.txt
+
+            // change program name ; now first and last line have differing program id
+            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Emptier.");
+            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.compiler.CompileOnce();//unit.Parse();
+            names.index++;
+            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            unit.Compare();//with Empty.2.txt
+
+            // clear document
+            e = updateLine(TextChangeType.DocumentCleared, /* the following parameters are not used when DocumentCleared*/ 0, null);
+            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.compiler.CompileOnce();//unit.Parse();
+            names.index++;
+            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            unit.Compare();//with Empty.3.txt
+        }
+
+        private static TextChangedEvent updateLine(TextChangeType type, int line, string text) {
+            TextChangedEvent e = new TextChangedEvent();
+            ITextLine snapshot = new TextLineSnapshot(line, text, null);
+            e.TextChanges.Add(new TextChange(type, line, snapshot));
+            return e;
         }
     }
 }

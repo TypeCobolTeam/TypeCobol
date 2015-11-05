@@ -127,6 +127,7 @@ namespace TypeCobol.Compiler
                     Program newProgram;
                     Class newClass;
                     IList<ParserDiagnostic> newDiagnostics;
+                    //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, out newProgram, out newClass, out newDiagnostics);
 
                     // Capture the result of the parse in a new snapshot

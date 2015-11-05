@@ -15,7 +15,7 @@ namespace TypeCobol.Test.Compiler.Parser
 {
     internal class TestUnit
     {
-        private FileCompiler compiler = null;
+        internal FileCompiler compiler = null;
         public FilesComparator comparator;
         public TestObserver observer;
 
@@ -351,6 +351,24 @@ namespace TypeCobol.Test.Compiler.Parser
         }
     }
 
+    internal class Multipass : FilesComparator
+    {
+        public Multipass(string name, Names resultnames = null, bool debug = false)
+            : base(name, resultnames != null ? resultnames : new IndexNames(), debug) { }
+        /*
+        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        {
+            System.Console.WriteLine("pass="+paths.resultnames.CreateName(paths.name));
+        }
+        */
+        internal class IndexNames : Names
+        {
+            internal int index = 0;
+            public string CreateName(string name) { return name+'.'+index; }
+            public System.Type GetComparatorType() { return typeof(Multipass); }
+        }
+    }
+
 
 
     internal interface Names
@@ -435,9 +453,9 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class Paths
     {
-        private readonly string Root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
+        internal readonly string Root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar;
         internal string name;
-        private Names resultnames;
+        internal Names resultnames;
 
         public Paths(string name, Names resultnames)
         {
