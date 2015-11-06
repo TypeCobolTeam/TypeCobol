@@ -88,7 +88,7 @@ class Server {
                         // - use a concrete class somewhere
                         // - try SimpleMessagePack
                         // - ... ?
-                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\", Errors="+e.Diagnostics.Count);
+//                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\", Errors="+e.Diagnostics.Count);
                         var element = new MsgPackCodeElement {
                                 Type = e.Type,
                                 Begin = e.ConsumedTokens[0].Column-1,
@@ -116,15 +116,12 @@ class Server {
                                     Category = (int)error.Info.Category,
                                     Code = error.Info.Code,
                                 });
-                            foreach(MsgPackError err in element.Errors) System.Console.WriteLine("Error: "+error);
                         }
 					    if (element.Errors.Count > 0 ) System.Console.WriteLine(element.Errors.Count+" Error(s) to send.");
                         list.Add(element);
                     }
 					tmarshaller.Pack(pipe, list);
 					System.Console.WriteLine(list.Count+" CodeElements sent.");
-					//List<MsgPackError> errors = new List<MsgPackError>();
-					//emarshaller.Pack(pipe, errors);
 				}
 
 				pipe.Disconnect();
