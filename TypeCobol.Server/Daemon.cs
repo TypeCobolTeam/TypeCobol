@@ -62,9 +62,11 @@ class Server {
 
 	static void Main(string[] args) {
         Parser parser = new Parser("TypeCobol.Server");
+        string pipename = "TypeCobol.pipe";
+        if (args.Length > 0) pipename = args[0];
 		while (true) {
-			var pipe = new NamedPipeServerStream("testpipe", PipeDirection.InOut, 4);
-			System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect ...");
+			var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
+			System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on \""+pipename+"\" ...");
 			pipe.WaitForConnection(); // blocking
 
 			System.Console.WriteLine("Client connected.");

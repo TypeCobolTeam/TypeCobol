@@ -12,7 +12,7 @@ public class Parser {
 
 
 	public Parser() {
-		this.pipename = "testpipe";
+		this.pipename = typecobol.server.Server.NAME;
 	}
 
 	public boolean parse(final String text) {

@@ -4,15 +4,14 @@ import java.io.File;
 
 public class Server extends Thread {
 
+	public static final String NAME = "TypeCobol.Eclipse";
+
 	static volatile boolean run = true;
 	private Process process = null;
 
 	@Override
 	public void run() {
 		final ProcessBuilder builder = createProcessBuilder(getExecutable());
-//		final Map<String, String> environment = builder.environment();
-//		for (final Entry<String, String> entry : environment.entrySet())
-//			System.out.println(entry.getKey() + " : " + entry.getValue());
 		try { process = builder.start(); }
 		catch (final java.io.IOException ex) {
 			ex.printStackTrace();
@@ -49,10 +48,8 @@ public class Server extends Thread {
 	}
 
 	private static ProcessBuilder createProcessBuilder(final File path) {
-		final String[] args = { path.getAbsolutePath(), "testpipe" };
+		final String[] args = { path.getAbsolutePath(), NAME };
 		final ProcessBuilder builder = new ProcessBuilder(args);
-		//final ProcessBuilder builder = new ProcessBuilder(path.getName());
-		//builder.directory(path.getParentFile());
 		return builder;
 	}
 
