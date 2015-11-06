@@ -33,7 +33,7 @@ public class Scanner implements ITokenScanner {
 	public int getTokenOffset() {
 		int offset = -1;
 		try { offset = document.getLineOffset(current.line); }
-		catch (final BadLocationException ex) { }
+		catch (final BadLocationException ex) { ex.printStackTrace(); }
 		return offset + current.begin;
 	}
 
@@ -44,7 +44,8 @@ public class Scanner implements ITokenScanner {
 		index ++;
 		if (index >= tokens.size()) return Token.EOF;
 		current =  tokens.get(index);
-		return new Token(new TextAttribute(getColor(current.family), null, SWT.ITALIC));
+		//if (current.family == TokenFamily.StatementStartingKeyword && current.begin==4 && current.length==6) System.out.println("Statement starting @"+getTokenOffset()+" l="+getTokenLength());
+		return new Token(new TextAttribute(getColor(current.family), null, SWT.BOLD));
 	}
 
 	private Color getColor(final TokenFamily family) {
