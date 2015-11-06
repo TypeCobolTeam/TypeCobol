@@ -13,6 +13,8 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	private final Parser parser = new Parser();
 	private final MarkerCreator handler;
 
+	private List<typecobol.client.Token> tokens = null;
+
 	public DocumentListener(final MarkerCreator handler) {
 		this.handler = handler;
 	}
@@ -23,6 +25,7 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public void documentChanged(final DocumentEvent event) {
 		parser.parse(event.fDocument.get());
+		tokens = createTokens();
 
 		if (parser.elements != null) {
 			for (final CodeElement e: parser.elements) {
@@ -40,11 +43,15 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public void documentPartitioningChanged(final IDocument document) { }
 
-	@Override
-	public List<typecobol.client.Token> getTokens() {
+	private List<typecobol.client.Token> createTokens() {
 		final List<typecobol.client.Token> tokens = new java.util.ArrayList<typecobol.client.Token>();
 		if (parser.elements == null) return tokens;
 		for (final CodeElement e: parser.elements) tokens.addAll(e.tokens);
+		return tokens;
+	}
+
+	@Override
+	public List<typecobol.client.Token> getTokens() {
 		return tokens;
 	}
 
