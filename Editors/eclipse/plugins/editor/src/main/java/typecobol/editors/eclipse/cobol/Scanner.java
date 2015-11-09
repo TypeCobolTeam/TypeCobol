@@ -52,29 +52,31 @@ public class Scanner implements ITokenScanner {
 		return colors.getColor(getColorCode(family));
 	}
 
+	private static boolean hackIssue128 = true;
 	private static String getColorCode(final TokenFamily family) {
+		hackIssue128 = !hackIssue128;
 		switch(family) {
 			case Invalid:
-				return "#ff0000";
+				return hackIssue128?"#fe0000":"#ff0000";
 			case Comments:
 			case CompilerDirective:
-				return "#00aa00";
+				return hackIssue128?"#00a900":"#00aa00";
 			case AlphanumericLiteral:
-				return "#aa00aa";
+				return hackIssue128?"#aa00a9":"#aa00aa";
 			case NumericLiteral:
-				return "#00aaaa";
+				return hackIssue128?"#00aaa9":"#00aaaa";
 			case CompilerDirectiveStartingKeyword:
 			case CodeElementStartingKeyword:
 			case StatementStartingKeyword:
 			case StatementEndingKeyword:
-				return "#0000ff";
+				return hackIssue128?"#0000fe":"#0000ff";
 			case SpecialRegisterKeyword:
 			case FigurativeConstantKeyword:
 			case SpecialObjetIdentifierKeyword:
 			case SyntaxKeyword:
-				return "#0000aa";
+				return hackIssue128?"#0000ab":"#0000aa";
 			case Symbol:
-				return "#ffaa00";
+				return hackIssue128?"#feaa00":"#ffaa00";
 			case SyntaxSeparator:
 			case ArithmeticOperator:
 			case RelationalOperator:
@@ -82,7 +84,7 @@ public class Scanner implements ITokenScanner {
 			case InternalTokenGroup:
 			case SyntaxLiteral:
 			default:
-				return "#000000";
+				return hackIssue128?"#000001":"#000000";
 		}
 	}
 
