@@ -17,13 +17,17 @@ public class Parser {
 
 	public boolean parse(final String text) {
 		elements = null;
+		final String path = "\\\\.\\pipe\\"+pipename;
 		RandomAccessFile pipe = null;
-		try { // connect to pipe
-			final String path = "\\\\.\\pipe\\"+pipename;
-			pipe = new RandomAccessFile(path, "rw"); //FNFException
-		} catch (final FileNotFoundException ex) {
-			System.err.println("Pipe \""+pipename+"\" not found.");
-			return false;
+		while(pipe == null) {
+			try { pipe = new RandomAccessFile(path, "rw"); } // connect to pipe
+			catch (final FileNotFoundException fnfex) { } // pipe not yet open
+			finally {
+				if (pipe == null) { // not connected, wait a bit
+					try { Thread.sleep(100); }
+					catch (final InterruptedException iex) { return false; }
+				}
+			}
 		}
 
 		boolean status = true;
