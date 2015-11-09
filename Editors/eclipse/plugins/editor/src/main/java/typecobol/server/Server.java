@@ -6,7 +6,7 @@ public class Server extends Thread {
 
 	public static final String NAME = "TypeCobol.Eclipse";
 
-	static volatile boolean run = true;
+	static volatile boolean run = false;
 	private Process process = null;
 
 	@Override
@@ -23,6 +23,7 @@ public class Server extends Thread {
 		final Runnable err = new Dump(process.getErrorStream(), System.err);
 		new Thread(out).start();
 		new Thread(err).start();
+		run = true;
 		while(run) {
 			try { sleep(500); }
 			catch (final InterruptedException ex) { }//DO nothing
