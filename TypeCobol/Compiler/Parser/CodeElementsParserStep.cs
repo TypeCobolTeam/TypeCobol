@@ -98,19 +98,19 @@ namespace TypeCobol.Compiler.Parser
 
                     // Add code element to the list                    
                     codeElementsLine.AddCodeElement(codeElement);
-                    if(codeElement.Diagnostics != null)
+                    foreach (ParserDiagnostic d in errorListener.Diagnostics)
                     {
-                        foreach (Diagnostic diag in codeElement.Diagnostics)
-                        {
-                            codeElementsLine.AddParserDiagnostic(diag);
-                        }
+                        codeElement.Diagnostics.Add(d);
                     }
-                }
-
-                // Register compiler directive parse errors
-                foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
-                {
-                    codeElementsLine.AddParserDiagnostic(parserDiag);
+                    foreach (Diagnostic d in codeElement.Diagnostics)
+                    {
+                        codeElementsLine.AddParserDiagnostic(d);
+                    }
+                } else {
+                    foreach (ParserDiagnostic d in errorListener.Diagnostics)
+                    {
+                        codeElementsLine.AddParserDiagnostic(d);
+                    }
                 }
             }
             while (tokenStream.La(1) >= 0);
