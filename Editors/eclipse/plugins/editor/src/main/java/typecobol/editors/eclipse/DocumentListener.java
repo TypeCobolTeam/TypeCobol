@@ -37,7 +37,7 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 				handler.error(e, offset);
 			}
 		}
-		//else ;//TODO error marker parsing failed
+		else System.err.println("ERROR: error marker parsing failed");//TODO
 	}
 
 	@Override
