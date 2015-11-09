@@ -66,7 +66,7 @@ class Server {
         if (args.Length > 0) pipename = args[0];
 		while (true) {
 			var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
-			System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on \""+pipename+"\" ...");
+			//System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on \""+pipename+"\" ...");
 			pipe.WaitForConnection(); // blocking
 
 			System.Console.WriteLine("Client connected.");
@@ -76,7 +76,6 @@ class Server {
 				var tmarshaller = MessagePackSerializer.Get<List<MsgPackCodeElement>>();
 				var emarshaller = MessagePackSerializer.Get<List<MsgPackError>>();
 				int code = imarshaller.Unpack(pipe);
-				System.Console.WriteLine("Order "+code);
 				if (code == 66) { // let's parse!
 					string text = smarshaller.Unpack(pipe);
 					parser.Parse(new TypeCobol.Compiler.Text.TextString(text));
@@ -128,7 +127,7 @@ class Server {
 			} 
 			catch (IOException ex) { System.Console.WriteLine("Error: {0}", ex.Message); }
 			catch (System.Runtime.Serialization.SerializationException ex ) { System.Console.WriteLine("Error: {0}", ex.Message); }
-			finally { System.Console.WriteLine("Close pipe."); pipe.Close(); }
+			finally { pipe.Close(); }
 		}
 	}
 
