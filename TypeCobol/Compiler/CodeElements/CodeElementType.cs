@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.CodeElements
         // Code structure
 
         // -- Program --
-        ProgramIdentification,
+        ProgramIdentification = 1, // <- value 1 is mandatory to synchronize this list with the Antlr parser
         ProgramEnd,
         // -- Class --
         ClassIdentification,

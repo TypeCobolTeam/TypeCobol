@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                throw new NotImplementedException();
+                return -1;
                 //return ConsumedTokens[0].Line;
             }
         }
@@ -112,7 +112,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                return 1;
+                return Token.CHANNEL_SourceTokens;
             }
         }
 

@@ -30,8 +30,6 @@ namespace TypeCobol.Compiler.Parser
             CobolProgramClassParser cobolParser = new CobolProgramClassParser(tokenStream);
             // -> activate full ambiguities detection
             //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
-            IAntlrErrorStrategy cobolErrorStrategy = new CobolErrorStrategy();
-            cobolParser.ErrorHandler = cobolErrorStrategy;
 
             // Register all parse errors in a list in memory
             DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();

@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)previousCodeElementsDocument.Lines).ToBuilder();
+                    ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions);
 
                     // Create a new version of the document to track these changes
@@ -83,7 +83,7 @@ namespace TypeCobol.Compiler
                     currentCodeElementsLinesVersion = currentCodeElementsLinesVersion.next;
 
                     // Update the code elements document snapshot
-                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines);
+                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines.ToImmutable());
                 }
 
                 // Send events to all listeners

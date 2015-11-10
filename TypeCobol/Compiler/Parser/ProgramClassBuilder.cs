@@ -4,6 +4,7 @@ using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -16,6 +17,9 @@ namespace TypeCobol.Compiler.Parser
         /// Program object resulting of the visit the parse tree
         /// </summary>
         public Program Program { get; private set; }
+
+        // Programs can be nested => track current programs being analyzed
+        private Stack<Program> programsStack = null;
 
         /// <summary>
         /// Class object resulting of the visit the parse tree
@@ -35,6 +39,33 @@ namespace TypeCobol.Compiler.Parser
             Program = null;
             Class = null;
             Diagnostics = new List<Diagnostic>();
+        }
+
+        public override void EnterCobolProgram(CobolProgramClassParser.CobolProgramContext context)
+        {
+            Program currentProgram = null;
+            if (Program == null)
+            {
+                currentProgram = new SourceProgram();
+                Program = currentProgram;
+                programsStack = new Stack<Program>();
+                programsStack.Push(Program);
+            }
+            else
+            {
+                currentProgram = new NestedProgram(programsStack.Peek());
+                programsStack.Push(currentProgram);
+            }
+
+            currentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;            
+        }
+
+        public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context)
+        {
+            if(programsStack != null)
+            {
+                programsStack.Pop();
+            }
         }
     }
 }

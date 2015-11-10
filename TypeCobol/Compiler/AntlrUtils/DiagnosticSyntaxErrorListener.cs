@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
 
             // Register a new diagnostic
-            ParserDiagnostic diagnostic = new ParserDiagnostic(msg, (Token)offendingSymbol, ruleStack.ToString());
+            ParserDiagnostic diagnostic = new ParserDiagnostic(msg, (IToken)offendingSymbol, ruleStack.ToString());
             Diagnostics.Add(diagnostic);
         }
     }
@@ -55,17 +55,17 @@ namespace TypeCobol.Compiler.AntlrUtils
     /// </summary>
     public class ParserDiagnostic : Diagnostic
     {
-        public ParserDiagnostic(string message, Token offendingSymbol, string ruleStack) :
-            base(MessageCode.SyntaxErrorInParser, offendingSymbol != null ? offendingSymbol.Column : -1, offendingSymbol != null ? offendingSymbol.EndColumn : -1, message)
+        public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack) :
+            base(MessageCode.SyntaxErrorInParser, offendingSymbol != null ? offendingSymbol.Column : -1, offendingSymbol != null ? offendingSymbol.StopIndex + 1 : -1, message)
         {
             OffendingSymbol = offendingSymbol;
             RuleStack = ruleStack;
         }
 
         /// <summary>
-        /// First token which did not match the current rule in the gramme
+        /// First token which did not match the current rule in the grammar
         /// </summary>
-        public Token OffendingSymbol { get; private set; }
+        public IToken OffendingSymbol { get; private set; }
 
         /// <summary>
         /// Stack of grammar rules which were being recognized when an incorrect token occured

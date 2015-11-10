@@ -338,6 +338,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
                     else if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
                     {
+                        lineIndex = previousLineIndex;
                         previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
                         processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
                         if(!previousLine.HasDirectiveTokenContinuationFromPreviousLine)
