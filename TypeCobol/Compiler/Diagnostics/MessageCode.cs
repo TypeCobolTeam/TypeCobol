@@ -35,6 +35,7 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidCblProcessCompilerDirective = 25,
         InvalidControlCblCompilerStatementOption = 26,
         SyntaxErrorInParser = 27,
-        FailedToLoadTextDocumentReferencedByCopyDirective = 28
+        FailedToLoadTextDocumentReferencedByCopyDirective = 28,
+        SyntaxWarningInParser = 29
     }
 }

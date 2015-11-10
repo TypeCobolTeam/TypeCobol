@@ -50,7 +50,7 @@ public class MarkerCreator {
 		if (!marker.exists()) return null;
 		java.util.Map<String,Object> attrs = new java.util.HashMap<String,Object>();
 		attrs.put(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-		attrs.put(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+		attrs.put(IMarker.SEVERITY, error.severity == 1? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
 		attrs.put(TYPECOBOL_SEVERITY, error.severity);
 		attrs.put(TYPECOBOL_CATEGORY, error.category);
 		attrs.put(TYPECOBOL_CODE,     error.code);

@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
 
             // Register a new diagnostic
-            ParserDiagnostic diagnostic = new ParserDiagnostic(msg, (Token)offendingSymbol, ruleStack.ToString());
+            ParserDiagnostic diagnostic = new ParserDiagnostic((Token)offendingSymbol, ruleStack.ToString(), msg);
             Diagnostics.Add(diagnostic);
         }
     }
@@ -55,8 +55,8 @@ namespace TypeCobol.Compiler.AntlrUtils
     /// </summary>
     public class ParserDiagnostic : Diagnostic
     {
-        public ParserDiagnostic(string message, Token offendingSymbol, string ruleStack) :
-            base(MessageCode.SyntaxErrorInParser, offendingSymbol != null ? offendingSymbol.Column : -1, offendingSymbol != null ? offendingSymbol.EndColumn : -1, message)
+        public ParserDiagnostic(Token offendingSymbol, string ruleStack, string message, MessageCode code = MessageCode.SyntaxErrorInParser) :
+            base(code, offendingSymbol != null ? offendingSymbol.Column : -1, offendingSymbol != null ? offendingSymbol.EndColumn : -1, message)
         {
             OffendingSymbol = offendingSymbol;
             RuleStack = ruleStack;

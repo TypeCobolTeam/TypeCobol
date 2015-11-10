@@ -1,9 +1,24 @@
 ﻿--- Diagnostics ---
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 2)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 3)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 5)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 6)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 7)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 8)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 9)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 10)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 38)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 39)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 42)
 [1,2]<27,Error,Syntax>Syntax error : no viable alternative at input 'i2 ... GO' (RuleStack=codeElement, OffendingSymbol=[1,2:GO]<GO> on line 45)
 [1,2]<27,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 45)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 45)
 [1,2]<27,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 46)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 46)
 [1,2]<27,Error,Syntax>Syntax error : Conditional GO TO: Required <procedure name> (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 48)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 48)
 [1,2]<27,Error,Syntax>Syntax error : Conditional GO TO: Maximum 255 <procedure name> allowed (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 50)
+[1,2]<29,Warning,Semantics>Warning : Forbidden: GOTO (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 50)
 --- Code Elements ---
 [[GotoStatement]] [1,2:GO]<GO> --> [7,19:procedurename]<UserDefinedWord>
 

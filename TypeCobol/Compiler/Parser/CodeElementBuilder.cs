@@ -703,6 +703,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterGotoStatement(CobolCodeElementsParser.GotoStatementContext context)
         {
             CodeElement = new StatementsBuilder().CreateGotoStatement(context);
+            DiagnosticUtils.AddWarning(CodeElement, "Forbidden: GOTO", context);
         }
 
 
