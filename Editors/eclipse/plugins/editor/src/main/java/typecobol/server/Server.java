@@ -4,10 +4,11 @@ import java.io.File;
 
 public class Server extends Thread {
 
-	public static final String NAME = "TypeCobol.Eclipse";
-
 	static volatile boolean run = false;
 	private Process process = null;
+	private final String name;
+
+	public Server(final String name) { this.name = name; }
 
 	@Override
 	public void run() {
@@ -18,7 +19,7 @@ public class Server extends Thread {
 			cleanexit();
 			return;
 		}
-		System.out.println("Server started.");
+		System.out.println("Server started. Listening on \""+name+"\".");
 		final Runnable out = new Dump(process.getInputStream(), System.out);
 		final Runnable err = new Dump(process.getErrorStream(), System.err);
 		new Thread(out).start();
@@ -48,14 +49,18 @@ public class Server extends Thread {
 		return new File(path, "TypeCobol.Server.exe");
 	}
 
-	private static ProcessBuilder createProcessBuilder(final File path) {
-		final String[] args = { path.getAbsolutePath(), NAME };
+	private ProcessBuilder createProcessBuilder(final File path) {
+		final String[] args = { path.getAbsolutePath(), name };
 		final ProcessBuilder builder = new ProcessBuilder(args);
 		return builder;
 	}
 
 	public static void main(final String[] args) {
-		final Thread thread = new Server();
+		final String name;
+		if (args != null && args.length > 0) 
+			 name = args[0];
+		else name = typecobol.editors.eclipse.cobol.Editor.PIPE_NAME;
+		final Thread thread = new Server(name);
 		thread.start();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override

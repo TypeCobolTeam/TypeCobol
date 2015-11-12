@@ -12,7 +12,7 @@ public class Parser {
 
 
 	public Parser() {
-		this.pipename = typecobol.server.Server.NAME;
+		this.pipename = typecobol.editors.eclipse.cobol.Editor.PIPE_NAME;
 	}
 
 	public boolean parse(final String text) {
@@ -24,8 +24,9 @@ public class Parser {
 			catch (final FileNotFoundException fnfex) { } // pipe not yet open
 			finally {
 				if (pipe == null) { // not connected, wait a bit
+					System.out.println("Waiting for pipe \""+pipename+"\"...");
 					try { Thread.sleep(100); }
-					catch (final InterruptedException iex) { return false; }
+					catch (final InterruptedException iex) { iex.printStackTrace(); return false; }
 				}
 			}
 		}

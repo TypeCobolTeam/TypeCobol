@@ -51,7 +51,7 @@ public enum TokenFamily {
 	private final int code;
 	private TokenFamily(final int code) { this.code = code; }
 	@Override
-	public String toString() { return String.valueOf(code); }
+	public String toString() { return this.name(); }
 
 	public static TokenFamily asEnum(final int code) {
 		for(final TokenFamily family: TokenFamily.values()) {

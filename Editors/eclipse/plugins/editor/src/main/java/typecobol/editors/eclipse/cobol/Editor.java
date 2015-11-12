@@ -15,6 +15,8 @@ import typecobol.editors.eclipse.MarkersCleaner;
 
 public class Editor extends TextEditor {
 
+	public static final String PIPE_NAME = "TypeCobol.Eclipse";
+
 	private final ColorMap colors;
 	private final MarkerCreator handler = new MarkerCreator();
 	private final DocumentListener listener = new DocumentListener(handler);
