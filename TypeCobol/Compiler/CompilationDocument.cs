@@ -451,7 +451,7 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines);
+                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
                 }
 
                 // Send events to all listeners

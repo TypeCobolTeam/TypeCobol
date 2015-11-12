@@ -34,10 +34,20 @@ namespace TypeCobol.Compiler.Parser
         {
             // Collect all changes applied to the processed tokens lines during the incremental scan
             IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges = new List<DocumentChange<ICodeElementsLine>>();
-            
+
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // TO DO : Implement the incremental parsing with COPY & REPLACE
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            // TO DO -- Remove this block of code after implementing incremental parsing of CodeElements
+            // Here, we do something incorrect in a multithread environment 
+            // => we update the content of IMMUTABLE lines to reset all previously parsed CodeElements
+            foreach(CodeElementsLine immutableLineShouldNotBeChanged in documentLines)
+            {
+                if (immutableLineShouldNotBeChanged.CodeElements != null) immutableLineShouldNotBeChanged.CodeElements.Clear();
+                if (immutableLineShouldNotBeChanged.ParserDiagnostics != null) immutableLineShouldNotBeChanged.ParserDiagnostics.Clear();
+            }
+            // -- END
 
             // Create a token iterator on top of pre-processed tokens lines
             ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetProcessedTokensIterator(textSourceInfo, documentLines);
@@ -83,33 +93,39 @@ namespace TypeCobol.Compiler.Parser
                 // Try to parse a code element starting with the current token
                 CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
 
-                // Get the first line that was parsed                
-                CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
-
-                // Visit the parse tree to build a first class object representing the code elements
-                walker.Walk(codeElementBuilder, codeElementParseTree);
-                CodeElement codeElement = codeElementBuilder.CodeElement;
-                if (codeElement != null)
+                // If the parse tree is not empty
+                if (codeElementParseTree.Start.Type > 0)
                 {
-                    // Attach consumed tokens and main document line numbers information to the code element
-                    codeElement.ConsumedTokens = cobolParser.ConsumedTokens;
-                    codeElement.FirstTokenLineIndexInMainDocument = cobolParser.FirstTokenLineIndexInMainDocument;
-                    codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
+                    // Get the first line that was parsed                
+                    CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
 
-                    // Add code element to the list                    
-                    codeElementsLine.AddCodeElement(codeElement);
-                    foreach (ParserDiagnostic d in errorListener.Diagnostics)
+                    // Visit the parse tree to build a first class object representing the code elements
+                    walker.Walk(codeElementBuilder, codeElementParseTree);
+                    CodeElement codeElement = codeElementBuilder.CodeElement;
+                    if (codeElement != null)
                     {
-                        codeElement.Diagnostics.Add(d);
+                        // Attach consumed tokens and main document line numbers information to the code element
+                        codeElement.ConsumedTokens = cobolParser.ConsumedTokens;
+                        codeElement.FirstTokenLineIndexInMainDocument = cobolParser.FirstTokenLineIndexInMainDocument;
+                        codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
+
+                        // Add code element to the list                    
+                        codeElementsLine.AddCodeElement(codeElement);
+                        foreach (ParserDiagnostic d in errorListener.Diagnostics)
+                        {
+                            codeElement.Diagnostics.Add(d);
+                        }
+                        foreach (Diagnostic d in codeElement.Diagnostics)
+                        {
+                            codeElementsLine.AddParserDiagnostic(d);
+                        }
                     }
-                    foreach (Diagnostic d in codeElement.Diagnostics)
+                    else
                     {
-                        codeElementsLine.AddParserDiagnostic(d);
-                    }
-                } else {
-                    foreach (ParserDiagnostic d in errorListener.Diagnostics)
-                    {
-                        codeElementsLine.AddParserDiagnostic(d);
+                        foreach (ParserDiagnostic d in errorListener.Diagnostics)
+                        {
+                            codeElementsLine.AddParserDiagnostic(d);
+                        }
                     }
                 }
             }
