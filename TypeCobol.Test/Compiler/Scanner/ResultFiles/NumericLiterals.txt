@@ -7,13 +7,13 @@
 [9,9: ]<SpaceSeparator>
 [10,17:17870154]<IntegerLiteral>{17870154}
 [18,18: ]<SpaceSeparator>
-[19,22:+197]<DecimalLiteral>{197|0>197}
+[19,22:+197]<IntegerLiteral>{197}
 [23,23: ]<SpaceSeparator>
-[24,27:-254]<DecimalLiteral>{-254|0>-254}
+[24,27:-254]<IntegerLiteral>{-254}
 [28,28: ]<SpaceSeparator>
-[29,30:-0]<DecimalLiteral>{0|0>0}
+[29,30:-0]<IntegerLiteral>{0}
 [31,31: ]<SpaceSeparator>
-[32,33:+0]<DecimalLiteral>{0|0>0}
+[32,33:+0]<IntegerLiteral>{0}
 [34,34: ]<SpaceSeparator>
 [35,36:- ]<MinusOperator>
 [37,37:0]<IntegerLiteral>{0}
@@ -65,7 +65,7 @@
 [1,7:1234537]<IntegerLiteral>{1234537}
 
 -- Line 5 --
-[1,8:+1234567]<DecimalLiteral>{1234567|0>1234567}
+[1,8:+1234567]<IntegerLiteral>{1234567}
 
 -- Line 6 --
 [1,8:.1234567]<DecimalLiteral>{1234567|7>0.1234567}

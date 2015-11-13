@@ -1,11 +1,11 @@
 ﻿-- Line 1 --
 [1,1:1]<IntegerLiteral>{1}
 [2,2: ]<SpaceSeparator>
-=>continued:[3,3:+2]<DecimalLiteral>{2|0>2}
+=>continued:[3,3:+2]<IntegerLiteral>{2}
 
 -- Line 2 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,6:+2]<DecimalLiteral>{2|0>2}
+=>continuation:[6,6:+2]<IntegerLiteral>{2}
 
 -- Line 3 --
 [1,1:1]<IntegerLiteral>{1}
@@ -19,11 +19,11 @@
 -- Line 5 --
 [1,1:1]<IntegerLiteral>{1}
 [2,2: ]<SpaceSeparator>
-=>continued:[3,3:-2]<DecimalLiteral>{-2|0>-2}
+=>continued:[3,3:-2]<IntegerLiteral>{-2}
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,6:-2]<DecimalLiteral>{-2|0>-2}
+=>continuation:[6,6:-2]<IntegerLiteral>{-2}
 
 -- Line 7 --
 [1,1:1]<IntegerLiteral>{1}

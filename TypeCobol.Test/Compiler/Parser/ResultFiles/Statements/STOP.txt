@@ -5,7 +5,7 @@
 
 [[StopStatement]] [1,4:STOP]<STOP> --> [6,7:42]<IntegerLiteral>{42}
 
-[[StopStatement]] [1,4:STOP]<STOP> --> [6,7:-1]<DecimalLiteral>{-1|0>-1}
+[[StopStatement]] [1,4:STOP]<STOP> --> [6,7:-1]<IntegerLiteral>{-1}
 
 [[StopStatement]] [1,4:STOP]<STOP> --> [6,11+:"STOP"]<AlphanumericLiteral>(",Y,Y){STOP}
 

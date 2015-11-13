@@ -19,19 +19,19 @@
 [6,6:6]<IntegerLiteral>{6}
 
 -- Line 7 --
-=>continued:[1,1:+123]<DecimalLiteral>{123|0>123}
+=>continued:[1,1:+123]<IntegerLiteral>{123}
 
 -- Line 8 --
-=>continuation:[2,4:+123]<DecimalLiteral>{123|0>123}
+=>continuation:[2,4:+123]<IntegerLiteral>{123}
 [1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 9 --
 [1,1: ]<SpaceSeparator>
-=>continued:[2,3:-123]<DecimalLiteral>{-123|0>-123}
+=>continued:[2,3:-123]<IntegerLiteral>{-123}
 
 -- Line 10 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,7:-123]<DecimalLiteral>{-123|0>-123}
+=>continuation:[6,7:-123]<IntegerLiteral>{-123}
 
 -- Line 11 --
 =>continued:[1,1:.23]<DecimalLiteral>{23|2>0.23}

@@ -1178,8 +1178,17 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     currentIndex += decMatch.Length;
                     int endIndex = startIndex + decMatch.Length - 1;
-                    Token token = new Token(TokenType.DecimalLiteral, startIndex, endIndex, tokensLine);
-                    token.LiteralValue = new DecimalLiteralValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
+                    TokenType type;
+                    LiteralValue value;
+                    if(decMatch.Groups[3].Value.Length > 0) {
+                        type = TokenType.DecimalLiteral;
+                        value = new DecimalLiteralValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
+                    } else {
+                        type = TokenType.IntegerLiteral;
+                        value = new IntegerLiteralValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
+                    }
+                    Token token = new Token(type, startIndex, endIndex, tokensLine);
+                    token.LiteralValue = value;
                     return token;
                 }
                 else
