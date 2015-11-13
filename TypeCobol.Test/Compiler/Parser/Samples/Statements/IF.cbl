@@ -198,3 +198,6 @@ IF ( x ( y ) = 'OK'  ) CONTINUE END-IF.
 IF ( a OF b ( x ) = 'OK'  ) CONTINUE END-IF.
 IF ( a ( x OF y ) = 'OK'  ) THEN CONTINUE END-IF.
 IF ( a OF b ( x OF y ) = 'OK'  ) THEN CONTINUE END-IF.
+
+SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+IF x > 100,00 CONTINUE END-IF.

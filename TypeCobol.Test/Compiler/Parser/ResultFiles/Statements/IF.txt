@@ -687,3 +687,13 @@
 
 [[SentenceEnd]] [54,54+:.]<PeriodSeparator> --> [54,54+:.]<PeriodSeparator>
 
+[[SpecialNamesParagraph]] [1,13:SPECIAL-NAMES]<SPECIAL_NAMES> --> [38,38+:.]<PeriodSeparator>
+
+[[IfStatement]] [1,2:IF]<IF> --> [8,13:100,00]<DecimalLiteral>{10000|2>100}
+
+[[ContinueStatement]] [15,22:CONTINUE]<CONTINUE> --> [15,22:CONTINUE]<CONTINUE>
+
+[[IfStatementEnd]] [24,29:END-IF]<END_IF> --> [24,29:END-IF]<END_IF>
+
+[[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
+
