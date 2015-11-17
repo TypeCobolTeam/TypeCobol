@@ -253,7 +253,6 @@ namespace TypeCobol.Compiler.Preprocessor
 
         public override void EnterDeleteCompilerStatement(CobolCompilerDirectivesParser.DeleteCompilerStatementContext context) 
         {
-            System.Console.WriteLine("ENTER DELETE");
             CompilerDirective = new DeleteDirective();
         }
         
@@ -263,10 +262,8 @@ namespace TypeCobol.Compiler.Preprocessor
 
             bool isFirst = true;
             int previous = -42;
-            System.Console.WriteLine("length="+context.IntegerLiteral().Length);
             foreach(ITerminalNode node in context.IntegerLiteral()) {
                 int current = (int)ParseTreeUtils.GetIntegerLiteral(node);
-                System.Console.WriteLine("previous="+previous+", current="+current);
                 if (isFirst) {
                     previous = current;
                     isFirst = false;
@@ -328,6 +325,14 @@ namespace TypeCobol.Compiler.Preprocessor
             if (context.sequenceNumber() != null && context.sequenceNumber().IntegerLiteral() != null)
             {
                 insertDirective.SequenceNumber = (int)ParseTreeUtils.GetIntegerLiteral(context.sequenceNumber().IntegerLiteral());
+                if (insertDirective.SequenceNumber < 0) {
+                    Token errorToken = ParseTreeUtils.GetTokenFromTerminalNode(context.sequenceNumber().IntegerLiteral());
+                    Diagnostic error = new Diagnostic(
+                        MessageCode.InvalidNumericLiteralFormat,
+                        errorToken.Column, errorToken.EndColumn,
+                        "TODO");
+                    Diagnostics.Add(error);//TODO proper diagnostic error
+                }
             }
         }
         
