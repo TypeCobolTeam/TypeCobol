@@ -83,7 +83,7 @@ namespace TypeCobol.Test.Compiler.Preprocessor
                 string expectedResult = reader.ReadToEnd();
                 if (result != expectedResult)
                 {
-                    throw new Exception("Tokens and diagnostics produced by preprocessor in test \"" + testName + "\" don't match the expected result");
+                    throw new Exception("Tokens and diagnostics produced by preprocessor in test \"" + testName + "\" don't match the expected result:\n"+result);
                 }
             }
         }
