@@ -449,20 +449,14 @@ deleteCompilerStatement:
                    /* sequenceNumber? */ DELETE_CD sequenceNumberField;
 
 // Implementation detail 1 : CommaSeparator is considered as whitespace by the parser
-// that's why we make it optional here, even if it is required in the spec
-sequenceNumberField:
-                       sequenceNumberElement (CommaSeparator? sequenceNumberElement)*;
-
-// Implementation detail 2 : 0000001-0000099 is recognized as two tokens
-// IntegerLiteral DecimalLiteral by the scanner, that's why we use
-// DecimalLiteral here, instead if MinusOperator IntegerLiteral
+// so, even if it is required in the spec, we won't be able to use it here
+// Implementation detail 2 : 0000001-0000099 is recognized as IntegerLiteral IntegerLiteral
+// by the scanner (two tokens, first one >0, second one <0), that's why we don't use MinusOperator
 // Implementation detail 3 : the spec constraint below
 // Each entry in the sequence-number-field must be separated from the preceding entry 
 // by a comma >>> followed by a space <<<.
-// => this ensures that the separating comma is not included in the DecimalLiteral
-sequenceNumberElement:
-                         IntegerLiteral |   // single number
-                         (IntegerLiteral DecimalLiteral);  // range of numbers
+sequenceNumberField:
+	IntegerLiteral IntegerLiteral*;
 
 // p539: EJECT statement 
 // The EJECT statement specifies that the next source statement is to be printed at the

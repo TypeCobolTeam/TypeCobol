@@ -253,29 +253,42 @@ namespace TypeCobol.Compiler.Preprocessor
 
         public override void EnterDeleteCompilerStatement(CobolCompilerDirectivesParser.DeleteCompilerStatementContext context) 
         {
+            System.Console.WriteLine("ENTER DELETE");
             CompilerDirective = new DeleteDirective();
         }
         
-        public override void EnterSequenceNumberElement(CobolCompilerDirectivesParser.SequenceNumberElementContext context) 
+        public override void EnterSequenceNumberField(CobolCompilerDirectivesParser.SequenceNumberFieldContext context)
         {
             DeleteDirective deleteDirective = (DeleteDirective)CompilerDirective;
-            DeleteDirective.SequenceNumberRange sequenceNumberRange = new DeleteDirective.SequenceNumberRange();
 
-            // Single number
-            if (context.DecimalLiteral() == null)
-            {
-                int sequenceNumber = (int)ParseTreeUtils.GetIntegerLiteral(context.IntegerLiteral());
-                sequenceNumberRange.From = sequenceNumber;
-                sequenceNumberRange.To = sequenceNumber;
+            bool isFirst = true;
+            int previous = -42;
+            System.Console.WriteLine("length="+context.IntegerLiteral().Length);
+            foreach(ITerminalNode node in context.IntegerLiteral()) {
+                int current = (int)ParseTreeUtils.GetIntegerLiteral(node);
+                System.Console.WriteLine("previous="+previous+", current="+current);
+                if (isFirst) {
+                    previous = current;
+                    isFirst = false;
+                } else {
+                    DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                    range.From = previous;
+                    if(current<0) {
+                        range.To = -current;
+                        isFirst = true;
+                    } else {
+                        range.To = previous;
+                        previous = current;
+                    }
+                    deleteDirective.SequenceNumberRangesList.Add(range);
+                }
             }
-            // Real range
-            else
-            {
-                sequenceNumberRange.From = (int)ParseTreeUtils.GetIntegerLiteral(context.IntegerLiteral());
-                sequenceNumberRange.To = -(int)((DecimalLiteralValue)((Token)(context.DecimalLiteral().Symbol)).LiteralValue).IntegerValue;
+            if (!isFirst && previous >= 0) {
+                DeleteDirective.SequenceNumberRange range = new DeleteDirective.SequenceNumberRange();
+                range.From = previous;
+                range.To = previous;
+                deleteDirective.SequenceNumberRangesList.Add(range);
             }
-
-            deleteDirective.SequenceNumberRangesList.Add(sequenceNumberRange);
         }
 
         public override void EnterEjectCompilerStatement(CobolCompilerDirectivesParser.EjectCompilerStatementContext context) 
