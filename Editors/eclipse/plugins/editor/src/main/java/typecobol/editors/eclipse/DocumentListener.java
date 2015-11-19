@@ -25,28 +25,31 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public void documentChanged(final DocumentEvent event) {
 		String text;
+		int firstLineIndex;
 		try {
 			final IDocument d = event.getDocument();
-			final int firstLineIndex = d.getLineOfOffset(event.getOffset());
-			final int lastLineIndex  = d.getLineOfOffset(event.getOffset()+event.getLength());
-			System.out.print("documentChanged: ["+firstLineIndex+(firstLineIndex!=lastLineIndex?("-"+lastLineIndex):"")+"]; ");
+			firstLineIndex = d.getLineOfOffset(event.getOffset());
+			final int nbCharsInserted = event.getLength() == 0 ? event.getText().length() : event.getLength();
+			final int lastLineIndex  = d.getLineOfOffset(Math.min(event.getOffset()+nbCharsInserted, d.getLength()));
+
 			int length = 0;
 			for (int l=firstLineIndex; l<=lastLineIndex; l++) {
 				final String delimiter = d.getLineDelimiter(l);
 				if (delimiter != null) length += delimiter.length();
 				length += d.getLineInformation(l).getLength();
 			}
-			System.out.println("get("+d.getLineOffset(firstLineIndex)+","+length+")");
+			//System.out.println("documentChanged @["+firstLineIndex+(firstLineIndex!=lastLineIndex?("-"+lastLineIndex):"")+"]");
 			text = event.getDocument().get(d.getLineOffset(firstLineIndex), length);
-			System.out.println("\""+text+"\"");
+			//System.out.println("\""+text+"\"");
 		}
 		catch (final BadLocationException ex) {
 			ex.printStackTrace();
 			System.err.println("Error calculating edition span; defaulting to whole document.");
+			firstLineIndex = 0;
 			text = event.getDocument().get();
 		}
 		parser.parse(text);
-		tokens = createTokens();
+		tokens = createTokens(firstLineIndex);
 
 		if (parser.elements != null) {
 			for (final CodeElement e: parser.elements) {
@@ -64,10 +67,15 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public void documentPartitioningChanged(final IDocument document) { }
 
-	private List<typecobol.client.Token> createTokens() {
+	private List<typecobol.client.Token> createTokens(final int lineOffset) {
 		final List<typecobol.client.Token> tokens = new java.util.ArrayList<typecobol.client.Token>();
 		if (parser.elements == null) return tokens;
-		for (final CodeElement e: parser.elements) tokens.addAll(e.tokens);
+		for (final CodeElement e: parser.elements) {
+			for(final typecobol.client.Token t: e.tokens) {
+				t.line += lineOffset;
+			}
+			tokens.addAll(e.tokens);
+		}
 		return tokens;
 	}
 
