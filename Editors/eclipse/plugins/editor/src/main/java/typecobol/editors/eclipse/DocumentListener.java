@@ -24,7 +24,28 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 
 	@Override
 	public void documentChanged(final DocumentEvent event) {
-		parser.parse(event.fDocument.get());
+		String text;
+		try {
+			final IDocument d = event.getDocument();
+			final int firstLineIndex = d.getLineOfOffset(event.getOffset());
+			final int lastLineIndex  = d.getLineOfOffset(event.getOffset()+event.getLength());
+			System.out.print("documentChanged: ["+firstLineIndex+(firstLineIndex!=lastLineIndex?("-"+lastLineIndex):"")+"]; ");
+			int length = 0;
+			for (int l=firstLineIndex; l<=lastLineIndex; l++) {
+				final String delimiter = d.getLineDelimiter(l);
+				if (delimiter != null) length += delimiter.length();
+				length += d.getLineInformation(l).getLength();
+			}
+			System.out.println("get("+d.getLineOffset(firstLineIndex)+","+length+")");
+			text = event.getDocument().get(d.getLineOffset(firstLineIndex), length);
+			System.out.println("\""+text+"\"");
+		}
+		catch (final BadLocationException ex) {
+			ex.printStackTrace();
+			System.err.println("Error calculating edition span; defaulting to whole document.");
+			text = event.getDocument().get();
+		}
+		parser.parse(text);
 		tokens = createTokens();
 
 		if (parser.elements != null) {
