@@ -1,6 +1,7 @@
 package typecobol.client;
 
 import static org.msgpack.template.Templates.TInteger;
+import static org.msgpack.template.Templates.TString;
 
 import org.msgpack.packer.Packer;
 import org.msgpack.template.Template;
@@ -13,6 +14,12 @@ public class Token {
 	public int begin;
 	public int length;
 	public int line;
+	public String text;
+
+	@Override
+	public String toString() {
+		return "("+begin+";"+length+")@"+line+" ["+family+": \""+text+"\"]";
+	}
 
 
 
@@ -32,6 +39,7 @@ public class Token {
 			token.begin  = TInteger.read(unpacker, null, required);
 			token.length = TInteger.read(unpacker, null, required);
 			token.line   = TInteger.read(unpacker, null, required);
+			token.text   = TString.read(unpacker, null, required);
 			unpacker.readArrayEnd();
 			return token;
 		}

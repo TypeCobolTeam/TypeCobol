@@ -10,12 +10,13 @@ import org.eclipse.jface.text.*;
 
 public class DocumentListener implements IDocumentListener, IDocumentPartitioningListener, TokensProvider {
 
-	private final Parser parser = new Parser();
+	private final Parser parser;
 	private final MarkerCreator handler;
 
 	private List<typecobol.client.Token> tokens = null;
 
-	public DocumentListener(final MarkerCreator handler) {
+	public DocumentListener(final Parser parser, final MarkerCreator handler) {
+		this.parser = parser;
 		this.handler = handler;
 	}
 

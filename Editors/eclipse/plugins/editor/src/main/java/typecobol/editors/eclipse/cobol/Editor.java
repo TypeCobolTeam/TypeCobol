@@ -11,6 +11,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
+import typecobol.client.Parser;
 import typecobol.editors.eclipse.ColorMap;
 import typecobol.editors.eclipse.DocumentListener;
 import typecobol.editors.eclipse.MarkerCreator;
@@ -21,14 +22,16 @@ public class Editor extends TextEditor {
 	public static final String PIPE_NAME = "TypeCobol.Eclipse";
 
 	private final ColorMap colors;
+	private final Parser parser = new Parser();
+	private final DocumentListener listener;
 	private final MarkerCreator handler = new MarkerCreator();
-	private final DocumentListener listener = new DocumentListener(handler);
 	private final MarkersCleaner cleaner = new MarkersCleaner();
 	private final Scanner scanner;
 
 	public Editor() {
 		super();
 		colors = new ColorMap();
+		listener = new DocumentListener(parser, handler);
 		scanner = new Scanner(listener, colors);
 		setSourceViewerConfiguration(new Configuration(scanner));
 		
@@ -62,7 +65,7 @@ public class Editor extends TextEditor {
 		String path = null;
 		if (input instanceof org.eclipse.ui.part.FileEditorInput) {
 			final IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(input);
-			path = file.getFullPath().toString();
+			path = file.getLocation().toString();
 			resource = file;
 		} else
 		if (input instanceof org.eclipse.ui.ide.FileStoreEditorInput) {
@@ -71,6 +74,7 @@ public class Editor extends TextEditor {
 		}
 		handler.input = resource;
 		MarkersCleaner.deleteMarkers(resource);
+		parser.initialize(path);
 
 		if (document != null) {
 			document.addDocumentListener(listener);

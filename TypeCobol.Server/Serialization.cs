@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TypeCobol.Server.Serialization
 {
-    public class IntSerializer {
+    public class IntegerSerializer {
         private MessagePackSerializer<int> Marshaller = MessagePackSerializer.Get<int>();
         public bool Serialize(Stream output, int data) {
             Marshaller.Pack(output, data);
@@ -42,7 +42,6 @@ namespace TypeCobol.Server.Serialization
                                 Type = e.Type,
                                 Begin = e.ConsumedTokens[0].Column-1,
                                 End = e.ConsumedTokens[e.ConsumedTokens.Count-1].EndColumn,
-                                Text = e.Text,
                                 LineFirst = e.ConsumedTokens[0].Line-1,
                                 LineLast  = e.ConsumedTokens[e.ConsumedTokens.Count-1].Line-1,
                     };
@@ -53,6 +52,7 @@ namespace TypeCobol.Server.Serialization
                                     Begin = token.Column-1,
                                     Length = token.Length,
                                     Line = token.Line-1,
+                                    Text = token.Text,
                         });
                 }
                 element.Errors = new List<MsgPackError>();
@@ -94,15 +94,13 @@ public class MsgPackCodeElement {
 	public int Begin;
 	[MessagePackMemberAttribute(2)]
 	public int End { get; set; }
-	[MessagePackMemberAttribute(5)]
-	public string Text;
 	[MessagePackMemberAttribute(3)]
 	public int LineFirst;
 	[MessagePackMemberAttribute(4)]
 	public int LineLast;
-	[MessagePackMemberAttribute(6)]
+	[MessagePackMemberAttribute(5)]
     public IList<MsgPackToken> Tokens;
-	[MessagePackMemberAttribute(7)]
+	[MessagePackMemberAttribute(6)]
     public List<MsgPackError> Errors;
 }
 
@@ -115,6 +113,8 @@ public class MsgPackToken {
     public int Length;
 	[MessagePackMemberAttribute(3)]
     public int Line;
+	[MessagePackMemberAttribute(4)]
+    public string Text;
 }
 
 public class MsgPackError {

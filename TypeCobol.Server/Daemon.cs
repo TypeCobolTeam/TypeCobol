@@ -15,7 +15,8 @@ class Server {
 
         var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
         Commands.Register(66, new Parse(parser, pipe, pipe));
-        IntSerializer decoder = new IntSerializer();
+        Commands.Register(67, new Initialize(parser, pipe, pipe));
+        IntegerSerializer decoder = new IntegerSerializer();
 		while (true) {
 			//System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on \""+pipename+"\" ...");
 			pipe.WaitForConnection(); // blocking
@@ -24,7 +25,7 @@ class Server {
 				int code = decoder.Deserialize(pipe);
                 var command = Commands.Get(code);
                 command.execute();
-			} 
+			}
 			catch (IOException ex) { System.Console.WriteLine("Error: {0}", ex.Message); }
 			catch (System.Runtime.Serialization.SerializationException ex ) { System.Console.WriteLine("Error: {0}", ex.Message); }
 			finally { pipe.Disconnect(); }

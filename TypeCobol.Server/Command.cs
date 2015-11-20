@@ -15,25 +15,50 @@ namespace TypeCobol.Server
         void execute();
     }
 
-    internal class Parse : Command {
+    internal abstract class AbstractCommand : Command {
+        internal Parser Parser;
+        internal Stream Input;
+        internal Stream Output;
+        private IntegerSerializer ReturnCodeSerializer = new IntegerSerializer();
 
-        private Parser Parser;
-        private Stream Input;
-        private Stream Output;
-        private StringSerializer Deserializer;
-        private CodeElementsListSerializer Serializer;
-
-        public Parse(Parser parser, Stream istream, Stream ostream) {
+        public AbstractCommand(Parser parser, Stream istream, Stream ostream) {
             this.Parser = parser;
             this.Input  = istream;
             this.Output = ostream;
-            this.Deserializer = new StringSerializer();
-            this.Serializer = new CodeElementsListSerializer();
         }
-        public void execute() {
-            string text = this.Deserializer.Deserialize(this.Input);
+
+        public abstract void execute();
+
+        internal void SerializeReturnCode(int code) {
+            this.ReturnCodeSerializer.Serialize(Output, code);
+        }
+    }
+
+    internal class Initialize : AbstractCommand {
+        private StringSerializer Deserializer = new StringSerializer();
+
+        public Initialize(Parser parser, Stream istream, Stream ostream)
+          : base(parser, istream, ostream) { }
+
+        public override void execute() {
+            string path = Deserializer.Deserialize(Input);
+            Parser.Init(path);
+            SerializeReturnCode(0);
+        }
+    }
+
+    internal class Parse : AbstractCommand {
+        private StringSerializer Deserializer = new StringSerializer();
+        private CodeElementsListSerializer Serializer = new CodeElementsListSerializer();
+
+        public Parse(Parser parser, Stream istream, Stream ostream)
+          : base(parser, istream, ostream) { }
+
+        public override void execute() {
+            string text = this.Deserializer.Deserialize(Input);
             Parser.Parse(new TypeCobol.Compiler.Text.TextString(text));
-            this.Serializer.Serialize(this.Output, Parser.CodeElements);
+            SerializeReturnCode(0);
+            Serializer.Serialize(Output, Parser.CodeElements);
         }
     }
 }

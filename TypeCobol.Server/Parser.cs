@@ -13,26 +13,33 @@ namespace TypeCobol.Server
     public class Parser
     {
         public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
-        private CompilationProject Project;
-        private TypeCobolOptions Options;
+        private CompilationProject project;
+        private TypeCobolOptions options;
         private FileCompiler Compiler = null;
 
         public Parser(string name)
         {
             this.Observer = new Observer();
+        }
 
-            DirectoryInfo localDirectory = new DirectoryInfo(".");
-            DocumentFormat format = DocumentFormat.FreeUTF8Format;
-            this.Options = new TypeCobolOptions();
-            this.Project = new CompilationProject(name,
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
-                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, this.Options);
+        private static DocumentFormat GetFormat(string filename) {
+            return DocumentFormat.FreeUTF8Format;//TODO autodetect
+        }
+
+        public void Init(string path) {
+            string directory = Directory.GetParent(path).FullName;
+            string filename = Path.GetFileName(path);
+            DirectoryInfo root = new DirectoryInfo(directory);
+            DocumentFormat format = GetFormat(path);
+            /*TypeCobolOptions */options = new TypeCobolOptions();
+            /*CompilationProject */project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
+                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+            //Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
         }
 
         public void Parse(ITextDocument document)
         {
-            // TODO this could go in constructor if document could be set after a FileCompiler creation
-            Compiler = new FileCompiler(document, Project.SourceFileProvider, Project, Options, false);
+            Compiler = new FileCompiler(document, project.SourceFileProvider, project, options, false);
             try { Compiler.CompileOnce(); }
             catch(Exception ex) { Observer.OnError(ex); }
         }
