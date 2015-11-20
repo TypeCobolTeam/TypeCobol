@@ -8,6 +8,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+
 import typecobol.editors.eclipse.ColorMap;
 import typecobol.editors.eclipse.DocumentListener;
 import typecobol.editors.eclipse.MarkerCreator;
@@ -28,7 +31,6 @@ public class Editor extends TextEditor {
 		colors = new ColorMap();
 		scanner = new Scanner(listener, colors);
 		setSourceViewerConfiguration(new Configuration(scanner));
-		setDocumentProvider(new FileDocumentProvider());
 		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(cleaner);
 	}
@@ -39,14 +41,36 @@ public class Editor extends TextEditor {
 		super.dispose();
 	}
 
+	private static IDocumentProvider createDocumentProvider(final IEditorInput input) {
+		if (input instanceof org.eclipse.ui.part.FileEditorInput) {
+			return new FileDocumentProvider();
+		}
+		if (input instanceof org.eclipse.ui.ide.FileStoreEditorInput) {
+			return new TextFileDocumentProvider();// outside of workbench
+		}
+		throw new UnsupportedOperationException();
+	}
+
 	@Override
 	protected void doSetInput(final IEditorInput input) throws CoreException
 	{
+		setDocumentProvider(createDocumentProvider(input));
 		super.doSetInput(input);
 		final IDocument document = getDocumentProvider().getDocument(input);
-		final IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(input);
-		handler.input = file;
-		MarkersCleaner.deleteMarkers(file);
+
+		org.eclipse.core.resources.IResource resource = null;
+		String path = null;
+		if (input instanceof org.eclipse.ui.part.FileEditorInput) {
+			final IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(input);
+			path = file.getFullPath().toString();
+			resource = file;
+		} else
+		if (input instanceof org.eclipse.ui.ide.FileStoreEditorInput) {
+			path = ((org.eclipse.ui.ide.FileStoreEditorInput)input).getURI().getPath();
+			System.err.println("Cannot create resource from out-of-project file \""+path+"\".");
+		}
+		handler.input = resource;
+		MarkersCleaner.deleteMarkers(resource);
 
 		if (document != null) {
 			document.addDocumentListener(listener);
