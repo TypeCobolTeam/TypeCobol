@@ -15,11 +15,13 @@ namespace TypeCobol.Server
         public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
         private CompilationProject project;
         private TypeCobolOptions options;
+        private Dictionary<string,FileCompiler> Compilers;
         private FileCompiler Compiler = null;
 
         public Parser(string name)
         {
-            this.Observer = new Observer();
+            Observer = new Observer();
+            Compilers = new Dictionary<string,FileCompiler>();
         }
 
         private static DocumentFormat GetFormat(string filename) {
@@ -34,12 +36,13 @@ namespace TypeCobol.Server
             /*TypeCobolOptions */options = new TypeCobolOptions();
             /*CompilationProject */project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
-            //Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
+            var compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
+            Compilers.Add(path, compiler);
         }
 
-        public void Parse(ITextDocument document)
+        public void Parse(string path, ITextDocument document)
         {
-            Compiler = new FileCompiler(document, project.SourceFileProvider, project, options, false);
+            Compiler = Compilers[path];
             try { Compiler.CompileOnce(); }
             catch(Exception ex) { Observer.OnError(ex); }
         }

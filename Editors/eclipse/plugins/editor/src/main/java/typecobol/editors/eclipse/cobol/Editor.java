@@ -55,8 +55,7 @@ public class Editor extends TextEditor {
 	}
 
 	@Override
-	protected void doSetInput(final IEditorInput input) throws CoreException
-	{
+	protected void doSetInput(final IEditorInput input) throws CoreException {
 		setDocumentProvider(createDocumentProvider(input));
 		super.doSetInput(input);
 		final IDocument document = getDocumentProvider().getDocument(input);
@@ -78,6 +77,7 @@ public class Editor extends TextEditor {
 
 		if (document != null) {
 			document.addDocumentListener(listener);
+			listener.setDocumentPath(document, path);
 			listener.documentChanged(new DocumentEvent(document, 0, document.get().length(), document.get()));
 		}
 	}

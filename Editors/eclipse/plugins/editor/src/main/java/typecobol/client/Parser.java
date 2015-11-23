@@ -50,12 +50,12 @@ public class Parser {
 		return status;
 	}
 
-	public boolean parse(final String text) {
+	public boolean parse(final String path, final String text) {
 		elements = null;
 		RandomAccessFile pipe = connect("\\\\.\\pipe\\"+pipename);
 		final Client client = new Client(pipe);
 		boolean status = true;
-		try { elements = client.parse(text); }
+		try { elements = client.parse(path, text); }
 		catch (final Exception ex) {
 			System.err.println("Error sending/receiving data.");
 			ex.printStackTrace();

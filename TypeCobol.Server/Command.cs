@@ -55,8 +55,9 @@ namespace TypeCobol.Server
           : base(parser, istream, ostream) { }
 
         public override void execute() {
+            string path = Deserializer.Deserialize(Input);
             string text = this.Deserializer.Deserialize(Input);
-            Parser.Parse(new TypeCobol.Compiler.Text.TextString(text));
+            Parser.Parse(path, new TypeCobol.Compiler.Text.TextString(text));
             SerializeReturnCode(0);
             Serializer.Serialize(Output, Parser.CodeElements);
         }

@@ -14,6 +14,7 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	private final MarkerCreator handler;
 
 	private List<typecobol.client.Token> tokens = null;
+	private java.util.Map<IDocument,String> paths = new java.util.HashMap<IDocument,String>();
 
 	public DocumentListener(final Parser parser, final MarkerCreator handler) {
 		this.parser = parser;
@@ -49,7 +50,7 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 			firstLineIndex = 0;
 			text = event.getDocument().get();
 		}
-		parser.parse(text);
+		parser.parse(paths.get(event.getDocument()), text);
 		tokens = createTokens(firstLineIndex);
 
 		if (parser.elements != null) {
@@ -83,6 +84,10 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 	@Override
 	public List<typecobol.client.Token> getTokens() {
 		return tokens;
+	}
+
+	public void setDocumentPath(final IDocument document, final String path) {
+		paths .put(document, path);
 	}
 
 }
