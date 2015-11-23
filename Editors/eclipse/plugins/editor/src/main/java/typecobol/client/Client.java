@@ -1,6 +1,7 @@
 package typecobol.client;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 
 import org.msgpack.MessagePack;
@@ -25,6 +26,8 @@ public class Client {
 		msgpack.register(Token.class);
 		msgpack.register(CodeElementType.class);
 		msgpack.register(CodeElement.class);
+		msgpack.register(TextChangeType.class);
+		msgpack.register(TextChange.class);
 	}
 
 	public boolean initialize(final String path) throws IOException {
@@ -49,14 +52,14 @@ public class Client {
 		return status == 0;
 	}
 
-	public List<CodeElement> parse(final String path, final String data) throws IOException {
+	public List<CodeElement> parse(final String path, final TextChange[] changes) throws IOException {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		final Packer packer = msgpack.createPacker(out);
 
 		final int order = 66;// 66 = let's parse!
 		packer.write(order);
 		packer.write(path);
-		packer.write(data);
+		tList(TextChange.TTextChange).write(packer, Arrays.asList(changes));
 		packer.close();
 		this.pipe.write(out.toByteArray());
 		out.close();
@@ -66,7 +69,7 @@ public class Client {
 		final Unpacker unpacker = msgpack.createUnpacker(in);
 		final int status = unpacker.read(TInteger);
 		System.out.println("Executed command:"+order+" status:"+status);
-		final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.tToken);
+		final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.TCodeElement);
 		List<CodeElement> result = unpacker.read(ctemplate);
 		unpacker.close();
 		in.close();

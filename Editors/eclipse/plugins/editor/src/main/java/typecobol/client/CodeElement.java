@@ -24,7 +24,7 @@ public class CodeElement {
 		return "("+begin+"["+lineFirst+"]; "+end+"["+lineLast+"]) ["+type+"]";
 	}
 
-	public static class TokenTemplate implements Template<CodeElement> {
+	public static class CodeElementTemplate implements Template<CodeElement> {
 
 		@Override
 		public CodeElement read(final Unpacker unpacker, final CodeElement token)
@@ -43,11 +43,11 @@ public class CodeElement {
 			token.lineFirst = TInteger.read(unpacker, null, required);
 			token.lineLast  = TInteger.read(unpacker, null, required);
 
-			final Template<List<Token>> ttemplate = tList(Token.tToken);
+			final Template<List<Token>> ttemplate = tList(Token.TToken);
 			List<Token> tokens = unpacker.read(ttemplate);
 			token.tokens = tokens;
 
-			final Template<List<Error>> etemplate = tList(Error.tError);
+			final Template<List<Error>> etemplate = tList(Error.TError);
 			List<Error> errors = unpacker.read(etemplate);
 			token.errors = errors;
 
@@ -67,5 +67,5 @@ public class CodeElement {
 		}
 
 	}
-	public static Template<CodeElement> tToken = new TokenTemplate();
+	public static final Template<CodeElement> TCodeElement = new CodeElementTemplate();
 }

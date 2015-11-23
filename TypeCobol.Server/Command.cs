@@ -49,6 +49,7 @@ namespace TypeCobol.Server
 
     internal class Parse : AbstractCommand {
         private StringSerializer Deserializer = new StringSerializer();
+        private TextChangedEventSerializer EventDeserializer = new TextChangedEventSerializer();
         private CodeElementsListSerializer Serializer = new CodeElementsListSerializer();
 
         public Parse(Parser parser, Stream istream, Stream ostream)
@@ -56,8 +57,8 @@ namespace TypeCobol.Server
 
         public override void execute() {
             string path = Deserializer.Deserialize(Input);
-            string text = this.Deserializer.Deserialize(Input);
-            Parser.Parse(path, new TypeCobol.Compiler.Text.TextString(text));
+            var e = EventDeserializer.Deserialize(Input);
+            Parser.Parse(path, null, e);
             SerializeReturnCode(0);
             Serializer.Serialize(Output, Parser.CodeElements);
         }

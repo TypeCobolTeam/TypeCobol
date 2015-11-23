@@ -13,8 +13,6 @@ namespace TypeCobol.Server
     public class Parser
     {
         public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
-        private CompilationProject project;
-        private TypeCobolOptions options;
         private Dictionary<string,FileCompiler> Compilers;
         private FileCompiler Compiler = null;
 
@@ -33,16 +31,18 @@ namespace TypeCobol.Server
             string filename = Path.GetFileName(path);
             DirectoryInfo root = new DirectoryInfo(directory);
             DocumentFormat format = GetFormat(path);
-            /*TypeCobolOptions */options = new TypeCobolOptions();
-            /*CompilationProject */project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
+            TypeCobolOptions options = new TypeCobolOptions();
+            CompilationProject project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             var compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
             Compilers.Add(path, compiler);
         }
-
-        public void Parse(string path, ITextDocument document)
+        bool first = true;
+        public void Parse(string path, ITextDocument document, TextChangedEvent e=null)
         {
             Compiler = Compilers[path];
+            if (first) first = false;
+            else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             try { Compiler.CompileOnce(); }
             catch(Exception ex) { Observer.OnError(ex); }
         }

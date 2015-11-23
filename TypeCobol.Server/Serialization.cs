@@ -1,6 +1,7 @@
 ﻿using MsgPack.Serialization;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Server.Serialization
 {
@@ -79,6 +80,41 @@ namespace TypeCobol.Server.Serialization
         }
     }
 
+    public class TextChangedEventSerializer {
+        //private MessagePackSerializer<List<MsgPackTextChange>> Marshaller = MessagePackSerializer.Get<List<MsgPackTextChange>>();
+        MessagePackSerializer<byte> Number = MessagePackSerializer.Get<byte>();
+        MessagePackSerializer<string> String = MessagePackSerializer.Get<string>();
+        public bool Serialize(Stream output, TextChangedEvent e) {
+            List<MsgPackTextChange> list = new List<MsgPackTextChange>();
+            foreach(TextChange change in e.TextChanges) {
+                list.Add(new MsgPackTextChange {
+                        Type = (int)change.Type,
+                        Line = change.LineIndex,
+                        Text = change.NewLine.Text,
+                    });
+            }
+            //Marshaller.Pack(output, list);
+            System.Console.WriteLine("TODO: send "+list.Count+" TextChanges.");
+            return true;
+        }
+        public TextChangedEvent Deserialize(Stream input) {
+            TextChangedEvent e = new TextChangedEvent();
+//            foreach(MsgPackTextChange change in Marshaller.Unpack(input)) {
+//                ITextLine snapshot = new TextLineSnapshot(change.Line, change.Text, null);
+//                e.TextChanges.Add(new TextChange((TextChangeType)change.Type, change.Line, snapshot));
+//            }
+            int size = Number.Unpack(input);
+            for(int c=0; c<size; c++) {
+                TextChangeType type = (TextChangeType)Number.Unpack(input);
+                int line = Number.Unpack(input);
+                string text = String.Unpack(input);
+                ITextLine snapshot = new TextLineSnapshot(line, text, null);
+                e.TextChanges.Add(new TextChange(type, line, snapshot));
+            }
+            return e;
+        }
+    }
+
 
 // The following seem have no importance regarding msgpack serialization:
 // - how the class to serialize is named
@@ -130,6 +166,15 @@ public class MsgPackError {
     public int Category;
 	[MessagePackMemberAttribute(5)]
     public int Code;
+}
+
+public class MsgPackTextChange {
+	[MessagePackMemberAttribute(0)]
+    public int Type;
+	[MessagePackMemberAttribute(1)]
+    public int Line;
+	[MessagePackMemberAttribute(2)]
+    public string Text;
 }
 
 }

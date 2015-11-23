@@ -3,6 +3,8 @@ package typecobol.editors.eclipse;
 import typecobol.client.CodeElement;
 import typecobol.client.TokensProvider;
 import typecobol.client.Parser;
+import typecobol.client.TextChange;
+import typecobol.client.TextChangeType;
 
 import java.util.List;
 
@@ -26,32 +28,17 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 
 	@Override
 	public void documentChanged(final DocumentEvent event) {
-		String text;
-		int firstLineIndex;
+		TextChange[] changes;
 		try {
-			final IDocument d = event.getDocument();
-			firstLineIndex = d.getLineOfOffset(event.getOffset());
-			final int nbCharsInserted = event.getLength() == 0 ? event.getText().length() : event.getLength();
-			final int lastLineIndex  = d.getLineOfOffset(Math.min(event.getOffset()+nbCharsInserted, d.getLength()));
-
-			int length = 0;
-			for (int l=firstLineIndex; l<=lastLineIndex; l++) {
-				final String delimiter = d.getLineDelimiter(l);
-				if (delimiter != null) length += delimiter.length();
-				length += d.getLineInformation(l).getLength();
-			}
-			//System.out.println("documentChanged @["+firstLineIndex+(firstLineIndex!=lastLineIndex?("-"+lastLineIndex):"")+"]");
-			text = event.getDocument().get(d.getLineOffset(firstLineIndex), length);
-			//System.out.println("\""+text+"\"");
+			changes = createTextChanges(event);
+			parser.parse(paths.get(event.getDocument()), changes);
+			int indexOfFirstLine = event.getDocument().getLineOfOffset(event.getOffset());
+			tokens = createTokens(indexOfFirstLine);
 		}
 		catch (final BadLocationException ex) {
-			ex.printStackTrace();
-			System.err.println("Error calculating edition span; defaulting to whole document.");
-			firstLineIndex = 0;
-			text = event.getDocument().get();
+			System.err.println("Error calculating edition span.");
+			changes = new TextChange[0];
 		}
-		parser.parse(paths.get(event.getDocument()), text);
-		tokens = createTokens(firstLineIndex);
 
 		if (parser.elements != null) {
 			for (final CodeElement e: parser.elements) {
@@ -65,6 +52,31 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 		}
 		else System.err.println("ERROR: error marker parsing failed");//TODO
 	}
+
+
+
+	private static TextChange[] createTextChanges(final DocumentEvent event) throws BadLocationException {
+		final IDocument d = event.getDocument();
+		final int lengthOfRemovedText = event.getLength();
+		final int lengthOfInsertedText = event.getText().length();
+		final int indexOfFirstLine = d.getLineOfOffset(event.getOffset());
+		final int lengthOfUpdate = lengthOfRemovedText == 0 ? lengthOfInsertedText : lengthOfRemovedText;
+		final int indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+lengthOfUpdate, d.getLength()));
+		System.out.println(">>> removed:"+lengthOfRemovedText+" inserted: "+lengthOfInsertedText
+				+" @"+indexOfFirstLine+(indexOfLastLine!=indexOfFirstLine?("-"+indexOfLastLine):""));
+		final TextChange[] changes = new TextChange[indexOfLastLine-indexOfFirstLine+1];
+		for (int l=indexOfFirstLine; l<=indexOfLastLine; l++) {
+			final TextChange change = new TextChange();
+			change.line = 0;
+			change.type = TextChangeType.LineInserted;
+			final IRegion line = d.getLineInformation(l);
+			change.text = d.get(line.getOffset(), line.getLength());
+			changes[l-indexOfFirstLine] = change;
+		}
+		return changes;
+	}
+
+
 
 	@Override
 	public void documentPartitioningChanged(final IDocument document) { }

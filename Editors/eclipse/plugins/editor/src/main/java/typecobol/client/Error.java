@@ -54,5 +54,5 @@ public class Error {
 		}
 
 	}
-	public static Template<Error> tError = new ErrorTemplate();
+	public static final Template<Error> TError = new ErrorTemplate();
 }

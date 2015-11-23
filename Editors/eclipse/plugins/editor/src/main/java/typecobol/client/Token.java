@@ -56,5 +56,5 @@ public class Token {
 		}
 
 	}
-	public static Template<Token> tToken = new TokenTemplate();
+	public static final Template<Token> TToken = new TokenTemplate();
 }
