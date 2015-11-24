@@ -13,12 +13,14 @@ namespace TypeCobol.Server
     public class Parser
     {
         public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
+        private Dictionary<string,bool> Inits;
         private Dictionary<string,FileCompiler> Compilers;
         private FileCompiler Compiler = null;
 
         public Parser(string name)
         {
             Observer = new Observer();
+            Inits = new Dictionary<string,bool>();
             Compilers = new Dictionary<string,FileCompiler>();
         }
 
@@ -26,7 +28,10 @@ namespace TypeCobol.Server
             return DocumentFormat.FreeUTF8Format;//TODO autodetect
         }
 
-        public void Init(string path) {
+        public void Init(string path)
+        {
+            FileCompiler compiler;
+            if (Compilers.TryGetValue(path, out compiler)) return;
             string directory = Directory.GetParent(path).FullName;
             string filename = Path.GetFileName(path);
             DirectoryInfo root = new DirectoryInfo(directory);
@@ -34,14 +39,15 @@ namespace TypeCobol.Server
             TypeCobolOptions options = new TypeCobolOptions();
             CompilationProject project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
-            var compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
+            compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
             Compilers.Add(path, compiler);
+            Inits.Add(path, false);
         }
-        bool first = true;
-        public void Parse(string path, ITextDocument document, TextChangedEvent e=null)
+
+        public void Parse(string path, TextChangedEvent e)
         {
             Compiler = Compilers[path];
-            if (first) first = false;
+            if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
             else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             try { Compiler.CompileOnce(); }
             catch(Exception ex) { Observer.OnError(ex); }

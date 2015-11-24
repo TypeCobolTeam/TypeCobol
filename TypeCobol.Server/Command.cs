@@ -58,7 +58,7 @@ namespace TypeCobol.Server
         public override void execute() {
             string path = Deserializer.Deserialize(Input);
             var e = EventDeserializer.Deserialize(Input);
-            Parser.Parse(path, null, e);
+            Parser.Parse(path, e);
             SerializeReturnCode(0);
             Serializer.Serialize(Output, Parser.CodeElements);
         }
