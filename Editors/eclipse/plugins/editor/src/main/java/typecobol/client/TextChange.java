@@ -16,7 +16,7 @@ public class TextChange {
 
 	@Override
 	public String toString() {
-		return type+" \""+text+"\" @"+line;
+		return "@"+line+": "+type+" \""+text+"\"";
 	}
 
 	public static class TextChangeTemplate implements Template<TextChange> {
