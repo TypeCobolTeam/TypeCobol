@@ -57,7 +57,7 @@ namespace TypeCobol.Editor
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
         {
             List<ClassificationSpan> spans = new List<ClassificationSpan>();
-            parser.Parse("TODO: Parser.Init not called, this will break", new TextString(span.GetText()));
+            //parser.Parse("TODO: Parser.Init not called, this will break", new TextString(span.GetText()));
             foreach (var e in parser.CodeElements)
             {
                 foreach (var token in e.ConsumedTokens)
