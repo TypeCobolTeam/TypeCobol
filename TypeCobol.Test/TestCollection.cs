@@ -116,6 +116,7 @@ namespace TypeCobol.Test
             TestCodeElements.Check_ParagraphCodeElements();
             //TODO  TestCodeElements.Check_EntryCodeElements();// RefreshProgramClassDocumentSnapshot
             TestParser.Check_BeforeAfterInsertion();
+            TestParser.Check_BeforeAfterInsertionBatched();
 
             string root = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
             foreach (string directory in Directory.GetDirectories(PlatformUtils.GetPathForProjectFile(root)))

@@ -31,6 +31,32 @@ namespace TypeCobol.Test.Compiler.Parser
             }
         }
 
+        public static void Check_BeforeAfterInsertionBatched() {
+            TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
+            TextChangedEvent e;
+            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Empty");
+            unit.comparator = new Multipass(unit.comparator.paths.name);
+            unit.Init();
+            unit.Parse();
+
+            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Empty.");
+            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Emptier.", e);
+            System.Console.WriteLine(e.TextChanges.Count+" TextChanges");
+
+            // clear document
+            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.Parse();
+
+            foreach(TypeCobol.Compiler.CodeElements.CodeElement ce in unit.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements) {
+                foreach(TypeCobol.Compiler.Scanner.Token t in ce.ConsumedTokens) Console.WriteLine(" "+t.Text);
+            }
+
+            names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
+            names.index = 2;
+            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            unit.Compare();//with Empty.2.txt
+        }
+
         public static void Check_BeforeAfterInsertion() {
             TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
             TextChangedEvent e;
@@ -67,8 +93,8 @@ namespace TypeCobol.Test.Compiler.Parser
             unit.Compare();//with Empty.3.txt
         }
 
-        private static TextChangedEvent updateLine(TextChangeType type, int line, string text) {
-            TextChangedEvent e = new TextChangedEvent();
+        private static TextChangedEvent updateLine(TextChangeType type, int line, string text, TextChangedEvent e = null) {
+            if (e==null) e = new TextChangedEvent();
             ITextLine snapshot = new TextLineSnapshot(line, text, null);
             e.TextChanges.Add(new TextChange(type, line, snapshot));
             return e;
