@@ -13,6 +13,9 @@ public class DiffTest {
 	private static final String LINSPECT = "INSPECT a TALLYING i FOR CHARACTERS BY x j FOR CHARACTERS.";
 	private static final String LADDX    =    "ADD 1 TO x.";
 	private static final String LADDY    =    "ADD 2 TO 2 GIVING y.";
+	private static final String LADDXY        = LADDX+SEP+LADDY;
+	private static final String LADDXY_MERGE  = "ADD 1 TO 2 GIVING y.";
+	private static final String LADDXY_DELETE = "x."+SEP+"ADD 2 TO ";
 	private static final String LADDY_DELETE  = "2 GIVING ";
 	private static final String LADDY_UPDATED = "ADD 2 TO y.";
 	private static final String LADDZ    =    "ADD 3 TO z.";
@@ -56,6 +59,26 @@ public class DiffTest {
 		assertEquals(changes[0].type, TextChangeType.LineRemoved);
 		assertEquals(changes[0].line, 2);
 			// we don't care about text
+	}
+
+	@Test
+	public void onMultipleLinesDeleted() {
+		// given
+		final String before = LADDX+SEP + LADDXY+SEP + LADDY;
+		final String after  = LADDX+SEP + LADDXY_MERGE+SEP + LADDY;
+		final String edit = LADDXY_DELETE;
+		final Diff diff = createDiff(before, UPDATE, edit, after);
+		System.out.println(diff);
+		// when
+		final TextChange[] changes = diff.createTextChanges();
+		System.out.println(TextChange.toString(changes));
+		// then
+		assertEquals(changes.length, 2);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].line, 1);
+		assertEquals(changes[0].text, LADDXY_MERGE);
+		assertEquals(changes[1].type, TextChangeType.LineRemoved);
+		assertEquals(changes[1].line, 2);
 	}
 
 	@Test
