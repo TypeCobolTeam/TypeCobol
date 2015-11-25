@@ -18,6 +18,13 @@ public class TextChange {
 	public String toString() {
 		return "@"+line+": "+type+" \""+text+"\"";
 	}
+	public static String toString(final TextChange[] changes) {
+		final String separator = "\n";
+		final StringBuilder str = new StringBuilder();
+		for (final TextChange change: changes) str.append(change).append(separator);
+		str.deleteCharAt(str.length()-separator.length());
+		return str.toString();
+	}
 
 	public static class TextChangeTemplate implements Template<TextChange> {
 

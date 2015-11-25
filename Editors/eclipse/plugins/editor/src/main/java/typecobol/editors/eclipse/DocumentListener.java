@@ -39,6 +39,26 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 		doParse(event.getDocument(), changes);
 	}
 
+	public static String toString(final DocumentEvent event) {
+		final IDocument d = event.getDocument();
+		final int lengthOfRemovedText = event.getLength();
+		final int lengthOfInsertedText = event.getText().length();
+		final int lengthOfUpdate = lengthOfRemovedText == 0 ? lengthOfInsertedText : lengthOfRemovedText;
+	    int indexOfLastLine;
+		int indexOfFirstLine;
+		try { indexOfFirstLine = d.getLineOfOffset(event.getOffset()); }
+		catch(final BadLocationException ex) { indexOfFirstLine = -1; }
+		try { indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+lengthOfUpdate, d.getLength())); }
+		catch(final BadLocationException ex) { indexOfLastLine = -1; }
+		final StringBuilder str = new StringBuilder(); str
+			.append(" d.len="+d.getLength())
+			.append(" e.os="+event.getOffset())
+			.append(" @"+indexOfFirstLine+(indexOfLastLine>indexOfFirstLine?("-"+indexOfLastLine):""))
+			.append(" e.len[deleted]="+event.getLength())
+			.append(" e.text=\n\""+event.getText()+"\"(e.text.len[inserted]="+event.getText().length()+")")
+		; return str.toString();
+	}
+
 	private void doParse(final IDocument document, final TextChange[] changes) {
 		parser.parse(paths.get(document), changes);
 		tokens = createTokens();

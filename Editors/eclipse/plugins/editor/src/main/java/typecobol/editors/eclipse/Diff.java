@@ -19,15 +19,22 @@ public class Diff {
 
 	public void set(final boolean after, final DocumentEvent event) {
 		Diff.Info info = null;
-		try { info = new Diff.Info(event); }
-		catch(final BadLocationException ex) { ex.printStackTrace(); }
+		final int lengthOfRemovedText = event.getLength();
+		final int lengthOfInsertedText = event.getText().length();
+		if (( after && lengthOfInsertedText == 0)
+		 || (!after && lengthOfRemovedText  == 0)) {
+			info = new Diff.Info(event.getDocument().getLength());
+		} else {
+			try { info = new Diff.Info(event); }
+			catch(final BadLocationException ex) { ex.printStackTrace(); }
+		}
 		if (after) this.after = info;
 		else this.before = info;
 	}
 
 	public TextChange[] createTextChanges() {
 		if (after.lengthOfDocument == 0) return createDocumentClearedTextChanges();
-		final TextChange[] changes = new TextChange[after.lines.length];
+		final TextChange[] changes = new TextChange[Math.max(after.lines.length, before.lines.length)];
 		int c;
 		for (c = 0; c < after.lines.length; c++) {
 			changes[c] = new TextChange();
@@ -38,10 +45,10 @@ public class Diff {
 			changes[c].text = after.lines[c].text;
 		}
 		if (before == null) return changes;
-		for (; c < before.lines.length; c++) {
+		for (; c < changes.length && c < before.lines.length; c++) {
 			changes[c] = new TextChange();
 			changes[c].type = TextChangeType.LineRemoved;
-			changes[c].line = after.lines[c].index;
+			changes[c].line = (after.lengthOfDocument < c ? after.lines[c].index : before.lines[c].index);
 			changes[c].text = null;// unused by parser
 		}
 		return changes;
@@ -88,6 +95,11 @@ public class Diff {
 		final int lengthOfDocument;
 		final Line[] lines;
 
+		public Info(final int lengthOfDocument) {
+			this.lengthOfDocument = lengthOfDocument;
+			lines = new Line[0];
+		}
+
 		public Info(final DocumentEvent event) throws BadLocationException {
 			final IDocument d = event.getDocument();
 			lengthOfDocument = d.getLength();
@@ -95,8 +107,7 @@ public class Diff {
 			final int lengthOfInsertedText = event.getText().length();
 			final int indexOfFirstLine = d.getLineOfOffset(event.getOffset());
 			final int lengthOfUpdate = lengthOfRemovedText == 0 ? lengthOfInsertedText : lengthOfRemovedText;
-			      int indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+lengthOfUpdate, d.getLength()));
-			//if (indexOfLastLine+1 < d.getNumberOfLines()) indexOfLastLine ++;
+			      int indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+lengthOfUpdate-1, d.getLength()));
 			lines = new Line[indexOfLastLine-indexOfFirstLine+1];
 			for (int l=indexOfFirstLine; l<=indexOfLastLine; l++) {
 				final IRegion line = d.getLineInformation(l);
