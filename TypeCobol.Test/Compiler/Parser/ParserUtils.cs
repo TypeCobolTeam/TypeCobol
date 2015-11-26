@@ -167,11 +167,33 @@ namespace TypeCobol.Test.Compiler.Parser
                 str.Append(" common:");    Dump(str, program.IsCommon);
                 str.Append(" initial:");   Dump(str, program.IsInitial);
                 str.Append(" recursive:"); Dump(str, program.IsRecursive);
+                str.AppendLine();
+                Dump(str, program.AuthoringProperties);
             }
             return str;
         }
 
-        internal static void Dump(StringBuilder builder, Class cls)
+        private static StringBuilder Dump(StringBuilder str, AuthoringProperties data)
+        {
+            if (data == null) str.Append("?");
+            else {
+                str.Append(" author: "); Dump(str, data.Author);
+                str.Append(" written: "); Dump(str, data.DateWritten);
+                str.Append(" compiled: "); Dump(str, data.DateCompiled);
+                str.Append(" installation: "); Dump(str, data.Installation);
+                str.Append(" security: "); Dump(str, data.Security);
+            }
+            return str;
+        }
+
+        private static StringBuilder Dump<T>(StringBuilder str, SyntaxProperty<T> data)
+        {
+            if (data == null) str.Append("?");
+            else str.Append(data.Value);
+            return str;
+        }
+
+        internal static StringBuilder Dump(StringBuilder builder, Class cls)
         {
             throw new NotImplementedException();
         }
