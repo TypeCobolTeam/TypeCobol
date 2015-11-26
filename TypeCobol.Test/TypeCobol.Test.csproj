@@ -114,8 +114,8 @@
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.1.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.2.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.3.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\Simple.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\EmptyPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\SimplePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ALTER.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ok.txt" />

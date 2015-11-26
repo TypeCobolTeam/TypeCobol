@@ -1,0 +1,2 @@
+﻿--- Program ---
+PROGRAM: Simple common:False initial:True recursive:False

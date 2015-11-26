@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -131,6 +132,55 @@ namespace TypeCobol.Test.Compiler.Parser
             {
                 return String.Empty;
             }
+        }
+
+        internal static string DumpResult(Program program, Class cls, IList<ParserDiagnostic> diagnostics)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (diagnostics != null && diagnostics.Count > 0) {
+                builder.AppendLine(DiagnosticsToString(diagnostics));
+            }
+            if (program != null) {
+                builder.AppendLine("--- Program ---");
+                Dump(builder, program);
+            }
+            if (cls != null) {
+                builder.AppendLine("--- Class ---");
+                Dump(builder, cls);
+            }
+            return builder.ToString();
+        }
+
+        internal static StringBuilder Dump(StringBuilder str, TypeCobol.Compiler.CodeModel.Program program)
+        {
+            str.Append("PROGRAM: ");
+            Dump(str, program.Identification);
+            str.AppendLine();
+            return str;
+        }
+
+        internal static StringBuilder Dump(StringBuilder str, ProgramIdentification program)
+        {
+            if (program == null) str.Append("?");
+            else {
+                str.Append(program.ProgramName);
+                str.Append(" common:");    Dump(str, program.IsCommon);
+                str.Append(" initial:");   Dump(str, program.IsInitial);
+                str.Append(" recursive:"); Dump(str, program.IsRecursive);
+            }
+            return str;
+        }
+
+        internal static void Dump(StringBuilder builder, Class cls)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static StringBuilder Dump(StringBuilder str, SyntaxBoolean b)
+        {
+            if (b == null) str.Append("?");
+            else str.Append(b.Value);
+            return str;
         }
 
 

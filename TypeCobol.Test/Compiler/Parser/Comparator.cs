@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
@@ -61,38 +62,8 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path)))
             {
-                CodeElementsDocument parserResult = this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot;
-                this.comparator.Compare(parserResult.CodeElements, parserResult.ParserDiagnostics, reader);
-                ProgramClassDocument result2 = this.compiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot;
-                if (result2.Program != null) System.Console.WriteLine(Dump(result2.Program).ToString());
+                this.comparator.Compare(this.compiler.CompilationResultsForProgram, reader);
             }
-        }
-
-        private StringBuilder Dump(TypeCobol.Compiler.CodeModel.Program program)
-        {
-            StringBuilder str = new StringBuilder();
-            str.Append("PROGRAM: ");
-            Dump(str, program.Identification);
-            return str;
-        }
-
-        private StringBuilder Dump(StringBuilder str, ProgramIdentification program)
-        {
-            if (program == null) str.Append("?");
-            else {
-                str.Append(program.ProgramName);
-                str.Append(" i:");Dump(str, program.IsInitial);
-                str.Append(" r:");Dump(str, program.IsRecursive);
-                str.Append(" c:");Dump(str, program.IsCommon);
-            }
-            return str;
-        }
-
-        private StringBuilder Dump(StringBuilder str, SyntaxBoolean b)
-        {
-            if (b == null) str.Append("?");
-            else str.Append(b.Value);
-            return str;
         }
     }
 
@@ -120,6 +91,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new CodeElementName(),
                 new RPNName(),
                 new NYName(),
+                new PGMName(),
             };
 
         private IList<string> samples;
@@ -235,7 +207,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal interface Comparator
     {
-        void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected);
+        void Compare(CompilationUnit result, StreamReader expected);
     }
 
     internal class FilesComparator : Comparator
@@ -252,7 +224,12 @@ namespace TypeCobol.Test.Compiler.Parser
             this.debug = debug;
         }
 
-        public virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        public virtual void Compare(CompilationUnit result, StreamReader reader)
+        {
+            Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.CodeElementsDocumentSnapshot.ParserDiagnostics, reader);
+        }
+
+        internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             string result = ParserUtils.DumpResult(elements, diagnostics);
             if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
@@ -275,7 +252,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public ArithmeticComparator(string name, Names resultnames = null, bool debug = false)
             : base(name, resultnames, debug) { }
 
-        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
@@ -320,7 +297,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public NYComparator(string name, Names resultnames = null, bool debug = false)
             : base(name, resultnames, debug) { }
 
-        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
@@ -354,7 +331,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public Outputter(string name, Names resultnames = null, bool debug = false)
             : base(name, resultnames, debug) { }
 
-        public override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             foreach (var e in elements)
             {
@@ -388,6 +365,25 @@ namespace TypeCobol.Test.Compiler.Parser
         }
     }
 
+    internal class ProgramsComparator : FilesComparator
+    {
+        public ProgramsComparator(string name, Names resultnames = null, bool debug = false)
+            : base(name, resultnames, debug) { }
+
+        public override void Compare(CompilationUnit result, StreamReader reader)
+        {
+            ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
+            Compare(pcd.Program, pcd.Class, pcd.Diagnostics, reader);
+        }
+
+        internal void Compare(Program program, Class cls, IList<TypeCobol.Compiler.AntlrUtils.ParserDiagnostic> diagnostics, StreamReader expected)
+        {
+            string result = ParserUtils.DumpResult(program, cls, diagnostics);
+            if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
+        }
+    }
+
 
 
     internal interface Names
@@ -418,6 +414,12 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         public string CreateName(string name) { return name + "NY"; }
         public System.Type GetComparatorType() { return typeof(NYComparator); }
+    }
+
+    internal class PGMName : Names
+    {
+        public string CreateName(string name) { return name + "PGM"; }
+        public System.Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
 
     internal class AbstractPath
