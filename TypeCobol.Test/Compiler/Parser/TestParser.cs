@@ -36,7 +36,7 @@ namespace TypeCobol.Test.Compiler.Parser
             TextChangedEvent e;
             TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Empty");
             unit.comparator = new Multipass(unit.comparator.paths.name);
-            unit.Init();
+            unit.Init(new string[] { "*.pgm", "*.cpy", });
             unit.Parse();
 
             e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Empty.");
@@ -62,7 +62,7 @@ namespace TypeCobol.Test.Compiler.Parser
             TextChangedEvent e;
             TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Empty");
             unit.comparator = new Multipass(unit.comparator.paths.name);
-            unit.Init();
+            unit.Init(new string[] { "*.pgm", "*.cpy", });
             unit.Parse();
             names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
             names.index = 0;

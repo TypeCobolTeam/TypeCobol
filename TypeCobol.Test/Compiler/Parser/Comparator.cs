@@ -25,13 +25,15 @@ namespace TypeCobol.Test.Compiler.Parser
             this.observer = new TestObserver();
         }
 
-        public void Init()
+        public void Init(string[] extensions = null)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(comparator.paths.sample.full.folder);
             DocumentFormat format = comparator.getSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
+            if (extensions == null) extensions = new string[] { "*.cbl", "*.cpy" };
+            comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
+                localDirectory.FullName, extensions,
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = comparator.paths.sample.project.file;
             this.compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
@@ -61,7 +63,36 @@ namespace TypeCobol.Test.Compiler.Parser
             {
                 CodeElementsDocument parserResult = this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot;
                 this.comparator.Compare(parserResult.CodeElements, parserResult.ParserDiagnostics, reader);
+                ProgramClassDocument result2 = this.compiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot;
+                if (result2.Program != null) System.Console.WriteLine(Dump(result2.Program).ToString());
             }
+        }
+
+        private StringBuilder Dump(TypeCobol.Compiler.CodeModel.Program program)
+        {
+            StringBuilder str = new StringBuilder();
+            str.Append("PROGRAM: ");
+            Dump(str, program.Identification);
+            return str;
+        }
+
+        private StringBuilder Dump(StringBuilder str, ProgramIdentification program)
+        {
+            if (program == null) str.Append("?");
+            else {
+                str.Append(program.ProgramName);
+                str.Append(" i:");Dump(str, program.IsInitial);
+                str.Append(" r:");Dump(str, program.IsRecursive);
+                str.Append(" c:");Dump(str, program.IsCommon);
+            }
+            return str;
+        }
+
+        private StringBuilder Dump(StringBuilder str, SyntaxBoolean b)
+        {
+            if (b == null) str.Append("?");
+            else str.Append(b.Value);
+            return str;
         }
     }
 
@@ -93,26 +124,13 @@ namespace TypeCobol.Test.Compiler.Parser
 
         private IList<string> samples;
         private FilesComparator finder = new FilesComparator("whatever");
+        private string[] extensions;
 
-        internal FolderTester() : this(null, null, null, true) { }
-        internal FolderTester(string folder) : this(folder, null, null, true) { }
-        internal FolderTester(string[] ignored) : this(null, ignored, null, true) { }
-        internal FolderTester(Names resultnames) : this(null, null, resultnames, true) { }
-        internal FolderTester(bool deep) : this(null, null, null, deep) { }
-        internal FolderTester(string folder, string[] ignored) : this(folder, ignored, null, true) { }
-        internal FolderTester(string folder, Names namecreator) : this(folder, null, namecreator, true) { }
-        internal FolderTester(string folder, bool deep) : this(folder, null, null, deep) { }
-        internal FolderTester(string[] ignored, Names resultnames) : this(null, ignored, resultnames, true) { }
-        internal FolderTester(string[] ignored, bool deep) : this(null, ignored, null, deep) { }
-        internal FolderTester(Names resultnames, bool deep) : this(null, null, resultnames, deep) { }
-        internal FolderTester(string folder, string[] ignored, Names resultnames) : this(folder, ignored, resultnames, true) { }
-        internal FolderTester(string folder, string[] ignored, bool deep) : this(folder, ignored, null, deep) { }
-        internal FolderTester(string folder, Names resultnames, bool deep) : this(folder, null, resultnames, deep) { }
-        internal FolderTester(string[] ignored, Names resultnames, bool deep) : this(null, ignored, resultnames, deep) { }
-        internal FolderTester(string folder, string[] ignored, Names resultnames, bool deep)
+        internal FolderTester(string folder, string[] extensions, string[] ignored = null, bool deep = true)
         {
             string root = CreateSamplesRoot(folder);
-            string[] paths = Directory.GetFiles(root, "*.cbl", (deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
+            this.extensions = extensions;
+            string[] paths = Directory.GetFiles(root, extensions[0], (deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
             this.samples = Filter(paths, (ignored != null ? ignored : new string[0]), folder);
         }
 
@@ -152,22 +170,22 @@ namespace TypeCobol.Test.Compiler.Parser
                 IList<FilesComparator> comparators = GetComparators(sample, debug);
                 if (comparators.Count < 1)
                 {
-                    System.Console.Write("\nERROR: Missing result file \"" + sample + "\"");
+                    System.Console.WriteLine(" /!\\ ERROR: Missing result file \"" + sample + "\"");
                     errors.AppendLine("Missing result file \"" + sample + "\"");
                     continue;
                 }
                 foreach (var comparator in comparators)
                 {
-                    System.Console.Write("\nCheck result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+                    System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
                     var unit = new TestUnit(sample, debug);
                     unit.comparator = comparator;
-                    unit.Init();
+                    unit.Init(this.extensions);
                     try
                     {
                         unit.Parse();
                         if (unit.observer.HasErrors)
                         {
-                            System.Console.Write(" --- EXCEPTION\n" + unit.observer.DumpErrors());
+                            System.Console.WriteLine(" /!\\ EXCEPTION\n" + unit.observer.DumpErrors());
                             errors.AppendLine(unit.observer.DumpErrors());
                         }
 
@@ -185,7 +203,7 @@ namespace TypeCobol.Test.Compiler.Parser
                     }
                     catch (System.Exception ex)
                     {
-                        System.Console.Write(" --- MISMATCH\n" + ex.Message);
+                        System.Console.WriteLine(" /!\\ MISMATCH\n" + ex.Message);
                         errors.Append("E");
                     }
                 }
@@ -199,6 +217,7 @@ namespace TypeCobol.Test.Compiler.Parser
             foreach (var names in Names)
             {
                 var paths = new Paths(sample, names);
+                paths.sextension = extensions[0];
                 if (System.IO.File.Exists(paths.result.full.path))
                 {
                     System.Type type = names.GetComparatorType();

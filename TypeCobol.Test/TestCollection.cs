@@ -122,9 +122,11 @@ namespace TypeCobol.Test
             foreach (string directory in Directory.GetDirectories(PlatformUtils.GetPathForProjectFile(root)))
             {
                 var dirname = Path.GetFileName(directory);
-                System.Console.Write("Entering directory \""+dirname+"\":");
-                new FolderTester(dirname).Test();
-                System.Console.Write("\n\n");
+                string[] extensions = new string[] { "*.cbl", };
+                if (dirname == "Programs") extensions = new string[] { "*.pgm", "*.cpy", };
+                System.Console.WriteLine("Entering directory \""+dirname+"\" ["+string.Join(", ", extensions)+"]:");
+                new FolderTester(dirname, extensions).Test();
+                System.Console.Write("\n");
             }
 
             //This test use TypeChecker which is specific to TypeCobol

@@ -115,6 +115,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.2.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.3.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\Simple.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ALTER.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ok.txt" />
@@ -261,7 +262,8 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
-    <None Include="Compiler\Parser\Samples\Programs\Empty.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />
     <None Include="Compiler\Parser\Samples\Statements\ALTER.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ok.cbl" />
