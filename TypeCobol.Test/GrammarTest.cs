@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace TypeCobol.Test
 {
@@ -47,12 +48,16 @@ namespace TypeCobol.Test
                 System.IO.File.AppendAllText("CheckGrammarResults.txt", (" parsed in " + formatted + "\n"));
 
                 tested++;
+                bool okay = true;
                 if(hasErrors(unit.CodeElementsDocumentSnapshot)) {
-                    Console.WriteLine(filename);
-                    string result = ParserUtils.DiagnosticsToString(unit.CodeElementsDocumentSnapshot.ParserDiagnostics);
-                    totalNumberOfErrors += unit.CodeElementsDocumentSnapshot.ParserDiagnostics.Count();
-                    Console.WriteLine(result);
-                    System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
+                    okay = false;
+                    totalNumberOfErrors += checkErrors(filename, unit.CodeElementsDocumentSnapshot.ParserDiagnostics);
+                }
+                if(hasErrors(unit.ProgramClassDocumentSnapshot)) {
+                    okay = false;
+                    totalNumberOfErrors += checkErrors(filename, unit.ProgramClassDocumentSnapshot.Diagnostics);
+                }
+                if (!okay) {
                     nbFilesInError++;
                     if (nbFilesInError >= STOP_AFTER_AS_MANY_ERRORS) break;
                 }
@@ -66,6 +71,20 @@ namespace TypeCobol.Test
         private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document)
         {
             return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
+        }
+
+        private bool hasErrors(TypeCobol.Compiler.Parser.ProgramClassDocument document)
+        {
+            return document != null && document.Diagnostics != null && document.Diagnostics.Count() > 0;
+        }
+
+        private int checkErrors(string filename, IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics)
+        {
+            Console.WriteLine(filename);
+            string result = ParserUtils.DiagnosticsToString(diagnostics);
+            Console.WriteLine(result);
+            System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
+            return diagnostics.Count();
         }
     }
 }
