@@ -326,13 +326,13 @@ namespace TypeCobol.Compiler.Preprocessor
                 IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
                 while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
                 {
-                    // Get the previous line until a non reset and non continued line is encountered
+                    // Get the previous line until a non continued line is encountered
                     ProcessedTokensLine previousLine = reversedEnumerator.Current;
 
-                    // A reset line tells nothing about the previous state : continue searching
-                    if(previousLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    // A reset line was already treated by the previous call to CheckIfAdjacentLinesNeedRefresh : stop searching
+                    if (previousLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                     {
-                        continue;
+                        break;
                     }
                     // Previous line is a continuation : reset this line and continue navigating backwards
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
@@ -361,18 +361,17 @@ namespace TypeCobol.Compiler.Preprocessor
                 IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
                 while (enumerator.MoveNext())
                 {
-                    // Get the next line until a non reset and non continuation line is encountered
+                    // Get the next line until non continuation line is encountered
                     nextLineIndex++;
                     ProcessedTokensLine nextLine = enumerator.Current;
 
-                    // A reset line tells nothing about the previous state : continue searching
+                    // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
                     if (nextLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                     {
-                        lastLineIndexReset = nextLineIndex;
-                        continue;
+                       break;
                     }
-                    // Next line is a continuation and is continued: reset this line and continue navigating backwards
-                    // Next line is a continuation but is not continued : reset this line and stop navigating backwards
+                    // Next line is a continuation and is continued: reset this line and continue navigating forwards
+                    // Next line is a continuation but is not continued : reset this line and stop navigating forwards
                     else if (nextLine.HasDirectiveTokenContinuationFromPreviousLine)
                     {
                         nextLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.Preprocessor);
