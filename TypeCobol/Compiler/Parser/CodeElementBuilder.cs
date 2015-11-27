@@ -842,7 +842,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterPerformProcedureStatement(CobolCodeElementsParser.PerformProcedureStatementContext context)
         {
-            CodeElement = new PerformStatement();
+            CodeElement = new PerformProcedureStatement();
         }
 
         public override void EnterPerformStatementEnd(CobolCodeElementsParser.PerformStatementEndContext context)

@@ -27,7 +27,7 @@ Set  fatalError TO TRUE
 
 Set  otherVariable TO TRUE
 
-[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,26:errorProcedure]<UserDefinedWord>
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,26:errorProcedure]<UserDefinedWord>
 
 [[WhenConditionalExpression]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 

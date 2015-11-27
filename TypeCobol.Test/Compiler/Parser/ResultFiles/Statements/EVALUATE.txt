@@ -113,7 +113,7 @@
 
 [[WhenConditionalExpression]] [3,6:WHEN]<WHEN> --> [8,16:condition]<UserDefinedWord>
 
-[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,25:procedureName]<UserDefinedWord>
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,25:procedureName]<UserDefinedWord>
 
 [[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
 
@@ -137,11 +137,11 @@
 
 [[WhenConditionalExpression]] [3,6:WHEN]<WHEN> --> [8,17:condition1]<UserDefinedWord>
 
-[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname1]<UserDefinedWord>
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname1]<UserDefinedWord>
 
 [[WhenEvaluateCondition]] [3,6:WHEN]<WHEN> --> [19,19:)]<RightParenthesisSeparator>
 
-[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname2]<UserDefinedWord>
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,21:funcname2]<UserDefinedWord>
 
 [[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
 
