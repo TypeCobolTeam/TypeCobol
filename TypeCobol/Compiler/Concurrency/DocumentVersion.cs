@@ -194,7 +194,7 @@ namespace TypeCobol.Compiler.Concurrency
             }
 
             // Sort all changes by line index
-            reducedDocumentChanges.Sort((documentChange1, documentChange2) => documentChange2.LineIndex - documentChange1.LineIndex);
+            reducedDocumentChanges.Sort((documentChange1, documentChange2) => documentChange1.LineIndex - documentChange2.LineIndex);
             return reducedDocumentChanges;
         }
     }
