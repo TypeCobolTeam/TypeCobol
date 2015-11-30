@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
 
             // Register a new diagnostic
-            ParserDiagnostic diagnostic = new ParserDiagnostic(msg, (IToken)offendingSymbol, ruleStack.ToString());
+            ParserDiagnostic diagnostic = new ParserDiagnostic(msg, offendingSymbol, ruleStack.ToString());
             Diagnostics.Add(diagnostic);
         }
     }

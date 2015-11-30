@@ -41,7 +41,7 @@ namespace TypeCobol.Test
                 watch.Start();
                 var unit = ParserUtils.ParseCobolFile(filename, TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat, samples);
                 watch.Stop();
-                TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
+                //TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
                 TimeSpan elapsed = watch.Elapsed;
                 sum += elapsed;
                 string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
