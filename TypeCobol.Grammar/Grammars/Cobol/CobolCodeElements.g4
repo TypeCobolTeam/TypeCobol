@@ -268,36 +268,6 @@ ioStatement:
 
 
 
-	   /////////////////////
-	  // DELIMITED SCOPE //
-	 //   STATEMENTS    //
-	/////////////////////
-
-//delimitedScopeStatement:
-//	  addStatementConditionalWithScope
-//	| callStatementConditionalWithScope
-//	| computeStatementConditionalWithScope
-//	| deleteStatementConditionalWithScope
-//	| divideStatementConditionalWithScope
-//	| evaluateStatementWithScope
-//	| ifStatementWithScope
-//	| invokeStatementConditionalWithScope
-//	| multiplyStatementConditionalWithScope
-//	| performStatementWithScope
-//	| readStatementConditionalWithScope
-//	| returnStatementConditionalWithScope
-//	| rewriteStatementConditionalWithScope
-//	| searchStatementConditionalWithScope
-//	| startStatementConditionalWithScope
-//	| stringStatementConditionalWithScope
-//	| subtractStatementConditionalWithScope
-//	| unstringStatementConditionalWithScope
-//	| writeStatementConditionalWithScope
-//	| xmlStatementConditionalWithScope
-//	;
-
-
-
 	   /////////////////
 	  // STATEMENT   //
 	 // TERMINATORS //
