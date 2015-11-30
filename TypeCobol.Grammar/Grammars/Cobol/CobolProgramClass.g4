@@ -943,7 +943,7 @@ callStatementConditional:
                             (((OnExceptionCondition imperativeStatement+)?
                             (NotOnExceptionCondition imperativeStatement+)?) |
                             (OnOverflowCondition imperativeStatement+)?)
-                            CallStatementEnd;
+                            CallStatementEnd?;
 
 computeStatementConditional:
                                ComputeStatement
