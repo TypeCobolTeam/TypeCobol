@@ -410,7 +410,7 @@ configurationSection :
                    ( SourceComputerParagraph
                    | ObjectComputerParagraph
                    | SpecialNamesParagraph
-                   | RepositoryParagraph)*;
+                   | RepositoryParagraph )*;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
@@ -430,7 +430,7 @@ configurationSection :
 
 inputOutputSection: 
                   InputOutputSectionHeader
-                  fileControlParagraph
+                  fileControlParagraph?
                   ioControlParagraph?;
 
 // p125: FILE-CONTROL
