@@ -739,45 +739,122 @@ sentence :
 // - SET
 
 imperativeStatement:
-        (AcceptStatement      |
-         AddStatement         |
-         AlterStatement       |
-         CallStatement        |
-         CancelStatement      |
-         CloseStatement       |
-         ComputeStatement     |
-         DeleteStatement      |
-         DisplayStatement     |
-         DivideStatement      |
-         ExecStatement        |
-         ExitStatement        |
-         ExitMethodStatement  |
-         ExitProgramStatement |
-         GobackStatement      |
-         GotoStatement        |
-         InitializeStatement  |
-         InspectStatement     |
-         InvokeStatement      |
-         MergeStatement       |
-         MoveStatement        |
-         MultiplyStatement    |
-         OpenStatement        |
-         PerformProcedureStatement) |
-         performStatementWithBody |
-        (ReadStatement        |
-         ReleaseStatement     |
-         ReturnStatement      |
-         RewriteStatement     |
-         SetStatement         |
-         SortStatement        |
-         StartStatement       |
-         StopStatement        |
-         StringStatement      |
-         SubtractStatement    |
-         UnstringStatement    |
-         WriteStatement       |
-         XmlGenerateStatement |
-         XmlParseStatement);
+	  ContinueStatement
+	| ExecStatement
+	| evaluateStatementExplicitScope
+	| ifStatementExplicitScope
+	| searchStatementExplicitScope
+// -- arithmetic --
+	| AddStatement
+	| ComputeStatement
+	| DivideStatement
+	| MultiplyStatement
+	| SubtractStatement
+	| addStatementExplicitScope
+	| computeStatementExplicitScope
+	| divideStatementExplicitScope
+	| multiplyStatementExplicitScope
+	| subtractStatementExplicitScope
+// -- data movement --
+	| AcceptStatement // (DATE, DAY, DAY-OF-WEEK, TIME)
+	| InitializeStatement
+	| InspectStatement
+	| MoveStatement
+	| SetStatement // "table-handling" too
+	| StringStatement
+	| UnstringStatement
+	| XmlGenerateStatement
+	| XmlParseStatement
+	| stringStatementExplicitScope
+	| unstringStatementExplicitScope
+	| xmlGenerateStatementExplicitScope
+	| xmlParseStatementExplicitScope
+// -- ending --
+	| StopStatement // RUN
+	| ExitMethodStatement
+	| ExitProgramStatement
+	| GobackStatement
+// -- input-output --
+//	| AcceptStatement // identifier
+	| CloseStatement
+	| DeleteStatement
+	| DisplayStatement
+	| OpenStatement
+	| ReadStatement
+	| RewriteStatement
+	| StartStatement
+//	StopStatement // literal
+	| WriteStatement
+	| deleteStatementExplicitScope
+	| readStatementExplicitScope
+	| rewriteStatementExplicitScope
+	| startStatementExplicitScope
+	| writeStatementExplicitScope
+// -- ordering --
+	| MergeStatement
+	| ReleaseStatement
+	| ReturnStatement
+	| SortStatement
+	| returnStatementExplicitScope
+// -- procedure-branching --
+	| AlterStatement
+	| ExitStatement
+	| GotoStatement
+	| PerformProcedureStatement
+	| performStatementWithBody
+// -- program or method linkage --
+	| CallStatement
+	| CancelStatement
+	| InvokeStatement
+	| callStatementExplicitScope
+	| invokeStatementExplicitScope
+	;
+
+// p280: Delimited scope statements
+// In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
+// turn a conditional statement into an imperative statement.
+// The resulting imperative statement can then be nested. Explicit scope terminators
+// can also be used to terminate the scope of an imperative statement. Explicit scope
+// terminators are provided for all COBOL statements that can have conditional
+// phrases.
+// Unless explicitly specified otherwise, a delimited scope statement can be specified
+// wherever an imperative statement is allowed by the rules of the language.
+// Explicit scope terminators
+// An explicit scope terminator marks the end of certain PROCEDURE DIVISION
+// statements.
+// A conditional statement that is delimited by its explicit scope terminator is
+// considered an imperative statement and must follow the rules for imperative
+// statements.
+// These are the explicit scope terminators:
+// - END-ADD
+// - END-CALL
+// - END-COMPUTE
+// - END-DELETE
+// - END-DIVIDE
+// - END-EVALUATE
+// - END-IF
+// - END-INVOKE
+// - END-MULTIPLY
+// - END-PERFORM
+// - END-READ
+// - END-RETURN
+// - END-REWRITE
+// - END-SEARCH
+// - END-START
+// - END-STRING
+// - END-SUBTRACT
+// - END-UNSTRING
+// - END-WRITE
+// - END-XML
+// Implicit scope terminators
+// At the end of any sentence, an implicit scope terminator is a separator period that
+// terminates the scope of all previous statements not yet terminated.
+// An unterminated conditional statement cannot be contained by another statement.
+// Except for nesting conditional statements within IF statements, nested statements
+// must be imperative statements and must follow the rules for imperative
+// statements. You should not nest conditional statements.
+
+
    
 // p278: Conditional statements
 // A conditional statement specifies that the truth value of a condition is to be
@@ -838,228 +915,140 @@ imperativeStatement:
 // Table-handling
 // - SEARCH
 
-// p280: Delimited scope statements
-// In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
-// turn a conditional statement into an imperative statement.
-// The resulting imperative statement can then be nested. Explicit scope terminators
-// can also be used to terminate the scope of an imperative statement. Explicit scope
-// terminators are provided for all COBOL statements that can have conditional
-// phrases.
-// Unless explicitly specified otherwise, a delimited scope statement can be specified
-// wherever an imperative statement is allowed by the rules of the language.
-// Explicit scope terminators
-// An explicit scope terminator marks the end of certain PROCEDURE DIVISION
-// statements.
-// A conditional statement that is delimited by its explicit scope terminator is
-// considered an imperative statement and must follow the rules for imperative
-// statements.
-// These are the explicit scope terminators:
-// - END-ADD
-// - END-CALL
-// - END-COMPUTE
-// - END-DELETE
-// - END-DIVIDE
-// - END-EVALUATE
-// - END-IF
-// - END-INVOKE
-// - END-MULTIPLY
-// - END-PERFORM
-// - END-READ
-// - END-RETURN
-// - END-REWRITE
-// - END-SEARCH
-// - END-START
-// - END-STRING
-// - END-SUBTRACT
-// - END-UNSTRING
-// - END-WRITE
-// - END-XML
-// Implicit scope terminators
-// At the end of any sentence, an implicit scope terminator is a separator period that
-// terminates the scope of all previous statements not yet terminated.
-// An unterminated conditional statement cannot be contained by another statement.
-// Except for nesting conditional statements within IF statements, nested statements
-// must be imperative statements and must follow the rules for imperative
-// statements. You should not nest conditional statements.
-
-statement:
-         AcceptStatement      |
-         addStatementConditional |
-         AlterStatement       |
-         callStatementConditional |
-         CancelStatement      |
-         CloseStatement       |
-         computeStatementConditional |
-         ContinueStatement    |
-         deleteStatementConditional |
-         DisplayStatement     |
-         divideStatementConditional |
-         EntryStatement       |
-         evaluateStatementWithBody |
-         ExecStatement        |
-         ExitStatement        |
-         ExitMethodStatement  |
-         ExitProgramStatement |
-         GobackStatement      |
-         GotoStatement        |
-         ifStatementWithBody  |
-         InitializeStatement  |
-         InspectStatement     |
-         invokeStatementConditional |
-         MergeStatement       |
-         MoveStatement        |
-         multiplyStatementConditional |
-         OpenStatement        |
-         performStatementWithBody |
-         PerformProcedureStatement |
-         readStatementConditional |
-         ReleaseStatement     |
-         returnStatementConditional |
-         rewriteStatementConditional |
-         searchStatementWithBody |
-         SetStatement         |
-         SortStatement        |
-         startStatementConditional |
-         StopStatement        |
-         stringStatementConditional |
-         subtractStatementConditional |
-         unstringStatementConditional |
-         writeStatementConditional |
-         xmlGenerateStatementConditional |
-         xmlParseStatementConditional;
+conditionalStatement:
+// -- arithmetic --
+	  addStatementConditional
+	| computeStatementConditional
+	| divideStatementConditional
+	| multiplyStatementConditional
+	| subtractStatementConditional
+// -- data movement --
+	| stringStatementConditional
+	| unstringStatementConditional
+	| xmlGenerateStatementConditional
+	| xmlParseStatementConditional
+// -- decision --
+	| evaluateStatementWithBody
+	| ifStatementWithBody
+// -- input-output --
+	| deleteStatementConditional
+	| readStatementConditional
+	| rewriteStatementConditional
+	| startStatementConditional
+	| writeStatementConditional
+// -- ordering --
+	| returnStatementConditional
+// -- program or method linkage --
+	| callStatementConditional
+	| invokeStatementConditional
+// -- table-handling --
+	| searchStatementWithBody
+	;
 
 
-// -- Conditional statements --
+
+statement: imperativeStatement | conditionalStatement;
 // (see the documentation for these statements in CobolCodeElements.g4)
 
-addStatementConditional:
-                           AddStatement
-                           (OnSizeErrorCondition imperativeStatement+)?
-                           (NotOnSizeErrorCondition imperativeStatement+)?
-                           AddStatementEnd?;
 
-callStatementConditional:
-                            CallStatement
-                            (((OnExceptionCondition imperativeStatement+)?
-                            (NotOnExceptionCondition imperativeStatement+)?) |
-                            (OnOverflowCondition imperativeStatement+)?)
-                            CallStatementEnd?;
 
-computeStatementConditional:
-                               ComputeStatement
-                               (OnSizeErrorCondition imperativeStatement+)?
-                               (NotOnSizeErrorCondition imperativeStatement+)?
-                               ComputeStatementEnd?;
+addStatementConditional:			AddStatement sizeErrorConditions;
+addStatementExplicitScope:			AddStatement sizeErrorConditions? AddStatementEnd;
 
-deleteStatementConditional:
-                              DeleteStatement
-                              (InvalidKeyCondition imperativeStatement+)?
-                              (NotInvalidKeyCondition imperativeStatement+)?
-                              DeleteStatementEnd?;
+callStatementConditional:			CallStatement (exceptionConditions | (OnOverflowCondition imperativeStatement+));
+callStatementExplicitScope:			CallStatement (exceptionConditions | (OnOverflowCondition imperativeStatement+))? CallStatementEnd;
 
-divideStatementConditional:
-                              DivideStatement
-                              (OnSizeErrorCondition imperativeStatement+)?
-                              (NotOnSizeErrorCondition imperativeStatement+)?
-                              DivideStatementEnd?;
+computeStatementConditional:		ComputeStatement sizeErrorConditions;
+computeStatementExplicitScope:		ComputeStatement sizeErrorConditions? ComputeStatementEnd;
+
+deleteStatementConditional:			DeleteStatement invalidKeyConditions;
+deleteStatementExplicitScope:		DeleteStatement invalidKeyConditions? DeleteStatementEnd;
+
+divideStatementConditional:			DivideStatement sizeErrorConditions;
+divideStatementExplicitScope:		DivideStatement sizeErrorConditions? DivideStatementEnd;
 
 evaluateStatementWithBody:
-                     EvaluateStatement
-                     ((WhenConditionalExpression | WhenEvaluateCondition)+ imperativeStatement+)+
-                     (WhenOtherCondition imperativeStatement+)?
-                     EvaluateStatementEnd?;
+	EvaluateStatement
+		((WhenConditionalExpression | WhenEvaluateCondition)+ imperativeStatement+)+
+		(WhenOtherCondition imperativeStatement+)?;
+evaluateStatementExplicitScope:		evaluateStatementWithBody EvaluateStatementEnd;
 
 ifStatementWithBody:
-                IfStatement
-                    (statement+ | NextSentenceStatement)
-               (ElseCondition 
-                    (statement+ | NextSentenceStatement)
-               )?
-               IfStatementEnd?;
+	IfStatement (statement+ | NextSentenceStatement)
+	(ElseCondition (statement+ | NextSentenceStatement))?;
+ifStatementExplicitScope:			ifStatementWithBody IfStatementEnd;
 
-invokeStatementConditional:
-                              InvokeStatement
-                              (OnExceptionCondition imperativeStatement+)?
-                              (NotOnExceptionCondition imperativeStatement+)?
-                              InvokeStatementEnd?;
+invokeStatementConditional:			InvokeStatement exceptionConditions;
+invokeStatementExplicitScope:		InvokeStatement exceptionConditions? InvokeStatementEnd;
 
-multiplyStatementConditional:
-                                MultiplyStatement
-                                (OnSizeErrorCondition imperativeStatement+)?
-                                (NotOnSizeErrorCondition imperativeStatement+)?
-                                MultiplyStatementEnd?;
+multiplyStatementConditional:		MultiplyStatement sizeErrorConditions;
+multiplyStatementExplicitScope:		MultiplyStatement sizeErrorConditions? MultiplyStatementEnd;
 
-performStatementWithBody:
-                            PerformStatement
-                            imperativeStatement* 
-                            PerformStatementEnd;
+performStatementWithBody:			PerformStatement imperativeStatement* PerformStatementEnd;
 
-readStatementConditional:
-                            ReadStatement
-                            (AtEndCondition imperativeStatement+)?
-                            (NotAtEndCondition imperativeStatement+)?                 
-                            (InvalidKeyCondition imperativeStatement+)?
-                            (NotInvalidKeyCondition imperativeStatement+)?
-                            ReadStatementEnd?;
+readStatementConditional:			ReadStatement (atEndConditions | invalidKeyConditions | atEndConditions invalidKeyConditions);
+readStatementExplicitScope:			ReadStatement atEndConditions? invalidKeyConditions? ReadStatementEnd;
 
-returnStatementConditional:
-                              ReturnStatement
-                              (AtEndCondition imperativeStatement+)?
-                              (NotAtEndCondition imperativeStatement+)?
-                              ReturnStatementEnd?;
+returnStatementConditional:			ReturnStatement atEndConditions;
+returnStatementExplicitScope:		ReturnStatement atEndConditions? ReturnStatementEnd;
 
-rewriteStatementConditional:
-                             RewriteStatement
-                             (InvalidKeyCondition imperativeStatement+)?
-                             (NotInvalidKeyCondition imperativeStatement+)?
-                             RewriteStatementEnd?;
+rewriteStatementConditional:		RewriteStatement invalidKeyConditions;
+rewriteStatementExplicitScope:		RewriteStatement invalidKeyConditions? RewriteStatementEnd;
 
 searchStatementWithBody:
-                   SearchStatement
-                   (AtEndCondition imperativeStatement+)?
-                   (WhenConditionalExpression (imperativeStatement+ | NextSentenceStatement))+
-                   SearchStatementEnd?;
+	SearchStatement (AtEndCondition imperativeStatement+)?
+	(	(WhenConditionalExpression (imperativeStatement+ | NextSentenceStatement))+
+	  | (WhenSearchCondition       (imperativeStatement+ | NextSentenceStatement))
+	);
 
-startStatementConditional:
-                             StartStatement
-                             (InvalidKeyCondition imperativeStatement+)?
-                             (NotInvalidKeyCondition imperativeStatement+)?
-                             StartStatementEnd?;
+searchStatementExplicitScope:		searchStatementWithBody SearchStatementEnd;
 
-stringStatementConditional:
-                              StringStatement
-                              (OnOverflowCondition imperativeStatement+)?
-                              (NotOnOverflowCondition imperativeStatement+)?
-                              StringStatementEnd?;
+startStatementConditional:			StartStatement invalidKeyConditions;
+startStatementExplicitScope:		StartStatement invalidKeyConditions? StartStatementEnd;
 
-subtractStatementConditional:
-                                SubtractStatement
-                                (OnSizeErrorCondition imperativeStatement+)?
-                                (NotOnSizeErrorCondition imperativeStatement+)?
-                                SubtractStatementEnd?;
+stringStatementConditional:			StringStatement overflowConditions;
+stringStatementExplicitScope:		StringStatement overflowConditions? StringStatementEnd;
 
-unstringStatementConditional:
-                                UnstringStatement
-                                (OnOverflowCondition imperativeStatement+)?
-                                (NotOnOverflowCondition imperativeStatement+)?
-                                UnstringStatementEnd?;
+subtractStatementConditional:		SubtractStatement sizeErrorConditions;
+subtractStatementExplicitScope:		SubtractStatement sizeErrorConditions? SubtractStatementEnd;
 
-writeStatementConditional:
-                             WriteStatement
-                             (AtEndOfPageCondition imperativeStatement+)? 
-                             (NotAtEndOfPageCondition imperativeStatement+)? 
-                             (InvalidKeyCondition imperativeStatement+)?
-                             (NotInvalidKeyCondition imperativeStatement+)? 
-                             WriteStatementEnd?;
+unstringStatementConditional:		UnstringStatement overflowConditions;
+unstringStatementExplicitScope:		UnstringStatement overflowConditions? UnstringStatementEnd;
 
-xmlGenerateStatementConditional:
-                                   XmlGenerateStatement
-                                   (OnExceptionCondition imperativeStatement+)?
-                                   (NotOnExceptionCondition imperativeStatement+)?
-                                   XmlStatementEnd?;
+writeStatementConditional:			WriteStatement (atEndConditions | invalidKeyConditions | atEndConditions invalidKeyConditions);
+writeStatementExplicitScope:		WriteStatement atEndConditions? invalidKeyConditions? WriteStatementEnd;
 
-xmlParseStatementConditional:
-                                XmlParseStatement
-                                (OnExceptionCondition imperativeStatement+)?
-                                (NotOnExceptionCondition imperativeStatement+)?
-                                XmlStatementEnd?;
+xmlGenerateStatementConditional:	XmlGenerateStatement exceptionConditions;
+xmlGenerateStatementExplicitScope:	XmlGenerateStatement exceptionConditions? XmlGenerateStatementEnd;
+
+xmlParseStatementConditional:		XmlParseStatement exceptionConditions;
+xmlParseStatementExplicitScope:		XmlParseStatement exceptionConditions? XmlParseStatementEnd;
+
+
+
+
+
+atEndConditions:
+	(AtEndCondition imperativeStatement+) |
+	(NotAtEndCondition imperativeStatement+) |
+	((AtEndCondition imperativeStatement+) (NotAtEndCondition imperativeStatement+));
+
+exceptionConditions:
+	(OnExceptionCondition imperativeStatement+) |
+	(NotOnExceptionCondition imperativeStatement+) |
+	((OnExceptionCondition imperativeStatement+) (NotOnExceptionCondition imperativeStatement+));
+
+invalidKeyConditions:
+	(InvalidKeyCondition imperativeStatement+) |
+	(NotInvalidKeyCondition imperativeStatement+) |
+	((InvalidKeyCondition imperativeStatement+) (NotInvalidKeyCondition imperativeStatement+));
+
+overflowConditions:
+	(OnOverflowCondition imperativeStatement+) |
+	(NotOnOverflowCondition imperativeStatement+) |
+	((OnOverflowCondition imperativeStatement+) (NotOnOverflowCondition imperativeStatement+));
+
+sizeErrorConditions:
+	(OnSizeErrorCondition imperativeStatement+) |
+	(NotOnSizeErrorCondition imperativeStatement+) |
+	((OnSizeErrorCondition imperativeStatement+) (NotOnSizeErrorCondition imperativeStatement+));

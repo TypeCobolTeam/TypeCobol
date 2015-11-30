@@ -11,7 +11,7 @@ namespace TypeCobol.Test
     public class GrammarTest
     {
         [TestMethod]
-        [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
+//        [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
         public void CheckGrammarCorrectness()
         {
             int STOP_AFTER_AS_MANY_ERRORS = 1000;
