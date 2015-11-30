@@ -115,6 +115,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.2.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.3.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EmptyPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\EvaluatePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\PerformPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\SimplePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ALTER.txt" />
@@ -264,6 +265,7 @@
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\Evaluate.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Perform.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />
     <None Include="Compiler\Parser\Samples\Statements\ALTER.cbl" />

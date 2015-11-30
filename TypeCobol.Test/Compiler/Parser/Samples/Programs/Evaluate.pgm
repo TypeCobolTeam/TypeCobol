@@ -1,0 +1,40 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. evaluate-semantic.
+  
+PROCEDURE DIVISION.
+*******************
+
+*  // just one when
+* ///////////////////
+EVALUATE VALUE1
+  WHEN A
+    DISPLAY 'something'
+END-EVALUATE
+.
+
+*   // multiple when
+*  // multiple statements
+* /////////////////////////
+EVALUATE VALUE2
+  WHEN A
+    DISPLAY 'something'
+	CALL 'something'
+  WHEN B
+  WHEN C
+    DISPLAY 'anything'
+	CALL 'anything'
+  WHEN OTHER
+    DISPLAY 'ERROR'
+    CALL 'ABENDS'
+END-EVALUATE
+.
+
+PERFORM procedurename.
+
+*  // nested perform
+* ////////////////////
+EVALUATE VALUE3
+  WHEN A
+    PERFORM procedurename
+END-EVALUATE
+.
