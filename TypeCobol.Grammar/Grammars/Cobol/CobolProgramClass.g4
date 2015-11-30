@@ -407,10 +407,10 @@ methodDefinition :
 
 configurationSection : 
                      ConfigurationSectionHeader
-                     SourceComputerParagraph?
-                     ObjectComputerParagraph?
-                     SpecialNamesParagraph?
-                     RepositoryParagraph?;
+                   ( SourceComputerParagraph
+                   | ObjectComputerParagraph
+                   | SpecialNamesParagraph
+                   | RepositoryParagraph)*;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
