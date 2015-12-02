@@ -1,5 +1,7 @@
 package typecobol.editors.eclipse;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -18,40 +20,49 @@ public class Diff {
 	public Info after  = null;
 
 	public void set(final boolean after, final DocumentEvent event) {
+		DocumentEventAdapter e = null;
 		Diff.Info info = null;
-		final int lengthOfRemovedText = event.getLength();
-		final int lengthOfInsertedText = event.getText().length();
-		if (( after && lengthOfInsertedText == 0)
-		 || (!after && lengthOfRemovedText  == 0)) {
-			info = new Diff.Info(event.getDocument().getLength());
-		} else {
-			try { info = new Diff.Info(event); }
-			catch(final BadLocationException ex) { ex.printStackTrace(); }
+		try {
+			e = new DocumentEventAdapter(event);
+			info = new Diff.Info(e);
+		} catch(final BadLocationException ex) { ex.printStackTrace(); }
+		if (after) {
+			this.after = info;
+			cleanupLines(e);
+		} else this.before = info;
+	}
+
+	private void cleanupLines(DocumentEventAdapter event) {
+		final int nblines = event.indexOfLastLine - event.indexOfFirstLine +1;
+		if (nblines > 1) {
+			final int lengthOfUpdate = event.lengthOfInsertedText - event.lengthOfRemovedText;
+			if (lengthOfUpdate < 0) this.after.removeLastLine();
+			else
+			if (lengthOfUpdate > 0) this.before.removeLastLine();
 		}
-		if (after) this.after = info;
-		else this.before = info;
 	}
 
 	public TextChange[] createTextChanges() {
 		if (after.lengthOfDocument == 0) return createDocumentClearedTextChanges();
-		final TextChange[] changes = new TextChange[Math.max(after.lines.length, before.lines.length)];
-		int c;
-		for (c = 0; c < after.lines.length; c++) {
-			changes[c] = new TextChange();
-			if (before == null || c >= before.lines.length)
-				 changes[c].type = TextChangeType.LineInserted;
-			else changes[c].type = TextChangeType.LineUpdated;
-			changes[c].line = after.lines[c].index;
-			changes[c].text = after.lines[c].text;
+		final java.util.List<TextChange> changes = new java.util.ArrayList<TextChange>();
+		for (final Line line: after) {
+			final TextChange change = new TextChange();
+			if (before.contains(line.index))
+				 change.type = TextChangeType.LineUpdated;
+			else change.type = TextChangeType.LineInserted;
+			change.line = line.index;
+			change.text = line.text;
+			changes.add(change);
 		}
-		if (before == null) return changes;
-		for (; c < changes.length && c < before.lines.length; c++) {
-			changes[c] = new TextChange();
-			changes[c].type = TextChangeType.LineRemoved;
-			changes[c].line = (after.lengthOfDocument < c ? after.lines[c].index : before.lines[c].index);
-			changes[c].text = null;// unused by parser
+		for (final Line line: before) {
+			if (after.contains(line.index)) continue;// already added in previous loop
+			final TextChange change = new TextChange();
+			change.type = TextChangeType.LineRemoved;
+			change.line = line.index;
+			change.text = line.text;
+			changes.add(change);
 		}
-		return changes;
+		return changes.toArray(new TextChange[changes.size()]);
 	}
 
 	private static TextChange[] createDocumentClearedTextChanges() {
@@ -93,26 +104,30 @@ public class Diff {
 	}
 	static class Info implements Iterable<Line> {
 		final int lengthOfDocument;
-		final Line[] lines;
+		final List<Line> lines = new ArrayList<Line>();
 
 		public Info(final int lengthOfDocument) {
 			this.lengthOfDocument = lengthOfDocument;
-			lines = new Line[0];
 		}
 
-		public Info(final DocumentEvent event) throws BadLocationException {
-			final IDocument d = event.getDocument();
-			lengthOfDocument = d.getLength();
-			final int lengthOfRemovedText = event.getLength();
-			final int lengthOfInsertedText = event.getText().length();
-			final int indexOfFirstLine = d.getLineOfOffset(event.getOffset());
-			final int lengthOfUpdate = lengthOfRemovedText == 0 ? lengthOfInsertedText : lengthOfRemovedText;
-			      int indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+lengthOfUpdate-1, d.getLength()));
-			lines = new Line[indexOfLastLine-indexOfFirstLine+1];
-			for (int l=indexOfFirstLine; l<=indexOfLastLine; l++) {
-				final IRegion line = d.getLineInformation(l);
-				lines[l-indexOfFirstLine] = new Line(l, line.getOffset(), d.get(line.getOffset(),line.getLength()));
+		public Info(final DocumentEventAdapter event) throws BadLocationException {
+			lengthOfDocument = event.lengthOfDocument;
+			for (int l=event.indexOfFirstLine; l<=event.indexOfLastLine; l++) {
+				final IRegion line = event.document.getLineInformation(l);
+				lines.add(new Line(l, line.getOffset(), event.document.get(line.getOffset(),line.getLength())));
 			}
+			assert(lines.size() == (event.indexOfLastLine-event.indexOfFirstLine+1));
+		}
+
+		public boolean contains(int index) {
+			for(final Line line: lines)
+				if (line.index == index)
+					return true;
+			return false;
+		}
+
+		public void removeLastLine() {
+			lines.remove(lines.size()-1);
 		}
 
 		@Override
@@ -124,22 +139,39 @@ public class Diff {
 
 		@Override
 		public Iterator<Line> iterator() {
-			Iterator<Line> iterator = new Iterator<Line>() {
-				private int current = 0;
-				@Override
-				public boolean hasNext() {
-					return current < lines.length;
-				}
-				@Override
-				public Line next() {
-					return lines[current++];
-				}
-				@Override
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-			};
-			return iterator;
+			return lines.iterator();
+		}
+	}
+	static class DocumentEventAdapter {
+		final IDocument document;
+		final int lengthOfDocument;
+		final int lengthOfRemovedText;
+		final int lengthOfInsertedText;
+		final int indexOfFirstLine;
+		final int indexOfLastLine;
+
+		public DocumentEventAdapter(final DocumentEvent event) throws BadLocationException {
+			final IDocument d = event.getDocument();
+			lengthOfDocument = d.getLength();
+			lengthOfRemovedText = event.getLength();
+			lengthOfInsertedText = event.getText().length();
+			indexOfFirstLine = d.getLineOfOffset(event.getOffset());
+			final int max = Math.max(lengthOfInsertedText, lengthOfRemovedText);
+			indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+max/*-1*/, d.getLength()));
+			document = d;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder str = new StringBuilder();
+			str.append("document.length=").append(lengthOfDocument);
+			str.append(" removed:").append(lengthOfRemovedText);
+			str.append(" inserted:").append(lengthOfInsertedText);
+			str.append(" @").append(indexOfFirstLine);
+			if (indexOfLastLine != indexOfFirstLine)
+				str.append("-").append(indexOfLastLine);
+			str.append("\ntext=\"").append(document.get()).append("\"");
+			return str.toString();
 		}
 	}
 }
