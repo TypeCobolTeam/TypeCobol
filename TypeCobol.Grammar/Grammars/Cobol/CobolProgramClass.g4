@@ -739,7 +739,6 @@ sentence:
 
 imperativeStatement:
 	  ContinueStatement
-	| ExecStatement
 	| evaluateStatementExplicitScope
 	| ifStatementExplicitScope
 	| searchStatementExplicitScope
@@ -807,6 +806,8 @@ imperativeStatement:
 	| InvokeStatement
 	| callStatementExplicitScope
 	| invokeStatementExplicitScope
+
+	| ExecStatement
 	;
 
 // p280: Delimited scope statements
