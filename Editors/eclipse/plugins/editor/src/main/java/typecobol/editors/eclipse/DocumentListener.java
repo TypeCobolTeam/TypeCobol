@@ -34,8 +34,10 @@ public class DocumentListener implements IDocumentListener, IDocumentPartitionin
 		diff.set(Diff.AFTER, event);
 		System.out.println(diff);
 
+		// diff.before can be uninitialized because we manually call
+		// documentChanged (ie. this method) from Editor.doSetInput
+		if (diff.before == null) diff.before = new Diff.Info(0);
 		final TextChange[] changes = diff.createTextChanges();
-//		for (final TextChange change: changes) doParse(event.getDocument(), new TextChange[] { change });
 		doParse(event.getDocument(), changes);
 	}
 
