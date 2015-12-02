@@ -34,7 +34,7 @@ public class Diff {
 
 	private void cleanupLines(DocumentEventAdapter event) {
 		final int nblines = event.indexOfLastLine - event.indexOfFirstLine +1;
-		if (nblines > 1) {
+		if (nblines > 1 || nblines < before.lines.size()) {
 			final int lengthOfUpdate = event.lengthOfInsertedText - event.lengthOfRemovedText;
 			if (lengthOfUpdate < 0) {
 				this.after.removeLastLine();
