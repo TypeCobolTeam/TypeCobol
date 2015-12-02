@@ -60,7 +60,7 @@ namespace TypeCobol.Server
             var e = EventDeserializer.Deserialize(Input);
             Parser.Parse(path, e);
             SerializeReturnCode(0);
-            Serializer.Serialize(Output, Parser.CodeElements);
+            Serializer.Serialize(Output, Parser.CodeElements, Parser.Snapshot);
         }
     }
 }

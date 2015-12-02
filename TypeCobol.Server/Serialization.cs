@@ -1,6 +1,10 @@
 ﻿using MsgPack.Serialization;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Server.Serialization
@@ -29,9 +33,10 @@ namespace TypeCobol.Server.Serialization
 
     public class CodeElementsListSerializer {
         private MessagePackSerializer<List<MsgPackCodeElement>> Marshaller = MessagePackSerializer.Get<List<MsgPackCodeElement>>();
-        public bool Serialize(Stream output, IEnumerable<TypeCobol.Compiler.CodeElements.CodeElement> data) {
+
+        public bool Serialize(Stream output, IEnumerable<CodeElement> data, IDocumentSnapshot<ICodeElementsLine> snapshot) {
             List<MsgPackCodeElement> list = new List<MsgPackCodeElement>();
-            foreach(TypeCobol.Compiler.CodeElements.CodeElement e in data) {
+            foreach(CodeElement e in data) {
                 // okay, we know it: this conversion is ugly
                 // reason of it: MsgPack.Cli won't let us get a Serializer on CodeElement because it is abstract
                 // so we have to explore other ways to solve this:
@@ -43,8 +48,8 @@ namespace TypeCobol.Server.Serialization
                                 Type = e.Type,
                                 Begin = e.ConsumedTokens[0].Column-1,
                                 End = e.ConsumedTokens[e.ConsumedTokens.Count-1].EndColumn,
-                                LineFirst = e.ConsumedTokens[0].Line-1,
-                                LineLast  = e.ConsumedTokens[e.ConsumedTokens.Count-1].Line-1,
+                                LineFirst = getLine(e.ConsumedTokens[0], snapshot.Lines),
+                                LineLast  = getLine(e.ConsumedTokens[e.ConsumedTokens.Count-1], snapshot.Lines),
                     };
                 element.Tokens = new List<MsgPackToken>();
                 foreach(TypeCobol.Compiler.Scanner.Token token in e.ConsumedTokens) {
@@ -52,7 +57,7 @@ namespace TypeCobol.Server.Serialization
                                     Type = (int)token.TokenFamily,
                                     Begin = token.Column-1,
                                     Length = token.Length,
-                                    Line = token.Line-1,
+                                    Line = getLine(token, snapshot.Lines),
                                     Text = token.Text,
                         });
                 }
@@ -73,6 +78,11 @@ namespace TypeCobol.Server.Serialization
             Marshaller.Pack(output, list);
             System.Console.WriteLine(list.Count+" CodeElements sent.");
             return true;
+        }
+
+        private int getLine(Token token, ISearchableReadOnlyList<ICodeElementsLine> lines) {
+            // token.Line is only defined in the context of a snapshot of the source document
+            return lines.IndexOf(token.TokensLine, token.TokensLine.InitialLineIndex);
         }
 
         public List<MsgPackCodeElement> Deserialize(Stream input) {
@@ -125,7 +135,7 @@ namespace TypeCobol.Server.Serialization
 
 public class MsgPackCodeElement {
 	[MessagePackMemberAttribute(0)]
-	public TypeCobol.Compiler.CodeElements.CodeElementType Type;
+	public CodeElementType Type;
 	[MessagePackMemberAttribute(1)]
 	public int Begin;
 	[MessagePackMemberAttribute(2)]

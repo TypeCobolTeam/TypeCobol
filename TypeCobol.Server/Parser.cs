@@ -7,6 +7,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Server
 {
@@ -51,6 +52,14 @@ namespace TypeCobol.Server
             else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             try { Compiler.CompileOnce(); }
             catch(Exception ex) { Observer.OnError(ex); }
+        }
+
+        public IDocumentSnapshot<ICodeElementsLine> Snapshot
+        {
+            get
+            {
+                return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot;
+            }
         }
 
         public IEnumerable<CodeElement> CodeElements
