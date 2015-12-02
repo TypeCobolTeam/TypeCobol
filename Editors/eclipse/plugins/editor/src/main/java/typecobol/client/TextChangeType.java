@@ -2,10 +2,10 @@ package typecobol.client;
 
 public enum TextChangeType {
 
-    LineInserted(1),
-    LineUpdated(2),
-    LineRemoved(3),
-    DocumentCleared(0);
+    LineInserted(0),
+    LineUpdated(1),
+    LineRemoved(2),
+    DocumentCleared(3);
 
 
 
