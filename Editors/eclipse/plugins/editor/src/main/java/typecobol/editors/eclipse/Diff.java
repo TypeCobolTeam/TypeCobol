@@ -36,9 +36,15 @@ public class Diff {
 		final int nblines = event.indexOfLastLine - event.indexOfFirstLine +1;
 		if (nblines > 1) {
 			final int lengthOfUpdate = event.lengthOfInsertedText - event.lengthOfRemovedText;
-			if (lengthOfUpdate < 0) this.after.removeLastLine();
-			else
-			if (lengthOfUpdate > 0) this.before.removeLastLine();
+			if (lengthOfUpdate < 0) {
+				this.after.removeLastLine();
+			} else
+			if (lengthOfUpdate > 0) {
+				final Line bLast = this.before.removeLastLine();
+				final Line aLast = this.after.lines.get(this.after.lines.size()-1);
+				if (bLast.text.compareTo(aLast.text) == 0)
+					this.after.removeLastLine();
+			}
 		}
 	}
 
@@ -126,8 +132,15 @@ public class Diff {
 			return false;
 		}
 
-		public void removeLastLine() {
-			lines.remove(lines.size()-1);
+		public boolean contains(final String text) {
+			for(final Line line: lines)
+				if (line.text == text)
+					return true;
+			return false;
+		}
+
+		public Line removeLastLine() {
+			return lines.remove(lines.size()-1);
 		}
 
 		@Override

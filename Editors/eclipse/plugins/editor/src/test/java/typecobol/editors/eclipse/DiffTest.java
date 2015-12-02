@@ -46,39 +46,44 @@ public class DiffTest {
 	}
 
 	@Test
-	public void onLineDeleted() {
+	public void onLinesMerged() {
 		// given
-		final String before = LINSPECT+SEP + LEMPTY+SEP + LADDX+SEP + LADDY;
-		final String after  = LINSPECT+SEP + LEMPTY+SEP + LADDY_UPDATED;
-		final String edit = LADDX+SEP;
+		final String before = LINSPECT+SEP + LEMPTY+SEP + LADDXY;
+		final String after  = LINSPECT+SEP + LEMPTY+SEP + LADDXY_MERGE;
+		final String edit = LADDXY_DELETE;
+		final Diff diff = createDiff(before, UPDATE, edit, after);
+		// when
+		final TextChange[] changes = diff.createTextChanges();
+		// then
+		assertEquals(changes.length, 2);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].line, 2);
+		assertEquals(changes[0].text, LADDXY_MERGE);
+		assertEquals(changes[1].type, TextChangeType.LineRemoved);
+		assertEquals(changes[1].line, 3);
+		assertEquals(changes[1].text, LADDY);
+	}
+
+	@Test
+	public void onLinesDeleted() {
+		// given
+		final String before = LADDX+SEP + LADDXY+SEP + LADDY;
+		final String after  = LADDX+SEP + LADDY;
+		final String edit = LADDXY+SEP;
 		final Diff diff = createDiff(before, DELETE, edit, after);
 		// when
 		final TextChange[] changes = diff.createTextChanges();
 		// then
-		assertEquals(changes.length, 1);
-		assertEquals(changes[0].type, TextChangeType.LineRemoved);
-		assertEquals(changes[0].line, 2);
-			// we don't care about text
-	}
-
-	@Test
-	public void onMultipleLinesDeleted() {
-		// given
-		final String before = LADDX+SEP + LADDXY+SEP + LADDY;
-		final String after  = LADDX+SEP + LADDXY_MERGE+SEP + LADDY;
-		final String edit = LADDXY_DELETE;
-		final Diff diff = createDiff(before, UPDATE, edit, after);
-		System.out.println(diff);
-		// when
-		final TextChange[] changes = diff.createTextChanges();
-		System.out.println(TextChange.toString(changes));
-		// then
-		assertEquals(changes.length, 2);
+		assertEquals(changes.length, 3);
 		assertEquals(changes[0].type, TextChangeType.LineUpdated);
 		assertEquals(changes[0].line, 1);
-		assertEquals(changes[0].text, LADDXY_MERGE);
+		assertEquals(changes[0].text, LADDY);
 		assertEquals(changes[1].type, TextChangeType.LineRemoved);
 		assertEquals(changes[1].line, 2);
+		assertEquals(changes[1].text, LADDY);
+		assertEquals(changes[2].type, TextChangeType.LineRemoved);
+		assertEquals(changes[2].line, 3);
+		assertEquals(changes[2].text, LADDY);
 	}
 
 	@Test
