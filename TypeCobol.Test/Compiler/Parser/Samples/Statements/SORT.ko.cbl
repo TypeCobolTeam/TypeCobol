@@ -33,7 +33,7 @@ SORT x ASCENDING  d WITH DUPLICATES IN ORDER COLLATING SEQUENCE IS USING filenam
 * DUPLICATES and SEQUENCE interverted
 SORT x DESCENDING d SEQUENCE    alphabetname      DUPLICATES                    USING filename1 GIVING filename2.
 SORT x ASCENDING  d SEQUENCE IS alphabetname WITH DUPLICATES IN ORDER COLLATING USING filename1 GIVING filename2.
-* DUPLICATES-SEQUENCE at the end 
+* DUPLICATES-SEQUENCE at the end
 SORT x ASCENDING  d        USING filename1 GIVING filename2      DUPLICATES                    SEQUENCE    alphabetname. 
 SORT x DESCENDING d1 d2 d3 USING filename1 GIVING filename2 WITH DUPLICATES IN ORDER COLLATING SEQUENCE IS alphabetname.
 SORT x DESCENDING d        INPUT PROCEDURE    procedurename1                     OUTPUT PROCEDURE    procedurename2 THRU procedurename3      DUPLICATES                    SEQUENCE    alphabetname.

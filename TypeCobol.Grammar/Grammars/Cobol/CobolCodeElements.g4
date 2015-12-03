@@ -6094,11 +6094,9 @@ invokeStatementEnd: END_INVOKE;
 // statement.
 
 mergeStatement:
-
 	MERGE fileName onAscendingDescendingKey+
 		(COLLATING? SEQUENCE IS? alphabetName)?
 		usingFilenames
-//		USING fileName fileName+
 		(givingFilenames | outputProcedure);
 
 

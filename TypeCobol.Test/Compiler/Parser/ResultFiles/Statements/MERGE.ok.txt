@@ -1,0 +1,53 @@
+﻿--- Code Elements ---
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [66,74:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [75,75+:.]<PeriodSeparator> --> [75,75+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [66,74:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [75,75+:.]<PeriodSeparator> --> [75,75+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [68,76:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [77,77+:.]<PeriodSeparator> --> [77,77+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [68,76:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [77,77+:.]<PeriodSeparator> --> [77,77+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [121,129:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [130,130+:.]<PeriodSeparator> --> [130,130+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [90,98:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [99,99+:.]<PeriodSeparator> --> [99,99+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [90,98:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [99,99+:.]<PeriodSeparator> --> [99,99+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [90,98:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [99,99+:.]<PeriodSeparator> --> [99,99+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [90,98:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [99,99+:.]<PeriodSeparator> --> [99,99+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [82,94:procedurename]<UserDefinedWord>
+
+[[SentenceEnd]] [95,95+:.]<PeriodSeparator> --> [95,95+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [105,118:procedurename2]<UserDefinedWord>
+
+[[SentenceEnd]] [119,119+:.]<PeriodSeparator> --> [119,119+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [130,143:procedurename3]<UserDefinedWord>
+
+[[SentenceEnd]] [144,144+:.]<PeriodSeparator> --> [144,144+:.]<PeriodSeparator>
+
+[[MergeStatement]] [1,5:MERGE]<MERGE> --> [130,143:procedurename4]<UserDefinedWord>
+
+[[SentenceEnd]] [144,144+:.]<PeriodSeparator> --> [144,144+:.]<PeriodSeparator>
+

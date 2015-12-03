@@ -130,6 +130,8 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.CONVERTING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\INSPECT.ok.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\MERGE.ko.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\MERGE.ok.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\RELEASE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForExternalSwitches.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SETForIndexes.txt" />
@@ -276,6 +278,8 @@
     <None Include="Compiler\Parser\Samples\Statements\CALL.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ok.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CANCEL.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\MERGE.ko.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\MERGE.ok.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\SORT.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\ENTRY.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
