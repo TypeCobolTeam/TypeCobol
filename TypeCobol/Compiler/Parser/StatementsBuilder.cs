@@ -480,7 +480,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.usingFilenames() != null)
             {
                 statement.Using = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
-                if (statement.Using.Count < 2)
+                if (statement.Using.Count == 1)
                     DiagnosticUtils.AddError(statement, "MERGE: USING <filename> <filename>+", context.usingFilenames());
             }
             if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileName());
