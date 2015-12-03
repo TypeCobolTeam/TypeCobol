@@ -115,18 +115,22 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context)
         {
             if (context.conditionNameReference() == null) return new Empty();
-            return createCondition(context.conditionNameReference().qualifiedConditionName());
+            return createCondition(context.conditionNameReference());
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext qualified)
+        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameReferenceContext context)
         {
-            if (qualified == null) return new Empty();
-            // we can take first, as conditionName is a UserDefinedWord
-            var condition = new Condition(ParseTreeUtils.GetFirstToken(qualified.conditionName()));
-            // TODO condition.inof.AddDataNames(qualified.inOrOfDataName());
-            // TODO condition.inof.AddFileName(qualified.inOrOfFileName());
-            // TODO add subscripts
-            return condition;
+            if (context == null) return new Empty();
+            QualifiedName<ConditionName> name = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
+            IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());
+            return new Condition(name, subscripts);
+        }
+
+        private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext context)
+        {
+            if (context == null) return new Empty();
+            QualifiedName<ConditionName> name = SyntaxElementBuilder.CreateQualifiedName(context);
+            return new Condition(name);
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.RelationConditionContext context)

@@ -102,29 +102,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class Condition : LogicalExpression //TODO is this an Identifier? 'seems so ...
-    {
-        public Token token { get; private set; }
-        public INOFList inof = new INOFList();
-        public SubscriptList subscripts = new SubscriptList();
-
-        public Condition(Token token)
-        {
-            this.token = token;
-        }
-        public override string ToString()
-        {
-            if (token == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                return token.Text;
-            }
-        }
-    }
-
     public class Empty : LogicalExpression
     {
         public override string ToString() { return "?LOGIC?"; }

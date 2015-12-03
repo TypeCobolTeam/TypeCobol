@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class Subscript
     {
-        public QualifiedDataName dataname { get; set; }
+        public QualifiedName<DataName> dataname { get; set; }
         public SymbolReference<IndexName> indexname { get; set; }
         public SyntaxNumber offset { get; set; }
         public char op { get; set; }
@@ -129,11 +129,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class DataReference : Identifier
     {
-        public QualifiedDataName Name { get; private set; }
+        public QualifiedName<DataName> Name { get; private set; }
         public IList<Subscript> Subscripts { get; private set; }
         public Substring ReferenceModifier { get; set; }
 
-        public DataReference(QualifiedDataName name, IList<Subscript> subscripts = null, Substring substring = null)
+        public DataReference(QualifiedName<DataName> name, IList<Subscript> subscripts = null, Substring substring = null)
         {
             this.Name = name;
             this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
@@ -158,15 +158,45 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class QualifiedDataName
+    public class Condition : LogicalExpression, Identifier
     {
-        public SymbolReference<DataName> DataName { get; private set; }
+        public QualifiedName<ConditionName> Name { get; private set; }
+        public IList<Subscript> Subscripts { get; private set; }
+
+        public Condition(QualifiedName<ConditionName> name, IList<Subscript> subscripts = null)
+        {
+            this.Name = name;
+            this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
+        }
+
+        public void SetReferenceModifier(Substring substring) {
+            throw new System.InvalidOperationException("Conditions cannot be reference modified!");
+        }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            str.Append(this.Name.ToString());
+            if (this.Subscripts.Count > 0)
+            {
+                str.Append("( ");
+                foreach (var subscript in this.Subscripts) str.Append(subscript).Append(", ");
+                if (str[str.Length - 2] == ',') str.Length -= 2;
+                str.Append(')');
+            }
+            return str.ToString();
+        }
+    }
+
+    public class QualifiedName<T> where T: Symbol
+    {
+        public SymbolReference<T> Name { get; private set; }
         public IList<SymbolReference<DataName>> DataNames { get; private set; }
         public SymbolReference<FileName> FileName { get; private set; }
 
-        public QualifiedDataName(SymbolReference<DataName> dataname, IList<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
+        public QualifiedName(SymbolReference<T> dataname, IList<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
         {
-            this.DataName = dataname;
+            this.Name = dataname;
             this.DataNames = datanames != null ? datanames : new List<SymbolReference<DataName>>();
             this.FileName = filename;
         }
@@ -176,7 +206,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             var str = new StringBuilder();
             if (this.FileName != null) str.Append(this.FileName).Append('.');
             foreach (var dataname in this.DataNames) str.Append(dataname).Append('.');
-            str.Append(this.DataName);
+            str.Append(this.Name);
             return str.ToString();
         }
     }

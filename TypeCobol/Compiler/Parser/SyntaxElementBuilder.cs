@@ -233,31 +233,40 @@ namespace TypeCobol.Compiler.Parser
         private static DataReference CreateDataNameReference(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
-            QualifiedDataName name = CreateQualifiedName(context);
+            QualifiedName<DataName> name = CreateQualifiedName(context);
             IList<Subscript> subscripts = CreateSubscripts(context);
             if (name != null || subscripts != null) return new DataReference(name, subscripts);
             return null;
         }
 
-        private static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.DataNameReferenceContext context)
+        private static QualifiedName<DataName> CreateQualifiedName(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
             return CreateQualifiedName(context.qualifiedDataName());
         }
 
-        public static QualifiedDataName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
+        public static QualifiedName<DataName> CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
         {
             if (context == null) return null;
-            SymbolReference<DataName> dataname = null;
-            if (context.dataNameBase() != null) dataname = CreateDataName(context.dataNameBase().dataName());
+            SymbolReference<DataName> name = null;
+            if (context.dataNameBase() != null) name = CreateDataName(context.dataNameBase().dataName());
             IList<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
             SymbolReference<FileName> filename = CreateFileName(context.fileName());
-            return new QualifiedDataName(dataname, datanames, filename);
+            return new QualifiedName<DataName>(name, datanames, filename);
         }
 
-        internal static IList<QualifiedDataName> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
+        public static QualifiedName<ConditionName> CreateQualifiedName(CobolCodeElementsParser.QualifiedConditionNameContext context)
         {
-            var names = new List<QualifiedDataName>();
+            if (context == null) return null;
+            SymbolReference<ConditionName> name = CreateConditionName(context.conditionName());
+            IList<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            SymbolReference<FileName> filename = CreateFileName(context.fileName());
+            return new QualifiedName<ConditionName>(name, datanames, filename);
+        }
+
+        internal static IList<QualifiedName<DataName>> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
+        {
+            var names = new List<QualifiedName<DataName>>();
             foreach (var name in context)
             {
                 var x = CreateQualifiedName(name);
@@ -295,6 +304,12 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        public static SymbolReference<ConditionName> CreateConditionName(CobolCodeElementsParser.ConditionNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<ConditionName>(new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
         internal static IList<SymbolReference<FileName>> CreateFileNames(IReadOnlyList<CobolCodeElementsParser.FileNameContext> context)
@@ -368,7 +383,7 @@ namespace TypeCobol.Compiler.Parser
             return CreateSubscripts(context.subscript());
         }
 
-        private static IList<Subscript> CreateSubscripts(IReadOnlyList<CobolCodeElementsParser.SubscriptContext> context)
+        public static IList<Subscript> CreateSubscripts(IReadOnlyList<CobolCodeElementsParser.SubscriptContext> context)
         {
             if (context == null) return null;
             var subscripts = new List<Subscript>();

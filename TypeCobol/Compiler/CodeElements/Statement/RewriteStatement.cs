@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must be the name of a logical record in a DATA DIVISION FD entry. The
         /// record-name can be qualified.
         /// </summary>
-        QualifiedDataName RecordName;
+        QualifiedName<DataName> RecordName;
         /// <summary>
         /// p405:
         /// FROM phrase
@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         Identifier From;
 
-        public RewriteStatement(QualifiedDataName recordname, Identifier identifier)
+        public RewriteStatement(QualifiedName<DataName> recordname, Identifier identifier)
             : base(CodeElementType.RewriteStatement)
         {
             this.RecordName = recordname;

@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must specify the name of a logical record in a sort-merge file description
         /// entry (SD). record-name-1 can be qualified.
         /// </summary>
-        public QualifiedDataName RecordName;
+        public QualifiedName<DataName> RecordName;
 
         /// <summary>
         /// p401:
