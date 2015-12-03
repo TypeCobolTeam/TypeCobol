@@ -106,8 +106,6 @@ namespace TypeCobol.Compiler.Parser
                     {
                         // Attach consumed tokens and main document line numbers information to the code element
                         codeElement.ConsumedTokens = cobolParser.ConsumedTokens;
-                        codeElement.FirstTokenLineIndexInMainDocument = cobolParser.FirstTokenLineIndexInMainDocument;
-                        codeElement.LastTokenLineIndexInMainDocument = cobolParser.LastTokenLineIndexInMainDocument;
 
                         // Add code element to the list                    
                         codeElementsLine.AddCodeElement(codeElement);

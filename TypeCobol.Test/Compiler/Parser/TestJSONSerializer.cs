@@ -70,10 +70,6 @@ namespace TypeCobol.Test.Compiler.Parser
             newline(b, a+1, "");
             kv(b, "Type", "\"" + e.Type + "\"");
             newline(b, a+1, ",");
-            kv(b, "FirstTokenLineIndexInMainDocument", "" + e.FirstTokenLineIndexInMainDocument);
-            newline(b, a+1, ",");
-            kv(b, "LastTokenLineIndexInMainDocument", "" + e.LastTokenLineIndexInMainDocument);
-            newline(b, a+1, ",");
             b.Append("\"ConsumedTokens\": [");
             bool first = true;
             foreach (var t in e.ConsumedTokens)

@@ -30,16 +30,6 @@ namespace TypeCobol.Compiler.CodeElements
         public IList<Token> ConsumedTokens { get; set; }
 
         /// <summary>
-        /// Line index in the main document where the first consumed token is starting
-        /// </summary>
-        public int FirstTokenLineIndexInMainDocument { get; set; }
-
-        /// <summary>
-        /// Line index in the main document where the last consumed token is starting
-        /// </summary>
-        public int LastTokenLineIndexInMainDocument { get; set; }
-
-        /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
@@ -58,10 +48,12 @@ namespace TypeCobol.Compiler.CodeElements
             bool displayLineNumbers = false;
             if (displayLineNumbers)
             {
+                int first = ConsumedTokens[0].Line;
+                int last  = ConsumedTokens[ConsumedTokens.Count-1].Line;
                 sb.Append(" on lines ");
-                sb.Append(FirstTokenLineIndexInMainDocument);
+                sb.Append(first);
                 sb.Append(">");
-                sb.Append(LastTokenLineIndexInMainDocument);
+                sb.Append(last);
             }
             sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
             return sb.ToString();
