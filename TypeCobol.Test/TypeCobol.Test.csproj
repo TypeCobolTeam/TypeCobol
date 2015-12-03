@@ -149,6 +149,8 @@
     <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\READ.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\SET.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SORT.ko.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\SORT.ok.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\START.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\STOP.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\STRING.txt" />
@@ -274,6 +276,7 @@
     <None Include="Compiler\Parser\Samples\Statements\CALL.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CALL.ok.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\CANCEL.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\SORT.ko.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\ENTRY.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
@@ -293,6 +296,7 @@
     <None Include="Compiler\Parser\Samples\ON.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\READ.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\RELEASE.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\SORT.ok.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\START.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STOP.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\STRING.cbl" />
