@@ -160,6 +160,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Statements\UNSTRING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\USE.DEBUGGING.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\USE.ERRORS.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Statements\XML\GENERATE.txt" />
     <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\XML\XML.rdz.txt" />
@@ -309,6 +310,7 @@
     <None Include="Compiler\Parser\Samples\Statements\UNSTRING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\USE.DEBUGGING.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\USE.ERRORS.cbl" />
+    <None Include="Compiler\Parser\Samples\Statements\XML\GENERATE.cbl" />
     <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\XML\XML.rdz.cbl" />
     <None Include="Compiler\Parser\Samples\Statements\XML\SUPPRESS.ko.cbl" />

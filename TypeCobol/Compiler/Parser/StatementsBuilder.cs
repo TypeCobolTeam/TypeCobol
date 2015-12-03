@@ -641,8 +641,12 @@ namespace TypeCobol.Compiler.Parser
             }
             foreach (var namecontext in context.xmlName())
             {
-                var x = CreateXmlName(namecontext);
-                if (x != null) statement.Names.Add(x);
+                try {
+                    var x = CreateXmlName(namecontext);
+                    if (x != null) statement.Names.Add(x);
+                } catch(System.InvalidOperationException ex) {
+                    DiagnosticUtils.AddError(statement, "Expected: Alphanumeric or National literal", namecontext);
+                }
             }
             foreach (var typecontext in context.xmlType())
             {
@@ -658,7 +662,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private static Expression CreateIdentifierOrAlphanumericOrNationalLiteral(CobolCodeElementsParser.IdentifierContext identifier, 
-                                                                                   CobolCodeElementsParser.AlphanumOrNationalLiteralContext literal) {
+                                                                                  CobolCodeElementsParser.AlphanumOrNationalLiteralContext literal) {
             Expression result = SyntaxElementBuilder.CreateIdentifier(identifier);
             if (result != null) return result;
             return SyntaxElementBuilder.CreateLiteral(literal);
