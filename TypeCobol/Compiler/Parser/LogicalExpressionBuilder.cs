@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
-            System.Console.WriteLine("TODO: IMPLEMENT ARITHMERIC OPERAND "+ (context.arithmeticExpression() != null) + " " + (context.indexName() != null));
+            if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
             if (context.indexName() != null) return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.indexName().UserDefinedWord())));
             return new Empty();
         }

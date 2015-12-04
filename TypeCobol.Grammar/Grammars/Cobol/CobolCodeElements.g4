@@ -9230,7 +9230,7 @@ execStatementEnd: END_EXEC;
 // Table 18. Valid arithmetic symbol pairs
 // ...
 
-arithmeticExpression :
+arithmeticExpression:
 	multiplicationAndDivision arithMADTail*;
 
 arithMADTail:
