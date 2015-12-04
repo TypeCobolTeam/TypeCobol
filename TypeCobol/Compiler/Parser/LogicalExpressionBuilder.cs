@@ -182,6 +182,18 @@ namespace TypeCobol.Compiler.Parser
             return '?';
         }
 
+        internal char invertOperator(char op) {
+            switch(op) {
+                case '>': return '≤';
+                case '≥': return '<';
+                case '<': return '≥';
+                case '≤': return '>';
+                case '=': return '!';
+                case '!': return '=';
+                default: return '?';
+            }
+        }
+
         private Expression createOperand(CobolCodeElementsParser.OperandContext context)
         {
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
@@ -340,22 +352,21 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicOperation createOperation(Expression left, char op, CobolCodeElementsParser.AbbreviatedNOTContext context)
         {
-            var operation = createOperation(left, op, context.abbreviatedExpression());
-            if (context.NOT() == null) return operation;
-            return new NOT(operation);
+            return createOperation(left, (context.NOT() != null), op, context.abbreviatedExpression());
         }
 
-        private LogicOperation createOperation(Expression left, char op, CobolCodeElementsParser.AbbreviatedExpressionContext context)
+        private LogicOperation createOperation(Expression left, bool not, char op, CobolCodeElementsParser.AbbreviatedExpressionContext context)
         {
             if (context == null) return null;
-            if (context.abbreviatedOperand() != null ) return createOperand(left, context.abbreviatedOperand());
+            if (context.abbreviatedOperand() != null ) return createOperand(left, not, op, context.abbreviatedOperand());
             if (context.abbreviatedOR() != null) return CreateOperation(left, op, context.abbreviatedOR());
             return null;
         }
 
-        private Relation createOperand(Expression left, CobolCodeElementsParser.AbbreviatedOperandContext context)
+        private Relation createOperand(Expression left, bool not, char op, CobolCodeElementsParser.AbbreviatedOperandContext context)
         {
-            char op = CreateOperator(context.relationalOperator());
+            if (context.relationalOperator() != null) op = CreateOperator(context.relationalOperator());
+            if (not) op = invertOperator(op);
             Expression right = createOperand(context.operand());
             return new Relation(left, op, right);
         }
