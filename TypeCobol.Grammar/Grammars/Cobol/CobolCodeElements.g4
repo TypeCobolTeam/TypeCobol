@@ -3383,7 +3383,7 @@ occursClause:
 // An index-name is not the same as the name of an index data item, and an
 // index-name cannot be used like a data-name.
 
-indexName : UserDefinedWord;
+indexName: UserDefinedWord;
             
 // p198: The PICTURE clause specifies the general characteristics and editing requirements
 // of an elementary item.
