@@ -372,6 +372,7 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CobolCodeElementsParser.ObjectReferenceContext context)
         {
+            if (context == null) return new Empty();
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.NULL() != null || context.NULLS() != null) return new Null();
             if (context.SELF() != null) return new Self();
@@ -380,8 +381,13 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CobolCodeElementsParser.SignConditionContext context)
         {
-            System.Console.WriteLine("TODO: IMPLEMENT SIGN CONDITIONS");
-            return new Empty();
+            if (context == null) return new Empty();
+            Expression operand = createOperand(context.operand());
+            bool not = context.NOT() != null;
+            if (context.ZERO() != null) return new SignCondition(operand, not, SignCondition.Type.ZERO);
+            if (context.POSITIVE() != null) return new SignCondition(operand, not, SignCondition.Type.POSITIVE);
+            if (context.NEGATIVE() != null) return new SignCondition(operand, not, SignCondition.Type.NEGATIVE);
+            return new SignCondition(operand, not, SignCondition.Type.UNKNOWN);
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.SwitchStatusConditionContext context)

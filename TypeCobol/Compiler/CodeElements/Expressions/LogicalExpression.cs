@@ -102,6 +102,28 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
+    public class SignCondition : LogicalExpression
+    {
+        public Expression operand { get; private set; }
+        public enum Type { ZERO, POSITIVE, NEGATIVE, UNKNOWN }
+        public Type type { get; private set; }
+        public bool not { get; private set; }
+
+        public SignCondition(Expression operand, bool not, Type type) {
+            this.operand = operand;
+            this.not = not;
+            this.type = type;
+        }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder(operand.ToString()).Append(" IS ");
+            if (not) str.Append("NOT ");
+            str.Append(type).Append(" ?");
+            return str.ToString();
+        }
+    }
+
     public class Empty : LogicalExpression
     {
         public override string ToString() { return "?LOGIC?"; }
