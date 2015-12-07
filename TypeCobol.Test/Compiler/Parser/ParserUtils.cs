@@ -134,7 +134,7 @@ namespace TypeCobol.Test.Compiler.Parser
             }
         }
 
-        internal static string DumpResult(Program program, Class cls, IList<ParserDiagnostic> diagnostics)
+        internal static string DumpResult(Program program, Class cls, IList<Diagnostic> diagnostics)
         {
             StringBuilder builder = new StringBuilder();
             if (diagnostics != null && diagnostics.Count > 0) {

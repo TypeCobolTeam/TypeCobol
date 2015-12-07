@@ -373,10 +373,13 @@ namespace TypeCobol.Test.Compiler.Parser
         public override void Compare(CompilationUnit result, StreamReader reader)
         {
             ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-            Compare(pcd.Program, pcd.Class, pcd.Diagnostics, reader);
+            List<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics = new List<TypeCobol.Compiler.Diagnostics.Diagnostic>();
+            diagnostics.AddRange(result.CodeElementsDocumentSnapshot.ParserDiagnostics);
+            diagnostics.AddRange(pcd.Diagnostics);
+            Compare(pcd.Program, pcd.Class, diagnostics, reader);
         }
 
-        internal void Compare(Program program, Class cls, IList<TypeCobol.Compiler.AntlrUtils.ParserDiagnostic> diagnostics, StreamReader expected)
+        internal void Compare(Program program, Class cls, IList<Diagnostic> diagnostics, StreamReader expected)
         {
             string result = ParserUtils.DumpResult(program, cls, diagnostics);
             if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
