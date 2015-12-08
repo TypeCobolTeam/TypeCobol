@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -74,9 +75,15 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         public string ToStringWithRuleStack()
         {
-            // TO DO - IMPORTANT : OffendingSymbol.Line below returns the INITIAL line number, and not the CURRENT line number
+            int lineindex = OffendingSymbol.Line;
+            if (lineindex < 0) { // ProgramClass parsing
+                CodeElement e = OffendingSymbol as CodeElement;
+                if (e != null) lineindex = e.ConsumedTokens[0].Line;
+            }
+            // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
             // This is enough to pass all unit tests, but will return false informations in real usage !
-            return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + OffendingSymbol.Line + ")";
+            // for real line number, use a Snapshot
+            return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + lineindex + ")";
         }
     }
 }
