@@ -650,7 +650,7 @@ paragraph:
 // One or more statements terminated by a separator period.
 
 sentence:
-	(statement+ SentenceEnd) | ExecStatement;
+	(statement* SentenceEnd) | ExecStatement;
 
 // p253: Statement
 // A syntactically valid combination of identifiers and symbols (literals,
