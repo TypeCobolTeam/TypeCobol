@@ -111,6 +111,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\CallPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CompilerDirectingPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.0.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.1.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Empty.2.txt" />
@@ -272,6 +273,7 @@
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Call.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CompilerDirecting.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Evaluate.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Perform.pgm" />
