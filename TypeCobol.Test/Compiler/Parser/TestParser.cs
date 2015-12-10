@@ -34,13 +34,13 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void Check_BeforeAfterInsertionBatched() {
             TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
             TextChangedEvent e;
-            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Empty");
+            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Simple");
             unit.comparator = new Multipass(unit.comparator.paths.name);
             unit.Init(new string[] { "*.pgm", "*.cpy", });
             unit.Parse();
 
-            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Empty.");
-            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Emptier.", e);
+            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
+            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.", e);
             System.Console.WriteLine(e.TextChanges.Count+" TextChanges");
 
             // clear document
@@ -54,35 +54,35 @@ namespace TypeCobol.Test.Compiler.Parser
             names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
             names.index = 2;
             System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
-            unit.Compare();//with Empty.2.txt
+            unit.Compare();//with Simple.2.txt
         }
 
         public static void Check_BeforeAfterInsertion() {
             TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
             TextChangedEvent e;
-            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Empty");
+            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Simple");
             unit.comparator = new Multipass(unit.comparator.paths.name);
             unit.Init(new string[] { "*.pgm", "*.cpy", });
             unit.Parse();
             names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
             names.index = 0;
-            unit.Compare();//with Empty.0.txt
+            unit.Compare();//with Simple.0.txt
 
             // explicitely close program by adding END PROGRAM line
-            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Empty.");
+            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
             unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
             names.index++;
             System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
-            unit.Compare();//with Empty.1.txt
+            unit.Compare();//with Simple.1.txt
 
             // change program name ; now first and last line have differing program id
-            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Emptier.");
+            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.");
             unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
             names.index++;
             System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
-            unit.Compare();//with Empty.2.txt
+            unit.Compare();//with Simple.2.txt
 
             // clear document
             e = updateLine(TextChangeType.DocumentCleared, /* the following parameters are not used when DocumentCleared*/ 0, null);
@@ -90,7 +90,7 @@ namespace TypeCobol.Test.Compiler.Parser
             unit.Parse();
             names.index++;
             System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
-            unit.Compare();//with Empty.3.txt
+            unit.Compare();//with Simple.3.txt
         }
 
         private static TextChangedEvent updateLine(TextChangeType type, int line, string text, TextChangedEvent e = null) {
