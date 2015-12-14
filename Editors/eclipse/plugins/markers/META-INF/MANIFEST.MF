@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TypeCobol Markers
+Bundle-SymbolicName: TypeCobol.Markers;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Activator: typecobol.markers.Activator
+Bundle-Vendor: EID
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.ui,
+ org.eclipse.ui.ide
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
