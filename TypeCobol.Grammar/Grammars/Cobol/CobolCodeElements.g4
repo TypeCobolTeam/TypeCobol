@@ -2860,23 +2860,23 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 // Format 3: condition-name
 // 88 condition-name-1 value-clause.
 
-dataDescriptionEntry : 
-                     levelNumber (dataName | FILLER)?
-                     redefinesClause?
-                     renamesClause ?
-                    (blankWhenZeroClause |
-                     externalClause |
-                     globalClause |
-                     groupUsageClause |
-                     justifiedClause |
-                     occursClause |
-                     pictureClause |
-                     signClause |
-                     synchronizedClause |
-                     usageClause |
-                     valueClause |
-                     typeCobolExt_typeClause)*
-                     PeriodSeparator;
+dataDescriptionEntry:
+	levelNumber (dataName | FILLER)?
+	( renamesClause
+	| redefinesClause
+	| blankWhenZeroClause
+	| externalClause
+	| globalClause
+	| groupUsageClause
+	| justifiedClause
+	| occursClause
+	| pictureClause
+	| signClause
+	| synchronizedClause
+	| usageClause
+	| valueClause
+//	| typeCobolExt_typeClause
+	)* PeriodSeparator;
 
 // TypeCobol extension DEMO
 

@@ -23,8 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class DataDescriptionEntry : CodeElement
     {
-        public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry)
-        { }
+        public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry) { }
 
         /// <summary>
         /// The level-number specifies the hierarchy of data within a record, and identifies
@@ -33,13 +32,123 @@ namespace TypeCobol.Compiler.CodeElements
         /// A level-number has an integer value between 1 and 49, inclusive, or one of the
         /// special level-number values 66, 77, or 88.
         /// 66 
-        /// Identifies items that must contain a RENAMES clause; such items regroup previously defined data items. (For details, see “RENAMES clause” on page 219.) 
+        /// Identifies items that must contain a RENAMES clause;
+        /// such items regroup previously defined data items.
+        /// (For details, see “RENAMES clause” on page 219.)
         /// 77 
-        /// Identifies data item description entries that are independent WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION items; they are not subdivisions of other items and are not subdivided themselves. 
+        /// Identifies data item description entries that are independent
+        /// WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION items;
+        /// they are not subdivisions of other items and are not subdivided themselves.
         /// 88 
-        /// Identifies any condition-name entry that is associated with a particular value of a conditional variable. (For details, see “VALUE clause” on page 237.)
+        /// Identifies any condition-name entry that is associated
+        /// with a particular value of a conditional variable.
+        /// (For details, see “VALUE clause” on page 237.)
         /// </summary>
         public int LevelNumber { get; set; }
+
+        /// <summary>
+        /// p187:
+        /// A data item that is not explicitly referred to in a program. The keyword
+        /// FILLER is optional. If specified, FILLER must be the first word following
+        /// the level-number.
+        /// The keyword FILLER can be used with a conditional variable if explicit
+        /// reference is never made to the conditional variable but only to values that
+        /// it can assume. FILLER cannot be used with a condition-name.
+        /// In a MOVE CORRESPONDING statement or in an ADD CORRESPONDING or
+        /// SUBTRACT CORRESPONDING statement, FILLER items are ignored.
+        /// In an INITIALIZE statement, elementary FILLER items are ignored.
+        ///
+        /// If data-name-1 or the FILLER clause is omitted, the data item being described is
+        /// treated as though FILLER had been specified.
+        /// </summary>
+        public bool IsFiller { get; set; }
+
+        /// <summary>
+        /// p187:
+        /// Explicitly identifies the data being described.
+        /// data-name-1, if specified, identifies a data item used in the program.
+        /// data-name-1 must be the first word following the level-number.
+        /// The data item can be changed during program execution.
+        /// data-name-1 must be specified for level-66 and level-88 items. It must also
+        /// be specified for any entry containing the GLOBAL or EXTERNAL clause,
+        /// and for record description entries associated with file description entries
+        /// that have the GLOBAL or EXTERNAL clauses.
+        /// </summary>
+        public DataName Name { get; set; }
+
+        /// <summary>
+        /// Type declaration.
+        /// TODO: find a data representation, Object is bad!
+        /// </summary>
+        public Object Type { get; set; }
+
+        /// <summary>
+        /// Name of the top-level symbol (for group elements).
+        /// </summary>
+        public DataDescriptionEntry TopLevel { get; set; }
+
+        /// <summary>
+        /// Token (used for position tracking).
+        /// </summary>
+        public Token Token { get; set; }
+
+        /// <summary>
+        /// p188:
+        /// The EXTERNAL clause specifies that the storage associated with a data item is
+        /// associated with the run unit rather than with any particular program or method
+        /// within the run unit.
+        /// An external data item can be referenced by any program or method in the run unit
+        /// that describes the data item. References to an external data item from different
+        /// programs or methods using separate descriptions of the data item are always to
+        /// the same data item. In a run unit, there is only one representative of an external
+        /// data item.
+        /// The EXTERNAL clause can be specified only on data description entries whose
+        /// level-number is 01. It can be specified only on data description entries that are in
+        /// the WORKING-STORAGE SECTION of a program or method. It cannot be
+        /// specified in LINKAGE SECTION or FILE SECTION data description entries. Any
+        /// data item described by a data description entry subordinate to an entry that
+        /// describes an external record also attains the external attribute. Indexes in an
+        /// external data record do not possess the external attribute.
+        /// The data contained in the record named by the data-name clause is external and
+        /// can be accessed and processed by any program or method in the run unit that
+        /// describes and, optionally, redefines it. This data is subject to the following rules:
+        /// * If two or more programs or methods within a run unit describe the same
+        /// external data record, each record-name of the associated record description
+        /// entries must be the same, and the records must define the same number of
+        /// bytes. However, a program or method that describes an external record can
+        /// contain a data description entry including the REDEFINES clause that redefines
+        /// the complete external record, and this complete redefinition need not occur
+        /// identically in other programs or methods in the run unit.
+        /// * Use of the EXTERNAL clause does not imply that the associated data-name is a
+        /// global name.
+        /// </summary>
+        public bool IsExternal { get; set; }
+
+        /// <summary>
+        /// p189:
+        /// The GLOBAL clause specifies that a data-name is available to every program
+        /// contained within the program that declares it, as long as the contained program
+        /// does not itself have a declaration for that name. All data-names subordinate to or
+        /// condition-names or indexes associated with a global name are global names.
+        /// A data-name is global if the GLOBAL clause is specified either in the data
+        /// description entry by which the data-name is declared or in another entry to which
+        /// that data description entry is subordinate. The GLOBAL clause can be specified in
+        /// the WORKING-STORAGE SECTION, the FILE SECTION, the LINKAGE SECTION,
+        /// and the LOCAL-STORAGE SECTION, but only in data description entries whose
+        /// level-number is 01.
+        /// In the same DATA DIVISION, the data description entries for any two data items
+        /// for which the same data-name is specified must not include the GLOBAL clause.
+        /// A statement in a program contained directly or indirectly within a program that
+        /// describes a global name can reference that name without describing it again.
+        /// Two programs in a run unit can reference common data in the following
+        /// circumstances:
+        /// * The data content of an external data record can be referenced from any program
+        /// that describes the data record as external.
+        /// * If a program is contained within another program, both programs can refer to
+        /// data that possesses the global attribute either in the containing program or in
+        /// any program that directly or indirectly contains the containing program.
+        /// </summary>
+        public bool IsGlobal { get; set; }
     }
 
     /// <summary>

@@ -391,7 +391,38 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDataDescriptionEntry(CobolCodeElementsParser.DataDescriptionEntryContext context)
         {
-            CodeElement = new DataDescriptionEntry();
+            var entry = new DataDescriptionEntry();
+            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+                var token = ParseTreeUtils.GetTokenFromTerminalNode(context.levelNumber().IntegerLiteral());
+                entry.LevelNumber = (int)((IntegerLiteralValue)token.LiteralValue).Number;
+            }
+            var dataname = SyntaxElementBuilder.CreateDataName(context.dataName());
+            if (dataname != null) entry.Name = dataname.Symbol;
+            var global = GetContext(entry, context.globalClause());
+            entry.IsGlobal   = global != null && global.GLOBAL() != null;
+            var external = GetContext(entry, context.externalClause());
+            entry.IsExternal = external != null && external.EXTERNAL() != null;
+
+            entry.IsFiller = (dataname == null || context.FILLER() != null);
+            CodeElement = entry;
+
+            if (dataname == null) {
+                if ((entry.LevelNumber == 77 || entry.LevelNumber == 88) && !entry.IsFiller)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for level-66 or level-88 items", context.levelNumber());
+                if (entry.IsGlobal)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
+                if (entry.IsExternal)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+            }
+        }
+
+        private T GetContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext
+        {
+            if (contexts == null) return null;
+            if (contexts.Length < 1) return null;
+            for (int c = 1; c < contexts.Length; c++)
+                DiagnosticUtils.AddError(e, "Only one of these allowed!", contexts[c]);
+            return contexts[0];
         }
 
         // -- InputOutput Section --
