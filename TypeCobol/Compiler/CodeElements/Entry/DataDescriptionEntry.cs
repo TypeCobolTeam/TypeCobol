@@ -94,6 +94,21 @@ namespace TypeCobol.Compiler.CodeElements
 
         /// <summary>
         /// p188:
+        /// The BLANK WHEN ZERO clause specifies that an item contains only spaces when
+        /// its value is zero.
+        ///
+        /// The BLANK WHEN ZERO clause may be specified only for an elementary item
+        /// described by its picture character string as category numeric-edited or numeric,
+        /// without the picture symbol S or *. These items must be described, either implicitly
+        /// or explicitly, as USAGE DISPLAY or USAGE NATIONAL.
+        ///
+        /// A BLANK WHEN ZERO clause that is specified for an item defined as numeric by
+        /// its picture character string defines the item as category numeric-edited.
+        /// </summary>
+        public bool IsBlankWhenZero { get; set; }
+
+        /// <summary>
+        /// p188:
         /// The EXTERNAL clause specifies that the storage associated with a data item is
         /// associated with the run unit rather than with any particular program or method
         /// within the run unit.

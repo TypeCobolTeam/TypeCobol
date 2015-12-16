@@ -398,10 +398,12 @@ namespace TypeCobol.Compiler.Parser
             }
             var dataname = SyntaxElementBuilder.CreateDataName(context.dataName());
             if (dataname != null) entry.Name = dataname.Symbol;
-            var global = GetContext(entry, context.globalClause());
-            entry.IsGlobal   = global != null && global.GLOBAL() != null;
+            var blank = GetContext(entry, context.blankWhenZeroClause());
+            entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
             var external = GetContext(entry, context.externalClause());
             entry.IsExternal = external != null && external.EXTERNAL() != null;
+            var global = GetContext(entry, context.globalClause());
+            entry.IsGlobal = global != null && global.GLOBAL() != null;
 
             entry.IsFiller = (dataname == null || context.FILLER() != null);
             CodeElement = entry;
@@ -409,10 +411,10 @@ namespace TypeCobol.Compiler.Parser
             if (dataname == null) {
                 if ((entry.LevelNumber == 77 || entry.LevelNumber == 88) && !entry.IsFiller)
                     DiagnosticUtils.AddError(entry, "Data name must be specified for level-66 or level-88 items", context.levelNumber());
-                if (entry.IsGlobal)
-                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
                 if (entry.IsExternal)
                     DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+                if (entry.IsGlobal)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
             }
         }
 
