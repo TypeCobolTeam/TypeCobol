@@ -406,6 +406,8 @@ namespace TypeCobol.Compiler.Parser
             entry.IsGlobal = global != null && global.GLOBAL() != null;
             var justified = GetContext(entry, context.justifiedClause());
             entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
+            var group = GetContext(entry, context.groupUsageClause());
+            entry.IsGroupUsage = group != null && group.GROUP_USAGE() != null;
 
             entry.IsFiller = (dataname == null || context.FILLER() != null);
             CodeElement = entry;

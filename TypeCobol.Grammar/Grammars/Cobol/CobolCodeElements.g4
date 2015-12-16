@@ -2867,8 +2867,8 @@ dataDescriptionEntry:
 	| blankWhenZeroClause
 	| externalClause
 	| globalClause
-	| groupUsageClause
 	| justifiedClause
+	| groupUsageClause
 	| occursClause
 	| pictureClause
 	| signClause

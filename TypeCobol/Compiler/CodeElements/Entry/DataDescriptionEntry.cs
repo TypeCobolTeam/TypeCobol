@@ -198,6 +198,66 @@ namespace TypeCobol.Compiler.CodeElements
         /// clause.
         /// </summary>
         public bool IsJustified { get; set; }
+
+        /// <summary>
+        /// p190:
+        /// A GROUP-USAGE clause with the NATIONAL phrase specifies that the group
+        /// item defined by the entry is a national group item. A national group item contains
+        /// national characters in all subordinate data items and subordinate group items.
+        /// When GROUP-USAGE NATIONAL is specified:
+        /// * The subject of the entry is a national group item. The class and category of a
+        /// national group are national.
+        /// * A USAGE clause must not be specified for the subject of the entry. A USAGE
+        /// NATIONAL clause is implied.
+        /// * A USAGE NATIONAL clause is implied for any subordinate elementary data
+        /// items that are not described with a USAGE NATIONAL clause.
+        /// * All subordinate elementary data items must be explicitly or implicitly described
+        /// with USAGE NATIONAL.
+        /// * Any signed numeric data items must be described with the SIGN IS SEPARATE clause.
+        /// * A GROUP-USAGE NATIONAL clause is implied for any subordinate group
+        /// items that are not described with a GROUP-USAGE NATIONAL clause.
+        /// * All subordinate group items must be explicitly or implicitly described with a
+        /// GROUP-USAGE NATIONAL clause.
+        /// * The JUSTIFIED clause must not be specified.
+        /// Unless stated otherwise, a national group item is processed as though it were an
+        /// elementary data item of usage national, class and category national, described with
+        /// PICTURE N(m), where m is the length of the group in national character positions.
+        ///
+        /// p191:
+        /// Usage note: When you use national groups, the compiler can ensure proper
+        /// truncation and padding of group items for statements such as MOVE and
+        /// INSPECT. Groups defined without a GROUP-USAGE NATIONAL clause are
+        /// alphanumeric groups. The content of alphanumeric groups, including any national
+        /// characters, is treated as alphanumeric data, possibly leading to invalid truncation
+        /// or mishandling of national character data.
+        ///
+        /// Where national group items are processed as groups
+        /// Name qualification:
+        /// The name of a national group item can be used to qualify the names of
+        /// elementary data items and subordinate group items in the national group. The
+        /// rules of qualification for a national group are the same as the rules of
+        /// qualification for an alphanumeric group.
+        /// RENAMES clause:
+        /// The rules for a national group item specified in the THROUGH phrase are the
+        /// same as the rules for an alphanumeric group item specified in the THROUGH
+        /// phrase. The result is an alphanumeric group item.
+        /// CORRESPONDING phrase:
+        /// A national group item is processed as a group in accordance with the rules of
+        /// the CORRESPONDING phrase. Elementary data items within a national group
+        /// are processed the same as they would be if defined within an alphanumeric
+        /// group.
+        /// INITIALIZE statement:
+        /// A national group item is processed as a group in accordance with the rules of
+        /// the INITIALIZE statement. Elementary items within the national group are
+        /// initialized the same as they would be if defined within an alphanumeric
+        /// group.
+        /// XML GENERATE statement:
+        /// A national group item specified in the FROM phrase is processed as a group in
+        /// accordance with the rules of the XML GENERATE statement. Elementary items
+        /// within the national group are processed the same as they would be if defined
+        /// within an alphanumeric group.
+        /// </summary>
+        public bool IsGroupUsage { get; set; }
     }
 
     /// <summary>
