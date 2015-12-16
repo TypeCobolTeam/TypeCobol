@@ -2862,15 +2862,15 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 
 dataDescriptionEntry:
 	levelNumber (dataName | FILLER)?
-	( renamesClause
-	| redefinesClause
+	  renamesClause?
+	  redefinesClause?
+	( pictureClause
 	| blankWhenZeroClause
 	| externalClause
 	| globalClause
 	| justifiedClause
 	| groupUsageClause
 	| occursClause
-	| pictureClause
 	| signClause
 	| synchronizedClause
 	| usageClause

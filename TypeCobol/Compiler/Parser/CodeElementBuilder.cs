@@ -391,13 +391,32 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDataDescriptionEntry(CobolCodeElementsParser.DataDescriptionEntryContext context)
         {
-            var entry = new DataDescriptionEntry();
+            int level = 0;
             if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
                 var token = ParseTreeUtils.GetTokenFromTerminalNode(context.levelNumber().IntegerLiteral());
-                entry.LevelNumber = (int)((IntegerLiteralValue)token.LiteralValue).Number;
+                level = (int)((IntegerLiteralValue)token.LiteralValue).Number;
             }
             var dataname = SyntaxElementBuilder.CreateDataName(context.dataName());
-            if (dataname != null) entry.Name = dataname.Symbol;
+
+            DataDescriptionEntry entry = new DataDescriptionEntry();
+            entry.LevelNumber = level;
+            if (dataname != null) entry.DataName = dataname.Symbol;
+            //entry.IsFiller = (dataname == null || context.FILLER() != null);
+            if (entry.LevelNumber == 88) entry.IsConditionNameDescription = true;
+
+            var renames = context.renamesClause();
+            if (context.renamesClause() != null) {
+                var names = SyntaxElementBuilder.CreateDataNames(renames.dataName());
+                if (names.Count > 0) entry.RenamesFromDataName = names[0];
+                if (names.Count > 1) entry.RenamesToDataName   = names[1];
+                //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
+            }
+
+            var redefines = context.redefinesClause();
+            if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
+
+            //TODO PICTURE
+
             var blank = GetContext(entry, context.blankWhenZeroClause());
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
             var external = GetContext(entry, context.externalClause());
@@ -406,10 +425,23 @@ namespace TypeCobol.Compiler.Parser
             entry.IsGlobal = global != null && global.GLOBAL() != null;
             var justified = GetContext(entry, context.justifiedClause());
             entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
+
+            var sign = GetContext(entry, context.signClause());
+            if (sign != null) {
+                if (sign.TRAILING() != null) entry.SignPosition = SignPosition.Trailing;
+                if (sign.LEADING()  != null) entry.SignPosition = SignPosition.Leading;
+                entry.IsSignSeparate = sign.SEPARATE() != null;
+            }
+            var sync = GetContext(entry, context.synchronizedClause());
+            entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
+
             var group = GetContext(entry, context.groupUsageClause());
             entry.IsGroupUsage = group != null && group.GROUP_USAGE() != null;
+            //TODO OCCURS
+            //TODO USAGE
+            //TODO VALUE
+            var value = GetContext(entry, context.valueClause());
 
-            entry.IsFiller = (dataname == null || context.FILLER() != null);
             CodeElement = entry;
 
             if (dataname == null) {
@@ -427,7 +459,7 @@ namespace TypeCobol.Compiler.Parser
             if (contexts == null) return null;
             if (contexts.Length < 1) return null;
             for (int c = 1; c < contexts.Length; c++)
-                DiagnosticUtils.AddError(e, "Only one of these allowed!", contexts[c]);
+                DiagnosticUtils.AddError(e, "Only one such clause allowed", contexts[c]);
             return contexts[0];
         }
 

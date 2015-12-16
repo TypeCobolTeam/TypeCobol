@@ -250,7 +250,8 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             SymbolReference<DataName> name = null;
             if (context.dataNameBase() != null) name = CreateDataName(context.dataNameBase().dataName());
-            IList<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            datanames.Reverse();
             SymbolReference<FileName> filename = CreateFileName(context.fileName());
             return new QualifiedName<DataName>(name, datanames, filename);
         }
@@ -259,7 +260,8 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             SymbolReference<ConditionName> name = CreateConditionName(context.conditionName());
-            IList<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            datanames.Reverse();
             SymbolReference<FileName> filename = CreateFileName(context.fileName());
             return new QualifiedName<ConditionName>(name, datanames, filename);
         }
@@ -287,7 +289,7 @@ namespace TypeCobol.Compiler.Parser
             return new SymbolReference<ClassName>(new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
-        private static IList<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        public static List<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
         {
             List<SymbolReference<DataName>> datanames = new List<SymbolReference<DataName>>();
             if (context != null)
@@ -296,7 +298,6 @@ namespace TypeCobol.Compiler.Parser
                     var name = CreateDataName(dataname);
                     if (name != null) datanames.Add(name);
                 }
-            datanames.Reverse();
             return datanames;
         }
 
@@ -304,6 +305,13 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+        }
+
+        // only used for data description entry
+        public static SymbolReference<ConditionName> CreateConditionName(CobolCodeElementsParser.DataNameContext context)
+        {
+            if (context == null) return null;
+            return new SymbolReference<ConditionName>(new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
         }
 
         public static SymbolReference<ConditionName> CreateConditionName(CobolCodeElementsParser.ConditionNameContext context)
