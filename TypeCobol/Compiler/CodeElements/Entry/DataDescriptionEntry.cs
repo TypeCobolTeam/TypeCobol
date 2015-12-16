@@ -164,6 +164,40 @@ namespace TypeCobol.Compiler.CodeElements
         /// any program that directly or indirectly contains the containing program.
         /// </summary>
         public bool IsGlobal { get; set; }
+
+        /// <summary>
+        /// p189:
+        /// The JUSTIFIED clause overrides standard positioning rules for receiving items of
+        /// category alphabetic, alphanumeric, DBCS, or national.
+        ///
+        /// You can specify the JUSTIFIED clause only at the elementary level. JUST is an
+        /// abbreviation for JUSTIFIED, and has the same meaning.
+        /// You cannot specify the JUSTIFIED clause:
+        /// * For data items of category numeric, numeric-edited, alphanumeric-edited, or
+        /// national-edited
+        /// * For edited DBCS items
+        /// * For index data items
+        /// * For items described as USAGE FUNCTION-POINTER, USAGE POINTER,
+        /// USAGE PROCEDURE-POINTER, or USAGE OBJECT REFERENCE
+        /// * For external floating-point or internal floating-point items
+        /// * With level-66 (RENAMES) and level-88 (condition-name) entries
+        ///
+        /// p190:
+        /// When the JUSTIFIED clause is specified for a receiving item, the data is aligned at
+        /// the rightmost character position in the receiving item. Also:
+        /// * If the sending item is larger than the receiving item, the leftmost character
+        /// positions are truncated.
+        /// * If the sending item is smaller than the receiving item, the unused character
+        /// positions at the left are filled with spaces. For a DBCS item, each unused
+        /// position is filled with a DBCS space (X'4040'); for an item described with usage
+        /// NATIONAL, each unused position is filled with the default Unicode space
+        /// (NX'0020'); otherwise, each unused position is filled with an alphanumeric space.
+        /// If you omit the JUSTIFIED clause, the rules for standard alignment are followed
+        /// (see “Alignment rules” on page 166).
+        /// The JUSTIFIED clause does not affect initial settings as determined by the VALUE
+        /// clause.
+        /// </summary>
+        public bool IsJustified { get; set; }
     }
 
     /// <summary>

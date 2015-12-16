@@ -404,6 +404,8 @@ namespace TypeCobol.Compiler.Parser
             entry.IsExternal = external != null && external.EXTERNAL() != null;
             var global = GetContext(entry, context.globalClause());
             entry.IsGlobal = global != null && global.GLOBAL() != null;
+            var justified = GetContext(entry, context.justifiedClause());
+            entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
 
             entry.IsFiller = (dataname == null || context.FILLER() != null);
             CodeElement = entry;
