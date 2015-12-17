@@ -573,6 +573,11 @@ namespace TypeCobol.Compiler.Parser
         {
             return new FigurativeConstant(new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(node)));
         }
+
+        internal static int CreateInteger(ITerminalNode node) {
+            var token = ParseTreeUtils.GetTokenFromTerminalNode(node);
+            return (int)((TypeCobol.Compiler.Scanner.IntegerLiteralValue)token.LiteralValue).Number;
+        }
     }
 
 }

@@ -3351,10 +3351,13 @@ groupUsageClause:
 //   – Programs compiled with the THREAD option
 
 occursClause:
-                OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
-                (DEPENDING ON? dataName)?
-                ((ASCENDING | DESCENDING) KEY? IS? dataName+)*
-                (INDEXED BY? indexName+)?;
+	OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
+	occursDependingOn?
+	occursKeys*
+	(INDEXED BY? indexName+)?;
+
+occursDependingOn: DEPENDING ON? dataName;
+occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataName+;
 
 // p194: index-name-1
 // Each index-name specifies an index to be created by the compiler for use

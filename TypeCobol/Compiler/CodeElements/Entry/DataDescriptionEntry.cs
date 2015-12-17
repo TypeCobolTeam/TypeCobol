@@ -438,7 +438,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// GROUP-USAGE NATIONAL clause is specified.
         /// When a GROUP-USAGE NATIONAL clause is specified or implied for a group
         /// level entry, USAGE NATIONAL must be specified or implied for every elementary
-        /// item within the group. 
+        /// item within the group.
         /// When the USAGE clause is not specified at either the group or elementary level, a
         /// usage clause is implied with:
         /// - Usage DISPLAY when the PICTURE clause contains only symbols other than G
@@ -499,6 +499,227 @@ namespace TypeCobol.Compiler.CodeElements
         /// describe group or elementary items defined with the USAGE OBJECT REFERENCE clause.
         /// </summary>
         public SymbolReference<ClassName> ObjectReference { get; set; }
+
+        /// <summary>
+        /// p191:
+        /// The DATA DIVISION language elements used for table handling are the OCCURS
+        /// clause and the INDEXED BY phrase.
+        ///
+        /// For the INDEXED BY phrase description, see “INDEXED BY phrase” on page 194.
+        ///
+        /// The OCCURS clause specifies tables whose elements can be referred to by indexing
+        /// or subscripting. It also eliminates the need for separate entries for repeated data
+        /// items.
+        ///
+        /// Formats for the OCCURS clause include fixed-length tables and variable-length
+        /// tables.
+        ///
+        /// The subject of an OCCURS clause is the data-name of the data item that contains
+        /// the OCCURS clause. Except for the OCCURS clause itself, data description clauses
+        /// used with the subject apply to each occurrence of the item described.
+        ///
+        /// Whenever the subject of an OCCURS clause or any data-item subordinate to it is
+        /// referenced, it must be subscripted or indexed, with the following exceptions:
+        /// - When the subject of the OCCURS clause is used as the subject of a SEARCH
+        ///   statement
+        /// - When the subject or a subordinate data item is the object of the
+        ///   ASCENDING/DESCENDING KEY phrase
+        /// - When the subordinate data item is the object of the REDEFINES clause
+        ///
+        /// When subscripted or indexed, the subject refers to one occurrence within the table,
+        /// unless the ALL subscript is used in an intrinsic function.
+        ///
+        /// The OCCURS clause cannot be specified in a data description entry that:
+        /// - Has a level number of 01, 66, 77, or 88.
+        /// - Describes a redefined data item. (However, a redefined item can be subordinate
+        ///   to an item that contains an OCCURS clause.)
+        ///
+        /// p192:
+        /// Fixed-length tables are specified using the OCCURS clause.
+        ///
+        /// Because seven subscripts or indexes are allowed, six nested levels and one
+        /// outermost level of the format-1 OCCURS clause are allowed.
+        /// </summary>
+        public bool IsTableOccurence { get; set; }
+
+
+        /// <summary>
+        /// p195:
+        /// You can specify variable-length tables by using the OCCURS DEPENDING ON clause.
+        ///
+        /// p196:
+        /// The OCCURS DEPENDING ON clause specifies variable-length tables.
+        ///
+        ///   data-name-1
+        ///   Identifies the object of the OCCURS DEPENDING ON clause; that is, the
+        ///   data item whose current value represents the current number of
+        ///   occurrences of the subject item. The contents of items whose occurrence
+        ///   numbers exceed the value of the object are undefined.
+        ///   The object of the OCCURS DEPENDING ON clause (data-name-1) must
+        ///   describe an integer data item.
+        ///   The object of the OCCURS DEPENDING ON clause must not occupy any
+        ///   storage position within the range of the table (that is, any storage position
+        ///   from the first character position in the table through the last character
+        ///   position in the table).
+        ///   The object of the OCCURS DEPENDING ON clause cannot be variably
+        ///   located; the object cannot follow an item that contains an OCCURS
+        ///   DEPENDING ON clause.
+        ///   If the OCCURS clause is specified in a data description entry included in a
+        ///   record description entry that contains the EXTERNAL clause, data-name-1,
+        ///   if specified, must reference a data item that possesses the external attribute.
+        ///   data-name-1 must be described in the same DATA DIVISION as the subject
+        ///   of the entry.
+        ///   If the OCCURS clause is specified in a data description entry subordinate
+        ///   to one that contains the GLOBAL clause, data-name-1, if specified, must be
+        ///   a global name. data-name-1 must be described in the same DATA DIVISION
+        ///   as the subject of the entry.
+        ///
+        /// p197:
+        /// All data-names used in the OCCURS clause can be qualified; they cannot be
+        /// subscripted or indexed.
+        /// At the time that the group item, or any data item that contains a subordinate
+        /// OCCURS DEPENDING ON item or that follows but is not subordinate to the
+        /// OCCURS DEPENDING ON item, is referenced, the value of the object of the
+        /// OCCURS DEPENDING ON clause must fall within the range integer-1 through
+        /// integer-2, if identifier-2 is specified.
+        /// The object of an OCCURS DEPENDING ON clause cannot be a nonsubordinate
+        /// item that follows a complex ODO item.
+        /// Any nonsubordinate item that follows an item described with an OCCURS
+        /// DEPENDING ON clause is a variably located item. That is, its location is affected by
+        /// the value of the OCCURS DEPENDING ON object.
+        /// </summary>
+        public SymbolReference<DataName> OccursDependingOn { get; set; }
+
+        /// <summary>
+        /// p192 (Fixed-length tables):
+        /// The exact number of occurrences. [It] must be greater than zero.
+        ///
+        /// p195 (Variable-length tables):
+        /// The minimum number of occurrences.
+        /// The value (..) must be greater than or equal to zero, and it must
+        /// also be less than the value of [MaxOccurencesCount].
+        /// If (..) omitted, a value of 1 is assumed (..).
+        /// </summary>
+        public int MinOccurencesCount { get; set; }
+
+        /// <summary>
+        /// p195 (Variable-length tables):
+        /// The maximum number of occurrences.
+        /// [It] must be greater than [MinOccurencesCount].
+        /// ---
+        /// Fixed-length tables are specified using the OCCURS clause.
+        /// The length of the subject item is fixed. Only the number of repetitions of the subject
+        /// item is variable.
+        /// UNBOUNDED => Int32.MaxValue
+        /// Unbounded maximum number of occurrences.
+        /// Unbounded group
+        /// A group that contains at least one unbounded table.
+        /// You can define unbounded groups only in the LINKAGE
+        /// SECTION. Either alphanumeric groups or national groups can be
+        /// unbounded.
+        /// </summary>
+        public int MaxOccurencesCount { get; set; }
+
+        /// <summary>
+        /// p192:
+        /// ASCENDING KEY and DESCENDING KEY phrases
+        /// Data is arranged in ascending or descending order, depending on the keyword
+        /// specified, according to the values contained in data-name-2. The data-names are
+        /// listed in their descending order of significance.
+        ///
+        /// p193:
+        /// The order is determined by the rules for comparison of operands (see “Relation
+        /// conditions” on page 259). The ASCENDING KEY and DESCENDING KEY data
+        /// items are used in OCCURS clauses and the SEARCH ALL statement for a binary
+        /// search of the table element.
+        ///
+        ///   data-name-2
+        ///   Must be the name of the subject entry or the name of an entry subordinate
+        ///   to the subject entry. data-name-2 can be qualified.
+        ///   If data-name-2 names the subject entry, that entire entry becomes the
+        ///   ASCENDING KEY or DESCENDING KEY and is the only key that can be
+        ///   specified for this table element.
+        ///   If data-name-2 does not name the subject entry, then data-name-2:
+        ///   - Must be subordinate to the subject of the table entry itself
+        ///   - Must not be subordinate to, or follow, any other entry that contains an
+        ///     OCCURS clause
+        //    - Must not contain an OCCURS clause
+        ///   data-name-2 must not have subordinate items that contain OCCURS
+        ///   DEPENDING ON clauses.
+        /// </summary>
+        public IList<SymbolReference<DataName>> TableOccurenceKeys { get; set; }
+
+        /// <summary>
+        /// ASCENDING KEY and DESCENDING KEY phrases
+        /// Data is arranged in ascending or descending order, depending on the keyword specified.
+        ///
+        /// p193:
+        /// When the ASCENDING KEY or DESCENDING KEY phrase is specified, the following rules apply:
+        /// * Keys must be listed in decreasing order of significance.
+        /// * The total number of keys for a given table element must not exceed 12.
+        /// * The data in the table must be arranged in ascending or descending sequence
+        ///   according to the collating sequence in use.
+        /// * The key must be described with one of the following usages:
+        ///   – BINARY
+        ///   – DISPLAY
+        ///   – DISPLAY-1
+        ///   – NATIONAL
+        ///   – PACKED-DECIMAL
+        ///   – COMPUTATIONAL
+        ///   – COMPUTATIONAL-1
+        ///   – COMPUTATIONAL-2
+        ///   – COMPUTATIONAL-3
+        ///   – COMPUTATIONAL-4
+        ///   – COMPUTATIONAL-5
+        /// * A key described with usage NATIONAL can have one of the following
+        /// categories: national, national-edited, numeric-edited, numeric, or external
+        /// floating-point.
+        /// * The sum of the lengths of all the keys associated with one table element must
+        /// not exceed 256.
+        /// * If a key is specified without qualifiers and it is not a unique name, the key will
+        /// be implicitly qualified with the subject of the OCCURS clause and all qualifiers
+        /// of the OCCURS clause subject.
+        /// </summary>
+        public IList<KeyDirection> TableOccurenceKeyDirections { get; set; }
+
+        /// <summary>
+        /// p194:
+        /// The INDEXED BY phrase specifies the indexes that can be used with a table. A
+        /// table without an INDEXED BY phrase can be referred to through indexing by
+        /// using an index-name associated with another table.
+        ///
+        /// Indexes normally are allocated in static memory associated with the program that
+        /// contains the table. Thus indexes are in the last-used state when a program is
+        /// reentered. However, in the following cases, indexes are allocated on a
+        /// per-invocation basis. Thus you must set the value of the index on every entry for
+        /// indexes on tables in the following sections:
+        /// - The LOCAL-STORAGE SECTION
+        /// - The WORKING-STORAGE SECTION of a class definition (object instance
+        ///   variables)
+        /// - The LINKAGE SECTION of:
+        ///   – Methods
+        ///   – Programs compiled with the RECURSIVE clause
+        ///   – Programs compiled with the THREAD option
+        ///
+        /// Indexes specified in an external data record do not possess the external attribute.
+        ///
+        ///   index-name-1
+        ///   Each index-name specifies an index to be created by the compiler for use
+        ///   by the program. These index-names are not data-names and are not
+        ///   identified elsewhere in the COBOL program; instead, they can be regarded
+        ///   as private special registers for the use of this object program only. They are
+        ///   not data and are not part of any data hierarchy.
+        ///
+        ///   Unreferenced index names need not be uniquely defined.
+        ///
+        ///   In one table entry, up to 12 index-names can be specified.
+        ///
+        ///   If a data item that possesses the global attribute includes a table accessed
+        ///   with an index, that index also possesses the global attribute. Therefore, the
+        ///   scope of an index-name is the same as that of the data-name that names
+        ///   the table in which the index is defined.
+        /// </summary>
+        public IList<SymbolReference<IndexName>> IndexedBy { get; set; }
 
 
 
@@ -642,164 +863,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-        /// <summary>
-        /// The DATA DIVISION language elements used for table handling are the OCCURS
-        /// clause and the INDEXED BY phrase.
-        /// For the INDEXED BY phrase description, see “INDEXED BY phrase” on page 194.
-        /// The OCCURS clause specifies tables whose elements can be referred to by indexing
-        /// or subscripting. It also eliminates the need for separate entries for repeated data
-        /// items.
-        /// Formats for the OCCURS clause include fixed-length tables and variable-length
-        /// tables.
-        /// The subject of an OCCURS clause is the data-name of the data item that contains
-        /// the OCCURS clause. Except for the OCCURS clause itself, data description clauses
-        /// used with the subject apply to each occurrence of the item described.
-        /// Whenever the subject of an OCCURS clause or any data-item subordinate to it is
-        /// referenced, it must be subscripted or indexed, with the following exceptions:
-        /// - When the subject of the OCCURS clause is used as the subject of a SEARCH
-        ///   statement
-        /// - When the subject or a subordinate data item is the object of the
-        ///   ASCENDING/DESCENDING KEY phrase
-        /// - When the subordinate data item is the object of the REDEFINES clause
-        /// When subscripted or indexed, the subject refers to one occurrence within the table,
-        /// unless the ALL subscript is used in an intrinsic function.
-        /// The OCCURS clause cannot be specified in a data description entry that:
-        /// - Has a level number of 01, 66, 77, or 88.
-        /// - Describes a redefined data item. (However, a redefined item can be subordinate
-        ///   to an item that contains an OCCURS clause.)
-        /// Because seven subscripts or indexes are allowed, six nested levels and one
-        /// outermost level of the format-1 OCCURS clause are allowed.
-        /// </summary>
-        public bool IsTableOccurence { get; set; }
 
-        /// <summary>
-        /// Fixed-length tables are specified using the OCCURS clause.
-        /// integer-2
-        /// The exact number of occurrences. integer-2 must be greater than zero.
-        /// Variable-length tables
-        /// You can specify variable-length tables by using the OCCURS DEPENDING ON
-        /// clause.
-        /// integer-1
-        /// The minimum number of occurrences.
-        /// The value of integer-1 must be greater than or equal to zero, and it must
-        /// also be less than the value of integer-2.
-        /// If integer-1 is omitted, a value of 1 is assumed
-        /// </summary>
-        public int MinOccurencesCount { get; set; }
-
-        /// <summary>
-        /// Fixed-length tables are specified using the OCCURS clause.
-        /// integer-2
-        /// The exact number of occurrences. integer-2 must be greater than zero.
-        /// integer-2
-        /// The maximum number of occurrences.
-        /// integer-2 must be greater than integer-1.
-        /// The length of the subject item is fixed. Only the number of repetitions of the subject
-        /// item is variable.
-        /// UNBOUNDED => Int32.MaxValue
-        /// Unbounded maximum number of occurrences.
-        /// Unbounded group
-        /// A group that contains at least one unbounded table.
-        /// You can define unbounded groups only in the LINKAGE
-        /// SECTION. Either alphanumeric groups or national groups can be
-        /// unbounded.
-        /// </summary>
-        public int MaxOccurencesCount { get; set; }
-
-        /// <summary>
-        /// The OCCURS DEPENDING ON clause specifies variable-length tables.
-        /// data-name-1
-        /// Identifies the object of the OCCURS DEPENDING ON clause; that is, the
-        /// data item whose current value represents the current number of
-        /// occurrences of the subject item. The contents of items whose occurrence
-        /// numbers exceed the value of the object are undefined.
-        /// The object of the OCCURS DEPENDING ON clause (data-name-1) must
-        /// describe an integer data item.
-        /// The object of the OCCURS DEPENDING ON clause must not occupy any
-        /// storage position within the range of the table (that is, any storage position
-        /// from the first character position in the table through the last character
-        /// position in the table).
-        /// The object of the OCCURS DEPENDING ON clause cannot be variably
-        /// located; the object cannot follow an item that contains an OCCURS
-        /// DEPENDING ON clause.
-        /// data-name-1 must be described in the same DATA DIVISION as the subject
-        /// of the entry.
-        /// All data-names used in the OCCURS clause can be qualified; they cannot be
-        /// subscripted or indexed.
-        /// At the time that the group item, or any data item that contains a subordinate
-        /// OCCURS DEPENDING ON item or that follows but is not subordinate to the
-        /// OCCURS DEPENDING ON item, is referenced, the value of the object of the
-        /// OCCURS DEPENDING ON clause must fall within the range integer-1 through
-        /// integer-2, if identifier-2 is specified.
-        /// The object of an OCCURS DEPENDING ON clause cannot be a nonsubordinate
-        /// item that follows a complex ODO item.
-        /// Any nonsubordinate item that follows an item described with an OCCURS
-        /// DEPENDING ON clause is a variably located item. That is, its location is affected by
-        /// the value of the OCCURS DEPENDING ON object.
-        /// </summary>
-        public SymbolReference<DataName> OccursDependingOn { get; set; }
-
-        /// <summary>
-        /// ASCENDING KEY and DESCENDING KEY phrases
-        /// Data is arranged in ascending or descending order, depending on the keyword
-        /// specified, according to the values contained in data-name-2. The data-names are
-        /// listed in their descending order of significance.
-        /// The order is determined by the rules for comparison of operands (see “Relation
-        /// conditions” on page 259). The ASCENDING KEY and DESCENDING KEY data
-        /// items are used in OCCURS clauses and the SEARCH ALL statement for a binary
-        /// search of the table element.
-        /// data-name-2
-        /// Must be the name of the subject entry or the name of an entry subordinate
-        /// to the subject entry. data-name-2 can be qualified.
-        /// If data-name-2 names the subject entry, that entire entry becomes the
-        /// ASCENDING KEY or DESCENDING KEY and is the only key that can be
-        /// specified for this table element.
-        /// If data-name-2 does not name the subject entry, then data-name-2:
-        /// - Must be subordinate to the subject of the table entry itself
-        /// - Must not be subordinate to, or follow, any other entry that contains an
-        ///   OCCURS clause
-        // - Must not contain an OCCURS clause
-        /// data-name-2 must not have subordinate items that contain OCCURS
-        /// DEPENDING ON clauses.
-        /// </summary>
-        public IList<SymbolReference<DataName>> TableOccurenceKeys { get; set; }
-
-        /// <summary>
-        /// ASCENDING KEY and DESCENDING KEY phrases
-        /// Data is arranged in ascending or descending order, depending on the keyword specified.
-        /// </summary>
-        public IList<KeyDirection> TableOccurenceKeyDirections { get; set; }
-
-        /// <summary>
-        /// The INDEXED BY phrase specifies the indexes that can be used with a table. A
-        /// table without an INDEXED BY phrase can be referred to through indexing by
-        /// using an index-name associated with another table.
-        /// Indexes normally are allocated in static memory associated with the program that
-        /// contains the table. Thus indexes are in the last-used state when a program is
-        /// reentered. However, in the following cases, indexes are allocated on a
-        /// per-invocation basis. Thus you must set the value of the index on every entry for
-        /// indexes on tables in the following sections:
-        ///- The LOCAL-STORAGE SECTION
-        /// - The WORKING-STORAGE SECTION of a class definition (object instance
-        ///   variables)
-        /// - The LINKAGE SECTION of:
-        ///   – Methods
-        ///   – Programs compiled with the RECURSIVE clause
-        ///   – Programs compiled with the THREAD option
-        ///    Each index-name specifies an index to be created by the compiler for use
-        /// by the program. These index-names are not data-names and are not
-        /// identified elsewhere in the COBOL program; instead, they can be regarded
-        /// as private special registers for the use of this object program only. They are
-        /// not data and are not part of any data hierarchy.
-        /// Unreferenced index names need not be uniquely defined.
-        /// In one table entry, up to 12 index-names can be specified.
-        /// If a data item that possesses the global attribute includes a table accessed
-        /// with an index, that index also possesses the global attribute. Therefore, the
-        /// scope of an index-name is the same as that of the data-name that names
-        /// the table in which the index is defined.
-        /// Indexes specified in an external data record do not possess the external attribute.
-        /// </summary>
-        public IList<IndexName> IndexedBy { get; set; }
 
         /// <summary>
         /// The VALUE clause specifies the initial contents of a data item or the values
@@ -873,6 +937,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum KeyDirection
     {
+        Unknown,
         Ascending,
         Descending
     }

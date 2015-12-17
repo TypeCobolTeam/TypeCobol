@@ -393,8 +393,7 @@ namespace TypeCobol.Compiler.Parser
         {
             int level = 0;
             if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-                var token = ParseTreeUtils.GetTokenFromTerminalNode(context.levelNumber().IntegerLiteral());
-                level = (int)((IntegerLiteralValue)token.LiteralValue).Number;
+                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
             }
             var dataname = SyntaxElementBuilder.CreateDataName(context.dataName());
 
@@ -443,7 +442,8 @@ namespace TypeCobol.Compiler.Parser
                 entry.ObjectReference = SyntaxElementBuilder.CreateClassName(usage.className());
             }
 
-            //TODO OCCURS
+            UpdateDataDescriptionEntryWithOccursClause(entry, GetContext(entry, context.occursClause()));
+
             //TODO VALUE
             var value = GetContext(entry, context.valueClause());
 
@@ -456,6 +456,80 @@ namespace TypeCobol.Compiler.Parser
                     DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the EXTERNAL clause", external);
                 if (entry.IsGlobal)
                     DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
+            }
+        }
+
+        private void UpdateDataDescriptionEntryWithOccursClause(DataDescriptionEntry entry, CobolCodeElementsParser.OccursClauseContext context)
+        {
+            if (context == null) return;
+            entry.IsTableOccurence = true;
+
+            bool isVariable = (context.occursDependingOn() != null);
+            if (isVariable) {
+                entry.OccursDependingOn = SyntaxElementBuilder.CreateDataName(context.occursDependingOn().dataName());
+            }
+            isVariable = isVariable || (context.UNBOUNDED() != null) || (context.TO() != null);
+
+            var integers = context.IntegerLiteral();
+            if (integers != null) {
+                isVariable = isVariable || (integers.Length == 2);
+                if (integers.Length == 0) {
+                    if (isVariable) {
+                            // 1) OCCURS UNBOUNDED DEPENDING ON...
+                        entry.MinOccurencesCount = 1;
+                        entry.MaxOccurencesCount = Int32.MaxValue;
+                    }
+                    // else;   2) OCCURS ... -syntax error (fixed length, exact missing)
+                } else
+                if (integers.Length == 1) {
+                    if (isVariable) {
+                        if (context.UNBOUNDED() != null) {
+                            // 3) OCCURS min TO UNBOUNDED DEPENDING ON...
+                            // 4) OCCURS min UNBOUNDED DEPENDING ON... -syntax error (TO missing)
+                            entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                            entry.MaxOccurencesCount = Int32.MaxValue;
+                        } else {
+                            // 5) OCCURS max DEPENDING ON...
+                            // 6) OCCURS min TO DEPENDING ON... -syntax error (max missing)
+                            // 7) OCCURS TO max DEPENDING ON... -syntax error (min missing)
+                            // WARNING! due to our grammar, we cannot discriminate between 6) and 7)
+                            // this shouldn't be a problem as both cases are syntax errors
+                            entry.MinOccurencesCount = 1;
+                            entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                        }
+                    } else {
+                            // 8) OCCURS exact ... (fixed length)
+                        entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                    }
+                } else { // isVariable == true && integers.Length == 2
+                            // 9) OCCURS min TO max DEPENDING ON...
+                            //10) OCCURS min max DEPENDING ON... -syntax error (TO missing)
+                    entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                    entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[1]);
+                }
+            }
+
+            var keys = context.occursKeys();
+            if (keys != null) {
+                entry.TableOccurenceKeys = new List<SymbolReference<DataName>>();
+                entry.TableOccurenceKeyDirections = new List<KeyDirection>();
+                foreach(var key in keys) {
+                    var direction = KeyDirection.Unknown;
+                    if (key.ASCENDING()  != null) direction = KeyDirection.Ascending;
+                    if (key.DESCENDING() != null) direction = KeyDirection.Descending;
+                    foreach(var name in key.dataName()) {
+                        var data = SyntaxElementBuilder.CreateDataName(name);
+                        if (data == null) continue;
+                        entry.TableOccurenceKeys.Add(data);
+                        entry.TableOccurenceKeyDirections.Add(direction);
+                    }
+                }
+            }
+
+            var indexes = context.indexName();
+            if (indexes != null) {
+                entry.IndexedBy = new List<SymbolReference<IndexName>>();
+                foreach(var index in indexes) entry.IndexedBy.Add(SyntaxElementBuilder.CreateIndexName(index));
             }
         }
 
