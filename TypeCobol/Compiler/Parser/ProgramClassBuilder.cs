@@ -21,6 +21,9 @@ namespace TypeCobol.Compiler.Parser
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
 
+        private IList<DataDescriptionEntry> ExternalScope = new List<DataDescriptionEntry>();
+        private IList<DataDescriptionEntry> GlobalScope = new List<DataDescriptionEntry>();
+
         /// <summary>
         /// Class object resulting of the visit the parse tree
         /// </summary>
@@ -66,6 +69,40 @@ namespace TypeCobol.Compiler.Parser
             {
                 programsStack.Pop();
             }
+        }
+
+        public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
+            UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Working);
+        }
+
+        public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
+            UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Local);
+        }
+
+        public override void EnterLinkageStorageSection(CobolProgramClassParser.LinkageSectionContext context) {
+            UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Linkage);
+        }
+
+        enum Section {
+            Working,
+            Local,
+            Linkage,
+        }
+
+        private void UpdateSymbolsTable(Antlr4.Runtime.Tree.ITerminalNode[] storage, Section section) {
+            if (storage == null) return;
+            foreach(var node in storage) {
+                DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
+                if (data != null) GetScope(data, section).Add(data);
+            }
+        }
+
+        private IList<DataDescriptionEntry> GetScope(DataDescriptionEntry data, Section section) {
+            if (data.IsExternal) return ExternalScope;
+            if (data.IsGlobal) return GlobalScope;
+            if (section == Section.Working) return Program.WorkingStorageData;
+            if (section == Section.Local)   return Program.LocalStorageData;
+            else return Program.LinkageData;
         }
     }
 }
