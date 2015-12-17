@@ -436,9 +436,14 @@ namespace TypeCobol.Compiler.Parser
             entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
 
             var group = GetContext(entry, context.groupUsageClause());
-            entry.IsGroupUsage = group != null && group.GROUP_USAGE() != null;
+            entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
+            var usage = GetContext(entry, context.usageClause());
+            if (usage != null) {
+                entry.Usage = CreateDataUsage(usage);
+                entry.ObjectReference = SyntaxElementBuilder.CreateClassName(usage.className());
+            }
+
             //TODO OCCURS
-            //TODO USAGE
             //TODO VALUE
             var value = GetContext(entry, context.valueClause());
 
@@ -452,6 +457,27 @@ namespace TypeCobol.Compiler.Parser
                 if (entry.IsGlobal)
                     DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
             }
+        }
+
+        private DataUsage CreateDataUsage(CobolCodeElementsParser.UsageClauseContext context)
+        {
+            if (context.BINARY() != null
+             || context.COMP()   != null || context.COMPUTATIONAL()   != null
+             || context.COMP_4() != null || context.COMPUTATIONAL_4() != null) return DataUsage.Binary;
+            if (context.COMP_1() != null || context.COMPUTATIONAL_1() != null) return DataUsage.FloatingPöint;
+            if (context.COMP_2() != null || context.COMPUTATIONAL_2() != null) return DataUsage.LongFloatingPöint;
+            if (context.PACKED_DECIMAL() != null
+             || context.COMP_3() != null || context.COMPUTATIONAL_3() != null) return DataUsage.PackedDecimal;
+            if (context.COMP_5() != null || context.COMPUTATIONAL_5() != null) return DataUsage.NativeBinary;
+            if (context.DISPLAY_ARG() != null) return DataUsage.Display;
+            if (context.DISPLAY_1()   != null) return DataUsage.DBCS;
+            if (context.INDEX() != null) return DataUsage.Index;
+            if (context.NATIONAL() != null) return DataUsage.National;
+            if (context.OBJECT() != null || context.REFERENCE() != null) return DataUsage.ObjectReference;
+            if (context.POINTER() != null) return DataUsage.Pointer;
+            if (context.FUNCTION_POINTER()  != null) return DataUsage.FunctionPointer;
+            if (context.PROCEDURE_POINTER() != null) return DataUsage.ProcedurePointer;
+            return DataUsage.Unknown;
         }
 
         private T GetContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext

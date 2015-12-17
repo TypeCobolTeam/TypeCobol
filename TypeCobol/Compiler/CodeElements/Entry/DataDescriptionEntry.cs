@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// within the national group are processed the same as they would be if defined
         /// within an alphanumeric group.
         /// </summary>
-        public bool IsGroupUsage { get; set; }
+        public bool IsGroupUsageNational { get; set; }
 
         /// <summary>
         /// The PICTURE clause specifies the general characteristics and editing requirements
@@ -421,6 +421,84 @@ namespace TypeCobol.Compiler.CodeElements
         /// The length of an elementary item is not affected by the SYNCHRONIZED clause.
         /// </summary>
         public bool IsSynchronized { get; set; }
+
+        /// <summary>
+        /// p228:
+        /// The USAGE clause specifies the format in which data is represented in storage.
+        ///
+        /// p229:
+        /// The USAGE clause can be specified for a data description entry with any
+        /// level-number other than 66 or 88.
+        ///
+        /// p230:
+        /// When specified at the group level, the USAGE clause applies to each elementary
+        /// item in the group. The usage of elementary items must not contradict the usage of
+        /// a group to which the elementary items belongs.
+        /// A USAGE clause must not be specified in a group level entry for which a
+        /// GROUP-USAGE NATIONAL clause is specified.
+        /// When a GROUP-USAGE NATIONAL clause is specified or implied for a group
+        /// level entry, USAGE NATIONAL must be specified or implied for every elementary
+        /// item within the group. 
+        /// When the USAGE clause is not specified at either the group or elementary level, a
+        /// usage clause is implied with:
+        /// - Usage DISPLAY when the PICTURE clause contains only symbols other than G
+        ///   or N
+        /// - Usage NATIONAL when the PICTURE clause contains only one or more of the
+        ///   symbol N and the NSYMBOL(NATIONAL) compiler option is in effect
+        /// - Usage DISPLAY-1 when the PICTURE clause contains one or more of the symbol
+        ///   N and the NSYMBOL(DBCS) compiler option is in effect
+        /// NATIVE is treated as a comment in all phrases for which NATIVE is
+        /// shown in the USAGE clause.
+        /// </summary>
+        public DataUsage Usage { get; set; }
+
+        /// <summary>
+        /// p234:
+        /// A data item defined with the OBJECT REFERENCE phrase is an object reference. An
+        /// object reference data item is a 4-byte elementary item.
+        ///
+        ///   class-name-1
+        ///   An optional class name.
+        ///   You must declare class-name-1 in the REPOSITORY paragraph in the
+        ///   configuration section of the containing class or outermost program.
+        ///   If specified, class-name-1 indicates that data-name-1 always refers to an
+        ///   object-instance of class class-name-1 or a class derived from class-name-1.
+        ///   Important: The programmer must ensure that the referenced object meets
+        ///   this requirement; violations are not diagnosed.
+        ///   If class-name-1 is not specified, the object reference can refer to an object of
+        ///   any class. In this case, data-name-1 is a universal object reference.
+        ///   You can specify data-name-1 within an alphanumeric group item without
+        ///   affecting the semantics of the group item. There is no conversion of values
+        ///   or other special handling of the object references when statements are
+        ///   executed that operate on the group. The group continues to behave as an
+        ///   alphanumeric group item.
+        ///
+        /// An object reference can be defined in any section of the DATA DIVISION of a
+        /// factory definition, object definition, method, or program.
+        /// An object-reference data item can be used in only:
+        /// - A SET statement (format 7 only)
+        /// - A relation condition
+        /// - An INVOKE statement
+        /// - The USING or RETURNING phrase of an INVOKE statement
+        /// - The USING or RETURNING phrase of a CALL statement
+        /// - A program procedure division or ENTRY statement USING or RETURNING phrase
+        /// - A method procedure division USING or RETURNING phrase
+        ///
+        /// Object-reference data items:
+        /// - Are ignored in CORRESPONDING operations
+        /// - Are unaffected by INITIALIZE statements
+        /// - Can be the subject or object of a REDEFINES clause
+        /// - Cannot be a conditional variable
+        /// - Can be written to a file (but upon subsequent reading of the record the content
+        ///   of the object reference is undefined)
+        ///
+        /// A VALUE clause for an object-reference data item can contain only NULL or NULLS.
+        /// You can use the SYNCHRONIZED clause with the USAGE OBJECT REFERENCE
+        /// clause to obtain efficient alignment of the object-reference data item.
+        /// The JUSTIFIED, PICTURE, and BLANK WHEN ZERO clauses cannot be used to
+        /// describe group or elementary items defined with the USAGE OBJECT REFERENCE clause.
+        /// </summary>
+        public SymbolReference<ClassName> ObjectReference { get; set; }
 
 
 
@@ -724,63 +802,6 @@ namespace TypeCobol.Compiler.CodeElements
         public IList<IndexName> IndexedBy { get; set; }
 
         /// <summary>
-        /// A GROUP-USAGE clause with the NATIONAL phrase specifies that the group
-        /// item defined by the entry is a national group item. A national group item contains
-        /// national characters in all subordinate data items and subordinate group items.
-        /// When GROUP-USAGE NATIONAL is specified:
-        /// - The subject of the entry is a national group item. The class and category of a
-        ///  national group are national.
-        /// - A USAGE clause must not be specified for the subject of the entry. A USAGE
-        ///   NATIONAL clause is implied.
-        /// - A USAGE NATIONAL clause is implied for any subordinate elementary data
-        ///   items that are not described with a USAGE NATIONAL clause.
-        /// - All subordinate elementary data items must be explicitly or implicitly described
-        ///   with USAGE NATIONAL.
-        /// - Any signed numeric data items must be described with the SIGN IS SEPARATE
-        ///   clause.
-        /// - A GROUP-USAGE NATIONAL clause is implied for any subordinate group
-        ///   items that are not described with a GROUP-USAGE NATIONAL clause.
-        /// - All subordinate group items must be explicitly or implicitly described with a
-        ///   GROUP-USAGE NATIONAL clause.
-        /// - The JUSTIFIED clause must not be specified.
-        /// Unless stated otherwise, a national group item is processed as though it were an
-        /// elementary data item of usage national, class and category national, described with
-        /// PICTURE N(m), where m is the length of the group in national character positions.
-        /// Usage note: When you use national groups, the compiler can ensure proper
-        /// truncation and padding of group items for statements such as MOVE and
-        /// INSPECT. Groups defined without a GROUP-USAGE NATIONAL clause are
-        /// alphanumeric groups. The content of alphanumeric groups, including any national
-        /// characters, is treated as alphanumeric data, possibly leading to invalid truncation
-        /// or mishandling of national character data.
-        /// </summary>
-        public bool GroupUsageIsNational { get; set; }
-
-        /// <summary>
-        /// The USAGE clause specifies the format in which data is represented in storage.
-        /// The USAGE clause can be specified for a data description entry with any
-        /// level-number other than 66 or 88.
-        /// When specified at the group level, the USAGE clause applies to each elementary
-        /// item in the group. The usage of elementary items must not contradict the usage of
-        /// a group to which the elementary items belongs.
-        /// A USAGE clause must not be specified in a group level entry for which a
-        /// GROUP-USAGE NATIONAL clause is specified.
-        /// When a GROUP-USAGE NATIONAL clause is specified or implied for a group
-        /// level entry, USAGE NATIONAL must be specified or implied for every elementary
-        /// item within the group. 
-        /// When the USAGE clause is not specified at either the group or elementary level, a
-        /// usage clause is implied with:
-        /// - Usage DISPLAY when the PICTURE clause contains only symbols other than G
-        ///   or N
-        /// - Usage NATIONAL when the PICTURE clause contains only one or more of the
-        ///   symbol N and the NSYMBOL(NATIONAL) compiler option is in effect
-        /// - Usage DISPLAY-1 when the PICTURE clause contains one or more of the symbol
-        ///   N and the NSYMBOL(DBCS) compiler option is in effect
-        /// NATIVE is treated as a comment in all phrases for which NATIVE is
-        /// shown in the USAGE clause.
-        /// </summary>
-        public DataUsage Usage { get; set; }
-
-        /// <summary>
         /// The VALUE clause specifies the initial contents of a data item or the values
         /// associated with a condition-name. The use of the VALUE clause differs depending
         /// on the DATA DIVISION section in which it is specified.
@@ -872,38 +893,30 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum DataUsage
     {
+        Unknown,
         /// <summary>
-        /// p230: BINARY         
+        /// p230: BINARY
+        /// p231: COMPUTATIONAL or COMP (binary)
+        /// p231: COMPUTATIONAL-4 or COMP-4 (binary)
         /// </summary>
         Binary,
         /// <summary>
-        /// p231: PACKED-DECIMAL 
+        /// p231: COMPUTATIONAL-5 or COMP-5 (native binary)
+        /// </summary>
+        NativeBinary,
+        /// <summary>
+        /// p231: PACKED-DECIMAL
+        /// p231: COMPUTATIONAL-3 or COMP-3 (internal decimal)
         /// </summary>
         PackedDecimal,
         /// <summary>
-        /// p231: COMPUTATIONAL or COMP (binary) 
-        /// </summary>
-        Comp,
-        /// <summary>
         //// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
         /// </summary>
-        Comp1,
+        FloatingPöint,
         /// <summary>
         /// p231: COMPUTATIONAL-2 or COMP-2 (long floating-point)
         /// </summary>
-        Comp2,
-        /// <summary>
-        /// p231: COMPUTATIONAL-3 or COMP-3 (internal decimal) 
-        /// </summary>
-        Comp3,
-        /// <summary>
-        /// p231: COMPUTATIONAL-4 or COMP-4 (binary) 
-        /// </summary>
-        Comp4,
-        /// <summary>
-        /// p231: COMPUTATIONAL-5 or COMP-5 (native binary) 
-        /// </summary>
-        Comp5,
+        LongFloatingPöint,
         /// <summary>
         /// p232: DISPLAY phrase 
         /// </summary>
@@ -911,7 +924,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// p233: DISPLAY-1 phrase
         /// </summary>
-        Display1,
+        DBCS,
         /// <summary>
         /// p233: FUNCTION-POINTER phrase 
         /// </summary>
