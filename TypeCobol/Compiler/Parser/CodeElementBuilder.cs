@@ -414,7 +414,8 @@ namespace TypeCobol.Compiler.Parser
             var redefines = context.redefinesClause();
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
 
-            //TODO PICTURE
+            var picture = GetContext(entry, context.pictureClause());
+            if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
 
             var blank = GetContext(entry, context.blankWhenZeroClause());
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
@@ -446,7 +447,6 @@ namespace TypeCobol.Compiler.Parser
 
             //TODO VALUE
             var value = GetContext(entry, context.valueClause());
-
             CodeElement = entry;
 
             if (dataname == null) {

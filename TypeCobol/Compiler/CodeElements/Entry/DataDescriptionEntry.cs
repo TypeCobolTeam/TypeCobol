@@ -274,8 +274,11 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsGroupUsageNational { get; set; }
 
         /// <summary>
+        /// p198:
         /// The PICTURE clause specifies the general characteristics and editing requirements
         /// of an elementary item.
+        ///
+        /// p199:
         /// The PICTURE clause must be specified for every elementary item except
         /// the following ones:
         /// - Index data items
@@ -285,10 +288,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// - Internal floating-point data items
         /// In these cases, use of the PICTURE clause is prohibited.
         /// The PICTURE clause can be specified only at the elementary level.
-        /// character-string
-        /// character-string is made up of certain COBOL characters used as picture
-        /// symbols. The allowable combinations determine the category of the
-        /// elementary data item.
+        ///
+        ///   character-string is made up of certain COBOL characters used as picture
+        ///   symbols. The allowable combinations determine the category of the
+        ///   elementary data item.
+        ///
+        ///   character-string can contain a maximum of 50 characters.
         /// </summary>
         public string Picture { get; set; }
 
@@ -851,6 +856,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// national-literal, or ALL literal can be specified.
         /// </summary>
         public LiteralValue ThroughValue { get; set; }
+
+
+
+        public override string ToString() {
+            var str = new System.Text.StringBuilder();
+            str.Append(LevelNumber).Append(" ");
+            if (IsConditionNameDescription)
+                 str.Append(ConditionName);
+            else str.Append(DataName);
+            str.Append(" PIC ").Append(Picture);
+            return str.ToString();
+        }
     }
 
     /// <summary>
