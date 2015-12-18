@@ -419,19 +419,15 @@ namespace TypeCobol.Compiler.Parser
             entry.IsGlobal = global != null && global.GLOBAL() != null;
             var justified = GetContext(entry, context.justifiedClause());
             entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
-
-            UpdateDataDescriptionEntryWithSignClause(entry, GetContext(entry, context.signClause()));
             var sync = GetContext(entry, context.synchronizedClause());
             entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
-
             var group = GetContext(entry, context.groupUsageClause());
             entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
             UpdateDataDescriptionEntryWithUsageClause(entry, GetContext(entry, context.usageClause()));
-
+            UpdateDataDescriptionEntryWithSignClause(entry, GetContext(entry, context.signClause()));
             UpdateDataDescriptionEntryWithOccursClause(entry, GetContext(entry, context.occursClause()));
+            UpdateDataDescriptionEntryWithValueClause(entry, GetContext(entry, context.valueClause()));
 
-            //TODO VALUE
-            var value = GetContext(entry, context.valueClause());
             CodeElement = entry;
 
             if (dataname == null) {
@@ -562,6 +558,15 @@ namespace TypeCobol.Compiler.Parser
             if (context.FUNCTION_POINTER()  != null) return DataUsage.FunctionPointer;
             if (context.PROCEDURE_POINTER() != null) return DataUsage.ProcedurePointer;
             return DataUsage.None;
+        }
+
+        private void UpdateDataDescriptionEntryWithValueClause(DataDescriptionEntry entry, CobolCodeElementsParser.ValueClauseContext context)
+        {
+            if (context == null) return;
+            var values = context.literal();
+            if (values.Length > 0) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(values[0]); // format 1 and 2
+            if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
+            entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
         }
 
         private T GetContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -824,38 +825,122 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        /// <summary>
-        /// literal-1
-        /// Associates the condition-name with a single value.
-        /// The class of literal-1 must be a valid class for assignment to the associated
-        /// conditional variable.
-        /// </summary>
-        public LiteralValue Value { get; set; }
+
 
         /// <summary>
-        /// literal-1 THROUGH literal-2
-        /// Associates the condition-name with at least one range of values. When the
-        /// THROUGH phrase is used, literal-1 must be less than literal-2.
-        /// literal-1 and literal-2 must be of the same class. The class of literal-1 and
-        /// literal-2 must be a valid class for assignment to the associated conditional
-        /// variable.
-        /// When literal-1 and literal-2 are DBCS literals, the range of DBCS values
-        /// specified by the THROUGH phrase is based on the binary collating
-        /// sequence of the hexadecimal values of the DBCS characters.
-        /// When literal-1 and literal-2 are national literals, the range of national
-        /// character values specified by the THROUGH phrase is based on the binary
-        /// collating sequence of the hexadecimal values of the national characters
-        /// represented by the literals.
-        /// If the associated conditional variable is of class DBCS, literal-1 and literal-2
-        /// must be DBCS literals. The figurative constant SPACE or the figurative
-        /// constant ALL DBCS-literal can be specified.
-        /// If the associated conditional variable is of class national, literal-1 and
-        /// literal-2 must be either both national literals or both alphanumeric literals
-        /// for a given condition-name. The figurative constants ZERO, SPACE,
-        /// QUOTE, HIGH-VALUE, LOW-VALUE, symbolic-character, ALL
-        /// national-literal, or ALL literal can be specified.
+        /// Specifies the initial value of a data item.
+        ///
+        /// p237:
+        /// The VALUE clause specifies the initial contents of a data item or the values
+        /// associated with a condition-name. The use of the VALUE clause differs depending
+        /// on the DATA DIVISION section in which it is specified.
+        ///
+        /// A VALUE clause that is used in the FILE SECTION or the LINKAGE SECTION in
+        /// an entry other than a condition-name entry is syntax checked, but has no effect on
+        /// the execution of the program.
+        ///
+        /// In the WORKING-STORAGE SECTION and the LOCAL-STORAGE SECTION, the
+        /// VALUE clause can be used in condition-name entries or in specifying the initial
+        /// value of any data item. The data item assumes the specified value at the beginning
+        /// of program execution. If the initial value is not explicitly specified, the value is
+        /// unpredictable.
+        ///
+        /// p237:
+        /// Initialization is independent of any BLANK WHEN ZERO or JUSTIFIED clause that is specified.
+        ///
+        /// A format-1 VALUE clause specified in a data description entry that contains or is
+        /// subordinate to an OCCURS clause causes every occurrence of the associated data
+        /// item to be assigned the specified value. Each structure that contains the
+        /// DEPENDING ON phrase of the OCCURS clause is assumed to contain the
+        /// maximum number of occurrences for the purposes of VALUE initialization.
+        ///
+        /// The VALUE clause must not be specified for a data description entry that contains
+        /// or is subordinate to an entry that contains either an EXTERNAL or a REDEFINES
+        /// clause. This rule does not apply to condition-name entries.
+        ///
+        /// A format-1 VALUE clause can be specified for an elementary data item or for a
+        /// group item. When the VALUE clause is specified at the group level, the group area
+        /// is initialized without consideration for the subordinate entries within the group.
+        /// In addition, a VALUE clause must not be specified for subordinate entries
+        /// within the group.
+        ///
+        /// For group items, the VALUE clause must not be specified if any subordinate
+        /// entries contain a JUSTIFIED or SYNCHRONIZED clause.
+        ///
+        /// If the VALUE clause is specified for an alphanumeric group, all subordinate items
+        /// must be explicitly or implicitly described with USAGE DISPLAY.
+        ///
+        /// The VALUE clause must not conflict with other clauses in the data description
+        /// entry or in the data description of that entry's hierarchy.
+        ///
+        /// p238:
+        /// The functions of the editing characters in a PICTURE clause are ignored in
+        /// determining the initial value of the item described. However, editing characters are
+        /// included in determining the size of the item. Therefore, any editing characters
+        /// must be included in the literal. For example, if the item is defined as PICTURE
+        /// +999.99 and the value is to be +12.34, then the VALUE clause should be specified
+        /// as VALUE "+012.34".
+        ///
+        /// A VALUE clause cannot be specified for external floating-point items.
+        /// A data item cannot contain a VALUE clause if the prior data item contains an
+        /// OCCURS clause with the DEPENDING ON phrase.
+        ///
+        /// p239:
+        ///   Associates the condition-name with a single value.
+        ///   The class of literal-1 must be a valid class for assignment to the associated
+        ///   conditional variable.
         /// </summary>
-        public LiteralValue ThroughValue { get; set; }
+        public Literal InitialValue { get; set; }
+
+        /// <summary>
+        /// p239:
+        /// This format associates a value, values, or ranges of values with a condition-name.
+        /// Each such condition-name requires a separate level-88 entry. Level-number 88 and
+        /// the condition-name are not part of the format-2 VALUE clause itself. They are
+        /// included in the format only for clarity.
+        ///
+        /// literal-1 THROUGH literal-2
+        ///   Associates the condition-name with at least one range of values. When the
+        ///   THROUGH phrase is used, literal-1 must be less than literal-2. For details,
+        ///   see “Rules for condition-name entries.”
+        ///
+        ///   literal-1 and literal-2 must be of the same class. The class of literal-1 and
+        ///   literal-2 must be a valid class for assignment to the associated conditional
+        ///   variable.
+        ///
+        ///   When literal-1 and literal-2 are DBCS literals, the range of DBCS values
+        ///   specified by the THROUGH phrase is based on the binary collating
+        ///   sequence of the hexadecimal values of the DBCS characters.
+        ///
+        ///   When literal-1 and literal-2 are national literals, the range of national
+        ///   character values specified by the THROUGH phrase is based on the binary
+        ///   collating sequence of the hexadecimal values of the national characters
+        ///   represented by the literals.
+        ///
+        ///   If the associated conditional variable is of class DBCS, literal-1 and literal-2
+        ///   must be DBCS literals. The figurative constant SPACE or the figurative
+        ///   constant ALL DBCS-literal can be specified.
+        ///
+        ///   If the associated conditional variable is of class national, literal-1 and
+        ///   literal-2 must be either both national literals or both alphanumeric literals
+        ///   for a given condition-name. The figurative constants ZERO, SPACE,
+        ///   QUOTE, HIGH-VALUE, LOW-VALUE, symbolic-character, ALL
+        ///   national-literal, or ALL literal can be specified.
+        /// </summary>
+        public Literal ThroughValue { get; set; }
+
+        /// <summary>
+        /// p242:
+        /// This format assigns an invalid address as the initial value of an item defined as
+        /// USAGE POINTER, USAGE PROCEDURE POINTER, or USAGE FUNCTION-POINTER.
+        /// It also assigns an invalid object reference as the initial value
+        /// of an item defined as USAGE OBJECT REFERENCE.
+        ///
+        /// VALUE IS NULL can be specified only for elementary items described
+        /// implicitly or explicitly as USAGE POINTER, USAGE PROCEDURE-POINTER,
+        /// USAGE FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
+        /// </summary>
+        public bool IsInitialValueNull { get; set; }
 
 
 
@@ -882,63 +967,6 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-        /// <summary>
-        /// The VALUE clause specifies the initial contents of a data item or the values
-        /// associated with a condition-name. The use of the VALUE clause differs depending
-        /// on the DATA DIVISION section in which it is specified.
-        /// A VALUE clause that is used in the FILE SECTION or the LINKAGE SECTION in
-        /// an entry other than a condition-name entry is syntax checked, but has no effect on
-        /// the execution of the program.
-        /// In the WORKING-STORAGE SECTION and the LOCAL-STORAGE SECTION, the
-        /// VALUE clause can be used in condition-name entries or in specifying the initial
-        /// value of any data item. The data item assumes the specified value at the beginning
-        /// of program execution. If the initial value is not explicitly specified, the value is
-        /// unpredictable.
-        /// Initialization is independent of
-        /// any BLANK WHEN ZERO or JUSTIFIED clause that is specified.
-        /// A format-1 VALUE clause specified in a data description entry that contains or is
-        /// subordinate to an OCCURS clause causes every occurrence of the associated data
-        /// item to be assigned the specified value. Each structure that contains the
-        /// DEPENDING ON phrase of the OCCURS clause is assumed to contain the
-        /// maximum number of occurrences for the purposes of VALUE initialization.
-        /// The VALUE clause must not be specified for a data description entry that contains
-        /// or is subordinate to an entry that contains either an EXTERNAL or a REDEFINES
-        /// clause. This rule does not apply to condition-name entries.
-        /// A format-1 VALUE clause can be specified for an elementary data item or for a
-        /// group item. When the VALUE clause is specified at the group level, the group area
-        /// is initialized without consideration for the subordinate entries within the group. In
-        /// addition, a VALUE clause must not be specified for subordinate entries within the
-        /// group.
-        /// For group items, the VALUE clause must not be specified if any subordinate
-        /// entries contain a JUSTIFIED or SYNCHRONIZED clause.
-        /// If the VALUE clause is specified for an alphanumeric group, all subordinate items
-        /// must be explicitly or implicitly described with USAGE DISPLAY.
-        /// The VALUE clause must not conflict with other clauses in the data description
-        /// entry or in the data description of that entry's hierarchy.
-        /// The functions of the editing characters in a PICTURE clause are ignored in
-        /// determining the initial value of the item described. However, editing characters are
-        /// included in determining the size of the item. Therefore, any editing characters
-        /// must be included in the literal. For example, if the item is defined as PICTURE
-        /// +999.99 and the value is to be +12.34, then the VALUE clause should be specified
-        /// as VALUE "+012.34".
-        /// A VALUE clause cannot be specified for external floating-point items.
-        /// A data item cannot contain a VALUE clause if the prior data item contains an
-        /// OCCURS clause with the DEPENDING ON phrase.
-        /// </summary>
-        public LiteralValue InitialValue { get; set; }
-
-        /// <summary>
-        /// Format 3: NULL value
-        ///                VALUE IS? (NULL | NULLS);
-        /// This format assigns an invalid address as the initial value of an item defined as
-        /// USAGE POINTER, USAGE PROCEDURE POINTER, or USAGE
-        /// FUNCTION-POINTER. It also assigns an invalid object reference as the initial
-        /// value of an item defined as USAGE OBJECT REFERENCE.
-        /// VALUE IS NULL can be specified only for elementary items described implicitly or
-        /// explicitly as USAGE POINTER, USAGE PROCEDURE-POINTER, USAGE
-        /// FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
-        /// </summary>
-        public bool InitialValueIsNull { get; set; }
 
         // --- Temporary : First TypeCobol DEMO ---
 
@@ -1039,48 +1067,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// p236: PROCEDURE-POINTER phrase 
         /// </summary>
         ProcedurePointer
-    }
-
-    /// <summary>
-    /// Format 2: condition-name value
-    /// 88 conditionName* ((VALUE IS?) | (VALUES ARE?)) (literal ((THROUGH | THRU) literal)?)+;
-    /// This format associates a value, values, or ranges of values with a condition-name.
-    /// Each such condition-name requires a separate level-88 entry. 
-    /// </summary>
-    public class ConditionNameDescription : DataDescriptionEntry
-    {
-
-        /// <summary>
-        /// literal-1
-        /// Associates the condition-name with a single value.
-        /// The class of literal-1 must be a valid class for assignment to the associated
-        /// conditional variable.
-        /// </summary>
-        public LiteralValue Value { get; set; }
-
-        /// <summary>
-        /// literal-1 THROUGH literal-2
-        /// Associates the condition-name with at least one range of values. When the
-        /// THROUGH phrase is used, literal-1 must be less than literal-2. 
-        /// literal-1 and literal-2 must be of the same class. The class of literal-1 and
-        /// literal-2 must be a valid class for assignment to the associated conditional
-        /// variable.
-        /// When literal-1 and literal-2 are DBCS literals, the range of DBCS values
-        /// specified by the THROUGH phrase is based on the binary collating
-        /// sequence of the hexadecimal values of the DBCS characters.
-        /// When literal-1 and literal-2 are national literals, the range of national
-        /// character values specified by the THROUGH phrase is based on the binary
-        /// collating sequence of the hexadecimal values of the national characters
-        /// represented by the literals.
-        /// If the associated conditional variable is of class DBCS, literal-1 and literal-2
-        /// must be DBCS literals. The figurative constant SPACE or the figurative
-        /// constant ALL DBCS-literal can be specified.
-        /// If the associated conditional variable is of class national, literal-1 and
-        /// literal-2 must be either both national literals or both alphanumeric literals
-        /// for a given condition-name. The figurative constants ZERO, SPACE,
-        /// QUOTE, HIGH-VALUE, LOW-VALUE, symbolic-character, ALL
-        /// national-literal, or ALL literal can be specified.
-        /// </summary>
-        public LiteralValue ThroughValue { get; set; }
     }
 }
