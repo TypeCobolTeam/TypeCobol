@@ -72,14 +72,17 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
+            if (Program.WorkingStorageData == null) Program.WorkingStorageData = new List<DataDescriptionEntry>();
             UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
+            if (Program.LocalStorageData == null) Program.LocalStorageData = new List<DataDescriptionEntry>();
             UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
+            if (Program.LinkageData == null) Program.LinkageData = new List<DataDescriptionEntry>();
             UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Linkage);
         }
 
