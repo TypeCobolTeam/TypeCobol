@@ -403,13 +403,7 @@ namespace TypeCobol.Compiler.Parser
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
             if (entry.LevelNumber == 88) entry.IsConditionNameDescription = true;
 
-            var renames = context.renamesClause();
-            if (context.renamesClause() != null) {
-                var names = SyntaxElementBuilder.CreateDataNames(renames.dataName());
-                if (names.Count > 0) entry.RenamesFromDataName = names[0];
-                if (names.Count > 1) entry.RenamesToDataName   = names[1];
-                //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
-            }
+            UpdateDataDescriptionEntryWithRenamesClause(entry, context.renamesClause());
 
             var redefines = context.redefinesClause();
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
@@ -426,22 +420,13 @@ namespace TypeCobol.Compiler.Parser
             var justified = GetContext(entry, context.justifiedClause());
             entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
 
-            var sign = GetContext(entry, context.signClause());
-            if (sign != null) {
-                if (sign.TRAILING() != null) entry.SignPosition = SignPosition.Trailing;
-                if (sign.LEADING()  != null) entry.SignPosition = SignPosition.Leading;
-                entry.IsSignSeparate = sign.SEPARATE() != null;
-            }
+            UpdateDataDescriptionEntryWithSignClause(entry, GetContext(entry, context.signClause()));
             var sync = GetContext(entry, context.synchronizedClause());
             entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
 
             var group = GetContext(entry, context.groupUsageClause());
             entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
-            var usage = GetContext(entry, context.usageClause());
-            if (usage != null) {
-                entry.Usage = CreateDataUsage(usage);
-                entry.ObjectReference = SyntaxElementBuilder.CreateClassName(usage.className());
-            }
+            UpdateDataDescriptionEntryWithUsageClause(entry, GetContext(entry, context.usageClause()));
 
             UpdateDataDescriptionEntryWithOccursClause(entry, GetContext(entry, context.occursClause()));
 
@@ -457,6 +442,31 @@ namespace TypeCobol.Compiler.Parser
                 if (entry.IsGlobal)
                     DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
             }
+        }
+
+        private void UpdateDataDescriptionEntryWithRenamesClause(DataDescriptionEntry entry, CobolCodeElementsParser.RenamesClauseContext context)
+        {
+            if (context == null) return;
+            var names = SyntaxElementBuilder.CreateDataNames(context.dataName());
+            if (names.Count > 0) entry.RenamesFromDataName = names[0];
+            if (names.Count > 1) entry.RenamesToDataName   = names[1];
+            //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
+        }
+
+        private void UpdateDataDescriptionEntryWithSignClause(DataDescriptionEntry entry, CobolCodeElementsParser.SignClauseContext context)
+        {
+            if (context == null) return;
+            entry.SignPosition = SignPosition.None;
+            if (context.TRAILING() != null) entry.SignPosition = SignPosition.Trailing;
+            if (context.LEADING()  != null) entry.SignPosition = SignPosition.Leading;
+            entry.IsSignSeparate = context.SEPARATE() != null;
+        }
+
+        private void UpdateDataDescriptionEntryWithUsageClause(DataDescriptionEntry entry, CobolCodeElementsParser.UsageClauseContext context)
+        {
+            if (context == null) return;
+            entry.Usage = CreateDataUsage(context);
+            entry.ObjectReference = SyntaxElementBuilder.CreateClassName(context.className());
         }
 
         private void UpdateDataDescriptionEntryWithOccursClause(DataDescriptionEntry entry, CobolCodeElementsParser.OccursClauseContext context)
@@ -514,7 +524,7 @@ namespace TypeCobol.Compiler.Parser
                 entry.TableOccurenceKeys = new List<SymbolReference<DataName>>();
                 entry.TableOccurenceKeyDirections = new List<KeyDirection>();
                 foreach(var key in keys) {
-                    var direction = KeyDirection.Unknown;
+                    var direction = KeyDirection.None;
                     if (key.ASCENDING()  != null) direction = KeyDirection.Ascending;
                     if (key.DESCENDING() != null) direction = KeyDirection.Descending;
                     foreach(var name in key.dataName()) {
@@ -551,7 +561,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.POINTER() != null) return DataUsage.Pointer;
             if (context.FUNCTION_POINTER()  != null) return DataUsage.FunctionPointer;
             if (context.PROCEDURE_POINTER() != null) return DataUsage.ProcedurePointer;
-            return DataUsage.Unknown;
+            return DataUsage.None;
         }
 
         private T GetContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext

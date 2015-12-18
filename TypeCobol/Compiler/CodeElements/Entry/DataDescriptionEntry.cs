@@ -954,7 +954,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum KeyDirection
     {
-        Unknown,
+        None,
         Ascending,
         Descending
     }
@@ -966,6 +966,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum SignPosition
     {
+        None,
         Leading,
         Trailing
     }
@@ -975,7 +976,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum DataUsage
     {
-        Unknown,
+        None,
         /// <summary>
         /// p230: BINARY
         /// p231: COMPUTATIONAL or COMP (binary)
