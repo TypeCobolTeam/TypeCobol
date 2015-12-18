@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.Parser
             UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Local);
         }
 
-        public override void EnterLinkageStorageSection(CobolProgramClassParser.LinkageSectionContext context) {
+        public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
             UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Linkage);
         }
 
