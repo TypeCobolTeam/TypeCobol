@@ -65,7 +65,6 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public void Add(Section section, DataDescriptionEntry symbol) {
-            System.Console.WriteLine(">>> Add("+section+","+symbol+")");
             get(section).Add(symbol.DataName.Name, symbol);
         }
         public DataDescriptionEntry Get(Section section, string name) {

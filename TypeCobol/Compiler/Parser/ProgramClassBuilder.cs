@@ -74,17 +74,17 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
             if (Program.Data == null) CreateSymbolsTable();
-            UpdateSymbolsTable(context.DataDescriptionEntry(), SymbolTable.Section.Working);
+            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
             if (Program.Data == null) CreateSymbolsTable();
-            UpdateSymbolsTable(context.DataDescriptionEntry(), SymbolTable.Section.Local);
+            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
             if (Program.Data == null) CreateSymbolsTable();
-            UpdateSymbolsTable(context.DataDescriptionEntry(), SymbolTable.Section.Linkage);
+            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Linkage);
         }
 
         private void CreateSymbolsTable() {
@@ -93,12 +93,29 @@ namespace TypeCobol.Compiler.Parser
             else Program.Data = new SymbolTable(nested.ContainingProgram.Data);
         }
 
-        private void UpdateSymbolsTable(Antlr4.Runtime.Tree.ITerminalNode[] storage, SymbolTable.Section section) {
-            if (storage == null) return;
-            foreach(var node in storage) {
+        private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
+            IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
+            if (nodes == null) return result;
+            Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
+            foreach (var node in nodes) {
                 DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
-                if (data != null) GetScope(data).Add(section, data);
+                bool okay = false;
+                while(!okay && groups.Count > 0) {
+                    var toplevel = groups.Peek();
+                    if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
+                    else {
+                        toplevel.Subordinates.Add(data);
+                        okay = true;
+                    }
+                }
+                if (data.IsGroup) groups.Push(data);
+                if (!okay) result.Add(data);
             }
+            return result;
+        }
+
+        private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
+            foreach(var d in data) GetScope(d).Add(section, d);
         }
 
         private SymbolTable GetScope(DataDescriptionEntry data) {

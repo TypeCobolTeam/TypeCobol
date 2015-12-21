@@ -298,6 +298,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public string Picture { get; set; }
 
+        public bool IsGroup {
+            get { return Picture == null; }
+            private set { IsGroup = value; }
+        }
+        public IList<DataDescriptionEntry> Subordinates = new List<DataDescriptionEntry>();
+
         /// <summary>
         /// p216:
         /// The REDEFINES clause allows you to use different data description entries to
@@ -953,27 +959,6 @@ namespace TypeCobol.Compiler.CodeElements
             str.Append(" PIC ").Append(Picture);
             return str.ToString();
         }
-    }
-
-    /// <summary>
-    /// Format 1 is used for data description entries in all DATA DIVISION sections.
-    /// The level-number in format 1 can be any number in the range 01–49, or 77.
-    /// </summary>
-    public class DataNameDescription : DataDescriptionEntry
-    {
-
-
-
-
-
-
-
-        // --- Temporary : First TypeCobol DEMO ---
-
-        /// <summary>
-        /// Type Cobol extension
-        /// </summary>
-        public string DataType { get; set; }
     }
 
     /// <summary>
