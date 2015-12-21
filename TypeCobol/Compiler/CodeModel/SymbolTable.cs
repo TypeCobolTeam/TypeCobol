@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.CodeModel
         public DataDescriptionEntry Get(Section section, string name) {
             return get(section)[name];
         }
-        private Dictionary<string,DataDescriptionEntry> get(Section section) {
+        public Dictionary<string,DataDescriptionEntry> get(Section section) {
             if (section == Section.Working) return WorkingStorageData;
             if (section == Section.Local)   return LocalStorageData;
             return LinkageData;

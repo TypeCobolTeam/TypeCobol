@@ -1,3 +1,17 @@
 ﻿--- Program ---
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
+WORKING-STORAGE:
+1 str PIC X(08)
+1 group PIC 
+  5 num PIC 9
+  5 subgroup PIC 
+    10 vrai PIC 9
+    10 faux PIC 9
+  5 subgroup2 PIC 
+    10 x PIC 9(2)
+    10 y PIC 9(2)
+  5 str PIC X(15)
+1 x PIC A(3)
+1 sqlcode PIC ZZ9+
+1 toto PIC X(08)

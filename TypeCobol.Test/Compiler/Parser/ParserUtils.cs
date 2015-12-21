@@ -156,6 +156,7 @@ namespace TypeCobol.Test.Compiler.Parser
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
+            Dump(str, program.Data);
             return str;
         }
 
@@ -195,13 +196,61 @@ namespace TypeCobol.Test.Compiler.Parser
 
         internal static StringBuilder Dump(StringBuilder builder, Class cls)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("TODO");
         }
 
         internal static StringBuilder Dump(StringBuilder str, SyntaxBoolean b)
         {
             if (b == null) str.Append("?");
             else str.Append(b.Value);
+            return str;
+        }
+
+        private static StringBuilder Dump(StringBuilder str, SymbolTable table)
+        {
+            if (table == null) return str;
+            Dictionary<string, DataDescriptionEntry> map;
+            map = table.get(SymbolTable.Section.Working);
+            if(map != null && map.Count > 0) {
+                str.Append("WORKING-STORAGE:\n");
+                Dump(str, map);
+            }
+            map = table.get(SymbolTable.Section.Local);
+            if(map != null && map.Count > 0) {
+                str.Append("LOCAL-STORAGE:\n");
+                Dump(str, map);
+            }
+            map = table.get(SymbolTable.Section.Linkage);
+            if(map != null && map.Count > 0) {
+                str.Append("LINKAGE:\n");
+                Dump(str, map);
+            }
+            return str;
+        }
+
+        private static void Dump(StringBuilder str, Dictionary<string, DataDescriptionEntry> map)
+        {
+            foreach(string key in map.Keys) {
+                Dump(str, map[key]);
+                str.Append("\n");
+            }
+        }
+
+        private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0)
+        {
+            DumpIndent(str, indent);
+            str.Append(data);
+            if (!data.IsGroup) return str;
+            foreach(DataDescriptionEntry d in data.Subordinates) {
+                str.Append("\n");
+                Dump(str, d, indent+1);
+            }
+            return str;
+        }
+
+        private static StringBuilder DumpIndent(StringBuilder str, int indent)
+        {
+            for (int c=0; c<indent; c++) str.Append("  ");
             return str;
         }
 
