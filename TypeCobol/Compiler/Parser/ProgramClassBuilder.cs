@@ -21,8 +21,8 @@ namespace TypeCobol.Compiler.Parser
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
 
-        private IList<DataDescriptionEntry> ExternalScope = new List<DataDescriptionEntry>();
-        private IList<DataDescriptionEntry> GlobalScope = new List<DataDescriptionEntry>();
+        private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
+        private SymbolTable TableOfGlobals;
 
         /// <summary>
         /// Class object resulting of the visit the parse tree
@@ -39,6 +39,7 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public override void EnterCobolCompilationUnit(CobolProgramClassParser.CobolCompilationUnitContext context)
         {
+            TableOfGlobals = new SymbolTable(TableOfExternals, SymbolTable.Scope.Global);
             Program = null;
             Class = null;
             Diagnostics = new List<Diagnostic>();
@@ -72,40 +73,38 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
-            if (Program.WorkingStorageData == null) Program.WorkingStorageData = new List<DataDescriptionEntry>();
-            UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Working);
+            if (Program.Data == null) CreateSymbolsTable();
+            UpdateSymbolsTable(context.DataDescriptionEntry(), SymbolTable.Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
-            if (Program.LocalStorageData == null) Program.LocalStorageData = new List<DataDescriptionEntry>();
-            UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Local);
+            if (Program.Data == null) CreateSymbolsTable();
+            UpdateSymbolsTable(context.DataDescriptionEntry(), SymbolTable.Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
-            if (Program.LinkageData == null) Program.LinkageData = new List<DataDescriptionEntry>();
-            UpdateSymbolsTable(context.DataDescriptionEntry(), Section.Linkage);
+            if (Program.Data == null) CreateSymbolsTable();
+            UpdateSymbolsTable(context.DataDescriptionEntry(), SymbolTable.Section.Linkage);
         }
 
-        enum Section {
-            Working,
-            Local,
-            Linkage,
+        private void CreateSymbolsTable() {
+            NestedProgram nested = Program as NestedProgram;
+            if (nested == null) Program.Data = new SymbolTable(TableOfGlobals);
+            else Program.Data = new SymbolTable(nested.ContainingProgram.Data);
         }
 
-        private void UpdateSymbolsTable(Antlr4.Runtime.Tree.ITerminalNode[] storage, Section section) {
+        private void UpdateSymbolsTable(Antlr4.Runtime.Tree.ITerminalNode[] storage, SymbolTable.Section section) {
             if (storage == null) return;
             foreach(var node in storage) {
                 DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
-                if (data != null) GetScope(data, section).Add(data);
+                if (data != null) GetScope(data).Add(section, data);
             }
         }
 
-        private IList<DataDescriptionEntry> GetScope(DataDescriptionEntry data, Section section) {
-            if (data.IsExternal) return ExternalScope;
-            if (data.IsGlobal) return GlobalScope;
-            if (section == Section.Working) return Program.WorkingStorageData;
-            if (section == Section.Local)   return Program.LocalStorageData;
-            else return Program.LinkageData;
+        private SymbolTable GetScope(DataDescriptionEntry data) {
+            if (data.IsExternal) return TableOfExternals;
+            if (data.IsGlobal) return TableOfGlobals;
+            return Program.Data;
         }
     }
 }
