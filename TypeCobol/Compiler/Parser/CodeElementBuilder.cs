@@ -10,6 +10,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Statement;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -69,6 +70,7 @@ namespace TypeCobol.Compiler.Parser
                 programIdentification.IsRecursive = new SyntaxBoolean(recursiveFlag);
             }
 
+            Context = context;
             CodeElement = programIdentification;
         }
 
@@ -82,6 +84,7 @@ namespace TypeCobol.Compiler.Parser
                 programEnd.ProgramName = new ProgramName(programName);
             }
 
+            Context = context;
             CodeElement = programEnd;
         }
 
@@ -173,6 +176,7 @@ namespace TypeCobol.Compiler.Parser
                 classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
             }
 
+            Context = context;
             CodeElement = classIdentification;
         }
 
@@ -186,26 +190,31 @@ namespace TypeCobol.Compiler.Parser
                 classEnd.ClassName = new ClassName(className);
             }
 
+            Context = context;
             CodeElement = classEnd;
         }
 
         public override void EnterFactoryIdentification(CobolCodeElementsParser.FactoryIdentificationContext context)
         {
+            Context = context;
             CodeElement = new FactoryIdentification();
         }
 
         public override void EnterFactoryEnd(CobolCodeElementsParser.FactoryEndContext context)
         {
+            Context = context;
             CodeElement = new FactoryEnd();
         }
 
         public override void EnterObjectIdentification(CobolCodeElementsParser.ObjectIdentificationContext context)
         {
+            Context = context;
             CodeElement = new ObjectIdentification();
         }
 
         public override void EnterObjectEnd(CobolCodeElementsParser.ObjectEndContext context)
         {
+            Context = context;
             CodeElement = new ObjectEnd();
         }
 
@@ -219,6 +228,7 @@ namespace TypeCobol.Compiler.Parser
                 methodIdentification.MethodName = new MethodName(methodName);
             }
 
+            Context = context;
             CodeElement = methodIdentification;
         }
 
@@ -232,6 +242,7 @@ namespace TypeCobol.Compiler.Parser
                 methodEnd.MethodName = new MethodName(methodName);
             }
 
+            Context = context;
             CodeElement = methodEnd;
         }
 
@@ -239,11 +250,13 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterEnvironmentDivisionHeader(CobolCodeElementsParser.EnvironmentDivisionHeaderContext context)
         {
+            Context = context;
             CodeElement = new EnvironmentDivisionHeader();
         }
 
         public override void EnterDataDivisionHeader(CobolCodeElementsParser.DataDivisionHeaderContext context)
         {
+            Context = context;
             CodeElement = new DataDivisionHeader();
         }
 
@@ -287,16 +300,19 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
+            Context = context;
             CodeElement = procedureDivisionHeader;
         }
 
         public override void EnterDeclarativesHeader(CobolCodeElementsParser.DeclarativesHeaderContext context)
         {
+            Context = context;
             CodeElement = new DeclarativesHeader();
         }
 
         public override void EnterDeclarativesEnd(CobolCodeElementsParser.DeclarativesEndContext context)
         {
+            Context = context;
             CodeElement = new DeclarativesEnd();
         }
 
@@ -318,40 +334,47 @@ namespace TypeCobol.Compiler.Parser
                 sectionHeader.PriorityNumber = new SyntaxNumber(priorityNumber);
             }
 
+            Context = context;
             CodeElement = sectionHeader;
         }
 
         public override void EnterConfigurationSectionHeader(
             CobolCodeElementsParser.ConfigurationSectionHeaderContext context)
         {
+            Context = context;
             CodeElement = new ConfigurationSectionHeader();
         }
 
         public override void EnterInputOutputSectionHeader(
             CobolCodeElementsParser.InputOutputSectionHeaderContext context)
         {
+            Context = context;
             CodeElement = new InputOutputSectionHeader();
         }
 
         public override void EnterFileSectionHeader(CobolCodeElementsParser.FileSectionHeaderContext context)
         {
+            Context = context;
             CodeElement = new FileSectionHeader();
         }
 
         public override void EnterWorkingStorageSectionHeader(
             CobolCodeElementsParser.WorkingStorageSectionHeaderContext context)
         {
+            Context = context;
             CodeElement = new WorkingStorageSectionHeader();
         }
 
         public override void EnterLocalStorageSectionHeader(
             CobolCodeElementsParser.LocalStorageSectionHeaderContext context)
         {
+            Context = context;
             CodeElement = new LocalStorageSectionHeader();
         }
 
         public override void EnterLinkageSectionHeader(CobolCodeElementsParser.LinkageSectionHeaderContext context)
         {
+            Context = context;
             CodeElement = new LinkageSectionHeader();
         }
 
@@ -367,18 +390,21 @@ namespace TypeCobol.Compiler.Parser
                 paragraphHeader.ParagraphName = new ParagraphName(paragraphName);
             }
 
+            Context = context;
             CodeElement = paragraphHeader;
         }
 
         public override void EnterFileControlParagraphHeader(
             CobolCodeElementsParser.FileControlParagraphHeaderContext context)
         {
+            Context = context;
             CodeElement = new FileControlParagraphHeader();
         }
 
         public override void EnterIoControlParagraphHeader(
             CobolCodeElementsParser.IoControlParagraphHeaderContext context)
         {
+            Context = context;
             CodeElement = new IOControlParagraphHeader();
         }
 
@@ -386,6 +412,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSentenceEnd(CobolCodeElementsParser.SentenceEndContext context)
         {
+            Context = context;
             CodeElement = new SentenceEnd();
         }
 
@@ -395,6 +422,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterFileDescriptionEntry(CobolCodeElementsParser.FileDescriptionEntryContext context)
         {
+            Context = context;
             CodeElement = new FileDescriptionEntry();
         }
 
@@ -417,36 +445,28 @@ namespace TypeCobol.Compiler.Parser
             var redefines = context.redefinesClause();
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
 
-            var picture = GetFirstContext(entry, context.pictureClause());
+            var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
             if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
 
-            var blank = GetFirstContext(entry, context.blankWhenZeroClause());
+            var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
-            var external = GetFirstContext(entry, context.externalClause());
+            var external = DataDescriptionChecker.GetContext(entry, context.externalClause(), false);
             entry.IsExternal = external != null && external.EXTERNAL() != null;
-            var global = GetFirstContext(entry, context.globalClause());
+            var global = DataDescriptionChecker.GetContext(entry, context.globalClause(), false);
             entry.IsGlobal = global != null && global.GLOBAL() != null;
-            var justified = GetFirstContext(entry, context.justifiedClause());
+            var justified = DataDescriptionChecker.GetContext(entry, context.justifiedClause(), false);
             entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
-            var sync = GetFirstContext(entry, context.synchronizedClause());
+            var sync = DataDescriptionChecker.GetContext(entry, context.synchronizedClause(), false);
             entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
-            var group = GetFirstContext(entry, context.groupUsageClause());
+            var group = DataDescriptionChecker.GetContext(entry, context.groupUsageClause(), false);
             entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
-            UpdateDataDescriptionEntryWithUsageClause(entry, GetFirstContext(entry, context.usageClause()));
-            UpdateDataDescriptionEntryWithSignClause(entry, GetFirstContext(entry, context.signClause()));
-            UpdateDataDescriptionEntryWithOccursClause(entry, GetFirstContext(entry, context.occursClause()));
-            UpdateDataDescriptionEntryWithValueClause(entry, GetFirstContext(entry, context.valueClause()));
+            UpdateDataDescriptionEntryWithUsageClause(entry, DataDescriptionChecker.GetContext(entry, context.usageClause(), false));
+            UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
+            UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
+            UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
 
+            Context = context;
             CodeElement = entry;
-
-            if (dataname == null) {
-                if ((entry.LevelNumber == 77 || entry.LevelNumber == 88) && !entry.IsFiller)
-                    DiagnosticUtils.AddError(entry, "Data name must be specified for level-66 or level-88 items", context.levelNumber());
-                if (entry.IsExternal)
-                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the EXTERNAL clause", external);
-                if (entry.IsGlobal)
-                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
-            }
         }
 
         private void UpdateDataDescriptionEntryWithRenamesClause(DataDescriptionEntry entry, CobolCodeElementsParser.RenamesClauseContext context)
@@ -598,11 +618,13 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterFileControlEntry(CobolCodeElementsParser.FileControlEntryContext context)
         {
+            Context = context;
             CodeElement = new FileControlEntry();
         }
 
         public override void EnterIoControlEntry(CobolCodeElementsParser.IoControlEntryContext context)
         {
+            Context = context;
             CodeElement = new IOControlEntry();
         }
 
@@ -612,21 +634,25 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterSourceComputerParagraph(CobolCodeElementsParser.SourceComputerParagraphContext context)
         {
+            Context = context;
             CodeElement = new SourceComputerParagraph();
         }
 
         public override void EnterObjectComputerParagraph(CobolCodeElementsParser.ObjectComputerParagraphContext context)
         {
+            Context = context;
             CodeElement = new ObjectComputerParagraph();
         }
 
         public override void EnterSpecialNamesParagraph(CobolCodeElementsParser.SpecialNamesParagraphContext context)
         {
+            Context = context;
             CodeElement = new SpecialNamesParagraph();
         }
 
         public override void EnterRepositoryParagraph(CobolCodeElementsParser.RepositoryParagraphContext context)
         {
+            Context = context;
             CodeElement = new RepositoryParagraph();
         }
 
@@ -634,6 +660,7 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateAcceptStatement(context);
         }
 
@@ -647,6 +674,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var builder = new ArithmeticStatementBuilder('+');
             builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
         }
 
@@ -658,10 +686,8 @@ namespace TypeCobol.Compiler.Parser
                 builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
                     context.identifierRounded());
             }
-            else
-            {
-                DiagnosticUtils.AddError(builder.statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
-            }
+
+            Context = context;
             CodeElement = builder.statement;
         }
 
@@ -669,34 +695,35 @@ namespace TypeCobol.Compiler.Parser
         {
             var builder = new ArithmeticStatementBuilder('+');
             builder.InitializeFormat3Statement(context.identifier(), context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
-        }
-
-        public override void EnterAddStatement(CobolCodeElementsParser.AddStatementContext context)
-        {
-            //CodeElement = new AddStatement();
         }
 
         public override void EnterAddStatementEnd(CobolCodeElementsParser.AddStatementEndContext context)
         {
+            Context = context;
             CodeElement = new AddStatementEnd();
         }
 
         public override void EnterComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
         {
+            Context = context;
             CodeElement = new ComputeStatementBuilder().CreateComputeStatement(context);
         }
         public override void EnterComputeStatementEnd(CobolCodeElementsParser.ComputeStatementEndContext context)
         {
+            Context = context;
             CodeElement = new ComputeStatementEnd();
         }
 
         public override void EnterDivideStatement(CobolCodeElementsParser.DivideStatementContext context)
         {
+            Context = context;
             CodeElement = new DivideStatementBuilder().CreateStatement(context);
         }
         public override void EnterDivideStatementEnd(CobolCodeElementsParser.DivideStatementEndContext context)
         {
+            Context = context;
             CodeElement = new DivideStatementEnd();
         }
 
@@ -718,15 +745,18 @@ namespace TypeCobol.Compiler.Parser
                     alter = null;
                 }
             }
+            Context = context;
             CodeElement = statement;
         }
 
         public override void EnterCallStatement(CobolCodeElementsParser.CallStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateCallStatement(context);
         }
         public override void EnterCallStatementEnd(CobolCodeElementsParser.CallStatementEndContext context)
         {
+            Context = context;
             CodeElement = new CallStatementEnd();
         }
 
@@ -741,11 +771,13 @@ namespace TypeCobol.Compiler.Parser
                     DiagnosticUtils.AddError(statement, "CANCEL: <literal> must be alphanumeric", c);
                 if (item != null) statement.Items.Add(item);
             }
+            Context = context;
             CodeElement = statement;
         }
 
         public override void EnterContinueStatement(CobolCodeElementsParser.ContinueStatementContext context)
         {
+            Context = context;
             CodeElement = new ContinueStatement();
         }
 
@@ -753,10 +785,12 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new DeleteStatement();
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            Context = context;
             CodeElement = statement;
         }
         public override void EnterDeleteStatementEnd(CobolCodeElementsParser.DeleteStatementEndContext context)
         {
+            Context = context;
             CodeElement = new DeleteStatementEnd();
         }
 
@@ -824,7 +858,7 @@ namespace TypeCobol.Compiler.Parser
             Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
             statement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
 
-
+            Context = context;
             CodeElement = statement;
         }
 
@@ -862,6 +896,8 @@ namespace TypeCobol.Compiler.Parser
                 u.ByValue = by.VALUE() != null;
                 statement.Usings.Add(u);
             }
+
+            Context = context;
             CodeElement = statement;
         }
 
@@ -877,31 +913,38 @@ namespace TypeCobol.Compiler.Parser
                 if (node != null) str.Append(node.Text);
             }
             statement.Code = str.ToString();
+
+            Context = context;
             CodeElement = statement;
         }
 
         public override void EnterExitMethodStatement(CobolCodeElementsParser.ExitMethodStatementContext context)
         {
+            Context = context;
             CodeElement = new ExitMethodStatement();
         }
 
         public override void EnterExitProgramStatement(CobolCodeElementsParser.ExitProgramStatementContext context)
         {
+            Context = context;
             CodeElement = new ExitProgramStatement();
         }
 
         public override void EnterExitStatement(CobolCodeElementsParser.ExitStatementContext context)
         {
+            Context = context;
             CodeElement = new ExitStatement();
         }
 
         public override void EnterGobackStatement(CobolCodeElementsParser.GobackStatementContext context)
         {
+            Context = context;
             CodeElement = new GobackStatement();
         }
 
         public override void EnterGotoStatement(CobolCodeElementsParser.GotoStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateGotoStatement(context);
         }
 
@@ -913,58 +956,70 @@ namespace TypeCobol.Compiler.Parser
             {
                 statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
             }
+
+            Context = context;
             CodeElement = statement;
         }
 
         public override void EnterElseCondition(CobolCodeElementsParser.ElseConditionContext context)
         {
+            Context = context;
             CodeElement = new ElseCondition();
         }
 
         public override void EnterIfStatementEnd(CobolCodeElementsParser.IfStatementEndContext context)
         {
+            Context = context;
             CodeElement = new IfStatementEnd();
         }
 
 
         public override void EnterEvaluateStatement(CobolCodeElementsParser.EvaluateStatementContext context)
         {
+            Context = context;
             CodeElement = new EvaluateStatement();
         }
 
         public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
         {
+            Context = context;
             CodeElement = new WhenEvaluateCondition();
         }
 
         public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
         {
+            Context = context;
             CodeElement = new WhenOtherCondition();
         }
 
         public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
         {
+            Context = context;
             CodeElement = new EvaluateStatementEnd();
         }
 
 
         public override void EnterInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateInitializeStatement(context);
         }
 
         public override void EnterInspectStatement(CobolCodeElementsParser.InspectStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateInspectStatement(context);
         }
 
         public override void EnterInvokeStatement(CobolCodeElementsParser.InvokeStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateInvokeStatement(context);
         }
 
         public override void EnterMoveStatement(CobolCodeElementsParser.MoveStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateMoveStatement(context);
         }
 
@@ -972,6 +1027,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var builder = new ArithmeticStatementBuilder('×');
             builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
         }
 
@@ -980,73 +1036,87 @@ namespace TypeCobol.Compiler.Parser
             var builder = new ArithmeticStatementBuilder('×');
             builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
                 context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
-        }
-
-        public override void EnterMultiplyStatement(CobolCodeElementsParser.MultiplyStatementContext context)
-        {
-            //CodeElement = new MultiplyStatement();
         }
 
         public override void EnterMultiplyStatementEnd(CobolCodeElementsParser.MultiplyStatementEndContext context)
         {
+            Context = context;
             CodeElement = new MultiplyStatementEnd();
         }
 
 
         public override void EnterNextSentenceStatement(CobolCodeElementsParser.NextSentenceStatementContext context)
         {
+            Context = context;
             CodeElement = new NextSentenceStatement();
         }
 
         public override void EnterOpenStatement(CobolCodeElementsParser.OpenStatementContext context)
         {
+            Context = context;
             CodeElement = new FileOperationBuilder().CreateOpenStatement(context);
         }
 
         public override void EnterCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
         {
+            Context = context;
             CodeElement = new FileOperationBuilder().CreateCloseStatement(context);
         }
 
         public override void EnterReadStatement(CobolCodeElementsParser.ReadStatementContext context)
         {
+            Context = context;
             CodeElement = new FileOperationBuilder().CreateReadStatement(context);
         }
 
         public override void EnterReadStatementEnd(CobolCodeElementsParser.ReadStatementEndContext context)
         {
+            Context = context;
             CodeElement = new ReadStatementEnd();
         }
 
         public override void EnterWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
         {
+            Context = context;
             CodeElement = new FileOperationBuilder().CreateWriteStatement(context);
         }
 
         public override void EnterWriteStatementEnd(CobolCodeElementsParser.WriteStatementEndContext context)
         {
+            Context = context;
             CodeElement = new WriteStatementEnd();
         }
 
         public override void EnterRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
         {
+            Context = context;
             CodeElement = new FileOperationBuilder().CreateRewriteStatement(context);
+        }
+
+        public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new RewriteStatementEnd();
         }
 
 
         public override void EnterPerformStatement(CobolCodeElementsParser.PerformStatementContext context)
         {
+            Context = context;
             CodeElement = new PerformStatement();
         }
 
         public override void EnterPerformProcedureStatement(CobolCodeElementsParser.PerformProcedureStatementContext context)
         {
+            Context = context;
             CodeElement = new PerformProcedureStatement();
         }
 
         public override void EnterPerformStatementEnd(CobolCodeElementsParser.PerformStatementEndContext context)
         {
+            Context = context;
             CodeElement = new PerformStatementEnd();
         }
 
@@ -1057,24 +1127,29 @@ namespace TypeCobol.Compiler.Parser
             var statement = new ReleaseStatement();
             statement.RecordName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
             statement.From = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            Context = context;
             CodeElement = statement;
         }
 
         public override void EnterReturnStatement(CobolCodeElementsParser.ReturnStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateReturnStatement(context);
         }
         public override void EnterReturnStatementEnd(CobolCodeElementsParser.ReturnStatementEndContext context)
         {
+            Context = context;
             CodeElement = new ReturnStatementEnd();
         }
 
         public override void EnterSearchStatement(CobolCodeElementsParser.SearchStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateSearchStatement(context);
         }
         public override void EnterSearchStatementEnd(CobolCodeElementsParser.SearchStatementEndContext context)
         {
+            Context = context;
             CodeElement = new SearchStatementEnd();
         }
 
@@ -1172,6 +1247,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
+            Context = context;
             CodeElement = statement;
         }
 
@@ -1211,6 +1287,7 @@ namespace TypeCobol.Compiler.Parser
                 DiagnosticUtils.AddError(statement, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
 
+            Context = context;
             CodeElement = statement;
         }
 
@@ -1247,6 +1324,7 @@ namespace TypeCobol.Compiler.Parser
                 statement.SetExternalSwitches = setExternalSwitchs;
             }
 
+            Context = context;
             CodeElement = statement;
         }
 
@@ -1254,11 +1332,13 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterMergeStatement(CobolCodeElementsParser.MergeStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateMergeStatement(context);
         }
 
         public override void EnterSortStatement(CobolCodeElementsParser.SortStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateSortStatement(context);
         }
 
@@ -1275,6 +1355,7 @@ namespace TypeCobol.Compiler.Parser
         }
         public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)
         {
+            Context = context;
             CodeElement = new StartStatementEnd();
         }
 
@@ -1347,13 +1428,21 @@ namespace TypeCobol.Compiler.Parser
                 statement.PointerIdentifier = SyntaxElementBuilder.CreateIdentifier(context.stringStatementWith().identifier());
             } //else don't set statement.PointerIdentifier
 
+            Context = context;
             CodeElement = statement;
+        }
+
+        public override void EnterStringStatementEnd(CobolCodeElementsParser.StringStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new StringStatementEnd();
         }
 
         public override void EnterSubtractStatementFormat1(CobolCodeElementsParser.SubtractStatementFormat1Context context)
         {
             var builder = new ArithmeticStatementBuilder('-');
             builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
         }
 
@@ -1362,6 +1451,7 @@ namespace TypeCobol.Compiler.Parser
             var builder = new ArithmeticStatementBuilder('-');
             builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
                 context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
         }
 
@@ -1369,16 +1459,13 @@ namespace TypeCobol.Compiler.Parser
         {
             var builder = new ArithmeticStatementBuilder('-');
             builder.InitializeFormat3Statement(context.identifier(), context.identifierRounded());
+            Context = context;
             CodeElement = builder.statement;
-        }
-
-        public override void EnterSubtractStatement(CobolCodeElementsParser.SubtractStatementContext context)
-        {
-            //CodeElement = new SubtractStatement();
         }
 
         public override void EnterSubtractStatementEnd(CobolCodeElementsParser.SubtractStatementEndContext context)
         {
+            Context = context;
             CodeElement = new SubtractStatementEnd();
         }
 
@@ -1448,11 +1535,19 @@ namespace TypeCobol.Compiler.Parser
                 statement.Tallying = SyntaxElementBuilder.CreateIdentifier(context.unstringTallying().identifier());
             }
 
+            Context = context;
             CodeElement = statement;
+        }
+
+        public override void EnterUnstringStatementEnd(CobolCodeElementsParser.UnstringStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new UnstringStatementEnd();
         }
 
         public override void EnterUseStatement(CobolCodeElementsParser.UseStatementContext context)
         {
+            Context = context;
             var builder = new StatementsBuilder();
             if (context.useStatementForExceptionDeclarative() != null)
                 CodeElement = builder.CreateUseStatement(context.useStatementForExceptionDeclarative());
@@ -1465,16 +1560,19 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateXmlGenerateStatement(context);
         }
 
         public override void EnterXmlParseStatement(CobolCodeElementsParser.XmlParseStatementContext context)
         {
+            Context = context;
             CodeElement = new StatementsBuilder().CreateXmlParseStatement(context);
         }
 
         public override void EnterXmlStatementEnd(CobolCodeElementsParser.XmlStatementEndContext context)
         {
+            Context = context;
             CodeElement = new XmlStatementEnd();
         }
 
@@ -1482,84 +1580,80 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
         {
+            Context = context;
             CodeElement = new WhenConditionalExpression();
         }
 
         public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)
         {
+            Context = context;
             CodeElement = new AtEndCondition();
         }
 
         public override void EnterNotAtEndCondition(CobolCodeElementsParser.NotAtEndConditionContext context)
         {
+            Context = context;
             CodeElement = new NotAtEndCondition();
         }
 
         public override void EnterAtEndOfPageCondition(CobolCodeElementsParser.AtEndOfPageConditionContext context)
         {
+            Context = context;
             CodeElement = new AtEndOfPageCondition();
         }
 
         public override void EnterNotAtEndOfPageCondition(CobolCodeElementsParser.NotAtEndOfPageConditionContext context)
         {
+            Context = context;
             CodeElement = new NotAtEndOfPageCondition();
         }
 
         public override void EnterOnExceptionCondition(CobolCodeElementsParser.OnExceptionConditionContext context)
         {
+            Context = context;
             CodeElement = new OnExceptionCondition();
         }
 
         public override void EnterNotOnExceptionCondition(CobolCodeElementsParser.NotOnExceptionConditionContext context)
         {
+            Context = context;
             CodeElement = new NotOnExceptionCondition();
         }
 
         public override void EnterOnOverflowCondition(CobolCodeElementsParser.OnOverflowConditionContext context)
         {
+            Context = context;
             CodeElement = new OnOverflowCondition();
         }
 
         public override void EnterNotOnOverflowCondition(CobolCodeElementsParser.NotOnOverflowConditionContext context)
         {
+            Context = context;
             CodeElement = new NotOnOverflowCondition();
         }
 
         public override void EnterInvalidKeyCondition(CobolCodeElementsParser.InvalidKeyConditionContext context)
         {
+            Context = context;
             CodeElement = new InvalidKeyCondition();
         }
 
         public override void EnterNotInvalidKeyCondition(CobolCodeElementsParser.NotInvalidKeyConditionContext context)
         {
+            Context = context;
             CodeElement = new NotInvalidKeyCondition();
         }
 
         public override void EnterOnSizeErrorCondition(CobolCodeElementsParser.OnSizeErrorConditionContext context)
         {
+            Context = context;
             CodeElement = new OnSizeErrorCondition();
         }
 
         public override void EnterNotOnSizeErrorCondition(CobolCodeElementsParser.NotOnSizeErrorConditionContext context)
         {
+            Context = context;
             CodeElement = new NotOnSizeErrorCondition();
-        }
-
-        // Statement ends
-
-        public override void EnterRewriteStatementEnd(CobolCodeElementsParser.RewriteStatementEndContext context)
-        {
-            CodeElement = new RewriteStatementEnd();
-        }
-
-        public override void EnterStringStatementEnd(CobolCodeElementsParser.StringStatementEndContext context)
-        {
-            CodeElement = new StringStatementEnd();
-        }
-
-        public override void EnterUnstringStatementEnd(CobolCodeElementsParser.UnstringStatementEndContext context)
-        {
-            CodeElement = new UnstringStatementEnd();
         }
     }
 }

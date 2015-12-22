@@ -41,6 +41,8 @@ namespace TypeCobol.Compiler.Parser
         private IList<CodeElementListener> listeners = new List<CodeElementListener>();
 
         internal void CreateListeners() {
+            listeners.Add(new DataDescriptionChecker());
+            listeners.Add(new AddStatementChecker());
             listeners.Add(new StartStatementChecker());
             listeners.Add(new StopStatementChecker());
         }
