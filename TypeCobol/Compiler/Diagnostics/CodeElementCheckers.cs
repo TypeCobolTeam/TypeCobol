@@ -54,12 +54,33 @@ namespace TypeCobol.Compiler.Diagnostics
         public IList<Type> GetCodeElements() {
             return new List<Type>() { typeof(AddStatement), };
         }
-        public void OnCodeElement(CodeElement e, ParserRuleContext context) {
-            var s = e as AddStatement;
-            var c = context as CobolCodeElementsParser.AddStatementFormat2Context;
-            if (c == null) return; //we only check format 2
-            if (c.GIVING() == null)
-                DiagnosticUtils.AddError(s, "Required: <identifier> after TO", c.identifierOrNumericLiteralTmp());
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var statement = e as AddStatement;
+            var context = c as CobolCodeElementsParser.AddStatementFormat2Context;
+            if (context == null) return; //we only check format 2
+            if (context.GIVING() == null)
+                DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
+        }
+    }
+
+    class CancelStatementChecker: CodeElementListener
+    {
+        public IList<Type> GetCodeElements() {
+            return new List<Type>() { typeof(CancelStatement), };
+        }
+        public void OnCodeElement(CodeElement e, ParserRuleContext ctxt) {
+            var statement = e as CancelStatement;
+            var context = ctxt as CobolCodeElementsParser.CancelStatementContext;
+
+            foreach (var item in statement.Items)
+            {
+                var literal = item as TypeCobol.Compiler.CodeElements.Expressions.Literal;
+                if (literal != null && (literal.Value is double || literal.Value is long)) {
+                    // we should link this error to the specific context.identifierOrLiteral[i] context
+                    // corresponding to statement.Items[i], but since refactor in #157 it's not trivial anymore
+                    DiagnosticUtils.AddError(statement, "CANCEL: <literal> must be alphanumeric", context);
+                }
+            }
         }
     }
 
@@ -68,12 +89,12 @@ namespace TypeCobol.Compiler.Diagnostics
         public IList<Type> GetCodeElements() {
             return new List<Type>() { typeof(StartStatement), };
         }
-        public void OnCodeElement(CodeElement e, ParserRuleContext context) {
-            var s = e as StartStatement;
-            var c = context as CobolCodeElementsParser.StartStatementContext;
-            if (c.relationalOperator() != null)
-                if (s.Operator != '=' && s.Operator != '>' && s.Operator != '≥')
-                    DiagnosticUtils.AddError(s, "START: Illegal operator "+s.Operator, c.relationalOperator());
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var statement = e as StartStatement;
+            var context = c as CobolCodeElementsParser.StartStatementContext;
+            if (context.relationalOperator() != null)
+                if (statement.Operator != '=' && statement.Operator != '>' && statement.Operator != '≥')
+                    DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.Operator, context.relationalOperator());
         }
     }
 
@@ -82,12 +103,12 @@ namespace TypeCobol.Compiler.Diagnostics
         public IList<Type> GetCodeElements() {
             return new List<Type>() { typeof(StopStatement), };
         }
-        public void OnCodeElement(CodeElement e, ParserRuleContext context) {
-            var s = e as StopStatement;
-            var c = context as CobolCodeElementsParser.StopStatementContext;
-            if (c.literal() != null)
-                if (s.Literal != null && s.Literal.All)
-                    DiagnosticUtils.AddError(s, "STOP: Illegal ALL", c.literal());
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var statement = e as StopStatement;
+            var context = c as CobolCodeElementsParser.StopStatementContext;
+            if (context.literal() != null)
+                if (statement.Literal != null && statement.Literal.All)
+                    DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
         }
     }
 }

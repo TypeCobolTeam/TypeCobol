@@ -766,11 +766,9 @@ namespace TypeCobol.Compiler.Parser
             foreach (var c in context.identifierOrLiteral())
             {
                 var item = SyntaxElementBuilder.CreateIdentifierOrLiteral(c);
-                var literal = item as Literal;
-                if (literal != null && (literal.Value is double || literal.Value is long))
-                    DiagnosticUtils.AddError(statement, "CANCEL: <literal> must be alphanumeric", c);
                 if (item != null) statement.Items.Add(item);
             }
+
             Context = context;
             CodeElement = statement;
         }
