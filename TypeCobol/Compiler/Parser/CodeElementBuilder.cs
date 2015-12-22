@@ -18,10 +18,18 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
-        /// <summary>
-        ///     CodeElement object resulting of the visit the parse tree
-        /// </summary>
-        public CodeElement CodeElement = null;
+        private CodeElement _ce;
+        private ParserRuleContext Context;
+
+        /// <summary>CodeElement object resulting of the visit the parse tree</summary>
+        public CodeElement CodeElement {
+            get { return _ce; }
+            private set {
+                _ce = value;
+                if (value != null) Dispatcher.OnCodeElement(value, Context);
+            }
+        }
+        public CodeElementDispatcher Dispatcher { get; internal set; }
 
         /// <summary>
         ///     Initialization code run before parsing each new CodeElement
@@ -29,6 +37,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterCodeElement(CobolCodeElementsParser.CodeElementContext context)
         {
             CodeElement = null;
+            Context = null;
         }
 
         // Code structure
@@ -1252,11 +1261,9 @@ namespace TypeCobol.Compiler.Parser
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
             statement.DataName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
             if (context.relationalOperator() != null)
-            {
                 statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
-                if (statement.Operator != '=' && statement.Operator != '>' && statement.Operator != '≥')
-                    DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.Operator, context.relationalOperator());
-            }
+            
+            Context = context;
             CodeElement = statement;
         }
         public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)
@@ -1268,12 +1275,10 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new StopStatement();
             if (context.literal() != null)
-            {
                 statement.Literal = SyntaxElementBuilder.CreateLiteral(context.literal());
-                if (statement.Literal != null && statement.Literal.All)
-                    DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
-            }
             statement.IsStopRun = context.RUN() != null;
+
+            Context = context;
             CodeElement = statement;
         }
 
