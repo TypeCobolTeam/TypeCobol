@@ -44,6 +44,7 @@ namespace TypeCobol.Compiler.Parser
             listeners.Add(new DataDescriptionChecker());
             listeners.Add(new AddStatementChecker());
             listeners.Add(new CancelStatementChecker());
+            listeners.Add(new SetStatementChecker());
             listeners.Add(new StartStatementChecker());
             listeners.Add(new StopStatementChecker());
         }

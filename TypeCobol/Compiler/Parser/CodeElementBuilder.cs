@@ -1156,7 +1156,7 @@ namespace TypeCobol.Compiler.Parser
             var statement = new SetStatementForAssignation();
             if (context.setStatementForAssignationReceiving() != null)
             {
-                var receivginList = new List<Expression>();
+                statement.ReceivingFields = new List<Expression>();
                 foreach (
                     CobolCodeElementsParser.SetStatementForAssignationReceivingContext receivingContext in
                         context.setStatementForAssignationReceiving())
@@ -1182,14 +1182,9 @@ namespace TypeCobol.Compiler.Parser
                     {
                         receiving = SyntaxElementBuilder.CreateObjectReferenceId(receivingContext.objectReferenceId());
                     }
-                    else
-                    {
-                        DiagnosticUtils.AddError(statement, "Set: Receiving fields missing or type unknown before TO", receivingContext);
-                        break;
-                    }
-                    receivginList.Add(receiving);
+                    else break;
+                    statement.ReceivingFields.Add(receiving);
                 }
-                statement.ReceivingFields = receivginList;
             }
 
             if (context.setStatementForAssignationSending() != null)
@@ -1239,10 +1234,6 @@ namespace TypeCobol.Compiler.Parser
                     statement.SendingField =
                         new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().SELF()));
                 }
-                else
-                {
-                    DiagnosticUtils.AddError(statement, "Set: Sending field missing or type unknown after TO", context.setStatementForAssignationSending());
-                }
             }
 
             Context = context;
@@ -1279,10 +1270,6 @@ namespace TypeCobol.Compiler.Parser
             else if (context.IntegerLiteral() != null)
             {
                 statement.SendingField = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
-            } 
-            else
-            {
-                DiagnosticUtils.AddError(statement, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
 
             Context = context;

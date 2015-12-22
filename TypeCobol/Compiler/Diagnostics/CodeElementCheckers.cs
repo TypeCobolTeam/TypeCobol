@@ -84,6 +84,35 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    class SetStatementChecker: CodeElementListener
+    {
+        public IList<Type> GetCodeElements() {
+            return new List<Type>() { typeof(TypeCobol.Compiler.CodeElements.Statement.SetStatementForIndex), };
+        }
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var sa = e as TypeCobol.Compiler.CodeElements.Statement.SetStatementForAssignation;
+            if (sa != null) {
+                var ca = c as CobolCodeElementsParser.SetStatementForAssignationContext;
+                for (int i = 0; i < ca.setStatementForAssignationReceiving().Length; i++) {
+                    if (i >= sa.ReceivingFields.Count) {
+                        var ctxt = ca.setStatementForAssignationReceiving()[i];
+                        DiagnosticUtils.AddError(sa, "Set: Receiving fields missing or type unknown before TO", ctxt);
+                    }
+                }
+                if (sa.SendingField == null) {
+                    DiagnosticUtils.AddError(sa, "Set: Sending field missing or type unknown after TO", ca.setStatementForAssignationSending());
+                }
+            }
+            var si = e as TypeCobol.Compiler.CodeElements.Statement.SetStatementForIndex;
+            if (si != null) {
+                if (si.SendingField == null) {
+                    var ci = c as CobolCodeElementsParser.SetStatementForIndexesContext;
+                    DiagnosticUtils.AddError(si, "Set xxx up/down by xxx: Sending field missing or type unknown", ci);
+                }
+            }
+        }
+    }
+
     class StartStatementChecker: CodeElementListener
     {
         public IList<Type> GetCodeElements() {
