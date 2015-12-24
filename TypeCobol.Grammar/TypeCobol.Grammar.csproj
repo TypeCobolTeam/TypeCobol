@@ -78,6 +78,7 @@
   <ItemGroup>
     <Content Include="How to configure antlr 4 in Visual Studio.txt" />
     <Content Include="How to edit antlr 4 grammar files.txt" />
+    <Content Include="IMPORTANT_README_BEFORE_FIRST_BUILD.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

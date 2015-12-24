@@ -5,28 +5,35 @@ PROCEDURE DIVISION.
 
 SKIP-01.
   CONTINUE
-  SKIP3.
+  SKIP3
+  .
 SKIP-02.
-  SKIP3.
+  SKIP3
+  .
 SKIP-03.
   SKIP3.
-  SKIP3.
+  SKIP3
+  .
 SKIP-04.
   SKIP3
-  SKIP3.
+  SKIP3
+  .
 SKIP-05.
   CONTINUE.
-  SKIP3.
+  SKIP3
+  .
 SKIP-06.
   CONTINUE
   SKIP3
   CONTINUE.
 SKIP-06.
   PERFORM procedurename
-  SKIP3.
+  SKIP3
+  .
 SKIP-07.
   PERFORM procedurename.
-  SKIP3.
+  SKIP3
+  .
 SKIP-08.
   PERFORM procedurename
   SKIP3
@@ -34,15 +41,19 @@ SKIP-08.
 
 EJECT01.
   CONTINUE
-  EJECT.
+  EJECT
+  .
 EJECT02.
-  EJECT.
+  EJECT
+  .
 EJECT03.
   EJECT.
-  EJECT.
+  EJECT
+  .
 EJECT04.
   EJECT
-  EJECT.
+  EJECT
+  .
 EJECT05.
   CONTINUE.
   EJECT.
@@ -52,10 +63,12 @@ EJECT06.
   CONTINUE.
 EJECT06.
   PERFORM procedurename
-  EJECT.
+  EJECT
+  .
 EJECT07.
   PERFORM procedurename.
-  EJECT.
+  EJECT
+  .
 EJECT08.
   PERFORM procedurename
   EJECT

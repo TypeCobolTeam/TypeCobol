@@ -100,6 +100,7 @@
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\DiagnosticSyntaxErrorListener.cs" />
+    <Compile Include="Compiler\AntlrUtils\LineAwareParser.cs" />
     <Compile Include="Compiler\AntlrUtils\ParseTreeUtils.cs" />
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
@@ -363,15 +364,19 @@
     <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
     <None Include="Documentation\Architecture\Initial requirements.docx" />
     <None Include="Documentation\Architecture\TypeCobolStats_14_04_2015.xlsx" />
+    <None Include="Documentation\Reference\DB2 11 for zOs - Application Programming and SQL Guide.pdf" />
     <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Language Reference.pdf" />
+    <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf" />
     <None Include="Documentation\Studies\CobolLexer.tokens.xlsx" />
     <None Include="Documentation\Studies\Code elements.xlsx" />
     <None Include="Documentation\Studies\Compiler directive study.xlsx" />
     <None Include="Documentation\Studies\Compiler options study.xlsx" />
+    <None Include="Documentation\Studies\Data item study.docx" />
     <None Include="Documentation\Studies\IBM compiler versions study.xlsx" />
     <None Include="Documentation\Studies\IBM vs DotNet charsets.xlsx" />
     <None Include="Documentation\Studies\Lexical families.xlsx" />
     <None Include="Documentation\Studies\Literals and Identifiers in parser rules.xlsx" />
+    <None Include="Documentation\Studies\Move code element study.docx" />
     <None Include="Documentation\Studies\Pipeline - compilation steps.docx" />
     <None Include="Documentation\Studies\Text editors functions study.xlsx" />
     <None Include="packages.config">
