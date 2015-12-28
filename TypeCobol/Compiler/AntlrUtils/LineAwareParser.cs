@@ -10,13 +10,12 @@ namespace TypeCobol.Compiler.AntlrUtils
         { }
 
         public bool IsNextTokenOnTheSameLine()
-        {
-            Token previousToken = (Token)_input.Lt(-1);
+        {            
             Token currentToken = (Token)CurrentToken;
-            
-            
-            return previousToken != null && currentToken != null &&
-                   previousToken.TokensLine == currentToken.TokensLine;
+            Token nextToken = (Token)_input.Lt(2);
+
+            return nextToken != null && currentToken != null &&
+                   nextToken.TokensLine == currentToken.TokensLine;
         }
     }
 }
