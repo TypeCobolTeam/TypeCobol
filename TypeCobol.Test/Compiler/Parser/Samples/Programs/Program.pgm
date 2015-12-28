@@ -15,11 +15,16 @@ DATA DIVISION.
 **************
 WORKING-STORAGE SECTION.
 01  str    PIC X(08) VALUE 'THIS'.
-01  group  PIC X(08).
- 77  vrai  PIC 9 VALUE 1.
- 77  faux  PIC 9 VALUE 0.
- 77  num   PIC 9.
- 77  str   PIC X(15) VALUE 'THAT'.
+01  group.
+ 05  num   PIC 9.
+ 05 subgroup.
+  10  vrai  PIC 9 VALUE 1.
+  10  faux  PIC 9 VALUE 0.
+ 05 subgroup2.
+  10  x  PIC 9(2).
+  10  y  PIC 9(2).
+ 05  str   PIC X(15) VALUE 'THAT'.
+01 x PIC A(3).
 
 01  sqlcode  PIC ZZ9+ BLANK WHEN ZERO.
   EXEC SQL DECLARE tablename TABLE

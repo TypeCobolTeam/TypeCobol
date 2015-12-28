@@ -21,6 +21,9 @@ namespace TypeCobol.Compiler.Parser
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
 
+        private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
+        private SymbolTable TableOfGlobals;
+
         /// <summary>
         /// Class object resulting of the visit the parse tree
         /// </summary>
@@ -36,6 +39,7 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public override void EnterCobolCompilationUnit(CobolProgramClassParser.CobolCompilationUnitContext context)
         {
+            TableOfGlobals = new SymbolTable(TableOfExternals, SymbolTable.Scope.Global);
             Program = null;
             Class = null;
             Diagnostics = new List<Diagnostic>();
@@ -66,6 +70,58 @@ namespace TypeCobol.Compiler.Parser
             {
                 programsStack.Pop();
             }
+        }
+
+        public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
+            if (Program.Data == null) CreateSymbolsTable();
+            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Working);
+        }
+
+        public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
+            if (Program.Data == null) CreateSymbolsTable();
+            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Local);
+        }
+
+        public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
+            if (Program.Data == null) CreateSymbolsTable();
+            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Linkage);
+        }
+
+        private void CreateSymbolsTable() {
+            NestedProgram nested = Program as NestedProgram;
+            if (nested == null) Program.Data = new SymbolTable(TableOfGlobals);
+            else Program.Data = new SymbolTable(nested.ContainingProgram.Data);
+        }
+
+        private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
+            IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
+            if (nodes == null) return result;
+            Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
+            foreach (var node in nodes) {
+                DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
+                bool okay = false;
+                while(!okay && groups.Count > 0) {
+                    var toplevel = groups.Peek();
+                    if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
+                    else {
+                        toplevel.Subordinates.Add(data);
+                        okay = true;
+                    }
+                }
+                if (data.IsGroup) groups.Push(data);
+                if (!okay) result.Add(data);
+            }
+            return result;
+        }
+
+        private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
+            foreach(var d in data) GetScope(d).Add(section, d);
+        }
+
+        private SymbolTable GetScope(DataDescriptionEntry data) {
+            if (data.IsExternal) return TableOfExternals;
+            if (data.IsGlobal) return TableOfGlobals;
+            return Program.Data;
         }
     }
 }

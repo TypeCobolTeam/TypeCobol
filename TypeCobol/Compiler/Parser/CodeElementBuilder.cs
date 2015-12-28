@@ -18,10 +18,18 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     internal class CodeElementBuilder : CobolCodeElementsBaseListener
     {
-        /// <summary>
-        ///     CodeElement object resulting of the visit the parse tree
-        /// </summary>
-        public CodeElement CodeElement = null;
+        private CodeElement _ce;
+        private ParserRuleContext Context;
+
+        /// <summary>CodeElement object resulting of the visit the parse tree</summary>
+        public CodeElement CodeElement {
+            get { return _ce; }
+            private set {
+                _ce = value;
+                if (value != null) Dispatcher.OnCodeElement(value, Context);
+            }
+        }
+        public CodeElementDispatcher Dispatcher { get; internal set; }
 
         /// <summary>
         ///     Initialization code run before parsing each new CodeElement
@@ -29,6 +37,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterCodeElement(CobolCodeElementsParser.CodeElementContext context)
         {
             CodeElement = null;
+            Context = null;
         }
 
         // Code structure
@@ -391,7 +400,191 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDataDescriptionEntry(CobolCodeElementsParser.DataDescriptionEntryContext context)
         {
-            CodeElement = new DataDescriptionEntry();
+            int level = 0;
+            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+            }
+            var dataname = SyntaxElementBuilder.CreateDataName(context.dataName());
+
+            DataDescriptionEntry entry = new DataDescriptionEntry();
+            entry.LevelNumber = level;
+            if (dataname != null) entry.DataName = dataname.Symbol;
+            //entry.IsFiller = (dataname == null || context.FILLER() != null);
+            if (entry.LevelNumber == 88) entry.IsConditionNameDescription = true;
+
+            UpdateDataDescriptionEntryWithRenamesClause(entry, context.renamesClause());
+
+            var redefines = context.redefinesClause();
+            if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
+
+            var picture = GetContext(entry, context.pictureClause());
+            if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
+
+            var blank = GetContext(entry, context.blankWhenZeroClause());
+            entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
+            var external = GetContext(entry, context.externalClause());
+            entry.IsExternal = external != null && external.EXTERNAL() != null;
+            var global = GetContext(entry, context.globalClause());
+            entry.IsGlobal = global != null && global.GLOBAL() != null;
+            var justified = GetContext(entry, context.justifiedClause());
+            entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
+            var sync = GetContext(entry, context.synchronizedClause());
+            entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
+            var group = GetContext(entry, context.groupUsageClause());
+            entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
+            UpdateDataDescriptionEntryWithUsageClause(entry, GetContext(entry, context.usageClause()));
+            UpdateDataDescriptionEntryWithSignClause(entry, GetContext(entry, context.signClause()));
+            UpdateDataDescriptionEntryWithOccursClause(entry, GetContext(entry, context.occursClause()));
+            UpdateDataDescriptionEntryWithValueClause(entry, GetContext(entry, context.valueClause()));
+
+            CodeElement = entry;
+
+            if (dataname == null) {
+                if ((entry.LevelNumber == 77 || entry.LevelNumber == 88) && !entry.IsFiller)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for level-66 or level-88 items", context.levelNumber());
+                if (entry.IsExternal)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+                if (entry.IsGlobal)
+                    DiagnosticUtils.AddError(entry, "Data name must be specified for any entry containing the GLOBAL clause", global);
+            }
+        }
+
+        private void UpdateDataDescriptionEntryWithRenamesClause(DataDescriptionEntry entry, CobolCodeElementsParser.RenamesClauseContext context)
+        {
+            if (context == null) return;
+            var names = SyntaxElementBuilder.CreateDataNames(context.dataName());
+            if (names.Count > 0) entry.RenamesFromDataName = names[0];
+            if (names.Count > 1) entry.RenamesToDataName   = names[1];
+            //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
+        }
+
+        private void UpdateDataDescriptionEntryWithSignClause(DataDescriptionEntry entry, CobolCodeElementsParser.SignClauseContext context)
+        {
+            if (context == null) return;
+            entry.SignPosition = SignPosition.None;
+            if (context.TRAILING() != null) entry.SignPosition = SignPosition.Trailing;
+            if (context.LEADING()  != null) entry.SignPosition = SignPosition.Leading;
+            entry.IsSignSeparate = context.SEPARATE() != null;
+        }
+
+        private void UpdateDataDescriptionEntryWithUsageClause(DataDescriptionEntry entry, CobolCodeElementsParser.UsageClauseContext context)
+        {
+            if (context == null) return;
+            entry.Usage = CreateDataUsage(context);
+            entry.ObjectReference = SyntaxElementBuilder.CreateClassName(context.className());
+        }
+
+        private void UpdateDataDescriptionEntryWithOccursClause(DataDescriptionEntry entry, CobolCodeElementsParser.OccursClauseContext context)
+        {
+            if (context == null) return;
+            entry.IsTableOccurence = true;
+
+            bool isVariable = (context.occursDependingOn() != null);
+            if (isVariable) {
+                entry.OccursDependingOn = SyntaxElementBuilder.CreateDataName(context.occursDependingOn().dataName());
+            }
+            isVariable = isVariable || (context.UNBOUNDED() != null) || (context.TO() != null);
+
+            var integers = context.IntegerLiteral();
+            if (integers != null) {
+                isVariable = isVariable || (integers.Length == 2);
+                if (integers.Length == 0) {
+                    if (isVariable) {
+                            // 1) OCCURS UNBOUNDED DEPENDING ON...
+                        entry.MinOccurencesCount = 1;
+                        entry.MaxOccurencesCount = Int32.MaxValue;
+                    }
+                    // else;   2) OCCURS ... -syntax error (fixed length, exact missing)
+                } else
+                if (integers.Length == 1) {
+                    if (isVariable) {
+                        if (context.UNBOUNDED() != null) {
+                            // 3) OCCURS min TO UNBOUNDED DEPENDING ON...
+                            // 4) OCCURS min UNBOUNDED DEPENDING ON... -syntax error (TO missing)
+                            entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                            entry.MaxOccurencesCount = Int32.MaxValue;
+                        } else {
+                            // 5) OCCURS max DEPENDING ON...
+                            // 6) OCCURS min TO DEPENDING ON... -syntax error (max missing)
+                            // 7) OCCURS TO max DEPENDING ON... -syntax error (min missing)
+                            // WARNING! due to our grammar, we cannot discriminate between 6) and 7)
+                            // this shouldn't be a problem as both cases are syntax errors
+                            entry.MinOccurencesCount = 1;
+                            entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                        }
+                    } else {
+                            // 8) OCCURS exact ... (fixed length)
+                        entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                    }
+                } else { // isVariable == true && integers.Length == 2
+                            // 9) OCCURS min TO max DEPENDING ON...
+                            //10) OCCURS min max DEPENDING ON... -syntax error (TO missing)
+                    entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                    entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[1]);
+                }
+            }
+
+            var keys = context.occursKeys();
+            if (keys != null) {
+                entry.TableOccurenceKeys = new List<SymbolReference<DataName>>();
+                entry.TableOccurenceKeyDirections = new List<KeyDirection>();
+                foreach(var key in keys) {
+                    var direction = KeyDirection.None;
+                    if (key.ASCENDING()  != null) direction = KeyDirection.Ascending;
+                    if (key.DESCENDING() != null) direction = KeyDirection.Descending;
+                    foreach(var name in key.dataName()) {
+                        var data = SyntaxElementBuilder.CreateDataName(name);
+                        if (data == null) continue;
+                        entry.TableOccurenceKeys.Add(data);
+                        entry.TableOccurenceKeyDirections.Add(direction);
+                    }
+                }
+            }
+
+            var indexes = context.indexName();
+            if (indexes != null) {
+                entry.IndexedBy = new List<SymbolReference<IndexName>>();
+                foreach(var index in indexes) entry.IndexedBy.Add(SyntaxElementBuilder.CreateIndexName(index));
+            }
+        }
+
+        private DataUsage CreateDataUsage(CobolCodeElementsParser.UsageClauseContext context)
+        {
+            if (context.BINARY() != null
+             || context.COMP()   != null || context.COMPUTATIONAL()   != null
+             || context.COMP_4() != null || context.COMPUTATIONAL_4() != null) return DataUsage.Binary;
+            if (context.COMP_1() != null || context.COMPUTATIONAL_1() != null) return DataUsage.FloatingPöint;
+            if (context.COMP_2() != null || context.COMPUTATIONAL_2() != null) return DataUsage.LongFloatingPöint;
+            if (context.PACKED_DECIMAL() != null
+             || context.COMP_3() != null || context.COMPUTATIONAL_3() != null) return DataUsage.PackedDecimal;
+            if (context.COMP_5() != null || context.COMPUTATIONAL_5() != null) return DataUsage.NativeBinary;
+            if (context.DISPLAY_ARG() != null) return DataUsage.Display;
+            if (context.DISPLAY_1()   != null) return DataUsage.DBCS;
+            if (context.INDEX() != null) return DataUsage.Index;
+            if (context.NATIONAL() != null) return DataUsage.National;
+            if (context.OBJECT() != null || context.REFERENCE() != null) return DataUsage.ObjectReference;
+            if (context.POINTER() != null) return DataUsage.Pointer;
+            if (context.FUNCTION_POINTER()  != null) return DataUsage.FunctionPointer;
+            if (context.PROCEDURE_POINTER() != null) return DataUsage.ProcedurePointer;
+            return DataUsage.None;
+        }
+
+        private void UpdateDataDescriptionEntryWithValueClause(DataDescriptionEntry entry, CobolCodeElementsParser.ValueClauseContext context)
+        {
+            if (context == null) return;
+            var values = context.literal();
+            if (values.Length > 0) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(values[0]); // format 1 and 2
+            if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
+            entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
+        }
+
+        private T GetContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext
+        {
+            if (contexts == null) return null;
+            if (contexts.Length < 1) return null;
+            for (int c = 1; c < contexts.Length; c++)
+                DiagnosticUtils.AddError(e, "Only one such clause allowed", contexts[c]);
+            return contexts[0];
         }
 
         // -- InputOutput Section --
@@ -1068,11 +1261,9 @@ namespace TypeCobol.Compiler.Parser
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
             statement.DataName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
             if (context.relationalOperator() != null)
-            {
                 statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
-                if (statement.Operator != '=' && statement.Operator != '>' && statement.Operator != '≥')
-                    DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.Operator, context.relationalOperator());
-            }
+            
+            Context = context;
             CodeElement = statement;
         }
         public override void EnterStartStatementEnd(CobolCodeElementsParser.StartStatementEndContext context)
@@ -1084,12 +1275,10 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new StopStatement();
             if (context.literal() != null)
-            {
                 statement.Literal = SyntaxElementBuilder.CreateLiteral(context.literal());
-                if (statement.Literal != null && statement.Literal.All)
-                    DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
-            }
             statement.IsStopRun = context.RUN() != null;
+
+            Context = context;
             CodeElement = statement;
         }
 

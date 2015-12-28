@@ -2860,23 +2860,23 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 // Format 3: condition-name
 // 88 condition-name-1 value-clause.
 
-dataDescriptionEntry : 
-                     levelNumber (dataName | FILLER)?
-                     redefinesClause?
-                     renamesClause ?
-                    (blankWhenZeroClause |
-                     externalClause |
-                     globalClause |
-                     groupUsageClause |
-                     justifiedClause |
-                     occursClause |
-                     pictureClause |
-                     signClause |
-                     synchronizedClause |
-                     usageClause |
-                     valueClause |
-                     typeCobolExt_typeClause)*
-                     PeriodSeparator;
+dataDescriptionEntry:
+	levelNumber (dataName | FILLER)?
+	  renamesClause?
+	  redefinesClause?
+	( pictureClause
+	| blankWhenZeroClause
+	| externalClause
+	| globalClause
+	| justifiedClause
+	| groupUsageClause
+	| occursClause
+	| signClause
+	| synchronizedClause
+	| usageClause
+	| valueClause
+//	| typeCobolExt_typeClause
+	)* PeriodSeparator;
 
 // TypeCobol extension DEMO
 
@@ -3351,10 +3351,13 @@ groupUsageClause:
 //   – Programs compiled with the THREAD option
 
 occursClause:
-                OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
-                (DEPENDING ON? dataName)?
-                ((ASCENDING | DESCENDING) KEY? IS? dataName+)*
-                (INDEXED BY? indexName+)?;
+	OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
+	occursDependingOn?
+	occursKeys*
+	(INDEXED BY? indexName+)?;
+
+occursDependingOn: DEPENDING ON? dataName;
+occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataName+;
 
 // p194: index-name-1
 // Each index-name specifies an index to be created by the compiler for use
