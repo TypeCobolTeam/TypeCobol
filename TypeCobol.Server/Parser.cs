@@ -47,6 +47,12 @@ namespace TypeCobol.Server
 
         public void Parse(string path, TextChangedEvent e)
         {
+            //if the server is restarted during Eclipse lifetime, then we need to init the parser
+            //This is useful when debugging. Perhaps it'll be deleted at the end
+            if (!Compilers.ContainsKey(path))
+            {
+                Init(path);
+            }
             Compiler = Compilers[path];
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
             else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
