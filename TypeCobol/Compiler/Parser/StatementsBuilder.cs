@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
@@ -85,11 +86,11 @@ namespace TypeCobol.Compiler.Parser
                 var identifier = SyntaxElementBuilder.CreateIdentifier(e);
                 if (identifier != null) statement.Usings.Add(new CallStatement.Using(mode, identifier));
 
-                if (identifier as FunctionReference != null) //p306: identifier-2 cannot be a function-identifier.
+                if (identifier is FunctionReference) //p306: identifier-2 cannot be a function-identifier.
                     DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", e);
-                if (identifier as LinageCounter != null)
+                if (identifier is LinageCounter)
                     DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", e);
-                if (mode == CallStatement.Using.Mode.REFERENCE && identifier as Length != null)
+                if (mode == CallStatement.Using.Mode.REFERENCE && identifier is Length)
                     DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", e);
                 //TODO what about special registers ?
             }
@@ -204,7 +205,7 @@ namespace TypeCobol.Compiler.Parser
 
             // CONVERTING
             if (context.inspectConverting() != null)
-                return CreateInspectConverting(context.inspectConverting(), identifier);
+                return CreateInspectConverting(context.inspectConverting());
 
             var statement = new InspectStatement();
             statement.Item = identifier;
@@ -229,7 +230,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private InspectConvertingStatement CreateInspectConverting(CobolCodeElementsParser.InspectConvertingContext context, Identifier identifier)
+        private InspectConvertingStatement CreateInspectConverting(CobolCodeElementsParser.InspectConvertingContext context)
         {
             var statement = new InspectConvertingStatement();
             if (context.identifierOrLiteral().Length > 0)
@@ -395,11 +396,12 @@ namespace TypeCobol.Compiler.Parser
             var statement = new MoveStatement(sending, receiving, context.corresponding() != null);
             if (context.corresponding() != null)
             {
-                if (sending as Literal != null)
+                if (sending is Literal)
                     DiagnosticUtils.AddError(statement, "MOVE CORRESPONDING: illegal <literal> before TO", context.identifierOrLiteral());
                 if (receiving != null && receiving.Count > 1)
                     DiagnosticUtils.AddError(statement, "MOVE CORRESPONDING: maximum 1 group item after TO", context.identifierOrLiteral());
             }
+            Debug.Assert(receiving != null, "receiving != null");
             foreach (var identifier in receiving)
             {
                 var function = identifier as FunctionReference;

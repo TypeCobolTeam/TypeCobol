@@ -417,25 +417,25 @@ namespace TypeCobol.Compiler.Parser
             var redefines = context.redefinesClause();
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
 
-            var picture = GetContext(entry, context.pictureClause());
+            var picture = GetFirstContext(entry, context.pictureClause());
             if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
 
-            var blank = GetContext(entry, context.blankWhenZeroClause());
+            var blank = GetFirstContext(entry, context.blankWhenZeroClause());
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
-            var external = GetContext(entry, context.externalClause());
+            var external = GetFirstContext(entry, context.externalClause());
             entry.IsExternal = external != null && external.EXTERNAL() != null;
-            var global = GetContext(entry, context.globalClause());
+            var global = GetFirstContext(entry, context.globalClause());
             entry.IsGlobal = global != null && global.GLOBAL() != null;
-            var justified = GetContext(entry, context.justifiedClause());
+            var justified = GetFirstContext(entry, context.justifiedClause());
             entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
-            var sync = GetContext(entry, context.synchronizedClause());
+            var sync = GetFirstContext(entry, context.synchronizedClause());
             entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
-            var group = GetContext(entry, context.groupUsageClause());
+            var group = GetFirstContext(entry, context.groupUsageClause());
             entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
-            UpdateDataDescriptionEntryWithUsageClause(entry, GetContext(entry, context.usageClause()));
-            UpdateDataDescriptionEntryWithSignClause(entry, GetContext(entry, context.signClause()));
-            UpdateDataDescriptionEntryWithOccursClause(entry, GetContext(entry, context.occursClause()));
-            UpdateDataDescriptionEntryWithValueClause(entry, GetContext(entry, context.valueClause()));
+            UpdateDataDescriptionEntryWithUsageClause(entry, GetFirstContext(entry, context.usageClause()));
+            UpdateDataDescriptionEntryWithSignClause(entry, GetFirstContext(entry, context.signClause()));
+            UpdateDataDescriptionEntryWithOccursClause(entry, GetFirstContext(entry, context.occursClause()));
+            UpdateDataDescriptionEntryWithValueClause(entry, GetFirstContext(entry, context.valueClause()));
 
             CodeElement = entry;
 
@@ -578,7 +578,14 @@ namespace TypeCobol.Compiler.Parser
             entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
         }
 
-        private T GetContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext
+        /// <summary>
+        /// Return one single context max.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="e"></param>
+        /// <param name="contexts"></param>
+        /// <returns>Null if contexts contains nothing, first occurence of contexts otherwise</returns>
+        private T GetFirstContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext
         {
             if (contexts == null) return null;
             if (contexts.Length < 1) return null;

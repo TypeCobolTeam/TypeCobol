@@ -159,7 +159,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-
+        
         internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CobolCodeElementsParser.IdentifierContext> context)
         {
             IList<Identifier> identifiers = new List<Identifier>();
@@ -204,8 +204,7 @@ namespace TypeCobol.Compiler.Parser
             if (context == null || context.FUNCTION() == null) return null;
             var symbol = new FunctionName(ParseTreeUtils.GetFirstToken(context.intrinsicFunctionName()));
             var parameters = CreateFunctionParameters(context.argument());
-            if (symbol != null || parameters != null) return new FunctionReference(symbol, parameters);
-            return null;
+            return new FunctionReference(symbol, parameters);
         }
 
         private static IList<FunctionParameter> CreateFunctionParameters(IReadOnlyList<CobolCodeElementsParser.ArgumentContext> context)

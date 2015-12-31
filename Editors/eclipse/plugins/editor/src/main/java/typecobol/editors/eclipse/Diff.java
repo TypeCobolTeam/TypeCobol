@@ -55,7 +55,8 @@ public class Diff {
 			final TextChange change = new TextChange();
 			if (before.contains(line.index))
 				 change.type = TextChangeType.LineUpdated;
-			else change.type = TextChangeType.LineInserted;
+			else 
+				change.type = TextChangeType.LineInserted;
 			change.line = line.index;
 			change.text = line.text;
 			changes.add(change);
