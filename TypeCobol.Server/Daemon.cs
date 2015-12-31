@@ -5,19 +5,19 @@ using TypeCobol.Server.Serialization;
 
 namespace TypeCobol.Server
 {
-
 class Server {
 
 	static void Main(string[] args) {
         Parser parser = new Parser("TypeCobol.Server");
-        string pipename = "TypeCobol.pipe";
+        string pipename = "TypeCobol.Server";
         if (args.Length > 0) pipename = args[0];
 
         var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
         Commands.Register(66, new Parse(parser, pipe, pipe));
         Commands.Register(67, new Initialize(parser, pipe, pipe));
         IntegerSerializer decoder = new IntegerSerializer();
-		while (true) {
+       System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on " + pipename);
+       while (true) {
 			//System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on \""+pipename+"\" ...");
 			pipe.WaitForConnection(); // blocking
 			//System.Console.WriteLine("Client connected.");

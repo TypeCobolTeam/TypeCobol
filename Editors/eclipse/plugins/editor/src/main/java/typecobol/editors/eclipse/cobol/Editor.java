@@ -19,7 +19,7 @@ import typecobol.editors.eclipse.MarkersCleaner;
 
 public class Editor extends TextEditor {
 
-	public static final String PIPE_NAME = "TypeCobol.Eclipse";
+	public static final String PIPE_NAME = "TypeCobol.Server";
 
 	private final ColorMap colors;
 	private final Parser parser = new Parser();
