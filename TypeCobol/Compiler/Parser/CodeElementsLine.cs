@@ -56,16 +56,6 @@ namespace TypeCobol.Compiler.Parser
         }
 
         /// <summary>
-        /// True if a code element was parsed from tokens on this line and continues with tokens on the next line
-        /// </summary>
-        public bool HasCodeElementContinuedOnNextLine { get; private set; }
-
-        /// <summary>
-        /// True if a code element was parsed from tokens on the previous line and continues with tokens on this line
-        /// </summary>
-        public bool HasCodeElementContinuationFromPreviousLine { get; private set;  }
-
-        /// <summary>
         /// Error and warning messages produced while parsing the source text line
         /// </summary>
         public IList<Diagnostic> ParserDiagnostics { get; private set; }
