@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using TypeCobol.Server.Serialization;
 
@@ -56,11 +57,18 @@ namespace TypeCobol.Server
           : base(parser, istream, ostream) { }
 
         public override void execute() {
+            var sw = Stopwatch.StartNew();
             string path = Deserializer.Deserialize(Input);
             var e = EventDeserializer.Deserialize(Input);
+            var elapsedStage1 = sw.ElapsedMilliseconds;
             Parser.Parse(path, e);
+            var elapsedStage2 = sw.ElapsedMilliseconds;
             SerializeReturnCode(0);
             Serializer.Serialize(Output, Parser.CodeElements, Parser.Snapshot);
+            var elapsedStage3 = sw.ElapsedMilliseconds;
+            sw.Stop();
+
+            Debug.WriteLine("Total time : " + elapsedStage3 + " parse time: " +  (elapsedStage2-elapsedStage1) + " pack time: "+ (elapsedStage3 - (elapsedStage2 - elapsedStage1)));
         }
     }
 }
