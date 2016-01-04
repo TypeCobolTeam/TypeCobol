@@ -92,7 +92,7 @@ namespace TypeCobol.Server.Serialization
 
     public class TextChangedEventSerializer {
         //private MessagePackSerializer<List<MsgPackTextChange>> Marshaller = MessagePackSerializer.Get<List<MsgPackTextChange>>();
-        MessagePackSerializer<byte> Number = MessagePackSerializer.Get<byte>();
+        MessagePackSerializer<int> Number = MessagePackSerializer.Get<int>();
         MessagePackSerializer<string> String = MessagePackSerializer.Get<string>();
         public bool Serialize(Stream output, TextChangedEvent e) {
             List<MsgPackTextChange> list = new List<MsgPackTextChange>();
