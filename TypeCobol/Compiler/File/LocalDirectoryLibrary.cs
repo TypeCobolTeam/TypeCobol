@@ -88,17 +88,29 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         private string FindFirstMatchingFilePath(string textName)
         {
+            //If textName already contains a '.', we can assume that textName already contains an extension
+            //So let's try first to get the file with only textName and then with project extension
+            if (textName.Contains("."))
+            {
+                return FindFirstMatchingFilePath_EmptyFirst(textName);
+            }
+            //Otherwise, let's first try with project extension and then without
+            return FindFirstMatchingFilePath_ExtensionsFirst(textName);
+        }
+
+        private string FindFirstMatchingFilePath_EmptyFirst(string textName)
+        {
             // First try without extension
             string matchingFilePath = FindFirstMatchingFilePath(textName, String.Empty);
-            if(matchingFilePath != null)
+            if (matchingFilePath != null)
             {
                 return matchingFilePath;
             }
 
             // Then try with each extension in the order of the table
-            if(fileExtensions != null)
+            if (fileExtensions != null)
             {
-                foreach(string extension in fileExtensions)
+                foreach (string extension in fileExtensions)
                 {
                     matchingFilePath = FindFirstMatchingFilePath(textName, extension);
                     if (matchingFilePath != null)
@@ -111,6 +123,35 @@ namespace TypeCobol.Compiler.File
             // Not found
             return null;
         }
+
+        private string FindFirstMatchingFilePath_ExtensionsFirst(string textName)
+        {
+            string matchingFilePath;
+
+            // Then try with each extension in the order of the table
+            if (fileExtensions != null)
+            {
+                foreach (string extension in fileExtensions)
+                {
+                    matchingFilePath = FindFirstMatchingFilePath(textName, extension);
+                    if (matchingFilePath != null)
+                    {
+                        return matchingFilePath;
+                    }
+                }
+            }
+
+            // First try without extension
+            matchingFilePath = FindFirstMatchingFilePath(textName, String.Empty);
+            if (matchingFilePath != null)
+            {
+                return matchingFilePath;
+            }
+
+            // Not found
+            return null;
+        }
+
 
         // Reused part of the previous method
         private string FindFirstMatchingFilePath(string textName, string extension)

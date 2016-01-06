@@ -40,14 +40,15 @@ namespace TypeCobol.Test.Compiler.Parser
         public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null)
         {
             if (folder == null) folder = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
-            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
+            DirectoryInfo localDirectory = new DirectoryInfo(folder);
             if (!localDirectory.Exists)
             {
                 throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
             if (documentFormat == null) documentFormat = DocumentFormat.RDZReferenceFormat;
             CompilationProject project = new CompilationProject("test",
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
+                //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
+                localDirectory.FullName, new string[] {"*.cpy", "*.cbl" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), false);
             compiler.CompileOnce();
