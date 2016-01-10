@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -32,13 +33,23 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         private class ParseSection
         {
-            public ParseSection(Token startToken, Token startTokenForNextSection)
+            public ParseSection()
+            { }
+
+            public ParseSection(int startLineIndex, Token startToken, int stopLineIndex, Token stopToken, bool stopTokenIsLastTokenOfTheLine)
             {
+                StartLineIndex = startLineIndex;
                 StartToken = startToken;
-                StartTokenForNextCodeElement = startTokenForNextSection;
+                StopLineIndex = stopLineIndex;
+                StopToken = stopToken;
+                StopTokenIsLastTokenOfTheLine = stopTokenIsLastTokenOfTheLine;
             }
-            public Token StartToken { get; private set; }
-            public Token StartTokenForNextCodeElement { get; private set; }
+
+            public int StartLineIndex { get; set; }
+            public Token StartToken { get; set; }
+            public int StopLineIndex { get; set; }
+            public Token StopToken { get; set; }
+            public bool StopTokenIsLastTokenOfTheLine { get; set; }
         }
 
         /// <summary>
@@ -53,36 +64,44 @@ namespace TypeCobol.Compiler.Parser
             // 1. The tokens line changed : these lines were already reset during the previous steps
             // 2. If a tokens line that changed was involved in the parsing of a multiline code element, the whole group of lines must be parsed again
 
-            // --- PREPARATION PHASE : identify all parse sections where code element need to be refreshed ---
+            // --- PREPARATION PHASE : identify all parse sections where code elements need to be refreshed ---
 
             IList<ParseSection> refreshParseSections = null;
 
             // Iterate over all processed tokens changes detected by the PreprocessorStep :
-            // refresh all the adjacent lines participating in a CodeElement
+            // - refresh all the adjacent lines participating in a CodeElement
+            // - register the start and stop token for all sections of the document which need to be parsed again
             if (processedTokensLinesChanges != null)
             {
-                refreshParseSections = new List<ParseSection>();
-
-                int lastLineIndexReset = -1;
-                foreach (DocumentChange<IProcessedTokensLine> tokensChange in processedTokensLinesChanges)
+                // If the document was cleared, everything must be parsed again
+                if (processedTokensLinesChanges[0].Type != DocumentChangeType.DocumentCleared)
                 {
-                    if (tokensChange.LineIndex > lastLineIndexReset)
+                    refreshParseSections = new List<ParseSection>();
+
+                    ParseSection lastParseSection = null;
+                    foreach (DocumentChange<IProcessedTokensLine> tokensChange in processedTokensLinesChanges)
                     {
-                        lastLineIndexReset = CheckIfAdjacentLinesNeedRefresh(tokensChange.Type, tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, processedTokensLinesChanges, lastLineIndexReset, refreshParseSections);
+                        if (lastParseSection == null || tokensChange.LineIndex > lastParseSection.StopLineIndex)
+                        {
+                            lastParseSection = CheckIfAdjacentLinesNeedRefresh(tokensChange.Type, tokensChange.LineIndex, documentLines, prepareDocumentLineForUpdate, codeElementsLinesChanges, lastParseSection);
+                            refreshParseSections.Add(lastParseSection);
+                        }
                     }
                 }
             }
 
+            // --- INITIALIZE ANTLR CodeElements parser ---
+
             // Create a token iterator on top of pre-processed tokens lines
             ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetProcessedTokensIterator(textSourceInfo, documentLines);
 
-            // Create an Antlr compatible token source on top a the token iterator
+            // Create an Antlr compatible token source on top of the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
                 textSourceInfo.Name,
                 tokensIterator);
 
             // Init parser
-            ITokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
+            TokensLinesTokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
             TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
             // -> activate full ambiguities detection
             //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
@@ -100,15 +119,26 @@ namespace TypeCobol.Compiler.Parser
             codeElementBuilder.Dispatcher = new CodeElementDispatcher();
             codeElementBuilder.Dispatcher.CreateListeners();
 
-            // TO DO -- Iterate only over the code elements which need to be refreshed
+            // --- INCREMENTAL PARSING ---
+
+            // In case of incremental parsing, parse only the code sections we need to refresh
+            IEnumerator<ParseSection> parseSectionsEnumerator = null;
+            ParseSection currentParseSection = null;
+            if (refreshParseSections != null)
+            {
+                // Get the first code section we need to refresh
+                parseSectionsEnumerator = refreshParseSections.GetEnumerator();
+                parseSectionsEnumerator.MoveNext();
+                currentParseSection = parseSectionsEnumerator.Current;
+
+                // Seek just before the next code element starting token
+                tokenStream.SeekToToken(currentParseSection.StartToken);
+                tokenStream.StartLookingForStopToken(currentParseSection.StopToken);
+            }
+
+            // Parse one CodeElement at a time while advancing in the underlying token stream
             do
             {
-                // TO DO -- Seek just before the next code element starting token
-                // tokensIterator.SeekToToken(codeElementStartingToken);
-
-                // !! Do not reset the Antlr BufferedTokenStream position while iterating on adjacent code elements
-                //tokenStream.SetTokenSource(tokenSource);
-
                 // Reset parsing error diagnostics
                 //cobolErrorStrategy.Reset(cobolParser);
                 errorListener.Diagnostics.Clear();
@@ -124,6 +154,10 @@ namespace TypeCobol.Compiler.Parser
                 {
                     // Get the first line that was parsed                
                     CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
+
+                    // Register that this line was updated
+                    int updatedLineIndex = documentLines.IndexOf(codeElementsLine, codeElementsLine.InitialLineIndex);
+                    codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, updatedLineIndex, codeElementsLine));
 
                     // Visit the parse tree to build a first class object representing the code elements
                     walker.Walk(codeElementBuilder, codeElementParseTree);
@@ -149,6 +183,29 @@ namespace TypeCobol.Compiler.Parser
                         foreach (ParserDiagnostic d in errorListener.Diagnostics)
                         {
                             codeElementsLine.AddParserDiagnostic(d);
+                        }
+                    }
+                }
+
+                // In case of incremental parsing, directly jump to next parse section in the token stream
+                // Else, simply start parsing the next CodeElement beginning with the next token
+                if (currentParseSection != null)
+                {
+                    // Check if we reached the end of the current ParseSection
+                    if (tokenStream.StreamReachedStopToken)
+                    {
+
+                        // Adavance to the next ParseSection
+                        if (parseSectionsEnumerator.MoveNext())
+                        {
+                            currentParseSection = parseSectionsEnumerator.Current;
+                            tokenStream.SeekToToken(currentParseSection.StartToken);
+                            tokenStream.StartLookingForStopToken(currentParseSection.StopToken);
+                        }
+                        // No more section to parse
+                        else
+                        {
+                            break;
                         }
                     }
                 }
@@ -187,80 +244,104 @@ namespace TypeCobol.Compiler.Parser
         /// 1. List all the starting and stop tokens of sections to parse with the rules above
         /// 2. Parse code elements beginning with starting token and until we reach stop token
         /// </summary>
-        private static int CheckIfAdjacentLinesNeedRefresh(DocumentChangeType changeType, int lineIndex, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges, int lastLineIndexReset, IList<ParseSection> refreshParseSections)
+        private static ParseSection CheckIfAdjacentLinesNeedRefresh(DocumentChangeType changeType, int lineIndex, ISearchableReadOnlyList<CodeElementsLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges, ParseSection lastParseSection)
         {
-            // Navigate backwards to the start of the multiline compiler directive
+            ParseSection currentParseSection = new ParseSection();
+
+            // Navigate backwards to the start of the multiline code element
             if (lineIndex > 0)
             {
                 int previousLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
+                int lastLineIndexReset = lastParseSection != null ? lastParseSection.StopLineIndex  : - 1;
+                IEnumerator<CodeElementsLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
                 while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
                 {
-                    // Get the previous line until a non continued line is encountered
-                    ProcessedTokensLine previousLine = reversedEnumerator.Current;
+                    // Get the previous line until the first code element is encountered
+                    CodeElementsLine previousLine = reversedEnumerator.Current;
 
-                    // A reset line was already treated by the previous call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (previousLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    // The start of the parse section is delimited by the previous CodeElement
+                    bool previousLineHasCodeElements = previousLine.HasCodeElements;
+                    if (previousLineHasCodeElements)
                     {
-                        break;
+                        currentParseSection.StartLineIndex = previousLineIndex;
+                        currentParseSection.StartToken = previousLine.CodeElements[0].ConsumedTokens[0];
                     }
-                    // Previous line is a continuation : reset this line and continue navigating backwards
-                    // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
-                    else if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
-                    {
-                        lineIndex = previousLineIndex;
-                        previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
-                        processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
-                        if (!previousLine.HasDirectiveTokenContinuationFromPreviousLine)
-                        {
-                            break;
-                        }
-                    }
-                    // Previous line not involved in a multiline compiler directive : stop searching
-                    else
+
+                    // All lines contained in the parse section could be modified, and should be reset
+                    previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
+                    previousLine.ResetCodeElements();
+                    codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
+
+                    // Stop iterating backwards as soon as the start of an old CodeElement is found                   
+                    if (previousLineHasCodeElements)
                     {
                         break;
                     }
                 }
             }
 
-            // Navigate forwards to the end of the multiline compiler directive 
+            // Navigate forwards to the end of the multiline code element
             if (lineIndex < (documentLines.Count - 1))
             {
                 int nextLineIndex = lineIndex;
-                IEnumerator<ProcessedTokensLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
+                IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, true);
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered
                     nextLineIndex++;
-                    ProcessedTokensLine nextLine = enumerator.Current;
+                    CodeElementsLine nextLine = enumerator.Current;
 
-                    // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (nextLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
-                    {
-                        break;
+                    // Check if the next CodeElement found starts at the beginning of the line      
+                    bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
+                    if (nextLine.HasCodeElements)
+                    {                        
+                        Token startTokenForNextParseSection = nextLine.CodeElements[0].ConsumedTokens[0];
+                        Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
+                        nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;                        
                     }
-                    // Next line is a continuation and is continued: reset this line and continue navigating forwards
-                    // Next line is a continuation but is not continued : reset this line and stop navigating forwards
-                    else if (nextLine.HasDirectiveTokenContinuationFromPreviousLine)
+
+                    // All lines contained in the parse section could be modified
+                    if (!nextCodeElementStartsAtTheBeginningOfTheLine)
                     {
-                        nextLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.Preprocessor);
-                        processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                        lastLineIndexReset = nextLineIndex;
-                        if (!nextLine.HasDirectiveTokenContinuedOnNextLine)
+                        nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
+                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
+                    }
+
+                    // Stop iterating forwards as soon as the start of an old CodeElement is found                   
+                    if (nextLine.HasCodeElements)
+                    {
+                        if (!nextCodeElementStartsAtTheBeginningOfTheLine)
                         {
-                            break;
+                            currentParseSection.StopLineIndex = nextLineIndex;
+                            currentParseSection.StopToken = nextLine.CodeElements[0].ConsumedTokens[0];
                         }
-                    }
-                    // Previous line not involved in a multiline compiler directive : stop searching
-                    else
-                    {
+                        else
+                        {
+                            currentParseSection.StopLineIndex = nextLineIndex;
+                            while (currentParseSection.StopToken == null && currentParseSection.StopLineIndex >= 1)
+                            {
+                                currentParseSection.StopLineIndex = currentParseSection.StopLineIndex - 1;
+                                currentParseSection.StopToken = documentLines[currentParseSection.StopLineIndex].TokensWithCompilerDirectives.Last(token => token.Channel == Token.CHANNEL_SourceTokens);
+                            }
+                        }
+                        currentParseSection.StopTokenIsLastTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
                         break;
-                    }
+                    }                   
                 }
             }
+            // Current parse section ends with the updated line
+            else
+            {
+                currentParseSection.StopLineIndex = lineIndex + 1;
+                while (currentParseSection.StopToken == null && currentParseSection.StopLineIndex >= 1)
+                {
+                    currentParseSection.StopLineIndex = currentParseSection.StopLineIndex - 1;
+                    currentParseSection.StopToken = documentLines[currentParseSection.StopLineIndex].TokensWithCompilerDirectives.Last(token => token.Channel == Token.CHANNEL_SourceTokens);
+                }
+                currentParseSection.StopTokenIsLastTokenOfTheLine = true;
+            }        
 
-            return lastLineIndexReset > lineIndex ? lastLineIndexReset : lineIndex;
+            return currentParseSection;
         }
     }
 }
