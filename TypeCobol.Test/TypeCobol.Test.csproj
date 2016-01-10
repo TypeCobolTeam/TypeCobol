@@ -275,6 +275,7 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Pipeline\Samples\BigBatch.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Call.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\CompilerDirecting.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />

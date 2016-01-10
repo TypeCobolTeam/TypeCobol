@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using TypeCobol.Compiler.Concurrency;
@@ -39,6 +40,51 @@ namespace TypeCobol.Compiler
         // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
         private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
 
+        /// <summary>
+        /// Informations used to track the performance of each compilation step
+        /// </summary>
+        public class PerfStatsForCompilationStep
+        {
+            public PerfStatsForCompilationStep(CompilationStep compilationStep)
+            {
+                CompilationStep = compilationStep;
+            }
+
+            public CompilationStep CompilationStep { get; private set; }
+
+            public int RefreshCount { get; private set; }
+            public int LastRefreshTime { get; private set; }
+
+            public int FirstCompilationTime { get; private set; }
+            public int TotalRefreshTime { get; private set; }
+            public int AverageRefreshTime { get { return RefreshCount < 2 ? 0 : TotalRefreshTime / (RefreshCount - 1); } }
+
+            private Stopwatch stopWatch = new Stopwatch();
+
+            public void OnStartRefresh()
+            {
+                stopWatch.Restart();
+            }
+
+            public void OnStopRefresh()
+            {
+                stopWatch.Stop();
+
+                RefreshCount++;
+                LastRefreshTime = (int)stopWatch.ElapsedMilliseconds;
+
+                if (RefreshCount == 1)
+                {
+                    FirstCompilationTime = LastRefreshTime;
+                }
+                else
+                {
+                    TotalRefreshTime += LastRefreshTime;
+                }
+            }
+        }
+
+
         // --- Initialization ---
 
         /// <summary>
@@ -65,6 +111,11 @@ namespace TypeCobol.Compiler
             // Initialize document views versions
             currentTextLinesVersion = new DocumentVersion<ICobolTextLine>(this);
             currentTokensLinesVersion = new DocumentVersion<ITokensLine>(this);
+
+            // Initialize performance stats 
+            PerfStatsForText = new PerfStatsForCompilationStep(CompilationStep.Text);
+            PerfStatsForScanner = new PerfStatsForCompilationStep(CompilationStep.Scanner);
+            PerfStatsForPreprocessor = new PerfStatsForCompilationStep(CompilationStep.Preprocessor);
         }
 
         /// <summary>
@@ -141,6 +192,9 @@ namespace TypeCobol.Compiler
             DocumentChangedEvent<ICobolTextLine> documentChangedEvent = null;
             lock (lockObjectForDocumentLines)
             {
+                // Start perf measurement
+                PerfStatsForText.OnStartRefresh();
+
                 // Apply text changes to the compilation document
                 IList<DocumentChange<ICobolTextLine>> documentChanges = new List<DocumentChange<ICobolTextLine>>(textChangedEvent.TextChanges.Count);
                 foreach (TextChange textChange in textChangedEvent.TextChanges)
@@ -230,6 +284,9 @@ namespace TypeCobol.Compiler
                 // Prepare an event to signal document change to all listeners
                 documentChangedEvent = new DocumentChangedEvent<ICobolTextLine>(currentTextLinesVersion, currentTextLinesVersion.next);
                 currentTextLinesVersion = currentTextLinesVersion.next;
+
+                // Stop perf measurement
+                PerfStatsForText.OnStopRefresh();
             }
 
             // Send events to all listeners
@@ -261,8 +318,13 @@ namespace TypeCobol.Compiler
         /// </summary>
         public event EventHandler<DocumentChangedEvent<ICobolTextLine>> TextLinesChanged;
 
+        /// <summary>
+        /// Performance stats for the UpdateTextLines method
+        /// </summary>
+        public PerfStatsForCompilationStep PerfStatsForText { get; private set; }
+
         // --- Tokens lines ---
-        
+
         /// <summary>
         /// Current list of tokens lines.
         /// NOT thread-safe : can only be accessed from the owner thread.
@@ -313,6 +375,9 @@ namespace TypeCobol.Compiler
             DocumentChangedEvent<ITokensLine> documentChangedEvent = null;
             lock (lockObjectForDocumentLines)
             {
+                // Start perf measurement
+                PerfStatsForScanner.OnStartRefresh();
+
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
@@ -333,6 +398,9 @@ namespace TypeCobol.Compiler
 
                 // Register that the tokens lines were synchronized with the current text lines version
                 textLinesVersionForCurrentTokensLines = currentTextLinesVersion;
+
+                // Stop perf measurement
+                PerfStatsForScanner.OnStopRefresh();
             }
 
             // Send events to all listeners
@@ -366,6 +434,11 @@ namespace TypeCobol.Compiler
         /// Subscribe to this event to be notified of all changes in the tokens lines of the document
         /// </summary>
         public event EventHandler<DocumentChangedEvent<ITokensLine>> TokensLinesChanged;
+
+        /// <summary>
+        /// Performance stats for the UpdateTokensLines method
+        /// </summary>
+        public PerfStatsForCompilationStep PerfStatsForScanner { get; private set; }
 
         // --- Document snapshots ---
 
@@ -424,6 +497,9 @@ namespace TypeCobol.Compiler
                     tokensLineChanges = previousTokensDocumentVersion.GetReducedAndOrderedChangesInNewerVersion(tokensDocument.CurrentVersion);
                 }
 
+                // Start perf measurement
+                PerfStatsForPreprocessor.OnStartRefresh();
+
                 // Track all changes applied to the document while updating this snapshot
                 DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
                
@@ -454,6 +530,9 @@ namespace TypeCobol.Compiler
                     ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
                 }
 
+                // Stop perf measurement
+                PerfStatsForPreprocessor.OnStopRefresh();
+
                 // Send events to all listeners
                 EventHandler<DocumentChangedEvent<IProcessedTokensLine>> processedTokensLinesChangedEventsSource = ProcessedTokensLinesChangedEventsSource; // avoid race condition
                 if (documentChangedEvent != null && processedTokensLinesChangedEventsSource != null)
@@ -473,6 +552,11 @@ namespace TypeCobol.Compiler
         /// Subscribe to this event to be notified of all changes in the processed tokens lines of the document
         /// </summary>
         public event EventHandler<DocumentChangedEvent<IProcessedTokensLine>> ProcessedTokensLinesChangedEventsSource;
+
+        /// <summary>
+        /// Performance stats for the RefreshProcessedTokensDocumentSnapshot method
+        /// </summary>
+        public PerfStatsForCompilationStep PerfStatsForPreprocessor { get; private set; }
 
         #region Thread ownership and synchronization
         // Inspired from ICSharpCode.AvalonEdit.Document.TextDocument

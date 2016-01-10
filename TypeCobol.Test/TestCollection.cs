@@ -154,6 +154,7 @@ namespace TypeCobol.Test
             TestIncrementalParser.CheckRemoveCodeElement();
 
             TestIncrementalPipeline.CheckUpdateFromFile();
+            //TestIncrementalPipeline.CheckPerformance();
         }
     }
 }

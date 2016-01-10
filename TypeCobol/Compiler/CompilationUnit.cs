@@ -22,7 +22,11 @@ namespace TypeCobol.Compiler
         /// </summary>
         public CompilationUnit(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider) :
             base(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider)
-        { }
+        {
+            // Initialize performance stats 
+            PerfStatsForCodeElementsParser = new PerfStatsForCompilationStep(CompilationStep.CodeElementsParser);
+            PerfStatsForProgramClassParser = new PerfStatsForCompilationStep(CompilationStep.ProgramClassParser);
+        }
 
         /// <summary>
         /// Creates a new snapshot of the document viewed as CodeElement objects after parsing.
@@ -56,6 +60,9 @@ namespace TypeCobol.Compiler
                     processedTokensLineChanges = previousProcessedTokensDocumentVersion.GetReducedAndOrderedChangesInNewerVersion(processedTokensDocument.CurrentVersion);
                 }
 
+                // Start perf measurement
+                PerfStatsForCodeElementsParser.OnStartRefresh();
+
                 // Track all changes applied to the document while updating this snapshot
                 DocumentChangedEvent<ICodeElementsLine> documentChangedEvent = null;
 
@@ -86,6 +93,9 @@ namespace TypeCobol.Compiler
                     CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines.ToImmutable());
                 }
 
+                // Stop perf measurement
+                PerfStatsForCodeElementsParser.OnStopRefresh();
+
                 // Send events to all listeners
                 EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
                 if (documentChangedEvent != null && codeElementsLinesChanged != null)
@@ -107,6 +117,11 @@ namespace TypeCobol.Compiler
         public event EventHandler<DocumentChangedEvent<ICodeElementsLine>> CodeElementsLinesChanged;
 
         /// <summary>
+        /// Performance stats for the RefreshCodeElementsDocumentSnapshot method
+        /// </summary>
+        public PerfStatsForCompilationStep PerfStatsForCodeElementsParser { get; private set; }
+
+        /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// (if the code elements lines changed since the last time this method was called)
         /// Thread-safe : this method can be called from any thread.
@@ -123,6 +138,9 @@ namespace TypeCobol.Compiler
                 // Check if an update is necessary and compute changes to apply since last version
                 if (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion)
                 {
+                    // Start perf measurement
+                    PerfStatsForProgramClassParser.OnStartRefresh();
+
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     Program newProgram;
                     Class newClass;
@@ -135,6 +153,9 @@ namespace TypeCobol.Compiler
                         codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion +1,
                         newProgram, newClass, newDiagnostics);
                     snapshotWasUpdated = true;
+
+                    // Stop perf measurement
+                    PerfStatsForProgramClassParser.OnStopRefresh();
                 }
             }
 
@@ -157,6 +178,11 @@ namespace TypeCobol.Compiler
         /// Subscribe to this event to be notified of all changes in the complete program or class view of the document
         /// </summary>
         public event EventHandler<int> ProgramClassChanged;
+
+        /// <summary>
+        /// Performance stats for the RefreshProgramClassDocumentSnapshot method
+        /// </summary>
+        public PerfStatsForCompilationStep PerfStatsForProgramClassParser { get; private set; }
 
         #region Thread ownership and synchronization
 

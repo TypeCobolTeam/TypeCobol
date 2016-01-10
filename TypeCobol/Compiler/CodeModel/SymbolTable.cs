@@ -65,7 +65,10 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public void Add(Section section, DataDescriptionEntry symbol) {
-            get(section).Add(symbol.DataName.Name, symbol);
+            if (symbol.DataName != null) // Data descriptions without data name are perfectly legal
+            {
+                get(section).Add(symbol.DataName.Name, symbol);
+            }
         }
         public DataDescriptionEntry Get(Section section, string name) {
             return get(section)[name];
