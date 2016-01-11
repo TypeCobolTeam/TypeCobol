@@ -6,6 +6,8 @@
 
 grammar CobolCompilerDirectives;
 
+options { superClass=TypeCobol.Compiler.AntlrUtils.LineAwareParser; }
+
 import CobolBase;
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
@@ -470,7 +472,8 @@ sequenceNumberField:
 // The EJECT statement has no effect on the compilation of the source unit itself.
 
 ejectCompilerStatement:
-                          EJECT PeriodSeparator?;
+                          ({IsNextTokenOnTheSameLine()}? EJECT PeriodSeparator?) |
+						  (EJECT);
 
 // p539: ENTER statement
 // The ENTER statement is designed to facilitate the use of more than one source
@@ -647,7 +650,8 @@ serviceReloadCompilerStatement:
 // For example, in the case of batch applications, a SKIP1, SKIP2, or SKIP3 statement must be placed between the CBL (PROCESS) statement and the end of the program or class (or the END CLASS marker or END PROGRAM marker, if specified).
 
 skipCompilerStatement:
-                         (SKIP1 | SKIP2 | SKIP3) PeriodSeparator?;
+                         ({IsNextTokenOnTheSameLine()}? (SKIP1 | SKIP2 | SKIP3) PeriodSeparator?) |
+						 (SKIP1 | SKIP2 | SKIP3);				
 
 // p545: TITLE statement
 // The TITLE statement specifies a title to be printed at the top of each page of the source listing produced during compilation.
@@ -673,7 +677,8 @@ skipCompilerStatement:
 // No other statement can appear on the same line as the TITLE statement.
 
 titleCompilerStatement:
-                          TITLE (AlphanumericLiteral | NationalLiteral | DBCSLiteral) PeriodSeparator?;
+                          ({IsNextTokenOnTheSameLine()}? TITLE (AlphanumericLiteral | NationalLiteral | DBCSLiteral) PeriodSeparator?) |
+						  (TITLE (AlphanumericLiteral | NationalLiteral | DBCSLiteral));
 
 // p546: USE statement
 // -> see the DECLARATIVES section in CobolCodeElements.g4

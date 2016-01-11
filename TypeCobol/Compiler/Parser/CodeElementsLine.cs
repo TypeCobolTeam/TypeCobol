@@ -35,6 +35,13 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+        // --- Computed line properties after code elements parser execution ---
+
+        /// <summary>
+        /// True if a code element starts on the current line
+        /// </summary>
+        public bool HasCodeElements { get { return CodeElements != null; } }
+
         /// <summary>
         /// Code elements STARTING on this line 
         /// </summary>
@@ -56,14 +63,13 @@ namespace TypeCobol.Compiler.Parser
         }
 
         /// <summary>
-        /// True if a code element was parsed from tokens on this line and continues with tokens on the next line
+        /// Called when a line is reused between two incremental parsing phases
         /// </summary>
-        public bool HasCodeElementContinuedOnNextLine { get; private set; }
-
-        /// <summary>
-        /// True if a code element was parsed from tokens on the previous line and continues with tokens on this line
-        /// </summary>
-        public bool HasCodeElementContinuationFromPreviousLine { get; private set;  }
+        internal void ResetCodeElements()
+        {
+            CodeElements = null;
+            ParserDiagnostics = null;
+        }
 
         /// <summary>
         /// Error and warning messages produced while parsing the source text line

@@ -20,15 +20,5 @@ namespace TypeCobol.Compiler.Parser
         /// Error and warning messages produced while parsing the source text line
         /// </summary>
         IList<Diagnostic> ParserDiagnostics { get; }
-
-        /// <summary>
-        /// True if a code element was parsed from tokens on this line and continues with tokens on the next line
-        /// </summary>
-        bool HasCodeElementContinuedOnNextLine { get; }
-
-        /// <summary>
-        /// True if a code element was parsed from tokens on the previous line and continues with tokens on this line
-        /// </summary>
-        bool HasCodeElementContinuationFromPreviousLine { get; }
     }
 }

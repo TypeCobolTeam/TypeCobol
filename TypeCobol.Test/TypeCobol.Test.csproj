@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=e9931a4108ef2354, processorArchitecture=MSIL">
-      <HintPath>..\packages\Antlr4.Runtime.4.5-alpha002\lib\net45\Antlr4.Runtime.dll</HintPath>
+      <HintPath>..\packages\Antlr4.Runtime.4.5-alpha003\lib\net45\Antlr4.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -275,6 +275,7 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Pipeline\Samples\BigBatch.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Call.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\CompilerDirecting.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />

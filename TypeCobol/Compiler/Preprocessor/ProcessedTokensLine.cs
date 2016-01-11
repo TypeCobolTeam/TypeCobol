@@ -267,7 +267,7 @@ namespace TypeCobol.Compiler.Preprocessor
             this.ReplaceDirective = previousLineVersion.ReplaceDirective;
             this.tokensWithCompilerDirectives = previousLineVersion.tokensWithCompilerDirectives;
 
-            CompilationStep = Concurrency.CompilationStep.Scanner;
+            CompilationStep = Concurrency.CompilationStep.Preprocessor;
         }
     }
 }
