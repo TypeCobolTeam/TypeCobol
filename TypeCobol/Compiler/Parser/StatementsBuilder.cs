@@ -44,11 +44,7 @@ namespace TypeCobol.Compiler.Parser
             statement.Subprogram = CreateProgram(context);
             foreach (var call in context.callBy()) AddCallUsings(call, statement);
             if (context.callReturning() != null)
-            {
                 statement.Returning = SyntaxElementBuilder.CreateIdentifier(context.callReturning().identifier());
-                if (statement.Returning == null)
-                    DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callReturning());
-            }
             return statement;
         }
 

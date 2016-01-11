@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -28,9 +29,9 @@ namespace TypeCobol.Compiler.Diagnostics
             var occurs    = GetContext(data, context.occursClause());
             var value     = GetContext(data, context.valueClause());
 
-            if (data.DataName == null) {
+            if (data.Name == null) {
                 if ((data.LevelNumber == 77 || data.LevelNumber == 88) && !data.IsFiller)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for level-66 or level-88 items", context.levelNumber());
+                    DiagnosticUtils.AddError(data, "Data name must be specified for level-66 or level-88 items: "+data, context.levelNumber());
                 if (data.IsExternal)
                     DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
                 if (data.IsGlobal)
@@ -68,6 +69,44 @@ namespace TypeCobol.Compiler.Diagnostics
             if (context == null) return; //we only check format 2
             if (context.GIVING() == null)
                 DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
+        }
+    }
+
+    class CallStatementChecker: CodeElementListener
+    {
+        public IList<Type> GetCodeElements() {
+            return new List<Type>() { typeof(CallStatement), };
+        }
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var statement = e as CallStatement;
+            var context = c as CobolCodeElementsParser.CallStatementContext;
+
+            //foreach (var call in context.callBy()) CheckCallUsings(statement, call);
+
+            if (context.callReturning() != null && statement.Returning == null)
+                DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callReturning());
+        }
+
+        private void CheckCallUsings(CallStatement statement, CobolCodeElementsParser.CallByContext context){
+            foreach(var e in statement.Usings) {
+                if (e.Identifier != null) {
+                    if (e.Identifier as FunctionReference != null)
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
+                    if (e.Identifier as LinageCounter != null)
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", context);
+                    if (e.UsingMode == CallStatement.Using.Mode.REFERENCE && e.Identifier as Length != null)
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+                    //TODO what about special registers ?
+                }
+                if (e.Literal != null) {
+                    if (e.UsingMode == CallStatement.Using.Mode.REFERENCE)
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+                }
+                if (e.Filename != null) {
+                    if (e.UsingMode == CallStatement.Using.Mode.CONTENT || e.UsingMode == CallStatement.Using.Mode.VALUE)
+                        DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
+                }
+            }
         }
     }
 

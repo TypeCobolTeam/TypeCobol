@@ -65,9 +65,13 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public void Add(Section section, DataDescriptionEntry symbol) {
-            if (symbol.DataName != null) // Data descriptions without data name are perfectly legal
-            {
-                get(section).Add(symbol.DataName.Name, symbol);
+            //if (symbol.DataName == null) return; // TODO Data descriptions without data name are perfectly legal
+            if (symbol.IsFiller) return;// FILLER don't have any name to be referenced by
+            var data = get(section);
+            if (data.ContainsKey(symbol.Name.Name)) {
+                System.Console.WriteLine("TODO: cannot add \""+symbol+"\", section already contains \""+data[symbol.Name.Name]+"\".");
+            } else {
+                data.Add(symbol.Name.Name, symbol);
             }
         }
         public DataDescriptionEntry Get(Section section, string name) {

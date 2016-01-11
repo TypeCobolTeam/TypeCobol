@@ -43,6 +43,7 @@ namespace TypeCobol.Compiler.Parser
         internal void CreateListeners() {
             listeners.Add(new DataDescriptionChecker());
             listeners.Add(new AddStatementChecker());
+            listeners.Add(new CallStatementChecker());
             listeners.Add(new CancelStatementChecker());
             listeners.Add(new SetStatementChecker());
             listeners.Add(new StartStatementChecker());

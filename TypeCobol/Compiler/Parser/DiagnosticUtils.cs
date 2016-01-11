@@ -7,7 +7,20 @@ namespace TypeCobol.Compiler.Parser
     {
         internal static void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context)
         {
-            AddError(e, message, ParseTreeUtils.GetFirstToken(context), new RuleStackBuilder().GetRuleStack(context));
+            string rulestack = new RuleStackBuilder().GetRuleStack(context);
+            /*
+            var tokens = ParseTreeUtils.GetTokensList(context);
+            ParserDiagnostic diagnostic = null;
+            if (tokens.Count > 0) {
+                var first = tokens[0];
+                var last = tokens[tokens.Count-1];
+                diagnostic = new ParserDiagnostic(message, first.StartIndex+1, last.StopIndex+1, first.Line, rulestack);
+            } else {
+                diagnostic = new ParserDiagnostic(message, null, rulestack);
+            }
+            e.Diagnostics.Add(diagnostic);
+            */
+            AddError(e, message, ParseTreeUtils.GetFirstToken(context), rulestack);
         }
 
         internal static void AddError(CodeElement e, string message, Scanner.Token token, string rulestack)

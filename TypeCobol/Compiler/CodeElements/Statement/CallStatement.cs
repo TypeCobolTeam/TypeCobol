@@ -176,13 +176,13 @@ namespace TypeCobol.Compiler.CodeElements
             /// phrase is encountered. BY REFERENCE is assumed if you do not specify a BY
             /// CONTENT, BY REFERENCE, or BY VALUE phrase prior to the first parameter.
             /// </summary>
-            internal enum Mode { REFERENCE, CONTENT, VALUE, UNKNOWN }
+            public enum Mode { REFERENCE, CONTENT, VALUE, UNKNOWN }
 
-            Mode UsingMode;
-            Identifier Identifier;
-            Literal Literal;
-            SymbolReference<FileName> Filename;
-            Omitted Omitted;
+            public Mode UsingMode;
+            public Identifier Identifier;
+            public Literal Literal;
+            public SymbolReference<FileName> Filename;
+            public Omitted Omitted;
 
             internal Using(Mode mode, Identifier value)
             {

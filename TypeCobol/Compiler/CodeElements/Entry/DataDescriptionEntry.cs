@@ -90,6 +90,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public DataName DataName { get; set; }
 
+        public Symbol Name {
+            get {
+                if (IsConditionNameDescription) return ConditionName;
+                return DataName;
+            }
+            private set { Name = value; }
+        }
 
         /// <summary>
         /// Type declaration.

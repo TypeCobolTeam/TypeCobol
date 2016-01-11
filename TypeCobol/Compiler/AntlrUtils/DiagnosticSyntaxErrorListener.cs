@@ -60,7 +60,13 @@ namespace TypeCobol.Compiler.AntlrUtils
             base(code, offendingSymbol != null ? offendingSymbol.Column : -1, offendingSymbol != null ? offendingSymbol.StopIndex + 1 : -1, message)
         {
             OffendingSymbol = offendingSymbol;
-            RuleStack = ruleStack;
+            this.ruleStack = ruleStack;
+        }
+
+        public ParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser)
+            : base(code, start, stop, message) {
+            this.line = line;
+            this.ruleStack = ruleStack;
         }
 
         /// <summary>
@@ -68,10 +74,10 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         public IToken OffendingSymbol { get; private set; }
 
-        /// <summary>
-        /// Stack of grammar rules which were being recognized when an incorrect token occured
-        /// </summary>
-        public string RuleStack { get; private set; }
+        /// <summary>Grammar rules which were being recognized when an incorrect token occured.</summary>
+        private string ruleStack;
+        /// <summary>Line at wich the error occured.</summary>
+        private int line = -1;
 
         public string ToStringWithRuleStack()
         {
@@ -83,7 +89,8 @@ namespace TypeCobol.Compiler.AntlrUtils
             // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
             // This is enough to pass all unit tests, but will return false informations in real usage !
             // for real line number, use a Snapshot
-            return base.ToString() + " (RuleStack=" + RuleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + lineindex + ")";
+            return base.ToString() + " (RuleStack=" + ruleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + lineindex + ")";
+//            return base.ToString() + " (RuleStack="+rulestack+", OffendingSymbol=TODO on line "+line+")";
         }
     }
 }
