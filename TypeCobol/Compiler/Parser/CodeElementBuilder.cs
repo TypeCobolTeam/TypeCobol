@@ -598,22 +598,6 @@ namespace TypeCobol.Compiler.Parser
             entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
         }
 
-        /// <summary>
-        /// Return one single context max.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="e"></param>
-        /// <param name="contexts"></param>
-        /// <returns>Null if contexts contains nothing, first occurence of contexts otherwise</returns>
-        private T GetFirstContext<T>(CodeElement e, T[] contexts) where T: Antlr4.Runtime.ParserRuleContext
-        {
-            if (contexts == null) return null;
-            if (contexts.Length < 1) return null;
-            for (int c = 1; c < contexts.Length; c++)
-                DiagnosticUtils.AddError(e, "Only one such clause allowed", contexts[c]);
-            return contexts[0];
-        }
-
         // -- InputOutput Section --
 
         public override void EnterFileControlEntry(CobolCodeElementsParser.FileControlEntryContext context)

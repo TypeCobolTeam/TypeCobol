@@ -38,6 +38,14 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
+        /// <summary>
+        /// Return the first ParserRuleContext in a list.
+        /// If there is more than one context in the parameter list, a diagnostic error is added to the CodeElement parameter.
+        /// </summary>
+        /// <typeparam name="T">ParserRuleContext subclass</typeparam>
+        /// <param name="e">CodeElement in error if there is more than one context in contexts</param>
+        /// <param name="contexts">List of ParserRuleContexts</param>
+        /// <returns>First element of contexts if contexts is not null and of size > 0, null otherwise</returns>
         public static T GetContext<T>(CodeElement e, T[] contexts, bool checkErrors = true) where T: Antlr4.Runtime.ParserRuleContext {
             if (contexts == null) return null;
             if (contexts.Length < 1) return null;
