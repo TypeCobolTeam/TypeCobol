@@ -41,15 +41,10 @@ namespace TypeCobol.Test.Compiler.Parser
 
             e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
             e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.", e);
-            System.Console.WriteLine(e.TextChanges.Count+" TextChanges");
 
             // clear document
             unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
-
-            foreach(TypeCobol.Compiler.CodeElements.CodeElement ce in unit.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements) {
-                foreach(TypeCobol.Compiler.Scanner.Token t in ce.ConsumedTokens) Console.WriteLine(" "+t.Text);
-            }
 
             names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
             names.index = 2;
