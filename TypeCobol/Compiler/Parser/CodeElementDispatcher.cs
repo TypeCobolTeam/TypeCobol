@@ -40,14 +40,18 @@ namespace TypeCobol.Compiler.Parser
 
         private IList<CodeElementListener> listeners = new List<CodeElementListener>();
 
+        /// <summary>
+        /// Adds to listeners one instance of each type implementing CodeElementListener interface
+        /// and defined in namespace TypeCobol.Compiler.Diagnostics.
+        /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
+        /// </summary>
         internal void CreateListeners() {
-            listeners.Add(new DataDescriptionChecker());
-            listeners.Add(new AddStatementChecker());
-            listeners.Add(new CallStatementChecker());
-            listeners.Add(new CancelStatementChecker());
-            listeners.Add(new SetStatementChecker());
-            listeners.Add(new StartStatementChecker());
-            listeners.Add(new StopStatementChecker());
+            var namespaces = new string[] { "TypeCobol.Compiler.Diagnostics", };
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            foreach (var names in namespaces) {
+                var instances = TypeCobol.Tools.Reflection.GetInstances<CodeElementListener>(assembly, names);
+                foreach (var checker in instances) listeners.Add(checker);
+            }
         }
     }
 }
