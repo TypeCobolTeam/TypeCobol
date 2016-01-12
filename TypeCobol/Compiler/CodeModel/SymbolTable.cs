@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// describe external data records, which are shared by programs
         /// and methods throughout the run unit.
         /// </summary>
-        private Dictionary<string,DataDescriptionEntry> WorkingStorageData = new Dictionary<string,DataDescriptionEntry>();
+        private Dictionary<string,List<DataDescriptionEntry>> WorkingStorageData = new Dictionary<string,List<DataDescriptionEntry>>();
 
         /// <summary>
         /// The LOCAL-STORAGE SECTION defines storage that is allocated
@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// However, each data item is reinitialized to the value specified
         /// in its VALUE clause each time the nested program is invoked.
         /// </summary>
-        private Dictionary<string,DataDescriptionEntry> LocalStorageData = new Dictionary<string,DataDescriptionEntry>();
+        private Dictionary<string,List<DataDescriptionEntry>> LocalStorageData = new Dictionary<string,List<DataDescriptionEntry>>();
 
         /// <summary>
         /// The LINKAGE SECTION describes data made available from another
@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// - They are condition-names or index-names associated with data items that satisfy
         ///   any of the above conditions.
         /// </summary>
-        private Dictionary<string,DataDescriptionEntry> LinkageData = new Dictionary<string,DataDescriptionEntry>();
+        private Dictionary<string,List<DataDescriptionEntry>> LinkageData = new Dictionary<string,List<DataDescriptionEntry>>();
 
         public Scope CurrentScope { get; internal set; }
         public SymbolTable EnclosingScope { get; internal set; }
@@ -66,12 +66,16 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void Add(Section section, DataDescriptionEntry symbol) {
             if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
-            get(section).Add(symbol.Name.Name, symbol);
+            var entries = Get(section, symbol.Name.Name);
+            entries.Add(symbol);
         }
-        public DataDescriptionEntry Get(Section section, string name) {
-            return get(section)[name];
+
+        public List<DataDescriptionEntry> Get(Section section, string name) {
+            var storage = Get(section);
+            if (!storage.ContainsKey(name)) storage[name] = new List<DataDescriptionEntry>();
+            return storage[name];
         }
-        public Dictionary<string,DataDescriptionEntry> get(Section section) {
+        public Dictionary<string,List<DataDescriptionEntry>> Get(Section section) {
             if (section == Section.Working) return WorkingStorageData;
             if (section == Section.Local)   return LocalStorageData;
             return LinkageData;

@@ -960,10 +960,17 @@ namespace TypeCobol.Compiler.CodeElements
         public override string ToString() {
             var str = new System.Text.StringBuilder();
             str.Append(LevelNumber).Append(" ");
-            if (IsConditionNameDescription)
-                 str.Append(ConditionName);
-            else str.Append(DataName);
-            str.Append(" PIC ").Append(Picture);
+            if (IsFiller) str.Append("<filler>");
+            else if (Name==null) str.Append("?");
+            str.Append(Name);
+            if (IsGroup) {
+                str.Append(" GROUP(").Append(Subordinates.Count).Append(") [ ");
+                foreach (var sub in Subordinates) str.Append(sub.Name).Append(" ");
+                str.Append("]");
+            } else {
+                str.Append(" PIC ").Append(Picture);
+            }
+            if (TopLevel != null) str.Append(" <of> ").Append(TopLevel.Name);
             return str.ToString();
         }
     }

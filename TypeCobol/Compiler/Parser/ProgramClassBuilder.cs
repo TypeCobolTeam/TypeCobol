@@ -98,6 +98,7 @@ namespace TypeCobol.Compiler.Parser
                     if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
                     else {
                         toplevel.Subordinates.Add(data);
+                        data.TopLevel = toplevel;
                         okay = true;
                     }
                 }

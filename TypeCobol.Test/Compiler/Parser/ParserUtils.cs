@@ -210,18 +210,18 @@ namespace TypeCobol.Test.Compiler.Parser
         private static StringBuilder Dump(StringBuilder str, SymbolTable table)
         {
             if (table == null) return str;
-            Dictionary<string, DataDescriptionEntry> map;
-            map = table.get(SymbolTable.Section.Working);
+            Dictionary<string,List<DataDescriptionEntry>> map;
+            map = table.Get(SymbolTable.Section.Working);
             if(map != null && map.Count > 0) {
                 str.Append("WORKING-STORAGE:\n");
                 Dump(str, map);
             }
-            map = table.get(SymbolTable.Section.Local);
+            map = table.Get(SymbolTable.Section.Local);
             if(map != null && map.Count > 0) {
                 str.Append("LOCAL-STORAGE:\n");
                 Dump(str, map);
             }
-            map = table.get(SymbolTable.Section.Linkage);
+            map = table.Get(SymbolTable.Section.Linkage);
             if(map != null && map.Count > 0) {
                 str.Append("LINKAGE:\n");
                 Dump(str, map);
@@ -229,11 +229,12 @@ namespace TypeCobol.Test.Compiler.Parser
             return str;
         }
 
-        private static void Dump(StringBuilder str, Dictionary<string, DataDescriptionEntry> map)
-        {
+        private static void Dump(StringBuilder str, Dictionary<string, List<DataDescriptionEntry>> map) {
             foreach(string key in map.Keys) {
-                Dump(str, map[key]);
-                str.Append("\n");
+                foreach (var data in map[key]) {
+                    Dump(str, data, 1);
+                    str.Append("\n");
+                }
             }
         }
 
