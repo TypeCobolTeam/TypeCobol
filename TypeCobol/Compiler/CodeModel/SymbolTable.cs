@@ -66,12 +66,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void Add(Section section, DataDescriptionEntry symbol) {
             if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
-            var data = get(section);
-            if (data.ContainsKey(symbol.Name.Name)) {
-                System.Console.WriteLine("TODO: cannot add \""+symbol+"\", section already contains \""+data[symbol.Name.Name]+"\".");
-            } else {
-                data.Add(symbol.Name.Name, symbol);
-            }
+            get(section).Add(symbol.Name.Name, symbol);
         }
         public DataDescriptionEntry Get(Section section, string name) {
             return get(section)[name];

@@ -21,6 +21,11 @@ namespace TypeCobol.Compiler.Parser
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
 
+        private Program CurrentProgram {
+            get { return programsStack.Peek(); }
+            set { programsStack.Push(value); }
+        }
+
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
@@ -45,52 +50,40 @@ namespace TypeCobol.Compiler.Parser
             Diagnostics = new List<Diagnostic>();
         }
 
-        public override void EnterCobolProgram(CobolProgramClassParser.CobolProgramContext context)
-        {
-            Program currentProgram = null;
-            if (Program == null)
-            {
-                currentProgram = new SourceProgram();
-                Program = currentProgram;
+        public override void EnterCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
+            if (Program == null) {
+                Program = new SourceProgram();
                 programsStack = new Stack<Program>();
-                programsStack.Push(Program);
+                CurrentProgram = Program;
+            } else {
+                CurrentProgram = new NestedProgram(CurrentProgram);
             }
-            else
-            {
-                currentProgram = new NestedProgram(programsStack.Peek());
-                programsStack.Push(currentProgram);
-            }
-
-            currentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;            
+            CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
         }
 
-        public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context)
-        {
-            if(programsStack != null)
-            {
-                programsStack.Pop();
-            }
+        public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
+            if(programsStack != null) programsStack.Pop();
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
-            if (Program.Data == null) CreateSymbolsTable();
+            if (CurrentProgram.Data == null) CreateSymbolsTable();
             UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
-            if (Program.Data == null) CreateSymbolsTable();
+            if (CurrentProgram.Data == null) CreateSymbolsTable();
             UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
-            if (Program.Data == null) CreateSymbolsTable();
+            if (CurrentProgram.Data == null) CreateSymbolsTable();
             UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Linkage);
         }
 
         private void CreateSymbolsTable() {
-            NestedProgram nested = Program as NestedProgram;
-            if (nested == null) Program.Data = new SymbolTable(TableOfGlobals);
-            else Program.Data = new SymbolTable(nested.ContainingProgram.Data);
+            NestedProgram nested = CurrentProgram as NestedProgram;
+            if (nested == null) CurrentProgram.Data = new SymbolTable(TableOfGlobals);
+            else CurrentProgram.Data = new SymbolTable(nested.ContainingProgram.Data);
         }
 
         private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
@@ -121,7 +114,7 @@ namespace TypeCobol.Compiler.Parser
         private SymbolTable GetScope(DataDescriptionEntry data) {
             if (data.IsExternal) return TableOfExternals;
             if (data.IsGlobal) return TableOfGlobals;
-            return Program.Data;
+            return CurrentProgram.Data;
         }
     }
 }
