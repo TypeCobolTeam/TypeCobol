@@ -68,6 +68,7 @@ namespace TypeCobol.Compiler.CodeModel
             if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
             var entries = Get(section, symbol.Name.Name);
             entries.Add(symbol);
+            foreach(var sub in symbol.Subordinates) Add(section, sub);
         }
 
         public List<DataDescriptionEntry> Get(Section section, string name) {

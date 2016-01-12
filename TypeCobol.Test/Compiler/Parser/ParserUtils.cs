@@ -242,11 +242,6 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             DumpIndent(str, indent);
             str.Append(data);
-            if (!data.IsGroup) return str;
-            foreach(DataDescriptionEntry d in data.Subordinates) {
-                str.Append("\n");
-                Dump(str, d, indent+1);
-            }
             return str;
         }
 

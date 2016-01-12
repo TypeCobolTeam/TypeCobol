@@ -959,10 +959,10 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string ToString() {
             var str = new System.Text.StringBuilder();
-            str.Append(LevelNumber).Append(" ");
             if (IsFiller) str.Append("<filler>");
             else if (Name==null) str.Append("?");
             str.Append(Name);
+            str.Append(" {").Append(LevelNumber).Append("}");
             if (IsGroup) {
                 str.Append(" GROUP(").Append(Subordinates.Count).Append(") [ ");
                 foreach (var sub in Subordinates) str.Append(sub.Name).Append(" ");

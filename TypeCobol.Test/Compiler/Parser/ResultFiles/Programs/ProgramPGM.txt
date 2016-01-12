@@ -2,16 +2,16 @@
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
 WORKING-STORAGE:
-  1 str PIC X(08)
-  1 group GROUP(4) [ num subgroup subgroup2 str ]
-    5 num PIC 9 <of> group
-    5 subgroup GROUP(2) [ vrai faux ] <of> group
-      10 vrai PIC 9 <of> subgroup
-      10 faux PIC 9 <of> subgroup
-    5 subgroup2 GROUP(2) [ x y ] <of> group
-      10 x PIC 9(2) <of> subgroup2
-      10 y PIC 9(2) <of> subgroup2
-    5 str PIC X(15) <of> group
-  1 x PIC A(3)
-  1 sqlcode PIC ZZ9+
-  1 toto PIC X(08)
+  str {1} PIC X(08)
+  str {5} PIC X(15) <of> group
+  group {1} GROUP(4) [ num subgroup subgroup2 str ]
+  num {5} PIC 9 <of> group
+  subgroup {5} GROUP(2) [ vrai faux ] <of> group
+  vrai {10} PIC 9 <of> subgroup
+  faux {10} PIC 9 <of> subgroup
+  subgroup2 {5} GROUP(2) [ x y ] <of> group
+  x {10} PIC 9(2) <of> subgroup2
+  x {1} PIC A(3)
+  y {10} PIC 9(2) <of> subgroup2
+  sqlcode {1} PIC ZZ9+
+  toto {1} PIC X(08)
