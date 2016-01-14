@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// p369: The MOVE statement transfers data from one area of storage to one or more other areas.
     /// </summary>
-    public class MoveStatement : CodeElement
+    public class MoveStatement : CodeElement, TypeCobol.Compiler.CodeModel.SymbolUser
     {
         /// <summary>
         /// identifier-1 , literal-1
@@ -48,6 +48,18 @@ namespace TypeCobol.Compiler.CodeElements
             this.Sending   = sending;
             this.Receiving = receiving;
             this.IsCorresponding = corresponding;
+        }
+
+        public IList<QualifiedName> Symbols {
+            get {
+                var symbols = new List<QualifiedName>();
+                if (Sending is Identifier)
+                    symbols.Add(((Identifier)Sending).Name);
+                foreach (var identifier in Receiving)
+                    symbols.Add(identifier.Name);
+                return symbols;
+            }
+            private set { throw new System.InvalidOperationException(); }
         }
     }
 }

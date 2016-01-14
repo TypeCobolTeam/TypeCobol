@@ -187,4 +187,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
         }
     }
+
+
+
+    class DeclarationChecker: CodeElementListener
+    {
+        public IList<Type> GetCodeElements() {
+            return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
+        }
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var statement = e as TypeCobol.Compiler.CodeModel.SymbolUser;
+            System.Console.WriteLine("TODO: check declaration of "+statement.Symbols.Count+" symbol(s).");
+        }
+    }
 }
