@@ -33,8 +33,12 @@ namespace TypeCobol.Compiler.Parser
         public void OnCodeElement(CodeElement e, ParserRuleContext context) {
             foreach(var listener in listeners) {
                 var types = listener.GetCodeElements();
-                if (types == null || types.Contains(e.GetType()))
-                    listener.OnCodeElement(e, context);
+                foreach (var expected in types) {
+                    if (TypeCobol.Tools.Reflection.IsTypeOf(e.GetType(), expected)) {
+                        listener.OnCodeElement(e, context);
+                        break; // only notify each listener once for a given CodeElement
+                    }
+                }
             }
         }
 
