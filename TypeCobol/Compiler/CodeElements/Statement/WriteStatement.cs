@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// written can be different from the number of character positions in the
         ///record being replaced.
         /// </summary>
-        QualifiedName<DataName> RecordName;
+        QualifiedName RecordName;
         /// <summary>
         /// p450:
         /// FROM phrase
@@ -106,7 +106,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         bool Page;
 
-        public WriteStatement(QualifiedName<DataName> recordname, Identifier identifier, bool before, bool after, Expression lines, MnemonicForEnvironmentName mnemonic, bool page)
+        public WriteStatement(QualifiedName recordname, Identifier identifier, bool before, bool after, Expression lines, MnemonicForEnvironmentName mnemonic, bool page)
             : base(CodeElementType.WriteStatement)
         {
             this.RecordName = recordname;

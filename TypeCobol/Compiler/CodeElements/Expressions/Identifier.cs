@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class Subscript
     {
-        public QualifiedName<DataName> dataname { get; set; }
+        public QualifiedName dataname { get; set; }
         public IndexName indexname { get; set; }
         public SyntaxNumber offset { get; set; }
         public char op { get; set; }
@@ -126,11 +126,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class DataReference : Identifier
     {
-        public QualifiedName<DataName> Name { get; private set; }
+        public QualifiedName Name { get; private set; }
         public IList<Subscript> Subscripts { get; private set; }
         public Substring ReferenceModifier { get; set; }
 
-        public DataReference(QualifiedName<DataName> name, IList<Subscript> subscripts = null, Substring substring = null)
+        public DataReference(QualifiedName name, IList<Subscript> subscripts = null, Substring substring = null)
         {
             this.Name = name;
             this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
@@ -157,10 +157,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class Condition : LogicalExpression, Identifier
     {
-        public QualifiedName<ConditionName> Name { get; private set; }
+        /// <summary>ConditionName</summary>
+        public QualifiedName Name { get; private set; }
         public IList<Subscript> Subscripts { get; private set; }
 
-        public Condition(QualifiedName<ConditionName> name, IList<Subscript> subscripts = null)
+        public Condition(QualifiedName name, IList<Subscript> subscripts = null)
         {
             this.Name = name;
             this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
@@ -185,15 +186,15 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class QualifiedName<T> where T: Symbol
+    public class QualifiedName
     {
-        public T Name { get; private set; }
+        public Symbol Symbol { get; private set; }
         public IList<DataName> DataNames { get; private set; }
         public FileName FileName { get; private set; }
 
-        public QualifiedName(T dataname, IList<DataName> datanames = null, FileName filename = null)
+        public QualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null)
         {
-            this.Name = dataname;
+            this.Symbol = symbol;
             this.DataNames = datanames != null ? datanames : new List<DataName>();
             this.FileName = filename;
         }
@@ -203,7 +204,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             var str = new StringBuilder();
             if (this.FileName != null) str.Append(this.FileName).Append('.');
             foreach (var dataname in this.DataNames) str.Append(dataname).Append('.');
-            str.Append(this.Name);
+            str.Append(this.Symbol.Name);
             return str.ToString();
         }
     }

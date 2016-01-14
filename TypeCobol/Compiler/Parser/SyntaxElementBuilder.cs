@@ -232,19 +232,19 @@ namespace TypeCobol.Compiler.Parser
         private static DataReference CreateDataNameReference(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
-            QualifiedName<DataName> name = CreateQualifiedName(context);
+            QualifiedName name = CreateQualifiedName(context);
             IList<Subscript> subscripts = CreateSubscripts(context);
             if (name != null || subscripts != null) return new DataReference(name, subscripts);
             return null;
         }
 
-        private static QualifiedName<DataName> CreateQualifiedName(CobolCodeElementsParser.DataNameReferenceContext context)
+        private static QualifiedName CreateQualifiedName(CobolCodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
             return CreateQualifiedName(context.qualifiedDataName());
         }
 
-        public static QualifiedName<DataName> CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
+        public static QualifiedName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
         {
             if (context == null) return null;
             DataName name = null;
@@ -252,22 +252,22 @@ namespace TypeCobol.Compiler.Parser
             List<DataName> datanames = CreateDataNames(context.dataName());
             datanames.Reverse();
             FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName<DataName>(name, datanames, filename);
+            return new QualifiedName(name, datanames, filename);
         }
 
-        public static QualifiedName<ConditionName> CreateQualifiedName(CobolCodeElementsParser.QualifiedConditionNameContext context)
+        public static QualifiedName CreateQualifiedName(CobolCodeElementsParser.QualifiedConditionNameContext context)
         {
             if (context == null) return null;
             ConditionName name = CreateConditionName(context.conditionName());
             List<DataName> datanames = CreateDataNames(context.dataName());
             datanames.Reverse();
             FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName<ConditionName>(name, datanames, filename);
+            return new QualifiedName(name, datanames, filename);
         }
 
-        internal static IList<QualifiedName<DataName>> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
+        internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
         {
-            var names = new List<QualifiedName<DataName>>();
+            var names = new List<QualifiedName>();
             foreach (var name in context)
             {
                 var x = CreateQualifiedName(name);

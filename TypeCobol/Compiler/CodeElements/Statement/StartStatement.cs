@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// status key is updated when the START statement is executed (See “File status key”
         /// on page 287).
         /// </summary>
-        public QualifiedName<DataName> DataName = null;
+        public QualifiedName DataName = null;
 
         public char Operator = '?';
 

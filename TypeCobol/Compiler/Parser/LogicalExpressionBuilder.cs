@@ -121,16 +121,15 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameReferenceContext context)
         {
             if (context == null) return new Empty();
-            QualifiedName<ConditionName> name = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
+            QualifiedName conditionname = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
             IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());
-            return new Condition(name, subscripts);
+            return new Condition(conditionname, subscripts);
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext context)
         {
             if (context == null) return new Empty();
-            QualifiedName<ConditionName> name = SyntaxElementBuilder.CreateQualifiedName(context);
-            return new Condition(name);
+            return new Condition(SyntaxElementBuilder.CreateQualifiedName(context));
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.RelationConditionContext context)

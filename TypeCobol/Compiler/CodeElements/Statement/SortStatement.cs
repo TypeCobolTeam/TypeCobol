@@ -313,7 +313,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class KeyDataItem
     {
-        public IList<QualifiedName<DataName>> Data = new List<QualifiedName<DataName>>();
+        public IList<QualifiedName> Data = new List<QualifiedName>();
 
         /// <summary>
         /// pp423-424:
