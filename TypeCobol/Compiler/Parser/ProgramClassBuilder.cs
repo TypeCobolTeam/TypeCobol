@@ -55,8 +55,11 @@ namespace TypeCobol.Compiler.Parser
                 Program = new SourceProgram();
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
+                CurrentProgram.Data = new SymbolTable(TableOfGlobals);
             } else {
-                CurrentProgram = new NestedProgram(CurrentProgram);
+                var enclosing = CurrentProgram;
+                CurrentProgram = new NestedProgram(enclosing);
+                CurrentProgram.Data = new SymbolTable(enclosing.Data);
             }
             CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
         }
@@ -66,26 +69,20 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
-            if (CurrentProgram.Data == null) CreateSymbolsTable();
             UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
-            if (CurrentProgram.Data == null) CreateSymbolsTable();
             UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
-            if (CurrentProgram.Data == null) CreateSymbolsTable();
             UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Linkage);
         }
 
-        private void CreateSymbolsTable() {
-            NestedProgram nested = CurrentProgram as NestedProgram;
-            if (nested == null) CurrentProgram.Data = new SymbolTable(TableOfGlobals);
-            else CurrentProgram.Data = new SymbolTable(nested.ContainingProgram.Data);
-        }
-
+        /// <summary>Update toplevel/subirdinate relations of data description entries.</summary>
+        /// <param name="nodes">DataDescriptionEntry[] array -typically <section context>.DataDescriptionEntry()</param>
+        /// <returns>nodes parameter, but with each element having its TopLevel and Subordinates properties initialized</returns>
         private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
             IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
             if (nodes == null) return result;
