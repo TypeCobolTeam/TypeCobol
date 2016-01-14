@@ -115,7 +115,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// schema by using the XML-SCHEMA clause. For more information about
         /// the XML-SCHEMA clause, see “SPECIAL-NAMES paragraph” on page 112.
         /// </summary>
-        public SymbolReference<XmlSchemaName> ValidatingFile;
+        public XmlSchemaName ValidatingFile;
 
         /// <summary>
         /// p471:

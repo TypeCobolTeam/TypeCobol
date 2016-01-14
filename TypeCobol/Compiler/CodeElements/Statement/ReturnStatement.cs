@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// current record are available. If any data items lie beyond the length of the
         /// current record, their contents are undefined.
         /// </summary>
-        SymbolReference<FileName> FileName;
+        FileName FileName;
 
         /// <summary>
         /// When there is only one record description associated with file-name-1 or all
@@ -64,7 +64,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         Identifier Into;
 
-        public ReturnStatement(SymbolReference<FileName> filename, Identifier into)
+        public ReturnStatement(FileName filename, Identifier into)
             : base(CodeElementType.ReturnStatement) {
             this.FileName = filename;
             this.Into = into;

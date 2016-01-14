@@ -30,7 +30,7 @@
         /// Must be defined in an FD entry in the DATA DIVISION and must be the
         /// name of an indexed or relative file.
         /// </summary>
-        public SymbolReference<FileName> FileName = null;
+        public FileName FileName = null;
 
         public DeleteStatement() : base(CodeElementType.DeleteStatement) { }
     }

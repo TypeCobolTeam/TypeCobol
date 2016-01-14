@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// defined in an FD entry in the DATA DIVISION and must not name a sort
         /// file.
         /// </summary>
-        public SymbolReference<FileName> FileName = null;
+        public FileName FileName = null;
 
         /// <summary>
         /// p429:

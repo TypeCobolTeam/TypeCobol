@@ -247,21 +247,21 @@ namespace TypeCobol.Compiler.Parser
         public static QualifiedName<DataName> CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
         {
             if (context == null) return null;
-            SymbolReference<DataName> name = null;
+            DataName name = null;
             if (context.dataNameBase() != null) name = CreateDataName(context.dataNameBase().dataName());
-            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            List<DataName> datanames = CreateDataNames(context.dataName());
             datanames.Reverse();
-            SymbolReference<FileName> filename = CreateFileName(context.fileName());
+            FileName filename = CreateFileName(context.fileName());
             return new QualifiedName<DataName>(name, datanames, filename);
         }
 
         public static QualifiedName<ConditionName> CreateQualifiedName(CobolCodeElementsParser.QualifiedConditionNameContext context)
         {
             if (context == null) return null;
-            SymbolReference<ConditionName> name = CreateConditionName(context.conditionName());
-            List<SymbolReference<DataName>> datanames = CreateDataNames(context.dataName());
+            ConditionName name = CreateConditionName(context.conditionName());
+            List<DataName> datanames = CreateDataNames(context.dataName());
             datanames.Reverse();
-            SymbolReference<FileName> filename = CreateFileName(context.fileName());
+            FileName filename = CreateFileName(context.fileName());
             return new QualifiedName<ConditionName>(name, datanames, filename);
         }
 
@@ -276,21 +276,21 @@ namespace TypeCobol.Compiler.Parser
             return names;
         }
 
-        internal static SymbolReference<AlphabetName> CreateAlphabetName(CobolCodeElementsParser.AlphabetNameContext context)
+        internal static AlphabetName CreateAlphabetName(CobolCodeElementsParser.AlphabetNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<AlphabetName>(new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        internal static SymbolReference<ClassName> CreateClassName(CobolCodeElementsParser.ClassNameContext context)
+        internal static ClassName CreateClassName(CobolCodeElementsParser.ClassNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<ClassName>(new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static List<SymbolReference<DataName>> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        public static List<DataName> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
         {
-            List<SymbolReference<DataName>> datanames = new List<SymbolReference<DataName>>();
+            List<DataName> datanames = new List<DataName>();
             if (context != null)
                 foreach (var dataname in context)
                 {
@@ -300,28 +300,28 @@ namespace TypeCobol.Compiler.Parser
             return datanames;
         }
 
-        public static SymbolReference<DataName> CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        public static DataName CreateDataName(CobolCodeElementsParser.DataNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<DataName>(new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
         // only used for data description entry
-        public static SymbolReference<ConditionName> CreateConditionName(CobolCodeElementsParser.DataNameContext context)
+        public static ConditionName CreateConditionName(CobolCodeElementsParser.DataNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<ConditionName>(new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static SymbolReference<ConditionName> CreateConditionName(CobolCodeElementsParser.ConditionNameContext context)
+        public static ConditionName CreateConditionName(CobolCodeElementsParser.ConditionNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<ConditionName>(new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        internal static IList<SymbolReference<FileName>> CreateFileNames(IReadOnlyList<CobolCodeElementsParser.FileNameContext> context)
+        internal static IList<FileName> CreateFileNames(IReadOnlyList<CobolCodeElementsParser.FileNameContext> context)
         {
-            List<SymbolReference<FileName>> filenames = new List<SymbolReference<FileName>>();
+            List<FileName> filenames = new List<FileName>();
             if (context != null)
                 foreach (var filename in context)
                 {
@@ -332,16 +332,16 @@ namespace TypeCobol.Compiler.Parser
             return filenames;
         }
 
-        public static SymbolReference<FileName> CreateFileName(CobolCodeElementsParser.FileNameContext context)
+        public static FileName CreateFileName(CobolCodeElementsParser.FileNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<FileName>(new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static SymbolReference<IndexName> CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
+        public static IndexName CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<IndexName>(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
         internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CobolCodeElementsParser.ProcedureNameContext> context)
@@ -359,29 +359,27 @@ namespace TypeCobol.Compiler.Parser
 
         internal static QualifiedProcedureName CreateProcedureName(CobolCodeElementsParser.ProcedureNameContext context)
         {
-            SymbolReference<ParagraphName> paragraphname = null;
-            if (context.paragraphName() != null) paragraphname = CreateParagraphName(context.paragraphName());
-            SymbolReference<SectionName> sectionname = null;
-            if (context.sectionName() != null) sectionname = CreateSectionName(context.sectionName());
+            ParagraphName paragraphname = CreateParagraphName(context.paragraphName());
+            SectionName sectionname = CreateSectionName(context.sectionName());
             return new QualifiedProcedureName(paragraphname, sectionname);
         }
 
-        public static SymbolReference<ParagraphName> CreateParagraphName(CobolCodeElementsParser.ParagraphNameContext context)
+        public static ParagraphName CreateParagraphName(CobolCodeElementsParser.ParagraphNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<ParagraphName>(new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static SymbolReference<SectionName> CreateSectionName(CobolCodeElementsParser.SectionNameContext context)
+        public static SectionName CreateSectionName(CobolCodeElementsParser.SectionNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<SectionName>(new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static SymbolReference<XmlSchemaName> CreateXmlSchemaName(CobolCodeElementsParser.XmlSchemaNameContext context)
+        public static XmlSchemaName CreateXmlSchemaName(CobolCodeElementsParser.XmlSchemaNameContext context)
         {
             if (context == null) return null;
-            return new SymbolReference<XmlSchemaName>(new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord())));
+            return new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
         private static IList<Subscript> CreateSubscripts(CobolCodeElementsParser.DataNameReferenceContext context)
@@ -411,7 +409,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ALL() != null)
             {
                 var token = ParseTreeUtils.GetTokenFromTerminalNode(context.ALL());
-                subscript.indexname = new SymbolReference<IndexName>(new IndexName(token));
+                subscript.indexname = new IndexName(token);
             }
             if (context.qualifiedDataName() != null)
             {
@@ -464,7 +462,7 @@ namespace TypeCobol.Compiler.Parser
         private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context)
         {
             if (context == null || context.fileName() == null) return null;
-            return new LinageCounter(CreateFileName(context.fileName()).Symbol);
+            return new LinageCounter(CreateFileName(context.fileName()));
         }
 
 

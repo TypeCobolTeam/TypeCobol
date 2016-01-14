@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// associated with the GIVING clause (file-name-3, ...) cannot be specified in the SAME
         /// AREA clause; however, they can be associated with the SAME RECORD AREA clause.
         /// </summary>
-        public SymbolReference<FileName> FileName;
+        public FileName FileName;
 
         /// <summary>
         /// p423:
@@ -99,7 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// SEQUENCE phrase and the PROGRAM COLLATING SEQUENCE clause are
         /// omitted, the EBCDIC collating sequence is used.
         /// </summary>
-        public SymbolReference<AlphabetName> CollatingSequence;
+        public AlphabetName CollatingSequence;
 
         /// <summary>
         /// p425:
@@ -125,7 +125,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Describing the input to sorting or merging in the Enterprise COBOL
         /// Programming Guide.
         /// </summary>
-        public IList<SymbolReference<FileName>> Using;
+        public IList<FileName> Using;
 
         /// <summary>
         /// pp425-426:
@@ -201,7 +201,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// is returned from that USE procedure or if no such USE procedure is
         /// specified, the processing of the file is terminated.
         /// </summary>
-        public IList<SymbolReference<FileName>> Giving;
+        public IList<FileName> Giving;
 
         /// <summary>
         /// p427:

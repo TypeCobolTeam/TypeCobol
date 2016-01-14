@@ -41,7 +41,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// configuration section of the class or program that contains the INVOKE
         /// statement.
         /// </summary>
-        public SymbolReference<ClassName> ClassName;
+        public ClassName ClassName;
 
         /// <summary>
         /// p357:

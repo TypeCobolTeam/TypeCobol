@@ -366,7 +366,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// description (FD) entry, items subordinate to the redefining or redefined item can
         /// contain an OCCURS DEPENDING ON clause.
         /// </summary>
-        public SymbolReference<DataName> RedefinesDataName { get; set; }
+        public DataName RedefinesDataName { get; set; }
 
         /// <summary>
         /// p221:
@@ -517,7 +517,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The JUSTIFIED, PICTURE, and BLANK WHEN ZERO clauses cannot be used to
         /// describe group or elementary items defined with the USAGE OBJECT REFERENCE clause.
         /// </summary>
-        public SymbolReference<ClassName> ObjectReference { get; set; }
+        public ClassName ObjectReference { get; set; }
 
         /// <summary>
         /// p191:
@@ -607,7 +607,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// DEPENDING ON clause is a variably located item. That is, its location is affected by
         /// the value of the OCCURS DEPENDING ON object.
         /// </summary>
-        public SymbolReference<DataName> OccursDependingOn { get; set; }
+        public DataName OccursDependingOn { get; set; }
 
         /// <summary>
         /// p192 (Fixed-length tables):
@@ -666,7 +666,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///   data-name-2 must not have subordinate items that contain OCCURS
         ///   DEPENDING ON clauses.
         /// </summary>
-        public IList<SymbolReference<DataName>> TableOccurenceKeys { get; set; }
+        public IList<DataName> TableOccurenceKeys { get; set; }
 
         /// <summary>
         /// ASCENDING KEY and DESCENDING KEY phrases
@@ -738,7 +738,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///   scope of an index-name is the same as that of the data-name that names
         ///   the table in which the index is defined.
         /// </summary>
-        public IList<SymbolReference<IndexName>> IndexedBy { get; set; }
+        public IList<IndexName> IndexedBy { get; set; }
 
 
 
@@ -798,8 +798,8 @@ namespace TypeCobol.Compiler.CodeElements
         ///     item.
         ///   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
         /// </summary>
-        public SymbolReference<DataName> RenamesFromDataName { get; set; }
-        public SymbolReference<DataName> RenamesToDataName { get; set; }
+        public DataName RenamesFromDataName { get; set; }
+        public DataName RenamesToDataName { get; set; }
 
 
 

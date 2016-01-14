@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// table element, one serial SEARCH statement steps through two table
         /// elements at once.
         /// </summary>
-        public SymbolReference<IndexName> VaryingIndex = null;
+        public IndexName VaryingIndex = null;
         /// <summary>
         /// p408:
         /// Use format 1 (serial search) when the table that you want to search has not been

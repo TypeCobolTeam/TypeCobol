@@ -21,11 +21,11 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public SymbolicCharacterValue(Token symbolicCharacter) : base(LiteralValueType.SymbolicCharacter)
         {
-            SymbolicCharacter = new SymbolReference<SymbolicCharacter>(new SymbolicCharacter(symbolicCharacter));
+            SymbolicCharacter = new SymbolicCharacter(symbolicCharacter);
         }
 
         public bool All { get; set; }
 
-        public SymbolReference<SymbolicCharacter> SymbolicCharacter { get; private set; }
+        public SymbolicCharacter SymbolicCharacter { get; private set; }
     }
 }

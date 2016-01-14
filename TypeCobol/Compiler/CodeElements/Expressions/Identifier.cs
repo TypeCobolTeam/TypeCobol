@@ -37,12 +37,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     
     public class INOF<S> where S : Symbol
     {
-        public SymbolReference<S> reference { get; private set; }
+        public S reference { get; private set; }
 
-        public INOF(S symbol)
-        {
-            this.reference = new SymbolReference<S>(symbol);
-        }
+        public INOF(S symbol) { this.reference = symbol; }
 
         public override string ToString()
         {
@@ -81,7 +78,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class Subscript
     {
         public QualifiedName<DataName> dataname { get; set; }
-        public SymbolReference<IndexName> indexname { get; set; }
+        public IndexName indexname { get; set; }
         public SyntaxNumber offset { get; set; }
         public char op { get; set; }
         public bool all { get; set; }
@@ -190,14 +187,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class QualifiedName<T> where T: Symbol
     {
-        public SymbolReference<T> Name { get; private set; }
-        public IList<SymbolReference<DataName>> DataNames { get; private set; }
-        public SymbolReference<FileName> FileName { get; private set; }
+        public T Name { get; private set; }
+        public IList<DataName> DataNames { get; private set; }
+        public FileName FileName { get; private set; }
 
-        public QualifiedName(SymbolReference<T> dataname, IList<SymbolReference<DataName>> datanames = null, SymbolReference<FileName> filename = null)
+        public QualifiedName(T dataname, IList<DataName> datanames = null, FileName filename = null)
         {
             this.Name = dataname;
-            this.DataNames = datanames != null ? datanames : new List<SymbolReference<DataName>>();
+            this.DataNames = datanames != null ? datanames : new List<DataName>();
             this.FileName = filename;
         }
 
@@ -213,10 +210,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class QualifiedProcedureName
     {
-        public SymbolReference<ParagraphName> ParagraphName { get; private set; }
-        public SymbolReference<SectionName>   SectionName   { get; private set; }
+        public ParagraphName ParagraphName { get; private set; }
+        public SectionName   SectionName   { get; private set; }
 
-        public QualifiedProcedureName(SymbolReference<ParagraphName> paragraphname, SymbolReference<SectionName> sectionname)
+        public QualifiedProcedureName(ParagraphName paragraphname, SectionName sectionname)
         {
             this.ParagraphName = paragraphname;
             this.SectionName = sectionname;

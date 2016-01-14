@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// DIVISION and must not name a sort or merge file. The FD entry must be
         /// equivalent to the information supplied when the file was defined.
         /// </summary>
-        SymbolReference<FileName> FileName;
+        FileName FileName;
         /// <summary>
         /// REVERSED
         /// Valid only for sequential single-reel files. REVERSED is not valid for
@@ -92,7 +92,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         bool IsReversed;
 
-        public OpenFileName(SymbolReference<FileName> filename, bool norewind = false, bool reversed = false)
+        public OpenFileName(FileName filename, bool norewind = false, bool reversed = false)
         {
             this.FileName = filename;
             this.IsNoRewind = norewind;

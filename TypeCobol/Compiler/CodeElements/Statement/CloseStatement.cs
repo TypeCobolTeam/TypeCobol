@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// than one file-name is specified, the files need not have the same
         /// organization or access. [FileName] must not be a sort or merge file.
         /// </summary>
-        SymbolReference<FileName> FileName;
+        FileName FileName;
 
         /// <summary>
         /// p314:
@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         bool IsLock;
 
-        public CloseFileName(SymbolReference<FileName> filename, bool reelunit, bool forremoval, bool norewind, bool lock_)
+        public CloseFileName(FileName filename, bool reelunit, bool forremoval, bool norewind, bool lock_)
         {
             this.FileName = filename;
             this.IsReelUnit = reelunit;

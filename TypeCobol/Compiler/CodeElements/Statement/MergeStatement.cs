@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// file-name-3, ... , are accepted by the merge program and then merged according to
         /// the keys specified.
         /// </summary>
-        public SymbolReference<FileName> FileName;
+        public FileName FileName;
         /// <summary>
         /// p365-366:
         /// ASCENDING/DESCENDING KEY phrase
@@ -144,7 +144,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// COLLATING SEQUENCE clause of the OBJECT-COMPUTER paragraph are
         /// omitted, the EBCDIC collating sequence is used.
         /// </summary>
-        public SymbolReference<AlphabetName> CollatingSequence;
+        public AlphabetName CollatingSequence;
 
         /// <summary>
         /// pp366-367:
@@ -167,7 +167,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// must not be greater than the largest record described for file-name-1. For more
         /// information, see Sorting and merging files in the Enterprise COBOL Programming Guide.
         /// </summary>
-        public IList<SymbolReference<FileName>> Using;
+        public IList<FileName> Using;
 
         /// <summary>
         /// p367:
@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// DECLARATIVE procedures are specified for these files for output operations, the
         /// declaratives will be driven for errors if errors occur.
         /// </summary>
-        public IList<SymbolReference<FileName>> Giving;
+        public IList<FileName> Giving;
 
         /// <summary>
         /// pp367-368:

@@ -164,17 +164,8 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterClassIdentification(CobolCodeElementsParser.ClassIdentificationContext context)
         {
             var classIdentification = new ClassIdentification();
-
-            Token className = ParseTreeUtils.GetFirstToken(context.classId);
-            if (className != null)
-            {
-                classIdentification.ClassName = new ClassName(className);
-            }
-            Token inheritsFromClassName = ParseTreeUtils.GetFirstToken(context.inheritsFromClassName);
-            if (inheritsFromClassName != null)
-            {
-                classIdentification.InheritsFromClassName = new SymbolReference<ClassName>(new ClassName(inheritsFromClassName));
-            }
+            classIdentification.ClassName = SyntaxElementBuilder.CreateClassName(context.classId);
+            classIdentification.InheritsFrom = SyntaxElementBuilder.CreateClassName(context.inheritsFromClassName);
 
             Context = context;
             CodeElement = classIdentification;
@@ -432,11 +423,10 @@ namespace TypeCobol.Compiler.Parser
             if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
                 level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
             }
-            var dataname = SyntaxElementBuilder.CreateDataName(context.dataName());
 
             DataDescriptionEntry entry = new DataDescriptionEntry();
             entry.LevelNumber = level;
-            if (dataname != null) entry.DataName = dataname.Symbol;
+            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataName());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
             if (entry.LevelNumber == 88) entry.IsConditionNameDescription = true;
 
@@ -546,7 +536,7 @@ namespace TypeCobol.Compiler.Parser
 
             var keys = context.occursKeys();
             if (keys != null) {
-                entry.TableOccurenceKeys = new List<SymbolReference<DataName>>();
+                entry.TableOccurenceKeys = new List<DataName>();
                 entry.TableOccurenceKeyDirections = new List<KeyDirection>();
                 foreach(var key in keys) {
                     var direction = KeyDirection.None;
@@ -563,7 +553,7 @@ namespace TypeCobol.Compiler.Parser
 
             var indexes = context.indexName();
             if (indexes != null) {
-                entry.IndexedBy = new List<SymbolReference<IndexName>>();
+                entry.IndexedBy = new List<IndexName>();
                 foreach(var index in indexes) entry.IndexedBy.Add(SyntaxElementBuilder.CreateIndexName(index));
             }
         }

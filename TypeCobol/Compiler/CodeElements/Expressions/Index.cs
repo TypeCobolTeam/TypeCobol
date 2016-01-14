@@ -8,16 +8,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 {
     public class Index : Expression
     {
-        public SymbolReference<IndexName> Name { get; private set; }
+        public IndexName Name { get; private set; }
 
-        public Index(IndexName indexName)
-        {
-            Name = new SymbolReference<IndexName>(indexName);
-        }
+        public Index(IndexName indexName) { Name = indexName; }
 
-        public override string ToString()
-        {
-            return Name.ToString();
-        }
+        public override string ToString() { return Name.ToString(); }
     }
 }

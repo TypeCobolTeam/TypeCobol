@@ -103,7 +103,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// name of a file takes precedence over a declarative statement specifying the
         /// open mode of the file.
         /// </summary>
-        public IList<SymbolReference<FileName>> FileNames = new List<SymbolReference<FileName>>();
+        public IList<FileName> FileNames = new List<FileName>();
 
         /// <summary>
         /// p547:

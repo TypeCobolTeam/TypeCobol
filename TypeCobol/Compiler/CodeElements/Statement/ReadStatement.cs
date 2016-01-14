@@ -16,14 +16,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// p394:
         /// Must be defined in a DATA DIVISION FD entry.
         /// </summary>
-        SymbolReference<FileName> FileName;
+        FileName FileName;
         /// <summary>
         /// p395:
         /// The KEY IS phrase can be specified only for indexed files. data-name-1 must
         /// identify a record key associated with file-name-1. data-name-1 can be qualified; it
         /// cannot be subscripted.
         /// </summary>
-        SymbolReference<DataName> Key;
+        DataName Key;
         /// <summary>
         /// p395:
         /// identifier-1 is the receiving field.
@@ -72,7 +72,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         bool IsRecord;
 
-        public ReadStatement(SymbolReference<FileName> filename, Identifier into, SymbolReference<DataName> key, bool next, bool record)
+        public ReadStatement(FileName filename, Identifier into, DataName key, bool next, bool record)
             : base(CodeElementType.ReadStatement)
         {
             this.FileName = filename;

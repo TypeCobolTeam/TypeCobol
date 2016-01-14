@@ -149,7 +149,7 @@ namespace TypeCobol.Compiler.CodeElements
             /// and must be set to a valid function or program entry point; otherwise, 
             /// the results of the CALL statement are undefined.
             /// </summary>
-            private SymbolReference<DataName> FunctionOrProcedurePointer;
+            private DataName FunctionOrProcedurePointer;
 
             public Program(Identifier identifier)
             {
@@ -161,7 +161,7 @@ namespace TypeCobol.Compiler.CodeElements
                 this.Literal = literal;
             }
 
-            public Program(SymbolReference<DataName> pointer)
+            public Program(DataName pointer)
             {
                 this.FunctionOrProcedurePointer = pointer;
             }
@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.CodeElements
             public Mode UsingMode;
             public Identifier Identifier;
             public Literal Literal;
-            public SymbolReference<FileName> Filename;
+            public FileName Filename;
             public Omitted Omitted;
 
             internal Using(Mode mode, Identifier value)
@@ -194,7 +194,7 @@ namespace TypeCobol.Compiler.CodeElements
                 this.UsingMode = mode;
                 this.Literal = value;
             }
-            internal Using(Mode mode, SymbolReference<FileName> value)
+            internal Using(Mode mode, FileName value)
             {
                 this.UsingMode = mode;
                 this.Filename = value;
