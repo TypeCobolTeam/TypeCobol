@@ -121,6 +121,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
     public interface Identifier : Expression {
+        QualifiedName Name { get; }
         void SetReferenceModifier(Substring substring);
     }
 
@@ -262,6 +263,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         /// Reference to the special register symbol in the source text
         /// </summary>
         public Symbol Symbol { get; private set; }
+        public QualifiedName Name {
+            get { return new QualifiedName(Symbol); }
+            private set { throw new System.InvalidOperationException(); }
+        }
 
         public Substring Substring { get; set; }
 
@@ -292,6 +297,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public Symbol Symbol { get; private set; }
         public Substring Substring { get; set; }
         public IList<FunctionParameter> Parameters { get; private set; }
+        public QualifiedName Name {
+            get { return new QualifiedName(Symbol); }
+            private set { throw new System.InvalidOperationException(); }
+        }
 
         public FunctionReference(Symbol symbol, IList<FunctionParameter> parameters = null)
         {
@@ -332,9 +341,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class LinageCounter : SymbolReference<FileName>, Identifier
+    public class LinageCounter : FileName, Identifier
     {
-        public LinageCounter(FileName filename) : base(filename) { }
+        public LinageCounter(Token filename) : base(filename) { }
+        public QualifiedName Name {
+            get { return new QualifiedName(this); }
+            private set { throw new System.InvalidOperationException(); }
+        }
 
         public Substring Substring { get; set; }
         public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
@@ -343,6 +356,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class Address : Identifier
     {
         public DataReference Identifier { get; set; }
+        public QualifiedName Name {
+            get { return Identifier.Name; }
+            private set { throw new System.InvalidOperationException(); }
+        }
         public Address(DataReference identifier) { this.Identifier = identifier; }
         public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
     }
@@ -350,6 +367,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     public class Length : Identifier
     {
         public DataReference Identifier { get; set; }
+        public QualifiedName Name {
+            get { return Identifier.Name; }
+            private set { throw new System.InvalidOperationException(); }
+        }
         public Length(DataReference identifier) { this.Identifier = identifier; }
         public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
     }

@@ -338,6 +338,17 @@ namespace TypeCobol.Compiler.Parser
             return new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
+        public static LinageCounter CreateLinageCounter(CobolCodeElementsParser.FileNameContext context) {
+            if (context == null) return null;
+            return new LinageCounter(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+        }
+
+        private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context) {
+            if (context == null || context.fileName() == null) return null;
+            var filename = CreateFileName(context.fileName());
+            return new LinageCounter(filename.NameToken);
+        }
+
         public static IndexName CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
         {
             if (context == null) return null;
@@ -457,12 +468,6 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null || context.dataNameReference() == null) return null;
             return new Length(CreateDataNameReference(context.dataNameReference()));
-        }
-
-        private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context)
-        {
-            if (context == null || context.fileName() == null) return null;
-            return new LinageCounter(CreateFileName(context.fileName()));
         }
 
 
