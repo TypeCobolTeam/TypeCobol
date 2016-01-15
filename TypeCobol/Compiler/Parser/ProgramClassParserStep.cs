@@ -42,6 +42,8 @@ namespace TypeCobol.Compiler.Parser
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
             ProgramClassBuilder programClassBuilder = new ProgramClassBuilder();
+            programClassBuilder.Dispatcher = new ProgramDispatcher();
+            programClassBuilder.Dispatcher.CreateListeners();
             walker.Walk(programClassBuilder, codeElementParseTree);
                         
             // Register compiler results

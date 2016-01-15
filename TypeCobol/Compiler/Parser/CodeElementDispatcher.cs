@@ -6,7 +6,7 @@ using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
 {
-    interface CodeElementListener {
+    public interface CodeElementListener {
         /// <summary>
         /// Returns the type(s) of CodeElement the listener is interested in.
         /// The listener will be notified about the creation of a CodeElement
@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Parser
         void OnCodeElement(CodeElement ce, ParserRuleContext context);
     }
 
-    class CodeElementDispatcher: CodeElementListener {
+    public class CodeElementDispatcher: CodeElementListener {
         public IList<System.Type> GetCodeElements() { return null; }
 
         /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-    interface ProgramListener {
+    public interface ProgramListener {
         /// <summary>
         /// Returns the type(s) of CodeElement the listener is interested in.
         /// The listener will be notified about the creation of a CodeElement
@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.Parser
         void OnCodeElement(CodeElement ce, ParserRuleContext context, Program program);
     }
 
-    class ProgramDispatcher: ProgramListener {
+    public class ProgramDispatcher: ProgramListener {
         public IList<System.Type> GetCodeElements() { return null; }
 
         /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>

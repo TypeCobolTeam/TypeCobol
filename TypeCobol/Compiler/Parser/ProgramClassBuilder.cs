@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
+using Antlr4.Runtime;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -26,15 +27,15 @@ namespace TypeCobol.Compiler.Parser
             set { programsStack.Push(value); }
         }
 
+        /// <summary>Class object resulting of the visit the parse tree</summary>
+        public Class Class { get; private set; }
+
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
         private Stack<Node> Branch = new Stack<Node>();
 
-        /// <summary>
-        /// Class object resulting of the visit the parse tree
-        /// </summary>
-        public Class Class { get; private set; }
+        public ProgramDispatcher Dispatcher { get; internal set; }
 
         /// <summary>
         /// Initialization code run before parsing each new Program or Class
@@ -111,31 +112,34 @@ namespace TypeCobol.Compiler.Parser
             return CurrentProgram.Data;
         }
 
-        private void Attach(Node child) {
+        private void Attach(CodeElement e, ParserRuleContext context) {
             if (Branch.Count > 0)
-                Branch.Peek().Add(child);
-            Branch.Push(child);
+                Branch.Peek().Add(e);
+            var node = e as Node;
+            if (node != null)
+                Branch.Push(node);
+            Dispatcher.OnCodeElement(e, context, CurrentProgram);
         }
         private void Detach() {
             Branch.Pop();
         }
 
         public override void EnterSection(CobolProgramClassParser.SectionContext context) {
-            Attach(new Section());
+            Attach(new Section(), context);
         }
         public override void ExitSection(CobolProgramClassParser.SectionContext context) {
             Detach();
         }
 
         public override void EnterParagraph(CobolProgramClassParser.ParagraphContext context) {
-            Attach(new Paragraph());
+            Attach(new Paragraph(), context);
         }
         public override void ExitParagraph(CobolProgramClassParser.ParagraphContext context) {
             Detach();
         }
 
         public override void EnterSentence(CobolProgramClassParser.SentenceContext context) {
-            Attach(new Sentence());
+            Attach(new Sentence(), context);
         }
         public override void ExitSentence(CobolProgramClassParser.SentenceContext context) {
             Detach();
@@ -146,7 +150,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.imperativeStatement() != null) statement = AsStatement(context.imperativeStatement());
             if (context.conditionalStatement()!= null) statement = AsStatement(context.conditionalStatement());
             if (statement != null) {
-                Branch.Peek().Add(statement);
+                Attach(statement, context);
             }
         }
 
