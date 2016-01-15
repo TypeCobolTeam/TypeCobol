@@ -83,14 +83,39 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
-            // TODO solve ambiguities
+            IList<DataDescriptionEntry> found;
+            if (name.DataNames.Count > 0) {
+                IList<DataDescriptionEntry> values = Get(name.DataNames[0].Name);
+                for (int c = 1; c < name.DataNames.Count; c++) {
+                    values = Filter(values, name.DataNames[c].Name);
+                }
+                found = Filter(values, name.Symbol.Name);
+            } else {
+                found = Get(name.Symbol.Name);
+            }
+            return found;
+        }
+
+        private IList<DataDescriptionEntry> Filter(IList<DataDescriptionEntry> values, string subordinate) {
+            var filtered = new List<DataDescriptionEntry>();
+            foreach (var data in values) {
+                foreach (var sub in data.Subordinates) {
+                    if (sub.Name.Name.Equals(subordinate)) {
+                        filtered.Add(data);
+                        break;
+                    }
+                }
+            }
+            return filtered;
+        }
+        private IList<DataDescriptionEntry> Get(string key) {
             var values = new List<DataDescriptionEntry>();
-            if (WorkingStorageData.ContainsKey(name.Symbol.Name))
-                values.AddRange(WorkingStorageData[name.Symbol.Name]);
-            if (LocalStorageData.ContainsKey(name.Symbol.Name))
-                values.AddRange(LocalStorageData[name.Symbol.Name]);
-            if (LinkageData.ContainsKey(name.Symbol.Name))
-                values.AddRange(LinkageData[name.Symbol.Name]);
+            if (WorkingStorageData.ContainsKey(key))
+                values.AddRange(WorkingStorageData[key]);
+            if (LocalStorageData.ContainsKey(key))
+                values.AddRange(LocalStorageData[key]);
+            if (LinkageData.ContainsKey(key))
+                values.AddRange(LinkageData[key]);
             return values;
         }
 
