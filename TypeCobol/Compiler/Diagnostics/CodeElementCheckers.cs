@@ -197,8 +197,15 @@ namespace TypeCobol.Compiler.Diagnostics
             return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
-            var statement = e as TypeCobol.Compiler.CodeModel.SymbolUser;
-            System.Console.WriteLine("TODO: check declaration of "+statement.Symbols.Count+" symbol(s).");
+            var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
+            var table = program.Data;
+            foreach (var symbol in element.Symbols) {
+                var found = table.Get(symbol);
+                if (found.Count < 1)
+                    DiagnosticUtils.AddError(e, symbol.Symbol.Name+" not declared");
+                if (found.Count > 1)
+                    DiagnosticUtils.AddError(e, symbol.Symbol.Name+" ambiguity");
+            }
         }
     }
 }

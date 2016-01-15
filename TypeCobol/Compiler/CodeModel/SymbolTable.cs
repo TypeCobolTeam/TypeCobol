@@ -82,6 +82,18 @@ namespace TypeCobol.Compiler.CodeModel
             return LinkageData;
         }
 
+        internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
+            // TODO solve ambiguities
+            var values = new List<DataDescriptionEntry>();
+            if (WorkingStorageData.ContainsKey(name.Symbol.Name))
+                values.AddRange(WorkingStorageData[name.Symbol.Name]);
+            if (LocalStorageData.ContainsKey(name.Symbol.Name))
+                values.AddRange(LocalStorageData[name.Symbol.Name]);
+            if (LinkageData.ContainsKey(name.Symbol.Name))
+                values.AddRange(LinkageData[name.Symbol.Name]);
+            return values;
+        }
+
         /// <summary>
         /// Cobol has compile time binding for variables,
         /// sometimes called static scope.
