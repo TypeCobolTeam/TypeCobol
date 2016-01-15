@@ -7,7 +7,6 @@ using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeElements.Statement;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;

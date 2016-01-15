@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
@@ -16,20 +17,18 @@ namespace TypeCobol.Compiler.Parser
         IList<System.Type> GetCodeElements();
 
         /// <summary>
-        /// Called when a CodeElement is created, but only if the CodeElement
-        /// type equals one of those returned by GetCodeElements.
+        /// Called when a CodeElement is created during CodeElementParserStep,
+        /// if the CodeElement type equals one of those returned by GetCodeElements.
         /// </summary>
         /// <param name="ce">CodeElement created</param>
+        /// <param name="context">Context associated to ce's creation</param>
         void OnCodeElement(CodeElement ce, ParserRuleContext context);
     }
 
     class CodeElementDispatcher: CodeElementListener {
         public IList<System.Type> GetCodeElements() { return null; }
 
-        /// <summary>
-        /// Notifies listeners about the creation of a new CodeElement.
-        /// </summary>
-        /// <param name="ce">CodeElement created.</param>
+        /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
         public void OnCodeElement(CodeElement e, ParserRuleContext context) {
             foreach(var listener in listeners) {
                 var types = listener.GetCodeElements();
@@ -54,6 +53,61 @@ namespace TypeCobol.Compiler.Parser
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             foreach (var names in namespaces) {
                 var instances = TypeCobol.Tools.Reflection.GetInstances<CodeElementListener>(assembly, names);
+                foreach (var checker in instances) listeners.Add(checker);
+            }
+        }
+    }
+
+
+
+    interface ProgramListener {
+        /// <summary>
+        /// Returns the type(s) of CodeElement the listener is interested in.
+        /// The listener will be notified about the creation of a CodeElement
+        /// only if the CodeElement type matches at least one of the Types
+        /// returned by this method.
+        /// </summary>
+        /// <returns>IList of CodeElement Types</returns>
+        IList<System.Type> GetCodeElements();
+
+        /// <summary>
+        /// Called when a CodeElement is created during ProgramClassParserStep,
+        /// if the CodeElement type equals one of those returned by GetCodeElements.
+        /// </summary>
+        /// <param name="ce">CodeElement created</param>
+        /// <param name="context">Context associated to ce's creation</param>
+        /// <param name="program">Current scope program</param>
+        void OnCodeElement(CodeElement ce, ParserRuleContext context, Program program);
+    }
+
+    class ProgramDispatcher: ProgramListener {
+        public IList<System.Type> GetCodeElements() { return null; }
+
+        /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
+        public void OnCodeElement(CodeElement e, ParserRuleContext context, Program program) {
+            foreach(var listener in listeners) {
+                var types = listener.GetCodeElements();
+                foreach (var expected in types) {
+                    if (TypeCobol.Tools.Reflection.IsTypeOf(e.GetType(), expected)) {
+                        listener.OnCodeElement(e, context, program);
+                        break; // only notify each listener once for a given CodeElement
+                    }
+                }
+            }
+        }
+
+        private IList<ProgramListener> listeners = new List<ProgramListener>();
+
+        /// <summary>
+        /// Adds to listeners one instance of each type implementing CodeElementListener interface
+        /// and defined in namespace TypeCobol.Compiler.Diagnostics.
+        /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
+        /// </summary>
+        internal void CreateListeners() {
+            var namespaces = new string[] { "TypeCobol.Compiler.Diagnostics", };
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            foreach (var names in namespaces) {
+                var instances = TypeCobol.Tools.Reflection.GetInstances<ProgramListener>(assembly, names);
                 foreach (var checker in instances) listeners.Add(checker);
             }
         }

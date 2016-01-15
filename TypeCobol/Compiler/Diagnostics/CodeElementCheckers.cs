@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -134,10 +135,10 @@ namespace TypeCobol.Compiler.Diagnostics
     class SetStatementChecker: CodeElementListener
     {
         public IList<Type> GetCodeElements() {
-            return new List<Type>() { typeof(TypeCobol.Compiler.CodeElements.Statement.SetStatementForIndex), };
+            return new List<Type>() { typeof(TypeCobol.Compiler.CodeElements.SetStatementForIndex), };
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-            var sa = e as TypeCobol.Compiler.CodeElements.Statement.SetStatementForAssignation;
+            var sa = e as TypeCobol.Compiler.CodeElements.SetStatementForAssignation;
             if (sa != null) {
                 var ca = c as CobolCodeElementsParser.SetStatementForAssignationContext;
                 for (int i = 0; i < ca.setStatementForAssignationReceiving().Length; i++) {
@@ -150,7 +151,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(sa, "Set: Sending field missing or type unknown after TO", ca.setStatementForAssignationSending());
                 }
             }
-            var si = e as TypeCobol.Compiler.CodeElements.Statement.SetStatementForIndex;
+            var si = e as TypeCobol.Compiler.CodeElements.SetStatementForIndex;
             if (si != null) {
                 if (si.SendingField == null) {
                     var ci = c as CobolCodeElementsParser.SetStatementForIndexesContext;
@@ -190,12 +191,12 @@ namespace TypeCobol.Compiler.Diagnostics
 
 
 
-    class DeclarationChecker: CodeElementListener
+    class DeclarationChecker: ProgramListener
     {
         public IList<Type> GetCodeElements() {
             return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
         }
-        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+        public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
             var statement = e as TypeCobol.Compiler.CodeModel.SymbolUser;
             System.Console.WriteLine("TODO: check declaration of "+statement.Symbols.Count+" symbol(s).");
         }
