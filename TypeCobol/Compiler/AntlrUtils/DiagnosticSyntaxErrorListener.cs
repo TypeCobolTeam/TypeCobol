@@ -81,7 +81,10 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         public string ToStringWithRuleStack() {
             int lineindex = line;
-            if (lineindex < 0) { // ProgramClass parsing
+            if (lineindex < 0 && OffendingSymbol != null) {
+                lineindex = OffendingSymbol.Line;
+            }
+            if (lineindex < 0 && OffendingSymbol != null) {
                 CodeElement e = OffendingSymbol as CodeElement;
                 if (e != null) lineindex = e.ConsumedTokens[0].Line;
             }
