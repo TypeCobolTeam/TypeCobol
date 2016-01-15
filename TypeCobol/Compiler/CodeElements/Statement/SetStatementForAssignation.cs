@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
-namespace TypeCobol.Compiler.CodeElements.Statement
+namespace TypeCobol.Compiler.CodeElements
 {
     class SetStatementForAssignation : SetStatement
     {

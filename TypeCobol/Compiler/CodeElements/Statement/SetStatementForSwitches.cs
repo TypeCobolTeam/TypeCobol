@@ -2,7 +2,7 @@
 using System.Text;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
-namespace TypeCobol.Compiler.CodeElements.Statement
+namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     ///     Format 3: SET for external switches
