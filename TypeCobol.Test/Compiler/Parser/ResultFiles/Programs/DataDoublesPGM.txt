@@ -1,4 +1,10 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+[3,13]<27,Error,Syntax>Syntax error : Symbol Y is not referenced ([3>13] on line 33)
+[3,20]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol I-DOUBLE ([3>20] on line 34)
+[3,31]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol VARIANT-1B ([3>31] on line 36)
+[3,46]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2 ([3>46] on line 38)
+
+--- Program ---
 PROGRAM: Doubles common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 WORKING-STORAGE:

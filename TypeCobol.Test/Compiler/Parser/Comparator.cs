@@ -376,6 +376,9 @@ namespace TypeCobol.Test.Compiler.Parser
             List<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics = new List<TypeCobol.Compiler.Diagnostics.Diagnostic>();
             diagnostics.AddRange(result.CodeElementsDocumentSnapshot.ParserDiagnostics);
             diagnostics.AddRange(pcd.Diagnostics);
+            foreach (var element in result.CodeElementsDocumentSnapshot.CodeElements) {
+                diagnostics.AddRange(element.Diagnostics);
+            }
             Compare(pcd.Program, pcd.Class, diagnostics, reader);
         }
 

@@ -79,9 +79,8 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// <summary>Line at wich the error occured.</summary>
         private int line = -1;
 
-        public string ToStringWithRuleStack()
-        {
-            int lineindex = OffendingSymbol.Line;
+        public string ToStringWithRuleStack() {
+            int lineindex = line;
             if (lineindex < 0) { // ProgramClass parsing
                 CodeElement e = OffendingSymbol as CodeElement;
                 if (e != null) lineindex = e.ConsumedTokens[0].Line;
@@ -89,8 +88,17 @@ namespace TypeCobol.Compiler.AntlrUtils
             // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
             // This is enough to pass all unit tests, but will return false informations in real usage !
             // for real line number, use a Snapshot
-            return base.ToString() + " (RuleStack=" + ruleStack + ", OffendingSymbol=" + OffendingSymbol.ToString() + " on line " + lineindex + ")";
-//            return base.ToString() + " (RuleStack="+rulestack+", OffendingSymbol=TODO on line "+line+")";
+            var str = new StringBuilder();
+            str.Append(base.ToString()).Append(" (");
+            if (ruleStack!=null) str.Append("RuleStack="+ruleStack+", ");
+            if (OffendingSymbol!=null) {
+                str.Append("OffendingSymbol=").Append(OffendingSymbol);
+            } else {
+                str.Append("[").Append(ColumnStart).Append(">").Append(ColumnEnd).Append("]");
+            }
+            str.Append(" on line ").Append(lineindex);
+            str.Append(")");
+            return str.ToString();
         }
     }
 }

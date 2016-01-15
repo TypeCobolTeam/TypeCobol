@@ -202,9 +202,9 @@ namespace TypeCobol.Compiler.Diagnostics
             foreach (var symbol in element.Symbols) {
                 var found = table.Get(symbol);
                 if (found.Count < 1)
-                    DiagnosticUtils.AddError(e, symbol.Symbol.Name+" not declared");
+                    DiagnosticUtils.AddError(e, "Symbol "+symbol+" is not referenced");
                 if (found.Count > 1)
-                    DiagnosticUtils.AddError(e, symbol.Symbol.Name+" ambiguity");
+                    DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+symbol);
             }
         }
     }
