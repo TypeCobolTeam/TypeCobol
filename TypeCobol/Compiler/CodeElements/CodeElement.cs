@@ -147,5 +147,10 @@ namespace TypeCobol.Compiler.CodeElements
                 return ConsumedTokens[0].InputStream;
             }
         }
+
+        public CodeElement Parent {
+            get;
+            internal set;
+        }
     }
 }
