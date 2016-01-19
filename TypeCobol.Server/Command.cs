@@ -64,7 +64,8 @@ namespace TypeCobol.Server
             Parser.Parse(path, e);
             var elapsedStage2 = sw.ElapsedMilliseconds;
             SerializeReturnCode(0);
-            Serializer.Serialize(Output, Parser.CodeElements, Parser.Snapshot);
+            Serializer.Lines = Parser.Snapshot.Lines;
+            Serializer.Serialize(Output, Parser.CodeElements);
             var elapsedStage3 = sw.ElapsedMilliseconds;
             sw.Stop();
 

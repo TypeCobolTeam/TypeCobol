@@ -1,190 +1,160 @@
-﻿using MsgPack.Serialization;
-using System.Collections.Generic;
+﻿using SimpleMsgPack;
 using System.IO;
+using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Server.Serialization
 {
-    public class IntegerSerializer {
-        private MessagePackSerializer<int> Marshaller = MessagePackSerializer.Get<int>();
-        public bool Serialize(Stream output, int data) {
-            Marshaller.Pack(output, data);
+    public abstract class Serializer<T> {
+        internal MsgPack msgpack = new MsgPack();
+
+        public bool Serialize(Stream output, T data) {
+            Encode(data);
+            msgpack.Encode2Stream(output);
             return true;
         }
-        public int Deserialize(Stream input) {
-            return Marshaller.Unpack(input);
+
+        public byte[] Serialize(T data) {
+            Encode(data);
+            return msgpack.Encode2Bytes();
         }
+        internal abstract void Encode(T data);
+
+        public T Deserialize(Stream input) {
+            msgpack.DecodeFromStream(input);
+            return Decode();
+        }
+        public T Deserialize(byte[] input) {
+            msgpack.DecodeFromBytes(input);
+            return Decode();
+        }
+        internal abstract T Decode();
     }
 
-    public class StringSerializer {
-        private MessagePackSerializer<string> Marshaller = MessagePackSerializer.Get<string>();
-        public bool Serialize(Stream output, string data) {
-            Marshaller.Pack(output, data);
-            return true;
-        }
-        public string Deserialize(Stream input) {
-            return Marshaller.Unpack(input);
-        }
+    public class IntegerSerializer: Serializer<int> {
+        internal override void Encode(int data)  { msgpack.AsInteger = data; }
+        internal override int Decode() { return (int)msgpack.AsInteger; }
     }
 
-    public class CodeElementsListSerializer {
-        private MessagePackSerializer<List<MsgPackCodeElement>> Marshaller = MessagePackSerializer.Get<List<MsgPackCodeElement>>();
+    public class StringSerializer: Serializer<string> {
+        internal override void Encode(string data)  { msgpack.AsString = data; }
+        internal override string Decode() { return msgpack.AsString; }
+    }
 
-        public bool Serialize(Stream output, IEnumerable<CodeElement> data, IDocumentSnapshot<ICodeElementsLine> snapshot) {
-            List<MsgPackCodeElement> list = new List<MsgPackCodeElement>();
-            foreach(CodeElement e in data) {
-                // okay, we know it: this conversion is ugly
-                // reason of it: MsgPack.Cli won't let us get a Serializer on CodeElement because it is abstract
-                // so we have to explore other ways to solve this:
-                // - use a concrete class somewhere
-                // - try SimpleMessagePack
-                // - ... ?
-//                        System.Console.WriteLine("["+e.Type+"] "+e.ConsumedTokens.Count+" tokens, \""+e.Text+"\"; ToString=\""+e.ToString()+"\", Errors="+e.Diagnostics.Count);
-                var element = new MsgPackCodeElement {
-                                Type = e.Type,
-                                Begin = e.ConsumedTokens[0].Column-1,
-                                End = e.ConsumedTokens[e.ConsumedTokens.Count-1].EndColumn,
-                                LineFirst = getLine(e.ConsumedTokens[0], snapshot.Lines),
-                                LineLast  = getLine(e.ConsumedTokens[e.ConsumedTokens.Count-1], snapshot.Lines),
-                    };
-                element.Tokens = new List<MsgPackToken>();
-                foreach(TypeCobol.Compiler.Scanner.Token token in e.ConsumedTokens) {
-                    element.Tokens.Add(new MsgPackToken {
-                                    Type = (int)token.TokenFamily,
-                                    Begin = token.Column-1,
-                                    Length = token.Length,
-                                    Line = getLine(token, snapshot.Lines),
-                                    Text = token.Text,
-                        });
-                }
-                element.Errors = new List<MsgPackError>();
-                foreach(TypeCobol.Compiler.Diagnostics.Diagnostic error in e.Diagnostics) {
-                    element.Errors.Add(new MsgPackError {
-                                    Begin = error.ColumnStart-1,
-                                    End = error.ColumnEnd,
-                                    Message = error.Message,
-                                    Severity = (int)error.Info.Severity,
-                                    Category = (int)error.Info.Category,
-                                    Code = error.Info.Code,
-                        });
-                }
-                //if (element.Errors.Count > 0) System.Console.WriteLine(element.Errors.Count+" Error(s) to send.");
-                list.Add(element);
+    public class CodeElementSerializer: Serializer<CodeElement> {
+    public static int[] STUB;
+        public ISearchableReadOnlyList<ICodeElementsLine> Lines;
+
+        internal override void Encode(CodeElement data) {
+            Encode(msgpack, data, Lines);
+        }
+
+        internal static void Encode(MsgPack msgpack, CodeElement data, ISearchableReadOnlyList<ICodeElementsLine> lines) {
+            var first = data.ConsumedTokens[0];
+            var last  = data.ConsumedTokens[data.ConsumedTokens.Count-1];
+            msgpack.ForcePathObject("Type").AsInteger = (int)data.Type;
+            msgpack.ForcePathObject("Begin").AsInteger = first.Column-1;
+            msgpack.ForcePathObject("End").AsInteger = last.EndColumn;
+            msgpack.ForcePathObject("LineFirst").AsInteger = GetLine(first, lines);
+            msgpack.ForcePathObject("LineLast").AsInteger = GetLine(last, lines);
+            foreach(Token token in data.ConsumedTokens) {
+                var child = msgpack.ForcePathObject("Tokens").AddArrayChild();
+                child.ForcePathObject("Type").AsInteger = (int)token.TokenFamily;
+                child.ForcePathObject("Begin").AsInteger = token.Column-1;
+                child.ForcePathObject("Length").AsInteger = token.Length;
+                child.ForcePathObject("Line").AsInteger = GetLine(token, lines);
+                child.ForcePathObject("Text").AsString = token.Text;
             }
-            Marshaller.Pack(output, list);
-            System.Console.WriteLine(list.Count+" CodeElements sent.");
-            return true;
+            foreach(TypeCobol.Compiler.Diagnostics.Diagnostic error in data.Diagnostics) {
+                var child = msgpack.ForcePathObject("Errors").AddArrayChild();
+                child.ForcePathObject("Begin").AsInteger = error.ColumnStart-1;
+                child.ForcePathObject("End").AsInteger = error.ColumnEnd;
+                child.ForcePathObject("Message").AsString = error.Message;
+                child.ForcePathObject("Severity").AsInteger = (int)error.Info.Severity;
+                child.ForcePathObject("Category").AsInteger = (int)error.Info.Category;
+                child.ForcePathObject("Code").AsInteger = error.Info.Code;
+            }
         }
-
-        private int getLine(Token token, ISearchableReadOnlyList<ICodeElementsLine> lines) {
-            // token.Line is only defined in the context of a snapshot of the source document
+        private static int GetLine(Token token, ISearchableReadOnlyList<ICodeElementsLine> lines) {
+            if (lines == null)
+                //return token.Line;
+                throw new System.ArgumentNullException("this.Line must be set from the source document snapshot");
             return lines.IndexOf(token.TokensLine, token.TokensLine.InitialLineIndex);
         }
 
-        public List<MsgPackCodeElement> Deserialize(Stream input) {
-            return Marshaller.Unpack(input);
+        internal override CodeElement Decode() {
+            return Decode(msgpack);
+        }
+
+        internal static CodeElement Decode(MsgPack msgpack) {
+            int type = (int)msgpack.ForcePathObject("Type").AsInteger;
+            int begin = (int)msgpack.ForcePathObject("Begin").AsInteger;
+            int end   = (int)msgpack.ForcePathObject("End").AsInteger;
+            int lfirst = (int)msgpack.ForcePathObject("LineFirst").AsInteger;
+            int llast  = (int)msgpack.ForcePathObject("LineLast").AsInteger;
+            foreach (MsgPack item in msgpack.ForcePathObject("Tokens")) {
+                int ttype = (int)item.ForcePathObject("Type").AsInteger;
+                int tbegin = (int)item.ForcePathObject("Begin").AsInteger;
+                int tlen = (int)item.ForcePathObject("Length").AsInteger;
+                int tline = (int)item.ForcePathObject("Line").AsInteger;
+                string ttext = item.ForcePathObject("Text").AsString;
+            }
+            foreach (MsgPack item in msgpack.ForcePathObject("Errors")) {
+                int ebegin = (int)item.ForcePathObject("Begin").AsInteger;
+                int eend = (int)item.ForcePathObject("End").AsInteger;
+                string emessage = item.ForcePathObject("Message").AsString;
+                int eseverity = (int)item.ForcePathObject("Severity").AsInteger;
+                int ecategory = (int)item.ForcePathObject("Category").AsInteger;
+                int ecode = (int)item.ForcePathObject("Code").AsInteger;
+            }
+            return null; //TODO CodeElementFactory.Create(CodeElementType),
+                        // then fill in the blanks of the CodeElement instance
+                       // (C#-side CodeElement decoding wasn't necessary at the time of implementation)
         }
     }
 
-    public class TextChangedEventSerializer {
-        //private MessagePackSerializer<List<MsgPackTextChange>> Marshaller = MessagePackSerializer.Get<List<MsgPackTextChange>>();
-        MessagePackSerializer<int> Number = MessagePackSerializer.Get<int>();
-        MessagePackSerializer<string> String = MessagePackSerializer.Get<string>();
-        public bool Serialize(Stream output, TextChangedEvent e) {
-            List<MsgPackTextChange> list = new List<MsgPackTextChange>();
-            foreach(TextChange change in e.TextChanges) {
-                list.Add(new MsgPackTextChange {
-                        Type = (int)change.Type,
-                        Line = change.LineIndex,
-                        Text = change.NewLine.Text,
-                    });
+    public class CodeElementsListSerializer: Serializer<IEnumerable<CodeElement>> {
+        public ISearchableReadOnlyList<ICodeElementsLine> Lines;
+
+        internal override void Encode(IEnumerable<CodeElement> data) {
+            foreach(var e in data) {
+                var item = msgpack.ForcePathObject("CodeElements").AddArrayChild();
+                CodeElementSerializer.Encode(item, e, Lines);
             }
-            //Marshaller.Pack(output, list);
-            System.Console.WriteLine("TODO: send "+list.Count+" TextChanges.");
-            return true;
         }
-        public TextChangedEvent Deserialize(Stream input) {
-            TextChangedEvent e = new TextChangedEvent();
-//            foreach(MsgPackTextChange change in Marshaller.Unpack(input)) {
-//                ITextLine snapshot = new TextLineSnapshot(change.Line, change.Text, null);
-//                e.TextChanges.Add(new TextChange((TextChangeType)change.Type, change.Line, snapshot));
-//            }
-            int size = Number.Unpack(input);
-            for(int c=0; c<size; c++) {
-                TextChangeType type = (TextChangeType)Number.Unpack(input);
-                int line = Number.Unpack(input);
-                string text = String.Unpack(input);
+        internal override IEnumerable<CodeElement> Decode() {
+            var result = new List<CodeElement>();
+            foreach (MsgPack item in msgpack.ForcePathObject("CodeElements")) {
+                var e = CodeElementSerializer.Decode(item);
+                result.Add(e);
+            }
+            return result;
+        }
+    }
+
+    public class TextChangedEventSerializer: Serializer<TextChangedEvent> {
+        internal override void Encode(TextChangedEvent data) {
+            foreach(var change in data.TextChanges) {
+                var item = msgpack.ForcePathObject("Events").AddArrayChild();
+                item.ForcePathObject("Type").AsInteger = (int)change.Type;
+                item.ForcePathObject("Line").AsInteger = change.LineIndex;
+                item.ForcePathObject("Text").AsString = change.NewLine.Text;
+            }
+        }
+        internal override TextChangedEvent Decode() {
+            var result = new TextChangedEvent();
+            foreach (MsgPack item in msgpack.ForcePathObject("Events")) {
+                TextChangeType type = (TextChangeType)item.ForcePathObject("Type").AsInteger;
+                int line = (int)item.ForcePathObject("Line").AsInteger;
+                string text = item.ForcePathObject("Text").AsString;
                 ITextLine snapshot = new TextLineSnapshot(line, text, null);
-                e.TextChanges.Add(new TextChange(type, line, snapshot));
+                result.TextChanges.Add(new TextChange(type, line, snapshot));
             }
-            return e;
+            return result;
         }
     }
-
-
-// The following seem have no importance regarding msgpack serialization:
-// - how the class to serialize is named
-// - in what order fields are declared or initialized:
-//   they are always serialized by msgpack in alphabetical order,
-//   excepted if one uses [MessagePackMemberAttribute(<0-based position>)]
-// - wheter or not the field to serialize is a C# property
-
-public class MsgPackCodeElement {
-	[MessagePackMemberAttribute(0)]
-	public CodeElementType Type;
-	[MessagePackMemberAttribute(1)]
-	public int Begin;
-	[MessagePackMemberAttribute(2)]
-	public int End { get; set; }
-	[MessagePackMemberAttribute(3)]
-	public int LineFirst;
-	[MessagePackMemberAttribute(4)]
-	public int LineLast;
-	[MessagePackMemberAttribute(5)]
-    public IList<MsgPackToken> Tokens;
-	[MessagePackMemberAttribute(6)]
-    public List<MsgPackError> Errors;
-}
-
-public class MsgPackToken {
-	[MessagePackMemberAttribute(0)]
-    public int Type;
-	[MessagePackMemberAttribute(1)]
-    public int Begin;
-	[MessagePackMemberAttribute(2)]
-    public int Length;
-	[MessagePackMemberAttribute(3)]
-    public int Line;
-	[MessagePackMemberAttribute(4)]
-    public string Text;
-}
-
-public class MsgPackError {
-	[MessagePackMemberAttribute(0)]
-    public int Begin;
-	[MessagePackMemberAttribute(1)]
-    public int End;
-	[MessagePackMemberAttribute(2)]
-    public string Message;
-	[MessagePackMemberAttribute(3)]
-    public int Severity;
-	[MessagePackMemberAttribute(4)]
-    public int Category;
-	[MessagePackMemberAttribute(5)]
-    public int Code;
-}
-
-public class MsgPackTextChange {
-	[MessagePackMemberAttribute(0)]
-    public int Type;
-	[MessagePackMemberAttribute(1)]
-    public int Line;
-	[MessagePackMemberAttribute(2)]
-    public string Text;
-}
-
 }
