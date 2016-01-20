@@ -3,9 +3,9 @@ package typecobol.client;
 import org.msgpack.template.Template;
 import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
-import static org.msgpack.template.Templates.*;
 
 import java.util.List;
+import java.util.ArrayList;
 
 // this annotation is necessary only if you don't
 // use MessagePack.register(<this class>)
@@ -35,23 +35,34 @@ public class CodeElement {
 		public CodeElement read(final Unpacker unpacker, CodeElement token, final boolean required)
 				throws java.io.IOException {
 			token = new CodeElement();
-			unpacker.readArrayBegin();
+			int size = unpacker.readMapBegin();
 
-			token.type  = CodeElementType.asEnum(TString.read(unpacker, null, required));
-			token.begin = TInteger.read(unpacker, null, required);
-			token.end   = TInteger.read(unpacker, null, required);
-			token.lineFirst = TInteger.read(unpacker, null, required);
-			token.lineLast  = TInteger.read(unpacker, null, required);
+			unpacker.readString();
+			token.type  = CodeElementType.asEnum(unpacker.readString());
+			unpacker.readString();
+			token.begin = unpacker.readInt();
+			unpacker.readString();
+			token.end   = unpacker.readInt();
+			unpacker.readString();
+			token.lineFirst = unpacker.readInt();
+			unpacker.readString();
+			token.lineLast  = unpacker.readInt();
 
-			final Template<List<Token>> ttemplate = tList(Token.TToken);
-			List<Token> tokens = unpacker.read(ttemplate);
-			token.tokens = tokens;
-
-			final Template<List<Error>> etemplate = tList(Error.TError);
-			List<Error> errors = unpacker.read(etemplate);
-			token.errors = errors;
-
+			unpacker.readString();//"Tokens"
+			size = unpacker.readArrayBegin();
+			token.tokens = new ArrayList<Token>();
+			for (int c=0; c<size; c++) token.tokens.add(unpacker.read(Token.TToken)); 
 			unpacker.readArrayEnd();
+
+			unpacker.readString();//"Errors"
+			token.errors = new ArrayList<Error>();
+			if (unpacker.getNextType() == org.msgpack.type.ValueType.ARRAY) {
+				size = unpacker.readArrayBegin();
+				for (int c=0; c<size; c++) token.errors.add(unpacker.read(Error.TError));
+				unpacker.readArrayEnd();
+			} // else this CodeElement has no error
+
+			unpacker.readMapEnd();
 			return token;
 		}
 

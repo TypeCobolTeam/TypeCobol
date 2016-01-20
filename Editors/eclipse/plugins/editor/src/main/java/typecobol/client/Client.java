@@ -1,8 +1,7 @@
 package typecobol.client;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -59,21 +58,24 @@ public class Client {
 		final int order = 66;// 66 = let's parse!
 		packer.write(order);
 		packer.write(path);
-		tList(TextChange.TTextChange).write(packer, Arrays.asList(changes));
+
+		Map<String,List<TextChange>> map = new HashMap<String,List<TextChange>>();
+		map.put("Events", Arrays.asList(changes));
+		tMap(TString, tList(TextChange.TTextChange)).write(packer, map);
 		packer.close();
 		this.pipe.write(out.toByteArray());
 		out.close();
-
 		// read response
 		final InputStream in = java.nio.channels.Channels.newInputStream(pipe.getChannel());
 		final Unpacker unpacker = msgpack.createUnpacker(in);
 		final int status = unpacker.read(TInteger);
 		System.out.println("Executed command:"+order+" status:"+status);
-		final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.TCodeElement);
-		List<CodeElement> result = unpacker.read(ctemplate);
+		//final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.TCodeElement);
+		final Template<Map<String,List<CodeElement>>> ctemplate = tMap(TString,tList(CodeElement.TCodeElement));
+		Map<String,List<CodeElement>> result = unpacker.read(ctemplate);
 		unpacker.close();
 		in.close();
 
-		return result;
+		return result.get("CodeElements");
 	}
 }

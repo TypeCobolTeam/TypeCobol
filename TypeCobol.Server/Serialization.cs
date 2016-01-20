@@ -46,7 +46,6 @@ namespace TypeCobol.Server.Serialization
     }
 
     public class CodeElementSerializer: Serializer<CodeElement> {
-    public static int[] STUB;
         public ISearchableReadOnlyList<ICodeElementsLine> Lines;
 
         internal override void Encode(CodeElement data) {
@@ -56,21 +55,25 @@ namespace TypeCobol.Server.Serialization
         internal static void Encode(MsgPack msgpack, CodeElement data, ISearchableReadOnlyList<ICodeElementsLine> lines) {
             var first = data.ConsumedTokens[0];
             var last  = data.ConsumedTokens[data.ConsumedTokens.Count-1];
-            msgpack.ForcePathObject("Type").AsInteger = (int)data.Type;
+
+            msgpack.ForcePathObject("Type").AsString = data.Type.ToString();
             msgpack.ForcePathObject("Begin").AsInteger = first.Column-1;
             msgpack.ForcePathObject("End").AsInteger = last.EndColumn;
             msgpack.ForcePathObject("LineFirst").AsInteger = GetLine(first, lines);
             msgpack.ForcePathObject("LineLast").AsInteger = GetLine(last, lines);
+            MsgPack item;
+            item = msgpack.ForcePathObject("Tokens");
             foreach(Token token in data.ConsumedTokens) {
-                var child = msgpack.ForcePathObject("Tokens").AddArrayChild();
+                var child = item.AddArrayChild();
                 child.ForcePathObject("Type").AsInteger = (int)token.TokenFamily;
                 child.ForcePathObject("Begin").AsInteger = token.Column-1;
                 child.ForcePathObject("Length").AsInteger = token.Length;
                 child.ForcePathObject("Line").AsInteger = GetLine(token, lines);
                 child.ForcePathObject("Text").AsString = token.Text;
             }
+            item = msgpack.ForcePathObject("Errors");
             foreach(TypeCobol.Compiler.Diagnostics.Diagnostic error in data.Diagnostics) {
-                var child = msgpack.ForcePathObject("Errors").AddArrayChild();
+                var child = item.AddArrayChild();
                 child.ForcePathObject("Begin").AsInteger = error.ColumnStart-1;
                 child.ForcePathObject("End").AsInteger = error.ColumnEnd;
                 child.ForcePathObject("Message").AsString = error.Message;
@@ -121,9 +124,9 @@ namespace TypeCobol.Server.Serialization
         public ISearchableReadOnlyList<ICodeElementsLine> Lines;
 
         internal override void Encode(IEnumerable<CodeElement> data) {
+            var item = msgpack.ForcePathObject("CodeElements");
             foreach(var e in data) {
-                var item = msgpack.ForcePathObject("CodeElements").AddArrayChild();
-                CodeElementSerializer.Encode(item, e, Lines);
+                CodeElementSerializer.Encode(item.AddArrayChild(), e, Lines);
             }
         }
         internal override IEnumerable<CodeElement> Decode() {
@@ -140,20 +143,22 @@ namespace TypeCobol.Server.Serialization
         internal override void Encode(TextChangedEvent data) {
             foreach(var change in data.TextChanges) {
                 var item = msgpack.ForcePathObject("Events").AddArrayChild();
-                item.ForcePathObject("Type").AsInteger = (int)change.Type;
-                item.ForcePathObject("Line").AsInteger = change.LineIndex;
-                item.ForcePathObject("Text").AsString = change.NewLine.Text;
+                item.AsArray.Add((int)change.Type);//Type
+                item.AsArray.Add(change.LineIndex);//Line
+                item.AsArray.Add(change.NewLine.Text);//Text
             }
         }
         internal override TextChangedEvent Decode() {
             var result = new TextChangedEvent();
             foreach (MsgPack item in msgpack.ForcePathObject("Events")) {
-                TextChangeType type = (TextChangeType)item.ForcePathObject("Type").AsInteger;
-                int line = (int)item.ForcePathObject("Line").AsInteger;
-                string text = item.ForcePathObject("Text").AsString;
+                TextChangeType type = (TextChangeType)item.AsArray[0].AsInteger;//Type
+                int line = (int)item.AsArray[1].AsInteger;//Line
+                string text = item.AsArray[2].AsString;//Text
                 ITextLine snapshot = new TextLineSnapshot(line, text, null);
                 result.TextChanges.Add(new TextChange(type, line, snapshot));
             }
+            //System.Console.WriteLine("TextChangedEventSerializer.Decode(): decoded "+result.TextChanges.Count+" events.");
+            //foreach(var change in result.TextChanges) System.Console.WriteLine(" - "+change.ToString());
             return result;
         }
     }

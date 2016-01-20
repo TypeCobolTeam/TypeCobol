@@ -53,5 +53,11 @@ namespace TypeCobol.Compiler.Text
         /// New line content after the update (null in case of a LineRemoved event)
         /// </summary>
         public ITextLine NewLine { get; private set; }
+
+        public override String ToString() {
+            var str = new StringBuilder();
+            str.Append(Type).Append("@").Append(LineIndex).Append("\"").Append(NewLine.Text).Append("\"");
+            return str.ToString();
+        }
     }
 }

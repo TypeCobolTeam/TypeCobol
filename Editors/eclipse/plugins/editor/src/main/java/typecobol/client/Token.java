@@ -1,8 +1,5 @@
 package typecobol.client;
 
-import static org.msgpack.template.Templates.TInteger;
-import static org.msgpack.template.Templates.TString;
-
 import org.msgpack.packer.Packer;
 import org.msgpack.template.Template;
 import org.msgpack.unpacker.Unpacker;
@@ -34,13 +31,18 @@ public class Token {
 		public Token read(final Unpacker unpacker, Token token, final boolean required)
 				throws java.io.IOException {
 			token = new Token();
-			unpacker.readArrayBegin();
-			token.family = TokenFamily.asEnum(TInteger.read(unpacker, null, required));
-			token.begin  = TInteger.read(unpacker, null, required);
-			token.length = TInteger.read(unpacker, null, required);
-			token.line   = TInteger.read(unpacker, null, required);
-			token.text   = TString.read(unpacker, null, required);
-			unpacker.readArrayEnd();
+			unpacker.readMapBegin(); //give me 5
+			unpacker.readString();
+			token.family = TokenFamily.asEnum(unpacker.readInt());
+			unpacker.readString();
+			token.begin  = unpacker.readInt();
+			unpacker.readString();
+			token.length = unpacker.readInt();
+			unpacker.readString();
+			token.line   = unpacker.readInt();
+			unpacker.readString();
+			token.text   = unpacker.readString();
+			unpacker.readMapEnd();
 			return token;
 		}
 
