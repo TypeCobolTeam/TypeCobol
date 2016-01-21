@@ -43,8 +43,14 @@ public class Scanner implements ITokenScanner {
 		if (tokens == null) return Token.EOF;
 		index ++;
 		if (index >= tokens.size()) return Token.EOF;
-		current =  tokens.get(index);
-		//if (current.family == TokenFamily.StatementStartingKeyword && current.begin==4 && current.length==6) System.out.println("Statement starting @"+getTokenOffset()+" l="+getTokenLength());
+		final typecobol.client.Token t = tokens.get(index);
+		if (t.line >= document.getNumberOfLines()) {
+			// prevents BadLocationException in getTokenOffset, but shouldn't be necessary
+			// TypeCobol.Server seems to send too much CodeElements
+			System.err.println("Token "+t+": line index is "+t.line+" but document has only "+document.getNumberOfLines()+" lines.");
+			return Token.EOF;
+		}
+		current =  t;
 		return new Token(new TextAttribute(getColor(current.family), null, SWT.BOLD));
 	}
 
