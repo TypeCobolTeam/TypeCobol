@@ -29,7 +29,7 @@ public class CodeElement {
 		@Override
 		public CodeElement read(final Unpacker unpacker, final CodeElement token)
 				throws java.io.IOException {
-			return read(unpacker, token, false);
+			return read(unpacker, token, true);
 		}
 		@Override
 		public CodeElement read(final Unpacker unpacker, CodeElement token, final boolean required)
@@ -52,17 +52,17 @@ public class CodeElement {
 			size = unpacker.readArrayBegin();
 			token.tokens = new ArrayList<Token>();
 			for (int c=0; c<size; c++) token.tokens.add(unpacker.read(Token.TToken)); 
-			unpacker.readArrayEnd();
+			unpacker.readArrayEnd(required);
 
 			unpacker.readString();//"Errors"
 			token.errors = new ArrayList<Error>();
 			if (unpacker.getNextType() == org.msgpack.type.ValueType.ARRAY) {
 				size = unpacker.readArrayBegin();
 				for (int c=0; c<size; c++) token.errors.add(unpacker.read(Error.TError));
-				unpacker.readArrayEnd();
-			} // else this CodeElement has no error
+				unpacker.readArrayEnd(required);
+			} else unpacker.readNil();
 
-			unpacker.readMapEnd();
+			unpacker.readMapEnd(required);
 			return token;
 		}
 

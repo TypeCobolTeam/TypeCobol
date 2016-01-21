@@ -70,12 +70,11 @@ public class Client {
 		final Unpacker unpacker = msgpack.createUnpacker(in);
 		final int status = unpacker.read(TInteger);
 		System.out.println("Executed command:"+order+" status:"+status);
-		//final Template<java.util.List<CodeElement>> ctemplate = tList(CodeElement.TCodeElement);
-		final Template<Map<String,List<CodeElement>>> ctemplate = tMap(TString,tList(CodeElement.TCodeElement));
-		Map<String,List<CodeElement>> result = unpacker.read(ctemplate);
+		final Template<Map<String,List<CodeElement>>> template = tMap(TString,tList(CodeElement.TCodeElement));
+		final List<CodeElement> result = unpacker.read(template).get("CodeElements");
 		unpacker.close();
 		in.close();
 
-		return result.get("CodeElements");
+		return result;
 	}
 }

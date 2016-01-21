@@ -10,25 +10,29 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Server.Serialization
 {
     public abstract class Serializer<T> {
-        internal MsgPack msgpack = new MsgPack();
+        internal MsgPack msgpack;
 
         public bool Serialize(Stream output, T data) {
+            msgpack = new MsgPack();
             Encode(data);
             msgpack.Encode2Stream(output);
             return true;
         }
 
         public byte[] Serialize(T data) {
+            msgpack = new MsgPack();
             Encode(data);
             return msgpack.Encode2Bytes();
         }
         internal abstract void Encode(T data);
 
         public T Deserialize(Stream input) {
+            msgpack = new MsgPack();
             msgpack.DecodeFromStream(input);
             return Decode();
         }
         public T Deserialize(byte[] input) {
+            msgpack = new MsgPack();
             msgpack.DecodeFromBytes(input);
             return Decode();
         }
