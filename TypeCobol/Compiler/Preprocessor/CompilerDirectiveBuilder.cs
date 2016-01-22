@@ -92,6 +92,42 @@ namespace TypeCobol.Compiler.Preprocessor
                 ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref textName);
                 ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref textName);
                 copyDirective.TextName = textName;
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+                if (textName != null)
+                {
+                    // Get token for the text name
+                    Token textNameToken = null;
+                    if (context.UserDefinedWord() != null)
+                    {
+                        textNameToken = (Token)context.UserDefinedWord().Symbol;
+                    }
+                    if (context.AlphanumericLiteral() != null)
+                    {
+                        textNameToken = (Token)context.AlphanumericLiteral().Symbol;
+                    }
+
+                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                    List<RemarksDirective.TextNameVariation> copyTextNamesVariations = ((TokensLine)textNameToken.TokensLine).InitialScanState.CopyTextNamesVariations;
+                    if(copyTextNamesVariations != null && copyTextNamesVariations.Count > 0)
+                    {
+                        // Check if the current text name was mentioned in a REMARKS compiler directive
+                        RemarksDirective.TextNameVariation textNameDeclaration = copyTextNamesVariations.Find(declaration => String.Equals(declaration.TextNameWithSuffix, textName, StringComparison.InvariantCultureIgnoreCase));
+                        if(textNameDeclaration != null)
+                        {
+                            // Declaration found => apply the legacy REPLACING semantics to the copy directive
+                            copyDirective.RemoveFirst01Level = true;
+                            if(textNameDeclaration.HasSuffix)
+                            {
+                                copyDirective.TextName = textNameDeclaration.TextName;
+                                copyDirective.InsertSuffixChar = true;
+                                copyDirective.SuffixChar = textNameDeclaration.SuffixChar;
+                            }
+                        }
+                    }
+                }
+#endif
             }
         }
 

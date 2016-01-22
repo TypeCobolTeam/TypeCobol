@@ -43,7 +43,11 @@ namespace TypeCobol.Compiler.Preprocessor
         public ITokensLinesIterator GetProcessedTokensIterator()
         {
             ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines);
-            if (HasReplacingDirective)
+            if (HasReplacingDirective
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                || CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar       
+#endif               
+                )
             {
                 ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective);
                 return replaceIterator;

@@ -21,13 +21,21 @@ namespace TypeCobol.Compiler.Preprocessor
 
         // Current COPY REPLACING directive in effect for a file import
         // (optional : null if the iterator was NOT created in the context of an imported document)
-        public CopyDirective copyReplacingDirective;
+        public CopyDirective CopyReplacingDirective { get; private set; }
 
         // Iterator position
         private struct ReplaceTokensLinesIteratorPosition
         {
             // Underlying tokens iterator position
             public object SourceIteratorPosition;
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+            // Support for legacy replacing syntax semantics : 
+            // Remove the first 01 level data item found in the COPY text
+            // before copying it into the main program
+            public bool SawTheFirst01IntegerLiteral;
+#endif
 
             // Current REPLACE directive in effect in the file
             // (optional : null if the iterator WAS created in the context of an imported document)
@@ -67,7 +75,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective)
         {
             this.sourceIterator = sourceIterator;
-            this.copyReplacingDirective = copyReplacingDirective;
+            this.CopyReplacingDirective = copyReplacingDirective;
 
             if(copyReplacingDirective.ReplaceOperations.Count > 0)
             {
@@ -149,6 +157,31 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 Token nextToken = sourceIterator.NextToken();
 
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+                // Support for legacy replacing syntax semantics : 
+                // Remove the first 01 level data item found in the COPY text
+                // before copying it into the main program
+                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawTheFirst01IntegerLiteral)
+                {
+                    if(nextToken.TokenType == TokenType.IntegerLiteral && nextToken.Text == "01")
+                    {
+                        // Register that we saw the first "01" integer literal in the underlying file
+                        currentPosition.SawTheFirst01IntegerLiteral = true;
+
+                        // Skip all tokens after 01 until the next period separator 
+                        while(nextToken.TokenType != TokenType.PeriodSeparator && nextToken.TokenType != TokenType.EndOfFile)
+                        {
+                            nextToken = sourceIterator.NextToken();
+                        }
+                        if(nextToken.TokenType == TokenType.PeriodSeparator)
+                        {
+                            nextToken = sourceIterator.NextToken();
+                        }
+                    }
+                }
+#endif
+
                 // If the next token is a REPLACE directive, update the current replace directive in effect
                 while (nextToken.TokenType == TokenType.ReplaceDirective)
                 {
@@ -185,6 +218,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     nextToken = sourceIterator.NextToken();
                 }
 
+                // Apply the current REPLACE operations in effect
                 ReplaceStatus status;
                 do
                 {
@@ -228,6 +262,28 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             ReplaceStatus status = new ReplaceStatus();
             IList<Token> originalMatchingTokens;
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+            // Support for legacy replacing syntax semantics : 
+            // Insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+            // before copying it into the main program
+            if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
+            {
+                string originalText = nextToken.Text;
+                int indexOFirstDash = originalText.IndexOf('-');
+                if (indexOFirstDash > 0)
+                {
+                    string replacedText = originalText.Substring(0, indexOFirstDash) + CopyReplacingDirective.SuffixChar + originalText.Substring(indexOFirstDash);
+                    TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
+                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
+
+                    status.replacedToken = new ReplacedToken(replacementToken, nextToken);
+                    currentPosition.CurrentToken = status.replacedToken;
+                }
+            }
+#endif      
+
             if (replaceOperation != null && TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
             {
                 status.replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
