@@ -118,7 +118,7 @@
 -- Line 33 --
 
 -- Line 34 --
-[8,72:REMARKS. COPY=(YIDCHB1                                           ]<CommentLine>
+*** DIRECTIVE REMARKS YIDCHB1 ([8,72:REMARKS. COPY=(YIDCHB1                                           ]<CommentLine>) ***
 
 -- Line 35 --
 [8,9:01]<IntegerLiteral>{1}
