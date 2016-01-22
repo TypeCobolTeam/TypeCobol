@@ -19,7 +19,7 @@ namespace TypeCobol.Tools.CommandLine
             // Basic test program, useful to debug : compiles all sample programs located under TypeCobol.Test\Samples\EI Cobol samples\EI-Production"
 
             string currentDirectory = Directory.GetCurrentDirectory();
-            string projectRootPath = @"D:\Users\Laurent\OneDrive\Dev\Visual Studio 2012\Projects\TypeCobol\";//currentDirectory.Substring(0, currentDirectory.IndexOf(@"\TypeCobol\") + 11);
+            string projectRootPath = currentDirectory.Substring(0, currentDirectory.IndexOf(@"\TypeCobol\") + 11);
 
             string sourcePath = projectRootPath + @"TypeCobol.Test\Samples\EI Cobol samples\EI-Production";
             string[] programExtensions = { "*.PGM" };

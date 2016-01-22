@@ -49,10 +49,10 @@ namespace TypeCobol.Compiler.Directives
         // readyOrResetTraceCompilerStatement
         READY_TRACE,
         RESET_TRACE,
-        /// ------------
-        /// NON-STANDARD EI Compiler Directive
-        /// ------------
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+        // NON-STANDARD EI Compiler Directive, roughly equivalent to COPY REPLACING
         REMARKS,
+#endif
         // replaceCompilerStatement
         REPLACE,
         REPLACE_OFF,
