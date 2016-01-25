@@ -368,12 +368,11 @@ When the keyword is found, enter a special state :
 Exit this special state when :
 - a period separator token is encountered
 - a line without * in column 7 is encountered
-=> produce a pseudo token of type 'END-REMARKS' without underlying chars when either condition is found
 
 ** PREPROCESSOR **
 
 Add a new type of compiler directive, with the following grammar :
-'*REMARKS' ( 'COPY' '=' ( UserDefinedName | ( '(' UserDefinedName+ ')' ) ) )+ '.'? 'END-REMARKS'
+'*REMARKS' ( 'COPY' '=' ( UserDefinedName | ( '(' UserDefinedName+ ')' ) ) )+ '.'?
 
 The compiler directive object stores a list of user defined names, with two types :
 - text names (at most 7 characters)

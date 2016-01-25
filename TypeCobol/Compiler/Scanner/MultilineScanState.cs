@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -11,6 +12,32 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class MultilineScanState
     {
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+        /// <summary>
+        /// True if we detect in the comments lines stream that we are inside a REMARKS compiler directive.
+        /// </summary>
+        public bool InsideRemarksDirective { get; set; }
+
+        /// <summary>
+        /// Text names variations declared in REMARS compiler directives.
+        /// </summary>
+        public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; private set; }
+
+        /// <summary>
+        /// Register a new symbolic character name found in the source file
+        /// </summary>
+        public void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
+        {
+            if (CopyTextNamesVariations == null)
+            {
+                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
+            }
+            CopyTextNamesVariations.AddRange(textNamesVariations);
+        }
+
+#endif
+
         /// <summary>
         /// True if we know from the keyword stream that we are inside a DATA DIVISION.
         /// Used by the Scanner to disambiguate similar keywords based on their context of appearance. 
@@ -85,7 +112,14 @@ namespace TypeCobol.Compiler.Scanner
         public MultilineScanState Clone()
         {
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
-            if(SymbolicCharacters != null)
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+            clone.InsideRemarksDirective = InsideRemarksDirective;
+            if(CopyTextNamesVariations != null)
+            {
+                clone.CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
+            }
+#endif
+            if (SymbolicCharacters != null)
             {
                 clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
             }
@@ -369,6 +403,11 @@ namespace TypeCobol.Compiler.Scanner
             else
             {
                 return InsideDataDivision == otherScanState.InsideDataDivision &&
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                    InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
+                    ((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
+                     (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
+#endif
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
                     EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
@@ -388,6 +427,13 @@ namespace TypeCobol.Compiler.Scanner
                 int hash = 17;
                 // Suitable nullity checks etc, of course :)
                 hash = hash * 23 + InsideDataDivision.GetHashCode();
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                hash = hash * 23 + InsideRemarksDirective.GetHashCode();
+                if (CopyTextNamesVariations != null)
+                {
+                    hash = hash * 23 + CopyTextNamesVariations.Count;
+                }
+#endif
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();
                 hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();

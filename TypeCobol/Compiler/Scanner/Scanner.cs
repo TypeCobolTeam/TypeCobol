@@ -46,10 +46,89 @@ namespace TypeCobol.Compiler.Scanner
             string line = tokensLine.Text;
             int startIndex = textLine.Source.StartIndex;
             int lastIndex = textLine.Source.EndIndex;
-                        
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+            // Detect the first line of a REMARKS compiler directive inside comment lines
+            if (textLine.Type == CobolTextLineType.Comment && tokensLine.SourceText.StartsWith("REMARKS. ", StringComparison.InvariantCultureIgnoreCase))
+            {
+                tokensLine.ScanState.InsideRemarksDirective = true;
+            }
+            // A REMARKS compiler directive always stops with the first non comment line
+            else if(tokensLine.ScanState.InsideRemarksDirective && textLine.Type != CobolTextLineType.Comment)
+            {
+                tokensLine.ScanState.InsideRemarksDirective = false;
+            }
+            
+            // Try to scan REMARKS compiler directive parameters inside the comment line
+            if (textLine.Type == CobolTextLineType.Comment && tokensLine.ScanState.InsideRemarksDirective)
+            {
+                string commentLine = textLine.SourceText;
+
+                int firstSpaceIndex = commentLine.IndexOf(' ');
+                int firstEqualIndex = commentLine.IndexOf('=');
+                int firstLParenIndex = commentLine.IndexOf('(');
+                int startIndexForSignificantPart = Math.Max(Math.Max(firstSpaceIndex + 1, firstEqualIndex + 1), firstLParenIndex + 1);
+
+                int firstRParenIndex = commentLine.IndexOf(')', startIndexForSignificantPart);
+                int firstPeriodIndex = commentLine.IndexOf('.', startIndexForSignificantPart);
+                int endIndexForSignificantPart = commentLine.Length - 1;
+                if (firstRParenIndex >= 0)
+                {
+                    endIndexForSignificantPart = firstRParenIndex - 1;
+                }
+                if (firstPeriodIndex >= 0 && firstPeriodIndex < firstRParenIndex)
+                {
+                    endIndexForSignificantPart = firstPeriodIndex - 1;
+                }
+
+                RemarksDirective remarksDirective = null;
+                string significantPart = commentLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
+                if (significantPart.Length > 0)
+                {
+                    remarksDirective = new RemarksDirective();
+                    foreach (string candidateName in significantPart.Split(' '))
+                    {
+                        if (candidateName.Length == 7 || candidateName.Length == 8)
+                        {
+                            RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
+                            remarksDirective.CopyTextNamesVariations.Add(textName);
+                        }
+                        else if (!String.IsNullOrWhiteSpace(candidateName))
+                        {
+                            // A string which is not a text name is an error : stop scanning here
+                            remarksDirective = null;
+                            tokensLine.ScanState.InsideRemarksDirective = false;
+                            break;
+                        }
+                    }
+                }
+
+                // A period character indicates the end of the REMARKS compiler directive
+                if (firstPeriodIndex >= 0)
+                {
+                    tokensLine.ScanState.InsideRemarksDirective = false;
+                }
+
+                // A non empty remarks directive will replace the comment line
+                if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0)
+                {
+                    tokensLine.ScanState.AddCopyTextNamesVariations(remarksDirective.CopyTextNamesVariations);
+
+                    Token originalCommentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
+                    IList<Token> originalTokens = new List<Token>(1);
+                    originalTokens.Add(originalCommentToken);
+                    Token remarksDirectiveToken = new CompilerDirectiveToken(remarksDirective, originalTokens, false);
+                    tokensLine.AddToken(remarksDirectiveToken);
+                    return;
+                }
+            }
+
+#endif
+
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
-            if(textLine.Type == CobolTextLineType.Comment ||
+            if (textLine.Type == CobolTextLineType.Comment ||
                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
                 Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);

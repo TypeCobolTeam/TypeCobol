@@ -49,6 +49,10 @@ namespace TypeCobol.Compiler.Directives
         // readyOrResetTraceCompilerStatement
         READY_TRACE,
         RESET_TRACE,
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+        // NON-STANDARD EI Compiler Directive, roughly equivalent to COPY REPLACING
+        REMARKS,
+#endif
         // replaceCompilerStatement
         REPLACE,
         REPLACE_OFF,
@@ -385,6 +389,28 @@ namespace TypeCobol.Compiler.Directives
         /// For details, see “REPLACING phrase” on page 533.       
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+        /// <summary>
+        /// If true, remove the first 01 level data item found in the COPY text 
+        /// before copying it into the main program (legacy REPLACING syntax).
+        /// </summary>
+        public bool RemoveFirst01Level { get; set; }
+
+        /// <summary>
+        /// If true, insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+        /// before copying it into the main program (legacy REPLACING syntax).
+        /// </summary>
+        public bool InsertSuffixChar { get; set; }
+
+        /// <summary>
+        /// Character which should be inserted before the first '-' in all user defined words found in the COPY text 
+        /// before copying it into the main program (legacy REPLACING syntax).
+        /// </summary>
+        public char SuffixChar { get; set; }
+
+#endif
 
         public override string ToString()
         {
@@ -754,6 +780,103 @@ namespace TypeCobol.Compiler.Directives
             sb.Append('>');
         }
     }
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+    /// <summary>
+    /// Legacy syntax used instead of COPY REPLACING :
+    /// *REMARKS. COPY=(YI03PCBA YI03PCBB).
+    /// 01 I03PCBA. COPY YI03PCBA.
+    /// 01 I03PCBB. COPY YI03PCBB.
+    /// 
+    /// Operations exécuted by the preprocessor :
+    /// - import COPY YI03PCB (text name without one char suffix)
+    /// - remove level 01 code element in the imported COPY
+    /// - insert one char suffix A or B before the first '-' in each data name inside the COPY
+    /// 
+    /// This enables to import two times the same COPY but with different names for its fields.
+    /// It is a legacy equivalent of COPY REPLACING + usage of partial names in the copy text.
+    /// </summary>
+    public class RemarksDirective : CompilerDirective
+    {
+        public RemarksDirective() : base(CompilerDirectiveType.REMARKS)
+        {
+            CopyTextNamesVariations = new List<TextNameVariation>();
+        }
+
+        /// <summary>
+        /// List of variations for COPY text names included in the program
+        /// </summary>
+        public IList<TextNameVariation> CopyTextNamesVariations { get; set; }        
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            bool isFirst = true;
+            foreach (var textNameViariation in CopyTextNamesVariations)
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    sb.Append(" ,");
+                }
+                sb.Append(textNameViariation.ToString());
+            }
+            return Type.ToString() + " " + sb.ToString();
+        }
+
+        /// <summary>
+        /// Stores a text name : if the text name is of length 8, then the last character must be interpreted like a suffix
+        /// </summary>
+        public class TextNameVariation
+        {
+            public TextNameVariation(string textNameWithSuffix)
+            {
+                if (textNameWithSuffix.Length > 8)
+                {
+                    throw new ArgumentException("Text name should be at most 8 chars long");
+                }
+                TextNameWithSuffix = textNameWithSuffix;
+            }
+
+            /// <summary>
+            /// Text name with potential appended suffix
+            /// </summary>
+            public string TextNameWithSuffix { get; private set; }
+
+            /// <summary>
+            /// True if a suffix was appended to text name
+            /// </summary>
+            public bool HasSuffix { get { return TextNameWithSuffix.Length == 8; } }
+
+            /// <summary>
+            /// Text name without suffix
+            /// </summary>
+            public string TextName { get { return HasSuffix ? TextNameWithSuffix.Substring(0, 7) : TextNameWithSuffix; } }
+
+            /// <summary>
+            /// Suffix appended to text name
+            /// </summary>
+            public char SuffixChar { get { return HasSuffix ? TextNameWithSuffix[7] : (char)0; } }
+
+            public override string ToString()
+            {
+                if (HasSuffix)
+                {
+                    return TextName.Substring(0, 7) + "(" + SuffixChar + ")";
+                }
+                else
+                {
+                    return TextName;
+                }
+            }
+        }
+    }
+
+#endif
 
     /// <summary>
     /// p541: REPLACE statement
