@@ -4,11 +4,11 @@
 
   <extension point="org.eclipse.ui.editors">
     <editor
-            id="typecobol.editors.eclipse.cobol.Editor"
+            id="typecobol.editors.eclipse.Editor"
             name="TypeCobol Editor"
             extensions="cbl, pgm, cpy, cpx"
             icon="icons/icon.png"
-            class="typecobol.editors.eclipse.cobol.Editor"
+            class="typecobol.editors.eclipse.Editor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">
     </editor>
   </extension>

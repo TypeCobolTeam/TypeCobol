@@ -1,4 +1,4 @@
-package typecobol.editors.eclipse.cobol;
+package typecobol.editors.eclipse;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -12,10 +12,6 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import typecobol.client.Parser;
-import typecobol.editors.eclipse.ColorMap;
-import typecobol.editors.eclipse.DocumentListener;
-import typecobol.editors.eclipse.MarkerCreator;
-import typecobol.editors.eclipse.MarkersCleaner;
 
 public class Editor extends TextEditor {
 

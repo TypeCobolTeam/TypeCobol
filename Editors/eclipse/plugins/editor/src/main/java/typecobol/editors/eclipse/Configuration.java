@@ -1,4 +1,4 @@
-package typecobol.editors.eclipse.cobol;
+package typecobol.editors.eclipse;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;

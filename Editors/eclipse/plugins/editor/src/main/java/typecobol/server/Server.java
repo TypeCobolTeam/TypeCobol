@@ -59,7 +59,7 @@ public class Server extends Thread {
 		final String name;
 		if (args != null && args.length > 0) 
 			 name = args[0];
-		else name = typecobol.editors.eclipse.cobol.Editor.PIPE_NAME;
+		else name = typecobol.editors.eclipse.Editor.PIPE_NAME;
 		final Thread thread = new Server(name);
 		thread.start();
 		Runtime.getRuntime().addShutdownHook(new Thread() {

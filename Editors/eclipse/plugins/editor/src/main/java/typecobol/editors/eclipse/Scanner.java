@@ -1,4 +1,4 @@
-package typecobol.editors.eclipse.cobol;
+package typecobol.editors.eclipse;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -9,7 +9,6 @@ import org.eclipse.swt.graphics.Color;
 
 import typecobol.client.TokenFamily;
 import typecobol.client.TokensProvider;
-import typecobol.editors.eclipse.ColorMap;
 
 public class Scanner implements ITokenScanner {
 

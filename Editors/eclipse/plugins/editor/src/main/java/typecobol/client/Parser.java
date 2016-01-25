@@ -13,7 +13,7 @@ public class Parser {
 
 
 	public Parser() {
-		this.pipename = typecobol.editors.eclipse.cobol.Editor.PIPE_NAME;
+		this.pipename = typecobol.editors.eclipse.Editor.PIPE_NAME;
 	}
 
 	private static RandomAccessFile connect(final String path) {
