@@ -27,52 +27,52 @@ public class CodeElement {
 	public static class CodeElementTemplate implements Template<CodeElement> {
 
 		@Override
-		public CodeElement read(final Unpacker unpacker, final CodeElement token)
+		public CodeElement read(final Unpacker unpacker, final CodeElement e)
 				throws java.io.IOException {
-			return read(unpacker, token, true);
+			return read(unpacker, e, true);
 		}
 		@Override
-		public CodeElement read(final Unpacker unpacker, CodeElement token, final boolean required)
+		public CodeElement read(final Unpacker unpacker, CodeElement e, final boolean required)
 				throws java.io.IOException {
-			token = new CodeElement();
+			e = new CodeElement();
 			int size = unpacker.readMapBegin();
 
 			unpacker.readString();
-			token.type  = CodeElementType.asEnum(unpacker.readString());
+			e.type  = CodeElementType.asEnum(unpacker.readString());
 			unpacker.readString();
-			token.begin = unpacker.readInt();
+			e.begin = unpacker.readInt();
 			unpacker.readString();
-			token.end   = unpacker.readInt();
+			e.end   = unpacker.readInt();
 			unpacker.readString();
-			token.lineFirst = unpacker.readInt();
+			e.lineFirst = unpacker.readInt();
 			unpacker.readString();
-			token.lineLast  = unpacker.readInt();
+			e.lineLast  = unpacker.readInt();
 
 			unpacker.readString();//"Tokens"
 			size = unpacker.readArrayBegin();
-			token.tokens = new ArrayList<Token>();
-			for (int c=0; c<size; c++) token.tokens.add(unpacker.read(Token.TToken)); 
+			e.tokens = new ArrayList<Token>();
+			for (int c=0; c<size; c++) e.tokens.add(unpacker.read(Token.TToken));
 			unpacker.readArrayEnd(required);
 
 			unpacker.readString();//"Errors"
-			token.errors = new ArrayList<Error>();
+			e.errors = new ArrayList<Error>();
 			if (unpacker.getNextType() == org.msgpack.type.ValueType.ARRAY) {
 				size = unpacker.readArrayBegin();
-				for (int c=0; c<size; c++) token.errors.add(unpacker.read(Error.TError));
+				for (int c=0; c<size; c++) e.errors.add(unpacker.read(Error.TError));
 				unpacker.readArrayEnd(required);
 			} else unpacker.readNil();
 
 			unpacker.readMapEnd(required);
-			return token;
+			return e;
 		}
 
 		@Override
-		public void write(final Packer packer, final CodeElement token)
+		public void write(final Packer packer, final CodeElement e)
 				throws java.io.IOException {
-			write(packer, token, false);
+			write(packer, e, false);
 		}
 		@Override
-		public void write(final Packer packer, final CodeElement token, final boolean required)
+		public void write(final Packer packer, final CodeElement e, final boolean required)
 				throws java.io.IOException {
 			throw new UnsupportedOperationException("TODO");
 		}
