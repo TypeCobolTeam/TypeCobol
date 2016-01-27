@@ -7103,77 +7103,13 @@ searchStatementEnd: END_SEARCH;
 // of a method. object-reference-id-1 is set to reference the object upon which the
 // currently executing method was invoked.
 
+//SetStatement (1st version)
 ///setStatement:
 ///                SET ( ((indexName | identifier | (ADDRESS OF identifier))+ TO (indexName | identifier | IntegerLiteral | (ADDRESS OF identifier) | (ENTRY_ARG (identifier | literal)) | (NULL | NULLS | SELF))) |
 ///                      ((indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral)) |
 ///                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
 ///                      (conditionName+ TO TRUE) );
 
-//setStatement:
-//	  setStatementFormat1	//SET for basic table handling
-//	| setStatementFormat2	//SET for adjusting indexes
-//	| setStatementFormat3	//SET for external switches
-//	| setStatementFormat4	//SET for condition-names
-//	| setStatementFormat5	//SET for USAGE IS POINTER
-//	| setStatementFormat6	//SET for procedure-pointer and function-pointer data items
-//	| setStatementFormat7	//SET for USAGE OBJECT REFERENCE data items
-//	;
-
-
-
-////Format 1: SET for basic table handling
-//setStatementFormat1:
-//	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
-//setStatementFormat1Receiving:
-//	indexName | identifier;
-//setStatementFormat1Sending:
-//	indexName | identifier | IntegerLiteral;
-//
-////Format 2: SET for adjusting indexes
-//setStatementFormat2:
-//	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
-//
-////Format 3: SET for external switches
-//setStatementFormat3:
-//	SET setStatementFormat3What+;
-//setStatementFormat3What:
-//	mnemonicForUPSISwitchName+ TO (ON | OFF);
-//
-////Format 4: SET for condition-names
-//setStatementFormat4:
-//	SET identifier+ TO TRUE;
-//
-////Format 5: SET for USAGE IS POINTER
-//setStatementFormat5:
-//	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
-//setStatementFormat5Receiving:
-//	(ADDRESS OF)? identifier;
-//setStatementFormat5Sending:
-//	((ADDRESS OF)? identifier) | (NULL | NULLS);
-//
-////Format 6: SET for procedure-pointer and function-pointer data items
-//setStatementFormat6:
-//	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
-//setStatementFormat6Receiving:
-//	  procedurePointer
-//	| functionPointer
-//	;
-//setStatementFormat6Sending:
-//	  procedurePointer
-//	| functionPointer
-//	| (ENTRY (identifier | alphanumericLiteral))
-//	| (NULL | NULLS)
-//	| pointerDataItem
-//	;
-//
-////Format 7: SET for USAGE OBJECT REFERENCE data items
-//setStatementFormat7:
-//	SET objectReferenceId TO setStatementFormat7Sending;
-//setStatementFormat7Sending:
-//	objectReference | NULL | SELF;
-//
-pointerDataItem:   identifier; // do these SET items
-objectReferenceId: identifier;// really work like that?
 
 
 
@@ -7187,17 +7123,16 @@ setStatement:
 	| setStatementForSwitches;	//SET format 3 for external switches
 
 setStatementForAssignation:
-	SET setStatementForAssignationReceiving+ TO setStatementForAssignationSending;
-
-setStatementForAssignationReceiving:
-	indexName | identifier | procedurePointer | functionPointer | objectReferenceId;					
+	SET setStatementForAssignationReceiving=identifier+ TO setStatementForAssignationSending;
+	// where identifier can also be a index name, procedure pointer, function pointer or an object reference Id
+	 
 
 setStatementForAssignationSending:
-	indexName | identifier | IntegerLiteral																		//Format 1 + 5
-	| TRUE																										//Format 4
-	| (NULL | NULLS)																							//Format 5 + 6 + 7
-	| procedurePointer | functionPointer | (ENTRY (identifier | alphanumericLiteral)) 	| pointerDataItem		//Format 6 (+NULL | NULLS)
-	|objectReferenceId | SELF		;																			//Format 7 (+NULL)
+	identifier | IntegerLiteral	// identifier can also be an index name									//Format 1 + 5
+	| TRUE																								//Format 4
+	| (NULL | NULLS)																					//Format 5 + 6 + 7
+	| (ENTRY (identifier | alphanumericLiteral))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| SELF ;										//identifier can also be a n object reference id 	//Format 7 (+NULL)
 
 //Format 2: SET for adjusting indexes
 setStatementForIndexes:

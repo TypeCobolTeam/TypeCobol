@@ -503,18 +503,6 @@ namespace TypeCobol.Compiler.Parser
             throw new NotImplementedException();
         }
 
-        public static Expression CreatePointerDataItem(CobolCodeElementsParser.PointerDataItemContext pointerDataItem)
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
-
-        public static Expression CreateObjectReferenceId(CobolCodeElementsParser.ObjectReferenceIdContext objectReferenceId)
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
-
         public static Expression CreateAddressOfIdentifier(ITerminalNode address, CobolCodeElementsParser.IdentifierContext identifier)
         {
             throw new NotImplementedException();

@@ -1127,33 +1127,14 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSetStatementForAssignation(CobolCodeElementsParser.SetStatementForAssignationContext context)
         {
             var statement = new SetStatementForAssignation();
-            if (context.setStatementForAssignationReceiving() != null)
+            if (context.identifier() != null)
             {
                 statement.ReceivingFields = new List<Expression>();
-                foreach (
-                    CobolCodeElementsParser.SetStatementForAssignationReceivingContext receivingContext in
-                        context.setStatementForAssignationReceiving())
-                {
+                foreach ( var identifierContext in context.identifier()) {
                     Expression receiving;
-                    if (receivingContext.indexName() != null)
+                    if (identifierContext != null)
                     {
-                        receiving = SyntaxElementBuilder.CreateIndex(receivingContext.indexName());
-                    }
-                    else if (receivingContext.identifier() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateIdentifier(receivingContext.identifier());
-                    }
-                    else if (receivingContext.procedurePointer() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateProcedurePointer(receivingContext.procedurePointer());
-                    }
-                    else if (receivingContext.functionPointer() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateFunctionPointer(receivingContext.functionPointer());
-                    }
-                    else if (receivingContext.objectReferenceId() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateObjectReferenceId(receivingContext.objectReferenceId());
+                        receiving = SyntaxElementBuilder.CreateIdentifier(identifierContext);
                     }
                     else break;
                     statement.ReceivingFields.Add(receiving);
@@ -1162,11 +1143,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.setStatementForAssignationSending() != null)
             {
-                if (context.setStatementForAssignationSending().indexName() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateIndex(context.setStatementForAssignationSending().indexName());
-                }
-                else if (context.setStatementForAssignationSending().identifier() != null)
+               if (context.setStatementForAssignationSending().identifier() != null)
                 {
                     statement.SendingField = SyntaxElementBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
                 }
@@ -1186,22 +1163,6 @@ namespace TypeCobol.Compiler.Parser
                 {
                     statement.SendingField = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
                 }
-                else if (context.setStatementForAssignationSending().procedurePointer() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateProcedurePointer(context.setStatementForAssignationSending().procedurePointer());
-                }
-                else if (context.setStatementForAssignationSending().functionPointer() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateFunctionPointer(context.setStatementForAssignationSending().functionPointer());
-                }
-                else if (context.setStatementForAssignationSending().pointerDataItem() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreatePointerDataItem(context.setStatementForAssignationSending().pointerDataItem());
-                }
-                else if (context.setStatementForAssignationSending().objectReferenceId() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateObjectReferenceId(context.setStatementForAssignationSending().objectReferenceId());
-                } 
                 else if (context.setStatementForAssignationSending().SELF() != null)
                 {
                     statement.SendingField =

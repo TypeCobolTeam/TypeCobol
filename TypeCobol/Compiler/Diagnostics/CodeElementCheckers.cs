@@ -141,9 +141,9 @@ namespace TypeCobol.Compiler.Diagnostics
             var sa = e as TypeCobol.Compiler.CodeElements.SetStatementForAssignation;
             if (sa != null) {
                 var ca = c as CobolCodeElementsParser.SetStatementForAssignationContext;
-                for (int i = 0; i < ca.setStatementForAssignationReceiving().Length; i++) {
+                for (int i = 0; i < ca.identifier().Length; i++) {
                     if (i >= sa.ReceivingFields.Count) {
-                        var ctxt = ca.setStatementForAssignationReceiving()[i];
+                        var ctxt = ca.identifier()[i];
                         DiagnosticUtils.AddError(sa, "Set: Receiving fields missing or type unknown before TO", ctxt);
                     }
                 }
