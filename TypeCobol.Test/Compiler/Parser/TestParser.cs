@@ -64,7 +64,9 @@ namespace TypeCobol.Test.Compiler.Parser
             unit.Compare();//with Simple.0.txt
 
             // explicitely close program by adding END PROGRAM line
-            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
+            var e2 = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
+            e = updateLine(TextChangeType.LineUpdated, 1, "  PROGRAM-ID. Simple.");
+            e.TextChanges.Add(e2.TextChanges[0]);
             unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
             names.index++;

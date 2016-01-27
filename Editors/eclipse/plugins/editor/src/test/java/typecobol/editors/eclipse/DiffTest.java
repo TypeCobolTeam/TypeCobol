@@ -5,24 +5,9 @@ import org.eclipse.jface.text.*;
 import org.junit.Test;
 import typecobol.client.TextChange;
 import typecobol.client.TextChangeType;
+import typecobol.editors.eclipse.Diff.DocumentEventAdapter;
 
 public class DiffTest {
-
-	private static final String SEP = "\r\n";
-	private static final String LEMPTY   = "";
-	private static final String LINSPECT = "INSPECT a TALLYING i FOR CHARACTERS BY x j FOR CHARACTERS.";
-	private static final String LADDX    =    "ADD 1 TO x.";
-	private static final String LADDY    =    "ADD 2 TO 2 GIVING y.";
-	private static final String LADDXY        = LADDX+SEP+LADDY;
-	private static final String LADDXY_MERGE  = "ADD 1 TO 2 GIVING y.";
-	private static final String LADDXY_DELETE = "x."+SEP+"ADD 2 TO ";
-	private static final String LADDY_DELETE  = "2 GIVING ";
-	private static final String LADDY_UPDATED = "ADD 2 TO y.";
-	private static final String LADDZ    =    "ADD 3 TO z.";
-
-	private static final byte INSERT = 0x01;
-	private static final byte DELETE = 0x10;
-	private static final byte UPDATE = INSERT|DELETE;
 
 	@org.junit.Before
 	public void setUp() throws Exception { }
@@ -30,115 +15,315 @@ public class DiffTest {
 	@org.junit.After
 	public void tearDown() throws Exception { }
 
+	private DocumentEvent createEvent(final String content, final int offset, final int lengthOfReplacedText, final String insertedText) {
+		return new DocumentEvent(new Document(content), offset, lengthOfReplacedText, insertedText);
+	}
+	private DocumentEvent[] createEvents(final String content, final int offset, final int lengthOfRemovedText, final String insertedText) {
+		final DocumentEvent[] events = new DocumentEvent[2];
+		events[0] = createEvent(content, offset, lengthOfRemovedText, insertedText);
+		final String editedContent = content.substring(0, offset)+insertedText+content.substring(offset+lengthOfRemovedText);
+		events[1] = createEvent(editedContent, offset, lengthOfRemovedText, insertedText);
+		return events;
+	}
+
+	private Diff createDiff(final String beforeEdit, final int offset, final int deleted, final String edit, final String afterEdit) {
+		assertEquals(afterEdit.length(), beforeEdit.length()-deleted+edit.length());
+		final DocumentEvent[] events = createEvents(beforeEdit, offset, deleted, edit);
+		// DocumentEvent BEFORE edit is done
+		assertEquals(events[0].getDocument().getLength(), beforeEdit.length());
+		assertEquals(events[0].getDocument().get(),       beforeEdit);
+		assertEquals(events[0].getOffset(),               offset);
+		assertEquals(events[0].getLength(),               deleted);
+		assertEquals(events[0].getText(),                 edit);
+		// DocumentEvent AFTER resource is edited
+		assertEquals(events[1].getDocument().getLength(), afterEdit.length());
+		assertEquals(events[1].getDocument().get(),       afterEdit);
+		assertEquals(events[1].getOffset(),               events[0].getOffset());
+		assertEquals(events[1].getLength(),               events[0].getLength());
+		assertEquals(events[1].getText(),                 events[0].getText());
+
+		final Diff diff = new Diff();
+		diff.set(false, events[0]); // sets diff.before
+		diff.set(true,  events[1]); // sets diff.after
+		return diff;
+	}
+
+	private void checkLines(final java.util.List<Diff.Line> lines, final String content, final int[] expected) {
+		assertEquals(lines.size(), expected.length);
+		final java.util.regex.Matcher m = java.util.regex.Pattern.compile("\r\n|\r|\n").matcher(content);
+		int nblines = 1;
+		int start = 0;
+		while (m.find()) {
+			final int index = nblines-1;
+			if (java.util.Arrays.asList(expected).contains(index)) {
+				final Diff.Line line = lines.get(index);
+				final String text = content.substring(start, m.start());
+				assertEquals(line.index, index);
+				assertEquals(line.text,  text);
+				assertEquals(line.offset,start);
+			}
+			nblines++;;
+			start = m.end();
+		}
+	}
+
+
+
+	@Test
+	public void onDocumentOpened() {
+		final String content =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		final DocumentEvent after = createEvent(content, 0, content.length(), content);
+		// (nothing BEFORE edit)
+		// DocumentEvent AFTER resource is edited
+		assertEquals(after.getDocument().getLength(), content.length());
+		assertEquals(after.getDocument().get(),       content);
+		assertEquals(after.getOffset(),               0);
+		assertEquals(after.getLength(),               content.length());
+		assertEquals(after.getText(),                 content);
+
+		final Diff diff = new Diff();
+		diff.before = new Diff.Info(0);
+		diff.set(true, after);
+		checkLines(diff.before.lines, "",      new int[]{ });
+		checkLines(diff.after.lines,  content, new int[]{ 0,1,2 });
+
+		final TextChange[] changes = diff.createTextChanges();
+		assertEquals(changes.length,  3);
+		assertEquals(changes[0].line, 0);
+		assertEquals(changes[0].type, TextChangeType.LineInserted);
+		assertEquals(changes[0].text, "IDENTIFICATION DIVISION.");
+		assertEquals(changes[1].line, 1);
+		assertEquals(changes[1].type, TextChangeType.LineInserted);
+		assertEquals(changes[1].text, "  PROGRAM-ID. Test.");
+		assertEquals(changes[2].line, 2);
+		assertEquals(changes[2].type, TextChangeType.LineInserted);
+		assertEquals(changes[2].text, "END PROGRAM Test.");
+	}
+
 	@Test
 	public void onDocumentCleared() {
-		// given
-		final String before = LINSPECT+SEP + LEMPTY+SEP + LADDX+SEP + LADDY;
-		final String after  = LEMPTY;
-		final String edit = before;
-		final Diff diff = createDiff(before, DELETE, edit, after);
-		// when
+		final String content =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		final Diff diff = createDiff(content, 0, content.length(), "", "");
+		checkLines(diff.before.lines, content, new int[]{ 0,1,2 });
+		checkLines(diff.after.lines,  "",      new int[]{ 0 });
 		final TextChange[] changes = diff.createTextChanges();
-		// then
-		assertEquals(changes.length, 1);
+		assertEquals(changes.length,  1);
+		assertEquals(changes[0].line, 0);
 		assertEquals(changes[0].type, TextChangeType.DocumentCleared);
-			// we don't care about text or line
+		assertEquals(changes[0].text, null);
 	}
 
 	@Test
-	public void onLinesMerged() {
-		// given
-		final String before = LINSPECT+SEP + LEMPTY+SEP + LADDXY;
-		final String after  = LINSPECT+SEP + LEMPTY+SEP + LADDXY_MERGE;
-		final String edit = LADDXY_DELETE;
-		final Diff diff = createDiff(before, UPDATE, edit, after);
-		// when
-		final TextChange[] changes = diff.createTextChanges();
-		// then
-		assertEquals(changes.length, 2);
-		assertEquals(changes[0].type, TextChangeType.LineUpdated);
-		assertEquals(changes[0].line, 2);
-		assertEquals(changes[0].text, LADDXY_MERGE);
-		assertEquals(changes[1].type, TextChangeType.LineRemoved);
-		assertEquals(changes[1].line, 3);
-		assertEquals(changes[1].text, LADDY);
-	}
-
-	@Test
-	public void onLinesDeleted() {
-		// given
-		final String before = LADDX+SEP + LADDXY+SEP + LADDY;
-		final String after  = LADDX+SEP + LADDY;
-		final String edit = LADDXY+SEP;
-		final Diff diff = createDiff(before, DELETE, edit, after);
-		// when
-		final TextChange[] changes = diff.createTextChanges();
-		// then
-		assertEquals(changes.length, 3);
-		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+	public void onLineUpdatedAdd() {
+		final String content =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		Diff diff;
+		TextChange[] changes;
+		// FIRST EDIT
+		final int offset1 = 44;
+		final String edit1 = "ud";
+		final int del1 = 0;
+		final String afterEdit1 =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Testud."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		diff = createDiff(content, offset1, del1, edit1, afterEdit1);
+		checkLines(diff.before.lines, content,    new int[]{ 1 });
+		checkLines(diff.after.lines,  afterEdit1, new int[]{ 1 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  1);
 		assertEquals(changes[0].line, 1);
-		assertEquals(changes[0].text, LADDY);
-		assertEquals(changes[1].type, TextChangeType.LineRemoved);
-		assertEquals(changes[1].line, 2);
-		assertEquals(changes[1].text, LADDY);
-		assertEquals(changes[2].type, TextChangeType.LineRemoved);
-		assertEquals(changes[2].line, 3);
-		assertEquals(changes[2].text, LADDY);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "  PROGRAM-ID. Testud.");
+
+		// SECOND EDIT
+		final int offset2 = 60;
+		final String edit2 = " Tu peux pas";
+		final int del2 = 0;
+		final String afterEdit2 =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Testud."
+			+"\r\n"+"END PROGRAM Tu peux pas Test."
+			;
+		diff = createDiff(afterEdit1, offset2, del2, edit2, afterEdit2);
+		checkLines(diff.before.lines, content,    new int[]{ 1 });
+		checkLines(diff.after.lines,  afterEdit1, new int[]{ 1 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  1);
+		assertEquals(changes[0].line, 2);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "END PROGRAM Tu peux pas Test.");
 	}
 
 	@Test
-	public void onLineUpdated() {
-		// given
-		final String before = LINSPECT+SEP + LEMPTY+SEP + LADDX+SEP + LADDY;
-		final String after  = LINSPECT+SEP + LEMPTY+SEP + LADDX+SEP + LADDY_UPDATED;
-		final String edit = LADDY_DELETE;
-		final Diff diff = createDiff(before, UPDATE, edit, after);
-		// when
-		final TextChange[] changes = diff.createTextChanges();
-		// then
-		assertEquals(changes.length, 1);
+	public void onLineUpdatedDel() {
+		final String content =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		Diff diff;
+		TextChange[] changes;
+		// FIRST EDIT
+		final int offset1 = 31;
+		final String edit1 = "";
+		final int del1 = 14;
+		final String afterEdit1 =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PRO"
+			+"\r\n"+"END PROGRAM Test."
+			;
+		diff = createDiff(content, offset1, del1, edit1, afterEdit1);
+		checkLines(diff.before.lines, content,    new int[]{ 1 });
+		checkLines(diff.after.lines,  afterEdit1, new int[]{ 1 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  1);
+		assertEquals(changes[0].line, 1);
 		assertEquals(changes[0].type, TextChangeType.LineUpdated);
-		assertEquals(changes[0].text, LADDY_UPDATED);
-		assertEquals(changes[0].line, 3);
+		assertEquals(changes[0].text, "  PRO");
+
+		// SECOND EDIT
+		final int offset2 = 36;
+		final String edit2 = "";
+		final int del2 = 14;
+		final String afterEdit2 =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PRO"
+			+"\r\n"+"END"
+			;
+		diff = createDiff(afterEdit1, offset2, del2, edit2, afterEdit2);
+		checkLines(diff.before.lines, afterEdit1, new int[]{ 2 });
+		checkLines(diff.after.lines,  afterEdit2, new int[]{ 2 });
+		changes = diff.createTextChanges();
+		//for (final TextChange c: changes) System.out.println(c);
+		assertEquals(changes.length,  1);
+		assertEquals(changes[0].line, 2);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "END");
 	}
 
 	@Test
 	public void onLineInserted() {
-		// given
-		final String before = LINSPECT+SEP + LEMPTY+SEP + LADDX+SEP + LADDY;
-		final String after  = LINSPECT+SEP + LEMPTY+SEP + LADDX+SEP + LADDZ+SEP + LADDY;
-		final String edit = LADDZ+SEP; //TODO same but inverted
-		final Diff diff = createDiff(before, INSERT, edit, after);
-		// when
-		final TextChange[] changes = diff.createTextChanges();
-		// then
-		assertEquals(changes.length, 1);
-		assertEquals(changes[0].type, TextChangeType.LineInserted);
-		assertEquals(changes[0].text, LADDZ);
-		assertEquals(changes[0].line, 3);
+		final String content =
+					"IDENTIFICATION DIVISION."
+			;
+		Diff diff;
+		TextChange[] changes;
+		// FIRST EDIT
+		final int offset1 = content.length();
+		final String edit1 = "\r\n"+"END PROGRAM Test.";
+		final int del1 = 0;
+		final String afterEdit1 =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		diff = createDiff(content, offset1, del1, edit1, afterEdit1);
+		checkLines(diff.before.lines, content,    new int[]{ 0 });
+		checkLines(diff.after.lines,  afterEdit1, new int[]{ 0,1 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  2);
+		assertEquals(changes[0].line, 0);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "IDENTIFICATION DIVISION.");
+		assertEquals(changes[1].line, 1);
+		assertEquals(changes[1].type, TextChangeType.LineInserted);
+		assertEquals(changes[1].text, "END PROGRAM Test.");
+
+		// SECOND EDIT
+		final int offset2 = offset1;
+		final String edit2 = "\r\n"+"  PROGRAM-ID. Test.";
+		final int del2 = 0;
+		final String afterEdit2 =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		diff = createDiff(afterEdit1, offset2, del2, edit2, afterEdit2);
+		checkLines(diff.before.lines, content,    new int[]{ 0 });
+		checkLines(diff.after.lines,  afterEdit2, new int[]{ 0,1 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  2);
+		assertEquals(changes[0].line, 0);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "IDENTIFICATION DIVISION.");
+		assertEquals(changes[1].line, 1);
+		assertEquals(changes[1].type, TextChangeType.LineInserted);
+		assertEquals(changes[1].text, "  PROGRAM-ID. Test.");
 	}
 
-	private Diff createDiff(final String before, final byte mode, final String edit, final String after) {
-		int offset;
-		if ((mode & DELETE) > 0)
-			 offset = before.indexOf(edit);
-		else offset = after.indexOf(edit);
-		final DocumentEvent ebefore = createEvent(mode, offset, edit, new Document(before));
-		final DocumentEvent eafter  = createEvent(mode, offset, edit, new Document(after));
-		final Diff diff = new Diff();
-		diff.set(Diff.BEFORE, ebefore);
-		diff.set(Diff.AFTER,  eafter);
-		return diff;
+	@Test
+	public void onLinesMerged() {
+		final String content =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		Diff diff;
+		TextChange[] changes;
+		// EDIT
+		final int offset1 = 15;
+		final String edit1 = "";
+		final int del1 = 44;
+		final String afterEdit1 =
+					"IDENTIFICATION Test."
+			;
+		diff = createDiff(content, offset1, del1, edit1, afterEdit1);
+		checkLines(diff.before.lines, content,    new int[]{ 0,1,2 });
+		checkLines(diff.after.lines,  afterEdit1, new int[]{ 0 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  3);
+		assertEquals(changes[0].line, 0);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "IDENTIFICATION Test.");
+		assertEquals(changes[1].line, 1);
+		assertEquals(changes[1].type, TextChangeType.LineRemoved);
+		assertEquals(changes[1].text, "  PROGRAM-ID. Test.");
+		assertEquals(changes[2].line, 2);
+		assertEquals(changes[2].type, TextChangeType.LineRemoved);
+		assertEquals(changes[2].text, "END PROGRAM Test.");
 	}
 
-	private DocumentEvent createEvent(final byte mode, final int offset, final String text, final IDocument document) {
-		final DocumentEvent event = new DocumentEvent();
-		event.fLength = (mode & DELETE) > 0 ? text.length() : 0;
-		event.fText   = (mode & INSERT) > 0 ? text : "";
-		event.fOffset = offset;
-		//if (event.fOffset < 0 && document.get().length() == 0) event.fOffset = 0;
-		event.fDocument = document;
-		return event;
+	@Test
+	public void onLinesChanged() {
+		final String content =
+					"IDENTIFICATION DIVISION."
+			+"\r\n"+"  PROGRAM-ID. Test."
+			+"\r\n"+"END PROGRAM Test."
+			;
+		Diff diff;
+		TextChange[] changes;
+		// EDIT
+		final int offset1 = 6;
+		final String edit1 = "TE wiztigers.";
+		final int del1 = 58;
+		final String afterEdit1 =
+					"IDENTITE wiztigers."
+			;
+		diff = createDiff(content, offset1, del1, edit1, afterEdit1);
+		checkLines(diff.before.lines, content,    new int[]{ 0,1,2 });
+		checkLines(diff.after.lines,  afterEdit1, new int[]{ 0 });
+		changes = diff.createTextChanges();
+		assertEquals(changes.length,  3);
+		assertEquals(changes[0].line, 0);
+		assertEquals(changes[0].type, TextChangeType.LineUpdated);
+		assertEquals(changes[0].text, "IDENTITE wiztigers.");
+		assertEquals(changes[1].line, 1);
+		assertEquals(changes[1].type, TextChangeType.LineRemoved);
+		assertEquals(changes[1].text, "  PROGRAM-ID. Test.");
+		assertEquals(changes[2].line, 2);
+		assertEquals(changes[2].type, TextChangeType.LineRemoved);
+		assertEquals(changes[2].text, "END PROGRAM Test.");
 	}
-
 }

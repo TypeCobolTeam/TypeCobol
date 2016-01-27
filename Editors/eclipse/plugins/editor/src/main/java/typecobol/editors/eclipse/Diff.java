@@ -20,32 +20,13 @@ public class Diff {
 	public Info after  = null;
 
 	public void set(final boolean after, final DocumentEvent event) {
-		DocumentEventAdapter e = null;
 		Diff.Info info = null;
 		try {
-			e = new DocumentEventAdapter(event);
+			final DocumentEventAdapter e = new DocumentEventAdapter(event, after);
 			info = new Diff.Info(e);
 		} catch(final BadLocationException ex) { ex.printStackTrace(); }
-		if (after) {
-			this.after = info;
-			cleanupLines(e);
-		} else this.before = info;
-	}
-
-	private void cleanupLines(DocumentEventAdapter event) {
-		final int nblines = event.indexOfLastLine - event.indexOfFirstLine +1;
-		if (nblines > 1 || nblines < before.lines.size()) {
-			final int lengthOfUpdate = event.lengthOfInsertedText - event.lengthOfRemovedText;
-			if (lengthOfUpdate < 0) {
-				this.after.removeLastLine();
-			} else
-			if (lengthOfUpdate > 0) {
-				final Line bLast = this.before.removeLastLine();
-				final Line aLast = this.after.lines.get(this.after.lines.size()-1);
-				if (bLast.text.compareTo(aLast.text) == 0)
-					this.after.removeLastLine();
-			}
-		}
+		if (after) this.after = info;
+		else this.before = info;
 	}
 
 	public TextChange[] createTextChanges() {
@@ -105,7 +86,7 @@ public class Diff {
 		@Override
 		public String toString() {
 			final StringBuilder str = new StringBuilder();
-			str.append(index).append(": \"").append(text).append("\" (").append(text.length()).append(")");
+			str.append(index).append(": \"").append(text).append("\" len:").append(text.length());
 			return str.toString();
 		}
 	}
@@ -164,14 +145,14 @@ public class Diff {
 		final int indexOfFirstLine;
 		final int indexOfLastLine;
 
-		public DocumentEventAdapter(final DocumentEvent event) throws BadLocationException {
+		public DocumentEventAdapter(final DocumentEvent event, final boolean after) throws BadLocationException {
 			final IDocument d = event.getDocument();
 			lengthOfDocument = d.getLength();
 			lengthOfRemovedText = event.getLength();
 			lengthOfInsertedText = event.getText().length();
 			indexOfFirstLine = d.getLineOfOffset(event.getOffset());
-			final int max = Math.max(lengthOfInsertedText, lengthOfRemovedText);
-			indexOfLastLine  = d.getLineOfOffset(Math.min(event.getOffset()+max/*-1*/, d.getLength()));
+			final int length = (after? lengthOfInsertedText: lengthOfRemovedText);
+			indexOfLastLine  = d.getLineOfOffset(event.getOffset()+length);
 			document = d;
 		}
 
@@ -185,6 +166,19 @@ public class Diff {
 			if (indexOfLastLine != indexOfFirstLine)
 				str.append("-").append(indexOfLastLine);
 			str.append("\ntext=\"").append(document.get()).append("\"");
+			return str.toString();
+		}
+
+		protected static String toString(final DocumentEvent event) {
+			final StringBuilder str = new StringBuilder();
+			final IDocument doc = event.getDocument();
+			str.append(doc.getClass().getCanonicalName());
+			str.append("\ndocument.getLength()="+doc.getLength());
+			str.append("\ndocument.get()="+doc.get());
+			str.append("\n"+event.getClass().getCanonicalName());
+			str.append("\nevent.getOffset()="+event.getOffset());
+			str.append("\nevent.getLength()="+event.getLength());
+			str.append("\nevent.getText()=\""+event.getText()+"\"");
 			return str.toString();
 		}
 	}
