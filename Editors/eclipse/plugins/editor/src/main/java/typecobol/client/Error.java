@@ -31,14 +31,20 @@ public class Error {
 		public Error read(final Unpacker unpacker, Error error, final boolean required)
 				throws java.io.IOException {
 			error = new Error();
-			unpacker.readArrayBegin();
+			unpacker.readMapBegin();
+			unpacker.readString();
 			error.begin = TInteger.read(unpacker, null, required);
+			unpacker.readString();
 			error.end   = TInteger.read(unpacker, null, required);
+			unpacker.readString();
 			error.message = TString.read(unpacker, null, required);
+			unpacker.readString();
 			error.severity = TInteger.read(unpacker, null, required);
+			unpacker.readString();
 			error.category = TInteger.read(unpacker, null, required);
+			unpacker.readString();
 			error.code     = TInteger.read(unpacker, null, required);
-			unpacker.readArrayEnd();
+			unpacker.readMapEnd();
 			return error;
 		}
 
