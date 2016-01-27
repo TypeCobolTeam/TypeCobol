@@ -58,7 +58,6 @@ namespace TypeCobol.Server
 
         public override void execute() {
             var sw = Stopwatch.StartNew();
-            var time0 = sw.ElapsedMilliseconds;
             string path = Deserializer.Deserialize(Input);
             var e = EventDeserializer.Deserialize(Input);
             var time1 = sw.ElapsedMilliseconds;
@@ -71,10 +70,9 @@ namespace TypeCobol.Server
             sw.Stop();
 
             var str = new System.Text.StringBuilder();
-            str.AppendLine("Total time: "+(time3-time0));
-            str.AppendLine("Parse time: "+(time2-time1));
-            str.AppendLine("Serialize time: "+(time1-time0)+"(unpack) + "+(time3-time2)+"(pack) = "+(time1-time0+time3-time2));
-            System.Console.Write(str.ToString());
+            str.Append("Total time: ").Append($"{time3,5}").Append("ms  Parse : ").Append($"{time2 - time1,5}").
+                Append("ms  Serialize: ").Append($"{time3 - (time2 - time1),5}").Append("ms  (unpack) ").Append($"{time1,3}").Append("ms  (pack) ").Append($"{time3 - time2,5}").Append(" ms");
+            System.Console.WriteLine(str);
         }
     }
 }
