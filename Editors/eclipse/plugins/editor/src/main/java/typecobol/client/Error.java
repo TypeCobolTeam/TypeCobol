@@ -1,8 +1,5 @@
 package typecobol.client;
 
-import static org.msgpack.template.Templates.TInteger;
-import static org.msgpack.template.Templates.TString;
-
 import org.msgpack.packer.Packer;
 import org.msgpack.template.Template;
 import org.msgpack.unpacker.Unpacker;
@@ -33,17 +30,17 @@ public class Error {
 			error = new Error();
 			unpacker.readMapBegin();
 			unpacker.readString();
-			error.begin = TInteger.read(unpacker, null, required);
+			error.begin = unpacker.readInt();
 			unpacker.readString();
-			error.end   = TInteger.read(unpacker, null, required);
+			error.end   = unpacker.readInt();
 			unpacker.readString();
-			error.message = TString.read(unpacker, null, required);
+			error.message = unpacker.readString();
 			unpacker.readString();
-			error.severity = TInteger.read(unpacker, null, required);
+			error.severity = unpacker.readInt();
 			unpacker.readString();
-			error.category = TInteger.read(unpacker, null, required);
+			error.category = unpacker.readInt();
 			unpacker.readString();
-			error.code     = TInteger.read(unpacker, null, required);
+			error.code     = unpacker.readInt();
 			unpacker.readMapEnd();
 			return error;
 		}
