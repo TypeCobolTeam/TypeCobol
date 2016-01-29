@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
@@ -12,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor.VisualStudio", "Editors\VisualStudio\Editor.VisualStudio.csproj", "{83E6C379-4617-490B-A5C6-225276EA7096}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobolStudio", "TypeCobolStudio\TypeCobolStudio.csproj", "{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.LanguageServer", "TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj", "{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.VsCodeClient", "TypeCobol.VsCodeClient\TypeCobol.VsCodeClient.csproj", "{16734607-4567-4566-BFFA-398CF3821448}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +49,14 @@ Global
 		{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16734607-4567-4566-BFFA-398CF3821448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16734607-4567-4566-BFFA-398CF3821448}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16734607-4567-4566-BFFA-398CF3821448}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16734607-4567-4566-BFFA-398CF3821448}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
