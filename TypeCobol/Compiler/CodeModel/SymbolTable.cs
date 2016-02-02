@@ -100,6 +100,7 @@ namespace TypeCobol.Compiler.CodeModel
             var filtered = new List<DataDescriptionEntry>();
             foreach (var data in values) {
                 foreach (var sub in data.Subordinates) {
+                    if (sub.Name == null) continue;//TODO issue #179
                     if (sub.Name.Name.Equals(subordinate)) {
                         filtered.Add(data);
                         break;
