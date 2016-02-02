@@ -98,14 +98,14 @@ namespace TypeCobol.Compiler.Parser
                 if (mode == CallStatement.Using.Mode.REFERENCE)
                     DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", e);
             }
-            foreach (var e in context.fileName())
-            {
-                var filename = SyntaxElementBuilder.CreateFileName(e);
-                if (filename != null) statement.Usings.Add(new CallStatement.Using(mode, filename));
+            //foreach (var e in context.fileName())
+            //{
+            //    var filename = SyntaxElementBuilder.CreateFileName(e);
+            //    if (filename != null) statement.Usings.Add(new CallStatement.Using(mode, filename));
 
-                if (mode == CallStatement.Using.Mode.CONTENT || mode == CallStatement.Using.Mode.VALUE)
-                    DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", e);
-            }
+            //    if (mode == CallStatement.Using.Mode.CONTENT || mode == CallStatement.Using.Mode.VALUE)
+            //        DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", e);
+            //}
             foreach (var e in context.OMITTED())
             {
                 var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(e);
