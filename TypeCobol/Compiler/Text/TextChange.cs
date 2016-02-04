@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Text
 
         public override String ToString() {
             var str = new StringBuilder();
-            str.Append(Type).Append("@").Append(LineIndex).Append("\"").Append(NewLine.Text).Append("\"");
+            str.Append(Type).Append("@").Append(LineIndex).Append("\"").Append(NewLine == null ? String.Empty : NewLine.Text).Append("\"");
             return str.ToString();
         }
     }

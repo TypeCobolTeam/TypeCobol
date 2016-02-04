@@ -346,6 +346,7 @@
     <Compile Include="Compiler\Text\TextString.cs" />
     <Compile Include="Compiler\TypeChecker\CompilationError.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
+    <Compile Include="LanguageServices\Editor\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compiler\Scanner\CompilerDirectiveToken.cs" />
     <Compile Include="Compiler\Scanner\ContinuationToken.cs" />
