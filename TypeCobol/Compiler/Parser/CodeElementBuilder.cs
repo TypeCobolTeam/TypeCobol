@@ -923,10 +923,10 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
         {
             var statement = new IfStatement();
-            //if (context.conditionalExpression() != null)
-            //{
-            //    statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
-            //}
+            if (context.conditionalExpression() != null)
+            {
+                statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
+            }
 
             Context = context;
             CodeElement = statement;

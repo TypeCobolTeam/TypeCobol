@@ -525,7 +525,7 @@ tokens
 // diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used.
 
 numericLiteral: 
-                  (IntegerLiteral | DecimalLiteral | FloatingPointLiteral | ZERO | ZEROS | ZEROES);
+                  IntegerLiteral | DecimalLiteral | FloatingPointLiteral | (ZERO | ZEROS | ZEROES);
 
 // - 2. Alphanumeric literals -
 
@@ -538,33 +538,33 @@ numericLiteral:
 // - Format 4: “Null-terminated alphanumeric literals” on page 37
 
 alphanumOrHexadecimalLiteral:
-                                (AlphanumericLiteral |
-                                 HexadecimalAlphanumericLiteral);
+                                AlphanumericLiteral |
+                                HexadecimalAlphanumericLiteral;
 
 alphanumericLiteralBase:
-                           (AlphanumericLiteral |
-                            HexadecimalAlphanumericLiteral) |                      
-                            figurativeConstant;
+                           AlphanumericLiteral |
+                           HexadecimalAlphanumericLiteral |                      
+                           figurativeConstant;
 
 alphanumOrNationalLiteralBase:
-                                (AlphanumericLiteral |
-                                 HexadecimalAlphanumericLiteral |                      
-                                 NationalLiteral |
-                                 HexadecimalNationalLiteral |
-                                 DBCSLiteral) |
+                                 (AlphanumericLiteral |
+                                  HexadecimalAlphanumericLiteral |                      
+                                  NationalLiteral |
+                                  HexadecimalNationalLiteral |
+                                  DBCSLiteral) |
                                  figurativeConstant;
 
 // p13: You can use a figurative constant wherever literal appears in a syntax diagram,
 // except where explicitly prohibited.
 
 figurativeConstant:
-	(HIGH_VALUE | HIGH_VALUES |
+	HIGH_VALUE | HIGH_VALUES |
 	LOW_VALUE  | LOW_VALUES |
 	NULL  | NULLS |
 	QUOTE | QUOTES |
 	SPACE | SPACES |
 	ZERO  | ZEROS  | ZEROES |
-	SymbolicCharacter);
+	SymbolicCharacter;
 
 // p13: ALL literal
 // literal can be an alphanumeric literal, a DBCS literal, a national literal, or a

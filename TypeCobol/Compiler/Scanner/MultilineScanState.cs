@@ -33,10 +33,6 @@ namespace TypeCobol.Compiler.Scanner
             {
                 CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
             }
-            else
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
-            }
             CopyTextNamesVariations.AddRange(textNamesVariations);
         }
 
@@ -120,7 +116,7 @@ namespace TypeCobol.Compiler.Scanner
             clone.InsideRemarksDirective = InsideRemarksDirective;
             if(CopyTextNamesVariations != null)
             {
-                clone.CopyTextNamesVariations = CopyTextNamesVariations;
+                clone.CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
             }
 #endif
             if (SymbolicCharacters != null)
