@@ -156,8 +156,10 @@ namespace TypeCobol.Compiler.Parser
                     CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
 
                     // Register that this line was updated
-                    int updatedLineIndex = documentLines.IndexOf(codeElementsLine, codeElementsLine.InitialLineIndex);
-                    codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, updatedLineIndex, codeElementsLine));
+                    // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
+                    //int updatedLineIndex = documentLines.IndexOf(codeElementsLine, codeElementsLine.InitialLineIndex);
+                    //codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, updatedLineIndex, codeElementsLine));
+                    codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, codeElementsLine.InitialLineIndex, codeElementsLine));
 
                     // Visit the parse tree to build a first class object representing the code elements
                     walker.Walk(codeElementBuilder, codeElementParseTree);
