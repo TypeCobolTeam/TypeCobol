@@ -4784,8 +4784,7 @@ callStatement:
 	CALL (identifier | literal | procedurePointer | functionPointer) (USING callBy+)? callReturning?;
 
 callBy:
-	(BY? (REFERENCE | CONTENT | VALUE))? 
-        (identifier | literal /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
+	(BY? (REFERENCE | CONTENT | VALUE))? (identifier | literal | fileName | OMITTED)+;
 
 callReturning:
 	RETURNING identifier;
@@ -5161,8 +5160,8 @@ evaluateStatementEnd: END_EVALUATE;
 // - Any selection subject in which expression-1, expression-2, ... is specified as an arithmetic expression
 // - Any selection subject in which expression-1, expression-2, ... is specified as a conditional expression 
 
-//expression:
-//              arithmeticExpression | conditionalExpression;              
+expression:
+              arithmeticExpression | conditionalExpression;              
            
 
 
@@ -9234,26 +9233,26 @@ execStatementEnd: END_EXEC;
 // Table 18. Valid arithmetic symbol pairs
 // ...
 
-// arithmeticExpression:
-// 	multiplicationAndDivision arithMADTail*;
+arithmeticExpression:
+	multiplicationAndDivision arithMADTail*;
 
-// arithMADTail:
-// 	(PlusOperator | MinusOperator) multiplicationAndDivision;
+arithMADTail:
+	(PlusOperator | MinusOperator) multiplicationAndDivision;
 
-// multiplicationAndDivision:
-// 	exponentiation arithEXPTail*;
+multiplicationAndDivision:
+	exponentiation arithEXPTail*;
 
-// arithEXPTail:
-// 	(MultiplyOperator | DivideOperator) exponentiation;
+arithEXPTail:
+	(MultiplyOperator | DivideOperator) exponentiation;
               
-// exponentiation:
-//                   unaryOperator (PowerOperator unaryOperator)*;
+exponentiation:
+                  unaryOperator (PowerOperator unaryOperator)*;
 
-// unaryOperator:
-//                  (PlusOperator | MinusOperator)? expressionBase;
+unaryOperator:
+                 (PlusOperator | MinusOperator)? expressionBase;
 
-// expressionBase:
-//                    identifier | numericLiteral | (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator);
+expressionBase:
+                   identifier | numericLiteral | (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator);
 
 // p256: Conditional expressions
 // A conditional expression causes the object program to select alternative paths of
@@ -9265,10 +9264,10 @@ execStatementEnd: END_EXEC;
 // condition is simple or complex.
 // Simple conditions
 
-// conditionalExpression:
-// 	  simpleCondition
-// 	| complexCondition
-// 	;
+conditionalExpression:
+	  simpleCondition
+	| complexCondition
+	;
 
 // p256: There are five simple conditions.
 // The simple conditions are:
@@ -9279,12 +9278,12 @@ execStatementEnd: END_EXEC;
 // - Switch-status condition
 // A simple condition has a truth value of either true or false.   
 
-// simpleCondition:
-//                     classCondition         |
-//                     conditionNameCondition |
-//                     relationCondition      |
-//                     signCondition          |
-//                     switchStatusCondition;
+simpleCondition:
+                    classCondition         |
+                    conditionNameCondition |
+                    relationCondition      |
+                    signCondition          |
+                    switchStatusCondition;
 
 // p256: Class condition
 // The class condition determines whether the content of a data item is alphabetic,
@@ -9320,14 +9319,14 @@ execStatementEnd: END_EXEC;
 
 // ... more details on the evaluation of classCondition p257/258 ...
 
-// classCondition :
-//                    identifier IS? NOT? (charsetClassName |
-//                                         (NUMERIC |
-//                                         ALPHABETIC |
-//                                         ALPHABETIC_LOWER |
-//                                         ALPHABETIC_UPPER |                                        
-//                                         DBCS |
-//                                         KANJI));
+classCondition :
+                   identifier IS? NOT? (charsetClassName |
+                                        (NUMERIC |
+                                        ALPHABETIC |
+                                        ALPHABETIC_LOWER |
+                                        ALPHABETIC_UPPER |                                        
+                                        DBCS |
+                                        KANJI));
                     
 // p258: Condition-name condition
 // A condition-name condition tests a conditional variable to determine whether its
@@ -9362,8 +9361,8 @@ execStatementEnd: END_EXEC;
 // Depending on the evaluation of the condition-name condition, alternative paths of
 // execution are taken by the object program.
 
-// conditionNameCondition:
-// 	conditionNameReference;
+conditionNameCondition:
+	conditionNameReference;
 
 // p259: Relation conditions
 // A relation condition specifies the comparison of two operands. The relational
@@ -9400,11 +9399,11 @@ execStatementEnd: END_EXEC;
 // - An object-reference relation condition. For details, see “Object-reference relation
 //   conditions” on page 269.
                    
-// relationCondition:
-//                      generalRelationCondition |
-//                      dataPointerRelationCondition |
-//                      programPointerRelationCondition |
-//                      objectReferenceRelationCondition;
+relationCondition:
+                     generalRelationCondition |
+                     dataPointerRelationCondition |
+                     programPointerRelationCondition |
+                     objectReferenceRelationCondition;
 
 // p260: General relation conditions
 // A general relation condition compares two operands, either of which can be an
@@ -9469,41 +9468,42 @@ execStatementEnd: END_EXEC;
 //abbreviatedRelation:
 //	(AND | OR) NOT? relationalOperator? operand;
 
-// generalRelationCondition:
-// 	operand relationalOperator abbreviatedOR;
+generalRelationCondition:
+	operand relationalOperator abbreviatedOR;
 
 // p274: Abbreviated combined relation conditions
-// abbreviatedOR:  abbreviatedAND (OR abbreviatedAND)*;
-// abbreviatedAND: abbreviatedNOT (AND abbreviatedNOT)*;
-// abbreviatedNOT: NOT? abbreviatedExpression;
-// abbreviatedExpression: abbreviatedOperand | (LeftParenthesisSeparator abbreviatedOR RightParenthesisSeparator);
+abbreviatedOR:  abbreviatedAND (OR abbreviatedAND)*;
+abbreviatedAND: abbreviatedNOT (AND abbreviatedNOT)*;
+abbreviatedNOT: NOT? abbreviatedExpression;
+abbreviatedExpression: abbreviatedOperand | (LeftParenthesisSeparator abbreviatedOR RightParenthesisSeparator);
 
-// abbreviatedOperand:
-// 	relationalOperator? operand;
+abbreviatedOperand:
+	relationalOperator? operand;
 
-// relationalOperator:
-// 	IS? ((NOT? strictRelation) | simpleRelation);
+relationalOperator:
+	IS? ((NOT? strictRelation) | simpleRelation);
 	
-// strictRelation:
-// 	  GREATER THAN?
-// 	| GreaterThanOperator
-// 	| LessThanOperator
-// 	| EQUAL TO?
-// 	| EqualOperator
-// 	;
+strictRelation:
+	  GREATER THAN?
+	| GreaterThanOperator
+	| LESS THAN?
+	| LessThanOperator
+	| EQUAL TO?
+	| EqualOperator
+	;
 
-// simpleRelation:
-// 	  GREATER THAN? OR EQUAL TO?
-// 	| GreaterThanOrEqualOperator
-// 	| LESS THAN? OR EQUAL TO?
-// 	| LessThanOrEqualOperator
-// 	;
+simpleRelation:
+	  GREATER THAN? OR EQUAL TO?
+	| GreaterThanOrEqualOperator
+	| LESS THAN? OR EQUAL TO?
+	| LessThanOrEqualOperator
+	;
 
 // p260: The subject of the relation condition. Can be an identifier, literal,
 // function-identifier (already included in identifier), arithmetic expression, or index-name.
 
-// operand:
-// 	identifier | literal | arithmeticExpression | indexName;
+operand:
+	identifier | literal | arithmeticExpression | indexName;
 
 // p267: Data pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9529,14 +9529,14 @@ execStatementEnd: END_EXEC;
 
 // ... p268: Table 24. Permissible comparisons for USAGE POINTER, NULL, and ADDRESS OF ...
 
-// dataPointerRelationCondition:
-// 	dataPointer relationConditionEquality dataPointer;
+dataPointerRelationCondition:
+	dataPointer relationConditionEquality dataPointer;
 
-// relationConditionEquality:
-// 	IS? NOT? ((EQUAL TO?) | EqualOperator);
+relationConditionEquality:
+	IS? NOT? ((EQUAL TO?) | EqualOperator);
 
-// dataPointer:
-// 	(ADDRESS OF identifier) | identifier | NULL | NULLS;
+dataPointer:
+	(ADDRESS OF identifier) | identifier | NULL | NULLS;
                 
 // p268: Procedure-pointer and function-pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9559,11 +9559,11 @@ execStatementEnd: END_EXEC;
 // FUNCTION-POINTER or USAGE PROCEDURE-POINTER. That is,
 // NULL=NULL is not allowed.
 
-// programPointerRelationCondition:
-// 	procedureOrFunctionPointer relationConditionEquality procedureOrFunctionPointer;
+programPointerRelationCondition:
+	procedureOrFunctionPointer relationConditionEquality procedureOrFunctionPointer;
 
-// procedureOrFunctionPointer:
-// 	identifier | NULL | NULLS;
+procedureOrFunctionPointer:
+	identifier | NULL | NULLS;
 
 // p269: Object-reference relation conditions
 // A data item of usage OBJECT REFERENCE can be compared for equality or
@@ -9573,11 +9573,11 @@ execStatementEnd: END_EXEC;
 // Two object-references compare equal only if the data items identify the same
 // object.
 
-// objectReferenceRelationCondition:
-// 	objectReference relationConditionEquality objectReference;
+objectReferenceRelationCondition:
+	objectReference relationConditionEquality objectReference;
 
-// objectReference:
-// 	identifier | SELF | NULL | NULLS;
+objectReference:
+	identifier | SELF | NULL | NULLS;
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -9599,8 +9599,8 @@ execStatementEnd: END_EXEC;
 // compiler option. For details, see NUMPROC in the Enterprise COBOL Programming
 // Guide.
 
-// signCondition:
-//                  operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
+signCondition:
+                 operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
 //TODO p269: operand := numeric identifier or arithmetic expression that  contains at least one reference to a variable.
                  
 // p270: Switch-status condition
@@ -9613,7 +9613,7 @@ execStatementEnd: END_EXEC;
 // value is considered to be alphanumeric.) The result of the test is true if the UPSI
 // switch is set to the value (0 or 1) corresponding to condition-name.
                  
-// switchStatusCondition: qualifiedConditionName;
+switchStatusCondition: qualifiedConditionName;
                  
 // p270: Complex conditions 
 // A complex condition is formed by combining simple conditions, combined
@@ -9689,11 +9689,11 @@ execStatementEnd: END_EXEC;
 //   false, the combined condition is false. If t3 is true, the combined condition is
 //   true.
 
-// complexCondition:
-//                     andCondition (OR andCondition)*;
+complexCondition:
+                    andCondition (OR andCondition)*;
 
-// andCondition:
-//                 notCondition (AND notCondition)*;
+andCondition:
+                notCondition (AND notCondition)*;
 
 // p271: Negated simple conditions
 // A simple condition is negated through the use of the logical operator NOT.
@@ -9705,8 +9705,8 @@ execStatementEnd: END_EXEC;
 // NOT A IS EQUAL TO B.
 // NOT (A IS EQUAL TO B).
 
-// notCondition:
-//                 NOT? conditionBase;
+notCondition:
+                NOT? conditionBase;
 
 // p272: Parentheses are never needed when either ANDs or ORs (but not both) are used
 // exclusively in one combined condition. However, parentheses might be needed to
@@ -9715,8 +9715,8 @@ execStatementEnd: END_EXEC;
 // There must be a one-to-one correspondence between left and right parentheses,
 // with each left parenthesis to the left of its corresponding right parenthesis.
 
-// conditionBase:
-//                  simpleCondition | (LeftParenthesisSeparator complexCondition RightParenthesisSeparator);
+conditionBase:
+                 simpleCondition | (LeftParenthesisSeparator complexCondition RightParenthesisSeparator);
 
 // p77: A function-identifier is a sequence of character strings and separators that uniquely
 // references the data item that results from the evaluation of a function.
@@ -9774,10 +9774,10 @@ execStatementEnd: END_EXEC;
 
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
-// functionIdentifier:
-// 	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+functionIdentifier:
+	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
-// intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
+intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -9789,10 +9789,10 @@ execStatementEnd: END_EXEC;
 // - A literal other than a figurative constant
 // - A special-register
 
-// argument:
-//             identifier | // an identifier can be a special register or a functionIdentifier
-// 	    literal | 
-//             arithmeticExpression;
+argument:
+            identifier | // an identifier can be a special register or a functionIdentifier
+			literal | 
+			arithmeticExpression;
 
 // NB : Because FunctionNames are not reserved words,
 // and because the exact list of the instrinsic functions, their types and their arguments are more a library matter than a language matter,
@@ -9928,13 +9928,13 @@ dataName : UserDefinedWord;
 // different types of user-defined words.
 // These same rules apply to classes and their contained methods.
 
-// qualifiedDataName:
-// 	dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
+qualifiedDataName:
+	dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
 
-// dataNameBase: dataName;
+dataNameBase: dataName;
 
-// qualifiedConditionName:
-// 	conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+qualifiedConditionName:
+	conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -10045,19 +10045,19 @@ dataName : UserDefinedWord;
 // down by the value of the integer. The use of relative indexing does not cause the
 // program to alter the value of the index.
 
-// subscript:
-// 	IntegerLiteral | ALL  |
-// 	(qualifiedDataName withRelativeSubscripting?) |
-// 	(indexName withRelativeSubscripting?);
+subscript:
+	IntegerLiteral | ALL  |
+	(qualifiedDataName withRelativeSubscripting?) |
+	(indexName withRelativeSubscripting?);
 
-// withRelativeSubscripting:
-// 			(PlusOperator | MinusOperator) IntegerLiteral;
+withRelativeSubscripting:
+			(PlusOperator | MinusOperator) IntegerLiteral;
 
-// dataNameReference:
-//                     qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+dataNameReference:
+                     qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 					 
-// conditionNameReference:
-//                           qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+conditionNameReference:
+                          qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p70: Condition-name
 // condition-name-1
@@ -10105,22 +10105,22 @@ conditionNameReferenceInSpecialNamesParagraph:
 // A function-identifier that makes reference to an integer or numeric function can be
 // used wherever an arithmetic expression can be used.
 
-// dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
-//             dataNameReference |
-//             specialRegister |
-//             addressOfSpecialRegisterDecl |
-//             lengthOfSpecialRegisterDecl |
-//             linageCounterSpecialRegisterDecl |
-//             functionIdentifier;
+dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
+            dataNameReference |
+            specialRegister |
+            addressOfSpecialRegisterDecl |
+            lengthOfSpecialRegisterDecl |
+            linageCounterSpecialRegisterDecl |
+			functionIdentifier;
 			
-// addressOfSpecialRegisterDecl:
-// 			ADDRESS OF dataNameReference;
+addressOfSpecialRegisterDecl:
+			ADDRESS OF dataNameReference;
 			
-// lengthOfSpecialRegisterDecl:						 
-// 			LENGTH OF? dataNameReference;
+lengthOfSpecialRegisterDecl:						 
+			LENGTH OF? dataNameReference;
 
-// linageCounterSpecialRegisterDecl:
-// 			LINAGE_COUNTER OF fileName;
+linageCounterSpecialRegisterDecl:
+			LINAGE_COUNTER OF fileName;
 
 // p74: Reference modification
 // Reference modification defines a data item by specifying a leftmost character and
@@ -10200,11 +10200,11 @@ conditionNameReferenceInSpecialNamesParagraph:
 //   evaluated at the time subscripting would be evaluated if subscripts had been
 //   specified.
 
-// referenceModifier:
-//                     leftMostCharacterPosition ColonSeparator length?;
+referenceModifier:
+                     leftMostCharacterPosition ColonSeparator length?;
 
-// leftMostCharacterPosition: arithmeticExpression;
-// length: arithmeticExpression;
+leftMostCharacterPosition: arithmeticExpression;
+length: arithmeticExpression;
 
 // p68: Identifiers
 // When used in a syntax diagram in this information, the term identifier refers to a
@@ -10233,157 +10233,6 @@ conditionNameReferenceInSpecialNamesParagraph:
 // must be uniquely named if referenced. Data items associated with level-numbers
 // 02 through 49 are successively lower levels of the hierarchy.
 
-// identifier:
-// 	  (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?)
-// 	| conditionNameReference;
-
-
-// -------------------------------------------
-// Optimized version of the expressions syntax
-// -------------------------------------------
-
-// Referenced by :
-// - evaluateStatement
-expression:
-              arithmeticExpression | conditionalExpression;    
-
-// --- CONDITIONAL EXPRESSSIONS ---
-
-conditionalExpression:
-                         LeftParenthesisSeparator conditionalExpression RightParenthesisSeparator
-                      |  NOT conditionalExpression
-                      |  conditionalExpression AND conditionalExpression
-                      |  conditionalExpression OR conditionalExpression
-                      |  classCondition        
-                      |  conditionNameCondition
-                      |  generalRelationCondition
-                      |  pointerRelationCondition
-                      |  signCondition;
-
-classCondition :
-                   identifier IS? NOT? (charsetClassName |
-                                        (NUMERIC |
-                                        ALPHABETIC |
-                                        ALPHABETIC_LOWER |
-                                        ALPHABETIC_UPPER |                                        
-                                        DBCS |
-                                        KANJI));
-
-conditionNameCondition: 
-                          conditionNameReference;
-
-
-generalRelationCondition:
-                            operand relationalOperator abbreviatedExpression;
-
-abbreviatedExpression:   
-                         (LeftParenthesisSeparator abbreviatedExpression RightParenthesisSeparator)
-                       |  NOT abbreviatedExpression
-                       |  abbreviatedExpression AND abbreviatedExpression
-                       |  abbreviatedExpression OR abbreviatedExpression
-                       |  relationalOperator operand
-                       |  operand;
-
-operand:
-           identifier | literal | arithmeticExpression;
-
-relationalOperator:
-	IS? ((NOT? strictRelation) | simpleRelation);
-	
-strictRelation:
-	  GREATER THAN?
-	| GreaterThanOperator
-	| LESS THAN?
-	| LessThanOperator
-	| EQUAL TO?
-	| EqualOperator
-	;
-
-simpleRelation:
-	  GREATER THAN? OR EQUAL TO?
-	| GreaterThanOrEqualOperator
-	| LESS THAN? OR EQUAL TO?
-	| LessThanOrEqualOperator
-	;
-
-pointerRelationCondition:
-                            specificPointerOperand relationConditionEquality specificPointerOperand;
-
-specificPointerOperand:
-                          (ADDRESS OF identifier) | identifier | (SELF | NULL | NULLS);
-
-relationConditionEquality:
-                             IS? NOT? ((EQUAL TO?) | EqualOperator);
-
-signCondition:
-                 operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
-
-// --- ARITHMETIC EXPRESSSIONS ---
-
-arithmeticExpression:   (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator)
-                      | (PlusOperator | MinusOperator) arithmeticExpression
-                      |<assoc=right> arithmeticExpression PowerOperator arithmeticExpression
-                      |  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression 
-                      |  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression 
-                      |  identifier 
-                      |  numericLiteral;
-
-// --- IDENTIFIERS ---
-
 identifier:
-              dataNameReferenceOrSpecialRegisterOrFunctionIdentifier 
-              (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
-
-referenceModifier:
-                     leftMostCharacterPosition ColonSeparator length?;
-
-leftMostCharacterPosition: arithmeticExpression;
-length: arithmeticExpression;
-
-dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
-            dataNameReference |
-            specialRegister |
-            addressOfSpecialRegisterDecl |
-            lengthOfSpecialRegisterDecl |
-            linageCounterSpecialRegisterDecl |
-            functionIdentifier;
-
-functionIdentifier:
-                      FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
-
-intrinsicFunctionName: 
-                         (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
-
-argument:
-            identifier |  literal | arithmeticExpression;
-
-// --- DATA REFERENCES ---
-
-addressOfSpecialRegisterDecl:
-                                ADDRESS OF dataNameReference;
-			
-lengthOfSpecialRegisterDecl:
-                               LENGTH OF? dataNameReference;
-
-linageCounterSpecialRegisterDecl:
-                                    LINAGE_COUNTER OF fileName;
-
-dataNameReference:
-                     qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-conditionNameReference: 
-                          qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-subscript:
-             IntegerLiteral | ALL  | (qualifiedDataName withRelativeSubscripting?);
-
-withRelativeSubscripting:
-                            (PlusOperator | MinusOperator) IntegerLiteral;
-
-qualifiedDataName:
-                     dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
-
-dataNameBase: dataName;
-
-qualifiedConditionName:
-                          conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+	  (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?)
+	| conditionNameReference;

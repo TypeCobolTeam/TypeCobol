@@ -147,7 +147,8 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
             CodeElement statement = null;
-            statement = AsStatement(context);
+            if (context.imperativeStatement() != null) statement = AsStatement(context.imperativeStatement());
+            if (context.conditionalStatement()!= null) statement = AsStatement(context.conditionalStatement());
             if (statement != null) {
                 Attach(statement, context);
             }
@@ -157,7 +158,7 @@ namespace TypeCobol.Compiler.Parser
             return node != null? (CodeElement)node.Symbol : null;
         }
 
-        private CodeElement AsStatement(CobolProgramClassParser.StatementContext context)
+        private CodeElement AsStatement(CobolProgramClassParser.ImperativeStatementContext context)
         {
             return
                 (CodeElement)AsStatement(context.ContinueStatement()) ??
@@ -244,6 +245,12 @@ namespace TypeCobol.Compiler.Parser
 	| invokeStatementExplicitScope
  */
                 (CodeElement)AsStatement(context.ExecStatement()) ??
+                null;
+        }
+
+        private CodeElement AsStatement(CobolProgramClassParser.ConditionalStatementContext conditionalStatementContext) {
+            return
+                // TODO
                 null;
         }
     }

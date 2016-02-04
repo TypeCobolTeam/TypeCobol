@@ -218,7 +218,7 @@ namespace TypeCobol.Compiler.Parser
         private static FunctionParameter CreateFunctionParameter(CobolCodeElementsParser.ArgumentContext context)
         {
             if (context.literal() != null) return new FunctionParameter(CreateLiteral(context.literal()));
-            //if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
+            if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
             if (context.identifier() != null) return new FunctionParameter(CreateIdentifier(context.identifier()));
             return null;
         }
@@ -427,11 +427,11 @@ namespace TypeCobol.Compiler.Parser
                 subscript.dataname = CreateQualifiedName(context.qualifiedDataName());
                 InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
             }
-            //if (context.indexName() != null)
-            //{
-            //    subscript.indexname = CreateIndexName(context.indexName());
-            //    InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
-            //}
+            if (context.indexName() != null)
+            {
+                subscript.indexname = CreateIndexName(context.indexName());
+                InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
+            }
             return subscript;
         }
 
@@ -448,10 +448,10 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             var builder = new ArithmeticExpressionBuilder();
             ArithmeticExpression left = null, right = null;
-            //if (context.leftMostCharacterPosition() != null)
-            //    left = builder.CreateArithmeticExpression(context.leftMostCharacterPosition().arithmeticExpression());
-            //if (context.length() != null)
-            //    right = builder.CreateArithmeticExpression(context.length().arithmeticExpression());
+            if (context.leftMostCharacterPosition() != null)
+                left = builder.CreateArithmeticExpression(context.leftMostCharacterPosition().arithmeticExpression());
+            if (context.length() != null)
+                right = builder.CreateArithmeticExpression(context.length().arithmeticExpression());
             if (left == null && right == null) return null;
             return new Substring(left, right);
         }

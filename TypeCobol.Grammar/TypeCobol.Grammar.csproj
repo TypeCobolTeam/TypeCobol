@@ -72,9 +72,6 @@
     </Antlr4>
     <None Include="Grammars\Cobol\TokenTypes.xlsx" />
     <None Include="packages.config" />
-    <None Include="Perf\expressionsGrammar.g4" />
-    <None Include="Perf\Statements grammar study.xlsx" />
-    <None Include="Perf\TypeCobol performance.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="How to configure antlr 4 in Visual Studio.txt" />
