@@ -50,6 +50,7 @@ namespace TypeCobol.LanguageServices.Editor
         {
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, compilationProject.Encoding, compilationProject.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, false);
+            fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
             lock (OpenedFileCompilers)
             {
                 OpenedFileCompilers.Add(fileName, fileCompiler);
@@ -67,6 +68,7 @@ namespace TypeCobol.LanguageServices.Editor
             if (OpenedFileCompilers.TryGetValue(fileName, out fileCompilerToUpdate))
             {
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
             }
         }
 

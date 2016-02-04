@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -38,6 +40,7 @@ namespace TypeCobol.LanguageServer
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
             initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
+            initializeResult.capabilities.hoverProvider = true;
             return initializeResult;
         }
 
@@ -64,7 +67,10 @@ namespace TypeCobol.LanguageServer
                 string fileName = Path.GetFileName(objUri.LocalPath);
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
 
-                // Convert text changes format 
+                #region Convert text changes format from multiline range replacement to single line updates
+
+                // THIS CONVERSION STILL NEEDS MORE WORK : much more complicated than you would think
+
                 TextChangedEvent textChangedEvent = new TextChangedEvent();
                 foreach (var contentChange in parameters.contentChanges)
                 {
@@ -111,6 +117,10 @@ namespace TypeCobol.LanguageServer
                             lastLineIndex--;
                             lastLineDeleted = true;
                         }
+                        if(!lastLineDeleted && contentChange.text.Length == 0)
+                        {
+                            lineUpdates = new string[0];
+                        }
 
                         // Get original lines text before change
                         string originalFirstLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line].Text;
@@ -144,10 +154,10 @@ namespace TypeCobol.LanguageServer
                         // Insert the updated lines
                         if (!(startOfFirstLine == null && lineUpdates == null && endOfLastLine == null))
                         {
-                            int lineUpdatesCount = lineUpdates != null ? lineUpdates.Length : 1;
+                            int lineUpdatesCount = (lineUpdates != null && lineUpdates.Length > 0) ? lineUpdates.Length : 1;
                             for (int i = 0; i < lineUpdatesCount; i++)
                             {
-                                string newLine = lineUpdates != null ? lineUpdates[i] : String.Empty;
+                                string newLine = (lineUpdates != null && lineUpdates.Length > 0) ? lineUpdates[i] : String.Empty;
                                 if (i == 0)
                                 {
                                     newLine = startOfFirstLine + newLine;
@@ -163,6 +173,7 @@ namespace TypeCobol.LanguageServer
                         }
                     }
                 }
+                #endregion
 
                 // Update the source file with the computed text changes
                 typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent);
@@ -187,6 +198,35 @@ namespace TypeCobol.LanguageServer
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + fileName);
             }
+        }
+
+        // -- Tooltip information on hover --
+
+        public override Hover OnHover(TextDocumentPosition parameters)
+        {
+            Uri objUri = new Uri(parameters.uri);
+            if (objUri.IsFile)
+            {
+                // Get compilation info for the current file
+                string fileName = Path.GetFileName(objUri.LocalPath);
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
+
+                // Find the token located below the mouse pointer
+                var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
+                var hoveredToken = tokensLine.TokensWithCompilerDirectives.First(token => token.StartIndex <= parameters.position.character && token.StopIndex >= parameters.position.character);
+
+                // Return a text describing this token
+                if (hoveredToken != null)
+                {
+                    string tokenDescription = hoveredToken.TokenFamily.ToString() + " - " + hoveredToken.TokenType.ToString();
+                    return new Hover()
+                    {
+                        range = new Range(parameters.position.line, hoveredToken.StartIndex, parameters.position.line, hoveredToken.StopIndex + 1),
+                        contents = new MarkedString[] { new MarkedString() { language="Cobol", value=tokenDescription } }
+                    };
+                }
+            }
+            return null;
         }
     }
 }
