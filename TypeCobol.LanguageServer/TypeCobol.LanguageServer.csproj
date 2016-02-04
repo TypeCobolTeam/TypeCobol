@@ -155,7 +155,12 @@
   <ItemGroup>
     <Content Include="Github reference.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
+      <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
+      <Name>TypeCobol</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

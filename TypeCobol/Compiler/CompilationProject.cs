@@ -24,8 +24,12 @@ namespace TypeCobol.Compiler
             RootDirectory = rootDirectory;
             SourceFileProvider = new SourceFileProvider();
             rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, true, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
-            defaultColumnsLayout = columnsLayout;
-            defaultCompilationOptions = compilationOptions;
+
+            Encoding = encoding;
+            EndOfLineDelimiter = endOfLineDelimiter;
+            FixedLineLength = fixedLineLength;
+            ColumnsLayout = columnsLayout;
+            CompilationOptions = compilationOptions;
                         
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
@@ -71,10 +75,12 @@ namespace TypeCobol.Compiler
         // Used for file creation and file import in the root directory
         ICobolLibrary rootDirectoryLibrary;
 
-        // Default ColumnsLayout for text in this project
-        ColumnsLayout defaultColumnsLayout;
-        // Default Compilation options for programs in this project
-        TypeCobolOptions defaultCompilationOptions;
+        // Default properties for all files of the project
+        public Encoding Encoding { get; private set; }
+        public EndOfLineDelimiter EndOfLineDelimiter { get; private set; }
+        public int FixedLineLength { get; private set; }
+        public ColumnsLayout ColumnsLayout { get; private set; }
+        public TypeCobolOptions CompilationOptions { get; private set; }
 
         // -- Files manipulation --
 
@@ -172,7 +178,7 @@ namespace TypeCobol.Compiler
             }
             else
             {
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, defaultColumnsLayout, defaultCompilationOptions, true);
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, true);
                 fileCompiler.CompileOnce();
                 resultDocument = fileCompiler.CompilationResultsForCopy;
 
