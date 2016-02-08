@@ -231,13 +231,12 @@ relationConditionEquality:
 // - operand
 // - argument
 // - referenceModifier
-arithmeticExpression:   (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator)
-                      | (PlusOperator | MinusOperator)? arithmeticExpression
-                      |  arithmeticExpression PowerOperator<assoc=right> arithmeticExpression
-                      |  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression 
-                      |  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression 
-                      | identifier 
-                      | numericLiteral;
+arithmeticExpression: (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator)
+					| (arithmeticExpression? (PlusOperator    |MinusOperator ) arithmeticExpression)
+					| (arithmeticExpression  (MultiplyOperator|DivideOperator) arithmeticExpression)
+					| (<assoc=right> arithmeticExpression    PowerOperator     arithmeticExpression)
+					| identifier
+					| numericLiteral;
 
 //INCLUDED multiplicationAndDivision:
 //INCLUDED 	exponentiation arithEXPTail*;
