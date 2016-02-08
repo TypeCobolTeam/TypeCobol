@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[10,11]<27,Error,Syntax>Syntax error : no viable alternative at input 'x ... 42' (RuleStack=codeElement>invokeStatement>invokeObject>identifier, OffendingSymbol=[10,11:42]<IntegerLiteral>{42} on line 20)
+[10,11]<27,Error,Syntax>Syntax error : no viable alternative at input '42' (RuleStack=codeElement>invokeStatement, OffendingSymbol=[10,11:42]<IntegerLiteral>{42} on line 20)
 [26,30]<27,Error,Syntax>Syntax error : no viable alternative at input 'USING' (RuleStack=codeElement, OffendingSymbol=[26,30:USING]<USING> on line 22)
 [24,32]<27,Error,Syntax>Syntax error : no viable alternative at input 'RETURNING' (RuleStack=codeElement, OffendingSymbol=[24,32:RETURNING]<RETURNING> on line 24)
 [22,22]<27,Error,Syntax>Syntax error : INVOKE: Illegal <identifier> reference modification (RuleStack=codeElement>invokeStatement>invokeReturning>identifier, OffendingSymbol=[22,22:a]<UserDefinedWord> on line 26)
