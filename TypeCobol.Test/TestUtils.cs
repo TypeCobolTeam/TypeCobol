@@ -27,33 +27,15 @@ namespace TypeCobol.Test
             String[] expectedResultLines = expectedResult.Split('\r', '\n' );
             String[] resultLines = result.Split('\r', '\n');
 
-
-//            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++)
-//            {
-//                if (expectedResultLines[c] != resultLines[c])
-//                {
-//                    errors.AppendLine("Line " + c + ": result=\n>>> " + resultLines[c] + "\n vs expected=\n>>> " + expectedResultLines[c] );
-//                }
-//            }
-
-
-//            if (expectedResultLines.Length != resultLines.Length)
-//            {
-//                errors.AppendLine("result lines=" + resultLines.Length + "; lines expected=" + expectedResultLines.Length);
-//            }
-
-//            if (errors.Length > 0)
-//            {
-//                errors.Insert(0, "In test:" + testName + "\n");
-//                errors.AppendLine("====================\n" + result + "====================");
-//                throw new Exception(errors.ToString());
-//            }
-
-
+            var linefaults = new List<int>();
+            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++) {
+                if (expectedResultLines[c] != resultLines[c]) linefaults.Add(c/2+1);
+            }
 
             if (result != expectedResult)
             {
-                errors.Insert(0, "result != expectedResult  In test:" + testName + "\n");
+                errors.Append("result != expectedResult  In test:" + testName)
+                      .AppendLine(" at line"+(linefaults.Count>1?"s":"")+": "+string.Join(",", linefaults));
                 errors.Append("=== RESULT ==========\n" + result + "====================");
                 throw new Exception(errors.ToString());
             }
