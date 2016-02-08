@@ -238,31 +238,6 @@ arithmeticExpression: (LeftParenthesisSeparator arithmeticExpression RightParent
 					| identifier
 					| numericLiteral;
 
-//INCLUDED multiplicationAndDivision:
-//INCLUDED 	exponentiation arithEXPTail*;
-
-//INCLUDED arithMADTail:
-//INCLUDED 	(PlusOperator | MinusOperator) multiplicationAndDivision;
-
-//INCLUDED arithEXPTail:
-//INCLUDED 	(MultiplyOperator | DivideOperator) exponentiation;
-
-//INCLUDED exponentiation:
-//INCLUDED                   unaryOperator (PowerOperator unaryOperator)*;
-
-//INCLUDED unaryOperator:
-//INCLUDED                  (PlusOperator | MinusOperator)? expressionBase;
-
-//INCLUDED expressionBase:
-//INCLUDED                    identifier | numericLiteral | (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator);
-
-
-// Referenced by :
-// - addStatement
-// - divideStatement
-// - multiplyStatement
-// - subtractStatement
-
 identifierOrNumericLiteral:
 		identifier | numericLiteral;
 
