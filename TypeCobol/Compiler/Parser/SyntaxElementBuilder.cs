@@ -448,10 +448,10 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             var builder = new ArithmeticExpressionBuilder();
             ArithmeticExpression left = null, right = null;
-            //if (context.leftMostCharacterPosition() != null)
-            //    left = builder.CreateArithmeticExpression(context.leftMostCharacterPosition().arithmeticExpression());
-            //if (context.length() != null)
-            //    right = builder.CreateArithmeticExpression(context.length().arithmeticExpression());
+            if (context.leftMostCharacterPosition() != null)
+                left = builder.CreateArithmeticExpression(context.leftMostCharacterPosition().arithmeticExpression());
+            if (context.length() != null)
+                right = builder.CreateArithmeticExpression(context.length().arithmeticExpression());
             if (left == null && right == null) return null;
             return new Substring(left, right);
         }
