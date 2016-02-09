@@ -52,7 +52,11 @@ PARAGRAPH1.
   EXEC SQL OPEN something END-EXEC
 
 PARAGRAPH2.
-  CONTINUE
+  SEARCH num VARYING y
+    WHEN num = y
+      MOVE faux to y
+      MOVE vrai to num
+  END-SEARCH
   .
 
 EMPTY-PARAGRAPH.

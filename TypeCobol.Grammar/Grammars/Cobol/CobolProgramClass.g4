@@ -996,7 +996,7 @@ rewriteStatementConditional:
 searchStatementWithBody:
                         SearchStatement 
                             (AtEndCondition statement+)?
-                            (WhenConditionalExpression (statement | NextSentenceStatement))+
+                            (WhenConditionalExpression (statement+ | NextSentenceStatement))+
                         SearchStatementEnd?;
 
 startStatementConditional:			
