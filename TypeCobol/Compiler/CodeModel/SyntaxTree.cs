@@ -4,25 +4,23 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.CodeModel
 {
-    class AST
+    class SyntaxTree
     {
         public Node Root { get; private set; }
         private Stack<Node> Branch = new Stack<Node>();
 
-        public AST(Node root) {
+        public SyntaxTree(Node root) {
             this.Root = root;
             Attach(root);
         }
 
         public void Attach(Node node) {
-System.Console.WriteLine(">>> Attach "+node.GetType().Name+": "+(node.CodeElement!=null?node.CodeElement.GetType().Name:"?"));
             if (Branch.Count > 0)
                 Branch.Peek().Add(node);
             Branch.Push(node);
         }
         public void Detach() {
             var node = Branch.Pop();
-System.Console.WriteLine("<<< Detach "+node.GetType().Name+": "+(node.CodeElement!=null?node.CodeElement.GetType().Name:"?"));
         }
 
         public string ToString() {

@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Parser
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
-        private AST AST = null;
+        private SyntaxTree AST = null;
 
         public ProgramDispatcher Dispatcher { get; internal set; }
 
@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.Parser
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
                 CurrentProgram.Data = new SymbolTable(TableOfGlobals);
-                AST = new AST(new ProgramN());
+                AST = new SyntaxTree(new ProgramN());
             } else {
                 var enclosing = CurrentProgram;
                 CurrentProgram = new NestedProgram(enclosing);
