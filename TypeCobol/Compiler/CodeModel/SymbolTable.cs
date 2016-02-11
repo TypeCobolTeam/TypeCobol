@@ -16,10 +16,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// The WORKING-STORAGE SECTION for programs (and methods) can also
         /// describe external data records, which are shared by programs
         /// and methods throughout the run unit.
-        /// </summary>
-        private Dictionary<string,List<DataDescriptionEntry>> WorkingStorageData = new Dictionary<string,List<DataDescriptionEntry>>();
-
-        /// <summary>
+        ///
         /// The LOCAL-STORAGE SECTION defines storage that is allocated
         /// and freed on a per-invocation basis. On each invocation,
         /// data items defined in the LOCAL-STORAGE SECTION are reallocated.
@@ -29,10 +26,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// are allocated upon each invocation of the containing outermost program.
         /// However, each data item is reinitialized to the value specified
         /// in its VALUE clause each time the nested program is invoked.
-        /// </summary>
-        private Dictionary<string,List<DataDescriptionEntry>> LocalStorageData = new Dictionary<string,List<DataDescriptionEntry>>();
-
-        /// <summary>
+        ///
         /// The LINKAGE SECTION describes data made available from another
         /// program or method.
         /// Record description entries and data item description entries in the
@@ -52,7 +46,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// - They are condition-names or index-names associated with data items that satisfy
         ///   any of the above conditions.
         /// </summary>
-        private Dictionary<string,List<DataDescriptionEntry>> LinkageData = new Dictionary<string,List<DataDescriptionEntry>>();
+        public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>();
 
         public Scope CurrentScope { get; internal set; }
         public SymbolTable EnclosingScope { get; internal set; }
@@ -72,14 +66,9 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public List<DataDescriptionEntry> Get(Section section, string name) {
-            var storage = Get(section);
-            if (!storage.ContainsKey(name)) storage[name] = new List<DataDescriptionEntry>();
-            return storage[name];
-        }
-        public Dictionary<string,List<DataDescriptionEntry>> Get(Section section) {
-            if (section == Section.Working) return WorkingStorageData;
-            if (section == Section.Local)   return LocalStorageData;
-            return LinkageData;
+            if (!DataEntries.ContainsKey(name))
+                DataEntries[name] = new List<DataDescriptionEntry>();
+            return DataEntries[name];
         }
 
         internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
@@ -111,12 +100,8 @@ namespace TypeCobol.Compiler.CodeModel
         }
         private IList<DataDescriptionEntry> Get(string key) {
             var values = new List<DataDescriptionEntry>();
-            if (WorkingStorageData.ContainsKey(key))
-                values.AddRange(WorkingStorageData[key]);
-            if (LocalStorageData.ContainsKey(key))
-                values.AddRange(LocalStorageData[key]);
-            if (LinkageData.ContainsKey(key))
-                values.AddRange(LinkageData[key]);
+            if (DataEntries.ContainsKey(key))
+                values.AddRange(DataEntries[key]);
             return values;
         }
 

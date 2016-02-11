@@ -7,7 +7,7 @@
 --- Program ---
 PROGRAM: Doubles common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
-WORKING-STORAGE:
+SYMBOL TABLE:
   I-DOUBLE {77} PIC X(32)
   I-DOUBLE {77} PIC X(32)
   I-DOUBLE {77} PIC X(32)

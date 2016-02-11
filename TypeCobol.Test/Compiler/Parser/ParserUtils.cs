@@ -210,20 +210,9 @@ namespace TypeCobol.Test.Compiler.Parser
         private static StringBuilder Dump(StringBuilder str, SymbolTable table)
         {
             if (table == null) return str;
-            Dictionary<string,List<DataDescriptionEntry>> map;
-            map = table.Get(SymbolTable.Section.Working);
+            Dictionary<string,List<DataDescriptionEntry>> map = table.DataEntries;
             if(map != null && map.Count > 0) {
-                str.Append("WORKING-STORAGE:\n");
-                Dump(str, map);
-            }
-            map = table.Get(SymbolTable.Section.Local);
-            if(map != null && map.Count > 0) {
-                str.Append("LOCAL-STORAGE:\n");
-                Dump(str, map);
-            }
-            map = table.Get(SymbolTable.Section.Linkage);
-            if(map != null && map.Count > 0) {
-                str.Append("LINKAGE:\n");
+                str.Append("SYMBOL TABLE:\n");
                 Dump(str, map);
             }
             return str;
