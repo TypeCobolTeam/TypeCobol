@@ -60,15 +60,31 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void Add(Section section, DataDescriptionEntry symbol) {
             if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
-            var entries = Get(section, symbol.Name.Name);
-            entries.Add(symbol);
+            Get(symbol).Add(symbol);
             foreach(var sub in symbol.Subordinates) Add(section, sub);
         }
 
-        public List<DataDescriptionEntry> Get(Section section, string name) {
-            if (!DataEntries.ContainsKey(name))
-                DataEntries[name] = new List<DataDescriptionEntry>();
-            return DataEntries[name];
+        private Scope GetScope(DataDescriptionEntry data) {
+            if (data.IsExternal) return Scope.External;
+            if (data.IsGlobal) return Scope.Global;
+            return Scope.Program;
+        }
+        private SymbolTable GetTable(SymbolTable.Scope scope) {
+            if (CurrentScope == scope) return this;
+            SymbolTable table = this.EnclosingScope;
+            while(table != null) {
+                if (table.CurrentScope == scope) return table;
+                table = table.EnclosingScope;
+            }
+            return null;
+        }
+
+        public List<DataDescriptionEntry> Get(DataDescriptionEntry data) {
+            string key = data.Name.Name;
+            var table = GetTable(GetScope(data)).DataEntries;
+            if (!table.ContainsKey(key))
+                table[key] = new List<DataDescriptionEntry>();
+            return table[key];
         }
 
         internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
@@ -102,6 +118,8 @@ namespace TypeCobol.Compiler.CodeModel
             var values = new List<DataDescriptionEntry>();
             if (DataEntries.ContainsKey(key))
                 values.AddRange(DataEntries[key]);
+            if (EnclosingScope!= null)
+                values.AddRange(EnclosingScope.Get(key));
             return values;
         }
 

@@ -106,13 +106,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
-            foreach(var d in data) GetScope(d).Add(section, d);
-        }
-
-        private SymbolTable GetScope(DataDescriptionEntry data) {
-            if (data.IsExternal) return TableOfExternals;
-            if (data.IsGlobal) return TableOfGlobals;
-            return CurrentProgram.Data;
+            foreach(var d in data) CurrentProgram.Data.Add(section, d);
         }
 
         private void _enter(CodeElement e, ParserRuleContext context) {

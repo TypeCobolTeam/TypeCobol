@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-[3,13]<27,Error,Syntax>Syntax error : Symbol Y is not referenced ([3>13] on line 33)
-[3,20]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol I-DOUBLE ([3>20] on line 34)
-[3,31]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol VARIANT-1B ([3>31] on line 36)
-[3,46]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2 ([3>46] on line 38)
+[3,13]<27,Error,Syntax>Syntax error : Symbol Y is not referenced ([3>13] on line 35)
+[3,20]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol I-DOUBLE ([3>20] on line 36)
+[3,31]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol VARIANT-1B ([3>31] on line 38)
+[3,46]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2 ([3>46] on line 40)
 
 --- Program ---
 PROGRAM: Doubles common:False initial:False recursive:False
@@ -13,7 +13,7 @@ SYMBOL TABLE:
   I-DOUBLE {77} PIC X(32)
   X {1} PIC X(32)
   BIGZONE {1} PIC X(3000)
-  GROUP-DOUBLE {1} GROUP(4) [ VARIANT-1A VARIANT-1B VARIANT-2  ]
+  GROUP-DOUBLE {1} GROUP(6) [ VARIANT-1A VARIANT-1B VARIANT-2 GLOBO EXTRA  ]
   GROUP-DOUBLE {1} GROUP(1) [ VARIANT-2 ]
   VARIANT-1A {5} GROUP(2) [ V1A1 V1A2 ] <of> GROUP-DOUBLE
   V1A1 {10} PIC X(500) <of> VARIANT-1A
@@ -24,3 +24,7 @@ SYMBOL TABLE:
   VARIANT-2 {5} GROUP(1) [ V2 ] <of> GROUP-DOUBLE
   V2 {10} PIC X(3000) <of> VARIANT-2
   ANOTHER-GROUP {1} GROUP(1) [ VARIANT-1B ]
+GLOBAL SCOPE:
+  GLOBO {5} PIC X(100) <of> GROUP-DOUBLE
+EXTERNAL SCOPE:
+  EXTRA {5} PIC X(100) <of> GROUP-DOUBLE
