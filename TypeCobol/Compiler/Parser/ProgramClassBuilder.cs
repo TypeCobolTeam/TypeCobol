@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Parser
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
-        private Stack<Node> Branch = new Stack<Node>();
+        private AST AST = null;
 
         public ProgramDispatcher Dispatcher { get; internal set; }
 
@@ -53,16 +53,19 @@ namespace TypeCobol.Compiler.Parser
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
                 CurrentProgram.Data = new SymbolTable(TableOfGlobals);
+                AST = new AST(new ProgramN());
             } else {
                 var enclosing = CurrentProgram;
                 CurrentProgram = new NestedProgram(enclosing);
                 CurrentProgram.Data = new SymbolTable(enclosing.Data);
+                _enter(new ProgramN());
             }
             CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
         }
 
         public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
             if(programsStack != null) programsStack.Pop();
+            AST.Detach();
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
@@ -112,66 +115,61 @@ namespace TypeCobol.Compiler.Parser
             return CurrentProgram.Data;
         }
 
-        private void Attach(CodeElement e, ParserRuleContext context) {
-            if (Branch.Count > 0)
-                Branch.Peek().Add(e);
-            var node = e as Node;
-            if (node != null)
-                Branch.Push(node);
-            Dispatcher.OnCodeElement(e, context, CurrentProgram);
+        private void _enter(CodeElement e, ParserRuleContext context) {
+            _enter(new Node(e));
+            if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
         }
-        private void Detach() {
-            Branch.Pop();
-        }
+        private void _enter(Node node) { AST.Attach(node); }
+        private void _exit() { AST.Detach(); }
 
         public override void EnterSection(CobolProgramClassParser.SectionContext context) {
-            Attach(new Section(), context);
+            _enter(new Section());
         }
         public override void ExitSection(CobolProgramClassParser.SectionContext context) {
-            Detach();
+            _exit();
         }
 
         public override void EnterParagraph(CobolProgramClassParser.ParagraphContext context) {
-            Attach(new Paragraph(), context);
+            _enter(new Paragraph());
         }
         public override void ExitParagraph(CobolProgramClassParser.ParagraphContext context) {
-            Detach();
+            _exit();
         }
 
         public override void EnterSentence(CobolProgramClassParser.SentenceContext context) {
-            Attach(new Sentence(), context);
+            _enter(new Sentence());
         }
         public override void ExitSentence(CobolProgramClassParser.SentenceContext context) {
-            Detach();
+            _exit();
         }
 
         public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
-            CodeElement statement = null;
-            statement = AsStatement(context);
-            if (statement != null) {
-                Attach(statement, context);
-            }
+            CodeElement statement = AsStatement(context);
+            _enter(statement, context);
+        }
+        public override void ExitStatement(CobolProgramClassParser.StatementContext context) {
+            _exit();
         }
 
-        private CodeElement AsStatement(Antlr4.Runtime.Tree.ITerminalNode node) {
+        private CodeElement AsCodeElement(Antlr4.Runtime.Tree.ITerminalNode node) {
             return node != null? (CodeElement)node.Symbol : null;
         }
 
         private CodeElement AsStatement(CobolProgramClassParser.StatementContext context)
         {
             return
-                (CodeElement)AsStatement(context.ContinueStatement()) ??
+                (CodeElement)AsCodeElement(context.ContinueStatement()) ??
 /* TODO
 	| evaluateStatementExplicitScope
 	| ifStatementExplicitScope
 	| searchStatementExplicitScope
  */
 // -- arithmetic --
-                (CodeElement)AsStatement(context.AddStatement()) ??
-                (CodeElement)AsStatement(context.ComputeStatement()) ??
-                (CodeElement)AsStatement(context.DivideStatement()) ??
-                (CodeElement)AsStatement(context.MultiplyStatement()) ??
-                (CodeElement)AsStatement(context.SubtractStatement()) ??
+                (CodeElement)AsCodeElement(context.AddStatement()) ??
+                (CodeElement)AsCodeElement(context.ComputeStatement()) ??
+                (CodeElement)AsCodeElement(context.DivideStatement()) ??
+                (CodeElement)AsCodeElement(context.MultiplyStatement()) ??
+                (CodeElement)AsCodeElement(context.SubtractStatement()) ??
 /* TODO
 	| addStatementExplicitScope
 	| computeStatementExplicitScope
@@ -181,15 +179,15 @@ namespace TypeCobol.Compiler.Parser
  */
 
 // -- data movement --
-                (CodeElement)AsStatement(context.AcceptStatement()) ?? // (DATE, DAY, DAY-OF-WEEK, TIME)
-                (CodeElement)AsStatement(context.InitializeStatement()) ??
-                (CodeElement)AsStatement(context.InspectStatement()) ??
-                (CodeElement)AsStatement(context.MoveStatement()) ??
-                (CodeElement)AsStatement(context.SetStatement()) ?? // "table-handling" too
-                (CodeElement)AsStatement(context.StringStatement()) ??
-                (CodeElement)AsStatement(context.UnstringStatement()) ??
-                (CodeElement)AsStatement(context.XmlGenerateStatement()) ??
-                (CodeElement)AsStatement(context.XmlParseStatement()) ??
+                (CodeElement)AsCodeElement(context.AcceptStatement()) ?? // (DATE, DAY, DAY-OF-WEEK, TIME)
+                (CodeElement)AsCodeElement(context.InitializeStatement()) ??
+                (CodeElement)AsCodeElement(context.InspectStatement()) ??
+                (CodeElement)AsCodeElement(context.MoveStatement()) ??
+                (CodeElement)AsCodeElement(context.SetStatement()) ?? // "table-handling" too
+                (CodeElement)AsCodeElement(context.StringStatement()) ??
+                (CodeElement)AsCodeElement(context.UnstringStatement()) ??
+                (CodeElement)AsCodeElement(context.XmlGenerateStatement()) ??
+                (CodeElement)AsCodeElement(context.XmlParseStatement()) ??
 /* TODO
 	| stringStatementExplicitScope
 	| unstringStatementExplicitScope
@@ -197,21 +195,21 @@ namespace TypeCobol.Compiler.Parser
 	| xmlParseStatementExplicitScope
  */
 // -- ending --
-                (CodeElement)AsStatement(context.StopStatement()) ?? // RUN
-                (CodeElement)AsStatement(context.ExitMethodStatement()) ??
-                (CodeElement)AsStatement(context.ExitProgramStatement()) ??
-                (CodeElement)AsStatement(context.GobackStatement()) ??
+                (CodeElement)AsCodeElement(context.StopStatement()) ?? // RUN
+                (CodeElement)AsCodeElement(context.ExitMethodStatement()) ??
+                (CodeElement)AsCodeElement(context.ExitProgramStatement()) ??
+                (CodeElement)AsCodeElement(context.GobackStatement()) ??
 // -- input-output --
-//              (CodeElement)AsStatement(context.AcceptStatement()) ?? // identifier
-                (CodeElement)AsStatement(context.CloseStatement()) ??
-                (CodeElement)AsStatement(context.DeleteStatement()) ??
-                (CodeElement)AsStatement(context.DisplayStatement()) ??
-                (CodeElement)AsStatement(context.OpenStatement()) ??
-                (CodeElement)AsStatement(context.ReadStatement()) ??
-                (CodeElement)AsStatement(context.RewriteStatement()) ??
-                (CodeElement)AsStatement(context.StartStatement()) ??
-//              (CodeElement)AsStatement(context.StopStatement()) ?? // literal
-                (CodeElement)AsStatement(context.WriteStatement()) ??
+//              (CodeElement)AsCodeElement(context.AcceptStatement()) ?? // identifier
+                (CodeElement)AsCodeElement(context.CloseStatement()) ??
+                (CodeElement)AsCodeElement(context.DeleteStatement()) ??
+                (CodeElement)AsCodeElement(context.DisplayStatement()) ??
+                (CodeElement)AsCodeElement(context.OpenStatement()) ??
+                (CodeElement)AsCodeElement(context.ReadStatement()) ??
+                (CodeElement)AsCodeElement(context.RewriteStatement()) ??
+                (CodeElement)AsCodeElement(context.StartStatement()) ??
+//              (CodeElement)AsCodeElement(context.StopStatement()) ?? // literal
+                (CodeElement)AsCodeElement(context.WriteStatement()) ??
 /* TODO
 	| deleteStatementExplicitScope
 	| readStatementExplicitScope
@@ -220,30 +218,30 @@ namespace TypeCobol.Compiler.Parser
 	| writeStatementExplicitScope
  */
 // -- ordering --
-                (CodeElement)AsStatement(context.MergeStatement()) ??
-                (CodeElement)AsStatement(context.ReleaseStatement()) ??
-                (CodeElement)AsStatement(context.ReturnStatement()) ??
-                (CodeElement)AsStatement(context.SortStatement()) ??
+                (CodeElement)AsCodeElement(context.MergeStatement()) ??
+                (CodeElement)AsCodeElement(context.ReleaseStatement()) ??
+                (CodeElement)AsCodeElement(context.ReturnStatement()) ??
+                (CodeElement)AsCodeElement(context.SortStatement()) ??
 /* TODO
 	| returnStatementExplicitScope
  */
 // -- procedure-branching --
-                (CodeElement)AsStatement(context.AlterStatement()) ??
-                (CodeElement)AsStatement(context.ExitStatement()) ??
-                (CodeElement)AsStatement(context.GotoStatement()) ??
-                (CodeElement)AsStatement(context.PerformProcedureStatement()) ??
+                (CodeElement)AsCodeElement(context.AlterStatement()) ??
+                (CodeElement)AsCodeElement(context.ExitStatement()) ??
+                (CodeElement)AsCodeElement(context.GotoStatement()) ??
+                (CodeElement)AsCodeElement(context.PerformProcedureStatement()) ??
 /* TODO
 	| performStatementWithBody
  */
 // -- program or method linkage --
-                (CodeElement)AsStatement(context.CallStatement()) ??
-                (CodeElement)AsStatement(context.CancelStatement()) ??
-                (CodeElement)AsStatement(context.InvokeStatement()) ??
+                (CodeElement)AsCodeElement(context.CallStatement()) ??
+                (CodeElement)AsCodeElement(context.CancelStatement()) ??
+                (CodeElement)AsCodeElement(context.InvokeStatement()) ??
 /* TODO
 	| callStatementExplicitScope
 	| invokeStatementExplicitScope
  */
-                (CodeElement)AsStatement(context.ExecStatement()) ??
+                (CodeElement)AsCodeElement(context.ExecStatement()) ??
                 null;
         }
     }

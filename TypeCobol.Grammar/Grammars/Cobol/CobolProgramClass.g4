@@ -625,7 +625,8 @@ declaratives:
 // keywords END DECLARATIVES.
 
 section:
-           ((SectionHeader | ParagraphHeader) | sentence)+;
+	  ((SectionHeader | ParagraphHeader) paragraph*)
+	| sentence+;
 
 // p253: Paragraph
 // A paragraph-name followed by a separator period, optionally followed by
