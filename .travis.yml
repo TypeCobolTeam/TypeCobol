@@ -1,6 +1,0 @@
-language: csharp
-solution: TypeCobol.sln
-
-install:
- - cat ./packages/Antlr4.4.5-alpha003/build/Antlr4.targets
-

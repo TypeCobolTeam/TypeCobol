@@ -1,0 +1,4 @@
+# scripts to run before build
+before_build:
+    - nuget restore
+    - fsi PreBuild\TweakAntlr.fsscript packages\Antlr4.4.5-alpha003\build\Antlr4.targets
