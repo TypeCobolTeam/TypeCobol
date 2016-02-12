@@ -4,9 +4,9 @@ configuration: ReleaseAppveyor #Debug #Appveyor
 
 # scripts to run before build
 before_build:
-    - nuget restore
-    - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" PreBuild\TweakAntlr.fsscript packages\Antlr4.4.5-alpha003\build\Antlr4.targets'
     - del TypeCobol.sln
+    - nuget restore
+    - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" PreBuild\TweakAntlr.fsscript packages\Antlr4.4.5-alpha003\build\Antlr4.targets'    
     
 build:
   project: TypeCobolAppveyor.sln
