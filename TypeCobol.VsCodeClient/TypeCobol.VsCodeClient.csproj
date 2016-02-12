@@ -53,7 +53,7 @@
   <PropertyGroup>
     <RootNamespace>TypeCobol.VsCodeClient</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug appveyor'">
+  <PropertyGroup Condition="'$(Configuration)' == 'DebugAppveyor'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
     <DebugType>full</DebugType>

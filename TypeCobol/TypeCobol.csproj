@@ -37,9 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug appveyor|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugAppveyor|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug appveyor\</OutputPath>
+    <OutputPath>bin\DebugAppveyor\</OutputPath>
     <DefineConstants>TRACE;DEBUG;EUROINFO_LEGACY_REPLACING_SYNTAX</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
