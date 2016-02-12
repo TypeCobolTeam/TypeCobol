@@ -14,9 +14,11 @@ namespace TypeCobol.Compiler.CodeModel
             Attach(root);
         }
 
+        public void Add(Node node) {
+            Branch.Peek().Add(node);
+        }
         public void Attach(Node node) {
-            if (Branch.Count > 0)
-                Branch.Peek().Add(node);
+            if (Branch.Count > 0) Add(node);
             Branch.Push(node);
         }
         public void Detach() {

@@ -112,14 +112,19 @@ namespace TypeCobol.Compiler.Parser
         private void _exit() { Program.SyntaxTree.Detach(); }
 
         public override void EnterSection(CobolProgramClassParser.SectionContext context) {
-            _enter(new Section());
+            var node = new Section();
+            var terminal = context.SectionHeader();
+            if (terminal != null) node.Add(new Node(AsCodeElement(terminal)));
+            terminal = context.ParagraphHeader();
+            if (terminal != null) node.Add(new Node(AsCodeElement(terminal)));
+            _enter(node);
         }
         public override void ExitSection(CobolProgramClassParser.SectionContext context) {
             _exit();
         }
 
         public override void EnterParagraph(CobolProgramClassParser.ParagraphContext context) {
-            _enter(new Paragraph());
+            _enter(new Node(AsCodeElement(context.ParagraphHeader())));
         }
         public override void ExitParagraph(CobolProgramClassParser.ParagraphContext context) {
             _exit();
@@ -129,6 +134,7 @@ namespace TypeCobol.Compiler.Parser
             _enter(new Sentence());
         }
         public override void ExitSentence(CobolProgramClassParser.SentenceContext context) {
+            Program.SyntaxTree.Add(new Node(AsCodeElement(context.SentenceEnd())));
             _exit();
         }
 
