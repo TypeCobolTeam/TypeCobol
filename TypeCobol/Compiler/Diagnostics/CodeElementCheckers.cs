@@ -198,7 +198,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
             var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
-            var table = program.Data;
+            var table = program.SymbolTable;
             foreach (var symbol in element.Symbols) {
                 var found = table.Get(symbol);
                 if (found.Count < 1)

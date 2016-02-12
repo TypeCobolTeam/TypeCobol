@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    class Node {
+    public class Node {
         private IList<Node> children_ = new List<Node>();
         public IList<Node> Children {
             get { return new System.Collections.ObjectModel.ReadOnlyCollection<Node>(children_); }

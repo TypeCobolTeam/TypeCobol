@@ -4,7 +4,7 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.CodeModel
 {
-    class SyntaxTree
+    public class SyntaxTree
     {
         public Node Root { get; private set; }
         private Stack<Node> Branch = new Stack<Node>();

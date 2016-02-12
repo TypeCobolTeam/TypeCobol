@@ -157,7 +157,7 @@ namespace TypeCobol.Test.Compiler.Parser
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
-            Dump(str, program.Data);
+            Dump(str, program.SymbolTable);
             return str;
         }
 

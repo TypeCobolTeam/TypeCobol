@@ -33,8 +33,6 @@ namespace TypeCobol.Compiler.Parser
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
-        private SyntaxTree AST = null;
-
         public ProgramDispatcher Dispatcher { get; internal set; }
 
         /// <summary>
@@ -49,23 +47,20 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
             if (Program == null) {
-                Program = new SourceProgram();
+                Program = new SourceProgram(TableOfGlobals);
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
-                CurrentProgram.Data = new SymbolTable(TableOfGlobals);
-                AST = new SyntaxTree(new ProgramN());
             } else {
                 var enclosing = CurrentProgram;
                 CurrentProgram = new NestedProgram(enclosing);
-                CurrentProgram.Data = new SymbolTable(enclosing.Data);
-                _enter(new ProgramN());
+                _enter(CurrentProgram.SyntaxTree.Root);
             }
             CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
         }
 
         public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
-            if(programsStack != null) programsStack.Pop();
-            AST.Detach();
+            programsStack.Pop();
+            _exit();
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
@@ -106,15 +101,15 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
-            foreach(var d in data) CurrentProgram.Data.Add(section, d);
+            foreach(var d in data) CurrentProgram.SymbolTable.Add(section, d);
         }
 
         private void _enter(CodeElement e, ParserRuleContext context) {
             _enter(new Node(e));
             if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
         }
-        private void _enter(Node node) { AST.Attach(node); }
-        private void _exit() { AST.Detach(); }
+        private void _enter(Node node) { Program.SyntaxTree.Attach(node); }
+        private void _exit() { Program.SyntaxTree.Detach(); }
 
         public override void EnterSection(CobolProgramClassParser.SectionContext context) {
             _enter(new Section());
