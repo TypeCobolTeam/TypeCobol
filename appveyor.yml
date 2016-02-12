@@ -1,12 +1,11 @@
 version: 1.0.{build}
-#os: Visual Studio 2015
-configuration: Debug #Appveyor
+configuration: Debug 
 
 # scripts to run before build
 before_build:
-    - del TypeCobol.sln
-    - nuget restore
-    - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" PreBuild\TweakAntlr.fsscript packages\Antlr4.4.5-alpha003\build\Antlr4.targets'    
+    - del TypeCobol.sln  #use TypeCobolAppveyor.sln instead
+    - nuget restore      #install missing nuget packages
+    - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" PreBuild\TweakAntlr.fsscript packages\Antlr4.4.5-alpha003\build\Antlr4.targets'    #fsharp script fixing Antlr4.targets file
     
 build:
   project: TypeCobolAppveyor.sln
