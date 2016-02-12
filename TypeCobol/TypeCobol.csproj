@@ -113,7 +113,7 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
-    <Compile Include="Compiler\CodeModel\AST.cs" />
+    <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\CodeElementCheckers.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
