@@ -1,6 +1,6 @@
 version: 1.0.{build}
 #os: Visual Studio 2015
-configuration: Debug #Appveyor
+configuration: ReleaseAppveyor #Debug #Appveyor
 
 # scripts to run before build
 before_build:
