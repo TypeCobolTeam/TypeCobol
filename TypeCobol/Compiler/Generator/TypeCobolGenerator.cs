@@ -9,35 +9,58 @@ namespace TypeCobol.Compiler.Generator
     /// <summary>
     /// Code transformation tool which generates Cobol code from a TypeCobol source program
     /// </summary>
-    internal class TypeCobolGenerator
+    public class TypeCobolGenerator
     {
         /// <summary>
         /// Source TypeCobol code model
         /// </summary>
-        public ProgramClassDocument InputTypeCobolProgram { get; private set; }
+        public ProgramClassDocument Input { get; private set; }
 
         /// <summary>
         /// Output text document where Cobol code will be generated
         /// </summary>
-        public ITextDocument OutputCobolTextDocument { get; private set; }
+        public ITextDocument OutputDocument { get; private set; }
 
         /// <summary>
         /// Initialize a TypeCobol to Cobol transformation 
         /// </summary>
-        /// <param name="sourceCodeModel">Source TypeCobol code model</param>
-        /// <param name="generatedTextDocument">Ouput text document where Cobol code will be generated</param>
-        public TypeCobolGenerator(ProgramClassDocument inputTypeCobolProgram, ITextDocument outputCobolTextDocument)
-        {
-            InputTypeCobolProgram = inputTypeCobolProgram;
-            OutputCobolTextDocument = outputCobolTextDocument;
+        /// <param name="input">Input program</param>
+        /// <param name="output">Ouput text document where Cobol code will be generated</param>
+        public TypeCobolGenerator(ProgramClassDocument input, ITextDocument output) {
+            Input = input;
+            OutputDocument = output;
         }
     
         /// <summary>
-        /// Generatea Cobol program corresponding to the TypeCobol source
+        /// Generate Cobol program corresponding to the TypeCobol source
         /// </summary>
-        public void GenerateCobolText()
-        {
- 	        // GeneratedTextDocument.Write ...
-        }        
+        public void GenerateCobolText() {
+            if (Input.Program == null) return;
+            var str = new System.Text.StringBuilder();
+            GenerateCode(str, 0, Input.Program.SyntaxTree.Root);
+//System.Console.WriteLine("RESULT:\n"+str.ToString());
+        }
+
+        private int GenerateCode(System.Text.StringBuilder str, int line, CodeElements.Node node) {
+            if (node.CodeElement != null) {
+                int c = 0;
+                foreach(var token in node.CodeElement.ConsumedTokens) {
+                    line = GenerateCode(str, token, line);
+                }
+            }
+            foreach(var child in node.Children) {
+                line = GenerateCode(str, line, child);
+            }
+            return line;
+        }
+
+        private int GenerateCode(System.Text.StringBuilder str, Scanner.Token token, int line) {
+            while(line < token.Line) {
+                str.AppendLine();
+                line++;
+            }
+            str.Append(token.Text).Append(" ");
+            return line;
+        }
     }
 }
