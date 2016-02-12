@@ -1,7 +1,5 @@
 # TypeCobol
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vig02qtfelsov0im?svg=true)](https://ci.appveyor.com/project/vavans/typecobol)
-
 Prototype of an incremental Cobol compiler front-end for IBM Enterprise Cobol 5.1 for zOS syntax.
 
 This prototype is a work in progress and is currently written in C#.
