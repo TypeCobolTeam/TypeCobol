@@ -64,15 +64,34 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
-            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Working);
+            var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
+            AddStorageNode(context.WorkingStorageSectionHeader(), entries);
+            UpdateSymbolsTable(entries, SymbolTable.Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
-            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Local);
+            var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
+            AddStorageNode(context.LocalStorageSectionHeader(), entries);
+            UpdateSymbolsTable(entries, SymbolTable.Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
-            UpdateSymbolsTable(CreateDataDescriptionEntries(context.DataDescriptionEntry()), SymbolTable.Section.Linkage);
+            var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
+            AddStorageNode(context.LinkageSectionHeader(), entries);
+            UpdateSymbolsTable(entries, SymbolTable.Section.Linkage);
+        }
+
+        private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
+            var node = new Node(AsCodeElement(terminal));
+            AddEntries(node, entries);
+            CurrentProgram.SyntaxTree.Add(node);
+        }
+        private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
+            foreach(var entry in entries) {
+                var child = new Node(entry);
+                AddEntries(child, entry.Subordinates);
+                root.Add(child);
+            }
         }
 
         /// <summary>Update toplevel/subordinate relations of data description entries.</summary>
