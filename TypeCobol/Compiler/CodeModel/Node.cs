@@ -18,9 +18,4 @@ namespace TypeCobol.Compiler.CodeElements
             child.Parent = this;
         }
     }
-    
-    class ProgramN : Node { public ProgramN() : base(null) { } }
-    class Paragraph: Node { public Paragraph(): base(null) { } }
-    class Section  : Node { public Section()  : base(null) { } }
-    class Sentence : Node { public Sentence() : base(null) { } }
 }
