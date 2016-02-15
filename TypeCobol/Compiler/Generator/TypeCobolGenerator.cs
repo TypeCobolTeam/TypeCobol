@@ -37,30 +37,32 @@ namespace TypeCobol.Compiler.Generator
         public void GenerateCobolText(string filename) {
             if (Input.Program == null) return;
             var str = new System.Text.StringBuilder();
-            GenerateCode(str, 0, Input.Program.SyntaxTree.Root);
-            System.IO.File.AppendAllText(filename, str.ToString());
+            int line = 1, offset = 0;
+            GenerateCode(Input.Program.SyntaxTree.Root, str, ref line, ref offset);
+            System.IO.File.WriteAllText(filename, str.ToString());
         }
 
-        private int GenerateCode(System.Text.StringBuilder str, int line, CodeElements.Node node) {
+        private void GenerateCode(CodeElements.Node node, System.Text.StringBuilder str, ref int line, ref int offset) {
             if (node.CodeElement != null) {
-                int c = 0;
                 foreach(var token in node.CodeElement.ConsumedTokens) {
-                    line = GenerateCode(str, token, line);
+                    GenerateCode(token, str, ref line, ref offset);
                 }
             }
             foreach(var child in node.Children) {
-                line = GenerateCode(str, line, child);
+                GenerateCode(child, str, ref line, ref offset);
             }
-            return line;
         }
 
-        private int GenerateCode(System.Text.StringBuilder str, Scanner.Token token, int line) {
+        private void GenerateCode(Scanner.Token token, System.Text.StringBuilder str, ref int line, ref int offset) {
             while(line < token.Line) {
                 str.AppendLine();
                 line++;
+                offset = 0;
             }
-            str.Append(token.Text).Append(" ");
-            return line;
+            for(int c=offset; c<token.StartIndex; c++) str.Append(' ');
+            offset = token.StartIndex;
+            str.Append(token.Text);
+            offset += token.Length;
         }
     }
 }
