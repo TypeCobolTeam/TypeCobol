@@ -955,11 +955,8 @@ evaluateStatementWithBody:
                         EvaluateStatementEnd?;
 
 ifStatementWithBody:
-                        IfStatement 
-                            (statement+ | NextSentenceStatement)
-                        (ElseCondition 
-                            (statement+ | NextSentenceStatement) )?
-                        IfStatementEnd?;
+	IfStatement (statement+ | NextSentenceStatement) elseClause? IfStatementEnd?;
+elseClause: ElseCondition (statement+ | NextSentenceStatement);
 
 invokeStatementConditional:			
                         InvokeStatement 
