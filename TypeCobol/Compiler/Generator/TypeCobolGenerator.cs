@@ -34,11 +34,11 @@ namespace TypeCobol.Compiler.Generator
         /// <summary>
         /// Generate Cobol program corresponding to the TypeCobol source
         /// </summary>
-        public void GenerateCobolText() {
+        public void GenerateCobolText(string filename) {
             if (Input.Program == null) return;
             var str = new System.Text.StringBuilder();
             GenerateCode(str, 0, Input.Program.SyntaxTree.Root);
-//System.Console.WriteLine("RESULT:\n"+str.ToString());
+            System.IO.File.AppendAllText(filename, str.ToString());
         }
 
         private int GenerateCode(System.Text.StringBuilder str, int line, CodeElements.Node node) {
