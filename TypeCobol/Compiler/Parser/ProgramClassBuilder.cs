@@ -56,10 +56,25 @@ namespace TypeCobol.Compiler.Parser
                 _enter(CurrentProgram.SyntaxTree.Root);
             }
             CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
+            _enter(new Node(AsCodeElement(context.ProgramIdentification())));
         }
 
         public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
             programsStack.Pop();
+            _exit();
+        }
+
+        public override void EnterEnvironmentDivision(CobolProgramClassParser.EnvironmentDivisionContext context) {
+            _enter(new Node(AsCodeElement(context.EnvironmentDivisionHeader())));
+        }
+        public override void ExitEnvironmentDivision(CobolProgramClassParser.EnvironmentDivisionContext context) {
+            _exit();
+        }
+
+        public override void EnterDataDivision(CobolProgramClassParser.DataDivisionContext context) {
+            _enter(new Node(AsCodeElement(context.DataDivisionHeader())));
+        }
+        public override void ExitDataDivision(CobolProgramClassParser.DataDivisionContext context) {
             _exit();
         }
 
@@ -84,7 +99,7 @@ namespace TypeCobol.Compiler.Parser
         private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
             var node = new Node(AsCodeElement(terminal));
             AddEntries(node, entries);
-            CurrentProgram.SyntaxTree.Add(node);
+            _add(node);
         }
         private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
             foreach(var entry in entries) {
@@ -123,6 +138,14 @@ namespace TypeCobol.Compiler.Parser
             foreach(var d in data) CurrentProgram.SymbolTable.Add(section, d);
         }
 
+        public override void EnterProcedureDivision(CobolProgramClassParser.ProcedureDivisionContext context) {
+            _enter(new Node(AsCodeElement(context.ProcedureDivisionHeader())));
+        }
+        public override void ExitProcedureDivision(CobolProgramClassParser.ProcedureDivisionContext context) {
+            _exit();
+        }
+
+        private void _add(Node node) { Program.SyntaxTree.Add(node); }
         private void _enter(CodeElement e, ParserRuleContext context) {
             _enter(new Node(e));
             if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);

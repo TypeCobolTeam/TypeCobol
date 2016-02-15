@@ -192,24 +192,22 @@ cobolCompilationUnit :
 // p84 : Format: COBOL source program
 
 cobolProgram:
-                ProgramIdentification
-               (EnvironmentDivisionHeader 
-                    configurationSection?
-                    inputOutputSection?
-               )?
-               (DataDivisionHeader 
-                    fileSection?
-                    workingStorageSection?
-                    localStorageSection?
-                    linkageSection?
-               )?
-               (ProcedureDivisionHeader 
-                    declaratives?
-                    section*
-               )?
+	ProgramIdentification
+	environmentDivision?
+	dataDivision?
+	procedureDivision?
                 cobolProgram* 
                 ProgramEnd?
                 ;
+
+environmentDivision:
+	EnvironmentDivisionHeader  configurationSection? inputOutputSection?;
+
+dataDivision:
+	DataDivisionHeader fileSection? workingStorageSection? localStorageSection? linkageSection?;
+
+procedureDivision:
+	ProcedureDivisionHeader declaratives? section*;
 
 // p85 : An end program marker separates each program in the sequence of programs. 
 //       program-name must be identical to a program-name declared in a preceding program-ID paragraph.
