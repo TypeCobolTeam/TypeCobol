@@ -131,7 +131,7 @@ tokens
     ElseCondition,
     WhenEvaluateCondition,
     WhenOtherCondition,
-    WhenConditionalExpression,
+    WhenCondition,
 
     // Statement ends
 
@@ -949,13 +949,19 @@ divideStatementConditional:
                         DivideStatementEnd?;
 
 evaluateStatementWithBody:                             
-                        EvaluateStatement
-                            ((WhenConditionalExpression | WhenEvaluateCondition)+ statement+)+
-                            (WhenOtherCondition statement+)?
-                        EvaluateStatementEnd?;
+	EvaluateStatement
+		(WhenCondition+ statement+)+
+		whenOtherClause?
+	EvaluateStatementEnd?;
+
+whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:
-	IfStatement (statement+ | NextSentenceStatement) elseClause? IfStatementEnd?;
+	IfStatement
+		(statement+ | NextSentenceStatement)
+		elseClause?
+	IfStatementEnd?;
+
 elseClause: ElseCondition (statement+ | NextSentenceStatement);
 
 invokeStatementConditional:			
@@ -992,7 +998,7 @@ rewriteStatementConditional:
 searchStatementWithBody:
                         SearchStatement 
                             (AtEndCondition statement+)?
-                            (WhenConditionalExpression (statement+ | NextSentenceStatement))+
+                            (WhenCondition (statement+ | NextSentenceStatement))+
                         SearchStatementEnd?;
 
 startStatementConditional:			

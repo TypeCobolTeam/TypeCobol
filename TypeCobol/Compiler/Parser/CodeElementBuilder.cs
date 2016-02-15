@@ -951,18 +951,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new EvaluateStatement();
         }
 
-        public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenEvaluateCondition();
-        }
-
-        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenOtherCondition();
-        }
-
         public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
         {
             Context = context;
@@ -1497,10 +1485,16 @@ namespace TypeCobol.Compiler.Parser
 
         // Statement conditions
 
-        public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
+        public override void EnterWhenCondition(CobolCodeElementsParser.WhenConditionContext context)
         {
             Context = context;
             CodeElement = new WhenConditionalExpression();
+        }
+
+        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
+        {
+            Context = context;
+            CodeElement = new WhenOtherCondition();
         }
 
         public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)

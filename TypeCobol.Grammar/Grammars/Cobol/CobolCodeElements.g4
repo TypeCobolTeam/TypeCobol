@@ -176,9 +176,7 @@ codeElement:
 
 	// --- Decision statements ---
 	evaluateStatement |
-		whenConditionalExpression | // this rule is a subset of
-		whenEvaluateCondition |    // this one --> can be ambiguous
-		                          // declare subset first to make it default
+		whenCondition |
 		whenOtherCondition |
 	evaluateStatementEnd |
 
@@ -191,7 +189,7 @@ codeElement:
 	// --- Table handling statements ---
 	searchStatement |
 		// atEndCondition ... imperative statements ...
-		// whenConditionalExpression |
+		// whenCondition |
 		whenSearchCondition |
 	searchStatementEnd |
 
@@ -5084,9 +5082,11 @@ evaluateStatement:
 	EVALUATE (identifier | literal | expression | TRUE | FALSE)
 	  ( ALSO (identifier | literal | expression | TRUE | FALSE) )*;
 
-whenEvaluateCondition:
-	WHEN    LeftParenthesisSeparator? (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) RightParenthesisSeparator?
-	 ( ALSO LeftParenthesisSeparator? (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
+whenCondition:
+	WHEN LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
+
+whenEvaluateCondition: whenCondition;
 
 evaluatePhrase1Choice4:
 	NOT? (identifier | literal | arithmeticExpression) evaluateThrough?;
@@ -6826,9 +6826,6 @@ rewriteStatementEnd: END_REWRITE;
 
 searchStatement:
 	SEARCH ALL? identifier (VARYING (identifier | indexName))?;
-
-whenConditionalExpression:
-	WHEN conditionalExpression;
 
 whenSearchCondition:
 	WHEN  dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)

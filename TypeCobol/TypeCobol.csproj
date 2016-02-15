@@ -185,7 +185,6 @@
     <Compile Include="Compiler\CodeElements\StatementCondition\OnExceptionCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\OnOverflowCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\OnSizeErrorCondition.cs" />
-    <Compile Include="Compiler\CodeElements\StatementCondition\WhenEvaluateCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\WhenOtherCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\WhenConditionalExpression.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\AddStatementEnd.cs" />
