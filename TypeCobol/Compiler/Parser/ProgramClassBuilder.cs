@@ -68,8 +68,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
-            programsStack.Pop();
+            _add(new Node(AsCodeElement(context.ProgramEnd())));
             _exit();
+            programsStack.Pop();
         }
 
         public override void EnterEnvironmentDivision(CobolProgramClassParser.EnvironmentDivisionContext context) {
