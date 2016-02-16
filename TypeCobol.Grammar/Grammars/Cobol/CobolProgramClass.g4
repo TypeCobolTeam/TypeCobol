@@ -403,7 +403,7 @@ methodDefinition :
 
 // p109 : CONFIGURATION SECTION Format:
 
-configurationSection : 
+configurationSection:
                      ConfigurationSectionHeader
                    ( SourceComputerParagraph
                    | ObjectComputerParagraph

@@ -79,6 +79,22 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
 
+        public override void EnterConfigurationSection(CobolProgramClassParser.ConfigurationSectionContext context) {
+            _enter(new Node(AsCodeElement(context.ConfigurationSectionHeader())));
+            IList<CodeElement> paragraphs;
+            paragraphs = AsCodeElements(context.SourceComputerParagraph());
+            foreach(var p in paragraphs) _add(new Node(p)); // should be 0 or 1
+            paragraphs = AsCodeElements(context.ObjectComputerParagraph());
+            foreach(var p in paragraphs) _add(new Node(p)); // should be 0 or 1
+            paragraphs = AsCodeElements(context.SpecialNamesParagraph());
+            foreach(var p in paragraphs) _add(new Node(p)); // should be 0 or 1
+            paragraphs = AsCodeElements(context.RepositoryParagraph());
+            foreach(var p in paragraphs) _add(new Node(p)); // should be 0 or 1
+        }
+        public override void ExitConfigurationSection(CobolProgramClassParser.ConfigurationSectionContext context) {
+            _exit();
+        }
+
         public override void EnterDataDivision(CobolProgramClassParser.DataDivisionContext context) {
             _enter(new Node(AsCodeElement(context.DataDivisionHeader())));
         }
@@ -209,6 +225,15 @@ namespace TypeCobol.Compiler.Parser
 
         private CodeElement AsCodeElement(Antlr4.Runtime.Tree.ITerminalNode node) {
             return node != null? (CodeElement)node.Symbol : null;
+        }
+        private IList<CodeElement> AsCodeElements(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
+            var list = new List<CodeElement>();
+            foreach(var node in nodes) {
+                var e = AsCodeElement(node);
+                if (e != null)
+                    list.Add(e);
+            }
+            return list;
         }
 
         private CodeElement AsStatement(CobolProgramClassParser.StatementContext context)
