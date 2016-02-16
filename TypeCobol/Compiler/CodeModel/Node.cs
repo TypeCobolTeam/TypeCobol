@@ -17,5 +17,9 @@ namespace TypeCobol.Compiler.CodeElements
             children_.Add(child);
             child.Parent = this;
         }
+        internal void Remove() {
+            Parent.children_.Remove(this);
+            Parent = null;
+        }
     }
 }

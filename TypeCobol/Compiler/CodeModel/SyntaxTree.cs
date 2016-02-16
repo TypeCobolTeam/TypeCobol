@@ -17,12 +17,19 @@ namespace TypeCobol.Compiler.CodeModel
         public void Add(Node node) {
             Branch.Peek().Add(node);
         }
-        public void Attach(Node node) {
-            if (Branch.Count > 0) Add(node);
+        public void Push(Node node) {
             Branch.Push(node);
         }
-        public void Detach() {
-            var node = Branch.Pop();
+        public void Attach(Node node) {
+            if (Branch.Count > 0) Add(node);
+            Push(node);
+        }
+        public Node Detach() {
+            return Branch.Pop();
+        }
+        public Node Delete() {
+            Branch.Peek().Remove();
+            return Detach();
         }
 
         public string ToString() {

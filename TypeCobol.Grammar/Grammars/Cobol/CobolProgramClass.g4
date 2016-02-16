@@ -950,10 +950,11 @@ divideStatementConditional:
 
 evaluateStatementWithBody:                             
 	EvaluateStatement
-		(WhenCondition+ statement+)+
+		whenConditionClause+
 		whenOtherClause?
 	EvaluateStatementEnd?;
 
+whenConditionClause: WhenCondition+ statement+;
 whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:

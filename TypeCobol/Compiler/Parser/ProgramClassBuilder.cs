@@ -42,6 +42,7 @@ namespace TypeCobol.Compiler.Parser
         }
         private void _enter(Node node) { Program.SyntaxTree.Attach(node); }
         private void _exit() { Program.SyntaxTree.Detach(); }
+        private void _del() { Program.SyntaxTree.Delete(); }
 
         /// <summary>
         /// Initialization code run before parsing each new Program or Class
@@ -173,8 +174,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSection(CobolProgramClassParser.SectionContext context) {
             var terminal = context.SectionHeader();
             if (terminal == null) terminal = context.ParagraphHeader();
-            var node = new Node(AsCodeElement(terminal));
-            _enter(node);
+            _enter(new Node(AsCodeElement(terminal)));
         }
         public override void ExitSection(CobolProgramClassParser.SectionContext context) {
             _exit();
@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.Parser
             _enter(new Node(null));
         }
         public override void ExitSentence(CobolProgramClassParser.SentenceContext context) {
-            Program.SyntaxTree.Add(new Node(AsCodeElement(context.SentenceEnd())));
+            _add(new Node(AsCodeElement(context.SentenceEnd())));
             _exit();
         }
 
@@ -203,25 +203,59 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
 
+
+
         public override void EnterIfStatementWithBody(CobolProgramClassParser.IfStatementWithBodyContext context) {
+            _del();// delete the node we attached in EnterStatement
             _enter(new Node(AsCodeElement(context.IfStatement())));
             _enter(new Node(null));//THEN
         }
         public override void EnterElseClause(CobolProgramClassParser.ElseClauseContext context) {
-            _exit();// we want ELSE to be child of IF, not THEN, so exit IF
-            var node = new Node(AsCodeElement(context.ElseCondition()));
-            _enter(node);
+            _exit();// we want ELSE to be child of IF, not THEN, so exit THEN
+            _enter(new Node(AsCodeElement(context.ElseCondition())));// ELSE
             var next = AsCodeElement(context.NextSentenceStatement());
-            if (next != null) node.Add(new Node(next));
+            if (next != null) _add(new Node(next));
         }
         public override void ExitElseClause(CobolProgramClassParser.ElseClauseContext context) {
-            _exit();
+            _exit();// exit ELSE
         }
         public override void ExitIfStatementWithBody(CobolProgramClassParser.IfStatementWithBodyContext context) {
             var end = AsCodeElement(context.IfStatementEnd());
             if (end != null) _add(new Node(end));
+            // don't _exit() because this will be done in ExitStatement
+        }
+
+        public override void EnterEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
+            _del();// delete the node we attached in EnterStatement
+            _enter(new Node(AsCodeElement(context.EvaluateStatement())));
+        }
+        public override void EnterWhenConditionClause(CobolProgramClassParser.WhenConditionClauseContext context) {
+            _enter(new Node(null)); // WHEN group
+            var nodes = new List<Node>();
+            foreach(var condition in context.WhenCondition()) {
+                var node = new Node(AsCodeElement(condition));
+                nodes.Add(node);
+                CurrentProgram.SyntaxTree.Add(node);
+            }
+            CurrentProgram.SyntaxTree.Push(nodes[nodes.Count-1]);
+        }
+        public override void ExitWhenConditionClause(CobolProgramClassParser.WhenConditionClauseContext context) {
+            _exit(); // last WHEN
+            _exit(); // WHEN group
+        }
+        public override void EnterWhenOtherClause(CobolProgramClassParser.WhenOtherClauseContext context) {
+            _enter(new Node(AsCodeElement(context.WhenOtherCondition())));
+        }
+        public override void ExitWhenOtherClause(CobolProgramClassParser.WhenOtherClauseContext context) {
             _exit();
         }
+        public override void ExitEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
+            _add(new Node(AsCodeElement(context.EvaluateStatementEnd())));
+            // don't _exit() because this will be done in ExitStatement
+        }
+
+
+
 
 
         private CodeElement AsCodeElement(Antlr4.Runtime.Tree.ITerminalNode node) {
