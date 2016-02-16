@@ -4,75 +4,10 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
-    public class Pointer : Expression
-    {
-        public IdentifierOld identifier { get; private set; }
-        public Pointer(IdentifierOld identifier)
-        {
-            this.identifier = identifier;
-        }
-        public override string ToString()
-        {
-            return ("->( " + identifier + ")");
-        }
-    }
-
-    public class IdentifierOld : Expression
-    {
-        public Token token { get; set; }
-        public bool ROUNDED = false;
-        public Token LINAGE_COUNTER = null;
-        public INOFList inof = new INOFList();
-        public SubscriptList subscripts = new SubscriptList();
-        
-        public override string ToString()
-        {
-            string token = this.token != null ? this.token.Text : base.ToString();
-            StringBuilder res = new StringBuilder(token);
-            res.Append(inof);
-            res.Append(subscripts);
-            return res.ToString();
-        }
-    }
-    
-    public class INOF<S> where S : Symbol
-    {
-        public S reference { get; private set; }
-
-        public INOF(S symbol) { this.reference = symbol; }
-
-        public override string ToString()
-        {
-            StringBuilder res = new StringBuilder("");
-            res.Append("<");
-            res.Append(reference);
-            if (res.Length > 0) return res.ToString();
-            return "?";
-        }
-    }
-
-    public class INOFList
-    {
-        public List<INOF<DataName>> datanames = new List<INOF<DataName>>();
-        public List<INOF<FileName>> filenames = new List<INOF<FileName>>();
-
-        public void AddDataName(DataName dataName)
-        {
-            datanames.Add(new INOF<DataName>(dataName));
-        }
-
-        public void AddFileName(FileName fileName)
-        {
-            filenames.Add(new INOF<FileName>(fileName));
-        }
-
-        public override string ToString()
-        {
-            StringBuilder res = new StringBuilder();
-            foreach (var dataname in datanames) res.Append(dataname);
-            foreach (var filename in filenames) res.Append(filename);
-            return res.ToString();
-        }
+    public class Pointer : Expression {
+        public Identifier identifier { get; private set; }
+        public Pointer(Identifier identifier) { this.identifier = identifier; }
+        public override string ToString() { return ("->( " + identifier + ")"); }
     }
 
     public class Subscript
@@ -93,28 +28,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             if (offset != null) res.Append(offset);
             if (res.Length > 0) return res.ToString();
             return "?";
-        }
-    }
-
-    public class SubscriptList
-    {
-        private List<Subscript> subscripts = new List<Subscript>();       
-
-        public void AddSubscript(Subscript subscript)
-        {
-            subscripts.Add(subscript);
-        }
-
-        public override string ToString()
-        {
-            StringBuilder res = new StringBuilder();
-            if (subscripts.Count > 0)
-            {
-                res.Append("( ");
-                foreach (var subscript in subscripts) res.Append(subscript).Append(", ");
-                res.Append(')');
-            }
-            return res.ToString();
         }
     }
 

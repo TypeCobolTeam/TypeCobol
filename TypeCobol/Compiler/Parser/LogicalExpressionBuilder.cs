@@ -10,14 +10,27 @@ namespace TypeCobol.Compiler.Parser
     class LogicalExpressionBuilder
     {
 
-        //public LogicalExpression createCondition(CobolCodeElementsParser.ConditionalExpressionContext context)
-        //{
-        //    if (context.simpleCondition() != null)
-        //        return createCondition(context.simpleCondition());
-        //    if (context.complexCondition() != null)
-        //        return createCondition(context.complexCondition());
-        //    return new Empty();
-        //}
+        public LogicalExpression createCondition(CobolCodeElementsParser.ConditionalExpressionContext context) {
+            var conditions = new List<LogicalExpression>();
+            foreach(var terminal in context.conditionalExpression()) conditions.Add(createCondition(terminal));
+            if (conditions.Count < 1) {
+                // simple condition
+                if (context.classCondition()           != null) return createCondition(context.classCondition());
+                if (context.conditionNameCondition()   != null) return createCondition(context.conditionNameCondition());
+                if (context.generalRelationCondition() != null) return createCondition(context.generalRelationCondition());
+                if (context.pointerRelationCondition() != null) return createCondition(context.pointerRelationCondition());
+                if (context.signCondition()            != null) return createCondition(context.signCondition());
+            } else // complex condition
+            if (conditions.Count == 1) {
+                if (context.NOT() == null) return conditions[0]; // (x)
+                return new NOT(conditions[0]); // NOT x
+            } else
+            if (conditions.Count > 1 ) {
+                if (context.AND() != null) return new AND(conditions[0], conditions[1]);
+                return new OR(conditions[0], conditions[1]);
+            }
+            throw new System.NotSupportedException("Uh-oh!");
+        }
 
         //private LogicalExpression createCondition(CobolCodeElementsParser.ComplexConditionContext context)
         //{
@@ -132,19 +145,6 @@ namespace TypeCobol.Compiler.Parser
             return new Condition(SyntaxElementBuilder.CreateQualifiedName(context));
         }
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.RelationConditionContext context)
-        //{
-        //    if (context.generalRelationCondition() != null)
-        //        return createCondition(context.generalRelationCondition());
-        //    if (context.dataPointerRelationCondition() != null)
-        //        return createCondition(context.dataPointerRelationCondition());
-        //    if (context.programPointerRelationCondition() != null)
-        //        return createCondition(context.programPointerRelationCondition());
-        //    if (context.objectReferenceRelationCondition() != null)
-        //        return createCondition(context.objectReferenceRelationCondition());
-        //    return new Empty();
-        //}
-
         internal char CreateOperator(CobolCodeElementsParser.RelationalOperatorContext context)
         {
             if (context == null) return '?';
@@ -193,44 +193,42 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        //private Expression createOperand(CobolCodeElementsParser.OperandContext context)
-        //{
-        //    if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
-        //    if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
-        //    if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
-        //    if (context.indexName() != null) return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.indexName().UserDefinedWord())));
-        //    return new Empty();
-        //}
+        private Expression createOperand(CobolCodeElementsParser.OperandContext context) {
+            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
+            if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
+            // indexName cannot be distinguished from identifier at the parsing stage
+            return new Empty();
+        }
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context)
-        //{
-        //    if (context == null) return new Empty();
-        //    Expression left = createOperand(context.operand());
-        //    char op = CreateOperator(context.relationalOperator());
-        //    return CreateOperation(left, op, context.abbreviatedOR());
-        //}
+        private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context) {
+            if (context == null)  return new Empty();
+            var left = createOperand(context.operand());
+            char op = CreateOperator(context.relationalOperator());
+            return CreateExpression(left, op, context.abbreviatedExpression());
+        }
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.DataPointerRelationConditionContext context)
-        //{
-        //    if (context.dataPointer() != null && context.dataPointer().Length > 0)
-        //    {
-        //        var first = context.dataPointer().ElementAt(0);
-        //        Expression left = createOperand(context.dataPointer().ElementAt(0));
-        //        if (first.ADDRESS() != null) left = new Pointer((IdentifierOld)left);
+        private LogicalExpression CreateExpression(Expression left, char op, CobolCodeElementsParser.AbbreviatedExpressionContext context) {
+            var operand = createOperand(context.operand());
+            /*
+            if (operand != null) {
+                if (context.relationalOperator() != null) {
+                    char oop = CreateOperator(context.relationalOperator());
+                }
+                return LogicOperation.Create(left, op, operand);
+            }
+            throw new System.NotImplementedException("TODO");
+            */
+            return new Empty();
+        }
 
-        //        char op = createOperator(context.relationConditionEquality());
-
-        //        Expression right = null;
-        //        if (context.dataPointer().Length > 1)
-        //        {
-        //            var second = context.dataPointer().ElementAt(1);
-        //            right = createOperand(second);
-        //            if (second.ADDRESS() != null) right = new Pointer((IdentifierOld)right);
-        //        }
-        //        return LogicOperation.Create(left, op, right);
-        //    }
-        //    return new Empty();
-        //}
+        private LogicalExpression createCondition(CobolCodeElementsParser.PointerRelationConditionContext context) {
+            var op = createOperator(context.relationConditionEquality());
+            var operands = context.specificPointerOperand();
+            var left = createOperand(operands[0]);
+            var right = createOperand(operands[1]);
+            return LogicOperation.Create(left, op, right);
+        }
 
         private char createOperator(CobolCodeElementsParser.RelationConditionEqualityContext context)
         {
@@ -240,80 +238,28 @@ namespace TypeCobol.Compiler.Parser
             return '?';
         }
 
-        //private Expression createOperand(CobolCodeElementsParser.DataPointerContext context)
-        //{
-        //    if (context.NULL() != null || context.NULLS() != null) return new Null();
-        //    if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
-        //    return new Empty();
-        //}
+        private Expression createOperand(CobolCodeElementsParser.SpecificPointerOperandContext context) {
+            if (context == null) return new Empty();
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.ProgramPointerRelationConditionContext context)
-        //{
-        //    if (context.procedureOrFunctionPointer() != null && context.procedureOrFunctionPointer().Length > 0)
-        //    {
-        //        Expression left = createOperand(context.procedureOrFunctionPointer().ElementAt(0));
+            if (context.identifier() != null) {
+                var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                if (context.ADDRESS() != null || context.OF() != null) return new Pointer(identifier);
+                return identifier;
+            }
+            if (context.NULL() != null || context.NULLS() != null) return new Null();
+            if (context.SELF() != null) return new Self();
+            return new Empty();
+        }
 
-        //        char op = createOperator(context.relationConditionEquality());
-
-        //        Expression right = null;
-        //        if (context.procedureOrFunctionPointer().Length > 1)
-        //        {
-        //            right = createOperand(context.procedureOrFunctionPointer().ElementAt(1));
-        //        }
-        //        return LogicOperation.Create(left, op, right);
-        //    }
-        //    return new Empty();
-        //}
-
-        //private Expression createOperand(CobolCodeElementsParser.ProcedureOrFunctionPointerContext context)
-        //{
-        //    if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
-        //    if (context.NULL() != null || context.NULLS() != null) return new Null();
-        //    return new Empty();
-        //}
-
-        //private LogicalExpression createCondition(CobolCodeElementsParser.ObjectReferenceRelationConditionContext context)
-        //{
-        //    if (context.objectReference() != null && context.objectReference().Length > 0)
-        //    {
-        //        Expression left = createOperand(context.objectReference().ElementAt(0));
-
-        //        char op = createOperator(context.relationConditionEquality());
-
-        //        Expression right = null;
-        //        if (context.objectReference().Length > 1)
-        //        {
-        //            right = createOperand(context.objectReference().ElementAt(1));
-        //        }
-        //        return LogicOperation.Create(left, op, right);
-        //    }
-        //    return new Empty();
-        //}
-
-        //private Expression createOperand(CobolCodeElementsParser.ObjectReferenceContext context)
-        //{
-        //    if (context == null) return new Empty();
-        //    if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
-        //    if (context.NULL() != null || context.NULLS() != null) return new Null();
-        //    if (context.SELF() != null) return new Self();
-        //    return new Empty();
-        //}
-
-        //private LogicalExpression createCondition(CobolCodeElementsParser.SignConditionContext context)
-        //{
-        //    if (context == null) return new Empty();
-        //    Expression operand = createOperand(context.operand());
-        //    bool not = context.NOT() != null;
-        //    if (context.ZERO() != null) return new SignCondition(operand, not, SignCondition.Type.ZERO);
-        //    if (context.POSITIVE() != null) return new SignCondition(operand, not, SignCondition.Type.POSITIVE);
-        //    if (context.NEGATIVE() != null) return new SignCondition(operand, not, SignCondition.Type.NEGATIVE);
-        //    return new SignCondition(operand, not, SignCondition.Type.UNKNOWN);
-        //}
-
-        //private LogicalExpression createCondition(CobolCodeElementsParser.SwitchStatusConditionContext context)
-        //{
-        //    return createCondition(context.qualifiedConditionName());
-        //}
+        private LogicalExpression createCondition(CobolCodeElementsParser.SignConditionContext context) {
+            if (context == null) return new Empty();
+            Expression operand = createOperand(context.operand());
+            bool not = context.NOT() != null;
+            if (context.ZERO() != null) return new SignCondition(operand, not, SignCondition.Type.ZERO);
+            if (context.POSITIVE() != null) return new SignCondition(operand, not, SignCondition.Type.POSITIVE);
+            if (context.NEGATIVE() != null) return new SignCondition(operand, not, SignCondition.Type.NEGATIVE);
+            return new SignCondition(operand, not, SignCondition.Type.UNKNOWN);
+        }
 
 
 
