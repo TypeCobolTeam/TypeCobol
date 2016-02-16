@@ -194,6 +194,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private Expression createOperand(CobolCodeElementsParser.OperandContext context) {
+            if (context == null) return new Empty();
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
             if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
