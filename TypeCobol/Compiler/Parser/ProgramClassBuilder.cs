@@ -181,6 +181,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterParagraph(CobolProgramClassParser.ParagraphContext context) {
+            if (Program.SyntaxTree.Head().CodeElement is ParagraphHeader) _exit();
             _enter(new Node(AsCodeElement(context.ParagraphHeader())));
         }
         public override void ExitParagraph(CobolProgramClassParser.ParagraphContext context) {
@@ -222,7 +223,8 @@ namespace TypeCobol.Compiler.Parser
         public override void ExitIfStatementWithBody(CobolProgramClassParser.IfStatementWithBodyContext context) {
             var end = AsCodeElement(context.IfStatementEnd());
             if (end != null) _add(new Node(end));
-            // don't _exit() because this will be done in ExitStatement
+            if (Program.SyntaxTree.Head().Children.Count < 3) _exit(); // _exit() THEN node if there was no ELSE
+            // don't _exit() IF node because this will be done in ExitStatement
         }
 
         public override void EnterEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {

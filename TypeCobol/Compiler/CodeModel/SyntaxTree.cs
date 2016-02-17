@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public void Add(Node node) {
-            Branch.Peek().Add(node);
+            Head().Add(node);
         }
         public void Push(Node node) {
             Branch.Push(node);
@@ -31,6 +31,9 @@ namespace TypeCobol.Compiler.CodeModel
             Branch.Peek().Remove();
             return Detach();
         }
+        public Node Head() {
+            return Branch.Peek();
+        }
 
         public string ToString() {
             var str = new StringBuilder();
@@ -41,7 +44,14 @@ namespace TypeCobol.Compiler.CodeModel
             for(int c=1; c<indent; c++) str.Append("  ");
             str.Append("+ ");
             if (node.CodeElement==null) str.AppendLine(node.GetType().Name);
-            else str.AppendLine(node.CodeElement.GetType().Name);
+            else {
+                str.Append(node.CodeElement.GetType().Name);
+                ParagraphHeader ph = node.CodeElement as ParagraphHeader;
+                if (ph!=null) str.Append(" \"").Append(ph.ParagraphName).Append("\"");
+                SectionHeader sh = node.CodeElement as SectionHeader;
+                if (sh!=null) str.Append(" \"").Append(sh.SectionName).Append("\"");
+                str.AppendLine();
+            }
             foreach(var child in node.Children) ToString(child, str, indent+1);
         }
     }
