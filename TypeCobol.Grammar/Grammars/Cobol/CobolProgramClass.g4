@@ -938,10 +938,10 @@ computeStatementConditional:
 		(onSizeError | noSizeError)*
 	ComputeStatementEnd?;
 
-deleteStatementConditional:			
-                        DeleteStatement 
-                            invalidKeyConditions? 
-                        DeleteStatementEnd?;
+deleteStatementConditional:
+	DeleteStatement
+		(onInvalidKey | noInvalidKey)*
+	DeleteStatementEnd?;
 
 divideStatementConditional:
 	DivideStatement
@@ -980,21 +980,20 @@ performStatementWithBody:
 		statement*
 	PerformStatementEnd?;
 
-readStatementConditional:			
-                        ReadStatement 
-                            ((atEndConditions? invalidKeyConditions?) | 
-                             (invalidKeyConditions? atEndConditions?))
-                        ReadStatementEnd?;
+readStatementConditional:
+	ReadStatement
+		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
+	ReadStatementEnd?;
 
-returnStatementConditional:			
-                        ReturnStatement 
-                            atEndConditions? 
-                        ReturnStatementEnd?;
+returnStatementConditional:
+	ReturnStatement
+		(onAtEnd | noAtEnd)*
+	ReturnStatementEnd?;
 
-rewriteStatementConditional:		
-                        RewriteStatement 
-                            invalidKeyConditions? 
-                        RewriteStatementEnd?;
+rewriteStatementConditional:
+	RewriteStatement
+		(onInvalidKey | noInvalidKey)*
+	RewriteStatementEnd?;
 
 searchStatementWithBody:
                         SearchStatement 
@@ -1002,10 +1001,10 @@ searchStatementWithBody:
                             (WhenCondition (statement+ | NextSentenceStatement))+
                         SearchStatementEnd?;
 
-startStatementConditional:			
-                        StartStatement 
-                            invalidKeyConditions? 
-                        StartStatementEnd?;
+startStatementConditional:
+	StartStatement
+		(onInvalidKey | noInvalidKey)*
+	StartStatementEnd?;
 
 stringStatementConditional:			
                         StringStatement 
@@ -1022,11 +1021,10 @@ unstringStatementConditional:
                             overflowConditions? 
                         UnstringStatementEnd?;
 
-writeStatementConditional:			
-                        WriteStatement 
-                            ((atEndConditions? invalidKeyConditions?) | 
-                             (invalidKeyConditions? atEndConditions?) )
-                        WriteStatementEnd?;
+writeStatementConditional:
+	WriteStatement
+		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
+	WriteStatementEnd?;
 
 xmlGenerateStatementConditional:	
                         XmlGenerateStatement 
@@ -1040,20 +1038,16 @@ xmlParseStatementConditional:
 
 // Conditional execution of statements
 
-atEndConditions:
-	(AtEndCondition statement+) |
-	(NotAtEndCondition statement+) |
-	((AtEndCondition statement+) (NotAtEndCondition statement+));
+onAtEnd: AtEndCondition statement+;
+noAtEnd: NotAtEndCondition statement+;
 
 exceptionConditions:
 	(OnExceptionCondition statement+) |
 	(NotOnExceptionCondition statement+) |
 	((OnExceptionCondition statement+) (NotOnExceptionCondition statement+));
 
-invalidKeyConditions:
-	(InvalidKeyCondition statement+) |
-	(NotInvalidKeyCondition statement+) |
-	((InvalidKeyCondition statement+) (NotInvalidKeyCondition statement+));
+onInvalidKey: InvalidKeyCondition statement+;
+noInvalidKey: NotInvalidKeyCondition statement+;
 
 overflowConditions:
 	(OnOverflowCondition statement+) |

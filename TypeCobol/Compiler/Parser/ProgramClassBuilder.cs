@@ -269,44 +269,83 @@ namespace TypeCobol.Compiler.Parser
 
 
         public override void EnterAddStatementConditional(CobolProgramClassParser.AddStatementConditionalContext context) {
-            EnterArithmeticConditionalStatement(context.AddStatement());
+            EnterConditionalStatement(context.AddStatement());
         }
         public override void ExitAddStatementConditional(CobolProgramClassParser.AddStatementConditionalContext context) {
-            ExitArithmeticConditionalStatement(context.AddStatementEnd());
+            ExitConditionalStatement(context.AddStatementEnd());
         }
         public override void EnterComputeStatementConditional(CobolProgramClassParser.ComputeStatementConditionalContext context) {
-            EnterArithmeticConditionalStatement(context.ComputeStatement());
+            EnterConditionalStatement(context.ComputeStatement());
         }
         public override void ExitComputeStatementConditional(CobolProgramClassParser.ComputeStatementConditionalContext context) {
-            ExitArithmeticConditionalStatement(context.ComputeStatementEnd());
+            ExitConditionalStatement(context.ComputeStatementEnd());
         }
         public override void EnterDivideStatementConditional(CobolProgramClassParser.DivideStatementConditionalContext context) {
-            EnterArithmeticConditionalStatement(context.DivideStatement());
+            EnterConditionalStatement(context.DivideStatement());
         }
         public override void ExitDivideStatementConditional(CobolProgramClassParser.DivideStatementConditionalContext context) {
-            ExitArithmeticConditionalStatement(context.DivideStatementEnd());
+            ExitConditionalStatement(context.DivideStatementEnd());
         }
         public override void EnterMultiplyStatementConditional(CobolProgramClassParser.MultiplyStatementConditionalContext context) {
-            EnterArithmeticConditionalStatement(context.MultiplyStatement());
+            EnterConditionalStatement(context.MultiplyStatement());
         }
         public override void ExitMultiplyStatementConditional(CobolProgramClassParser.MultiplyStatementConditionalContext context) {
-            ExitArithmeticConditionalStatement(context.MultiplyStatementEnd());
+            ExitConditionalStatement(context.MultiplyStatementEnd());
         }
         public override void EnterSubtractStatementConditional(CobolProgramClassParser.SubtractStatementConditionalContext context) {
-            EnterArithmeticConditionalStatement(context.SubtractStatement());
+            EnterConditionalStatement(context.SubtractStatement());
         }
         public override void ExitSubtractStatementConditional(CobolProgramClassParser.SubtractStatementConditionalContext context) {
-            ExitArithmeticConditionalStatement(context.SubtractStatementEnd());
+            ExitConditionalStatement(context.SubtractStatementEnd());
         }
-        private void EnterArithmeticConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
+
+        public override void EnterDeleteStatementConditional(CobolProgramClassParser.DeleteStatementConditionalContext context) {
+            EnterConditionalStatement(context.DeleteStatement());
+        }
+        public override void ExitDeleteStatementConditional(CobolProgramClassParser.DeleteStatementConditionalContext context) {
+            ExitConditionalStatement(context.DeleteStatementEnd());
+        }
+        public override void EnterReadStatementConditional(CobolProgramClassParser.ReadStatementConditionalContext context) {
+            EnterConditionalStatement(context.ReadStatement());
+        }
+        public override void ExitReadStatementConditional(CobolProgramClassParser.ReadStatementConditionalContext context) {
+            ExitConditionalStatement(context.ReadStatementEnd());
+        }
+        public override void EnterWriteStatementConditional(CobolProgramClassParser.WriteStatementConditionalContext context) {
+            EnterConditionalStatement(context.WriteStatement());
+        }
+        public override void ExitWriteStatementConditional(CobolProgramClassParser.WriteStatementConditionalContext context) {
+            ExitConditionalStatement(context.WriteStatementEnd());
+        }
+        public override void EnterRewriteStatementConditional(CobolProgramClassParser.RewriteStatementConditionalContext context) {
+            EnterConditionalStatement(context.RewriteStatement());
+        }
+        public override void ExitRewriteStatementConditional(CobolProgramClassParser.RewriteStatementConditionalContext context) {
+            ExitConditionalStatement(context.RewriteStatementEnd());
+        }
+        public override void EnterStartStatementConditional(CobolProgramClassParser.StartStatementConditionalContext context) {
+            EnterConditionalStatement(context.StartStatement());
+        }
+        public override void ExitStartStatementConditional(CobolProgramClassParser.StartStatementConditionalContext context) {
+            ExitConditionalStatement(context.StartStatementEnd());
+        }
+        public override void EnterReturnStatementConditional(CobolProgramClassParser.ReturnStatementConditionalContext context) {
+            EnterConditionalStatement(context.ReturnStatement());
+        }
+        public override void ExitReturnStatementConditional(CobolProgramClassParser.ReturnStatementConditionalContext context) {
+            ExitConditionalStatement(context.ReturnStatementEnd());
+        }
+
+        private void EnterConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
             _del();// delete the node we attached in EnterStatement
             _enter(new Node(AsCodeElement(terminal)));
         }
-        private void ExitArithmeticConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
+        private void ExitConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
             var end = AsCodeElement(terminal);
             if (end != null) _add(new Node(end));
             // don't _exit() because this will be done in ExitStatement
         }
+
         public override void EnterOnSizeError(CobolProgramClassParser.OnSizeErrorContext context) {
             _enter(new Node(AsCodeElement(context.OnSizeErrorCondition())));
         }
@@ -319,6 +358,46 @@ namespace TypeCobol.Compiler.Parser
         public override void ExitNoSizeError(CobolProgramClassParser.NoSizeErrorContext context) {
             _exit();
         }
+
+        public override void EnterOnAtEnd(CobolProgramClassParser.OnAtEndContext context) {
+            _enter(new Node(AsCodeElement(context.AtEndCondition())));
+        }
+        public override void ExitOnAtEnd(CobolProgramClassParser.OnAtEndContext context) {
+            _exit();
+        }
+        public override void EnterNoAtEnd(CobolProgramClassParser.NoAtEndContext context) {
+            _enter(new Node(AsCodeElement(context.NotAtEndCondition())));
+        }
+        public override void ExitNoAtEnd(CobolProgramClassParser.NoAtEndContext context) {
+            _exit();
+        }
+
+        public override void EnterOnInvalidKey(CobolProgramClassParser.OnInvalidKeyContext context) {
+            _enter(new Node(AsCodeElement(context.InvalidKeyCondition())));
+        }
+        public override void ExitOnInvalidKey(CobolProgramClassParser.OnInvalidKeyContext context) {
+            _exit();
+        }
+        public override void EnterNoInvalidKey(CobolProgramClassParser.NoInvalidKeyContext context) {
+            _enter(new Node(AsCodeElement(context.NotInvalidKeyCondition())));
+        }
+        public override void ExitNoInvalidKey(CobolProgramClassParser.NoInvalidKeyContext context) {
+            _exit();
+        }
+        /*
+        public override void EnterOn(CobolProgramClassParser.OnContext context) {
+            _enter(new Node(AsCodeElement(contex)));
+        }
+        public override void ExitOn(CobolProgramClassParser.OnContext context) {
+            _exit();
+        }
+        public override void EnterNo(CobolProgramClassParser.NoContext context) {
+            _enter(new Node(AsCodeElement(contex)));
+        }
+        public override void ExitNo(CobolProgramClassParser.NoContext context) {
+            _exit();
+        }
+        */
 
 
 
