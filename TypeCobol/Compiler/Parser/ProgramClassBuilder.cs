@@ -251,9 +251,7 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
         public override void ExitEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
-            var end = AsCodeElement(context.EvaluateStatementEnd());
-            if (end != null) _add(new Node(end));
-            // don't _exit() because this will be done in ExitStatement
+            ExitConditionalStatement(context.EvaluateStatementEnd());
         }
 
 
@@ -262,9 +260,23 @@ namespace TypeCobol.Compiler.Parser
             _enter(new Node(AsCodeElement(context.PerformStatement())));
         }
         public override void ExitPerformStatementWithBody(CobolProgramClassParser.PerformStatementWithBodyContext context) {
-            var end = AsCodeElement(context.PerformStatementEnd());
-            if (end != null) _add(new Node(end));
-            // don't _exit() because this will be done in ExitStatement
+            ExitConditionalStatement(context.PerformStatementEnd());
+        }
+
+        public override void EnterSearchStatementWithBody(CobolProgramClassParser.SearchStatementWithBodyContext context) {
+            _del();// delete the node we attached in EnterStatement
+            _enter(new Node(AsCodeElement(context.SearchStatement())));
+        }
+        public override void EnterWhenSearchConditionClause(CobolProgramClassParser.WhenSearchConditionClauseContext context) {
+            _enter(new Node(AsCodeElement(context.WhenCondition())));
+            var next = AsCodeElement(context.NextSentenceStatement());
+            if (next != null) _add(new Node(next));
+        }
+        public override void ExitWhenSearchConditionClause(CobolProgramClassParser.WhenSearchConditionClauseContext context) {
+            _exit(); // WHEN
+        }
+        public override void ExitSearchStatementWithBody(CobolProgramClassParser.SearchStatementWithBodyContext context) {
+            ExitConditionalStatement(context.SearchStatementEnd());
         }
 
 

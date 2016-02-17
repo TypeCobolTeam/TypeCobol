@@ -996,10 +996,12 @@ rewriteStatementConditional:
 	RewriteStatementEnd?;
 
 searchStatementWithBody:
-                        SearchStatement 
-                            (AtEndCondition statement+)?
-                            (WhenCondition (statement+ | NextSentenceStatement))+
-                        SearchStatementEnd?;
+	SearchStatement
+		onAtEnd?
+		whenSearchConditionClause+
+	SearchStatementEnd?;
+
+whenSearchConditionClause: WhenCondition (statement+ | NextSentenceStatement);
 
 startStatementConditional:
 	StartStatement
