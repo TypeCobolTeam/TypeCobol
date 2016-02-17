@@ -928,10 +928,10 @@ addStatementConditional:
 		(onSizeError | noSizeError)*
 	AddStatementEnd?;
 
-callStatementConditional:			
-                        CallStatement 
-                            (exceptionConditions | (OnOverflowCondition statement+))? 
-                        CallStatementEnd?;
+callStatementConditional:
+	CallStatement
+		(onException | noException | onOverflow)*
+	CallStatementEnd?;
 
 computeStatementConditional:
 	ComputeStatement
@@ -965,10 +965,10 @@ ifStatementWithBody:
 
 elseClause: ElseCondition (statement+ | NextSentenceStatement);
 
-invokeStatementConditional:			
-                        InvokeStatement 
-                            exceptionConditions? 
-                        InvokeStatementEnd?;
+invokeStatementConditional:
+	InvokeStatement
+		(onException | noException)*
+	InvokeStatementEnd?;
 
 multiplyStatementConditional:
 	MultiplyStatement
@@ -1026,25 +1026,23 @@ writeStatementConditional:
 		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
 	WriteStatementEnd?;
 
-xmlGenerateStatementConditional:	
-                        XmlGenerateStatement 
-                            exceptionConditions?
-                        XmlStatementEnd?;
+xmlGenerateStatementConditional:
+	XmlGenerateStatement
+		(onException | noException)*
+	XmlStatementEnd?;
 
-xmlParseStatementConditional:		
-                        XmlParseStatement
-                            exceptionConditions?
-                        XmlStatementEnd?;
+xmlParseStatementConditional:
+	XmlParseStatement
+		(onException | noException)*
+	XmlStatementEnd?;
 
 // Conditional execution of statements
 
 onAtEnd: AtEndCondition statement+;
 noAtEnd: NotAtEndCondition statement+;
 
-exceptionConditions:
-	(OnExceptionCondition statement+) |
-	(NotOnExceptionCondition statement+) |
-	((OnExceptionCondition statement+) (NotOnExceptionCondition statement+));
+onException: OnExceptionCondition statement+;
+noException: NotOnExceptionCondition statement+;
 
 onInvalidKey: InvalidKeyCondition statement+;
 noInvalidKey: NotInvalidKeyCondition statement+;

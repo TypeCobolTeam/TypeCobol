@@ -349,6 +349,31 @@ namespace TypeCobol.Compiler.Parser
             ExitConditionalStatement(context.UnstringStatementEnd());
         }
 
+        public override void EnterCallStatementConditional(CobolProgramClassParser.CallStatementConditionalContext context) {
+            EnterConditionalStatement(context.CallStatement());
+        }
+        public override void ExitCallStatementConditional(CobolProgramClassParser.CallStatementConditionalContext context) {
+            ExitConditionalStatement(context.CallStatementEnd());
+        }
+        public override void EnterInvokeStatementConditional(CobolProgramClassParser.InvokeStatementConditionalContext context) {
+            EnterConditionalStatement(context.InvokeStatement());
+        }
+        public override void ExitInvokeStatementConditional(CobolProgramClassParser.InvokeStatementConditionalContext context) {
+            ExitConditionalStatement(context.InvokeStatementEnd());
+        }
+        public override void EnterXmlGenerateStatementConditional(CobolProgramClassParser.XmlGenerateStatementConditionalContext context) {
+            EnterConditionalStatement(context.XmlGenerateStatement());
+        }
+        public override void ExitXmlGenerateStatementConditional(CobolProgramClassParser.XmlGenerateStatementConditionalContext context) {
+            ExitConditionalStatement(context.XmlStatementEnd());
+        }
+        public override void EnterXmlParseStatementConditional(CobolProgramClassParser.XmlParseStatementConditionalContext context) {
+            EnterConditionalStatement(context.XmlParseStatement());
+        }
+        public override void ExitXmlParseStatementConditional(CobolProgramClassParser.XmlParseStatementConditionalContext context) {
+            ExitConditionalStatement(context.XmlStatementEnd());
+        }
+
         private void EnterConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
             _del();// delete the node we attached in EnterStatement
             _enter(new Node(AsCodeElement(terminal)));
@@ -385,6 +410,19 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
 
+        public override void EnterOnException(CobolProgramClassParser.OnExceptionContext context) {
+            _enter(new Node(AsCodeElement(context.OnExceptionCondition())));
+        }
+        public override void ExitOnException(CobolProgramClassParser.OnExceptionContext context) {
+            _exit();
+        }
+        public override void EnterNoException(CobolProgramClassParser.NoExceptionContext context) {
+            _enter(new Node(AsCodeElement(context.NotOnExceptionCondition())));
+        }
+        public override void ExitNoException(CobolProgramClassParser.NoExceptionContext context) {
+            _exit();
+        }
+
         public override void EnterOnInvalidKey(CobolProgramClassParser.OnInvalidKeyContext context) {
             _enter(new Node(AsCodeElement(context.InvalidKeyCondition())));
         }
@@ -410,20 +448,6 @@ namespace TypeCobol.Compiler.Parser
         public override void ExitNoOverflow(CobolProgramClassParser.NoOverflowContext context) {
             _exit();
         }
-        /*
-        public override void EnterOn(CobolProgramClassParser.OnContext context) {
-            _enter(new Node(AsCodeElement(contex)));
-        }
-        public override void ExitOn(CobolProgramClassParser.OnContext context) {
-            _exit();
-        }
-        public override void EnterNo(CobolProgramClassParser.NoContext context) {
-            _enter(new Node(AsCodeElement(contex)));
-        }
-        public override void ExitNo(CobolProgramClassParser.NoContext context) {
-            _exit();
-        }
-        */
 
 
 
