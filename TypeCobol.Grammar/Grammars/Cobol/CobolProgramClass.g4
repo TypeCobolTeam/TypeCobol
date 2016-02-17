@@ -1006,20 +1006,20 @@ startStatementConditional:
 		(onInvalidKey | noInvalidKey)*
 	StartStatementEnd?;
 
-stringStatementConditional:			
-                        StringStatement 
-                            overflowConditions?
-                        StringStatementEnd?;
+stringStatementConditional:
+	StringStatement
+		(onOverflow | noOverflow)*
+	StringStatementEnd?;
 
 subtractStatementConditional:
 	SubtractStatement
 		(onSizeError | noSizeError)*
 	SubtractStatementEnd?;
 
-unstringStatementConditional:		
-                        UnstringStatement 
-                            overflowConditions? 
-                        UnstringStatementEnd?;
+unstringStatementConditional:
+	UnstringStatement
+		(onOverflow | noOverflow)*
+	UnstringStatementEnd?;
 
 writeStatementConditional:
 	WriteStatement
@@ -1049,11 +1049,8 @@ exceptionConditions:
 onInvalidKey: InvalidKeyCondition statement+;
 noInvalidKey: NotInvalidKeyCondition statement+;
 
-overflowConditions:
-	(OnOverflowCondition statement+) |
-	(NotOnOverflowCondition statement+) |
-	((OnOverflowCondition statement+) (NotOnOverflowCondition statement+));
-
+onOverflow: OnOverflowCondition statement+;
+noOverflow: NotOnOverflowCondition statement+;
 
 onSizeError: OnSizeErrorCondition statement+;
 noSizeError: NotOnSizeErrorCondition statement+;

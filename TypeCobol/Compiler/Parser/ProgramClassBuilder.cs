@@ -336,6 +336,19 @@ namespace TypeCobol.Compiler.Parser
             ExitConditionalStatement(context.ReturnStatementEnd());
         }
 
+        public override void EnterStringStatementConditional(CobolProgramClassParser.StringStatementConditionalContext context) {
+            EnterConditionalStatement(context.StringStatement());
+        }
+        public override void ExitStringStatementConditional(CobolProgramClassParser.StringStatementConditionalContext context) {
+            ExitConditionalStatement(context.StringStatementEnd());
+        }
+        public override void EnterUnstringStatementConditional(CobolProgramClassParser.UnstringStatementConditionalContext context) {
+            EnterConditionalStatement(context.UnstringStatement());
+        }
+        public override void ExitUnstringStatementConditional(CobolProgramClassParser.UnstringStatementConditionalContext context) {
+            ExitConditionalStatement(context.UnstringStatementEnd());
+        }
+
         private void EnterConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
             _del();// delete the node we attached in EnterStatement
             _enter(new Node(AsCodeElement(terminal)));
@@ -382,6 +395,19 @@ namespace TypeCobol.Compiler.Parser
             _enter(new Node(AsCodeElement(context.NotInvalidKeyCondition())));
         }
         public override void ExitNoInvalidKey(CobolProgramClassParser.NoInvalidKeyContext context) {
+            _exit();
+        }
+
+        public override void EnterOnOverflow(CobolProgramClassParser.OnOverflowContext context) {
+            _enter(new Node(AsCodeElement(context.OnOverflowCondition())));
+        }
+        public override void ExitOnOverflow(CobolProgramClassParser.OnOverflowContext context) {
+            _exit();
+        }
+        public override void EnterNoOverflow(CobolProgramClassParser.NoOverflowContext context) {
+            _enter(new Node(AsCodeElement(context.NotOnOverflowCondition())));
+        }
+        public override void ExitNoOverflow(CobolProgramClassParser.NoOverflowContext context) {
             _exit();
         }
         /*
