@@ -976,9 +976,9 @@ multiplyStatementConditional:
                         MultiplyStatementEnd?;
 
 performStatementWithBody:			
-                        PerformStatement 
-                            statement* 
-                        PerformStatementEnd?;
+	PerformStatement
+		statement*
+	PerformStatementEnd?;
 
 readStatementConditional:			
                         ReadStatement 
