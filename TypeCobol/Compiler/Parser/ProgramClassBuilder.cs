@@ -69,7 +69,8 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void ExitCobolProgram(CobolProgramClassParser.CobolProgramContext context) {
-            _add(new Node(AsCodeElement(context.ProgramEnd())));
+            var end = AsCodeElement(context.ProgramEnd());
+            if (end != null) _add(new Node(end));
             _exit();
             programsStack.Pop();
         }
@@ -191,7 +192,8 @@ namespace TypeCobol.Compiler.Parser
             _enter(new Node(null));
         }
         public override void ExitSentence(CobolProgramClassParser.SentenceContext context) {
-            _add(new Node(AsCodeElement(context.SentenceEnd())));
+            var end = AsCodeElement(context.SentenceEnd());
+            if (end != null) _add(new Node(end));
             _exit();
         }
 
@@ -249,7 +251,8 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
         public override void ExitEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
-            _add(new Node(AsCodeElement(context.EvaluateStatementEnd())));
+            var end = AsCodeElement(context.EvaluateStatementEnd());
+            if (end != null) _add(new Node(end));
             // don't _exit() because this will be done in ExitStatement
         }
 
@@ -258,7 +261,8 @@ namespace TypeCobol.Compiler.Parser
             _enter(new Node(AsCodeElement(context.PerformStatement())));
         }
         public override void ExitPerformStatementWithBody(CobolProgramClassParser.PerformStatementWithBodyContext context) {
-            _add(new Node(AsCodeElement(context.PerformStatementEnd())));
+            var end = AsCodeElement(context.PerformStatementEnd());
+            if (end != null) _add(new Node(end));
             _exit();
         }
 
