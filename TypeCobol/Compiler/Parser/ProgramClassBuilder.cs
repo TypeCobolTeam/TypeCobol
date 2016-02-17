@@ -223,6 +223,7 @@ namespace TypeCobol.Compiler.Parser
             // don't _exit() IF node because this will be done in ExitStatement
         }
 
+
         public override void EnterEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
             _del();// delete the node we attached in EnterStatement
             _enter(new Node(AsCodeElement(context.EvaluateStatement())));
@@ -250,6 +251,15 @@ namespace TypeCobol.Compiler.Parser
         public override void ExitEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
             _add(new Node(AsCodeElement(context.EvaluateStatementEnd())));
             // don't _exit() because this will be done in ExitStatement
+        }
+
+
+        public override void EnterPerformStatementWithBody(CobolProgramClassParser.PerformStatementWithBodyContext context) {
+            _enter(new Node(AsCodeElement(context.PerformStatement())));
+        }
+        public override void ExitPerformStatementWithBody(CobolProgramClassParser.PerformStatementWithBodyContext context) {
+            _add(new Node(AsCodeElement(context.PerformStatementEnd())));
+            _exit();
         }
 
 
