@@ -923,30 +923,30 @@ statement:
 
 // Statements with optional body  
 
-addStatementConditional:			
-                        AddStatement 
-                            sizeErrorConditions? 
-                        AddStatementEnd?;
+addStatementConditional:
+	AddStatement
+		(onSizeError | noSizeError)*
+	AddStatementEnd?;
 
 callStatementConditional:			
                         CallStatement 
                             (exceptionConditions | (OnOverflowCondition statement+))? 
                         CallStatementEnd?;
 
-computeStatementConditional:		
-                        ComputeStatement 
-                            sizeErrorConditions? 
-                        ComputeStatementEnd?;
+computeStatementConditional:
+	ComputeStatement
+		(onSizeError | noSizeError)*
+	ComputeStatementEnd?;
 
 deleteStatementConditional:			
                         DeleteStatement 
                             invalidKeyConditions? 
                         DeleteStatementEnd?;
 
-divideStatementConditional:			
-                        DivideStatement 
-                            sizeErrorConditions? 
-                        DivideStatementEnd?;
+divideStatementConditional:
+	DivideStatement
+		(onSizeError | noSizeError)*
+	DivideStatementEnd?;
 
 evaluateStatementWithBody:                             
 	EvaluateStatement
@@ -970,10 +970,10 @@ invokeStatementConditional:
                             exceptionConditions? 
                         InvokeStatementEnd?;
 
-multiplyStatementConditional:		
-                        MultiplyStatement
-                            sizeErrorConditions? 
-                        MultiplyStatementEnd?;
+multiplyStatementConditional:
+	MultiplyStatement
+		(onSizeError | noSizeError)*
+	MultiplyStatementEnd?;
 
 performStatementWithBody:			
 	PerformStatement
@@ -1012,10 +1012,10 @@ stringStatementConditional:
                             overflowConditions?
                         StringStatementEnd?;
 
-subtractStatementConditional:		
-                        SubtractStatement 
-                            sizeErrorConditions?
-                        SubtractStatementEnd?;
+subtractStatementConditional:
+	SubtractStatement
+		(onSizeError | noSizeError)*
+	SubtractStatementEnd?;
 
 unstringStatementConditional:		
                         UnstringStatement 
@@ -1060,7 +1060,6 @@ overflowConditions:
 	(NotOnOverflowCondition statement+) |
 	((OnOverflowCondition statement+) (NotOnOverflowCondition statement+));
 
-sizeErrorConditions:
-	(OnSizeErrorCondition statement+) |
-	(NotOnSizeErrorCondition statement+) |
-	((OnSizeErrorCondition statement+) (NotOnSizeErrorCondition statement+));
+
+onSizeError: OnSizeErrorCondition statement+;
+noSizeError: NotOnSizeErrorCondition statement+;
