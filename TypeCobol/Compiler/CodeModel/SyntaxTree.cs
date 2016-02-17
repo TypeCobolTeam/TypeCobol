@@ -42,17 +42,18 @@ namespace TypeCobol.Compiler.CodeModel
         }
         private void ToString(Node node, StringBuilder str, int indent) {
             for(int c=1; c<indent; c++) str.Append("  ");
-            str.Append("+ ");
-            if (node.CodeElement==null) str.AppendLine(node.GetType().Name);
-            else {
-                str.Append(node.CodeElement.GetType().Name);
-                ParagraphHeader ph = node.CodeElement as ParagraphHeader;
-                if (ph!=null) str.Append(" \"").Append(ph.ParagraphName).Append("\"");
-                SectionHeader sh = node.CodeElement as SectionHeader;
-                if (sh!=null) str.Append(" \"").Append(sh.SectionName).Append("\"");
-                str.AppendLine();
-            }
+            str.Append("+ ").Append(node.ToString());
+            str.AppendLine();
             foreach(var child in node.Children) ToString(child, str, indent+1);
+        }
+
+        internal string BranchToString() {
+            var str = new StringBuilder();
+            var reversed = new List<Node>();
+            foreach(var node in Branch) reversed.Insert(0, node);
+            foreach(var node in reversed) str.Append(node.ToString()).Append(" > ");
+            str.Length -= 2;
+            return str.ToString();
         }
     }
 }

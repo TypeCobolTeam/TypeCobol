@@ -217,13 +217,10 @@ namespace TypeCobol.Compiler.Parser
             var next = AsCodeElement(context.NextSentenceStatement());
             if (next != null) _add(new Node(next));
         }
-        public override void ExitElseClause(CobolProgramClassParser.ElseClauseContext context) {
-            _exit();// exit ELSE
-        }
         public override void ExitIfStatementWithBody(CobolProgramClassParser.IfStatementWithBodyContext context) {
+            _exit(); // _exit() ELSE (if any) or THEN
             var end = AsCodeElement(context.IfStatementEnd());
             if (end != null) _add(new Node(end));
-            if (Program.SyntaxTree.Head().Children.Count < 3) _exit(); // _exit() THEN node if there was no ELSE
             // don't _exit() IF node because this will be done in ExitStatement
         }
 

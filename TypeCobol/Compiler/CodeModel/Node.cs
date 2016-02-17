@@ -21,5 +21,10 @@ namespace TypeCobol.Compiler.CodeElements
             Parent.children_.Remove(this);
             Parent = null;
         }
+
+        public string ToString() {
+            if (CodeElement==null) return GetType().Name+"?";
+            else return CodeElement.GetType().Name;
+        }
     }
 }
