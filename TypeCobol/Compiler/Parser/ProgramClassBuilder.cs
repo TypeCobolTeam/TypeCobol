@@ -174,10 +174,9 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSection(CobolProgramClassParser.SectionContext context) {
             var terminal = context.SectionHeader();
             if (terminal == null) terminal = context.ParagraphHeader();
-            _enter(new Node(AsCodeElement(terminal)));
-        }
-        public override void ExitSection(CobolProgramClassParser.SectionContext context) {
-            _exit();
+            // if we _enter(..) a node here, it will be detached by ExitParagraph
+            // if we do not, no need to detach anything in ExitSection
+            if (terminal != null) _enter(new Node(AsCodeElement(terminal)));
         }
 
         public override void EnterParagraph(CobolProgramClassParser.ParagraphContext context) {
