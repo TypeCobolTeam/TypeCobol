@@ -125,23 +125,20 @@ namespace TypeCobol.Compiler.Parser
             return condition;
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context)
-        {
-            if (context.conditionNameReference() == null) return new Empty();
+        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context) {
+            if (context == null) return null;
             return createCondition(context.conditionNameReference());
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameReferenceContext context)
-        {
-            if (context == null) return new Empty();
+        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameReferenceContext context) {
+            if (context == null) return null;
             QualifiedName conditionname = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
             IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());
             return new Condition(conditionname, subscripts);
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext context)
-        {
-            if (context == null) return new Empty();
+        private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext context) {
+            if (context == null) return null;
             return new Condition(SyntaxElementBuilder.CreateQualifiedName(context));
         }
 
@@ -194,33 +191,49 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private Expression createOperand(CobolCodeElementsParser.OperandContext context) {
-            if (context == null) return new Empty();
+            if (context == null) return null;
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
             if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
             // indexName cannot be distinguished from identifier at the parsing stage
-            return new Empty();
+            return null;
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context) {
-            if (context == null)  return new Empty();
+            if (context == null)  return null;
             var left = createOperand(context.operand());
             char op = CreateOperator(context.relationalOperator());
             return CreateExpression(left, op, context.abbreviatedExpression());
         }
 
+        /// <summary>
+        /// issue #151: this method only manages to return correct results with very simple abbreviated relations.
+        /// it returns WRONG results with the majority of what can be written with this horrid syntax.
+        /// </summary>
         private LogicalExpression CreateExpression(Expression left, char op, CobolCodeElementsParser.AbbreviatedExpressionContext context) {
+            char op2 = '?';
             var operand = createOperand(context.operand());
-            /*
             if (operand != null) {
                 if (context.relationalOperator() != null) {
-                    char oop = CreateOperator(context.relationalOperator());
+                    op2 = CreateOperator(context.relationalOperator());
+                    return new Relation(left, op2, operand);
                 }
-                return LogicOperation.Create(left, op, operand);
+                return new Relation(left, op, operand);
             }
-            throw new System.NotImplementedException("TODO");
-            */
-            return new Empty();
+            var tail = context.abbreviatedExpression();
+            if (tail.Length == 1) {
+                var expr  = CreateExpression(left, op, tail[0]);
+                if (context.NOT() != null) expr = new NOT(expr);
+                return expr;
+            }
+            if (context.AND() != null) op2 = '&';
+            if (context.OR()  != null) op2 = '|';
+            if (op2 != '?') {
+                var aleft  = CreateExpression(left, op, tail[0]);
+                var aright = CreateExpression(left, op, tail[1]);
+                return LogicOperation.Create(aleft, op2, aright);
+            }
+            return null;
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.PointerRelationConditionContext context) {
@@ -240,7 +253,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private Expression createOperand(CobolCodeElementsParser.SpecificPointerOperandContext context) {
-            if (context == null) return new Empty();
+            if (context == null) return null;
 
             if (context.identifier() != null) {
                 var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
@@ -249,11 +262,11 @@ namespace TypeCobol.Compiler.Parser
             }
             if (context.NULL() != null || context.NULLS() != null) return new Null();
             if (context.SELF() != null) return new Self();
-            return new Empty();
+            return null;
         }
 
         private LogicalExpression createCondition(CobolCodeElementsParser.SignConditionContext context) {
-            if (context == null) return new Empty();
+            if (context == null) return null;
             Expression operand = createOperand(context.operand());
             bool not = context.NOT() != null;
             if (context.ZERO() != null) return new SignCondition(operand, not, SignCondition.Type.ZERO);
