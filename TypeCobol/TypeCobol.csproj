@@ -112,6 +112,7 @@
     <Compile Include="Compiler\AntlrUtils\ParseTreeUtils.cs" />
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
+    <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
