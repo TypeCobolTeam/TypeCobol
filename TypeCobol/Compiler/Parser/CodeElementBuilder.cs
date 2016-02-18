@@ -435,7 +435,10 @@ namespace TypeCobol.Compiler.Parser
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
 
             var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
-            if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
+			if (picture != null) {
+				entry.Picture = picture.PictureCharacterString().GetText();
+				entry.DataType = DataType.Create(entry.Picture);
+			} else entry.DataType = DataType.Unknown;
 
             var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
