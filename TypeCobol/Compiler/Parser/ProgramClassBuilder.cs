@@ -142,9 +142,12 @@ namespace TypeCobol.Compiler.Parser
         private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
             IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
             if (nodes == null) return result;
+			char[] currencies = GetCurrencies();
+
             Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
             foreach (var node in nodes) {
                 DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
+				ComputeType(data, currencies);
                 bool okay = false;
                 while(!okay && groups.Count > 0) {
                     var toplevel = groups.Peek();
@@ -160,6 +163,35 @@ namespace TypeCobol.Compiler.Parser
             }
             return result;
         }
+
+		private void ComputeType(DataDescriptionEntry data, char[] currencies) {
+			if (data.Picture != null)
+				 data.DataType = DataType.Create(data.Picture, currencies);
+			else data.DataType = DataType.Unknown;
+		}
+
+		private char[] GetCurrencies() {
+			IDictionary<string, string> currencies = null;
+			var specialnode = GetNode(typeof(SpecialNamesParagraph));
+			if (specialnode != null) currencies = (specialnode.CodeElement as SpecialNamesParagraph).CurrencySymbols;
+			if (currencies == null || currencies.Count < 1) return new char[] { '$' };
+			var chars = new List<char>();
+			foreach(var key in currencies.Keys)
+				if (key.Length == 1) chars.Add(key[0]);
+			return chars.ToArray();
+		}
+
+		private Node GetNode(Type type) {
+			var nodes = new List<Node>();
+			nodes.Add(CurrentProgram.SyntaxTree.Root);
+			while(nodes.Count > 0) {
+				var node = nodes[0];
+				if (node.CodeElement != null && node.CodeElement.GetType() == type) return node;
+				nodes.Remove(node);
+				nodes.AddRange(node.Children); //breadth-first
+			}
+			return null;
+		}
 
         private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
             foreach(var d in data) CurrentProgram.SymbolTable.Add(section, d);

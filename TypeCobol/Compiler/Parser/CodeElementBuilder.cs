@@ -435,10 +435,7 @@ namespace TypeCobol.Compiler.Parser
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
 
             var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
-			if (picture != null) {
-				entry.Picture = picture.PictureCharacterString().GetText();
-				entry.DataType = DataType.Create(entry.Picture);
-			} else entry.DataType = DataType.Unknown;
+			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
 
             var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
@@ -620,11 +617,24 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new ObjectComputerParagraph();
         }
 
-        public override void EnterSpecialNamesParagraph(CobolCodeElementsParser.SpecialNamesParagraphContext context)
-        {
-            Context = context;
-            CodeElement = new SpecialNamesParagraph();
-        }
+		public override void EnterSpecialNamesParagraph(CobolCodeElementsParser.SpecialNamesParagraphContext context) {
+			var paragraph = new SpecialNamesParagraph();
+			foreach(var clause in context.currencySignClause())
+				CreateCurrencySign(paragraph, clause);
+
+			Context = context;
+			CodeElement = paragraph;
+		}
+		public void CreateCurrencySign(SpecialNamesParagraph paragraph, CobolCodeElementsParser.CurrencySignClauseContext context) {
+			var currencies = context.alphanumOrHexadecimalLiteral();
+			string currencyStr = null;
+			string currencyChar = "$";
+			if (currencies.Length > 0)
+				currencyStr = SyntaxElementBuilder.CreateString(currencies[0]);
+			if (currencies.Length > 1)
+				currencyChar = SyntaxElementBuilder.CreateString(currencies[1]);
+			paragraph.CurrencySymbols[currencyChar] = currencyStr;
+		}
 
         public override void EnterRepositoryParagraph(CobolCodeElementsParser.RepositoryParagraphContext context)
         {

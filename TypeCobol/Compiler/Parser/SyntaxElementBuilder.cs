@@ -568,6 +568,18 @@ namespace TypeCobol.Compiler.Parser
             var token = ParseTreeUtils.GetTokenFromTerminalNode(node);
             return (int)((TypeCobol.Compiler.Scanner.IntegerLiteralValue)token.LiteralValue).Number;
         }
-    }
+
+		internal static string CreateString(CobolCodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
+			var str = GetString(context);
+			if (str == null) return null;
+			if (str[0] == 'X' || str[0] == 'x') str = str.Substring(1);
+			return str.Substring(1,str.Length-2); // remove '' or ""
+		}
+		private static string GetString(CobolCodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
+			if (context.AlphanumericLiteral() != null) return context.AlphanumericLiteral().Symbol.Text;
+			if (context.HexadecimalAlphanumericLiteral() != null) return context.HexadecimalAlphanumericLiteral().Symbol.Text;
+			return null;
+		}
+	}
 
 }

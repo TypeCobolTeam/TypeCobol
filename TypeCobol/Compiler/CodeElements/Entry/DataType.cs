@@ -28,22 +28,39 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 		public static DataType Create(string picture) {
+			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
+			return doCreate(picture, basic);
+		}
+		public static DataType Create(string picture, char[] currencies) {
+			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
+			var all = new char[basic.Length + currencies.Length];
+			basic.CopyTo(all, 0);
+			currencies.CopyTo(all, basic.Length);
+			return doCreate(picture, all);
+		}
+		private static DataType doCreate(string picture, char[] numericEditingSpecificChars) {
+			//if (picture.Length > 50) return DataType.Unknown;// it's not our job to detect this
+			char[] editingBase = new char[]{'B','0','/'};
+			char[] editingNumeric = new char[editingBase.Length + numericEditingSpecificChars.Length];
+			editingBase.CopyTo(editingNumeric, 0);
+			numericEditingSpecificChars.CopyTo(editingNumeric, editingBase.Length);
+
 			picture = remove(picture, '(',')');
-			char[] chars = distinct(picture);
+			char[] chars = distinct(picture.ToUpper());
 			if (contains(chars, 'E'))
 				return DataType.FloatingPoint;// ±?E±99
 			if (contains(chars, new char[]{'X'}))
-				if (contains(chars, new char[]{'B','0','/'}))
+				if (contains(chars, editingBase))
 					 return DataType.AlphanumericEdited;
 				else return DataType.Alphanumeric;
 			if (contains(chars, new char[]{'A'}))
 				return DataType.Alphabetic;
 			if (contains(chars, new char[]{'G','N'}))
 				return DataType.DBCS;
+			if (contains(chars, editingNumeric))
+				return DataType.NumericEdited;
 			if (contains(chars, new char[]{'9','S','V','P'}))
-				if (contains(chars, new char[]{'B','0','/','.','Z','+','-','*','D'/*,'B'*/,'C','S'}))
-					 return DataType.NumericEdited;
-				else return DataType.Numeric;
+				return DataType.Numeric;
 			return DataType.Unknown;
 		}
 		/// <summary>Remove from string expr all substrings between characters begin and end.</summary>
@@ -88,5 +105,6 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
+
 	}
 }
