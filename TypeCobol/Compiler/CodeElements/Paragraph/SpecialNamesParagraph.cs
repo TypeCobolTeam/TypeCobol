@@ -18,9 +18,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SpecialNamesParagraph : CodeElement
     {
-        public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
-        {
-        }
+		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph) {
+			CurrencySymbols = new Dictionary<string, string>();
+		}
 
         /// <summary>
         /// Relates IBM-specified environment-names to user-defined mnemonic-names
@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The CURRENCY SIGN clause specifies a currency sign value and the currency
         /// symbol used to represent that currency sign value in a PICTURE clause.
         /// </summary>
-        public IDictionary<char, string> CurrencySymbols { get; set; }
+        public IDictionary<string, string> CurrencySymbols { get; set; }
 
         /// <summary>
         /// The DECIMAL-POINT IS COMMA clause exchanges the functions of the period

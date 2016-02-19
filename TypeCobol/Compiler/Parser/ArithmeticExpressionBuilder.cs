@@ -62,77 +62,35 @@ namespace TypeCobol.Compiler.Parser
 
         
 
-        //internal ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ArithmeticExpressionContext context)
-        //{
-        //    ArithmeticExpression current = null;
-        //    ArithmeticExpression result = null;
-        //    if (context.multiplicationAndDivision() != null)
-        //        result =  CreateArithmeticExpression(context.multiplicationAndDivision());
+        internal ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ArithmeticExpressionContext context) {
+            if (context.identifier() != null) return new ArithmeticIdentifier(SyntaxElementBuilder.CreateIdentifier(context.identifier()));
+            if (context.numericLiteral() != null) return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
 
-        //    foreach (var tail in context.arithMADTail())
-        //    {
-        //        char op = '?';
-        //        if (tail.PlusOperator() != null) op = '+';
-        //        if (tail.MinusOperator() != null) op = '-';
-        //        current = CreateArithmeticExpression(tail.multiplicationAndDivision());
-        //        result = CreateResult(result, op, current);
-        //    }
-        //    return result;
-        //}
-
-        //private ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.MultiplicationAndDivisionContext context)
-        //{
-        //    ArithmeticExpression current = null;
-        //    ArithmeticExpression result = null;
-        //    if (context.exponentiation() != null)
-        //        result = CreateArithmeticExpression(context.exponentiation());
-
-        //    foreach (var tail in context.arithEXPTail())
-        //    {
-        //        char op = '?';
-        //        if (tail.MultiplyOperator() != null) op = '×';
-        //        if (tail.DivideOperator() != null) op = '÷';
-        //        current = CreateArithmeticExpression(tail.exponentiation());
-        //        result = CreateResult(result, op, current);
-        //    }
-        //    return result;
-        //}
-
-        //private ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ExponentiationContext context)
-        //{
-        //    char op = '?';
-        //    if (context.PowerOperator() != null) op = '^';
-        //    ArithmeticExpression current = null;
-        //    ArithmeticExpression result = null;
-        //    if (context.unaryOperator() != null)
-        //    {
-        //        foreach (var operation in context.unaryOperator())
-        //        {
-        //            current = CreateArithmeticExpression(operation);
-        //            result = CreateResult(result, op, current);
-        //        }
-        //    }
-        //    return result;
-        //}
-
-        private ArithmeticExpression CreateResult(ArithmeticExpression left, char op, ArithmeticExpression right)
-        {
-            if (left == null) return right;
-            return new ArithmeticOperation(left, op, right);
+            ArithmeticExpression result = null;
+            char op = CreateOperator(context);
+            var members = context.arithmeticExpression();
+            if (members.Length > 1) {
+                var left  = CreateArithmeticExpression(members[0]);
+                var right = CreateArithmeticExpression(members[1]);
+                result = new ArithmeticOperation(left, op, right);
+            } else
+            if (members.Length > 0) {
+                result = CreateArithmeticExpression(members[0]);
+                if (context.LeftParenthesisSeparator() == null && context.RightParenthesisSeparator() == null) {
+                    if (op == '-') result = new ArithmeticOperation(new Zero(), '-', result);
+                }
+            }
+            return result;
         }
 
-        //private ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.UnaryOperatorContext context)
-        //{
-        //    ArithmeticExpression result = CreateArithmeticExpression(context.expressionBase());
-        //    if (context.MinusOperator() != null) result = new ArithmeticOperation(new Zero(), '-', result);
-        //    return result;
-        //}
-
-        //private ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ExpressionBaseContext context)
-        //{
-        //    if (context.identifier() != null) return new ArithmeticIdentifier(SyntaxElementBuilder.CreateIdentifier(context.identifier()));
-        //    if (context.numericLiteral() != null) return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
-        //    return CreateArithmeticExpression(context.arithmeticExpression());
-        //}
+        private char CreateOperator(CobolCodeElementsParser.ArithmeticExpressionContext context) {
+            char op = '?';
+            if (context.PlusOperator()     != null) op = '+';
+            if (context.MinusOperator()    != null) op = '-';
+            if (context.MultiplyOperator() != null) op = '×';
+            if (context.DivideOperator()   != null) op = '÷';
+            if (context.PowerOperator()    != null) op = '^';
+            return op;
+        }
     }
 }

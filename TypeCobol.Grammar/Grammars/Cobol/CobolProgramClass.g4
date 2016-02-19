@@ -131,7 +131,7 @@ tokens
     ElseCondition,
     WhenEvaluateCondition,
     WhenOtherCondition,
-    WhenConditionalExpression,
+    WhenCondition,
 
     // Statement ends
 
@@ -192,24 +192,22 @@ cobolCompilationUnit :
 // p84 : Format: COBOL source program
 
 cobolProgram:
-                ProgramIdentification
-               (EnvironmentDivisionHeader 
-                    configurationSection?
-                    inputOutputSection?
-               )?
-               (DataDivisionHeader 
-                    fileSection?
-                    workingStorageSection?
-                    localStorageSection?
-                    linkageSection?
-               )?
-               (ProcedureDivisionHeader 
-                    declaratives?
-                    section*
-               )?
+	ProgramIdentification
+	environmentDivision?
+	dataDivision?
+	procedureDivision?
                 cobolProgram* 
                 ProgramEnd?
                 ;
+
+environmentDivision:
+	EnvironmentDivisionHeader  configurationSection? inputOutputSection?;
+
+dataDivision:
+	DataDivisionHeader fileSection? workingStorageSection? localStorageSection? linkageSection?;
+
+procedureDivision:
+	ProcedureDivisionHeader declaratives? section*;
 
 // p85 : An end program marker separates each program in the sequence of programs. 
 //       program-name must be identical to a program-name declared in a preceding program-ID paragraph.
@@ -405,7 +403,7 @@ methodDefinition :
 
 // p109 : CONFIGURATION SECTION Format:
 
-configurationSection : 
+configurationSection:
                      ConfigurationSectionHeader
                    ( SourceComputerParagraph
                    | ObjectComputerParagraph
@@ -625,7 +623,8 @@ declaratives:
 // keywords END DECLARATIVES.
 
 section:
-           ((SectionHeader | ParagraphHeader) | sentence)+;
+	  ((SectionHeader | ParagraphHeader) paragraph*)
+	| sentence+;
 
 // p253: Paragraph
 // A paragraph-name followed by a separator period, optionally followed by
@@ -924,140 +923,134 @@ statement:
 
 // Statements with optional body  
 
-addStatementConditional:			
-                        AddStatement 
-                            sizeErrorConditions? 
-                        AddStatementEnd?;
+addStatementConditional:
+	AddStatement
+		(onSizeError | noSizeError)*
+	AddStatementEnd?;
 
-callStatementConditional:			
-                        CallStatement 
-                            (exceptionConditions | (OnOverflowCondition statement+))? 
-                        CallStatementEnd?;
+callStatementConditional:
+	CallStatement
+		(onException | noException | onOverflow)*
+	CallStatementEnd?;
 
-computeStatementConditional:		
-                        ComputeStatement 
-                            sizeErrorConditions? 
-                        ComputeStatementEnd?;
+computeStatementConditional:
+	ComputeStatement
+		(onSizeError | noSizeError)*
+	ComputeStatementEnd?;
 
-deleteStatementConditional:			
-                        DeleteStatement 
-                            invalidKeyConditions? 
-                        DeleteStatementEnd?;
+deleteStatementConditional:
+	DeleteStatement
+		(onInvalidKey | noInvalidKey)*
+	DeleteStatementEnd?;
 
-divideStatementConditional:			
-                        DivideStatement 
-                            sizeErrorConditions? 
-                        DivideStatementEnd?;
+divideStatementConditional:
+	DivideStatement
+		(onSizeError | noSizeError)*
+	DivideStatementEnd?;
 
 evaluateStatementWithBody:                             
-                        EvaluateStatement
-                            ((WhenConditionalExpression | WhenEvaluateCondition)+ statement+)+
-                            (WhenOtherCondition statement+)?
-                        EvaluateStatementEnd?;
+	EvaluateStatement
+		whenConditionClause+
+		whenOtherClause?
+	EvaluateStatementEnd?;
+
+whenConditionClause: WhenCondition+ statement+;
+whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:
-                        IfStatement 
-                            (statement+ | NextSentenceStatement)
-                        (ElseCondition 
-                            (statement+ | NextSentenceStatement) )?
-                        IfStatementEnd?;
+	IfStatement
+		(statement+ | NextSentenceStatement)
+		elseClause?
+	IfStatementEnd?;
 
-invokeStatementConditional:			
-                        InvokeStatement 
-                            exceptionConditions? 
-                        InvokeStatementEnd?;
+elseClause: ElseCondition (statement+ | NextSentenceStatement);
 
-multiplyStatementConditional:		
-                        MultiplyStatement
-                            sizeErrorConditions? 
-                        MultiplyStatementEnd?;
+invokeStatementConditional:
+	InvokeStatement
+		(onException | noException)*
+	InvokeStatementEnd?;
+
+multiplyStatementConditional:
+	MultiplyStatement
+		(onSizeError | noSizeError)*
+	MultiplyStatementEnd?;
 
 performStatementWithBody:			
-                        PerformStatement 
-                            statement* 
-                        PerformStatementEnd?;
+	PerformStatement
+		statement*
+	PerformStatementEnd?;
 
-readStatementConditional:			
-                        ReadStatement 
-                            ((atEndConditions? invalidKeyConditions?) | 
-                             (invalidKeyConditions? atEndConditions?))
-                        ReadStatementEnd?;
+readStatementConditional:
+	ReadStatement
+		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
+	ReadStatementEnd?;
 
-returnStatementConditional:			
-                        ReturnStatement 
-                            atEndConditions? 
-                        ReturnStatementEnd?;
+returnStatementConditional:
+	ReturnStatement
+		(onAtEnd | noAtEnd)*
+	ReturnStatementEnd?;
 
-rewriteStatementConditional:		
-                        RewriteStatement 
-                            invalidKeyConditions? 
-                        RewriteStatementEnd?;
+rewriteStatementConditional:
+	RewriteStatement
+		(onInvalidKey | noInvalidKey)*
+	RewriteStatementEnd?;
 
 searchStatementWithBody:
-                        SearchStatement 
-                            (AtEndCondition statement+)?
-                            (WhenConditionalExpression (statement | NextSentenceStatement))+
-                        SearchStatementEnd?;
+	SearchStatement
+		onAtEnd?
+		whenSearchConditionClause+
+	SearchStatementEnd?;
 
-startStatementConditional:			
-                        StartStatement 
-                            invalidKeyConditions? 
-                        StartStatementEnd?;
+whenSearchConditionClause: WhenCondition (statement+ | NextSentenceStatement);
 
-stringStatementConditional:			
-                        StringStatement 
-                            overflowConditions?
-                        StringStatementEnd?;
+startStatementConditional:
+	StartStatement
+		(onInvalidKey | noInvalidKey)*
+	StartStatementEnd?;
 
-subtractStatementConditional:		
-                        SubtractStatement 
-                            sizeErrorConditions?
-                        SubtractStatementEnd?;
+stringStatementConditional:
+	StringStatement
+		(onOverflow | noOverflow)*
+	StringStatementEnd?;
 
-unstringStatementConditional:		
-                        UnstringStatement 
-                            overflowConditions? 
-                        UnstringStatementEnd?;
+subtractStatementConditional:
+	SubtractStatement
+		(onSizeError | noSizeError)*
+	SubtractStatementEnd?;
 
-writeStatementConditional:			
-                        WriteStatement 
-                            ((atEndConditions? invalidKeyConditions?) | 
-                             (invalidKeyConditions? atEndConditions?) )
-                        WriteStatementEnd?;
+unstringStatementConditional:
+	UnstringStatement
+		(onOverflow | noOverflow)*
+	UnstringStatementEnd?;
 
-xmlGenerateStatementConditional:	
-                        XmlGenerateStatement 
-                            exceptionConditions?
-                        XmlStatementEnd?;
+writeStatementConditional:
+	WriteStatement
+		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
+	WriteStatementEnd?;
 
-xmlParseStatementConditional:		
-                        XmlParseStatement
-                            exceptionConditions?
-                        XmlStatementEnd?;
+xmlGenerateStatementConditional:
+	XmlGenerateStatement
+		(onException | noException)*
+	XmlStatementEnd?;
+
+xmlParseStatementConditional:
+	XmlParseStatement
+		(onException | noException)*
+	XmlStatementEnd?;
 
 // Conditional execution of statements
 
-atEndConditions:
-	(AtEndCondition statement+) |
-	(NotAtEndCondition statement+) |
-	((AtEndCondition statement+) (NotAtEndCondition statement+));
+onAtEnd: AtEndCondition statement+;
+noAtEnd: NotAtEndCondition statement+;
 
-exceptionConditions:
-	(OnExceptionCondition statement+) |
-	(NotOnExceptionCondition statement+) |
-	((OnExceptionCondition statement+) (NotOnExceptionCondition statement+));
+onException: OnExceptionCondition statement+;
+noException: NotOnExceptionCondition statement+;
 
-invalidKeyConditions:
-	(InvalidKeyCondition statement+) |
-	(NotInvalidKeyCondition statement+) |
-	((InvalidKeyCondition statement+) (NotInvalidKeyCondition statement+));
+onInvalidKey: InvalidKeyCondition statement+;
+noInvalidKey: NotInvalidKeyCondition statement+;
 
-overflowConditions:
-	(OnOverflowCondition statement+) |
-	(NotOnOverflowCondition statement+) |
-	((OnOverflowCondition statement+) (NotOnOverflowCondition statement+));
+onOverflow: OnOverflowCondition statement+;
+noOverflow: NotOnOverflowCondition statement+;
 
-sizeErrorConditions:
-	(OnSizeErrorCondition statement+) |
-	(NotOnSizeErrorCondition statement+) |
-	((OnSizeErrorCondition statement+) (NotOnSizeErrorCondition statement+));
+onSizeError: OnSizeErrorCondition statement+;
+noSizeError: NotOnSizeErrorCondition statement+;

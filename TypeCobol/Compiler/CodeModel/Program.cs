@@ -12,7 +12,9 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public abstract class Program
     {
-        public Program() { }
+        public Program() {
+            SyntaxTree = new SyntaxTree(new Node(null));
+        }
 
         /// <summary>
         /// True if the current program is contained in another program.
@@ -64,7 +66,13 @@ namespace TypeCobol.Compiler.CodeModel
         /// Table of symbols defined in this program.
         /// Includes WORKING-STORAGE, LOCAL-STORAGE and LINKAGE data.
         /// </summary>
-        public SymbolTable Data;
+        public SymbolTable SymbolTable;
+
+        /// <summary>
+        /// Abstract Syntax Tree of this program.
+        /// Syntax trees of nested programs (if any) are nodes/subtrees of this one.
+        /// </summary>
+        public SyntaxTree SyntaxTree;
 
         // -- PROCEDURE DIVISION --
 
@@ -85,6 +93,11 @@ namespace TypeCobol.Compiler.CodeModel
         public SourceProgram()
         {
             IsNested = false;
+        }
+
+        public SourceProgram(SymbolTable EnclosingScope) {
+            IsNested = false;
+            SymbolTable = new SymbolTable(EnclosingScope);
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -137,6 +150,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             IsNested = true;
             ContainingProgram = containingProgram;
+            SymbolTable = new SymbolTable(containingProgram.SymbolTable);
         }
 
         /// <summary>

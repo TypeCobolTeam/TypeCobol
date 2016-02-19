@@ -21,6 +21,7 @@ namespace TypeCobol.Test
             string[] files = System.IO.Directory.GetFiles(path, regex, System.IO.SearchOption.AllDirectories);
             string[] include = { };
             string[] exclude = { };
+            bool codegen = false;
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
             int tested = 0, nbFilesInError = 0, ignores = 0;
@@ -60,6 +61,11 @@ namespace TypeCobol.Test
                 if (!okay) {
                     nbFilesInError++;
                     if (nbFilesInError >= STOP_AFTER_AS_MANY_ERRORS) break;
+                }
+
+                if (codegen) {
+                    var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(unit.ProgramClassDocumentSnapshot, null);
+                    generator.GenerateCobolText(filename+".gen");
                 }
             }
             string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);

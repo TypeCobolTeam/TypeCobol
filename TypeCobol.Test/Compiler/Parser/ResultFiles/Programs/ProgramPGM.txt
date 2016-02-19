@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
-WORKING-STORAGE:
+SYMBOL TABLE:
   str {1} PIC X(08)
   str {5} PIC X(15) <of> group
   group {1} GROUP(4) [ num subgroup subgroup2 str ]

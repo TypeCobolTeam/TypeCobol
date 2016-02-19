@@ -176,9 +176,7 @@ codeElement:
 
 	// --- Decision statements ---
 	evaluateStatement |
-		whenConditionalExpression | // this rule is a subset of
-		whenEvaluateCondition |    // this one --> can be ambiguous
-		                          // declare subset first to make it default
+		whenCondition |
 		whenOtherCondition |
 	evaluateStatementEnd |
 
@@ -191,7 +189,7 @@ codeElement:
 	// --- Table handling statements ---
 	searchStatement |
 		// atEndCondition ... imperative statements ...
-		// whenConditionalExpression |
+		// whenCondition |
 		whenSearchCondition |
 	searchStatementEnd |
 
@@ -1021,20 +1019,6 @@ offConditionNameForUPSISwitch:
 
 mnemonicForUPSISwitchName : UserDefinedWord;
 
-// p115 : condition-1, condition-2
-// Condition-names follow the rules for user-defined names. At least one
-// character must be alphabetic. The value associated with the
-// condition-name is considered to be alphanumeric. A condition-name can be
-// associated with the on status or off status of each UPSI switch specified.
-// In the PROCEDURE DIVISION, the UPSI switch status is tested through
-// the associated condition-name. Each condition-name is the equivalent of a
-// level-88 item; the associated mnemonic-name, if specified, is considered the
-// conditional variable and can be used for qualification.
-// Condition-names specified in the SPECIAL-NAMES paragraph of a
-// containing program can be referenced in any contained program
-
-conditionName : UserDefinedWord;
-
 // p114 : environmentName
 // System devices or standard system actions taken by the compiler.
 // Valid specifications for environment-name-1 are shown in the following table.
@@ -1252,15 +1236,6 @@ symbolicCharactersOrdinalPositions:
 
 classClause : 
                 CLASS charsetClassName IS? (charactersLiteral | charactersRange)+;
-
-// p118 : CLASS class-name-1 IS
-// Provides a means for relating a name to the specified set of characters
-// listed in that clause. class-name-1 can be referenced only in a class
-// condition. The characters specified by the values of the literals in this
-// clause define the exclusive set of characters of which this class consists.
-// The class-name in the CLASS clause can be a DBCS user-defined word.
-
-charsetClassName : UserDefinedWord;
 
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same
@@ -1653,12 +1628,6 @@ fileControlEntry :
 
 selectClause:
                 SELECT OPTIONAL? fileName;
-
-// p130: file-name-1 
-// Must be identified by an FD or SD entry in the DATA DIVISION. 
-// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
-
-fileName: UserDefinedWord;
 
 // p130: ASSIGN clause
 // The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.
@@ -3358,35 +3327,6 @@ occursClause:
 
 occursDependingOn: DEPENDING ON? dataName;
 occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataName+;
-
-// p194: index-name-1
-// Each index-name specifies an index to be created by the compiler for use
-// by the program. These index-names are not data-names and are not
-// identified elsewhere in the COBOL program; instead, they can be regarded
-// as private special registers for the use of this object program only. They are
-// not data and are not part of any data hierarchy.
-// Unreferenced index names need not be uniquely defined.
-// In one table entry, up to 12 index-names can be specified.
-// If a data item that possesses the global attribute includes a table accessed
-// with an index, that index also possesses the global attribute. Therefore, the
-// scope of an index-name is the same as that of the data-name that names
-// the table in which the index is defined.
-// Indexes specified in an external data record do not possess the external attribute.
-
-// p71: Index-name
-// An index-name identifies an index. An index can be regarded as a private special
-// register that the compiler generates for working with a table. You name an index
-// by specifying the INDEXED BY phrase in the OCCURS clause that defines a table.
-// You can use an index-name in only the following language elements:
-// - SET statements
-// - PERFORM statements
-// - SEARCH statements
-// - Subscripts
-// - Relation conditions
-// An index-name is not the same as the name of an index data item, and an
-// index-name cannot be used like a data-name.
-
-indexName: UserDefinedWord;
             
 // p198: The PICTURE clause specifies the general characteristics and editing requirements
 // of an elementary item.
@@ -5142,9 +5082,11 @@ evaluateStatement:
 	EVALUATE (identifier | literal | expression | TRUE | FALSE)
 	  ( ALSO (identifier | literal | expression | TRUE | FALSE) )*;
 
-whenEvaluateCondition:
-	WHEN    LeftParenthesisSeparator? (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) RightParenthesisSeparator?
-	 ( ALSO LeftParenthesisSeparator? (ANY | conditionalExpression | TRUE | FALSE | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
+whenCondition:
+	WHEN LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
+
+whenEvaluateCondition: whenCondition;
 
 evaluatePhrase1Choice4:
 	NOT? (identifier | literal | arithmeticExpression) evaluateThrough?;
@@ -6885,9 +6827,6 @@ rewriteStatementEnd: END_REWRITE;
 searchStatement:
 	SEARCH ALL? identifier (VARYING (identifier | indexName))?;
 
-whenConditionalExpression:
-	WHEN conditionalExpression;
-
 whenSearchCondition:
 	WHEN  dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)
 	(AND (dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionalExpression)*;
@@ -7104,77 +7043,13 @@ searchStatementEnd: END_SEARCH;
 // of a method. object-reference-id-1 is set to reference the object upon which the
 // currently executing method was invoked.
 
+//SetStatement (1st version)
 ///setStatement:
 ///                SET ( ((indexName | identifier | (ADDRESS OF identifier))+ TO (indexName | identifier | IntegerLiteral | (ADDRESS OF identifier) | (ENTRY_ARG (identifier | literal)) | (NULL | NULLS | SELF))) |
 ///                      ((indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral)) |
 ///                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
 ///                      (conditionName+ TO TRUE) );
 
-//setStatement:
-//	  setStatementFormat1	//SET for basic table handling
-//	| setStatementFormat2	//SET for adjusting indexes
-//	| setStatementFormat3	//SET for external switches
-//	| setStatementFormat4	//SET for condition-names
-//	| setStatementFormat5	//SET for USAGE IS POINTER
-//	| setStatementFormat6	//SET for procedure-pointer and function-pointer data items
-//	| setStatementFormat7	//SET for USAGE OBJECT REFERENCE data items
-//	;
-
-
-
-////Format 1: SET for basic table handling
-//setStatementFormat1:
-//	SET setStatementFormat1Receiving+ TO setStatementFormat1Sending;
-//setStatementFormat1Receiving:
-//	indexName | identifier;
-//setStatementFormat1Sending:
-//	indexName | identifier | IntegerLiteral;
-//
-////Format 2: SET for adjusting indexes
-//setStatementFormat2:
-//	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
-//
-////Format 3: SET for external switches
-//setStatementFormat3:
-//	SET setStatementFormat3What+;
-//setStatementFormat3What:
-//	mnemonicForUPSISwitchName+ TO (ON | OFF);
-//
-////Format 4: SET for condition-names
-//setStatementFormat4:
-//	SET identifier+ TO TRUE;
-//
-////Format 5: SET for USAGE IS POINTER
-//setStatementFormat5:
-//	SET setStatementFormat5Receiving+ TO setStatementFormat5Sending;
-//setStatementFormat5Receiving:
-//	(ADDRESS OF)? identifier;
-//setStatementFormat5Sending:
-//	((ADDRESS OF)? identifier) | (NULL | NULLS);
-//
-////Format 6: SET for procedure-pointer and function-pointer data items
-//setStatementFormat6:
-//	SET setStatementFormat6Receiving+ TO setStatementFormat6Sending;
-//setStatementFormat6Receiving:
-//	  procedurePointer
-//	| functionPointer
-//	;
-//setStatementFormat6Sending:
-//	  procedurePointer
-//	| functionPointer
-//	| (ENTRY (identifier | alphanumericLiteral))
-//	| (NULL | NULLS)
-//	| pointerDataItem
-//	;
-//
-////Format 7: SET for USAGE OBJECT REFERENCE data items
-//setStatementFormat7:
-//	SET objectReferenceId TO setStatementFormat7Sending;
-//setStatementFormat7Sending:
-//	objectReference | NULL | SELF;
-//
-pointerDataItem:   identifier; // do these SET items
-objectReferenceId: identifier;// really work like that?
 
 
 
@@ -7188,17 +7063,16 @@ setStatement:
 	| setStatementForSwitches;	//SET format 3 for external switches
 
 setStatementForAssignation:
-	SET setStatementForAssignationReceiving+ TO setStatementForAssignationSending;
-
-setStatementForAssignationReceiving:
-	indexName | identifier | procedurePointer | functionPointer | objectReferenceId;					
+	SET setStatementForAssignationReceiving=identifier+ TO setStatementForAssignationSending;
+	// where identifier can also be a index name, procedure pointer, function pointer or an object reference Id
+	 
 
 setStatementForAssignationSending:
-	indexName | identifier | IntegerLiteral																		//Format 1 + 5
-	| TRUE																										//Format 4
-	| (NULL | NULLS)																							//Format 5 + 6 + 7
-	| procedurePointer | functionPointer | (ENTRY (identifier | alphanumericLiteral)) 	| pointerDataItem		//Format 6 (+NULL | NULLS)
-	|objectReferenceId | SELF		;																			//Format 7 (+NULL)
+	identifier | IntegerLiteral	// identifier can also be an index name									//Format 1 + 5
+	| TRUE																								//Format 4
+	| (NULL | NULLS)																					//Format 5 + 6 + 7
+	| (ENTRY (identifier | alphanumericLiteral))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| SELF ;										//identifier can also be a n object reference id 	//Format 7 (+NULL)
 
 //Format 2: SET for adjusting indexes
 setStatementForIndexes:
@@ -9150,110 +9024,98 @@ execStatementEnd: END_EXEC;
 // End of DB2 coprocessor
 // ------------------------------
 
-// p254: Arithmetic expressions
-// Arithmetic expressions are used as operands of certain conditional and arithmetic
-// statements.
-// An arithmetic expression can consist of any of the following items:
-// 1. An identifier described as a numeric elementary item (including numeric
-// functions)
-// 2. A numeric literal
-// 3. The figurative constant ZERO
-// 4. Identifiers and literals, as defined in items 1, 2, and 3, separated by arithmetic
-//    operators
-// 5. Two arithmetic expressions, as defined in items 1, 2, 3, or 4, separated by an
-//    arithmetic operator
-// 6. An arithmetic expression, as defined in items 1, 2, 3, 4, or 5, enclosed in
-//    parentheses
-// Any arithmetic expression can be preceded by a unary operator.
-// Identifiers and literals that appear in arithmetic expressions must represent either
-// numeric elementary items or numeric literals on which arithmetic can be
-// performed.
 
-// p254: Arithmetic operators
-// Five binary arithmetic operators and two unary arithmetic operators can be used in
-// arithmetic expressions. These operators are represented by specific characters that
-// must be preceded and followed by a space.
-// These binary and unary arithmetic operators are shown in Table 17.
-// Table 17. Binary and unary operators
-// Binary operator | Meaning 
-// + Addition
-// - Subtraction
-// * Multiplication
-// / Division
-// ** Exponentiation
-// Unary operator | Meaning
-// + Multiplication by +1
-// - Multiplication by -1
 
-// p254: Exponentiation
-// If an exponential expression is evaluated as both a positive and a negative number,
-// the result is always the positive number. For example, the square root of 4:
-// 4 ** 0.5
-// is evaluated as +2 and -2. Enterprise COBOL always returns +2.
-// If the value of an expression to be raised to a power is zero, the exponent must
-// have a value greater than zero. Otherwise, the size error condition exists. In any
-// case where no real number exists as the result of an evaluation, the size error
-// condition exists.
-// Limitation: Exponents in fixed-point exponential expressions cannot contain more
-// than nine digits. The compiler will truncate any exponent with more than nine
-// digits. In the case of truncation, the compiler will issue a diagnostic message if the
-// exponent is a literal or constant; if the exponent is a variable or data-name, a
-// diagnostic message is issued at run time.
 
-// p254: Parentheses can be used in arithmetic expressions to specify the order in which
-// elements are to be evaluated.
-// Expressions within parentheses are evaluated first. When expressions are contained
-// within nested parentheses, evaluation proceeds from the least inclusive to the most
-// inclusive set.
-// When parentheses are not used, or parenthesized expressions are at the same level
-// of inclusiveness, the following hierarchic order is implied:
-// 1. Unary operator
-// 2. Exponentiation
-// 3. Multiplication and division
-// 4. Addition and subtraction
-//Parentheses either eliminate ambiguities in logic where consecutive operations
-//appear at the same hierarchic level, or modify the normal hierarchic sequence of
-//execution when this is necessary. When the order of consecutive operations at the
-//same hierarchic level is not completely specified by parentheses, the order is from
-//left to right.
-//An arithmetic expression can begin only with a left parenthesis, a unary operator,
-//or an operand (that is, an identifier or a literal). It can end only with a right
-//parenthesis or an operand. An arithmetic expression must contain at least one
-//reference to an identifier or a literal.
-//There must be a one-to-one correspondence between left and right parentheses in
-//an arithmetic expression, with each left parenthesis placed to the left of its
-//corresponding right parenthesis.
-//If the first operator in an arithmetic expression is a unary operator, it must be
-//immediately preceded by a left parenthesis if that arithmetic expression
-//immediately follows an identifier or another arithmetic expression.
 
-// p255: The following table shows permissible arithmetic symbol pairs. An arithmetic
-// symbol pair is the combination of two such symbols in sequence. In the table:
-// Yes Indicates a permissible pairing.
-// No Indicates that the pairing is not permitted.
-// Table 18. Valid arithmetic symbol pairs
-// ...
 
-// arithmeticExpression:
-// 	multiplicationAndDivision arithMADTail*;
 
-// arithMADTail:
-// 	(PlusOperator | MinusOperator) multiplicationAndDivision;
 
-// multiplicationAndDivision:
-// 	exponentiation arithEXPTail*;
 
-// arithEXPTail:
-// 	(MultiplyOperator | DivideOperator) exponentiation;
-              
-// exponentiation:
-//                   unaryOperator (PowerOperator unaryOperator)*;
 
-// unaryOperator:
-//                  (PlusOperator | MinusOperator)? expressionBase;
 
-// expressionBase:
-//                    identifier | numericLiteral | (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -------------------------------------------
+// Optimized version of the expressions syntax
+// -------------------------------------------
+
+// --------------------------------------
+// SUMMARY of PERFORMANCE PROBLEMS
+//
+// 1) Conditional expressions
+//
+// conditionalExpression/AdaptivePredict
+// - simpleCondition | complexCondition
+//
+// simpleCondition/AdaptivePredict
+// - classCondition | conditionNameCondition | relationCondition | signCondition | switchStatusCondition
+//
+// abbreviatedOr/AdaptivePredict
+// - abbreviatedAND (OR abbreviatedAND)*
+//
+// abbreviatedAnd/AdaptivePredict
+// - abbreviatedNOT (AND abbreviatedNOT)*
+//
+// 2) Identifiers and name references
+//
+// identifier/AdaptivePredict
+// - (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier ...) | conditionNameReference
+//
+// operand/AdaptivePredict
+// - identifier | literal | arithmeticExpression | indexName
+//
+// callBy/AdaptivePredict
+// - identifier | literal | fileName
+//
+// 3) Name references and subscripts
+//
+// dataNameReference/AdaptivePredict
+// - qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?
+//
+// subscript/AdaptivePredict
+// - (qualifiedDataName withRelativeSubscripting?) | (indexName withRelativeSubscripting?)
+// -----------------------------------
+
+expression: arithmeticExpression | conditionalExpression;
+
 
 // p256: Conditional expressions
 // A conditional expression causes the object program to select alternative paths of
@@ -9263,12 +9125,114 @@ execStatementEnd: END_EXEC;
 // conditions. Both simple and complex conditions can be enclosed within any
 // number of paired parentheses; the parentheses do not change whether the
 // condition is simple or complex.
-// Simple conditions
 
-// conditionalExpression:
-// 	  simpleCondition
-// 	| complexCondition
-// 	;
+// p270: Complex conditions
+// A complex condition is formed by combining simple conditions, combined
+// conditions, or complex conditions with logical operators, or negating those
+// conditions with logical negation.
+// Each logical operator must be preceded and followed by a space. The following
+// table shows the logical operators and their meanings.
+// Table 25. Logical operators and their meanings
+// Logical operator | Name | Meaning
+// AND | Logical conjunction | The truth value is true when both conditions are true.
+// OR | Logical inclusive OR | The truth value is true when either or both conditions are true.
+// NOT | Logical negation | Reversal of truth value (the truth value is true if the condition is false).
+// Unless modified by parentheses, the following list is the order of precedence (from
+// highest to lowest):
+// 1. Arithmetic operations
+// 2. Simple conditions
+// 3. NOT
+// 4. AND
+// 5. OR
+// The truth value of a complex condition (whether parenthesized or not) is the truth
+// value that results from the interaction of all the stated logical operators on either of
+// the following options:
+// - The individual truth values of simple conditions
+// - The intermediate truth values of conditions logically combined or logically
+//   negated
+// A complex condition can be either of the following options:
+// - A negated simple condition
+// - A combined condition (which can be negated)
+
+// p272: Combined conditions
+// Two or more conditions can be logically connected to form a combined condition.
+// The condition to be combined can be any of the following ones:
+// - A simple-condition
+// - A negated simple-condition
+// - A combined condition
+// - A negated combined condition (that is, the NOT logical operator followed by a
+//   combined condition enclosed in parentheses)
+// - A combination of the preceding conditions that is specified according to the
+//  rules in the following table
+
+// ... p272: Table 26. Combined conditions—permissible element sequences ...
+
+// p273: Order of evaluation of conditions
+// Parentheses, both explicit and implicit, define the level of inclusiveness within a
+// complex condition. Two or more conditions connected by only the logical operators
+// AND or OR at the same level of inclusiveness establish a hierarchical level within
+// a complex condition. Therefore an entire complex condition is a nested structure of
+// hierarchical levels, with the entire complex condition being the most inclusive
+// hierarchical level.
+// Within this context, the evaluation of the conditions within an entire complex
+// condition begins at the left of the condition. The constituent connected conditions
+// within a hierarchical level are evaluated in order from left to right, and evaluation
+// of that hierarchical level terminates as soon as a truth value for it is determined,
+// regardless of whether all the constituent connected conditions within that
+// hierarchical level have been evaluated.
+// Values are established for arithmetic expressions and functions if and when the
+// conditions that contain them are evaluated. Similarly, negated conditions are
+// evaluated if and when it is necessary to evaluate the complex condition that they
+// represent. For example:
+// NOT A IS GREATER THAN B OR A + B IS EQUAL TO C AND D IS POSITIVE
+// is evaluated as if parenthesized as follows:
+// (NOT (A IS GREATER THAN B)) OR
+// (((A + B) IS EQUAL TO C) AND (D IS POSITIVE))
+// Order of evaluation:
+// 1. (NOT (A IS GREATER THAN B)) is evaluated, giving some intermediate truth
+//    value, t1. If t1 is true, the combined condition is true, and no further evaluation
+//    takes place. If t1 is false, evaluation continues as follows.
+// 2. (A + B) is evaluated, giving some intermediate result, x.
+// 3. (x IS EQUAL TO C) is evaluated, giving some intermediate truth value, t2. If t2 is
+//    false, the combined condition is false, and no further evaluation takes place. If
+//    t2 is true, the evaluation continues as follows.
+//4. (D IS POSITIVE) is evaluated, giving some intermediate truth value, t3. If t3 is
+//   false, the combined condition is false. If t3 is true, the combined condition is
+//   true.
+
+// p271: Negated simple conditions
+// A simple condition is negated through the use of the logical operator NOT.
+// The negated simple condition gives the opposite truth value of the simple
+// condition. That is, if the truth value of the simple condition is true, then the truth
+// value of that same negated simple condition is false, and vice versa.
+// Placing a negated simple condition within parentheses does not change its truth
+// value. That is, the following two statements are equivalent:
+// NOT A IS EQUAL TO B.
+// NOT (A IS EQUAL TO B).
+
+// p272: Parentheses are never needed when either ANDs or ORs (but not both) are used
+// exclusively in one combined condition. However, parentheses might be needed to
+// modify the implicit precedence rules to maintain the correct logical relation of
+// operators and operands.
+// There must be a one-to-one correspondence between left and right parentheses,
+// with each left parenthesis to the left of its corresponding right parenthesis.
+
+conditionalExpression:
+// Complex conditions
+	   LeftParenthesisSeparator conditionalExpression RightParenthesisSeparator
+	|  NOT conditionalExpression
+	|  conditionalExpression AND conditionalExpression
+	|  conditionalExpression OR conditionalExpression
+// Simple conditions:
+	|  classCondition
+	|  conditionNameCondition
+	|  generalRelationCondition
+	|  pointerRelationCondition
+//	|  programPointerRelationCondition  // impossible to distinguish at the parsing stage
+//	|  objectReferenceRelationCondition // impossible to distinguish at the parsing stage
+	|  signCondition
+//	|  switchStatusCondition // impossible to distinguish from conditionNameCondition at the parsing stage
+	;
 
 // p256: There are five simple conditions.
 // The simple conditions are:
@@ -9277,14 +9241,7 @@ execStatementEnd: END_EXEC;
 // - Relation condition
 // - Sign condition
 // - Switch-status condition
-// A simple condition has a truth value of either true or false.   
-
-// simpleCondition:
-//                     classCondition         |
-//                     conditionNameCondition |
-//                     relationCondition      |
-//                     signCondition          |
-//                     switchStatusCondition;
+// A simple condition has a truth value of either true or false.
 
 // p256: Class condition
 // The class condition determines whether the content of a data item is alphabetic,
@@ -9320,15 +9277,9 @@ execStatementEnd: END_EXEC;
 
 // ... more details on the evaluation of classCondition p257/258 ...
 
-// classCondition :
-//                    identifier IS? NOT? (charsetClassName |
-//                                         (NUMERIC |
-//                                         ALPHABETIC |
-//                                         ALPHABETIC_LOWER |
-//                                         ALPHABETIC_UPPER |                                        
-//                                         DBCS |
-//                                         KANJI));
-                    
+classCondition:
+	identifier IS? NOT? (charsetClassName | (NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER | DBCS | KANJI));
+
 // p258: Condition-name condition
 // A condition-name condition tests a conditional variable to determine whether its
 // value is equal to any values that are associated with the condition-name.
@@ -9362,8 +9313,9 @@ execStatementEnd: END_EXEC;
 // Depending on the evaluation of the condition-name condition, alternative paths of
 // execution are taken by the object program.
 
-// conditionNameCondition:
-// 	conditionNameReference;
+conditionNameCondition: conditionNameReference;
+
+
 
 // p259: Relation conditions
 // A relation condition specifies the comparison of two operands. The relational
@@ -9399,12 +9351,6 @@ execStatementEnd: END_EXEC;
 //   relation conditions” on page 268.
 // - An object-reference relation condition. For details, see “Object-reference relation
 //   conditions” on page 269.
-                   
-// relationCondition:
-//                      generalRelationCondition |
-//                      dataPointerRelationCondition |
-//                      programPointerRelationCondition |
-//                      objectReferenceRelationCondition;
 
 // p260: General relation conditions
 // A general relation condition compares two operands, either of which can be an
@@ -9464,46 +9410,44 @@ execStatementEnd: END_EXEC;
 
 // ... p262 to p267 : many more details on comparisons ...
 
-//generalRelationCondition:
-//	operand relationalOperator operand abbreviatedRelation*;
-//abbreviatedRelation:
-//	(AND | OR) NOT? relationalOperator? operand;
+generalRelationCondition: operand relationalOperator abbreviatedExpression;
 
-// generalRelationCondition:
-// 	operand relationalOperator abbreviatedOR;
 
 // p274: Abbreviated combined relation conditions
-// abbreviatedOR:  abbreviatedAND (OR abbreviatedAND)*;
-// abbreviatedAND: abbreviatedNOT (AND abbreviatedNOT)*;
-// abbreviatedNOT: NOT? abbreviatedExpression;
-// abbreviatedExpression: abbreviatedOperand | (LeftParenthesisSeparator abbreviatedOR RightParenthesisSeparator);
 
-// abbreviatedOperand:
-// 	relationalOperator? operand;
-
-// relationalOperator:
-// 	IS? ((NOT? strictRelation) | simpleRelation);
-	
-// strictRelation:
-// 	  GREATER THAN?
-// 	| GreaterThanOperator
-// 	| LessThanOperator
-// 	| EQUAL TO?
-// 	| EqualOperator
-// 	;
-
-// simpleRelation:
-// 	  GREATER THAN? OR EQUAL TO?
-// 	| GreaterThanOrEqualOperator
-// 	| LESS THAN? OR EQUAL TO?
-// 	| LessThanOrEqualOperator
-// 	;
+abbreviatedExpression:
+	  (LeftParenthesisSeparator abbreviatedExpression RightParenthesisSeparator)
+	|  NOT abbreviatedExpression
+	|  abbreviatedExpression AND abbreviatedExpression
+	|  abbreviatedExpression OR abbreviatedExpression
+	|  relationalOperator operand
+	|  operand;
 
 // p260: The subject of the relation condition. Can be an identifier, literal,
 // function-identifier (already included in identifier), arithmetic expression, or index-name.
 
-// operand:
-// 	identifier | literal | arithmeticExpression | indexName;
+operand: identifier | literal | arithmeticExpression; // | indexName cannot be distinguished from identifier at the parsing stage
+
+relationalOperator:
+	IS? ((NOT? strictRelation) | simpleRelation);
+
+strictRelation:
+	  GREATER THAN?
+	| GreaterThanOperator
+	| LESS THAN?
+	| LessThanOperator
+	| EQUAL TO?
+	| EqualOperator
+	;
+
+simpleRelation:
+	  GREATER THAN? OR EQUAL TO?
+	| GreaterThanOrEqualOperator
+	| LESS THAN? OR EQUAL TO?
+	| LessThanOrEqualOperator
+	;
+
+
 
 // p267: Data pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9528,15 +9472,6 @@ execStatementEnd: END_EXEC;
 // POINTER, NULL, and ADDRESS OF.
 
 // ... p268: Table 24. Permissible comparisons for USAGE POINTER, NULL, and ADDRESS OF ...
-
-// dataPointerRelationCondition:
-// 	dataPointer relationConditionEquality dataPointer;
-
-// relationConditionEquality:
-// 	IS? NOT? ((EQUAL TO?) | EqualOperator);
-
-// dataPointer:
-// 	(ADDRESS OF identifier) | identifier | NULL | NULLS;
                 
 // p268: Procedure-pointer and function-pointer relation conditions
 // Only EQUAL and NOT EQUAL are allowed as relational operators when
@@ -9559,12 +9494,6 @@ execStatementEnd: END_EXEC;
 // FUNCTION-POINTER or USAGE PROCEDURE-POINTER. That is,
 // NULL=NULL is not allowed.
 
-// programPointerRelationCondition:
-// 	procedureOrFunctionPointer relationConditionEquality procedureOrFunctionPointer;
-
-// procedureOrFunctionPointer:
-// 	identifier | NULL | NULLS;
-
 // p269: Object-reference relation conditions
 // A data item of usage OBJECT REFERENCE can be compared for equality or
 // inequality with another data item of usage OBJECT REFERENCE or with NULL,
@@ -9573,11 +9502,25 @@ execStatementEnd: END_EXEC;
 // Two object-references compare equal only if the data items identify the same
 // object.
 
-// objectReferenceRelationCondition:
-// 	objectReference relationConditionEquality objectReference;
+// Comparison of dataPointerRelationCondition / programPointerRelationCondition / objectReferenceRelationCondition
+// ALL : pointer IS? NOT? ((EQUAL TO?) | EqualOperator) pointer
+// dataPointer : (ADDRESS OF identifier) | identifier | NULL | NULLS
+// programPointer : identifier | NULL | NULLS
+// objectReference : identifier | SELF | NULL | NULLS
+// => only difference : (ADDRESS OF identifier) / SELF
+// identifier : already contains ADDRESS OF dataNameReference
+// => add SELF / NULL / NULLS to identifier and all 3 rules are in fact exactly identical at the parsing stage
+// generalRelationCondition : operand relationalOperator operand
+//                        ==> operand IS? NOT? (EQUAL TO? | EqualOperator) operand
+// operand : identifier ...
+// => except for (ADDRESS OF identifier) | SELF | NULL | NULLS, generalRelationCondition is always matched first
+// Conclusion : except for very special cases, these three rules are never matched
 
-// objectReference:
-// 	identifier | SELF | NULL | NULLS;
+pointerRelationCondition: specificPointerOperand relationConditionEquality specificPointerOperand;
+
+specificPointerOperand: (ADDRESS OF identifier) | identifier | (SELF | NULL | NULLS);
+
+relationConditionEquality: IS? NOT? ((EQUAL TO?) | EqualOperator);
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -9599,10 +9542,8 @@ execStatementEnd: END_EXEC;
 // compiler option. For details, see NUMPROC in the Enterprise COBOL Programming
 // Guide.
 
-// signCondition:
-//                  operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
-//TODO p269: operand := numeric identifier or arithmetic expression that  contains at least one reference to a variable.
-                 
+signCondition: operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
+
 // p270: Switch-status condition
 // The switch-status condition determines the on or off status of a UPSI switch.
 // condition-name
@@ -9614,109 +9555,233 @@ execStatementEnd: END_EXEC;
 // switch is set to the value (0 or 1) corresponding to condition-name.
                  
 // switchStatusCondition: qualifiedConditionName;
-                 
-// p270: Complex conditions 
-// A complex condition is formed by combining simple conditions, combined
-// conditions, or complex conditions with logical operators, or negating those
-// conditions with logical negation.
-// Each logical operator must be preceded and followed by a space. The following
-// table shows the logical operators and their meanings.
-// Table 25. Logical operators and their meanings
-// Logical operator | Name | Meaning
-// AND | Logical conjunction | The truth value is true when both conditions are true.
-// OR | Logical inclusive OR | The truth value is true when either or both conditions are true.
-// NOT | Logical negation | Reversal of truth value (the truth value is true if the condition is false).
-// Unless modified by parentheses, the following list is the order of precedence (from
-// highest to lowest):
-// 1. Arithmetic operations
-// 2. Simple conditions
-// 3. NOT
-// 4. AND
-// 5. OR
-// The truth value of a complex condition (whether parenthesized or not) is the truth
-// value that results from the interaction of all the stated logical operators on either of
-// the following options:
-// - The individual truth values of simple conditions
-// - The intermediate truth values of conditions logically combined or logically 
-//   negated
-// A complex condition can be either of the following options:
-// - A negated simple condition
-// - A combined condition (which can be negated)
 
-// p272: Combined conditions
-// Two or more conditions can be logically connected to form a combined condition.
-// The condition to be combined can be any of the following ones:
-// - A simple-condition
-// - A negated simple-condition
-// - A combined condition
-// - A negated combined condition (that is, the NOT logical operator followed by a
-//   combined condition enclosed in parentheses)
-// - A combination of the preceding conditions that is specified according to the
-//  rules in the following table
 
-// ... p272: Table 26. Combined conditions—permissible element sequences ...
 
-// p273: Order of evaluation of conditions
-// Parentheses, both explicit and implicit, define the level of inclusiveness within a
-// complex condition. Two or more conditions connected by only the logical operators
-// AND or OR at the same level of inclusiveness establish a hierarchical level within
-// a complex condition. Therefore an entire complex condition is a nested structure of
-// hierarchical levels, with the entire complex condition being the most inclusive
-// hierarchical level.
-// Within this context, the evaluation of the conditions within an entire complex
-// condition begins at the left of the condition. The constituent connected conditions
-// within a hierarchical level are evaluated in order from left to right, and evaluation
-// of that hierarchical level terminates as soon as a truth value for it is determined,
-// regardless of whether all the constituent connected conditions within that
-// hierarchical level have been evaluated.
-// Values are established for arithmetic expressions and functions if and when the
-// conditions that contain them are evaluated. Similarly, negated conditions are
-// evaluated if and when it is necessary to evaluate the complex condition that they
-// represent. For example:
-// NOT A IS GREATER THAN B OR A + B IS EQUAL TO C AND D IS POSITIVE
-// is evaluated as if parenthesized as follows:
-// (NOT (A IS GREATER THAN B)) OR
-// (((A + B) IS EQUAL TO C) AND (D IS POSITIVE))
-// Order of evaluation:
-// 1. (NOT (A IS GREATER THAN B)) is evaluated, giving some intermediate truth
-//    value, t1. If t1 is true, the combined condition is true, and no further evaluation
-//    takes place. If t1 is false, evaluation continues as follows.
-// 2. (A + B) is evaluated, giving some intermediate result, x.
-// 3. (x IS EQUAL TO C) is evaluated, giving some intermediate truth value, t2. If t2 is
-//    false, the combined condition is false, and no further evaluation takes place. If
-//    t2 is true, the evaluation continues as follows.
-//4. (D IS POSITIVE) is evaluated, giving some intermediate truth value, t3. If t3 is
-//   false, the combined condition is false. If t3 is true, the combined condition is
-//   true.
 
-// complexCondition:
-//                     andCondition (OR andCondition)*;
 
-// andCondition:
-//                 notCondition (AND notCondition)*;
 
-// p271: Negated simple conditions
-// A simple condition is negated through the use of the logical operator NOT.
-// The negated simple condition gives the opposite truth value of the simple
-// condition. That is, if the truth value of the simple condition is true, then the truth
-// value of that same negated simple condition is false, and vice versa.
-// Placing a negated simple condition within parentheses does not change its truth
-// value. That is, the following two statements are equivalent:
-// NOT A IS EQUAL TO B.
-// NOT (A IS EQUAL TO B).
 
-// notCondition:
-//                 NOT? conditionBase;
 
-// p272: Parentheses are never needed when either ANDs or ORs (but not both) are used
-// exclusively in one combined condition. However, parentheses might be needed to
-// modify the implicit precedence rules to maintain the correct logical relation of
-// operators and operands.
-// There must be a one-to-one correspondence between left and right parentheses,
-// with each left parenthesis to the left of its corresponding right parenthesis.
 
-// conditionBase:
-//                  simpleCondition | (LeftParenthesisSeparator complexCondition RightParenthesisSeparator);
+
+// p254: Arithmetic expressions
+// Arithmetic expressions are used as operands of certain conditional and arithmetic
+// statements.
+// An arithmetic expression can consist of any of the following items:
+// 1. An identifier described as a numeric elementary item (including numeric
+// functions)
+// 2. A numeric literal
+// 3. The figurative constant ZERO
+// 4. Identifiers and literals, as defined in items 1, 2, and 3, separated by arithmetic
+//    operators
+// 5. Two arithmetic expressions, as defined in items 1, 2, 3, or 4, separated by an
+//    arithmetic operator
+// 6. An arithmetic expression, as defined in items 1, 2, 3, 4, or 5, enclosed in
+//    parentheses
+// Any arithmetic expression can be preceded by a unary operator.
+// Identifiers and literals that appear in arithmetic expressions must represent either
+// numeric elementary items or numeric literals on which arithmetic can be
+// performed.
+
+// p254: Arithmetic operators
+// Five binary arithmetic operators and two unary arithmetic operators can be used in
+// arithmetic expressions. These operators are represented by specific characters that
+// must be preceded and followed by a space.
+// These binary and unary arithmetic operators are shown in Table 17.
+// Table 17. Binary and unary operators
+// Binary operator | Meaning
+// + Addition
+// - Subtraction
+// * Multiplication
+// / Division
+// ** Exponentiation
+// Unary operator | Meaning
+// + Multiplication by +1
+// - Multiplication by -1
+
+// p254: Exponentiation
+// If an exponential expression is evaluated as both a positive and a negative number,
+// the result is always the positive number. For example, the square root of 4:
+// 4 ** 0.5
+// is evaluated as +2 and -2. Enterprise COBOL always returns +2.
+// If the value of an expression to be raised to a power is zero, the exponent must
+// have a value greater than zero. Otherwise, the size error condition exists. In any
+// case where no real number exists as the result of an evaluation, the size error
+// condition exists.
+// Limitation: Exponents in fixed-point exponential expressions cannot contain more
+// than nine digits. The compiler will truncate any exponent with more than nine
+// digits. In the case of truncation, the compiler will issue a diagnostic message if the
+// exponent is a literal or constant; if the exponent is a variable or data-name, a
+// diagnostic message is issued at run time.
+
+// p254: Parentheses can be used in arithmetic expressions to specify the order in which
+// elements are to be evaluated.
+// Expressions within parentheses are evaluated first. When expressions are contained
+// within nested parentheses, evaluation proceeds from the least inclusive to the most
+// inclusive set.
+// When parentheses are not used, or parenthesized expressions are at the same level
+// of inclusiveness, the following hierarchic order is implied:
+// 1. Unary operator
+// 2. Exponentiation
+// 3. Multiplication and division
+// 4. Addition and subtraction
+//Parentheses either eliminate ambiguities in logic where consecutive operations
+//appear at the same hierarchic level, or modify the normal hierarchic sequence of
+//execution when this is necessary. When the order of consecutive operations at the
+//same hierarchic level is not completely specified by parentheses, the order is from
+//left to right.
+//An arithmetic expression can begin only with a left parenthesis, a unary operator,
+//or an operand (that is, an identifier or a literal). It can end only with a right
+//parenthesis or an operand. An arithmetic expression must contain at least one
+//reference to an identifier or a literal.
+//There must be a one-to-one correspondence between left and right parentheses in
+//an arithmetic expression, with each left parenthesis placed to the left of its
+//corresponding right parenthesis.
+//If the first operator in an arithmetic expression is a unary operator, it must be
+//immediately preceded by a left parenthesis if that arithmetic expression
+//immediately follows an identifier or another arithmetic expression.
+
+// p255: The following table shows permissible arithmetic symbol pairs. An arithmetic
+// symbol pair is the combination of two such symbols in sequence. In the table:
+// Yes Indicates a permissible pairing.
+// No Indicates that the pairing is not permitted.
+// Table 18. Valid arithmetic symbol pairs
+// ...
+arithmeticExpression:
+	  (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator)
+	| (PlusOperator | MinusOperator) arithmeticExpression
+	|<assoc=right> arithmeticExpression PowerOperator arithmeticExpression
+	|  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression
+	|  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression
+	|  identifier
+	|  numericLiteral;
+
+
+
+
+
+// p68: Identifiers
+// When used in a syntax diagram in this information, the term identifier refers to a
+// valid combination of a data-name or function-identifier with its qualifiers,
+// subscripts, and reference-modifiers as required for uniqueness of reference.
+// Rules for identifiers associated with a format can however specifically prohibit
+// qualification, subscripting, or reference modification.
+// The term data-name refers to a name that must not be qualified, subscripted, or
+// reference modified unless specifically permitted by the rules for the format.
+// - For a description of qualification, see “Qualification” on page 65.
+// - For a description of subscripting, see “Subscripting” on page 71.
+// - For a description of reference modification, see “Reference modification” on
+//   page 74.
+// p69: Duplication of data-names must not occur in those places where the data-names
+// cannot be made unique by qualification.
+// In the same program, the data-name specified as the subject of the entry whose
+// level-number is 01 that includes the EXTERNAL clause must not be the same
+// data-name specified for any other data description entry that includes the
+// EXTERNAL clause.
+// In the same DATA DIVISION, the data description entries for any two data items
+// for which the same data-name is specified must not include the GLOBAL clause.
+// DATA DIVISION names that are explicitly referenced must either be uniquely
+// defined or made unique through qualification. Unreferenced data items need not
+// be uniquely defined. The highest level in a data hierarchy (a data item associated
+// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
+// must be uniquely named if referenced. Data items associated with level-numbers
+// 02 through 49 are successively lower levels of the hierarchy.
+
+identifier:
+	  dataNameReferenceOrSpecialRegisterOrFunctionIdentifier (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?
+	// | conditionNameReference // cannot be distinguished from dataNameReference at this stage
+          ;
+
+// p74: Reference modification
+// Reference modification defines a data item by specifying a leftmost character and
+// optional length for the data item.
+// data-name-1
+// Must reference a data item described explicitly or implicitly with usage
+// DISPLAY, DISPLAY-1, or NATIONAL. A national group item is processed
+// as an elementary data item of category national.
+// data-name-1 can be qualified or subscripted.
+// function-name-1
+// Must reference an alphanumeric or national function.
+// leftmost-character-position
+// Must be an arithmetic expression. The evaluation of leftmost-characterposition
+// must result in a positive nonzero integer that is less than or equal
+// to the number of characters in the data item referenced by data-name-1.
+// length
+// Must be an arithmetic expression.
+// The evaluation of length must result in a positive nonzero integer.
+// The sum of leftmost-character-position and length minus the value 1 must be
+// less than or equal to the number of character positions in data-name-1. If
+// length is omitted, the length used will be equal to the number of character
+// positions in data-name-1 plus 1, minus leftmost-character-position.
+// For usages DISPLAY-1 and NATIONAL, each character position occupies 2 bytes.
+// Reference modification operates on whole character positions and not on the
+// individual bytes of the characters in usages DISPLAY-1 and NATIONAL. For usage
+// DISPLAY, reference modification operates as though each character were a
+// single-byte character.
+// Unless otherwise specified, reference modification is allowed anywhere an
+// identifier or function-identifier that references a data item or function with the
+// same usage as the reference-modified data item is permitted.
+// Each character position referenced by data-name-1 or function-name-1 is assigned an
+// ordinal number incrementing by one from the leftmost position to the rightmost
+// position. The leftmost position is assigned the ordinal number one. If the data
+// description entry for data-name-1 contains a SIGN IS SEPARATE clause, the sign
+// position is assigned an ordinal number within that data item.
+// If data-name-1 is described with usage DISPLAY and category numeric,
+// numeric-edited, alphabetic, alphanumeric-edited, or external floating-point,
+// data-name-1 is operated upon for purposes of reference modification as if it were
+// redefined as a data item of category alphanumeric with the same size as the data
+// item referenced by data-name-1.
+// If data-name-1 is described with usage NATIONAL and category numeric,
+// numeric-edited, national-edited, or external floating-point, data-name-1 is operated
+// upon for purposes of reference modification as if it were redefined as a data item
+// of category national with the same size as the data item referenced by data-name-1.
+// If data-name-1 is a national group item, data-name-1 is processed as an elementary
+// data item of category national.
+// Reference modification creates a unique data item that is a subset of data-name-1 or
+// a subset of the value referenced by function-name-1 and its arguments, if any. This
+// unique data item is considered an elementary data item without the JUSTIFIED
+// clause.
+// When a function is reference-modified, the unique data item has class, category,
+// and usage national if the type of the function is national; otherwise, it has class
+// and category alphanumeric and usage display.
+// When data-name-1 is reference-modified, the unique data item has the same class,
+// category, and usage as that defined for the data item referenced by data-name-1
+// except that:
+// - If data-name-1 has category national-edited, the unique data item has category
+//   national.
+// - If data-name-1 has usage NATIONAL and category numeric-edited, numeric, or
+//   external floating-point, the unique data item has category national.
+// - If data-name-1 has usage DISPLAY, and category numeric-edited,
+//   alphanumeric-edited, numeric, or external floating-point, the unique data item
+//   has category alphanumeric.
+// - If data-name-1 references an alphanumeric group item, the unique data item is
+//   considered to have usage DISPLAY and category alphanumeric.
+// - If data-name-1 references a national group item, the unique data item has usage
+//   NATIONAL and category national.
+// If length is not specified, the unique data item created extends from and includes
+// the character position identified by leftmost-character-position up to and including
+// the rightmost character position of the data item referenced by data-name-1.
+
+// p75: Evaluation of operands
+// Reference modification for an operand is evaluated as follows:
+// - If subscripting is specified for the operand, the reference modification is
+//   evaluated immediately after evaluation of the subscript.
+// - If subscripting is not specified for the operand, the reference modification is
+//   evaluated at the time subscripting would be evaluated if subscripts had been
+//   specified.
+
+referenceModifier: leftMostCharacterPosition ColonSeparator length?;
+leftMostCharacterPosition: arithmeticExpression;
+length: arithmeticExpression;
+
+dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
+	  dataNameReference
+	| specialRegister
+	| addressOfSpecialRegisterDecl
+	| lengthOfSpecialRegisterDecl
+	| linageCounterSpecialRegisterDecl
+	| functionIdentifier;
 
 // p77: A function-identifier is a sequence of character strings and separators that uniquely
 // references the data item that results from the evaluation of a function.
@@ -9729,6 +9794,13 @@ execStatementEnd: END_EXEC;
 //   and category, size, sign, and permissible values) and the evaluation of the
 //   function according to its definition and the particular arguments specified would
 //   not have these characteristics
+// A function-identifier that makes reference to an integer or numeric function can be
+// used wherever an arithmetic expression can be used.
+
+// p77: A function-identifier that makes reference to an alphanumeric or national function
+// can be specified anywhere that a data item of category alphanumeric or category
+// national, respectively, can be referenced and where references to functions are not
+// specifically prohibited.
 // A function-identifier that makes reference to an integer or numeric function can be
 // used wherever an arithmetic expression can be used.
 
@@ -9774,10 +9846,8 @@ execStatementEnd: END_EXEC;
 
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
-// functionIdentifier:
-// 	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
-
-// intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
+functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+intrinsicFunctionName: (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -9789,10 +9859,10 @@ execStatementEnd: END_EXEC;
 // - A literal other than a figurative constant
 // - A special-register
 
-// argument:
-//             identifier | // an identifier can be a special register or a functionIdentifier
-// 	    literal | 
-//             arithmeticExpression;
+argument:
+	  identifier // an identifier can be a special register or a functionIdentifier
+	| literal
+	| arithmeticExpression;
 
 // NB : Because FunctionNames are not reserved words,
 // and because the exact list of the instrinsic functions, their types and their arguments are more a library matter than a language matter,
@@ -9807,134 +9877,37 @@ execStatementEnd: END_EXEC;
 // ... detailed description of each intrinsic function p484 -> p524 ...
 
 //Function names
-//               ACOS |
-//               ANNUITY |
-//               ASIN |
-//               ATAN |
-//               CHAR |
-//               COS |
-//               CURRENT_DATE |
-//               DATE_OF_INTEGER |
-//               DATE_TO_YYYYMMDD |
-//               DAY_OF_INTEGER |
-//               DAY_TO_YYYYDDD |
-//               DISPLAY_OF |
-//               FACTORIAL |
-//               INTEGER |
-//               INTEGER_OF_DATE |
-//               INTEGER_OF_DAY |
-//               INTEGER_PART |
-//               LENGTH |
-//               LOG |
-//               LOG10 |
-//               LOWER_CASE |   
-//               MAX |
-//               MEAN |
-//               MEDIAN |
-//               MIDRANGE |
-//               MIN |
-//               MOD |
-//               NATIONAL_OF |
-//               NUMVAL |
-//               NUMVAL_C |
-//               ORD |
-//               ORD_MAX |
-//               ORD_MIN |
-//               PRESENT_VALUE |
-//               RANDOM |
-//               RANGE |
-//               REM |
-//               REVERSE |
-//               SIN |
-//               SQRT |
-//               STANDARD_DEVIATION |
-//               SUM |
-//               TAN |
-//               ULENGTH |
-//               UPOS |
-//               UPPER_CASE |
-//               USUBSTR |
-//               USUPPLEMENTARY |
-//               UVALID |
-//               UWIDTH |
-//               VARIANCE |
-//               WHEN_COMPILED |
-//               YEAR_TO_YYYY;
+//	ACOS | ANNUITY | ASIN | ATAN |
+//	CHAR | COS | CURRENT_DATE |
+//	DATE_OF_INTEGER | DATE_TO_YYYYMMDD | DAY_OF_INTEGER | DAY_TO_YYYYDDD |
+//	DISPLAY_OF | FACTORIAL |
+//	INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY | INTEGER_PART |
+//	LENGTH | LOG | LOG10 | LOWER_CASE |
+//	MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
+//	NATIONAL_OF | NUMVAL | NUMVAL_C |
+//	ORD | ORD_MAX | ORD_MIN |
+//	PRESENT_VALUE |
+//	RANDOM | RANGE | REM | REVERSE |
+//	SIN | SQRT | STANDARD_DEVIATION | SUM |
+//	TAN |
+//	ULENGTH | UPOS | UPPER_CASE | USUBSTR | USUPPLEMENTARY | UVALID | UWIDTH |
+//	VARIANCE |
+//	WHEN_COMPILED |
+//	YEAR_TO_YYYY;
 
-// p67: References to DATA DIVISION names
-// This section discusses the following types of references.
-// - “Simple data reference”
-// - “Identifiers” on page 68
-// Simple data reference
-// The most basic method of referencing data items in a COBOL program is simple
-// data reference, which is data-name-1 without qualification, subscripting, or reference
-// modification. Simple data reference is used to reference a single elementary or
-// group item.
-// data-name-1
-// Can be any data description entry.
-// data-name-1 must be unique in a program.
 
-dataName : UserDefinedWord;
+// --- DATA REFERENCES ---
 
-// p65: Uniqueness of reference
-// Every user-defined name in a COBOL program is assigned by the user to name a
-// resource for solving a data processing problem. To use a resource, a statement in a
-// COBOL program must contain a reference that uniquely identifies that resource.
-// To ensure uniqueness of reference, a user-defined name can be qualified. A
-// subscript is required for unique reference to a table element, except as specified in
-// “Subscripting” on page 71. A data-name or function-name, any subscripts, and the
-// specified reference-modifier uniquely reference a data item defined by reference
-// modification.
-// When the same name has been assigned in separate programs to two or more
-// occurrences of a resource of a given type, and when qualification by itself does not
-// allow the references in one of those programs to differentiate between the
-// identically named resources, then certain conventions that limit the scope of names
-// apply. The conventions ensure that the resource identified is that described in the
-// program containing the reference. For more information about resolving
-// program-names, see “Resolution of names” on page 62.
-// Unless otherwise specified by the rules for a statement, any subscripts and
-// reference modification are evaluated only once as the first step in executing that
-// statement.
+// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
+// data-name or identifier that has the same definition as the implicit definition of the
+// special register can be used.
 
-// p65: Qualification
-// A name that exists within a hierarchy of names can be made unique by specifying
-// one or more higher-level names in the hierarchy. The higher-level names are called
-// qualifiers, and the process by which such names are made unique is called
-// qualification.
-// Qualification is specified by placing one or more phrases after a user-specified
-// name, with each phrase made up of the word IN or OF followed by a qualifier. (IN
-// and OF are logically equivalent.)
-// In any hierarchy, the data-name associated with the highest level must be unique if
-// it is referenced, and cannot be qualified.
-// You must specify enough qualification to make the name unique; however, it is not
-// always necessary to specify all the levels of the hierarchy. For example, if there is
-// more than one file whose records contain the field EMPLOYEE-NO, but only one of the
-// files has a record named MASTER-RECORD:
-// - EMPLOYEE-NO OF MASTER-RECORD sufficiently qualifies EMPLOYEE-NO.
-// - EMPLOYEE-NO OF MASTER-RECORD OF MASTER-FILE is valid but unnecessary.
-// Qualification rules
-// The rules for qualifying a name are:
-// - A name can be qualified even though it does not need qualification except in a
-//   REDEFINES clause, in which case it must not be qualified.
-// - Each qualifier must be of a higher level than the name it qualifies and must be
-//   within the same hierarchy.
-// - If there is more than one combination of qualifiers that ensures uniqueness, any
-//   of those combinations can be used.
-// Identical names
-// When programs are directly or indirectly contained within other programs, each
-// program can use identical user-defined words to name resources.
-// A program references the resources that program describes rather than the
-// same-named resources described in another program, even if the names are
-// different types of user-defined words.
-// These same rules apply to classes and their contained methods.
+addressOfSpecialRegisterDecl: ADDRESS OF dataNameReference;
+lengthOfSpecialRegisterDecl:  LENGTH OF? dataNameReference;
+linageCounterSpecialRegisterDecl: LINAGE_COUNTER OF fileName;
 
-// qualifiedDataName:
-// 	dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
-
-// dataNameBase: dataName;
-
-// qualifiedConditionName:
-// 	conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+dataNameReference:
+	qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -10045,19 +10018,82 @@ dataName : UserDefinedWord;
 // down by the value of the integer. The use of relative indexing does not cause the
 // program to alter the value of the index.
 
-// subscript:
-// 	IntegerLiteral | ALL  |
-// 	(qualifiedDataName withRelativeSubscripting?) |
-// 	(indexName withRelativeSubscripting?);
+subscript:
+	  IntegerLiteral | ALL
+	| (qualifiedDataName withRelativeSubscripting?)
+//	| (indexName withRelativeSubscripting?) // cannot be distinguished from the previous line at the parsing stage
+	;
 
-// withRelativeSubscripting:
-// 			(PlusOperator | MinusOperator) IntegerLiteral;
+withRelativeSubscripting: (PlusOperator | MinusOperator) IntegerLiteral;
 
-// dataNameReference:
-//                     qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-					 
-// conditionNameReference:
-//                           qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+// p65: Uniqueness of reference
+// Every user-defined name in a COBOL program is assigned by the user to name a
+// resource for solving a data processing problem. To use a resource, a statement in a
+// COBOL program must contain a reference that uniquely identifies that resource.
+// To ensure uniqueness of reference, a user-defined name can be qualified. A
+// subscript is required for unique reference to a table element, except as specified in
+// “Subscripting” on page 71. A data-name or function-name, any subscripts, and the
+// specified reference-modifier uniquely reference a data item defined by reference
+// modification.
+// When the same name has been assigned in separate programs to two or more
+// occurrences of a resource of a given type, and when qualification by itself does not
+// allow the references in one of those programs to differentiate between the
+// identically named resources, then certain conventions that limit the scope of names
+// apply. The conventions ensure that the resource identified is that described in the
+// program containing the reference. For more information about resolving
+// program-names, see “Resolution of names” on page 62.
+// Unless otherwise specified by the rules for a statement, any subscripts and
+// reference modification are evaluated only once as the first step in executing that
+// statement.
+
+// p65: Qualification
+// A name that exists within a hierarchy of names can be made unique by specifying
+// one or more higher-level names in the hierarchy. The higher-level names are called
+// qualifiers, and the process by which such names are made unique is called
+// qualification.
+// Qualification is specified by placing one or more phrases after a user-specified
+// name, with each phrase made up of the word IN or OF followed by a qualifier. (IN
+// and OF are logically equivalent.)
+// In any hierarchy, the data-name associated with the highest level must be unique if
+// it is referenced, and cannot be qualified.
+// You must specify enough qualification to make the name unique; however, it is not
+// always necessary to specify all the levels of the hierarchy. For example, if there is
+// more than one file whose records contain the field EMPLOYEE-NO, but only one of the
+// files has a record named MASTER-RECORD:
+// - EMPLOYEE-NO OF MASTER-RECORD sufficiently qualifies EMPLOYEE-NO.
+// - EMPLOYEE-NO OF MASTER-RECORD OF MASTER-FILE is valid but unnecessary.
+// Qualification rules
+// The rules for qualifying a name are:
+// - A name can be qualified even though it does not need qualification except in a
+//   REDEFINES clause, in which case it must not be qualified.
+// - Each qualifier must be of a higher level than the name it qualifies and must be
+//   within the same hierarchy.
+// - If there is more than one combination of qualifiers that ensures uniqueness, any
+//   of those combinations can be used.
+// Identical names
+// When programs are directly or indirectly contained within other programs, each
+// program can use identical user-defined words to name resources.
+// A program references the resources that program describes rather than the
+// same-named resources described in another program, even if the names are
+// different types of user-defined words.
+// These same rules apply to classes and their contained methods.
+
+// p67: References to DATA DIVISION names
+// This section discusses the following types of references.
+// - “Simple data reference”
+// - “Identifiers” on page 68
+// Simple data reference
+// The most basic method of referencing data items in a COBOL program is simple
+// data reference, which is data-name-1 without qualification, subscripting, or reference
+// modification. Simple data reference is used to reference a single elementary or
+// group item.
+// data-name-1
+// Can be any data description entry.
+// data-name-1 must be unique in a program.
+
+qualifiedDataName: dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
+
+dataNameBase: dataName;
 
 // p70: Condition-name
 // condition-name-1
@@ -10085,305 +10121,117 @@ dataName : UserDefinedWord;
 // “SPECIAL-NAMES paragraph” on page 112.
 
 // p70: Format 1: condition-name in data division
-
-// => cf conditionNameReference above
+conditionNameReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p70: Format 2: condition-name in SPECIAL-NAMES paragraph
-
-conditionNameReferenceInSpecialNamesParagraph:
-                                                 conditionName 
-                                                ((IN | OF) mnemonicForUPSISwitchName)*;
-
-// p16: Unless otherwise explicitly restricted, a special register can be used wherever a
-// data-name or identifier that has the same definition as the implicit definition of the
-// special register can be used.
-
-// p77: A function-identifier that makes reference to an alphanumeric or national function
-// can be specified anywhere that a data item of category alphanumeric or category
-// national, respectively, can be referenced and where references to functions are not
-// specifically prohibited.
-// A function-identifier that makes reference to an integer or numeric function can be
-// used wherever an arithmetic expression can be used.
-
-// dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
-//             dataNameReference |
-//             specialRegister |
-//             addressOfSpecialRegisterDecl |
-//             lengthOfSpecialRegisterDecl |
-//             linageCounterSpecialRegisterDecl |
-//             functionIdentifier;
-			
-// addressOfSpecialRegisterDecl:
-// 			ADDRESS OF dataNameReference;
-			
-// lengthOfSpecialRegisterDecl:						 
-// 			LENGTH OF? dataNameReference;
-
-// linageCounterSpecialRegisterDecl:
-// 			LINAGE_COUNTER OF fileName;
-
-// p74: Reference modification
-// Reference modification defines a data item by specifying a leftmost character and
-// optional length for the data item.
-// data-name-1
-// Must reference a data item described explicitly or implicitly with usage
-// DISPLAY, DISPLAY-1, or NATIONAL. A national group item is processed
-// as an elementary data item of category national.
-// data-name-1 can be qualified or subscripted.
-// function-name-1
-// Must reference an alphanumeric or national function.
-// leftmost-character-position
-// Must be an arithmetic expression. The evaluation of leftmost-characterposition
-// must result in a positive nonzero integer that is less than or equal
-// to the number of characters in the data item referenced by data-name-1.
-// length
-// Must be an arithmetic expression.
-// The evaluation of length must result in a positive nonzero integer.
-// The sum of leftmost-character-position and length minus the value 1 must be
-// less than or equal to the number of character positions in data-name-1. If
-// length is omitted, the length used will be equal to the number of character
-// positions in data-name-1 plus 1, minus leftmost-character-position.
-// For usages DISPLAY-1 and NATIONAL, each character position occupies 2 bytes.
-// Reference modification operates on whole character positions and not on the
-// individual bytes of the characters in usages DISPLAY-1 and NATIONAL. For usage
-// DISPLAY, reference modification operates as though each character were a
-// single-byte character.
-// Unless otherwise specified, reference modification is allowed anywhere an
-// identifier or function-identifier that references a data item or function with the
-// same usage as the reference-modified data item is permitted.
-// Each character position referenced by data-name-1 or function-name-1 is assigned an
-// ordinal number incrementing by one from the leftmost position to the rightmost
-// position. The leftmost position is assigned the ordinal number one. If the data
-// description entry for data-name-1 contains a SIGN IS SEPARATE clause, the sign
-// position is assigned an ordinal number within that data item.
-// If data-name-1 is described with usage DISPLAY and category numeric,
-// numeric-edited, alphabetic, alphanumeric-edited, or external floating-point,
-// data-name-1 is operated upon for purposes of reference modification as if it were
-// redefined as a data item of category alphanumeric with the same size as the data
-// item referenced by data-name-1.
-// If data-name-1 is described with usage NATIONAL and category numeric,
-// numeric-edited, national-edited, or external floating-point, data-name-1 is operated
-// upon for purposes of reference modification as if it were redefined as a data item
-// of category national with the same size as the data item referenced by data-name-1.
-// If data-name-1 is a national group item, data-name-1 is processed as an elementary
-// data item of category national.
-// Reference modification creates a unique data item that is a subset of data-name-1 or
-// a subset of the value referenced by function-name-1 and its arguments, if any. This
-// unique data item is considered an elementary data item without the JUSTIFIED
-// clause.
-// When a function is reference-modified, the unique data item has class, category,
-// and usage national if the type of the function is national; otherwise, it has class
-// and category alphanumeric and usage display.
-// When data-name-1 is reference-modified, the unique data item has the same class,
-// category, and usage as that defined for the data item referenced by data-name-1
-// except that:
-// - If data-name-1 has category national-edited, the unique data item has category
-//   national.
-// - If data-name-1 has usage NATIONAL and category numeric-edited, numeric, or
-//   external floating-point, the unique data item has category national.
-// - If data-name-1 has usage DISPLAY, and category numeric-edited,
-//   alphanumeric-edited, numeric, or external floating-point, the unique data item
-//   has category alphanumeric.
-// - If data-name-1 references an alphanumeric group item, the unique data item is
-//   considered to have usage DISPLAY and category alphanumeric.
-// - If data-name-1 references a national group item, the unique data item has usage
-//   NATIONAL and category national.
-// If length is not specified, the unique data item created extends from and includes
-// the character position identified by leftmost-character-position up to and including
-// the rightmost character position of the data item referenced by data-name-1. 
-
-// p75: Evaluation of operands
-// Reference modification for an operand is evaluated as follows:
-// - If subscripting is specified for the operand, the reference modification is
-//   evaluated immediately after evaluation of the subscript.
-// - If subscripting is not specified for the operand, the reference modification is
-//   evaluated at the time subscripting would be evaluated if subscripts had been
-//   specified.
-
-// referenceModifier:
-//                     leftMostCharacterPosition ColonSeparator length?;
-
-// leftMostCharacterPosition: arithmeticExpression;
-// length: arithmeticExpression;
-
-// p68: Identifiers
-// When used in a syntax diagram in this information, the term identifier refers to a
-// valid combination of a data-name or function-identifier with its qualifiers,
-// subscripts, and reference-modifiers as required for uniqueness of reference.
-// Rules for identifiers associated with a format can however specifically prohibit
-// qualification, subscripting, or reference modification.
-// The term data-name refers to a name that must not be qualified, subscripted, or
-// reference modified unless specifically permitted by the rules for the format.
-// - For a description of qualification, see “Qualification” on page 65.
-// - For a description of subscripting, see “Subscripting” on page 71.
-// - For a description of reference modification, see “Reference modification” on
-//   page 74.
-// p69: Duplication of data-names must not occur in those places where the data-names
-// cannot be made unique by qualification.
-// In the same program, the data-name specified as the subject of the entry whose
-// level-number is 01 that includes the EXTERNAL clause must not be the same
-// data-name specified for any other data description entry that includes the
-// EXTERNAL clause.
-// In the same DATA DIVISION, the data description entries for any two data items
-// for which the same data-name is specified must not include the GLOBAL clause.
-// DATA DIVISION names that are explicitly referenced must either be uniquely
-// defined or made unique through qualification. Unreferenced data items need not
-// be uniquely defined. The highest level in a data hierarchy (a data item associated
-// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
-// must be uniquely named if referenced. Data items associated with level-numbers
-// 02 through 49 are successively lower levels of the hierarchy.
-
-// identifier:
-// 	  (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?)
-// 	| conditionNameReference;
+//conditionNameReferenceInSpecialNamesParagraph: conditionName ((IN | OF) mnemonicForUPSISwitchName)*;
 
 
-// -------------------------------------------
-// Optimized version of the expressions syntax
-// -------------------------------------------
-
-// Referenced by :
-// - evaluateStatement
-expression:
-              arithmeticExpression | conditionalExpression;    
-
-// --- CONDITIONAL EXPRESSSIONS ---
-
-conditionalExpression:
-                         LeftParenthesisSeparator conditionalExpression RightParenthesisSeparator
-                      |  NOT conditionalExpression
-                      |  conditionalExpression AND conditionalExpression
-                      |  conditionalExpression OR conditionalExpression
-                      |  classCondition        
-                      |  conditionNameCondition
-                      |  generalRelationCondition
-                      |  pointerRelationCondition
-                      |  signCondition;
-
-classCondition :
-                   identifier IS? NOT? (charsetClassName |
-                                        (NUMERIC |
-                                        ALPHABETIC |
-                                        ALPHABETIC_LOWER |
-                                        ALPHABETIC_UPPER |                                        
-                                        DBCS |
-                                        KANJI));
-
-conditionNameCondition: 
-                          conditionNameReference;
+qualifiedConditionName: conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
 
 
-generalRelationCondition:
-                            operand relationalOperator abbreviatedExpression;
 
-abbreviatedExpression:   
-                         (LeftParenthesisSeparator abbreviatedExpression RightParenthesisSeparator)
-                       |  NOT abbreviatedExpression
-                       |  abbreviatedExpression AND abbreviatedExpression
-                       |  abbreviatedExpression OR abbreviatedExpression
-                       |  relationalOperator operand
-                       |  operand;
 
-operand:
-           identifier | literal | arithmeticExpression;
 
-relationalOperator:
-	IS? ((NOT? strictRelation) | simpleRelation);
-	
-strictRelation:
-	  GREATER THAN?
-	| GreaterThanOperator
-	| LESS THAN?
-	| LessThanOperator
-	| EQUAL TO?
-	| EqualOperator
-	;
+// --- Terminals ---
+//
+//literal: alphanumOrNationalLiteral | numericLiteral;
+//
+//alphanumOrNationalLiteral:
+//	  alphanumOrNationalLiteralBase
+//	| NullTerminatedAlphanumericLiteral
+//	| (ALL alphanumOrNationalLiteralBase);
+//
+//alphanumOrNationalLiteralBase:
+//	( AlphanumericLiteral
+//	| HexadecimalAlphanumericLiteral
+//	| NationalLiteral
+//	| HexadecimalNationalLiteral
+//	| DBCSLiteral )
+//	| figurativeConstant;
+//
+//figurativeConstant:
+//	( HIGH_VALUE | HIGH_VALUES
+//	| LOW_VALUE  | LOW_VALUES
+//	| NULL  | NULLS
+//	| QUOTE | QUOTES
+//	| SPACE | SPACES
+//	| ZERO  | ZEROS  | ZEROES
+//	| SymbolicCharacter);
+//
+//numericLiteral: (IntegerLiteral | DecimalLiteral | FloatingPointLiteral | ZERO | ZEROS | ZEROES);
+//
+//specialRegister:
+//	( DEBUG_CONTENTS | DEBUG_ITEM | DEBUG_LINE | DEBUG_NAME | DEBUG_SUB_1 | DEBUG_SUB_2 | DEBUG_SUB_3
+//	| SORT_CONTROL | SORT_CORE_SIZE | SORT_FILE_SIZE | SORT_MESSAGE | SORT_MODE_SIZE | SORT_RETURN
+//	| XML_CODE | XML_EVENT | XML_INFORMATION | XML_NAMESPACE | XML_NAMESPACE_PREFIX | XML_NNAMESPACE | XML_NNAMESPACE_PREFIX | XML_NTEXT | XML_TEXT
+//	| JNIENVPTR | LINAGE_COUNTER | RETURN_CODE | SHIFT_IN | SHIFT_OUT | TALLY | WHEN_COMPILED );
 
-simpleRelation:
-	  GREATER THAN? OR EQUAL TO?
-	| GreaterThanOrEqualOperator
-	| LESS THAN? OR EQUAL TO?
-	| LessThanOrEqualOperator
-	;
 
-pointerRelationCondition:
-                            specificPointerOperand relationConditionEquality specificPointerOperand;
 
-specificPointerOperand:
-                          (ADDRESS OF identifier) | identifier | (SELF | NULL | NULLS);
+	  ////////////////////////
+	 // User defined words //
+	////////////////////////
 
-relationConditionEquality:
-                             IS? NOT? ((EQUAL TO?) | EqualOperator);
+// p118 : CLASS class-name-1 IS
+// Provides a means for relating a name to the specified set of characters
+// listed in that clause. class-name-1 can be referenced only in a class
+// condition. The characters specified by the values of the literals in this
+// clause define the exclusive set of characters of which this class consists.
+// The class-name in the CLASS clause can be a DBCS user-defined word.
 
-signCondition:
-                 operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
+charsetClassName: UserDefinedWord;
 
-// --- ARITHMETIC EXPRESSSIONS ---
+// p115 : condition-1, condition-2
+// Condition-names follow the rules for user-defined names. At least one
+// character must be alphabetic. The value associated with the
+// condition-name is considered to be alphanumeric. A condition-name can be
+// associated with the on status or off status of each UPSI switch specified.
+// In the PROCEDURE DIVISION, the UPSI switch status is tested through
+// the associated condition-name. Each condition-name is the equivalent of a
+// level-88 item; the associated mnemonic-name, if specified, is considered the
+// conditional variable and can be used for qualification.
+// Condition-names specified in the SPECIAL-NAMES paragraph of a
+// containing program can be referenced in any contained program
 
-arithmeticExpression:   (LeftParenthesisSeparator arithmeticExpression RightParenthesisSeparator)
-                      | (PlusOperator | MinusOperator) arithmeticExpression
-                      |<assoc=right> arithmeticExpression PowerOperator arithmeticExpression
-                      |  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression 
-                      |  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression 
-                      |  identifier 
-                      |  numericLiteral;
+conditionName: UserDefinedWord;
 
-// --- IDENTIFIERS ---
+dataName: UserDefinedWord;
 
-identifier:
-              dataNameReferenceOrSpecialRegisterOrFunctionIdentifier 
-              (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+// p130: file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
 
-referenceModifier:
-                     leftMostCharacterPosition ColonSeparator length?;
+fileName: UserDefinedWord;
 
-leftMostCharacterPosition: arithmeticExpression;
-length: arithmeticExpression;
+// p194: index-name-1
+// Each index-name specifies an index to be created by the compiler for use
+// by the program. These index-names are not data-names and are not
+// identified elsewhere in the COBOL program; instead, they can be regarded
+// as private special registers for the use of this object program only. They are
+// not data and are not part of any data hierarchy.
+// Unreferenced index names need not be uniquely defined.
+// In one table entry, up to 12 index-names can be specified.
+// If a data item that possesses the global attribute includes a table accessed
+// with an index, that index also possesses the global attribute. Therefore, the
+// scope of an index-name is the same as that of the data-name that names
+// the table in which the index is defined.
+// Indexes specified in an external data record do not possess the external attribute.
 
-dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
-            dataNameReference |
-            specialRegister |
-            addressOfSpecialRegisterDecl |
-            lengthOfSpecialRegisterDecl |
-            linageCounterSpecialRegisterDecl |
-            functionIdentifier;
+// p71: Index-name
+// An index-name identifies an index. An index can be regarded as a private special
+// register that the compiler generates for working with a table. You name an index
+// by specifying the INDEXED BY phrase in the OCCURS clause that defines a table.
+// You can use an index-name in only the following language elements:
+// - SET statements
+// - PERFORM statements
+// - SEARCH statements
+// - Subscripts
+// - Relation conditions
+// An index-name is not the same as the name of an index data item, and an
+// index-name cannot be used like a data-name.
 
-functionIdentifier:
-                      FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+indexName: UserDefinedWord;
 
-intrinsicFunctionName: 
-                         (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
-
-argument:
-            identifier |  literal | arithmeticExpression;
-
-// --- DATA REFERENCES ---
-
-addressOfSpecialRegisterDecl:
-                                ADDRESS OF dataNameReference;
-			
-lengthOfSpecialRegisterDecl:
-                               LENGTH OF? dataNameReference;
-
-linageCounterSpecialRegisterDecl:
-                                    LINAGE_COUNTER OF fileName;
-
-dataNameReference:
-                     qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-conditionNameReference: 
-                          qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-subscript:
-             IntegerLiteral | ALL  | (qualifiedDataName withRelativeSubscripting?);
-
-withRelativeSubscripting:
-                            (PlusOperator | MinusOperator) IntegerLiteral;
-
-qualifiedDataName:
-                     dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
-
-dataNameBase: dataName;
-
-qualifiedConditionName:
-                          conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+// defined previousely in the file
+// mnemonicForUPSISwitchName : UserDefinedWord;

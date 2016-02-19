@@ -54,10 +54,54 @@ namespace TypeCobol.Server
                 Init(path);
             }
             Compiler = Compilers[path];
+
+            Compiler.CompilationResultsForProgram.TextLinesChanged += OnTextLine;
+            Compiler.CompilationResultsForProgram.CodeElementsLinesChanged += OnCodeElementLine;
+
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
             else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             try { Compiler.CompileOnce(); }
             catch(Exception ex) { Observer.OnError(ex); }
+
+            Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
+            Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;
+        }
+
+        private void OnCodeElementLine(object sender, DocumentChangedEvent<ICodeElementsLine> e)
+        {
+            System.Console.WriteLine("+++ OnCodeElementLine(..):");
+            int c = 0;
+            if (e.DocumentChanges != null)
+            foreach(var change in e.DocumentChanges) {
+                System.Console.WriteLine(" - "+change.Type+"@"+change.LineIndex);
+                if (change.NewLine == null) System.Console.WriteLine("Line NIL");
+                else
+                if (change.NewLine.CodeElements == null) System.Console.WriteLine("CodeElements NIL");
+                else {
+                    int i = 0;
+                    foreach(var ce in change.NewLine.CodeElements) {
+                        System.Console.WriteLine("   - "+ce);
+                        i++;
+                    }
+                    System.Console.WriteLine("   "+i+" CodeElements");
+                }
+                c++;
+            }
+            System.Console.WriteLine("+++ --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
+        }
+
+        private void OnTextLine(object sender, DocumentChangedEvent<ICobolTextLine> e)
+        {
+            System.Console.WriteLine("--- OnTextLine(..):");
+            int c = 0;
+            if (e.DocumentChanges != null)
+            foreach(var change in e.DocumentChanges) {
+                System.Console.Write(" + "+change.Type+"@"+change.LineIndex+": ");
+                if (change.NewLine == null) System.Console.WriteLine("?");
+                else System.Console.WriteLine("\""+change.NewLine.SourceText+"\"");
+                c++;
+            }
+            System.Console.WriteLine("--- --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
         }
 
         public IDocumentSnapshot<ICodeElementsLine> Snapshot

@@ -136,19 +136,16 @@ namespace TypeCobol.Compiler.Parser
 
     class ComputeStatementBuilder
     {
-        internal ComputeStatement CreateComputeStatement(CobolCodeElementsParser.ComputeStatementContext context)
-        {
+        internal ComputeStatement CreateComputeStatement(CobolCodeElementsParser.ComputeStatementContext context) {
             if (context == null) return null;
             var statement = new ComputeStatement();
-            //var right = new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
-            //if (context.identifierRounded() != null)
-            //{
-            //    foreach (var identifier in context.identifierRounded())
-            //    {
-            //        var left = ArithmeticStatementBuilder.CreateIdentifierRounded(identifier);
-            //        statement.Affectations.Add(left, right);
-            //    }
-            //}
+            var right = new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
+            if (context.identifierRounded() != null) {
+                foreach (var identifier in context.identifierRounded()) {
+                    var left = ArithmeticStatementBuilder.CreateIdentifierRounded(identifier);
+                    statement.Affectations.Add(left, right);
+                }
+            }
             return statement;
         }
     }

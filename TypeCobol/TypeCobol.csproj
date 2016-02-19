@@ -112,7 +112,9 @@
     <Compile Include="Compiler\AntlrUtils\ParseTreeUtils.cs" />
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
-    <Compile Include="Compiler\CodeElements\Node.cs" />
+    <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
+    <Compile Include="Compiler\CodeModel\Node.cs" />
+    <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\CodeElementCheckers.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
@@ -184,7 +186,6 @@
     <Compile Include="Compiler\CodeElements\StatementCondition\OnExceptionCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\OnOverflowCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\OnSizeErrorCondition.cs" />
-    <Compile Include="Compiler\CodeElements\StatementCondition\WhenEvaluateCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\WhenOtherCondition.cs" />
     <Compile Include="Compiler\CodeElements\StatementCondition\WhenConditionalExpression.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\AddStatementEnd.cs" />
@@ -224,7 +225,6 @@
     <Compile Include="Compiler\CodeElements\Statement\ExitMethodStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ExitProgramStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ExitStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\FlowControl.cs" />
     <Compile Include="Compiler\CodeElements\Statement\GobackStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\GotoStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\IfStatement.cs" />
@@ -346,6 +346,7 @@
     <Compile Include="Compiler\Text\TextString.cs" />
     <Compile Include="Compiler\TypeChecker\CompilationError.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
+    <Compile Include="LanguageServices\Editor\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compiler\Scanner\CompilerDirectiveToken.cs" />
     <Compile Include="Compiler\Scanner\ContinuationToken.cs" />

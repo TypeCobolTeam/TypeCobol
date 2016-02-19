@@ -48,78 +48,24 @@ namespace TypeCobol.Compiler.Scanner
             int lastIndex = textLine.Source.EndIndex;
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
+            if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
+            // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
+            if (tokensLine.ScanState.InsideRemarksDirective) {
+                string remarksLine = textLine.SourceText;
 
-            // Detect the first line of a REMARKS compiler directive inside comment lines
-            if (textLine.Type == CobolTextLineType.Comment && tokensLine.SourceText.StartsWith("REMARKS. ", StringComparison.InvariantCultureIgnoreCase))
-            {
-                tokensLine.ScanState.InsideRemarksDirective = true;
-            }
-            // A REMARKS compiler directive always stops with the first non comment line
-            else if(tokensLine.ScanState.InsideRemarksDirective && textLine.Type != CobolTextLineType.Comment)
-            {
-                tokensLine.ScanState.InsideRemarksDirective = false;
-            }
-            
-            // Try to scan REMARKS compiler directive parameters inside the comment line
-            if (textLine.Type == CobolTextLineType.Comment && tokensLine.ScanState.InsideRemarksDirective)
-            {
-                string commentLine = textLine.SourceText;
+                int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
+                int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
+                int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
+                string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
 
-                int firstSpaceIndex = commentLine.IndexOf(' ');
-                int firstEqualIndex = commentLine.IndexOf('=');
-                int firstLParenIndex = commentLine.IndexOf('(');
-                int startIndexForSignificantPart = Math.Max(Math.Max(firstSpaceIndex + 1, firstEqualIndex + 1), firstLParenIndex + 1);
-
-                int firstRParenIndex = commentLine.IndexOf(')', startIndexForSignificantPart);
-                int firstPeriodIndex = commentLine.IndexOf('.', startIndexForSignificantPart);
-                int endIndexForSignificantPart = commentLine.Length - 1;
-                if (firstRParenIndex >= 0)
-                {
-                    endIndexForSignificantPart = firstRParenIndex - 1;
-                }
-                if (firstPeriodIndex >= 0 && firstPeriodIndex < firstRParenIndex)
-                {
-                    endIndexForSignificantPart = firstPeriodIndex - 1;
+                if (firstPeriodIndex >= 0 || (!tokensLine.ScanState.InsideRemarksParentheses && !remarksLine.Contains("COPY"))) {
+                    tokensLine.ScanState.InsideRemarksDirective = false; // indicates the end of the REMARKS compiler directive
                 }
 
-                RemarksDirective remarksDirective = null;
-                string significantPart = commentLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
-                if (significantPart.Length > 0)
-                {
-                    remarksDirective = new RemarksDirective();
-                    foreach (string candidateName in significantPart.Split(' '))
-                    {
-                        if (candidateName.Length == 7 || candidateName.Length == 8)
-                        {
-                            RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
-                            remarksDirective.CopyTextNamesVariations.Add(textName);
-                        }
-                        else if (!String.IsNullOrWhiteSpace(candidateName))
-                        {
-                            // A string which is not a text name is an error : stop scanning here
-                            remarksDirective = null;
-                            tokensLine.ScanState.InsideRemarksDirective = false;
-                            break;
-                        }
-                    }
-                }
-
-                // A period character indicates the end of the REMARKS compiler directive
-                if (firstPeriodIndex >= 0)
-                {
-                    tokensLine.ScanState.InsideRemarksDirective = false;
-                }
-
-                // A non empty remarks directive will replace the comment line
-                if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0)
-                {
-                    tokensLine.ScanState.AddCopyTextNamesVariations(remarksDirective.CopyTextNamesVariations);
-
-                    Token originalCommentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
-                    IList<Token> originalTokens = new List<Token>(1);
-                    originalTokens.Add(originalCommentToken);
-                    Token remarksDirectiveToken = new CompilerDirectiveToken(remarksDirective, originalTokens, false);
-                    tokensLine.AddToken(remarksDirectiveToken);
+                RemarksDirective remarksDirective = CreateRemarksDirective(significantPart, tokensLine.ScanState);
+                if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0) {
+                    // A non empty remarks directive will replace the comment line
+                    tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex));
                     return;
                 }
             }
@@ -171,6 +117,57 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.AddToken(nextToken);
             }    
         }
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+        private static bool IsInsideRemarks(CobolTextLineType type, string line) {
+            return type == CobolTextLineType.Comment && line.StartsWith("REMARKS. ", StringComparison.InvariantCultureIgnoreCase);
+        }
+        private static int GetStartIndexOfSignificantPart(string line, MultilineScanState state) {
+            int start = Math.Max(line.IndexOf(' ') +1, line.IndexOf('=') +1);
+            if (!state.InsideRemarksParentheses) {
+                int firstLParenIndex = line.IndexOf('(');
+                state.InsideRemarksParentheses = (firstLParenIndex >= 0);
+                start = Math.Max(start, firstLParenIndex +1);
+            }
+            return start;
+        }
+        private static int GetEndIndexOfSignificantPart(string line, MultilineScanState state, int firstPeriodIndex) {
+            int end = line.Length -1;
+            if (state.InsideRemarksParentheses) {
+                int firstRParenIndex = line.IndexOf(')');
+                if (firstRParenIndex >= 0) {
+                    end = firstRParenIndex -1;
+                    state.InsideRemarksParentheses = false;
+                }
+                if (firstPeriodIndex >= 0 && firstPeriodIndex < firstRParenIndex)
+                    end = firstPeriodIndex - 1;
+            }
+            return end;
+        }
+        private static RemarksDirective CreateRemarksDirective(string significantPart, MultilineScanState state) {
+            if (significantPart.Length < 1) return null;
+            var remarksDirective = new RemarksDirective();
+            foreach (string candidateName in significantPart.Split(' ')) {
+                if (candidateName.Length == 7 || candidateName.Length == 8) {
+                    RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
+                    remarksDirective.CopyTextNamesVariations.Add(textName);
+                }
+                else if (!String.IsNullOrWhiteSpace(candidateName)) {
+                    // A string which is not a text name is an error : stop scanning here
+                    remarksDirective = null;
+                    state.InsideRemarksDirective = false;
+                    break;
+                }
+            }
+            return remarksDirective;
+        }
+        private static Token CreateCompilerDirectiveToken(RemarksDirective remarksDirective, TokensLine tokensLine, int start, int end) {
+            tokensLine.ScanState.AddCopyTextNamesVariations(remarksDirective.CopyTextNamesVariations);
+            IList<Token> originalTokens = new List<Token>(1);
+            originalTokens.Add(new Token(TokenType.CommentLine, start,end, tokensLine));
+            return new CompilerDirectiveToken(remarksDirective, originalTokens, false);
+        }
+#endif
 
         /// <summary>
         /// Scan a group of continuation lines when no previous scan state object is available

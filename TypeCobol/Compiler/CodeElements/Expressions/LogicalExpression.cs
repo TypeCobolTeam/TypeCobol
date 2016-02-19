@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
 
         public override string ToString() { //RPN
-            return new StringBuilder(left.ToString()).Append(" ").Append(right.ToString()).Append(" ").Append(op).ToString();
+            return new StringBuilder(left!=null?left.ToString():"<?>").Append(" ").Append(right!=null?right.ToString():"<?>").Append(" ").Append(op).ToString();
         }
 
         public static LogicOperation Create(Expression left, char op, Expression right)
@@ -52,9 +52,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public NOT(Expression expression)
             : base(expression, '!', null) { }
 
-        public override string ToString()
-        {
-            return new StringBuilder(left.ToString()).Append(" ").Append(op).ToString();
+        public override string ToString() {
+            return new StringBuilder("NOT( ").Append(left.ToString()).Append(" )").ToString();
         }
     }
 
@@ -122,11 +121,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             str.Append(type).Append(" ?");
             return str.ToString();
         }
-    }
-
-    public class Empty : LogicalExpression
-    {
-        public override string ToString() { return "?LOGIC?"; }
     }
 
     public class Null : LogicalExpression

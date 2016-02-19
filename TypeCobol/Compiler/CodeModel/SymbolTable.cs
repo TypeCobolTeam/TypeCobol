@@ -16,10 +16,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// The WORKING-STORAGE SECTION for programs (and methods) can also
         /// describe external data records, which are shared by programs
         /// and methods throughout the run unit.
-        /// </summary>
-        private Dictionary<string,List<DataDescriptionEntry>> WorkingStorageData = new Dictionary<string,List<DataDescriptionEntry>>();
-
-        /// <summary>
+        ///
         /// The LOCAL-STORAGE SECTION defines storage that is allocated
         /// and freed on a per-invocation basis. On each invocation,
         /// data items defined in the LOCAL-STORAGE SECTION are reallocated.
@@ -29,10 +26,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// are allocated upon each invocation of the containing outermost program.
         /// However, each data item is reinitialized to the value specified
         /// in its VALUE clause each time the nested program is invoked.
-        /// </summary>
-        private Dictionary<string,List<DataDescriptionEntry>> LocalStorageData = new Dictionary<string,List<DataDescriptionEntry>>();
-
-        /// <summary>
+        ///
         /// The LINKAGE SECTION describes data made available from another
         /// program or method.
         /// Record description entries and data item description entries in the
@@ -52,7 +46,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// - They are condition-names or index-names associated with data items that satisfy
         ///   any of the above conditions.
         /// </summary>
-        private Dictionary<string,List<DataDescriptionEntry>> LinkageData = new Dictionary<string,List<DataDescriptionEntry>>();
+        public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>();
 
         public Scope CurrentScope { get; internal set; }
         public SymbolTable EnclosingScope { get; internal set; }
@@ -66,20 +60,31 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void Add(Section section, DataDescriptionEntry symbol) {
             if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
-            var entries = Get(section, symbol.Name.Name);
-            entries.Add(symbol);
+            Get(symbol).Add(symbol);
             foreach(var sub in symbol.Subordinates) Add(section, sub);
         }
 
-        public List<DataDescriptionEntry> Get(Section section, string name) {
-            var storage = Get(section);
-            if (!storage.ContainsKey(name)) storage[name] = new List<DataDescriptionEntry>();
-            return storage[name];
+        private Scope GetScope(DataDescriptionEntry data) {
+            if (data.IsExternal) return Scope.External;
+            if (data.IsGlobal) return Scope.Global;
+            return Scope.Program;
         }
-        public Dictionary<string,List<DataDescriptionEntry>> Get(Section section) {
-            if (section == Section.Working) return WorkingStorageData;
-            if (section == Section.Local)   return LocalStorageData;
-            return LinkageData;
+        private SymbolTable GetTable(SymbolTable.Scope scope) {
+            if (CurrentScope == scope) return this;
+            SymbolTable table = this.EnclosingScope;
+            while(table != null) {
+                if (table.CurrentScope == scope) return table;
+                table = table.EnclosingScope;
+            }
+            return null;
+        }
+
+        public List<DataDescriptionEntry> Get(DataDescriptionEntry data) {
+            string key = data.Name.Name;
+            var table = GetTable(GetScope(data)).DataEntries;
+            if (!table.ContainsKey(key))
+                table[key] = new List<DataDescriptionEntry>();
+            return table[key];
         }
 
         internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
@@ -100,6 +105,7 @@ namespace TypeCobol.Compiler.CodeModel
             var filtered = new List<DataDescriptionEntry>();
             foreach (var data in values) {
                 foreach (var sub in data.Subordinates) {
+                    if (sub.Name == null) continue;//TODO issue #179
                     if (sub.Name.Name.Equals(subordinate)) {
                         filtered.Add(data);
                         break;
@@ -110,12 +116,10 @@ namespace TypeCobol.Compiler.CodeModel
         }
         private IList<DataDescriptionEntry> Get(string key) {
             var values = new List<DataDescriptionEntry>();
-            if (WorkingStorageData.ContainsKey(key))
-                values.AddRange(WorkingStorageData[key]);
-            if (LocalStorageData.ContainsKey(key))
-                values.AddRange(LocalStorageData[key]);
-            if (LinkageData.ContainsKey(key))
-                values.AddRange(LinkageData[key]);
+            if (DataEntries.ContainsKey(key))
+                values.AddRange(DataEntries[key]);
+            if (EnclosingScope!= null)
+                values.AddRange(EnclosingScope.Get(key));
             return values;
         }
 

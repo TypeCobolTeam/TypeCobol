@@ -18,6 +18,8 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we detect in the comments lines stream that we are inside a REMARKS compiler directive.
         /// </summary>
         public bool InsideRemarksDirective { get; set; }
+        /// <summary>True if we are inside a COPY=(..) of a REMARKS compiler directive.</summary>
+        public bool InsideRemarksParentheses { get; set; }
 
         /// <summary>
         /// Text names variations declared in REMARS compiler directives.
@@ -118,6 +120,7 @@ namespace TypeCobol.Compiler.Scanner
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             clone.InsideRemarksDirective = InsideRemarksDirective;
+            clone.InsideRemarksParentheses = InsideRemarksParentheses;
             if(CopyTextNamesVariations != null)
             {
                 clone.CopyTextNamesVariations = CopyTextNamesVariations;

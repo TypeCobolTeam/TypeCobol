@@ -304,6 +304,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///   character-string can contain a maximum of 50 characters.
         /// </summary>
         public string Picture { get; set; }
+		public DataType DataType { get; set; }
 
         public bool IsGroup {
             get { return Picture == null; }

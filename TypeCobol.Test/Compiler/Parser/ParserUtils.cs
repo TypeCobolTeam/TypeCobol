@@ -157,7 +157,7 @@ namespace TypeCobol.Test.Compiler.Parser
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
-            Dump(str, program.Data);
+            Dump(str, program.SymbolTable);
             return str;
         }
 
@@ -207,25 +207,18 @@ namespace TypeCobol.Test.Compiler.Parser
             return str;
         }
 
-        private static StringBuilder Dump(StringBuilder str, SymbolTable table)
+        private static StringBuilder Dump(StringBuilder str, SymbolTable table, string header=null)
         {
             if (table == null) return str;
-            Dictionary<string,List<DataDescriptionEntry>> map;
-            map = table.Get(SymbolTable.Section.Working);
-            if(map != null && map.Count > 0) {
-                str.Append("WORKING-STORAGE:\n");
+            if (header == null) header = "SYMBOL TABLE:\n";
+            if (table.CurrentScope == SymbolTable.Scope.External) header = "EXTERNAL SCOPE:\n";
+            if (table.CurrentScope == SymbolTable.Scope.Global) header = "GLOBAL SCOPE:\n";
+            Dictionary<string,List<DataDescriptionEntry>> map = table.DataEntries;
+            if(map.Count > 0) {
+                str.Append(header);
                 Dump(str, map);
             }
-            map = table.Get(SymbolTable.Section.Local);
-            if(map != null && map.Count > 0) {
-                str.Append("LOCAL-STORAGE:\n");
-                Dump(str, map);
-            }
-            map = table.Get(SymbolTable.Section.Linkage);
-            if(map != null && map.Count > 0) {
-                str.Append("LINKAGE:\n");
-                Dump(str, map);
-            }
+            Dump(str, table.EnclosingScope, "ENCLOSING SCOPE:\n");
             return str;
         }
 

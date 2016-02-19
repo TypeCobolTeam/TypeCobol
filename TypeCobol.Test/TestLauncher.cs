@@ -44,5 +44,10 @@ namespace TypeCobol.Test
         {
             TestCollection.CheckPipeline();
         }
+
+        [TestMethod]
+        public void CheckUtils() {
+            TestPictureParsing.Check_PictureToType();
+        }
     }
 }

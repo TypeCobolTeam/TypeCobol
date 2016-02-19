@@ -435,7 +435,7 @@ namespace TypeCobol.Compiler.Parser
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
 
             var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
-            if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
+			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
 
             var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
             entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
@@ -617,11 +617,24 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new ObjectComputerParagraph();
         }
 
-        public override void EnterSpecialNamesParagraph(CobolCodeElementsParser.SpecialNamesParagraphContext context)
-        {
-            Context = context;
-            CodeElement = new SpecialNamesParagraph();
-        }
+		public override void EnterSpecialNamesParagraph(CobolCodeElementsParser.SpecialNamesParagraphContext context) {
+			var paragraph = new SpecialNamesParagraph();
+			foreach(var clause in context.currencySignClause())
+				CreateCurrencySign(paragraph, clause);
+
+			Context = context;
+			CodeElement = paragraph;
+		}
+		public void CreateCurrencySign(SpecialNamesParagraph paragraph, CobolCodeElementsParser.CurrencySignClauseContext context) {
+			var currencies = context.alphanumOrHexadecimalLiteral();
+			string currencyStr = null;
+			string currencyChar = "$";
+			if (currencies.Length > 0)
+				currencyStr = SyntaxElementBuilder.CreateString(currencies[0]);
+			if (currencies.Length > 1)
+				currencyChar = SyntaxElementBuilder.CreateString(currencies[1]);
+			paragraph.CurrencySymbols[currencyChar] = currencyStr;
+		}
 
         public override void EnterRepositoryParagraph(CobolCodeElementsParser.RepositoryParagraphContext context)
         {
@@ -923,11 +936,9 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterIfStatement(CobolCodeElementsParser.IfStatementContext context)
         {
             var statement = new IfStatement();
-            //if (context.conditionalExpression() != null)
-            //{
-            //    statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
-            //}
-
+            if (context.conditionalExpression() != null) {
+                statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
+            }
             Context = context;
             CodeElement = statement;
         }
@@ -949,18 +960,6 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = new EvaluateStatement();
-        }
-
-        public override void EnterWhenEvaluateCondition(CobolCodeElementsParser.WhenEvaluateConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenEvaluateCondition();
-        }
-
-        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenOtherCondition();
         }
 
         public override void EnterEvaluateStatementEnd(CobolCodeElementsParser.EvaluateStatementEndContext context)
@@ -1127,33 +1126,14 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSetStatementForAssignation(CobolCodeElementsParser.SetStatementForAssignationContext context)
         {
             var statement = new SetStatementForAssignation();
-            if (context.setStatementForAssignationReceiving() != null)
+            if (context.identifier() != null)
             {
                 statement.ReceivingFields = new List<Expression>();
-                foreach (
-                    CobolCodeElementsParser.SetStatementForAssignationReceivingContext receivingContext in
-                        context.setStatementForAssignationReceiving())
-                {
+                foreach ( var identifierContext in context.identifier()) {
                     Expression receiving;
-                    if (receivingContext.indexName() != null)
+                    if (identifierContext != null)
                     {
-                        receiving = SyntaxElementBuilder.CreateIndex(receivingContext.indexName());
-                    }
-                    else if (receivingContext.identifier() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateIdentifier(receivingContext.identifier());
-                    }
-                    else if (receivingContext.procedurePointer() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateProcedurePointer(receivingContext.procedurePointer());
-                    }
-                    else if (receivingContext.functionPointer() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateFunctionPointer(receivingContext.functionPointer());
-                    }
-                    else if (receivingContext.objectReferenceId() != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateObjectReferenceId(receivingContext.objectReferenceId());
+                        receiving = SyntaxElementBuilder.CreateIdentifier(identifierContext);
                     }
                     else break;
                     statement.ReceivingFields.Add(receiving);
@@ -1162,11 +1142,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.setStatementForAssignationSending() != null)
             {
-                if (context.setStatementForAssignationSending().indexName() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateIndex(context.setStatementForAssignationSending().indexName());
-                }
-                else if (context.setStatementForAssignationSending().identifier() != null)
+               if (context.setStatementForAssignationSending().identifier() != null)
                 {
                     statement.SendingField = SyntaxElementBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
                 }
@@ -1186,22 +1162,6 @@ namespace TypeCobol.Compiler.Parser
                 {
                     statement.SendingField = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
                 }
-                else if (context.setStatementForAssignationSending().procedurePointer() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateProcedurePointer(context.setStatementForAssignationSending().procedurePointer());
-                }
-                else if (context.setStatementForAssignationSending().functionPointer() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateFunctionPointer(context.setStatementForAssignationSending().functionPointer());
-                }
-                else if (context.setStatementForAssignationSending().pointerDataItem() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreatePointerDataItem(context.setStatementForAssignationSending().pointerDataItem());
-                }
-                else if (context.setStatementForAssignationSending().objectReferenceId() != null)
-                {
-                    statement.SendingField = SyntaxElementBuilder.CreateObjectReferenceId(context.setStatementForAssignationSending().objectReferenceId());
-                } 
                 else if (context.setStatementForAssignationSending().SELF() != null)
                 {
                     statement.SendingField =
@@ -1536,10 +1496,16 @@ namespace TypeCobol.Compiler.Parser
 
         // Statement conditions
 
-        public override void EnterWhenConditionalExpression(CobolCodeElementsParser.WhenConditionalExpressionContext context)
+        public override void EnterWhenCondition(CobolCodeElementsParser.WhenConditionContext context)
         {
             Context = context;
             CodeElement = new WhenConditionalExpression();
+        }
+
+        public override void EnterWhenOtherCondition(CobolCodeElementsParser.WhenOtherConditionContext context)
+        {
+            Context = context;
+            CodeElement = new WhenOtherCondition();
         }
 
         public override void EnterAtEndCondition(CobolCodeElementsParser.AtEndConditionContext context)

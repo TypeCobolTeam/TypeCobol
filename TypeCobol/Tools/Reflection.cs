@@ -14,6 +14,7 @@ namespace TypeCobol.Tools
         public static List<Type> GetTypesInNamespace<T>(Assembly assembly, string nspace) {
             var types = new List<Type>();
             foreach(var type in assembly.GetTypes()) {
+				if (type.Namespace == null) continue;
                 if (type.Namespace.StartsWith(nspace)) {
                     if (IsTypeOf(type, typeof(T))) types.Add(type);
                 }
