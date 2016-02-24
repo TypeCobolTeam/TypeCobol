@@ -105,6 +105,21 @@
     <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassVisitor.cs">
       <Link>Compiler\Parser\Generated\CobolProgramClassVisitor.cs</Link>
     </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolBaseListener.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolBaseListener.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolBaseVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolListener.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolListener.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolParser.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolParser.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolVisitor.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolVisitor.cs</Link>
+    </Compile>
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\DiagnosticSyntaxErrorListener.cs" />
@@ -321,6 +336,7 @@
     <Compile Include="Compiler\Parser\SyntaxElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementsDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />
+    <Compile Include="Compiler\Parser\TypeCobolElementBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CopyTokensLinesIterator.cs" />
     <Compile Include="Compiler\Preprocessor\ImportedTokensDocument.cs" />
@@ -372,6 +388,7 @@
     <Compile Include="Compiler\TypeChecker\CobolTypeChecker.cs" />
     <Compile Include="Tools\Reflection.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolCompiler.cs" />
+    <Compile Include="Tools\CodeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
