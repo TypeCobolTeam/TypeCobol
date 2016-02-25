@@ -8,10 +8,10 @@ namespace TypeCobol.Compiler.CodeElements
             get { return new System.Collections.ObjectModel.ReadOnlyCollection<Node>(children_); }
             private set { throw new System.InvalidOperationException(); }
         }
-        public CodeElement CodeElement { get; internal set; }
+        public object CodeElement { get; internal set; }
         public Node Parent { get; internal set; }
 
-        public Node(CodeElement e) { CodeElement = e; }
+        public Node(object e) { CodeElement = e; }
 
         internal void Add(Node child) {
             children_.Add(child);
@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.CodeElements
             Parent = null;
         }
 
-        public string ToString() {
+        public override string ToString() {
             if (CodeElement==null) return GetType().Name+"?";
             else return CodeElement.GetType().Name;
         }
