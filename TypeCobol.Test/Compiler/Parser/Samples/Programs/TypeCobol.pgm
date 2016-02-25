@@ -1,0 +1,23 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. TypeCobol.
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+
+01 Feature TYPE.
+  02 Feature-name PIC X(15) OCCURS 10.
+01 Equipment.
+  02 Equipment-id OCCURS 100 TIMES.
+    03 Feature-list TYPE 'Feature'.
+
+01 Vect2 TYPE.
+  05 Coord2d.
+    10 X PIC X.
+    10 Y PIC X.
+  05 Coord3d.
+    10 Z PIC X.
+01 Point.
+  05 Position2d TYPE 'Vect2'.
+  05 Movment2d.
+    11 Accel2d  TYPE 'Vect2'.
+    11 Speed2d  TYPE 'Vect2'.

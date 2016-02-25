@@ -2844,12 +2844,13 @@ dataDescriptionEntry:
 	| synchronizedClause
 	| usageClause
 	| valueClause
-//	| typeCobolExt_typeClause
+	| tcExtTypedefClause
+	| tcExtTypeClause
 	)* PeriodSeparator;
 
 // TypeCobol extension DEMO
-
-typeCobolExt_typeClause: TYPE AlphanumericLiteral;
+tcExtTypedefClause: TYPE;
+tcExtTypeClause:    TYPE AlphanumericLiteral;
 
 // p158: The relationships among all data to be used in a program are defined in the DATA DIVISION through a system of level indicators and level-numbers.
 

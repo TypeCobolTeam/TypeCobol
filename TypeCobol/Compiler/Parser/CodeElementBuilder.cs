@@ -453,6 +453,9 @@ namespace TypeCobol.Compiler.Parser
             UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
             UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
             UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
+// [TYPECOBOL]
+			entry.IsTypeDefinition = (context.tcExtTypedefClause().Length > 0);
+// [/TYPECOBOL]
 
             Context = context;
             CodeElement = entry;
