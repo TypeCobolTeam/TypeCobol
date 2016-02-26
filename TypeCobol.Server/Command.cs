@@ -65,8 +65,8 @@ var time1 = sw.ElapsedMilliseconds;
 			Parser.Parse(path, e);
 var time2 = sw.ElapsedMilliseconds;
 			SerializeReturnCode(0);
-			Serializer.Lines = Parser.Snapshot.Lines;
-			Serializer.Serialize(Output, Parser.CodeElements);
+			Serializer.Lines = Parser.CodeElementsSnapshot.Lines;
+			Serializer.Serialize(Output, Parser.CodeElementsSnapshot.CodeElements);
 var time3 = sw.ElapsedMilliseconds;
 sw.Stop();
 

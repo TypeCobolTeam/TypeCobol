@@ -65,13 +65,15 @@ namespace TypeCobol.Server
 		}
 
 		private static void runOnce(Config config) {
-foreach(var f in config.InputFiles) System.Console.WriteLine(" < "+f);
-foreach(var f in config.OutputFiles) System.Console.WriteLine(" > "+f);
-			throw new System.NotImplementedException("TODO: parse "+config.InputFiles.Count+" files into "+config.OutputFiles.Count+" files (error file:"+config.ErrorFile+")");
+			var parser = new Parser("TypeCobol.Server");
+			for(int c=0; c<config.InputFiles.Count; c++) {
+				parser.Parse(config.InputFiles[c]);
+				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Snapshot, null);
+				codegen.GenerateCobolText(config.OutputFiles[c]);
+			}
 		}
 
 		private static void runServer(string pipename) {
-
 			var parser = new Parser("TypeCobol.Server");
 			var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
 			Commands.Register(66, new Parse(parser, pipe, pipe));
