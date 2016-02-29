@@ -4,13 +4,13 @@
 DATA DIVISION.
 WORKING-STORAGE SECTION.
 
-01 Feature TYPE.
+01 Feature TYPEDEF.
   02 Feature-name PIC X(15) OCCURS 10.
 01 Equipment.
   02 Equipment-id OCCURS 100 TIMES.
     03 Feature-list TYPE 'Feature'.
 
-01 Vect2 TYPE.
+01 Vect2 TYPEDEF.
   05 Coord2d.
     10 X PIC X.
     10 Y PIC X.

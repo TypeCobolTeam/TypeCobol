@@ -26,5 +26,5 @@ dataDescriptionEntry:
 	| tcExtTypeClause
 	)* PeriodSeparator;
 
-tcExtTypedefClause: TYPE;
+tcExtTypedefClause: TYPEDEF STRONG?;
 tcExtTypeClause:    TYPE AlphanumericLiteral;
