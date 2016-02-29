@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
+    <None Include="Grammars\Cobol\CobolCodeElementsNew.g4" />
     <None Include="Grammars\Cobol\CobolBase.g4" />
     <Antlr4 Include="Grammars\Cobol\CobolCompilerDirectives.g4">
       <Generator>MSBuild:Compile</Generator>
@@ -71,7 +72,7 @@
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="Grammars\Cobol\TokenTypes.xlsx" />
-    <Antlr4 Include="Grammars\Cobol\TypeCobol.g4">
+    <Antlr4 Include="Grammars\Cobol\TypeCobolCodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>

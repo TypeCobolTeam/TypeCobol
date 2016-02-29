@@ -105,20 +105,20 @@
     <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassVisitor.cs">
       <Link>Compiler\Parser\Generated\CobolProgramClassVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolBaseListener.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolBaseListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsBaseListener.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolBaseVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolListener.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsListener.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolParser.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolParser.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsParser.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolVisitor.cs">
-      <Link>Compiler\Parser\Generated\TypeCobolVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsVisitor.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
     </Compile>
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
@@ -336,7 +336,6 @@
     <Compile Include="Compiler\Parser\SyntaxElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementsDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />
-    <Compile Include="Compiler\Parser\TypeCobolElementBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CopyTokensLinesIterator.cs" />
     <Compile Include="Compiler\Preprocessor\ImportedTokensDocument.cs" />
