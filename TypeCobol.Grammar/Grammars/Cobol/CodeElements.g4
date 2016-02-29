@@ -6,7 +6,7 @@
 // LIST of syntax nodes instead of TREE (because it is easier to reuse).
 // -----------------------------------------------------------------------
 
-grammar CobolCodeElements;
+grammar CodeElements;
 
 // importing boths grammar raises the following error message:
 // "repeated grammar prequel spec (options, tokens, or import); please merge"

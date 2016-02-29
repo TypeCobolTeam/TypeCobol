@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
             var data = e as DataDescriptionEntry;
-            var context = c as CobolCodeElementsParser.DataDescriptionEntryContext;
+            var context = c as CodeElementsParser.DataDescriptionEntryContext;
 
             var picture   = GetContext(data, context.pictureClause());
             var blank     = GetContext(data, context.blankWhenZeroClause());
@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
             var statement = e as AddStatement;
-            var context = c as CobolCodeElementsParser.AddStatementFormat2Context;
+            var context = c as CodeElementsParser.AddStatementFormat2Context;
             if (context == null) return; //we only check format 2
             if (context.GIVING() == null)
                 DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
             var statement = e as CallStatement;
-            var context = c as CobolCodeElementsParser.CallStatementContext;
+            var context = c as CodeElementsParser.CallStatementContext;
 
             //foreach (var call in context.callBy()) CheckCallUsings(statement, call);
 
@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callReturning());
         }
 
-        private void CheckCallUsings(CallStatement statement, CobolCodeElementsParser.CallByContext context){
+        private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallByContext context){
             foreach(var e in statement.Usings) {
                 if (e.Identifier != null) {
                     if (e.Identifier as FunctionReference != null)
@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext ctxt) {
             var statement = e as CancelStatement;
-            var context = ctxt as CobolCodeElementsParser.CancelStatementContext;
+            var context = ctxt as CodeElementsParser.CancelStatementContext;
 
             foreach (var item in statement.Items)
             {
@@ -140,7 +140,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
             var sa = e as TypeCobol.Compiler.CodeElements.SetStatementForAssignation;
             if (sa != null) {
-                var ca = c as CobolCodeElementsParser.SetStatementForAssignationContext;
+                var ca = c as CodeElementsParser.SetStatementForAssignationContext;
                 for (int i = 0; i < ca.identifier().Length; i++) {
                     if (i >= sa.ReceivingFields.Count) {
                         var ctxt = ca.identifier()[i];
@@ -154,7 +154,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var si = e as TypeCobol.Compiler.CodeElements.SetStatementForIndex;
             if (si != null) {
                 if (si.SendingField == null) {
-                    var ci = c as CobolCodeElementsParser.SetStatementForIndexesContext;
+                    var ci = c as CodeElementsParser.SetStatementForIndexesContext;
                     DiagnosticUtils.AddError(si, "Set xxx up/down by xxx: Sending field missing or type unknown", ci);
                 }
             }
@@ -168,7 +168,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
             var statement = e as StartStatement;
-            var context = c as CobolCodeElementsParser.StartStatementContext;
+            var context = c as CodeElementsParser.StartStatementContext;
             if (context.relationalOperator() != null)
                 if (statement.Operator != '=' && statement.Operator != '>' && statement.Operator != '≥')
                     DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.Operator, context.relationalOperator());
@@ -182,7 +182,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
         public void OnCodeElement(CodeElement e, ParserRuleContext c) {
             var statement = e as StopStatement;
-            var context = c as CobolCodeElementsParser.StopStatementContext;
+            var context = c as CodeElementsParser.StopStatementContext;
             if (context.literal() != null)
                 if (statement.Literal != null && statement.Literal.All)
                     DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
