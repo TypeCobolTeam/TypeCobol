@@ -1,6 +1,6 @@
 grammar TypeCobolCodeElements;
 
-import CobolCodeElementsNew;
+import CobolCodeElements;
 
 // --- Starting rule ---
 cobolCodeElements: codeElement* EOF;

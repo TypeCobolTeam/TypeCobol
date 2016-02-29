@@ -11,7 +11,7 @@ grammar CodeElements;
 // importing boths grammar raises the following error message:
 // "repeated grammar prequel spec (options, tokens, or import); please merge"
 // so we switch between grammars depending wether or not we want TypeCobol
-//import CobolCodeElementsNew;
+//import CobolCodeElements;
 import TypeCobolCodeElements;
 
 // --- Starting parser rule for PHASE 1 of parsing ---

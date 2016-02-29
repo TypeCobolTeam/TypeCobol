@@ -6,7 +6,7 @@
 // LIST of syntax nodes instead of TREE (because it is easier to reuse).
 // -----------------------------------------------------------------------
 
-grammar CobolCodeElementsNew;
+grammar CobolCodeElements;
 
 import CobolBase;
 
