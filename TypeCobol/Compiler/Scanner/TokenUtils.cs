@@ -22,11 +22,12 @@ namespace TypeCobol.Compiler.Scanner
 				if (tokenType == (int)families[family+1]) family++;
 			}
 			// Register the token strings corresponding to each token type (for keywords only)
-			int max = (int)TokenType.CompilerDirective-1;
+			int keywordBegin = 38;
+			int keywordEnd = (int)TokenType.CompilerDirective-1;
 			tokenStringFromTokenType = new string[types.Length];
-			for(int c=38; c<types.Length; c++) {
+			for(int c=keywordBegin; c<types.Length; c++) {
 				var current = types[c];
-				if ((int)current > max) break;
+				if ((int)current > keywordEnd) break;
 				tokenStringFromTokenType[(int)current] = current.ToString().Replace('_','-');
 			}
 			tokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
