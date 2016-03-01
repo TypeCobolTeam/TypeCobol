@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Parser
     class LogicalExpressionBuilder
     {
 
-        public LogicalExpression createCondition(CobolCodeElementsParser.ConditionalExpressionContext context) {
+        public LogicalExpression createCondition(CodeElementsParser.ConditionalExpressionContext context) {
             var conditions = new List<LogicalExpression>();
             foreach(var terminal in context.conditionalExpression()) conditions.Add(createCondition(terminal));
             if (conditions.Count < 1) {
@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.Parser
             throw new System.NotSupportedException("Uh-oh!");
         }
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.ComplexConditionContext context)
+        //private LogicalExpression createCondition(CodeElementsParser.ComplexConditionContext context)
         //{
         //    if (context.andCondition() != null)
         //    {
@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Parser
         //    return new Empty();
         //}
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.AndConditionContext context)
+        //private LogicalExpression createCondition(CodeElementsParser.AndConditionContext context)
         //{
         //    if (context.notCondition() != null)
         //    {
@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.Parser
         //    return new Empty();
         //}
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.NotConditionContext context)
+        //private LogicalExpression createCondition(CodeElementsParser.NotConditionContext context)
         //{
         //    if (context.conditionBase() != null)
         //    {
@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.Parser
         //    return new Empty();
         //}
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.ConditionBaseContext context)
+        //private LogicalExpression createCondition(CodeElementsParser.ConditionBaseContext context)
         //{
         //    if (context.simpleCondition() != null)
         //        return createCondition(context.simpleCondition());
@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.Parser
         //    return new Empty();
         //}
 
-        //private LogicalExpression createCondition(CobolCodeElementsParser.SimpleConditionContext context)
+        //private LogicalExpression createCondition(CodeElementsParser.SimpleConditionContext context)
         //{
         //    if (context.classCondition() != null)
         //        return createCondition(context.classCondition());
@@ -110,7 +110,7 @@ namespace TypeCobol.Compiler.Parser
         //    return new Empty();
         //}
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.ClassConditionContext context)
+        private LogicalExpression createCondition(CodeElementsParser.ClassConditionContext context)
         {
             Symbol type = null;
             if (context.charsetClassName() != null) type = new CharsetClassName(ParseTreeUtils.GetFirstToken(context.charsetClassName()));
@@ -125,24 +125,24 @@ namespace TypeCobol.Compiler.Parser
             return condition;
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameConditionContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.ConditionNameConditionContext context) {
             if (context == null) return null;
             return createCondition(context.conditionNameReference());
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.ConditionNameReferenceContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.ConditionNameReferenceContext context) {
             if (context == null) return null;
             QualifiedName conditionname = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
             IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());
             return new Condition(conditionname, subscripts);
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.QualifiedConditionNameContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.QualifiedConditionNameContext context) {
             if (context == null) return null;
             return new Condition(SyntaxElementBuilder.CreateQualifiedName(context));
         }
 
-        internal char CreateOperator(CobolCodeElementsParser.RelationalOperatorContext context)
+        internal char CreateOperator(CodeElementsParser.RelationalOperatorContext context)
         {
             if (context == null) return '?';
             var simple = context.simpleRelation();
@@ -190,7 +190,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private Expression createOperand(CobolCodeElementsParser.OperandContext context) {
+        private Expression createOperand(CodeElementsParser.OperandContext context) {
             if (context == null) return null;
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
             if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
@@ -199,7 +199,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.GeneralRelationConditionContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.GeneralRelationConditionContext context) {
             if (context == null)  return null;
             var left = createOperand(context.operand());
             char op = CreateOperator(context.relationalOperator());
@@ -210,7 +210,7 @@ namespace TypeCobol.Compiler.Parser
         /// issue #151: this method only manages to return correct results with very simple abbreviated relations.
         /// it returns WRONG results with the majority of what can be written with this horrid syntax.
         /// </summary>
-        private LogicalExpression CreateExpression(Expression left, char op, CobolCodeElementsParser.AbbreviatedExpressionContext context) {
+        private LogicalExpression CreateExpression(Expression left, char op, CodeElementsParser.AbbreviatedExpressionContext context) {
             char op2 = '?';
             var operand = createOperand(context.operand());
             if (operand != null) {
@@ -236,7 +236,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.PointerRelationConditionContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.PointerRelationConditionContext context) {
             var op = createOperator(context.relationConditionEquality());
             var operands = context.specificPointerOperand();
             var left = createOperand(operands[0]);
@@ -244,7 +244,7 @@ namespace TypeCobol.Compiler.Parser
             return LogicOperation.Create(left, op, right);
         }
 
-        private char createOperator(CobolCodeElementsParser.RelationConditionEqualityContext context)
+        private char createOperator(CodeElementsParser.RelationConditionEqualityContext context)
         {
             if (context == null) return '?';
             if (context.NOT() != null) return '!';
@@ -252,7 +252,7 @@ namespace TypeCobol.Compiler.Parser
             return '?';
         }
 
-        private Expression createOperand(CobolCodeElementsParser.SpecificPointerOperandContext context) {
+        private Expression createOperand(CodeElementsParser.SpecificPointerOperandContext context) {
             if (context == null) return null;
 
             if (context.identifier() != null) {
@@ -265,7 +265,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private LogicalExpression createCondition(CobolCodeElementsParser.SignConditionContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.SignConditionContext context) {
             if (context == null) return null;
             Expression operand = createOperand(context.operand());
             bool not = context.NOT() != null;
@@ -279,7 +279,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        //internal LogicOperation CreateOperation(Expression left, char op, CobolCodeElementsParser.AbbreviatedORContext context)
+        //internal LogicOperation CreateOperation(Expression left, char op, CodeElementsParser.AbbreviatedORContext context)
         //{
         //    if (context == null) return null;
         //    LogicOperation operation = null;
@@ -294,7 +294,7 @@ namespace TypeCobol.Compiler.Parser
         //    return operation;
         //}
 
-        //private LogicOperation createOperation(Expression left, char op, CobolCodeElementsParser.AbbreviatedANDContext context)
+        //private LogicOperation createOperation(Expression left, char op, CodeElementsParser.AbbreviatedANDContext context)
         //{
         //    if (context == null) return null;
         //    LogicOperation operation = null;
@@ -309,12 +309,12 @@ namespace TypeCobol.Compiler.Parser
         //    return operation;
         //}
 
-        //private LogicOperation createOperation(Expression left, char op, CobolCodeElementsParser.AbbreviatedNOTContext context)
+        //private LogicOperation createOperation(Expression left, char op, CodeElementsParser.AbbreviatedNOTContext context)
         //{
         //    return createOperation(left, (context.NOT() != null), op, context.abbreviatedExpression());
         //}
 
-        //private LogicOperation createOperation(Expression left, bool not, char op, CobolCodeElementsParser.AbbreviatedExpressionContext context)
+        //private LogicOperation createOperation(Expression left, bool not, char op, CodeElementsParser.AbbreviatedExpressionContext context)
         //{
         //    if (context == null) return null;
         //    if (context.abbreviatedOperand() != null ) return createOperand(left, not, op, context.abbreviatedOperand());
@@ -322,7 +322,7 @@ namespace TypeCobol.Compiler.Parser
         //    return null;
         //}
 
-        //private Relation createOperand(Expression left, bool not, char op, CobolCodeElementsParser.AbbreviatedOperandContext context)
+        //private Relation createOperand(Expression left, bool not, char op, CodeElementsParser.AbbreviatedOperandContext context)
         //{
         //    if (context.relationalOperator() != null) op = CreateOperator(context.relationalOperator());
         //    if (not) op = invertOperator(op);

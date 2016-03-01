@@ -45,7 +45,7 @@ namespace TypeCobol.Server
             Inits.Add(path, false);
         }
 
-        public void Parse(string path, TextChangedEvent e)
+        public void Parse(string path, TextChangedEvent e=null)
         {
             //if the server is restarted during Eclipse lifetime, then we need to init the parser
             //This is useful when debugging. Perhaps it'll be deleted at the end
@@ -104,14 +104,6 @@ namespace TypeCobol.Server
             System.Console.WriteLine("--- --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
         }
 
-        public IDocumentSnapshot<ICodeElementsLine> Snapshot
-        {
-            get
-            {
-                return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot;
-            }
-        }
-
         public IEnumerable<CodeElement> CodeElements
         {
             get
@@ -122,15 +114,13 @@ namespace TypeCobol.Server
             }
         }
 
-        public IEnumerable<Diagnostic> Errors
-        {
-            get
-            {
-                // TODO test if compilation is done
-                if (Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot == null) return new List<Diagnostic>();
-                return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.ParserDiagnostics;
-            }
-        }
+		public CodeElementsDocument CodeElementsSnapshot {
+			get { return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot; }
+		}
+
+		public ProgramClassDocument Snapshot {
+			get { return Compiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot; }
+		}
     }
 
 

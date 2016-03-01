@@ -194,7 +194,12 @@ namespace TypeCobol.Compiler.Parser
 		}
 
         private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
-            foreach(var d in data) CurrentProgram.SymbolTable.Add(section, d);
+            foreach(var d in data) {
+// [TYPECOBOL]
+				if (d.IsTypeDefinition) CurrentProgram.CustomTypes[d.Name.Name] = d;
+// [/TYPECOBOL]
+				else CurrentProgram.SymbolTable.Add(section, d);
+			}
         }
 
         public override void EnterProcedureDivision(CobolProgramClassParser.ProcedureDivisionContext context) {

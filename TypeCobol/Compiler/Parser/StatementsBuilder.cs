@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.Parser
          // ACCEPT STATEMENT //
         //////////////////////
 
-        internal AcceptStatement CreateAcceptStatement(CobolCodeElementsParser.AcceptStatementContext context)
+        internal AcceptStatement CreateAcceptStatement(CodeElementsParser.AcceptStatementContext context)
         {
             var statement = new AcceptStatement();
             statement.Receiving = SyntaxElementBuilder.CreateIdentifier(context.identifier());
@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private DateMode CreateDateMode(CobolCodeElementsParser.AcceptStatementContext context)
+        private DateMode CreateDateMode(CodeElementsParser.AcceptStatementContext context)
         {
             if (context.YYYYMMDD() != null) return DateMode.DATE_YYYYMMDD;
             if (context.DATE() != null) return DateMode.DATE_YYMMDD;
@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.Parser
          // CALL STATEMENT //
         ////////////////////
 
-        internal CallStatement CreateCallStatement(CobolCodeElementsParser.CallStatementContext context)
+        internal CallStatement CreateCallStatement(CodeElementsParser.CallStatementContext context)
         {
             var statement = new CallStatement();
             statement.Subprogram = CreateProgram(context);
@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private CallStatement.Program CreateProgram(CobolCodeElementsParser.CallStatementContext context)
+        private CallStatement.Program CreateProgram(CodeElementsParser.CallStatementContext context)
         {
             if (context.identifier() != null)
             {
@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private void AddCallUsings(CobolCodeElementsParser.CallByContext context, CallStatement statement)
+        private void AddCallUsings(CodeElementsParser.CallByContext context, CallStatement statement)
         {
             if (context == null) return;
             CallStatement.Using.Mode mode = CreateCallMode(context, statement);
@@ -115,7 +115,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private CallStatement.Using.Mode CreateCallMode(CobolCodeElementsParser.CallByContext context, CallStatement statement)
+        private CallStatement.Using.Mode CreateCallMode(CodeElementsParser.CallByContext context, CallStatement statement)
         {
             if (context.VALUE() != null) return CallStatement.Using.Mode.VALUE;
             if (context.CONTENT() != null) return CallStatement.Using.Mode.CONTENT;
@@ -135,7 +135,7 @@ namespace TypeCobol.Compiler.Parser
          // GOTO STATEMENT //
         ////////////////////
 
-        internal GotoStatement CreateGotoStatement(CobolCodeElementsParser.GotoStatementContext context)
+        internal GotoStatement CreateGotoStatement(CodeElementsParser.GotoStatementContext context)
         {
             var statement = new GotoStatement();
             foreach (var procedure in context.procedureName())
@@ -160,7 +160,7 @@ namespace TypeCobol.Compiler.Parser
          // INITIALIZE STATEMENT //
         //////////////////////////
 
-        internal InitializeStatement CreateInitializeStatement(CobolCodeElementsParser.InitializeStatementContext context)
+        internal InitializeStatement CreateInitializeStatement(CodeElementsParser.InitializeStatementContext context)
         {
             var statement = new InitializeStatement();
             statement.Receiving = SyntaxElementBuilder.CreateIdentifiers(context.identifier());
@@ -172,7 +172,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private InitializeStatement.Replacing.Mode CreateInitializeMode(CobolCodeElementsParser.InitializeReplacingContext context)
+        private InitializeStatement.Replacing.Mode CreateInitializeMode(CodeElementsParser.InitializeReplacingContext context)
         {
             if (context.ALPHABETIC() != null) return InitializeStatement.Replacing.Mode.ALPHABETIC;
             if (context.ALPHANUMERIC() != null) return InitializeStatement.Replacing.Mode.ALPHANUMERIC;
@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler.Parser
          // INSPECT STATEMENT //
         ///////////////////////
 
-        internal CodeElement CreateInspectStatement(CobolCodeElementsParser.InspectStatementContext context)
+        internal CodeElement CreateInspectStatement(CodeElementsParser.InspectStatementContext context)
         {
             var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
 
@@ -223,7 +223,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private InspectConvertingStatement CreateInspectConverting(CobolCodeElementsParser.InspectConvertingContext context)
+        private InspectConvertingStatement CreateInspectConverting(CodeElementsParser.InspectConvertingContext context)
         {
             var statement = new InspectConvertingStatement();
             if (context.identifierOrLiteral().Length > 0)
@@ -240,7 +240,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectByIdentifiersContext context, InspectStatement statement, bool meWantsBy)
+        private InspectStatement.Subject CreateInspectSubject(CodeElementsParser.InspectByIdentifiersContext context, InspectStatement statement, bool meWantsBy)
         {
             var result = new InspectStatement.Subject();
             result.SubstitutionField = CreateInspectBy(context.inspectBy());
@@ -252,7 +252,7 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-        private InspectStatement.Subject CreateInspectSubject(CobolCodeElementsParser.InspectCharactersContext context, InspectStatement statement, bool meWantsBy)
+        private InspectStatement.Subject CreateInspectSubject(CodeElementsParser.InspectCharactersContext context, InspectStatement statement, bool meWantsBy)
         {
             var result = new InspectStatement.Subject();
             result.SubstitutionField = CreateInspectBy(context.inspectBy());
@@ -264,7 +264,7 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-        private InspectStatement.ALF CreateInspectIdentifier(CobolCodeElementsParser.InspectIdentifiersContext context, InspectStatement statement, bool meWantsBy, bool isFirstAllowed)
+        private InspectStatement.ALF CreateInspectIdentifier(CodeElementsParser.InspectIdentifiersContext context, InspectStatement statement, bool meWantsBy, bool isFirstAllowed)
         {
             var alf = new InspectStatement.ALF();
             alf.All = context.ALL() != null;
@@ -280,7 +280,7 @@ namespace TypeCobol.Compiler.Parser
             return alf;
         }
 
-        private IList<Delimiter> CreateDelimiters(IReadOnlyList<CobolCodeElementsParser.InspectPhrase1Context> context, CodeElement e)
+        private IList<Delimiter> CreateDelimiters(IReadOnlyList<CodeElementsParser.InspectPhrase1Context> context, CodeElement e)
         {
             var delimiters = new List<Delimiter>();
             bool seenBefore = false, seenAfter = false;
@@ -302,7 +302,7 @@ namespace TypeCobol.Compiler.Parser
             return delimiters;
         }
 
-        private Delimiter CreateDelimiter(CobolCodeElementsParser.InspectPhrase1Context context)
+        private Delimiter CreateDelimiter(CodeElementsParser.InspectPhrase1Context context)
         {
             var delimiter = new Delimiter();
             delimiter.Initial = context.INITIAL() != null;
@@ -312,7 +312,7 @@ namespace TypeCobol.Compiler.Parser
             return delimiter;
         }
 
-        private Expression CreateInspectBy(CobolCodeElementsParser.InspectByContext context)
+        private Expression CreateInspectBy(CodeElementsParser.InspectByContext context)
         {
             if (context == null) return null;
             return SyntaxElementBuilder.CreateIdentifierOrLiteral(context.identifierOrLiteral());
@@ -324,7 +324,7 @@ namespace TypeCobol.Compiler.Parser
          // INVOKE STATEMENT //
         //////////////////////
 
-        internal InvokeStatement CreateInvokeStatement(CobolCodeElementsParser.InvokeStatementContext context)
+        internal InvokeStatement CreateInvokeStatement(CodeElementsParser.InvokeStatementContext context)
         {
             var statement = new InvokeStatement();
 
@@ -382,7 +382,7 @@ namespace TypeCobol.Compiler.Parser
          // MOVE STATEMENT //
         ////////////////////
 
-        internal MoveStatement CreateMoveStatement(Generated.CobolCodeElementsParser.MoveStatementContext context)
+        internal MoveStatement CreateMoveStatement(Generated.CodeElementsParser.MoveStatementContext context)
         {
             var sending   = SyntaxElementBuilder.CreateIdentifierOrLiteral(context.identifierOrLiteral());
             var receiving = SyntaxElementBuilder.CreateIdentifiers(context.identifier());
@@ -413,7 +413,7 @@ namespace TypeCobol.Compiler.Parser
          // RETURN STATEMENT //
         //////////////////////
 
-        internal ReturnStatement CreateReturnStatement(Generated.CobolCodeElementsParser.ReturnStatementContext context)
+        internal ReturnStatement CreateReturnStatement(Generated.CodeElementsParser.ReturnStatementContext context)
         {
             if (context == null) return null;
             var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
@@ -428,7 +428,7 @@ namespace TypeCobol.Compiler.Parser
          // SEARCH STATEMENT //
         //////////////////////
 
-        internal SearchStatement CreateSearchStatement(CobolCodeElementsParser.SearchStatementContext context)
+        internal SearchStatement CreateSearchStatement(CodeElementsParser.SearchStatementContext context)
         {
             var statement = new SearchStatement();
             statement.All = context.ALL() != null;
@@ -466,7 +466,7 @@ namespace TypeCobol.Compiler.Parser
          // MERGE STATEMENT //
         /////////////////////
 
-        internal MergeStatement CreateMergeStatement(CobolCodeElementsParser.MergeStatementContext context)
+        internal MergeStatement CreateMergeStatement(CodeElementsParser.MergeStatementContext context)
         {
             var statement = new MergeStatement();
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
@@ -487,7 +487,7 @@ namespace TypeCobol.Compiler.Parser
          // SORT STATEMENT //
         ////////////////////
 
-        internal SortStatement CreateSortStatement(CobolCodeElementsParser.SortStatementContext context)
+        internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)
         {
             var statement = new SortStatement();
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
@@ -504,7 +504,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private IList<KeyDataItem> CreateKeyDataItems(IReadOnlyList<CobolCodeElementsParser.OnAscendingDescendingKeyContext> context)
+        private IList<KeyDataItem> CreateKeyDataItems(IReadOnlyList<CodeElementsParser.OnAscendingDescendingKeyContext> context)
         {
             var keys = new List<KeyDataItem>();
             foreach (var key in context)
@@ -515,7 +515,7 @@ namespace TypeCobol.Compiler.Parser
             return keys;
         }
 
-        private KeyDataItem CreateKeyDataItem(CobolCodeElementsParser.OnAscendingDescendingKeyContext context)
+        private KeyDataItem CreateKeyDataItem(CodeElementsParser.OnAscendingDescendingKeyContext context)
         {
             if (context == null) return null;
             var key = new KeyDataItem();
@@ -530,7 +530,7 @@ namespace TypeCobol.Compiler.Parser
          // USE STATEMENT //
         ///////////////////
 
-        internal UseErrorsStatement CreateUseStatement(CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context)
+        internal UseErrorsStatement CreateUseStatement(CodeElementsParser.UseStatementForExceptionDeclarativeContext context)
         {
             var statement = new UseErrorsStatement();
             if (context.fileName() != null)
@@ -545,7 +545,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private OpenMode CreateOpenMode(CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context, UseErrorsStatement statement)
+        private OpenMode CreateOpenMode(CodeElementsParser.UseStatementForExceptionDeclarativeContext context, UseErrorsStatement statement)
         {
             if (context.INPUT() != null)
             {
@@ -574,14 +574,14 @@ namespace TypeCobol.Compiler.Parser
             return OpenMode.NONE;
         }
         /*
-        private void AddError(UseErrorsStatement statement, string mode, CobolCodeElementsParser.UseStatementForExceptionDeclarativeContext context, Antlr4.Runtime.Tree.ITerminalNode node)
+        private void AddError(UseErrorsStatement statement, string mode, CodeElementsParser.UseStatementForExceptionDeclarativeContext context, Antlr4.Runtime.Tree.ITerminalNode node)
         {
             var rulestack = new TypeCobol.Compiler.AntlrUtils.RuleStackBuilder().GetRuleStack(context);
             var token = TypeCobol.Compiler.AntlrUtils.ParseTreeUtils.GetTokenFromTerminalNode(node);
             DiagnosticUtils.AddError(statement, "USE AFTER ERROR: Illegal <filename list> with "+mode, token, rulestack);
         }
         */
-        internal UseDebuggingStatement CreateUseStatement(CobolCodeElementsParser.UseStatementForDebuggingDeclarativeContext context)
+        internal UseDebuggingStatement CreateUseStatement(CodeElementsParser.UseStatementForDebuggingDeclarativeContext context)
         {
             var statement = new UseDebuggingStatement();
             if (context.ALL() != null) statement.AllProcedures = true;
@@ -609,7 +609,7 @@ namespace TypeCobol.Compiler.Parser
          // XML GENERATE STATEMENT //
         ////////////////////////////
 
-        internal XmlGenerateStatement CreateXmlGenerateStatement(CobolCodeElementsParser.XmlGenerateStatementContext context)
+        internal XmlGenerateStatement CreateXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context)
         {
             var statement = new XmlGenerateStatement();
             statement.Encoding = SyntaxElementBuilder.CreateEncoding(context.codepage());
@@ -656,14 +656,14 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private static Expression CreateIdentifierOrAlphanumericOrNationalLiteral(CobolCodeElementsParser.IdentifierContext identifier, 
-                                                                                  CobolCodeElementsParser.AlphanumOrNationalLiteralContext literal) {
+        private static Expression CreateIdentifierOrAlphanumericOrNationalLiteral(CodeElementsParser.IdentifierContext identifier, 
+                                                                                  CodeElementsParser.AlphanumOrNationalLiteralContext literal) {
             Expression result = SyntaxElementBuilder.CreateIdentifier(identifier);
             if (result != null) return result;
             return SyntaxElementBuilder.CreateLiteral(literal);
         }
 
-        private XmlGenerateStatement.Name CreateXmlName(CobolCodeElementsParser.XmlNameContext context)
+        private XmlGenerateStatement.Name CreateXmlName(CodeElementsParser.XmlNameContext context)
         {
             if (context == null) return null;
             var result = new XmlGenerateStatement.Name();
@@ -672,7 +672,7 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-        private XmlGenerateStatement.Type CreateXmlType(CobolCodeElementsParser.XmlTypeContext context)
+        private XmlGenerateStatement.Type CreateXmlType(CodeElementsParser.XmlTypeContext context)
         {
             if (context == null) return null;
             var result = new XmlGenerateStatement.Type();
@@ -683,7 +683,7 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-        private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElement e, CobolCodeElementsParser.XmlSuppressContext context)
+        private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElement e, CodeElementsParser.XmlSuppressContext context)
         {
             XmlGenerateStatement.Suppression result = new XmlGenerateStatement.Suppression();
             result.Specific = SyntaxElementBuilder.CreateIdentifier(context.identifier());
@@ -706,7 +706,7 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-        private XmlGenerateStatement.Suppression.Mode CreateXmlSuppressionMode(CobolCodeElementsParser.XmlSuppressGenericContext context)
+        private XmlGenerateStatement.Suppression.Mode CreateXmlSuppressionMode(CodeElementsParser.XmlSuppressGenericContext context)
         {
             if (context == null) return XmlGenerateStatement.Suppression.Mode.UNKNOWN;
             var result = XmlGenerateStatement.Suppression.Mode.UNKNOWN;
@@ -741,7 +741,7 @@ namespace TypeCobol.Compiler.Parser
          // XML PARSE STATEMENT //
         /////////////////////////
 
-        internal XmlParseStatement CreateXmlParseStatement(CobolCodeElementsParser.XmlParseStatementContext context)
+        internal XmlParseStatement CreateXmlParseStatement(CodeElementsParser.XmlParseStatementContext context)
         {
             var statement = new XmlParseStatement();
             int c = 0;

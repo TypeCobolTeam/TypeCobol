@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Parser
 {
     internal class FileOperationBuilder
     {
-        internal OpenStatement CreateOpenStatement(CobolCodeElementsParser.OpenStatementContext context)
+        internal OpenStatement CreateOpenStatement(CodeElementsParser.OpenStatementContext context)
         {
             var filenames = new Dictionary<OpenMode, IList<OpenFileName>>();
             var list = new List<OpenFileName>();
@@ -55,7 +55,7 @@ namespace TypeCobol.Compiler.Parser
             return new OpenStatement(filenames);
         }
 
-        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenInputContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenInputContext context)
         {
             if (context.fileNameWithNoRewindOrReversed() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.Parser
             return filenames;
         }
 
-        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenOutputContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenOutputContext context)
         {
             if (context.fileNameWithNoRewind() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -82,7 +82,7 @@ namespace TypeCobol.Compiler.Parser
             return filenames;
         }
 
-        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenIOContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenIOContext context)
         {
             if (context.fileName() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -94,7 +94,7 @@ namespace TypeCobol.Compiler.Parser
             return filenames;
         }
 
-        private IList<OpenFileName> CreateOpenFileNames(CobolCodeElementsParser.OpenExtendContext context)
+        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenExtendContext context)
         {
             if (context.fileName() == null) return null;
             var filenames = new List<OpenFileName>();
@@ -108,7 +108,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        internal CloseStatement CreateCloseStatement(CobolCodeElementsParser.CloseStatementContext context)
+        internal CloseStatement CreateCloseStatement(CodeElementsParser.CloseStatementContext context)
         {
             if (context.closeFileName() == null) return null;
             var filenames = new List<CloseFileName>();
@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Parser
             return new CloseStatement(filenames);
         }
 
-        private CloseFileName CreateCloseFileName(CobolCodeElementsParser.CloseFileNameContext context)
+        private CloseFileName CreateCloseFileName(CodeElementsParser.CloseFileNameContext context)
         {
             if (context == null) return null;
             var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        internal ReadStatement CreateReadStatement(CobolCodeElementsParser.ReadStatementContext context)
+        internal ReadStatement CreateReadStatement(CodeElementsParser.ReadStatementContext context)
         {
             if (context == null) return null;
             return new ReadStatement(
@@ -141,7 +141,7 @@ namespace TypeCobol.Compiler.Parser
                 );
         }
 
-        internal WriteStatement CreateWriteStatement(CobolCodeElementsParser.WriteStatementContext context)
+        internal WriteStatement CreateWriteStatement(CodeElementsParser.WriteStatementContext context)
         {
             if (context == null) return null;
             return new WriteStatement(
@@ -155,7 +155,7 @@ namespace TypeCobol.Compiler.Parser
                 );
         }
 
-        internal RewriteStatement CreateRewriteStatement(CobolCodeElementsParser.RewriteStatementContext context)
+        internal RewriteStatement CreateRewriteStatement(CodeElementsParser.RewriteStatementContext context)
         {
             if (context == null) return null;
             return new RewriteStatement(

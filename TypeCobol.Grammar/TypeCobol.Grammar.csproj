@@ -58,10 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Antlr4 Include="Grammars\Cobol\CobolCodeElements.g4">
+    <Antlr4 Include="Grammars\Cobol\CodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
+    <None Include="Grammars\Cobol\CobolCodeElements.g4" />
     <None Include="Grammars\Cobol\CobolBase.g4" />
     <Antlr4 Include="Grammars\Cobol\CobolCompilerDirectives.g4">
       <Generator>MSBuild:Compile</Generator>
@@ -71,6 +72,10 @@
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="Grammars\Cobol\TokenTypes.xlsx" />
+    <Antlr4 Include="Grammars\Cobol\TypeCobolCodeElements.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
     <None Include="packages.config" />
     <None Include="Perf\expressionsGrammar.g4" />
     <None Include="Perf\Statements grammar study.xlsx" />
