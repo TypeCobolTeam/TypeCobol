@@ -68,6 +68,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         public SymbolTable SymbolTable;
 
+// [TYPECOBOL]
+		public Dictionary<string,DataDescriptionEntry> CustomTypes = new Dictionary<string,DataDescriptionEntry>();
+// [/TYPECOBOL]
+
         /// <summary>
         /// Abstract Syntax Tree of this program.
         /// Syntax trees of nested programs (if any) are nodes/subtrees of this one.

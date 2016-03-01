@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.Parser
 {
     internal class ArithmeticExpressionBuilder
     {
-        internal Expression CreateNumberOrIdentifier(CobolCodeElementsParser.IdentifierOrNumericLiteralContext context)
+        internal Expression CreateNumberOrIdentifier(CodeElementsParser.IdentifierOrNumericLiteralContext context)
         {
             if (context == null) return null;
             if (context.identifier() != null)
@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        internal Expression CreateNumberOrIdentifier(CobolCodeElementsParser.IdentifierOrIntegerContext context)
+        internal Expression CreateNumberOrIdentifier(CodeElementsParser.IdentifierOrIntegerContext context)
         {
             if (context == null) return null;
             if (context.identifier() != null)
@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        internal Expression CreateAddition(IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> operands)
+        internal Expression CreateAddition(IReadOnlyList<CodeElementsParser.IdentifierOrNumericLiteralContext> operands)
         {
             if (operands == null) return null;
 
@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.Parser
 
         
 
-        internal ArithmeticExpression CreateArithmeticExpression(CobolCodeElementsParser.ArithmeticExpressionContext context) {
+        internal ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context) {
             if (context.identifier() != null) return new ArithmeticIdentifier(SyntaxElementBuilder.CreateIdentifier(context.identifier()));
             if (context.numericLiteral() != null) return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
 
@@ -83,7 +83,7 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-        private char CreateOperator(CobolCodeElementsParser.ArithmeticExpressionContext context) {
+        private char CreateOperator(CodeElementsParser.ArithmeticExpressionContext context) {
             char op = '?';
             if (context.PlusOperator()     != null) op = '+';
             if (context.MinusOperator()    != null) op = '-';

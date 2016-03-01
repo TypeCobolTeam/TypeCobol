@@ -43,8 +43,9 @@ namespace TypeCobol.Compiler.Generator
         }
 
         private void GenerateCode(CodeElements.Node node, System.Text.StringBuilder str, ref int line, ref int offset) {
-            if (node.CodeElement != null) {
-                foreach(var token in node.CodeElement.ConsumedTokens) {
+			var ce = node.CodeElement as TypeCobol.Compiler.CodeElements.CodeElement;
+            if (ce != null) {
+                foreach(var token in ce.ConsumedTokens) {
                     GenerateCode(token, str, ref line, ref offset);
                 }
             }

@@ -147,7 +147,7 @@ namespace TypeCobol.Compiler.Parser
                 cobolParser.ResetTraces();
 
                 // Try to parse a code element starting with the current token
-                CobolCodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
+                CodeElementsParser.CodeElementContext codeElementParseTree = cobolParser.codeElement();
 
                 // If the parse tree is not empty
                 if (codeElementParseTree.Start.Type > 0)

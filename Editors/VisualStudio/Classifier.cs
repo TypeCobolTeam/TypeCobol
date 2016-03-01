@@ -55,25 +55,24 @@ namespace TypeCobol.Editor
         /// <param name="trackingSpan">The span currently being classified</param>
         /// <returns>A list of ClassificationSpans that represent spans identified to be of this classification</returns>
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
-        {
+		{
             List<ClassificationSpan> spans = new List<ClassificationSpan>();
             //parser.Parse("TODO: Parser.Init not called, this will break", new TextString(span.GetText()));
-            foreach (var e in parser.CodeElements)
-            {
-                foreach (var token in e.ConsumedTokens)
-                {
-                    IClassificationType type = GetClassificationType(token.TokenFamily);
-                    spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start + token.StartIndex, token.Length), type));
-                }
-            }
-            foreach (var e in parser.Errors)
-            {
-                IClassificationType type = registry.GetClassificationType("cobol.error");
-                System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd).GetText()+"\"");
-                spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd), type));
-            }
-            return spans;
-        }
+			if (parser.CodeElementsSnapshot != null) {
+				foreach (var e in parser.CodeElementsSnapshot.CodeElements) {
+					foreach (var token in e.ConsumedTokens) {
+						IClassificationType type = GetClassificationType(token.TokenFamily);
+						spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start + token.StartIndex, token.Length), type));
+					}
+				}
+				foreach (var e in parser.CodeElementsSnapshot.ParserDiagnostics) {
+					IClassificationType type = registry.GetClassificationType("cobol.error");
+					System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd).GetText()+"\"");
+					spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd), type));
+				}
+			}
+			return spans;
+		}
 
         private IClassificationType GetClassificationType(TokenFamily family)
         {

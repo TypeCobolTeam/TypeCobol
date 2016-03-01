@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private void InitializeFormat1RightOperand(Expression left,
-            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
+            IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // note: "ADD a b TO c d." gives c = a+b+c and d = a+b+d
             // note: "SUBTRACT a b FROM c d." gives c = c-a+b and d = d-a+b
@@ -34,8 +34,8 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public void InitializeFormat1Statement(
-            IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> leftContext,
-            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
+            IReadOnlyList<CodeElementsParser.IdentifierOrNumericLiteralContext> leftContext,
+            IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
             Expression left = builder.CreateAddition(leftContext);
@@ -46,8 +46,8 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public void InitializeFormat1Statement(
-            CobolCodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
-            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> rightContext)
+            CodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
+            IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> rightContext)
         {
             // create the "left" operand of this addition
             Expression left = builder.CreateNumberOrIdentifier(leftContext);
@@ -58,9 +58,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public void InitializeFormat2Statement(
-            IReadOnlyList<CobolCodeElementsParser.IdentifierOrNumericLiteralContext> leftContext,
-            CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
-            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
+            IReadOnlyList<CodeElementsParser.IdentifierOrNumericLiteralContext> leftContext,
+            CodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
+            IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> resultContext)
         {
             Expression operation = builder.CreateAddition(leftContext);
             if (operation != null && rightContext != null)
@@ -76,9 +76,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public void InitializeFormat2Statement(
-            CobolCodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
-            CobolCodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
-            IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext)
+            CodeElementsParser.IdentifierOrNumericLiteralContext leftContext,
+            CodeElementsParser.IdentifierOrNumericLiteralTmpContext rightContext,
+            IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> resultContext)
         {
             Expression operation = builder.CreateNumberOrIdentifier(leftContext);
             if (operation != null && rightContext != null)
@@ -93,7 +93,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private void InitializeFormat2Result(IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> resultContext, Expression operation)
+        private void InitializeFormat2Result(IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> resultContext, Expression operation)
         {
             foreach (var operand in resultContext)
             {
@@ -103,8 +103,8 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public void InitializeFormat3Statement(
-            CobolCodeElementsParser.IdentifierContext leftContext,
-            CobolCodeElementsParser.IdentifierRoundedContext rightContext)
+            CodeElementsParser.IdentifierContext leftContext,
+            CodeElementsParser.IdentifierRoundedContext rightContext)
         {
             Expression left = null;
             if (leftContext != null)
@@ -119,14 +119,14 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Expression CreateIdentifierRounded(CobolCodeElementsParser.IdentifierRoundedContext operand)
+        internal static Expression CreateIdentifierRounded(CodeElementsParser.IdentifierRoundedContext operand)
         {
             Expression identifier = SyntaxElementBuilder.CreateIdentifier(operand.identifier());
             if (operand.ROUNDED() != null) identifier = new Rounded(identifier);
             return identifier;
         }
 
-        internal static IList<Expression> CreateIdentifiersRounded(IReadOnlyList<CobolCodeElementsParser.IdentifierRoundedContext> operands)
+        internal static IList<Expression> CreateIdentifiersRounded(IReadOnlyList<CodeElementsParser.IdentifierRoundedContext> operands)
         {
             var expressions = new List<Expression>();
             foreach (var operand in operands) expressions.Add(CreateIdentifierRounded(operand));
@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.Parser
 
     class ComputeStatementBuilder
     {
-        internal ComputeStatement CreateComputeStatement(CobolCodeElementsParser.ComputeStatementContext context) {
+        internal ComputeStatement CreateComputeStatement(CodeElementsParser.ComputeStatementContext context) {
             if (context == null) return null;
             var statement = new ComputeStatement();
             var right = new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
@@ -152,7 +152,7 @@ namespace TypeCobol.Compiler.Parser
 
     class DivideStatementBuilder
     {
-        internal DivideStatement CreateStatement(CobolCodeElementsParser.DivideStatementContext context)
+        internal DivideStatement CreateStatement(CodeElementsParser.DivideStatementContext context)
         {
             if (context != null)
             {
@@ -162,7 +162,7 @@ namespace TypeCobol.Compiler.Parser
             return new DivideStatement();
         }
 
-        private DivideStatement CreateStatement(CobolCodeElementsParser.DivideSimpleContext context)
+        private DivideStatement CreateStatement(CodeElementsParser.DivideSimpleContext context)
         {
             var statement = new DivideStatement();
 
@@ -182,7 +182,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        private DivideStatement CreateStatement(CobolCodeElementsParser.DivideGivingContext context)
+        private DivideStatement CreateStatement(CodeElementsParser.DivideGivingContext context)
         {
             var statement = new DivideStatement();
 

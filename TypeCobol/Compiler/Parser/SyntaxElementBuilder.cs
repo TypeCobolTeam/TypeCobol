@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Parser
 {
     internal static class SyntaxElementBuilder
     {
-        public static SyntaxNumber CreateSyntaxNumber(CobolCodeElementsParser.NumericLiteralContext context)
+        public static SyntaxNumber CreateSyntaxNumber(CodeElementsParser.NumericLiteralContext context)
         {
             if (context.IntegerLiteral() != null)
             {
@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.Parser
             throw new InvalidOperationException("This is not a number!");
         }
 
-        public static SyntaxString CreateSyntaxString(CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
+        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumOrNationalLiteralContext context)
         {
             if (context.NullTerminatedAlphanumericLiteral() != null)
             {
@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Parser
             throw new InvalidOperationException("This is not a string!");
         }
 
-        public static SyntaxString CreateSyntaxString(CobolCodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
+        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
         {
             if (context.AlphanumericLiteral() != null)
             {
@@ -122,7 +122,7 @@ namespace TypeCobol.Compiler.Parser
             throw new InvalidOperationException("This is not a string!");
         }
 
-        public static SyntaxNational CreateSyntaxNational(CobolCodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
+        public static SyntaxNational CreateSyntaxNational(CodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
         {
             if (context.NationalLiteral() != null)
             {
@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.Parser
             throw new InvalidOperationException("This is not a national!");
         }
 
-        public static Literal CreateLiteral(CobolCodeElementsParser.LiteralContext context)
+        public static Literal CreateLiteral(CodeElementsParser.LiteralContext context)
         {
             if (context == null) return null;
             if (context.numericLiteral() != null)
@@ -147,7 +147,7 @@ namespace TypeCobol.Compiler.Parser
             return CreateLiteral(context.alphanumOrNationalLiteral());
         }
 
-        internal static Literal CreateLiteral(CobolCodeElementsParser.AlphanumOrNationalLiteralContext context)
+        internal static Literal CreateLiteral(CodeElementsParser.AlphanumOrNationalLiteralContext context)
         {
             if (context == null) return null;
             SyntaxString stringValue = CreateSyntaxString(context);
@@ -160,7 +160,7 @@ namespace TypeCobol.Compiler.Parser
 
 
         
-        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CobolCodeElementsParser.IdentifierContext> context)
+        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context)
         {
             IList<Identifier> identifiers = new List<Identifier>();
             if (context != null)
@@ -172,7 +172,7 @@ namespace TypeCobol.Compiler.Parser
             return identifiers;
         }
 
-        public static Identifier CreateIdentifier(CobolCodeElementsParser.IdentifierContext context)
+        public static Identifier CreateIdentifier(CodeElementsParser.IdentifierContext context)
         {
             if (context == null) return null;
             Identifier identifier = CreateIdentifier(context.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier());
@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
-        private static Identifier CreateIdentifier(CobolCodeElementsParser.DataNameReferenceOrSpecialRegisterOrFunctionIdentifierContext context)
+        private static Identifier CreateIdentifier(CodeElementsParser.DataNameReferenceOrSpecialRegisterOrFunctionIdentifierContext context)
         {
             if (context == null) return null;
             Identifier identifier = CreateDataNameReference(context.dataNameReference());
@@ -199,7 +199,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private static Identifier CreateFunctionReference(CobolCodeElementsParser.FunctionIdentifierContext context)
+        private static Identifier CreateFunctionReference(CodeElementsParser.FunctionIdentifierContext context)
         {
             if (context == null || context.FUNCTION() == null) return null;
             var symbol = new FunctionName(ParseTreeUtils.GetFirstToken(context.intrinsicFunctionName()));
@@ -207,7 +207,7 @@ namespace TypeCobol.Compiler.Parser
             return new FunctionReference(symbol, parameters);
         }
 
-        private static IList<FunctionParameter> CreateFunctionParameters(IReadOnlyList<CobolCodeElementsParser.ArgumentContext> context)
+        private static IList<FunctionParameter> CreateFunctionParameters(IReadOnlyList<CodeElementsParser.ArgumentContext> context)
         {
             if (context == null) return null;
             IList<FunctionParameter> parameters = new List<FunctionParameter>();
@@ -215,7 +215,7 @@ namespace TypeCobol.Compiler.Parser
             return parameters;
         }
 
-        private static FunctionParameter CreateFunctionParameter(CobolCodeElementsParser.ArgumentContext context)
+        private static FunctionParameter CreateFunctionParameter(CodeElementsParser.ArgumentContext context)
         {
             if (context.literal() != null) return new FunctionParameter(CreateLiteral(context.literal()));
             //if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
@@ -223,13 +223,13 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private static Identifier CreateSpecialRegister(CobolCodeElementsParser.SpecialRegisterContext context)
+        private static Identifier CreateSpecialRegister(CodeElementsParser.SpecialRegisterContext context)
         {
             if (context == null) return null;
             return new SpecialRegister(new SpecialRegisterName(ParseTreeUtils.GetFirstToken(context)));
         }
 
-        private static DataReference CreateDataNameReference(CobolCodeElementsParser.DataNameReferenceContext context)
+        private static DataReference CreateDataNameReference(CodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
             QualifiedName name = CreateQualifiedName(context);
@@ -238,13 +238,13 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private static QualifiedName CreateQualifiedName(CobolCodeElementsParser.DataNameReferenceContext context)
+        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
             return CreateQualifiedName(context.qualifiedDataName());
         }
 
-        public static QualifiedName CreateQualifiedName(CobolCodeElementsParser.QualifiedDataNameContext context)
+        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context)
         {
             if (context == null) return null;
             DataName name = null;
@@ -255,7 +255,7 @@ namespace TypeCobol.Compiler.Parser
             return new QualifiedName(name, datanames, filename);
         }
 
-        public static QualifiedName CreateQualifiedName(CobolCodeElementsParser.QualifiedConditionNameContext context)
+        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context)
         {
             if (context == null) return null;
             ConditionName name = CreateConditionName(context.conditionName());
@@ -265,7 +265,7 @@ namespace TypeCobol.Compiler.Parser
             return new QualifiedName(name, datanames, filename);
         }
 
-        internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CobolCodeElementsParser.QualifiedDataNameContext> context)
+        internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context)
         {
             var names = new List<QualifiedName>();
             foreach (var name in context)
@@ -276,19 +276,19 @@ namespace TypeCobol.Compiler.Parser
             return names;
         }
 
-        internal static AlphabetName CreateAlphabetName(CobolCodeElementsParser.AlphabetNameContext context)
+        internal static AlphabetName CreateAlphabetName(CodeElementsParser.AlphabetNameContext context)
         {
             if (context == null) return null;
             return new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        internal static ClassName CreateClassName(CobolCodeElementsParser.ClassNameContext context)
+        internal static ClassName CreateClassName(CodeElementsParser.ClassNameContext context)
         {
             if (context == null) return null;
             return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static List<DataName> CreateDataNames(IReadOnlyList<CobolCodeElementsParser.DataNameContext> context)
+        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameContext> context)
         {
             List<DataName> datanames = new List<DataName>();
             if (context != null)
@@ -300,26 +300,26 @@ namespace TypeCobol.Compiler.Parser
             return datanames;
         }
 
-        public static DataName CreateDataName(CobolCodeElementsParser.DataNameContext context)
+        public static DataName CreateDataName(CodeElementsParser.DataNameContext context)
         {
             if (context == null) return null;
             return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
         // only used for data description entry
-        public static ConditionName CreateConditionName(CobolCodeElementsParser.DataNameContext context)
+        public static ConditionName CreateConditionName(CodeElementsParser.DataNameContext context)
         {
             if (context == null) return null;
             return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static ConditionName CreateConditionName(CobolCodeElementsParser.ConditionNameContext context)
+        public static ConditionName CreateConditionName(CodeElementsParser.ConditionNameContext context)
         {
             if (context == null) return null;
             return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        internal static IList<FileName> CreateFileNames(IReadOnlyList<CobolCodeElementsParser.FileNameContext> context)
+        internal static IList<FileName> CreateFileNames(IReadOnlyList<CodeElementsParser.FileNameContext> context)
         {
             List<FileName> filenames = new List<FileName>();
             if (context != null)
@@ -332,30 +332,30 @@ namespace TypeCobol.Compiler.Parser
             return filenames;
         }
 
-        public static FileName CreateFileName(CobolCodeElementsParser.FileNameContext context)
+        public static FileName CreateFileName(CodeElementsParser.FileNameContext context)
         {
             if (context == null) return null;
             return new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static LinageCounter CreateLinageCounter(CobolCodeElementsParser.FileNameContext context) {
+        public static LinageCounter CreateLinageCounter(CodeElementsParser.FileNameContext context) {
             if (context == null) return null;
             return new LinageCounter(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        private static LinageCounter CreateLinageCounter(CobolCodeElementsParser.LinageCounterSpecialRegisterDeclContext context) {
+        private static LinageCounter CreateLinageCounter(CodeElementsParser.LinageCounterSpecialRegisterDeclContext context) {
             if (context == null || context.fileName() == null) return null;
             var filename = CreateFileName(context.fileName());
             return new LinageCounter(filename.NameToken);
         }
 
-        public static IndexName CreateIndexName(CobolCodeElementsParser.IndexNameContext context)
+        public static IndexName CreateIndexName(CodeElementsParser.IndexNameContext context)
         {
             if (context == null) return null;
             return new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CobolCodeElementsParser.ProcedureNameContext> context)
+        internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CodeElementsParser.ProcedureNameContext> context)
         {
             List<QualifiedProcedureName> procedurenames = new List<QualifiedProcedureName>();
             if (context != null)
@@ -368,38 +368,38 @@ namespace TypeCobol.Compiler.Parser
             return procedurenames;
         }
 
-        internal static QualifiedProcedureName CreateProcedureName(CobolCodeElementsParser.ProcedureNameContext context)
+        internal static QualifiedProcedureName CreateProcedureName(CodeElementsParser.ProcedureNameContext context)
         {
             ParagraphName paragraphname = CreateParagraphName(context.paragraphName());
             SectionName sectionname = CreateSectionName(context.sectionName());
             return new QualifiedProcedureName(paragraphname, sectionname);
         }
 
-        public static ParagraphName CreateParagraphName(CobolCodeElementsParser.ParagraphNameContext context)
+        public static ParagraphName CreateParagraphName(CodeElementsParser.ParagraphNameContext context)
         {
             if (context == null) return null;
             return new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static SectionName CreateSectionName(CobolCodeElementsParser.SectionNameContext context)
+        public static SectionName CreateSectionName(CodeElementsParser.SectionNameContext context)
         {
             if (context == null) return null;
             return new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static XmlSchemaName CreateXmlSchemaName(CobolCodeElementsParser.XmlSchemaNameContext context)
+        public static XmlSchemaName CreateXmlSchemaName(CodeElementsParser.XmlSchemaNameContext context)
         {
             if (context == null) return null;
             return new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        private static IList<Subscript> CreateSubscripts(CobolCodeElementsParser.DataNameReferenceContext context)
+        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
             return CreateSubscripts(context.subscript());
         }
 
-        public static IList<Subscript> CreateSubscripts(IReadOnlyList<CobolCodeElementsParser.SubscriptContext> context)
+        public static IList<Subscript> CreateSubscripts(IReadOnlyList<CodeElementsParser.SubscriptContext> context)
         {
             if (context == null) return null;
             var subscripts = new List<Subscript>();
@@ -408,7 +408,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
-        public static Subscript CreateSubscript(CobolCodeElementsParser.SubscriptContext context)
+        public static Subscript CreateSubscript(CodeElementsParser.SubscriptContext context)
         {
             if (context == null) return null;
 
@@ -435,7 +435,7 @@ namespace TypeCobol.Compiler.Parser
             return subscript;
         }
 
-        private static void InitializeSubscriptOperatorAndLiteral(Subscript subscript, CobolCodeElementsParser.WithRelativeSubscriptingContext context)
+        private static void InitializeSubscriptOperatorAndLiteral(Subscript subscript, CodeElementsParser.WithRelativeSubscriptingContext context)
         {
             if (context == null) return;
             if (context.PlusOperator() != null) subscript.op = '+';
@@ -443,7 +443,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.IntegerLiteral() != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
         }
 
-        private static Substring CreateReferenceModifier(CobolCodeElementsParser.ReferenceModifierContext context)
+        private static Substring CreateReferenceModifier(CodeElementsParser.ReferenceModifierContext context)
         {
             if (context == null) return null;
             var builder = new ArithmeticExpressionBuilder();
@@ -458,13 +458,13 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        private static Address CreateAddressOf(CobolCodeElementsParser.AddressOfSpecialRegisterDeclContext context)
+        private static Address CreateAddressOf(CodeElementsParser.AddressOfSpecialRegisterDeclContext context)
         {
             if (context == null || context.dataNameReference() == null) return null;
             return new Address(CreateDataNameReference(context.dataNameReference()));
         }
 
-        private static Length CreateLengthOf(CobolCodeElementsParser.LengthOfSpecialRegisterDeclContext context)
+        private static Length CreateLengthOf(CodeElementsParser.LengthOfSpecialRegisterDeclContext context)
         {
             if (context == null || context.dataNameReference() == null) return null;
             return new Length(CreateDataNameReference(context.dataNameReference()));
@@ -473,44 +473,44 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        internal static MnemonicForEnvironmentName CreateMnemonic(CobolCodeElementsParser.MnemonicForEnvironmentNameContext context)
+        internal static MnemonicForEnvironmentName CreateMnemonic(CodeElementsParser.MnemonicForEnvironmentNameContext context)
         {
             if (context == null) return null;
             return new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(context));
         }
 
-        internal static MnemonicOrEnvironmentName CreateMnemonic(CobolCodeElementsParser.MnemonicOrEnvironmentNameContext context)
+        internal static MnemonicOrEnvironmentName CreateMnemonic(CodeElementsParser.MnemonicOrEnvironmentNameContext context)
         {
             if (context == null) return null;
             return new MnemonicOrEnvironmentName(ParseTreeUtils.GetFirstToken(context));
         }
 
-        public static Index CreateIndex(CobolCodeElementsParser.IndexNameContext indexName)
+        public static Index CreateIndex(CodeElementsParser.IndexNameContext indexName)
         {
             if (indexName == null) return null;
             return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(indexName.UserDefinedWord())));
         }
 
-        public static Expression CreateProcedurePointer(CobolCodeElementsParser.ProcedurePointerContext procedurePointer)
+        public static Expression CreateProcedurePointer(CodeElementsParser.ProcedurePointerContext procedurePointer)
         {
             //TODO
             throw new NotImplementedException();
         }
 
-        public static Expression CreateFunctionPointer(CobolCodeElementsParser.FunctionPointerContext functionPointer)
+        public static Expression CreateFunctionPointer(CodeElementsParser.FunctionPointerContext functionPointer)
         {
             //TODO
             throw new NotImplementedException();
         }
 
-        public static Expression CreateAddressOfIdentifier(ITerminalNode address, CobolCodeElementsParser.IdentifierContext identifier)
+        public static Expression CreateAddressOfIdentifier(ITerminalNode address, CodeElementsParser.IdentifierContext identifier)
         {
             throw new NotImplementedException();
         }
 
 
 
-        public static Expression CreateIdentifierOrLiteral(CobolCodeElementsParser.IdentifierOrLiteralContext context)
+        public static Expression CreateIdentifierOrLiteral(CodeElementsParser.IdentifierOrLiteralContext context)
         {
             if (context == null) return null;
             if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
@@ -519,7 +519,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
-        internal static Expression CreateEncoding(CobolCodeElementsParser.CodepageContext context)
+        internal static Expression CreateEncoding(CodeElementsParser.CodepageContext context)
         {
             if (context == null) return null;
             if (context.identifier() != null)
@@ -529,7 +529,7 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        internal static IList<FigurativeConstant> CreateFigurativeConstants(IReadOnlyList<CobolCodeElementsParser.FigurativeConstantContext> context)
+        internal static IList<FigurativeConstant> CreateFigurativeConstants(IReadOnlyList<CodeElementsParser.FigurativeConstantContext> context)
         {
             IList<FigurativeConstant> constants = new List<FigurativeConstant>();
             foreach (var c in context)
@@ -540,7 +540,7 @@ namespace TypeCobol.Compiler.Parser
             return constants;
         }
 
-        internal static FigurativeConstant CreateFigurativeConstant(CobolCodeElementsParser.FigurativeConstantContext context)
+        internal static FigurativeConstant CreateFigurativeConstant(CodeElementsParser.FigurativeConstantContext context)
         {
             if (context.HIGH_VALUE()  != null) return CreateFigurativeConstant(context.HIGH_VALUE());
             if (context.HIGH_VALUES() != null) return CreateFigurativeConstant(context.HIGH_VALUES());
@@ -569,13 +569,13 @@ namespace TypeCobol.Compiler.Parser
             return (int)((TypeCobol.Compiler.Scanner.IntegerLiteralValue)token.LiteralValue).Number;
         }
 
-		internal static string CreateString(CobolCodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
+		internal static string CreateString(CodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
 			var str = GetString(context);
 			if (str == null) return null;
 			if (str[0] == 'X' || str[0] == 'x') str = str.Substring(1);
 			return str.Substring(1,str.Length-2); // remove '' or ""
 		}
-		private static string GetString(CobolCodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
+		private static string GetString(CodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
 			if (context.AlphanumericLiteral() != null) return context.AlphanumericLiteral().Symbol.Text;
 			if (context.HexadecimalAlphanumericLiteral() != null) return context.HexadecimalAlphanumericLiteral().Symbol.Text;
 			return null;

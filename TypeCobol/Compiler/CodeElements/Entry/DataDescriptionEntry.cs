@@ -956,10 +956,17 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public bool IsInitialValueNull { get; set; }
 
+// [TYPECOBOL]
+		public bool IsTypeDefinition = false;
+// [/TYPECOBOL]
+
 
 
         public override string ToString() {
             var str = new System.Text.StringBuilder();
+// [TYPECOBOL]
+			if (IsTypeDefinition) str.Append("TYPEDEF ");
+// [/TYPECOBOL]
             if (IsFiller) str.Append("<filler>");
             else if (Name==null) str.Append("?");
             str.Append(Name);

@@ -1,0 +1,21 @@
+﻿--- Program ---
+PROGRAM: TypeCobol common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+CUSTOM TYPES:
+ * Feature
+     - Feature-name {2} PIC X(15) <of> Feature
+ * Vect2
+     - Coord2d {5} GROUP(2) [ X Y ] <of> Vect2
+       - X {10} PIC X <of> Coord2d
+       - Y {10} PIC X <of> Coord2d
+     - Coord3d {5} GROUP(1) [ Z ] <of> Vect2
+       - Z {10} PIC X <of> Coord3d
+SYMBOL TABLE:
+  Equipment {1} GROUP(1) [ Equipment-id ]
+  Equipment-id {2} GROUP(1) [ Feature-list ] <of> Equipment
+  Feature-list {3} GROUP(0) [ ] <of> Equipment-id
+  Point {1} GROUP(2) [ Position2d Movment2d ]
+  Position2d {5} GROUP(0) [ ] <of> Point
+  Movment2d {5} GROUP(2) [ Accel2d Speed2d ] <of> Point
+  Accel2d {11} GROUP(0) [ ] <of> Movment2d
+  Speed2d {11} GROUP(0) [ ] <of> Movment2d
