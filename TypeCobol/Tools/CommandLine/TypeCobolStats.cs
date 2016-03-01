@@ -520,11 +520,12 @@ namespace TypeCobol.Tools.CommandLine
         public void OnToken(TokenType tokenType)
         {
             TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
-            if (tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective)
+            if (tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective &&
+                tokenType != TokenType.EJECT && tokenType != TokenType.SKIP1 && tokenType != TokenType.SKIP2 && tokenType != TokenType.SKIP3)
             {
                 RegisterToken(tokenType);
                 lastWord = tokenType;
-                if (tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword || tokenFamily == TokenFamily.StatementStartingKeyword)
+                if (tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword || tokenFamily == TokenFamily.StatementStartingKeyword || tokenFamily == TokenFamily.StatementEndingKeyword)
                 {
                     lastElementStartingWord = tokenType;
                 }                                
