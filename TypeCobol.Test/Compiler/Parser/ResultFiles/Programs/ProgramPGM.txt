@@ -2,16 +2,16 @@
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
 SYMBOL TABLE:
-  str {1} PIC X(08)
-  str {5} PIC X(15) <of> group
+  str {1} Alphanumeric
+  str {5} Alphanumeric <of> group
   group {1} GROUP(4) [ num subgroup subgroup2 str ]
-  num {5} PIC 9 <of> group
+  num {5} Numeric <of> group
   subgroup {5} GROUP(2) [ vrai faux ] <of> group
-  vrai {10} PIC 9 <of> subgroup
-  faux {10} PIC 9 <of> subgroup
+  vrai {10} Numeric <of> subgroup
+  faux {10} Numeric <of> subgroup
   subgroup2 {5} GROUP(2) [ x y ] <of> group
-  x {10} PIC 9(2) <of> subgroup2
-  x {1} PIC A(3)
-  y {10} PIC 9(2) <of> subgroup2
-  sqlcode {1} PIC ZZ9+
-  toto {1} PIC X(08)
+  x {10} Numeric <of> subgroup2
+  x {1} Alphabetic
+  y {10} Numeric <of> subgroup2
+  sqlcode {1} NumericEdited
+  toto {1} Alphanumeric

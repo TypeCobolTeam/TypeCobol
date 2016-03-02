@@ -147,7 +147,8 @@ namespace TypeCobol.Compiler.Parser
             Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
             foreach (var node in nodes) {
                 DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
-				ComputeType(data, currencies);
+				if (data.IsTypeDefinition) RegisterCustomType(data);
+				data.DataType = ComputeType(data, currencies);
                 bool okay = false;
                 while(!okay && groups.Count > 0) {
                     var toplevel = groups.Peek();
@@ -164,10 +165,17 @@ namespace TypeCobol.Compiler.Parser
             return result;
         }
 
-		private void ComputeType(DataDescriptionEntry data, char[] currencies) {
-			if (data.Picture != null)
-				 data.DataType = DataType.Create(data.Picture, currencies);
-			else data.DataType = DataType.Unknown;
+		private void RegisterCustomType(DataDescriptionEntry data) {
+			CurrentProgram.CustomTypes[data.Name.Name] = data;
+		}
+
+		private DataType ComputeType(DataDescriptionEntry data, char[] currencies) {
+			if (data.Picture == null) {
+				if (data.DataType != null) return data.DataType;
+				else return DataType.Unknown;
+			}
+			try { return CurrentProgram.CustomTypes[data.Picture].DataType; }
+			catch(KeyNotFoundException ex) { return DataType.Create(data.Picture, currencies); }
 		}
 
 		private char[] GetCurrencies() {
@@ -193,14 +201,14 @@ namespace TypeCobol.Compiler.Parser
 			return null;
 		}
 
-        private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
-            foreach(var d in data) {
+		private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
+			foreach(var d in data) {
 // [TYPECOBOL]
-				if (d.IsTypeDefinition) CurrentProgram.CustomTypes[d.Name.Name] = d;
+				if (!d.IsTypeDefinition)
 // [/TYPECOBOL]
-				else CurrentProgram.SymbolTable.Add(section, d);
+					CurrentProgram.SymbolTable.Add(section, d);
 			}
-        }
+		}
 
         public override void EnterProcedureDivision(CobolProgramClassParser.ProcedureDivisionContext context) {
             _enter(new Node(AsCodeElement(context.ProcedureDivisionHeader())));
