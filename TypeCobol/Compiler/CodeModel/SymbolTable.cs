@@ -58,10 +58,10 @@ namespace TypeCobol.Compiler.CodeModel
                 throw new System.InvalidOperationException("Only Table of EXTERNAL symbols don't have any enclosing scope.");
         }
 
-        public void Add(Section section, DataDescriptionEntry symbol) {
+        public void Add(DataDescriptionEntry symbol) {
             if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
             Get(symbol).Add(symbol);
-            foreach(var sub in symbol.Subordinates) Add(section, sub);
+            foreach(var sub in symbol.Subordinates) Add(sub);
         }
 
         private Scope GetScope(DataDescriptionEntry data) {

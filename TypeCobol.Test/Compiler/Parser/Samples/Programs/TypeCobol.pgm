@@ -12,10 +12,10 @@ WORKING-STORAGE SECTION.
 
 01 Vect2 TYPEDEF.
   05 Coord2d.
-    10 X PIC X.
-    10 Y PIC X.
+    10 X PIC 9.
+    10 Y PIC 9.
   05 Coord3d.
-    10 Z PIC X.
+    10 Z PIC 9.
 01 Point.
   05 Position2d TYPE 'Vect2'.
   05 Movment2d.

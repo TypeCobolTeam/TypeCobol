@@ -22,9 +22,21 @@ namespace TypeCobol.Compiler.CodeElements
     /// Level-88 entries must immediately follow the data description entry for the
     /// conditional variable with which the condition-names are associated.
     /// </summary>
-    public class DataDescriptionEntry : CodeElement
+    public class DataDescriptionEntry : CodeElement, ICloneable
     {
         public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry) { }
+
+		public object Clone() {
+			var clone = this.MemberwiseClone() as DataDescriptionEntry;
+			var subs = new List<DataDescriptionEntry>();
+			foreach(var sub in Subordinates) {
+				var csub = sub.Clone() as DataDescriptionEntry;
+				csub.TopLevel = clone;
+				subs.Add(csub);
+			}
+			clone.Subordinates = subs;
+			return clone;
+		}
 
         /// <summary>
         /// The level-number specifies the hierarchy of data within a record, and identifies
@@ -958,6 +970,17 @@ namespace TypeCobol.Compiler.CodeElements
 
 // [TYPECOBOL]
 		public bool IsTypeDefinition = false;
+		public bool IsTypeDefinitionPart {
+			get {
+				var parent = this;
+				while(parent != null) {
+					if (parent.IsTypeDefinition) return true;
+					parent = parent.TopLevel;
+				}
+				return false;
+			}
+			private set { throw new InvalidOperationException(); }
+		}
 // [/TYPECOBOL]
 
 
@@ -977,7 +1000,11 @@ namespace TypeCobol.Compiler.CodeElements
 				str.Append("]");
 			}
 			if (DataType != DataType.Unknown ) str.Append(DataType);
-			if (TopLevel != null) str.Append(" <of> ").Append(TopLevel.Name);
+			var parent = TopLevel;
+			while(parent != null) {
+				str.Append(" <of> ").Append(parent.Name);
+				parent = parent.TopLevel;
+			}
 			return str.ToString();
 		}
     }

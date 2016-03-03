@@ -7,11 +7,11 @@ SYMBOL TABLE:
   group {1} GROUP(4) [ num subgroup subgroup2 str ]
   num {5} Numeric <of> group
   subgroup {5} GROUP(2) [ vrai faux ] <of> group
-  vrai {10} Numeric <of> subgroup
-  faux {10} Numeric <of> subgroup
+  vrai {10} Numeric <of> subgroup <of> group
+  faux {10} Numeric <of> subgroup <of> group
   subgroup2 {5} GROUP(2) [ x y ] <of> group
-  x {10} Numeric <of> subgroup2
+  x {10} Numeric <of> subgroup2 <of> group
   x {1} Alphabetic
-  y {10} Numeric <of> subgroup2
+  y {10} Numeric <of> subgroup2 <of> group
   sqlcode {1} NumericEdited
   toto {1} Alphanumeric
