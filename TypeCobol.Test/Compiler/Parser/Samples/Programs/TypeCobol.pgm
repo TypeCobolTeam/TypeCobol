@@ -11,13 +11,13 @@ WORKING-STORAGE SECTION.
     03 Feature-list TYPE 'Feature'.
 
 01 Vect2 TYPEDEF.
-  05 Coord2d.
-    10 X PIC 9.
-    10 Y PIC 9.
+  11 Coord2d.
+    15 X PIC 9.
+    12 Y PIC 9.
   05 Coord3d.
     10 Z PIC 9.
 01 Point.
   05 Position2d TYPE 'Vect2'.
   05 Movment2d.
-    11 Accel2d  TYPE 'Vect2'.
-    11 Speed2d  TYPE 'Vect2'.
+    14 Accel2d  TYPE 'Vect2'.
+    10 Speed2d  TYPE 'Vect2'.

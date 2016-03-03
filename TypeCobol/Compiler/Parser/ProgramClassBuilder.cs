@@ -167,8 +167,10 @@ namespace TypeCobol.Compiler.Parser
 			return result;
 		}
 
-		private void UpdateLevelNumbers(DataDescriptionEntry clone,int p) {
-			// TODO
+		private void UpdateLevelNumbers(DataDescriptionEntry clone, int level) {
+			clone.LevelNumber = level+1;
+			foreach(var sub in clone.Subordinates)
+				UpdateLevelNumbers(sub, level+1);
 		}
 
 		/// <summary>Update the toplevel data of a given data description.</summary>
