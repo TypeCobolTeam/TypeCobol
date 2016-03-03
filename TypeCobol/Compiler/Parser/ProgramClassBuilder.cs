@@ -169,8 +169,12 @@ namespace TypeCobol.Compiler.Parser
 
 		private void UpdateLevelNumbers(DataDescriptionEntry clone, int level) {
 			clone.LevelNumber = level+1;
+			if (clone.LevelNumber == 66
+			 || clone.LevelNumber == 77
+			 || clone.LevelNumber == 88)
+				clone.LevelNumber++;
 			foreach(var sub in clone.Subordinates)
-				UpdateLevelNumbers(sub, level+1);
+				UpdateLevelNumbers(sub, clone.LevelNumber);
 		}
 
 		/// <summary>Update the toplevel data of a given data description.</summary>
