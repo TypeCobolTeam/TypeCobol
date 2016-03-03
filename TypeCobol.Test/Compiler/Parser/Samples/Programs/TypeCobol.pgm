@@ -8,7 +8,7 @@ WORKING-STORAGE SECTION.
   02 Feature-name PIC X(15) OCCURS 10.
 01 Equipment.
   02 Equipment-id OCCURS 100 TIMES.
-    03 Feature-list TYPE 'Feature'.
+    03 Feature-list TYPE Feature.
 
 01 Vect2 TYPEDEF.
   11 Coord2d.
@@ -17,7 +17,7 @@ WORKING-STORAGE SECTION.
   05 Coord3d.
     10 Z PIC 9.
 01 Point.
-  05 Position2d TYPE 'Vect2'.
+  05 Position2d TYPE Vect2.
   05 Movment2d.
-    14 Accel2d  TYPE 'Vect2'.
-    10 Speed2d  TYPE 'Vect2'.
+    14 Accel2d  TYPE Vect2.
+    10 Speed2d  TYPE Vect2.

@@ -459,11 +459,8 @@ namespace TypeCobol.Compiler.Parser
 				entry.DataType = new DataType(entry.Name.Name);
 
 			foreach(var typeclause in context.tcExtTypeClause()) {
-				var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.AlphanumericLiteral());
-				if (token != null) {
-					// this is a custom type, we remove ' or " delimiters
-					entry.Picture = token.Text.Substring(1,token.Text.Length-2);
-				}
+				var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
+				if (token != null) entry.Picture = token.Text;
 			}
 // [/TYPECOBOL]
 
