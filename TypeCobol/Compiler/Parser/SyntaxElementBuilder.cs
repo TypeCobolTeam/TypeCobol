@@ -39,6 +39,38 @@ namespace TypeCobol.Compiler.Parser
             throw new InvalidOperationException("This is not a number!");
         }
 
+        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumericLiteralContext context)
+        {
+            if (context.NullTerminatedAlphanumericLiteral() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.NullTerminatedAlphanumericLiteral()));
+            }
+            if (context.alphanumericLiteralBase() != null)
+            {
+                return CreateSyntaxString(context.alphanumericLiteralBase());
+            }
+            throw new InvalidOperationException("This is not a string!");
+        }
+
+        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumericLiteralBaseContext context)
+        {
+            if (context.AlphanumericLiteral() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral()));
+            }
+            if (context.HexadecimalAlphanumericLiteral() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalAlphanumericLiteral()));
+            }
+            if (context.figurativeConstant() != null)
+            {
+                var figurativeConstant = context.figurativeConstant();
+                return CreateSyntaxString(figurativeConstant);
+                throw new InvalidOperationException("Figurative constant not recognised");
+            }
+            throw new InvalidOperationException("This is not a string!");
+        }
+
         public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumOrNationalLiteralContext context)
         {
             if (context.NullTerminatedAlphanumericLiteral() != null)
@@ -65,61 +97,67 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.figurativeConstant() != null)
             {
-                if (context.figurativeConstant().HIGH_VALUE() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().HIGH_VALUE()));
-                }
-                if (context.figurativeConstant().HIGH_VALUES() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().HIGH_VALUES()));
-                }
-                if (context.figurativeConstant().LOW_VALUE() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().LOW_VALUE()));
-                }
-                if (context.figurativeConstant().LOW_VALUES() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().LOW_VALUES()));
-                }
-                if (context.figurativeConstant().NULL() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().NULL()));
-                }
-                if (context.figurativeConstant().NULLS() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().NULLS()));
-                }
-                if (context.figurativeConstant().QUOTE() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().QUOTE()));
-                }
-                if (context.figurativeConstant().QUOTES() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().QUOTES()));
-                }
-                if (context.figurativeConstant().SPACE() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().SPACE()));
-                }
-                if (context.figurativeConstant().SPACES() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().SPACES()));
-                }
-                if (context.figurativeConstant().ZERO() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZERO()));
-                }
-                if (context.figurativeConstant().ZEROES() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZEROES()));
-                }
-                if (context.figurativeConstant().ZEROS() != null)
-                {
-                    return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.figurativeConstant().ZEROS()));
-                }
-                throw new InvalidOperationException("Figurative constant not recognised");
+                var figurativeConstant = context.figurativeConstant();
+                return CreateSyntaxString(figurativeConstant);
             }
             throw new InvalidOperationException("This is not a string!");
+        }
+
+        private static SyntaxString CreateSyntaxString(CodeElementsParser.FigurativeConstantContext figurativeConstant)
+        {
+            if (figurativeConstant.HIGH_VALUE() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.HIGH_VALUE()));
+            }
+            if (figurativeConstant.HIGH_VALUES() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.HIGH_VALUES()));
+            }
+            if (figurativeConstant.LOW_VALUE() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.LOW_VALUE()));
+            }
+            if (figurativeConstant.LOW_VALUES() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.LOW_VALUES()));
+            }
+            if (figurativeConstant.NULL() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.NULL()));
+            }
+            if (figurativeConstant.NULLS() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.NULLS()));
+            }
+            if (figurativeConstant.QUOTE() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.QUOTE()));
+            }
+            if (figurativeConstant.QUOTES() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.QUOTES()));
+            }
+            if (figurativeConstant.SPACE() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.SPACE()));
+            }
+            if (figurativeConstant.SPACES() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.SPACES()));
+            }
+            if (figurativeConstant.ZERO() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.ZERO()));
+            }
+            if (figurativeConstant.ZEROES() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.ZEROES()));
+            }
+            if (figurativeConstant.ZEROS() != null)
+            {
+                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.ZEROS()));
+            }
+            throw new InvalidOperationException("Figurative constant not recognised");
         }
 
         public static SyntaxNational CreateSyntaxNational(CodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
@@ -145,6 +183,15 @@ namespace TypeCobol.Compiler.Parser
                 return new Literal(numberValue);
             }
             return CreateLiteral(context.alphanumOrNationalLiteral());
+        }
+
+        internal static Literal CreateLiteral(CodeElementsParser.AlphanumericLiteralContext context)
+        {
+            if (context == null) return null;
+            SyntaxString stringValue = CreateSyntaxString(context);
+            var literal = new Literal(stringValue);
+            literal.All = context.ALL() != null;
+            return literal;
         }
 
         internal static Literal CreateLiteral(CodeElementsParser.AlphanumOrNationalLiteralContext context)
@@ -489,18 +536,6 @@ namespace TypeCobol.Compiler.Parser
         {
             if (indexName == null) return null;
             return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(indexName.UserDefinedWord())));
-        }
-
-        public static Expression CreateProcedurePointer(CodeElementsParser.ProcedurePointerContext procedurePointer)
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
-
-        public static Expression CreateFunctionPointer(CodeElementsParser.FunctionPointerContext functionPointer)
-        {
-            //TODO
-            throw new NotImplementedException();
         }
 
         public static Expression CreateAddressOfIdentifier(ITerminalNode address, CodeElementsParser.IdentifierContext identifier)

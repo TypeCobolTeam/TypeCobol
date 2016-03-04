@@ -34,10 +34,10 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;EUROINFO_LEGACY_REPLACING_SYNTAX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -146,6 +146,7 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\SymbolInformation.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />

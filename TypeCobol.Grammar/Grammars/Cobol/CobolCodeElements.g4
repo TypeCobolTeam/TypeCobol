@@ -420,7 +420,7 @@ notOnSizeErrorCondition:
 
 programIdentification:
                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       PROGRAM_ID PeriodSeparator? programName
+                       PROGRAM_ID PeriodSeparator? programNameDefinition
                        (IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
                        authoringProperties;
                        
@@ -435,7 +435,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-              END PROGRAM programName PeriodSeparator;
+              END PROGRAM programNameReference2 PeriodSeparator;
 
 // p85 : program-name can be specified either as a user-defined word or in an alphanumeric literal. 
 //       program-name cannot be a figurative constant. 
@@ -508,7 +508,13 @@ programEnd:
 //   is contained within that common program.
 // - Otherwise, the separately compiled program is called.
 
-programName : UserDefinedWord | alphanumericLiteral;
+programNameDefinition : UserDefinedWord | alphanumericLiteral;
+
+programNameReference1 : alphanumericLiteral;
+
+programNameReference2 : UserDefinedWord | alphanumericLiteral;
+
+programNameFromData : identifier;
 
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
@@ -4716,7 +4722,7 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	CALL (identifier | literal | procedurePointer | functionPointer) (USING callBy+)? callReturning?;
+	CALL (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer) (USING callBy+)? callReturning?;
 
 callBy:
 	(BY? (REFERENCE | CONTENT | VALUE))? 
@@ -4732,15 +4738,15 @@ callStatementEnd: END_CALL;
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
 // After a program has been canceled by COBOL, released by PL/I or C, or deleted by assembler, any procedure-pointers that had been set to that program's entry point are no longer valid. 
 
-procedurePointer:
-                    dataName;
+// => replaced by programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
+// procedurePointer: dataName;
 
 // p305: function-pointer-1 
 // Must be defined with USAGE IS FUNCTION-POINTER and must be set to a valid function or program entry point; otherwise, the results of the CALL statement are undefined. 
 // After a program has been canceled by COBOL, released by PL/I or C, or deleted by the assembler, any function-pointers that had been set to that function or program's entry point are no longer valid.
 
-functionPointer:
-                   dataName;
+// => replaced by programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
+// functionPointer: dataName;
 
 // p311: CANCEL statement
 // The CANCEL statement ensures that the referenced subprogram is entered in initial state the next time that it is called.
@@ -4770,7 +4776,7 @@ functionPointer:
 // For example: A calls B and B calls C (When A receives control, it can cancel C.) A calls B and A calls C (When C receives control, it can cancel B.)
 
 cancelStatement:
-	CANCEL identifierOrLiteral+;
+	CANCEL (programNameReference1 | programNameFromData)+;
 
 // p313: CLOSE statement
 // The CLOSE statement terminates the processing of volumes and files.
@@ -5030,22 +5036,29 @@ divideStatementEnd: END_DIVIDE;
 // - Programs that specify a return value using the PROCEDURE DIVISION RETURNING phrase. For details, see the discussion of the RETURNING phrase under “The PROCEDURE DIVISION header” on page 247. 
 // - Nested program. See “Nested programs” on page 85 for a description of nested programs.
 // When a CALL statement that specifies the alternate entry point is executed in a calling program, control is transferred to the next executable statement following the ENTRY statement.
-// literal-1 
-// Must be an alphanumeric literal that conform to the rules for the formation of a program-name in an outermost program (see “PROGRAM-ID paragraph” on page 100). 
-// Must not match the program-ID or any other ENTRY literal in this program. 
-// Must not be a figurative constant.
 // Execution of the called program begins at the first executable statement following the ENTRY statement whose literal corresponds to the literal or identifier specified in the CALL statement.
 // The entry point name on the ENTRY statement can be affected by the PGMNAME compiler option. For details, see PGMNAME in the Enterprise COBOL Programming Guide. 
 // USING phrase
 // For a discussion of the USING phrase, see “The PROCEDURE DIVISION header” on page 247.
 
 entryStatement:
-	ENTRY literal (USING byReferenceOrByValueIdentifiers+)? /*PeriodSeparator*/;
+	ENTRY programEntryDefinition (USING byReferenceOrByValueIdentifiers+)? /*PeriodSeparator*/;
 
 byReferenceOrByValueIdentifiers:
 	(BY? (REFERENCE | VALUE))? identifier+;
 
+// literal-1 
+// Must be an alphanumeric literal that conform to the rules for the formation of a program-name in an outermost program (see “PROGRAM-ID paragraph” on page 100). 
+// Must not match the program-ID or any other ENTRY literal in this program. 
+// Must not be a figurative constant.
 
+programEntryDefinition: alphanumericLiteral;
+
+programNameReferenceOrProgramEntryReference : alphanumericLiteral;
+
+programNameFromDataOrProgramEntryFromData : identifier;
+
+programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer : identifier;
 
 // p331: EVALUATE statement
 // The EVALUATE statement provides a shorthand notation for a series of nested IF statements. 
@@ -7066,7 +7079,7 @@ setStatementForAssignationSending:
 	identifier | IntegerLiteral	// identifier can also be an index name									//Format 1 + 5
 	| TRUE																								//Format 4
 	| (NULL | NULLS)																					//Format 5 + 6 + 7
-	| (ENTRY (identifier | alphanumericLiteral))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| (ENTRY (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| SELF ;										//identifier can also be a n object reference id 	//Format 7 (+NULL)
 
 //Format 2: SET for adjusting indexes

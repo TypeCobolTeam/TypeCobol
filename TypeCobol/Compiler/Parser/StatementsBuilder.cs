@@ -50,25 +50,27 @@ namespace TypeCobol.Compiler.Parser
 
         private CallStatement.Program CreateProgram(CodeElementsParser.CallStatementContext context)
         {
-            if (context.identifier() != null)
+            if (context.programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer() != null)
             {
-                var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                var identifier = SyntaxElementBuilder.CreateIdentifier(context.programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer().identifier());
                 if (identifier != null) return new CallStatement.Program(identifier);
+                /* TO DO : check here in the symbol table if identifier is a procedure pointer or function pointer
+                if (context.procedurePointer() != null)
+                {
+                    var pointer = SyntaxElementBuilder.CreateDataName(context.procedurePointer().dataName());
+                    if (pointer != null) return new CallStatement.Program(pointer);
+                }
+                if (context.functionPointer() != null)
+                {
+                    var pointer = SyntaxElementBuilder.CreateDataName(context.functionPointer().dataName());
+                    if (pointer != null) return new CallStatement.Program(pointer);
+                }
+                */
             }
-            if (context.literal() != null)
+            if (context.programNameReferenceOrProgramEntryReference() != null)
             {
-                var literal = SyntaxElementBuilder.CreateLiteral(context.literal());
+                var literal = SyntaxElementBuilder.CreateLiteral(context.programNameReferenceOrProgramEntryReference().alphanumericLiteral());
                 if (literal != null) return new CallStatement.Program(literal);
-            }
-            if (context.procedurePointer() != null)
-            {
-                var pointer = SyntaxElementBuilder.CreateDataName(context.procedurePointer().dataName());
-                if (pointer != null) return new CallStatement.Program(pointer);
-            }
-            if (context.functionPointer() != null)
-            {
-                var pointer = SyntaxElementBuilder.CreateDataName(context.functionPointer().dataName());
-                if (pointer != null) return new CallStatement.Program(pointer);
             }
             return null;
         }

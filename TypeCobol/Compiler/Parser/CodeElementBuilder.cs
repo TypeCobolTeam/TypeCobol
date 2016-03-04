@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var programIdentification = new ProgramIdentification();
 
-            Token programName = ParseTreeUtils.GetFirstToken(context.programName());
+            Token programName = ParseTreeUtils.GetFirstToken(context.programNameDefinition());
             if (programName != null)
             {
                 programIdentification.ProgramName = new ProgramName(programName);
@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var programEnd = new ProgramEnd();
 
-            Token programName = ParseTreeUtils.GetFirstToken(context.programName());
+            Token programName = ParseTreeUtils.GetFirstToken(context.programNameReference2());
             if (programName != null)
             {
                 programEnd.ProgramName = new ProgramName(programName);
@@ -752,12 +752,28 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterCancelStatement(CodeElementsParser.CancelStatementContext context)
         {
             var statement = new CancelStatement();
-            foreach (var c in context.identifierOrLiteral())
+            if (context.programNameReference1() != null)
             {
-                var item = SyntaxElementBuilder.CreateIdentifierOrLiteral(c);
-                if (item != null) statement.Items.Add(item);
+                foreach (var c in context.programNameReference1())
+                {
+                    if (c.alphanumericLiteral() != null)
+                    {
+                        var item = SyntaxElementBuilder.CreateLiteral(c.alphanumericLiteral());
+                        statement.Items.Add(item);
+                    }
+                }
             }
-
+            if (context.programNameFromData() != null)
+            {
+                foreach (var c in context.programNameFromData())
+                {
+                    if (c.identifier() != null)
+                    {
+                        var item = SyntaxElementBuilder.CreateIdentifier(c.identifier());
+                        statement.Items.Add(item);
+                    }
+                }
+            }
             Context = context;
             CodeElement = statement;
         }
@@ -875,7 +891,10 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterEntryStatement(CodeElementsParser.EntryStatementContext context)
         {
             var statement = new EntryStatement();
-            statement.ProgramName = SyntaxElementBuilder.CreateLiteral(context.literal());
+            if (context.programEntryDefinition() != null)
+            {
+                statement.ProgramName = SyntaxElementBuilder.CreateLiteral(context.programEntryDefinition().alphanumericLiteral());
+            }
             foreach(var by in context.byReferenceOrByValueIdentifiers()) {
                 var u = new EntryStatement.Using<Identifier>();
                 var identifiers = SyntaxElementBuilder.CreateIdentifiers(by.identifier());
