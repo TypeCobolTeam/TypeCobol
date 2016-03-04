@@ -22,9 +22,21 @@ namespace TypeCobol.Compiler.CodeElements
     /// Level-88 entries must immediately follow the data description entry for the
     /// conditional variable with which the condition-names are associated.
     /// </summary>
-    public class DataDescriptionEntry : CodeElement
+    public class DataDescriptionEntry : CodeElement, ICloneable
     {
         public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry) { }
+
+		public object Clone() {
+			var clone = this.MemberwiseClone() as DataDescriptionEntry;
+			var subs = new List<DataDescriptionEntry>();
+			foreach(var sub in Subordinates) {
+				var csub = sub.Clone() as DataDescriptionEntry;
+				csub.TopLevel = clone;
+				subs.Add(csub);
+			}
+			clone.Subordinates = subs;
+			return clone;
+		}
 
         /// <summary>
         /// The level-number specifies the hierarchy of data within a record, and identifies
@@ -958,29 +970,43 @@ namespace TypeCobol.Compiler.CodeElements
 
 // [TYPECOBOL]
 		public bool IsTypeDefinition = false;
+		public bool IsTypeDefinitionPart {
+			get {
+				var parent = this;
+				while(parent != null) {
+					if (parent.IsTypeDefinition) return true;
+					parent = parent.TopLevel;
+				}
+				return false;
+			}
+			private set { throw new InvalidOperationException(); }
+		}
 // [/TYPECOBOL]
 
 
 
-        public override string ToString() {
-            var str = new System.Text.StringBuilder();
+		public override string ToString() {
+			var str = new System.Text.StringBuilder();
 // [TYPECOBOL]
 			if (IsTypeDefinition) str.Append("TYPEDEF ");
 // [/TYPECOBOL]
-            if (IsFiller) str.Append("<filler>");
-            else if (Name==null) str.Append("?");
-            str.Append(Name);
-            str.Append(" {").Append(LevelNumber).Append("}");
-            if (IsGroup) {
-                str.Append(" GROUP(").Append(Subordinates.Count).Append(") [ ");
-                foreach (var sub in Subordinates) str.Append(sub.Name).Append(" ");
-                str.Append("]");
-            } else {
-                str.Append(" PIC ").Append(Picture);
-            }
-            if (TopLevel != null) str.Append(" <of> ").Append(TopLevel.Name);
-            return str.ToString();
-        }
+			if (IsFiller) str.Append("<filler>");
+			else if (Name==null) str.Append("?");
+			str.Append(Name);
+			str.Append(" {").Append(LevelNumber).Append("} ");
+			if (IsGroup) {
+				str.Append("GROUP(").Append(Subordinates.Count).Append(") [ ");
+				foreach (var sub in Subordinates) str.Append(sub.Name).Append(" ");
+				str.Append("]");
+			}
+			if (DataType != DataType.Unknown ) str.Append(DataType);
+			var parent = TopLevel;
+			while(parent != null) {
+				str.Append(" <of> ").Append(parent.Name);
+				parent = parent.TopLevel;
+			}
+			return str.ToString();
+		}
     }
 
     /// <summary>

@@ -455,6 +455,13 @@ namespace TypeCobol.Compiler.Parser
             UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
 // [TYPECOBOL]
 			entry.IsTypeDefinition = (context.tcExtTypedefClause().Length > 0);
+			if (entry.IsTypeDefinition && entry.Name != null)
+				entry.DataType = new DataType(entry.Name.Name);
+
+			foreach(var typeclause in context.tcExtTypeClause()) {
+				var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
+				if (token != null) entry.Picture = token.Text;
+			}
 // [/TYPECOBOL]
 
             Context = context;
