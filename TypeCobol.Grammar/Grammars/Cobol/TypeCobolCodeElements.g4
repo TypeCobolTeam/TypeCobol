@@ -27,4 +27,4 @@ dataDescriptionEntry:
 	)* PeriodSeparator;
 
 tcExtTypedefClause: TYPEDEF STRONG?;
-tcExtTypeClause:    TYPE AlphanumericLiteral;
+tcExtTypeClause:    TYPE UserDefinedWord;

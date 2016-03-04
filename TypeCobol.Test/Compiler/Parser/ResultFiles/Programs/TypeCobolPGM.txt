@@ -3,19 +3,35 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 CUSTOM TYPES:
  * Feature
-     - Feature-name {2} PIC X(15) <of> Feature
+     - Feature-name {2} Alphanumeric <of> Feature
  * Vect2
-     - Coord2d {5} GROUP(2) [ X Y ] <of> Vect2
-       - X {10} PIC X <of> Coord2d
-       - Y {10} PIC X <of> Coord2d
+     - Coord2d {11} GROUP(2) [ X Y ] <of> Vect2
+       - X {15} Numeric <of> Coord2d <of> Vect2
+       - Y {12} Numeric <of> Coord2d <of> Vect2
      - Coord3d {5} GROUP(1) [ Z ] <of> Vect2
-       - Z {10} PIC X <of> Coord3d
+       - Z {10} Numeric <of> Coord3d <of> Vect2
 SYMBOL TABLE:
   Equipment {1} GROUP(1) [ Equipment-id ]
   Equipment-id {2} GROUP(1) [ Feature-list ] <of> Equipment
-  Feature-list {3} GROUP(0) [ ] <of> Equipment-id
+  Feature-list {3} Feature <of> Equipment-id <of> Equipment
+  Feature-name {4} Alphanumeric <of> Feature-list <of> Equipment-id <of> Equipment
   Point {1} GROUP(2) [ Position2d Movment2d ]
-  Position2d {5} GROUP(0) [ ] <of> Point
+  Position2d {5} Vect2 <of> Point
+  Coord2d {6} GROUP(2) [ X Y ] <of> Position2d <of> Point
+  Coord2d {15} GROUP(2) [ X Y ] <of> Accel2d <of> Movment2d <of> Point
+  Coord2d {11} GROUP(2) [ X Y ] <of> Speed2d <of> Movment2d <of> Point
+  X {7} Numeric <of> Coord2d <of> Position2d <of> Point
+  X {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
+  X {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  Y {7} Numeric <of> Coord2d <of> Position2d <of> Point
+  Y {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
+  Y {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  Coord3d {6} GROUP(1) [ Z ] <of> Position2d <of> Point
+  Coord3d {15} GROUP(1) [ Z ] <of> Accel2d <of> Movment2d <of> Point
+  Coord3d {11} GROUP(1) [ Z ] <of> Speed2d <of> Movment2d <of> Point
+  Z {7} Numeric <of> Coord3d <of> Position2d <of> Point
+  Z {16} Numeric <of> Coord3d <of> Accel2d <of> Movment2d <of> Point
+  Z {12} Numeric <of> Coord3d <of> Speed2d <of> Movment2d <of> Point
   Movment2d {5} GROUP(2) [ Accel2d Speed2d ] <of> Point
-  Accel2d {11} GROUP(0) [ ] <of> Movment2d
-  Speed2d {11} GROUP(0) [ ] <of> Movment2d
+  Accel2d {14} Vect2 <of> Movment2d <of> Point
+  Speed2d {10} Vect2 <of> Movment2d <of> Point
