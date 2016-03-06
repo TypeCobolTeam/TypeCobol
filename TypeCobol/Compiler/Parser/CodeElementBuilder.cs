@@ -10,6 +10,8 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
+using Antlr4.Runtime.Misc;
+using TypeCobol.Compiler.CodeElements.Symbols;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -312,7 +314,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var sectionHeader = new SectionHeader();
 
-            Token sectionName = ParseTreeUtils.GetFirstToken(context.sectionName());
+            Token sectionName = ParseTreeUtils.GetFirstToken(context.sectionNameDefinition());
             if (sectionName != null)
             {
                 sectionHeader.SectionName = new SectionName(sectionName);
@@ -374,7 +376,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var paragraphHeader = new ParagraphHeader();
 
-            Token paragraphName = ParseTreeUtils.GetFirstToken(context.paragraphName());
+            Token paragraphName = ParseTreeUtils.GetFirstToken(context.paragraphNameDefinition());
             if (paragraphName != null)
             {
                 paragraphHeader.ParagraphName = new ParagraphName(paragraphName);
@@ -1608,5 +1610,99 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = new NotOnSizeErrorCondition();
         }
+
+        // -- Symbols --
+
+        // ** Program names and Program entries **
+
+        public override void EnterProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ProgramName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ProgramEntry);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterProgramNameReference1(CodeElementsParser.ProgramNameReference1Context context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ProgramName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterProgramNameReference2(CodeElementsParser.ProgramNameReference2Context context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ProgramName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry };
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        // + runtime references
+        // => programNameFromDataOrProgramEntryFromData
+        // => programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
+
+        // ** Section names and Paragraph names **
+
+        public override void EnterSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.SectionName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ParagraphName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.SectionName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ParagraphName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterParagraphNameOrSectionNameReference(CodeElementsParser.ParagraphNameOrSectionNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.SectionName, SymbolType.ParagraphName };
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
+        {
+            if(context.paragraphNameReference() != null && context.sectionNameReference() != null)
+            {
+                Token paragraphToken = ParseTreeUtils.GetFirstToken(context.paragraphNameReference());
+                Token sectionToken = ParseTreeUtils.GetFirstToken(context.sectionNameReference());
+                ((SymbolInformation)paragraphToken.SymbolInformation).QualifedBy = new Token[] { sectionToken };
+            }
+        }
+
+        // ** Class names and Method names **
     }
 }

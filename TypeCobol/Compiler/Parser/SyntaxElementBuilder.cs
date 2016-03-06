@@ -5,6 +5,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -417,18 +418,31 @@ namespace TypeCobol.Compiler.Parser
 
         internal static QualifiedProcedureName CreateProcedureName(CodeElementsParser.ProcedureNameContext context)
         {
-            ParagraphName paragraphname = CreateParagraphName(context.paragraphName());
-            SectionName sectionname = CreateSectionName(context.sectionName());
-            return new QualifiedProcedureName(paragraphname, sectionname);
+            if (context.paragraphNameOrSectionNameReference() != null)
+            {
+                Token symbolToken = ParseTreeUtils.GetFirstToken(context.paragraphNameOrSectionNameReference());
+                // TO DO : use here the symbol table to check if the name is a paragraph or a section
+                // In the meantime, because sections are obsolete, we just assume it is always a paragraph name
+                ParagraphName paragraphName = new ParagraphName(symbolToken);
+                return new QualifiedProcedureName(paragraphName, null);
+            }
+            else //if(context.qualifiedParagraphNameReference() != null)
+            {
+                Token paragraphToken = ParseTreeUtils.GetFirstToken(context.qualifiedParagraphNameReference().paragraphNameReference());
+                Token sectionToken = ParseTreeUtils.GetFirstToken(context.qualifiedParagraphNameReference().sectionNameReference());
+                ParagraphName paragraphName = new ParagraphName(paragraphToken);
+                SectionName sectionName = new SectionName(sectionToken);
+                return new QualifiedProcedureName(paragraphName, sectionName);
+            }
         }
 
-        public static ParagraphName CreateParagraphName(CodeElementsParser.ParagraphNameContext context)
+        public static ParagraphName CreateParagraphName(CodeElementsParser.ParagraphNameDefinitionContext context)
         {
             if (context == null) return null;
             return new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static SectionName CreateSectionName(CodeElementsParser.SectionNameContext context)
+        public static SectionName CreateSectionName(CodeElementsParser.SectionNameDefinitionContext context)
         {
             if (context == null) return null;
             return new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));

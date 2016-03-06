@@ -4175,8 +4175,7 @@ useStatementForDebuggingDeclarative:
 // program cannot be referenced from any other program.
 
 procedureName:
-                 (paragraphName ((IN | OF) sectionName)?) |
-                 sectionName;
+                 paragraphNameOrSectionNameReference | qualifiedParagraphNameReference;
 
 // p252: Section
 // A section-header optionally followed by one or more paragraphs.
@@ -4190,14 +4189,16 @@ procedureName:
 // keywords END DECLARATIVES.
 
 sectionHeader:
-                 sectionName SECTION priorityNumber? PeriodSeparator;
+                 sectionNameDefinition SECTION priorityNumber? PeriodSeparator;
 
 // p252: Section-name
 // A user-defined word that identifies a section. A referenced
 // section-name, because it cannot be qualified, must be unique
 // within the program in which it is defined.
 
-sectionName : UserDefinedWord;
+sectionNameDefinition : UserDefinedWord;
+
+sectionNameReference : UserDefinedWord;
 
 // p252: Segments
 // A segment consists of all sections in a program that have the same
@@ -4231,7 +4232,7 @@ sectionName : UserDefinedWord;
 // paragraphs are so contained.
 
 paragraphHeader:
-                   paragraphName PeriodSeparator;
+                   paragraphNameDefinition PeriodSeparator;
 
 // p253: Paragraph-name
 // A user-defined word that identifies a paragraph. A
@@ -4239,7 +4240,13 @@ paragraphHeader:
 // If there are no declaratives (format 2), a paragraph-name is not
 // required in the PROCEDURE DIVISION.
 
-paragraphName : UserDefinedWord;
+paragraphNameDefinition : UserDefinedWord;
+
+paragraphNameReference : UserDefinedWord;
+
+paragraphNameOrSectionNameReference : UserDefinedWord;
+
+qualifiedParagraphNameReference : paragraphNameReference (IN | OF) sectionNameReference;
 
 // Sentence
 // One or more statements terminated by a separator period.
