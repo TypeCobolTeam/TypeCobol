@@ -96,8 +96,13 @@ namespace TypeCobol.Server
 				parser.Init(path, config.Format);
 				parser.Parse(path);
 
-				writer.AddErrors(path, parser.CodeElementsSnapshot.ParserDiagnostics);
-				writer.AddErrors(path, parser.Snapshot.Diagnostics);
+				var converter = new TypeCobol.Tools.CodeElementDiagnostics(parser.CodeElementsSnapshot.Lines);
+				writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
+				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
+				foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
+					if (e.Diagnostics.Count < 1) continue;
+					writer.AddErrors(path, converter.GetDiagnostics(e));
+				}
 
 				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Snapshot, null);
 				codegen.GenerateCobolText(config.OutputFiles[c]);

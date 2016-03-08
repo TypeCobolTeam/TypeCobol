@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 using System.Collections.Generic;
-using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Server {
 
@@ -49,7 +49,10 @@ public class XMLWriter: AbstractErrorWriter {
 	private XmlWriter writer;
 
 	public XMLWriter(System.IO.TextWriter writer) {
-		this.writer = System.Xml.XmlWriter.Create(writer);
+		var settings = new XmlWriterSettings();
+		settings.NewLineOnAttributes = true;
+		settings.Indent = true;
+		this.writer = XmlWriter.Create(writer, settings);
 	}
 
 	public override void Write() {
@@ -60,6 +63,7 @@ public class XMLWriter: AbstractErrorWriter {
 				writeMessage(Inputs[key], error);
 		}
 		writeOutputs();
+		writeLinesLookup();
 		writeTail();
 	}
 
@@ -73,10 +77,13 @@ public class XMLWriter: AbstractErrorWriter {
 	}
 
 	private void writeTail() {
-		writer.WriteStartElement("STATEMENTTABLE");
-		writer.WriteEndElement();// STATEMENTTABLE
 		writer.WriteEndElement();// PACKAGE
 		writer.WriteEndElement();// BUILD
+	}
+
+	private void writeLinesLookup() {
+		writer.WriteStartElement("STATEMENTTABLE");
+		writer.WriteEndElement();// STATEMENTTABLE
 	}
 
 	private void writeInputs() {
@@ -105,18 +112,20 @@ public class XMLWriter: AbstractErrorWriter {
 
 	private void writeMessage(string id, Diagnostic error) {
 		writer.WriteStartElement("MESSAGE");
-		writer.WriteElementString("MSGNUMBER", "TC"+AsIBMSuffix(error.Info.Severity));
-		writer.WriteElementString("MSGLINE", "1"); //TODO
+		writer.WriteElementString("MSGNUMBER", "TC"+AsIBMSuffix(error.Severity));
+		writer.WriteElementString("MSGLINE", error.Range.End.Line.ToString());
 		writer.WriteElementString("MSGFILE", id);
 		writer.WriteElementString("MSGTEXT", error.Message);
 		writer.WriteEndElement();// MESSAGE
 	}
 
-	private static string AsIBMSuffix(Compiler.Diagnostics.Severity severity) {
-		if (severity == Compiler.Diagnostics.Severity.Error) return "-E";
-		if (severity == Compiler.Diagnostics.Severity.Warning) return "-W";
-		if (severity == Compiler.Diagnostics.Severity.Info) return "-I";
-		throw new System.NotImplementedException("Unsupported severity: "+severity);
+	private static string AsIBMSuffix(int severity) {
+		switch(severity) {
+			// TODO: these depend on Compiler.Diagnostics.Severity int values
+			case 3:  return "-I";
+			case 2:  return "-W";
+			default: return "-E";
+		}
 	}
 }
 
@@ -139,7 +148,7 @@ public class ConsoleWriter: AbstractErrorWriter {
 		writer.WriteLineAsync();
 		writer.WriteAsync(errors.Count.ToString());
 		writer.WriteAsync(" error");
-		writer.WriteAsync((errors.Count>1)?"s":"");
+		if (errors.Count > 1) writer.WriteAsync('s');
 		writer.WriteAsync(" in \"");
 		writer.WriteAsync(title);
 		writer.WriteLineAsync("\":");

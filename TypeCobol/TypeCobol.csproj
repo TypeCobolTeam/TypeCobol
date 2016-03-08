@@ -385,6 +385,7 @@
     <Compile Include="Compiler\Text\TextLineSnapshot.cs" />
     <Compile Include="Compiler\Text\CobolTextLine.cs" />
     <Compile Include="Compiler\TypeChecker\CobolTypeChecker.cs" />
+    <Compile Include="Tools\DiagnosticUtils.cs" />
     <Compile Include="Tools\Reflection.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolCompiler.cs" />
     <Compile Include="Tools\CodeGenerator.cs" />
