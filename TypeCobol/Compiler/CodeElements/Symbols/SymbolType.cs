@@ -15,6 +15,7 @@ namespace TypeCobol.Compiler.CodeElements
         ConditionName,
         ConditionForUPSISwitchName,
         DataName,
+        ExternalClassName,
         IndexName,
         FileName,
         MethodName,

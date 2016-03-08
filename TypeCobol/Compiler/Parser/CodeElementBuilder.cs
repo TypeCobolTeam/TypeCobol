@@ -165,7 +165,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterClassIdentification(CodeElementsParser.ClassIdentificationContext context)
         {
             var classIdentification = new ClassIdentification();
-            classIdentification.ClassName = SyntaxElementBuilder.CreateClassName(context.classId);
+            classIdentification.ClassName = SyntaxElementBuilder.CreateClassName(context.classNameDefinition());
             classIdentification.InheritsFrom = SyntaxElementBuilder.CreateClassName(context.inheritsFromClassName);
 
             Context = context;
@@ -176,7 +176,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var classEnd = new ClassEnd();
 
-            Token className = ParseTreeUtils.GetFirstToken(context.className());
+            Token className = ParseTreeUtils.GetFirstToken(context.classNameReference());
             if (className != null)
             {
                 classEnd.ClassName = new ClassName(className);
@@ -214,7 +214,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var methodIdentification = new MethodIdentification();
 
-            Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
+            Token methodName = ParseTreeUtils.GetFirstToken(context.methodNameDefinition());
             if (methodName != null)
             {
                 methodIdentification.MethodName = new MethodName(methodName);
@@ -228,7 +228,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var methodEnd = new MethodEnd();
 
-            Token methodName = ParseTreeUtils.GetFirstToken(context.methodName());
+            Token methodName = ParseTreeUtils.GetFirstToken(context.methodNameReference());
             if (methodName != null)
             {
                 methodEnd.MethodName = new MethodName(methodName);
@@ -492,7 +492,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return;
             entry.Usage = CreateDataUsage(context);
-            entry.ObjectReference = SyntaxElementBuilder.CreateClassName(context.className());
+            entry.ObjectReference = SyntaxElementBuilder.CreateClassName(context.classNameReference());
         }
 
         private void UpdateDataDescriptionEntryWithOccursClause(DataDescriptionEntry entry, CodeElementsParser.OccursClauseContext context)
@@ -1704,5 +1704,65 @@ namespace TypeCobol.Compiler.Parser
         }
 
         // ** Class names and Method names **
+
+        public override void EnterClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ClassName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMethodNameDefinition(CodeElementsParser.MethodNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.MethodName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ClassName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinitionOrReference, SymbolType.ClassName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterClassNameReferenceOrObjectReference(CodeElementsParser.ClassNameReferenceOrObjectReferenceContext context)
+        {
+            var identifier = context.identifier();
+            Token symbolToken = SyntaxElementBuilder.GetSymbolTokenIfIdentifierIsOneUserDefinedWord(identifier);
+            if(symbolToken != null)
+            {
+                SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ClassName, SymbolType.DataName };
+                SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+                symbolToken.SymbolInformation = symbolInfo;
+            }
+        }
+
+        public override void EnterExternalClassNameDefOrRef(CodeElementsParser.ExternalClassNameDefOrRefContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinitionOrReference, SymbolType.ExternalClassName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMethodNameReference(CodeElementsParser.MethodNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.MethodName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        // + runtime references 
+        // => methodNameFromData
+
+        // ** Aliases on external names **
+        
     }
 }

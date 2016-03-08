@@ -227,7 +227,26 @@ namespace TypeCobol.Compiler.Parser
             if (identifier != null ) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
-
+        
+        public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierContext identifier)
+        {
+            if (identifier.referenceModifier() == null)
+            {
+                var dataNameReference = identifier.dataNameReferenceOrSpecialRegisterOrFunctionIdentifier().dataNameReference();
+                if (dataNameReference != null)
+                {
+                    if (dataNameReference.subscript() == null)
+                    {
+                        var qualifiedDataName = dataNameReference.qualifiedDataName();
+                        if (qualifiedDataName.dataName() == null && qualifiedDataName.fileName() == null)
+                        {
+                            return ParseTreeUtils.GetFirstToken(qualifiedDataName.dataNameBase());
+                        }
+                    }
+                }
+            }
+            return null;
+        }
 
         private static Identifier CreateIdentifier(CodeElementsParser.DataNameReferenceOrSpecialRegisterOrFunctionIdentifierContext context)
         {
@@ -330,7 +349,13 @@ namespace TypeCobol.Compiler.Parser
             return new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        internal static ClassName CreateClassName(CodeElementsParser.ClassNameContext context)
+        internal static ClassName CreateClassName(CodeElementsParser.ClassNameDefinitionContext context)
+        {
+            if (context == null) return null;
+            return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+        }
+
+        internal static ClassName CreateClassName(CodeElementsParser.ClassNameReferenceContext context)
         {
             if (context == null) return null;
             return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));

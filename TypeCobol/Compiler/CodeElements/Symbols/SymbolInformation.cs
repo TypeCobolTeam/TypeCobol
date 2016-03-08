@@ -14,6 +14,7 @@ namespace TypeCobol.Compiler.CodeElements.Symbols
     {
         SymbolDefinition,
         SymbolReference,
+        SymbolDefinitionOrReference, // class names in the repository paragraph can be either references or definitions
         ExternalName
     }
 

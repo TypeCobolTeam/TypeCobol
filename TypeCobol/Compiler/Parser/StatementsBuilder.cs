@@ -3,6 +3,7 @@ using System.Diagnostics;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -330,24 +331,43 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new InvokeStatement();
 
-            // object name
-            if (context.invokeObject() != null)
+            // class name or object reference
+            if (context.classNameReferenceOrObjectReference() != null)
             {
-                statement.Instance = SyntaxElementBuilder.CreateIdentifier(context.invokeObject().identifier());
-                statement.ClassName = SyntaxElementBuilder.CreateClassName(context.invokeObject().className());
-                statement.IsSelf = context.invokeObject().SELF() != null;
-                statement.IsSuper = context.invokeObject().SUPER() != null;
+                // A single UserDefinedWord can reference either a class name or a data name (object reference)
+                var identifier = context.classNameReferenceOrObjectReference().identifier();
+                Token symbolToken = SyntaxElementBuilder.GetSymbolTokenIfIdentifierIsOneUserDefinedWord(identifier);
+                if (symbolToken != null)
+                {
+                    // TO DO : use the symbol table to resolve this ambiguity
+                    // Only one of the following twoi properties should be set
+                    statement.ClassName = new ClassName(symbolToken);
+                    statement.Instance = SyntaxElementBuilder.CreateIdentifier(identifier);
+                }
+                else
+                {
+                    statement.Instance = SyntaxElementBuilder.CreateIdentifier(identifier);
+                }
+                
+            }
+            else if(context.SELF() != null)            
+            {
+                statement.IsSelf = true;
+            }
+            else if(context.SUPER() != null)
+            {
+                statement.IsSuper = true;
             }
 
             // method name
             if (context.NEW() != null)
                 statement.MethodName = new New();
             else
-            if (context.identifier() != null)
-                statement.MethodName = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.methodNameFromData() != null)
+                statement.MethodName = SyntaxElementBuilder.CreateIdentifier(context.methodNameFromData().identifier());
             else
-            if (context.alphanumOrNationalLiteral() != null)
-                statement.MethodName = SyntaxElementBuilder.CreateLiteral(context.alphanumOrNationalLiteral());
+            if (context.methodNameReference() != null)
+                statement.MethodName = SyntaxElementBuilder.CreateLiteral(context.methodNameReference().alphanumOrNationalLiteral());
 
             // usings
             statement.Usings = new List<Expression>();

@@ -553,14 +553,14 @@ programNameFromData : identifier;
 
 classIdentification:
                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       CLASS_ID PeriodSeparator classId=className INHERITS inheritsFromClassName=className PeriodSeparator
+                       CLASS_ID PeriodSeparator classNameDefinition INHERITS inheritsFromClassName=classNameReference PeriodSeparator
                        authoringProperties
                    ;
 
 // p91 : The end of a COBOL class definition is indicated by the END CLASS marker.
 
 classEnd:
-            END CLASS className PeriodSeparator;
+            END CLASS classNameReference PeriodSeparator;
 
 // p103 : class-name
 // A user-defined word that identifies the class. class-name can optionally
@@ -573,7 +573,12 @@ classEnd:
 // that is part of a Java package or for using non-COBOL naming conventions for
 // class-names.
 
-className : UserDefinedWord;
+classNameDefinition : UserDefinedWord;
+
+classNameReference : UserDefinedWord;
+
+// Can not distinguish between a simple UserDefinedWord = classReference and a proper identifier = objectReference
+classNameReferenceOrObjectReference : identifier;
 
 // p97 : Factory IDENTIFICATION DIVISION
 // A factory IDENTIFICATION DIVISION contains only a factory paragraph
@@ -669,13 +674,13 @@ objectEnd:
 
 methodIdentification:
                         (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                        METHOD_ID PeriodSeparator? methodName PeriodSeparator?
+                        METHOD_ID PeriodSeparator? methodNameDefinition PeriodSeparator?
                         authoringProperties;
 
 // p93 : The end of a COBOL method definition is indicated by the END METHOD marker.
 
 methodEnd:
-             END METHOD methodName PeriodSeparator;
+             END METHOD methodNameReference PeriodSeparator;
 
 // p104 : method-name
 // An alphanumeric literal or national literal that contains the name of the
@@ -683,7 +688,11 @@ methodEnd:
 // method name. Method names are used directly, without translation. The
 // method name is processed in a case-sensitive manner.
 
-methodName : alphanumOrNationalLiteral;
+methodNameDefinition : alphanumOrNationalLiteral;
+
+methodNameReference : alphanumOrNationalLiteral;
+
+methodNameFromData : identifier;
 
 // p104 : Method signature
 // The signature of a method consists of the name of the method and the number and
@@ -1441,7 +1450,7 @@ externalFileId : UserDefinedWord;
 
 repositoryParagraph: 
                    REPOSITORY PeriodSeparator 
-                   ((CLASS className (IS? externalClassName /*| javaArrayClassReference*/)?)+ PeriodSeparator)?;
+                   ((CLASS classNameDefOrRef (IS? externalClassNameDefOrRef /*| javaArrayClassReference*/)?)+ PeriodSeparator)?;
 
 // p122: external-class-name-1
 // An alphanumeric literal containing a name that enables a COBOL program
@@ -1454,7 +1463,9 @@ repositoryParagraph:
 // See Java Language Specification, Third Edition, by Gosling et al., for Java
 // class-name formation rules.
 
-externalClassName : alphanumericLiteral;
+classNameDefOrRef : UserDefinedWord;
+
+externalClassNameDefOrRef : alphanumericLiteral;
 
 // p122: java-array-class-reference
 // A reference that enables a COBOL program to access a class that represents
@@ -3694,7 +3705,7 @@ usageClause:
                               (DISPLAY_1 NATIVE?) |
                               INDEX |
                               (NATIONAL NATIVE?) |
-                              (OBJECT REFERENCE className?) |
+                              (OBJECT REFERENCE classNameReference?) |
                               (PACKED_DECIMAL NATIVE?) |
                               (POINTER |
                               PROCEDURE_POINTER |
@@ -5840,10 +5851,7 @@ inspectBy: BY identifierOrLiteral;
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE invokeObject (alphanumOrNationalLiteral | identifier | NEW) (USING invokeUsing+)? invokeReturning?;
-
-invokeObject:
-	identifier | className | SELF | SUPER;
+	INVOKE (classNameReferenceOrObjectReference |  SELF | SUPER) (methodNameReference | methodNameFromData | NEW) (USING invokeUsing+)? invokeReturning?;
 
 invokeUsing:
 	BY? VALUE (identifier | literal)+;
@@ -7086,7 +7094,7 @@ setStatementForAssignationSending:
 	identifier | IntegerLiteral	// identifier can also be an index name									//Format 1 + 5
 	| TRUE																								//Format 4
 	| (NULL | NULLS)																					//Format 5 + 6 + 7
-	| (ENTRY (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| SELF ;										//identifier can also be a n object reference id 	//Format 7 (+NULL)
 
 //Format 2: SET for adjusting indexes
