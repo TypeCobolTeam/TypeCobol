@@ -82,90 +82,28 @@ namespace TypeCobol.Server
 		}
 
 		private static void runOnce(Config config) {
+			TextWriter w;
+			if (config.ErrorFile == null) w = System.Console.Error;
+			else w = File.CreateText(config.ErrorFile);
+			AbstractErrorWriter writer;
+			if (config.IsErrorXML) writer = new XMLWriter(w);
+			else writer = new ConsoleWriter(w);
+			writer.Outputs = config.OutputFiles;
+
 			var parser = new Parser("TypeCobol.Server");
 			for(int c=0; c<config.InputFiles.Count; c++) {
-				parser.Init(config.InputFiles[c], config.Format);
-				parser.Parse(config.InputFiles[c]);
+				string path = config.InputFiles[c];
+				parser.Init(path, config.Format);
+				parser.Parse(path);
 
-				TextWriter writer;
-				if (config.ErrorFile != null) writer = File.CreateText(config.ErrorFile);
-				else writer = System.Console.Error;
-				if (config.IsErrorXML) {
-					writeXML(writer, config, parser.CodeElementsSnapshot.ParserDiagnostics, parser.Snapshot.Diagnostics);
-				} else {
-					write(writer, parser.CodeElementsSnapshot.ParserDiagnostics, parser.Snapshot.Diagnostics);
-				}
+				writer.AddErrors(path, parser.CodeElementsSnapshot.ParserDiagnostics);
+				writer.AddErrors(path, parser.Snapshot.Diagnostics);
 
 				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Snapshot, null);
 				codegen.GenerateCobolText(config.OutputFiles[c]);
 			}
-		}
-
-		private static void writeXML(TextWriter w, Config config,
-								IEnumerable<Compiler.Diagnostics.Diagnostic> ceerrors,
-								IList<Compiler.AntlrUtils.ParserDiagnostic> pcerrors) {
-			var writer = System.Xml.XmlWriter.Create(w);
-			writer.WriteStartElement("BUILD");
-			writer.WriteStartElement("PACKAGE");
-			writeFiles(writer, config.InputFiles);
-			foreach(var error in ceerrors) writeError(writer, error);
-			foreach(var error in pcerrors) writeError(writer, error);
-			writeFiles(writer, config.OutputFiles, "OUT");
-			writer.WriteStartElement("STATEMENTTABLE");
-			writer.WriteEndElement();// STATEMENTTABLE
-			writer.WriteEndElement();// PACKAGE
-			writer.WriteEndElement();// BUILD
-			writer.Close();
-		}
-
-		private static void writeError(System.Xml.XmlWriter writer, Compiler.Diagnostics.Diagnostic error) {
-			writer.WriteStartElement("MESSAGE");
-			writer.WriteElementString("MSGNUMBER", "TC"+AsIBMSuffix(error.Info.Severity));
-			writer.WriteElementString("MSGLINE", "1"); //TODO
-			writer.WriteElementString("MSGFILE", "1"); //TODO
-			writer.WriteElementString("MSGTEXT", error.Message);
-			writer.WriteEndElement();// MESSAGE
-		}
-
-		private static string AsIBMSuffix(Compiler.Diagnostics.Severity severity) {
-			if (severity == Compiler.Diagnostics.Severity.Error) return "-E";
-			if (severity == Compiler.Diagnostics.Severity.Warning) return "-W";
-			if (severity == Compiler.Diagnostics.Severity.Info) return "-I";
-			throw new System.NotImplementedException("Unsupported severity: "+severity);
-		}
-
-		private static void writeFiles(System.Xml.XmlWriter writer, IList<string> paths, string prefix = "") {
-			writer.WriteStartElement(prefix+"FILEREFERENCETABLE");
-			writer.WriteElementString(prefix+"FILECOUNT", paths.Count.ToString());
-			int c = 1;
-			foreach(var path in paths) {
-				writer.WriteStartElement(prefix+"FILE");
-				writer.WriteElementString(prefix+"FILENUMBER", (c++).ToString());
-				writer.WriteElementString(prefix+"FILENAME", new FileInfo(path).FullName);
-				writer.WriteEndElement();// FILE
-			}
-			writer.WriteEndElement();// FILEREFERENCETABLE
-		}
-
-		private static void write(TextWriter writer,
-								IEnumerable<Compiler.Diagnostics.Diagnostic> ceerrors,
-								IList<Compiler.AntlrUtils.ParserDiagnostic> pcerrors) {
-			write(writer, "CodeElements", ceerrors);
-			write(writer, "ProgramClass", pcerrors);
-			writer.Close();
-		}
-
-		private static void write(TextWriter writer, string title, IEnumerable<Compiler.Diagnostics.Diagnostic> errors) {
-			int nberrors = 0;
-			foreach(var e in errors) nberrors++;
-			if (nberrors==0) return;
-			writer.WriteLineAsync();
-			writer.WriteAsync(nberrors.ToString());
-			writer.WriteAsync(' ');
-			writer.WriteAsync(title);
-			writer.WriteAsync(" error");
-			writer.WriteLineAsync((nberrors>1)?"s:":":");
-			foreach(var e in errors) writer.WriteLineAsync(e.ToString());
+			writer.Write();
+			writer.Flush();
 		}
 
 		private static void runServer(string pipename) {
