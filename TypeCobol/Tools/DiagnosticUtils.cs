@@ -9,10 +9,16 @@ namespace TypeCobol.Tools {
 public class Position {
 	public int Line = 1;
 	public int Character = 1;
+	public override string ToString() {
+		return Line+":"+Character;
+	}
 }
 public class Range {
 	public Position Start = new Position();
 	public Position End = new Position();
+	public override string ToString() {
+		return Start+">"+End;
+	}
 }
 public class Diagnostic {
 	public Range Range = new Range();
@@ -20,6 +26,10 @@ public class Diagnostic {
 	public string Code;
 	public string Source;
 	public string Message;
+
+	public override string ToString() {
+		return "\""+Source+"\"@("+Range+"): ["+Code+":"+Severity+"] "+Message;
+	}
 }
 
 
@@ -34,9 +44,8 @@ public class CodeElementDiagnostics {
 	public IList<Diagnostic> GetDiagnostics(CodeElement e) {
 		var results = new List<Diagnostic>();
 		foreach(var d in e.Diagnostics) {
-			var tokens = GetTokens(e.ConsumedTokens, d.ColumnStart, d.ColumnEnd);
 			var diagnostic = AsDiagnostic(d);
-			diagnostic.Range = GetRange(tokens, d.ColumnStart, d.ColumnEnd);
+			diagnostic.Range = GetRange(e.ConsumedTokens, d.ColumnStart, d.ColumnEnd);
 			results.Add(diagnostic);
 		}
 		return results;
@@ -53,18 +62,8 @@ public class CodeElementDiagnostics {
 	}
 
 	private int GetLine(ITokensLine line) {
-		if (line != null) return Lines.IndexOf(line, line.InitialLineIndex);
+		if (line != null) return Lines.IndexOf(line, line.InitialLineIndex)+1;
 		throw new System.ArgumentNullException("this.Line must be set from the source document snapshot");
-	}
-
-	private IList<Token> GetTokens(IList<Token> tokens, int start, int end) {
-		var result = new List<Token>();
-		foreach(var token in tokens) {
-			if (token.StopIndex < start) continue;//before what we want
-			if (token.StartIndex > end) break;//after what we want
-			result.Add(token);
-		}
-		return result;
 	}
 
 	private Diagnostic AsDiagnostic(TypeCobol.Compiler.Diagnostics.Diagnostic d) {
@@ -73,7 +72,7 @@ public class CodeElementDiagnostics {
 		diagnostic.Range.End.Character = d.ColumnEnd;
 		diagnostic.Severity = (int)d.Info.Severity;
 		diagnostic.Code = d.Info.Code.ToString();
-		diagnostic.Source = d.Info.Document.Name;
+		diagnostic.Source = d.Info.Document.Id.ToString();
 		diagnostic.Message = d.Message;
 		return diagnostic;
 	}
