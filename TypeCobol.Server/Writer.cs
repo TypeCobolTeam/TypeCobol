@@ -63,7 +63,7 @@ public class XMLWriter: AbstractErrorWriter {
 				writeMessage(Inputs[key], error);
 		}
 		writeOutputs();
-		writeLinesLookup();
+//		writeLinesLookup();
 		writeTail();
 	}
 
@@ -83,6 +83,7 @@ public class XMLWriter: AbstractErrorWriter {
 
 	private void writeLinesLookup() {
 		writer.WriteStartElement("STATEMENTTABLE");
+		// TODO
 		writer.WriteEndElement();// STATEMENTTABLE
 	}
 
