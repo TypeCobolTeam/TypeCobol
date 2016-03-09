@@ -105,7 +105,8 @@ namespace TypeCobol.Server
 				}
 
 				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Snapshot, null);
-				codegen.GenerateCobolText(config.OutputFiles[c]);
+				var stream = new StreamWriter(config.OutputFiles[c]);
+				codegen.WriteCobol(stream);
 			}
 			writer.Write();
 			writer.Flush();

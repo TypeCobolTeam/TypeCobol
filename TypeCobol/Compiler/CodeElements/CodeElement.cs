@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Common properties shared between all code elements.
     /// A CodeElement produced during the first parsing phase is also a token consumed by the second parsing phase. 
     /// </summary>
-    public abstract class CodeElement : IToken
+    public abstract partial class CodeElement: IToken
     {
         public CodeElement(CodeElementType type)
         {

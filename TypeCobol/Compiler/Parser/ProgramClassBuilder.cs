@@ -35,14 +35,20 @@ namespace TypeCobol.Compiler.Parser
 
         public ProgramDispatcher Dispatcher { get; internal set; }
 
-        private void _add(Node node) { Program.SyntaxTree.Add(node); }
-        private void _enter(CodeElement e, ParserRuleContext context) {
-            _enter(new Node(e));
-            if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
-        }
-        private void _enter(Node node) { Program.SyntaxTree.Attach(node); }
-        private void _exit() { Program.SyntaxTree.Detach(); }
-        private void _del() { Program.SyntaxTree.Delete(); }
+		private void _add(Node node) {
+			node.SymbolTable = CurrentProgram.SymbolTable;
+			Program.SyntaxTree.Add(node);
+		}
+		private void _enter(CodeElement e, ParserRuleContext context) {
+			_enter(new Node(e));
+			if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
+		}
+		private void _enter(Node node) {
+			node.SymbolTable = CurrentProgram.SymbolTable;
+			Program.SyntaxTree.Attach(node);
+		}
+		private void _exit() { Program.SyntaxTree.Detach(); }
+		private void _del() { Program.SyntaxTree.Delete(); }
 
         /// <summary>
         /// Initialization code run before parsing each new Program or Class
@@ -120,18 +126,20 @@ namespace TypeCobol.Compiler.Parser
             AddStorageNode(context.LinkageSectionHeader(), entries);
         }
 
-        private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
-            var node = new Node(AsCodeElement(terminal));
-            AddEntries(node, entries);
-            _add(node);
-        }
-        private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
-            foreach(var entry in entries) {
-                var child = new Node(entry);
-                AddEntries(child, entry.Subordinates);
-                root.Add(child);
-            }
-        }
+		private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
+			var node = new Node(AsCodeElement(terminal));
+			_enter(node);
+			AddEntries(node, entries);
+			_exit();
+		}
+		private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
+			foreach(var entry in entries) {
+				var child = new Node(entry);
+				_enter(child);
+				AddEntries(child, entry.Subordinates);
+				_exit();
+			}
+		}
 
 		/// <summary>Update toplevel/subordinate relations of data description entries.</summary>
 		/// <param name="nodes">DataDescriptionEntry[] array -typically <section context>.DataDescriptionEntry()</param>
@@ -144,7 +152,7 @@ namespace TypeCobol.Compiler.Parser
 
 			foreach (var node in nodes) {
 				DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
-				if (data.IsTypeDefinition) RegisterCustomType(data);
+				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
 				var customTypeDescription = ComputeType(data, currencies);
@@ -195,12 +203,6 @@ namespace TypeCobol.Compiler.Parser
 			return updated;
 		}
 
-		/// <summary>Register a data description as a custom type.</summary>
-		/// <param name="data">A TYPEDEF data description</param>
-		private void RegisterCustomType(DataDescriptionEntry data) {
-			CurrentProgram.CustomTypes[data.Name.Name] = data;
-		}
-
 		/// <summary>Update the toplevel data of a given data description.</summary>
 		/// <param name="data">Data description to update</param>
 		/// <param name="currencies">Currency characters, used to know if data is numeric or numeric edited</param>
@@ -212,10 +214,10 @@ namespace TypeCobol.Compiler.Parser
 				return null;
 			}
 			try {
-				var customTypeGroup = CurrentProgram.CustomTypes[data.Picture];
+				var customTypeGroup = CurrentProgram.SymbolTable.GetCustomType(data.Picture);
 				data.DataType = customTypeGroup.DataType;
 				return customTypeGroup;
-			} catch(KeyNotFoundException ex) {
+			} catch(ArgumentException ex) {
 				data.DataType = DataType.Create(data.Picture, currencies);
 				return null;
 			}

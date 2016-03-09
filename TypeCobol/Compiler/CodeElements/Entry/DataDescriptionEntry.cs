@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Level-88 entries must immediately follow the data description entry for the
     /// conditional variable with which the condition-names are associated.
     /// </summary>
-    public class DataDescriptionEntry : CodeElement, ICloneable
+    public partial class DataDescriptionEntry : CodeElement, ICloneable
     {
         public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry) { }
 
