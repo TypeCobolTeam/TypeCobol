@@ -11,17 +11,13 @@ namespace TypeCobol.Compiler.CodeElements {
 			if (IsTypeDefinitionPart) {
 				return; // TYPEDEFS and subordinates have no equivalent in COBOL
 			}
-//			if (scope.IsCustomType(this.DataType)) {
-//			if (IsGenerated(scope)) {
-				string code = "";
-				for (int c=0; c<Generation; c++) code += " ";
-				code += LevelNumber.ToString("00")+" "+Name;
-				if (!IsGroup && !scope.IsCustomType(DataType)) code += " PIC "+Picture;
-				code += ".";
-				Codegen.Write(stream, code, ref line, ref offset);
-				return;
-//			}
-			base.WriteCode(stream, scope, ref line, ref offset);
+			string code = "";
+			for (int c=0; c<Generation; c++) code += " ";
+			code += LevelNumber.ToString("00")+" "+Name;
+			if (!IsGroup && !scope.IsCustomType(DataType)) code += " PIC "+Picture;
+			code += ".";
+			Codegen.Write(stream, code, ref line, ref offset);
+			return;
 		}
 
 		/// <summary>All DataDescriptionEntries have one of their TopLevel items be of a custom type.</summary>
