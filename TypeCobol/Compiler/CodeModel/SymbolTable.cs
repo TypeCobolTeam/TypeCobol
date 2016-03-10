@@ -86,33 +86,26 @@ namespace TypeCobol.Compiler.CodeModel
 			return table[key];
 		}
 
+
 		internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
-			IList<DataDescriptionEntry> found;
-			if (name.DataNames.Count > 0) {
-				IList<DataDescriptionEntry> values = Get(name.DataNames[0].Name);
-				for (int c = 1; c < name.DataNames.Count; c++) {
-					values = Filter(values, name.DataNames[c].Name);
-				}
-				found = Filter(values, name.Symbol.Name);
-			} else {
-				found = Get(name.Symbol.Name);
+			IList<DataDescriptionEntry> found = Get(name.Symbol.Name);
+			int max = name.DataNames.Count;
+			for(int c=0; c<max; c++) {
+				string pname = name.DataNames[max-c-1].Name;
+				found = Filter(found, pname, c+1);
 			}
 			return found;
 		}
-
-		private IList<DataDescriptionEntry> Filter(IList<DataDescriptionEntry> values, string subordinate) {
+		private IList<DataDescriptionEntry> Filter(IList<DataDescriptionEntry> values, string pname, int generation) {
 			var filtered = new List<DataDescriptionEntry>();
-			foreach (var data in values) {
-				foreach (var sub in data.Subordinates) {
-					if (sub.Name == null) continue;//TODO issue #179
-					if (sub.Name.Name.Equals(subordinate)) {
-						filtered.Add(data);
-						break;
-					}
-				}
+			foreach(var entry in values) {
+				var parent = entry.GetAncestor(generation);
+				if (parent == null) continue;
+				if (parent.Name.Name.Equals(pname)) filtered.Add(entry);
 			}
 			return filtered;
 		}
+
 		private IList<DataDescriptionEntry> Get(string key) {
 			var values = new List<DataDescriptionEntry>();
 			if (DataEntries.ContainsKey(key))

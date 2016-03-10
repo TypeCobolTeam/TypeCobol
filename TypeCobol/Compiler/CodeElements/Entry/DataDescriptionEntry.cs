@@ -109,6 +109,18 @@ namespace TypeCobol.Compiler.CodeElements
             }
             private set { Name = value; }
         }
+		public QualifiedName QualifiedName {
+			get {
+				List<DataName> names = new List<DataName>();
+				var current = TopLevel;
+				while(current != null) {
+					names.Add(current.DataName);
+					current = current.TopLevel;
+				}
+				names.Reverse();
+				return new QualifiedName(Name, names);
+			}
+		}
 
         /// <summary>
         /// Type declaration.
@@ -120,6 +132,26 @@ namespace TypeCobol.Compiler.CodeElements
         /// Name of the top-level symbol (for group elements).
         /// </summary>
         public DataDescriptionEntry TopLevel { get; set; }
+
+		/// <param name="generation">0 for this, 1 for TopLevel, 2 for TopLevel.Toplevel, ...</param>
+		/// <returns>Appropriate TopLevel item, or null if generation <0 or generation too high.</returns>
+		public DataDescriptionEntry GetAncestor(int generation) {
+			if (generation < 0) return null;
+			if (generation==0) return this;
+			if (TopLevel == null) return null;
+			return TopLevel.GetAncestor(generation-1);
+		}
+		public int Generation {
+			get {
+				int generation = 0;
+				var parent = TopLevel;
+				while(parent != null) {
+					generation++;
+					parent = parent.TopLevel;
+				}
+				return generation;
+			}
+		}
 
         /// <summary>
         /// Token (used for position tracking).
