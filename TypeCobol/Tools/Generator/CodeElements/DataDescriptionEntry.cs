@@ -15,7 +15,9 @@ namespace TypeCobol.Compiler.CodeElements {
 //			if (IsGenerated(scope)) {
 				string code = "";
 				for (int c=0; c<Generation; c++) code += " ";
-				code += LevelNumber.ToString("00")+" "+Name+".";
+				code += LevelNumber.ToString("00")+" "+Name;
+				if (!IsGroup && !scope.IsCustomType(DataType)) code += " PIC "+Picture;
+				code += ".";
 				Codegen.Write(stream, code, ref line, ref offset);
 				return;
 //			}
