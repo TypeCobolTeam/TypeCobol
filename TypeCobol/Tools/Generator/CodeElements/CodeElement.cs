@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.CodeElements {
 			}
 		}
 
-		private static void WriteCode(TextWriter stream, Scanner.Token token, ref int line, ref int offset) {
+		internal static void WriteCode(TextWriter stream, Scanner.Token token, ref int line, ref int offset) {
 			while(line < token.Line) {
 				Codegen.WriteEmptyLine(stream, ref line, ref offset);
 			}
