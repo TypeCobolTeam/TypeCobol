@@ -65,7 +65,9 @@ namespace TypeCobol.Test
 
                 if (codegen) {
                     var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(unit.ProgramClassDocumentSnapshot, null);
-                    generator.GenerateCobolText(filename+".gen");
+					var stream = new System.IO.StreamWriter(filename+".gen");
+					generator.WriteCobol(stream);
+					stream.Close();
                 }
             }
             string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
@@ -34,36 +35,18 @@ namespace TypeCobol.Compiler.Generator
         /// <summary>
         /// Generate Cobol program corresponding to the TypeCobol source
         /// </summary>
-        public void GenerateCobolText(string filename) {
-            if (Input.Program == null) return;
-            var str = new System.Text.StringBuilder();
+		public void WriteCobol(TextWriter stream) {
             int line = 1, offset = 0;
-            GenerateCode(Input.Program.SyntaxTree.Root, str, ref line, ref offset);
-            System.IO.File.WriteAllText(filename, str.ToString());
-        }
+            WriteCobol(stream, Input.Program.SyntaxTree.Root, ref line, ref offset);
+			stream.Close();
+		}
 
-        private void GenerateCode(CodeElements.Node node, System.Text.StringBuilder str, ref int line, ref int offset) {
-			var ce = node.CodeElement as TypeCobol.Compiler.CodeElements.CodeElement;
-            if (ce != null) {
-                foreach(var token in ce.ConsumedTokens) {
-                    GenerateCode(token, str, ref line, ref offset);
-                }
-            }
+        private void WriteCobol(TextWriter stream, CodeElements.Node node, ref int line, ref int offset) {
+			var ce = node.CodeElement as TypeCobol.Generator.CodeGenerator;
+            if (ce != null) ce.WriteCode(stream, node.SymbolTable, ref line, ref offset);
             foreach(var child in node.Children) {
-                GenerateCode(child, str, ref line, ref offset);
+                WriteCobol(stream, child, ref line, ref offset);
             }
-        }
-
-        private void GenerateCode(Scanner.Token token, System.Text.StringBuilder str, ref int line, ref int offset) {
-            while(line < token.Line) {
-                str.AppendLine();
-                line++;
-                offset = 0;
-            }
-            for(int c=offset; c<token.StartIndex; c++) str.Append(' ');
-            offset = token.StartIndex;
-            str.Append(token.Text);
-            offset += token.Length;
-        }
-    }
+		}
+	}
 }

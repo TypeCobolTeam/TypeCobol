@@ -158,7 +158,7 @@ namespace TypeCobol.Test.Compiler.Parser
             Dump(str, program.Identification);
             str.AppendLine();
 // [TYPECOBOL]
-			Dump(str, program.CustomTypes);
+			Dump(str, program.SymbolTable.CustomTypes);
 // [/TYPECOBOL]
             Dump(str, program.SymbolTable);
             return str;

@@ -196,9 +196,9 @@ cobolProgram:
 	environmentDivision?
 	dataDivision?
 	procedureDivision?
-                cobolProgram* 
-                ProgramEnd?
-                ;
+		cobolProgram*
+	ProgramEnd?
+	;
 
 environmentDivision:
 	EnvironmentDivisionHeader  configurationSection? inputOutputSection?;
