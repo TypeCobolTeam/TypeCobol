@@ -493,7 +493,7 @@ namespace TypeCobol.Compiler.Parser
             var statement = new MergeStatement();
             statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
             statement.Keys = CreateKeyDataItems(context.onAscendingDescendingKey());
-            statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetName());
+            statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetNameReference());
             if (context.usingFilenames() != null)
             {
                 statement.Using = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
@@ -518,7 +518,7 @@ namespace TypeCobol.Compiler.Parser
                                   || context.WITH() != null     // used for DUPLICATES phrase,
                                   || context.IN() != null      // so the presence of any one
                                   || context.ORDER() != null; // shows us the writer's intent
-            statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetName());
+            statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetNameReference());
             if (context.usingFilenames()  != null) statement.Using  = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
             if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileName());
             if (context.inputProcedure()  != null) statement.Input  = SyntaxElementBuilder.CreateProcedureNames(context.inputProcedure().procedureName());
@@ -775,7 +775,7 @@ namespace TypeCobol.Compiler.Parser
             }
             statement.Encoding = SyntaxElementBuilder.CreateEncoding(context.codepage());
             statement.IsReturningNational = context.RETURNING() != null;
-            statement.ValidatingFile = SyntaxElementBuilder.CreateXmlSchemaName(context.xmlSchemaName());
+            statement.ValidatingFile = SyntaxElementBuilder.CreateXmlSchemaName(context.xmlSchemaNameReference());
             foreach (var procedure in context.procedureName())
             {
                 var procedurename = SyntaxElementBuilder.CreateProcedureName(procedure);

@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         AlphabetName,
         ClassName,
-        CharsetClassName,
+        CharacterClassName,
         ConditionName,
         ConditionForUPSISwitchName,
         DataName,

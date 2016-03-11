@@ -363,7 +363,7 @@ namespace TypeCobol.Compiler.Parser
             return names;
         }
 
-        internal static AlphabetName CreateAlphabetName(CodeElementsParser.AlphabetNameContext context)
+        internal static AlphabetName CreateAlphabetName(CodeElementsParser.AlphabetNameReferenceContext context)
         {
             if (context == null) return null;
             return new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
@@ -526,7 +526,7 @@ namespace TypeCobol.Compiler.Parser
             return new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static XmlSchemaName CreateXmlSchemaName(CodeElementsParser.XmlSchemaNameContext context)
+        public static XmlSchemaName CreateXmlSchemaName(CodeElementsParser.XmlSchemaNameReferenceContext context)
         {
             if (context == null) return null;
             return new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
@@ -688,7 +688,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ZERO()   != null) return CreateFigurativeConstant(context.ZERO());
             if (context.ZEROS()  != null) return CreateFigurativeConstant(context.ZEROS());
             if (context.ZEROES() != null) return CreateFigurativeConstant(context.ZEROES());
-            if (context.SymbolicCharacter() != null) return CreateFigurativeConstant(context.SymbolicCharacter());
+            if (context.symbolicCharacterReference() != null) return CreateFigurativeConstant(context.symbolicCharacterReference().SymbolicCharacter());
             return null;
         }
 

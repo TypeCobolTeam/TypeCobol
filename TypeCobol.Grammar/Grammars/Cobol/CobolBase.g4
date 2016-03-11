@@ -568,7 +568,9 @@ figurativeConstant:
 	QUOTE | QUOTES |
 	SPACE | SPACES |
 	ZERO  | ZEROS  | ZEROES |
-	SymbolicCharacter);
+	symbolicCharacterReference);
+
+symbolicCharacterReference : SymbolicCharacter;
 
 // p13: ALL literal
 // literal can be an alphanumeric literal, a DBCS literal, a national literal, or a

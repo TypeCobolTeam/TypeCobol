@@ -945,7 +945,7 @@ memorySizeClause:
                     MEMORY SIZE? IntegerLiteral (WORDS | CHARACTERS | MODULES);
 
 programCollatingSequenceClause:
-                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetName;
+                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetNameReference;
 
 segmentLimitClause:
                       SEGMENT_LIMIT IS? priorityNumber;
@@ -1086,7 +1086,31 @@ mnemonicForEnvironmentNameReferenceOrEnvironmentName :   UserDefinedWord;
 // data, but not for DBCS or national data.
 
 alphabetClause : 
-                   ALPHABET alphabetName IS? (standardCollatingSequence | userDefinedCollatingSequence);
+                   ALPHABET alphabetNameDefinition IS? (standardCollatingSequence | userDefinedCollatingSequence);
+				   				   
+// p 115 : ALPHABET alphabet-name-1 IS
+// alphabet-name-1 specifies a collating sequence when used in:
+// - The PROGRAM COLLATING SEQUENCE clause of the object-computer
+// paragraph
+// - The COLLATING SEQUENCE phrase of the SORT or MERGE statement
+// alphabet-name-1 specifies a character code set when used in:
+// - The FD entry CODE-SET clause
+// - The SYMBOLIC CHARACTERS clause
+
+alphabetNameDefinition : UserDefinedWord;
+
+alphabetNameReference : UserDefinedWord | standardCollatingSequence;
+
+// p 115 : STANDARD-1
+// Specifies the ASCII character set.
+// STANDARD-2
+// Specifies the International Reference Version of ISO/IEC 646, 7-bit
+// coded character set for information interchange.
+// NATIVE
+// Specifies the native character code set. If the ALPHABET clause is
+// omitted, EBCDIC is assumed.
+// EBCDIC
+// Specifies the EBCDIC character set.
 
 standardCollatingSequence:
                                  STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
@@ -1108,27 +1132,6 @@ charactersRange:
 
 charactersEqualSet:
                       characterInCollatingSequence (ALSO characterInCollatingSequence)+;
-
-// p 115 : ALPHABET alphabet-name-1 IS
-// alphabet-name-1 specifies a collating sequence when used in:
-// - The PROGRAM COLLATING SEQUENCE clause of the object-computer
-// paragraph
-// - The COLLATING SEQUENCE phrase of the SORT or MERGE statement
-// alphabet-name-1 specifies a character code set when used in:
-// - The FD entry CODE-SET clause
-// - The SYMBOLIC CHARACTERS clause
-// STANDARD-1
-// Specifies the ASCII character set.
-// STANDARD-2
-// Specifies the International Reference Version of ISO/IEC 646, 7-bit
-// coded character set for information interchange.
-// NATIVE
-// Specifies the native character code set. If the ALPHABET clause is
-// omitted, EBCDIC is assumed.
-// EBCDIC
-// Specifies the EBCDIC character set.
-
-alphabetName : UserDefinedWord | standardCollatingSequence;
 
 // p116 : literal-1, literal-2, literal-3
 // Specifies that the collating sequence for alphanumeric data is
@@ -1211,10 +1214,12 @@ characterInCollatingSequence : alphanumericLiteral | IntegerLiteral;
 // Provides a means of specifying one or more symbolic characters.
 
 symbolicCharactersClause :
-                             SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetName)?;
+                             SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
 
 symbolicCharactersOrdinalPositions:
-                                SymbolicCharacter+ (ARE|IS)? IntegerLiteral+;
+                                symbolicCharacterDefinition+ (ARE|IS)? IntegerLiteral+;
+
+symbolicCharacterDefinition : SymbolicCharacter;
 
 // p117 : symbolic-character-1 is a user-defined word and must contain at least one
 // alphabetic character. The same symbolic-character can appear only once in
@@ -1251,7 +1256,18 @@ symbolicCharactersOrdinalPositions:
 // ascending or descending order.
 
 classClause : 
-                CLASS charsetClassName IS? (charactersLiteral | charactersRange)+;
+                CLASS characterClassNameDefinition IS? (charactersLiteral | charactersRange)+;
+				
+// p118 : CLASS class-name-1 IS
+// Provides a means for relating a name to the specified set of characters
+// listed in that clause. class-name-1 can be referenced only in a class
+// condition. The characters specified by the values of the literals in this
+// clause define the exclusive set of characters of which this class consists.
+// The class-name in the CLASS clause can be a DBCS user-defined word.
+
+characterClassNameDefinition : UserDefinedWord;
+
+characterClassNameReference : UserDefinedWord;
 
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same
@@ -1367,14 +1383,16 @@ decimalPointClause :
 //environment variable name for the file.
 
 xmlSchemaClause :
-                    XML_SCHEMA xmlSchemaName IS? (externalFileId | alphanumericLiteral);
+                    XML_SCHEMA xmlSchemaNameDefinition IS? (externalFileId | alphanumericLiteral);
 
 // p120: XML-SCHEMA xml-schema-name-1 IS
 // xml-schema-name-1 can be referenced only in an XML PARSE statement.
 // The xml-schema-name in the XML SCHEMA clause can be a DBCS
 // user-defined word.
 
-xmlSchemaName : UserDefinedWord;
+xmlSchemaNameDefinition : UserDefinedWord;
+
+xmlSchemaNameReference : UserDefinedWord;
 
 // p121: external-fileid-1
 // Specifies a user-defined word that must conform to the following rules:
@@ -2221,73 +2239,6 @@ linkageSectionHeader:
 // FD is the file description level indicator and SD is the sort-merge file description level indicator.
 // levelIndicator : (FD | SD);
 
-//fileDescriptionEntry:
-//	fdFormat1 | fdFormat2 | fdFormat3 | fdFormat4;
-
-fdFormat1:
-	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel1? fdValue? fdData? fdLinage? fdRecording? fdCodeset? PeriodSeparator;
-
-fdFormat2:
-	FD fileName fdExternal? fdGlobal? fdBlock? (fdRecord1 | fdRecord2 | fdRecord3)? fdLabel2? fdValue? fdData? PeriodSeparator;
-
-fdFormat3:
-	FD fileName fdExternal? fdGlobal? (fdRecord1 | fdRecord3)? PeriodSeparator;
-
-fdFormat4:
-	SD fileName (fdRecord1 | fdRecord2 | fdRecord3)? fdData? fdBlock? fdLabel1? fdValue? fdLinage? fdCodeset? PeriodSeparator;
-
-fdExternal:
-	IS? EXTERNAL;
-fdGlobal:
-	IS? GLOBAL;
-
-fdBlock:
-	BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS);
-
-fdRecord1:
-	RECORD CONTAINS? IntegerLiteral CHARACTERS?;
-fdRecord2:
-	RECORD CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?;
-fdRecord3:
-	RECORD fdClause1 (DEPENDING ON? dataName)?;
-fdClause1:
-	IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS?;
-
-fdLabel1:
-	LABEL fdRecordVerb (fdStandardOrOmitted | dataName+);
-fdLabel2:
-	LABEL fdRecordVerb fdStandardOrOmitted;
-
-fdRecordVerb: (RECORD IS?) | (RECORDS ARE?);
-
-fdStandardOrOmitted: STANDARD | OMITTED;
-
-fdValue:
-	VALUE OF (systemName IS? (dataName | literal))+;
-
-fdData:
-	DATA fdRecordVerb dataName+;
-
-fdLinage:
-	LINAGE IS? (dataName | IntegerLiteral) LINES? fdClause2;
-
-fdClause2:
-	fdFooting? fdTop? fdBottom?;
-fdFooting:
-	WITH? FOOTING AT? (dataName | IntegerLiteral);
-fdTop:
-	LINES? AT? TOP (dataName | IntegerLiteral);
-fdBottom:
-	LINES? AT? BOTTOM (dataName | IntegerLiteral);
-
-fdRecording:
-	RECORDING MODE? IS? recordingMode;
-
-fdCodeset:
-	CODE_SET IS? alphabetName;
-
-
-
 fileDescriptionEntry : 
                     (FD | SD) fileName 
                    (externalClause |
@@ -2727,7 +2678,7 @@ recordingMode : UserDefinedWord; // possible values : F | V | U | S
 // program when specified under an SD.
 
 codeSetClause:
-                 CODE_SET IS? alphabetName;
+                 CODE_SET IS? alphabetNameReference;
 
 // p158: Record description entries describe the logical records in the file (including the category and format of data within each field of the logical record), different values the data might be assigned, and so forth.
 
@@ -6065,7 +6016,7 @@ invokeStatementEnd: END_INVOKE;
 
 mergeStatement:
 	MERGE fileName onAscendingDescendingKey+
-		(COLLATING? SEQUENCE IS? alphabetName)?
+		(COLLATING? SEQUENCE IS? alphabetNameReference)?
 		usingFilenames
 		(givingFilenames | outputProcedure);
 
@@ -7372,7 +7323,7 @@ setStatementForSwitchesWhat:
 sortStatement:
 	SORT fileName onAscendingDescendingKey+
 		(WITH? DUPLICATES IN? ORDER?)?
-		(COLLATING? SEQUENCE IS? alphabetName)?
+		(COLLATING? SEQUENCE IS? alphabetNameReference)?
 		(usingFilenames  | inputProcedure)
 		(givingFilenames | outputProcedure);
 
@@ -8692,7 +8643,7 @@ xmlParseStatement:
                      XML PARSE identifier
                      (WITH? ENCODING codepage)? 
                      (RETURNING NATIONAL)?
-                     (VALIDATING WITH? (identifier | (FILE xmlSchemaName)))?
+                     (VALIDATING WITH? (identifier | (FILE xmlSchemaNameReference)))?
                      PROCESSING PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)   ?;
 
 //xmlParseStatementConditional:
@@ -9302,7 +9253,7 @@ conditionalExpression:
 // ... more details on the evaluation of classCondition p257/258 ...
 
 classCondition:
-	identifier IS? NOT? (charsetClassName | (NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER | DBCS | KANJI));
+	identifier IS? NOT? (characterClassNameReference | (NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER | DBCS | KANJI));
 
 // p258: Condition-name condition
 // A condition-name condition tests a conditional variable to determine whether its
@@ -10203,15 +10154,6 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference :
 	  ////////////////////////
 	 // User defined words //
 	////////////////////////
-
-// p118 : CLASS class-name-1 IS
-// Provides a means for relating a name to the specified set of characters
-// listed in that clause. class-name-1 can be referenced only in a class
-// condition. The characters specified by the values of the literals in this
-// clause define the exclusive set of characters of which this class consists.
-// The class-name in the CLASS clause can be a DBCS user-defined word.
-
-charsetClassName: UserDefinedWord;
 
 // p115 : condition-1, condition-2
 // Condition-names follow the rules for user-defined names. At least one

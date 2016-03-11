@@ -10,10 +10,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// condition. The characters specified by the values of the literals in this
     /// clause define the exclusive set of characters of which this class consists.
     /// </summary>
-    public class CharsetClassName : Symbol
+    public class CharacterClassName : Symbol
     {
-        public CharsetClassName(Token userDefinedWord) :
-            base(userDefinedWord, SymbolType.CharsetClassName)
+        public CharacterClassName(Token userDefinedWord) :
+            base(userDefinedWord, SymbolType.CharacterClassName)
         { }
     }
 }

@@ -1836,5 +1836,63 @@ namespace TypeCobol.Compiler.Parser
             SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
             symbolToken.SymbolInformation = symbolInfo;
         }
+
+        // ** Characters, Characters sets and Schemas **
+
+        public override void EnterSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.SymbolicCharacter);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.SymbolicCharacter);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.AlphabetName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.AlphabetName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.CharacterClassName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.CharacterClassName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+       
+        public override void EnterXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.XmlSchemaName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
     }
 }

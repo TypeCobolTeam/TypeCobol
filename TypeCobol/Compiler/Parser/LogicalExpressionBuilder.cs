@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Parser
         private LogicalExpression createCondition(CodeElementsParser.ClassConditionContext context)
         {
             Symbol type = null;
-            if (context.charsetClassName() != null) type = new CharsetClassName(ParseTreeUtils.GetFirstToken(context.charsetClassName()));
+            if (context.characterClassNameReference() != null) type = new CharacterClassName(ParseTreeUtils.GetFirstToken(context.characterClassNameReference()));
             if (context.NUMERIC() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.NUMERIC()));
             if (context.ALPHABETIC() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC()));
             if (context.ALPHABETIC_LOWER() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC_LOWER()));

@@ -281,7 +281,7 @@
     <Compile Include="Compiler\CodeElements\Symbols\SymbolReference.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AlphabetName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AssignmentName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\CharsetClassName.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\CharacterClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ConditionName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SectionName.cs" />
