@@ -29,14 +29,14 @@ namespace TypeCobol.Server
             return DocumentFormat.FreeUTF8Format;//TODO autodetect
         }
 
-        public void Init(string path)
+        public void Init(string path, DocumentFormat format = null)
         {
             FileCompiler compiler;
             if (Compilers.TryGetValue(path, out compiler)) return;
             string directory = Directory.GetParent(path).FullName;
             string filename = Path.GetFileName(path);
             DirectoryInfo root = new DirectoryInfo(directory);
-            DocumentFormat format = GetFormat(path);
+            if (format == null) format = GetFormat(path);
             TypeCobolOptions options = new TypeCobolOptions();
             CompilationProject project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);

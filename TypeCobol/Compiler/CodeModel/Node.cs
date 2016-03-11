@@ -26,5 +26,7 @@ namespace TypeCobol.Compiler.CodeElements
             if (CodeElement==null) return GetType().Name+"?";
             else return CodeElement.GetType().Name;
         }
-    }
+
+		public CodeModel.SymbolTable SymbolTable { get; set; }
+	}
 }
