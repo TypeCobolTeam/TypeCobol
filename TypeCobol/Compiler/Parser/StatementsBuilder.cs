@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new AcceptStatement();
             statement.Receiving = SyntaxElementBuilder.CreateIdentifier(context.identifier());
-            statement.Input = SyntaxElementBuilder.CreateMnemonic(context.mnemonicOrEnvironmentName());
+            statement.Input = SyntaxElementBuilder.CreateMnemonic(context.mnemonicForEnvironmentNameReferenceOrEnvironmentName());
             statement.Mode = CreateDateMode(context);
             return statement;
         }
@@ -340,7 +340,7 @@ namespace TypeCobol.Compiler.Parser
                 if (symbolToken != null)
                 {
                     // TO DO : use the symbol table to resolve this ambiguity
-                    // Only one of the following twoi properties should be set
+                    // Only one of the following two properties should be set
                     statement.ClassName = new ClassName(symbolToken);
                     statement.Instance = SyntaxElementBuilder.CreateIdentifier(identifier);
                 }

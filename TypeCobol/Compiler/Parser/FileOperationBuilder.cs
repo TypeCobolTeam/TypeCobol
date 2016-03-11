@@ -150,7 +150,7 @@ namespace TypeCobol.Compiler.Parser
                 context.BEFORE() != null,
                 context.AFTER() != null,
                 new ArithmeticExpressionBuilder().CreateNumberOrIdentifier(context.identifierOrInteger()),
-                SyntaxElementBuilder.CreateMnemonic(context.mnemonicForEnvironmentName()),
+                SyntaxElementBuilder.CreateMnemonic(context.mnemonicForEnvironmentNameReference()),
                 context.PAGE() != null
                 );
         }

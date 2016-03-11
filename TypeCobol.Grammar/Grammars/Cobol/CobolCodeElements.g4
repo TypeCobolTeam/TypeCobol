@@ -1014,17 +1014,19 @@ upsiSwitchName : UserDefinedWord;
                         // !! Impossible to avoid a TARGET LANGUAGE DEPENDENT semantic predicate here 
                         //    (... ambiguity with environmentNameClause ...)
 upsiSwitchNameClause:   { CurrentToken.Text.StartsWith("UPSI-", System.StringComparison.OrdinalIgnoreCase) }? 
-                        upsiSwitchName ((IS? mnemonicForUPSISwitchName conditionNamesForUPSISwitch?) | conditionNamesForUPSISwitch);
+                        upsiSwitchName ((IS? mnemonicForUPSISwitchNameDefinition conditionNamesForUPSISwitch?) | conditionNamesForUPSISwitch);
 
 conditionNamesForUPSISwitch:
                                (onConditionNameForUPSISwitch offConditionNameForUPSISwitch?) |
                                (offConditionNameForUPSISwitch onConditionNameForUPSISwitch?);
 
 onConditionNameForUPSISwitch:
-                                ON STATUS? IS? conditionName;
+                                ON STATUS? IS? conditionForUPSISwitchNameDefinition;
 
 offConditionNameForUPSISwitch:
-                                 OFF STATUS? IS? conditionName;
+                                 OFF STATUS? IS? conditionForUPSISwitchNameDefinition;
+
+conditionForUPSISwitchNameDefinition : UserDefinedWord;
 
 // p115 : mnemonic-name-1 , mnemonic-name-2
 // mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
@@ -1032,7 +1034,9 @@ offConditionNameForUPSISwitch:
 
 // mnemonic-name-2 can qualify condition-1 or condition-2 names.
 
-mnemonicForUPSISwitchName : UserDefinedWord;
+mnemonicForUPSISwitchNameDefinition : UserDefinedWord;
+
+mnemonicForUPSISwitchNameReference : UserDefinedWord;
 
 // p114 : environmentName
 // System devices or standard system actions taken by the compiler.
@@ -1054,7 +1058,7 @@ mnemonicForUPSISwitchName : UserDefinedWord;
 environmentName : UserDefinedWord;
 
 environmentNameClause : 
-                          environmentName IS? mnemonicForEnvironmentName;
+                          environmentName IS? mnemonicForEnvironmentNameDefinition;
 
 
 
@@ -1070,14 +1074,11 @@ environmentNameClause :
 // mnemonic-name-1 can be used in ACCEPT, DISPLAY, and WRITE statements. 
 // mnemonic-name-2 can be referenced only in the SET statement. 
 
-mnemonicForEnvironmentName : UserDefinedWord;
+mnemonicForEnvironmentNameDefinition : UserDefinedWord;
 
+mnemonicForEnvironmentNameReference : UserDefinedWord;
 
-//As environmentName and mnemonicForEnvironmentName are both defined as UserDefinedWord
-//ANTLR can't know which one is the good statement
-//So CodeElementBuilder need to check if the UserDefinedWord match an environmentName
-//if not, it's mnemonicForEnvironmentName
-mnemonicOrEnvironmentName:   UserDefinedWord;
+mnemonicForEnvironmentNameReferenceOrEnvironmentName :   UserDefinedWord;
 
 // p 115 : The ALPHABET clause provides a means of relating an alphabet-name to a
 // specified character code set or collating sequence.
@@ -4531,7 +4532,7 @@ sentenceEnd:
 // Thus 2:41 PM is expressed as 14410000.
 
 acceptStatement:
-	ACCEPT identifier (FROM (mnemonicOrEnvironmentName | (DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME))?;
+	ACCEPT identifier (FROM (mnemonicForEnvironmentNameReferenceOrEnvironmentName | (DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME))?;
 
 
 
@@ -4939,7 +4940,7 @@ identifierOrLiteral:
 		identifier | literal;
 
 uponEnvironmentName:
-					UPON mnemonicOrEnvironmentName;
+					UPON mnemonicForEnvironmentNameReferenceOrEnvironmentName;
 
 withNoAdvancing:
 					WITH? NO ADVANCING;
@@ -7105,7 +7106,7 @@ setStatementForIndexes:
 setStatementForSwitches:
 	SET setStatementForSwitchesWhat+;
 setStatementForSwitchesWhat:
-	mnemonicForUPSISwitchName+ TO (ON | OFF);
+	mnemonicForUPSISwitchNameReference+ TO (ON | OFF);
 
 
 // p422: SORT statement
@@ -8099,7 +8100,7 @@ unstringStatementEnd: END_UNSTRING;
 
 writeStatement:
 	WRITE qualifiedDataName (FROM identifier)?
-	((BEFORE | AFTER) ADVANCING? ((identifierOrInteger (LINE | LINES)?) | mnemonicForEnvironmentName | PAGE)?)?;
+	((BEFORE | AFTER) ADVANCING? ((identifierOrInteger (LINE | LINES)?) | mnemonicForEnvironmentNameReference | PAGE)?)?;
 
 identifierOrInteger: identifier | IntegerLiteral;
 
@@ -9120,7 +9121,7 @@ execStatementEnd: END_EXEC;
 // 2) Identifiers and name references
 //
 // identifier/AdaptivePredict
-// - (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier ...) | conditionNameReference
+// - (dataNameReferenceOrSpecialRegisterOrFunctionIdentifier ...) | conditionReference
 //
 // operand/AdaptivePredict
 // - identifier | literal | arithmeticExpression | indexName
@@ -9248,7 +9249,7 @@ conditionalExpression:
 	|  conditionalExpression OR conditionalExpression
 // Simple conditions:
 	|  classCondition
-	|  conditionNameCondition
+	|  conditionNameConditionOrSwitchStatusCondition
 	|  generalRelationCondition
 	|  pointerRelationCondition
 //	|  programPointerRelationCondition  // impossible to distinguish at the parsing stage
@@ -9336,9 +9337,10 @@ classCondition:
 // Depending on the evaluation of the condition-name condition, alternative paths of
 // execution are taken by the object program.
 
-conditionNameCondition: conditionNameReference;
+// Impossible to distinguish from switchStatusCondition => joined in conditionNameOrSwitchStatusCondition        
+// conditionNameCondition: conditionReference;
 
-
+conditionNameConditionOrSwitchStatusCondition: conditionReference;
 
 // p259: Relation conditions
 // A relation condition specifies the comparison of two operands. The relational
@@ -9576,16 +9578,9 @@ signCondition: operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
 // The switch-status condition tests the value associated with condition-name. (The
 // value is considered to be alphanumeric.) The result of the test is true if the UPSI
 // switch is set to the value (0 or 1) corresponding to condition-name.
-                 
+   
+// Impossible to distinguish from conditionNameCondition => joined in conditionNameOrSwitchStatusCondition              
 // switchStatusCondition: qualifiedConditionName;
-
-
-
-
-
-
-
-
 
 
 // p254: Arithmetic expressions
@@ -9712,8 +9707,14 @@ arithmeticExpression:
 // 02 through 49 are successively lower levels of the hierarchy.
 
 identifier:
-	  dataNameReferenceOrSpecialRegisterOrFunctionIdentifier (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?
-	// | conditionNameReference // cannot be distinguished from dataNameReference at this stage
+	( dataReferenceOrConditionReference
+	| specialRegister
+	| addressOfSpecialRegisterDecl
+	| lengthOfSpecialRegisterDecl
+	| linageCounterSpecialRegisterDecl
+	| functionIdentifier) 
+	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?
+	// | conditionReference // cannot be distinguished from dataReference at this stage
           ;
 
 // p74: Reference modification
@@ -9797,14 +9798,6 @@ identifier:
 referenceModifier: leftMostCharacterPosition ColonSeparator length?;
 leftMostCharacterPosition: arithmeticExpression;
 length: arithmeticExpression;
-
-dataNameReferenceOrSpecialRegisterOrFunctionIdentifier:
-	  dataNameReference
-	| specialRegister
-	| addressOfSpecialRegisterDecl
-	| lengthOfSpecialRegisterDecl
-	| linageCounterSpecialRegisterDecl
-	| functionIdentifier;
 
 // p77: A function-identifier is a sequence of character strings and separators that uniquely
 // references the data item that results from the evaluation of a function.
@@ -9925,12 +9918,15 @@ argument:
 // data-name or identifier that has the same definition as the implicit definition of the
 // special register can be used.
 
-addressOfSpecialRegisterDecl: ADDRESS OF dataNameReference;
-lengthOfSpecialRegisterDecl:  LENGTH OF? dataNameReference;
+addressOfSpecialRegisterDecl: ADDRESS OF dataReference;
+lengthOfSpecialRegisterDecl:  LENGTH OF? dataReference;
 linageCounterSpecialRegisterDecl: LINAGE_COUNTER OF fileName;
 
-dataNameReference:
+dataReference:
 	qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+dataReferenceOrConditionReference:
+	qualifiedDataNameOrQualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -10144,17 +10140,29 @@ dataNameBase: dataName;
 // “SPECIAL-NAMES paragraph” on page 112.
 
 // p70: Format 1: condition-name in data division
-conditionNameReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+conditionReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p70: Format 2: condition-name in SPECIAL-NAMES paragraph
 //conditionNameReferenceInSpecialNamesParagraph: conditionName ((IN | OF) mnemonicForUPSISwitchName)*;
 
+// Impossible to distinguish between the following rules at this parsing stage ;
+// - conditionName or conditionForUPSISwitchName
+// - dataName or fileName or menmonicForUPSISwitchName
+// qualifiedConditionName: conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
 
-qualifiedConditionName: conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+qualifiedConditionName: 
+		conditionNameReferenceOrConditionForUPSISwitchNameReference
+		((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
+conditionNameReferenceOrConditionForUPSISwitchNameReference : UserDefinedWord;
 
+dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference : UserDefinedWord;
 
+qualifiedDataNameOrQualifiedConditionName:
+		dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference
+		((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference : UserDefinedWord;
 
 // --- Terminals ---
 //

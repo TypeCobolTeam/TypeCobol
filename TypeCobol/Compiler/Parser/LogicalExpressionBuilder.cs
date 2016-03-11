@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Parser
             if (conditions.Count < 1) {
                 // simple condition
                 if (context.classCondition()           != null) return createCondition(context.classCondition());
-                if (context.conditionNameCondition()   != null) return createCondition(context.conditionNameCondition());
+                if (context.conditionNameConditionOrSwitchStatusCondition()   != null) return createCondition(context.conditionNameConditionOrSwitchStatusCondition());
                 if (context.generalRelationCondition() != null) return createCondition(context.generalRelationCondition());
                 if (context.pointerRelationCondition() != null) return createCondition(context.pointerRelationCondition());
                 if (context.signCondition()            != null) return createCondition(context.signCondition());
@@ -125,12 +125,12 @@ namespace TypeCobol.Compiler.Parser
             return condition;
         }
 
-        private LogicalExpression createCondition(CodeElementsParser.ConditionNameConditionContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.ConditionNameConditionOrSwitchStatusConditionContext context) {
             if (context == null) return null;
-            return createCondition(context.conditionNameReference());
+            return createCondition(context.conditionReference());
         }
 
-        private LogicalExpression createCondition(CodeElementsParser.ConditionNameReferenceContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.ConditionReferenceContext context) {
             if (context == null) return null;
             QualifiedName conditionname = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
             IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());

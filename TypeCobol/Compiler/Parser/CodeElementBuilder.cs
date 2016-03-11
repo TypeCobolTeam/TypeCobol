@@ -848,7 +848,7 @@ namespace TypeCobol.Compiler.Parser
             //(mnemonic) Environment name
             if (context.uponEnvironmentName() != null)
             {
-                Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicOrEnvironmentName());
+                Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicForEnvironmentNameReferenceOrEnvironmentName());
                 if (mnemonicOrEnvironmentName != null)
                 {
                     statement.UponMnemonicOrEnvironmentName = new MnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
@@ -1251,10 +1251,10 @@ namespace TypeCobol.Compiler.Parser
                 {
                     var setExternalSwitch = new SetExternalSwitch();
                     
-                    if (switchesWhatContext.mnemonicForUPSISwitchName() != null)
+                    if (switchesWhatContext.mnemonicForUPSISwitchNameReference() != null)
                     {
                         var mnemonics = new List<MnemonicForEnvironmentName>();
-                        foreach (var mnemonicContext in switchesWhatContext.mnemonicForUPSISwitchName())
+                        foreach (var mnemonicContext in switchesWhatContext.mnemonicForUPSISwitchNameReference())
                         {
                            mnemonics.Add(new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(mnemonicContext)));
                         }
@@ -1762,7 +1762,79 @@ namespace TypeCobol.Compiler.Parser
         // + runtime references 
         // => methodNameFromData
 
-        // ** Aliases on external names **
-        
+        // ** Environment names, UPSI switch names and associated Mnemonics, Condition  **
+
+        public override void EnterEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.ExternalName, SymbolType.EnvironmentName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterUpsiSwitchName(CodeElementsParser.UpsiSwitchNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.ExternalName, SymbolType.UPSISwitchName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.MnemonicForEnvironmentName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.MnemonicForUPSISwitchName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ConditionForUPSISwitchName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.MnemonicForEnvironmentName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.MnemonicForEnvironmentName, SymbolType.EnvironmentName };
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.MnemonicForUPSISwitchName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName };
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
     }
 }
