@@ -2682,11 +2682,11 @@ codeSetClause:
 
 // p158: Record description entries describe the logical records in the file (including the category and format of data within each field of the logical record), different values the data might be assigned, and so forth.
 
-recordDescriptionEntry : dataDescriptionEntry+;
+// recordDescriptionEntry : dataDescriptionEntry+;
 
 // p158: Items that need not be so grouped can be defined in independent data description entries (called data item description entries). 
  
-dataItemDescriptionEntry : dataDescriptionEntry;
+// dataItemDescriptionEntry : dataDescriptionEntry;
 
 // p185: A data description entry specifies the characteristics of a data item. In the sections
 // that follow, sets of data description entries are called record description entries. The
@@ -2707,6 +2707,32 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 // The level-number in format 1 can be any number in the range 01–49, or 77.
 // A space, a comma, or a semicolon must separate clauses.
 
+// !! p205: The clauses can be written in any order, with two exceptions: 
+// - data-name-1 or FILLER, if specified, must immediately follow the level-number. 
+// - When the REDEFINES clause is specified, it must immediately follow data-name-1 or FILLER, if either is specified. If data-name-1 or FILLER is not specified, the REDEFINES clause must immediately follow the level-number.
+
+dataDescriptionEntry:
+	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+	
+	levelNumber (dataName | FILLER)? redefinesClause?
+	( pictureClause
+	| blankWhenZeroClause
+	| externalClause
+	| globalClause
+	| justifiedClause
+	| groupUsageClause
+	| occursClause
+	| signClause
+	| synchronizedClause
+	| usageClause
+	| valueClause
+	)* PeriodSeparator
+	
+	)
+	
+	| dataRenamesEntry
+	| dataConditionEntry;
+
 // p186: Format 2: renames
 // Format 2 regroups previously defined items.
 // A level-66 entry cannot rename another level-66 entry, nor can it rename a level-01,
@@ -2715,6 +2741,9 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 // data description entry in that record.
 //dataRenamesEntry:
 //                        '66' dataName renamesClause PeriodSeparator;
+
+dataRenamesEntry: { CurrentToken.Text == "66" }? 
+	levelNumber dataName renamesClause PeriodSeparator;
 
 // p186: Format 3: condition-name
 // Format 3 describes condition-names.
@@ -2728,18 +2757,8 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 //dataConditionNameEntry:
 //                        '88' conditionName valueClause PeriodSeparator;
 
-// --- SUMMARY ---
-// p185: Format 1: data description entry
-// - renamesClause not suported
-// p186: Format 2: renames
-// - levelNumber = 66
-// - FILLER not supported
-// - only renamesClause supported
-// p186: Format 3: condition-name
-// - levelNumber = 88
-// - dataName is conditionName
-// - FILLER not supported
-// - only valueClause supported
+dataConditionEntry: { CurrentToken.Text == "88" }? 
+	levelNumber conditionNameDefinition valueClauseForCondition PeriodSeparator;
 
 // p186: The level-number specifies the hierarchy of data within a record, and identifies
 // special-purpose data entries. A level-number begins a data description entry, a
@@ -2763,57 +2782,6 @@ dataItemDescriptionEntry : dataDescriptionEntry;
 // When level-numbers are indented, each new level-number can begin any
 // number of spaces to the right of Area A. The extent of indentation to the
 // right is limited only by the width of Area B.
-
-// p187: data-name-1
-// Explicitly identifies the data being described.
-// data-name-1, if specified, identifies a data item used in the program.
-// data-name-1 must be the first word following the level-number.
-// The data item can be changed during program execution.
-// data-name-1 must be specified for level-66 and level-88 items. It must also
-// be specified for any entry containing the GLOBAL or EXTERNAL clause,
-// and for record description entries associated with file description entries
-// that have the GLOBAL or EXTERNAL clauses.
-
-// p187: FILLER
-// A data item that is not explicitly referred to in a program. The keyword
-// FILLER is optional. If specified, FILLER must be the first word following
-// the level-number.
-// The keyword FILLER can be used with a conditional variable if explicit
-// reference is never made to the conditional variable but only to values that
-// it can assume. FILLER cannot be used with a condition-name.
-// In a MOVE CORRESPONDING statement or in an ADD
-// CORRESPONDING or SUBTRACT CORRESPONDING statement, FILLER
-// items are ignored. In an INITIALIZE statement, elementary FILLER items
-// are ignored.
-// If data-name-1 or the FILLER clause is omitted, the data item being described is
-// treated as though FILLER had been specified.
-
-// !! p205: The clauses can be written in any order, with two exceptions: 
-// - data-name-1 or FILLER, if specified, must immediately follow the level-number. 
-// - When the REDEFINES clause is specified, it must immediately follow data-name-1 or FILLER, if either is specified. If data-name-1 or FILLER is not specified, the REDEFINES clause must immediately follow the level-number.
-
-// p186 : 2 special cases
-// Format 2: renames
-// 66 data-name-1 renames-clause.
-// Format 3: condition-name
-// 88 condition-name-1 value-clause.
-
-dataDescriptionEntry:
-	levelNumber (dataName | FILLER)?
-	  renamesClause?
-	  redefinesClause?
-	( pictureClause
-	| blankWhenZeroClause
-	| externalClause
-	| globalClause
-	| justifiedClause
-	| groupUsageClause
-	| occursClause
-	| signClause
-	| synchronizedClause
-	| usageClause
-	| valueClause
-	)* PeriodSeparator;
 
 // p158: The relationships among all data to be used in a program are defined in the DATA DIVISION through a system of level indicators and level-numbers.
 
@@ -2859,6 +2827,13 @@ levelNumber : IntegerLiteral;
 
 // p187: data-name-1
 // Explicitly identifies the data being described.
+// data-name-1, if specified, identifies a data item used in the program.
+// data-name-1 must be the first word following the level-number.
+// The data item can be changed during program execution.
+// data-name-1 must be specified for level-66 and level-88 items. It must also
+// be specified for any entry containing the GLOBAL or EXTERNAL clause,
+// and for record description entries associated with file description entries
+// that have the GLOBAL or EXTERNAL clauses.
 
 // ... more details on Classes and categories of data p161 -> 166  ...
 
@@ -2886,6 +2861,42 @@ levelNumber : IntegerLiteral;
 
 // p168: There are two categories of algebraic signs used in COBOL: operational signs and editing signs. 
 // ... more details on Operational signs / Editing signs p168 ...
+
+dataName : UserDefinedWord;
+
+//dataNameReference : UserDefinedWord;
+
+// p187: FILLER
+// A data item that is not explicitly referred to in a program. The keyword
+// FILLER is optional. If specified, FILLER must be the first word following
+// the level-number.
+// The keyword FILLER can be used with a conditional variable if explicit
+// reference is never made to the conditional variable but only to values that
+// it can assume. FILLER cannot be used with a condition-name.
+// In a MOVE CORRESPONDING statement or in an ADD
+// CORRESPONDING or SUBTRACT CORRESPONDING statement, FILLER
+// items are ignored. In an INITIALIZE statement, elementary FILLER items
+// are ignored.
+// If data-name-1 or the FILLER clause is omitted, the data item being described is
+// treated as though FILLER had been specified.
+
+// p115 : condition-1, condition-2
+// Condition-names follow the rules for user-defined names. At least one
+// character must be alphabetic. The value associated with the
+// condition-name is considered to be alphanumeric. A condition-name can be
+// associated with the on status or off status of each UPSI switch specified.
+// In the PROCEDURE DIVISION, the UPSI switch status is tested through
+// the associated condition-name. Each condition-name is the equivalent of a
+// level-88 item; the associated mnemonic-name, if specified, is considered the
+// conditional variable and can be used for qualification.
+// Condition-names specified in the SPECIAL-NAMES paragraph of a
+// containing program can be referenced in any contained program
+
+conditionNameDefinition : UserDefinedWord;
+
+// references :
+// conditionNameReferenceOrConditionForUPSISwitchNameReference
+// dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference
 
 // p188: The BLANK WHEN ZERO clause specifies that an item contains only spaces when
 // its value is zero.
@@ -3712,6 +3723,20 @@ usageClause:
 
 // p238 : ... more details - Rules for literal values ...
 
+// p242: Format 3: NULL value
+// valueClause:
+//                VALUE IS? (NULL | NULLS);
+// This format assigns an invalid address as the initial value of an item defined as
+// USAGE POINTER, USAGE PROCEDURE POINTER, or USAGE
+// FUNCTION-POINTER. It also assigns an invalid object reference as the initial
+// value of an item defined as USAGE OBJECT REFERENCE.
+// VALUE IS NULL can be specified only for elementary items described implicitly or
+// explicitly as USAGE POINTER, USAGE PROCEDURE-POINTER, USAGE
+// FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
+
+valueClause:
+               VALUE IS? (literal | (NULL | NULLS));
+			   
 // p239: Format 2: condition-name value
 // valueClause:
 //     /*88 conditionName*/ ((VALUE IS?) | (VALUES ARE?)) (literal ((THROUGH | THRU) literal)?)+;
@@ -3755,19 +3780,8 @@ usageClause:
 
 // p240: ... more details - Rules for condition-name entries ...
 
-// p242: Format 3: NULL value
-// valueClause:
-//                VALUE IS? (NULL | NULLS);
-// This format assigns an invalid address as the initial value of an item defined as
-// USAGE POINTER, USAGE PROCEDURE POINTER, or USAGE
-// FUNCTION-POINTER. It also assigns an invalid object reference as the initial
-// value of an item defined as USAGE OBJECT REFERENCE.
-// VALUE IS NULL can be specified only for elementary items described implicitly or
-// explicitly as USAGE POINTER, USAGE PROCEDURE-POINTER, USAGE
-// FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
-
-valueClause:
-               ((VALUE IS?) | (VALUES ARE?)) ((literal ((THROUGH | THRU) literal)?)+ | (NULL | NULLS));
+valueClauseForCondition:
+		((VALUE IS?) | (VALUES ARE?)) (literal ((THROUGH | THRU) literal)?)+; 
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -10154,22 +10168,6 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference :
 	  ////////////////////////
 	 // User defined words //
 	////////////////////////
-
-// p115 : condition-1, condition-2
-// Condition-names follow the rules for user-defined names. At least one
-// character must be alphabetic. The value associated with the
-// condition-name is considered to be alphanumeric. A condition-name can be
-// associated with the on status or off status of each UPSI switch specified.
-// In the PROCEDURE DIVISION, the UPSI switch status is tested through
-// the associated condition-name. Each condition-name is the equivalent of a
-// level-88 item; the associated mnemonic-name, if specified, is considered the
-// conditional variable and can be used for qualification.
-// Condition-names specified in the SPECIAL-NAMES paragraph of a
-// containing program can be referenced in any contained program
-
-conditionName: UserDefinedWord;
-
-dataName: UserDefinedWord;
 
 // p130: file-name-1
 // Must be identified by an FD or SD entry in the DATA DIVISION.

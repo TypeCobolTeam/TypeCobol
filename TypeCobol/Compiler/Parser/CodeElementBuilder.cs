@@ -420,6 +420,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
         {
+            if(context.dataRenamesEntry() != null || context.dataConditionEntry() != null)
+            {
+                // For levels 66 and 88, the DataDescriptionEntry is created ny the following methods
+                // - EnterDataRenamesEntry
+                // - EnterDataConditionEntry
+                return;
+            }
+
             int level = 0;
             if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
                 level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
@@ -429,9 +437,6 @@ namespace TypeCobol.Compiler.Parser
             entry.LevelNumber = level;
             entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataName());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
-            if (entry.LevelNumber == 88) entry.IsConditionNameDescription = true;
-
-            UpdateDataDescriptionEntryWithRenamesClause(entry, context.renamesClause());
 
             var redefines = context.redefinesClause();
             if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
@@ -470,13 +475,46 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = entry;
         }
 
-        private void UpdateDataDescriptionEntryWithRenamesClause(DataDescriptionEntry entry, CodeElementsParser.RenamesClauseContext context)
+        public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context)
         {
-            if (context == null) return;
-            var names = SyntaxElementBuilder.CreateDataNames(context.dataName());
+            int level = 0;
+            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null)
+            {
+                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+            }
+
+            DataDescriptionEntry entry = new DataDescriptionEntry();
+            entry.LevelNumber = level;
+            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataName());
+            //entry.IsFiller = (dataname == null || context.FILLER() != null);
+
+            var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataName());
             if (names.Count > 0) entry.RenamesFromDataName = names[0];
-            if (names.Count > 1) entry.RenamesToDataName   = names[1];
-            //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
+            if (names.Count > 1) entry.RenamesToDataName = names[1];
+            //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized           
+
+            Context = context;
+            CodeElement = entry;            
+        }
+
+        public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context)
+        {
+            int level = 0;
+            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null)
+            {
+                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+            }
+
+            DataDescriptionEntry entry = new DataDescriptionEntry();
+            entry.LevelNumber = level;
+            // TO DO : enable to set properly entry.ConditionName
+            entry.DataName = SyntaxElementBuilder.CreateDataName(context.conditionNameDefinition());
+            entry.IsConditionNameDescription = true;
+
+            UpdateDataDescriptionEntryWithValueClauseForCondition(entry, context.valueClauseForCondition());
+            
+            Context = context;
+            CodeElement = entry;
         }
 
         private void UpdateDataDescriptionEntryWithSignClause(DataDescriptionEntry entry, CodeElementsParser.SignClauseContext context)
@@ -593,10 +631,17 @@ namespace TypeCobol.Compiler.Parser
         private void UpdateDataDescriptionEntryWithValueClause(DataDescriptionEntry entry, CodeElementsParser.ValueClauseContext context)
         {
             if (context == null) return;
+            var value = context.literal();
+            if (value != null) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(value); // format 1
+            entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
+        }
+
+        private void UpdateDataDescriptionEntryWithValueClauseForCondition(DataDescriptionEntry entry, CodeElementsParser.ValueClauseForConditionContext context)
+        {
+            if (context == null) return;
             var values = context.literal();
             if (values.Length > 0) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(values[0]); // format 1 and 2
             if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
-            entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
         }
 
         // -- InputOutput Section --
@@ -1821,6 +1866,14 @@ namespace TypeCobol.Compiler.Parser
             symbolToken.SymbolInformation = symbolInfo;
         }
 
+        public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
         public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
@@ -1837,7 +1890,7 @@ namespace TypeCobol.Compiler.Parser
             symbolToken.SymbolInformation = symbolInfo;
         }
 
-        // ** Characters, Characters sets and Schemas **
+        // ** Character sets **
 
         public override void EnterSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
         {
@@ -1880,7 +1933,24 @@ namespace TypeCobol.Compiler.Parser
             SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.CharacterClassName);
             symbolToken.SymbolInformation = symbolInfo;
         }
-       
+
+        // ** Data item, Index and Conditions **
+
+        public override void EnterConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ConditionName);
+            symbolToken.SymbolInformation = symbolInfo;
+        }
+
+        // Reference already handled above :
+        // => public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+
+        // Reference already handled above :
+        // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+
+        // ** Files **
+
         public override void EnterXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);

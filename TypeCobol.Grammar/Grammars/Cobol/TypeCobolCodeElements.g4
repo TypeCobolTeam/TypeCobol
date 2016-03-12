@@ -8,9 +8,9 @@ cobolCodeElements: codeElement* EOF;
 // --- Custom rules ---
 
 dataDescriptionEntry:
-	levelNumber (dataName | FILLER)?
-	  renamesClause?
-	  redefinesClause?
+	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+	
+	levelNumber (dataName | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
 	| externalClause
@@ -24,7 +24,14 @@ dataDescriptionEntry:
 	| valueClause
 	| tcExtTypedefClause
 	| tcExtTypeClause
-	)* PeriodSeparator;
+	)* PeriodSeparator
+	
+	)
+	
+	| dataRenamesEntry
+	| dataConditionEntry;
+	
 
 tcExtTypedefClause: TYPEDEF STRONG?;
+
 tcExtTypeClause:    TYPE UserDefinedWord;

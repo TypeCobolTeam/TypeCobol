@@ -432,10 +432,11 @@ namespace TypeCobol.Compiler.Parser
             return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static ConditionName CreateConditionName(CodeElementsParser.ConditionNameContext context)
+        // TO DO : create a ConditionName object here ...
+        public static DataName CreateDataName(CodeElementsParser.ConditionNameDefinitionContext context)
         {
             if (context == null) return null;
-            return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
         public static ConditionName CreateConditionName(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
