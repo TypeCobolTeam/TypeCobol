@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.CodeElements.Symbols;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -16,6 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         public CodeElement(CodeElementType type)
         {
             Type = type;
+            SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
             Diagnostics = new List<Diagnostic>();
         }
 
@@ -29,6 +31,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public IList<Token> ConsumedTokens { get; set; }
 
+        /// <summary>
+        /// Is the token is a UserDefinedWord or a literal, it could be a symbol definition or a symbol reference.
+        /// Keywords can also be symbol references (special registers).
+        /// This property enables to retrieve symbol information attached to this token at a later stage.
+        /// </summary>
+        public IDictionary<Token,SymbolInformation> SymbolInformationForTokens { get; set; }
+        
         /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>

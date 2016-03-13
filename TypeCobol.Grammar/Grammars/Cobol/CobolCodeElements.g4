@@ -1761,7 +1761,7 @@ organizationClause:
 // The PADDING CHARACTER clause is syntax checked, but has no effect on the execution of the program.
 
 paddingCharacterClause:
-                          PADDING CHARACTER? IS? (dataName | alphanumOrNationalLiteral);
+                          PADDING CHARACTER? IS? (dataNameReference | alphanumOrNationalLiteral);
 
 // p138: The RECORD DELIMITER clause indicates the method of determining the length of a variable-length record on an external medium. 
 // It can be specified only for variable-length records. 
@@ -1802,7 +1802,7 @@ accessModeClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-2 that specify the same relative location in the record and the same length.
 
 recordKeyClause:
-                   RECORD KEY? IS? dataName;
+                   RECORD KEY? IS? dataNameReference;
 
 // p141: The ALTERNATE RECORD KEY clause (format 2) specifies a data item within the record that provides an alternative path to the data in an indexed file. 
 // data-name-3 An ALTERNATE RECORD KEY data item. 
@@ -1820,7 +1820,7 @@ recordKeyClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-3 that specify the same relative location in the record and the same length. The file description entries must specify the same number of alternate record keys and the same DUPLICATES phrase.
 
 alternateRecordKeyClause:
-                            ALTERNATE RECORD? KEY? IS? dataName (WITH? DUPLICATES)?;
+                            ALTERNATE RECORD? KEY? IS? dataNameReference (WITH? DUPLICATES)?;
 
 // p142: The RELATIVE KEY clause (format 3) identifies a data-name that specifies the relative record number for a specific logical record within a relative file. 
 // data-name-4 Must be defined as an unsigned integer data item whose description does not contain the PICTURE symbol P. 
@@ -1833,7 +1833,7 @@ alternateRecordKeyClause:
 // The ACCESS MODE IS RANDOM clause must not be specified for file-names specified in the USING or GIVING phrase of a SORT or MERGE statement.
 
 relativeKeyClause:
-                     RELATIVE KEY? IS? dataName;
+                     RELATIVE KEY? IS? dataNameReference;
             
 // p143: The PASSWORD clause controls access to files. 
 // data-name-6 , data-name-7 Password data items. 
@@ -1850,7 +1850,7 @@ relativeKeyClause:
 // For external files, data-name-6 and data-name-7 must reference external data items. The PASSWORD clauses in each associated file-control entry must reference the same external data items.
 
 passwordClause:
-                  PASSWORD IS? dataName;
+                  PASSWORD IS? dataNameReference;
 
 // p143: The FILE STATUS clause monitors the execution of each input-output operation for the file.
 // When the FILE STATUS clause is specified, the system moves a value into the file status key data item after each input-output operation that explicitly or implicitly refers to this file. 
@@ -1868,7 +1868,7 @@ passwordClause:
 // For more information, see DFSMS Macro Instructions for Data Sets.
 
 fileStatusClause:
-                    FILE? STATUS IS? dataName dataName?;
+                    FILE? STATUS IS? dataNameReference dataNameReference?;
 
 // p125 : I-O-CONTROL
 // The keyword I-O-CONTROL identifies the I-O-CONTROL paragraph.
@@ -2459,7 +2459,7 @@ blockContainsClause:
 recordClause:
                 RECORD ((CONTAINS? IntegerLiteral CHARACTERS?) |
                         (CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?) |
-                        (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataName)?));
+                        (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
 
 // p179: For sequential, relative, or indexed files, and for sort/merge SDs, the LABEL
 // RECORDS clause is syntax checked, but has no effect on the execution of the
@@ -2477,7 +2477,7 @@ recordClause:
 // record description entry associated with the file.
 
 labelRecordsClause:
-                      LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataName*);
+                      LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataNameReference*);
 
 // p180: The VALUE OF clause describes an item in the label records associated with the
 // file.
@@ -2492,7 +2492,7 @@ labelRecordsClause:
 // program.
 
 valueOfClause:
-                 VALUE OF (systemName IS? (dataName | literal))+;
+                 VALUE OF (systemName IS? (dataNameReference | literal))+;
 
 //	System name			
 //		sn single byte		
@@ -2515,7 +2515,7 @@ systemName: UserDefinedWord;
 // with the same name.
 
 dataRecordsClause:
-                     DATA ((RECORD IS?) | (RECORDS ARE?)) dataName+;
+                     DATA ((RECORD IS?) | (RECORDS ARE?)) dataNameReference+;
 
 // p180: The LINAGE clause specifies the depth of a logical page in number of lines.
 // Optionally, it also specifies the line number at which the footing area begins and
@@ -2578,10 +2578,10 @@ dataRecordsClause:
 // “LINAGE-COUNTER” on page 20.
 
 linageClause:
-                LINAGE IS? (dataName | IntegerLiteral) LINES? 
-                (WITH? FOOTING AT? (dataName | IntegerLiteral))? 
-                (LINES? AT? TOP (dataName | IntegerLiteral))? 
-                (LINES? AT? BOTTOM (dataName | IntegerLiteral))?;
+                LINAGE IS? (dataNameReference | IntegerLiteral) LINES? 
+                (WITH? FOOTING AT? (dataNameReference | IntegerLiteral))? 
+                (LINES? AT? TOP (dataNameReference | IntegerLiteral))? 
+                (LINES? AT? BOTTOM (dataNameReference | IntegerLiteral))?;
            
 // p182: The RECORDING MODE clause specifies the format of the physical records in a
 // QSAM file. The clause is ignored for a VSAM file.
@@ -2714,7 +2714,7 @@ codeSetClause:
 dataDescriptionEntry:
 	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
 	
-	levelNumber (dataName | FILLER)? redefinesClause?
+	levelNumber (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
 	| externalClause
@@ -2743,7 +2743,7 @@ dataDescriptionEntry:
 //                        '66' dataName renamesClause PeriodSeparator;
 
 dataRenamesEntry: { CurrentToken.Text == "66" }? 
-	levelNumber dataName renamesClause PeriodSeparator;
+	levelNumber dataNameDefinition renamesClause PeriodSeparator;
 
 // p186: Format 3: condition-name
 // Format 3 describes condition-names.
@@ -2862,9 +2862,9 @@ levelNumber : IntegerLiteral;
 // p168: There are two categories of algebraic signs used in COBOL: operational signs and editing signs. 
 // ... more details on Operational signs / Editing signs p168 ...
 
-dataName : UserDefinedWord;
+dataNameDefinition : UserDefinedWord;
 
-//dataNameReference : UserDefinedWord;
+dataNameReference : UserDefinedWord;
 
 // p187: FILLER
 // A data item that is not explicitly referred to in a program. The keyword
@@ -2894,7 +2894,7 @@ dataName : UserDefinedWord;
 
 conditionNameDefinition : UserDefinedWord;
 
-// references :
+// Only ambiguous references :
 // conditionNameReferenceOrConditionForUPSISwitchNameReference
 // dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference
 
@@ -3300,8 +3300,8 @@ occursClause:
 	occursKeys*
 	(INDEXED BY? indexName+)?;
 
-occursDependingOn: DEPENDING ON? dataName;
-occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataName+;
+occursDependingOn: DEPENDING ON? dataNameReference;
+occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
             
 // p198: The PICTURE clause specifies the general characteristics and editing requirements
 // of an elementary item.
@@ -3481,7 +3481,7 @@ pictureClause:
 // p216: ... more considerations on REDEFINES usage until page  ...
 
 redefinesClause:
-                   /*levelNumber (dataName | FILLER)? */ REDEFINES dataName;
+                   /*levelNumber (dataName | FILLER)? */ REDEFINES dataNameReference;
 
 // p219: The RENAMES clause specifies alternative and possibly overlapping groupings of
 // elementary data items.
@@ -3539,7 +3539,7 @@ redefinesClause:
 //   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
-                 /* 66 dataName */ RENAMES dataName ((THROUGH | THRU) dataName)?;
+                 /* 66 dataName */ RENAMES dataNameReference ((THROUGH | THRU) dataNameReference)?;
 
 // p221: The SIGN clause specifies the position and mode of representation of the
 // operational sign for the signed numeric item to which it applies.
@@ -3902,7 +3902,7 @@ usingPhrase:
                USING inputParameters+;
 
 inputParameters:
-                   receivingMode? dataName+;
+                   receivingMode? dataNameReference+;
 
 receivingMode:
                  BY? REFERENCE  #ByReference | 
@@ -3935,7 +3935,7 @@ receivingMode:
 // register to return a value to the operating environment.
 
 returningPhrase:
-                   RETURNING dataName;
+                   RETURNING dataNameReference;
 
 // p246: Format: procedure division
 // 1 The USE statement is described under “USE statement” on page 546.
@@ -6578,7 +6578,7 @@ performStatementEnd: END_PERFORM;
 // ... more details p399->400 : READ statement notes ...
 
 readStatement:
-	READ fileName NEXT? RECORD? (INTO identifier)? (KEY IS? dataName)?;
+	READ fileName NEXT? RECORD? (INTO identifier)? (KEY IS? qualifiedDataName)?;
 
 readStatementEnd: END_READ;
 
@@ -6817,8 +6817,8 @@ searchStatement:
 	SEARCH ALL? identifier (VARYING (identifier | indexName))?;
 
 whenSearchCondition:
-	WHEN  dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)
-	(AND (dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionalExpression)*;
+	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)
+	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionalExpression)*;
 
 searchStatementEnd: END_SEARCH;
 
@@ -10075,9 +10075,9 @@ withRelativeSubscripting: (PlusOperator | MinusOperator) IntegerLiteral;
 // Can be any data description entry.
 // data-name-1 must be unique in a program.
 
-qualifiedDataName: dataNameBase ((IN | OF) dataName)* ((IN | OF) fileName)?;
+qualifiedDataName: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)*;
 
-dataNameBase: dataName;
+dataNameReferenceOrFileNameReference : UserDefinedWord;
 
 // p70: Condition-name
 // condition-name-1

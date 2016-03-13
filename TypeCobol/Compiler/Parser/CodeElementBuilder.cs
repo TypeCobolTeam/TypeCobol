@@ -269,7 +269,7 @@ namespace TypeCobol.Compiler.Parser
                                 : ReceivingMode.ByReference,
                             ParseTreeUtils.GetTokensList(inputParametersContext.receivingMode()));
                     }
-                    foreach (CodeElementsParser.DataNameContext dataNameContext in inputParametersContext.dataName())
+                    foreach (CodeElementsParser.DataNameReferenceContext dataNameContext in inputParametersContext.dataNameReference())
                     {
                         Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
                         var inputParameter = new InputParameter {ReceivingMode = receivingMode, DataName = new DataName(dataName)};
@@ -285,7 +285,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.returningPhrase() != null)
             {
-                Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataName());
+                Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataNameReference());
                 if (dataName != null)
                 {
                     procedureDivisionHeader.ReturningDataName = new DataName(dataName);
@@ -435,11 +435,11 @@ namespace TypeCobol.Compiler.Parser
 
             DataDescriptionEntry entry = new DataDescriptionEntry();
             entry.LevelNumber = level;
-            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataName());
+            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
 
             var redefines = context.redefinesClause();
-            if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataName());
+            if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
 
             var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
 			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
@@ -485,10 +485,10 @@ namespace TypeCobol.Compiler.Parser
 
             DataDescriptionEntry entry = new DataDescriptionEntry();
             entry.LevelNumber = level;
-            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataName());
+            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
 
-            var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataName());
+            var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataNameReference());
             if (names.Count > 0) entry.RenamesFromDataName = names[0];
             if (names.Count > 1) entry.RenamesToDataName = names[1];
             //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized           
@@ -540,7 +540,7 @@ namespace TypeCobol.Compiler.Parser
 
             bool isVariable = (context.occursDependingOn() != null);
             if (isVariable) {
-                entry.OccursDependingOn = SyntaxElementBuilder.CreateDataName(context.occursDependingOn().dataName());
+                entry.OccursDependingOn = SyntaxElementBuilder.CreateDataName(context.occursDependingOn().dataNameReference());
             }
             isVariable = isVariable || (context.UNBOUNDED() != null) || (context.TO() != null);
 
@@ -591,7 +591,7 @@ namespace TypeCobol.Compiler.Parser
                     var direction = KeyDirection.None;
                     if (key.ASCENDING()  != null) direction = KeyDirection.Ascending;
                     if (key.DESCENDING() != null) direction = KeyDirection.Descending;
-                    foreach(var name in key.dataName()) {
+                    foreach(var name in key.dataNameReference()) {
                         var data = SyntaxElementBuilder.CreateDataName(name);
                         if (data == null) continue;
                         entry.TableOccurenceKeys.Add(data);
@@ -1663,37 +1663,37 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ProgramName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ProgramEntry);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramEntry);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterProgramNameReference1(CodeElementsParser.ProgramNameReference1Context context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ProgramName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterProgramNameReference2(CodeElementsParser.ProgramNameReference2Context context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ProgramName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry };
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         // + runtime references
@@ -1705,46 +1705,46 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.SectionName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SectionName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ParagraphName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ParagraphName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.SectionName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SectionName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ParagraphName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ParagraphName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterParagraphNameOrSectionNameReference(CodeElementsParser.ParagraphNameOrSectionNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.SectionName, SymbolType.ParagraphName };
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
-        public override void EnterQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
+        public override void ExitQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
         {
-            if(context.paragraphNameReference() != null && context.sectionNameReference() != null)
+            if (context.sectionNameReference() != null)
             {
-                Token paragraphToken = ParseTreeUtils.GetFirstToken(context.paragraphNameReference());
-                Token sectionToken = ParseTreeUtils.GetFirstToken(context.sectionNameReference());
-                ((SymbolInformation)paragraphToken.SymbolInformation).QualifedBy = new Token[] { sectionToken };
+                Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.paragraphNameReference());
+                Token[] qualifierTokens = new Token[] { ParseTreeUtils.GetFirstToken(context.sectionNameReference()) };
+                UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
             }
         }
 
@@ -1753,29 +1753,29 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ClassName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ClassName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMethodNameDefinition(CodeElementsParser.MethodNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.MethodName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MethodName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.ClassName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ClassName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinitionOrReference, SymbolType.ClassName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ClassName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterClassNameReferenceOrObjectReference(CodeElementsParser.ClassNameReferenceOrObjectReferenceContext context)
@@ -1785,23 +1785,23 @@ namespace TypeCobol.Compiler.Parser
             if(symbolToken != null)
             {
                 SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ClassName, SymbolType.DataName };
-                SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-                symbolToken.SymbolInformation = symbolInfo;
+                SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
             }
         }
 
         public override void EnterExternalClassNameDefOrRef(CodeElementsParser.ExternalClassNameDefOrRefContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinitionOrReference, SymbolType.ExternalClassName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ExternalClassName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMethodNameReference(CodeElementsParser.MethodNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.MethodName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MethodName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         // + runtime references 
@@ -1812,82 +1812,82 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.ExternalName, SymbolType.EnvironmentName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.EnvironmentName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterUpsiSwitchName(CodeElementsParser.UpsiSwitchNameContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.ExternalName, SymbolType.UPSISwitchName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.UPSISwitchName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.MnemonicForEnvironmentName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForEnvironmentName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.MnemonicForUPSISwitchName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForUPSISwitchName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ConditionForUPSISwitchName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionForUPSISwitchName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.MnemonicForEnvironmentName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForEnvironmentName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.MnemonicForEnvironmentName, SymbolType.EnvironmentName };
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.MnemonicForUPSISwitchName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForUPSISwitchName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, candidateSymbolTypes);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         // ** Character sets **
@@ -1895,74 +1895,143 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.SymbolicCharacter);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SymbolicCharacter);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.SymbolicCharacter);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SymbolicCharacter);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.AlphabetName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.AlphabetName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.AlphabetName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.AlphabetName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.CharacterClassName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.CharacterClassName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.CharacterClassName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.CharacterClassName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         // ** Data item, Index and Conditions **
 
+        public override void EnterDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.DataName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
+        public override void EnterDataNameReference(CodeElementsParser.DataNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
+        public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName };
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
+        // Data name reference already handled above :
+        // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
+        
+        // Data name reference already handled above :
+        // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+        
         public override void EnterConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.ConditionName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
-        // Reference already handled above :
+        // Condition name reference already handled above :
         // => public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
 
-        // Reference already handled above :
+        // Condition name reference already handled above :
         // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+
+        public override void ExitQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context)
+        {
+            if(context.dataNameReferenceOrFileNameReference() != null)
+            {
+                Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReference());
+                Token[] qualifierTokens = context.dataNameReferenceOrFileNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
+                UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+            }
+        }
+
+        public override void ExitQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context)
+        {
+            if (context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null)
+            {
+                Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
+                Token[] qualifierTokens = context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
+                UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+            }
+        }
+
+        public override void ExitQualifiedDataNameOrQualifiedConditionName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context)
+        {
+            if (context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null)
+            {
+                Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+                Token[] qualifierTokens = context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
+                UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+            }
+        }
+
+        private void UpdateSymbolInformationForQualifiedNames(Token qualifiedToken, Token[] qualifierTokens)
+        {
+            SymbolInformation qualifiedSymbolInfo = CodeElement.SymbolInformationForTokens[qualifiedToken];
+            qualifiedSymbolInfo.QualifedBy = qualifierTokens;
+            foreach (var qualifierToken in qualifierTokens)
+            {
+                SymbolInformation qualifierSymbolInfo = CodeElement.SymbolInformationForTokens[qualifierToken];
+                qualifierSymbolInfo.QualifierFor = qualifiedToken;
+            }
+        }
 
         // ** Files **
 
         public override void EnterXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolDefinition, SymbolType.XmlSchemaName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.XmlSchemaName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
-            symbolToken.SymbolInformation = symbolInfo;
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
     }
 }

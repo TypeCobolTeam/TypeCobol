@@ -259,15 +259,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralValue LiteralValue { get; set; }
 
-        // --- Symbol information attached to the token at a later stage --
-
-        /// <summary>
-        /// Is the token is a UserDefinedWord or a literal, it could be a symbol definition or a symbol reference.
-        /// Keywords can also be symbol references (special registers).
-        /// This property enables to retrieve symbol information attached to this token at a later stage.
-        /// </summary>
-        public object SymbolInformation { get; set; }
-
         // --- Ambiguous tokens resolved after having been created ---
         
         internal void CorrectType(TokenType tokenType)

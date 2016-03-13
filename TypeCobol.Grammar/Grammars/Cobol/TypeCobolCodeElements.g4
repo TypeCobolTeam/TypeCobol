@@ -10,7 +10,7 @@ cobolCodeElements: codeElement* EOF;
 dataDescriptionEntry:
 	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
 	
-	levelNumber (dataName | FILLER)? redefinesClause?
+	levelNumber (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
 	| externalClause

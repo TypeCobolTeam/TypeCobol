@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Symbols
@@ -23,17 +19,24 @@ namespace TypeCobol.Compiler.CodeElements.Symbols
     /// </summary>
     public class SymbolInformation
     {
-        public SymbolInformation(SymbolRole role, SymbolType type)
+        public SymbolInformation(Token symbolToken, SymbolRole role, SymbolType type)
         {
+            SymbolToken = symbolToken;
             Role = role;
             Type = type;
         }
 
-        public SymbolInformation(SymbolRole role, SymbolType[] candidateSymbolTypes)
+        public SymbolInformation(Token symbolToken, SymbolRole role, SymbolType[] candidateSymbolTypes)
         {
+            SymbolToken = symbolToken;
             Role = role;
             CandidateSymbolTypes = candidateSymbolTypes;
         }
+
+        /// <summary>
+        /// Symbol token
+        /// </summary>
+        public Token SymbolToken { get; set; }
 
         /// <summary>
         /// Role of symbol Token
@@ -58,10 +61,25 @@ namespace TypeCobol.Compiler.CodeElements.Symbols
         /// <summary>
         /// Several names can be qualified by the names of enclosing scopes, for example :
         ///    paragraphName IN sectionName
-        ///    dataName IN dataName IN fileName
-        ///    conditionName IN dataName IN dataName
-        /// In this case, this property contains the ordered list of qualifying tokens.
+        ///    dataName1 IN dataName2 IN fileName
+        ///    conditionName IN dataName3 IN dataName4
+        /// In this case, this property contains the ordered list of qualifying tokens, for exemple :
+        ///    paragraphName => QualifiedBy = { sectionName }
+        ///    dataName1 => QualifiedBy = { dataName2, fileName }
+        ///    conditionName => QualifiedBy = { dataName3, dataName4 }
         /// </summary>
         public Token[] QualifedBy { get; set; }
+
+        /// <summary>
+        /// Several names can be qualified by the names of enclosing scopes, for example :
+        ///    paragraphName IN sectionName
+        ///    dataName1 IN dataName2 IN fileName
+        ///    conditionName IN dataName3 IN dataName4
+        /// In this case, this property contains the ordered list of qualifying tokens, for exemple :
+        ///    sectionName => QualifierFor = paragraphName
+        ///    fileName => QualifierFor = dataName2
+        ///    dataName2 => QualifierFor = dataName1
+        /// </summary>
+        public Token QualifierFor { get; set; }
     }
 }

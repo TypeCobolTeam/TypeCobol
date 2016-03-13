@@ -322,11 +322,12 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             DataName name = null;
-            if (context.dataNameBase() != null) name = CreateDataName(context.dataNameBase().dataName());
-            List<DataName> datanames = CreateDataNames(context.dataName());
+            if (context.dataNameReference() != null) name = CreateDataName(context.dataNameReference());
+            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReference());
             datanames.Reverse();
-            FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, filename);
+            // TO DO : need to lookup symbol table to distinguish data name and file name
+            //FileName filename = CreateFileName(context.fileName());
+            return new QualifiedName(name, datanames, /*filename*/null);
         }
 
         public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context)
@@ -381,7 +382,19 @@ namespace TypeCobol.Compiler.Parser
             return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameContext> context)
+        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceContext> context)
+        {
+            List<DataName> datanames = new List<DataName>();
+            if (context != null)
+                foreach (var dataname in context)
+                {
+                    var name = CreateDataName(dataname);
+                    if (name != null) datanames.Add(name);
+                }
+            return datanames;
+        }
+                
+        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceOrFileNameReferenceContext> context)
         {
             List<DataName> datanames = new List<DataName>();
             if (context != null)
@@ -405,9 +418,22 @@ namespace TypeCobol.Compiler.Parser
             return datanames;
         }
 
-        public static DataName CreateDataName(CodeElementsParser.DataNameContext context)
+        public static DataName CreateDataName(CodeElementsParser.DataNameDefinitionContext context)
         {
             if (context == null) return null;
+            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+        }
+
+        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceContext context)
+        {
+            if (context == null) return null;
+            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+        }
+
+        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
+        {
+            if (context == null) return null;
+            // TO DO : lookup symbol table to determine the type of the symbol
             return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
@@ -423,13 +449,6 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             // TO DO : lookup symbol table to determine the type of the symbol
             return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        // only used for data description entry
-        public static ConditionName CreateConditionName(CodeElementsParser.DataNameContext context)
-        {
-            if (context == null) return null;
-            return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
         // TO DO : create a ConditionName object here ...
