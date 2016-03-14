@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.CodeElements {
 			}
 
 			if (generated) {
-				Codegen.WriteEmptyLine(stream, ref line, ref offset);
+				Codegen.WriteEmptyLine(stream, ref line, ref offset, false);
 			}
 		}
 

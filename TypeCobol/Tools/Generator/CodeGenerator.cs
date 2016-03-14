@@ -14,18 +14,14 @@
 		/// <summary>Generates an empty line on the <paramref name="stream"/> parameter.</summary>
 		/// <param name="line">out: line++</param>
 		/// <param name="offset">out: 0</param>
-		public static void WriteEmptyLine(System.IO.TextWriter stream, ref int line, ref int offset) {
+		public static void WriteEmptyLine(System.IO.TextWriter stream, ref int line, ref int offset, bool update=true) {
 			stream.WriteLineAsync();
-			line++;
+			if (update) line++;
 			offset = 0;
 		}
 		public static void Write(System.IO.TextWriter stream, string s, ref int line, ref int offset) {
 			stream.WriteAsync(s);
 			offset += s.Length;
-		}
-		public static void WriteLine(System.IO.TextWriter stream, string s, ref int line, ref int offset) {
-			Write(stream, s, ref line, ref offset);
-			WriteEmptyLine(stream, ref line, ref offset);
 		}
 	}
 
