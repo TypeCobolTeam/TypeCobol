@@ -61,7 +61,7 @@ namespace TypeCobol.Compiler.Parser
             var filenames = new List<OpenFileName>();
             foreach (var filename in context.fileNameWithNoRewindOrReversed())
             {
-                var f = SyntaxElementBuilder.CreateFileName(filename.fileName());
+                var f = SyntaxElementBuilder.CreateFileName(filename.fileNameReference());
                 bool norewind = filename.NO() != null;
                 bool reversed = filename.REVERSED() != null;
                 if (f != null) filenames.Add(new OpenFileName(f, norewind, reversed));
@@ -75,7 +75,7 @@ namespace TypeCobol.Compiler.Parser
             var filenames = new List<OpenFileName>();
             foreach (var filename in context.fileNameWithNoRewind())
             {
-                var f = SyntaxElementBuilder.CreateFileName(filename.fileName());
+                var f = SyntaxElementBuilder.CreateFileName(filename.fileNameReference());
                 bool norewind = filename.NO() != null;
                 if (f != null) filenames.Add(new OpenFileName(f, norewind));
             }
@@ -84,9 +84,9 @@ namespace TypeCobol.Compiler.Parser
 
         private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenIOContext context)
         {
-            if (context.fileName() == null) return null;
+            if (context.fileNameReference() == null) return null;
             var filenames = new List<OpenFileName>();
-            foreach (var filename in context.fileName())
+            foreach (var filename in context.fileNameReference())
             {
                 var f = SyntaxElementBuilder.CreateFileName(filename);
                 if (f != null) filenames.Add(new OpenFileName(f));
@@ -96,9 +96,9 @@ namespace TypeCobol.Compiler.Parser
 
         private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenExtendContext context)
         {
-            if (context.fileName() == null) return null;
+            if (context.fileNameReference() == null) return null;
             var filenames = new List<OpenFileName>();
-            foreach (var filename in context.fileName())
+            foreach (var filename in context.fileNameReference())
             {
                 var f = SyntaxElementBuilder.CreateFileName(filename);
                 if (f != null) filenames.Add(new OpenFileName(f));
@@ -123,7 +123,7 @@ namespace TypeCobol.Compiler.Parser
         private CloseFileName CreateCloseFileName(CodeElementsParser.CloseFileNameContext context)
         {
             if (context == null) return null;
-            var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
+            var filename = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
             return new CloseFileName(filename, context.REEL() != null || context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
         }
 
@@ -133,7 +133,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new ReadStatement(
-                SyntaxElementBuilder.CreateFileName(context.fileName()),
+                SyntaxElementBuilder.CreateFileName(context.fileNameReference()),
                 SyntaxElementBuilder.CreateIdentifier(context.identifier()),
                 SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName()),
                 context.NEXT() != null,

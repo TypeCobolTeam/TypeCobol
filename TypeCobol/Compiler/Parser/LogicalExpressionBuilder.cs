@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CodeElementsParser.OperandContext context) {
             if (context == null) return null;
-            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.identifierOrIndexName() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifierOrIndexName());
             if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
             if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
             // indexName cannot be distinguished from identifier at the parsing stage

@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return;
             CallStatement.Using.Mode mode = CreateCallMode(context, statement);
-            foreach (var e in context.identifier())
+            foreach (var e in context.identifierOrFileName())
             {
                 var identifier = SyntaxElementBuilder.CreateIdentifier(e);
                 if (identifier != null) statement.Usings.Add(new CallStatement.Using(mode, identifier));
@@ -438,7 +438,7 @@ namespace TypeCobol.Compiler.Parser
         internal ReturnStatement CreateReturnStatement(Generated.CodeElementsParser.ReturnStatementContext context)
         {
             if (context == null) return null;
-            var filename = SyntaxElementBuilder.CreateFileName(context.fileName());
+            var filename = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
             var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
             var statement = new ReturnStatement(filename, identifier);
             return statement;
@@ -454,29 +454,24 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new SearchStatement();
             statement.All = context.ALL() != null;
-            var identifiers = context.identifier();
-            if (identifiers != null)
+            // SEARCH ALL? identifier
+            var identifier1 = context.identifier();
+            if (identifier1 != null)
             {
-                int c = 0;
-                foreach (var identifier in identifiers)
-                {
-                    if (c == 0) // SEARCH ALL? identifier
-                    {
-                        statement.Element = SyntaxElementBuilder.CreateIdentifier(identifier);
-                        if (IdentifierUtils.IsSubscripted(statement.Element))
-                            DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", context);
-                        if (IdentifierUtils.IsReferenceModified(statement.Element))
-                            DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", context);
-                    } else
-                    if (c == 1) // SEARCH ... VARYING identifier
-                    {
-                        statement.VaryingIdentifier = SyntaxElementBuilder.CreateIdentifier(identifier);
-                    } else
-                        DiagnosticUtils.AddError(statement, "SEARCH: wtf identifier?", context);
-                    c++;
-                }
+                statement.Element = SyntaxElementBuilder.CreateIdentifier(identifier1);
+                if (IdentifierUtils.IsSubscripted(statement.Element))
+                    DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", context);
+                if (IdentifierUtils.IsReferenceModified(statement.Element))
+                    DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", context);
             }
-            if (context.indexName() != null) statement.VaryingIndex = SyntaxElementBuilder.CreateIndexName(context.indexName());
+            var identifier2 = context.identifierOrIndexName();
+            // SEARCH ... VARYING identifier
+            if (identifier2 != null) 
+            {
+                statement.VaryingIdentifier = SyntaxElementBuilder.CreateIdentifier(identifier2);
+                // TO DO : lookup symbol table to distinguish between identifier or index name
+                // statement.VaryingIndex = SyntaxElementBuilder.CreateIndexName(identifier2);
+            }             
             if (statement.All && statement.IsVarying)
                 DiagnosticUtils.AddError(statement, "Illegal VARYING after SEARCH ALL", context);
             return statement;
@@ -491,16 +486,16 @@ namespace TypeCobol.Compiler.Parser
         internal MergeStatement CreateMergeStatement(CodeElementsParser.MergeStatementContext context)
         {
             var statement = new MergeStatement();
-            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
             statement.Keys = CreateKeyDataItems(context.onAscendingDescendingKey());
             statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetNameReference());
             if (context.usingFilenames() != null)
             {
-                statement.Using = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
+                statement.Using = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileNameReference());
                 if (statement.Using.Count == 1)
                     DiagnosticUtils.AddError(statement, "MERGE: USING <filename> <filename>+", context.usingFilenames());
             }
-            if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileName());
+            if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileNameReference());
             if (context.outputProcedure() != null) statement.Output = SyntaxElementBuilder.CreateProcedureNames(context.outputProcedure().procedureName());
             return statement;
         }
@@ -512,15 +507,15 @@ namespace TypeCobol.Compiler.Parser
         internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)
         {
             var statement = new SortStatement();
-            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileName());
+            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
             statement.Keys = CreateKeyDataItems(context.onAscendingDescendingKey());
             statement.IsDuplicates = context.DUPLICATES() != null// each of these words is only
                                   || context.WITH() != null     // used for DUPLICATES phrase,
                                   || context.IN() != null      // so the presence of any one
                                   || context.ORDER() != null; // shows us the writer's intent
             statement.CollatingSequence = SyntaxElementBuilder.CreateAlphabetName(context.alphabetNameReference());
-            if (context.usingFilenames()  != null) statement.Using  = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileName());
-            if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileName());
+            if (context.usingFilenames()  != null) statement.Using  = SyntaxElementBuilder.CreateFileNames(context.usingFilenames().fileNameReference());
+            if (context.givingFilenames() != null) statement.Giving = SyntaxElementBuilder.CreateFileNames(context.givingFilenames().fileNameReference());
             if (context.inputProcedure()  != null) statement.Input  = SyntaxElementBuilder.CreateProcedureNames(context.inputProcedure().procedureName());
             if (context.outputProcedure() != null) statement.Output = SyntaxElementBuilder.CreateProcedureNames(context.outputProcedure().procedureName());
             return statement;
@@ -555,9 +550,9 @@ namespace TypeCobol.Compiler.Parser
         internal UseErrorsStatement CreateUseStatement(CodeElementsParser.UseStatementForExceptionDeclarativeContext context)
         {
             var statement = new UseErrorsStatement();
-            if (context.fileName() != null)
+            if (context.fileNameReference() != null)
             {
-                foreach (var file in context.fileName())
+                foreach (var file in context.fileNameReference())
                 {
                     var filename = SyntaxElementBuilder.CreateFileName(file);
                     if (filename != null) statement.FileNames.Add(filename);

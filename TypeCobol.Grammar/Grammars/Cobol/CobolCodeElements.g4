@@ -1663,7 +1663,15 @@ fileControlEntry :
 // p130: If the file connector referenced by file-name-1 is an external file connector, all file-control entries in the run unit that reference this file connector must have the same specification for the OPTIONAL phrase.
 
 selectClause:
-                SELECT OPTIONAL? fileName;
+                SELECT OPTIONAL? fileNameDefinition;
+				
+// p130: file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
+
+fileNameDefinition : UserDefinedWord;
+
+fileNameReference : UserDefinedWord;
 
 // p130: ASSIGN clause
 // The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.
@@ -1962,7 +1970,7 @@ ioControlEntry:
 // The END OF REEL/UNIT phrase can be specified only if file-name-1 is a sequentially organized file.
 
 rerunClause:
-               RERUN ON? (assignmentName | fileName) (EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileName)?;
+               RERUN ON? (assignmentName | fileNameReference) (EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
    
 // p147: The SAME AREA clause is syntax checked, but has no effect on the execution of the program.
 // The SAME AREA clause specifies that two or more files that do not represent sort or merge files are to use the same main storage area during processing.
@@ -2001,13 +2009,13 @@ rerunClause:
 // p149: The SAME SORT-MERGE AREA clause is equivalent to the SAME SORT AREA clause.
 
 sameAreaClause:
-                  SAME (RECORD | SORT_ARG | SORT_MERGE)? AREA? FOR? fileName fileName*;
+                  SAME (RECORD | SORT_ARG | SORT_MERGE)? AREA? FOR? fileNameReference fileNameReference*;
 
 // p149: The MULTIPLE FILE TAPE clause (format 1) specifies that two or more files share the same physical reel of tape.
 // This clause is syntax checked, but has no effect on the execution of the program. The function is performed by the system through the LABEL parameter of the DD statement.
 
 multipleFileTapeClause:
-                          MULTIPLE FILE TAPE? CONTAINS? (fileName (POSITION IntegerLiteral)?)+;
+                          MULTIPLE FILE TAPE? CONTAINS? (fileNameReference (POSITION IntegerLiteral)?)+;
 
 // p149: The APPLY WRITE-ONLY clause optimizes buffer and device space allocation for files that have standard sequential organization, have variable-length records, and are blocked.
 // If you specify this phrase, the buffer is truncated only when the space available in the buffer is smaller than the size of the next record. 
@@ -2018,7 +2026,7 @@ multipleFileTapeClause:
 // For an alternate method of achieving the APPLY WRITE-ONLY results, see the description of the compiler option, AWO in the Enterprise COBOL Programming Guide.
 
 applyWriteOnlyClause:
-                        APPLY WRITE_ONLY ON? fileName+;
+                        APPLY WRITE_ONLY ON? fileNameReference+;
 
 // p153: Each section in the DATA DIVISION has a specific logical function within a COBOL program, object definition, factory definition, or method and can be omitted when that logical function is not needed. 
 // !! If included, the sections must be written in the order shown. 
@@ -2240,7 +2248,7 @@ linkageSectionHeader:
 // levelIndicator : (FD | SD);
 
 fileDescriptionEntry : 
-                    (FD | SD) fileName 
+                    (FD | SD) fileNameReference 
                    (externalClause |
                     globalClause |
                     blockContainsClause |
@@ -3298,11 +3306,42 @@ occursClause:
 	OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
 	occursDependingOn?
 	occursKeys*
-	(INDEXED BY? indexName+)?;
+	(INDEXED BY? indexNameDefinition+)?;
 
 occursDependingOn: DEPENDING ON? dataNameReference;
 occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
             
+// p194: index-name-1
+// Each index-name specifies an index to be created by the compiler for use
+// by the program. These index-names are not data-names and are not
+// identified elsewhere in the COBOL program; instead, they can be regarded
+// as private special registers for the use of this object program only. They are
+// not data and are not part of any data hierarchy.
+// Unreferenced index names need not be uniquely defined.
+// In one table entry, up to 12 index-names can be specified.
+// If a data item that possesses the global attribute includes a table accessed
+// with an index, that index also possesses the global attribute. Therefore, the
+// scope of an index-name is the same as that of the data-name that names
+// the table in which the index is defined.
+// Indexes specified in an external data record do not possess the external attribute.
+
+// p71: Index-name
+// An index-name identifies an index. An index can be regarded as a private special
+// register that the compiler generates for working with a table. You name an index
+// by specifying the INDEXED BY phrase in the OCCURS clause that defines a table.
+// You can use an index-name in only the following language elements:
+// - SET statements
+// - PERFORM statements
+// - SEARCH statements
+// - Subscripts
+// - Relation conditions
+// An index-name is not the same as the name of an index data item, and an
+// index-name cannot be used like a data-name.
+
+indexNameDefinition : UserDefinedWord;
+
+indexNameReference : UserDefinedWord;
+
 // p198: The PICTURE clause specifies the general characteristics and editing requirements
 // of an elementary item.
 // PICTURE or PIC
@@ -4076,7 +4115,7 @@ useStatement:
 // “Common processing facilities” on page 286.
 
 useStatementForExceptionDeclarative:
-	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileName+ | (INPUT | OUTPUT | I_O | EXTEND));
+	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileNameReference+ | (INPUT | OUTPUT | I_O | EXTEND));
 
 // p548: ... more rules that appky to declarative procedures until page 549 ...
 
@@ -4710,7 +4749,7 @@ callStatement:
 
 callBy:
 	(BY? (REFERENCE | CONTENT | VALUE))? 
-        (identifier | literal /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
+        (identifierOrFileName | literal /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
 
 callReturning:
 	RETURNING identifier;
@@ -4791,7 +4830,7 @@ cancelStatement:
 closeStatement:
 	CLOSE closeFileName+;
 
-closeFileName: fileName ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?;
+closeFileName: fileNameReference ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?;
 
 // p317: COMPUTE statement
 // The COMPUTE statement assigns the value of an arithmetic expression to one or more data items.
@@ -4849,7 +4888,7 @@ continueStatement:
 //For more information, see “Delimited scope statements” on page 280.
 
 deleteStatement:
-	DELETE fileName RECORD?;
+	DELETE fileNameReference RECORD?;
 
 deleteStatementEnd: END_DELETE;
 
@@ -6029,7 +6068,7 @@ invokeStatementEnd: END_INVOKE;
 // statement.
 
 mergeStatement:
-	MERGE fileName onAscendingDescendingKey+
+	MERGE fileNameReference onAscendingDescendingKey+
 		(COLLATING? SEQUENCE IS? alphabetNameReference)?
 		usingFilenames
 		(givingFilenames | outputProcedure);
@@ -6248,11 +6287,11 @@ openStatement:
 
 openInput: INPUT fileNameWithNoRewindOrReversed+;
 openOutput: OUTPUT fileNameWithNoRewind+;
-openIO: I_O fileName+;
-openExtend: EXTEND fileName+;
+openIO: I_O fileNameReference+;
+openExtend: EXTEND fileNameReference+;
 
-fileNameWithNoRewindOrReversed: fileName ((WITH? NO REWIND) | REVERSED)?;
-fileNameWithNoRewind: fileName (WITH? NO REWIND)?;
+fileNameWithNoRewindOrReversed: fileNameReference ((WITH? NO REWIND) | REVERSED)?;
+fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
 
 // p384: PERFORM statement
 // The PERFORM statement transfers control explicitly to one or more procedures
@@ -6283,12 +6322,12 @@ performProcedureStatement:
 		((identifier | numericLiteral) TIMES)							 // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
-		  ( AFTER (identifier | indexName) FROM (identifier | indexName | numericLiteral)	 // - VARYING phrase PERFORM
+		  ( AFTER identifierOrIndexName FROM (identifierOrIndexName | numericLiteral)	 // - VARYING phrase PERFORM
 			BY (identifier | numericLiteral) UNTIL conditionalExpression )* )				//
 		)?;															// (nothing) - Basic PERFORM
 
 performVarying:
-	VARYING (identifier | indexName) FROM (identifier | indexName | numericLiteral) BY (identifier | numericLiteral);
+	VARYING identifierOrIndexName FROM (identifierOrIndexName | numericLiteral) BY (identifier | numericLiteral);
 
 performStatementEnd: END_PERFORM;
 
@@ -6578,7 +6617,7 @@ performStatementEnd: END_PERFORM;
 // ... more details p399->400 : READ statement notes ...
 
 readStatement:
-	READ fileName NEXT? RECORD? (INTO identifier)? (KEY IS? qualifiedDataName)?;
+	READ fileNameReference NEXT? RECORD? (INTO identifier)? (KEY IS? qualifiedDataName)?;
 
 readStatementEnd: END_READ;
 
@@ -6698,7 +6737,7 @@ releaseStatement:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-	RETURN fileName RECORD? (INTO identifier)?;
+	RETURN fileNameReference RECORD? (INTO identifier)?;
 
 returnStatementEnd: END_RETURN;
 
@@ -6814,7 +6853,7 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p414 Search statement considerations ...
 
 searchStatement:
-	SEARCH ALL? identifier (VARYING (identifier | indexName))?;
+	SEARCH ALL? identifier (VARYING identifierOrIndexName)?;
 
 whenSearchCondition:
 	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)
@@ -7065,7 +7104,7 @@ setStatementForAssignationSending:
 
 //Format 2: SET for adjusting indexes
 setStatementForIndexes:
-	SET indexName+ (UP | DOWN) BY (identifier | IntegerLiteral);
+	SET indexNameReference+ (UP | DOWN) BY (identifier | IntegerLiteral);
 
 //Format 3: SET for external switches
 setStatementForSwitches:
@@ -7335,15 +7374,15 @@ setStatementForSwitchesWhat:
 // statement.
 
 sortStatement:
-	SORT fileName onAscendingDescendingKey+
+	SORT fileNameReference onAscendingDescendingKey+
 		(WITH? DUPLICATES IN? ORDER?)?
 		(COLLATING? SEQUENCE IS? alphabetNameReference)?
 		(usingFilenames  | inputProcedure)
 		(givingFilenames | outputProcedure);
 
 onAscendingDescendingKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
-usingFilenames:  USING  fileName+;
-givingFilenames: GIVING fileName+;
+usingFilenames:  USING  fileNameReference+;
+givingFilenames: GIVING fileNameReference+;
 inputProcedure:  INPUT  PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
 outputProcedure: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
 
@@ -7420,7 +7459,7 @@ outputProcedure: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureN
 // the specified comparison.
 
 startStatement:
-	START fileName (KEY IS? relationalOperator qualifiedDataName)?;
+	START fileNameReference (KEY IS? relationalOperator qualifiedDataName)?;
 
 startStatementEnd: END_START;
 
@@ -9416,7 +9455,7 @@ abbreviatedExpression:
 // p260: The subject of the relation condition. Can be an identifier, literal,
 // function-identifier (already included in identifier), arithmetic expression, or index-name.
 
-operand: identifier | literal | arithmeticExpression; // | indexName cannot be distinguished from identifier at the parsing stage
+operand: identifierOrIndexName | literal | arithmeticExpression; // | indexName cannot be distinguished from identifier at the parsing stage
 
 relationalOperator:
 	IS? ((NOT? strictRelation) | simpleRelation);
@@ -9885,7 +9924,7 @@ argument:
 
 addressOfSpecialRegisterDecl: ADDRESS OF dataReference;
 lengthOfSpecialRegisterDecl:  LENGTH OF? dataReference;
-linageCounterSpecialRegisterDecl: LINAGE_COUNTER OF fileName;
+linageCounterSpecialRegisterDecl: LINAGE_COUNTER OF fileNameReference;
 
 dataReference:
 	qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
@@ -10004,7 +10043,7 @@ dataReferenceOrConditionReference:
 
 subscript:
 	  IntegerLiteral | ALL
-	| (qualifiedDataName withRelativeSubscripting?)
+	| (qualifiedDataNameOrIndexName withRelativeSubscripting?)
 //	| (indexName withRelativeSubscripting?) // cannot be distinguished from the previous line at the parsing stage
 	;
 
@@ -10129,6 +10168,51 @@ qualifiedDataNameOrQualifiedConditionName:
 
 dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference : UserDefinedWord;
 
+// Ambiguity between qualifiedDataName, identifier and index name in some rules
+
+qualifiedDataNameOrIndexName:
+	dataNameReferenceOrIndexNameReference ((IN | OF) dataNameReferenceOrFileNameReference)*;
+
+dataNameReferenceOrIndexNameReference : UserDefinedWord;
+
+identifierOrIndexName:
+	( dataReferenceOrConditionReferenceOrIndexName
+	| specialRegister
+	| addressOfSpecialRegisterDecl
+	| lengthOfSpecialRegisterDecl
+	| linageCounterSpecialRegisterDecl
+	| functionIdentifier) 
+	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+dataReferenceOrConditionReferenceOrIndexName:
+	qualifiedDataNameOrQualifiedConditionNameOrIndexName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+qualifiedDataNameOrQualifiedConditionNameOrIndexName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference
+		((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference : UserDefinedWord;
+
+// Ambiguity between identifier and file name in some rules
+
+identifierOrFileName:
+	( dataReferenceOrConditionReferenceOrFileName
+	| specialRegister
+	| addressOfSpecialRegisterDecl
+	| lengthOfSpecialRegisterDecl
+	| linageCounterSpecialRegisterDecl
+	| functionIdentifier) 
+	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+dataReferenceOrConditionReferenceOrFileName:
+	qualifiedDataNameOrQualifiedConditionNameOrFileName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+qualifiedDataNameOrQualifiedConditionNameOrFileName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference
+		((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference : UserDefinedWord;
+
 // --- Terminals ---
 //
 //literal: alphanumOrNationalLiteral | numericLiteral;
@@ -10163,46 +10247,3 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference :
 //	| XML_CODE | XML_EVENT | XML_INFORMATION | XML_NAMESPACE | XML_NAMESPACE_PREFIX | XML_NNAMESPACE | XML_NNAMESPACE_PREFIX | XML_NTEXT | XML_TEXT
 //	| JNIENVPTR | LINAGE_COUNTER | RETURN_CODE | SHIFT_IN | SHIFT_OUT | TALLY | WHEN_COMPILED );
 
-
-
-	  ////////////////////////
-	 // User defined words //
-	////////////////////////
-
-// p130: file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
-
-fileName: UserDefinedWord;
-
-// p194: index-name-1
-// Each index-name specifies an index to be created by the compiler for use
-// by the program. These index-names are not data-names and are not
-// identified elsewhere in the COBOL program; instead, they can be regarded
-// as private special registers for the use of this object program only. They are
-// not data and are not part of any data hierarchy.
-// Unreferenced index names need not be uniquely defined.
-// In one table entry, up to 12 index-names can be specified.
-// If a data item that possesses the global attribute includes a table accessed
-// with an index, that index also possesses the global attribute. Therefore, the
-// scope of an index-name is the same as that of the data-name that names
-// the table in which the index is defined.
-// Indexes specified in an external data record do not possess the external attribute.
-
-// p71: Index-name
-// An index-name identifies an index. An index can be regarded as a private special
-// register that the compiler generates for working with a table. You name an index
-// by specifying the INDEXED BY phrase in the OCCURS clause that defines a table.
-// You can use an index-name in only the following language elements:
-// - SET statements
-// - PERFORM statements
-// - SEARCH statements
-// - Subscripts
-// - Relation conditions
-// An index-name is not the same as the name of an index data item, and an
-// index-name cannot be used like a data-name.
-
-indexName: UserDefinedWord;
-
-// defined previousely in the file
-// mnemonicForUPSISwitchName : UserDefinedWord;
