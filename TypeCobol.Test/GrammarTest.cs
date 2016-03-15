@@ -22,6 +22,7 @@ namespace TypeCobol.Test
             string[] include = { };
             string[] exclude = { };
             bool codegen = false;
+			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
             int tested = 0, nbFilesInError = 0, ignores = 0;
@@ -40,7 +41,7 @@ namespace TypeCobol.Test
                 }
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
-                var unit = ParserUtils.ParseCobolFile(filename, TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat, samples);
+                var unit = ParserUtils.ParseCobolFile(filename, format, samples);
                 watch.Stop();
                 //TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
                 TimeSpan elapsed = watch.Elapsed;
@@ -64,7 +65,7 @@ namespace TypeCobol.Test
                 }
 
                 if (codegen) {
-                    var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(unit.ProgramClassDocumentSnapshot, null);
+                    var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(null, format, unit.ProgramClassDocumentSnapshot);
 					var stream = new System.IO.StreamWriter(filename+".gen");
 					generator.WriteCobol(stream);
 					stream.Close();

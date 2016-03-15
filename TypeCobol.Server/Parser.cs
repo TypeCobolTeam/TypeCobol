@@ -121,6 +121,10 @@ namespace TypeCobol.Server
 		public ProgramClassDocument Snapshot {
 			get { return Compiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot; }
 		}
+
+		public ITextDocument Source {
+			get { return Compiler.TextDocument; }
+		}
     }
 
 
