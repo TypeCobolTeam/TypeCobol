@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// identifier-1 , literal-1
         /// The sending area.
         /// </summary>
-        private Expression Sending;
+        public Expression Sending;
         /// <summary>
         /// identifier-2
         /// The receiving areas. identifier-2 must not reference an intrinsic function.
@@ -50,13 +50,13 @@ namespace TypeCobol.Compiler.CodeElements
             this.IsCorresponding = corresponding;
         }
 
-        public IList<QualifiedName> Symbols {
+        public Dictionary<QualifiedName,bool> Symbols {
             get {
-                var symbols = new List<QualifiedName>();
+                var symbols = new Dictionary<QualifiedName,bool>();
                 if (Sending is Identifier)
-                    symbols.Add(((Identifier)Sending).Name);
+                    symbols.Add(((Identifier)Sending).Name, false);
                 foreach (var identifier in Receiving)
-                    symbols.Add(identifier.Name);
+                    symbols.Add(identifier.Name, true);
                 return symbols;
             }
             private set { throw new System.InvalidOperationException(); }

@@ -199,13 +199,44 @@ namespace TypeCobol.Compiler.Diagnostics
         public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
             var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
             var table = program.SymbolTable;
-            foreach (var symbol in element.Symbols) {
+            foreach (var symbol in element.Symbols.Keys) {
                 var found = table.Get(symbol);
                 if (found.Count < 1)
                     DiagnosticUtils.AddError(e, "Symbol "+symbol+" is not referenced");
                 if (found.Count > 1)
                     DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+symbol);
             }
+        }
+    }
+
+    class MoveChecker: ProgramListener
+    {
+        public IList<Type> GetCodeElements() {
+            return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
+        }
+        public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
+            var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
+            var table = program.SymbolTable;
+			QualifiedName sending = null;
+            foreach (var symbol in element.Symbols.Keys) {
+				if (!element.Symbols[symbol]) {
+					sending = symbol;
+					break;
+				}
+			}
+			if (sending == null) return; // no sending item
+			var items = table.Get(sending);
+			if (items.Count != 1) return; //ambiguity
+			var type = items[0].DataType;
+			foreach (var symbol in element.Symbols.Keys) {
+				if (symbol == sending) continue;
+				items = table.Get(symbol);
+				if (items.Count != 1) continue; //ambiguity
+				var receiving = items[0].DataType;
+				if (receiving != type) {
+					DiagnosticUtils.AddError(e, "Incompatible types: "+receiving.Name+", expected "+type.Name);
+				}
+			}
         }
     }
 }
