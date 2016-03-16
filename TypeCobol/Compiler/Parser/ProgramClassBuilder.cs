@@ -167,13 +167,31 @@ namespace TypeCobol.Compiler.Parser
 							data.Subordinates.Add(clone);
 							clone.TopLevel = data;
 							UpdateLevelNumbers(clone, data.LevelNumber);
+
 							CurrentProgram.SymbolTable.Add(clone);
+							AddGeneratedSymbols(clone);
 						}
 					}
 				}
 			}
 			return result;
 		}
+
+		private void AddGeneratedSymbols(DataDescriptionEntry data) {
+			if (data.DataType == null) return;
+			var custom = GetCustomType(data.DataType.Name);
+			if (custom == null) return;
+			foreach(var sub in new List<DataDescriptionEntry>(custom.Subordinates)) {
+				var clone = sub.Clone() as DataDescriptionEntry;
+				data.Subordinates.Add(clone);
+				clone.TopLevel = data;
+				UpdateLevelNumbers(clone, data.LevelNumber);
+				CurrentProgram.SymbolTable.Add(clone);
+
+				AddGeneratedSymbols(clone);
+			}
+		}
+
 
 		private void UpdateLevelNumbers(DataDescriptionEntry clone, int level) {
 			clone.LevelNumber = level+1;
@@ -221,6 +239,10 @@ namespace TypeCobol.Compiler.Parser
 				data.DataType = DataType.Create(data.Picture, currencies);
 				return null;
 			}
+		}
+		private DataDescriptionEntry GetCustomType(string name) {
+			try { return CurrentProgram.SymbolTable.GetCustomType(name); }
+			catch(ArgumentException ex) { return null; }
 		}
 
 		/// <summary>Retrieve currency characters from SPECIAL NAMES paragraph.</summary>

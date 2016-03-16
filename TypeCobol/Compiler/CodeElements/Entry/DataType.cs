@@ -4,7 +4,9 @@ namespace TypeCobol.Compiler.CodeElements
 {
 	public class DataType {
 		public string Name { get; private set; }
-		public DataType(string name) { Name = name; }
+		public bool IsStrong { get; private set; }
+
+		public DataType(string name, bool strong=false) { Name = name; IsStrong = strong; }
 
 		public override string ToString() { return Name; }
 

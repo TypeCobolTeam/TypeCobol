@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.Diagnostics
 				items = table.Get(symbol);
 				if (items.Count != 1) continue; //ambiguity
 				var receiving = items[0].DataType;
-				if (receiving != type) {
+				if (receiving != type && receiving.IsStrong) {
 					DiagnosticUtils.AddError(e, "Incompatible types: "+receiving.Name+", expected "+type.Name);
 				}
 			}
