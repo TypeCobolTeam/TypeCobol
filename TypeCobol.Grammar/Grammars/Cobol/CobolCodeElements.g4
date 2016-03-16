@@ -1383,7 +1383,7 @@ decimalPointClause :
 //environment variable name for the file.
 
 xmlSchemaClause :
-                    XML_SCHEMA xmlSchemaNameDefinition IS? (externalFileId | alphanumericLiteral);
+                    XML_SCHEMA xmlSchemaNameDefinition IS? /*(externalFileId | alphanumericLiteral)*/ assignmentName;
 
 // p120: XML-SCHEMA xml-schema-name-1 IS
 // xml-schema-name-1 can be referenced only in an XML PARSE statement.
@@ -1400,7 +1400,8 @@ xmlSchemaNameReference : UserDefinedWord;
 // - The user-defined word can contain the characters, A-Z, a-z, 0-9.
 // - The leading character must be alphabetic.
 
-externalFileId : UserDefinedWord;
+// Looks a lot like an assignment name ...
+// externalFileId : UserDefinedWord;
 
 // p121: The REPOSITORY paragraph is used in a program or class definition to identify all
 // the object-oriented classes that are intended to be referenced in that program or
@@ -9042,9 +9043,11 @@ xmlParseStatement:
 // including continuation lines, be coded in columns 12 through 72.
 
 execStatement:
-                 (EXEC | EXECUTE) ExecTranslatorName 
+                 (EXEC | EXECUTE) execTranslatorName 
                  ExecStatementText* 
                  execStatementEnd;
+
+execTranslatorName : ExecTranslatorName;
 
 execStatementEnd: END_EXEC;
 
@@ -9867,6 +9870,7 @@ length: arithmeticExpression;
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+
 intrinsicFunctionName: (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
@@ -9888,7 +9892,7 @@ argument:
 // and because the exact list of the instrinsic functions, their types and their arguments are more a library matter than a language matter,
 // we do not try to check the validity of the number of arguments, the types of arguments alowed, and the referenceModifier pertinence
 // at the grammar level.                      
-// All these rules will be check at a later time by looking at an independent table of instrinsic functions.
+// All these rules will be checked at a later time by looking at an independent table of instrinsic functions.
 
 // p484: Function definitions
 // This section provides an overview of the argument type, function type, and value

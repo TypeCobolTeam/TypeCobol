@@ -964,7 +964,11 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterExecStatement(CodeElementsParser.ExecStatementContext context)
         {
             var statement = new ExecStatement();
-            var node = ParseTreeUtils.GetTokenFromTerminalNode(context.ExecTranslatorName());
+            Token node = null;
+            if (context.execTranslatorName() != null)
+            {
+                node = ParseTreeUtils.GetTokenFromTerminalNode(context.execTranslatorName().ExecTranslatorName());
+            }
             if (node != null) statement.Compiler = node.Text;
             var str = new StringBuilder();
             foreach (var line in context.ExecStatementText())
@@ -1950,6 +1954,13 @@ namespace TypeCobol.Compiler.Parser
             CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
+        public override void EnterSpecialRegister(CodeElementsParser.SpecialRegisterContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
         public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
@@ -2119,6 +2130,29 @@ namespace TypeCobol.Compiler.Parser
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
+        public override void EnterAssignmentName(CodeElementsParser.AssignmentNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.AssignmentName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
+        // ** Runtime functions **
+
+        public override void EnterIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+
+        public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.ExecTranslatorName);
             CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
     }
