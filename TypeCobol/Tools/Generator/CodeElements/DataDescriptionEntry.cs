@@ -36,21 +36,15 @@ namespace TypeCobol.Compiler.CodeElements {
 			}
 
 			if (generated) {
-				if (HowFarRemoved == 0) {
-					// filter "TYPE UserDefinedWord" from re-written code
-					bool filter = false;
-					foreach(var token in ConsumedTokens) {
-						if (token.SourceText.Equals("TYPE")) filter = true;
-						if (!filter) WriteCode(stream, token, ref line, ref offset);
-						if (token.SourceText.Equals(DataType.Name)) filter = false;
-					}
-				} else {
-					// write the proper level number according to data hierarchy
-					Codegen.Write(stream, LevelNumber.ToString("00")+" ", ref line, ref offset);
-					// the rest of the tokens is written 'as is'
-					for(int i=1; i<ConsumedTokens.Count; i++) {
-						WriteCode(stream, ConsumedTokens[i], ref line, ref offset);
-					}
+				// write the proper level number according to data hierarchy
+				Codegen.Write(stream, LevelNumber.ToString("00")+" ", ref line, ref offset);
+				// filter "TYPE UserDefinedWord" from re-written code
+				bool filter = false;
+				for(int i=1; i<ConsumedTokens.Count; i++) {
+					var token = ConsumedTokens[i];
+					if (token.SourceText.Equals("TYPE")) filter = true;
+					if (!filter) WriteCode(stream, token, ref line, ref offset);
+					if (token.SourceText.Equals(DataType.Name)) filter = false;
 				}
 			} else {
 				// write pure COBOL data declaration with no modification
