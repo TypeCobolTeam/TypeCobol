@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<skeletons>
+
+  <!-- delete/comment TYPEDEF -->
+  <skeleton name="TYPEDEF">
+    <condition node="DataDescriptionEntry" clause="tcExtTypedefClause"/>
+    <patterns>
+      <pattern location="NODE" action="delete"></pattern>
+    </patterns>
+  </skeleton>
+
+</skeletons>

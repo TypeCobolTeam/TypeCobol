@@ -54,11 +54,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resource\*.xml">
+    <None Include="resources\config\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\output\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TypeCobol.Server\TypeCobol.Server.csproj">
+      <Project>{5bef9d4c-b1fb-455d-a2ea-b4db5108ecfd}</Project>
+      <Name>TypeCobol.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj">
+      <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
+      <Name>TypeCobol</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\Codegen.csproj">
       <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
       <Name>Codegen</Name>

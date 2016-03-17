@@ -6,8 +6,8 @@ namespace TypeCobol.Codegen.Config {
 
 	/// <summary>XML file <see cref="Skeleton"/> parser.</summary>
 	public class XmlParser: ConfigParser {
-		internal static string TAG_SKELETON     = "statement";
-		internal static string TAG_PATTERN_LIST = "skels";
+		internal static string TAG_SKELETON     = "skeleton";
+		internal static string TAG_PATTERN_LIST = "patterns";
 		internal static string TAG_PATTERN      = "pattern";
 		internal static string ATTR_NAME        = "name";
 		internal static string ATTR_GROUP       = "group";
