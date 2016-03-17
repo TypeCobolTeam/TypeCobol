@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Symbols;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
@@ -35,6 +37,9 @@ namespace TypeCobol.Tools.CommandLine
 
             // Initialize statistics vars
 
+            Stopwatch chrono = new Stopwatch();
+            chrono.Start();
+
             // 1. Program analysis after preprocessing
 
             // - total number of lines per program (including expanded COPY directives)
@@ -50,11 +55,11 @@ namespace TypeCobol.Tools.CommandLine
             StatCounter<CopyDirectiveType> copiesCounter = new StatCounter<CopyDirectiveType>(copiesCountDistributionCategories);
 
             // - number of replaced tokens per program
-            long[] replacedTokensCountDistributionCategories = { 150, 300, 450, 600, 900, 1500, 2250, 3000, 4500, 6000, 9000, 15000, int.MaxValue };
+            long[] replacedTokensCountDistributionCategories = { 50, 100, 150, 200, 300, 500, 1000, 2000, 5000, 10000, 20000, int.MaxValue };
             StatCounter<TokenType> replacedTokensCounter = new StatCounter<TokenType>(tokensCountDistributionCategories);
 
             // - number of code elements per program
-            long[] codeElementsCountDistributionCategories = { 10, 25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, int.MaxValue };
+            long[] codeElementsCountDistributionCategories = { 100, 200, 300, 400, 500, 750, 1000, 1500, 2000, 5000, 10000, int.MaxValue };
             StatCounter<CodeElementType> codeElementCounter = new StatCounter<CodeElementType>(codeElementsCountDistributionCategories);
 
             // 2. Program files before preprocessing
@@ -135,14 +140,42 @@ namespace TypeCobol.Tools.CommandLine
                         {
                             // + count lines
                             linesCounter.OnElement((int)line.Type);
-                            linesPerProgramFileCounter.OnElement((int)line.Type);                            
-                            
+                            linesPerProgramFileCounter.OnElement((int)line.Type);
+
+                            // Use symbol information known at parsing time for the tokens to build a language model
+                            if (line.CodeElements != null)
+                            {
+                                foreach (var codeElement in line.CodeElements)
+                                {
+                                    if (codeElement.SymbolInformationForTokens.Count > 0)
+                                    {
+                                        languageModelForProgram.AddSymbolInformationForTokens(codeElement.SymbolInformationForTokens);
+                                    }
+                                }
+                            }
+                            if(line.ImportedDocuments != null)
+                            {
+                                var symbolInformationForTokens = new Dictionary<Token,SymbolInformation>();
+                                foreach(var copyDirective in line.ImportedDocuments.Keys)
+                                {
+                                    if (copyDirective.TextNameSymbol != null)
+                                    {
+                                        symbolInformationForTokens.Add(copyDirective.TextNameSymbol, new SymbolInformation(copyDirective.TextNameSymbol, SymbolRole.ExternalName, SymbolType.TextName));
+                                    }
+                                    if (copyDirective.LibraryNameSymbol != null)
+                                    {
+                                        symbolInformationForTokens.Add(copyDirective.TextNameSymbol, new SymbolInformation(copyDirective.LibraryNameSymbol, SymbolRole.ExternalName, SymbolType.LibraryName));
+                                    }
+                                }
+                                languageModelForProgram.AddSymbolInformationForTokens(symbolInformationForTokens);
+                            }
+
                             // Iterate over tokens on this line
                             foreach (var token in line.SourceTokens)
                             {
                                 // + count tokens and build language model
                                 tokensPerProgramFileCounter.OnElement((int)token.TokenType);
-                                languageModelForProgram.OnToken(token.TokenType);
+                                languageModelForProgram.OnToken(token);
                             }
 
                             // Iterate over compiler directives on this line
@@ -220,12 +253,30 @@ namespace TypeCobol.Tools.CommandLine
                                                 linesCounter.OnElement((int)copyLine.Type);
                                                 linesPerCopyFileCounter.OnElement((int)copyLine.Type);
 
+                                                // Use symbol information known at parsing time for the tokens to build a language model
+                                                if (copyLine.ImportedDocuments != null)
+                                                {
+                                                    var symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
+                                                    foreach (var copyDirective2 in line.ImportedDocuments.Keys)
+                                                    {
+                                                        if (copyDirective2.TextNameSymbol != null)
+                                                        {
+                                                            symbolInformationForTokens.Add(copyDirective2.TextNameSymbol, new SymbolInformation(copyDirective2.TextNameSymbol, SymbolRole.ExternalName, SymbolType.TextName));
+                                                        }
+                                                        if (copyDirective2.LibraryNameSymbol != null)
+                                                        {
+                                                            symbolInformationForTokens.Add(copyDirective2.TextNameSymbol, new SymbolInformation(copyDirective2.LibraryNameSymbol, SymbolRole.ExternalName, SymbolType.LibraryName));
+                                                        }
+                                                    }
+                                                    languageModelForCopy.AddSymbolInformationForTokens(symbolInformationForTokens);
+                                                }
+
                                                 // Iterate over tokens on this line
                                                 foreach (var token in copyLine.SourceTokens)
                                                 {
                                                     // + count tokens and build language model
                                                     tokensPerCopyFileCounter.OnElement((int)token.TokenType);
-                                                    languageModelForCopy.OnToken(token.TokenType);
+                                                    languageModelForCopy.OnToken(token);
                                                 }
 
                                                 // Iterate over compiler directives on this line
@@ -370,7 +421,9 @@ namespace TypeCobol.Tools.CommandLine
             {
                 languageModelForCopy.DisplayResults(writer);
             }
-            Console.WriteLine("Done");
+
+            chrono.Stop();
+            Console.WriteLine("Done in " + Math.Round(chrono.ElapsedMilliseconds/(double)1000,3) + " sec");
         }
 
         private static void WriteTitle(StreamWriter writer, string title)
@@ -510,20 +563,31 @@ namespace TypeCobol.Tools.CommandLine
         private TokenType lastElementStartingWord = TokenType.InvalidToken;
         private TokenType lastWord = TokenType.InvalidToken;
 
+        private IDictionary<Token, SymbolInformation> symbolInformationForTokens;
 
         public void OnBeginProgram()
         {
             lastElementStartingWord = TokenType.InvalidToken;
             lastWord = TokenType.InvalidToken;
+            symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
+        }
+        
+        public void AddSymbolInformationForTokens(IDictionary<Token, SymbolInformation> additionalSymbolInformationForTokens)
+        {
+            foreach (var pair in additionalSymbolInformationForTokens)
+            {
+                symbolInformationForTokens[pair.Key] = pair.Value;
+            }
         }
 
-        public void OnToken(TokenType tokenType)
+        public void OnToken(Token token)
         {
+            TokenType tokenType = token.TokenType;
             TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
             if (tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective &&
                 tokenType != TokenType.EJECT && tokenType != TokenType.SKIP1 && tokenType != TokenType.SKIP2 && tokenType != TokenType.SKIP3)
             {
-                RegisterToken(tokenType);
+                RegisterToken(token);
                 lastWord = tokenType;
                 if (tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword || tokenFamily == TokenFamily.StatementStartingKeyword || tokenFamily == TokenFamily.StatementEndingKeyword)
                 {
@@ -532,7 +596,7 @@ namespace TypeCobol.Tools.CommandLine
             }
         }
 
-        private void RegisterToken(TokenType tokenType)
+        private void RegisterToken(Token token)
         {
             TotalCount++;
             WordProbabilitiesAfterElementStartingWord wordProbabilities = null;
@@ -541,7 +605,10 @@ namespace TypeCobol.Tools.CommandLine
                 wordProbabilities = new WordProbabilitiesAfterElementStartingWord(lastElementStartingWord);
                 WordProbabilitiesAfterElementStartingWord.Add(lastElementStartingWord, wordProbabilities);
             }
-            wordProbabilities.OnWords(lastWord, tokenType);
+
+            SymbolInformation symbolInfo = null;
+            symbolInformationForTokens.TryGetValue(token, out symbolInfo);
+            wordProbabilities.OnWords(lastWord, token.TokenType, symbolInfo);
         }
 
         public void ComputeProbabilities()
@@ -567,18 +634,76 @@ namespace TypeCobol.Tools.CommandLine
 
         public void DisplayResults(TextWriter writer)
         {
+            double top1Prediction = 0;
+            double top3Prediction = 0;
+            double top5Prediction = 0;
             foreach (var wordProbabilities in WordProbabilitiesAfterElementStartingWord.Values.OrderByDescending(wordProbabilities => wordProbabilities.TotalCount))
             {
-                writer.WriteLine(Enum.GetName(typeof(TokenType), wordProbabilities.ElementStartingWordType) + "\t" + (wordProbabilities.TotalCount * 100 / TotalCount));
+                double elementStartingWordProbability = wordProbabilities.TotalCount / (double)TotalCount;
+                writer.WriteLine(Enum.GetName(typeof(TokenType), wordProbabilities.ElementStartingWordType) + "\t" + Math.Round(elementStartingWordProbability * 100,2 ));
+
+                double top1PredictionAfterFirstWord = 0;
+                double top3PredictionAfterFirstWord = 0;
+                double top5PredictionAfterFirstWord = 0;
                 foreach (var nextWordProbabilities in wordProbabilities.WordProbabilities.Values.OrderByDescending(nextWordProbabilities => nextWordProbabilities.TotalCount))
                 {
-                    writer.WriteLine("\t" + Enum.GetName(typeof(TokenType), nextWordProbabilities.CurrentWordType) + "\t" + (nextWordProbabilities.TotalCount * 100 / wordProbabilities.TotalCount));
+                    double firstWordProbability = nextWordProbabilities.TotalCount/ (double)wordProbabilities.TotalCount;
+                    writer.WriteLine("\t" + Enum.GetName(typeof(TokenType), nextWordProbabilities.CurrentWordType) + "\t" + Math.Round(firstWordProbability * 100, 2));
+
+                    double top1PredictionForSecondWord = 0;
+                    double top3PredictionForSecondWord = 0;
+                    double top5PredictionForSecondWord = 0;
+                    int topIndex = 0;
                     foreach (var wordProbability in nextWordProbabilities.NextWords)
                     {
-                        writer.WriteLine("\t\t" + Enum.GetName(typeof(TokenType), wordProbability.WordType) + "\t" + wordProbability.Probability);
+                        topIndex++;
+                        double secondWordProbability = wordProbability.Probability;
+                        if(topIndex <= 1)
+                        {
+                            top1PredictionForSecondWord += secondWordProbability;
+                        }
+                        if (topIndex <= 3)
+                        {
+                            top3PredictionForSecondWord += secondWordProbability;
+                        }
+                        if (topIndex <= 5)
+                        {
+                            top5PredictionForSecondWord += secondWordProbability;
+                        }
+
+                        string symbolTypes = String.Empty;
+                        if(wordProbability.SymbolTypes != null)
+                        {
+                            symbolTypes = "(";
+                            bool isFirst = true;
+                            foreach(var symbolType in wordProbability.SymbolTypes)
+                            {
+                                if(isFirst)
+                                {
+                                    isFirst = false;
+                                }
+                                else
+                                {
+                                    symbolTypes += ",";
+                                }
+                                symbolTypes += Enum.GetName(typeof(SymbolType), symbolType);
+                            }
+                            symbolTypes += ")";
+                        }
+                        writer.WriteLine("\t\t" + Enum.GetName(typeof(TokenType), wordProbability.WordType)  + symbolTypes + "\t" + Math.Round(secondWordProbability * 100, 2));
                     }
+                    top1PredictionAfterFirstWord += firstWordProbability * top1PredictionForSecondWord;
+                    top3PredictionAfterFirstWord += firstWordProbability * top3PredictionForSecondWord;
+                    top5PredictionAfterFirstWord += firstWordProbability * top5PredictionForSecondWord;
                 }
+                top1Prediction += elementStartingWordProbability * top1PredictionAfterFirstWord;
+                top3Prediction += elementStartingWordProbability * top3PredictionAfterFirstWord;
+                top5Prediction += elementStartingWordProbability * top5PredictionAfterFirstWord;
             }
+            writer.WriteLine("--- Model performances ---");
+            writer.WriteLine("Next word is top 1 suggestion  " + Math.Round(top1Prediction * 100, 2) +"% of the time");
+            writer.WriteLine("Next word in top 3 suggestions " + Math.Round(top3Prediction * 100, 2) + "% of the time");
+            writer.WriteLine("Next word in top 5 suggestions " + Math.Round(top5Prediction * 100, 2) + "% of the time");
         }
     }
 
@@ -595,7 +720,7 @@ namespace TypeCobol.Tools.CommandLine
             WordProbabilities = new Dictionary<TokenType, NextWordProbabilities>();
         }
 
-        public void OnWords(TokenType firstWord, TokenType secondWord)
+        public void OnWords(TokenType firstWord, TokenType secondWord, SymbolInformation secondWordSymbolInfo)
         {
             TotalCount++;
             NextWordProbabilities nextWordProbabilities = null;
@@ -604,7 +729,7 @@ namespace TypeCobol.Tools.CommandLine
                 nextWordProbabilities = new NextWordProbabilities(firstWord);
                 WordProbabilities.Add(firstWord, nextWordProbabilities);
             }
-            nextWordProbabilities.OnNextWord(secondWord);
+            nextWordProbabilities.OnNextWord(secondWord, secondWordSymbolInfo);
         }
 
         public void ComputeWordProbabilities()
@@ -635,16 +760,17 @@ namespace TypeCobol.Tools.CommandLine
 
         public long TotalCount;
         private IDictionary<TokenType, long> NextWordCounts;
+        private IDictionary<TokenType, IList<SymbolType>> NextWordSymbolTypes;
 
         public IList<WordProbability> NextWords;
 
         public NextWordProbabilities(TokenType currentTokenType)
         {
             CurrentWordType = currentTokenType;
-            NextWordCounts = new Dictionary<TokenType, long>();
+            NextWordCounts = new Dictionary<TokenType, long>();            
         }
 
-        public void OnNextWord(TokenType nextWordType)
+        public void OnNextWord(TokenType nextWordType, SymbolInformation nextWordSymbolInfo)
         {
             TotalCount++;
             if(NextWordCounts.ContainsKey(nextWordType))
@@ -655,6 +781,36 @@ namespace TypeCobol.Tools.CommandLine
             {
                 NextWordCounts.Add(nextWordType, 1);
             }
+            if(nextWordSymbolInfo != null)
+            {
+                if(NextWordSymbolTypes == null)
+                {
+                    NextWordSymbolTypes = new Dictionary<TokenType, IList<SymbolType>>();
+                }
+                IList<SymbolType> candidateSymbolTypes = null;
+                if(!NextWordSymbolTypes.TryGetValue(nextWordType, out candidateSymbolTypes))
+                {
+                    candidateSymbolTypes = new List<SymbolType>();
+                    NextWordSymbolTypes.Add(nextWordType, candidateSymbolTypes);
+                }
+                if(nextWordSymbolInfo.CandidateSymbolTypes != null)
+                {
+                    foreach(var symbolType in nextWordSymbolInfo.CandidateSymbolTypes)
+                    {
+                        if (!candidateSymbolTypes.Contains(symbolType))
+                        {
+                            candidateSymbolTypes.Add(symbolType);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!candidateSymbolTypes.Contains(nextWordSymbolInfo.Type))
+                    {
+                        candidateSymbolTypes.Add(nextWordSymbolInfo.Type);
+                    }
+                }
+            }
         }
 
         public void ComputeNextWords()
@@ -663,10 +819,18 @@ namespace TypeCobol.Tools.CommandLine
             foreach(var tokenType in NextWordCounts.Keys.OrderByDescending(tokenType => NextWordCounts[tokenType]))
             {
                 long nextWordCount = NextWordCounts[tokenType];
-                int probability = (int)(nextWordCount * 100 / TotalCount);
-                if(probability >= 5)
+                double probability = nextWordCount / (double)TotalCount;
+                if(probability >= 0.05)
                 {
-                    NextWords.Add(new WordProbability(tokenType, probability));
+                    SymbolType[] symbolTypes = null;
+                    if(NextWordSymbolTypes != null)
+                    {
+                        if (NextWordSymbolTypes.ContainsKey(tokenType))
+                        {
+                            symbolTypes = NextWordSymbolTypes[tokenType].ToArray();
+                        }
+                    }
+                    NextWords.Add(new WordProbability(tokenType, symbolTypes, probability));
                 }
                 else
                 {
@@ -680,11 +844,13 @@ namespace TypeCobol.Tools.CommandLine
     class WordProbability
     {
         public TokenType WordType;
-        public int Probability;
+        public SymbolType[] SymbolTypes;
+        public double Probability;
 
-        public WordProbability(TokenType wordType, int probability)
+        public WordProbability(TokenType wordType, SymbolType[] symbolTypes, double probability)
         {
             WordType = wordType;
+            SymbolTypes = symbolTypes;
             Probability = probability;
         }
     }
