@@ -4,7 +4,7 @@ using TypeCobol.Codegen.Skeletons;
 
 namespace TypeCobol.Codegen {
 
-	class Program {
+	class App {
 		static void Main(string[] args) {
 			var files = new List<string>();
 			foreach(string arg in args) files.AddRange(GetParameterFiles(arg));
