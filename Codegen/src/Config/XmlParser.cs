@@ -5,7 +5,7 @@ using TypeCobol.Codegen.Skeletons;
 namespace TypeCobol.Codegen.Config {
 
 	/// <summary>XML file <see cref="Skeleton"/> parser.</summary>
-	internal class XmlParser: ConfigParser {
+	public class XmlParser: ConfigParser {
 		internal static string TAG_SKELETON     = "statement";
 		internal static string TAG_PATTERN_LIST = "skels";
 		internal static string TAG_PATTERN      = "pattern";

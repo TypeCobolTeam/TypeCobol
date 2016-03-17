@@ -11,7 +11,7 @@ namespace TypeCobol.Codegen {
 			var skeletons = new List<Skeleton>();
 			foreach(var file in files) {
 				string extension = Path.GetExtension(file);
-				var parser = GetParser(extension);
+				var parser = Config.Config.CreateParser(extension);
 				skeletons.AddRange(parser.Parse(file));
 			}
 			System.Console.WriteLine(skeletons.Count+" skeleton"+(skeletons.Count>1?"s":"")+':');
@@ -27,14 +27,6 @@ namespace TypeCobol.Codegen {
 				System.Console.WriteLine("\""+path+"\" is a directory.");
 			}
 			return files;
-		}
-
-		private static Config.ConfigParser GetParser(string extension) {
-			var map = new Dictionary<string,Config.ConfigParser>();
-			map.Add(".xml", new Config.XmlParser());
-			var defaultext = ".xml";
-			try { return map[extension.ToLower()]; }
-			catch(System.Exception) { return map[defaultext]; }
 		}
 	}
 
