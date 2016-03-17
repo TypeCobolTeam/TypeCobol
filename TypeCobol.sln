@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.LanguageServer", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.VsCodeClient", "TypeCobol.VsCodeClient\TypeCobol.VsCodeClient.csproj", "{16734607-4567-4566-BFFA-398CF3821448}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen", "Codegen\Codegen.csproj", "{4034CBC5-D3DC-45E5-81F2-605579E6B876}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen", "Codegen\src\Codegen.csproj", "{4034CBC5-D3DC-45E5-81F2-605579E6B876}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
