@@ -274,19 +274,37 @@ namespace TypeCobol.Compiler.Parser
             return identifier;
         }
 
-        public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierContext identifier)
+        public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrClassNameContext context)
+        {
+            if (context == null) return null;
+            Identifier identifier = CreateDataReferenceOrConditionReferenceOrClassName(context.dataReferenceOrConditionReferenceOrClassName());
+            if (identifier != null) return identifier;
+            identifier = CreateSpecialRegister(context.specialRegister());
+            if (identifier != null) return identifier;
+            identifier = CreateFunctionReference(context.functionIdentifier());
+            if (identifier != null) return identifier;
+            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+            if (identifier != null) return identifier;
+            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+            if (identifier != null) return identifier;
+            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+            if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+            return identifier;
+        }
+
+        public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierOrClassNameContext identifier)
         {
             if (identifier.referenceModifier() == null)
             {
-                var dataReferenceOrConditionReference = identifier.dataReferenceOrConditionReference();
-                if (dataReferenceOrConditionReference != null)
+                var dataReferenceOrConditionReferenceOrClassName = identifier.dataReferenceOrConditionReferenceOrClassName();
+                if (dataReferenceOrConditionReferenceOrClassName != null)
                 {
-                    if (dataReferenceOrConditionReference.subscript() == null)
+                    if (dataReferenceOrConditionReferenceOrClassName.subscript() == null)
                     {
-                        var qualifiedDataNameOrQualifiedConditionName = dataReferenceOrConditionReference.qualifiedDataNameOrQualifiedConditionName();
-                        if (qualifiedDataNameOrQualifiedConditionName.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null)
+                        var qualifiedDataNameOrQualifiedConditionNameOrClassName = dataReferenceOrConditionReferenceOrClassName.qualifiedDataNameOrQualifiedConditionNameOrClassName();
+                        if (qualifiedDataNameOrQualifiedConditionNameOrClassName.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null)
                         {
-                            return ParseTreeUtils.GetFirstToken(qualifiedDataNameOrQualifiedConditionName.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+                            return ParseTreeUtils.GetFirstToken(qualifiedDataNameOrQualifiedConditionNameOrClassName.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
                         }
                     }
                 }
@@ -358,6 +376,16 @@ namespace TypeCobol.Compiler.Parser
             IList<Subscript> subscripts = CreateSubscripts(context);
             if (name != null || subscripts != null) return new DataReference(name, subscripts);
             return null;
+
+        }
+
+        private static DataReference CreateDataReferenceOrConditionReferenceOrClassName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context)
+        {
+            if (context == null) return null;
+            QualifiedName name = CreateQualifiedName(context);
+            IList<Subscript> subscripts = CreateSubscripts(context);
+            if (name != null || subscripts != null) return new DataReference(name, subscripts);
+            return null;
         }
 
         private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceContext context)
@@ -382,6 +410,12 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return CreateQualifiedName(context.qualifiedDataNameOrQualifiedConditionNameOrFileName());
+        }
+
+        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context)
+        {
+            if (context == null) return null;
+            return CreateQualifiedName(context.qualifiedDataNameOrQualifiedConditionNameOrClassName());
         }
 
         public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context)
@@ -448,6 +482,18 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             DataName name = null;
             if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference() != null) name = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
+            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+            datanames.Reverse();
+            // TO DO : need to lookup symbol table to distinguish data name and file name
+            ///FileName filename = CreateFileName(context.fileName());
+            return new QualifiedName(name, datanames, /*filename*/null);
+        }
+
+        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context)
+        {
+            if (context == null) return null;
+            DataName name = null;
+            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference() != null) name = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
             List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
             datanames.Reverse();
             // TO DO : need to lookup symbol table to distinguish data name and file name
@@ -561,6 +607,13 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReferenceContext context)
+        {
+            if (context == null) return null;
+            // TO DO : lookup symbol table to determine the type of the symbol
+            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+        }
+
+        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReferenceContext context)
         {
             if (context == null) return null;
             // TO DO : lookup symbol table to determine the type of the symbol
@@ -700,6 +753,12 @@ namespace TypeCobol.Compiler.Parser
         }
 
         private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context)
+        {
+            if (context == null) return null;
+            return CreateSubscripts(context.subscript());
+        }
+
+        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context)
         {
             if (context == null) return null;
             return CreateSubscripts(context.subscript());

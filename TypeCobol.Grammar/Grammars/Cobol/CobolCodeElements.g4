@@ -577,9 +577,6 @@ classNameDefinition : UserDefinedWord;
 
 classNameReference : UserDefinedWord;
 
-// Can not distinguish between a simple UserDefinedWord = classReference and a proper identifier = objectReference
-classNameReferenceOrObjectReference : identifier;
-
 // p97 : Factory IDENTIFICATION DIVISION
 // A factory IDENTIFICATION DIVISION contains only a factory paragraph
 // header.
@@ -1971,8 +1968,11 @@ ioControlEntry:
 // The END OF REEL/UNIT phrase can be specified only if file-name-1 is a sequentially organized file.
 
 rerunClause:
-               RERUN ON? (assignmentName | fileNameReference) (EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
+               RERUN ON? assignmentNameOrFileNameReference (EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
    
+// Ambiguity between assignment name and file name at parsing stage
+assignmentNameOrFileNameReference : UserDefinedWord | alphanumericLiteral;
+
 // p147: The SAME AREA clause is syntax checked, but has no effect on the execution of the program.
 // The SAME AREA clause specifies that two or more files that do not represent sort or merge files are to use the same main storage area during processing.
 // The files named in a SAME AREA clause need not have the same organization or access. 
@@ -5857,7 +5857,7 @@ inspectBy: BY identifierOrLiteral;
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (classNameReferenceOrObjectReference |  SELF | SUPER) (methodNameReference | methodNameFromData | NEW) (USING invokeUsing+)? invokeReturning?;
+	INVOKE (identifierOrClassName |  SELF | SUPER) (methodNameReference | methodNameFromData | NEW) (USING invokeUsing+)? invokeReturning?;
 
 invokeUsing:
 	BY? VALUE (identifier | literal)+;
@@ -9056,54 +9056,6 @@ execStatementEnd: END_EXEC;
 // ------------------------------
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // -------------------------------------------
 // Optimized version of the expressions syntax
 // -------------------------------------------
@@ -10216,6 +10168,26 @@ qualifiedDataNameOrQualifiedConditionNameOrFileName:
 		((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
 dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference : UserDefinedWord;
+
+// Ambiguity between identifier and class name in some rules
+
+identifierOrClassName:
+	( dataReferenceOrConditionReferenceOrClassName
+	| specialRegister
+	| addressOfSpecialRegisterDecl
+	| lengthOfSpecialRegisterDecl
+	| linageCounterSpecialRegisterDecl
+	| functionIdentifier) 
+	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+dataReferenceOrConditionReferenceOrClassName:
+	qualifiedDataNameOrQualifiedConditionNameOrClassName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+qualifiedDataNameOrQualifiedConditionNameOrClassName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference
+		((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference : UserDefinedWord;
 
 // --- Terminals ---
 //

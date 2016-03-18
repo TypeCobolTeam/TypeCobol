@@ -332,10 +332,10 @@ namespace TypeCobol.Compiler.Parser
             var statement = new InvokeStatement();
 
             // class name or object reference
-            if (context.classNameReferenceOrObjectReference() != null)
+            if (context.identifierOrClassName() != null)
             {
                 // A single UserDefinedWord can reference either a class name or a data name (object reference)
-                var identifier = context.classNameReferenceOrObjectReference().identifier();
+                var identifier = context.identifierOrClassName();
                 Token symbolToken = SyntaxElementBuilder.GetSymbolTokenIfIdentifierIsOneUserDefinedWord(identifier);
                 if (symbolToken != null)
                 {
