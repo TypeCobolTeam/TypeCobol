@@ -45,10 +45,12 @@ namespace TypeCobol.Codegen {
 		[TestMethod]
 		public void ParseTypes() {
 			var skeletons = ParseConfig("Types.xml");
-			Assert.AreEqual(skeletons.Count,1);
-			Assert.AreEqual(skeletons[0].Patterns.Count,1);
-			var pattern = skeletons[0].Patterns[0];
-			var document = ParseSource("Types.cbl");
+			Assert.AreEqual(skeletons.Count,2);
+			Assert.AreEqual(skeletons[0].Patterns.Count, 1);
+			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
+			var document = ParseSource("Types.cbl", DocumentFormat.RDZReferenceFormat);
+			var codegen = new Generator();
+			codegen.Generate(document.Program.SyntaxTree.Root, document.Program.SymbolTable, document.TextSourceInfo.ColumnsLayout);
 		}
 
 
@@ -65,9 +67,8 @@ namespace TypeCobol.Codegen {
 			var parser = Config.Config.CreateParser(Path.GetExtension(path));
 			return parser.Parse(path);
 		}
-		internal static ProgramClassDocument ParseSource(string path, DocumentFormat format=null) {
+		internal static ProgramClassDocument ParseSource(string path, DocumentFormat format) {
 			path = Path.Combine(ROOT, INPUT, path);
-			if (format == null) format = DocumentFormat.RDZReferenceFormat;
 			var parser = new Parser("TypeCobol.Server");
 			parser.Init(path, format);
 			parser.Parse(path);
