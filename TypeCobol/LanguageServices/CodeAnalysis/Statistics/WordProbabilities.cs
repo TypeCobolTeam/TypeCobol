@@ -16,24 +16,36 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         public TokenType ElementStartingWordType;
 
         public long TotalCount;
-        public IDictionary<TokenType, NextWordProbabilities> WordProbabilities;
+        public IDictionary<int, NextWordProbabilities> WordProbabilities;
 
         public WordProbabilitiesAfterElementStartingWord(TokenType elementStartingWordType)
         {
             ElementStartingWordType = elementStartingWordType;
-            WordProbabilities = new Dictionary<TokenType, NextWordProbabilities>();
+            WordProbabilities = new Dictionary<int, NextWordProbabilities>();
         }
 
-        public void OnWords(TokenType firstWord, TokenType secondWord, SymbolInformation secondWordSymbolInfo)
+        public void OnWords(TokenType firstWord, TokenType secondWord, SymbolInformation secondWordSymbolInfo, TokenType lastWordBeforeSymbolOrLiteral)
         {
             TotalCount++;
+            int firstWordKey = ComputeLastWordsKey(firstWord, lastWordBeforeSymbolOrLiteral);
             NextWordProbabilities nextWordProbabilities = null;
-            if (!WordProbabilities.TryGetValue(firstWord, out nextWordProbabilities))
+            if (!WordProbabilities.TryGetValue(firstWordKey, out nextWordProbabilities))
             {
-                nextWordProbabilities = new NextWordProbabilities(firstWord);
-                WordProbabilities.Add(firstWord, nextWordProbabilities);
+                nextWordProbabilities = new NextWordProbabilities(firstWordKey);
+                WordProbabilities.Add(firstWordKey, nextWordProbabilities);
             }
             nextWordProbabilities.OnNextWord(secondWord, secondWordSymbolInfo);
+        }
+
+        private static int ComputeLastWordsKey(TokenType lastWord, TokenType lastWordBeforeSymbolOrLiteral)
+        {
+            int lastWordKey = 0;
+            if (LanguageModel.IsSymbolOrLiteral(lastWord, TokenUtils.GetTokenFamilyFromTokenType(lastWord)))
+            {
+                lastWordKey = (int)lastWordBeforeSymbolOrLiteral << 10;
+            }
+            lastWordKey += (int)lastWord;
+            return lastWordKey;
         }
 
         public void ComputeWordProbabilities()
@@ -44,10 +56,11 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             }
         }
 
-        public IList<WordProbability> NextWordsProbability(TokenType lastWordType)
+        public IList<WordProbability> NextWordsProbability(TokenType lastWord, TokenType lastWordBeforeSymbolOrLiteral)
         {
+            int lastWordKey = ComputeLastWordsKey(lastWord, lastWordBeforeSymbolOrLiteral);
             NextWordProbabilities wordProbabilities = null;
-            if (WordProbabilities.TryGetValue(lastWordType, out wordProbabilities))
+            if (WordProbabilities.TryGetValue(lastWordKey, out wordProbabilities))
             {
                 return wordProbabilities.NextWords;
             }
@@ -63,7 +76,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
     /// </summary>
     class NextWordProbabilities
     {
-        public TokenType CurrentWordType;
+        public int CurrentWordKey;
 
         public long TotalCount;
         private IDictionary<TokenType, long> NextWordCounts;
@@ -71,9 +84,9 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
 
         public IList<WordProbability> NextWords;
 
-        public NextWordProbabilities(TokenType currentTokenType)
+        public NextWordProbabilities(int currentWordKey)
         {
-            CurrentWordType = currentTokenType;
+            CurrentWordKey = currentWordKey;
             NextWordCounts = new Dictionary<TokenType, long>();
         }
 
@@ -127,7 +140,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             {
                 long nextWordCount = NextWordCounts[tokenType];
                 double probability = nextWordCount / (double)TotalCount;
-                if (probability >= 0.05)
+                if (probability >= 0.02)
                 {
                     SymbolType[] symbolTypes = null;
                     if (NextWordSymbolTypes != null)

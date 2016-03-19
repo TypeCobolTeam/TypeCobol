@@ -86,6 +86,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
 
         // Current position in the Tokens flow
         private TokenType lastElementStartingWord = TokenType.InvalidToken;
+        private TokenType lastWordBeforeSymbolOrLiteral = TokenType.InvalidToken;
         private TokenType lastWord = TokenType.InvalidToken;
                 
         /// <summary>
@@ -94,6 +95,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         public void OnBeginProgram()
         {
             lastElementStartingWord = TokenType.InvalidToken;
+            lastWordBeforeSymbolOrLiteral = TokenType.InvalidToken;
             lastWord = TokenType.InvalidToken;
         }
         
@@ -108,15 +110,55 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         {
             TokenType tokenType = token.TokenType;
             TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
-            if (tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective &&
-                tokenType != TokenType.EJECT && tokenType != TokenType.SKIP1 && tokenType != TokenType.SKIP2 && tokenType != TokenType.SKIP3)
+            if (IsSignificantWord(tokenType, tokenFamily))
             {
-                lastWord = tokenType;
-                if (tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword || tokenFamily == TokenFamily.StatementStartingKeyword || tokenFamily == TokenFamily.StatementEndingKeyword)
+                if (IsLastWordBeforeSymbolOrLiteral(tokenType, tokenFamily, lastWord))
+                {
+                    lastWordBeforeSymbolOrLiteral = lastWord;
+                }
+                lastWord = tokenType;                
+                if (IsElementStartingWord(tokenType, tokenFamily))
                 {
                     lastElementStartingWord = tokenType;
                 }
             }
+        }
+               
+        internal static bool IsSymbolOrLiteral(TokenType tokenType, TokenFamily tokenFamily)
+        {
+            return tokenType == TokenType.UserDefinedWord || tokenType == TokenType.PartialCobolWord ||
+                   tokenFamily == TokenFamily.NumericLiteral || tokenFamily == TokenFamily.AlphanumericLiteral;
+        }
+
+        internal static bool IsLastWordBeforeSymbolOrLiteral(TokenType tokenType, TokenFamily tokenFamily, TokenType lastWord)
+        {           
+            return IsSymbolOrLiteral(tokenType, tokenFamily) && tokenType != lastWord;
+        }
+
+        internal static bool IsSignificantWord(TokenType tokenType, TokenFamily tokenFamily)
+        {
+            return tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective &&
+                   tokenType != TokenType.EJECT && tokenType != TokenType.SKIP1 && tokenType != TokenType.SKIP2 && tokenType != TokenType.SKIP3;
+        }
+
+        internal static bool IsElementStartingWord(TokenType tokenType, TokenFamily tokenFamily)
+        {
+            return tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword ||
+                   tokenFamily == TokenFamily.StatementStartingKeyword || tokenFamily == TokenFamily.StatementEndingKeyword;
+        }
+
+        internal static string WordKeyToString(int currentWordKey)
+        {
+            string result = String.Empty;
+            if(currentWordKey >= 1024)
+            {
+                TokenType lastWordBeforeSymbolOrLiteral = (TokenType)(currentWordKey >> 10);
+                result = Enum.GetName(typeof(TokenType), lastWordBeforeSymbolOrLiteral) + ">";
+                currentWordKey = currentWordKey & 1023;
+            }
+            TokenType lastWord = (TokenType)currentWordKey;
+            result += Enum.GetName(typeof(TokenType), lastWord);
+            return result;
         }
 
         /// <summary>
@@ -128,7 +170,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             WordProbabilitiesAfterElementStartingWord wordProbabilities = null;
             if (WordProbabilitiesAfterElementStartingWord.TryGetValue(lastElementStartingWord, out wordProbabilities))
             {
-                return wordProbabilities.NextWordsProbability(lastWord);
+                return wordProbabilities.NextWordsProbability(lastWord, lastWordBeforeSymbolOrLiteral);
             }
             else
             {
