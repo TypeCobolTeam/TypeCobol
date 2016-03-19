@@ -364,6 +364,11 @@
     <Compile Include="Compiler\Text\TextSourceInfo.cs" />
     <Compile Include="Compiler\Text\TextString.cs" />
     <Compile Include="Compiler\TypeChecker\CompilationError.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\LanguageModelGenerator.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\WordProbabilities.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\StatsCounter.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\StatsGenerator.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
     <Compile Include="LanguageServices\Editor\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -435,6 +440,8 @@
     <Content Include="Documentation\Studies\TypeCobolStats_counters.txt" />
     <Content Include="Documentation\Studies\TypeCobolStats_modelForCopy.txt" />
     <Content Include="Documentation\Studies\TypeCobolStats_modelForProgram.txt" />
+    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Copy.txt" />
+    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Program.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">
