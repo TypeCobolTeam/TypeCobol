@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[24,27]<27,Error,Syntax>Syntax error : missing UserDefinedWord at 'null' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement>setStatementForAssignation>setStatementForAssignationSending>identifier>dataNameReferenceOrSpecialRegisterOrFunctionIdentifier>addressOfSpecialRegisterDecl>dataNameReference>qualifiedDataName>dataNameBase>dataName, OffendingSymbol=[24,27:null]<NULL> on line 7)
+[24,27]<27,Error,Syntax>Syntax error : missing UserDefinedWord at 'null' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement>setStatementForAssignation>setStatementForAssignationSending>identifier>addressOfSpecialRegisterDecl>dataReference>qualifiedDataName>dataNameReference, OffendingSymbol=[24,27:null]<NULL> on line 7)
 [1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'set ... ' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement, OffendingSymbol=[1,0:]<EndOfFile> on line 0)
 --- Code Elements ---
 Set  var1 TO var2

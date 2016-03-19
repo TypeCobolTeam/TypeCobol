@@ -14,30 +14,61 @@ namespace TypeCobol.Compiler.Diagnostics
         public IList<Type> GetCodeElements() {
             return new List<Type>() { typeof(DataDescriptionEntry), };
         }
-        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        {
             var data = e as DataDescriptionEntry;
+
+            // TO DO : all the lines below seem useless right now,
+            //         but I upgraded them to the new grammar anyway ?
+
+            // General case of data description entry
             var context = c as CodeElementsParser.DataDescriptionEntryContext;
+            if (context != null)
+            {
+                var picture = GetContext(data, context.pictureClause());
+                var blank = GetContext(data, context.blankWhenZeroClause());
+                var external = GetContext(data, context.externalClause());
+                var global = GetContext(data, context.globalClause());
+                var justified = GetContext(data, context.justifiedClause());
+                var sync = GetContext(data, context.synchronizedClause());
+                var group = GetContext(data, context.groupUsageClause());
+                var usage = GetContext(data, context.usageClause());
+                var sign = GetContext(data, context.signClause());
+                var occurs = GetContext(data, context.occursClause());
+                var value = GetContext(data, context.valueClause());
 
-            var picture   = GetContext(data, context.pictureClause());
-            var blank     = GetContext(data, context.blankWhenZeroClause());
-            var external  = GetContext(data, context.externalClause());
-            var global    = GetContext(data, context.globalClause());
-            var justified = GetContext(data, context.justifiedClause());
-            var sync      = GetContext(data, context.synchronizedClause());
-            var group     = GetContext(data, context.groupUsageClause());
-            var usage     = GetContext(data, context.usageClause());
-            var sign      = GetContext(data, context.signClause());
-            var occurs    = GetContext(data, context.occursClause());
-            var value     = GetContext(data, context.valueClause());
-
-            if (data.Name == null) {
-                if ((data.LevelNumber == 77 || data.LevelNumber == 88) && !data.IsFiller)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for level-66 or level-88 items: "+data, context.levelNumber());
-                if (data.IsExternal)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
-                if (data.IsGlobal)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
+                if (data.Name == null)
+                {
+                    if (data.IsExternal)
+                        DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+                    if (data.IsGlobal)
+                        DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
+                }
             }
+            else
+            {
+                // Level 88 condition
+                var context2 = c as CodeElementsParser.DataConditionEntryContext;
+                if (context2 != null)
+                {
+                    var value =  context2.valueClauseForCondition();
+                }
+                else
+                {
+                    // Level 66 renames
+                    var context3 = c as CodeElementsParser.DataRenamesEntryContext;
+                    if (context3 != null)
+                    {
+                        var renames = context3.renamesClause();
+                    }
+                }
+            }
+            
+            if (data.Name == null)
+            {
+                if ((data.LevelNumber == 77 || data.LevelNumber == 88) && !data.IsFiller)
+                    DiagnosticUtils.AddError(data, "Data name must be specified for level-66 or level-88 items: " + data, context.levelNumber());
+            }        
         }
 
         /// <summary>
