@@ -14,21 +14,48 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
     /// </summary>
     class LanguageModelGenerator
     {
-        private long TotalCount;
+        private int programCount;
+        private long totalWordCount;
         public IDictionary<TokenType, WordProbabilitiesAfterElementStartingWord> WordProbabilitiesAfterElementStartingWord = new Dictionary<TokenType, WordProbabilitiesAfterElementStartingWord>();
 
         private TokenType lastElementStartingWord = TokenType.InvalidToken;
-        private TokenType lastWordBeforeSymbolOrLiteral = TokenType.InvalidToken;
+        private int elementStartingWordIndexInProgram = 0;
+        private TokenType lastKeywordToken = TokenType.InvalidToken;
         private TokenType lastWord = TokenType.InvalidToken;
+        private int wordIndexInElement = 0;
 
         private IDictionary<Token, SymbolInformation> symbolInformationForTokens;
 
+        public LanguageModelGenerator()
+        {
+            var wordProbabilities = new WordProbabilitiesAfterElementStartingWord(TokenType.InvalidToken);
+            WordProbabilitiesAfterElementStartingWord.Add(TokenType.InvalidToken, wordProbabilities);
+        }
+
         public void OnBeginProgram()
         {
+            programCount++;
             lastElementStartingWord = TokenType.InvalidToken;
-            lastWordBeforeSymbolOrLiteral = TokenType.InvalidToken;
+            elementStartingWordIndexInProgram = 0;
+            lastKeywordToken = TokenType.InvalidToken;
             lastWord = TokenType.InvalidToken;
+            wordIndexInElement = 0;
             symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
+        }
+        
+        private void OnBeginElement(TokenType tokenType)
+        {
+            lastElementStartingWord = tokenType;
+            elementStartingWordIndexInProgram++;
+            wordIndexInElement = 0;
+
+            WordProbabilitiesAfterElementStartingWord wordProbabilities = null;
+            if (!WordProbabilitiesAfterElementStartingWord.TryGetValue(lastElementStartingWord, out wordProbabilities))
+            {
+                wordProbabilities = new WordProbabilitiesAfterElementStartingWord(lastElementStartingWord);
+                WordProbabilitiesAfterElementStartingWord.Add(lastElementStartingWord, wordProbabilities);
+            }
+            wordProbabilities.OnElementStartingWord(elementStartingWordIndexInProgram);
         }
 
         public void AddSymbolInformationForTokens(IDictionary<Token, SymbolInformation> additionalSymbolInformationForTokens)
@@ -45,34 +72,33 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
             if (LanguageModel.IsSignificantWord(tokenType, tokenFamily))
             {
-                if (LanguageModel.IsLastWordBeforeSymbolOrLiteral(tokenType, tokenFamily, lastWord))
-                {
-                    lastWordBeforeSymbolOrLiteral = lastWord;
-                }
-
                 RegisterToken(token);
 
-                lastWord = tokenType;
-                if (LanguageModel.IsElementStartingWord(tokenType, tokenFamily))
+                if (LanguageModel.IsKeywordToken(tokenType, tokenFamily))
                 {
-                    lastElementStartingWord = tokenType;
+                    lastKeywordToken = tokenType;
                 }
+                if (LanguageModel.IsElementStartingWord(tokenType, tokenFamily, lastWord))
+                {
+                    if(tokenType == TokenType.ID || tokenType == TokenType.IDENTIFICATION)
+                    {
+                        elementStartingWordIndexInProgram = 0;
+                    }
+                    OnBeginElement(tokenType);
+                }
+                lastWord = tokenType;
+                wordIndexInElement++;
             }
-        }        
+        }
 
         private void RegisterToken(Token token)
         {
-            TotalCount++;
-            WordProbabilitiesAfterElementStartingWord wordProbabilities = null;
-            if (!WordProbabilitiesAfterElementStartingWord.TryGetValue(lastElementStartingWord, out wordProbabilities))
-            {
-                wordProbabilities = new WordProbabilitiesAfterElementStartingWord(lastElementStartingWord);
-                WordProbabilitiesAfterElementStartingWord.Add(lastElementStartingWord, wordProbabilities);
-            }
+            totalWordCount++;
 
             SymbolInformation symbolInfo = null;
             symbolInformationForTokens.TryGetValue(token, out symbolInfo);
-            wordProbabilities.OnWords(lastWord, token.TokenType, symbolInfo, lastWordBeforeSymbolOrLiteral);
+            var wordProbabilities = WordProbabilitiesAfterElementStartingWord[lastElementStartingWord];
+            wordProbabilities.OnWords(lastWord, token.TokenType, symbolInfo, lastKeywordToken, wordIndexInElement);
         }
 
         public LanguageModel ComputeProbabilities()
@@ -90,20 +116,22 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             double top3Prediction = 0;
             double top5Prediction = 0;
             double top10Prediction = 0;
-            foreach (var wordProbabilities in WordProbabilitiesAfterElementStartingWord.Values.OrderByDescending(wordProbabilities => wordProbabilities.TotalCount))
+            foreach (var wordProbabilities in WordProbabilitiesAfterElementStartingWord.Values.OrderBy(wordProbabilities => (wordProbabilities.ElementIndexes/(double)wordProbabilities.ElementCount)))
             {
-                double elementStartingWordProbability = wordProbabilities.TotalCount / (double)TotalCount;
-                modelFile.WriteLine(Enum.GetName(typeof(TokenType), wordProbabilities.ElementStartingWordType) + "\t" + Math.Round(elementStartingWordProbability * 100, 2));
+                double elementStartingWordProbability = wordProbabilities.TotalCount / (double)totalWordCount;
+                double elementStartingWordCountPerProgram = wordProbabilities.ElementCount / (double)programCount;
+                modelFile.WriteLine(Enum.GetName(typeof(TokenType), wordProbabilities.ElementStartingWordType) + "\t" + Math.Round(elementStartingWordCountPerProgram, 2));
 
                 double top1PredictionAfterFirstWord = 0;
                 double top3PredictionAfterFirstWord = 0;
                 double top5PredictionAfterFirstWord = 0;
                 double top10PredictionAfterFirstWord = 0;
-                foreach (var nextWordProbabilities in wordProbabilities.WordProbabilities.Values.OrderByDescending(nextWordProbabilities => nextWordProbabilities.TotalCount))
+                foreach (var nextWordProbabilities in wordProbabilities.WordProbabilities.Values.OrderBy(nextWordProbabilities => (nextWordProbabilities.CurrentWordIndexes/(double)nextWordProbabilities.TotalCount)))
                 {
                     double firstWordProbability = nextWordProbabilities.TotalCount / (double)wordProbabilities.TotalCount;
+                    double firstWordCountPerElement = nextWordProbabilities.TotalCount / (double)wordProbabilities.ElementCount;
                     string firstWordName = LanguageModel.WordKeyToString(nextWordProbabilities.CurrentWordKey);
-                    modelFile.WriteLine("\t" + firstWordName + "\t" + Math.Round(firstWordProbability * 100, 2));
+                    modelFile.WriteLine("\t" + firstWordName + "\t" + Math.Round(firstWordCountPerElement, 2));
 
                     double top1PredictionForSecondWord = 0;
                     double top3PredictionForSecondWord = 0;

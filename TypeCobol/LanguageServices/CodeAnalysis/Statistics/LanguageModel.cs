@@ -86,7 +86,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
 
         // Current position in the Tokens flow
         private TokenType lastElementStartingWord = TokenType.InvalidToken;
-        private TokenType lastWordBeforeSymbolOrLiteral = TokenType.InvalidToken;
+        private TokenType lastKeywordToken = TokenType.InvalidToken;
         private TokenType lastWord = TokenType.InvalidToken;
                 
         /// <summary>
@@ -95,7 +95,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         public void OnBeginProgram()
         {
             lastElementStartingWord = TokenType.InvalidToken;
-            lastWordBeforeSymbolOrLiteral = TokenType.InvalidToken;
+            lastKeywordToken = TokenType.InvalidToken;
             lastWord = TokenType.InvalidToken;
         }
         
@@ -112,27 +112,16 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType(tokenType);
             if (IsSignificantWord(tokenType, tokenFamily))
             {
-                if (IsLastWordBeforeSymbolOrLiteral(tokenType, tokenFamily, lastWord))
+                if (IsKeywordToken(tokenType, tokenFamily))
                 {
-                    lastWordBeforeSymbolOrLiteral = lastWord;
-                }
-                lastWord = tokenType;                
-                if (IsElementStartingWord(tokenType, tokenFamily))
+                    lastKeywordToken = lastWord;
+                }            
+                if (IsElementStartingWord(tokenType, tokenFamily, lastWord))
                 {
                     lastElementStartingWord = tokenType;
                 }
+                lastWord = tokenType;
             }
-        }
-               
-        internal static bool IsSymbolOrLiteral(TokenType tokenType, TokenFamily tokenFamily)
-        {
-            return tokenType == TokenType.UserDefinedWord || tokenType == TokenType.PartialCobolWord ||
-                   tokenFamily == TokenFamily.NumericLiteral || tokenFamily == TokenFamily.AlphanumericLiteral;
-        }
-
-        internal static bool IsLastWordBeforeSymbolOrLiteral(TokenType tokenType, TokenFamily tokenFamily, TokenType lastWord)
-        {           
-            return IsSymbolOrLiteral(tokenType, tokenFamily) && tokenType != lastWord;
         }
 
         internal static bool IsSignificantWord(TokenType tokenType, TokenFamily tokenFamily)
@@ -140,11 +129,26 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             return tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective &&
                    tokenType != TokenType.EJECT && tokenType != TokenType.SKIP1 && tokenType != TokenType.SKIP2 && tokenType != TokenType.SKIP3;
         }
+        
+        internal static bool IsKeywordToken(TokenType tokenType, TokenFamily tokenFamily)
+        {
+            return tokenFamily >= TokenFamily.CompilerDirectiveStartingKeyword &&
+                   tokenFamily != TokenFamily.SpecialRegisterKeyword &&
+                   tokenFamily != TokenFamily.FigurativeConstantKeyword;
+        }
 
-        internal static bool IsElementStartingWord(TokenType tokenType, TokenFamily tokenFamily)
+        internal static bool IsSymbolOrLiteral(TokenType tokenType, TokenFamily tokenFamily)
+        {
+            return tokenType == TokenType.UserDefinedWord || tokenType == TokenType.PartialCobolWord ||
+                   tokenFamily == TokenFamily.NumericLiteral || tokenFamily == TokenFamily.AlphanumericLiteral;
+        }
+
+        internal static bool IsElementStartingWord(TokenType tokenType, TokenFamily tokenFamily, TokenType lastWord)
         {
             return tokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || tokenFamily == TokenFamily.CodeElementStartingKeyword ||
-                   tokenFamily == TokenFamily.StatementStartingKeyword || tokenFamily == TokenFamily.StatementEndingKeyword;
+                   tokenFamily == TokenFamily.StatementStartingKeyword || tokenFamily == TokenFamily.StatementEndingKeyword ||
+                   ((lastWord == TokenType.InvalidToken || lastWord == TokenType.PeriodSeparator) && 
+                    (tokenType == TokenType.IntegerLiteral || tokenType == TokenType.UserDefinedWord));
         }
 
         internal static string WordKeyToString(int currentWordKey)
@@ -170,7 +174,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
             WordProbabilitiesAfterElementStartingWord wordProbabilities = null;
             if (WordProbabilitiesAfterElementStartingWord.TryGetValue(lastElementStartingWord, out wordProbabilities))
             {
-                return wordProbabilities.NextWordsProbability(lastWord, lastWordBeforeSymbolOrLiteral);
+                return wordProbabilities.NextWordsProbability(lastWord, lastKeywordToken);
             }
             else
             {

@@ -18,13 +18,23 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         public long TotalCount;
         public IDictionary<int, NextWordProbabilities> WordProbabilities;
 
+        // Sorting order in the model file only
+        internal long ElementCount = 0;
+        internal long ElementIndexes = 0;
+
         public WordProbabilitiesAfterElementStartingWord(TokenType elementStartingWordType)
         {
             ElementStartingWordType = elementStartingWordType;
             WordProbabilities = new Dictionary<int, NextWordProbabilities>();
         }
 
-        public void OnWords(TokenType firstWord, TokenType secondWord, SymbolInformation secondWordSymbolInfo, TokenType lastWordBeforeSymbolOrLiteral)
+        internal void OnElementStartingWord(int elementStartingWordIndexInProgram)
+        {
+            ElementCount++;
+            ElementIndexes += elementStartingWordIndexInProgram;
+        }
+
+        public void OnWords(TokenType firstWord, TokenType secondWord, SymbolInformation secondWordSymbolInfo, TokenType lastWordBeforeSymbolOrLiteral, int secondWordIndexInElement)
         {
             TotalCount++;
             int firstWordKey = ComputeLastWordsKey(firstWord, lastWordBeforeSymbolOrLiteral);
@@ -34,13 +44,13 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                 nextWordProbabilities = new NextWordProbabilities(firstWordKey);
                 WordProbabilities.Add(firstWordKey, nextWordProbabilities);
             }
-            nextWordProbabilities.OnNextWord(secondWord, secondWordSymbolInfo);
+            nextWordProbabilities.OnNextWord(secondWord, secondWordSymbolInfo, secondWordIndexInElement);
         }
 
         private static int ComputeLastWordsKey(TokenType lastWord, TokenType lastWordBeforeSymbolOrLiteral)
         {
             int lastWordKey = 0;
-            if (LanguageModel.IsSymbolOrLiteral(lastWord, TokenUtils.GetTokenFamilyFromTokenType(lastWord)))
+            if (LanguageModel.IsSymbolOrLiteral(lastWord, TokenUtils.GetTokenFamilyFromTokenType(lastWord)) || lastWord == TokenType.PeriodSeparator)
             {
                 lastWordKey = (int)lastWordBeforeSymbolOrLiteral << 10;
             }
@@ -84,15 +94,19 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
 
         public IList<WordProbability> NextWords;
 
+        // Sorting order in the model file only
+        internal long CurrentWordIndexes = 0;
+
         public NextWordProbabilities(int currentWordKey)
         {
             CurrentWordKey = currentWordKey;
             NextWordCounts = new Dictionary<TokenType, long>();
         }
 
-        public void OnNextWord(TokenType nextWordType, SymbolInformation nextWordSymbolInfo)
+        public void OnNextWord(TokenType nextWordType, SymbolInformation nextWordSymbolInfo, int secondWordIndexInElement)
         {
             TotalCount++;
+            CurrentWordIndexes += secondWordIndexInElement - 1;
             if (NextWordCounts.ContainsKey(nextWordType))
             {
                 NextWordCounts[nextWordType] = NextWordCounts[nextWordType] + 1;
