@@ -1,4 +1,8 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+[1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 28)
+[1,22]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol Y ([1>22] on line 28)
+
+--- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 CUSTOM TYPES:

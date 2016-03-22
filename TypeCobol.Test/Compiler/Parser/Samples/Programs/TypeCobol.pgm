@@ -21,3 +21,8 @@ WORKING-STORAGE SECTION.
   05 Movment2d.
     14 Accel2d  TYPE Vect2.
     10 Speed2d  TYPE Vect2.
+
+PROCEDURE DIVISION.
+MOVE X OF Coord2d OF Accel2d OF Movment2d OF Point TO X OF Coord2d OF Speed2d OF Movment2d OF Point.
+MOVE Y OF Coord2d OF Position2d TO Z OF Coord3d OF Position2d.
+MOVE X OF Coord3d TO Y.

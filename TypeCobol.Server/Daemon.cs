@@ -104,7 +104,7 @@ namespace TypeCobol.Server
 					writer.AddErrors(path, converter.GetDiagnostics(e));
 				}
 
-				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Snapshot, null);
+				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
 				var stream = new StreamWriter(config.OutputFiles[c]);
 				codegen.WriteCobol(stream);
 			}

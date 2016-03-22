@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	public abstract partial class CodeElement: CodeGenerator {
 
 		/// <summary><see cref="TypeCobol.Generator.CodeGenerator"/></summary>
-		public virtual void WriteCode(TextWriter stream, SymbolTable scope, ref int line, ref int offset) {
+		public virtual void WriteCode(TextWriter stream, SymbolTable scope, ref int line, ref int offset, DocumentFormat format) {
 			foreach(var token in ConsumedTokens) {
 				WriteCode(stream, token, ref line, ref offset);
 			}
@@ -18,10 +18,10 @@ namespace TypeCobol.Compiler.CodeElements {
 				Codegen.WriteEmptyLine(stream, ref line, ref offset);
 			}
 			for(int c = offset; c < token.StartIndex; c++) {
-				stream.WriteAsync(' ');
+				stream.Write(' ');
 			}
 			offset = token.StartIndex;
-			stream.WriteAsync(token.Text);
+			stream.Write(token.Text);
 			offset += token.Length;
 		}
 	}

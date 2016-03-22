@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using TypeCobol.Codegen.Skeletons;
+
+namespace TypeCobol.Codegen.Config {
+	/// <summary><see cref="Skeleton"/> parser interface.</summary>
+	public interface ConfigParser {
+		List<Skeleton> Parse(string path);
+	}
+
+	public class Config {
+		private static readonly Dictionary<string,Type> _parsers = new Dictionary<string,Type> {
+			{ ".xml", typeof(XmlParser) },
+		};
+
+		public static ConfigParser CreateParser(string extension) {
+			Type type;
+			try { type = _parsers[extension.ToLower()]; }
+			catch(System.Exception) { type = _parsers[".xml"]; }
+			return (ConfigParser)Activator.CreateInstance(type);
+		}
+	}
+}
