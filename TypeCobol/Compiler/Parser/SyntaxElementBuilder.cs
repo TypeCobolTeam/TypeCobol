@@ -238,43 +238,44 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return CreateQualifiedName(context.qualifiedDataName());
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameBase() != null) name = CreateDataName(context.dataNameBase().dataName());
-            List<DataName> datanames = CreateDataNames(context.dataName());
-            datanames.Reverse();
-            FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, filename);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context)
-        {
-            if (context == null) return null;
-            ConditionName name = CreateConditionName(context.conditionName());
-            List<DataName> datanames = CreateDataNames(context.dataName());
-            datanames.Reverse();
-            FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, filename);
-        }
-
-        internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context)
-        {
-            var names = new List<QualifiedName>();
-            foreach (var name in context)
-            {
-                var x = CreateQualifiedName(name);
-                if (x != null) names.Add(x);
-            }
-            return names;
-        }
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataNameReferenceContext context) {
+			if (context == null) return null;
+			return CreateQualifiedName(context.qualifiedDataName());
+		}
+		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context) {
+			if (context == null) return null;
+			var legacy = context.legacyQualifiedName();
+			if (legacy != null) {
+				return CreateQualifiedName(CreateDataName(legacy.dataNameBase()), legacy.dataName(), true);
+			}
+			return CreateQualifiedName(CreateDataName(context.dataNameBase()), context.dataName(), false);
+		}
+		private static DataName CreateDataName(CodeElementsParser.DataNameBaseContext context) {
+			if (context == null) return null;
+			return CreateDataName(context.dataName());
+		}
+		private static QualifiedName CreateQualifiedName(Symbol name, CodeElementsParser.DataNameContext[] contexts, bool reverse) {
+			List<DataName> datanames = CreateDataNames(contexts);
+			if (reverse) datanames.Reverse();
+			FileName filename = null; // may be first element of datanames
+			return new QualifiedName(name, datanames, filename);
+		}
+		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context) {
+			if (context == null) return null;
+			var legacy = context.legacyQualifiedConditionName();
+			if (legacy != null) {
+				return CreateQualifiedName(CreateConditionName(legacy.conditionName()), legacy.dataName(), true);
+			}
+			return CreateQualifiedName(CreateConditionName(context.conditionName()), context.dataName(), false);
+		}
+		internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context) {
+			var names = new List<QualifiedName>();
+			foreach (var name in context) {
+				var x = CreateQualifiedName(name);
+				if (x != null) names.Add(x);
+			}
+			return names;
+		}
 
         internal static AlphabetName CreateAlphabetName(CodeElementsParser.AlphabetNameContext context)
         {
