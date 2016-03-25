@@ -550,6 +550,11 @@ alphanumericLiteralBase:
                             HexadecimalAlphanumericLiteral) |                      
                             figurativeConstant;
 
+alphanumericOrNationalOrDBCSLiteral: 
+										(AlphanumericLiteral | 
+										 NationalLiteral | 
+										 DBCSLiteral);
+
 alphanumOrNationalLiteralBase:
                                 (AlphanumericLiteral |
                                  HexadecimalAlphanumericLiteral |                      

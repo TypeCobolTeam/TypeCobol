@@ -6311,7 +6311,7 @@ fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
 
 performStatement:
 	PERFORM (
-		((identifier | numericLiteral) TIMES)											   // - TIMES phrase PERFORM
+		(identifierOrNumericLiteral TIMES)											   // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)					  // - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression )	 // - VARYING phrase PERFORM
 		)?;																				// (nothing) - Basic PERFORM
@@ -6320,17 +6320,19 @@ performStatement:
 
 performProcedureStatement:
 	PERFORM procedureName ((THROUGH |THRU) procedureName)? (			  // - Basic PERFORM
-		((identifier | numericLiteral) TIMES)							 // - TIMES phrase PERFORM
+		(identifierOrNumericLiteral TIMES)							 // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
-		  ( AFTER identifierOrIndexName FROM (identifierOrIndexName | numericLiteral)	 // - VARYING phrase PERFORM
-			BY (identifier | numericLiteral) UNTIL conditionalExpression )* )				//
+		  ( AFTER identifierOrIndexName FROM identifierOrIndexNameOrNumericLiteral	 // - VARYING phrase PERFORM
+			BY identifierOrNumericLiteral UNTIL conditionalExpression )* )				//
 		)?;															// (nothing) - Basic PERFORM
 
 performVarying:
-	VARYING identifierOrIndexName FROM (identifierOrIndexName | numericLiteral) BY (identifier | numericLiteral);
+	VARYING identifierOrIndexName FROM identifierOrIndexNameOrNumericLiteral BY identifierOrNumericLiteral;
 
 performStatementEnd: END_PERFORM;
+
+identifierOrIndexNameOrNumericLiteral : identifierOrIndexName | numericLiteral;
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,

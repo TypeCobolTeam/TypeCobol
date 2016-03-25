@@ -540,10 +540,7 @@ namespace TypeCobol.Compiler.Preprocessor
             TitleDirective titleDirective = new TitleDirective();
             CompilerDirective = titleDirective;
 
-            string title = null;
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref title);
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.NationalLiteral(), ref title);
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.DBCSLiteral(), ref title);
+            string title =  ParseTreeUtils.GetAlphanumericLiteral(context.alphanumericOrNationalOrDBCSLiteral());
             titleDirective.Title = title;
         }
     }
