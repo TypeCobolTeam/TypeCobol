@@ -121,6 +121,27 @@ namespace TypeCobol.Server
 		public ProgramClassDocument Snapshot {
 			get { return Compiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot; }
 		}
+
+		public ITextDocument Source {
+			get { return Compiler.TextDocument; }
+		}
+
+		public ICollection<TypeCobol.Tools.Diagnostic>[] Errors {
+			get {
+				var diagnostics = new TypeCobol.Tools.CodeElementDiagnostics(CodeElementsSnapshot.Lines);
+				var errors = new List<TypeCobol.Tools.Diagnostic>[2];
+				for(int c = 0; c < errors.Length; c++) errors[c] = new List<TypeCobol.Tools.Diagnostic>();
+				// 'CodeElements' parsing (1st phase) errors
+				errors[0].AddRange(diagnostics.AsDiagnostics(CodeElementsSnapshot.ParserDiagnostics));
+				foreach(var e in CodeElementsSnapshot.CodeElements) {
+					if (e.Diagnostics.Count < 1) continue;
+					errors[0].AddRange(diagnostics.GetDiagnostics(e));
+				}
+				// 'ProgramClass' parsing (2nd phase) errors
+				errors[1].AddRange(diagnostics.AsDiagnostics(Snapshot.Diagnostics));
+				return errors;
+			}
+		}
     }
 
 
