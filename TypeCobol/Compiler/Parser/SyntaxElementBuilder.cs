@@ -229,11 +229,11 @@ namespace TypeCobol.Compiler.Parser
             if (identifier != null) return identifier;
             identifier = CreateFunctionReference(context.functionIdentifier());
             if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+            identifier = CreateAddressOf(context.addressOfSpecialRegisterDefAndRef());
             if (identifier != null ) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
@@ -247,11 +247,11 @@ namespace TypeCobol.Compiler.Parser
             if (identifier != null) return identifier;
             identifier = CreateFunctionReference(context.functionIdentifier());
             if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+            identifier = CreateAddressOf(context.addressOfSpecialRegisterDefAndRef());
             if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
@@ -265,11 +265,11 @@ namespace TypeCobol.Compiler.Parser
             if (identifier != null) return identifier;
             identifier = CreateFunctionReference(context.functionIdentifier());
             if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+            identifier = CreateAddressOf(context.addressOfSpecialRegisterDefAndRef());
             if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
@@ -283,11 +283,11 @@ namespace TypeCobol.Compiler.Parser
             if (identifier != null) return identifier;
             identifier = CreateFunctionReference(context.functionIdentifier());
             if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDefAndRef());
             if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+            identifier = CreateAddressOf(context.addressOfSpecialRegisterDefAndRef());
             if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
             return identifier;
         }
@@ -665,7 +665,7 @@ namespace TypeCobol.Compiler.Parser
             return new LinageCounter(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        private static LinageCounter CreateLinageCounter(CodeElementsParser.LinageCounterSpecialRegisterDeclContext context) {
+        private static LinageCounter CreateLinageCounter(CodeElementsParser.LinageCounterSpecialRegisterDefAndRefContext context) {
             if (context == null || context.fileNameReference() == null) return null;
             var filename = CreateFileName(context.fileNameReference());
             return new LinageCounter(filename.NameToken);
@@ -823,13 +823,13 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        private static Address CreateAddressOf(CodeElementsParser.AddressOfSpecialRegisterDeclContext context)
+        private static Address CreateAddressOf(CodeElementsParser.AddressOfSpecialRegisterDefAndRefContext context)
         {
             if (context == null || context.dataReference() == null) return null;
             return new Address(CreateDataReference(context.dataReference()));
         }
 
-        private static Length CreateLengthOf(CodeElementsParser.LengthOfSpecialRegisterDeclContext context)
+        private static Length CreateLengthOf(CodeElementsParser.LengthOfSpecialRegisterDefAndRefContext context)
         {
             if (context == null || context.dataReference() == null) return null;
             return new Length(CreateDataReference(context.dataReference()));

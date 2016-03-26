@@ -9670,9 +9670,9 @@ arithmeticExpression:
 identifier:
 	( dataReferenceOrConditionReference
 	| specialRegister
-	| addressOfSpecialRegisterDecl
-	| lengthOfSpecialRegisterDecl
-	| linageCounterSpecialRegisterDecl
+	| addressOfSpecialRegisterDefAndRef
+	| lengthOfSpecialRegisterDefAndRef
+	| linageCounterSpecialRegisterDefAndRef
 	| functionIdentifier) 
 	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?
 	// | conditionReference // cannot be distinguished from dataReference at this stage
@@ -9880,9 +9880,9 @@ argument:
 // data-name or identifier that has the same definition as the implicit definition of the
 // special register can be used.
 
-addressOfSpecialRegisterDecl: ADDRESS OF dataReference;
-lengthOfSpecialRegisterDecl:  LENGTH OF? dataReference;
-linageCounterSpecialRegisterDecl: LINAGE_COUNTER OF fileNameReference;
+addressOfSpecialRegisterDefAndRef: ADDRESS OF dataReference;
+lengthOfSpecialRegisterDefAndRef:  LENGTH OF? dataReference;
+linageCounterSpecialRegisterDefAndRef: LINAGE_COUNTER OF fileNameReference;
 
 dataReference:
 	qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
@@ -10136,9 +10136,9 @@ dataNameReferenceOrIndexNameReference : UserDefinedWord;
 identifierOrIndexName:
 	( dataReferenceOrConditionReferenceOrIndexName
 	| specialRegister
-	| addressOfSpecialRegisterDecl
-	| lengthOfSpecialRegisterDecl
-	| linageCounterSpecialRegisterDecl
+	| addressOfSpecialRegisterDefAndRef
+	| lengthOfSpecialRegisterDefAndRef
+	| linageCounterSpecialRegisterDefAndRef
 	| functionIdentifier) 
 	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
@@ -10156,9 +10156,9 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOr
 identifierOrFileName:
 	( dataReferenceOrConditionReferenceOrFileName
 	| specialRegister
-	| addressOfSpecialRegisterDecl
-	| lengthOfSpecialRegisterDecl
-	| linageCounterSpecialRegisterDecl
+	| addressOfSpecialRegisterDefAndRef
+	| lengthOfSpecialRegisterDefAndRef
+	| linageCounterSpecialRegisterDefAndRef
 	| functionIdentifier) 
 	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
@@ -10176,9 +10176,9 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOr
 identifierOrClassName:
 	( dataReferenceOrConditionReferenceOrClassName
 	| specialRegister
-	| addressOfSpecialRegisterDecl
-	| lengthOfSpecialRegisterDecl
-	| linageCounterSpecialRegisterDecl
+	| addressOfSpecialRegisterDefAndRef
+	| lengthOfSpecialRegisterDefAndRef
+	| linageCounterSpecialRegisterDefAndRef
 	| functionIdentifier) 
 	(LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
