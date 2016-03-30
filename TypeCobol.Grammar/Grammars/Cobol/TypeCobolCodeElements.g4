@@ -6,15 +6,14 @@ import Cobol2002CodeElements;
 cobolCodeElements: codeElement* EOF;
 
 qualifiedDataName:
-	  ((dataName ColonSeparator ColonSeparator)* dataNameBase) // first dataName can be a fileName
-	| legacyQualifiedName
+	  ((dataNameReferenceOrFileNameReference ColonSeparator ColonSeparator)* dataNameReference)
+	| legacyQualifiedDataName
 	;
-
-legacyQualifiedName: dataNameBase ((IN | OF) dataName)*;  // last dataName can be a fileName
+legacyQualifiedDataName: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)*;
 
 qualifiedConditionName:
-	  ((dataName ColonSeparator ColonSeparator)* conditionName) // first dataName can be a fileName
+	  ((dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference)
 	| legacyQualifiedConditionName
 	;
-
-legacyQualifiedConditionName: conditionName ((IN | OF) dataName)*;  // last dataName can be a fileName
+legacyQualifiedConditionName:
+		conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;

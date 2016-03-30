@@ -1,0 +1,890 @@
+1. Program analysis after preprocessing
+
+----------------------
+Total number of lines per program (including expanded COPY directives)
+----------------------
+
+Statistics for CobolTextLineType on 497 programs :
+ - Average number per program : 7787
+ - Minimum number per program : 123
+ - Maximum number per program : 118214
+ - Distribution of counts per program : 
+   . 0 - 500 : 3,21 %
+   . 500 - 1000 : 5,03 %
+   . 1000 - 1500 : 8,45 %
+   . 1500 - 2000 : 9,05 %
+   . 2000 - 3000 : 14,48 %
+   . 3000 - 5000 : 15,69 %
+   . 5000 - 7500 : 11,06 %
+   . 7500 - 10000 : 8,65 %
+   . 10000 - 15000 : 9,85 %
+   . 15000 - 20000 : 6,23 %
+   . 20000 - 30000 : 4,42 %
+   . 30000 - 50000 : 3,01 %
+   . 50000 - 2147483647 : 0,8 %
+ - Details per element type : 
+   . Source : 48,45 %
+      + Average number per program : 3773
+      + Minimum number per program : 58
+      + Maximum number per program : 60420
+   . Comment : 42,15 %
+      + Average number per program : 3283
+      + Minimum number per program : 12
+      + Maximum number per program : 43137
+   . Blank : 8,14 %
+      + Average number per program : 634
+      + Minimum number per program : 0
+      + Maximum number per program : 13209
+   . Debug : 1,07 %
+      + Average number per program : 83
+      + Minimum number per program : 0
+      + Maximum number per program : 3584
+   . Continuation : 0,17 %
+      + Average number per program : 13
+      + Minimum number per program : 0
+      + Maximum number per program : 373
+
+----------------------
+Total number of tokens per program (after preprocessing)
+----------------------
+
+Statistics for TokenType on 497 programs :
+ - Average number per program : 16490
+ - Minimum number per program : 174
+ - Maximum number per program : 270465
+ - Distribution of counts per program : 
+   . 0 - 1500 : 5,43 %
+   . 1500 - 3000 : 11,46 %
+   . 3000 - 4500 : 11,06 %
+   . 4500 - 6000 : 9,05 %
+   . 6000 - 9000 : 13,27 %
+   . 9000 - 15000 : 15,69 %
+   . 15000 - 22500 : 11,26 %
+   . 22500 - 30000 : 6,43 %
+   . 30000 - 45000 : 8,04 %
+   . 45000 - 60000 : 4,22 %
+   . 60000 - 90000 : 2,81 %
+   . 90000 - 150000 : 1 %
+   . 150000 - 2147483647 : 0,2 %
+ - Details per element type : 
+   . UserDefinedWord : 20,7 %
+      + Average number per program : 3414
+      + Minimum number per program : 32
+      + Maximum number per program : 59021
+   . IntegerLiteral : 17,82 %
+      + Average number per program : 2938
+      + Minimum number per program : 10
+      + Maximum number per program : 48924
+   . PeriodSeparator : 16,87 %
+      + Average number per program : 2782
+      + Minimum number per program : 27
+      + Maximum number per program : 47890
+   . PictureCharacterString : 9,47 %
+      + Average number per program : 1563
+      + Minimum number per program : 5
+      + Maximum number per program : 26718
+   . PIC : 9,46 %
+      + Average number per program : 1560
+      + Minimum number per program : 5
+      + Maximum number per program : 26709
+   . AlphanumericLiteral : 7,73 %
+      + Average number per program : 1275
+      + Minimum number per program : 3
+      + Maximum number per program : 16965
+   . VALUE : 5,71 %
+      + Average number per program : 942
+      + Minimum number per program : 0
+      + Maximum number per program : 12267
+   . TO : 1,56 %
+      + Average number per program : 258
+      + Minimum number per program : 1
+      + Maximum number per program : 4230
+   . MOVE : 1,21 %
+      + Average number per program : 199
+      + Minimum number per program : 0
+      + Maximum number per program : 3840
+   . COMP_3 : 1 %
+      + Average number per program : 165
+      + Minimum number per program : 0
+      + Maximum number per program : 2043
+   . FILLER : 0,87 %
+      + Average number per program : 144
+      + Minimum number per program : 0
+      + Maximum number per program : 1510
+   . REDEFINES : 0,69 %
+      + Average number per program : 114
+      + Minimum number per program : 0
+      + Maximum number per program : 2247
+   . LeftParenthesisSeparator : 0,47 %
+      + Average number per program : 78
+      + Minimum number per program : 0
+      + Maximum number per program : 3354
+   . RightParenthesisSeparator : 0,47 %
+      + Average number per program : 78
+      + Minimum number per program : 0
+      + Maximum number per program : 3354
+   . ExecStatementText : 0,47 %
+      + Average number per program : 77
+      + Minimum number per program : 0
+      + Maximum number per program : 20377
+   . IF : 0,35 %
+      + Average number per program : 59
+      + Minimum number per program : 0
+      + Maximum number per program : 1921
+   . PERFORM : 0,33 %
+      + Average number per program : 54
+      + Minimum number per program : 0
+      + Maximum number per program : 714
+   . END_IF : 0,31 %
+      + Average number per program : 52
+      + Minimum number per program : 0
+      + Maximum number per program : 892
+   . TRUE : 0,28 %
+      + Average number per program : 46
+      + Minimum number per program : 0
+      + Maximum number per program : 540
+   . SET : 0,27 %
+      + Average number per program : 45
+      + Minimum number per program : 0
+      + Maximum number per program : 483
+   . EqualOperator : 0,26 %
+      + Average number per program : 43
+      + Minimum number per program : 0
+      + Maximum number per program : 1617
+   . THRU : 0,25 %
+      + Average number per program : 41
+      + Minimum number per program : 0
+      + Maximum number per program : 553
+   . SPACE : 0,18 %
+      + Average number per program : 30
+      + Minimum number per program : 0
+      + Maximum number per program : 431
+   . OCCURS : 0,17 %
+      + Average number per program : 28
+      + Minimum number per program : 0
+      + Maximum number per program : 500
+   . WHEN : 0,16 %
+      + Average number per program : 27
+      + Minimum number per program : 0
+      + Maximum number per program : 501
+   . COMP : 0,13 %
+      + Average number per program : 23
+      + Minimum number per program : 0
+      + Maximum number per program : 320
+   . NOT : 0,13 %
+      + Average number per program : 21
+      + Minimum number per program : 0
+      + Maximum number per program : 485
+   . ZERO : 0,12 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 759
+   . DISPLAY : 0,12 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 266
+   . OF : 0,12 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 3569
+   . ELSE : 0,1 %
+      + Average number per program : 18
+      + Minimum number per program : 0
+      + Maximum number per program : 782
+   . OR : 0,1 %
+      + Average number per program : 16
+      + Minimum number per program : 0
+      + Maximum number per program : 846
+
+----------------------
+Number of copies per program
+----------------------
+
+Statistics for CopyDirectiveType on 497 programs :
+ - Average number per program : 20
+ - Minimum number per program : 0
+ - Maximum number per program : 169
+ - Distribution of counts per program : 
+   . 0 - 0 : 1,2 %
+   . 0 - 5 : 16,09 %
+   . 5 - 10 : 26,15 %
+   . 10 - 15 : 13,88 %
+   . 15 - 20 : 10,66 %
+   . 20 - 30 : 12,67 %
+   . 30 - 50 : 10,46 %
+   . 50 - 2147483647 : 8,85 %
+ - Details per element type : 
+   . CopyRemarks : 61,59 %
+      + Average number per program : 12
+      + Minimum number per program : 0
+      + Maximum number per program : 110
+   . Copy : 28,61 %
+      + Average number per program : 5
+      + Minimum number per program : 0
+      + Maximum number per program : 169
+   . CopyReplacingRemarks : 9,43 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 42
+   . CopyReplacing : 0,35 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 22
+
+----------------------
+Number of replaced tokens per program
+----------------------
+
+Statistics for TokenType on 497 programs :
+ - Average number per program : 341
+ - Minimum number per program : 0
+ - Maximum number per program : 20044
+ - Distribution of counts per program : 
+   . 0 - 1500 : 94,16 %
+   . 1500 - 3000 : 3,42 %
+   . 3000 - 4500 : 0,8 %
+   . 4500 - 6000 : 1 %
+   . 6000 - 9000 : 0,2 %
+   . 9000 - 15000 : 0,2 %
+   . 15000 - 22500 : 0,2 %
+   . 22500 - 30000 : 0 %
+   . 30000 - 45000 : 0 %
+   . 45000 - 60000 : 0 %
+   . 60000 - 90000 : 0 %
+   . 90000 - 150000 : 0 %
+   . 150000 - 2147483647 : 0 %
+ - Details per element type : 
+   . UserDefinedWord : 98,58 %
+      + Average number per program : 336
+      + Minimum number per program : 0
+      + Maximum number per program : 20044
+   . PartialCobolWord : 1,41 %
+      + Average number per program : 4
+      + Minimum number per program : 0
+      + Maximum number per program : 1368
+
+----------------------
+Number of code elements per program
+----------------------
+
+Statistics for CodeElementType on 497 programs :
+ - Average number per program : 799
+ - Minimum number per program : 25
+ - Maximum number per program : 13405
+ - Distribution of counts per program : 
+   . 0 - 100 : 3,82 %
+   . 100 - 200 : 11,67 %
+   . 200 - 300 : 14,28 %
+   . 300 - 400 : 9,85 %
+   . 400 - 500 : 8,85 %
+   . 500 - 750 : 20,72 %
+   . 750 - 1000 : 10,86 %
+   . 1000 - 1500 : 9,65 %
+   . 1500 - 2000 : 3,21 %
+   . 2000 - 5000 : 5,83 %
+   . 5000 - 10000 : 1 %
+   . 10000 - 2147483647 : 0,2 %
+ - Details per element type : 
+   . MoveStatement : 24,96 %
+      + Average number per program : 199
+      + Minimum number per program : 0
+      + Maximum number per program : 3840
+   . DataDescriptionEntry : 18,68 %
+      + Average number per program : 149
+      + Minimum number per program : 1
+      + Maximum number per program : 2786
+   . IfStatement : 7,39 %
+      + Average number per program : 59
+      + Minimum number per program : 0
+      + Maximum number per program : 1921
+   . IfStatementEnd : 6,5 %
+      + Average number per program : 52
+      + Minimum number per program : 0
+      + Maximum number per program : 892
+   . PerformProcedureStatement : 6,36 %
+      + Average number per program : 50
+      + Minimum number per program : 0
+      + Maximum number per program : 679
+   . SentenceEnd : 6,28 %
+      + Average number per program : 50
+      + Minimum number per program : 1
+      + Maximum number per program : 1895
+   . SetStatement : 5,71 %
+      + Average number per program : 45
+      + Minimum number per program : 0
+      + Maximum number per program : 483
+   . ParagraphHeader : 3,76 %
+      + Average number per program : 30
+      + Minimum number per program : 0
+      + Maximum number per program : 549
+   . WhenConditionalExpression : 2,79 %
+      + Average number per program : 22
+      + Minimum number per program : 0
+      + Maximum number per program : 479
+   . DisplayStatement : 2,54 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 266
+   . ElseCondition : 2,26 %
+      + Average number per program : 18
+      + Minimum number per program : 0
+      + Maximum number per program : 782
+   . InitializeStatement : 1,31 %
+      + Average number per program : 10
+      + Minimum number per program : 0
+      + Maximum number per program : 210
+   . CallStatement : 1,25 %
+      + Average number per program : 9
+      + Minimum number per program : 0
+      + Maximum number per program : 101
+   . AddStatement : 1,1 %
+      + Average number per program : 8
+      + Minimum number per program : 0
+      + Maximum number per program : 165
+   . EvaluateStatement : 0,67 %
+      + Average number per program : 5
+      + Minimum number per program : 0
+      + Maximum number per program : 152
+   . EvaluateStatementEnd : 0,67 %
+      + Average number per program : 5
+      + Minimum number per program : 0
+      + Maximum number per program : 152
+   . StringStatement : 0,64 %
+      + Average number per program : 5
+      + Minimum number per program : 0
+      + Maximum number per program : 167
+   . CallStatementEnd : 0,62 %
+      + Average number per program : 4
+      + Minimum number per program : 0
+      + Maximum number per program : 81
+   . WhenOtherCondition : 0,48 %
+      + Average number per program : 3
+      + Minimum number per program : 0
+      + Maximum number per program : 70
+   . PerformStatement : 0,44 %
+      + Average number per program : 3
+      + Minimum number per program : 0
+      + Maximum number per program : 95
+   . PerformStatementEnd : 0,44 %
+      + Average number per program : 3
+      + Minimum number per program : 0
+      + Maximum number per program : 95
+   . ComputeStatement : 0,42 %
+      + Average number per program : 3
+      + Minimum number per program : 0
+      + Maximum number per program : 193
+   . ContinueStatement : 0,39 %
+      + Average number per program : 3
+      + Minimum number per program : 0
+      + Maximum number per program : 81
+   . ExecStatement : 0,39 %
+      + Average number per program : 3
+      + Minimum number per program : 0
+      + Maximum number per program : 642
+   . GotoStatement : 0,36 %
+      + Average number per program : 2
+      + Minimum number per program : 0
+      + Maximum number per program : 172
+   . ExitStatement : 0,21 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 226
+   . WriteStatement : 0,2 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 67
+   . FileDescriptionEntry : 0,18 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 17
+   . FileControlEntry : 0,18 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 17
+   . OpenStatement : 0,15 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 22
+   . CloseStatement : 0,13 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 16
+   . ProgramIdentification : 0,13 %
+      + Average number per program : 1
+      + Minimum number per program : 1
+      + Maximum number per program : 5
+   . DataDivisionHeader : 0,13 %
+      + Average number per program : 1
+      + Minimum number per program : 1
+      + Maximum number per program : 5
+   . ProcedureDivisionHeader : 0,13 %
+      + Average number per program : 1
+      + Minimum number per program : 1
+      + Maximum number per program : 5
+   . WorkingStorageSectionHeader : 0,12 %
+      + Average number per program : 1
+      + Minimum number per program : 1
+      + Maximum number per program : 4
+   . EnvironmentDivisionHeader : 0,12 %
+      + Average number per program : 1
+      + Minimum number per program : 1
+      + Maximum number per program : 1
+   . ConfigurationSectionHeader : 0,12 %
+      + Average number per program : 1
+      + Minimum number per program : 1
+      + Maximum number per program : 1
+   . SpecialNamesParagraph : 0,11 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 1
+   . SourceComputerParagraph : 0,11 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 1
+   . LinkageSectionHeader : 0,11 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 5
+   . GobackStatement : 0,11 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 4
+
+2. Program files before preprocessing
+
+----------------------
+Number of lines per program file (before preprocessing)
+----------------------
+
+Statistics for CobolTextLineType on 497 programs :
+ - Average number per program : 1657
+ - Minimum number per program : 105
+ - Maximum number per program : 34566
+ - Distribution of counts per program : 
+   . 0 - 25 : 0 %
+   . 25 - 50 : 0 %
+   . 50 - 100 : 0 %
+   . 100 - 150 : 1,6 %
+   . 150 - 200 : 1,2 %
+   . 200 - 300 : 4,02 %
+   . 300 - 500 : 13,88 %
+   . 500 - 1000 : 27,36 %
+   . 1000 - 1500 : 21,12 %
+   . 1500 - 2000 : 12,47 %
+   . 2000 - 3000 : 7,64 %
+   . 3000 - 2147483647 : 10,66 %
+ - Details per element type : 
+   . Source : 58,88 %
+      + Average number per program : 975
+      + Minimum number per program : 33
+      + Maximum number per program : 28160
+   . Comment : 26,24 %
+      + Average number per program : 435
+      + Minimum number per program : 12
+      + Maximum number per program : 12425
+   . Blank : 9,76 %
+      + Average number per program : 161
+      + Minimum number per program : 0
+      + Maximum number per program : 3175
+   . Debug : 5,02 %
+      + Average number per program : 83
+      + Minimum number per program : 0
+      + Maximum number per program : 3584
+
+----------------------
+Number of tokens per program file (before preprocessing)
+----------------------
+
+Statistics for TokenType on 497 programs :
+ - Average number per program : 7551
+ - Minimum number per program : 330
+ - Maximum number per program : 117340
+ - Distribution of counts per program : 
+   . 0 - 1500 : 9,85 %
+   . 1500 - 3000 : 22,33 %
+   . 3000 - 4500 : 15,09 %
+   . 4500 - 6000 : 13,68 %
+   . 6000 - 9000 : 17,5 %
+   . 9000 - 15000 : 11,67 %
+   . 15000 - 22500 : 4,22 %
+   . 22500 - 30000 : 1,81 %
+   . 30000 - 45000 : 2,41 %
+   . 45000 - 60000 : 0,6 %
+   . 60000 - 90000 : 0,6 %
+   . 90000 - 150000 : 0,2 %
+   . 150000 - 2147483647 : 0 %
+ - Details per element type : 
+   . SpaceSeparator : 48,97 %
+      + Average number per program : 3698
+      + Minimum number per program : 100
+      + Maximum number per program : 58949
+   . UserDefinedWord : 12,22 %
+      + Average number per program : 922
+      + Minimum number per program : 29
+      + Maximum number per program : 14458
+   . CommentLine : 6,73 %
+      + Average number per program : 508
+      + Minimum number per program : 11
+      + Maximum number per program : 15538
+   . PeriodSeparator : 3,57 %
+      + Average number per program : 269
+      + Minimum number per program : 23
+      + Maximum number per program : 4133
+   . TO : 3,4 %
+      + Average number per program : 257
+      + Minimum number per program : 0
+      + Maximum number per program : 4230
+   . IntegerLiteral : 3,23 %
+      + Average number per program : 244
+      + Minimum number per program : 1
+      + Maximum number per program : 3683
+   . MOVE : 2,63 %
+      + Average number per program : 199
+      + Minimum number per program : 0
+      + Maximum number per program : 3840
+   . AlphanumericLiteral : 2,1 %
+      + Average number per program : 158
+      + Minimum number per program : 1
+      + Maximum number per program : 3620
+   . PictureCharacterString : 1,27 %
+      + Average number per program : 96
+      + Minimum number per program : 0
+      + Maximum number per program : 2699
+   . PIC : 1,27 %
+      + Average number per program : 96
+      + Minimum number per program : 0
+      + Maximum number per program : 2699
+   . LeftParenthesisSeparator : 1,03 %
+      + Average number per program : 78
+      + Minimum number per program : 0
+      + Maximum number per program : 3354
+   . RightParenthesisSeparator : 1,03 %
+      + Average number per program : 78
+      + Minimum number per program : 0
+      + Maximum number per program : 3354
+   . ExecStatementText : 0,98 %
+      + Average number per program : 74
+      + Minimum number per program : 0
+      + Maximum number per program : 20340
+   . IF : 0,78 %
+      + Average number per program : 59
+      + Minimum number per program : 0
+      + Maximum number per program : 1921
+   . VALUE : 0,76 %
+      + Average number per program : 58
+      + Minimum number per program : 0
+      + Maximum number per program : 2702
+   . PERFORM : 0,72 %
+      + Average number per program : 54
+      + Minimum number per program : 0
+      + Maximum number per program : 714
+   . END_IF : 0,68 %
+      + Average number per program : 52
+      + Minimum number per program : 0
+      + Maximum number per program : 892
+   . TRUE : 0,61 %
+      + Average number per program : 46
+      + Minimum number per program : 0
+      + Maximum number per program : 540
+   . SET : 0,6 %
+      + Average number per program : 45
+      + Minimum number per program : 0
+      + Maximum number per program : 483
+   . EqualOperator : 0,57 %
+      + Average number per program : 43
+      + Minimum number per program : 0
+      + Maximum number per program : 1617
+   . WHEN : 0,34 %
+      + Average number per program : 26
+      + Minimum number per program : 0
+      + Maximum number per program : 501
+   . NOT : 0,28 %
+      + Average number per program : 21
+      + Minimum number per program : 0
+      + Maximum number per program : 485
+   . DISPLAY : 0,26 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 266
+   . COPY : 0,26 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 169
+   . OF : 0,26 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 3569
+   . ZERO : 0,24 %
+      + Average number per program : 18
+      + Minimum number per program : 0
+      + Maximum number per program : 711
+   . ELSE : 0,23 %
+      + Average number per program : 18
+      + Minimum number per program : 0
+      + Maximum number per program : 782
+   . OR : 0,22 %
+      + Average number per program : 16
+      + Minimum number per program : 0
+      + Maximum number per program : 846
+   . SUPPRESS : 0,21 %
+      + Average number per program : 16
+      + Minimum number per program : 0
+      + Maximum number per program : 140
+   . AND : 0,18 %
+      + Average number per program : 14
+      + Minimum number per program : 0
+      + Maximum number per program : 490
+   . ColonSeparator : 0,16 %
+      + Average number per program : 12
+      + Minimum number per program : 0
+      + Maximum number per program : 787
+   . FILLER : 0,15 %
+      + Average number per program : 11
+      + Minimum number per program : 0
+      + Maximum number per program : 855
+   . SPACE : 0,15 %
+      + Average number per program : 11
+      + Minimum number per program : 0
+      + Maximum number per program : 310
+   . SPACES : 0,15 %
+      + Average number per program : 11
+      + Minimum number per program : 0
+      + Maximum number per program : 334
+   . USING : 0,14 %
+      + Average number per program : 10
+      + Minimum number per program : 0
+      + Maximum number per program : 102
+   . BY : 0,14 %
+      + Average number per program : 10
+      + Minimum number per program : 0
+      + Maximum number per program : 209
+   . INITIALIZE : 0,13 %
+      + Average number per program : 10
+      + Minimum number per program : 0
+      + Maximum number per program : 210
+   . CompilerDirective : 0,13 %
+      + Average number per program : 10
+      + Minimum number per program : 0
+      + Maximum number per program : 79
+   . CALL : 0,13 %
+      + Average number per program : 9
+      + Minimum number per program : 0
+      + Maximum number per program : 101
+   . ADD : 0,11 %
+      + Average number per program : 8
+      + Minimum number per program : 0
+      + Maximum number per program : 165
+
+----------------------
+Number of compiler directives per program file
+----------------------
+
+Statistics for CompilerDirectiveType on 497 programs :
+ - Average number per program : 22
+ - Minimum number per program : 0
+ - Maximum number per program : 169
+ - Distribution of counts per program : 
+   . 0 - 0 : 0,8 %
+   . 0 - 5 : 12,87 %
+   . 5 - 10 : 26,55 %
+   . 10 - 15 : 14,08 %
+   . 15 - 20 : 10,26 %
+   . 20 - 30 : 13,07 %
+   . 30 - 50 : 12,67 %
+   . 50 - 75 : 4,42 %
+   . 75 - 100 : 3,01 %
+   . 100 - 200 : 2,21 %
+   . 200 - 2147483647 : 0 %
+ - Details per element type : 
+   . COPY : 89,93 %
+      + Average number per program : 20
+      + Minimum number per program : 0
+      + Maximum number per program : 169
+   . EJECT : 4,51 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 83
+   . SKIP3 : 3,17 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 66
+   . EXEC_SQL_INCLUDE : 1,4 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 7
+   . REPLACE : 0,42 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 1
+   . SKIP2 : 0,42 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 15
+   . SKIP1 : 0,12 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 8
+
+3. Copy files before preprocessing
+
+----------------------
+Number of references to each copy file
+----------------------
+
+----------------------
+Number of lines per copy file (before preprocessing)
+----------------------
+
+Statistics for CobolTextLineType on 2508 programs :
+ - Average number per program : 264
+ - Minimum number per program : 6
+ - Maximum number per program : 7228
+ - Distribution of counts per program : 
+   . 0 - 25 : 11,88 %
+   . 25 - 50 : 15,11 %
+   . 50 - 100 : 21,45 %
+   . 100 - 150 : 13,43 %
+   . 150 - 200 : 7,57 %
+   . 200 - 300 : 8,53 %
+   . 300 - 500 : 9,6 %
+   . 500 - 1000 : 7,21 %
+   . 1000 - 1500 : 2,03 %
+   . 1500 - 2000 : 1,27 %
+   . 2000 - 3000 : 1,23 %
+   . 3000 - 2147483647 : 0,63 %
+ - Details per element type : 
+   . Source : 45,99 %
+      + Average number per program : 121
+      + Minimum number per program : 2
+      + Maximum number per program : 2820
+   . Comment : 44,78 %
+      + Average number per program : 118
+      + Minimum number per program : 0
+      + Maximum number per program : 5104
+   . Blank : 8,46 %
+      + Average number per program : 22
+      + Minimum number per program : 0
+      + Maximum number per program : 1159
+   . Continuation : 0,76 %
+      + Average number per program : 2
+      + Minimum number per program : 0
+      + Maximum number per program : 340
+
+----------------------
+Number of tokens per copy file (before preprocessing)
+----------------------
+
+Statistics for TokenType on 2508 programs :
+ - Average number per program : 1292
+ - Minimum number per program : 19
+ - Maximum number per program : 28222
+ - Distribution of counts per program : 
+   . 0 - 1500 : 79,22 %
+   . 1500 - 3000 : 10,6 %
+   . 3000 - 4500 : 4,3 %
+   . 4500 - 6000 : 1,63 %
+   . 6000 - 9000 : 1,95 %
+   . 9000 - 15000 : 1,47 %
+   . 15000 - 22500 : 0,59 %
+   . 22500 - 30000 : 0,19 %
+   . 30000 - 45000 : 0 %
+   . 45000 - 60000 : 0 %
+   . 60000 - 90000 : 0 %
+   . 90000 - 150000 : 0 %
+   . 150000 - 2147483647 : 0 %
+ - Details per element type : 
+   . SpaceSeparator : 46,49 %
+      + Average number per program : 600
+      + Minimum number per program : 7
+      + Maximum number per program : 13445
+   . CommentLine : 9,17 %
+      + Average number per program : 118
+      + Minimum number per program : 0
+      + Maximum number per program : 5104
+   . IntegerLiteral : 8,97 %
+      + Average number per program : 115
+      + Minimum number per program : 2
+      + Maximum number per program : 3735
+   . PeriodSeparator : 8,64 %
+      + Average number per program : 111
+      + Minimum number per program : 2
+      + Maximum number per program : 2515
+   . UserDefinedWord : 8,51 %
+      + Average number per program : 110
+      + Minimum number per program : 0
+      + Maximum number per program : 2636
+   . PictureCharacterString : 5,69 %
+      + Average number per program : 73
+      + Minimum number per program : 0
+      + Maximum number per program : 2166
+   . PIC : 5,69 %
+      + Average number per program : 73
+      + Minimum number per program : 0
+      + Maximum number per program : 2166
+   . AlphanumericLiteral : 2,59 %
+      + Average number per program : 33
+      + Minimum number per program : 0
+      + Maximum number per program : 3158
+   . VALUE : 2,28 %
+      + Average number per program : 29
+      + Minimum number per program : 0
+      + Maximum number per program : 1230
+   . FILLER : 0,51 %
+      + Average number per program : 6
+      + Minimum number per program : 0
+      + Maximum number per program : 980
+   . COMP_3 : 0,51 %
+      + Average number per program : 6
+      + Minimum number per program : 0
+      + Maximum number per program : 1224
+   . REDEFINES : 0,4 %
+      + Average number per program : 5
+      + Minimum number per program : 0
+      + Maximum number per program : 287
+   . OCCURS : 0,11 %
+      + Average number per program : 1
+      + Minimum number per program : 0
+      + Maximum number per program : 65
+
+----------------------
+Number of compiler directives per copy file
+----------------------
+
+Statistics for CompilerDirectiveType on 2508 programs :
+ - Average number per program : 0
+ - Minimum number per program : 0
+ - Maximum number per program : 31
+ - Distribution of counts per program : 
+   . 0 - 0 : 97 %
+   . 0 - 5 : 2,67 %
+   . 5 - 10 : 0,11 %
+   . 10 - 15 : 0,15 %
+   . 15 - 20 : 0 %
+   . 20 - 30 : 0 %
+   . 30 - 50 : 0,03 %
+   . 50 - 75 : 0 %
+   . 75 - 100 : 0 %
+   . 100 - 200 : 0 %
+   . 200 - 2147483647 : 0 %
+ - Details per element type : 
+   . SKIP3 : 51,46 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 31
+   . EJECT : 29,28 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 13
+   . SKIP1 : 15,06 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 12
+   . COPY : 2,51 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 4
+   . SKIP2 : 1,67 %
+      + Average number per program : 0
+      + Minimum number per program : 0
+      + Maximum number per program : 2
+

@@ -108,6 +108,11 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public string BasisName { get; set; }
 
+        /// <summary>
+        /// Symbol token for BasisName
+        /// </summary>
+        public Token TextNameSymbol { get; set; }
+
         public override string ToString()
         {
             return Type.ToString() + " " + BasisName;
@@ -341,10 +346,20 @@ namespace TypeCobol.Compiler.Directives
         public string TextName { get; set; }
 
         /// <summary>
+        /// Symbol token for TextName
+        /// </summary>
+        public Token TextNameSymbol { get; set; }
+
+        /// <summary>
         /// Library-name identifies where the copy text exists.
         /// (see TextName for constraints on the format)
         /// </summary>
         public string LibraryName { get; set; }
+
+        /// <summary>
+        /// Symbol token for LibraryName
+        /// </summary>
+        public Token LibraryNameSymbol { get; set; }
 
         /// <summary>
         /// The SUPPRESS phrase specifies that the library text is not to be printed on the
