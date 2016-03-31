@@ -1990,74 +1990,125 @@ namespace TypeCobol.Compiler.Parser
 			Token[] qualifierTokens = null;
 			var legacy = context.legacyQualifiedDataName();
 			if (legacy != null) {
-				if (legacy.dataNameReferenceOrFileNameReference() != null) {
-					qualifiedToken = ParseTreeUtils.GetFirstToken(legacy.dataNameReference());
-					qualifierTokens = legacy.dataNameReferenceOrFileNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				}
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.dataNameReference(),
+					legacy.dataNameReferenceOrFileNameReference());
 			} else {
-				if(context.dataNameReferenceOrFileNameReference() != null) {
-					qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReference());
-					qualifierTokens = context.dataNameReferenceOrFileNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				}
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.dataNameReference(),
+					context.dataNameReferenceOrFileNameReference());
 			}
-			if (qualifierTokens != null) UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
 		public override void ExitQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
-			if (context.dataNameReferenceOrFileNameReference() != null) {
-				Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReferenceOrIndexNameReference());
-				Token[] qualifierTokens = context.dataNameReferenceOrFileNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+			Token qualifiedToken = null;
+			Token[] qualifierTokens = null;
+			var legacy = context.legacyQualifiedDataNameOrIndexName();
+			if (legacy != null) {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.dataNameReferenceOrIndexNameReference(),
+					legacy.dataNameReferenceOrFileNameReference());
+			} else {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.dataNameReferenceOrIndexNameReference(),
+					context.dataNameReferenceOrFileNameReference());
 			}
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrFileName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context) {
-			if (context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null) {
-				Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-				Token[] qualifierTokens = context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-			}
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
 		public override void ExitQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context) {
 			Token qualifiedToken = null;
 			Token[] qualifierTokens = null;
 			var legacy = context.legacyQualifiedConditionName();
 			if (legacy != null) {
-				if (legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null) {
-					qualifiedToken = ParseTreeUtils.GetFirstToken(legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-					qualifierTokens = legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				}
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
+					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
-				if(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null) {
-					qualifiedToken = ParseTreeUtils.GetFirstToken(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-					qualifierTokens = context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				}
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
+					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			}
-			if (qualifierTokens != null) UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
 		public override void ExitQualifiedDataNameOrQualifiedConditionName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context) {
-			if (context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null) {
-				Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-				Token[] qualifierTokens = context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+			Token qualifiedToken = null;
+			Token[] qualifierTokens = null;
+			var legacy = context.legacyQualifiedDataNameOrConditionName();
+			if (legacy != null) {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
+					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
+					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			}
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
 		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrIndexName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrIndexNameContext context) {
-			if (context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null) {
-				Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-				Token[] qualifierTokens = context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-				UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+			Token qualifiedToken = null;
+			Token[] qualifierTokens = null;
+			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
+			if (legacy != null) {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
+					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
+					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			}
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+		}
+		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrFileName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context) {
+			Token qualifiedToken;
+			Token[] qualifierTokens;
+			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
+			if (legacy != null) {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
+					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
+					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+		}
+		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrClassName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context) {
+			Token qualifiedToken;
+			Token[] qualifierTokens;
+			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
+			if (legacy != null) {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
+					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
+					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
 
-        private void UpdateSymbolInformationForQualifiedNames(Token qualifiedToken, Token[] qualifierTokens)
-        {
-            SymbolInformation qualifiedSymbolInfo = CodeElement.SymbolInformationForTokens[qualifiedToken];
-            qualifiedSymbolInfo.QualifedBy = qualifierTokens;
-            foreach (var qualifierToken in qualifierTokens)
-            {
-                SymbolInformation qualifierSymbolInfo = CodeElement.SymbolInformationForTokens[qualifierToken];
-                qualifierSymbolInfo.QualifierFor = qualifiedToken;
-            }
-        }
+		private void GetTokensForSymbolInformation(out Token qualifiedToken, out Token[] qualifierTokens, IParseTree node, IParseTree[] nodes) {
+			if (node != null)  qualifiedToken  = ParseTreeUtils.GetFirstToken(node);
+			else qualifiedToken = null;
+			if (nodes != null) qualifierTokens = nodes.Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
+			else qualifierTokens = null;
+		}
+
+		private void UpdateSymbolInformationForQualifiedNames(Token qualifiedToken, Token[] qualifierTokens) {
+			if (qualifiedToken != null) {
+				SymbolInformation qualifiedSymbolInfo = CodeElement.SymbolInformationForTokens[qualifiedToken];
+				qualifiedSymbolInfo.QualifedBy = qualifierTokens;
+			}
+			if (qualifierTokens != null)
+			foreach (var qualifierToken in qualifierTokens) {
+				SymbolInformation qualifierSymbolInfo = CodeElement.SymbolInformationForTokens[qualifierToken];
+				qualifierSymbolInfo.QualifierFor = qualifiedToken;
+			}
+		}
 
         public override void EnterIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
         {

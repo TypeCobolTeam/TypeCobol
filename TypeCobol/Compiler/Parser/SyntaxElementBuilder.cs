@@ -394,68 +394,110 @@ namespace TypeCobol.Compiler.Parser
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
 			if (context == null) return null;
-			var name = CreateDataName(context.dataNameReferenceOrIndexNameReference());
-			var datanames = CreateDataNames(context.dataNameReferenceOrFileNameReference());
-			return CreateQualifiedName(name, datanames, true);
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = context.legacyQualifiedDataNameOrIndexName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
+			} else {
+				name = CreateDataName(context.dataNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceContext context) {
 			if (context == null) return null;
 			var c = context.qualifiedDataNameOrQualifiedConditionName();
 			if (c == null) return null;
-			var name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-			var datanames = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			return CreateQualifiedName(name, datanames, true);
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrConditionName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context) {
 			if (context == null) return null;
 			var c = context.qualifiedDataNameOrQualifiedConditionNameOrIndexName();
 			if (c == null) return null;
-			var name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-			var datanames = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			return CreateQualifiedName(name, datanames, true);
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context) {
 			if (context == null) return null;
 			var c = context.qualifiedDataNameOrQualifiedConditionNameOrFileName();
 			if (c == null) return null;
-			var name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-			var datanames = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			return CreateQualifiedName(name, datanames, true);
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context) {
 			if (context == null) return null;
 			var c = context.qualifiedDataNameOrQualifiedConditionNameOrClassName();
 			if (c == null) return null;
-			var name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-			var datanames = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			return CreateQualifiedName(name, datanames, true);
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 
 		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context) {
 			if (context == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
 			var legacy = context.legacyQualifiedDataName();
 			if (legacy != null) {
-				var name = CreateDataName(legacy.dataNameReference());
-				var datanames = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
-				return CreateQualifiedName(name, datanames, true);
+				name = CreateDataName(legacy.dataNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
 			} else {
-				var name = CreateDataName(context.dataNameReference());
-				var datanames = CreateDataNames(context.dataNameReferenceOrFileNameReference());
-				return CreateQualifiedName(name, datanames, false);
+				name = CreateDataName(context.dataNameReference());
+				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReference());
 			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context) {
 			if (context == null) return null;
+			ConditionName name;
+			List<DataName> qualifiers;
 			var legacy = context.legacyQualifiedConditionName();
 			if (legacy != null) {
-				var name = CreateConditionName(legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(name, qualifiers, true);
+				name = CreateConditionName(legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
-				var name = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-				var qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(name, qualifiers, false);
+				name = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
 		private static QualifiedName CreateQualifiedName(Symbol name, List<DataName> qualifiers, bool reverse) {
 			if (reverse) qualifiers.Reverse();
