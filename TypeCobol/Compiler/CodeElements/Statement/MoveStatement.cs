@@ -53,13 +53,21 @@ namespace TypeCobol.Compiler.CodeElements
         public Dictionary<QualifiedName,bool> Symbols {
             get {
                 var symbols = new Dictionary<QualifiedName,bool>();
-                if (Sending is Identifier)
-                    symbols.Add(((Identifier)Sending).Name, false);
-                foreach (var identifier in Receiving)
-                    symbols.Add(identifier.Name, true);
+				var name = asUserDefinedName(Sending);
+				if (name != null) symbols.Add(name, false);
+                foreach (var identifier in Receiving) {
+					name = asUserDefinedName(identifier);
+					if (name != null) symbols.Add(name, false);
+				}
                 return symbols;
             }
             private set { throw new System.InvalidOperationException(); }
         }
+		private QualifiedName asUserDefinedName(Expression expression) {
+			if (!(expression is Identifier)) return null;
+			if (expression is SpecialRegister) return null;
+			if (expression is FunctionReference) return null;
+			return ((Identifier)expression).Name;
+		}
     }
 }
