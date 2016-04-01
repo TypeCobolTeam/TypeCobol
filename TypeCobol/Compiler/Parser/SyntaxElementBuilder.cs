@@ -643,6 +643,11 @@ namespace TypeCobol.Compiler.Parser
             // TO DO : lookup symbol table to determine the type of the symbol
             return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
+		internal static ConditionName CreateConditionName(CodeElementsParser.ConditionNameDefinitionContext context) {
+			if (context == null) return null;
+			// TO DO : lookup symbol table to determine the type of the symbol
+			return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+		}
 
         internal static IList<FileName> CreateFileNames(IReadOnlyList<CodeElementsParser.FileNameReferenceContext> context)
         {

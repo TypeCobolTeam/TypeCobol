@@ -7,38 +7,53 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 
-namespace TypeCobol.Compiler.Diagnostics
-{
-    class DataDescriptionChecker: CodeElementListener
-    {
-        public IList<Type> GetCodeElements() {
-            return new List<Type>() { typeof(DataDescriptionEntry), };
-        }
-        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-            var data = e as DataDescriptionEntry;
-            var context = c as CodeElementsParser.DataDescriptionEntryContext;
+namespace TypeCobol.Compiler.Diagnostics {
 
-            var picture   = GetContext(data, context.pictureClause());
-            var blank     = GetContext(data, context.blankWhenZeroClause());
-            var external  = GetContext(data, context.externalClause());
-            var global    = GetContext(data, context.globalClause());
-            var justified = GetContext(data, context.justifiedClause());
-            var sync      = GetContext(data, context.synchronizedClause());
-            var group     = GetContext(data, context.groupUsageClause());
-            var usage     = GetContext(data, context.usageClause());
-            var sign      = GetContext(data, context.signClause());
-            var occurs    = GetContext(data, context.occursClause());
-            var value     = GetContext(data, context.valueClause());
+	class DataDescriptionChecker: CodeElementListener {
 
-            if (data.Name == null) {
-                if ((data.LevelNumber == 77 || data.LevelNumber == 88) && !data.IsFiller)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for level-66 or level-88 items: "+data, context.levelNumber());
-                if (data.IsExternal)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
-                if (data.IsGlobal)
-                    DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
-            }
-        }
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(DataDescriptionEntry), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+			var data = e as DataDescriptionEntry;
+			if (c is CodeElementsParser.DataDescriptionEntryContext)
+				OnDataDescriptionEntry(data, c as CodeElementsParser.DataDescriptionEntryContext);
+			if (c is CodeElementsParser.DataConditionEntryContext)
+				OnDataConditionEntry(data, c as CodeElementsParser.DataConditionEntryContext);
+		}
+
+		private void OnDataDescriptionEntry(DataDescriptionEntry data, CodeElementsParser.DataDescriptionEntryContext context) {
+			var picture   = GetContext(data, context.pictureClause());
+			var blank     = GetContext(data, context.blankWhenZeroClause());
+			var external  = GetContext(data, context.externalClause());
+			var global    = GetContext(data, context.globalClause());
+			var justified = GetContext(data, context.justifiedClause());
+			var sync      = GetContext(data, context.synchronizedClause());
+			var group     = GetContext(data, context.groupUsageClause());
+			var usage     = GetContext(data, context.usageClause());
+			var sign      = GetContext(data, context.signClause());
+			var occurs    = GetContext(data, context.occursClause());
+			var value     = GetContext(data, context.valueClause());
+
+			if (data.Name == null) {
+				if (data.IsExternal)
+					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+				if (data.IsGlobal)
+					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
+			}
+		}
+		private void OnDataConditionEntry(DataDescriptionEntry data, CodeElementsParser.DataConditionEntryContext context) {
+			if (data.LevelNumber != 88)
+				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber());
+			if (data.Name == null && !data.IsFiller)
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
+		}
+		private void OnDataRenamesEntry(DataDescriptionEntry data, CodeElementsParser.DataRenamesEntryContext context) {
+			if (data.LevelNumber != 66)
+				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
+			if (data.Name == null && !data.IsFiller)
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());
+		}
 
         /// <summary>
         /// Return the first ParserRuleContext in a list.
@@ -57,7 +72,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             return contexts[0];
         }
-    }
+	}
 
     class AddStatementChecker: CodeElementListener
     {

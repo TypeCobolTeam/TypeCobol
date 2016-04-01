@@ -411,54 +411,48 @@ namespace TypeCobol.Compiler.Parser
 
         // -- Data Division --
 
-        public override void EnterFileDescriptionEntry(CodeElementsParser.FileDescriptionEntryContext context)
-        {
-            Context = context;
-            CodeElement = new FileDescriptionEntry();
-        }
+		public override void EnterFileDescriptionEntry(CodeElementsParser.FileDescriptionEntryContext context) {
+			Context = context;
+			CodeElement = new FileDescriptionEntry();
+		}
 
-        public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
-        {
-            if(context.dataRenamesEntry() != null || context.dataConditionEntry() != null)
-            {
-                // For levels 66 and 88, the DataDescriptionEntry is created by the following methods
-                // - EnterDataRenamesEntry
-                // - EnterDataConditionEntry
-                return;
-            }
+		public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context) {
+			if(context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
+				// For levels 66 and 88, the DataDescriptionEntry is created by the following methods
+				// - EnterDataRenamesEntry
+				// - EnterDataConditionEntry
+				return;
+			}
 
-            int level = 0;
-            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
-            }
+			DataDescriptionEntry entry = new DataDescriptionEntry();
+			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			}
+			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
+			//entry.IsFiller = (dataname == null || context.FILLER() != null);
 
-            DataDescriptionEntry entry = new DataDescriptionEntry();
-            entry.LevelNumber = level;
-            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
-            //entry.IsFiller = (dataname == null || context.FILLER() != null);
+			var redefines = context.redefinesClause();
+			if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
 
-            var redefines = context.redefinesClause();
-            if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
-
-            var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
+			var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
 			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
 
-            var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
-            entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
-            var external = DataDescriptionChecker.GetContext(entry, context.externalClause(), false);
-            entry.IsExternal = external != null && external.EXTERNAL() != null;
-            var global = DataDescriptionChecker.GetContext(entry, context.globalClause(), false);
-            entry.IsGlobal = global != null && global.GLOBAL() != null;
-            var justified = DataDescriptionChecker.GetContext(entry, context.justifiedClause(), false);
-            entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
-            var sync = DataDescriptionChecker.GetContext(entry, context.synchronizedClause(), false);
-            entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
-            var group = DataDescriptionChecker.GetContext(entry, context.groupUsageClause(), false);
-            entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
-            UpdateDataDescriptionEntryWithUsageClause(entry, DataDescriptionChecker.GetContext(entry, context.usageClause(), false));
-            UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
-            UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
-            UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
+			var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
+			entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
+			var external = DataDescriptionChecker.GetContext(entry, context.externalClause(), false);
+			entry.IsExternal = external != null && external.EXTERNAL() != null;
+			var global = DataDescriptionChecker.GetContext(entry, context.globalClause(), false);
+			entry.IsGlobal = global != null && global.GLOBAL() != null;
+			var justified = DataDescriptionChecker.GetContext(entry, context.justifiedClause(), false);
+			entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
+			var sync = DataDescriptionChecker.GetContext(entry, context.synchronizedClause(), false);
+			entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
+			var group = DataDescriptionChecker.GetContext(entry, context.groupUsageClause(), false);
+			entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
+			UpdateDataDescriptionEntryWithUsageClause(entry, DataDescriptionChecker.GetContext(entry, context.usageClause(), false));
+			UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
+			UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
+			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
 // [TYPECOBOL]
 			entry.IsTypeDefinition = (context.tcExtTypedefClause().Length > 0);
 			if (entry.IsTypeDefinition && entry.Name != null) {
@@ -472,51 +466,39 @@ namespace TypeCobol.Compiler.Parser
 			}
 // [/TYPECOBOL]
 
-            Context = context;
-            CodeElement = entry;
-        }
+			Context = context;
+			CodeElement = entry;
+		}
 
-        public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context)
-        {
-            int level = 0;
-            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null)
-            {
-                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
-            }
-
-            DataDescriptionEntry entry = new DataDescriptionEntry();
-            entry.LevelNumber = level;
-            entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
+		public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context) {
+			DataDescriptionEntry entry = new DataDescriptionEntry();
+			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			}
+			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
 
-            var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataNameReference());
-            if (names.Count > 0) entry.RenamesFromDataName = names[0];
-            if (names.Count > 1) entry.RenamesToDataName   = names[1];
-            //note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized           
+			var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataNameReference());
+			if (names.Count > 0) entry.RenamesFromDataName = names[0];
+			if (names.Count > 1) entry.RenamesToDataName   = names[1];
+			//note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
 
-            Context = context;
-            CodeElement = entry;            
-        }
+			Context = context;
+			CodeElement = entry;
+		}
 
-        public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context)
-        {
-            int level = 0;
-            if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null)
-            {
-                level = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
-            }
+		public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context) {
+			var entry = new DataDescriptionEntry();
+			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			}
+			entry.ConditionName = SyntaxElementBuilder.CreateConditionName(context.conditionNameDefinition());
+			entry.IsConditionNameDescription = true;
+			UpdateDataDescriptionEntryWithValueClauseForCondition(entry, context.valueClauseForCondition());
 
-            DataDescriptionEntry entry = new DataDescriptionEntry();
-            entry.LevelNumber = level;
-            // TO DO : enable to set properly entry.ConditionName
-            entry.DataName = SyntaxElementBuilder.CreateDataName(context.conditionNameDefinition());
-            entry.IsConditionNameDescription = true;
-
-            UpdateDataDescriptionEntryWithValueClauseForCondition(entry, context.valueClauseForCondition());
-            
-            Context = context;
-            CodeElement = entry;
-        }
+			Context = context;
+			CodeElement = entry;
+		}
 
         private void UpdateDataDescriptionEntryWithSignClause(DataDescriptionEntry entry, CodeElementsParser.SignClauseContext context)
         {
