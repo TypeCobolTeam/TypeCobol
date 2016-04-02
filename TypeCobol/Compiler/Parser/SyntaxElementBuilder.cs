@@ -388,129 +388,132 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
-        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceContext context)
-        {
-            if (context == null) return null;
-            return CreateQualifiedName(context.qualifiedDataName());
-        }
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceContext context) {
+			if (context == null) return null;
+			return CreateQualifiedName(context.qualifiedDataName());
+		}
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
+			if (context == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = context.legacyQualifiedDataNameOrIndexName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
+			} else {
+				name = CreateDataName(context.dataNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceContext context) {
+			if (context == null) return null;
+			var c = context.qualifiedDataNameOrQualifiedConditionName();
+			if (c == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrConditionName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context) {
+			if (context == null) return null;
+			var c = context.qualifiedDataNameOrQualifiedConditionNameOrIndexName();
+			if (c == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context) {
+			if (context == null) return null;
+			var c = context.qualifiedDataNameOrQualifiedConditionNameOrFileName();
+			if (c == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
+		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context) {
+			if (context == null) return null;
+			var c = context.qualifiedDataNameOrQualifiedConditionNameOrClassName();
+			if (c == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = c.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
+				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
 
-        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceContext context)
-        {
-            if (context == null) return null;
-            return CreateQualifiedName(context.qualifiedDataNameOrQualifiedConditionName());
-        }
+		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context) {
+			if (context == null) return null;
+			DataName name;
+			List<DataName> qualifiers;
+			var legacy = context.legacyQualifiedDataName();
+			if (legacy != null) {
+				name = CreateDataName(legacy.dataNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
+			} else {
+				name = CreateDataName(context.dataNameReference());
+				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
+		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context) {
+			if (context == null) return null;
+			ConditionName name;
+			List<DataName> qualifiers;
+			var legacy = context.legacyQualifiedConditionName();
+			if (legacy != null) {
+				name = CreateConditionName(legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			} else {
+				name = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			}
+			return CreateQualifiedName(name, qualifiers, legacy != null);
+		}
+		private static QualifiedName CreateQualifiedName(Symbol name, List<DataName> qualifiers, bool reverse) {
+			if (reverse) qualifiers.Reverse();
+			// TODO: need to lookup symbol table to distinguish data name and file name
+			FileName filename = null; // may be first element of qualifiers
+			return new QualifiedName(name, qualifiers, filename);
+		}
 
-        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context)
-        {
-            if (context == null) return null;
-            return CreateQualifiedName(context.qualifiedDataNameOrQualifiedConditionNameOrIndexName());
-        }
-
-        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context)
-        {
-            if (context == null) return null;
-            return CreateQualifiedName(context.qualifiedDataNameOrQualifiedConditionNameOrFileName());
-        }
-
-        private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context)
-        {
-            if (context == null) return null;
-            return CreateQualifiedName(context.qualifiedDataNameOrQualifiedConditionNameOrClassName());
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameReference() != null) name = CreateDataName(context.dataNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            //FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameReferenceOrIndexNameReference() != null) name = CreateDataName(context.dataNameReferenceOrIndexNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            //FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context)
-        {
-            if (context == null) return null;
-            ConditionName name = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            //FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference() != null) name = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            ///FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrIndexNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference() != null) name = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            ///FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference() != null) name = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            ///FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context)
-        {
-            if (context == null) return null;
-            DataName name = null;
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference() != null) name = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-            List<DataName> datanames = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-            datanames.Reverse();
-            // TO DO : need to lookup symbol table to distinguish data name and file name
-            ///FileName filename = CreateFileName(context.fileName());
-            return new QualifiedName(name, datanames, /*filename*/null);
-        }
-
-        internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context)
-        {
-            var names = new List<QualifiedName>();
-            foreach (var name in context)
-            {
-                var x = CreateQualifiedName(name);
-                if (x != null) names.Add(x);
-            }
-            return names;
-        }
+		internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context) {
+			var names = new List<QualifiedName>();
+			foreach (var name in context) {
+				var x = CreateQualifiedName(name);
+				if (x != null) names.Add(x);
+			}
+			return names;
+		}
 
         internal static AlphabetName CreateAlphabetName(CodeElementsParser.AlphabetNameReferenceContext context)
         {
@@ -640,6 +643,11 @@ namespace TypeCobol.Compiler.Parser
             // TO DO : lookup symbol table to determine the type of the symbol
             return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
+		internal static ConditionName CreateConditionName(CodeElementsParser.ConditionNameDefinitionContext context) {
+			if (context == null) return null;
+			// TO DO : lookup symbol table to determine the type of the symbol
+			return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
+		}
 
         internal static IList<FileName> CreateFileNames(IReadOnlyList<CodeElementsParser.FileNameReferenceContext> context)
         {

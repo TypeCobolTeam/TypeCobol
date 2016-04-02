@@ -858,7 +858,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// as required for the conditional variable.
         /// Condition-names are tested procedurally in condition-name conditions.
         /// </summary>
-        public ConditionName ConditionName { get; private set; }
+        public ConditionName ConditionName { get; set; }
 
         /// <summary>
         /// Format 2: condition-name value
@@ -1037,6 +1037,7 @@ namespace TypeCobol.Compiler.CodeElements
 				str.Append(" <of> ").Append(parent.Name);
 				parent = parent.TopLevel;
 			}
+			//if (InitialValue != null) str.Append('(').Append(InitialValue).Append(')');
 			return str.ToString();
 		}
     }

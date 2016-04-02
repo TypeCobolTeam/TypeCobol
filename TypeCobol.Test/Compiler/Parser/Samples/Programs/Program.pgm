@@ -29,6 +29,12 @@ WORKING-STORAGE SECTION.
  05  str   PIC X(15) VALUE 'THAT'.
 01 x PIC A(3).
 
+05  E1.
+  10  E2   PIC X(08).
+  10  E3   PIC X(04).
+    88  A   VALUE 'TITI'.
+    88  B   VALUE 'TOTO'.
+
 01  sqlcode  PIC ZZ9+ BLANK WHEN ZERO.
   EXEC SQL DECLARE tablename TABLE
   (

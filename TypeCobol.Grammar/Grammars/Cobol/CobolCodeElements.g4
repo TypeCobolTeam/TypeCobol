@@ -2871,9 +2871,9 @@ levelNumber : IntegerLiteral;
 // p168: There are two categories of algebraic signs used in COBOL: operational signs and editing signs. 
 // ... more details on Operational signs / Editing signs p168 ...
 
-dataNameDefinition : UserDefinedWord;
+dataNameDefinition: UserDefinedWord;
 
-dataNameReference : UserDefinedWord;
+dataNameReference: UserDefinedWord;
 
 // p187: FILLER
 // A data item that is not explicitly referred to in a program. The keyword
@@ -2901,7 +2901,7 @@ dataNameReference : UserDefinedWord;
 // Condition-names specified in the SPECIAL-NAMES paragraph of a
 // containing program can be referenced in any contained program
 
-conditionNameDefinition : UserDefinedWord;
+conditionNameDefinition: UserDefinedWord;
 
 // Only ambiguous references :
 // conditionNameReferenceOrConditionForUPSISwitchNameReference
@@ -6311,7 +6311,7 @@ fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
 
 performStatement:
 	PERFORM (
-		(identifierOrNumericLiteral TIMES)											   // - TIMES phrase PERFORM
+		((identifier | numericLiteral) TIMES)											   // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)					  // - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression )	 // - VARYING phrase PERFORM
 		)?;																				// (nothing) - Basic PERFORM
@@ -6320,19 +6320,17 @@ performStatement:
 
 performProcedureStatement:
 	PERFORM procedureName ((THROUGH |THRU) procedureName)? (			  // - Basic PERFORM
-		(identifierOrNumericLiteral TIMES)							 // - TIMES phrase PERFORM
+		((identifier | numericLiteral) TIMES)							 // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
-		  ( AFTER identifierOrIndexName FROM identifierOrIndexNameOrNumericLiteral	 // - VARYING phrase PERFORM
-			BY identifierOrNumericLiteral UNTIL conditionalExpression )* )				//
+		  ( AFTER identifierOrIndexName FROM (identifierOrIndexName | numericLiteral)	 // - VARYING phrase PERFORM
+			BY (identifier | numericLiteral) UNTIL conditionalExpression )* )				//
 		)?;															// (nothing) - Basic PERFORM
 
 performVarying:
-	VARYING identifierOrIndexName FROM identifierOrIndexNameOrNumericLiteral BY identifierOrNumericLiteral;
+	VARYING identifierOrIndexName FROM (identifierOrIndexName | numericLiteral) BY (identifier | numericLiteral);
 
 performStatementEnd: END_PERFORM;
-
-identifierOrIndexNameOrNumericLiteral : identifierOrIndexName | numericLiteral;
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
@@ -9058,6 +9056,54 @@ execStatementEnd: END_EXEC;
 // ------------------------------
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -------------------------------------------
 // Optimized version of the expressions syntax
 // -------------------------------------------
@@ -9542,6 +9588,14 @@ signCondition: operand IS? NOT? (POSITIVE | NEGATIVE |ZERO);
    
 // Impossible to distinguish from conditionNameCondition => joined in conditionNameOrSwitchStatusCondition              
 // switchStatusCondition: qualifiedConditionName;
+
+
+
+
+
+
+
+
 
 
 // p254: Arithmetic expressions
@@ -10074,7 +10128,7 @@ withRelativeSubscripting: (PlusOperator | MinusOperator) IntegerLiteral;
 
 qualifiedDataName: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)*;
 
-dataNameReferenceOrFileNameReference : UserDefinedWord;
+dataNameReferenceOrFileNameReference: UserDefinedWord;
 
 // p70: Condition-name
 // condition-name-1
