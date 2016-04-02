@@ -76,7 +76,7 @@
  into = result
 
 [[StringStatement]] [1,6:string]<STRING> --> [48,53:result]<UserDefinedWord>
-- variables to concat =  var1(1:5) var1    delimited by "term"
+- variables to concat =  var1 var1    delimited by "term"
  into = result
 
 [[StringStatement]] [1,6:string]<STRING> --> [46,51:result]<UserDefinedWord>

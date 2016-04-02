@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Parser
             if (conditions.Count < 1) {
                 // simple condition
                 if (context.classCondition()           != null) return createCondition(context.classCondition());
-                if (context.conditionNameCondition()   != null) return createCondition(context.conditionNameCondition());
+                if (context.conditionNameConditionOrSwitchStatusCondition()   != null) return createCondition(context.conditionNameConditionOrSwitchStatusCondition());
                 if (context.generalRelationCondition() != null) return createCondition(context.generalRelationCondition());
                 if (context.pointerRelationCondition() != null) return createCondition(context.pointerRelationCondition());
                 if (context.signCondition()            != null) return createCondition(context.signCondition());
@@ -32,88 +32,10 @@ namespace TypeCobol.Compiler.Parser
             throw new System.NotSupportedException("Uh-oh!");
         }
 
-        //private LogicalExpression createCondition(CodeElementsParser.ComplexConditionContext context)
-        //{
-        //    if (context.andCondition() != null)
-        //    {
-        //        var conditions = context.andCondition();
-        //        if (conditions.Length > 0)
-        //        {
-        //            LogicalExpression left = createCondition(conditions[0]);
-        //            if (conditions.Length > 1)
-        //            {
-        //                LogicalExpression right = createCondition(conditions[1]);
-        //                return new OR(left, right);
-        //            }
-        //            return left;
-        //        }
-        //    }
-        //    return new Empty();
-        //}
-
-        //private LogicalExpression createCondition(CodeElementsParser.AndConditionContext context)
-        //{
-        //    if (context.notCondition() != null)
-        //    {
-        //        var conditions = context.notCondition();
-        //        if (conditions.Length > 0)
-        //        {
-        //            LogicalExpression left = createCondition(conditions[0]);
-        //            if (conditions.Length > 1)
-        //            {
-        //                LogicalExpression right = createCondition(conditions[1]);
-        //                return new AND(left, right);
-        //            }
-        //            return left;
-        //        }
-        //    }
-        //    return new Empty();
-        //}
-
-        //private LogicalExpression createCondition(CodeElementsParser.NotConditionContext context)
-        //{
-        //    if (context.conditionBase() != null)
-        //    {
-        //        if (context.NOT() != null)
-        //        {
-        //            return new NOT(createCondition(context.conditionBase()));
-        //        }
-        //        else
-        //        {
-        //            return createCondition(context.conditionBase());
-        //        }
-        //    }
-        //    return new Empty();
-        //}
-
-        //private LogicalExpression createCondition(CodeElementsParser.ConditionBaseContext context)
-        //{
-        //    if (context.simpleCondition() != null)
-        //        return createCondition(context.simpleCondition());
-        //    if (context.complexCondition() != null)
-        //        return createCondition(context.complexCondition());
-        //    return new Empty();
-        //}
-
-        //private LogicalExpression createCondition(CodeElementsParser.SimpleConditionContext context)
-        //{
-        //    if (context.classCondition() != null)
-        //        return createCondition(context.classCondition());
-        //    if (context.conditionNameCondition() != null)
-        //        return createCondition(context.conditionNameCondition());
-        //    if (context.relationCondition() != null)
-        //        return createCondition(context.relationCondition());
-        //    if (context.signCondition() != null)
-        //        return createCondition(context.signCondition());
-        //    if (context.switchStatusCondition() != null)
-        //        return createCondition(context.switchStatusCondition());
-        //    return new Empty();
-        //}
-
         private LogicalExpression createCondition(CodeElementsParser.ClassConditionContext context)
         {
             Symbol type = null;
-            if (context.charsetClassName() != null) type = new CharsetClassName(ParseTreeUtils.GetFirstToken(context.charsetClassName()));
+            if (context.characterClassNameReference() != null) type = new CharacterClassName(ParseTreeUtils.GetFirstToken(context.characterClassNameReference()));
             if (context.NUMERIC() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.NUMERIC()));
             if (context.ALPHABETIC() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC()));
             if (context.ALPHABETIC_LOWER() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC_LOWER()));
@@ -125,12 +47,12 @@ namespace TypeCobol.Compiler.Parser
             return condition;
         }
 
-        private LogicalExpression createCondition(CodeElementsParser.ConditionNameConditionContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.ConditionNameConditionOrSwitchStatusConditionContext context) {
             if (context == null) return null;
-            return createCondition(context.conditionNameReference());
+            return createCondition(context.conditionReference());
         }
 
-        private LogicalExpression createCondition(CodeElementsParser.ConditionNameReferenceContext context) {
+        private LogicalExpression createCondition(CodeElementsParser.ConditionReferenceContext context) {
             if (context == null) return null;
             QualifiedName conditionname = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
             IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());
@@ -192,7 +114,7 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CodeElementsParser.OperandContext context) {
             if (context == null) return null;
-            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            if (context.identifierOrIndexName() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifierOrIndexName());
             if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
             if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
             // indexName cannot be distinguished from identifier at the parsing stage

@@ -128,6 +128,7 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\SymbolInformation.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
@@ -277,7 +278,7 @@
     <Compile Include="Compiler\CodeElements\Symbols\SymbolReference.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AlphabetName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AssignmentName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\CharsetClassName.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\CharacterClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ConditionName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SectionName.cs" />
@@ -360,6 +361,11 @@
     <Compile Include="Compiler\Text\TextSourceInfo.cs" />
     <Compile Include="Compiler\Text\TextString.cs" />
     <Compile Include="Compiler\TypeChecker\CompilationError.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\LanguageModelGenerator.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\WordProbabilities.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\StatsCounter.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\StatsGenerator.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
     <Compile Include="LanguageServices\Editor\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -389,6 +395,7 @@
     <Compile Include="Tools\Generator\CodeElements\CodeElement.cs" />
     <Compile Include="Tools\Generator\CodeElements\DataDescriptionEntry.cs" />
     <Compile Include="Tools\Generator\CodeGenerator.cs" />
+    <Compile Include="Tools\CommandLine\TypeCobolStats.cs" />
     <Compile Include="Tools\Reflection.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolCompiler.cs" />
     <Compile Include="Tools\CodeGenerator.cs" />
@@ -413,6 +420,7 @@
     <None Include="Documentation\Studies\Move code element study.docx" />
     <None Include="Documentation\Studies\Pipeline - compilation steps.docx" />
     <None Include="Documentation\Studies\Text editors functions study.xlsx" />
+    <None Include="Documentation\Studies\Symbols and User defined words.xlsx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -426,6 +434,11 @@
     <Content Include="Documentation\Studies\Lexical study.txt" />
     <Content Include="Documentation\Studies\Parser rules ordering .txt" />
     <Content Include="Documentation\Studies\Specific syntax - REMARKS.txt" />
+    <Content Include="Documentation\Studies\TypeCobolStats_counters.txt" />
+    <Content Include="Documentation\Studies\TypeCobolStats_modelForCopy.txt" />
+    <Content Include="Documentation\Studies\TypeCobolStats_modelForProgram.txt" />
+    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Copy.txt" />
+    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Program.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">

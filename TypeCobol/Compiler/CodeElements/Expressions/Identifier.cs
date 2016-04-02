@@ -100,28 +100,27 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class QualifiedName
-    {
-        public Symbol Symbol { get; private set; }
-        public IList<DataName> DataNames { get; private set; }
-        public FileName FileName { get; private set; }
+	public class QualifiedName {
+		public Symbol Symbol { get; private set; }
+		public IList<DataName> DataNames { get; private set; }
+		public FileName FileName { get; private set; }
+		public bool IsExplicit { get; private set; }
 
-        public QualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null)
-        {
-            this.Symbol = symbol;
-            this.DataNames = datanames != null ? datanames : new List<DataName>();
-            this.FileName = filename;
-        }
+		public QualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null, bool isExplicit = false) {
+			this.Symbol = symbol;
+			this.DataNames = datanames != null ? datanames : new List<DataName>();
+			this.FileName = filename;
+			this.IsExplicit = isExplicit;
+		}
 
-        public override string ToString()
-        {
-            var str = new StringBuilder();
-            if (this.FileName != null) str.Append(this.FileName).Append('.');
-            foreach (var dataname in this.DataNames) str.Append(dataname).Append('.');
-            str.Append(this.Symbol.Name);
-            return str.ToString();
-        }
-    }
+		public override string ToString() {
+			var str = new StringBuilder();
+			if (this.FileName != null) str.Append(this.FileName).Append('.');
+			foreach (var dataname in this.DataNames) str.Append(dataname).Append('.');
+			str.Append(this.Symbol.Name);
+			return str.ToString();
+		}
+	}
 
     public class QualifiedProcedureName
     {

@@ -1,30 +1,22 @@
 grammar TypeCobolCodeElements;
 
-import CobolCodeElements;
+import Cobol2002CodeElements;
 
 // --- Starting rule ---
 cobolCodeElements: codeElement* EOF;
 
-// --- Custom rules ---
+qualifiedDataName:                                    ((dataNameReferenceOrFileNameReference                                     ColonSeparator ColonSeparator)* dataNameReference)                                                                                    | legacyQualifiedDataName;
+qualifiedDataNameOrIndexName:                         ((dataNameReferenceOrFileNameReference                                     ColonSeparator ColonSeparator)* dataNameReferenceOrIndexNameReference)                                                                | legacyQualifiedDataNameOrIndexName;
+qualifiedConditionName:                               ((dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference)                                          | legacyQualifiedConditionName;
+qualifiedDataNameOrQualifiedConditionName:            ((dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference)                       | legacyQualifiedDataNameOrConditionName;
+qualifiedDataNameOrQualifiedConditionNameOrIndexName: ((dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference)   | legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName;
+qualifiedDataNameOrQualifiedConditionNameOrFileName:  ((dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference)    | legacyQualifiedDataNameOrQualifiedConditionNameOrFileName;
+qualifiedDataNameOrQualifiedConditionNameOrClassName: ((dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference)   | legacyQualifiedDataNameOrQualifiedConditionNameOrClassName;
 
-dataDescriptionEntry:
-	levelNumber (dataName | FILLER)?
-	  renamesClause?
-	  redefinesClause?
-	( pictureClause
-	| blankWhenZeroClause
-	| externalClause
-	| globalClause
-	| justifiedClause
-	| groupUsageClause
-	| occursClause
-	| signClause
-	| synchronizedClause
-	| usageClause
-	| valueClause
-	| tcExtTypedefClause
-	| tcExtTypeClause
-	)* PeriodSeparator;
-
-tcExtTypedefClause: TYPEDEF STRONG?;
-tcExtTypeClause:    TYPE UserDefinedWord;
+legacyQualifiedDataName:                                    dataNameReference                                                                                  ((IN | OF) dataNameReferenceOrFileNameReference)*;
+legacyQualifiedDataNameOrIndexName:                         dataNameReferenceOrIndexNameReference                                                              ((IN | OF) dataNameReferenceOrFileNameReference)*;
+legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+legacyQualifiedDataNameOrConditionName:                     dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference                     ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+legacyQualifiedDataNameOrQualifiedConditionNameOrFileName:  dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference  ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+legacyQualifiedDataNameOrQualifiedConditionNameOrClassName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;

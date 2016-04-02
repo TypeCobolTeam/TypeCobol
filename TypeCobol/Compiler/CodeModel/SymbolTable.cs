@@ -90,12 +90,59 @@ namespace TypeCobol.Compiler.CodeModel
 		internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
 			IList<DataDescriptionEntry> found = Get(name.Symbol.Name);
 			int max = name.DataNames.Count;
-			for(int c=0; c<max; c++) {
-				string pname = name.DataNames[max-c-1].Name;
-				found = Filter(found, pname, c+1);
+			if (name.IsExplicit) {
+				for(int c=0; c<max; c++) {
+					string pname = name.DataNames[max-c-1].Name;
+					found = Filter(found, pname, c+1);
+				}
+			} else {
+				var matches = new List<DataDescriptionEntry>();
+				foreach(var entry in found) {
+					int c=0, generation=0;
+					bool okay = true;
+					while (okay && c<max) {
+						string pname = name.DataNames[max-c-1].Name;
+						c++;
+						generation++;
+						okay = Filter(entry, pname, ref generation);
+					}
+					if (okay) matches.Add(entry);
+				}
+				found = matches;
 			}
 			return found;
 		}
+		/// <summary>
+		/// Attempts to find in a data description entry top level items a parent with a specific name.
+		/// The <see cref="generation"/> parameter indicates a "generation" where to begin the search:
+		/// <code>1</code> for <code>entry.TopLevel</code>, <code>2</code> for <code>entry.TopLevel.TopLevel</code> and so on.
+		/// If the appropriate item name is not found at the given <see cref="generation"/>, the method will run
+		/// up the tree until it finds:
+		///  - either a <code>null</code> top level item: in that case, the method returns <code>false</code>
+		///  - either an appropriately named top level item: in that case, the method returns <code>true</code>
+		///    and increases <see cref="generation"/> to the "generation" of the approprietaly named top level item.
+		/// </summary>
+		/// <param name="entry">Data description entry being searched</param>
+		/// <param name="pname">Top level item name being searched for</param>
+		/// <param name="generation">"Generation" where to begin the search</param>
+		/// <returns><code>true</code> if an appropriately named top level item was found.</returns>
+		private bool Filter(DataDescriptionEntry entry, string pname, ref int generation) {
+			var parent = entry.GetAncestor(generation);
+			while(parent != null) {
+				if (parent.Name.Name.Equals(pname)) return true;
+				parent = parent.TopLevel;
+				generation++;
+			}
+			return false;
+		}
+		/// <summary>
+		/// Filters out of a list of data descriptions entries all elements
+		/// with parent element named differently than what is expected.
+		/// </summary>
+		/// <param name="values">List of entries to filter</param>
+		/// <param name="pname">Expected parent name</param>
+		/// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
+		/// <returns>Filtered list</returns>
 		private IList<DataDescriptionEntry> Filter(IList<DataDescriptionEntry> values, string pname, int generation) {
 			var filtered = new List<DataDescriptionEntry>();
 			foreach(var entry in values) {

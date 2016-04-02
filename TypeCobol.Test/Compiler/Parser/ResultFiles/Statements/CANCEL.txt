@@ -1,6 +1,5 @@
 ﻿--- Diagnostics ---
-[1,6]<27,Error,Syntax>Syntax error : CANCEL: <literal> must be alphanumeric (RuleStack=codeElement>cancelStatement, OffendingSymbol=[1,6:CANCEL]<CANCEL> on line 4)
-[1,6]<27,Error,Syntax>Syntax error : CANCEL: <literal> must be alphanumeric (RuleStack=codeElement>cancelStatement, OffendingSymbol=[1,6:CANCEL]<CANCEL> on line 4)
+[8,9]<27,Error,Syntax>Syntax error : no viable alternative at input '42' (RuleStack=codeElement>cancelStatement, OffendingSymbol=[8,9:42]<IntegerLiteral>{42} on line 4)
 --- Code Elements ---
 [[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [8,8:x]<UserDefinedWord>
 
