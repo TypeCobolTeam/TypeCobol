@@ -9,8 +9,9 @@ namespace TypeCobol.Server
 
 		class Config {
 			public TypeCobol.Compiler.DocumentFormat Format = null;
-			public new List<string> InputFiles  = new List<string>();
-			public new List<string> OutputFiles = new List<string>();
+			public bool Codegen = false;
+			public List<string> InputFiles  = new List<string>();
+			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
 			public bool IsErrorXML {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
@@ -36,6 +37,7 @@ namespace TypeCobol.Server
 				{ "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", (string v) => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", (string v) => config.OutputFiles.Add(v) },
+				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\", \"zos\", or \"utf8\". "
@@ -59,7 +61,7 @@ namespace TypeCobol.Server
 			}
 			if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 				return exit(2, "The number of output files must be equal to the number of input files.");
-			if (config.OutputFiles.Count == 0)
+			if (config.OutputFiles.Count == 0 && config.Codegen)
 				foreach(var path in config.InputFiles) config.OutputFiles.Add(path+".cee");
 
 			if (args.Count > 0) pipename = args[0];
@@ -104,9 +106,11 @@ namespace TypeCobol.Server
 					writer.AddErrors(path, converter.GetDiagnostics(e));
 				}
 
-				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
-				var stream = new StreamWriter(config.OutputFiles[c]);
-				codegen.WriteCobol(stream);
+				if (config.Codegen) {
+					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
+					var stream = new StreamWriter(config.OutputFiles[c]);
+					codegen.WriteCobol(stream);
+				}
 			}
 			writer.Write();
 			writer.Flush();
