@@ -33,6 +33,16 @@ namespace TypeCobol.Compiler.Parser
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
+		public SymbolTable CustomSymbols {
+			private get { throw new System.InvalidOperationException(); }
+			set {
+				if (value != null)
+					foreach(var type in value.CustomTypes.Values)
+						TableOfExternals.RegisterCustomType(type);
+System.Console.Error.WriteLine("ProgramClassBuilder: "+(TableOfExternals != null ? TableOfExternals.CustomTypes.Count.ToString() : "?")+" types loaded.");
+			}
+		}
+
         public ProgramDispatcher Dispatcher { get; internal set; }
 
 		private void _add(Node node) {
@@ -675,5 +685,5 @@ namespace TypeCobol.Compiler.Parser
                 (CodeElement)AsCodeElement(context.ExecStatement()) ??
                 null;
         }
-    }
+	}
 }

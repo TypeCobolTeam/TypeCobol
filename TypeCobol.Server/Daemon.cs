@@ -96,10 +96,8 @@ namespace TypeCobol.Server
 			writer.Outputs = config.OutputFiles;
 
 			var parser = new Parser("TypeCobol.Server");
-			var table = loadCopies(config.Copies);
-w.WriteLine(table.CustomTypes.Count+" types loaded.");
-foreach(var type in table.CustomTypes.Values) w.WriteLine(type.Name+"{"+type.Subordinates.Count+"}");
-w.WriteLine("TODO: make them usable.");
+			parser.CustomSymbols = loadCopies(config.Copies);
+
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
 				parser.Init(path, config.Format);

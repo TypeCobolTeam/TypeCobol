@@ -27,6 +27,9 @@ namespace TypeCobol.Compiler
         /// </summary>
         public TypeCobolOptions CompilerOptions { get; private set; }
 
+		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
+		public CodeModel.SymbolTable CustomSymbols = null;
+
         /// <summary>
         /// The build system implements an efficient way to retrieve ProcessedTokensDocuments
         /// for all COPY compiler directives

@@ -32,7 +32,7 @@ namespace TypeCobol.Test.Compiler.Pipeline
             CompilationProject project = new CompilationProject("test",
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), false);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
             
             // Execute a first (complete) compilation
             compiler.CompileOnce();
