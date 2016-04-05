@@ -36,10 +36,13 @@ namespace TypeCobol.Compiler.Parser
 		public SymbolTable CustomSymbols {
 			private get { throw new System.InvalidOperationException(); }
 			set {
-				if (value != null)
+				if (value != null) {
+					foreach(var values in value.DataEntries.Values)
+						foreach(var data in values)
+							TableOfExternals.Add(data);
 					foreach(var type in value.CustomTypes.Values)
 						TableOfExternals.RegisterCustomType(type);
-System.Console.Error.WriteLine("ProgramClassBuilder: "+(TableOfExternals != null ? TableOfExternals.CustomTypes.Count.ToString() : "?")+" types loaded.");
+				}
 			}
 		}
 
