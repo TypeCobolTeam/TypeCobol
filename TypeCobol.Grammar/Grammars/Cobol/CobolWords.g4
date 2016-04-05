@@ -1,26 +1,22 @@
 // IBM Enterprise Cobol 5.1 for zOS
 
-// -----------------------------------------------------------------------
-// Common parts of the Cobol grammar used by the Cobol compiler directives
-// and by the Cobol code elements (imported by CobolCompilerDirectives.g4 
-// and by CobolCodeElements.g4) : tokens, token families and literals.
-// -----------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// List of all Cobol Token types and Token families produced by the Scanner
+// ------------------------------------------------------------------------
 
-grammar CobolBase;
+grammar CobolWords;
 
-// Note : the complete specifications of the COBOL TEXT FORMAT :
-//   1. Encoding, 2. Reference format, 3. Tokenizing
-// are reproduced in the comments at the end of this grammar file.
-
-// --- COBOL TOKEN TYPES ---
+// --- Cobol Token types ---
 
 // The token types are recognized by the Scanner before the parsing step.
 // All token types names start with a capital letter.
+// => see the complete documentation of the Cobol text format and the tokenizing process 
+//    in the comments below, at the end of this file.
 
 // The grammar rules defined in the Parser match sequences of theses token types.
 // All grammar rule names start with a lower case letter.
 
-// IMPORTANT : HOW TO INSERT, REMOVE, or REORDER a TOKEN TYPE in the list of tokens ?
+// IMPORTANT : HOW TO INSERT, REMOVE, or REORDER a TOKEN TYPE in the list of tokens below ?
 
 // 1. The token types list below is GENERATED from the following Excel table :
 // -> TypeCobol.Grammar/Grammars/Cobol/TokenTypes.xlsx
@@ -38,6 +34,9 @@ grammar CobolBase;
 // . update the total number of token types
 // . map new token types to token families
 // . register the character strings corresponding to each new token type (for keywords only)
+
+// 4. Each time you	add a token type, you must update the token families defined below in this grammar file : 
+// -> figurativeConstant, specialRegister, literalOrUserDefinedWordOReservedWordExceptCopy
 
 tokens 
 { 
@@ -510,11 +509,11 @@ tokens
     YYYYMMDD,
 // [TYPECOBOL]
 	TYPEDEF,
-	STRONG,
+	STRONG
 // [/TYPECOBOL]
 }
 
-// --- COBOL TOKEN FAMILIES ---
+// --- Cobol Token families ---
 
 // - 1. Numeric literals -
 
@@ -522,83 +521,488 @@ tokens
 // that contains no sign and no decimal point, except when other rules are included
 // with the description of the format.
 
-//integer : IntegerLiteral;
+// integer: IntegerLiteral;
 
-// p37: Numeric literals can be fixed-point or floating-point numbers.
-// p13: When a numeric literal appears in a syntax
-// diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used.
+// p38: A numeric literal is a character-string whose characters are selected from the digits 0 through 9, a sign character (+ or -), and the decimal point.
+// Numeric literals can be fixed-point or floating-point numbers.
 
-numericLiteral: 
-                  (IntegerLiteral | DecimalLiteral | FloatingPointLiteral | ZERO | ZEROS | ZEROES);
+numericLiteralToken: (IntegerLiteral | DecimalLiteral | FloatingPointLiteral);
+
+// p13: Figurative constants are reserved words that name and refer to specific constant values.
+// p15: When a numeric literal appears in a syntax diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used. 
+
+numericFigurativeConstant: (ZERO | ZEROS | ZEROES);
+
+numericLiteral: numericLiteralToken | numericFigurativeConstant;
+
+// ** Syntax rules for NULL/NULLS **
+// -- Definition
+// p15: NULL, NULLS Represents a value used to indicate that data items defined with USAGE POINTER, USAGE PROCEDURE-POINTER, USAGE FUNCTIONPOINTER, USAGE OBJECT REFERENCE, 
+// or the ADDRESS OF special register do not contain a valid address. NULL can be used only where explicitly allowed in the syntax formats. NULL has the value zero.
+// -- Type of NULL figurative constant
+// p162: Figurative constants (except NULL) have a class and category that depends on the literal or value represented by the figurative constant in the context of its use. 
+// p371: Alphanumeric: includes the following items: â€“ Data items of category alphanumeric â€“ Alphanumeric functions â€“ Alphanumeric literals â€“ The figurative constant ALL alphanumeric-literal and all other figurative constants (except NULL) when used in a context that requires an alphanumeric sending item 
+// -- Allowed usages in data description VALUE clause
+// p233: A VALUE clause for a function-pointer data item can contain only NULL or NULLS.
+// p235: A VALUE clause for an object-reference data item can contain only NULL or NULLS.
+// p235: A VALUE clause for a pointer data item can contain only NULL or NULLS.
+// p236: A VALUE clause for a procedure-pointer data item can contain only NULL or NULLS.
+// p242: VALUE clause - Format 3: NULL value 
+// p242: VALUE IS NULL can be specified only for elementary items described implicitly or explicitly as USAGE POINTER, USAGE PROCEDURE-POINTER, USAGE FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
+// -- Allowed usages in logical relation conditions
+// p268: Format 2: data-pointer relation condition
+// p268: The following table summarizes the permissible comparisons for USAGE POINTER, NULL, and ADDRESS OF. 
+// p269: Format 3: procedure-pointer and function-pointer relation condition
+// p269: Format 4: object-reference relation condition
+// -- Allowed usages in statements
+// p418: Format 5: SET statement for data-pointers
+// p419: NULL, NULLS Sending field. Sets the receiving field to contain the value of an invalid address.
+// p419: The following table shows valid combinations of sending and receiving fields in a format-5 SET statement.
+// p419: Format 6: SET statement for procedure-pointers and function-pointers
+// p421: Format 7: SET statement for object references
+// p421: If the figurative constant NULL is specified, the receiving object-reference-id-1 is set to the NULL value.
+// -- Forbidden usages
+// p306: CALL BY REFERENCE phrase - literal-2 Can be: A figurative constant (except ALL literal or NULL/NULLS)
+// p371: MOVE Statement - Alphanumeric: includes the following items: The figurative constant ALL alphanumeric-literal and all other figurative constants (except NULL)
+// p434: STRING statement - literal-1 or literal-2 can be any figurative constant that does not begin with the word ALL (except NULL).
+// p441: UNSTRING statement - Any figurative constant can be specified except NULL or one that begins with the word ALL. 
+// 
+// ==> NULL/NULLS tokens are referenced explicitely via nullFigurativeConstant in all CodeElements rules where they are allowed, we don't need to include them in the generic figurativeConstant rule
+
+nullFigurativeConstant: NULL | NULLS;
+
 
 // - 2. Alphanumeric literals -
 
 // p33: A literal is a character-string whose value is specified either by the characters of
 // which it is composed or by the use of a figurative constant.
 // p34: The formats of alphanumeric literals are:
-// - Format 1: “Basic alphanumeric literals”
-// - Format 2: “Alphanumeric literals with DBCS characters” on page 35
-// - Format 3: “Hexadecimal notation for alphanumeric literals” on page 36
-// - Format 4: “Null-terminated alphanumeric literals” on page 37
+// - Format 1: â€œBasic alphanumeric literals ?
+// - Format 2: â€œAlphanumeric literals with DBCS characters ? on page 35
+// - Format 3: â€œHexadecimal notation for alphanumeric literals ? on page 36
+// - Format 4: â€œNull-terminated alphanumeric literals ? on page 37
 
-alphanumOrHexadecimalLiteral:
-                                (AlphanumericLiteral |
-                                 HexadecimalAlphanumericLiteral);
+alphanumericLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral);
 
-alphanumericLiteralBase:
-                           (AlphanumericLiteral |
-                            HexadecimalAlphanumericLiteral) |                      
-                            figurativeConstant;
+alphanumericOrNationalLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
+                                     DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
 
-alphanumericOrNationalOrDBCSLiteral: 
-										(AlphanumericLiteral | 
-										 NationalLiteral | 
-										 DBCSLiteral);
+// p13: Figurative constants are reserved words that name and refer to specific constant values.
+// p15: The singular and plural forms of NULL, ZERO, SPACE, HIGH-VALUE, LOW-VALUE, and QUOTE can be used interchangeably.
+// When the rules of COBOL permit any one spelling of a figurative constant name, any alternative spelling of that figurative constant name can be specified.
+// symbolic-character Represents one or more of the characters specified as a value of the symbolic-character in the SYMBOLIC CHARACTERS clause of the SPECIAL-NAMES paragraph.
+// You can use a figurative constant wherever literal appears in a syntax diagram, except where explicitly prohibited.
+// Figurative constants are not allowed as function arguments except in an arithmetic expression, where the expression is an argument to a function.
+// The length of a figurative constant depends on the context of its use. 
+// The following rules apply:
+// - When a figurative constant is specified in a VALUE clause or associated with a data item (for example, when it is moved to or compared with another item), 
+//   the length of the figurative constant character-string is equal to 1 or the number of character positions in the associated data item, whichever is greater.
+// - When a figurative constant, other than the ALL literal, is not associated with another data item (for example, in a CALL, INVOKE, STOP, STRING, or UNSTRING statement), 
+//   the length of the character-string is one character.
 
-alphanumOrNationalLiteralBase:
-                                (AlphanumericLiteral |
-                                 HexadecimalAlphanumericLiteral |                      
-                                 NationalLiteral |
-                                 HexadecimalNationalLiteral |
-                                 DBCSLiteral) |
-                                 figurativeConstant;
+figurativeConstant: (HIGH_VALUE | HIGH_VALUES |
+                     LOW_VALUE  | LOW_VALUES |
+                     QUOTE | QUOTES |
+                     SPACE | SPACES |
+                     ZERO  | ZEROS  | ZEROES) |
+                     symbolicCharacterReference;
 
-// p13: You can use a figurative constant wherever literal appears in a syntax diagram,
-// except where explicitly prohibited.
+// p33: A literal is a character-string whose value is specified either by the characters of which it is composed or by the use of a figurative constant
 
-figurativeConstant:
-	(HIGH_VALUE | HIGH_VALUES |
-	LOW_VALUE  | LOW_VALUES |
-	NULL  | NULLS |
-	QUOTE | QUOTES |
-	SPACE | SPACES |
-	ZERO  | ZEROS  | ZEROES |
-	symbolicCharacterReference);
+alphanumericLiteral: alphanumericLiteralToken | figurativeConstant;
 
-symbolicCharacterReference : SymbolicCharacter;
-
-// p13: ALL literal
-// literal can be an alphanumeric literal, a DBCS literal, a national literal, or a
-// figurative constant other than the ALL literal.
-// p37: null-terminated literals are not supported in ALL literal figurative constants.
-
-alphanumericLiteral:
-           alphanumericLiteralBase |
-           NullTerminatedAlphanumericLiteral |
-           (ALL alphanumericLiteralBase);
-
-alphanumOrNationalLiteral:
-           alphanumOrNationalLiteralBase |
-           NullTerminatedAlphanumericLiteral |
-           (ALL alphanumOrNationalLiteralBase);
+alphanumericOrNationalLiteral: alphanumericOrNationalLiteralToken | figurativeConstant;
 
 // p534: literal
 // Can be numeric, alphanumeric, DBCS, or national.
 
-literal:
-           alphanumOrNationalLiteral | numericLiteral;
+literal: alphanumericOrNationalLiteral | numericLiteral;
 
-// - 3. Special registers -
+// ** Syntax rules for ALL literal **
+// -- Definition
+// p15: ALL literal - literal can be an alphanumeric literal, a DBCS literal, a national literal, or a figurative constant other than the ALL literal.
+// When literal is not a figurative constant, ALL literal represents one or more occurrences of the string of characters that compose the literal. 
+// When literal is a figurative constant, the word ALL has no meaning and is used only for readability. 
+// p37: null-terminated literals are not supported in ALL literal figurative constants
+// -- Allowed usages in data description VALUE clause
+// p207: Alphanumeric items / Alphanumeric-edited items - USAGE DISPLAY - associated VALUE clause must specify an alphanumeric literal or one of the following figurative constants: ALL alphanumeric-literal
+// p207: DBCS items - associated VALUE clause must contain a DBCS literal, the figurative constant SPACE, or the figurative constant ALL DBCS-literal.  
+// p208: National items / National-edited items - associated VALUE clause must specify an alphanumeric literal, a national literal, or one of the following figurative constants: ALL alphanumeric-literal v ALL national-literal 
+// p239: If the VALUE clause is specified at the group level for a national group, the literal can be an alphanumeric literal, a national literal, or one of the figurative constants ZERO, SPACE, QUOTES, HIGH-VALUE, LOW-VALUE, symbolic character, ALL national-literal, or ALL -literal. 
+// p239: A VALUE clause associated with a DBCS item must contain a DBCS literal, the figurative constant SPACE, or the figurative constant ALL DBCS-literal.
+// p240: Format 2: condition-name value - If the associated conditional variable is of class DBCS, literal-1 and literal-2 must be DBCS literals. The figurative constant SPACE or the figurative constant ALL DBCS-literal can be specified. 
+// p240: Format 2: condition-name value - If the associated conditional variable is of class national, literal-1 and literal-2 must be either both national literals or both alphanumeric literals for a given condition-name. The figurative constants ZERO, SPACE, QUOTE, HIGH-VALUE, LOW-VALUE, symbolic-character, ALL national-literal, or ALL literal can be specified. 
+// -- Allowed usages in logical relation conditions
+// p263: Format 1: general relation condition - Comparisons involving figurative constant - ALL alphanumeric literal / ALL national literal / ALL DBCS literal
+// -- Allowed usages in statements
+// p371: MOVE Statement - Alphanumeric: includes the following items: The figurative constant ALL alphanumeric-literal and all other figurative constants (except NULL)
+// p371: MOVE Statement - DBCS: includes data items of category DBCS, DBCS literals, and the figurative constant ALL DBCS-literal
+// p371: MOVE Statement - National: includes the following items: Figurative constants ZERO, SPACE, QUOTE, and ALL national-literal when used in a context that requires a national sending item 
+// p373: If the receiving item is numeric and the sending field is an alphanumeric literal, a national literal, or an ALL literal, all characters of the literal must be numeric characters. 
+// -- Forbidden usages
+// p238: If the VALUE clause is specified at the group level for an alphanumeric group, the literal must be an alphanumeric literal or a figurative constant as specified in â€œFigurative constantsï¿½? on page 13, other than ALL national-literal. 
+// p15: The figurative constant ALL literal must not be used with the CALL, INSPECT, INVOKE, STOP, or STRING statements. 
+// p306: CALL BY REFERENCE phrase - literal-2 Can be: A figurative constant (except ALL literal or NULL/NULLS)
+// p306: CALL BY CONTENT phrase - literal-2 Can be a figurative constant (except ALL literal or NULL/NULLS) 
+// p349: INSPECT statement with CONVERTING phrase - When identifier-1 is of usage DISPLAY or NATIONAL, literals can be any figurative constant that does not begin with the word ALL
+// p432: STOP statement - literal can be any figurative constant except ALL literal.
+// p433: STRING statement - literal-1 or literal-2can be any figurative constant that does not begin with the word ALL (except NULL). 
+// p441: UNSTRING statement - literal-1 or literal-2 must not be a figurative constant that begins with the word ALL. 
+// 
+// ==> ALL literal figurative constant is referenced explicitely via allFigurativeConstant in all CodeElements rules where it is allowed, we don't need to include it in the generic literal rules
+
+allFigurativeConstant: ALL (figurativeConstant | notNullTerminatedAlphanumericOrNationalLiteral);
+
+notNullTerminatedAlphanumericOrNationalLiteral: (AlphanumericLiteral | HexadecimalAlphanumericLiteral |
+                                                 DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
+
+
+// - 3. Symbols -
+
+// ** Code structure **
+
+// p85 : program-name can be specified either as a user-defined word or in an alphanumeric literal. 
+//       program-name cannot be a figurative constant. 
+//       Either way, program-name must follow the rules for forming program-names. 
+//       Any lowercase letters in the literal are folded to uppercase.
+
+// p101 : program-name
+// A user-defined word or alphanumeric literal, but not a figurative constant,
+// that identifies your program. It must follow the following rules of
+// formation, depending on the setting of the PGMNAME compiler option:
+// PGMNAME(COMPAT)
+// The name can be up to 30 characters in length.
+// Only the hyphen, underscore, digits 0-9, and alphabetic characters
+// are allowed in the name when it is specified as a user-defined
+// word.
+// At least one character must be alphabetic.
+// The hyphen cannot be the first or last character.
+// If program-name is an alphanumeric literal, the rules for the name
+// are the same except that the extension characters $, #, and @ can be
+// included in the name of the outermost program and the
+// underscore can be the first character.
+// PGMNAME (LONGUPPER)
+// If program-name is a user-defined word, it can be up to 30
+// characters in length.
+// If program-name is an alphanumeric literal, the literal can be up to
+// 160 characters in length. The literal cannot be a figurative constant.
+// Only the hyphen, underscore, digits 0-9, and alphabetic characters
+// are allowed in the name when the name is specified as a
+// user-defined word.
+// At least one character must be alphabetic.
+// The hyphen cannot be the first or last character.
+// If program-name is an alphanumeric literal, the underscore character
+// can be the first character.
+// External program-names are processed with alphabetic characters
+// folded to uppercase.
+// PGMNAME (LONGMIXED)
+// program-name must be specified as an alphnumeric literal, which
+// can be up to 160 characters in length. The literal cannot be a
+// figurative constant.
+// program-name can consist of any character in the range X'41' to
+// X'FE'.
+
+// p86 : The program-name of a program is specified in the PROGRAM-ID paragraph of the program's IDENTIFICATION DIVISION. 
+//       A program-name can be referenced only by the CALL statement, the CANCEL statement, the SET statement, or the END PROGRAM marker.
+
+// p86 : A separately compiled program and all of its directly and indirectly contained programs 
+//       must have unique program-names within that separately compiled program.
+
+// p86 : The following rules define the scope of a program-name:
+// - If the program-name is that of a program that does not possess the COMMON
+//   attribute and that program is directly contained within another program, that
+//   program-name can be referenced only by statements included in that containing program.
+// - If the program-name is that of a program that does possess the COMMON
+//   attribute and that program is directly contained within another program, that
+//   program-name can be referenced only by statements included in the containing
+//   program and any programs directly or indirectly contained within that
+//   containing program, except that program possessing the COMMON attribute
+//   and any programs contained within it.
+// - If the program-name is that of a program that is separately compiled, that
+//   program-name can be referenced by statements included in any other program
+//   in the run unit, except programs it directly or indirectly contains.
+// The mechanism used to determine which program to call is as follows:
+// - If one of two programs that have the same name as that specified in the CALL
+//   statement is directly contained within the program that includes the CALL
+//   statement, that program is called.
+// - If one of two programs that have the same name as that specified in the CALL
+//   statement possesses the COMMON attribute and is directly contained within
+//   another program that directly or indirectly contains the program that includes
+//   the CALL statement, that common program is called unless the calling program
+//   is contained within that common program.
+// - Otherwise, the separately compiled program is called.
+
+programNameDefinition: UserDefinedWord | alphanumericLiteralToken;
+
+programNameReference1: alphanumericLiteralToken;
+
+programNameReference2: UserDefinedWord | alphanumericLiteralToken;
+
+// p330: ENTRY statement
+// literal-1 
+// Must be an alphanumeric literal that conform to the rules for the formation of a program-name in an outermost program (see â€œPROGRAM-ID paragraphâ€ on page 100). 
+// Must not match the program-ID or any other ENTRY literal in this program. 
+// Must not be a figurative constant.
+
+programEntryDefinition: alphanumericLiteralToken;
+
+// [Type ambiguity] at this parsing stage
+programNameReferenceOrProgramEntryReference: alphanumericLiteralToken;
+
+// p252: Section-name
+// A user-defined word that identifies a section. A referenced
+// section-name, because it cannot be qualified, must be unique
+// within the program in which it is defined.
+
+sectionNameDefinition: UserDefinedWord;
+
+sectionNameReference: UserDefinedWord;
+
+// p253: Paragraph-name
+// A user-defined word that identifies a paragraph. A
+// paragraph-name, because it can be qualified, need not be unique.
+// If there are no declaratives (format 2), a paragraph-name is not
+// required in the PROCEDURE DIVISION.
+
+paragraphNameDefinition: UserDefinedWord;
+
+paragraphNameReference: UserDefinedWord;
+
+// [Type ambiguity] at this parsing stage
+paragraphNameReferenceOrSectionNameReference: UserDefinedWord;
+
+qualifiedParagraphNameReference: paragraphNameReference (IN | OF) sectionNameReference;
+
+// p103 : class-name
+// A user-defined word that identifies the class. class-name can optionally
+// have an entry in the REPOSITORY paragraph of the configuration section
+// of the class definition.
+
+// p103 : class-name-1 and class-name-2 must conform to the normal rules of formation for a
+// COBOL user-defined word, using single-byte characters.
+// See â€œREPOSITORY paragraphâ€ on page 121 for details on specifying a class-name
+// that is part of a Java package or for using non-COBOL naming conventions for
+// class-names.
+
+classNameDefinition: UserDefinedWord;
+
+classNameReference: UserDefinedWord;
+
+// p122: external-class-name-1
+// An alphanumeric literal containing a name that enables a COBOL program
+// to define or access classes with class-names that are defined using Java
+// rules of formation.
+// The name must conform to the rules of formation for a fully qualified Java
+// class-name. If the class is part of a Java package, external-class-name-1 must
+// specify the fully qualified name of the package, followed by a period,
+// followed by the simple name of the Java class.
+// See Java Language Specification, Third Edition, by Gosling et al., for Java
+// class-name formation rules.
+
+classNameDefOrRef: UserDefinedWord;
+
+externalClassNameDefOrRef: alphanumericLiteralToken;
+
+// p104 : method-name
+// An alphanumeric literal or national literal that contains the name of the
+// method. The name must conform to the rules of formation for a Java
+// method name. Method names are used directly, without translation. The
+// method name is processed in a case-sensitive manner.
+
+methodNameDefinition: alphanumericOrNationalLiteralToken;
+
+methodNameReference: alphanumericOrNationalLiteralToken;
+
+// ** Environment vars **
+
+// p115 : mnemonic-name-1 , mnemonic-name-2
+// mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
+// user-defined names. 
+
+// p115 : Mnemonic-names and environment-names need not be unique. If you
+// choose a mnemonic-name that is also an environment-name, its definition
+// as a mnemonic-name will take precedence over its definition as an
+// environment-name.
+
+// mnemonic-name-1 can be used in ACCEPT, DISPLAY, and WRITE statements. 
+// mnemonic-name-2 can be referenced only in the SET statement. 
+
+mnemonicForEnvironmentNameDefinition: UserDefinedWord;
+
+mnemonicForEnvironmentNameReference: UserDefinedWord;
+
+// [Type ambiguity] at this parsing stage
+mnemonicForEnvironmentNameReferenceOrEnvironmentName: UserDefinedWord;
+
+// p115 : mnemonic-name-1 , mnemonic-name-2
+// mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
+// user-defined names. 
+
+// mnemonic-name-2 can qualify condition-1 or condition-2 names.
+
+mnemonicForUPSISwitchNameDefinition: UserDefinedWord;
+
+mnemonicForUPSISwitchNameReference: UserDefinedWord;
+
+// p115 : upsiSwitchName
+// A 1-byte user-programmable status indicator (UPSI) switch.
+// - condition on UPSI switch status
+
+conditionForUPSISwitchNameDefinition: UserDefinedWord;
+
+// ** Character sets **
+
+// p117 : symbolic-character-1 is a user-defined word and must contain at least one
+// alphabetic character. The same symbolic-character can appear only once in
+// a SYMBOLIC CHARACTERS clause. The symbolic character can be a
+// DBCS user-defined word.
+// The internal representation of symbolic-character-1 is the internal
+// representation of the character that is represented in the specified character
+// set. The following rules apply:
+// - The relationship between each symbolic-character-1 and the corresponding
+// integer-1 is by their position in the SYMBOLIC CHARACTERS clause.
+// The first symbolic-character-1 is paired with the first integer-1; the second
+// symbolic-character-1 is paired with the second integer-1; and so forth.
+// - There must be a one-to-one correspondence between occurrences of
+// symbolic-character-1 and occurrences of integer-1 in a SYMBOLIC
+// CHARACTERS clause.
+// - If the IN phrase is specified, integer-1 specifies the ordinal position of the
+// character that is represented in the character set named by
+// alphabet-name-2. This ordinal position must exist.
+// - If the IN phrase is not specified, symbolic-character-1 represents the
+// character whose ordinal position in the native character set is specified
+// by integer-1.
+// Ordinal positions are numbered starting from 1.
+
+symbolicCharacterDefinition: SymbolicCharacter;
+
+symbolicCharacterReference: SymbolicCharacter;
+
+// p 115 : ALPHABET alphabet-name-1 IS
+// alphabet-name-1 specifies a collating sequence when used in:
+// - The PROGRAM COLLATING SEQUENCE clause of the object-computer
+// paragraph
+// - The COLLATING SEQUENCE phrase of the SORT or MERGE statement
+// alphabet-name-1 specifies a character code set when used in:
+// - The FD entry CODE-SET clause
+// - The SYMBOLIC CHARACTERS clause
+
+alphabetNameDefinition: UserDefinedWord;
+
+alphabetNameReference: UserDefinedWord | standardCollatingSequence;
+
+// p 115 : STANDARD-1
+// Specifies the ASCII character set.
+// STANDARD-2
+// Specifies the International Reference Version of ISO/IEC 646, 7-bit
+// coded character set for information interchange.
+// NATIVE
+// Specifies the native character code set. If the ALPHABET clause is
+// omitted, EBCDIC is assumed.
+// EBCDIC
+// Specifies the EBCDIC character set.
+
+standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
+
+// p118 : CLASS class-name-1 IS
+// Provides a means for relating a name to the specified set of characters
+// listed in that clause. class-name-1 can be referenced only in a class
+// condition. The characters specified by the values of the literals in this
+// clause define the exclusive set of characters of which this class consists.
+// The class-name in the CLASS clause can be a DBCS user-defined word.
+
+characterClassNameDefinition: UserDefinedWord;
+
+characterClassNameReference: UserDefinedWord;
+
+// ** Data **
+
+// p187: data-name-1
+// Explicitly identifies the data being described.
+// data-name-1, if specified, identifies a data item used in the program.
+// data-name-1 must be the first word following the level-number.
+// The data item can be changed during program execution.
+// data-name-1 must be specified for level-66 and level-88 items. It must also
+// be specified for any entry containing the GLOBAL or EXTERNAL clause,
+// and for record description entries associated with file description entries
+// that have the GLOBAL or EXTERNAL clauses.
+
+dataNameDefinition: UserDefinedWord;
+
+dataNameReference: UserDefinedWord;
+
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrFileNameReference: UserDefinedWord;
+
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: UserDefinedWord;
+
+// p115 : condition-1, condition-2
+// Condition-names follow the rules for user-defined names. At least one
+// character must be alphabetic. The value associated with the
+// condition-name is considered to be alphanumeric. A condition-name can be
+// associated with the on status or off status of each UPSI switch specified.
+// In the PROCEDURE DIVISION, the UPSI switch status is tested through
+// the associated condition-name. Each condition-name is the equivalent of a
+// level-88 item; the associated mnemonic-name, if specified, is considered the
+// conditional variable and can be used for qualification.
+// Condition-names specified in the SPECIAL-NAMES paragraph of a
+// containing program can be referenced in any contained program
+
+conditionNameDefinition: UserDefinedWord;
+
+// [Type ambiguity] at this parsing stage
+conditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
+
+// p194: index-name-1
+// Each index-name specifies an index to be created by the compiler for use
+// by the program. These index-names are not data-names and are not
+// identified elsewhere in the COBOL program; instead, they can be regarded
+// as private special registers for the use of this object program only. They are
+// not data and are not part of any data hierarchy.
+// Unreferenced index names need not be uniquely defined.
+// In one table entry, up to 12 index-names can be specified.
+// If a data item that possesses the global attribute includes a table accessed
+// with an index, that index also possesses the global attribute. Therefore, the
+// scope of an index-name is the same as that of the data-name that names
+// the table in which the index is defined.
+// Indexes specified in an external data record do not possess the external attribute.
+
+// p71: Index-name
+// An index-name identifies an index. An index can be regarded as a private special
+// register that the compiler generates for working with a table. You name an index
+// by specifying the INDEXED BY phrase in the OCCURS clause that defines a table.
+// You can use an index-name in only the following language elements:
+// - SET statements
+// - PERFORM statements
+// - SEARCH statements
+// - Subscripts
+// - Relation conditions
+// An index-name is not the same as the name of an index data item, and an
+// index-name cannot be used like a data-name.
+
+indexNameDefinition: UserDefinedWord;
+
+indexNameReference: UserDefinedWord;
+
+// ** Files **
+
+// p130: file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
+
+fileNameDefinition: UserDefinedWord;
+
+fileNameReference: UserDefinedWord;
+
+// p120: XML-SCHEMA xml-schema-name-1 IS
+// xml-schema-name-1 can be referenced only in an XML PARSE statement.
+// The xml-schema-name in the XML SCHEMA clause can be a DBCS
+// user-defined word.
+
+xmlSchemaNameDefinition: UserDefinedWord;
+
+xmlSchemaNameReference: UserDefinedWord;
 
 // p16: Special registers are reserved words that name storage areas generated by the
 // compiler. Their primary use is to store information produced through specific
@@ -612,11 +1016,319 @@ literal:
 // You can specify an alphanumeric special register in a function wherever an
 // alphanumeric argument to a function is allowed, unless specifically prohibited.
 // If qualification is allowed, special registers can be qualified as necessary to provide
-// uniqueness. (For more information, see “Qualification” on page 65.)
+// uniqueness. (For more information, see â€œQualificationï¿½? on page 65.)
 // ... p17-p33 : more details on all special registers ...
 
-specialRegister : 
-   (DEBUG_CONTENTS |
+specialRegister: (DEBUG_CONTENTS |
+                  DEBUG_ITEM |
+                  DEBUG_LINE |
+                  DEBUG_NAME |
+                  DEBUG_SUB_1 |
+                  DEBUG_SUB_2 |
+                  DEBUG_SUB_3 |
+                  JNIENVPTR |
+                  RETURN_CODE |
+                  SHIFT_IN |
+                  SHIFT_OUT |
+                  SORT_CONTROL |
+                  SORT_CORE_SIZE |
+                  SORT_FILE_SIZE |
+                  SORT_MESSAGE |
+                  SORT_MODE_SIZE |
+                  SORT_RETURN |
+                  TALLY |
+                  WHEN_COMPILED |
+                  XML_CODE |
+                  XML_EVENT |
+                  XML_INFORMATION |
+                  XML_NAMESPACE |
+                  XML_NAMESPACE_PREFIX |
+                  XML_NNAMESPACE |
+                  XML_NNAMESPACE_PREFIX |
+                  XML_NTEXT |
+                  XML_TEXT);
+
+// + LINAGE_COUNTER, ADDRESS OF and LENGTH OF require qualification => they are defined in CobolExpressions.g4
+
+
+// - 4. External names -
+
+// ** Environment vars **
+
+// p114 : environmentName
+// System devices or standard system actions taken by the compiler.
+// Valid specifications for environment-name-1 are shown in the following table.
+//   environmentName : Meaning : Allowed in
+//   SYSIN | SYSIPT : System logical input unit : ACCEPT
+//   SYSOUT | SYSLIST | SYSLST : System logical output unit : DISPLAY
+//   SYSPUNCH | SYSPCH : System punch device : DISPLAY
+//   CONSOLE : Console : ACCEPT and DISPLAY
+//   C01 through C12 : Skip to channel 1 through channel 12, respectively : WRITE ADVANCING
+//   CSP : Suppress spacing : WRITE ADVANCING
+//   S01 through S05 : Pocket select 1 through 5 on punch devices : WRITE ADVANCING
+//   AFP-5A : Advanced Function Printing : WRITE ADVANCING
+
+// SYSIN | SYSIPT | SYSOUT | SYSLIST | SYSLST | SYSPUNCH | SYSPCH | CONSOLE |
+// C01 | C02 | C03 | C04 | C05 | C06 | C07 | C08 | C09 | C10 | C11 | C12 |
+// CSP | S01 | S02 | S03 | S04 | S05 | AFP-5A;
+
+environmentName: UserDefinedWord;
+
+// p115 : upsiSwitchName
+// A 1-byte user-programmable status indicator (UPSI) switch.
+// Valid specifications for environment-name-2 are UPSI-0 through UPSI-7.
+
+// UPSI-0 | UPSI-1 | UPSI-2 | UPSI-3 | UPSI-4 | UPSI-5 | UPSI-6 | UPSI-7;
+
+upsiSwitchName: UserDefinedWord;
+
+// ** Files ***
+
+// * text-name , library-name
+// text-name identifies the copy text. library-name identifies where the copy text
+// exists.
+// - Can be from 1-30 characters in length
+// - Can contain the following characters: Latin uppercase letters A-Z, Latin
+//   lowercase letters a-z, digits 0-9, and hyphen
+// - The first or last character must not be a hyphen
+// - Cannot contain an underscore
+// Neither text-name nor library-name need to be unique within a program.
+// They can be identical to other user-defined words in the program.
+// text-name need not be qualified. If text-name is not qualified, a library-name
+// of SYSLIB is assumed.
+// When compiling from JCL or TSO, only the first eight characters are used
+// as the identifying name. When compiling with the cob2 command and
+// processing COPY text residing in the z/OS UNIX file system, all characters
+// are significant.
+// * literal-1 , literal-2
+// Must be alphanumeric literals. literal-1 identifies the copy text. literal-2
+// identifies where the copy text exists.
+// When compiling from JCL or TSO:
+// - Literals can be from 1-30 characters in length.
+// - Literals can contain characters: A-Z, a-z, 0-9, hyphen, @, #, or $.
+// - The first or last character must not be a hyphen.
+// - Literals cannot contain an underscore.
+// - Only the first eight characters are used as the identifying name.
+// When compiling with the cob2 command and processing COPY text
+// residing in the z/OS UNIX file system, the literal can be from 1 to 160
+// characters in length.
+// The uniqueness of text-name and library-name is determined after the formation and
+// conversion rules for a system-dependent name have been applied.
+// For information about the mapping of characters in the text-name, library-name, and
+// literals, see Compiler-directing statements in the Enterprise COBOL Programming
+// Guide.
+
+textName: UserDefinedWord | alphanumericLiteralToken;
+
+libraryName: UserDefinedWord | alphanumericLiteralToken;
+
+// p130: assignment-name-1 Identifies the external data file. 
+// It can be specified as a name or as an alphanumeric literal. 
+// assignment-name-1 is not the name of a data item, and assignment-name-1 cannot be contained in a data item. 
+// It is just a character string. It cannot contain an underscore character. 
+// Any assignment-name after the first is syntax checked, but has no effect on the execution of the program. 
+// p126: The name component of assignment-name-1 cannot contain an underscore.
+
+// p130: Format: assignment-name for QSAM files
+// label-? S-? name
+// p131: Format: assignment-name for VSAM sequential file
+// label-? AS- name
+// p131: Format: assignment-name for line-sequential, VSAM indexed, or VSAM relative file
+// label-? name
+
+// p132: Assignment name for environment variable
+// The name component of assignment-name-1 is initially treated as a ddname. 
+// If no file has been allocated using this ddname, then name is treated as an environment variable
+
+assignmentName: UserDefinedWord | alphanumericLiteralToken;
+
+// ** Runtime functions **
+
+// NB : Because FunctionNames are not reserved words,
+// and because the exact list of the instrinsic functions, their types and their arguments are more a library matter than a language matter,
+// we do not try to check the validity of the number of arguments, the types of arguments alowed, and the referenceModifier pertinence
+// at the grammar level.                      
+// All these rules will be checked at a later time by looking at an independent table of instrinsic functions.
+
+// p484: Function definitions
+// This section provides an overview of the argument type, function type, and value
+// returned for each of the intrinsic functions.
+
+// ... detailed description of each intrinsic function p484 -> p524 ...
+//Function names
+//	ACOS | ANNUITY | ASIN | ATAN |
+//	CHAR | COS | CURRENT_DATE |
+//	DATE_OF_INTEGER | DATE_TO_YYYYMMDD | DAY_OF_INTEGER | DAY_TO_YYYYDDD |
+//	DISPLAY_OF | FACTORIAL |
+//	INTEGER | INTEGER_OF_DATE | INTEGER_OF_DAY | INTEGER_PART |
+//	LENGTH | LOG | LOG10 | LOWER_CASE |
+//	MAX | MEAN | MEDIAN | MIDRANGE | MIN | MOD |
+//	NATIONAL_OF | NUMVAL | NUMVAL_C |
+//	ORD | ORD_MAX | ORD_MIN |
+//	PRESENT_VALUE |
+//	RANDOM | RANGE | REM | REVERSE |
+//	SIN | SQRT | STANDARD_DEVIATION | SUM |
+//	TAN |
+//	ULENGTH | UPOS | UPPER_CASE | USUBSTR | USUPPLEMENTARY | UVALID | UWIDTH |
+//	VARIANCE |
+//	WHEN_COMPILED |
+//	YEAR_TO_YYYY;
+
+intrinsicFunctionName: (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
+
+// IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf
+// p423: To communicate with DB2, do these steps:
+// Code any SQL statements that you need, delimiting them with EXEC SQL and END-EXEC statements.
+// execStatement: (EXEC | EXECUTE) execTranslatorName  ExecStatementText* END_EXEC;
+
+execTranslatorName : ExecTranslatorName;
+
+
+// - 5. Reserved words -
+
+// This list of reserved words is useful to parse the COPY REPLACING operands
+// -> it must be updated each time a new token type is added above
+
+literalOrUserDefinedWordOReservedWordExceptCopy: (
+	// Separators - Whitespace
+    // => excluded
+    // Comments
+    // => excluded
+    // Separators - Syntax
+    // => excluded
+    // Special character word - Arithmetic operators
+	// => excluded
+    // Special character word - Relational operators
+    // => excluded
+    // Literals - Alphanumeric
+    AlphanumericLiteral |
+    HexadecimalAlphanumericLiteral |
+    NullTerminatedAlphanumericLiteral |
+    NationalLiteral |
+    HexadecimalNationalLiteral |
+    DBCSLiteral |
+    // Literals - Numeric
+    IntegerLiteral |
+    DecimalLiteral |
+    FloatingPointLiteral |
+    // Literals - Syntax tokens
+    // => excluded
+    // Symbols    
+    FunctionName |
+    ExecTranslatorName |
+    PartialCobolWord  |
+    UserDefinedWord |
+    // Keywords - Compiler directive starting tokens
+    ASTERISK_CBL |
+    ASTERISK_CONTROL |
+    BASIS |
+    CBL |
+	// COPY => excluded
+    DELETE_CD |
+    EJECT |
+    ENTER |
+    EXEC_SQL_INCLUDE |
+    INSERT |
+    PROCESS |
+    READY |
+    RESET |
+    REPLACE |
+    SERVICE |
+    SKIP1 |
+    SKIP2 |
+    SKIP3 |
+    TITLE |
+    // Keywords - Code element starting tokens
+    APPLY |
+    CONFIGURATION |
+    ELSE |
+    ENVIRONMENT |
+    FD |
+    FILE_CONTROL |
+    I_O_CONTROL |
+    ID |
+    IDENTIFICATION |
+    INPUT_OUTPUT |
+    LINKAGE |
+    LOCAL_STORAGE |
+    MULTIPLE |
+    OBJECT_COMPUTER |
+    REPOSITORY |
+    RERUN |
+    SAME |
+    SD |
+    SELECT |
+    SOURCE_COMPUTER |
+    SPECIAL_NAMES |
+    USE |
+    WORKING_STORAGE |
+    // Keywords - Statement starting tokens
+    ACCEPT |
+    ADD |
+    ALTER |
+    CALL |
+    CANCEL |
+    CLOSE |
+    COMPUTE |
+    CONTINUE |
+    DELETE |
+    DISPLAY |
+    DIVIDE |
+    ENTRY |
+    EVALUATE |
+    EXEC |
+    EXECUTE |
+    EXIT |
+    GOBACK |
+    GO |
+    IF |
+    INITIALIZE |
+    INSPECT |
+    INVOKE |
+    MERGE |
+    MOVE |
+    MULTIPLY |
+    OPEN |
+    PERFORM |
+    READ |
+    RELEASE |
+    RETURN |
+    REWRITE |
+    SEARCH |
+    SET |
+    SORT |
+    START |
+    STOP |
+    STRING |
+    SUBTRACT |
+    UNSTRING |
+    WRITE |
+    XML |
+    // Keywords - Statement ending tokens
+    END_ADD |
+    END_CALL |
+    END_COMPUTE |
+    END_DELETE |
+    END_DIVIDE |
+    END_EVALUATE |
+    END_EXEC |
+    END_IF |
+    END_INVOKE |
+    END_MULTIPLY |
+    END_PERFORM |
+    END_READ |
+    END_RETURN |
+    END_REWRITE |
+    END_SEARCH |
+    END_START |
+    END_STRING |
+    END_SUBTRACT |
+    END_UNSTRING |
+    END_WRITE |
+    END_XML |
+    // Keywords - Special registers
+    ADDRESS |
+    DEBUG_CONTENTS |
     DEBUG_ITEM |
     DEBUG_LINE |
     DEBUG_NAME |
@@ -624,6 +1336,7 @@ specialRegister :
     DEBUG_SUB_2 |
     DEBUG_SUB_3 |
     JNIENVPTR |
+    LENGTH |
     LINAGE_COUNTER |
     RETURN_CODE |
     SHIFT_IN |
@@ -644,78 +1357,296 @@ specialRegister :
     XML_NNAMESPACE |
     XML_NNAMESPACE_PREFIX |
     XML_NTEXT |
-    XML_TEXT);
-
-// - 4. Reserved words -
-
-// This list of reserved word is useful to parse the COPY REPLACING operands
-// -> it should be updated each time a new keyword token is added
-
-reservedWord:
-                 keyword | figurativeConstant | specialRegister;
-
-keyword:
-// Keywords - Compiler directive starting tokens
-    (ASTERISK_CBL | ASTERISK_CONTROL | BASIS | CBL | COPY | DELETE_CD | EJECT |
-    ENTER | EXEC_SQL_INCLUDE | INSERT | PROCESS | READY | RESET | REPLACE |
-    SERVICE | SKIP1 | SKIP2 | SKIP3 | TITLE |
-    // Keywords - Statement starting tokens
-    ACCEPT | ADD | ALTER | CALL | CANCEL | CLOSE | COMPUTE | CONTINUE |
-    DELETE | DISPLAY | DIVIDE | ENTRY | EVALUATE | EXEC | EXECUTE | EXIT |
-    GOBACK | GO | IF | INITIALIZE | INSPECT | INVOKE | MERGE | MOVE |
-    MULTIPLY | OPEN | PERFORM | READ | RELEASE | RETURN | REWRITE | SEARCH |
-    SET | SORT | START | STOP | STRING | SUBTRACT | UNSTRING | WRITE | XML |
-    // Keywords - Statement ending tokens
-    END_ADD | END_CALL | END_COMPUTE | END_DELETE | END_DIVIDE | END_EVALUATE |
-    END_EXEC | END_IF | END_INVOKE | END_MULTIPLY | END_PERFORM | END_READ |
-    END_RETURN | END_REWRITE | END_SEARCH | END_START | END_STRING |
-    END_SUBTRACT | END_UNSTRING | END_WRITE | END_XML |
+    XML_TEXT |
+    // Keywords - Figurative constants
+    HIGH_VALUE |
+    HIGH_VALUES |
+    LOW_VALUE |
+    LOW_VALUES |
+    NULL |
+    NULLS |
+    QUOTE |
+    QUOTES |
+    SPACE |
+    SPACES |
+    ZERO |
+    ZEROES |
+    ZEROS |
+    SymbolicCharacter |
     // Keywords - Special object identifiers
-    SELF | SUPER |
+    SELF |
+    SUPER |
     // Keywords - Syntax tokens
-    ACCESS | ADVANCING | AFTER | ALL | ALPHABET | ALPHABETIC |
-    ALPHABETIC_LOWER | ALPHABETIC_UPPER | ALPHANUMERIC | ALPHANUMERIC_EDITED |
-    ALSO | ALTERNATE | AND | ANY | APPLY | ARE | AREA | AREAS | ASCENDING |
-    ASSIGN | AT | ATTRIBUTE | ATTRIBUTES | AUTHOR | BEFORE | BEGINNING |
-    BINARY | BLANK | BLOCK | BOTTOM | BY | CHARACTER | CHARACTERS | CLASS |
-    CLASS_ID | COBOL | CODE | CODE_SET | COLLATING | COM_REG | COMMA | COMMON |
-    COMP | COMP_1 | COMP_2 | COMP_3 | COMP_4 | COMP_5 | COMPUTATIONAL |
-    COMPUTATIONAL_1 | COMPUTATIONAL_2 | COMPUTATIONAL_3 | COMPUTATIONAL_4 |
-    COMPUTATIONAL_5 | CONFIGURATION | CONTAINS | CONTENT | CONVERTING |
-    CORR | CORRESPONDING | COUNT | CURRENCY | DATA | DATE | DATE_COMPILED |
-    DATE_WRITTEN | DAY | DAY_OF_WEEK | DBCS | DEBUGGING | DECIMAL_POINT |
-    DECLARATIVES | DELIMITED | DELIMITER | DEPENDING | DESCENDING |
-    DISPLAY_ARG | DISPLAY_1 | DIVISION | DOWN | DUPLICATES | DYNAMIC | EBCDIC |
-    EGCS | ELEMENT | ELSE | ENCODING | END | END_OF_PAGE | ENDING | ENTRY_ARG |
-    ENVIRONMENT | EOP | EQUAL | ERROR | EVERY | EXCEPTION | EXTEND | EXTERNAL |
-    FACTORY | FALSE | FD | FILE | FILE_CONTROL | FILLER | FIRST | FOOTING |
-    FOR | FROM | FUNCTION | FUNCTION_POINTER | GENERATE | GIVING | GLOBAL |
-    GREATER | GROUP_USAGE | I_O | I_O_CONTROL | ID | IDENTIFICATION | IN |
-    INDEX | INDEXED | INHERITS | INITIAL | INPUT | INPUT_OUTPUT | INSTALLATION |
-    INTO | INVALID | IS | JUST | JUSTIFIED | KANJI | KEY | LABEL | LEADING |
-    LEFT | LESS | LINAGE | LINE | LINES | LINKAGE | LOCAL_STORAGE | LOCK |
-    MEMORY | METHOD | METHOD_ID | MODE | MODULES | MORE_LABELS | MULTIPLE |
-    NAME | NAMESPACE | NAMESPACE_PREFIX | NATIONAL | NATIONAL_EDITED | NATIVE |
-    NEGATIVE | NEW | NEXT | NO | NONNUMERIC | NOT | NUMERIC | NUMERIC_EDITED |
-    OBJECT | OBJECT_COMPUTER | OCCURS | OF | OFF | OMITTED | ON | OPTIONAL |
-    OR | ORDER | ORGANIZATION | OTHER | OUTPUT | OVERFLOW | OVERRIDE |
-    PACKED_DECIMAL | PADDING | PAGE | PARSE | PASSWORD | PIC | PICTURE |
-    POINTER | POSITION | POSITIVE | PROCEDURE | PROCEDURE_POINTER |
-    PROCEDURES | PROCEED | PROCESSING | PROGRAM | PROGRAM_ID | RANDOM |
-    RECORD | RECORDING | RECORDS | RECURSIVE | REDEFINES | REEL | REFERENCE |
-    REFERENCES | RELATIVE | RELOAD | REMAINDER | REMOVAL | RENAMES | REPLACING |
-    REPOSITORY | RERUN | RESERVE | RETURNING | REVERSED | REWIND | RIGHT |
-    ROUNDED | RUN | SAME | SD | SECTION | SECURITY | SEGMENT_LIMIT | SELECT |
-    SENTENCE | SEPARATE | SEQUENCE | SEQUENTIAL | SIGN | SIZE | SORT_ARG |
-    SORT_MERGE | SOURCE_COMPUTER | SPECIAL_NAMES | SQL | SQLIMS | STANDARD |
-    STANDARD_1 | STANDARD_2 | STATUS | SUPPRESS | SYMBOL | SYMBOLIC | SYNC |
-    SYNCHRONIZED | TALLYING | TAPE | TEST | THAN | THEN | THROUGH | THRU |
-    TIME | TIMES | TO | TOP | TRACE | TRAILING | TRUE | TYPE | UNBOUNDED |
-    UNIT | UNTIL | UP | UPON | USAGE | USE | USING | VALIDATING | VALUE |
-    VALUES | VARYING | WHEN | WITH | WORDS | WORKING_STORAGE | WRITE_ONLY |
-    XML_DECLARATION | XML_SCHEMA | YYYYDDD | YYYYMMDD |
-	// Keywords - Parts of special registers
-	LENGTH | ADDRESS);
+    ACCESS |
+    ADVANCING |
+    AFTER |
+    ALL |
+    ALPHABET |
+    ALPHABETIC |
+    ALPHABETIC_LOWER |
+    ALPHABETIC_UPPER |
+    ALPHANUMERIC |
+    ALPHANUMERIC_EDITED |
+    ALSO |
+    ALTERNATE |
+    AND |
+    ANY |
+    ARE |
+    AREA |
+    AREAS |
+    ASCENDING |
+    ASSIGN |
+    AT |
+    ATTRIBUTE |
+    ATTRIBUTES |
+    AUTHOR |
+    BEFORE |
+    BEGINNING |
+    BINARY |
+    BLANK |
+    BLOCK |
+    BOTTOM |
+    BY |
+    CHARACTER |
+    CHARACTERS |
+    CLASS |
+    CLASS_ID |
+    COBOL |
+    CODE |
+    CODE_SET |
+    COLLATING |
+    COM_REG |
+    COMMA |
+    COMMON |
+    COMP |
+    COMP_1 |
+    COMP_2 |
+    COMP_3 |
+    COMP_4 |
+    COMP_5 |
+    COMPUTATIONAL |
+    COMPUTATIONAL_1 |
+    COMPUTATIONAL_2 |
+    COMPUTATIONAL_3 |
+    COMPUTATIONAL_4 |
+    COMPUTATIONAL_5 |
+    CONTAINS |
+    CONTENT |
+    CONVERTING |
+    CORR |
+    CORRESPONDING |
+    COUNT |
+    CURRENCY |
+    DATA |
+    DATE |
+    DATE_COMPILED |
+    DATE_WRITTEN |
+    DAY |
+    DAY_OF_WEEK |
+    DBCS |
+    DEBUGGING |
+    DECIMAL_POINT |
+    DECLARATIVES |
+    DELIMITED |
+    DELIMITER |
+    DEPENDING |
+    DESCENDING |
+    DISPLAY_ARG |
+    DISPLAY_1 |
+    DIVISION |
+    DOWN |
+    DUPLICATES |
+    DYNAMIC |
+    EBCDIC |
+    EGCS |
+    ELEMENT |
+    ENCODING |
+    END |
+    END_OF_PAGE |
+    ENDING |
+    ENTRY_ARG |
+    EOP |
+    EQUAL |
+    ERROR |
+    EVERY |
+    EXCEPTION |
+    EXTEND |
+    EXTERNAL |
+    FACTORY |
+    FALSE |
+    FILE |
+    FILLER |
+    FIRST |
+    FOOTING |
+    FOR |
+    FROM |
+    FUNCTION |
+    FUNCTION_POINTER |
+    GENERATE |
+    GIVING |
+    GLOBAL |
+    GREATER |
+    GROUP_USAGE |
+    I_O |
+    IN |
+    INDEX |
+    INDEXED |
+    INHERITS |
+    INITIAL |
+    INPUT |
+    INSTALLATION |
+    INTO |
+    INVALID |
+    IS |
+    JUST |
+    JUSTIFIED |
+    KANJI |
+    KEY |
+    LABEL |
+    LEADING |
+    LEFT |
+    LESS |
+    LINAGE |
+    LINE |
+    LINES |
+    LOCK |
+    MEMORY |
+    METHOD |
+    METHOD_ID |
+    MODE |
+    MODULES |
+    MORE_LABELS |
+    NAME |
+    NAMESPACE |
+    NAMESPACE_PREFIX |
+    NATIONAL |
+    NATIONAL_EDITED |
+    NATIVE |
+    NEGATIVE |
+    NEW |
+    NEXT |
+    NO |
+    NONNUMERIC |
+    NOT |
+    NUMERIC |
+    NUMERIC_EDITED |
+    OBJECT |
+    OCCURS |
+    OF |
+    OFF |
+    OMITTED |
+    ON |
+    OPTIONAL |
+    OR |
+    ORDER |
+    ORGANIZATION |
+    OTHER |
+    OUTPUT |
+    OVERFLOW |
+    OVERRIDE |
+    PACKED_DECIMAL |
+    PADDING |
+    PAGE |
+    PARSE |
+    PASSWORD |
+    PIC |
+    PICTURE |
+    POINTER |
+    POSITION |
+    POSITIVE |
+    PROCEDURE |
+    PROCEDURE_POINTER |
+    PROCEDURES |
+    PROCEED |
+    PROCESSING |
+    PROGRAM |
+    PROGRAM_ID |
+    RANDOM |
+    RECORD |
+    RECORDING |
+    RECORDS |
+    RECURSIVE |
+    REDEFINES |
+    REEL |
+    REFERENCE |
+    REFERENCES |
+    RELATIVE |
+    RELOAD |
+    REMAINDER |
+    REMOVAL |
+    RENAMES |
+    REPLACING |
+    RESERVE |
+    RETURNING |
+    REVERSED |
+    REWIND |
+    RIGHT |
+    ROUNDED |
+    RUN |
+    SECTION |
+    SECURITY |
+    SEGMENT_LIMIT |
+    SENTENCE |
+    SEPARATE |
+    SEQUENCE |
+    SEQUENTIAL |
+    SIGN |
+    SIZE |
+    SORT_ARG |
+    SORT_MERGE |
+    SQL |
+    SQLIMS |
+    STANDARD |
+    STANDARD_1 |
+    STANDARD_2 |
+    STATUS |
+    SUPPRESS |
+    SYMBOL |
+    SYMBOLIC |
+    SYNC |
+    SYNCHRONIZED |
+    TALLYING |
+    TAPE |
+    TEST |
+    THAN |
+    THEN |
+    THROUGH |
+    THRU |
+    TIME |
+    TIMES |
+    TO |
+    TOP |
+    TRACE |
+    TRAILING |
+    TRUE |
+    TYPE |
+    UNBOUNDED |
+    UNIT |
+    UNTIL |
+    UP |
+    UPON |
+    USAGE |
+    USING |
+    VALIDATING |
+    VALUE |
+    VALUES |
+    VARYING |
+    WHEN |
+    WITH |
+    WORDS |
+    WRITE_ONLY |
+    XML_DECLARATION |
+    XML_SCHEMA |
+    YYYYDDD |
+    YYYYMMDD |
+// [TYPECOBOL]
+	TYPEDEF |
+	STRONG
+// [/TYPECOBOL]
+);
+
+
+
 
 // -----------------
 // COBOL TEXT FORMAT
@@ -916,8 +1847,8 @@ keyword:
 // Use the indicator area to specify the continuation of words or alphanumeric literals
 // from the previous line onto the current line, the treatment of text as
 // documentation, and debugging lines.
-// See “Continuation lines” on page 54, “Comment lines” on page 56, and
-// “Debugging lines” on page 57.
+// See â€œContinuation linesï¿½? on page 54, â€œComment linesï¿½? on page 56, and
+// â€œDebugging linesï¿½? on page 57.
 // The indicator area can be used for source listing formatting. A slash (/) placed in
 // the indicator column causes the compiler to start a new page for the source listing,
 // and the corresponding source record to be treated as a comment. The effect can be
@@ -942,7 +1873,7 @@ keyword:
 // DECLARATIVES must begin in Area A and be followed immediately by a
 // separator period; no other text can appear on the same line. After the keywords
 // END DECLARATIVES, no text can appear before the following section header. (See
-// “Declaratives” on page 251.)
+// â€œDeclarativesï¿½? on page 251.)
 
 // p54: Area B
 // Certain items must begin in Area B.
@@ -959,8 +1890,8 @@ keyword:
 // or can be indented to clarify program logic. The output listing is indented only if
 // the input statements are indented. Indentation does not affect the meaning of the
 // program. The programmer can choose the amount of indentation, subject only to
-// the restrictions on the width of Area B. See also Chapter 5, “Sections and
-// paragraphs,” on page 49.
+// the restrictions on the width of Area B. See also Chapter 5, â€œSections and
+// paragraphs,ï¿½? on page 49.
 
 // p56: Area A or Area B
 // Certain items can begin in either Area A or Area B.
@@ -975,7 +1906,7 @@ keyword:
 // ... p56 -> p58: more details ...
 // A level-number that must begin in Area A is a one- or two-digit integer with a
 // value of 01 or 77. A level-number must be followed by a space or a separator
-// period. For more information, see “Level-numbers” on page 186.
+// period. For more information, see â€œLevel-numbersï¿½? on page 186.
 // A level-number that can begin in Area A or B is a one- or two-digit integer with a
 // value of 02 through 49, 66, or 88.
 
@@ -1053,8 +1984,8 @@ keyword:
 // control cards and cause them to be diagnosed as errors.
 // Multiple comment lines are allowed. Each must begin with an asterisk (*) or a
 // slash (/) in the indicator area, or with a floating comment indicator (*>).
-// For more information about floating comment indicators, see “Floating comment
-// indicators (*>).”
+// For more information about floating comment indicators, see â€œFloating comment
+// indicators (*>).ï¿½?
 // An asterisk (*) comment line is printed on the next available line in the output
 // listing. The effect can be dependent on the LINECOUNT compiler option. For
 // information about the LINECOUNT compiler option, see LINECOUNT in the
@@ -1075,7 +2006,7 @@ keyword:
 // OBJECT-COMPUTER paragraph), the DATA DIVISION, and the PROCEDURE
 // DIVISION. If a debugging line contains only spaces in Area A and Area B, it is
 // considered a blank line.
-// See "WITH DEBUGGING MODE" in “SOURCE-COMPUTER paragraph” on page
+// See "WITH DEBUGGING MODE" in â€œSOURCE-COMPUTER paragraphï¿½? on page
 // 110.
 
 // p110: WITH DEBUGGING MODE
@@ -1113,11 +2044,11 @@ keyword:
 // COBOL word, a literal, a PICTURE character-string, or a comment-entry. A
 // character-string is delimited by separators.
 // A separator is a string of contiguous characters used to delimit character strings.
-// Separators are described in detail under Chapter 4, “Separators,” on page 45.
+// Separators are described in detail under Chapter 4, â€œSeparators,ï¿½? on page 45.
 // Character strings and certain separators form text words. A text word is a character
 // or a sequence of contiguous characters (possibly continued across lines) between
 // character positions 8 and 72 inclusive in source text, library text, or pseudo-text.
-// For more information about pseudo-text, see “Pseudo-text” on page 58.
+// For more information about pseudo-text, see â€œPseudo-textï¿½? on page 58.
 
 // p45: A separator is a character or a string of two or more contiguous characters that
 // delimits character-strings.
@@ -1162,23 +2093,23 @@ keyword:
 
 // p46: Alphanumeric Literals 
 //   Quotation marks {"} ... {"}
-//   Apostrophes {’} ... {’}
-//   Null-terminated literal delimiters {Z"} ... {"}, {Z’} ... {’}
-//   DBCS literal delimiters {G"} ... {"}, {G’} ... {’}, {N"} ... {"}, {N’} ... {’}
-//   (-> N" and N’ are DBCS literal delimiters when the NSYMBOL(DBCS) compiler option is in effect)
-//   National literal delimiters {N"} ... {"}, {N’} ... {’}, {NX"} ... {"}, {NX’} ... {’}
+//   Apostrophes {â€™} ... {â€™}
+//   Null-terminated literal delimiters {Z"} ... {"}, {Zâ€™} ... {â€™}
+//   DBCS literal delimiters {G"} ... {"}, {Gâ€™} ... {â€™}, {N"} ... {"}, {Nâ€™} ... {â€™}
+//   (-> N" and Nâ€™ are DBCS literal delimiters when the NSYMBOL(DBCS) compiler option is in effect)
+//   National literal delimiters {N"} ... {"}, {Nâ€™} ... {â€™}, {NX"} ... {"}, {NXâ€™} ... {â€™}
 // The opening delimiter must be immediately preceded by a space or a left parenthesis.
 // The closing delimiter must be immediately followed by a separator 
 // space, comma, semicolon, period, right parenthesis, or pseudo-text delimiter. 
 // Delimiters must appear as balanced pairs.
 // They delimit alphanumeric literals, except when the literal is continued
-// (see “Continuation lines” on page 54).
+// (see â€œContinuation linesï¿½? on page 54).
 
 // p47: Pseudo-text delimiters {b==} ... {==b}
 // An opening pseudo-text delimiter must be immediately preceded by a
 // space. A closing pseudo-text delimiter must be immediately followed by a
 // separator space, comma, semicolon, or period. Pseudo-text delimiters must
-// appear as balanced pairs. They delimit pseudo-text. (See “COPY statement”
+// appear as balanced pairs. They delimit pseudo-text. (See â€œCOPY statementï¿½?
 // on page 530.)
 
 // p47: Any punctuation character included in a PICTURE character-string, a comment
@@ -1280,9 +2211,9 @@ keyword:
 // There are two types of special character words, which are recognized as
 // special characters only when represented in single-byte characters:
 // - Arithmetic operators: + - / * **
-// See “Arithmetic expressions” on page 253.
+// See â€œArithmetic expressionsï¿½? on page 253.
 // - Relational operators: <>=<=>=
-// See “Conditional expressions” on page 256.
+// See â€œConditional expressionsï¿½? on page 256.
 // Special object identifiers
 // COBOL provides two special object identifiers, SELF and SUPER:
 // ... p13 more details on SELF and SUPER ...
@@ -1340,7 +2271,7 @@ keyword:
 // You can specify an alphanumeric special register in a function wherever an
 // alphanumeric argument to a function is allowed, unless specifically prohibited.
 // If qualification is allowed, special registers can be qualified as necessary to provide
-// uniqueness. (For more information, see “Qualification” on page 65.)
+// uniqueness. (For more information, see â€œQualificationï¿½? on page 65.)
 // ... p17-p33 : more details on all special registers ...
 
 // Scope and comparison
@@ -1361,8 +2292,8 @@ keyword:
 // p11: A given user-defined word can belong to only one of these sets, except that a given
 // number can be both a priority-number and a level-number. Each user-defined
 // word within a set must be unique, except for priority-numbers and level-numbers
-// and except as specified in Chapter 8, “Referencing data names, copy libraries, and
-// PROCEDURE DIVISION names,” on page 65.
+// and except as specified in Chapter 8, â€œReferencing data names, copy libraries, and
+// PROCEDURE DIVISION names,ï¿½? on page 65.
 
 // p11: The following types of user-defined words can be referenced by statements and
 // entries in the program in which the user-defined word is declared:
@@ -1393,16 +2324,16 @@ keyword:
 
 // p33: A literal is a character-string whose value is specified either by the characters of
 // which it is composed or by the use of a figurative constant.
-// For more information about figurative constants, see “Figurative constants” on
+// For more information about figurative constants, see â€œFigurative constantsï¿½? on
 // page 13.
 
 // p34: Alphanumeric literals
 // Enterprise COBOL provides several formats of alphanumeric literals.
 // The formats of alphanumeric literals are:
-// - Format 1: “Basic alphanumeric literals”
-// - Format 2: “Alphanumeric literals with DBCS characters” on page 35
-// - Format 3: “Hexadecimal notation for alphanumeric literals” on page 36
-// - Format 4: “Null-terminated alphanumeric literals” on page 37
+// - Format 1: â€œBasic alphanumeric literalsï¿½?
+// - Format 2: â€œAlphanumeric literals with DBCS charactersï¿½? on page 35
+// - Format 3: â€œHexadecimal notation for alphanumeric literalsï¿½? on page 36
+// - Format 4: â€œNull-terminated alphanumeric literalsï¿½? on page 37
 
 // p34: Basic alphanumeric literals
 // Basic alphanumeric literals can contain any character in a single-byte EBCDIC
@@ -1410,19 +2341,19 @@ keyword:
 // The following format is for a basic alphanumeric literal:
 // Format 1: Basic alphanumeric literals
 // "single-byte-characters"
-//’ single-byte-characters’
+//â€™ single-byte-charactersâ€™
 // The enclosing quotation marks or apostrophes are excluded from the literal when
 // the program is compiled.
 // An embedded quotation mark or apostrophe must be represented by a pair of
-// quotation marks ("") or a pair of apostrophes (’’), respectively, when it is the
+// quotation marks ("") or a pair of apostrophes (â€™â€™), respectively, when it is the
 // character used as the opening delimiter. For example:
 // "THIS ISN""T WRONG"
-//’ THIS ISN’’T WRONG’
+//â€™ THIS ISNâ€™â€™T WRONGâ€™
 // The delimiter character used as the opening delimiter for a literal must be used as
 // the closing delimiter for that literal. For example:
-// ’THIS IS RIGHT’
+// â€™THIS IS RIGHTâ€™
 // "THIS IS RIGHT"
-// ’THIS IS WRONG"
+// â€™THIS IS WRONG"
 // You can use apostrophes or quotation marks as the literal delimiters independent
 // of the APOST/QUOTE compiler option.
 // Any punctuation characters included within an alphanumeric literal are part of the
@@ -1430,7 +2361,7 @@ keyword:
 // The maximum length of an alphanumeric literal is 160 bytes. The minimum length
 // is 1 byte.
 // Alphanumeric literals are in the alphanumeric data class and category. (Data
-// classes and categories are described in “Classes and categories of data” on page
+// classes and categories are described in â€œClasses and categories of dataï¿½? on page
 // 162.)
 
 // p35: Alphanumeric literals with DBCS characters
@@ -1442,8 +2373,8 @@ keyword:
 // Alphanumeric literals with DBCS characters have the following format:
 // Format 2: Alphanumeric literals with DBCS characters
 // "mixed-SBCS-and-DBCS-characters"
-// ’mixed-SBCS-and-DBCS-characters’
-// " or ’ The opening and closing delimiter. The closing delimiter must match the
+// â€™mixed-SBCS-and-DBCS-charactersâ€™
+// " or â€™ The opening and closing delimiter. The closing delimiter must match the
 // opening delimiter.
 // mixed-SBCS-and-DBCS-characters
 // Any mix of single-byte and DBCS characters.
@@ -1476,11 +2407,11 @@ keyword:
 // Hexadecimal notation has the following format:
 // Format 3: Hexadecimal notation for alphanumeric literals
 // X"hexadecimal-digits"
-// X’hexadecimal-digits’
-// X" or X’
+// Xâ€™hexadecimal-digitsâ€™
+// X" or Xâ€™
 // The opening delimiter for the hexadecimal notation of an alphanumeric
 // literal.
-// " or ’ The closing delimiter for the hexadecimal notation of an alphanumeric
+// " or â€™ The closing delimiter for the hexadecimal notation of an alphanumeric
 // literal. If a quotation mark is used in the opening delimiter, a quotation
 // mark must be used as the closing delimiter. Similarly, if an apostrophe is
 // used in the opening delimiter, an apostrophe must be used as the closing
@@ -1494,25 +2425,25 @@ keyword:
 // control character (X'0F'). An even number of hexadecimal digits must be specified.
 // The maximum length of a hexadecimal literal is 320 hexadecimal digits.
 // The continuation rules are the same as those for any alphanumeric literal. The
-// opening delimiter (X" or X’) cannot be split across lines.
+// opening delimiter (X" or Xâ€™) cannot be split across lines.
 // The DBCS compiler option has no effect on the processing of hexadecimal notation
 // of alphanumeric literals.
 // An alphanumeric literal in hexadecimal notation has data class and category
 // alphanumeric. Hexadecimal notation for alphanumeric literals can be used
 // anywhere alphanumeric literals can be used.
-// See also “Hexadecimal notation for national literals” on page 41.
+// See also â€œHexadecimal notation for national literalsï¿½? on page 41.
 
 // p37: Null-terminated alphanumeric literals
 // Alphanumeric literals can be null-terminated.
 // The format for null-terminated alphanumeric literals is:
 // Format 4: Null-terminated alphanumeric literals
 // Z"mixed-characters"
-// Z’mixed-characters’
-// Z" or Z’
+// Zâ€™mixed-charactersâ€™
+// Z" or Zâ€™
 // The opening delimiter for a null-terminated alphanumeric literal. Both
-// characters of the opening delimiter (Z" or Z’) must be on the same source
+// characters of the opening delimiter (Z" or Zâ€™) must be on the same source
 // line.
-// " or ’ The closing delimiter for a null-terminated alphanumeric literal.
+// " or â€™ The closing delimiter for a null-terminated alphanumeric literal.
 // If a quotation mark is used in the opening delimiter, a quotation mark
 // must be used as the closing delimiter. Similarly, if an apostrophe is used in
 // the opening delimiter, an apostrophe must be used as the closing delimiter.
@@ -1556,7 +2487,7 @@ keyword:
 // by the user.
 // Numeric literals can be fixed-point or floating-point numbers.
 // Numeric literals are in the numeric data class and category. (Data classes and
-// categories are described under “Classes and categories of data” on page 162.)
+// categories are described under â€œClasses and categories of dataï¿½? on page 162.)
 
 // p38: Rules for floating-point literal values
 // The format and rules for floating-point literals are listed below.
@@ -1575,18 +2506,18 @@ keyword:
 // The formats and rules for DBCS literals are listed in this section.
 // Format for DBCS literals
 // G"<DBCS-characters>"
-// G’<DBCS-characters>’
+// Gâ€™<DBCS-characters>â€™
 // N"<DBCS-characters>"
-// N’<DBCS-characters>’
-// G", G’, N", or N’
+// Nâ€™<DBCS-characters>â€™
+// G", Gâ€™, N", or Nâ€™
 // Opening delimiters.
-// N" and N’ identify a DBCS literal when the NSYMBOL(DBCS) compiler
+// N" and Nâ€™ identify a DBCS literal when the NSYMBOL(DBCS) compiler
 // option is in effect. They identify a national literal when the
 // NSYMBOL(NATIONAL) compiler option is in effect, and the rules
-// specified in “National literals” on page 40 apply.
+// specified in â€œNational literalsï¿½? on page 40 apply.
 // The opening delimiter must be followed immediately by a shift-out control
 // character.
-// For literals with opening delimiter N" or N’, when embedded quotes or
+// For literals with opening delimiter N" or Nâ€™, when embedded quotes or
 // apostrophes are specified as part of DBCS characters in a DBCS literal, a
 // single embedded DBCS quote or apostrophe is represented by two DBCS
 // quotes or apostrophes. If a single embedded DBCS quote or apostrophe is
@@ -1594,7 +2525,7 @@ keyword:
 // DBCS quote or apostrophe will be assumed.
 // < Represents the shift-out control character (X'0E')
 // > Represents the shift-in control character (X'0F')
-// " or ’ The closing delimiter. If a quotation mark is used in the opening delimiter,
+// " or â€™ The closing delimiter. If a quotation mark is used in the opening delimiter,
 // a quotation mark must be used as the closing delimiter. Similarly, if an
 // apostrophe is used in the opening delimiter, an apostrophe must be used
 // as the closing delimiter.
@@ -1617,25 +2548,25 @@ keyword:
 // The format and rules for basic national literals are listed in this section.
 // Format 1: Basic national literals
 // N"character-data"
-// N’character-data’
+// Nâ€™character-dataâ€™
 // When the NSYMBOL(NATIONAL) compiler option is in effect, the opening
-// delimiter N" or N’ identifies a national literal. A national literal is of the class and
+// delimiter N" or Nâ€™ identifies a national literal. A national literal is of the class and
 // category national.
 // When the NSYMBOL(DBCS) compiler option is in effect, the opening delimiter N"
-// or N’ identifies a DBCS literal, and the rules specified in “DBCS literals” on page
+// or Nâ€™ identifies a DBCS literal, and the rules specified in â€œDBCS literalsï¿½? on page
 // 38 apply.
-// N" or N’
+// N" or Nâ€™
 // Opening delimiters. The opening delimiter must be coded as single-byte
 // characters. It cannot be split across lines.
-// " or ’ The closing delimiter. The closing delimiter must be coded as a single-byte
+// " or â€™ The closing delimiter. The closing delimiter must be coded as a single-byte
 // character. If a quotation mark is used in the opening delimiter, it must be
 // used as the closing delimiter. Similarly, if an apostrophe is used in the
 // opening delimiter, it must be used as the closing delimiter.
 // To include the quotation mark or apostrophe used in the opening delimiter
 // in the content of the literal, specify a pair of quotation marks or
 // apostrophes, respectively. Examples:
-// N’This literal’’s content includes an apostrophe’
-// N’This literal includes ", which is not used in the opening delimiter’
+// Nâ€™This literalâ€™â€™s content includes an apostropheâ€™
+// Nâ€™This literal includes ", which is not used in the opening delimiterâ€™
 // N"This literal includes "", which is used in the opening delimiter"
 // character-data
 // The source text representation of the content of the national literal.
@@ -1666,13 +2597,13 @@ keyword:
 // listed in this section.
 // Format 2: Hexadecimal notation for national literals
 // NX"hexadecimal-digits"
-// NX’hexadecimal-digits’
+// NXâ€™hexadecimal-digitsâ€™
 // The hexadecimal notation format of national literals is not affected by the
 // NSYMBOL compiler option.
-// NX" or NX’
+// NX" or NXâ€™
 // Opening delimiters. The opening delimiter must be represented in
 // single-byte characters. It must not be split across lines.
-// " or ’ The closing delimiter. The closing delimiter must be represented as a
+// " or â€™ The closing delimiter. The closing delimiter must be represented as a
 // single-byte character.
 // If a quotation mark is used in the opening delimiter, a quotation mark
 // must be used as the closing delimiter. Similarly, if an apostrophe is used in
@@ -1746,9 +2677,9 @@ keyword:
 // It has no effect on the execution of the program. There are three forms of
 // comments:
 // Comment entry (IDENTIFICATION DIVISION)
-// This form is described under “Optional paragraphs” on page 105.
+// This form is described under â€œOptional paragraphsï¿½? on page 105.
 // Comment line (any division)
-// This form is described under “Comment lines” on page 56.
+// This form is described under â€œComment linesï¿½? on page 56.
 // Inline comments (any division)
 // Character-strings that form comments can contain DBCS characters or a
 // combination of DBCS and single-byte EBCDIC characters.
@@ -1771,8 +2702,8 @@ keyword:
 // control cards and cause them to be diagnosed as errors.
 // Multiple comment lines are allowed. Each must begin with an asterisk (*) or a
 // slash (/) in the indicator area, or with a floating comment indicator (*>).
-// For more information about floating comment indicators, see “Floating comment
-// indicators (*>).”
+// For more information about floating comment indicators, see â€œFloating comment
+// indicators (*>).ï¿½?
 // An asterisk (*) comment line is printed on the next available line in the output
 // listing. The effect can be dependent on the LINECOUNT compiler option. For
 // information about the LINECOUNT compiler option, see LINECOUNT in the
@@ -1845,7 +2776,7 @@ keyword:
 // An opening pseudo-text delimiter must be immediately preceded by a
 // space. A closing pseudo-text delimiter must be immediately followed by a
 // separator space, comma, semicolon, or period. Pseudo-text delimiters must
-// appear as balanced pairs. They delimit pseudo-text. (See “COPY statement”
+// appear as balanced pairs. They delimit pseudo-text. (See â€œCOPY statementï¿½?
 // on page 530.)
 
 // p54 : Both characters that make up the pseudo-text delimiter separator "==" must be on
@@ -1856,8 +2787,8 @@ keyword:
 // Area A or Area B.
 // If, however, there is a hyphen in the indicator area (column 7) of a line that follows
 // the opening pseudo-text delimiter, Area A of the line must be blank, and the rules
-// for continuation lines apply to the formation of text words. See “Continuation
-// lines” on page 54 for details.
+// for continuation lines apply to the formation of text words. See â€œContinuation
+// linesï¿½? on page 54 for details.
 
 // p532: Library text and pseudo-text can consist of or include any words (except
 // COPY), identifiers, or literals that can be written in the source text. This
@@ -1899,7 +2830,7 @@ keyword:
 // EXEC_SQL_INCLUDE : 'EXEC SQL INCLUDE'; // found in execSqlIncludeStatement
 // PROCESS : 'PROCESS'; // found in cblProcessStatement
 
-// - !! TO DO if necessary : no token SQL-INIT-FLAG has been defined in the scanner yet -
+// - TO DO if necessary : no token SQL-INIT-FLAG has been defined in the scanner yet -
 
 // p433: Precompiler: With the DB2 precompiler, if you pass host variables that might be
 // located at different addresses when the program is called more than once, the

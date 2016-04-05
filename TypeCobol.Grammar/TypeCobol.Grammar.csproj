@@ -58,7 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Grammars\Cobol\CobolBase.g4" />
+    <None Include="Grammars\Cobol\CobolWords.g4" />
+    <None Include="Grammars\Cobol\CobolExpressions.g4" />
     <Antlr4 Include="Grammars\Cobol\CobolCompilerDirectives.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
