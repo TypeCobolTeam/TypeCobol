@@ -2,6 +2,7 @@
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Server
 {
@@ -16,6 +17,7 @@ namespace TypeCobol.Server
 			public bool IsErrorXML {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
 			}
+			public List<string> Copies = new List<string>();
 		}
 
 		static int Main(string[] argv) {
@@ -44,6 +46,7 @@ namespace TypeCobol.Server
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
 								(string v) => config.Format = CreateFormat(v)
 				},
+				{ "y|copy=", "{PATH} to a copy to load. This option can be specified more than once.", (string v) => config.Copies.Add(v) },
 				{ "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
 				{ "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
@@ -93,6 +96,10 @@ namespace TypeCobol.Server
 			writer.Outputs = config.OutputFiles;
 
 			var parser = new Parser("TypeCobol.Server");
+			var table = loadCopies(config.Copies);
+w.WriteLine(table.CustomTypes.Count+" types loaded.");
+foreach(var type in table.CustomTypes.Values) w.WriteLine(type.Name+"{"+type.Subordinates.Count+"}");
+w.WriteLine("TODO: make them usable.");
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
 				parser.Init(path, config.Format);
@@ -114,6 +121,18 @@ namespace TypeCobol.Server
 			}
 			writer.Write();
 			writer.Flush();
+		}
+
+		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> copies) {
+			var parser = new Parser("TypeCobol.Server.loading");
+			var table = new SymbolTable(null, SymbolTable.Scope.External);
+			foreach(string path in copies) {
+				parser.Init(path);
+				parser.Parse(path);
+				foreach(var type in parser.Snapshot.Program.SymbolTable.CustomTypes.Values)
+					table.RegisterCustomType(type);//TODO check if already there
+			}
+			return table;
 		}
 
 		private static void runServer(string pipename) {

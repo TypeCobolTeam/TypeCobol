@@ -200,7 +200,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
-		internal void RegisterCustomType(DataDescriptionEntry data) {
+		public void RegisterCustomType(DataDescriptionEntry data) {
 			if (!data.IsTypeDefinition) throw new System.ArgumentException(data.Name+" is not a TYPEDEF data description");
 			CustomTypes[data.Name.Name] = data;
 		}
