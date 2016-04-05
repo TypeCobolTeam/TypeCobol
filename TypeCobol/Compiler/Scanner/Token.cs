@@ -19,6 +19,9 @@ namespace TypeCobol.Compiler.Scanner
         private int startIndex;
         private int stopIndex;
 
+		/// <summary>Empty constructor for mock.</summary>
+		public Token() { }
+
         /// <summary>
         /// Constructor for tokens without delimiters
         /// </summary>
@@ -92,7 +95,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Family from the TokenFamily Enumeration
         /// </summary>
-        public TokenFamily TokenFamily { get; private set; }
+        public virtual TokenFamily TokenFamily { get; private set; }
 
         /// <summary>
         /// True if this token is pseudo text in a REPLACE or COPY REPLACING directive
