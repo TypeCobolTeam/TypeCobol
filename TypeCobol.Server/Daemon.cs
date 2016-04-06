@@ -9,7 +9,7 @@ namespace TypeCobol.Server
 	class Server {
 
 		class Config {
-			public TypeCobol.Compiler.DocumentFormat Format = null;
+			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
@@ -42,7 +42,7 @@ namespace TypeCobol.Server
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
-				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\", \"zos\", or \"utf8\". "
+				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
 								(string v) => config.Format = CreateFormat(v)
 				},
