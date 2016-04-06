@@ -40,11 +40,5 @@ namespace TypeCobol.Test
         {
             TestCollection.CheckParser();
         }
-
-        [TestMethod]
-        public void CheckPipeline()
-        {
-            TestCollection.CheckPipeline();
-        }
     }
 }

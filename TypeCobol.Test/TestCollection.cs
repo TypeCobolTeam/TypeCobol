@@ -133,28 +133,5 @@ namespace TypeCobol.Test
             //As specifications of TypeCobol are not final yet this test can't be used
             //            TestParser.Check_ParserIntegration();
         }
-
-        public static void CheckPipeline()
-        {
-            TestFileWatcher.CheckAddProgramFile();
-            TestFileWatcher.CheckRenameProgramFile();
-            TestFileWatcher.CheckUpdateProgramFile();
-            TestFileWatcher.CheckRemoveProgramFile();
-
-            TestIncrementalScanner.CheckAddToken();
-            TestIncrementalScanner.CheckUpdateToken();
-            TestIncrementalScanner.CheckRemoveToken();
-
-            TestIncrementalPreprocessor.CheckAddCompilerDirective();
-            TestIncrementalPreprocessor.CheckUpdateCompilerDirective();
-            TestIncrementalPreprocessor.CheckRemoveCompilerDirective();
-
-            TestIncrementalParser.CheckAddCodeElement();
-            TestIncrementalParser.CheckUpdateCodeElement();
-            TestIncrementalParser.CheckRemoveCodeElement();
-
-            TestIncrementalPipeline.CheckUpdateFromFile();
-            //TestIncrementalPipeline.CheckPerformance();
-        }
     }
 }

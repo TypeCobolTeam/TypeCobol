@@ -87,11 +87,7 @@
     <Compile Include="Compiler\Parser\TestJSONSerializer.cs" />
     <Compile Include="Compiler\Parser\TestParser.cs" />
     <Compile Include="Compiler\Parser\TestTokenSource.cs" />
-    <Compile Include="Compiler\Pipeline\TestFileWatcher.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalParser.cs" />
     <Compile Include="Compiler\Pipeline\TestIncrementalPipeline.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalPreprocessor.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalScanner.cs" />
     <Compile Include="Compiler\Preprocessor\PreprocessorUtils.cs" />
     <Compile Include="Compiler\Preprocessor\TestCompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\TestCopyDirective.cs" />
