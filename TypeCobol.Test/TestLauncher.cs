@@ -33,7 +33,9 @@ namespace TypeCobol.Test
             TestCollection.CheckPreprocessor();
         }
 
-        [TestMethod]
+		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
         public void CheckParser()
         {
             TestCollection.CheckParser();
@@ -43,11 +45,6 @@ namespace TypeCobol.Test
         public void CheckPipeline()
         {
             TestCollection.CheckPipeline();
-        }
-
-        [TestMethod]
-        public void CheckUtils() {
-            TestPictureParsing.Check_PictureToType();
         }
     }
 }

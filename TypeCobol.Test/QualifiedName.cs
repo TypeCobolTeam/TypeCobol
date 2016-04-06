@@ -6,10 +6,12 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	[TestClass]
-	public class QualifiedNameTest {
+	public class QualifiedNames {
 
 		[TestMethod]
-		public void QualifiedName1() {
+		[TestCategory("SymbolTable")]
+		[TestProperty("Time","fast")]
+		public void QualifiedLength1DataName() {
 			var id = qname("x");
 			Assert.AreEqual(id.Symbol.Name, "x");
 			Assert.AreEqual(id.DataNames.Count, 0);
@@ -25,7 +27,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.IsFalse(id.Contains("xin"));
 		}
 		[TestMethod]
-		public void QualifiedName2() {
+		[TestCategory("SymbolTable")]
+		[TestProperty("Time","fast")]
+		public void QualifiedLength2DataName() {
 			var id = qname("group.name", false);
 			Assert.AreEqual(id.Symbol.Name, "name");
 			Assert.AreEqual(id.DataNames.Count, 1);
@@ -47,7 +51,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.IsFalse(id.Contains("group.name"));
 		}
 		[TestMethod]
-		public void QualifiedName2WithFilename() {
+		[TestCategory("SymbolTable")]
+		[TestProperty("Time","fast")]
+		public void QualifiedLength2FileName() {
 			var id = qname("file.name", true);
 			Assert.AreEqual(id.Symbol.Name, "name");
 			Assert.AreEqual(id.DataNames.Count, 0);
@@ -68,7 +74,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.IsFalse(id.Contains("file.name"));
 		}
 		[TestMethod]
-		public void QualifiedName5() {
+		[TestCategory("SymbolTable")]
+		[TestProperty("Time","fast")]
+		public void QualifiedLength5DataName() {
 			var id = qname("group.aaa.bb.c.name", false);
 			Assert.AreEqual(id.Symbol.Name, "name");
 			Assert.AreEqual(id.DataNames.Count, 4);
@@ -102,7 +110,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.IsFalse(id.Contains("group.aaa.bb.c.name"));
 		}
 		[TestMethod]
-		public void QualifiedName5WithFilename() {
+		[TestCategory("SymbolTable")]
+		[TestProperty("Time","fast")]
+		public void QualifiedLength5FileName() {
 			var id = qname("file.aaa.bb.c.name", true);
 			Assert.AreEqual(id.Symbol.Name, "name");
 			Assert.AreEqual(id.DataNames.Count, 3);
@@ -137,7 +147,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-		private QualifiedName qname(string uri, bool isFirstFilename = false) {
+		private static QualifiedName qname(string uri, bool isFirstFilename = false) {
 			var parts = uri.Split('.');
 			int p = 0;
 			FileName filename = null;
@@ -147,7 +157,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			var symbol = new DataName(token(parts[parts.Length-1]));
 			return new QualifiedName(symbol, datanames, filename);
 		}
-		private Token token(string word) {
+		private static Token token(string word) {
 			var token = new Mock<Token>();
 			token.Setup(foo => foo.Text).Returns(word);
 //			token.Setup(foo => foo.TokenType).Returns(TokenType.UserDefinedWord);

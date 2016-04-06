@@ -5,12 +5,13 @@ using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace TypeCobol.Test
-{
-    [TestClass]
-    public class GrammarTest
-    {
-        [TestMethod]
+namespace TypeCobol.Test {
+
+	[TestClass]
+	public class GrammarTest {
+		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","long")]
         [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
         public void CheckGrammarCorrectness()
         {
@@ -77,23 +78,18 @@ namespace TypeCobol.Test
             if (nbFilesInError > 0) Assert.Fail('\n'+message);
         }
 
-        private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document)
-        {
-            return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
-        }
-
-        private bool hasErrors(TypeCobol.Compiler.Parser.ProgramClassDocument document)
-        {
-            return document != null && document.Diagnostics != null && document.Diagnostics.Count() > 0;
-        }
-
-        private int checkErrors(string filename, IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics)
-        {
-            Console.WriteLine(filename);
-            string result = ParserUtils.DiagnosticsToString(diagnostics);
-            Console.WriteLine(result);
-            System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
-            return diagnostics.Count();
-        }
-    }
+		private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document) {
+			return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
+		}
+		private bool hasErrors(TypeCobol.Compiler.Parser.ProgramClassDocument document) {
+			return document != null && document.Diagnostics != null && document.Diagnostics.Count() > 0;
+		}
+		private int checkErrors(string filename, IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics) {
+			Console.WriteLine(filename);
+			string result = ParserUtils.DiagnosticsToString(diagnostics);
+			Console.WriteLine(result);
+			System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
+			return diagnostics.Count();
+		}
+	}
 }
