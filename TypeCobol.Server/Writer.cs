@@ -147,13 +147,19 @@ public class ConsoleWriter: AbstractErrorWriter {
 
 	private void write(string title, IList<Diagnostic> errors) {
 		writer.WriteLineAsync();
-		writer.WriteAsync(errors.Count.ToString());
+		if (errors.Count > 0)
+			 writer.WriteAsync(errors.Count.ToString());
+		else writer.WriteAsync("No");
 		writer.WriteAsync(" error");
 		if (errors.Count > 1) writer.WriteAsync('s');
 		writer.WriteAsync(" in \"");
 		writer.WriteAsync(title);
-		writer.WriteLineAsync("\":");
-		foreach(var e in errors) writer.WriteLineAsync(e.ToString());
+		if (errors.Count > 0) {
+			writer.WriteLineAsync("\":");
+			foreach(var e in errors) writer.WriteLineAsync(e.ToString());
+		} else {
+			writer.WriteLineAsync("\".");
+		}
 	}
 
 	public override void Flush() {
