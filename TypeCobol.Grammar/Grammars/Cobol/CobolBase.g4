@@ -511,6 +511,7 @@ tokens
 // [TYPECOBOL]
 	TYPEDEF,
 	STRONG,
+	UNSAFE,
 // [/TYPECOBOL]
 }
 
