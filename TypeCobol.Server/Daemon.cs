@@ -104,17 +104,24 @@ namespace TypeCobol.Server
 				parser.Parse(path);
 
 				var converter = new TypeCobol.Tools.CodeElementDiagnostics(parser.CodeElementsSnapshot.Lines);
-				writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
-				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
-				foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
-					if (e.Diagnostics.Count < 1) continue;
-					writer.AddErrors(path, converter.GetDiagnostics(e));
+				if (parser.CodeElementsSnapshot != null) {
+					writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
+					// no need to add errors from parser.CodeElementsSnapshot.CodeElements
+					// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
 				}
 
-				if (config.Codegen) {
-					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
-					var stream = new StreamWriter(config.OutputFiles[c]);
-					codegen.WriteCobol(stream);
+				if (parser.Snapshot != null) {
+					writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
+					foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
+						if (e.Diagnostics.Count < 1) continue;
+						writer.AddErrors(path, converter.GetDiagnostics(e));
+					}
+
+					if (config.Codegen) {
+						var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
+						var stream = new StreamWriter(config.OutputFiles[c]);
+						codegen.WriteCobol(stream);
+					}
 				}
 			}
 			writer.Write();
