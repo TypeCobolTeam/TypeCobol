@@ -224,8 +224,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 	}
 
-	class WriteOperationsChecker: ProgramListener
-	{
+	class WriteOperationsChecker: ProgramListener {
+
 		public IList<Type> GetCodeElements() {
 			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
 		}
@@ -248,6 +248,36 @@ namespace TypeCobol.Compiler.Diagnostics {
 				var receiving = lr[0];
 				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
 					DiagnosticUtils.AddError(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe");
+				}
+			}
+		}
+	}
+
+	class ReadOnlyPropertiesChecker: ProgramListener {
+
+		private static string[] READONLY_DATATYPES = new string[] { "W-DATE", };
+
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
+			var element = e as TypeCobol.Compiler.CodeModel.SymbolWriter;
+			var table = program.SymbolTable;
+			foreach(var pair in element.Symbols) {
+				if (pair.Item2 == null) continue; // no receiving item
+				var lr = table.Get(pair.Item2);
+				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
+				var receiving = lr[0];
+				checkReadOnly(e, receiving);
+			}
+		}
+
+		private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving) {
+			if (receiving.TopLevel == null) return;
+			if (receiving.TopLevel.DataType == null) return;
+			foreach(var type in READONLY_DATATYPES) {
+				if (type.Equals(receiving.TopLevel.DataType.Name)) {
+					DiagnosticUtils.AddError(e, type+" properties are read-only");
 				}
 			}
 		}
