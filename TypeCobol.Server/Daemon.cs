@@ -102,27 +102,31 @@ namespace TypeCobol.Server
 				string path = config.InputFiles[c];
 				parser.Init(path, config.Format);
 				parser.Parse(path);
-
-				var converter = new TypeCobol.Tools.CodeElementDiagnostics(parser.CodeElementsSnapshot.Lines);
-				if (parser.CodeElementsSnapshot != null) {
-					writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
-					// no need to add errors from parser.CodeElementsSnapshot.CodeElements
-					// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
+				if (parser.CodeElementsSnapshot == null) {
+					System.Console.WriteLine("No CodeElements Snapshot.");
+					continue;
 				}
 
-				if (parser.Snapshot != null) {
-					writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
-					foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
-						if (e.Diagnostics.Count < 1) continue;
-						writer.AddErrors(path, converter.GetDiagnostics(e));
-					}
+				var converter = new TypeCobol.Tools.CodeElementDiagnostics(parser.CodeElementsSnapshot.Lines);
+				writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
+				// no need to add errors from parser.CodeElementsSnapshot.CodeElements
+				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
 
-					if (config.Codegen) {
-						var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
-						var stream = new StreamWriter(config.OutputFiles[c]);
-						codegen.WriteCobol(stream);
-						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
-					}
+				if (parser.Snapshot == null) {
+					System.Console.WriteLine("No ProgramClass Snapshot.");
+					continue;
+				}
+				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
+				foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
+					if (e.Diagnostics.Count < 1) continue;
+					writer.AddErrors(path, converter.GetDiagnostics(e));
+				}
+
+				if (config.Codegen) {
+					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
+					var stream = new StreamWriter(config.OutputFiles[c]);
+					codegen.WriteCobol(stream);
+					System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
 				}
 			}
 			writer.Write();
@@ -135,6 +139,7 @@ namespace TypeCobol.Server
 			foreach(string path in copies) {
 				parser.Init(path);
 				parser.Parse(path);
+				if (parser.Snapshot == null) continue;
 				foreach(var type in parser.Snapshot.Program.SymbolTable.CustomTypes.Values)
 					table.RegisterCustomType(type);//TODO check if already there
 			}
