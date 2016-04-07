@@ -1,6 +1,6 @@
       * 2 CodeElements errors
-      * "1"@(54:12>54:67): [27:1] Syntax error : Incompatible types: INTERNAL-REF, expected Alphanumeric
-      * "1"@(55:12>55:67): [27:1] Syntax error : Incompatible types: EXTERNAL-REF, expected INTERNAL-REF
+      * "1"@(54:12>54:67): [27:1] Syntax error : Writing W-InternalRef:Alphanumeric to InternalRef:INTERNAL-REF is unsafe
+      * "1"@(55:12>55:67): [27:1] Syntax error : Writing InternalRef:INTERNAL-REF to ExternalRef:EXTERNAL-REF is unsafe
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Types.
 
