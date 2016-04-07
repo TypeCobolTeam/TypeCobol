@@ -57,18 +57,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			}
 		}
 
-        public override string ToString()
-        {
-            if (numberValue != null)
-            {
-                return numberValue.ToString();
-            }
-            if (stringValue != null)
-            {
-                return stringValue.ToString();
-            }
-            throw new InvalidOperationException("Malformed literal");
-        }
+		public override string ToString() {
+			return Value.ToString();
+		}
     }
 
     public class FigurativeConstant : Literal
