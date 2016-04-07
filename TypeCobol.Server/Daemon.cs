@@ -121,6 +121,7 @@ namespace TypeCobol.Server
 						var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
 						var stream = new StreamWriter(config.OutputFiles[c]);
 						codegen.WriteCobol(stream);
+						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
 					}
 				}
 			}

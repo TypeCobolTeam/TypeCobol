@@ -146,7 +146,6 @@ public class ConsoleWriter: AbstractErrorWriter {
 	}
 
 	private void write(string title, IList<Diagnostic> errors) {
-		writer.WriteLineAsync();
 		if (errors.Count > 0)
 			 writer.WriteAsync(errors.Count.ToString());
 		else writer.WriteAsync("No");
