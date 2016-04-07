@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.CodeModel
 		/// List of symbol pairs: the first element of the pair is read-only
 		/// and its content is written into the second element of the pair.
 		/// </summary>
-		ICollection<System.Tuple<QualifiedName,QualifiedName>> Symbols { get; }
+		ICollection<System.Tuple<System.Tuple<QualifiedName,TypeCobol.Compiler.CodeElements.DataType>,QualifiedName>> Symbols { get; }
 		/// <summary>Are unsafe write operations allowed?</summary>
 		bool IsUnsafe { get; }
 	}

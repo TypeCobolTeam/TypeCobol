@@ -236,14 +236,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 			foreach(var pair in element.Symbols) {
 				if (pair.Item1 == null) continue; // no sending item
 				if (pair.Item2 == null) continue; // no receiving item
-				var ls = table.Get(pair.Item1);
-				if (ls.Count != 1) continue; // ambiguity or not referenced; not my job
+				DataType sending = pair.Item1.Item2;
+				if (sending == null) { // unknown sending item type
+					if (pair.Item1.Item1 == null) continue; // ?no sending item
+					var ls = table.Get(pair.Item1.Item1);
+					if (ls.Count != 1) continue; // ambiguity or not referenced; not my job
+					sending = ls[0].DataType;
+				}
 				var lr = table.Get(pair.Item2);
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
-				var sending   = ls[0];
 				var receiving = lr[0];
-				if (receiving.DataType != sending.DataType && receiving.DataType.IsStrong) {
-					DiagnosticUtils.AddError(e, "Writing "+sending.Name+":"+sending.DataType+" to "+receiving.Name+":"+receiving.DataType+" is unsafe");
+				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
+					DiagnosticUtils.AddError(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe");
 				}
 			}
 		}

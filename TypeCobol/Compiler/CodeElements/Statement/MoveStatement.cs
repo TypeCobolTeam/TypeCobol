@@ -63,13 +63,17 @@ namespace TypeCobol.Compiler.CodeElements
 				return symbols;
 			}
 		}
-		ICollection<System.Tuple<QualifiedName,QualifiedName>> SymbolWriter.Symbols {
+		/// <summary>
+		/// Regarding the sending element, only one of the pair elements is not null:
+		/// either we know its qualified name, or its type.
+		/// </summary>
+		ICollection<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>> SymbolWriter.Symbols {
 			get {
-				var list = new List<System.Tuple<QualifiedName,QualifiedName>>();
-				var sending = asUserDefinedName(Sending);
+				var list = new List<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>>();
+				var sending = new System.Tuple<QualifiedName,DataType>(asUserDefinedName(Sending),asDataType(Sending));
 				foreach(var r in Receiving) {
 					var receiving = asUserDefinedName(r);
-					list.Add(new System.Tuple<QualifiedName,QualifiedName>(sending, receiving));
+					list.Add(new System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>(sending, receiving));
 				}
 				return list;
 			}
@@ -79,6 +83,12 @@ namespace TypeCobol.Compiler.CodeElements
 			if (expression is SpecialRegister) return null;
 			if (expression is FunctionReference) return null;
 			return ((Identifier)expression).Name;
+		}
+		private DataType asDataType(Expression expression) {
+			var literal = expression as Literal;
+			if (literal == null) return null;
+			if (literal.IsNumeric) return DataType.Numeric;
+			else return DataType.Alphanumeric;
 		}
 
 		public bool IsUnsafe { get; set; }
