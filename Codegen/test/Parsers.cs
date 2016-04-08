@@ -15,6 +15,8 @@ namespace TypeCobol.Codegen {
 	public class Parsers {
 
 		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
 		public void CreateDefaultParser() {
 			System.Type DEFAULT = typeof(XmlParser);
 			ConfigParser parser;
@@ -25,12 +27,16 @@ namespace TypeCobol.Codegen {
 		}
 
 		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
 		public void CreateXMLParser() {
 			var parser = Config.Config.CreateParser(".xml");
 			Assert.AreEqual(parser.GetType(), typeof(XmlParser));
 		}
 
 		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
 		public void ParseFailureIfNotFound() {
 			try {
 				ParseConfig("NOT_FOUND");
@@ -39,11 +45,15 @@ namespace TypeCobol.Codegen {
 		}
 
 		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
 		public void ParseEmpty() {
 			Assert.AreEqual(ParseConfig("Empty.xml").Count,0);
 		}
 
 		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
 		public void ParseTypes() {
 			var skeletons = ParseConfig("Types.xml");
 			Assert.AreEqual(skeletons.Count,2);

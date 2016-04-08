@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
-			IList<DataDescriptionEntry> found = Get(name.Symbol.Name);
+			var found = Get(name.Symbol.Name);
 			int max = name.DataNames.Count;
 			if (name.IsExplicit) {
 				for(int c=0; c<max; c++) {
@@ -200,7 +200,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
-		internal void RegisterCustomType(DataDescriptionEntry data) {
+		public void RegisterCustomType(DataDescriptionEntry data) {
 			if (!data.IsTypeDefinition) throw new System.ArgumentException(data.Name+" is not a TYPEDEF data description");
 			CustomTypes[data.Name.Name] = data;
 		}
@@ -208,7 +208,7 @@ namespace TypeCobol.Compiler.CodeModel
 		internal DataDescriptionEntry GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
-				try { return CustomTypes[type]; }
+				try { return table.CustomTypes[type]; }
 				catch(KeyNotFoundException ex) { } // should be in parent scope
 				table = table.EnclosingScope;
 			}

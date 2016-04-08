@@ -509,7 +509,8 @@ tokens
     YYYYMMDD,
 // [TYPECOBOL]
 	TYPEDEF,
-	STRONG
+	STRONG,
+	UNSAFE
 // [/TYPECOBOL]
 }
 

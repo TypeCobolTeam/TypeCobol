@@ -206,52 +206,80 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
 
-    class DeclarationChecker: ProgramListener
-    {
-        public IList<Type> GetCodeElements() {
-            return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
-        }
-        public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
-            var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
-            var table = program.SymbolTable;
-            foreach (var symbol in element.Symbols.Keys) {
-                var found = table.Get(symbol);
-                if (found.Count < 1)
-                    DiagnosticUtils.AddError(e, "Symbol "+symbol+" is not referenced");
-                if (found.Count > 1)
-                    DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+symbol);
-            }
-        }
-    }
+	class DeclarationChecker: ProgramListener
+	{
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
+			var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
+			var table = program.SymbolTable;
+			foreach (var symbol in element.Symbols) {
+				var found = table.Get(symbol);
+				if (found.Count < 1)
+					DiagnosticUtils.AddError(e, "Symbol "+symbol+" is not referenced");
+				if (found.Count > 1)
+					DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+symbol);
+			}
+		}
+	}
 
-    class MoveChecker: ProgramListener
-    {
-        public IList<Type> GetCodeElements() {
-            return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
-        }
-        public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
-            var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
-            var table = program.SymbolTable;
-			QualifiedName sending = null;
-            foreach (var symbol in element.Symbols.Keys) {
-				if (!element.Symbols[symbol]) {
-					sending = symbol;
-					break;
+	class WriteOperationsChecker: ProgramListener {
+
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
+			var element = e as TypeCobol.Compiler.CodeModel.SymbolWriter;
+			if (element.IsUnsafe) return; // nothing to do
+			var table = program.SymbolTable;
+			foreach(var pair in element.Symbols) {
+				if (pair.Item1 == null) continue; // no sending item
+				if (pair.Item2 == null) continue; // no receiving item
+				DataType sending = pair.Item1.Item2;
+				if (sending == null) { // unknown sending item type
+					if (pair.Item1.Item1 == null) continue; // ?no sending item
+					var ls = table.Get(pair.Item1.Item1);
+					if (ls.Count != 1) continue; // ambiguity or not referenced; not my job
+					sending = ls[0].DataType;
+				}
+				var lr = table.Get(pair.Item2);
+				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
+				var receiving = lr[0];
+				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
+					DiagnosticUtils.AddError(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe");
 				}
 			}
-			if (sending == null) return; // no sending item
-			var items = table.Get(sending);
-			if (items.Count != 1) return; //ambiguity
-			var type = items[0].DataType;
-			foreach (var symbol in element.Symbols.Keys) {
-				if (symbol == sending) continue;
-				items = table.Get(symbol);
-				if (items.Count != 1) continue; //ambiguity
-				var receiving = items[0].DataType;
-				if (receiving != type && receiving.IsStrong) {
-					DiagnosticUtils.AddError(e, "Incompatible types: "+receiving.Name+", expected "+type.Name);
+		}
+	}
+
+	class ReadOnlyPropertiesChecker: ProgramListener {
+
+		private static string[] READONLY_DATATYPES = new string[] { "W-DATE", };
+
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
+			var element = e as TypeCobol.Compiler.CodeModel.SymbolWriter;
+			var table = program.SymbolTable;
+			foreach(var pair in element.Symbols) {
+				if (pair.Item2 == null) continue; // no receiving item
+				var lr = table.Get(pair.Item2);
+				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
+				var receiving = lr[0];
+				checkReadOnly(e, receiving);
+			}
+		}
+
+		private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving) {
+			if (receiving.TopLevel == null) return;
+			if (receiving.TopLevel.DataType == null) return;
+			foreach(var type in READONLY_DATATYPES) {
+				if (type.Equals(receiving.TopLevel.DataType.Name)) {
+					DiagnosticUtils.AddError(e, type+" properties are read-only");
 				}
 			}
-        }
-    }
+		}
+	}
 }

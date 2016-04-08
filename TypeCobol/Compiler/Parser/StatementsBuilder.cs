@@ -426,6 +426,9 @@ namespace TypeCobol.Compiler.Parser
                     DiagnosticUtils.AddError(statement, "MOVE: illegal <intrinsic function> after TO", function.Symbol.NameToken, rulestack);
                 }
             }
+// [TYPECOBOL]
+			statement.IsUnsafe = context.UNSAFE() != null;
+// [/TYPECOBOL]
             return statement;
         }
 

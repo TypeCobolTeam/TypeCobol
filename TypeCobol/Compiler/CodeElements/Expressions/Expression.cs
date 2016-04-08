@@ -36,18 +36,30 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             }
         }
 
-        public override string ToString()
-        {
-            if (numberValue != null)
-            {
-                return numberValue.ToString();
-            }
-            if (stringValue != null)
-            {
-                return stringValue.ToString();
-            }
-            throw new InvalidOperationException("Malformed literal");
-        }
+		public bool IsNumeric {
+			get {
+				switch (Type.GetTypeCode(Value.GetType())) {
+					case TypeCode.Byte:
+					case TypeCode.SByte:
+					case TypeCode.UInt16:
+					case TypeCode.UInt32:
+					case TypeCode.UInt64:
+					case TypeCode.Int16:
+					case TypeCode.Int32:
+					case TypeCode.Int64:
+					case TypeCode.Decimal:
+					case TypeCode.Double:
+					case TypeCode.Single:
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+
+		public override string ToString() {
+			return Value.ToString();
+		}
     }
 
     public class FigurativeConstant : Literal
