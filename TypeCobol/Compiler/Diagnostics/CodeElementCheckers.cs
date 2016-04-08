@@ -255,7 +255,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 	class ReadOnlyPropertiesChecker: ProgramListener {
 
-		private static string[] READONLY_DATATYPES = new string[] { "W-DATE", };
+		private static string[] READONLY_DATATYPES = new string[] { "TC-DATE", };
 
 		public IList<Type> GetCodeElements() {
 			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };

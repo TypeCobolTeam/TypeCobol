@@ -1,0 +1,40 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID.   TEST-DATE.
+  AUTHOR.       WIZTIGERS.
+  DATE-WRITTEN. APRIL 2016
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+
+01  TC-DATE        TYPEDEF STRONG.
+  10  YYYY         PIC 9(04).
+  10  MM           PIC 9(02).
+  10  DD           PIC 9(02).
+
+01  olddate        PIC X(08).
+01  today          TYPE TC-DATE.
+01  tomorrow       TYPE TC-DATE.
+
+PROCEDURE DIVISION.
+*******************
+TEST-DATE.
+*** legal: from typed to typed
+  MOVE        today     TO   tomorrow
+*** legal: from typed to untyped
+  MOVE        today     TO   olddate
+*** illegal: from untyped to typed
+  MOVE        olddate   TO   today
+*** legal: from trusted untyped to typed
+  MOVE UNSAFE olddate   TO   today
+*** legal: properties are read-only
+  DISPLAY     today :: YYYY
+*** illegal: properties are read-only
+  MOVE        2015      TO   today :: YYYY
+  MOVE UNSAFE 2015      TO   today :: YYYY
+* --- convert something to date
+*  CONVERT db2date       TO   today
+* --- shallow control like in COBOL 20002
+*  VALIDATE                   today
+  .
