@@ -1,0 +1,50 @@
+﻿//tweak Antlr4.targets to remove wrong ItemGroup
+
+#r "System.Xml.Linq"
+
+open System.Xml.Linq
+
+exception ProgramArgumentsException of string
+
+//build a XName from a string, in the correct xml-namespace
+let xn s = XName.Get(s, "http://schemas.microsoft.com/developer/msbuild/2003")
+
+//build a XNam from a string (for attribute names)
+let xna s = XName.Get(s)
+
+//test if the XElement 'ig' is the one to delete
+let isItemGroupToDelete (ig : XElement) = not (Seq.isEmpty (ig.Elements (xn "_GeneratedCodeFiles")))
+    
+//Document structure
+    //<Project>
+    //    ...
+    //    <Target Name="Antlr4CompileAddFilesGenerated"
+    //          AfterTargets="Antlr4Compile"
+    //          Condition="'@(Antlr4)' != ''">
+    //          ...
+    //
+//  -->   ItemGroup to delete
+    //        <ItemGroup>
+    //            <Compile Include="@(Antlr4GeneratedCodeFiles)" />      
+    //            <_GeneratedCodeFiles Include="@(Antlr4GeneratedCodeFiles)" />
+    //        </ItemGroup>
+    //    </Target>
+    //</Project>
+
+let argv = fsi.CommandLineArgs
+
+if argv.Length < 2 then
+    eprintf "%s" "error, wrong number of arguments. Usage : fsi TweakAntlr path_to_Antlr4.targets"
+    1
+else
+    let path = argv.[1]
+    let doc = XDocument.Load(path)
+    let target = doc.Element(xn "Project").Elements(xn "Target") |> Seq.filter (fun t -> t.Attribute(xna "Name").Value = "Antlr4CompileAddFilesGenerated")
+    let value = target.ToString
+    let itemGroup = target.Elements(xn "ItemGroup") |> Seq.filter isItemGroupToDelete
+  
+    for ig in itemGroup do
+        ig.Remove()   
+
+    doc.Save(path)
+    0 // return an integer exit code

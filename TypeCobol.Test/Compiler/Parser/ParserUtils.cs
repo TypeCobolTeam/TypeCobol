@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), true);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForCopy;
@@ -50,7 +50,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] {"*.cpy", "*.cbl" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), false);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
@@ -157,6 +157,9 @@ namespace TypeCobol.Test.Compiler.Parser
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
+// [TYPECOBOL]
+			Dump(str, program.SymbolTable.CustomTypes);
+// [/TYPECOBOL]
             Dump(str, program.SymbolTable);
             return str;
         }
@@ -206,6 +209,25 @@ namespace TypeCobol.Test.Compiler.Parser
             else str.Append(b.Value);
             return str;
         }
+
+// [TYPECOBOL]
+		private static void Dump(StringBuilder str, Dictionary<string,DataDescriptionEntry> typedefs) {
+			if (typedefs.Count > 0) str.Append("CUSTOM TYPES:\n");
+			foreach(string typedef in typedefs.Keys) {
+				var entry = typedefs[typedef];
+				str.Append(" * ").AppendLine(typedef);
+				foreach(var sub in entry.Subordinates)
+					DumpInTypeDef(str, sub, 2);
+			}
+		}
+
+		private static void DumpInTypeDef(StringBuilder str, DataDescriptionEntry entry, int indent) {
+			for (int i=0; i<indent; i++) str.Append("  ");
+			str.Append(" - ").AppendLine(entry.ToString());
+			foreach(var sub in entry.Subordinates)
+				DumpInTypeDef(str, sub, indent+1);
+		}
+// [/TYPECOBOL]
 
         private static StringBuilder Dump(StringBuilder str, SymbolTable table, string header=null)
         {

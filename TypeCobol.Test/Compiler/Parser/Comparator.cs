@@ -37,7 +37,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, extensions,
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = comparator.paths.sample.project.file;
-            this.compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, false);
+            this.compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false);
         }
 
         public void Parse()

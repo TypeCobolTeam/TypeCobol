@@ -23,8 +23,8 @@ namespace TypeCobol.Compiler.AntlrUtils
             var builder = new StringBuilder(classname);
             builder.Length -= "Context".Length;
             builder[0] = System.Char.ToLower(classname[0]);
-            // could have done "RULE_" + builder.ToString(), then find int value of the field of CobolCodeElementsParser 
-            // corresponding to it, then got the exact name in CobolCodeElementsParser.ruleNames, but ... :P
+            // could have done "RULE_" + builder.ToString(), then find int value of the field of CodeElementsParser 
+            // corresponding to it, then got the exact name in CodeElementsParser.ruleNames, but ... :P
             return builder.ToString();
         }
     }

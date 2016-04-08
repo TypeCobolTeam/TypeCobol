@@ -178,7 +178,7 @@ namespace TypeCobol.Compiler
             }
             else
             {
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, true);
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true);
                 fileCompiler.CompileOnce();
                 resultDocument = fileCompiler.CompilationResultsForCopy;
 

@@ -80,9 +80,10 @@ compilerDirectingStatement:
 // source text must contain numeric sequence numbers in ascending order.
 
 basisCompilerStatement: 
-                  /* sequenceNumber? */ BASIS basisName;
+                  /* sequenceNumber? */ BASIS textName;
 
-basisName : UserDefinedWord | AlphanumericLiteral;
+// Same as textName ... "For rules of formation and processing rules, see the description under literal-1 and text-name of the “COPY statement”")
+//basisName : UserDefinedWord | AlphanumericLiteral;
 
 // p528: CBL (PROCESS) statement                            
 // With the CBL (PROCESS) statement, you can specify compiler options to be used
@@ -406,6 +407,44 @@ copyReplacingOperand:
 
 pseudoText:
               PseudoTextDelimiter /* any kind of token except PseudoTextDelimiter and the word COPY */ pseudoTextTokens+= ~(PseudoTextDelimiter | COPY)* PseudoTextDelimiter;
+
+// * text-name , library-name
+// text-name identifies the copy text. library-name identifies where the copy text
+// exists.
+// - Can be from 1-30 characters in length
+// - Can contain the following characters: Latin uppercase letters A-Z, Latin
+//   lowercase letters a-z, digits 0-9, and hyphen
+// - The first or last character must not be a hyphen
+// - Cannot contain an underscore
+// Neither text-name nor library-name need to be unique within a program.
+// They can be identical to other user-defined words in the program.
+// text-name need not be qualified. If text-name is not qualified, a library-name
+// of SYSLIB is assumed.
+// When compiling from JCL or TSO, only the first eight characters are used
+// as the identifying name. When compiling with the cob2 command and
+// processing COPY text residing in the z/OS UNIX file system, all characters
+// are significant.
+// * literal-1 , literal-2
+// Must be alphanumeric literals. literal-1 identifies the copy text. literal-2
+// identifies where the copy text exists.
+// When compiling from JCL or TSO:
+// - Literals can be from 1-30 characters in length.
+// - Literals can contain characters: A-Z, a-z, 0-9, hyphen, @, #, or $.
+// - The first or last character must not be a hyphen.
+// - Literals cannot contain an underscore.
+// - Only the first eight characters are used as the identifying name.
+// When compiling with the cob2 command and processing COPY text
+// residing in the z/OS UNIX file system, the literal can be from 1 to 160
+// characters in length.
+// The uniqueness of text-name and library-name is determined after the formation and
+// conversion rules for a system-dependent name have been applied.
+// For information about the mapping of characters in the text-name, library-name, and
+// literals, see Compiler-directing statements in the Enterprise COBOL Programming
+// Guide.
+
+textName : UserDefinedWord | AlphanumericLiteral;
+
+libraryName : UserDefinedWord | AlphanumericLiteral;
 
 // p537: DELETE statement
 // The DELETE statement is an extended source library statement. It removes COBOL

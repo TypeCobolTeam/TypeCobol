@@ -1,8 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
-MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
@@ -18,6 +15,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.LanguageServer", "TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj", "{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.VsCodeClient", "TypeCobol.VsCodeClient\TypeCobol.VsCodeClient.csproj", "{16734607-4567-4566-BFFA-398CF3821448}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen", "Codegen\src\Codegen.csproj", "{4034CBC5-D3DC-45E5-81F2-605579E6B876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen.Test", "Codegen\test\Codegen.Test.csproj", "{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4034CBC5-D3DC-45E5-81F2-605579E6B876} = {4034CBC5-D3DC-45E5-81F2-605579E6B876}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{16734607-4567-4566-BFFA-398CF3821448}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16734607-4567-4566-BFFA-398CF3821448}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16734607-4567-4566-BFFA-398CF3821448}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

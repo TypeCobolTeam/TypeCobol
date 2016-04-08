@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// The CLASS clause provides a means for relating a name to the specified set of characters listed in that clause.
         /// </summary>
-        public IDictionary<CharsetClassName, IList<char>> CharsetClassNames { get; set; }
+        public IDictionary<CharacterClassName, IList<char>> CharsetClassNames { get; set; }
 
         /// <summary>
         /// The CURRENCY SIGN clause affects numeric-edited data items whose PICTURE

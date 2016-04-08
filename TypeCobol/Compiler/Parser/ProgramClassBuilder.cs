@@ -33,16 +33,35 @@ namespace TypeCobol.Compiler.Parser
         private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
         private SymbolTable TableOfGlobals;
 
+		public SymbolTable CustomSymbols {
+			private get { throw new System.InvalidOperationException(); }
+			set {
+				if (value != null) {
+					foreach(var values in value.DataEntries.Values)
+						foreach(var data in values)
+							TableOfExternals.Add(data);
+					foreach(var type in value.CustomTypes.Values)
+						TableOfExternals.RegisterCustomType(type);
+				}
+			}
+		}
+
         public ProgramDispatcher Dispatcher { get; internal set; }
 
-        private void _add(Node node) { Program.SyntaxTree.Add(node); }
-        private void _enter(CodeElement e, ParserRuleContext context) {
-            _enter(new Node(e));
-            if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
-        }
-        private void _enter(Node node) { Program.SyntaxTree.Attach(node); }
-        private void _exit() { Program.SyntaxTree.Detach(); }
-        private void _del() { Program.SyntaxTree.Delete(); }
+		private void _add(Node node) {
+			node.SymbolTable = CurrentProgram.SymbolTable;
+			Program.SyntaxTree.Add(node);
+		}
+		private void _enter(CodeElement e, ParserRuleContext context) {
+			_enter(new Node(e));
+			if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
+		}
+		private void _enter(Node node) {
+			node.SymbolTable = CurrentProgram.SymbolTable;
+			Program.SyntaxTree.Attach(node);
+		}
+		private void _exit() { Program.SyntaxTree.Detach(); }
+		private void _del() { Program.SyntaxTree.Delete(); }
 
         /// <summary>
         /// Initialization code run before parsing each new Program or Class
@@ -108,68 +127,139 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterWorkingStorageSection(CobolProgramClassParser.WorkingStorageSectionContext context) {
             var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
             AddStorageNode(context.WorkingStorageSectionHeader(), entries);
-            UpdateSymbolsTable(entries, SymbolTable.Section.Working);
         }
 
         public override void EnterLocalStorageSection(CobolProgramClassParser.LocalStorageSectionContext context) {
             var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
             AddStorageNode(context.LocalStorageSectionHeader(), entries);
-            UpdateSymbolsTable(entries, SymbolTable.Section.Local);
         }
 
         public override void EnterLinkageSection(CobolProgramClassParser.LinkageSectionContext context) {
             var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
             AddStorageNode(context.LinkageSectionHeader(), entries);
-            UpdateSymbolsTable(entries, SymbolTable.Section.Linkage);
         }
 
-        private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
-            var node = new Node(AsCodeElement(terminal));
-            AddEntries(node, entries);
-            _add(node);
-        }
-        private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
-            foreach(var entry in entries) {
-                var child = new Node(entry);
-                AddEntries(child, entry.Subordinates);
-                root.Add(child);
-            }
-        }
-
-        /// <summary>Update toplevel/subordinate relations of data description entries.</summary>
-        /// <param name="nodes">DataDescriptionEntry[] array -typically <section context>.DataDescriptionEntry()</param>
-        /// <returns>nodes parameter, but with each element having its TopLevel and Subordinates properties initialized</returns>
-        private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
-            IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
-            if (nodes == null) return result;
-			char[] currencies = GetCurrencies();
-
-            Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
-            foreach (var node in nodes) {
-                DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
-				ComputeType(data, currencies);
-                bool okay = false;
-                while(!okay && groups.Count > 0) {
-                    var toplevel = groups.Peek();
-                    if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
-                    else {
-                        toplevel.Subordinates.Add(data);
-                        data.TopLevel = toplevel;
-                        okay = true;
-                    }
-                }
-                if (data.IsGroup) groups.Push(data);
-                if (!okay) result.Add(data);
-            }
-            return result;
-        }
-
-		private void ComputeType(DataDescriptionEntry data, char[] currencies) {
-			if (data.Picture != null)
-				 data.DataType = DataType.Create(data.Picture, currencies);
-			else data.DataType = DataType.Unknown;
+		private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
+			var node = new Node(AsCodeElement(terminal));
+			_enter(node);
+			AddEntries(node, entries);
+			_exit();
+		}
+		private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
+			foreach(var entry in entries) {
+				var child = new Node(entry);
+				_enter(child);
+				AddEntries(child, entry.Subordinates);
+				_exit();
+			}
 		}
 
+		/// <summary>Update toplevel/subordinate relations of data description entries.</summary>
+		/// <param name="nodes">DataDescriptionEntry[] array -typically <section context>.DataDescriptionEntry()</param>
+		/// <returns>nodes parameter, but with each element having its TopLevel and Subordinates properties initialized</returns>
+		private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
+			IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
+			if (nodes == null) return result;
+			char[] currencies = GetCurrencies();
+			Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
+
+			foreach (var node in nodes) {
+				DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
+				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
+				bool hasParent = ComputeParent(data, groups);
+				if (!hasParent) result.Add(data);
+				var customTypeDescription = ComputeType(data, currencies);
+				if (data.IsGroup) groups.Push(data);
+
+				if (!data.IsTypeDefinitionPart) {
+					CurrentProgram.SymbolTable.Add(data);
+					if (customTypeDescription != null) {
+						foreach(var sub in customTypeDescription.Subordinates) {
+							// add a clone so parent/child relations are not spoiled
+							var clone = sub.Clone() as DataDescriptionEntry;
+							data.Subordinates.Add(clone);
+							clone.TopLevel = data;
+							UpdateLevelNumbers(clone, data.LevelNumber);
+
+							CurrentProgram.SymbolTable.Add(clone);
+							AddGeneratedSymbols(clone);
+						}
+					}
+				}
+			}
+			return result;
+		}
+
+		private void AddGeneratedSymbols(DataDescriptionEntry data) {
+			if (data.DataType == null) return;
+			var custom = GetCustomType(data.DataType.Name);
+			if (custom == null) return;
+			foreach(var sub in new List<DataDescriptionEntry>(custom.Subordinates)) {
+				var clone = sub.Clone() as DataDescriptionEntry;
+				data.Subordinates.Add(clone);
+				clone.TopLevel = data;
+				UpdateLevelNumbers(clone, data.LevelNumber);
+				CurrentProgram.SymbolTable.Add(clone);
+
+				AddGeneratedSymbols(clone);
+			}
+		}
+
+
+		private void UpdateLevelNumbers(DataDescriptionEntry clone, int level) {
+			clone.LevelNumber = level+1;
+			if (clone.LevelNumber == 66
+			 || clone.LevelNumber == 77
+			 || clone.LevelNumber == 88)
+				clone.LevelNumber++;
+			foreach(var sub in clone.Subordinates)
+				UpdateLevelNumbers(sub, clone.LevelNumber);
+		}
+
+		/// <summary>Update the toplevel data of a given data description.</summary>
+		/// <param name="data">Data description to update</param>
+		/// <param name="groups">Current "branch" of parent data. If its size is greater than 0, data is a subordinate.</param>
+		/// <returns>True if the parental relation has been updated</returns>
+		private bool ComputeParent(DataDescriptionEntry data, Stack<DataDescriptionEntry> groups) {
+			bool updated = false;
+			while(!updated && groups.Count > 0) {
+				var toplevel = groups.Peek();
+				if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
+				else {
+					toplevel.Subordinates.Add(data);
+					data.TopLevel = toplevel;
+					updated = true;
+				}
+			}
+			return updated;
+		}
+
+		/// <summary>Update the toplevel data of a given data description.</summary>
+		/// <param name="data">Data description to update</param>
+		/// <param name="currencies">Currency characters, used to know if data is numeric or numeric edited</param>
+		/// <returns>Representation of the corresponding TYPEDEF if data is of a custom TYPE, or null if data type is unknown of from COBOL standard.</returns>
+		private DataDescriptionEntry ComputeType(DataDescriptionEntry data, char[] currencies) {
+			if (data.DataType != null) return null;
+			if (data.Picture == null) {
+				data.DataType = DataType.Unknown;
+				return null;
+			}
+			try {
+				var customTypeGroup = CurrentProgram.SymbolTable.GetCustomType(data.Picture);
+				data.DataType = customTypeGroup.DataType;
+				return customTypeGroup;
+			} catch(ArgumentException ex) {
+				data.DataType = DataType.Create(data.Picture, currencies);
+				return null;
+			}
+		}
+		private DataDescriptionEntry GetCustomType(string name) {
+			try { return CurrentProgram.SymbolTable.GetCustomType(name); }
+			catch(ArgumentException ex) { return null; }
+		}
+
+		/// <summary>Retrieve currency characters from SPECIAL NAMES paragraph.</summary>
+		/// <returns>Currency characters array</returns>
 		private char[] GetCurrencies() {
 			IDictionary<string, string> currencies = null;
 			var specialnode = GetNode(typeof(SpecialNamesParagraph));
@@ -181,6 +271,9 @@ namespace TypeCobol.Compiler.Parser
 			return chars.ToArray();
 		}
 
+		/// <summary>Get first node holding data of a given type.</summary>
+		/// <param name="type">Type of data we want</param>
+		/// <returns>First node encountered during a breadth-first traversal of the tree.</returns>
 		private Node GetNode(Type type) {
 			var nodes = new List<Node>();
 			nodes.Add(CurrentProgram.SyntaxTree.Root);
@@ -192,10 +285,6 @@ namespace TypeCobol.Compiler.Parser
 			}
 			return null;
 		}
-
-        private void UpdateSymbolsTable(IList<DataDescriptionEntry> data, SymbolTable.Section section) {
-            foreach(var d in data) CurrentProgram.SymbolTable.Add(section, d);
-        }
 
         public override void EnterProcedureDivision(CobolProgramClassParser.ProcedureDivisionContext context) {
             _enter(new Node(AsCodeElement(context.ProcedureDivisionHeader())));
@@ -599,5 +688,5 @@ namespace TypeCobol.Compiler.Parser
                 (CodeElement)AsCodeElement(context.ExecStatement()) ??
                 null;
         }
-    }
+	}
 }

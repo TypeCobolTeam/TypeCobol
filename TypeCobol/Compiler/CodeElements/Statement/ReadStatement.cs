@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// identify a record key associated with file-name-1. data-name-1 can be qualified; it
         /// cannot be subscripted.
         /// </summary>
-        DataName Key;
+        QualifiedName Key;
         /// <summary>
         /// p395:
         /// identifier-1 is the receiving field.
@@ -72,7 +72,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         bool IsRecord;
 
-        public ReadStatement(FileName filename, Identifier into, DataName key, bool next, bool record)
+        public ReadStatement(FileName filename, Identifier into, QualifiedName key, bool next, bool record)
             : base(CodeElementType.ReadStatement)
         {
             this.FileName = filename;

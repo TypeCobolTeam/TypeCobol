@@ -5,12 +5,13 @@ using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace TypeCobol.Test
-{
-    [TestClass]
-    public class GrammarTest
-    {
-        [TestMethod]
+namespace TypeCobol.Test {
+
+	[TestClass]
+	public class GrammarTest {
+		[TestMethod]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","long")]
         [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
         public void CheckGrammarCorrectness()
         {
@@ -22,6 +23,7 @@ namespace TypeCobol.Test
             string[] include = { };
             string[] exclude = { };
             bool codegen = false;
+			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
             System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
             int tested = 0, nbFilesInError = 0, ignores = 0;
@@ -40,7 +42,7 @@ namespace TypeCobol.Test
                 }
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
-                var unit = ParserUtils.ParseCobolFile(filename, TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat, samples);
+                var unit = ParserUtils.ParseCobolFile(filename, format, samples);
                 watch.Stop();
                 //TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
                 TimeSpan elapsed = watch.Elapsed;
@@ -64,8 +66,10 @@ namespace TypeCobol.Test
                 }
 
                 if (codegen) {
-                    var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(unit.ProgramClassDocumentSnapshot, null);
-                    generator.GenerateCobolText(filename+".gen");
+                    var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(null, format, unit.ProgramClassDocumentSnapshot);
+					var stream = new System.IO.StreamWriter(filename+".gen");
+					generator.WriteCobol(stream);
+					stream.Close();
                 }
             }
             string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);
@@ -74,23 +78,18 @@ namespace TypeCobol.Test
             if (nbFilesInError > 0) Assert.Fail('\n'+message);
         }
 
-        private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document)
-        {
-            return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
-        }
-
-        private bool hasErrors(TypeCobol.Compiler.Parser.ProgramClassDocument document)
-        {
-            return document != null && document.Diagnostics != null && document.Diagnostics.Count() > 0;
-        }
-
-        private int checkErrors(string filename, IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics)
-        {
-            Console.WriteLine(filename);
-            string result = ParserUtils.DiagnosticsToString(diagnostics);
-            Console.WriteLine(result);
-            System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
-            return diagnostics.Count();
-        }
-    }
+		private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document) {
+			return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
+		}
+		private bool hasErrors(TypeCobol.Compiler.Parser.ProgramClassDocument document) {
+			return document != null && document.Diagnostics != null && document.Diagnostics.Count() > 0;
+		}
+		private int checkErrors(string filename, IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics) {
+			Console.WriteLine(filename);
+			string result = ParserUtils.DiagnosticsToString(diagnostics);
+			Console.WriteLine(result);
+			System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
+			return diagnostics.Count();
+		}
+	}
 }

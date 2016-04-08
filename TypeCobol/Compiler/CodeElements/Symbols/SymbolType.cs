@@ -7,28 +7,40 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum SymbolType
     {
+        // Symbols defined and referenced in the program
+
         AlphabetName,
-        AssignmentName,
         ClassName,
-        CharsetClassName,
+        CharacterClassName,
         ConditionName,
+        ConditionForUPSISwitchName,
         DataName,
-        FunctionName,
-        SpecialRegisterName,
+        ExternalClassName,
         IndexName,
         FileName,
         MethodName,
         MnemonicForEnvironmentName,
         MnemonicForUPSISwitchName,
         ParagraphName,
+        ProgramEntry,
         ProgramName,
         SectionName,
+        SpecialRegisterName, // implicitely defined
         SymbolicCharacter,
         XmlSchemaName,
+
+        // External names referenced in the program
+
+        AssignmentName,
         EnvironmentName,
+        ExecTranslatorName,
+        FunctionName,
+        LibraryName,
+        TextName,
+        UPSISwitchName,
 
         /// <summary>
-        /// Type to use when the parser can't determiner the exact SymbolType.
+        /// Type to use when the parser can't determine the exact SymbolType.
         /// The actual type will be resolved in a next compiler phase
         /// </summary>
         Unknown

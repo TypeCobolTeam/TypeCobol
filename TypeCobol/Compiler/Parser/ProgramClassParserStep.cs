@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class ProgramClassParserStep
     {
-        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, out Program newProgram, out Class newClass, out IList<ParserDiagnostic> diagnostics)
+        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, out Program newProgram, out Class newClass, out IList<ParserDiagnostic> diagnostics)
         {
             // Create an Antlr compatible token source on top a the token iterator
             CodeElementsLinesTokenSource tokenSource = new CodeElementsLinesTokenSource(
@@ -42,6 +42,7 @@ namespace TypeCobol.Compiler.Parser
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
             ProgramClassBuilder programClassBuilder = new ProgramClassBuilder();
+			programClassBuilder.CustomSymbols = customSymbols;
             programClassBuilder.Dispatcher = new ProgramDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
             walker.Walk(programClassBuilder, codeElementParseTree);

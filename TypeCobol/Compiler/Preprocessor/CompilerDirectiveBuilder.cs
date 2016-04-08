@@ -38,16 +38,14 @@ namespace TypeCobol.Compiler.Preprocessor
 
         public override void EnterBasisCompilerStatement(CobolCompilerDirectivesParser.BasisCompilerStatementContext context) 
         {
-            CompilerDirective = new BasisDirective();
-        }
-        
-        public override void EnterBasisName(CobolCompilerDirectivesParser.BasisNameContext context) 
-        {
-            string basisName = null;
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref basisName);
-            ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref basisName);
+            var basisDirective = new BasisDirective();
+            CompilerDirective = basisDirective;
 
-            ((BasisDirective)CompilerDirective).BasisName = basisName;
+            if (context.textName() != null)
+            {
+                basisDirective.BasisName = GetTextName(context.textName());
+                basisDirective.TextNameSymbol = ParseTreeUtils.GetFirstToken(context.textName());
+            }
         }
         
         public override void EnterControlCblCompilerStatement(CobolCompilerDirectivesParser.ControlCblCompilerStatementContext context) 
@@ -80,67 +78,84 @@ namespace TypeCobol.Compiler.Preprocessor
         
         public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) 
         {
-            CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY);
-        }
-        
-        public override void EnterTextName(CobolCompilerDirectivesParser.TextNameContext context)
-        {
-            CopyDirective copyDirective = CompilerDirective as CopyDirective;
-            if (copyDirective != null)
+            var copyDirective = new CopyDirective(CompilerDirectiveType.COPY);
+            CompilerDirective = copyDirective;
+            
+            if (context.copyCompilerStatementBody() != null)
             {
-                string textName = null;
-                ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref textName);
-                ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref textName);
-                copyDirective.TextName = textName;
+                var textNameContext = context.copyCompilerStatementBody().textName();
+                if (textNameContext != null)
+                {
+                    string textName = GetTextName(textNameContext);
+                    copyDirective.TextName = textName;
+                    copyDirective.TextNameSymbol = ParseTreeUtils.GetFirstToken(textNameContext);
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 
-                if (textName != null)
-                {
-                    // Get token for the text name
-                    Token textNameToken = null;
-                    if (context.UserDefinedWord() != null)
+                    if (textName != null)
                     {
-                        textNameToken = (Token)context.UserDefinedWord().Symbol;
-                    }
-                    if (context.AlphanumericLiteral() != null)
-                    {
-                        textNameToken = (Token)context.AlphanumericLiteral().Symbol;
-                    }
-
-                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                    List<RemarksDirective.TextNameVariation> copyTextNamesVariations = ((TokensLine)textNameToken.TokensLine).InitialScanState.CopyTextNamesVariations;
-                    if(copyTextNamesVariations != null && copyTextNamesVariations.Count > 0)
-                    {
-                        // Check if the current text name was mentioned in a REMARKS compiler directive
-                        RemarksDirective.TextNameVariation textNameDeclaration = copyTextNamesVariations.Find(declaration => String.Equals(declaration.TextNameWithSuffix, textName, StringComparison.InvariantCultureIgnoreCase));
-                        if(textNameDeclaration != null)
+                        // Get token for the text name
+                        Token textNameToken = null;
+                        if (textNameContext.UserDefinedWord() != null)
                         {
-                            // Declaration found => apply the legacy REPLACING semantics to the copy directive
-                            copyDirective.RemoveFirst01Level = true;
-                            if(textNameDeclaration.HasSuffix)
+                            textNameToken = (Token)textNameContext.UserDefinedWord().Symbol;
+                        }
+                        if (textNameContext.AlphanumericLiteral() != null)
+                        {
+                            textNameToken = (Token)textNameContext.AlphanumericLiteral().Symbol;
+                        }
+
+                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                        List<RemarksDirective.TextNameVariation> copyTextNamesVariations = ((TokensLine)textNameToken.TokensLine).InitialScanState.CopyTextNamesVariations;
+                        if (copyTextNamesVariations != null && copyTextNamesVariations.Count > 0)
+                        {
+                            // Check if the current text name was mentioned in a REMARKS compiler directive
+                            RemarksDirective.TextNameVariation textNameDeclaration = copyTextNamesVariations.Find(declaration => String.Equals(declaration.TextNameWithSuffix, textName, StringComparison.InvariantCultureIgnoreCase));
+                            if (textNameDeclaration != null)
                             {
-                                copyDirective.TextName = textNameDeclaration.TextName;
-                                copyDirective.InsertSuffixChar = true;
-                                copyDirective.SuffixChar = textNameDeclaration.SuffixChar;
+                                // Declaration found => apply the legacy REPLACING semantics to the copy directive
+                                copyDirective.RemoveFirst01Level = true;
+                                if (textNameDeclaration.HasSuffix)
+                                {
+                                    copyDirective.TextName = textNameDeclaration.TextName;
+                                    copyDirective.InsertSuffixChar = true;
+                                    copyDirective.SuffixChar = textNameDeclaration.SuffixChar;
+                                }
                             }
                         }
                     }
-                }
 #endif
+                }
+
+                var libraryNameContext = context.copyCompilerStatementBody().libraryName();
+                if (libraryNameContext != null)
+                {
+                    copyDirective.LibraryName = GetLibraryName(libraryNameContext);
+                    copyDirective.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(libraryNameContext);
+                }
             }
         }
 
-        public override void EnterLibraryName(CobolCompilerDirectivesParser.LibraryNameContext context)
+        private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context)
         {
-            CopyDirective copyDirective = CompilerDirective as CopyDirective;
-            if (copyDirective != null)
+            string textName = null;
+            if (context != null)
             {
-                string libraryName = null;
+                ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref textName);
+                ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref textName);
+            }
+            return textName;
+        }
+
+        private string GetLibraryName(CobolCompilerDirectivesParser.LibraryNameContext context)
+        {
+            string libraryName = null;
+            if (context != null)
+            {
                 ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref libraryName);
                 ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref libraryName);
-                copyDirective.LibraryName = libraryName;
             }
+            return libraryName;
         }
 
         public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) 
@@ -347,10 +362,29 @@ namespace TypeCobol.Compiler.Preprocessor
                 enterDirective.RoutineName = routineName;
             }
         }
-        
-        public override void EnterExecSqlIncludeStatement(CobolCompilerDirectivesParser.ExecSqlIncludeStatementContext context) 
+
+        public override void EnterExecSqlIncludeStatement(CobolCompilerDirectivesParser.ExecSqlIncludeStatementContext context)
         {
-            CompilerDirective = new CopyDirective(CompilerDirectiveType.EXEC_SQL_INCLUDE);
+            var copyDirective = new CopyDirective(CompilerDirectiveType.EXEC_SQL_INCLUDE);
+            CompilerDirective = copyDirective;
+
+            if (context.copyCompilerStatementBody() != null)
+            {
+                var textNameContext = context.copyCompilerStatementBody().textName();
+                if (textNameContext != null)
+                {
+                    string textName = GetTextName(textNameContext);
+                    copyDirective.TextName = textName;
+                    copyDirective.TextNameSymbol = ParseTreeUtils.GetFirstToken(textNameContext);
+                }
+
+                var libraryNameContext = context.copyCompilerStatementBody().libraryName();
+                if (libraryNameContext != null)
+                {
+                    copyDirective.LibraryName = GetLibraryName(libraryNameContext);
+                    copyDirective.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(libraryNameContext);
+                }
+            }
         }
 
         public override void EnterInsertCompilerStatement(CobolCompilerDirectivesParser.InsertCompilerStatementContext context) 

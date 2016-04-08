@@ -60,20 +60,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsBaseListener.cs">
-      <Link>Compiler\Parser\Generated\CobolCodeElementsBaseListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CodeElementsBaseListener.cs">
+      <Link>Compiler\Parser\Generated\CodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\CobolCodeElementsBaseVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CodeElementsBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\CodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsListener.cs">
-      <Link>Compiler\Parser\Generated\CobolCodeElementsListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CodeElementsListener.cs">
+      <Link>Compiler\Parser\Generated\CodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsParser.cs">
-      <Link>Compiler\Parser\Generated\CobolCodeElementsParser.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CodeElementsParser.cs">
+      <Link>Compiler\Parser\Generated\CodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCodeElementsVisitor.cs">
-      <Link>Compiler\Parser\Generated\CobolCodeElementsVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CodeElementsVisitor.cs">
+      <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
     <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesBaseListener.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseListener.cs</Link>
@@ -105,6 +105,21 @@
     <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassVisitor.cs">
       <Link>Compiler\Parser\Generated\CobolProgramClassVisitor.cs</Link>
     </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsBaseListener.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsListener.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsListener.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsParser.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsParser.cs</Link>
+    </Compile>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsVisitor.cs">
+      <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
+    </Compile>
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
     <Compile Include="Compiler\AntlrUtils\DiagnosticSyntaxErrorListener.cs" />
@@ -113,6 +128,7 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\SymbolInformation.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
@@ -262,7 +278,7 @@
     <Compile Include="Compiler\CodeElements\Symbols\SymbolReference.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AlphabetName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\AssignmentName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\CharsetClassName.cs" />
+    <Compile Include="Compiler\CodeElements\Symbols\CharacterClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ClassName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\ConditionName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SectionName.cs" />
@@ -345,6 +361,11 @@
     <Compile Include="Compiler\Text\TextSourceInfo.cs" />
     <Compile Include="Compiler\Text\TextString.cs" />
     <Compile Include="Compiler\TypeChecker\CompilationError.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\LanguageModelGenerator.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\WordProbabilities.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\StatsCounter.cs" />
+    <Compile Include="LanguageServices\CodeAnalysis\Statistics\StatsGenerator.cs" />
     <Compile Include="LanguageServices\Editor\ILanguageEditor.cs" />
     <Compile Include="LanguageServices\Editor\Workspace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -370,8 +391,14 @@
     <Compile Include="Compiler\Text\TextLineSnapshot.cs" />
     <Compile Include="Compiler\Text\CobolTextLine.cs" />
     <Compile Include="Compiler\TypeChecker\CobolTypeChecker.cs" />
+    <Compile Include="Tools\DiagnosticUtils.cs" />
+    <Compile Include="Tools\Generator\CodeElements\CodeElement.cs" />
+    <Compile Include="Tools\Generator\CodeElements\DataDescriptionEntry.cs" />
+    <Compile Include="Tools\Generator\CodeGenerator.cs" />
+    <Compile Include="Tools\CommandLine\TypeCobolStats.cs" />
     <Compile Include="Tools\Reflection.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolCompiler.cs" />
+    <Compile Include="Tools\CodeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -393,6 +420,7 @@
     <None Include="Documentation\Studies\Move code element study.docx" />
     <None Include="Documentation\Studies\Pipeline - compilation steps.docx" />
     <None Include="Documentation\Studies\Text editors functions study.xlsx" />
+    <None Include="Documentation\Studies\Symbols and User defined words.xlsx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +434,11 @@
     <Content Include="Documentation\Studies\Lexical study.txt" />
     <Content Include="Documentation\Studies\Parser rules ordering .txt" />
     <Content Include="Documentation\Studies\Specific syntax - REMARKS.txt" />
+    <Content Include="Documentation\Studies\TypeCobolStats_counters.txt" />
+    <Content Include="Documentation\Studies\TypeCobolStats_modelForCopy.txt" />
+    <Content Include="Documentation\Studies\TypeCobolStats_modelForProgram.txt" />
+    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Copy.txt" />
+    <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Program.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">
