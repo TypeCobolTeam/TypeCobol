@@ -1706,9 +1706,6 @@ ioControlEntry:
 rerunClause:
                RERUN ON? assignmentNameOrFileNameReference (EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
    
-// Ambiguity between assignment name and file name at parsing stage
-assignmentNameOrFileNameReference : UserDefinedWord | alphanumericLiteral;
-
 // p147: The SAME AREA clause is syntax checked, but has no effect on the execution of the program.
 // The SAME AREA clause specifies that two or more files that do not represent sort or merge files are to use the same main storage area during processing.
 // The files named in a SAME AREA clause need not have the same organization or access. 
@@ -2364,40 +2361,6 @@ linageClause:
 
 recordingModeClause:
                        RECORDING MODE? IS? recordingMode;
-
-// p182: Permitted values for RECORDING MODE are:
-// * Recording mode F (fixed)
-// All the records in a file are the same length and each is wholly contained
-// within one block. Blocks can contain more than one record, and there is
-// usually a fixed number of records for each block. In this mode, there are
-// no record-length or block-descriptor fields.
-//* Recording mode V (variable)
-// The records can be either fixed-length or variable-length, and each must be
-// wholly contained within one block. Blocks can contain more than one
-// record. Each data record includes a record-length field and each block
-// includes a block-descriptor field. These fields are not described in the
-// DATA DIVISION. They are each 4 bytes long and provision is
-// automatically made for them. These fields are not available to you.
-// * Recording mode U (fixed or variable)
-// The records can be either fixed-length or variable-length. However, there is
-// only one record for each block. There are no record-length or
-// block-descriptor fields.
-// You cannot use RECORDING MODE U if you are using the BLOCK
-// CONTAINS clause.
-// * Recording mode S (spanned)
-// The records can be either fixed-length or variable-length, and can be larger
-// than a block. If a record is larger than the remaining space in a block, a
-// segment of the record is written to fill the block. The remainder of the
-// record is stored in the next block (or blocks, if required). Only complete
-// records are made available to you. Each segment of a record in a block,
-// even if it is the entire record, includes a segment-descriptor field, and each
-// block includes a block-descriptor field. These fields are not described in the
-// DATA DIVISION; provision is automatically made for them. These fields
-// are not available to you.
-// When recording mode S is used, the BLOCK CONTAINS CHARACTERS clause
-// must be used. Recording mode S is not allowed for ASCII files.
-
-recordingMode : UserDefinedWord; // possible values : F | V | U | S
 
 // p183: The CODE-SET clause specifies the character code used to represent data on a
 // magnetic tape file. When the CODE-SET clause is specified, an alphabet-name
@@ -3861,21 +3824,6 @@ useStatementForDebuggingDeclarative:
 // Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
 // sections, and a paragraph or group of paragraphs.
 // A procedure-name is a user-defined name that identifies a section or a paragraph.
-
-// p66: References to PROCEDURE DIVISION names
-// PROCEDURE DIVISION names that are explicitly referenced in a program must be
-// unique within a section.
-// A section-name is the highest and only qualifier available for a paragraph-name
-// and must be unique if referenced. (Section-names are described under
-// “Procedures” on page 252.)
-// If explicitly referenced, a paragraph-name must not be duplicated within a section.
-// When a paragraph-name is qualified by a section-name, the word SECTION must
-// not appear. A paragraph-name need not be qualified when referred to within the
-// section in which it appears. A paragraph-name or section-name that appears in a
-// program cannot be referenced from any other program.
-
-procedureName:
-                 paragraphNameReferenceOrSectionNameReference | qualifiedParagraphNameReference;
 
 // p252: Section
 // A section-header optionally followed by one or more paragraphs.

@@ -517,7 +517,7 @@ simpleRelation:
 // programPointer : identifier | NULL | NULLS
 // objectReference : identifier | SELF | NULL | NULLS
 
-operand: identifierOrIndexName | literal | allFigurativeConstant | nullFigurativeConstant | SELF | arithmeticExpression ; // indexName cannot be distinguished from identifier at this parsing stage
+operand: identifierOrIndexName | literal | allFigurativeConstant | nullFigurativeConstant | SELF | arithmeticExpression; // indexName cannot be distinguished from identifier at this parsing stage
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is

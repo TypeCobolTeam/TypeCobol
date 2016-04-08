@@ -640,7 +640,7 @@ literal: alphanumericOrNationalLiteral | numericLiteral;
 // p371: MOVE Statement - National: includes the following items: Figurative constants ZERO, SPACE, QUOTE, and ALL national-literal when used in a context that requires a national sending item 
 // p373: If the receiving item is numeric and the sending field is an alphanumeric literal, a national literal, or an ALL literal, all characters of the literal must be numeric characters. 
 // -- Forbidden usages
-// p238: If the VALUE clause is specified at the group level for an alphanumeric group, the literal must be an alphanumeric literal or a figurative constant as specified in “Figurative constants�? on page 13, other than ALL national-literal. 
+// p238: If the VALUE clause is specified at the group level for an alphanumeric group, the literal must be an alphanumeric literal or a figurative constant as specified in “Figurative constants ? on page 13, other than ALL national-literal. 
 // p15: The figurative constant ALL literal must not be used with the CALL, INSPECT, INVOKE, STOP, or STRING statements. 
 // p306: CALL BY REFERENCE phrase - literal-2 Can be: A figurative constant (except ALL literal or NULL/NULLS)
 // p306: CALL BY CONTENT phrase - literal-2 Can be a figurative constant (except ALL literal or NULL/NULLS) 
@@ -771,7 +771,26 @@ paragraphNameReference: UserDefinedWord;
 // [Type ambiguity] at this parsing stage
 paragraphNameReferenceOrSectionNameReference: UserDefinedWord;
 
+// p66: References to PROCEDURE DIVISION names
+// PROCEDURE DIVISION names that are explicitly referenced in a program must be
+// unique within a section.
+// A section-name is the highest and only qualifier available for a paragraph-name
+// and must be unique if referenced. (Section-names are described under
+// “Procedures” on page 252.)
+// If explicitly referenced, a paragraph-name must not be duplicated within a section.
+// When a paragraph-name is qualified by a section-name, the word SECTION must
+// not appear. A paragraph-name need not be qualified when referred to within the
+// section in which it appears. A paragraph-name or section-name that appears in a
+// program cannot be referenced from any other program.
+
 qualifiedParagraphNameReference: paragraphNameReference (IN | OF) sectionNameReference;
+
+// p252: Procedures
+// Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
+// sections, and a paragraph or group of paragraphs.
+// A procedure-name is a user-defined name that identifies a section or a paragraph.
+
+procedureName: paragraphNameReferenceOrSectionNameReference | qualifiedParagraphNameReference;
 
 // p103 : class-name
 // A user-defined word that identifies the class. class-name can optionally
@@ -1016,7 +1035,7 @@ xmlSchemaNameReference: UserDefinedWord;
 // You can specify an alphanumeric special register in a function wherever an
 // alphanumeric argument to a function is allowed, unless specifically prohibited.
 // If qualification is allowed, special registers can be qualified as necessary to provide
-// uniqueness. (For more information, see “Qualification�? on page 65.)
+// uniqueness. (For more information, see “Qualification ? on page 65.)
 // ... p17-p33 : more details on all special registers ...
 
 specialRegister: (DEBUG_CONTENTS |
@@ -1122,6 +1141,8 @@ textName: UserDefinedWord | alphanumericLiteralToken;
 
 libraryName: UserDefinedWord | alphanumericLiteralToken;
 
+qualifiedTextName: textName ((IN | OF) libraryName)?;
+
 // p130: assignment-name-1 Identifies the external data file. 
 // It can be specified as a name or as an alphanumeric literal. 
 // assignment-name-1 is not the name of a data item, and assignment-name-1 cannot be contained in a data item. 
@@ -1141,6 +1162,9 @@ libraryName: UserDefinedWord | alphanumericLiteralToken;
 // If no file has been allocated using this ddname, then name is treated as an environment variable
 
 assignmentName: UserDefinedWord | alphanumericLiteralToken;
+
+// [Type ambiguity] at this parsing stage
+assignmentNameOrFileNameReference : UserDefinedWord | alphanumericLiteralToken;
 
 // ** Runtime functions **
 
@@ -1182,6 +1206,53 @@ intrinsicFunctionName: (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
 // execStatement: (EXEC | EXECUTE) execTranslatorName  ExecStatementText* END_EXEC;
 
 execTranslatorName : ExecTranslatorName;
+
+// ** Compiler enumerations **
+
+// p528: *CONTROL (*CBL) statement
+// With the *CONTROL (or *CBL) statement, you can selectively display or suppress
+// the listing of source code, object code, and storage maps throughout the source
+// text. 
+// These are not reserved words, but the only possible values are the following
+// SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
+
+controlCblOption: UserDefinedWord;
+
+// p182: Permitted values for RECORDING MODE are:
+// * Recording mode F (fixed)
+// All the records in a file are the same length and each is wholly contained
+// within one block. Blocks can contain more than one record, and there is
+// usually a fixed number of records for each block. In this mode, there are
+// no record-length or block-descriptor fields.
+//* Recording mode V (variable)
+// The records can be either fixed-length or variable-length, and each must be
+// wholly contained within one block. Blocks can contain more than one
+// record. Each data record includes a record-length field and each block
+// includes a block-descriptor field. These fields are not described in the
+// DATA DIVISION. They are each 4 bytes long and provision is
+// automatically made for them. These fields are not available to you.
+// * Recording mode U (fixed or variable)
+// The records can be either fixed-length or variable-length. However, there is
+// only one record for each block. There are no record-length or
+// block-descriptor fields.
+// You cannot use RECORDING MODE U if you are using the BLOCK
+// CONTAINS clause.
+// * Recording mode S (spanned)
+// The records can be either fixed-length or variable-length, and can be larger
+// than a block. If a record is larger than the remaining space in a block, a
+// segment of the record is written to fill the block. The remainder of the
+// record is stored in the next block (or blocks, if required). Only complete
+// records are made available to you. Each segment of a record in a block,
+// even if it is the entire record, includes a segment-descriptor field, and each
+// block includes a block-descriptor field. These fields are not described in the
+// DATA DIVISION; provision is automatically made for them. These fields
+// are not available to you.
+// When recording mode S is used, the BLOCK CONTAINS CHARACTERS clause
+// must be used. Recording mode S is not allowed for ASCII files.
+
+// possible values : F | V | U | S
+
+recordingMode: UserDefinedWord; 
 
 
 // - 5. Reserved words -
@@ -1847,8 +1918,8 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // Use the indicator area to specify the continuation of words or alphanumeric literals
 // from the previous line onto the current line, the treatment of text as
 // documentation, and debugging lines.
-// See “Continuation lines�? on page 54, “Comment lines�? on page 56, and
-// “Debugging lines�? on page 57.
+// See “Continuation lines ? on page 54, “Comment lines ? on page 56, and
+// “Debugging lines ? on page 57.
 // The indicator area can be used for source listing formatting. A slash (/) placed in
 // the indicator column causes the compiler to start a new page for the source listing,
 // and the corresponding source record to be treated as a comment. The effect can be
@@ -1873,7 +1944,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // DECLARATIVES must begin in Area A and be followed immediately by a
 // separator period; no other text can appear on the same line. After the keywords
 // END DECLARATIVES, no text can appear before the following section header. (See
-// “Declaratives�? on page 251.)
+// “Declaratives ? on page 251.)
 
 // p54: Area B
 // Certain items must begin in Area B.
@@ -1891,7 +1962,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // the input statements are indented. Indentation does not affect the meaning of the
 // program. The programmer can choose the amount of indentation, subject only to
 // the restrictions on the width of Area B. See also Chapter 5, “Sections and
-// paragraphs,�? on page 49.
+// paragraphs, ? on page 49.
 
 // p56: Area A or Area B
 // Certain items can begin in either Area A or Area B.
@@ -1906,7 +1977,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // ... p56 -> p58: more details ...
 // A level-number that must begin in Area A is a one- or two-digit integer with a
 // value of 01 or 77. A level-number must be followed by a space or a separator
-// period. For more information, see “Level-numbers�? on page 186.
+// period. For more information, see “Level-numbers ? on page 186.
 // A level-number that can begin in Area A or B is a one- or two-digit integer with a
 // value of 02 through 49, 66, or 88.
 
@@ -1985,7 +2056,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // Multiple comment lines are allowed. Each must begin with an asterisk (*) or a
 // slash (/) in the indicator area, or with a floating comment indicator (*>).
 // For more information about floating comment indicators, see “Floating comment
-// indicators (*>).�?
+// indicators (*>). ?
 // An asterisk (*) comment line is printed on the next available line in the output
 // listing. The effect can be dependent on the LINECOUNT compiler option. For
 // information about the LINECOUNT compiler option, see LINECOUNT in the
@@ -2006,7 +2077,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // OBJECT-COMPUTER paragraph), the DATA DIVISION, and the PROCEDURE
 // DIVISION. If a debugging line contains only spaces in Area A and Area B, it is
 // considered a blank line.
-// See "WITH DEBUGGING MODE" in “SOURCE-COMPUTER paragraph�? on page
+// See "WITH DEBUGGING MODE" in “SOURCE-COMPUTER paragraph ? on page
 // 110.
 
 // p110: WITH DEBUGGING MODE
@@ -2044,11 +2115,11 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // COBOL word, a literal, a PICTURE character-string, or a comment-entry. A
 // character-string is delimited by separators.
 // A separator is a string of contiguous characters used to delimit character strings.
-// Separators are described in detail under Chapter 4, “Separators,�? on page 45.
+// Separators are described in detail under Chapter 4, “Separators, ? on page 45.
 // Character strings and certain separators form text words. A text word is a character
 // or a sequence of contiguous characters (possibly continued across lines) between
 // character positions 8 and 72 inclusive in source text, library text, or pseudo-text.
-// For more information about pseudo-text, see “Pseudo-text�? on page 58.
+// For more information about pseudo-text, see “Pseudo-text ? on page 58.
 
 // p45: A separator is a character or a string of two or more contiguous characters that
 // delimits character-strings.
@@ -2103,13 +2174,13 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // space, comma, semicolon, period, right parenthesis, or pseudo-text delimiter. 
 // Delimiters must appear as balanced pairs.
 // They delimit alphanumeric literals, except when the literal is continued
-// (see “Continuation lines�? on page 54).
+// (see “Continuation lines ? on page 54).
 
 // p47: Pseudo-text delimiters {b==} ... {==b}
 // An opening pseudo-text delimiter must be immediately preceded by a
 // space. A closing pseudo-text delimiter must be immediately followed by a
 // separator space, comma, semicolon, or period. Pseudo-text delimiters must
-// appear as balanced pairs. They delimit pseudo-text. (See “COPY statement�?
+// appear as balanced pairs. They delimit pseudo-text. (See “COPY statement ?
 // on page 530.)
 
 // p47: Any punctuation character included in a PICTURE character-string, a comment
@@ -2211,9 +2282,9 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // There are two types of special character words, which are recognized as
 // special characters only when represented in single-byte characters:
 // - Arithmetic operators: + - / * **
-// See “Arithmetic expressions�? on page 253.
+// See “Arithmetic expressions ? on page 253.
 // - Relational operators: <>=<=>=
-// See “Conditional expressions�? on page 256.
+// See “Conditional expressions ? on page 256.
 // Special object identifiers
 // COBOL provides two special object identifiers, SELF and SUPER:
 // ... p13 more details on SELF and SUPER ...
@@ -2271,7 +2342,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // You can specify an alphanumeric special register in a function wherever an
 // alphanumeric argument to a function is allowed, unless specifically prohibited.
 // If qualification is allowed, special registers can be qualified as necessary to provide
-// uniqueness. (For more information, see “Qualification�? on page 65.)
+// uniqueness. (For more information, see “Qualification ? on page 65.)
 // ... p17-p33 : more details on all special registers ...
 
 // Scope and comparison
@@ -2293,7 +2364,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // number can be both a priority-number and a level-number. Each user-defined
 // word within a set must be unique, except for priority-numbers and level-numbers
 // and except as specified in Chapter 8, “Referencing data names, copy libraries, and
-// PROCEDURE DIVISION names,�? on page 65.
+// PROCEDURE DIVISION names, ? on page 65.
 
 // p11: The following types of user-defined words can be referenced by statements and
 // entries in the program in which the user-defined word is declared:
@@ -2324,16 +2395,16 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 
 // p33: A literal is a character-string whose value is specified either by the characters of
 // which it is composed or by the use of a figurative constant.
-// For more information about figurative constants, see “Figurative constants�? on
+// For more information about figurative constants, see “Figurative constants ? on
 // page 13.
 
 // p34: Alphanumeric literals
 // Enterprise COBOL provides several formats of alphanumeric literals.
 // The formats of alphanumeric literals are:
-// - Format 1: “Basic alphanumeric literals�?
-// - Format 2: “Alphanumeric literals with DBCS characters�? on page 35
-// - Format 3: “Hexadecimal notation for alphanumeric literals�? on page 36
-// - Format 4: “Null-terminated alphanumeric literals�? on page 37
+// - Format 1: “Basic alphanumeric literals ?
+// - Format 2: “Alphanumeric literals with DBCS characters ? on page 35
+// - Format 3: “Hexadecimal notation for alphanumeric literals ? on page 36
+// - Format 4: “Null-terminated alphanumeric literals ? on page 37
 
 // p34: Basic alphanumeric literals
 // Basic alphanumeric literals can contain any character in a single-byte EBCDIC
@@ -2361,7 +2432,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // The maximum length of an alphanumeric literal is 160 bytes. The minimum length
 // is 1 byte.
 // Alphanumeric literals are in the alphanumeric data class and category. (Data
-// classes and categories are described in “Classes and categories of data�? on page
+// classes and categories are described in “Classes and categories of data ? on page
 // 162.)
 
 // p35: Alphanumeric literals with DBCS characters
@@ -2431,7 +2502,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // An alphanumeric literal in hexadecimal notation has data class and category
 // alphanumeric. Hexadecimal notation for alphanumeric literals can be used
 // anywhere alphanumeric literals can be used.
-// See also “Hexadecimal notation for national literals�? on page 41.
+// See also “Hexadecimal notation for national literals ? on page 41.
 
 // p37: Null-terminated alphanumeric literals
 // Alphanumeric literals can be null-terminated.
@@ -2487,7 +2558,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // by the user.
 // Numeric literals can be fixed-point or floating-point numbers.
 // Numeric literals are in the numeric data class and category. (Data classes and
-// categories are described under “Classes and categories of data�? on page 162.)
+// categories are described under “Classes and categories of data ? on page 162.)
 
 // p38: Rules for floating-point literal values
 // The format and rules for floating-point literals are listed below.
@@ -2514,7 +2585,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // N" and N’ identify a DBCS literal when the NSYMBOL(DBCS) compiler
 // option is in effect. They identify a national literal when the
 // NSYMBOL(NATIONAL) compiler option is in effect, and the rules
-// specified in “National literals�? on page 40 apply.
+// specified in “National literals ? on page 40 apply.
 // The opening delimiter must be followed immediately by a shift-out control
 // character.
 // For literals with opening delimiter N" or N’, when embedded quotes or
@@ -2553,7 +2624,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // delimiter N" or N’ identifies a national literal. A national literal is of the class and
 // category national.
 // When the NSYMBOL(DBCS) compiler option is in effect, the opening delimiter N"
-// or N’ identifies a DBCS literal, and the rules specified in “DBCS literals�? on page
+// or N’ identifies a DBCS literal, and the rules specified in “DBCS literals ? on page
 // 38 apply.
 // N" or N’
 // Opening delimiters. The opening delimiter must be coded as single-byte
@@ -2677,9 +2748,9 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // It has no effect on the execution of the program. There are three forms of
 // comments:
 // Comment entry (IDENTIFICATION DIVISION)
-// This form is described under “Optional paragraphs�? on page 105.
+// This form is described under “Optional paragraphs ? on page 105.
 // Comment line (any division)
-// This form is described under “Comment lines�? on page 56.
+// This form is described under “Comment lines ? on page 56.
 // Inline comments (any division)
 // Character-strings that form comments can contain DBCS characters or a
 // combination of DBCS and single-byte EBCDIC characters.
@@ -2703,7 +2774,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // Multiple comment lines are allowed. Each must begin with an asterisk (*) or a
 // slash (/) in the indicator area, or with a floating comment indicator (*>).
 // For more information about floating comment indicators, see “Floating comment
-// indicators (*>).�?
+// indicators (*>). ?
 // An asterisk (*) comment line is printed on the next available line in the output
 // listing. The effect can be dependent on the LINECOUNT compiler option. For
 // information about the LINECOUNT compiler option, see LINECOUNT in the
@@ -2776,7 +2847,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // An opening pseudo-text delimiter must be immediately preceded by a
 // space. A closing pseudo-text delimiter must be immediately followed by a
 // separator space, comma, semicolon, or period. Pseudo-text delimiters must
-// appear as balanced pairs. They delimit pseudo-text. (See “COPY statement�?
+// appear as balanced pairs. They delimit pseudo-text. (See “COPY statement ?
 // on page 530.)
 
 // p54 : Both characters that make up the pseudo-text delimiter separator "==" must be on
@@ -2788,7 +2859,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // If, however, there is a hyphen in the indicator area (column 7) of a line that follows
 // the opening pseudo-text delimiter, Area A of the line must be blank, and the rules
 // for continuation lines apply to the formation of text words. See “Continuation
-// lines�? on page 54 for details.
+// lines ? on page 54 for details.
 
 // p532: Library text and pseudo-text can consist of or include any words (except
 // COPY), identifiers, or literals that can be written in the source text. This

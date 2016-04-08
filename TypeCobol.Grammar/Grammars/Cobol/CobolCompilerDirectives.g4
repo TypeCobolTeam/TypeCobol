@@ -214,10 +214,6 @@ controlCblCompilerStatement:
                        controlCblOption+
                        PeriodSeparator?;
 
-// These are not reserved words, but the only possible values are the following
-// SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
-controlCblOption: UserDefinedWord;
-
 // p530: COPY statement                              
 // The COPY statement is a library statement that places prewritten text in a COBOL
 // compilation unit.
@@ -395,7 +391,7 @@ copyCompilerStatement:
                          COPY copyCompilerStatementBody PeriodSeparator;
              
 copyCompilerStatementBody:
-                             textName ((OF | IN) libraryName)?
+                             qualifiedTextName
                              SUPPRESS?
                              (REPLACING (copyReplacingOperand BY copyReplacingOperand)+)?;
 
