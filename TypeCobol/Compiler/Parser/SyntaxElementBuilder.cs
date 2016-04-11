@@ -292,25 +292,25 @@ namespace TypeCobol.Compiler.Parser
             return identifier;
         }
 
-        public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierOrClassNameContext identifier)
-        {
-            if (identifier.referenceModifier() == null)
-            {
-                var dataReferenceOrConditionReferenceOrClassName = identifier.dataReferenceOrConditionReferenceOrClassName();
-                if (dataReferenceOrConditionReferenceOrClassName != null)
-                {
-                    if (dataReferenceOrConditionReferenceOrClassName.subscript() == null)
-                    {
-                        var qualifiedDataNameOrQualifiedConditionNameOrClassName = dataReferenceOrConditionReferenceOrClassName.qualifiedDataNameOrQualifiedConditionNameOrClassName();
-                        if (qualifiedDataNameOrQualifiedConditionNameOrClassName.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null)
-                        {
-                            return ParseTreeUtils.GetFirstToken(qualifiedDataNameOrQualifiedConditionNameOrClassName.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-                        }
-                    }
-                }
-            }
-            return null;
-        }
+		public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierOrClassNameContext identifier) {
+			if (identifier.referenceModifier() == null) {
+				var dataReferenceOrConditionReferenceOrClassName = identifier.dataReferenceOrConditionReferenceOrClassName();
+				if (dataReferenceOrConditionReferenceOrClassName != null) {
+					if (dataReferenceOrConditionReferenceOrClassName.subscript() == null) {
+						var qualifiedName = dataReferenceOrConditionReferenceOrClassName.qualifiedDataNameOrQualifiedConditionNameOrClassName();
+						var legacy = qualifiedName.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
+						if (legacy != null) {
+							if (legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null) 
+								return ParseTreeUtils.GetFirstToken(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
+						} else {
+							if (qualifiedName.qDataOrFileOrUPSI() == null)
+								return ParseTreeUtils.GetFirstToken(qualifiedName.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
+						}
+					}
+				}
+			}
+			return null;
+		}
 
         private static Identifier CreateFunctionReference(CodeElementsParser.FunctionIdentifierContext context)
         {
@@ -402,7 +402,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
 			} else {
 				name = CreateDataName(context.dataNameReferenceOrIndexNameReference());
-				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReference());
+				qualifiers = CreateDataNames(context.qDataOrFile());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -418,7 +418,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -434,7 +434,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -450,7 +450,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -466,7 +466,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-				qualifiers = CreateDataNames(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -481,7 +481,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
 			} else {
 				name = CreateDataName(context.dataNameReference());
-				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReference());
+				qualifiers = CreateDataNames(context.qDataOrFile());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -495,7 +495,7 @@ namespace TypeCobol.Compiler.Parser
 				qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			} else {
 				name = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-				qualifiers = CreateDataNames(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+				qualifiers = CreateDataNames(context.qDataOrFileOrUPSI());
 			}
 			return CreateQualifiedName(name, qualifiers, legacy != null);
 		}
@@ -533,6 +533,15 @@ namespace TypeCobol.Compiler.Parser
             return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
+		private static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.QDataOrFileContext> context) {
+			var list = new List<CodeElementsParser.DataNameReferenceOrFileNameReferenceContext>();
+			foreach(var c in context)
+				if (c.dataNameReferenceOrFileNameReference() != null)
+					list.Add(c.dataNameReferenceOrFileNameReference());
+			//TODO: subscripting
+			return CreateDataNames(list);
+		}
+
         public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceContext> context)
         {
             List<DataName> datanames = new List<DataName>();
@@ -556,6 +565,15 @@ namespace TypeCobol.Compiler.Parser
                 }
             return datanames;
         }
+
+		private static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.QDataOrFileOrUPSIContext> context) {
+			var list = new List<CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext>();
+			foreach(var c in context)
+				if (c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null)
+					list.Add(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			//TODO: subscripting
+			return CreateDataNames(list);
+		}
 
         public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext> context)
         {
@@ -742,35 +760,40 @@ namespace TypeCobol.Compiler.Parser
             return new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
-        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceContext context)
-        {
-            if (context == null) return null;
-            return CreateSubscripts(context.subscript());
-        }
+		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceContext context) {
+			if (context == null) return null;
+			//TODO: subscripting
+			return CreateSubscripts(context.subscript());
+		}
 
-        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceContext context)
-        {
-            if (context == null) return null;
-            return CreateSubscripts(context.subscript());
-        }
+		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceContext context) {
+			if (context == null) return null;
+			var subscripts = CreateSubscripts(context.subscript());
+			//TODO: subscripting (probably not more correct than other CreateSubscripts() methods, but allows SEARCH test to pass)
+			if (context.qualifiedDataNameOrQualifiedConditionName() != null) {
+				var s = CreateSubscript(context.qualifiedDataNameOrQualifiedConditionName().subscript());
+				if (s != null) subscripts.Add(s);
+			}
+			return subscripts;
+		}
 
-        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context)
-        {
-            if (context == null) return null;
-            return CreateSubscripts(context.subscript());
-        }
+		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context) {
+			if (context == null) return null;
+			//TODO: subscripting
+			return CreateSubscripts(context.subscript());
+		}
 
-        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context)
-        {
-            if (context == null) return null;
-            return CreateSubscripts(context.subscript());
-        }
+		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context) {
+			if (context == null) return null;
+			//TODO: subscripting
+			return CreateSubscripts(context.subscript());
+		}
 
-        private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context)
-        {
-            if (context == null) return null;
-            return CreateSubscripts(context.subscript());
-        }
+		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context) {
+			if (context == null) return null;
+			//TODO: subscripting
+			return CreateSubscripts(context.subscript());
+		}
 
         public static IList<Subscript> CreateSubscripts(IReadOnlyList<CodeElementsParser.SubscriptContext> context)
         {

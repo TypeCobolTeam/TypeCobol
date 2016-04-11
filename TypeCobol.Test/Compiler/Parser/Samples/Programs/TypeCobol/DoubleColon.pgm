@@ -95,7 +95,7 @@ TEST-2.
 * illegal because reversed (thus undeclared)
     MOVE 'X' TO T2-D2 :: T2-C :: T2-B :: T2-A
     MOVE 'X' TO T2-A OF T2-B OF T2-C OF T2-C2
-* allow complete paths <----------------------- TODO: should these be illegal ?
+* allow only complete paths <----------------------- TODO: should these be illegal ?
     MOVE 'X' TO T2-A :: T2-D1
     MOVE 'X' TO T2-D1 OF T2-A
     .
@@ -114,5 +114,5 @@ TEST-3.
 
 TEST-4.
     MOVE SPACE TO T4-B1 OF T4-A1 ( 2 3 )
-*    MOVE SPACE TO T4-A1  ( 2 ) :: T4-B1 ( 3 ) <----------------------- TODO: this should be legal
+    MOVE SPACE TO T4-A1 ( 2 ) :: T4-B1 ( 3 )
     .
