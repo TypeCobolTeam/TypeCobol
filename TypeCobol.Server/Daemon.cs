@@ -103,7 +103,7 @@ namespace TypeCobol.Server
 				parser.Init(path, config.Format);
 				parser.Parse(path);
 				if (parser.CodeElementsSnapshot == null) {
-					System.Console.WriteLine("No CodeElements Snapshot.");
+					AddError(writer, "Cannot generate code from \""+config.InputFiles[c]+"\": no CodeElement snapshot.", path);
 					continue;
 				}
 
@@ -113,7 +113,7 @@ namespace TypeCobol.Server
 				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
 
 				if (parser.Snapshot == null) {
-					System.Console.WriteLine("No ProgramClass Snapshot.");
+					AddError(writer, "Cannot generate code from \""+config.InputFiles[c]+"\": no ProgramClass snapshot.", path);
 					continue;
 				}
 				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
@@ -130,19 +130,23 @@ namespace TypeCobol.Server
 						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
 					} else {
 						// might be a problem regarding the input file format
-						var error = new TypeCobol.Tools.Diagnostic();
-						error.Message = "Cannot generate code from \""+config.InputFiles[c]+"\".";
-						error.Code = "codegen";
-						error.Source = "1"; //TODO may be wrong
-						var list = new List<TypeCobol.Tools.Diagnostic>();
-						list.Add(error);
-						writer.AddErrors(path, list);
-						System.Console.WriteLine(error.Message);
+						AddError(writer, "Cannot generate code from \""+config.InputFiles[c]+"\": no Program object.", path);
 					}
 				}
 			}
 			writer.Write();
 			writer.Flush();
+		}
+
+		private static void AddError(AbstractErrorWriter writer, string message, string path) {
+			var error = new TypeCobol.Tools.Diagnostic();
+			error.Message = message;
+			error.Code = "codegen";
+			error.Source = "1"; //TODO may be wrong
+			var list = new List<TypeCobol.Tools.Diagnostic>();
+			list.Add(error);
+			writer.AddErrors(path, list);
+			System.Console.WriteLine(error.Message);
 		}
 
 		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> copies) {
