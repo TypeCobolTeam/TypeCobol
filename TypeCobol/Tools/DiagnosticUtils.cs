@@ -22,7 +22,7 @@ public class Range {
 }
 public class Diagnostic {
 	public Range Range = new Range();
-	public int Severity;
+	public int Severity = 1;
 	public string Code;
 	public string Source;
 	public string Message;

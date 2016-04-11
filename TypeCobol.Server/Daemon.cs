@@ -124,9 +124,21 @@ namespace TypeCobol.Server
 
 				if (config.Codegen) {
 					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
-					var stream = new StreamWriter(config.OutputFiles[c]);
-					codegen.WriteCobol(stream);
-					System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
+					if (codegen.IsValid) {
+						var stream = new StreamWriter(config.OutputFiles[c]);
+						codegen.WriteCobol(stream);
+						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
+					} else {
+						// might be a problem regarding the input file format
+						var error = new TypeCobol.Tools.Diagnostic();
+						error.Message = "Cannot generate code from \""+config.InputFiles[c]+"\".";
+						error.Code = "codegen";
+						error.Source = "1"; //TODO may be wrong
+						var list = new List<TypeCobol.Tools.Diagnostic>();
+						list.Add(error);
+						writer.AddErrors(path, list);
+						System.Console.WriteLine(error.Message);
+					}
 				}
 			}
 			writer.Write();

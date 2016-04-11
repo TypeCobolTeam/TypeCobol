@@ -25,7 +25,7 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 		Outputs = new List<string>();
 	}
 
-	public void AddErrors(string key, IEnumerable<Diagnostic> errors) {
+	protected List<Diagnostic> GetErrors(string key) {
 		List<Diagnostic> list;
 		try { list = Errors[key]; }
 		catch(KeyNotFoundException ex) {
@@ -33,7 +33,11 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 			Errors[key] = list;
 			Inputs[key] = GenerateNumber().ToString();
 		}
-		list.AddRange(errors);
+		return list;
+	}
+
+	public void AddErrors(string key, IEnumerable<Diagnostic> errors) {
+		GetErrors(key).AddRange(errors);
 	}
 
 	private int count = 1;
