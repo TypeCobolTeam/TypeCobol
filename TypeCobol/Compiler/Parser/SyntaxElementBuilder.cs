@@ -404,7 +404,7 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateDataName(context.dataNameReferenceOrIndexNameReference());
 				qualifiers = CreateDataNames(context.qDataOrFile());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceContext context) {
 			if (context == null) return null;
@@ -420,7 +420,7 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
 				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context) {
 			if (context == null) return null;
@@ -436,7 +436,7 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
 				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context) {
 			if (context == null) return null;
@@ -452,7 +452,7 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
 				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
 		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context) {
 			if (context == null) return null;
@@ -468,7 +468,7 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateDataName(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
 				qualifiers = CreateDataNames(c.qDataOrFileOrUPSI());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
 
 		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context) {
@@ -483,7 +483,7 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateDataName(context.dataNameReference());
 				qualifiers = CreateDataNames(context.qDataOrFile());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
 		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context) {
 			if (context == null) return null;
@@ -497,13 +497,13 @@ namespace TypeCobol.Compiler.Parser
 				name = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
 				qualifiers = CreateDataNames(context.qDataOrFileOrUPSI());
 			}
-			return CreateQualifiedName(name, qualifiers, legacy != null);
+			return CreateQualifiedName(name, qualifiers, legacy != null, legacy == null);
 		}
-		private static QualifiedName CreateQualifiedName(Symbol name, List<DataName> qualifiers, bool reverse) {
+		private static QualifiedName CreateQualifiedName(Symbol name, List<DataName> qualifiers, bool reverse, bool isExplicit) {
 			if (reverse) qualifiers.Reverse();
 			// TODO: need to lookup symbol table to distinguish data name and file name
 			FileName filename = null; // may be first element of qualifiers
-			return new QualifiedName(name, qualifiers, filename, !reverse);
+			return new QualifiedName(name, qualifiers, filename, isExplicit);
 		}
 
 		internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context) {
