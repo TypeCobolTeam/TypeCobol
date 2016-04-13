@@ -99,7 +99,11 @@ namespace TypeCobol.Server
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				parser.Init(path, config.Format);
+				try { parser.Init(path, config.Format); }
+				catch(System.IO.IOException ex) {
+					AddError(writer, ex.Message, path);
+					continue;
+				}
 				parser.Parse(path);
 				if (parser.CodeElementsSnapshot == null) {
 					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
@@ -141,7 +145,8 @@ namespace TypeCobol.Server
 			var error = new TypeCobol.Tools.Diagnostic();
 			error.Message = message;
 			error.Code = "codegen";
-			error.Source = writer.Inputs[path];
+			try { error.Source = writer.Inputs[path]; }
+			catch(KeyNotFoundException ex) { error.Source = writer.Count.ToString(); }
 			var list = new List<TypeCobol.Tools.Diagnostic>();
 			list.Add(error);
 			writer.AddErrors(path, list);

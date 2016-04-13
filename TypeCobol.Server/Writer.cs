@@ -41,6 +41,7 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 	}
 
 	private int count = 1;
+	public int Count { get { return count; } }
 	private int GenerateNumber() { return count++; }
 
 	public abstract void Write();
