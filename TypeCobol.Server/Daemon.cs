@@ -133,7 +133,7 @@ namespace TypeCobol.Server
 						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
 					} else {
 						// might be a problem regarding the input file format
-						AddError(writer, "Codegen failed for \""+path+"\" (no Program). Check file encoding?", path);
+						AddError(writer, "Codegen failed for \""+path+"\" (no Program). Check file format/encoding?", path);
 					}
 				}
 			}
