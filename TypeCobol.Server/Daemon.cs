@@ -81,9 +81,8 @@ namespace TypeCobol.Server
 		private static Compiler.DocumentFormat CreateFormat(string encoding) {
 			if (encoding == null) return null;
 			if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-			if (encoding.ToLower().Equals("rdz")) return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-			return null;
+			/*if (encoding.ToLower().Equals("rdz"))*/ return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 		}
 
 		private static void runOnce(Config config) {
@@ -103,7 +102,7 @@ namespace TypeCobol.Server
 				parser.Init(path, config.Format);
 				parser.Parse(path);
 				if (parser.CodeElementsSnapshot == null) {
-					AddError(writer, "Cannot generate code from \""+config.InputFiles[c]+"\": no CodeElement snapshot.", path);
+					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
 					continue;
 				}
 
@@ -113,7 +112,7 @@ namespace TypeCobol.Server
 				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
 
 				if (parser.Snapshot == null) {
-					AddError(writer, "Cannot generate code from \""+config.InputFiles[c]+"\": no ProgramClass snapshot.", path);
+					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
 					continue;
 				}
 				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
@@ -130,7 +129,7 @@ namespace TypeCobol.Server
 						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
 					} else {
 						// might be a problem regarding the input file format
-						AddError(writer, "Cannot generate code from \""+config.InputFiles[c]+"\": no Program object.", path);
+						AddError(writer, "Codegen failed for \""+path+"\" (no Program). Check file encoding?", path);
 					}
 				}
 			}
@@ -142,7 +141,7 @@ namespace TypeCobol.Server
 			var error = new TypeCobol.Tools.Diagnostic();
 			error.Message = message;
 			error.Code = "codegen";
-			error.Source = "1"; //TODO may be wrong
+			error.Source = writer.Inputs[path];
 			var list = new List<TypeCobol.Tools.Diagnostic>();
 			list.Add(error);
 			writer.AddErrors(path, list);
