@@ -1,47 +1,53 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Types.
-
+       
        ENVIRONMENT DIVISION.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-
+       
        01  W-InternalRef             PIC X(20).
-
+      * unused variables
        01  W-ELEMENT                 PIC X(20).
        01  W-ATTRIBUTE               PIC X(20).
-
-       01  W-DATE                    TYPEDEF.
-           05 TheDate                PIC 9(08).
-
+       
+      * Redeclaration of "intrinsic" TYPE DATE
+       01  TC-DATE                    TYPEDEF.
+      * YEAR (on 4 chars)
+           10 YYYY                   PIC 9(04).
+      * MONTH NUMBER (on 2 chars)
+           10 MM                     PIC 9(02).
+      * DAY OF MONTH (on 2 chars)
+           10 DD                     PIC 9(02).
+       
        01  DESCRIPTION               TYPEDEF.
            05 Ligne-01               PIC X(32).
            05 Ligne-02               PIC X(32).
            05 Ligne-03               PIC X(32).
            05 Ligne-04               PIC X(32).
            05 Ligne-05               PIC X(32).
-
+           
        01  IDENTITY                  TYPEDEF.
            05 LastName               PIC X(32).
            05 FirstName              PIC X(25).
-           05 BirthDay               TYPE W-DATE.
-
+           05 BirthDay               TYPE TC-DATE.
+           
        01  INTERNAL-REF              TYPEDEF STRONG.
            05  RType                 PIC X(03).
            05  RReference            PIC X(13).
-
+           
        01  EXTERNAL-REF              TYPEDEF STRONG.
            05  RType                 PIC X(03).
            05  RReference            PIC X(30).
-
+           
        01  PERSON                    TYPEDEF.
            05 UID                    PIC 9(13).
            05 InternalRef            TYPE INTERNAL-REF.
            05 ExternalRef            TYPE EXTERNAL-REF.
            05 Identite               TYPE IDENTITY.
            05 Description            TYPE DESCRIPTION.
-
-       01  PERSON-1                  TYPE PERSON.
-       01  PERSON-2                  TYPE PERSON.
+       
+      *01  PERSON-1                  TYPE PERSON.
+      *01  PERSON-2                  TYPE PERSON.
 
 
 
