@@ -105,28 +105,27 @@ namespace TypeCobol.Server
 					continue;
 				}
 				parser.Parse(path);
-				if (parser.CodeElementsSnapshot == null) {
+				if (parser.Results.CodeElementsDocumentSnapshot == null) {
 					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
 					continue;
 				}
 
-				var converter = new TypeCobol.Tools.CodeElementDiagnostics(parser.CodeElementsSnapshot.Lines);
-				writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
+				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
 				// no need to add errors from parser.CodeElementsSnapshot.CodeElements
 				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
 
-				if (parser.Snapshot == null) {
+				if (parser.Results.ProgramClassDocumentSnapshot == null) {
 					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
 					continue;
 				}
-				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
-				foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
+				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.ProgramClassDocumentSnapshot.Diagnostics));
+				foreach(var e in parser.Results.CodeElementsDocumentSnapshot.CodeElements) {
 					if (e.Diagnostics.Count < 1) continue;
-					writer.AddErrors(path, converter.GetDiagnostics(e));
+					writer.AddErrors(path, parser.Converter.GetDiagnostics(e));
 				}
 
 				if (config.Codegen) {
-					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
+					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Results.ProgramClassDocumentSnapshot);
 					if (codegen.IsValid) {
 						var stream = new StreamWriter(config.OutputFiles[c]);
 						codegen.WriteCobol(stream);
@@ -159,8 +158,8 @@ namespace TypeCobol.Server
 			foreach(string path in copies) {
 				parser.Init(path);
 				parser.Parse(path);
-				if (parser.Snapshot == null) continue;
-				foreach(var type in parser.Snapshot.Program.SymbolTable.CustomTypes.Values)
+				if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
+				foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes.Values)
 					table.RegisterCustomType(type);//TODO check if already there
 			}
 			return table;

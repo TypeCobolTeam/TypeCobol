@@ -205,7 +205,7 @@ namespace TypeCobol.Compiler.CodeModel
 			CustomTypes[data.Name.Name] = data;
 		}
 
-		internal DataDescriptionEntry GetCustomType(string type) {
+		public DataDescriptionEntry GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
 				try { return table.CustomTypes[type]; }
@@ -215,7 +215,7 @@ namespace TypeCobol.Compiler.CodeModel
 			throw new System.ArgumentException(type+" is not a custom type for this scope");
 		}
 
-		internal bool IsCustomType(DataType type) {
+		public bool IsCustomType(DataType type) {
 			if (type == null) return false;
 			foreach(var key in CustomTypes.Keys)
 				if (key.Equals(type.Name))

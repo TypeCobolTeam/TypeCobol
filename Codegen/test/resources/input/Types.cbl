@@ -46,8 +46,8 @@
            05 Identite               TYPE IDENTITY.
            05 Description            TYPE DESCRIPTION.
        
-      *01  PERSON-1                  TYPE PERSON.
-      *01  PERSON-2                  TYPE PERSON.
+       01  PERSON-1                  TYPE PERSON.
+       01  PERSON-2                  TYPE PERSON.
 
 
 

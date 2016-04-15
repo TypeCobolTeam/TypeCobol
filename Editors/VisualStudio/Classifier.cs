@@ -58,14 +58,14 @@ namespace TypeCobol.Editor
 		{
             List<ClassificationSpan> spans = new List<ClassificationSpan>();
             //parser.Parse("TODO: Parser.Init not called, this will break", new TextString(span.GetText()));
-			if (parser.CodeElementsSnapshot != null) {
-				foreach (var e in parser.CodeElementsSnapshot.CodeElements) {
+			if (parser.Results.CodeElementsDocumentSnapshot != null) {
+				foreach (var e in parser.Results.CodeElementsDocumentSnapshot.CodeElements) {
 					foreach (var token in e.ConsumedTokens) {
 						IClassificationType type = GetClassificationType(token.TokenFamily);
 						spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start + token.StartIndex, token.Length), type));
 					}
 				}
-				foreach (var e in parser.CodeElementsSnapshot.ParserDiagnostics) {
+				foreach (var e in parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics) {
 					IClassificationType type = registry.GetClassificationType("cobol.error");
 					System.Console.WriteLine("Error on: \"" + new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd).GetText()+"\"");
 					spans.Add(new ClassificationSpan(new SnapshotSpan(span.Start+e.ColumnStart-1, span.Start+e.ColumnEnd), type));

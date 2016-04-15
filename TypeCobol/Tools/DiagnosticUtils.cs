@@ -51,6 +51,12 @@ public class CodeElementDiagnostics {
 		return results;
 	}
 
+	public Range GetRange(CodeElement e) {
+		var start = e.ConsumedTokens[0].StartIndex;
+		var end = e.ConsumedTokens[e.ConsumedTokens.Count-1].StopIndex;
+		return GetRange(e.ConsumedTokens, start, end);
+	}
+
 	private Range GetRange(IList<Token> tokens, int start, int end) {
 		var range = new Range();
 		range.Start.Line = GetLine(tokens[0].TokensLine);
