@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>Class object resulting of the visit the parse tree</summary>
         public Class Class { get; private set; }
 
-        private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
+        private SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
         private SymbolTable TableOfGlobals;
 
 		public SymbolTable CustomSymbols {
@@ -39,9 +39,9 @@ namespace TypeCobol.Compiler.Parser
 				if (value != null) {
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
-							TableOfExternals.Add(data);
+							TableOfIntrisic.Add(data);
 					foreach(var type in value.CustomTypes.Values)
-						TableOfExternals.RegisterCustomType(type);
+						TableOfIntrisic.RegisterCustomType(type);
 				}
 			}
 		}
@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public override void EnterCobolCompilationUnit(CobolProgramClassParser.CobolCompilationUnitContext context)
         {
-            TableOfGlobals = new SymbolTable(TableOfExternals, SymbolTable.Scope.Global);
+            TableOfGlobals = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Global);
             Program = null;
             Class = null;
         }

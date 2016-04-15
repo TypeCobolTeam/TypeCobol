@@ -233,7 +233,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             if (table == null) return str;
             if (header == null) header = "SYMBOL TABLE:\n";
-            if (table.CurrentScope == SymbolTable.Scope.External) header = "EXTERNAL SCOPE:\n";
+            if (table.CurrentScope == SymbolTable.Scope.Intrinsic) header = "INTRISIC SCOPE:\n";
             if (table.CurrentScope == SymbolTable.Scope.Global) header = "GLOBAL SCOPE:\n";
             Dictionary<string,List<DataDescriptionEntry>> map = table.DataEntries;
             if(map.Count > 0) {

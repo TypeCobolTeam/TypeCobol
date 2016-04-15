@@ -154,7 +154,7 @@ namespace TypeCobol.Server
 
 		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> copies) {
 			var parser = new Parser("TypeCobol.Server.loading");
-			var table = new SymbolTable(null, SymbolTable.Scope.External);
+			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
 			foreach(string path in copies) {
 				parser.Init(path);
 				parser.Parse(path);
