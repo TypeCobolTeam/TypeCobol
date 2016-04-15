@@ -53,8 +53,8 @@ namespace TypeCobol.Compiler.CodeModel
 		public SymbolTable(SymbolTable enclosing = null, Scope current = Scope.Program) {
 			CurrentScope = current;
 			EnclosingScope = enclosing;
-			if (EnclosingScope == null && CurrentScope != Scope.External)
-				throw new System.InvalidOperationException("Only Table of EXTERNAL symbols don't have any enclosing scope.");
+			if (EnclosingScope == null && CurrentScope != Scope.Intrinsic)
+				throw new System.InvalidOperationException("Only Table of INTRISIC symbols don't have any enclosing scope.");
 		}
 
 		public void Add(DataDescriptionEntry symbol) {
@@ -64,9 +64,9 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 		private Scope GetScope(DataDescriptionEntry data) {
-			if (data.IsExternal) return Scope.External;
 			if (data.IsGlobal) return Scope.Global;
-			return Scope.Program;
+            //External is not a global or above global scope, so use Scope.Program for this kind of data
+            return Scope.Program;
 		}
 		private SymbolTable GetTable(SymbolTable.Scope scope) {
 			if (CurrentScope == scope) return this;
@@ -166,13 +166,16 @@ namespace TypeCobol.Compiler.CodeModel
 		/// Cobol has compile time binding for variables,
 		/// sometimes called static scope.
 		/// Within that, Cobol supports several layers of scope:
-		/// External, Global and Program scope.
+		/// Global and Program scope.
+		/// 
+		/// In TypeCobol we have an intrisic scope which is used for intrinsic types and
+		/// variables.
 		/// </summary>
 		public enum Scope {
 			/// <summary>
-			/// Variables declared as EXTERNAL are truly global.
+			/// Intrinsic scope is a specific to TypeCobol.
 			/// </summary>
-			External,
+			Intrinsic,
 			/// <summary>
 			/// Variables declared in WORKING STORAGE as GLOBAL are visible
 			/// to the entire program in which they are declared and

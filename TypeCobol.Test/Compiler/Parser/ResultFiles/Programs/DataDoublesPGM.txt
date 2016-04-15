@@ -23,9 +23,8 @@ SYMBOL TABLE:
   VARIANT-1B {5} Alphanumeric <of> ANOTHER-GROUP
   VARIANT-2 {5} Alphanumeric <of> GROUP-DOUBLE
   VARIANT-2 {5} GROUP(1) [ V2 ] <of> GROUP-DOUBLE
+  EXTRA {5} Alphanumeric <of> GROUP-DOUBLE
   V2 {10} Alphanumeric <of> VARIANT-2 <of> GROUP-DOUBLE
   ANOTHER-GROUP {1} GROUP(1) [ VARIANT-1B ]
 GLOBAL SCOPE:
   GLOBO {5} Alphanumeric <of> GROUP-DOUBLE
-EXTERNAL SCOPE:
-  EXTRA {5} Alphanumeric <of> GROUP-DOUBLE
