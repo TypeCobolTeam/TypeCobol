@@ -22,6 +22,31 @@ WORKING-STORAGE SECTION.
     14 Accel2d  TYPE Vect2.
     10 Speed2d  TYPE Vect2.
 
+01 groupe1.
+	05 groupe2 TYPEDEF.
+	  10 groupe3 PIC 9.
+
+01 MyType pic X(15) TYPEDEF.
+01 test1 type MyType.
+01 MyType2 TYPEDEF pic X(15).
+01 test2 type MyType2.
+01 MyType3 TYPEDEF STRONG pic X(15).
+01 test3 type MyType3.
+01 MyType4 TYPEDEF STRONG.
+01 test4 type MyType4.
+01 MyType5 redefines MyType4 TYPEDEF STRONG.
+   05 MyType5-a pic X.
+
+01 test5 type MyType5.
+
+01 MyExternalType TYPEDEF.
+  02 MyExternalType-name PIC X(15) external.
+01 MyExternalType2 TYPEDEF external.
+  02 MyExternalType2-name PIC X(15).
+
+01 unknowType type typeNotDefined.
+
+
 PROCEDURE DIVISION.
 MOVE X OF Coord2d OF Accel2d OF Movment2d OF Point TO X OF Coord2d OF Speed2d OF Movment2d OF Point.
 MOVE Y OF Coord2d OF Position2d TO Z OF Coord3d OF Position2d.
