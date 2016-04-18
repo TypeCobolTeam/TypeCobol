@@ -527,9 +527,11 @@ namespace TypeCobol.Compiler.Scanner
         XML_SCHEMA = 448,
         YYYYDDD = 449,
         YYYYMMDD = 450,
-// [TYPECOBOL]
+// [Cobol 2002]
         TYPEDEF = 451,
         STRONG = 452,
+// [/Cobol 2002]
+// [TYPECOBOL]
         UNSAFE = 453,
 // [/TYPECOBOL]
         // Group of tokens produced by the preprocessor

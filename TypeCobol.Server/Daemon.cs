@@ -1,4 +1,5 @@
-﻿using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
+﻿using System;
+using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
@@ -158,8 +159,15 @@ namespace TypeCobol.Server
 			foreach(string path in copies) {
 				parser.Init(path);
 				parser.Parse(path);
-				if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
-				foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes.Values)
+
+                if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
+                if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
+                {
+                    Console.WriteLine("Error: Your Intrisic types are not included into a program.");
+                    continue;
+                }
+                
+                foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes.Values)
 					table.RegisterCustomType(type);//TODO check if already there
 			}
 			return table;
