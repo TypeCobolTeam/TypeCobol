@@ -9,10 +9,10 @@ namespace TypeCobol.Compiler.CodeElements
 			get { return new System.Collections.ObjectModel.ReadOnlyCollection<Node>(children_); }
 			private set { throw new System.InvalidOperationException(); }
 		}
-		public object CodeElement { get; internal set; }
+		public CodeElement CodeElement { get; internal set; }
 		public Node Parent { get; internal set; }
 
-		public Node(object e) { CodeElement = e; }
+		public Node(CodeElement e) { CodeElement = e; }
 
 		internal void Add(Node child) {
 			children_.Add(child);
