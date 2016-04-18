@@ -16,7 +16,8 @@ WORKING-STORAGE SECTION.
 01  olddate        PIC X(08).
 01  today          TYPE TC-DATE.
 01  tomorrow       TYPE TC-DATE.
-
+01 groupe.
+   05 date1        type TC-DATE.
 PROCEDURE DIVISION.
 *******************
 TEST-DATE.
@@ -37,4 +38,11 @@ TEST-DATE.
 *  CONVERT db2date       TO   today
 * --- shallow control like in COBOL 20002
 *  VALIDATE                   today
+
+
+*** legal:
+  initialize today
+  initialize groupe
+  move spaces   to groupe
+  move olddate  to groupe
   .

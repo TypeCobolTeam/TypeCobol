@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-[3,34]<27,Error,Syntax>Syntax error : Writing Alphanumeric to today:TC-DATE is unsafe ([3>34] on line 28)
-[3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 34)
+[3,34]<27,Error,Syntax>Syntax error : Writing Alphanumeric to today:TC-DATE is unsafe ([3>34] on line 29)
 [3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 35)
+[3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 36)
 
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
@@ -16,8 +16,13 @@ SYMBOL TABLE:
   today {1} TC-DATE
   YYYY {2} Numeric <of> today
   YYYY {2} Numeric <of> tomorrow
+  YYYY {6} Numeric <of> date1 <of> groupe
   MM {2} Numeric <of> today
   MM {2} Numeric <of> tomorrow
+  MM {6} Numeric <of> date1 <of> groupe
   DD {2} Numeric <of> today
   DD {2} Numeric <of> tomorrow
+  DD {6} Numeric <of> date1 <of> groupe
   tomorrow {1} TC-DATE
+  groupe {1} GROUP(1) [ date1 ]
+  date1 {5} TC-DATE <of> groupe
