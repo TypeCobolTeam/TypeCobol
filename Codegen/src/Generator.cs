@@ -165,7 +165,12 @@ System.Console.WriteLine(line.Text);
 				bool isCustomTypeToo = !child.IsTypeDefinition && table.IsCustomType(child.DataType);
 				ICobolTextLine inserted = factory.CreateDataDefinition(child, level, generation, isCustomTypeToo);
 				output.Insert(++line, inserted);
-				if (isCustomTypeToo) insertChildren(table.GetCustomType(child.DataType.Name), ref line, level+1, generation+1);
+				if (isCustomTypeToo) {
+					var indent = "            ";
+					for(int c=0; c<generation; c++) indent += "  ";
+					output.Insert(++line, factory.CreateCommentedLine(factory.CreateInsertedLine(indent+child.Name+" TYPE "+child.DataType.Name)));
+					insertChildren(table.GetCustomType(child.DataType.Name), ref line, level+1, generation+1);
+				}
 			}
 		}
 	}
@@ -179,6 +184,9 @@ System.Console.WriteLine(line.Text);
 		}
 		public ICobolTextLine CreateInsertedLine(ITextLine line) {
 			return new InsertedLine(line.Text);
+		}
+		public ICobolTextLine CreateInsertedLine(string line) {
+			return new InsertedLine(line);
 		}
 
 		public ICobolTextLine CreateCustomTypedData(ITokensLine line, string typename) {

@@ -53,19 +53,24 @@
        01  PERSON-1.
            02 UID PIC 9(13).
            02 InternalRef.
+      *     InternalRef TYPE INTERNAL-REF
              03 RType PIC X(03).
              03 RReference PIC X(13).
            02 ExternalRef.
+      *     ExternalRef TYPE EXTERNAL-REF
              03 RType PIC X(03).
              03 RReference PIC X(30).
            02 Identite.
+      *     Identite TYPE IDENTITY
              03 LastName PIC X(32).
              03 FirstName PIC X(25).
              03 BirthDay.
+      *       BirthDay TYPE TC-DATE
                04 YYYY PIC 9(04).
                04 MM PIC 9(02).
                04 DD PIC 9(02).
            02 Description.
+      *     Description TYPE DESCRIPTION
              03 Ligne-01 PIC X(32).
              03 Ligne-02 PIC X(32).
              03 Ligne-03 PIC X(32).
@@ -75,19 +80,24 @@
        01  PERSON-2.
            02 UID PIC 9(13).
            02 InternalRef.
+      *     InternalRef TYPE INTERNAL-REF
              03 RType PIC X(03).
              03 RReference PIC X(13).
            02 ExternalRef.
+      *     ExternalRef TYPE EXTERNAL-REF
              03 RType PIC X(03).
              03 RReference PIC X(30).
            02 Identite.
+      *     Identite TYPE IDENTITY
              03 LastName PIC X(32).
              03 FirstName PIC X(25).
              03 BirthDay.
+      *       BirthDay TYPE TC-DATE
                04 YYYY PIC 9(04).
                04 MM PIC 9(02).
                04 DD PIC 9(02).
            02 Description.
+      *     Description TYPE DESCRIPTION
              03 Ligne-01 PIC X(32).
              03 Ligne-02 PIC X(32).
              03 Ligne-03 PIC X(32).
