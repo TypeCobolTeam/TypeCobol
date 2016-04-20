@@ -113,6 +113,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\TablesPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\Type-DatePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypedefPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EmptyPGM.txt" />
@@ -280,6 +281,7 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Date.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Typedef.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\DoubleColon.pgm" />

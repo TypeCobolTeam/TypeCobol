@@ -18,13 +18,22 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         public char op { get; set; }
         public bool all { get; set; }
 
+		public bool IsJustAnOffset {
+			get {
+				if (offset == null || op == '+' || op == '-' || dataname != null  || indexname != null || all) return false;
+				try { int value = int.Parse(offset.ToString()); return true; }
+				catch(System.Exception ex) { System.Console.WriteLine("! "+offset.ToString()); }
+				return false;
+			}
+		}
+
         public override string ToString()
         {
             StringBuilder res = new StringBuilder("");
             if (all) res.Append("all");
             if (dataname != null) res.Append(dataname);
             if (indexname != null) res.Append(indexname);
-            res.Append(op);
+            if (op == '+' || op == '-') res.Append(op);
             if (offset != null) res.Append(offset);
             if (res.Length > 0) return res.ToString();
             return "?";

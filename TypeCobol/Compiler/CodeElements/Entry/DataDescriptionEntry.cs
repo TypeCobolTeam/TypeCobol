@@ -683,6 +683,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// unbounded.
         /// </summary>
         public int MaxOccurencesCount { get; set; }
+		public bool NoMaxOccurencesCount {
+			get {
+				return MaxOccurencesCount == Int32.MaxValue;
+			}
+			set {
+				if (value) MaxOccurencesCount = Int32.MaxValue;
+				else throw new InvalidOperationException("Set me only to TRUE; or else set MaxOccurencesCount.");
+			}
+		}
 
         /// <summary>
         /// p192:
@@ -1025,6 +1034,15 @@ namespace TypeCobol.Compiler.CodeElements
 			if (IsFiller) str.Append("<filler>");
 			else if (Name==null) str.Append("?");
 			str.Append(Name);
+			if (IsTableOccurence) {
+				str.Append('[').Append(MinOccurencesCount);
+				if (MaxOccurencesCount != MinOccurencesCount)
+					if (NoMaxOccurencesCount) str.Append(";∞");
+					else str.Append(';').Append(MaxOccurencesCount);
+				if (OccursDependingOn != null)
+					str.Append(" >").Append(OccursDependingOn);
+				str.Append(']');
+			}
 			str.Append(" {").Append(LevelNumber).Append("} ");
 			if (IsGroup) {
 				str.Append("GROUP(").Append(Subordinates.Count).Append(") [ ");

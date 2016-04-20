@@ -31,8 +31,8 @@ SYMBOL TABLE:
   T3-B2 {5} Alphanumeric <of> T3-A1
   T3-B2 {5} Alphanumeric <of> T3-A2
   T3-A2 {1} GROUP(2) [ T3-B1 T3-B2 ]
-  T4-A1 {1} GROUP(2) [ T4-B1 T4-B2 ]
-  T4-B1 {5} GROUP(2) [ T4-C1 T4-C2 ] <of> T4-A1
+  T4-A1[10] {1} GROUP(2) [ T4-B1 T4-B2 ]
+  T4-B1[10] {5} GROUP(2) [ T4-C1 T4-C2 ] <of> T4-A1
   T4-B1 {5} GROUP(2) [ T4-C1 T4-C2 ] <of> T4-A2
   T4-C1 {10} Alphanumeric <of> T4-B1 <of> T4-A1
   T4-C1 {10} Alphanumeric <of> T4-B1 <of> T4-A2

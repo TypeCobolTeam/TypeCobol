@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-2
 		/// The receiving areas. identifier-2 must not reference an intrinsic function.
 		/// </summary>
-		private IList<Identifier> Receiving;
+		public IList<Identifier> Receiving;
 		/// <summary>
 		/// CORR is an abbreviation for, and is equivalent to, CORRESPONDING.
 		///
