@@ -207,94 +207,89 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        
-        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context)
-        {
-            IList<Identifier> identifiers = new List<Identifier>();
-            if (context != null)
-                foreach (var identifier in context)
-                {
-                   var i = CreateIdentifier(identifier);
-                    if (i != null) identifiers.Add(i);
-                }
-            return identifiers;
-        }
 
-        public static Identifier CreateIdentifier(CodeElementsParser.IdentifierContext context)
-        {
-            if (context == null) return null;
-            Identifier identifier = CreateDataReferenceOrConditionReference(context.dataReferenceOrConditionReference());
-            if (identifier != null) return identifier;
-            identifier = CreateSpecialRegister(context.specialRegister());
-            if (identifier != null) return identifier;
-            identifier = CreateFunctionReference(context.functionIdentifier());
-            if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var array = identifier as ReferenceModified;
-            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-            return identifier;
-        }
+		internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context) {
+			IList<Identifier> identifiers = new List<Identifier>();
+			if (context != null) {
+				foreach (var identifier in context) {
+				   var i = CreateIdentifier(identifier);
+					if (i != null) identifiers.Add(i);
+				}
+			}
+			return identifiers;
+		}
 
-        public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrIndexNameContext context)
-        {
-            if (context == null) return null;
-            Identifier identifier = CreateDataReferenceOrConditionReferenceOrIndexName(context.dataReferenceOrConditionReferenceOrIndexName());
-            if (identifier != null) return identifier;
-            identifier = CreateSpecialRegister(context.specialRegister());
-            if (identifier != null) return identifier;
-            identifier = CreateFunctionReference(context.functionIdentifier());
-            if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var array = identifier as ReferenceModified;
-            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-            return identifier;
-        }
+		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierContext context) {
+			if (context == null) return null;
+			Identifier identifier = CreateDataReferenceOrConditionReference(context.dataReferenceOrConditionReference());
+			if (identifier != null) return identifier;
+			identifier = CreateSpecialRegister(context.specialRegister());
+			if (identifier != null) return identifier;
+			identifier = CreateFunctionReference(context.functionIdentifier());
+			if (identifier != null) return identifier;
+			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+			var substring = identifier as ReferenceModified;
+			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
+			return identifier;
+		}
 
-        public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrFileNameContext context)
-        {
-            if (context == null) return null;
-            Identifier identifier = CreateDataReferenceOrConditionReferenceOrFileName(context.dataReferenceOrConditionReferenceOrFileName());
-            if (identifier != null) return identifier;
-            identifier = CreateSpecialRegister(context.specialRegister());
-            if (identifier != null) return identifier;
-            identifier = CreateFunctionReference(context.functionIdentifier());
-            if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var array = identifier as ReferenceModified;
-            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-            return identifier;
-        }
+		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrIndexNameContext context) {
+			if (context == null) return null;
+			Identifier identifier = CreateDataReferenceOrConditionReferenceOrIndexName(context.dataReferenceOrConditionReferenceOrIndexName());
+			if (identifier != null) return identifier;
+			identifier = CreateSpecialRegister(context.specialRegister());
+			if (identifier != null) return identifier;
+			identifier = CreateFunctionReference(context.functionIdentifier());
+			if (identifier != null) return identifier;
+			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+			var substring = identifier as ReferenceModified;
+			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
+			return identifier;
+		}
 
-        public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrClassNameContext context)
-        {
-            if (context == null) return null;
-            Identifier identifier = CreateDataReferenceOrConditionReferenceOrClassName(context.dataReferenceOrConditionReferenceOrClassName());
-            if (identifier != null) return identifier;
-            identifier = CreateSpecialRegister(context.specialRegister());
-            if (identifier != null) return identifier;
-            identifier = CreateFunctionReference(context.functionIdentifier());
-            if (identifier != null) return identifier;
-            identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-            if (identifier != null) return identifier;
-            identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var array = identifier as ReferenceModified;
-            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-            return identifier;
-        }
+		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrFileNameContext context) {
+			if (context == null) return null;
+			Identifier identifier = CreateDataReferenceOrConditionReferenceOrFileName(context.dataReferenceOrConditionReferenceOrFileName());
+			if (identifier != null) return identifier;
+			identifier = CreateSpecialRegister(context.specialRegister());
+			if (identifier != null) return identifier;
+			identifier = CreateFunctionReference(context.functionIdentifier());
+			if (identifier != null) return identifier;
+			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+			var substring = identifier as ReferenceModified;
+			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
+			return identifier;
+		}
+
+		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrClassNameContext context) {
+			if (context == null) return null;
+			Identifier identifier = CreateDataReferenceOrConditionReferenceOrClassName(context.dataReferenceOrConditionReferenceOrClassName());
+			if (identifier != null) return identifier;
+			identifier = CreateSpecialRegister(context.specialRegister());
+			if (identifier != null) return identifier;
+			identifier = CreateFunctionReference(context.functionIdentifier());
+			if (identifier != null) return identifier;
+			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
+			if (identifier != null) return identifier;
+			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
+			var substring = identifier as ReferenceModified;
+			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
+			return identifier;
+		}
 
 		public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierOrClassNameContext identifier) {
 			if (identifier.referenceModifier() == null) {

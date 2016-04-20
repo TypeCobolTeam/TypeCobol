@@ -36,11 +36,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	public interface Identifier : Expression {
 		QualifiedName Name { get; }
 	}
+	public interface Subscripted {
+		IList<Subscript> Subscripts { get; }
+	}
 	public interface ReferenceModified {
 		Substring ReferenceModifier { get; set; }
 	}
 
-	public class DataReference : Identifier, ReferenceModified
+	public class DataReference : Identifier, Subscripted, ReferenceModified
 	{
 		public QualifiedName Name { get; private set; }
 		public IList<Subscript> Subscripts { get; private set; }
@@ -67,7 +70,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		}
 	}
 
-    public class Condition : LogicalExpression, Identifier
+    public class Condition : LogicalExpression, Identifier, Subscripted
     {
         /// <summary>ConditionName</summary>
         public QualifiedName Name { get; private set; }
@@ -346,17 +349,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	public static class IdentifierUtils
 	{
 		public static bool IsSubscripted(Identifier identifier) {
-			DataReference data = identifier as DataReference;
-			if (data != null) return data.Subscripts != null && data.Subscripts.Count > 0;
-			Address address = identifier as Address;
-			if (address != null) return address.Identifier.Subscripts != null && address.Identifier.Subscripts.Count > 0;
-			Length len = identifier as Length;
-			if (len != null) return len.Identifier.Subscripts != null && len.Identifier.Subscripts.Count > 0;
-			return false;
+			var array = identifier as Subscripted;
+			return array != null && array.Subscripts.Count > 0;
 		}
 		public static bool IsReferenceModified(Identifier identifier) {
-			var rm = identifier as ReferenceModified;
-			return rm != null && rm.ReferenceModifier != null;
+			var substring = identifier as ReferenceModified;
+			return substring != null && substring.ReferenceModifier != null;
 		}
 	}
 }
