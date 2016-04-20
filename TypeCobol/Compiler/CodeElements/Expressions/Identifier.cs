@@ -33,41 +33,39 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-    public interface Identifier : Expression {
-        QualifiedName Name { get; }
-        void SetReferenceModifier(Substring substring);
-    }
+	public interface Identifier : Expression {
+		QualifiedName Name { get; }
+	}
+	public interface ReferenceModified {
+		Substring ReferenceModifier { get; set; }
+	}
 
-    public class DataReference : Identifier
-    {
-        public QualifiedName Name { get; private set; }
-        public IList<Subscript> Subscripts { get; private set; }
-        public Substring ReferenceModifier { get; set; }
+	public class DataReference : Identifier, ReferenceModified
+	{
+		public QualifiedName Name { get; private set; }
+		public IList<Subscript> Subscripts { get; private set; }
+		public Substring ReferenceModifier { get; set; }
 
-        public DataReference(QualifiedName name, IList<Subscript> subscripts = null, Substring substring = null)
-        {
-            this.Name = name;
-            this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
-            this.ReferenceModifier = substring;
-        }
+		public DataReference(QualifiedName name, IList<Subscript> subscripts = null, Substring substring = null) {
+			this.Name = name;
+			this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
+			this.ReferenceModifier = substring;
+		}
 
-        public void SetReferenceModifier(Substring substring) { this.ReferenceModifier = substring; }
-
-        public override string ToString()
-        {
-            var str = new StringBuilder();
-            str.Append(this.Name.ToString());
-            if (this.Subscripts.Count > 0)
-            {
-                str.Append("( ");
-                foreach (var subscript in this.Subscripts) str.Append(subscript).Append(", ");
-                if (str[str.Length - 2] == ',') str.Length -= 2;
-                str.Append(')');
-            }
-            if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
-            return str.ToString();
-        }
-    }
+		public override string ToString() {
+			var str = new StringBuilder();
+			str.Append(this.Name.ToString());
+			if (this.Subscripts.Count > 0)
+			{
+				str.Append("( ");
+				foreach (var subscript in this.Subscripts) str.Append(subscript).Append(", ");
+				if (str[str.Length - 2] == ',') str.Length -= 2;
+				str.Append(')');
+			}
+			if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
+			return str.ToString();
+		}
+	}
 
     public class Condition : LogicalExpression, Identifier
     {
@@ -79,10 +77,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             this.Name = name;
             this.Subscripts = subscripts != null? subscripts : new List<Subscript>();
-        }
-
-        public void SetReferenceModifier(Substring substring) {
-            throw new System.InvalidOperationException("Conditions cannot be reference modified!");
         }
 
         public override string ToString()
@@ -220,74 +214,66 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-    public class SpecialRegister : Identifier
-    {
-        /// <summary>
-        /// Reference to the special register symbol in the source text
-        /// </summary>
-        public Symbol Symbol { get; private set; }
-        public QualifiedName Name {
-            get { return new QualifiedName(Symbol); }
-            private set { throw new System.InvalidOperationException(); }
-        }
+	public class SpecialRegister : Identifier, ReferenceModified
+	{
+		/// <summary>
+		/// Reference to the special register symbol in the source text
+		/// </summary>
+		public Symbol Symbol { get; private set; }
+		public QualifiedName Name {
+			get { return new QualifiedName(Symbol); }
+			private set { throw new System.InvalidOperationException(); }
+		}
 
-        public Substring Substring { get; set; }
+		public Substring ReferenceModifier { get; set; }
 
-        public SpecialRegister(Symbol symbol, Substring substring = null)
-        {
-            this.Symbol = symbol;
-            this.Substring = substring;
-        }
+		public SpecialRegister(Symbol symbol, Substring substring = null) {
+			this.Symbol = symbol;
+			this.ReferenceModifier = substring;
+		}
 
-        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
-
-        public override string ToString()
-        {
-            var str = new StringBuilder();
-            str.Append(Symbol != null ? Symbol.ToString() : "?");
-            if (this.Substring != null) str.Append(this.Substring.ToString());
-            return str.ToString();
-        }
-    }
+		public override string ToString() {
+			var str = new StringBuilder();
+			str.Append(Symbol != null ? Symbol.ToString() : "?");
+			if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
+			return str.ToString();
+		}
+	}
 
 
 
-    public class FunctionReference : Identifier
-    {
-        /// <summary>
-        /// Reference to the intrinsic function symbol in the source text
-        /// </summary>
-        public Symbol Symbol { get; private set; }
-        public Substring Substring { get; set; }
-        public IList<FunctionParameter> Parameters { get; private set; }
-        public QualifiedName Name {
-            get { return new QualifiedName(Symbol); }
-            private set { throw new System.InvalidOperationException(); }
-        }
+	public class FunctionReference : Identifier, ReferenceModified
+	{
+		/// <summary>
+		/// Reference to the intrinsic function symbol in the source text
+		/// </summary>
+		public Symbol Symbol { get; private set; }
+		public Substring ReferenceModifier { get; set; }
+		public IList<FunctionParameter> Parameters { get; private set; }
+		public QualifiedName Name {
+			get { return new QualifiedName(Symbol); }
+			private set { throw new System.InvalidOperationException(); }
+		}
 
-        public FunctionReference(Symbol symbol, IList<FunctionParameter> parameters = null)
-        {
-            this.Symbol = symbol;
-            this.Parameters = parameters != null ? parameters : new List<FunctionParameter>();
-        }
+		public FunctionReference(Symbol symbol, IList<FunctionParameter> parameters = null) {
+			this.Symbol = symbol;
+			this.Parameters = parameters != null ? parameters : new List<FunctionParameter>();
+		}
 
-        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
-
-        public override string ToString()
-        {
-            var str = new StringBuilder();
-            str.Append(Symbol != null ? Symbol.ToString() : "?");
-            if (this.Parameters.Count > 0)
-            {
-                str.Append("( ");
-                foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
-                if (str[str.Length - 2] == ',') str.Length -= 2;
-                str.Append(')');
-            }
-            if (this.Substring != null) str.Append(this.Substring.ToString());
-            return str.ToString();
-        }
-    }
+		public override string ToString() {
+			var str = new StringBuilder();
+			str.Append(Symbol != null ? Symbol.ToString() : "?");
+			if (this.Parameters.Count > 0)
+			{
+				str.Append("( ");
+				foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
+				if (str[str.Length - 2] == ',') str.Length -= 2;
+				str.Append(')');
+			}
+			if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
+			return str.ToString();
+		}
+	}
 
     public class FunctionParameter : Expression
     {
@@ -304,66 +290,73 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class LinageCounter : FileName, Identifier
-    {
-        public LinageCounter(Token filename) : base(filename) { }
-        public QualifiedName Name {
-            get { return new QualifiedName(this); }
-            private set { throw new System.InvalidOperationException(); }
-        }
+	public class LinageCounter : FileName, Identifier, ReferenceModified
+	{
+		public LinageCounter(Token filename) : base(filename) { }
+		public QualifiedName Name {
+			get { return new QualifiedName(this); }
+			private set { throw new System.InvalidOperationException(); }
+		}
 
-        public Substring Substring { get; set; }
-        public void SetReferenceModifier(Substring substring) { this.Substring = substring; }
-    }
+		public Substring ReferenceModifier { get; set; }
+	}
 
-    public class Address : Identifier
-    {
-        public DataReference Identifier { get; set; }
-        public QualifiedName Name {
-            get { return Identifier.Name; }
-            private set { throw new System.InvalidOperationException(); }
-        }
-        public Address(DataReference identifier) { this.Identifier = identifier; }
-        public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
-    }
+	public class Address : Identifier, ReferenceModified
+	{
+		public DataReference Identifier { get; set; }
+		public QualifiedName Name {
+			get { return Identifier.Name; }
+			private set { throw new System.InvalidOperationException(); }
+		}
+		public Address(DataReference identifier) { this.Identifier = identifier; }
+		public Substring ReferenceModifier {
+			get {
+				if (this.Identifier != null)
+					return this.Identifier.ReferenceModifier;
+				else return null;
+			}
+			set {
+				if (this.Identifier != null)
+					this.Identifier.ReferenceModifier = value;
+			}
+		}
+	}
 
-    public class Length : Identifier
-    {
-        public DataReference Identifier { get; set; }
-        public QualifiedName Name {
-            get { return Identifier.Name; }
-            private set { throw new System.InvalidOperationException(); }
-        }
-        public Length(DataReference identifier) { this.Identifier = identifier; }
-        public void SetReferenceModifier(Substring substring) { if (this.Identifier != null) this.Identifier.SetReferenceModifier(substring); }
-    }
+	public class Length : Identifier, ReferenceModified
+	{
+		public DataReference Identifier { get; set; }
+		public QualifiedName Name {
+			get { return Identifier.Name; }
+			private set { throw new System.InvalidOperationException(); }
+		}
+		public Length(DataReference identifier) { this.Identifier = identifier; }
+		public Substring ReferenceModifier {
+			get {
+				if (this.Identifier != null)
+					return this.Identifier.ReferenceModifier;
+				else return null;
+			}
+			set {
+				if (this.Identifier != null)
+					this.Identifier.ReferenceModifier = value;
+			}
+		}
+	}
 
-    public static class IdentifierUtils
-    {
-        public static bool IsSubscripted(Identifier identifier) {
-            DataReference data = identifier as DataReference;
-            if (data != null) return data.Subscripts != null && data.Subscripts.Count > 0;
-            Address address = identifier as Address;
-            if (address != null) return address.Identifier.Subscripts != null && address.Identifier.Subscripts.Count > 0;
-            Length len = identifier as Length;
-            if (len != null) return len.Identifier.Subscripts != null && len.Identifier.Subscripts.Count > 0;
-            return false;
-        }
-        public static bool IsReferenceModified(Identifier identifier)
-        {
-            DataReference data = identifier as DataReference;
-            if (data != null) return data.ReferenceModifier != null;
-            SpecialRegister reg = identifier as SpecialRegister;
-            if (reg != null) return reg.Substring != null;
-            FunctionReference fun = identifier as FunctionReference;
-            if (fun != null) return fun.Substring != null;
-            LinageCounter linage = identifier as LinageCounter;
-            if (linage != null) return linage.Substring != null;
-            Address address = identifier as Address;
-            if (address != null) return address.Identifier.ReferenceModifier != null;
-            Length len = identifier as Length;
-            if (len != null) return len.Identifier.ReferenceModifier != null;
-            return false;
-        }
-    }
+	public static class IdentifierUtils
+	{
+		public static bool IsSubscripted(Identifier identifier) {
+			DataReference data = identifier as DataReference;
+			if (data != null) return data.Subscripts != null && data.Subscripts.Count > 0;
+			Address address = identifier as Address;
+			if (address != null) return address.Identifier.Subscripts != null && address.Identifier.Subscripts.Count > 0;
+			Length len = identifier as Length;
+			if (len != null) return len.Identifier.Subscripts != null && len.Identifier.Subscripts.Count > 0;
+			return false;
+		}
+		public static bool IsReferenceModified(Identifier identifier) {
+			var rm = identifier as ReferenceModified;
+			return rm != null && rm.ReferenceModifier != null;
+		}
+	}
 }

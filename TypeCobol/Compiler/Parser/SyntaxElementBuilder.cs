@@ -234,7 +234,8 @@ namespace TypeCobol.Compiler.Parser
             identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
             if (identifier != null) return identifier;
             identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-            if (identifier != null ) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+			var array = identifier as ReferenceModified;
+            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
             return identifier;
         }
 
@@ -252,7 +253,8 @@ namespace TypeCobol.Compiler.Parser
             identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
             if (identifier != null) return identifier;
             identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-            if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+			var array = identifier as ReferenceModified;
+            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
             return identifier;
         }
 
@@ -270,7 +272,8 @@ namespace TypeCobol.Compiler.Parser
             identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
             if (identifier != null) return identifier;
             identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-            if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+			var array = identifier as ReferenceModified;
+            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
             return identifier;
         }
 
@@ -288,7 +291,8 @@ namespace TypeCobol.Compiler.Parser
             identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
             if (identifier != null) return identifier;
             identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-            if (identifier != null) identifier.SetReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+			var array = identifier as ReferenceModified;
+            if (array != null) array.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
             return identifier;
         }
 
