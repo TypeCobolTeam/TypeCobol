@@ -23,8 +23,8 @@ WORKING-STORAGE SECTION.
     10 Speed2d  TYPE Vect2.
 
 01 groupe1.
-	05 groupe2 TYPEDEF.
-	  10 groupe3 PIC 9.
+  05 groupe2 TYPEDEF.
+    10 groupe3 PIC 9.
 
 01 MyType pic X(15) TYPEDEF.
 01 test1 type MyType.
