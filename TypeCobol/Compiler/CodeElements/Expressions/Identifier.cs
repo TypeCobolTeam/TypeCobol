@@ -45,14 +45,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	public interface Identifier : Expression {
 		QualifiedName Name { get; }
 	}
-	public interface Subscripted {
+	public interface Subscriptable {
 		IList<Subscript> Subscripts { get; }
 	}
-	public interface ReferenceModified {
+	public interface ReferenceModifiable {
 		Substring ReferenceModifier { get; set; }
 	}
 
-	public class DataReference : Identifier, Subscripted, ReferenceModified
+	public class DataReference : Identifier, Subscriptable, ReferenceModifiable
 	{
 		public QualifiedName Name { get; private set; }
 		public IList<Subscript> Subscripts { get; private set; }
@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		}
 	}
 
-    public class Condition : LogicalExpression, Identifier, Subscripted
+    public class Condition : LogicalExpression, Identifier, Subscriptable
     {
         /// <summary>ConditionName</summary>
         public QualifiedName Name { get; private set; }
@@ -226,7 +226,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-	public class SpecialRegister : Identifier, ReferenceModified
+	public class SpecialRegister : Identifier, ReferenceModifiable
 	{
 		/// <summary>
 		/// Reference to the special register symbol in the source text
@@ -254,7 +254,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-	public class FunctionReference : Identifier, ReferenceModified
+	public class FunctionReference : Identifier, ReferenceModifiable
 	{
 		/// <summary>
 		/// Reference to the intrinsic function symbol in the source text
@@ -302,7 +302,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-	public class LinageCounter : FileName, Identifier, ReferenceModified
+	public class LinageCounter : FileName, Identifier, ReferenceModifiable
 	{
 		public LinageCounter(Token filename) : base(filename) { }
 		public QualifiedName Name {
@@ -313,7 +313,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		public Substring ReferenceModifier { get; set; }
 	}
 
-	public class Address : Identifier, ReferenceModified
+	public class Address : Identifier, ReferenceModifiable
 	{
 		public DataReference Identifier { get; set; }
 		public QualifiedName Name {
@@ -334,7 +334,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		}
 	}
 
-	public class Length : Identifier, ReferenceModified
+	public class Length : Identifier, ReferenceModifiable
 	{
 		public DataReference Identifier { get; set; }
 		public QualifiedName Name {
@@ -358,11 +358,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	public static class IdentifierUtils
 	{
 		public static bool IsSubscripted(Identifier identifier) {
-			var array = identifier as Subscripted;
+			var array = identifier as Subscriptable;
 			return array != null && array.Subscripts.Count > 0;
 		}
 		public static bool IsReferenceModified(Identifier identifier) {
-			var substring = identifier as ReferenceModified;
+			var substring = identifier as ReferenceModifiable;
 			return substring != null && substring.ReferenceModifier != null;
 		}
 	}

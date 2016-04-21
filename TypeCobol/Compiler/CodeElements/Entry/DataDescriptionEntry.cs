@@ -1035,12 +1035,15 @@ namespace TypeCobol.Compiler.CodeElements
 			else if (Name==null) str.Append("?");
 			str.Append(Name);
 			if (IsTableOccurence) {
-				str.Append('[').Append(MinOccurencesCount);
+				str.Append('[');
+				if (OccursDependingOn != null)
+					str.Append(OccursDependingOn).Append("∈[");
+				str.Append(MinOccurencesCount);
 				if (MaxOccurencesCount != MinOccurencesCount)
 					if (NoMaxOccurencesCount) str.Append(";∞");
 					else str.Append(';').Append(MaxOccurencesCount);
 				if (OccursDependingOn != null)
-					str.Append(" >").Append(OccursDependingOn);
+					str.Append(']');
 				str.Append(']');
 			}
 			str.Append(" {").Append(LevelNumber).Append("} ");

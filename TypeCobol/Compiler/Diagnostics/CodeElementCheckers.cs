@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private bool check(Expression e, SymbolTable table) {
 			var i = e as Identifier;
 			if (i == null) return true; // a litteral cannot be mis-subscripted
-			var array = i as Subscripted;
+			var array = i as Subscriptable;
 			var found = table.Get(i.Name, array==null?null:array.Subscripts);
 			return true;
 		}

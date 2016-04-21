@@ -232,7 +232,7 @@ namespace TypeCobol.Compiler.Parser
 			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
 			if (identifier != null) return identifier;
 			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModified;
+			var substring = identifier as ReferenceModifiable;
 			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
 			return identifier;
 		}
@@ -250,7 +250,7 @@ namespace TypeCobol.Compiler.Parser
 			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
 			if (identifier != null) return identifier;
 			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModified;
+			var substring = identifier as ReferenceModifiable;
 			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
 			return identifier;
 		}
@@ -268,7 +268,7 @@ namespace TypeCobol.Compiler.Parser
 			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
 			if (identifier != null) return identifier;
 			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModified;
+			var substring = identifier as ReferenceModifiable;
 			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
 			return identifier;
 		}
@@ -286,7 +286,7 @@ namespace TypeCobol.Compiler.Parser
 			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
 			if (identifier != null) return identifier;
 			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModified;
+			var substring = identifier as ReferenceModifiable;
 			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
 			return identifier;
 		}

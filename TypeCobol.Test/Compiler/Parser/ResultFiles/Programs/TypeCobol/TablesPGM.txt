@@ -1,16 +1,23 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+[1,39]<27,Error,Syntax>Syntax error : T-nobounds needs subscripting. ([1>39] on line 24)
+[1,39]<27,Error,Syntax>Syntax error : T-variable needs subscripting. ([1>39] on line 24)
+[1,51]<27,Error,Syntax>Syntax error : T-variable has out of bounds subscripting: 101 > max=100 ([1>51] on line 26)
+
+--- Program ---
 PROGRAM: Tables common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 SYMBOL TABLE:
   mysize {1} Numeric
+  x {1} Alphanumeric
   T-fixed-1[100] {1} GROUP(1) [ T-fixed-2 ]
   T-fixed-2[100] {5} GROUP(1) [ E ] <of> T-fixed-1
   E {10} Alphanumeric <of> T-fixed-2 <of> T-fixed-1
   E {5} Alphanumeric <of> T-variable
   E {5} Alphanumeric <of> T-nobounds
-  E {5} Alphanumeric <of> T-minsize
+  E {10} Alphanumeric <of> T-minsize-2 <of> T-minsize-1
   E {5} Alphanumeric <of> T-interval
-  T-variable[1;100 >mysize] {1} GROUP(1) [ E ]
-  T-nobounds[1;∞ >mysize] {1} GROUP(1) [ E ]
-  T-minsize[50;∞ >mysize] {1} GROUP(1) [ E ]
-  T-interval[25;50 >mysize] {1} GROUP(1) [ E ]
+  T-variable[mysize∈[1;100]] {1} GROUP(1) [ E ]
+  T-nobounds[mysize∈[1;∞]] {1} GROUP(1) [ E ]
+  T-minsize-1[mysize∈[50;∞]] {1} GROUP(1) [ T-minsize-2 ]
+  T-minsize-2[mysize∈[50;∞]] {5} GROUP(1) [ E ] <of> T-minsize-1
+  T-interval[mysize∈[25;50]] {1} GROUP(1) [ E ]

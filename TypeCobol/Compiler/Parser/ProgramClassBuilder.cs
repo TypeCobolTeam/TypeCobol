@@ -318,13 +318,30 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
 
-        public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
-            CodeElement statement = AsStatement(context);
-            _enter(statement, context);
-        }
-        public override void ExitStatement(CobolProgramClassParser.StatementContext context) {
-            _exit();
-        }
+		public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
+			CodeElement statement = AsStatement(context);
+			FixSubscriptableQualifiedNames(statement, context);
+			_enter(statement, context);
+		}
+		public override void ExitStatement(CobolProgramClassParser.StatementContext context) {
+			_exit();
+		}
+
+		private void FixSubscriptableQualifiedNames(CodeElement ce, CobolProgramClassParser.StatementContext context) {
+			var statement = ce as IdentifierUser;
+			if (statement == null) return;
+			foreach(var identifier in statement.Identifiers) {
+				if (identifier is TypeCobol.Compiler.CodeElements.Expressions.Subscriptable) {
+					var found = CurrentProgram.SymbolTable.Get(identifier.Name);
+					if (found.Count != 1) continue;// ambiguity is not our job
+					List<string> errors;
+					var qelement = TypeCobol.Compiler.CodeElements.Expressions.QualifiedTableElementName.Create(identifier, found[0], out errors);
+					foreach(string error in errors) {
+						DiagnosticUtils.AddError(ce, error);
+					}
+				}
+			}
+		}
 
 
 

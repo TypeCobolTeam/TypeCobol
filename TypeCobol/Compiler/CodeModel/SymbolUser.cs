@@ -9,6 +9,12 @@ namespace TypeCobol.Compiler.CodeModel
 		ICollection<QualifiedName> Symbols { get; }
 	}
 
+	interface IdentifierUser
+	{
+		/// <summary>List of identifiers used, wether they are written or read-only.</summary>
+		ICollection<Identifier> Identifiers { get; }
+	}
+
 	interface SymbolWriter
 	{
 		/// <summary>
