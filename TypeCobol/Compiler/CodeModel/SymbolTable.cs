@@ -87,34 +87,6 @@ namespace TypeCobol.Compiler.CodeModel
 			return table[key];
 		}
 
-		internal IList<DataDescriptionEntry> Get(QualifiedName name, IList<Subscript> list) {
-			var found = Get(name);
-			if (list == null) return found;
-			var matches = new List<DataDescriptionEntry>();
-			foreach(var entry in found) {
-				bool okay = Filter(entry, list);
-				if (okay) matches.Add(entry);
-			}
-			return matches;
-		}
-		private bool Filter(DataDescriptionEntry entry, IList<Subscript> list) {
-			int c = 0;
-			var current = entry;
-			while(current != null) {
-				if (current.IsTableOccurence) {
-					if (c >= list.Count) return false;
-					if (list[c].IsJustAnOffset) {
-						int os = int.Parse(list[c].offset.ToString());
-						if (os < current.MinOccurencesCount) System.Console.WriteLine(current.Name+": "+os+" < "+current.MinOccurencesCount);
-						if (os > current.MaxOccurencesCount) System.Console.WriteLine(current.Name+": "+os+" > "+current.MaxOccurencesCount);
-					}
-					c++;
-				}
-				current = current.TopLevel;
-			}
-			return (c != list.Count);
-		}
-
 		internal IList<DataDescriptionEntry> Get(QualifiedName name) {
 			var found = Get(name.Symbol.Name);
 			int max = name.DataNames.Count;

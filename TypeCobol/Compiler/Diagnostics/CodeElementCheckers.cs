@@ -224,34 +224,6 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 	}
 
-	class ArrayChecker: ProgramListener
-	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(TypeCobol.Compiler.CodeElements.MoveStatement), };
-		}
-		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
-			var statement = e as TypeCobol.Compiler.CodeElements.MoveStatement;
-			var table = program.SymbolTable;
-			if (!check(statement.Sending, table)) {
-				var i = statement.Sending as Identifier;
-				DiagnosticUtils.AddError(e, (i!=null?i.Name.ToString():"?")+" ERROR SENDER");
-			}
-			foreach(var item in statement.Receiving)
-				if (!check(item, table)) {
-					var i = item as Identifier;
-					DiagnosticUtils.AddError(e, (i!=null?i.Name.ToString():"?")+" ERROR RCVER");
-				}
-		}
-
-		private bool check(Expression e, SymbolTable table) {
-			var i = e as Identifier;
-			if (i == null) return true; // a litteral cannot be mis-subscripted
-			var array = i as Subscriptable;
-			var found = table.Get(i.Name, array==null?null:array.Subscripts);
-			return true;
-		}
-	}
-
 	class WriteOperationsChecker: ProgramListener {
 
 		public IList<Type> GetCodeElements() {
