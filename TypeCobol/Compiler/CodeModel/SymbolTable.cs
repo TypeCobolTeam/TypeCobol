@@ -88,11 +88,11 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 		internal IList<DataDescriptionEntry> Get(QualifiedName name) {
-			var found = Get(name.Symbol.Name);
-			int max = name.DataNames.Count;
+			var found = Get(name.Head);
+			int max = name.Count-1;
 			if (name.IsExplicit) {
 				for(int c=0; c<max; c++) {
-					string pname = name.DataNames[max-c-1].Name;
+					string pname = name[max-c-1];
 					found = Filter(found, pname, c+1);
 				}
 			} else {
@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.CodeModel
 					int c=0, generation=0;
 					bool okay = true;
 					while (okay && c<max) {
-						string pname = name.DataNames[max-c-1].Name;
+						string pname = name[max-c-1];
 						c++;
 						generation++;
 						okay = Filter(entry, pname, ref generation);

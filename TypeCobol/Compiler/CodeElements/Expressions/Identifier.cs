@@ -106,13 +106,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-	public class QualifiedName: IList<string> {
+	public class SyntacticQualifiedName: QualifiedName {
 		public Symbol Symbol { get; private set; }
 		public IList<DataName> DataNames { get; private set; }
 		public FileName FileName { get; private set; }
 		public bool IsExplicit { get; private set; }
 
-		public QualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null, bool isExplicit = false) {
+		public SyntacticQualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null, bool isExplicit = false) {
 			this.Symbol = symbol;
 			this.DataNames = datanames != null ? datanames : new List<DataName>();
 			this.FileName = filename;
@@ -124,6 +124,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			foreach (string name in this) str.Append(name).Append('.');
 			str.Length -= 1;
 			return str.ToString();
+		}
+
+		public string Head {
+			get {
+				if (Symbol == null) return null;
+				return Symbol.Name;
+			}
 		}
 
 		public IEnumerator<string> GetEnumerator() {
@@ -233,7 +240,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		/// </summary>
 		public Symbol Symbol { get; private set; }
 		public QualifiedName Name {
-			get { return new QualifiedName(Symbol); }
+			get { return new SyntacticQualifiedName(Symbol); }
 			private set { throw new System.InvalidOperationException(); }
 		}
 
@@ -263,7 +270,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		public Substring ReferenceModifier { get; set; }
 		public IList<FunctionParameter> Parameters { get; private set; }
 		public QualifiedName Name {
-			get { return new QualifiedName(Symbol); }
+			get { return new SyntacticQualifiedName(Symbol); }
 			private set { throw new System.InvalidOperationException(); }
 		}
 
@@ -306,7 +313,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	{
 		public LinageCounter(Token filename) : base(filename) { }
 		public QualifiedName Name {
-			get { return new QualifiedName(this); }
+			get { return new SyntacticQualifiedName(this); }
 			private set { throw new System.InvalidOperationException(); }
 		}
 

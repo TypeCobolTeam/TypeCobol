@@ -502,7 +502,7 @@ namespace TypeCobol.Compiler.Parser
 			if (reverse) qualifiers.Reverse();
 			// TODO: need to lookup symbol table to distinguish data name and file name
 			FileName filename = null; // may be first element of qualifiers
-			return new QualifiedName(name, qualifiers, filename, isExplicit);
+			return new SyntacticQualifiedName(name, qualifiers, filename, isExplicit);
 		}
 
 		internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context) {

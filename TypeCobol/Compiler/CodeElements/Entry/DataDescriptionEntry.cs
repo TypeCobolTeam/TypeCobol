@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.CodeElements
 					current = current.TopLevel;
 				}
 				names.Reverse();
-				return new QualifiedName(Name, names);
+				return new SyntacticQualifiedName(Name, names);
 			}
 		}
 

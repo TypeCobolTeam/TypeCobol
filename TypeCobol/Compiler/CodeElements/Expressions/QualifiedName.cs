@@ -2,6 +2,14 @@
 using System.Collections.Specialized;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions {
+
+	public interface QualifiedName: IList<string> {
+		string Head { get; }
+		bool IsExplicit { get; }
+	}
+
+
+
 	public class QualifiedTableElementName {
 		OrderedDictionary names = new OrderedDictionary();
 
@@ -23,6 +31,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
+		/// <summary>Factory method.</summary>
+		/// <param name="identifier">Parsed identifier for this name qualification</param>
+		/// <param name="data">Data declaration the created name will fully-qualify</param>
+		/// <param name="messages">Error messages. If there are some, there is something wrong with <paramref name="identifier"/>'s name qualification</param>
+		/// <returns></returns>
 		public static QualifiedTableElementName Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
 			var names = CreatePairs(identifier, data, out messages);
 			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.QualifiedTableElementName();
