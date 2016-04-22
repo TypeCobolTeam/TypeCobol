@@ -206,21 +206,52 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
 
-	class DeclarationChecker: ProgramListener
-	{
+	class DeclarationChecker: ProgramListener {
 		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolUser), };
+			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
-			var element = e as TypeCobol.Compiler.CodeModel.SymbolUser;
+			var element = e as TypeCobol.Compiler.CodeModel.IdentifierUser;
 			var table = program.SymbolTable;
-			foreach (var symbol in element.Symbols) {
-				var found = table.Get(symbol);
-				if (found.Count < 1)
-					DiagnosticUtils.AddError(e, "Symbol "+symbol+" is not referenced");
+			foreach (var identifier in element.Identifiers) {
+				var found = table.Get(identifier.Name);
+				if (found.Count < 1) {
+					DiagnosticUtils.AddError(e, "Symbol "+identifier.Name+" is not referenced");
+					return;
+				}
 				if (found.Count > 1)
-					DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+symbol);
+					DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+identifier.Name);
+
+				foreach(var error in checkSubscripting(identifier.Name, found[0]))
+					DiagnosticUtils.AddError(e, error);
 			}
+		}
+
+		private IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
+			var errors = new List<string>();
+			if (qname is Subscripted) {
+				var sname = qname as Subscripted;
+				for(int i=qname.Count-1; i>=0; i--) {
+					string name = qname[i];
+					var subscript = sname[name];
+					if (subscript != null) {
+						if (!data.IsTableOccurence) {
+							errors.Add(name+" must not be subscripted.");
+						} else
+						if (subscript.IsJustAnOffset) {
+							int offset = int.Parse(subscript.offset.ToString());
+							if (offset > data.MaxOccurencesCount)
+								errors.Add(name+" subscripting out of bounds: "+offset+" > max="+data.MaxOccurencesCount);
+						}//else TODO: check if subscript.dataname subscripting is okay too
+					} else {
+						if (data.IsTableOccurence) {
+							errors.Add(name+" must be subscripted.");
+						}
+					}
+					data = data.TopLevel;
+				}
+			}
+			return errors;
 		}
 	}
 

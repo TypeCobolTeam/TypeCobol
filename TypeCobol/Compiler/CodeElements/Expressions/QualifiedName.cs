@@ -6,7 +6,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 	public interface QualifiedName: IList<string> {
 		string Head { get; }
 		bool IsExplicit { get; }
-		bool IsSubscripted { get; }
+	}
+
+	public interface Subscripted {
+		Subscript this[string name] { get; }
 	}
 
 
@@ -16,7 +19,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public IList<DataName> DataNames { get; private set; }
 		public FileName FileName { get; private set; }
 		public bool IsExplicit { get; private set; }
-		public bool IsSubscripted { get { return false; } }
 
 		public SyntacticQualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null, bool isExplicit = false) {
 			this.Symbol = symbol;
@@ -94,14 +96,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-	public class SubscriptedQualifiedName: QualifiedName {
+	public class SubscriptedQualifiedName: Subscripted, QualifiedName {
 		protected OrderedDictionary names = new OrderedDictionary();
 
 		public SubscriptedQualifiedName(bool isExplicit = true) {
 			this.IsExplicit = isExplicit;
 		}
-
-		public bool IsSubscripted { get { return true; } }
 
 		public void Add(string name, Subscript index) {
 			names.Add(name, index);
@@ -180,6 +180,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			return -1;
 		}
 
+		public Subscript this[string name] {
+			get { return (Subscript)names[name]; }
+		}
+
 
 
 
@@ -208,22 +212,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 				string name = current.QualifiedName[current.QualifiedName.Count-1];
 				TypeCobol.Compiler.CodeElements.Expressions.Subscript subscript = null;
 				if (current.IsTableOccurence) {
-					if (c >= subscripts.Count) {
-						errors.Add(current.QualifiedName+" needs subscripting.");
-					} else {
-						subscript = subscripts[c];
-						if (subscript.IsJustAnOffset) {
-							int os = int.Parse(subscript.offset.ToString());
-//							if (os < current.MinOccurencesCount) errors.Add(current.Name+" has out of bounds subscripting: "+os+" < min="+current.MinOccurencesCount);
-							if (os > current.MaxOccurencesCount) errors.Add(current.Name+" has out of bounds subscripting: "+os+" > max="+current.MaxOccurencesCount);
-						} //else TODO: check if subscript.dataname is subscripted too
-					}
+					if (c < subscripts.Count) subscript = subscripts[c];
 					c++;
 				}
 				names.Add(new System.Tuple<string,TypeCobol.Compiler.CodeElements.Expressions.Subscript>(name, subscript));
 				current = current.TopLevel;
 			}
-			if (c < subscripts.Count) errors.Add("Too much subscripts !");
+			if (c < subscripts.Count) errors.Add(identifier.Name+": too many subscripts ("+subscripts.Count+" vs expected="+c+')');
 			names.Reverse();
 			return names;
 		}

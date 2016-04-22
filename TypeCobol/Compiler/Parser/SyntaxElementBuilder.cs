@@ -345,7 +345,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context == null) return null;
 			QualifiedName name = CreateQualifiedName(context);
 			IList<Subscript> subscripts = null;
-			if (!name.IsSubscripted) subscripts = CreateSubscripts(context);
+			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
 			return new DataReference(name, subscripts);
 		}
 
@@ -353,7 +353,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context == null) return null;
 			QualifiedName name = CreateQualifiedName(context);
 			IList<Subscript> subscripts = null;
-			if (!name.IsSubscripted) subscripts = CreateSubscripts(context);
+			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
 			return new DataReference(name, subscripts);
 		}
 
@@ -361,7 +361,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context == null) return null;
 			QualifiedName name = CreateQualifiedName(context);
 			IList<Subscript> subscripts = null;
-			if (!name.IsSubscripted) subscripts = CreateSubscripts(context);
+			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
 			return new DataReference(name, subscripts);
 		}
 
@@ -369,7 +369,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context == null) return null;
 			QualifiedName name = CreateQualifiedName(context);
 			IList<Subscript> subscripts = null;
-			if (!name.IsSubscripted) subscripts = CreateSubscripts(context);
+			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
 			return new DataReference(name, subscripts);
 		}
 
@@ -377,7 +377,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context == null) return null;
 			QualifiedName name = CreateQualifiedName(context);
 			IList<Subscript> subscripts = null;
-			if (!name.IsSubscripted) subscripts = CreateSubscripts(context);
+			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
 			return new DataReference(name, subscripts);
 		}
 

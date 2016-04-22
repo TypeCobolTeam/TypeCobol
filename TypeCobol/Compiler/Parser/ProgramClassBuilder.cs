@@ -320,27 +320,25 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
 			CodeElement statement = AsStatement(context);
-			FixSubscriptableQualifiedNames(statement, context);
+			FixSubscriptableQualifiedNames(statement);
 			_enter(statement, context);
 		}
 		public override void ExitStatement(CobolProgramClassParser.StatementContext context) {
 			_exit();
 		}
 
-		private void FixSubscriptableQualifiedNames(CodeElement ce, CobolProgramClassParser.StatementContext context) {
-			var statement = ce as IdentifierUser;
-			if (statement == null) return;
-			foreach(var identifier in statement.Identifiers) {
-				if (identifier.Name.IsSubscripted) continue;
+		private void FixSubscriptableQualifiedNames(CodeElement statement) {
+			var identifiers = statement as IdentifierUser;
+			if (identifiers == null) return;
+			foreach(var identifier in identifiers.Identifiers) {
+				if (identifier.Name is TypeCobol.Compiler.CodeElements.Expressions.Subscripted) continue;
 				if (identifier is TypeCobol.Compiler.CodeElements.Expressions.Subscriptable) {
 					var found = CurrentProgram.SymbolTable.Get(identifier.Name);
 					if (found.Count != 1) continue;// ambiguity is not our job
 					List<string> errors;
 					var qelement = TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName.Create(identifier, found[0], out errors);
 					(identifier as TypeCobol.Compiler.CodeElements.Expressions.Subscriptable).UpdateSubscripting(qelement);
-					foreach(string error in errors) {
-						DiagnosticUtils.AddError(ce, error);
-					}
+					foreach(string error in errors) DiagnosticUtils.AddError(statement, error);
 				}
 			}
 		}
