@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 	public interface QualifiedName: IList<string> {
 		string Head { get; }
 		bool IsExplicit { get; }
+		bool IsSubscripted { get; }
 	}
 
 
@@ -15,6 +16,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public IList<DataName> DataNames { get; private set; }
 		public FileName FileName { get; private set; }
 		public bool IsExplicit { get; private set; }
+		public bool IsSubscripted { get { return false; } }
 
 		public SyntacticQualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null, bool isExplicit = false) {
 			this.Symbol = symbol;
@@ -94,6 +96,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public class QualifiedTableElement: QualifiedName {
 		protected OrderedDictionary names = new OrderedDictionary();
+
+		public bool IsSubscripted { get { return true; } }
 
 		public void Add(string name, Subscript index) {
 			names.Add(name, index);
