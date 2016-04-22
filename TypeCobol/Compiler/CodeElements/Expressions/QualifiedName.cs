@@ -94,7 +94,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-	public class QualifiedTableElement: QualifiedName {
+	public class SubscriptedQualifiedName: QualifiedName {
 		protected OrderedDictionary names = new OrderedDictionary();
 
 		public bool IsSubscripted { get { return true; } }
@@ -185,9 +185,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		/// <param name="data">Data declaration the created name will fully-qualify</param>
 		/// <param name="messages">Error messages. If there are some, there is something wrong with <paramref name="identifier"/>'s name qualification</param>
 		/// <returns></returns>
-		public static QualifiedTableElement Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
+		public static SubscriptedQualifiedName Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
 			var names = CreatePairs(identifier, data, out messages);
-			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.QualifiedTableElement();
+			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName();
 			foreach(var pair in names) qelement.Add(pair.Item1,pair.Item2);
 			return qelement;
 		}

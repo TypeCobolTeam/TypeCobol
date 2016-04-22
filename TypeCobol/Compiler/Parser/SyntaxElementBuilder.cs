@@ -393,7 +393,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFile()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -415,7 +415,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFileOrUPSI()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -437,7 +437,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFileOrUPSI()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -459,7 +459,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFileOrUPSI()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -481,7 +481,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFileOrUPSI()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -502,7 +502,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFile()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -522,7 +522,7 @@ namespace TypeCobol.Compiler.Parser
 				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 				return CreateQualifiedName(dataname, qualifiers, true, false);
 			} else {
-				var qname = new QualifiedTableElement();
+				var qname = new SubscriptedQualifiedName();
 				Symbol symbol;
 				foreach(var c in context.qDataOrFileOrUPSI()) {
 					if (c == null) continue; //TODO? else qname.IsExplicit = false;
@@ -534,7 +534,7 @@ namespace TypeCobol.Compiler.Parser
 				return qname;
 			}
 		}
-		private static void AddToSubscriptedQualifiedName(QualifiedTableElement qname, Symbol symbol, CodeElementsParser.SubscriptContext context) {
+		private static void AddToSubscriptedQualifiedName(SubscriptedQualifiedName qname, Symbol symbol, CodeElementsParser.SubscriptContext context) {
 			string name = symbol!=null?symbol.Name:null;
 			var subscript = CreateSubscript(context);
 			var pair = new Tuple<string,Subscript>(name,subscript);//TODO? test name|subscript == null

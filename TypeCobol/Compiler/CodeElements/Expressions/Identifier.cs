@@ -47,7 +47,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	}
 	public interface Subscriptable {
 		IList<Subscript> Subscripts { get; }
-		void UpdateSubscripting(QualifiedTableElement e);
+		void UpdateSubscripting(SubscriptedQualifiedName e);
 	}
 	public interface ReferenceModifiable {
 		Substring ReferenceModifier { get; set; }
@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			return str.ToString();
 		}
 
-		public void UpdateSubscripting(QualifiedTableElement e) {
+		public void UpdateSubscripting(SubscriptedQualifiedName e) {
 			Name = e;
 			Subscripts = null;
 		}
@@ -111,7 +111,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             return str.ToString();
         }
 
-		public void UpdateSubscripting(QualifiedTableElement e) {
+		public void UpdateSubscripting(SubscriptedQualifiedName e) {
 			Name = e;
 			Subscripts = null;
 		}

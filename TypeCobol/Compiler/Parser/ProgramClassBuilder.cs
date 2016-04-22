@@ -335,7 +335,7 @@ namespace TypeCobol.Compiler.Parser
 					var found = CurrentProgram.SymbolTable.Get(identifier.Name);
 					if (found.Count != 1) continue;// ambiguity is not our job
 					List<string> errors;
-					var qelement = TypeCobol.Compiler.CodeElements.Expressions.QualifiedTableElement.Create(identifier, found[0], out errors);
+					var qelement = TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName.Create(identifier, found[0], out errors);
 					(identifier as TypeCobol.Compiler.CodeElements.Expressions.Subscriptable).UpdateSubscripting(qelement);
 					foreach(string error in errors) {
 						DiagnosticUtils.AddError(ce, error);
