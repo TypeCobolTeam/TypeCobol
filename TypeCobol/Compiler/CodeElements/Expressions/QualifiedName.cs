@@ -97,6 +97,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 	public class SubscriptedQualifiedName: QualifiedName {
 		protected OrderedDictionary names = new OrderedDictionary();
 
+		public SubscriptedQualifiedName(bool isExplicit = true) {
+			this.IsExplicit = isExplicit;
+		}
+
 		public bool IsSubscripted { get { return true; } }
 
 		public void Add(string name, Subscript index) {

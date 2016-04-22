@@ -331,6 +331,7 @@ namespace TypeCobol.Compiler.Parser
 			var statement = ce as IdentifierUser;
 			if (statement == null) return;
 			foreach(var identifier in statement.Identifiers) {
+				if (identifier.Name.IsSubscripted) continue;
 				if (identifier is TypeCobol.Compiler.CodeElements.Expressions.Subscriptable) {
 					var found = CurrentProgram.SymbolTable.Get(identifier.Name);
 					if (found.Count != 1) continue;// ambiguity is not our job
