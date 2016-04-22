@@ -47,6 +47,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	}
 	public interface Subscriptable {
 		IList<Subscript> Subscripts { get; }
+		void UpdateSubscripting(QualifiedTableElement e);
 	}
 	public interface ReferenceModifiable {
 		Substring ReferenceModifier { get; set; }
@@ -77,6 +78,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
 			return str.ToString();
 		}
+
+		public void UpdateSubscripting(QualifiedTableElement e) {
+			Name = e;
+			Subscripts = null;
+		}
 	}
 
     public class Condition : LogicalExpression, Identifier, Subscriptable
@@ -104,6 +110,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             }
             return str.ToString();
         }
+
+		public void UpdateSubscripting(QualifiedTableElement e) {
+			Name = e;
+			Subscripts = null;
+		}
     }
 
     public class QualifiedProcedureName

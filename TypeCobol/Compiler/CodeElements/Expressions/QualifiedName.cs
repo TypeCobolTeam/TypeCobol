@@ -92,7 +92,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-	public class QualifiedTableElementName: QualifiedName {
+	public class QualifiedTableElement: QualifiedName {
 		protected OrderedDictionary names = new OrderedDictionary();
 
 		public void Add(string name, Subscript index) {
@@ -113,7 +113,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 		public string Head {
-			get { return (string)names[Count-1]; }
+			get {
+				object head = null;
+				foreach(string name in names.Keys) head = name;
+				return (string)head;
+			}
 		}
 		public bool IsExplicit { get; private set; }
 
@@ -177,9 +181,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		/// <param name="data">Data declaration the created name will fully-qualify</param>
 		/// <param name="messages">Error messages. If there are some, there is something wrong with <paramref name="identifier"/>'s name qualification</param>
 		/// <returns></returns>
-		public static QualifiedTableElementName Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
+		public static QualifiedTableElement Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
 			var names = CreatePairs(identifier, data, out messages);
-			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.QualifiedTableElementName();
+			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.QualifiedTableElement();
 			foreach(var pair in names) qelement.Add(pair.Item1,pair.Item2);
 			return qelement;
 		}
