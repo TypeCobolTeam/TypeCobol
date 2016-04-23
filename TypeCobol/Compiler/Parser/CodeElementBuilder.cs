@@ -544,7 +544,7 @@ namespace TypeCobol.Compiler.Parser
                             // 3) OCCURS min TO UNBOUNDED DEPENDING ON...
                             // 4) OCCURS min UNBOUNDED DEPENDING ON... -syntax error (TO missing)
                             entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
-                            entry.MaxOccurencesCount = Int32.MaxValue;
+                            entry.NoMaxOccurencesCount = true;
                         } else {
                             // 5) OCCURS max DEPENDING ON...
                             // 6) OCCURS min TO DEPENDING ON... -syntax error (max missing)
@@ -557,6 +557,7 @@ namespace TypeCobol.Compiler.Parser
                     } else {
                             // 8) OCCURS exact ... (fixed length)
                         entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                        entry.MaxOccurencesCount = entry.MinOccurencesCount;
                     }
                 } else { // isVariable == true && integers.Length == 2
                             // 9) OCCURS min TO max DEPENDING ON...
@@ -1978,7 +1979,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.dataNameReference(),
-					context.dataNameReferenceOrFileNameReference());
+					context.qDataOrFile());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
@@ -1993,7 +1994,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.dataNameReferenceOrIndexNameReference(),
-					context.dataNameReferenceOrFileNameReference());
+					context.qDataOrFile());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
@@ -2008,7 +2009,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+					context.qDataOrFileOrUPSI());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
@@ -2023,7 +2024,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+					context.qDataOrFileOrUPSI());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
@@ -2038,7 +2039,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
-					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+					context.qDataOrFileOrUPSI());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
@@ -2053,7 +2054,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
-					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+					context.qDataOrFileOrUPSI());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}
@@ -2068,7 +2069,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
 					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
-					context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+					context.qDataOrFileOrUPSI());
 			}
 			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
 		}

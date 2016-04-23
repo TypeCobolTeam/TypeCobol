@@ -22,7 +22,7 @@ public class Range {
 }
 public class Diagnostic {
 	public Range Range = new Range();
-	public int Severity;
+	public int Severity = 1;
 	public string Code;
 	public string Source;
 	public string Message;
@@ -49,6 +49,12 @@ public class CodeElementDiagnostics {
 			results.Add(diagnostic);
 		}
 		return results;
+	}
+
+	public Range GetRange(CodeElement e) {
+		var start = e.ConsumedTokens[0].StartIndex;
+		var end = e.ConsumedTokens[e.ConsumedTokens.Count-1].StopIndex;
+		return GetRange(e.ConsumedTokens, start, end);
 	}
 
 	private Range GetRange(IList<Token> tokens, int start, int end) {

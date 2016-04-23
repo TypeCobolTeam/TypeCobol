@@ -15,6 +15,9 @@ namespace TypeCobol.Codegen {
 	public class Parsers {
 
 		[TestMethod]
+		[TestCategory("Config")]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void CreateDefaultParser() {
 			System.Type DEFAULT = typeof(XmlParser);
 			ConfigParser parser;
@@ -25,12 +28,18 @@ namespace TypeCobol.Codegen {
 		}
 
 		[TestMethod]
+		[TestCategory("Config")]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void CreateXMLParser() {
 			var parser = Config.Config.CreateParser(".xml");
 			Assert.AreEqual(parser.GetType(), typeof(XmlParser));
 		}
 
 		[TestMethod]
+		[TestCategory("Config")]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void ParseFailureIfNotFound() {
 			try {
 				ParseConfig("NOT_FOUND");
@@ -39,11 +48,18 @@ namespace TypeCobol.Codegen {
 		}
 
 		[TestMethod]
+		[TestCategory("Config")]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void ParseEmpty() {
 			Assert.AreEqual(ParseConfig("Empty.xml").Count,0);
 		}
 
 		[TestMethod]
+		[TestCategory("Config")]
+		[TestCategory("Codegen")]
+		[TestCategory("Parsing")]
+		[TestProperty("Time","fast")]
 		public void ParseTypes() {
 			var skeletons = ParseConfig("Types.xml");
 			Assert.AreEqual(skeletons.Count,2);
@@ -51,19 +67,20 @@ namespace TypeCobol.Codegen {
 			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
 			var document = ParseSource("Types.cbl", DocumentFormat.RDZReferenceFormat);
 
-			var columns = document.Snapshot.TextSourceInfo.ColumnsLayout;
+			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			var writer = new System.IO.StringWriter();
 			// write parsing errors
 			WriteErrors(writer, document.Errors[0], "CodeElements", columns);
 			WriteErrors(writer, document.Errors[1], "ProgramClass", columns);
 			// write generated code
-			var codegen = new Generator(writer, document.Source);
-			codegen.Generate(document.Snapshot.Program.SyntaxTree.Root, columns);
+			var codegen = new Generator(writer, document.Results.TokensLines, document.Converter);
+			var program = document.Results.ProgramClassDocumentSnapshot.Program;
+			codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 			// flush
 			writer.Close();
 
 			// compare with expected result
-			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, "Types.fixme"));
+			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, "Types.cbl"));
 			Assert.AreEqual(writer.ToString(), expected);
 		}
 

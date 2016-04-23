@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.CodeElements
 					current = current.TopLevel;
 				}
 				names.Reverse();
-				return new QualifiedName(Name, names);
+				return new SyntacticQualifiedName(Name, names);
 			}
 		}
 
@@ -683,6 +683,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// unbounded.
         /// </summary>
         public int MaxOccurencesCount { get; set; }
+		public bool NoMaxOccurencesCount {
+			get {
+				return MaxOccurencesCount == Int32.MaxValue;
+			}
+			set {
+				if (value) MaxOccurencesCount = Int32.MaxValue;
+				else throw new InvalidOperationException("Set me only to TRUE; or else set MaxOccurencesCount.");
+			}
+		}
 
         /// <summary>
         /// p192:
@@ -1025,6 +1034,18 @@ namespace TypeCobol.Compiler.CodeElements
 			if (IsFiller) str.Append("<filler>");
 			else if (Name==null) str.Append("?");
 			str.Append(Name);
+			if (IsTableOccurence) {
+				str.Append('[');
+				if (OccursDependingOn != null)
+					str.Append(OccursDependingOn).Append("∈[");
+				str.Append(MinOccurencesCount);
+				if (MaxOccurencesCount != MinOccurencesCount)
+					if (NoMaxOccurencesCount) str.Append(";∞");
+					else str.Append(';').Append(MaxOccurencesCount);
+				if (OccursDependingOn != null)
+					str.Append(']');
+				str.Append(']');
+			}
 			str.Append(" {").Append(LevelNumber).Append("} ");
 			if (IsGroup) {
 				str.Append("GROUP(").Append(Subordinates.Count).Append(") [ ");

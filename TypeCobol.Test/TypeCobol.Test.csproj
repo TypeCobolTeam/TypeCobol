@@ -42,6 +42,10 @@
       <HintPath>..\packages\Antlr4.Runtime.4.5-alpha003\lib\net45\Antlr4.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
@@ -83,11 +87,7 @@
     <Compile Include="Compiler\Parser\TestJSONSerializer.cs" />
     <Compile Include="Compiler\Parser\TestParser.cs" />
     <Compile Include="Compiler\Parser\TestTokenSource.cs" />
-    <Compile Include="Compiler\Pipeline\TestFileWatcher.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalParser.cs" />
     <Compile Include="Compiler\Pipeline\TestIncrementalPipeline.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalPreprocessor.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalScanner.cs" />
     <Compile Include="Compiler\Preprocessor\PreprocessorUtils.cs" />
     <Compile Include="Compiler\Preprocessor\TestCompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\TestCopyDirective.cs" />
@@ -102,8 +102,8 @@
     <Compile Include="PlatformUtils.cs" />
     <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QualifiedName.cs" />
     <Compile Include="TestCollection.cs" />
-    <Compile Include="TestLauncher.cs" />
     <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -113,7 +113,9 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobolPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\TablesPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\Type-DatePGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypedefPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EmptyPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\SimplePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Simple.0.txt" />
@@ -126,6 +128,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Programs\CallPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EvaluatePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\PerformPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\DoubleColonPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ALTER.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ok.txt" />
@@ -278,7 +281,10 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
-    <None Include="Compiler\Parser\Samples\Programs\TypeCobol.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Date.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\Typedef.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\DoubleColon.pgm" />
     <None Include="Compiler\Pipeline\Samples\BigBatch.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />

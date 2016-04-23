@@ -60,35 +60,35 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
-        public FileCompiler(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, bool isCopyFile) :
-            this(libraryName, textName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions,isCopyFile)
+        public FileCompiler(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile) :
+            this(libraryName, textName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile)
         { }
 
         /// <summary>
         /// Load a Cobol source file in an pre-existing text document
         /// </summary>
         public FileCompiler(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ITextDocument textDocument, TypeCobolOptions compilerOptions, bool isCopyFile) :
-            this(libraryName, textName, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, isCopyFile)
+            this(libraryName, textName, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile)
         { }
 
         /// <summary>
         /// Use a pre-existing text document, not yet associated with a Cobol file
         /// </summary>
         public FileCompiler(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, bool isCopyFile) :
-            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, isCopyFile)
+            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile)
         { }
 
         /// <summary>
         /// Use a pre-existing text document, already initialized from a Cobol file
         /// </summary>
         public FileCompiler(ITextDocument textDocument, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, bool isCopyFile) :
-            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, isCopyFile)
+            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile)
         { }
 
         /// <summary>
         /// Common internal implementation for all 4 constructors above
         /// </summary>
-        private FileCompiler(string libraryName, string textName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, bool isCopyFile)
+        private FileCompiler(string libraryName, string textName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile)
         {
             // 1.a Find the Cobol source file
             CobolFile sourceFile = null;
@@ -128,17 +128,14 @@ namespace TypeCobol.Compiler
                 TextDocument = textDocument;
             }
 
-            // 3. Prepare the data structures used by the different steps of the compiler
-            if (isCopyFile)
-            {
-                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines,
-                    compilerOptions, documentProvider);
-            }
-            else
-            {
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines,
-                    compilerOptions, documentProvider);
-            }
+			// 3. Prepare the data structures used by the different steps of the compiler
+			if (isCopyFile) {
+				CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider);
+				CompilationResultsForCopy.CustomSymbols = customSymbols;
+			} else {
+				CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider);
+				CompilationResultsForProgram.CustomSymbols = customSymbols;
+			}
             CompilerOptions = compilerOptions;
         }
         

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -53,8 +54,8 @@ namespace TypeCobol.Compiler.CodeModel
 		public SymbolTable(SymbolTable enclosing = null, Scope current = Scope.Program) {
 			CurrentScope = current;
 			EnclosingScope = enclosing;
-			if (EnclosingScope == null && CurrentScope != Scope.External)
-				throw new System.InvalidOperationException("Only Table of EXTERNAL symbols don't have any enclosing scope.");
+			if (EnclosingScope == null && CurrentScope != Scope.Intrinsic)
+				throw new System.InvalidOperationException("Only Table of INTRISIC symbols don't have any enclosing scope.");
 		}
 
 		public void Add(DataDescriptionEntry symbol) {
@@ -64,9 +65,9 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 		private Scope GetScope(DataDescriptionEntry data) {
-			if (data.IsExternal) return Scope.External;
 			if (data.IsGlobal) return Scope.Global;
-			return Scope.Program;
+            //External is not a global or above global scope, so use Scope.Program for this kind of data
+            return Scope.Program;
 		}
 		private SymbolTable GetTable(SymbolTable.Scope scope) {
 			if (CurrentScope == scope) return this;
@@ -86,13 +87,12 @@ namespace TypeCobol.Compiler.CodeModel
 			return table[key];
 		}
 
-
-		internal IList<DataDescriptionEntry> Get(CodeElements.Expressions.QualifiedName name) {
-			IList<DataDescriptionEntry> found = Get(name.Symbol.Name);
-			int max = name.DataNames.Count;
+		internal IList<DataDescriptionEntry> Get(QualifiedName name) {
+			var found = Get(name.Head);
+			int max = name.Count-1;
 			if (name.IsExplicit) {
 				for(int c=0; c<max; c++) {
-					string pname = name.DataNames[max-c-1].Name;
+					string pname = name[max-c-1];
 					found = Filter(found, pname, c+1);
 				}
 			} else {
@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.CodeModel
 					int c=0, generation=0;
 					bool okay = true;
 					while (okay && c<max) {
-						string pname = name.DataNames[max-c-1].Name;
+						string pname = name[max-c-1];
 						c++;
 						generation++;
 						okay = Filter(entry, pname, ref generation);
@@ -166,13 +166,16 @@ namespace TypeCobol.Compiler.CodeModel
 		/// Cobol has compile time binding for variables,
 		/// sometimes called static scope.
 		/// Within that, Cobol supports several layers of scope:
-		/// External, Global and Program scope.
+		/// Global and Program scope.
+		/// 
+		/// In TypeCobol we have an intrisic scope which is used for intrinsic types and
+		/// variables.
 		/// </summary>
 		public enum Scope {
 			/// <summary>
-			/// Variables declared as EXTERNAL are truly global.
+			/// Intrinsic scope is a specific to TypeCobol.
 			/// </summary>
-			External,
+			Intrinsic,
 			/// <summary>
 			/// Variables declared in WORKING STORAGE as GLOBAL are visible
 			/// to the entire program in which they are declared and
@@ -200,22 +203,22 @@ namespace TypeCobol.Compiler.CodeModel
 
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
-		internal void RegisterCustomType(DataDescriptionEntry data) {
+		public void RegisterCustomType(DataDescriptionEntry data) {
 			if (!data.IsTypeDefinition) throw new System.ArgumentException(data.Name+" is not a TYPEDEF data description");
 			CustomTypes[data.Name.Name] = data;
 		}
 
-		internal DataDescriptionEntry GetCustomType(string type) {
+		public DataDescriptionEntry GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
-				try { return CustomTypes[type]; }
+				try { return table.CustomTypes[type]; }
 				catch(KeyNotFoundException ex) { } // should be in parent scope
 				table = table.EnclosingScope;
 			}
 			throw new System.ArgumentException(type+" is not a custom type for this scope");
 		}
 
-		internal bool IsCustomType(DataType type) {
+		public bool IsCustomType(DataType type) {
 			if (type == null) return false;
 			foreach(var key in CustomTypes.Keys)
 				if (key.Equals(type.Name))

@@ -119,9 +119,10 @@ namespace TypeCobol.Compiler.Scanner
         }
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
-        private static bool IsInsideRemarks(CobolTextLineType type, string line) {
-            return type == CobolTextLineType.Comment && line.StartsWith("REMARKS. ", StringComparison.InvariantCultureIgnoreCase);
-        }
+		private static bool IsInsideRemarks(CobolTextLineType type, string line) {
+			if (type != CobolTextLineType.Comment || line == null) return false;
+			return line.StartsWith("REMARKS. ", StringComparison.InvariantCultureIgnoreCase);
+		}
         private static int GetStartIndexOfSignificantPart(string line, MultilineScanState state) {
             int start = Math.Max(line.IndexOf(' ') +1, line.IndexOf('=') +1);
             if (!state.InsideRemarksParentheses) {

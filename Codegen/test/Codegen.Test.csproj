@@ -60,7 +60,7 @@
     <None Include="resources\input\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\output\*">
+    <None Include="resources\output\Types.cbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -25,7 +25,7 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 		Outputs = new List<string>();
 	}
 
-	public void AddErrors(string key, IEnumerable<Diagnostic> errors) {
+	protected List<Diagnostic> GetErrors(string key) {
 		List<Diagnostic> list;
 		try { list = Errors[key]; }
 		catch(KeyNotFoundException ex) {
@@ -33,10 +33,15 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 			Errors[key] = list;
 			Inputs[key] = GenerateNumber().ToString();
 		}
-		list.AddRange(errors);
+		return list;
+	}
+
+	public void AddErrors(string key, IEnumerable<Diagnostic> errors) {
+		GetErrors(key).AddRange(errors);
 	}
 
 	private int count = 1;
+	public int Count { get { return count; } }
 	private int GenerateNumber() { return count++; }
 
 	public abstract void Write();
@@ -146,14 +151,19 @@ public class ConsoleWriter: AbstractErrorWriter {
 	}
 
 	private void write(string title, IList<Diagnostic> errors) {
-		writer.WriteLineAsync();
-		writer.WriteAsync(errors.Count.ToString());
+		if (errors.Count > 0)
+			 writer.WriteAsync(errors.Count.ToString());
+		else writer.WriteAsync("No");
 		writer.WriteAsync(" error");
 		if (errors.Count > 1) writer.WriteAsync('s');
 		writer.WriteAsync(" in \"");
 		writer.WriteAsync(title);
-		writer.WriteLineAsync("\":");
-		foreach(var e in errors) writer.WriteLineAsync(e.ToString());
+		if (errors.Count > 0) {
+			writer.WriteLineAsync("\":");
+			foreach(var e in errors) writer.WriteLineAsync(e.ToString());
+		} else {
+			writer.WriteLineAsync("\".");
+		}
 	}
 
 	public override void Flush() {

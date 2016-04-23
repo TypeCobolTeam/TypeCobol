@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,17 +8,15 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Test.Compiler.Parser;
 
-namespace TypeCobol.Test.Compiler.Pipeline
-{
-    static class TestIncrementalPipeline
-    {
-        public static void CheckUpdateFromFile()
-        {
+namespace TypeCobol.Test.Compiler.Pipeline {
 
-        }
+	[TestClass]
+	public class TestIncrementalPipeline {
 
-        public static void CheckPerformance()
-        {
+		[TestMethod]
+		[TestCategory("Performance")]
+		[TestProperty("Time","long")]
+		public void CheckPerformance() {
             // Sample program properties
             string folder = "Compiler" + Path.DirectorySeparatorChar + "Pipeline" + Path.DirectorySeparatorChar + "Samples";
             string textName = "BigBatch";
@@ -32,7 +31,7 @@ namespace TypeCobol.Test.Compiler.Pipeline
             CompilationProject project = new CompilationProject("test",
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), false);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
             
             // Execute a first (complete) compilation
             compiler.CompileOnce();
@@ -65,6 +64,6 @@ namespace TypeCobol.Test.Compiler.Pipeline
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForProgramClassParser.LastRefreshTime + " ms : program class parser");
 
             Console.WriteLine(report.ToString());
-        }
-    }
+		}
+	}
 }

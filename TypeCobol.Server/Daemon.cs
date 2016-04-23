@@ -1,20 +1,24 @@
-﻿using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
+﻿using System;
+using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Server
 {
 	class Server {
 
 		class Config {
-			public TypeCobol.Compiler.DocumentFormat Format = null;
-			public new List<string> InputFiles  = new List<string>();
-			public new List<string> OutputFiles = new List<string>();
+			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+			public bool Codegen = false;
+			public List<string> InputFiles  = new List<string>();
+			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
 			public bool IsErrorXML {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
 			}
+			public List<string> Copies = new List<string>();
 		}
 
 		static int Main(string[] argv) {
@@ -36,12 +40,14 @@ namespace TypeCobol.Server
 				{ "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", (string v) => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", (string v) => config.OutputFiles.Add(v) },
+				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
-				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\", \"zos\", or \"utf8\". "
+				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
 								(string v) => config.Format = CreateFormat(v)
 				},
+				{ "y|copy=", "{PATH} to a copy to load. This option can be specified more than once.", (string v) => config.Copies.Add(v) },
 				{ "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
 				{ "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
@@ -59,7 +65,7 @@ namespace TypeCobol.Server
 			}
 			if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 				return exit(2, "The number of output files must be equal to the number of input files.");
-			if (config.OutputFiles.Count == 0)
+			if (config.OutputFiles.Count == 0 && config.Codegen)
 				foreach(var path in config.InputFiles) config.OutputFiles.Add(path+".cee");
 
 			if (args.Count > 0) pipename = args[0];
@@ -76,9 +82,8 @@ namespace TypeCobol.Server
 		private static Compiler.DocumentFormat CreateFormat(string encoding) {
 			if (encoding == null) return null;
 			if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-			if (encoding.ToLower().Equals("rdz")) return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-			return null;
+			/*if (encoding.ToLower().Equals("rdz"))*/ return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 		}
 
 		private static void runOnce(Config config) {
@@ -91,25 +96,81 @@ namespace TypeCobol.Server
 			writer.Outputs = config.OutputFiles;
 
 			var parser = new Parser("TypeCobol.Server");
+			parser.CustomSymbols = loadCopies(config.Copies);
+
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				parser.Init(path, config.Format);
+				try { parser.Init(path, config.Format); }
+				catch(System.IO.IOException ex) {
+					AddError(writer, ex.Message, path);
+					continue;
+				}
 				parser.Parse(path);
-
-				var converter = new TypeCobol.Tools.CodeElementDiagnostics(parser.CodeElementsSnapshot.Lines);
-				writer.AddErrors(path, converter.AsDiagnostics(parser.CodeElementsSnapshot.ParserDiagnostics));
-				writer.AddErrors(path, converter.AsDiagnostics(parser.Snapshot.Diagnostics));
-				foreach(var e in parser.CodeElementsSnapshot.CodeElements) {
-					if (e.Diagnostics.Count < 1) continue;
-					writer.AddErrors(path, converter.GetDiagnostics(e));
+				if (parser.Results.CodeElementsDocumentSnapshot == null) {
+					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
+					continue;
 				}
 
-				var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Snapshot);
-				var stream = new StreamWriter(config.OutputFiles[c]);
-				codegen.WriteCobol(stream);
+				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
+				// no need to add errors from parser.CodeElementsSnapshot.CodeElements
+				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
+
+				if (parser.Results.ProgramClassDocumentSnapshot == null) {
+					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
+					continue;
+				}
+				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.ProgramClassDocumentSnapshot.Diagnostics));
+				foreach(var e in parser.Results.CodeElementsDocumentSnapshot.CodeElements) {
+					if (e.Diagnostics.Count < 1) continue;
+					writer.AddErrors(path, parser.Converter.GetDiagnostics(e));
+				}
+
+				if (config.Codegen) {
+					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Results.ProgramClassDocumentSnapshot);
+					if (codegen.IsValid) {
+						var stream = new StreamWriter(config.OutputFiles[c]);
+						codegen.WriteCobol(stream);
+						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
+					} else {
+						// might be a problem regarding the input file format
+						AddError(writer, "Codegen failed for \""+path+"\" (no Program). Check file format/encoding?", path);
+					}
+				}
 			}
 			writer.Write();
 			writer.Flush();
+		}
+
+		private static void AddError(AbstractErrorWriter writer, string message, string path) {
+			var error = new TypeCobol.Tools.Diagnostic();
+			error.Message = message;
+			error.Code = "codegen";
+			try { error.Source = writer.Inputs[path]; }
+			catch(KeyNotFoundException ex) { error.Source = writer.Count.ToString(); }
+			var list = new List<TypeCobol.Tools.Diagnostic>();
+			list.Add(error);
+			writer.AddErrors(path, list);
+			System.Console.WriteLine(error.Message);
+		}
+
+		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> copies) {
+			var parser = new Parser("TypeCobol.Server.loading");
+			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+			foreach(string path in copies) {
+				parser.Init(path);
+				parser.Parse(path);
+
+                if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
+                if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
+                {
+                    Console.WriteLine("Error: Your Intrisic types are not included into a program.");
+                    continue;
+                }
+                
+                foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes.Values)
+					table.RegisterCustomType(type);//TODO check if already there
+			}
+			return table;
 		}
 
 		private static void runServer(string pipename) {

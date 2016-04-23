@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), true);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForCopy;
@@ -50,7 +50,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] {"*.cpy", "*.cbl" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), false);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
@@ -233,7 +233,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             if (table == null) return str;
             if (header == null) header = "SYMBOL TABLE:\n";
-            if (table.CurrentScope == SymbolTable.Scope.External) header = "EXTERNAL SCOPE:\n";
+            if (table.CurrentScope == SymbolTable.Scope.Intrinsic) header = "INTRISIC SCOPE:\n";
             if (table.CurrentScope == SymbolTable.Scope.Global) header = "GLOBAL SCOPE:\n";
             Dictionary<string,List<DataDescriptionEntry>> map = table.DataEntries;
             if(map.Count > 0) {
