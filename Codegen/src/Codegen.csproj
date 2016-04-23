@@ -51,6 +51,12 @@
       <Name>TypeCobol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=e9931a4108ef2354, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr4.Runtime.4.5-alpha002\lib\net45\Antlr4.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

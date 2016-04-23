@@ -113,7 +113,9 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobolPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\TablesPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\Type-DatePGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypedefPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EmptyPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\SimplePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Simple.0.txt" />
@@ -126,6 +128,7 @@
     <Content Include="Compiler\Parser\ResultFiles\Programs\CallPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EvaluatePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\PerformPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\DoubleColonPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\ALTER.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ko.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Statements\CALL.ok.txt" />
@@ -278,7 +281,10 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
-    <None Include="Compiler\Parser\Samples\Programs\TypeCobol.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Date.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\Typedef.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\DoubleColon.pgm" />
     <None Include="Compiler\Pipeline\Samples\BigBatch.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />

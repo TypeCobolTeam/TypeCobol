@@ -147,7 +147,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-		private static QualifiedName qname(string uri, bool isFirstFilename = false) {
+		private static SyntacticQualifiedName qname(string uri, bool isFirstFilename = false) {
 			var parts = uri.Split('.');
 			int p = 0;
 			FileName filename = null;
@@ -155,7 +155,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			var datanames = new List<DataName>();
 			while(p < parts.Length-1) datanames.Add(new DataName(token(parts[p++])));
 			var symbol = new DataName(token(parts[parts.Length-1]));
-			return new QualifiedName(symbol, datanames, filename);
+			return new SyntacticQualifiedName(symbol, datanames, filename);
 		}
 		private static Token token(string word) {
 			var token = new Mock<Token>();

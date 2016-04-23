@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>
 	/// p369: The MOVE statement transfers data from one area of storage to one or more other areas.
 	/// </summary>
-	public class MoveStatement : CodeElement, SymbolUser, SymbolWriter
+	public class MoveStatement : CodeElement, SymbolUser, IdentifierUser, SymbolWriter
 	{
 		/// <summary>
 		/// identifier-1 , literal-1
@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-2
 		/// The receiving areas. identifier-2 must not reference an intrinsic function.
 		/// </summary>
-		private IList<Identifier> Receiving;
+		public IList<Identifier> Receiving;
 		/// <summary>
 		/// CORR is an abbreviation for, and is equivalent to, CORRESPONDING.
 		///
@@ -49,6 +49,15 @@ namespace TypeCobol.Compiler.CodeElements
 			this.Sending   = sending;
 			this.Receiving = receiving;
 			this.IsCorresponding = corresponding;
+		}
+
+		ICollection<Identifier> IdentifierUser.Identifiers {
+			get {
+				var identifiers = new List<Identifier>();
+				if (Sending is Identifier) identifiers.Add(Sending as Identifier);
+				identifiers.AddRange(Receiving);
+				return identifiers;
+			}
 		}
 
 		ICollection<QualifiedName> SymbolUser.Symbols {

@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>Class object resulting of the visit the parse tree</summary>
         public Class Class { get; private set; }
 
-        private SymbolTable TableOfExternals = new SymbolTable(null, SymbolTable.Scope.External);
+        private SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
         private SymbolTable TableOfGlobals;
 
 		public SymbolTable CustomSymbols {
@@ -39,9 +39,9 @@ namespace TypeCobol.Compiler.Parser
 				if (value != null) {
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
-							TableOfExternals.Add(data);
+							TableOfIntrisic.Add(data);
 					foreach(var type in value.CustomTypes.Values)
-						TableOfExternals.RegisterCustomType(type);
+						TableOfIntrisic.RegisterCustomType(type);
 				}
 			}
 		}
@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public override void EnterCobolCompilationUnit(CobolProgramClassParser.CobolCompilationUnitContext context)
         {
-            TableOfGlobals = new SymbolTable(TableOfExternals, SymbolTable.Scope.Global);
+            TableOfGlobals = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Global);
             Program = null;
             Class = null;
         }
@@ -318,13 +318,30 @@ namespace TypeCobol.Compiler.Parser
             _exit();
         }
 
-        public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
-            CodeElement statement = AsStatement(context);
-            _enter(statement, context);
-        }
-        public override void ExitStatement(CobolProgramClassParser.StatementContext context) {
-            _exit();
-        }
+		public override void EnterStatement(CobolProgramClassParser.StatementContext context) {
+			CodeElement statement = AsStatement(context);
+			FixSubscriptableQualifiedNames(statement);
+			_enter(statement, context);
+		}
+		public override void ExitStatement(CobolProgramClassParser.StatementContext context) {
+			_exit();
+		}
+
+		private void FixSubscriptableQualifiedNames(CodeElement statement) {
+			var identifiers = statement as IdentifierUser;
+			if (identifiers == null) return;
+			foreach(var identifier in identifiers.Identifiers) {
+				if (identifier.Name is TypeCobol.Compiler.CodeElements.Expressions.Subscripted) continue;
+				if (identifier is TypeCobol.Compiler.CodeElements.Expressions.Subscriptable) {
+					var found = CurrentProgram.SymbolTable.Get(identifier.Name);
+					if (found.Count != 1) continue;// ambiguity is not our job
+					List<string> errors;
+					var qelement = TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName.Create(identifier, found[0], out errors);
+					(identifier as TypeCobol.Compiler.CodeElements.Expressions.Subscriptable).UpdateSubscripting(qelement);
+					foreach(string error in errors) DiagnosticUtils.AddError(statement, error);
+				}
+			}
+		}
 
 
 

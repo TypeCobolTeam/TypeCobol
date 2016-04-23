@@ -116,31 +116,30 @@ namespace TypeCobol.Server
 			}
 		}
 
-		public CodeElementsDocument CodeElementsSnapshot {
-			get { return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot; }
-		}
-
-		public ProgramClassDocument Snapshot {
-			get { return Compiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot; }
-		}
-
 		public ITextDocument Source {
 			get { return Compiler.TextDocument; }
 		}
 
+		public CompilationUnit Results {
+			get { return Compiler.CompilationResultsForProgram; }
+		}
+
+		public TypeCobol.Tools.CodeElementDiagnostics Converter {
+			get { return new TypeCobol.Tools.CodeElementDiagnostics(Results.CodeElementsDocumentSnapshot.Lines); }
+		}
+
 		public ICollection<TypeCobol.Tools.Diagnostic>[] Errors {
 			get {
-				var diagnostics = new TypeCobol.Tools.CodeElementDiagnostics(CodeElementsSnapshot.Lines);
 				var errors = new List<TypeCobol.Tools.Diagnostic>[2];
 				for(int c = 0; c < errors.Length; c++) errors[c] = new List<TypeCobol.Tools.Diagnostic>();
 				// 'CodeElements' parsing (1st phase) errors
-				errors[0].AddRange(diagnostics.AsDiagnostics(CodeElementsSnapshot.ParserDiagnostics));
-				foreach(var e in CodeElementsSnapshot.CodeElements) {
+				errors[0].AddRange(Converter.AsDiagnostics(Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
+				foreach(var e in Results.CodeElementsDocumentSnapshot.CodeElements) {
 					if (e.Diagnostics.Count < 1) continue;
-					errors[0].AddRange(diagnostics.GetDiagnostics(e));
+					errors[0].AddRange(Converter.GetDiagnostics(e));
 				}
 				// 'ProgramClass' parsing (2nd phase) errors
-				errors[1].AddRange(diagnostics.AsDiagnostics(Snapshot.Diagnostics));
+				errors[1].AddRange(Converter.AsDiagnostics(Results.ProgramClassDocumentSnapshot.Diagnostics));
 				return errors;
 			}
 		}
