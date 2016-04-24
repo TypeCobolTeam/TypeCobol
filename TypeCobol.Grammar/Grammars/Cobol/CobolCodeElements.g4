@@ -420,7 +420,7 @@ notOnSizeErrorCondition:
 
 programIdentification:
                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       PROGRAM_ID PeriodSeparator? programNameDefinition
+                       PROGRAM_ID PeriodSeparator? programName=programNameDefinition
                        (IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
                        authoringProperties;
                        
@@ -649,7 +649,7 @@ methodEnd:
 // p100 : Format: method identification division
 // !! p117 : The other paragraphs are optional and can appear in any order.
 
-authoringProperties :
+authoringProperties:
                                 ( authorParagraph |
                                   installationParagraph |
                                   dateWrittenParagraph |
@@ -657,19 +657,19 @@ authoringProperties :
                                   securityParagraph )*;
 
 authorParagraph:
-                   AUTHOR PeriodSeparator? CommentEntry*;
+                   AUTHOR PeriodSeparator? alphanumericValue3*;
 
 installationParagraph:
-                         INSTALLATION PeriodSeparator? CommentEntry*;
+                         INSTALLATION PeriodSeparator? alphanumericValue3*;
 
 dateWrittenParagraph:
-                        DATE_WRITTEN PeriodSeparator? CommentEntry*;
+                        DATE_WRITTEN PeriodSeparator? alphanumericValue3*;
 
 dateCompiledParagraph:
-                         DATE_COMPILED PeriodSeparator? CommentEntry*;
+                         DATE_COMPILED PeriodSeparator? alphanumericValue3*;
 
 securityParagraph:
-                     SECURITY PeriodSeparator? CommentEntry*;
+                     SECURITY PeriodSeparator? alphanumericValue3*;
 
 // ---
 
@@ -770,7 +770,7 @@ configurationSectionHeader:
 
 sourceComputerParagraph: 
                            SOURCE_COMPUTER PeriodSeparator
-                           (computerName 
+                           (computerName=alphanumericValue4 
                             withDebuggingModeClause? 
                             PeriodSeparator)?;
 
@@ -781,7 +781,7 @@ withDebuggingModeClause:
 // A system-name. For example:
 // IBM-system
 
-computerName : UserDefinedWord;
+// computerName : alphanumericValue4;
 
 // p110 : The OBJECT-COMPUTER paragraph specifies the system for which the object
 // program is designated.
@@ -826,17 +826,19 @@ computerName : UserDefinedWord;
 
 objectComputerParagraph :
                         OBJECT_COMPUTER PeriodSeparator
-                        (computerName 
+                        (computerName=alphanumericValue4 
                          memorySizeClause?
                          programCollatingSequenceClause?
                          segmentLimitClause?
                          PeriodSeparator)?;
 
 memorySizeClause:
-                    MEMORY SIZE? IntegerLiteral (WORDS | CHARACTERS | MODULES);
+                    MEMORY SIZE? integerValue (WORDS | CHARACTERS | MODULES);
 
 programCollatingSequenceClause:
-                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetNameReference;
+                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetReference;
+
+alphabetReference: alphabetNameReference | /* standardCollatingSequence */ intrinsicAlphabetNameReference;
 
 segmentLimitClause:
                       SEGMENT_LIMIT IS? priorityNumber;
@@ -855,7 +857,7 @@ segmentLimitClause:
 // - In a program that is declared with the RECURSIVE attribute
 // - In a program compiled with the THREAD compiler option
 
-priorityNumber : IntegerLiteral;
+priorityNumber: integerValue;
 
 // p112 : The SPECIAL-NAMES paragraph is the name of an ENVIRONMENT DIVISION
 // paragraph in which environment-names are related to user-specified
@@ -916,7 +918,7 @@ environmentNameClause :
 // data, but not for DBCS or national data.
 
 alphabetClause : 
-                   ALPHABET alphabetNameDefinition IS? (standardCollatingSequence | userDefinedCollatingSequence);
+                   ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence);
 
 userDefinedCollatingSequence:
                                 (charactersLiteral | charactersRange | charactersEqualSet)+;
@@ -1009,7 +1011,7 @@ charactersEqualSet:
 // national literal, a DBCS literal, or a symbolic-character figurative
 // constant must not be specified.
 
-characterInCollatingSequence : alphanumericLiteral | IntegerLiteral;
+characterInCollatingSequence : alphanumericValue1 | figurativeCharacterValue | ordinalPositionInCollatingSequence;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
@@ -1020,8 +1022,17 @@ symbolicCharactersClause :
                              SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
 
 symbolicCharactersOrdinalPositions:
-                                symbolicCharacterDefinition+ (ARE|IS)? IntegerLiteral+;
+                                symbolicCharacterDefinition+ (ARE|IS)? ordinalPositionInCollatingSequence+;
 
+// p116 : literal-1, literal-2, literal-3
+// - Each numeric literal specified must be an unsigned integer.
+// - Each numeric literal must have a value that corresponds to a
+// valid ordinal position within the collating sequence in effect.
+// See Appendix C, “EBCDIC and ASCII collating sequences,” on
+// page 569 for the ordinal numbers for characters in the
+// single-byte EBCDIC and ASCII collating sequences.
+
+ordinalPositionInCollatingSequence: integerValue;
 								
 // p118: The CLASS clause provides a means for relating a name to the specified set of
 // characters listed in that clause.
@@ -1034,7 +1045,9 @@ symbolicCharactersOrdinalPositions:
 // ascending or descending order.
 
 classClause : 
-                CLASS characterClassNameDefinition IS? (charactersLiteral | charactersRange)+;
+                CLASS characterClassNameDefinition IS? userDefinedCharacterClass;
+
+userDefinedCharacterClass: (charactersLiteral | charactersRange)+;
 				
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same
@@ -1120,7 +1133,7 @@ classClause :
 // p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
 
 currencySignClause :
-                       CURRENCY SIGN? IS? alphanumericLiteralToken (WITH? PICTURE SYMBOL alphanumericLiteralToken)?;
+                       CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.
@@ -1150,7 +1163,7 @@ decimalPointClause :
 //environment variable name for the file.
 
 xmlSchemaClause :
-                    XML_SCHEMA xmlSchemaNameDefinition IS? /*(externalFileId | alphanumericLiteral)*/ assignmentName;
+                    XML_SCHEMA xmlSchemaNameDefinition IS? assignmentName;
 
 // p121: external-fileid-1
 // Specifies a user-defined word that must conform to the following rules:
@@ -1471,7 +1484,7 @@ assignClause:
 // If the file connector referenced by file-name-1 in the SELECT clause is an external file connector, all file-control entries in the run unit that reference this file connector must have the same value for the integer specified in the RESERVE clause.
 
 reserveClause:
-                 RESERVE IntegerLiteral (AREA | AREAS)?;
+                 RESERVE integerValue (AREA | AREAS)?;
 
 // p135: ORGANIZATION clause
 // The ORGANIZATION clause identifies the logical structure of the file. 
@@ -1503,7 +1516,9 @@ organizationClause:
 // The PADDING CHARACTER clause is syntax checked, but has no effect on the execution of the program.
 
 paddingCharacterClause:
-                          PADDING CHARACTER? IS? (dataNameReference | alphanumericOrNationalLiteral);
+                          PADDING CHARACTER? IS? literalOrRuntimeCharacter;
+
+literalOrRuntimeCharacter: dataNameReference | characterValue2 | figurativeCharacterValue;
 
 // p138: The RECORD DELIMITER clause indicates the method of determining the length of a variable-length record on an external medium. 
 // It can be specified only for variable-length records. 
@@ -1513,7 +1528,7 @@ paddingCharacterClause:
 // The RECORD DELIMITER clause is syntax checked, but has no effect on the execution of the program.
 
 recordDelimiterClause:
-                         RECORD DELIMITER IS? (STANDARD_1 | assignmentName);
+                         RECORD DELIMITER IS? (STANDARD_1 | literalOrUserDefinedWordOReservedWordExceptCopy);
 
 // p138: The ACCESS MODE clause defines the manner in which the records of the file are made available for processing. 
 // If the ACCESS MODE clause is not specified, sequential access is assumed.
@@ -1704,7 +1719,7 @@ ioControlEntry:
 // The END OF REEL/UNIT phrase can be specified only if file-name-1 is a sequentially organized file.
 
 rerunClause:
-               RERUN ON? assignmentNameOrFileNameReference (EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
+               RERUN ON? assignmentNameOrFileNameReference (EVERY? ((integerValue RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
    
 // p147: The SAME AREA clause is syntax checked, but has no effect on the execution of the program.
 // The SAME AREA clause specifies that two or more files that do not represent sort or merge files are to use the same main storage area during processing.
@@ -1749,7 +1764,7 @@ sameAreaClause:
 // This clause is syntax checked, but has no effect on the execution of the program. The function is performed by the system through the LABEL parameter of the DD statement.
 
 multipleFileTapeClause:
-                          MULTIPLE FILE TAPE? CONTAINS? (fileNameReference (POSITION IntegerLiteral)?)+;
+                          MULTIPLE FILE TAPE? CONTAINS? (fileNameReference (POSITION integerValue)?)+;
 
 // p149: The APPLY WRITE-ONLY clause optimizes buffer and device space allocation for files that have standard sequential organization, have variable-length records, and are blocked.
 // If you specify this phrase, the buffer is truncated only when the space available in the buffer is smaller than the size of the next record. 
@@ -2102,7 +2117,7 @@ globalClause:
 // clause.
 
 blockContainsClause:
-                       BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS)?;
+                       BLOCK CONTAINS? (integerValue TO)? integerValue (CHARACTERS | RECORDS)?;
 
 // p177: When the RECORD clause is used, the record size must be specified as the number
 // of bytes needed to store the record internally, regardless of the USAGE of the data
@@ -2199,9 +2214,9 @@ blockContainsClause:
 //   the data item referenced by data-name-1 had data-name-1 been specified
 
 recordClause:
-                RECORD ((CONTAINS? IntegerLiteral CHARACTERS?) |
-                        (CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?) |
-                        (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
+                RECORD ((CONTAINS? integerValue CHARACTERS?) |
+                        (CONTAINS? integerValue TO integerValue CHARACTERS?) |
+                        (IS? VARYING IN? SIZE? (FROM? integerValue)? (TO integerValue)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
 
 // p179: For sequential, relative, or indexed files, and for sort/merge SDs, the LABEL
 // RECORDS clause is syntax checked, but has no effect on the execution of the
@@ -2234,7 +2249,7 @@ labelRecordsClause:
 // program.
 
 valueOfClause:
-                 VALUE OF (systemName IS? (dataNameReference | literal))+;
+                 VALUE OF (systemName IS? (dataNameReference | numericValue | alphanumericValue5 | figurativeCharacterValue))+;
 
 //	System name			
 //		sn single byte		
@@ -2247,7 +2262,7 @@ valueOfClause:
 //		sn DBCS allowed		 
 //			Computer name
 
-systemName: UserDefinedWord;
+systemName: alphanumericValue4;
 
 // p180: The DATA RECORDS clause is syntax checked but serves only as documentation
 // for the names of data records associated with the file.
@@ -2320,10 +2335,10 @@ dataRecordsClause:
 // “LINAGE-COUNTER” on page 20.
 
 linageClause:
-                LINAGE IS? (dataNameReference | IntegerLiteral) LINES? 
-                (WITH? FOOTING AT? (dataNameReference | IntegerLiteral))? 
-                (LINES? AT? TOP (dataNameReference | IntegerLiteral))? 
-                (LINES? AT? BOTTOM (dataNameReference | IntegerLiteral))?;
+                LINAGE IS? (dataNameReference | integerValue) LINES? 
+                (WITH? FOOTING AT? (dataNameReference | integerValue))? 
+                (LINES? AT? TOP (dataNameReference | integerValue))? 
+                (LINES? AT? BOTTOM (dataNameReference | integerValue))?;
            
 // p182: The RECORDING MODE clause specifies the format of the physical records in a
 // QSAM file. The clause is ignored for a VSAM file.
@@ -2531,7 +2546,7 @@ dataConditionEntry: { CurrentToken.Text == "88" }?
 // Subordinate data-names that are referenced in the program or method must be either uniquely defined, or made unique through qualification. 
 // Unreferenced data-names need not be uniquely defined. 
 
-levelNumber : IntegerLiteral;
+levelNumber : integerValue;
 
 // p187: data-name-1
 // Explicitly identifies the data being described.
@@ -2981,7 +2996,7 @@ groupUsageClause:
 //   – Programs compiled with the THREAD option
 
 occursClause:
-	OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
+	OCCURS (integerValue TO)? (integerValue | UNBOUNDED) TIMES?
 	occursDependingOn?
 	occursKeys*
 	(INDEXED BY? indexNameDefinition+)?;
@@ -3008,7 +3023,7 @@ occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
 // elementary data item.
 
 pictureClause:
-                 (PICTURE |PIC) IS? PictureCharacterString;
+                 (PICTURE |PIC) IS? /* PictureCharacterString */ alphanumericValue9;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -3421,7 +3436,7 @@ usageClause:
 // FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
 
 valueClause:
-               VALUE IS? (literal | allFigurativeConstant | nullFigurativeConstant);
+               VALUE IS? (numericValue | alphanumericValue5 | repeatedAlphanumericValue2 | nullFigurativeConstant);
 			   
 // p239: Format 2: condition-name value
 // valueClause:
@@ -3467,7 +3482,7 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-		((VALUE IS?) | (VALUES ARE?)) ((literal | allFigurativeConstant) ((THROUGH | THRU) (literal | allFigurativeConstant))?)+; 
+		((VALUE IS?) | (VALUES ARE?)) ((numericValue | alphanumericValue5 | repeatedAlphanumericValue2) ((THROUGH | THRU) (numericValue | alphanumericValue5 | repeatedAlphanumericValue2))?)+; 
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -4188,7 +4203,7 @@ identifierOrNumericLiteralTmp:
 		identifierOrNumericLiteral;
 
 identifierOrNumericLiteral:
-		identifier | numericLiteral;
+		identifier | numericValue;
 		
 // ROUNDED phrase
 // For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
@@ -4360,7 +4375,7 @@ programNameFromData : identifier;
 
 callBy:
 	(BY? (REFERENCE | CONTENT | VALUE))? 
-        (identifierOrFileName | literal /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
+        (identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
 
 callReturning:
 	RETURNING identifier;
@@ -4547,12 +4562,13 @@ deleteStatementEnd: END_DELETE;
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-                    DISPLAY identifierOrLiteral+
+                    DISPLAY identifierOrLiteral1+
                     uponEnvironmentName?
                     withNoAdvancing?;
 
-identifierOrLiteral:
-		identifier | literal;
+identifierOrLiteral1: identifier | numericValue | alphanumericValue5 | figurativeCharacterValue;
+
+identifierOrLiteral2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 uponEnvironmentName:
 					UPON mnemonicForEnvironmentNameReferenceOrEnvironmentName;
@@ -4712,8 +4728,8 @@ programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer : i
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE (identifier | literal | expression | TRUE | FALSE)
-	  ( ALSO (identifier | literal | expression | TRUE | FALSE) )*;
+	EVALUATE (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | expression | TRUE | FALSE)
+	  ( ALSO (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | expression | TRUE | FALSE) )*;
 
 whenCondition:
 	WHEN LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator?
@@ -4722,10 +4738,10 @@ whenCondition:
 whenEvaluateCondition: whenCondition;
 
 evaluatePhrase1Choice4:
-	NOT? (identifier | literal | arithmeticExpression) evaluateThrough?;
+	NOT? (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression) evaluateThrough?;
 
 evaluateThrough:
-	(THROUGH | THRU) (identifier | literal | arithmeticExpression);
+	(THROUGH | THRU) (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression);
 
 whenOtherCondition:
 	WHEN OTHER;
@@ -5019,7 +5035,7 @@ initializeStatement:
 	INITIALIZE identifier+ (REPLACING initializeReplacing+)?;
 
 initializeReplacing:
-	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS) DATA? BY identifierOrLiteral;
+	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS) DATA? BY identifierOrLiteral2;
 
 // p346: INSPECT statement
 // The INSPECT statement examines characters or groups of characters in a data
@@ -5231,7 +5247,7 @@ inspectStatement:
 	INSPECT identifier (inspectConverting | ((TALLYING inspectTallying+)? (REPLACING (inspectCharacters | inspectIdentifiers)+)?));
 
 inspectConverting:
-	CONVERTING identifierOrLiteral TO identifierOrLiteral inspectPhrase1*;
+	CONVERTING identifierOrLiteral2 TO identifierOrLiteral2 inspectPhrase1*;
 
 inspectTallying:
 	identifier FOR (inspectCharacters | inspectIdentifiers);
@@ -5243,12 +5259,12 @@ inspectIdentifiers:
 	(ALL | LEADING | FIRST) inspectByIdentifiers+;
 
 inspectByIdentifiers:
-	identifierOrLiteral inspectBy? inspectPhrase1*;
+	identifierOrLiteral2 inspectBy? inspectPhrase1*;
 
 inspectPhrase1:
-	(BEFORE | AFTER) INITIAL? identifierOrLiteral;
+	(BEFORE | AFTER) INITIAL? identifierOrLiteral2;
 
-inspectBy: BY identifierOrLiteral;
+inspectBy: BY identifierOrLiteral2;
 
 
 
@@ -5463,7 +5479,7 @@ invokeStatement:
 methodNameFromData : identifier;
 
 invokeUsing:
-	BY? VALUE (identifier | literal)+;
+	BY? VALUE (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue)+;
 
 invokeReturning:
 	RETURNING identifier;
@@ -5755,7 +5771,7 @@ mergeStatement:
 // ... more details p374->375 Group moves ...
 
 moveStatement:
-	MOVE corresponding? (identifierOrLiteral | allFigurativeConstant) TO identifier+;
+	MOVE corresponding? (identifierOrLiteral2 | repeatedAlphanumericValue2) TO identifier+;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
@@ -5914,7 +5930,7 @@ fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
 
 performStatement:
 	PERFORM (
-		((identifier | numericLiteral) TIMES)											   // - TIMES phrase PERFORM
+		((identifier | numericValue) TIMES)											   // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)					  // - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression )	 // - VARYING phrase PERFORM
 		)?;																				// (nothing) - Basic PERFORM
@@ -5923,15 +5939,15 @@ performStatement:
 
 performProcedureStatement:
 	PERFORM procedureName ((THROUGH |THRU) procedureName)? (			  // - Basic PERFORM
-		((identifier | numericLiteral) TIMES)							 // - TIMES phrase PERFORM
+		((identifier | numericValue) TIMES)							 // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
-		  ( AFTER identifierOrIndexName FROM (identifierOrIndexName | numericLiteral)	 // - VARYING phrase PERFORM
-			BY (identifier | numericLiteral) UNTIL conditionalExpression )* )				//
+		  ( AFTER identifierOrIndexName FROM (identifierOrIndexName | numericValue)	 // - VARYING phrase PERFORM
+			BY (identifier | numericValue) UNTIL conditionalExpression )* )				//
 		)?;															// (nothing) - Basic PERFORM
 
 performVarying:
-	VARYING identifierOrIndexName FROM (identifierOrIndexName | numericLiteral) BY (identifier | numericLiteral);
+	VARYING identifierOrIndexName FROM (identifierOrIndexName | numericValue) BY (identifier | numericValue);
 
 performStatementEnd: END_PERFORM;
 
@@ -6460,8 +6476,8 @@ searchStatement:
 	SEARCH ALL? identifier (VARYING identifierOrIndexName)?;
 
 whenSearchCondition:
-	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)
-	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionalExpression)*;
+	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression)
+	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression)) | conditionalExpression)*;
 
 searchStatementEnd: END_SEARCH;
 
@@ -6700,7 +6716,7 @@ setStatementForAssignation:
 	 
 
 setStatementForAssignationSending:
-	identifier | IntegerLiteral	// identifier can also be an index name									//Format 1 + 5
+	identifier | integerValue	// identifier can also be an index name									//Format 1 + 5
 	| TRUE																								//Format 4
 	| nullFigurativeConstant																			//Format 5 + 6 + 7
 	| (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
@@ -6708,7 +6724,7 @@ setStatementForAssignationSending:
 
 //Format 2: SET for adjusting indexes
 setStatementForIndexes:
-	SET indexNameReference+ (UP | DOWN) BY (identifier | IntegerLiteral);
+	SET indexNameReference+ (UP | DOWN) BY (identifier | integerValue);
 
 //Format 3: SET for external switches
 setStatementForSwitches:
@@ -7096,7 +7112,7 @@ startStatementEnd: END_START;
 // Subprogram : Returns directly to the program that called the main program. (Can be the system, which causes the application to end.)
 
 stopStatement:
-                 STOP (RUN | literal);
+                 STOP (RUN | numericValue | alphanumericValue5 | figurativeCharacterValue);
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
@@ -7214,10 +7230,10 @@ stringStatement:
 
 
 stringStatementWhat:
-	identifierToConcat=identifierOrLiteral+ DELIMITED BY? stringStatementDelimiter;
+	identifierToConcat=identifierOrLiteral2+ DELIMITED BY? stringStatementDelimiter;
 
 stringStatementDelimiter:
-	identifierOrLiteral | SIZE;
+	identifierOrLiteral1 | SIZE;
 
 stringStatementWith:
 	WITH? POINTER identifier;
@@ -7474,10 +7490,10 @@ unstringStatement:
 	UNSTRING unstringIdentifier=identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
 
 unstringDelimited:
-	DELIMITED BY? ALL? delimitedBy=identifierOrLiteral ustringOthersDelimiters*;
+	DELIMITED BY? ALL? delimitedBy=identifierOrLiteral1 ustringOthersDelimiters*;
 
 ustringOthersDelimiters:
-	OR ALL? identifierOrLiteral;
+	OR ALL? identifierOrLiteral1;
 
 //unstringReceiver:
 //	identifier unstringDelimiter? unstringCount?;
@@ -7710,7 +7726,7 @@ writeStatement:
 	WRITE qualifiedDataName (FROM identifier)?
 	((BEFORE | AFTER) ADVANCING? ((identifierOrInteger (LINE | LINES)?) | mnemonicForEnvironmentNameReference | PAGE)?)?;
 
-identifierOrInteger: identifier | IntegerLiteral;
+identifierOrInteger: identifier | integerValue;
 
 writeStatementEnd: END_WRITE;
 
@@ -8064,13 +8080,13 @@ xmlCount:
 	COUNT IN? identifier;
 
 xmlNamespace:
-	NAMESPACE IS? (identifier | alphanumericOrNationalLiteral);
+	NAMESPACE IS? (identifier | alphanumericValue5 | repeatedAlphanumericValue);
 
 xmlNamespacePrefix:
-	NAMESPACE_PREFIX IS? (identifier | alphanumericOrNationalLiteral);
+	NAMESPACE_PREFIX IS? (identifier | alphanumericValue5 | repeatedAlphanumericValue);
 
 xmlName:
-	identifier IS? alphanumericOrNationalLiteral;
+	identifier IS? alphanumericValue5 | repeatedAlphanumericValue;
 
 xmlType:
 	identifier IS? (ATTRIBUTE | ELEMENT | CONTENT);
@@ -8082,7 +8098,7 @@ xmlSuppressGeneric:
 	EVERY ((NUMERIC (ATTRIBUTE | ELEMENT)?) | (NONNUMERIC (ATTRIBUTE | ELEMENT)?) | ATTRIBUTE | ELEMENT);
 
 whenPhrase:
-	WHEN figurativeConstant (OR? figurativeConstant)*;
+	WHEN repeatedAlphanumericValue (OR? repeatedAlphanumericValue)*;
 // only figurative constants allowed: ZERO  ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 
 //xmlGenerateStatementConditional:
@@ -8101,7 +8117,7 @@ xmlStatementEnd: END_XML;
 // Enterprise COBOL Programming Guide.
 
 codepage:
-            identifier | IntegerLiteral;
+            identifier | integerValue;
 
 // p469: XML PARSE statement
 // The XML PARSE statement is the COBOL language interface to the high-speed

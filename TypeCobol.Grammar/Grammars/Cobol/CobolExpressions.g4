@@ -103,7 +103,7 @@ arithmeticExpression:
 	|  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression
 	|  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression
 	|  identifier
-	|  numericLiteral;
+	|  numericValue;
 
 
 // --- Conditional Expressions ---
@@ -517,7 +517,7 @@ simpleRelation:
 // programPointer : identifier | NULL | NULLS
 // objectReference : identifier | SELF | NULL | NULLS
 
-operand: identifierOrIndexName | literal | allFigurativeConstant | nullFigurativeConstant | SELF | arithmeticExpression; // indexName cannot be distinguished from identifier at this parsing stage
+operand: identifierOrIndexName | numericValue | alphanumericValue5 | repeatedAlphanumericValue2 | nullFigurativeConstant | SELF | arithmeticExpression; // indexName cannot be distinguished from identifier at this parsing stage
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -668,11 +668,13 @@ referenceModifier: leftMostCharacterPosition=arithmeticExpression ColonSeparator
 
 storageAreaReference:
 	  dataItemReference
-	| specialRegister
-	| linageCounterSpecialRegister
-	| addressOfSpecialRegisterDefAndRef
-	| lengthOfSpecialRegisterDefAndRef
+	| /* specialRegister */ intrinsicDataNameReference
+	| /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */ autoAllocatedDataItemReference
 	| functionIdentifier;
+
+// These references automatically allocate a storage area
+
+autoAllocatedDataItemReference: linageCounterSpecialRegister | addressOfSpecialRegister | lengthOfSpecialRegister;
 
 // p20: A separate LINAGE-COUNTER special register is generated for each FD entry that contains a LINAGE clause. 
 // p69 : Format 3 - LINAGE-COUNTER Must be qualified each time it is referenced if more than one file description entry 
@@ -683,12 +685,12 @@ linageCounterSpecialRegister: LINAGE_COUNTER ((IN | OF) fileNameReference)?;
 // p17: The ADDRESS OF special register references the address of a data item in the LINKAGE SECTION, 
 // the LOCAL-STORAGE SECTION, or the WORKING-STORAGE SECTION.
 
-addressOfSpecialRegisterDefAndRef: ADDRESS OF storageAreaReference;
+addressOfSpecialRegister: ADDRESS OF storageAreaReference;
 
 // p19: The LENGTH OF special register contains the number of bytes used by a data item.
 // LENGTH OF creates an implicit special register that contains the current byte length of the data item referenced by the identifier.
 
-lengthOfSpecialRegisterDefAndRef:  LENGTH OF? storageAreaReference;
+lengthOfSpecialRegister:  LENGTH OF? storageAreaReference;
 
 // p77: A function-identifier is a sequence of character strings and separators that uniquely
 // references the data item that results from the evaluation of a function.
@@ -767,7 +769,8 @@ functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator arg
 
 argument:
 	  identifier // an identifier can be a special register or a functionIdentifier
-	| literal
+	| numericValue 
+	| alphanumericValue5
 	| arithmeticExpression;
 
 

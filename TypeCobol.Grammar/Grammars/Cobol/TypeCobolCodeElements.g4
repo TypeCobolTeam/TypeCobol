@@ -19,4 +19,4 @@ legacyQualifiedDataName:                                    dataNameReference   
 legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
 moveStatement:
-	MOVE UNSAFE? corresponding? identifierOrLiteral TO identifier+;
+	MOVE UNSAFE? corresponding? identifierOrLiteral2 TO identifier+;

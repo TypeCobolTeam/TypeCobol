@@ -36,7 +36,7 @@ grammar CobolWords;
 // . register the character strings corresponding to each new token type (for keywords only)
 
 // 4. Each time you	add a token type, you must update the token families defined below in this grammar file : 
-// -> figurativeConstant, specialRegister, literalOrUserDefinedWordOReservedWordExceptCopy
+// -> figurativeConstant, externalName3, literalOrUserDefinedWordOReservedWordExceptCopy
 
 tokens 
 { 
@@ -534,7 +534,6 @@ numericLiteralToken: (IntegerLiteral | DecimalLiteral | FloatingPointLiteral);
 
 numericFigurativeConstant: (ZERO | ZEROS | ZEROES);
 
-numericLiteral: numericLiteralToken | numericFigurativeConstant;
 
 // ** Syntax rules for NULL/NULLS **
 // -- Definition
@@ -610,14 +609,14 @@ figurativeConstant: (HIGH_VALUE | HIGH_VALUES |
 
 // p33: A literal is a character-string whose value is specified either by the characters of which it is composed or by the use of a figurative constant
 
-alphanumericLiteral: alphanumericLiteralToken | figurativeConstant;
+// alphanumericLiteral => alphanumericValue1 | repeatedAlphanumericValue;
 
-alphanumericOrNationalLiteral: alphanumericOrNationalLiteralToken | figurativeConstant;
+// alphanumericOrNationalLiteral => alphanumericValue5 | repeatedAlphanumericValue;
 
 // p534: literal
 // Can be numeric, alphanumeric, DBCS, or national.
 
-literal: alphanumericOrNationalLiteral | numericLiteral;
+// literal => alphanumericValue5 | repeatedAlphanumericValue | numericValue;
 
 // ** Syntax rules for ALL literal **
 // -- Definition
@@ -657,8 +656,103 @@ allFigurativeConstant: ALL (figurativeConstant | notNullTerminatedAlphanumericOr
 notNullTerminatedAlphanumericOrNationalLiteral: (AlphanumericLiteral | HexadecimalAlphanumericLiteral |
                                                  DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
 
+// - Commonly used constant values -
+// (not strictly necessary to describe the grammar, but useful to optimize the CodeElements builder code)
+
+integerValue: IntegerLiteral;
+
+numericValue: numericLiteralToken | numericFigurativeConstant;
+
+characterValue: alphanumericLiteralToken;
+
+characterValue2: alphanumericOrNationalLiteralToken;
+
+figurativeCharacterValue: specialRegister;
+
+alphanumericValue1: alphanumericLiteralToken;
+
+alphanumericValue2: UserDefinedWord | alphanumericLiteralToken;
+
+alphanumericValue3: CommentEntry;
+
+alphanumericValue4: UserDefinedWord;
+
+alphanumericValue5: alphanumericOrNationalLiteralToken;
+
+alphanumericValue6: SymbolicCharacter;
+
+alphanumericValue7: standardCollatingSequence;
+
+alphanumericValue8: specialRegister;
+
+alphanumericValue9: PictureCharacterString;
+
+enumeratedValue: UserDefinedWord;
+
+enumeratedValue2: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
+
+enumeratedValue3: ExecTranslatorName;
+
+// - Values which can only be computed 
+//   . at the second stage of parsing
+//   . when compared or affected to a data storage area
+
+repeatedAlphanumericValue: figurativeConstant;
+
+repeatedAlphanumericValue2: figurativeConstant | allFigurativeConstant;
 
 // - 3. Symbols -
+
+// - Commonly used symbols syntax -
+// (not strictly necessary to describe the grammar, but useful to optimize the CodeElements builder code)
+
+symbolDefinition1: alphanumericValue1;
+
+symbolDefinition2: alphanumericValue2;
+
+symbolDefinition3: alphanumericValue4;
+
+symbolDefinition4: alphanumericValue5;
+
+symbolDefinition5: alphanumericValue6;
+
+symbolReference1: alphanumericValue1;
+
+symbolReference2: alphanumericValue2;
+
+symbolReference3: alphanumericValue4;
+
+symbolReference4: alphanumericValue5;
+
+symbolReference5: alphanumericValue6;
+
+// standardCollatingSequence
+symbolReference6: alphanumericValue7;
+
+// specialRegister
+symbolReference7: alphanumericValue8;
+
+ambiguousSymbolReference1: alphanumericValue1;
+
+ambiguousSymbolReference2: alphanumericValue4;
+
+symbolDefinitionOrReference1: alphanumericValue1;
+
+symbolDefinitionOrReference2: alphanumericValue4;
+
+externalName: alphanumericValue2;
+
+externalName2: alphanumericValue4;
+
+externalName3: enumeratedValue;
+
+externalName4: enumeratedValue2;
+
+externalName5: enumeratedValue3;
+
+externalNameOrSymbolReference: alphanumericValue2;
+
+externalNameOrSymbolReference2: alphanumericValue4;
 
 // ** Code structure **
 
@@ -733,11 +827,11 @@ notNullTerminatedAlphanumericOrNationalLiteral: (AlphanumericLiteral | Hexadecim
 //   is contained within that common program.
 // - Otherwise, the separately compiled program is called.
 
-programNameDefinition: UserDefinedWord | alphanumericLiteralToken;
+programNameDefinition: symbolDefinition2;
 
-programNameReference1: alphanumericLiteralToken;
+programNameReference1: symbolReference1;
 
-programNameReference2: UserDefinedWord | alphanumericLiteralToken;
+programNameReference2: symbolReference2;
 
 // p330: ENTRY statement
 // literal-1 
@@ -745,19 +839,19 @@ programNameReference2: UserDefinedWord | alphanumericLiteralToken;
 // Must not match the program-ID or any other ENTRY literal in this program. 
 // Must not be a figurative constant.
 
-programEntryDefinition: alphanumericLiteralToken;
+programEntryDefinition: symbolDefinition1;
 
 // [Type ambiguity] at this parsing stage
-programNameReferenceOrProgramEntryReference: alphanumericLiteralToken;
+programNameReferenceOrProgramEntryReference: ambiguousSymbolReference1;
 
 // p252: Section-name
 // A user-defined word that identifies a section. A referenced
 // section-name, because it cannot be qualified, must be unique
 // within the program in which it is defined.
 
-sectionNameDefinition: UserDefinedWord;
+sectionNameDefinition: symbolDefinition3;
 
-sectionNameReference: UserDefinedWord;
+sectionNameReference: symbolReference3;
 
 // p253: Paragraph-name
 // A user-defined word that identifies a paragraph. A
@@ -765,12 +859,12 @@ sectionNameReference: UserDefinedWord;
 // If there are no declaratives (format 2), a paragraph-name is not
 // required in the PROCEDURE DIVISION.
 
-paragraphNameDefinition: UserDefinedWord;
+paragraphNameDefinition: symbolDefinition3;
 
-paragraphNameReference: UserDefinedWord;
+paragraphNameReference: symbolReference3;
 
 // [Type ambiguity] at this parsing stage
-paragraphNameReferenceOrSectionNameReference: UserDefinedWord;
+paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference2;
 
 // p66: References to PROCEDURE DIVISION names
 // PROCEDURE DIVISION names that are explicitly referenced in a program must be
@@ -804,9 +898,9 @@ procedureName: paragraphNameReferenceOrSectionNameReference | qualifiedParagraph
 // that is part of a Java package or for using non-COBOL naming conventions for
 // class-names.
 
-classNameDefinition: UserDefinedWord;
+classNameDefinition: symbolDefinition3;
 
-classNameReference: UserDefinedWord;
+classNameReference: symbolReference3;
 
 // p122: external-class-name-1
 // An alphanumeric literal containing a name that enables a COBOL program
@@ -819,9 +913,9 @@ classNameReference: UserDefinedWord;
 // See Java Language Specification, Third Edition, by Gosling et al., for Java
 // class-name formation rules.
 
-classNameDefOrRef: UserDefinedWord;
+classNameDefOrRef: symbolDefinitionOrReference2;
 
-externalClassNameDefOrRef: alphanumericLiteralToken;
+externalClassNameDefOrRef: symbolDefinitionOrReference1;
 
 // p104 : method-name
 // An alphanumeric literal or national literal that contains the name of the
@@ -829,9 +923,9 @@ externalClassNameDefOrRef: alphanumericLiteralToken;
 // method name. Method names are used directly, without translation. The
 // method name is processed in a case-sensitive manner.
 
-methodNameDefinition: alphanumericOrNationalLiteralToken;
+methodNameDefinition: symbolDefinition4;
 
-methodNameReference: alphanumericOrNationalLiteralToken;
+methodNameReference: symbolReference4;
 
 // ** Environment vars **
 
@@ -847,12 +941,12 @@ methodNameReference: alphanumericOrNationalLiteralToken;
 // mnemonic-name-1 can be used in ACCEPT, DISPLAY, and WRITE statements. 
 // mnemonic-name-2 can be referenced only in the SET statement. 
 
-mnemonicForEnvironmentNameDefinition: UserDefinedWord;
+mnemonicForEnvironmentNameDefinition: symbolDefinition3;
 
-mnemonicForEnvironmentNameReference: UserDefinedWord;
+mnemonicForEnvironmentNameReference: symbolReference3;
 
 // [Type ambiguity] at this parsing stage
-mnemonicForEnvironmentNameReferenceOrEnvironmentName: UserDefinedWord;
+mnemonicForEnvironmentNameReferenceOrEnvironmentName: externalNameOrSymbolReference2;
 
 // p115 : mnemonic-name-1 , mnemonic-name-2
 // mnemonic-name-1 and mnemonic-name-2 follow the rules of formation for
@@ -860,15 +954,15 @@ mnemonicForEnvironmentNameReferenceOrEnvironmentName: UserDefinedWord;
 
 // mnemonic-name-2 can qualify condition-1 or condition-2 names.
 
-mnemonicForUPSISwitchNameDefinition: UserDefinedWord;
+mnemonicForUPSISwitchNameDefinition: symbolDefinition3;
 
-mnemonicForUPSISwitchNameReference: UserDefinedWord;
+mnemonicForUPSISwitchNameReference: symbolReference3;
 
 // p115 : upsiSwitchName
 // A 1-byte user-programmable status indicator (UPSI) switch.
 // - condition on UPSI switch status
 
-conditionForUPSISwitchNameDefinition: UserDefinedWord;
+conditionForUPSISwitchNameDefinition: symbolDefinition3;
 
 // ** Character sets **
 
@@ -894,9 +988,9 @@ conditionForUPSISwitchNameDefinition: UserDefinedWord;
 // by integer-1.
 // Ordinal positions are numbered starting from 1.
 
-symbolicCharacterDefinition: SymbolicCharacter;
+symbolicCharacterDefinition: symbolDefinition5;
 
-symbolicCharacterReference: SymbolicCharacter;
+symbolicCharacterReference: symbolReference6;
 
 // p 115 : ALPHABET alphabet-name-1 IS
 // alphabet-name-1 specifies a collating sequence when used in:
@@ -907,9 +1001,11 @@ symbolicCharacterReference: SymbolicCharacter;
 // - The FD entry CODE-SET clause
 // - The SYMBOLIC CHARACTERS clause
 
-alphabetNameDefinition: UserDefinedWord;
+alphabetNameDefinition: symbolDefinition3;
 
-alphabetNameReference: UserDefinedWord | standardCollatingSequence;
+alphabetNameReference: symbolReference3;
+
+intrinsicAlphabetNameReference: /* standardCollatingSequence */ symbolReference6;
 
 // p 115 : STANDARD-1
 // Specifies the ASCII character set.
@@ -931,9 +1027,9 @@ standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
 // clause define the exclusive set of characters of which this class consists.
 // The class-name in the CLASS clause can be a DBCS user-defined word.
 
-characterClassNameDefinition: UserDefinedWord;
+characterClassNameDefinition: symbolDefinition3;
 
-characterClassNameReference: UserDefinedWord;
+characterClassNameReference: symbolReference3;
 
 // ** Data **
 
@@ -947,15 +1043,17 @@ characterClassNameReference: UserDefinedWord;
 // and for record description entries associated with file description entries
 // that have the GLOBAL or EXTERNAL clauses.
 
-dataNameDefinition: UserDefinedWord;
+dataNameDefinition: symbolDefinition3;
 
-dataNameReference: UserDefinedWord;
+dataNameReference: symbolReference3;
+
+intrinsicDataNameReference: /* specialRegister */ symbolReference7;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrFileNameReference: UserDefinedWord;
+dataNameReferenceOrFileNameReference: ambiguousSymbolReference2;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: UserDefinedWord;
+dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: ambiguousSymbolReference2;
 
 // p115 : condition-1, condition-2
 // Condition-names follow the rules for user-defined names. At least one
@@ -969,10 +1067,10 @@ dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: UserDe
 // Condition-names specified in the SPECIAL-NAMES paragraph of a
 // containing program can be referenced in any contained program
 
-conditionNameDefinition: UserDefinedWord;
+conditionNameDefinition: symbolDefinition3;
 
 // [Type ambiguity] at this parsing stage
-conditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
+conditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference2;
 
 // p194: index-name-1
 // Each index-name specifies an index to be created by the compiler for use
@@ -1001,9 +1099,9 @@ conditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
 // An index-name is not the same as the name of an index data item, and an
 // index-name cannot be used like a data-name.
 
-indexNameDefinition: UserDefinedWord;
+indexNameDefinition: symbolDefinition3;
 
-indexNameReference: UserDefinedWord;
+indexNameReference: symbolReference3;
 
 // ** Files **
 
@@ -1011,18 +1109,18 @@ indexNameReference: UserDefinedWord;
 // Must be identified by an FD or SD entry in the DATA DIVISION.
 // A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
 
-fileNameDefinition: UserDefinedWord;
+fileNameDefinition: symbolDefinition3;
 
-fileNameReference: UserDefinedWord;
+fileNameReference: symbolReference3;
 
 // p120: XML-SCHEMA xml-schema-name-1 IS
 // xml-schema-name-1 can be referenced only in an XML PARSE statement.
 // The xml-schema-name in the XML SCHEMA clause can be a DBCS
 // user-defined word.
 
-xmlSchemaNameDefinition: UserDefinedWord;
+xmlSchemaNameDefinition: symbolDefinition3;
 
-xmlSchemaNameReference: UserDefinedWord;
+xmlSchemaNameReference: symbolReference3;
 
 // p16: Special registers are reserved words that name storage areas generated by the
 // compiler. Their primary use is to store information produced through specific
@@ -1092,7 +1190,7 @@ specialRegister: (DEBUG_CONTENTS |
 // C01 | C02 | C03 | C04 | C05 | C06 | C07 | C08 | C09 | C10 | C11 | C12 |
 // CSP | S01 | S02 | S03 | S04 | S05 | AFP-5A;
 
-environmentName: UserDefinedWord;
+environmentName: externalName3;
 
 // p115 : upsiSwitchName
 // A 1-byte user-programmable status indicator (UPSI) switch.
@@ -1100,7 +1198,7 @@ environmentName: UserDefinedWord;
 
 // UPSI-0 | UPSI-1 | UPSI-2 | UPSI-3 | UPSI-4 | UPSI-5 | UPSI-6 | UPSI-7;
 
-upsiSwitchName: UserDefinedWord;
+upsiSwitchName: externalName3;
 
 // ** Files ***
 
@@ -1138,9 +1236,9 @@ upsiSwitchName: UserDefinedWord;
 // literals, see Compiler-directing statements in the Enterprise COBOL Programming
 // Guide.
 
-textName: UserDefinedWord | alphanumericLiteralToken;
+textName: externalName;
 
-libraryName: UserDefinedWord | alphanumericLiteralToken;
+libraryName: externalName;
 
 qualifiedTextName: textName ((IN | OF) libraryName)?;
 
@@ -1162,10 +1260,10 @@ qualifiedTextName: textName ((IN | OF) libraryName)?;
 // The name component of assignment-name-1 is initially treated as a ddname. 
 // If no file has been allocated using this ddname, then name is treated as an environment variable
 
-assignmentName: UserDefinedWord | alphanumericLiteralToken;
+assignmentName: externalName;
 
 // [Type ambiguity] at this parsing stage
-assignmentNameOrFileNameReference : UserDefinedWord | alphanumericLiteralToken;
+assignmentNameOrFileNameReference : externalNameOrSymbolReference;
 
 // ** Runtime functions **
 
@@ -1199,14 +1297,14 @@ assignmentNameOrFileNameReference : UserDefinedWord | alphanumericLiteralToken;
 //	WHEN_COMPILED |
 //	YEAR_TO_YYYY;
 
-intrinsicFunctionName: (FunctionName | LENGTH | RANDOM | WHEN_COMPILED);
+intrinsicFunctionName: externalName4;
 
 // IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf
 // p423: To communicate with DB2, do these steps:
 // Code any SQL statements that you need, delimiting them with EXEC SQL and END-EXEC statements.
 // execStatement: (EXEC | EXECUTE) execTranslatorName  ExecStatementText* END_EXEC;
 
-execTranslatorName : ExecTranslatorName;
+execTranslatorName : externalName5;
 
 // ** Compiler enumerations **
 
@@ -1217,7 +1315,7 @@ execTranslatorName : ExecTranslatorName;
 // These are not reserved words, but the only possible values are the following
 // SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
 
-controlCblOption: UserDefinedWord;
+controlCblOption: enumeratedValue;
 
 // p182: Permitted values for RECORDING MODE are:
 // * Recording mode F (fixed)
@@ -1253,7 +1351,7 @@ controlCblOption: UserDefinedWord;
 
 // possible values : F | V | U | S
 
-recordingMode: UserDefinedWord; 
+recordingMode: enumeratedValue; 
 
 
 // - 5. Reserved words -

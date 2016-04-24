@@ -31,4 +31,6 @@ dataDescriptionEntry:
 
 tcExtTypedefClause: TYPEDEF STRONG?;
 
-tcExtTypeClause:    TYPE UserDefinedWord;
+tcExtTypeClause:    TYPE typeNameDefinition;
+
+typeNameDefinition: symbolDefinition3;

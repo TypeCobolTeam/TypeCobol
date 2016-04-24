@@ -672,8 +672,8 @@ skipCompilerStatement:
 // No other statement can appear on the same line as the TITLE statement.
 
 titleCompilerStatement:
-                          ({IsNextTokenOnTheSameLine()}? TITLE alphanumericOrNationalLiteralToken PeriodSeparator?) |
-						  (TITLE alphanumericOrNationalLiteralToken);
+                          ({IsNextTokenOnTheSameLine()}? TITLE alphanumericValue5 PeriodSeparator?) |
+						  (TITLE alphanumericValue5);
 						 
 // p546: USE statement
 // -> see the DECLARATIVES section in CobolCodeElements.g4
