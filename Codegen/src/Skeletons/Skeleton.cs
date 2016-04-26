@@ -5,6 +5,8 @@ namespace TypeCobol.Codegen.Skeletons {
 	public class Skeleton: IList<Pattern> {
 		/// <summary>Skeleton identifier.</summary>
 		public string Name            { get; internal set; }
+		/// <summary>List of <see cref="Condition"/> for this skeleton to be used.</summary>
+		public List<Condition> Conditions { get; internal set; }
 		/// <summary>List of <see cref="Pattern"/> defining this skeleton.</summary>
 		public List<Pattern> Patterns { get; internal set; }
 
@@ -12,6 +14,8 @@ namespace TypeCobol.Codegen.Skeletons {
 			var str = new System.Text.StringBuilder();
 			if (Name != null) str.Append(Name).Append(' ');
 			str.Append('(').Append(Patterns.Count).AppendLine(" pattern(s))");
+			foreach(var condition in Conditions)
+				str.Append(" - condition: ").AppendLine(condition.ToString());
 			foreach(var pattern in this)
 				str.Append(" - pattern: ").AppendLine(pattern.ToString());
 			return str.ToString();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
@@ -13,17 +14,19 @@ namespace TypeCobol.Codegen {
 		private List<ICobolTextLine> Output;
 		private TextWriter Writer;
 		private Tools.CodeElementDiagnostics Converter;
+		private List<Skeleton> Skeletons;
 
 		/// <summary>Table of symbols</summary>
 		private SymbolTable Table;
 
 
-		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter) {
+		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter, List<Skeleton> skeletons) {
 			Input = source;
 			Output = new List<ICobolTextLine>();
 			Output.AddRange(Input);
 			Writer = destination;
 			Converter = converter;
+			Skeletons = skeletons != null? skeletons : new List<Skeletons.Skeleton>();
 		}
 
 		/// <summary>Generates code</summary>

@@ -3,7 +3,9 @@
 
   <!-- comment TYPEDEF -->
   <skeleton name="TYPEDEF">
-    <condition node="DataDescriptionEntry" clause="tcExtTypedefClause"/>
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPEDEF"/>
+    </conditions>
     <patterns>
       <pattern location="NODE" action="comment"></pattern>
     </patterns>
@@ -11,7 +13,9 @@
 
   <!-- delete and replace TYPE -->
   <skeleton name="TYPE">
-    <condition node="DataDescriptionEntry" clause="tcExtTypeClause"/>
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE"/>
+    </conditions>
     <patterns>
       <pattern location="NODE" action="delete"></pattern>
     </patterns>

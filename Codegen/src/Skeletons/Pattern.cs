@@ -16,7 +16,7 @@ namespace TypeCobol.Codegen.Skeletons {
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			if (Name != null) str.Append("name:").Append(Name).Append(' ');
+			if (Name != null) str.Append(Name).Append(' ');
 			if (Group != null) str.Append("group:").Append(Group).Append(' ');
 			if (Location != null) str.Append("location:").Append(Location).Append(' ');
 			if (Variables.Count > 0) {
@@ -26,6 +26,7 @@ namespace TypeCobol.Codegen.Skeletons {
 				str.Length -= 1;
 				str.Append(" }");
 			}
+			if (Template != null) str.Append("template: \"").Append(Template).Append('"');
 			return str.ToString();
 		}
 	}

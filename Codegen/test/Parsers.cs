@@ -73,7 +73,7 @@ namespace TypeCobol.Codegen {
 			WriteErrors(writer, document.Errors[0], "CodeElements", columns);
 			WriteErrors(writer, document.Errors[1], "ProgramClass", columns);
 			// write generated code
-			var codegen = new Generator(writer, document.Results.TokensLines, document.Converter);
+			var codegen = new Generator(writer, document.Results.TokensLines, document.Converter, skeletons);
 			var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 			// flush

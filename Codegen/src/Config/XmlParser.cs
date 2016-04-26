@@ -7,6 +7,10 @@ namespace TypeCobol.Codegen.Config {
 	/// <summary>XML file <see cref="Skeleton"/> parser.</summary>
 	public class XmlParser: ConfigParser {
 		internal static string TAG_SKELETON     = "skeleton";
+		internal static string TAG_CONDITION_LIST = "conditions";
+		internal static string TAG_CONDITION      = "condition";
+		internal static string ATTR_NODE        = "node";
+		internal static string ATTR_CLAUSE      = "clause";
 		internal static string TAG_PATTERN_LIST = "patterns";
 		internal static string TAG_PATTERN      = "pattern";
 		internal static string ATTR_NAME        = "name";
@@ -54,18 +58,66 @@ namespace TypeCobol.Codegen.Config {
 	}
 
 	internal class SkeletonFactory: Factory<Skeleton> {
-		private static PatternListFactory Factory = new PatternListFactory();
+		private static ConditionListFactory CFactory = new ConditionListFactory();
+		private static PatternListFactory PFactory = new PatternListFactory();
 		public Skeleton Create(XmlElement e) {
 			var skeleton = new Skeleton();
+			skeleton.Conditions = new List<Condition>();
 			skeleton.Patterns = new List<Pattern>();
 			foreach(var child in e.ChildNodes) {
 				var ce = child as XmlElement;
 				if (ce == null) continue;
-				if (!ce.LocalName.ToLower().Equals(XmlParser.TAG_PATTERN_LIST)) continue;
 				skeleton.Name = XmlParser.GetAttribute(e, XmlParser.ATTR_NAME);
-				skeleton.Patterns.AddRange(Factory.Create(ce));
+				string name = ce.LocalName.ToLower();
+				if (name.Equals(XmlParser.TAG_CONDITION_LIST)) {
+					skeleton.Conditions.AddRange(CFactory.Create(ce));
+				} else
+				if (name.Equals(XmlParser.TAG_PATTERN_LIST)) {
+					skeleton.Patterns.AddRange(PFactory.Create(ce));
+				}
 			}
 			return skeleton;
+		}
+	}
+
+	internal class ConditionListFactory: Factory<List<Condition>> {
+		private static ConditionFactory Factory = new ConditionFactory();
+
+		public ConditionListFactory() {
+			//assembly = Assembly.GetExecutingAssembly();
+			//TypeCobol.Tools.Reflection.GetTypesInNamespace();
+		}
+		public List<Condition> Create(XmlElement e) {
+			var conditions = new List<Condition>();
+			foreach(var child in e.ChildNodes) {
+				var ce = child as XmlElement;
+				if (ce == null) continue;
+				if (!ce.LocalName.ToLower().Equals(XmlParser.TAG_CONDITION)) continue;
+				conditions.Add(Factory.Create(ce));
+			}
+			return conditions;
+		}
+	}
+
+	internal class ConditionFactory: Factory<Condition> {
+		private Dictionary<string,List<System.Type>> namespaces = new Dictionary<string,List<System.Type>>();
+
+		public Condition Create(XmlElement e) {
+			var condition = new ConditionOnNode();
+			string node = XmlParser.GetAttribute(e, XmlParser.ATTR_NODE);
+			condition.Node   = GetType(node);
+			condition.Clause = XmlParser.GetAttribute(e, XmlParser.ATTR_CLAUSE);
+			return condition;
+		}
+
+		private System.Type GetType(string fullname) {
+			int index = fullname.LastIndexOf('.');
+			string nspace = fullname.Substring(0, index);
+			if (!namespaces.ContainsKey(nspace))
+				namespaces[nspace] = TypeCobol.Tools.Reflection.GetTypesInNamespace(nspace);
+			foreach(var type in namespaces[nspace])
+				if (type.FullName.Equals(fullname)) return type;
+			return null;
 		}
 	}
 
