@@ -1516,9 +1516,9 @@ organizationClause:
 // The PADDING CHARACTER clause is syntax checked, but has no effect on the execution of the program.
 
 paddingCharacterClause:
-                          PADDING CHARACTER? IS? literalOrRuntimeCharacter;
+                          PADDING CHARACTER? IS? characterVariable;
 
-literalOrRuntimeCharacter: dataNameReference | characterValue2 | figurativeCharacterValue;
+characterVariable: dataNameReference | characterValue2 | figurativeCharacterValue;
 
 // p138: The RECORD DELIMITER clause indicates the method of determining the length of a variable-length record on an external medium. 
 // It can be specified only for variable-length records. 
@@ -2249,20 +2249,9 @@ labelRecordsClause:
 // program.
 
 valueOfClause:
-                 VALUE OF (systemName IS? (dataNameReference | numericValue | alphanumericValue5 | figurativeCharacterValue))+;
+                 VALUE OF (alphanumericValue4 IS? numericOrAlphanumericVariable)+;
 
-//	System name			
-//		sn single byte		
-//			Language name	
-//			Implementor name	
-//				Environment name
-//				External class name
-//				External fileid
-//				Assignment name
-//		sn DBCS allowed		 
-//			Computer name
-
-systemName: alphanumericValue4;
+numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue5 | figurativeCharacterValue;
 
 // p180: The DATA RECORDS clause is syntax checked but serves only as documentation
 // for the names of data records associated with the file.
@@ -2335,11 +2324,13 @@ dataRecordsClause:
 // “LINAGE-COUNTER” on page 20.
 
 linageClause:
-                LINAGE IS? (dataNameReference | integerValue) LINES? 
-                (WITH? FOOTING AT? (dataNameReference | integerValue))? 
-                (LINES? AT? TOP (dataNameReference | integerValue))? 
-                (LINES? AT? BOTTOM (dataNameReference | integerValue))?;
+                LINAGE IS? integerVariable LINES? 
+                (WITH? FOOTING AT? integerVariable)? 
+                (LINES? AT? TOP integerVariable)? 
+                (LINES? AT? BOTTOM integerVariable)?;
            
+integerVariable: dataNameReference | integerValue;
+
 // p182: The RECORDING MODE clause specifies the format of the physical records in a
 // QSAM file. The clause is ignored for a VSAM file.
 
@@ -2546,7 +2537,7 @@ dataConditionEntry: { CurrentToken.Text == "88" }?
 // Subordinate data-names that are referenced in the program or method must be either uniquely defined, or made unique through qualification. 
 // Unreferenced data-names need not be uniquely defined. 
 
-levelNumber : integerValue;
+levelNumber: integerValue;
 
 // p187: data-name-1
 // Explicitly identifies the data being described.
@@ -3023,7 +3014,7 @@ occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
 // elementary data item.
 
 pictureClause:
-                 (PICTURE |PIC) IS? /* PictureCharacterString */ alphanumericValue9;
+                 (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue9;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -4187,28 +4178,28 @@ addStatementEnd: END_ADD;
 // All identifiers or literals that precede the keyword TO are added together, and this sum is added to and stored in identifier-2. 
 // This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
 addStatementFormat1:
-		ADD identifierOrNumericLiteral+ TO identifierRounded+;
+		ADD numericVariable1+ TO numericVariableRounded+;
 
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
 addStatementFormat2:
-		ADD identifierOrNumericLiteral+ TO? identifierOrNumericLiteralTmp GIVING identifierRounded+;
+		ADD numericVariable1+ TO? numericVariableTmp GIVING numericVariableRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 addStatementFormat3:
-		ADD corresponding identifier TO identifierRounded;
+		ADD corresponding numericVariable2 TO numericVariableRounded;
 
-identifierOrNumericLiteralTmp:
-		identifierOrNumericLiteral;
+numericVariableTmp: numericVariable1;
 
-identifierOrNumericLiteral:
-		identifier | numericValue;
-		
+numericVariable1: identifier | numericValue;
+
+numericVariable2: identifier;
+
 // ROUNDED phrase
 // For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
-identifierRounded:
-		identifier ROUNDED?;
+numericVariableRounded:
+		numericVariable2 ROUNDED?;
 		
 // CORRESPONDING phrase (format 3)
 // See “CORRESPONDING phrase” on page 281. 
@@ -4373,6 +4364,10 @@ callStatement:
 
 programNameFromData : identifier;
 
+programNameFromDataOrProgramEntryFromData : identifier;
+
+programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer : identifier;
+
 callBy:
 	(BY? (REFERENCE | CONTENT | VALUE))? 
         (identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
@@ -4480,7 +4475,7 @@ closeFileName: fileNameReference ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO RE
 ///	computeStatementCore sizeErrorExceptions;
 
 computeStatement:
-	COMPUTE identifierRounded+ (EqualOperator | EQUAL) arithmeticExpression;
+	COMPUTE numericVariableRounded+ (EqualOperator | EQUAL) arithmeticExpression;
 
 computeStatementEnd: END_COMPUTE;
 
@@ -4659,18 +4654,18 @@ divideStatement:
 	divideGiving | divideSimple;
 
 divideSimple:
-	DIVIDE dDivisor INTO identifierRounded+;
+	DIVIDE dDivisor INTO numericVariableRounded+;
 divideGiving:
-	DIVIDE ((dDivisor INTO dDividend) | (dDividend BY dDivisor)) GIVING ((identifierRounded REMAINDER identifier) | identifierRounded+);
+	DIVIDE ((dDivisor INTO dDividend) | (dDividend BY dDivisor)) GIVING ((numericVariableRounded REMAINDER identifier) | numericVariableRounded+);
 
-//DIVIDE dDivisor  INTO                  identifierRounded+                       Format 1: identifierRoundedi = dDivisor/dQuotienti
-//DIVIDE dDivisor  INTO dDividend GIVING identifierRounded+                       Format 2: identifierRoundedi = dDivisor/dDividend
-//DIVIDE dDividend BY   dDivisor  GIVING identifierRounded+                       Format 3: identifierRoundedi = dDivisor/dDividend
-//DIVIDE dDivisor  INTO dDividend GIVING identifierRounded REMAINDER identifier   Format 4: identifierRounded  = dDivisor/dDividend    identifier = remainder
-//DIVIDE dDividend BY   dDivisor  GIVING identifierRounded REMAINDER identifier   Format 5: identifierRounded  = dDivisor/dDividend    identifier = remainder
+//DIVIDE dDivisor  INTO                  numericVariableRounded+                       Format 1: numericVariableRoundedi = dDivisor/dQuotienti
+//DIVIDE dDivisor  INTO dDividend GIVING numericVariableRounded+                       Format 2: numericVariableRoundedi = dDivisor/dDividend
+//DIVIDE dDividend BY   dDivisor  GIVING numericVariableRounded+                       Format 3: numericVariableRoundedi = dDivisor/dDividend
+//DIVIDE dDivisor  INTO dDividend GIVING numericVariableRounded REMAINDER numericVariable2   Format 4: numericVariableRounded  = dDivisor/dDividend    identifier = remainder
+//DIVIDE dDividend BY   dDivisor  GIVING numericVariableRounded REMAINDER numericVariable2   Format 5: numericVariableRounded  = dDivisor/dDividend    identifier = remainder
 
-dDivisor:  identifierOrNumericLiteral;
-dDividend: identifierOrNumericLiteral;
+dDivisor:  numericVariable1;
+dDividend: numericVariable1;
 
 //divideStatementConditional:
 //                              divideStatement
@@ -4696,10 +4691,6 @@ entryStatement:
 
 byReferenceOrByValueIdentifiers:
 	(BY? (REFERENCE | VALUE))? identifier+;
-
-programNameFromDataOrProgramEntryFromData : identifier;
-
-programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer : identifier;
 
 // p331: EVALUATE statement
 // The EVALUATE statement provides a shorthand notation for a series of nested IF statements. 
@@ -5788,7 +5779,7 @@ multiplyStatementEnd: END_MULTIPLY;
 // of identifier-2, the multiplication takes place in the left-to-right order in which
 // identifier-2 is specified.
 multiplyStatementFormat1:
-		MULTIPLY identifierOrNumericLiteral BY identifierRounded+;
+		MULTIPLY numericVariable1 BY numericVariableRounded+;
 
 //
 //// p377: Format 2: MULTIPLY statement with GIVING phrase
@@ -5796,7 +5787,7 @@ multiplyStatementFormat1:
 // identifier-2 or literal-2. The product is then stored in the data items referenced by
 // identifier-3.
 multiplyStatementFormat2:
-		MULTIPLY identifierOrNumericLiteral BY identifierOrNumericLiteralTmp GIVING identifierRounded+;
+		MULTIPLY numericVariable1 BY numericVariableTmp GIVING numericVariableRounded+;
 
 // For all formats:
 // identifier-1 , identifier-2
@@ -7254,20 +7245,20 @@ subtractStatement:
 // repeated for each successive occurrence of identifier-2, in the left-to-right order in
 // which identifier-2 is specified.
 subtractStatementFormat1:
-		SUBTRACT identifierOrNumericLiteral+ FROM identifierRounded+;
+		SUBTRACT numericVariable1+ FROM numericVariableRounded+;
 
 // p439: Format 2: SUBTRACT statement with GIVING phrase
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from identifier-2 or literal-2. The result of the subtraction is
 // stored as the new value of each data item referenced by identifier-3.
 subtractStatementFormat2:
-		SUBTRACT identifierOrNumericLiteral+ FROM identifierOrNumericLiteralTmp GIVING identifierRounded+;
+		SUBTRACT numericVariable1+ FROM numericVariableTmp GIVING numericVariableRounded+;
 
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are subtracted from, and the results are
 // stored in, the corresponding elementary data items within identifier-2.
 subtractStatementFormat3:
-		SUBTRACT corresponding identifier FROM identifierRounded;
+		SUBTRACT corresponding numericVariable2 FROM numericVariableRounded;
 
 subtractStatementEnd: END_SUBTRACT;
 
@@ -8663,7 +8654,7 @@ xmlParseStatement:
 
 execStatement:
                  (EXEC | EXECUTE) execTranslatorName 
-                 ExecStatementText* 
+                 alphanumericValue10* 
                  execStatementEnd;
 
 execStatementEnd: END_EXEC;

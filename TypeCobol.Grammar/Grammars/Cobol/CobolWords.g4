@@ -687,6 +687,8 @@ alphanumericValue8: specialRegister;
 
 alphanumericValue9: PictureCharacterString;
 
+alphanumericValue10: ExecStatementText;
+
 enumeratedValue: UserDefinedWord;
 
 enumeratedValue2: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
