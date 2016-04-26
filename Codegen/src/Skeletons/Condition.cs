@@ -26,9 +26,9 @@ namespace TypeCobol.Codegen.Skeletons {
 		private bool validate(string clause, Node node, SymbolTable table) {
 			var data = node.CodeElement as DataDescriptionEntry;
 			if (data == null) return false;
-			if (clause.Equals("TYPEDEF") && data.IsTypeDefinitionPart) return true;
-			if (clause.Equals("TYPE") && !data.IsTypeDefinition
-			 && table.IsCustomType(data.DataType)) return true;
+			// TODO
+			if (clause.Equals("TYPEDEF")) return data.IsTypeDefinitionPart;
+			if (clause.Equals("TYPE")) return !data.IsTypeDefinition && table.IsCustomType(data.DataType);
 			return false;
 		}
 

@@ -80,14 +80,24 @@ System.Console.WriteLine(line.Text);
 		}
 
 		private Action GetAction(Node node) {
-			var data = node.CodeElement as DataDescriptionEntry;
-			if (data != null) {
-				if (data.IsTypeDefinitionPart)
-					return new Comment(Output);
-				if (!data.IsTypeDefinition && Table.IsCustomType(data.DataType))//TODO tcTypeClauseExt (ie. contains "TYPE")
-					return new GenerateCustomTypedDataDescription(Output, Table);
+			var skeleton = GetActiveSkeleton(node);
+			if (skeleton != null) {
+				// TODO more robust way to associate skel <> action
+				if ("TYPEDEF".Equals(skeleton.Name)) return new Comment(Output);
+				if ("TYPE".   Equals(skeleton.Name)) return new GenerateCustomTypedDataDescription(Output, Table);
 			}
-			return new Write(Output);
+			return new Write(Output);// no peculiar codegen --> write as is
+		}
+
+		private Skeleton GetActiveSkeleton(Node node) {
+			foreach(var skeleton in Skeletons) {
+				bool active = false;
+				foreach(var condition in skeleton.Conditions) {
+					active = active || condition.Verify(node, Table); // OR
+				}
+				if (active) return skeleton;//TODO: what if more than 1 skel activates?
+			}
+			return null;
 		}
 	}
 
