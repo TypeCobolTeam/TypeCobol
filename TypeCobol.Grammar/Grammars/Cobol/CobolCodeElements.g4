@@ -4360,23 +4360,20 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	CALL (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer) (USING callBy+)? callReturning?;
+	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable (USING callBy+)? callReturning?;
 
-programNameFromData : identifier;
-
-programNameFromDataOrProgramEntryFromData : identifier;
-
-programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer : identifier;
+programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable: programNameReferenceOrProgramEntryReference | identifier;
 
 callBy:
 	(BY? (REFERENCE | CONTENT | VALUE))? 
-        (identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
+        (anyVariable4 /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
 
 callReturning:
 	RETURNING identifier;
 
 callStatementEnd: END_CALL;
 
+anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
@@ -4420,7 +4417,9 @@ callStatementEnd: END_CALL;
 // For example: A calls B and B calls C (When A receives control, it can cancel C.) A calls B and A calls C (When C receives control, it can cancel B.)
 
 cancelStatement:
-	CANCEL (programNameReference1 | programNameFromData)+;
+	CANCEL programNameVariable+;
+
+programNameVariable: programNameReference1 | identifier;
 
 // p313: CLOSE statement
 // The CLOSE statement terminates the processing of volumes and files.
@@ -5238,7 +5237,7 @@ inspectStatement:
 	INSPECT identifier (inspectConverting | ((TALLYING inspectTallying+)? (REPLACING (inspectCharacters | inspectIdentifiers)+)?));
 
 inspectConverting:
-	CONVERTING identifierOrLiteral2 TO identifierOrLiteral2 inspectPhrase1*;
+	CONVERTING alphanumericVariable1 TO alphanumericVariable2 inspectPhrase1*;
 
 inspectTallying:
 	identifier FOR (inspectCharacters | inspectIdentifiers);
@@ -5250,14 +5249,16 @@ inspectIdentifiers:
 	(ALL | LEADING | FIRST) inspectByIdentifiers+;
 
 inspectByIdentifiers:
-	identifierOrLiteral2 inspectBy? inspectPhrase1*;
+	alphanumericVariable1 inspectBy? inspectPhrase1*;
 
 inspectPhrase1:
-	(BEFORE | AFTER) INITIAL? identifierOrLiteral2;
+	(BEFORE | AFTER) INITIAL? alphanumericVariable1;
 
-inspectBy: BY identifierOrLiteral2;
+inspectBy: BY alphanumericVariable2;
 
+alphanumericVariable1: identifier | alphanumericValue5 | figurativeCharacterValue;
 
+alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
 
 // p356: INVOKE statement 
 // The INVOKE statement can create object instances of a COBOL or Java class and
@@ -5465,17 +5466,21 @@ inspectBy: BY identifierOrLiteral2;
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (identifierOrClassName |  SELF | SUPER) (methodNameReference | methodNameFromData | NEW) (USING invokeUsing+)? invokeReturning?;
-
-methodNameFromData : identifier;
+	INVOKE (classNameVariable | SELF | SUPER) (methodNameVariable | NEW) (USING invokeUsing+)? invokeReturning?;
 
 invokeUsing:
-	BY? VALUE (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue)+;
+	BY? VALUE anyVariable+;
 
 invokeReturning:
 	RETURNING identifier;
 
 invokeStatementEnd: END_INVOKE;
+
+classNameVariable: identifierOrClassName;
+
+methodNameVariable: methodNameReference | identifier;
+
+anyVariable: identifier | numericValue | alphanumericValue5;
 
 // p364: MERGE statement
 // The MERGE statement combines two or more identically sequenced files (that is,
@@ -5762,7 +5767,9 @@ mergeStatement:
 // ... more details p374->375 Group moves ...
 
 moveStatement:
-	MOVE corresponding? (identifierOrLiteral2 | repeatedAlphanumericValue2) TO identifier+;
+	MOVE corresponding? anyVariable2 TO identifier+;
+
+anyVariable2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | repeatedAlphanumericValue2;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
@@ -5921,7 +5928,7 @@ fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
 
 performStatement:
 	PERFORM (
-		((identifier | numericValue) TIMES)											   // - TIMES phrase PERFORM
+		(numericVariable1 TIMES)											   // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)					  // - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression )	 // - VARYING phrase PERFORM
 		)?;																				// (nothing) - Basic PERFORM
@@ -5930,17 +5937,19 @@ performStatement:
 
 performProcedureStatement:
 	PERFORM procedureName ((THROUGH |THRU) procedureName)? (			  // - Basic PERFORM
-		((identifier | numericValue) TIMES)							 // - TIMES phrase PERFORM
+		(numericVariable1 TIMES)							 // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
-		  ( AFTER identifierOrIndexName FROM (identifierOrIndexName | numericValue)	 // - VARYING phrase PERFORM
-			BY (identifier | numericValue) UNTIL conditionalExpression )* )				//
+		  ( AFTER identifierOrIndexName FROM numericOrIndexVariable	 // - VARYING phrase PERFORM
+			BY numericVariable1 UNTIL conditionalExpression )* )				//
 		)?;															// (nothing) - Basic PERFORM
 
 performVarying:
-	VARYING identifierOrIndexName FROM (identifierOrIndexName | numericValue) BY (identifier | numericValue);
+	VARYING identifierOrIndexName FROM numericOrIndexVariable BY numericVariable1;
 
 performStatementEnd: END_PERFORM;
+
+numericOrIndexVariable: identifierOrIndexName | numericValue;
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
@@ -6467,12 +6476,12 @@ searchStatement:
 	SEARCH ALL? identifier (VARYING identifierOrIndexName)?;
 
 whenSearchCondition:
-	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression)
-	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression)) | conditionalExpression)*;
+	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)
+	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)) | conditionalExpression)*;
 
 searchStatementEnd: END_SEARCH;
 
-
+anyVariable3: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 // p415: SET statement
 // The SET statement is used to perform an operation as described in this topic.
@@ -6710,12 +6719,12 @@ setStatementForAssignationSending:
 	identifier | integerValue	// identifier can also be an index name									//Format 1 + 5
 	| TRUE																								//Format 4
 	| nullFigurativeConstant																			//Format 5 + 6 + 7
-	| (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
-	| SELF ;										//identifier can also be a n object reference id 	//Format 7 (+NULL)
+	| ENTRY_ARG programNameOrProgramEntryVariable	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| SELF ;										//identifier can also be an object reference id 	//Format 7 (+NULL)
 
 //Format 2: SET for adjusting indexes
 setStatementForIndexes:
-	SET indexNameReference+ (UP | DOWN) BY (identifier | integerValue);
+	SET indexNameReference+ (UP | DOWN) BY integerVariable2;
 
 //Format 3: SET for external switches
 setStatementForSwitches:
@@ -6723,6 +6732,9 @@ setStatementForSwitches:
 setStatementForSwitchesWhat:
 	mnemonicForUPSISwitchNameReference+ TO (ON | OFF);
 
+programNameOrProgramEntryVariable: programNameReferenceOrProgramEntryReference | identifier;
+
+integerVariable2: identifier | integerValue;
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according
@@ -7103,7 +7115,9 @@ startStatementEnd: END_START;
 // Subprogram : Returns directly to the program that called the main program. (Can be the system, which causes the application to end.)
 
 stopStatement:
-                 STOP (RUN | numericValue | alphanumericValue5 | figurativeCharacterValue);
+                 STOP (RUN | numericOrAlphanumericValue);
+
+numericOrAlphanumericValue: numericValue | alphanumericValue5 | figurativeCharacterValue;
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
