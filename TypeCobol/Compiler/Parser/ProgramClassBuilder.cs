@@ -187,6 +187,10 @@ namespace TypeCobol.Compiler.Parser
 					}
 				}
 			}
+			foreach(var data in result) {
+				if (data.IsTypeDefinition && data.Subordinates.Count < 1 && data.Picture == null)
+					DiagnosticUtils.AddError(data, data.Name+" has no description.");
+			}
 			return result;
 		}
 
