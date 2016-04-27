@@ -462,7 +462,7 @@ namespace TypeCobol.Compiler.Parser
 
 			foreach(var typeclause in context.tcExtTypeClause()) {
 				var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-				if (token != null) entry.Picture = token.Text;
+				if (token != null) entry.Picture = "TYPE:"+token.Text;
 			}
 // [/TYPECOBOL]
 

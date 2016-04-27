@@ -244,11 +244,18 @@ namespace TypeCobol.Compiler.Parser
 				data.DataType = DataType.Unknown;
 				return null;
 			}
-			try {
-				var customTypeGroup = CurrentProgram.SymbolTable.GetCustomType(data.Picture);
-				data.DataType = customTypeGroup.DataType;
-				return customTypeGroup;
-			} catch(ArgumentException ex) {
+			if (data.Picture.StartsWith("TYPE:")) {
+				string typename = data.Picture.Substring(5);
+				try {
+					var customTypeGroup = CurrentProgram.SymbolTable.GetCustomType(typename);
+					data.DataType = customTypeGroup.DataType;
+					return customTypeGroup;
+				} catch(ArgumentException ex) {
+					data.DataType = DataType.Unknown;
+					DiagnosticUtils.AddError(data, "Type "+typename+" is not referenced.");
+					return null;
+				}
+			} else {
 				data.DataType = DataType.Create(data.Picture, currencies);
 				return null;
 			}

@@ -1,8 +1,7 @@
 ﻿--- Diagnostics ---
-[5,11]<27,Error,Syntax>Syntax error : no viable alternative at input '\t05 ... groupe2' (RuleStack=codeElement, OffendingSymbol=[5,11:groupe2]<UserDefinedWord> on line 26)
-[1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 37)
-[1,22]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol Y ([1>22] on line 37)
----->  Except a Semantic error because type "typeNotDefined" is not defined
+[1,34]<27,Error,Syntax>Syntax error : Type typeNotDefined is not referenced. ([1>34] on line 47)
+[1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 53)
+[1,22]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol Y ([1>22] on line 53)
 ---->  Except a Syntax error because type  "MyType" doesn't immediatly follow its type name
 ---->  Except a Syntax/Semantic error because type  "MyType3" is strong and it's only an elementary item
 ---->  Except a Semantic error because type  "MyType4" has no description
