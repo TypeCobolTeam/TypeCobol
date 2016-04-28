@@ -168,6 +168,14 @@ namespace TypeCobol.Compiler.Parser
                     {
                         // Attach consumed tokens and main document line numbers information to the code element
                         codeElement.ConsumedTokens = cobolParser.ConsumedTokens;
+						if (codeElement.ConsumedTokens == null) {// ISSUE #204:
+							if (tokenStream.Lt(1) != null) {// if not end of file,
+								// add next token to ConsumedTokens to know where is the CodeElement in error
+								codeElement.ConsumedTokens.Add((Token)tokenStream.Lt(1));
+								// this alter CodeElements semantics: in addition to matched tokens,
+								// it includes the first token in error if no token has been matched
+							}
+						}
 
                         // Add code element to the list                    
                         codeElementsLine.AddCodeElement(codeElement);

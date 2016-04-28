@@ -56,12 +56,12 @@ namespace TypeCobol.Compiler.AntlrUtils
     /// </summary>
     public class ParserDiagnostic : Diagnostic
     {
-        public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser) :
-            base(code, offendingSymbol != null ? offendingSymbol.Column : -1, offendingSymbol != null ? offendingSymbol.StopIndex + 1 : -1, message)
-        {
-            OffendingSymbol = offendingSymbol;
-            this.ruleStack = ruleStack;
-        }
+		public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser) :
+			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), message)
+		{
+			OffendingSymbol = offendingSymbol;
+			this.ruleStack = ruleStack;
+		}
 
         public ParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser)
             : base(code, start, stop, message) {
@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
             if (lineindex < 0 && OffendingSymbol != null) {
                 CodeElement e = OffendingSymbol as CodeElement;
-                if (e != null) lineindex = e.ConsumedTokens[0].Line;
+                if (e != null && e.ConsumedTokens.Count > 0) lineindex = e.ConsumedTokens[0].Line;
             }
             // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
             // This is enough to pass all unit tests, but will return false informations in real usage !
