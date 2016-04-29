@@ -5,35 +5,26 @@ using TypeCobol.Tools;
 namespace TypeCobol.Codegen.Skeletons {
 
 	public interface Condition {
-		bool Verify(Node node, SymbolTable table);
+		bool Verify(Node node);
 	}
 	public class ConditionOnNode: Condition {
 		public System.Type Node { get; internal set; }
-		public string Clause { get; internal set; }
+		public string Attribute { get; internal set; }
 
-		public bool Verify(Node node, SymbolTable table) {
+		public bool Verify(Node node) {
 			var ce = node.CodeElement;
 			if (ce == null) return false;
 			if (Node != null) {
 				bool okay = Reflection.IsTypeOf(ce.GetType(), Node);
-				if (Clause == null) return okay;
-				else return okay && validate(Clause, node, table);
+				if (Attribute == null) return okay;
+				else return okay && node[Attribute] != null;
 			} else 
-			if (Clause != null) return validate(Clause, node, table);
-			return false;
-		}
-
-		private bool validate(string clause, Node node, SymbolTable table) {
-			var data = node.CodeElement as DataDescriptionEntry;
-			if (data == null) return false;
-			// TODO
-			if (clause.Equals("TYPEDEF")) return data.IsTypeDefinitionPart;
-			if (clause.Equals("TYPE")) return !data.IsTypeDefinition && table.IsCustomType(data.DataType);
+			if (Attribute != null) return node[Attribute] != null;
 			return false;
 		}
 
 		public override string ToString() {
-			return "Node.Type="+Node+(Clause!=null?(" clause="+Clause):"");
+			return "Node.Type="+Node+(Attribute!=null?(" clause="+Attribute):"");
 		}
 	}
 

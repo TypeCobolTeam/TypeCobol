@@ -106,7 +106,7 @@ namespace TypeCobol.Codegen.Config {
 			var condition = new ConditionOnNode();
 			string node = XmlParser.GetAttribute(e, XmlParser.ATTR_NODE);
 			condition.Node   = GetType(node);
-			condition.Clause = XmlParser.GetAttribute(e, XmlParser.ATTR_CLAUSE);
+			condition.Attribute = XmlParser.GetAttribute(e, XmlParser.ATTR_CLAUSE);
 			return condition;
 		}
 

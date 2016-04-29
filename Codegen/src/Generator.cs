@@ -93,7 +93,7 @@ System.Console.WriteLine(line.Text);
 			foreach(var skeleton in Skeletons) {
 				bool active = false;
 				foreach(var condition in skeleton.Conditions) {
-					active = active || condition.Verify(node, Table); // OR
+					active = active || condition.Verify(node); // OR
 				}
 				if (active) return skeleton;//TODO: what if more than 1 skel activates?
 			}
