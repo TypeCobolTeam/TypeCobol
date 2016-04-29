@@ -17,7 +17,7 @@
       <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="delete"></pattern>
+      <pattern location="NODE" action="expand"></pattern>
     </patterns>
   </skeleton>
 

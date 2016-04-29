@@ -82,9 +82,11 @@ System.Console.WriteLine(line.Text);
 		private Action GetAction(Node node) {
 			var skeleton = GetActiveSkeleton(node);
 			if (skeleton != null) {
-				// TODO more robust way to associate skel <> action
-				if ("TYPEDEF".Equals(skeleton.Name)) return new Comment(Output);
-				if ("TYPE".   Equals(skeleton.Name)) return new GenerateCustomTypedDataDescription(Output, Table);
+				foreach(var pattern in skeleton) {
+					if ("comment".Equals(pattern.Action)) return new Comment(Output);
+					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
+					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
+				}
 			}
 			return new Write(Output);// no peculiar codegen --> write as is
 		}

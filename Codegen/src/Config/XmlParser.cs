@@ -16,6 +16,7 @@ namespace TypeCobol.Codegen.Config {
 		internal static string ATTR_NAME        = "name";
 		internal static string ATTR_GROUP       = "group";
 		internal static string ATTR_LOCATION    = "location";
+		internal static string ATTR_ACTION      = "action";
 		internal static string ATTR_VARIABLES   = "var";
 
 		/// <summary>Parses an XML file.</summary>
@@ -141,6 +142,7 @@ namespace TypeCobol.Codegen.Config {
 			pattern.Name = XmlParser.GetAttribute(e, XmlParser.ATTR_NAME);
 			pattern.Group = XmlParser.GetAttribute(e, XmlParser.ATTR_GROUP);
 			pattern.Location = XmlParser.GetAttribute(e, XmlParser.ATTR_LOCATION);
+			pattern.Action = XmlParser.GetAttribute(e, XmlParser.ATTR_ACTION);
 			pattern.Variables = new Dictionary<string,string>();
 			string vars = e.GetAttribute(XmlParser.ATTR_VARIABLES);
 			foreach(var var in vars.Split(',')) {

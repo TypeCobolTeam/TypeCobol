@@ -9,6 +9,8 @@ namespace TypeCobol.Codegen.Skeletons {
 		public string Group     { get; internal set; }
 		/// <summary>URI in an abstract syntax tree.</summary>
 		public string Location  { get; internal set; }
+		/// <summary>What to do with the sourcecode</summary>
+		public string Action  { get; internal set; }
 		/// <summary>Variables usable in the <paramref name="Template"/>.</summary>
 		public Dictionary<string,string> Variables { get; internal set; }
 		/// <summary>Code template.</summary>
@@ -16,17 +18,18 @@ namespace TypeCobol.Codegen.Skeletons {
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			if (Name != null) str.Append(Name).Append(' ');
-			if (Group != null) str.Append("group:").Append(Group).Append(' ');
-			if (Location != null) str.Append("location:").Append(Location).Append(' ');
+			if (Name != null) str.Append(Name);
+			if (Group != null) str.Append(" group:").Append(Group);
+			if (Location != null) str.Append(" location:").Append(Location);
+			if (Action != null) str.Append(" action:").Append(Action);
 			if (Variables.Count > 0) {
-				str.Append("variables: {");
+				str.Append(" variables: {");
 				foreach(var kv in Variables)
 					str.Append(' ').Append(kv.Key).Append(':').Append(kv.Value).Append(',');
 				str.Length -= 1;
 				str.Append(" }");
 			}
-			if (Template != null) str.Append("template: \"").Append(Template).Append('"');
+			if (Template != null) str.Append(" template: \"").Append(Template).Append('"');
 			return str.ToString();
 		}
 	}
