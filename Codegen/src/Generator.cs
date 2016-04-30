@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
@@ -13,17 +14,19 @@ namespace TypeCobol.Codegen {
 		private List<ICobolTextLine> Output;
 		private TextWriter Writer;
 		private Tools.CodeElementDiagnostics Converter;
+		private List<Skeleton> Skeletons;
 
 		/// <summary>Table of symbols</summary>
 		private SymbolTable Table;
 
 
-		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter) {
+		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter, List<Skeleton> skeletons) {
 			Input = source;
 			Output = new List<ICobolTextLine>();
 			Output.AddRange(Input);
 			Writer = destination;
 			Converter = converter;
+			Skeletons = skeletons != null? skeletons : new List<Skeletons.Skeleton>();
 		}
 
 		/// <summary>Generates code</summary>
@@ -77,14 +80,26 @@ System.Console.WriteLine(line.Text);
 		}
 
 		private Action GetAction(Node node) {
-			var data = node.CodeElement as DataDescriptionEntry;
-			if (data != null) {
-				if (data.IsTypeDefinitionPart)
-					return new Comment(Output);
-				if (!data.IsTypeDefinition && Table.IsCustomType(data.DataType))//TODO tcTypeClauseExt (ie. contains "TYPE")
-					return new GenerateCustomTypedDataDescription(Output, Table);
+			var skeleton = GetActiveSkeleton(node);
+			if (skeleton != null) {
+				foreach(var pattern in skeleton) {
+					if ("comment".Equals(pattern.Action)) return new Comment(Output);
+					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
+					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
+				}
 			}
-			return new Write(Output);
+			return new Write(Output);// no peculiar codegen --> write as is
+		}
+
+		private Skeleton GetActiveSkeleton(Node node) {
+			foreach(var skeleton in Skeletons) {
+				bool active = false;
+				foreach(var condition in skeleton.Conditions) {
+					active = active || condition.Verify(node); // OR
+				}
+				if (active) return skeleton;//TODO: what if more than 1 skel activates?
+			}
+			return null;
 		}
 	}
 

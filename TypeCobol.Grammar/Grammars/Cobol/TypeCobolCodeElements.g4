@@ -18,5 +18,23 @@ qDataOrFileOrUPSI: dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNa
 legacyQualifiedDataName:                                    dataNameReference                                                                                  ((IN | OF) dataNameReferenceOrFileNameReference)*;
 legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
+// rule modified to support:
+// - MOVE UNSAFE <custom type> TO <custom type>
+// - MOVE TRUE  TO <boolean>
+// - MOVE FALSE TO <boolean>
 moveStatement:
-	MOVE UNSAFE? corresponding? identifierOrLiteral2 TO identifier+;
+    MOVE UNSAFE? corresponding? (TRUE | FALSE | identifierOrLiteral) TO identifier+;
+//         ^                      ^       ^
+//          \                      \       \
+//           \                      --------------  MOVE [TRUE|FALSE] TO <boolean>
+//            ------------------------------------  MOVE UNSAFE <custom type> TO <custom type>
+
+
+// rule modified to support:
+// - SET <boolean> TO FALSE
+setStatementForAssignationSending:
+    identifier | IntegerLiteral
+    | FALSE                         // <----- SET <boolean> TO FALSE
+    | TRUE | (NULL | NULLS) | SELF
+    | (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))
+    ;

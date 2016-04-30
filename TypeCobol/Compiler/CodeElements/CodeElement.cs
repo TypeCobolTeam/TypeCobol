@@ -101,14 +101,6 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public int Column
-        {
-            get
-            {
-                return ConsumedTokens[0].Column;
-            }
-        }
-
         public int Channel
         {
             get
@@ -117,45 +109,47 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public int TokenIndex
-        {
-            get
-            {
-                return ConsumedTokens[0].TokenIndex;
-            }
-        }
+		public int Column {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
+				return ConsumedTokens[0].Column;
+			}
+		}
 
-        public int StartIndex
-        {
-            get
-            {
-                return ConsumedTokens[0].StartIndex;
-            }
-        }
+		public int TokenIndex {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;
+				return ConsumedTokens[0].TokenIndex;
+			}
+		}
 
-        public int StopIndex
-        {
-            get
-            {
-                return ConsumedTokens[ConsumedTokens.Count-1].StopIndex; ;
-            }
-        }
+		public int StartIndex {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;
+				return ConsumedTokens[0].StartIndex;
+			}
+		}
 
-        public ITokenSource TokenSource
-        {
-            get
-            {
-                return ConsumedTokens[0].TokenSource;
-            }
-        }
+		public int StopIndex {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
+				return ConsumedTokens[ConsumedTokens.Count-1].StopIndex;
+			}
+		}
 
-        public ICharStream InputStream
-        {
-            get
-            {
-                return ConsumedTokens[0].InputStream;
-            }
-        }
+		public ITokenSource TokenSource {
+			get {
+				if (ConsumedTokens.Count < 1) return null;
+				return ConsumedTokens[0].TokenSource;
+			}
+		}
+
+		public ICharStream InputStream {
+			get {
+				if (ConsumedTokens.Count < 1) return null;
+				return ConsumedTokens[0].InputStream;
+			}
+		}
 
         public CodeElement Parent {
             get;

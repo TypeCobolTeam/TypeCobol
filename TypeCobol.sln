@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "TypeCobol.Server\TypeCobol.Server.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "CLI\src\CLI.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor.VisualStudio", "Editors\VisualStudio\Editor.VisualStudio.csproj", "{83E6C379-4617-490B-A5C6-225276EA7096}"
 EndProject
