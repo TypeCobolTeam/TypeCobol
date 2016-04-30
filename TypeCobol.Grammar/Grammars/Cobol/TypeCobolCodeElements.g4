@@ -23,7 +23,7 @@ legacyQualifiedConditionName:                               conditionNameReferen
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
 moveStatement:
-    MOVE UNSAFE? corresponding? (TRUE | FALSE | identifierOrLiteral) TO identifier+;
+    MOVE UNSAFE? corresponding? (booleanValue | anyVariable4) TO identifier+;
 //         ^                      ^       ^
 //          \                      \       \
 //           \                      --------------  MOVE [TRUE|FALSE] TO <boolean>
@@ -36,5 +36,5 @@ setStatementForAssignationSending:
     identifier | IntegerLiteral
     | FALSE                         // <----- SET <boolean> TO FALSE
     | TRUE | (NULL | NULLS) | SELF
-    | (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))
+    | (ENTRY_ARG programNameOrProgramEntryVariable)
     ;

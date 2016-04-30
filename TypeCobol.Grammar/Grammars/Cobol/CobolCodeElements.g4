@@ -836,9 +836,7 @@ memorySizeClause:
                     MEMORY SIZE? integerValue (WORDS | CHARACTERS | MODULES);
 
 programCollatingSequenceClause:
-                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetReference;
-
-alphabetReference: alphabetNameReference | /* standardCollatingSequence */ intrinsicAlphabetNameReference;
+                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetName;
 
 segmentLimitClause:
                       SEGMENT_LIMIT IS? priorityNumber;
@@ -1011,7 +1009,7 @@ charactersEqualSet:
 // national literal, a DBCS literal, or a symbolic-character figurative
 // constant must not be specified.
 
-characterInCollatingSequence : alphanumericValue1 | figurativeCharacterValue | ordinalPositionInCollatingSequence;
+characterInCollatingSequence : characterValue3 | ordinalPositionInCollatingSequence;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
@@ -1028,12 +1026,9 @@ symbolicCharactersOrdinalPositions:
 // - Each numeric literal specified must be an unsigned integer.
 // - Each numeric literal must have a value that corresponds to a
 // valid ordinal position within the collating sequence in effect.
-// See Appendix C, “EBCDIC and ASCII collating sequences,” on
-// page 569 for the ordinal numbers for characters in the
-// single-byte EBCDIC and ASCII collating sequences.
 
 ordinalPositionInCollatingSequence: integerValue;
-								
+
 // p118: The CLASS clause provides a means for relating a name to the specified set of
 // characters listed in that clause.
 
@@ -1517,8 +1512,6 @@ organizationClause:
 
 paddingCharacterClause:
                           PADDING CHARACTER? IS? characterVariable;
-
-characterVariable: dataNameReference | characterValue2 | figurativeCharacterValue;
 
 // p138: The RECORD DELIMITER clause indicates the method of determining the length of a variable-length record on an external medium. 
 // It can be specified only for variable-length records. 
@@ -2251,8 +2244,6 @@ labelRecordsClause:
 valueOfClause:
                  VALUE OF (alphanumericValue4 IS? numericOrAlphanumericVariable)+;
 
-numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue5 | figurativeCharacterValue;
-
 // p180: The DATA RECORDS clause is syntax checked but serves only as documentation
 // for the names of data records associated with the file.
 // data-name-4
@@ -2328,8 +2319,6 @@ linageClause:
                 (WITH? FOOTING AT? integerVariable)? 
                 (LINES? AT? TOP integerVariable)? 
                 (LINES? AT? BOTTOM integerVariable)?;
-           
-integerVariable: dataNameReference | integerValue;
 
 // p182: The RECORDING MODE clause specifies the format of the physical records in a
 // QSAM file. The clause is ignored for a VSAM file.
@@ -3427,7 +3416,7 @@ usageClause:
 // FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
 
 valueClause:
-               VALUE IS? (numericValue | alphanumericValue5 | repeatedAlphanumericValue2 | nullFigurativeConstant);
+               VALUE IS? (anyValue | nullFigurativeConstant);
 			   
 // p239: Format 2: condition-name value
 // valueClause:
@@ -3473,7 +3462,7 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-		((VALUE IS?) | (VALUES ARE?)) ((numericValue | alphanumericValue5 | repeatedAlphanumericValue2) ((THROUGH | THRU) (numericValue | alphanumericValue5 | repeatedAlphanumericValue2))?)+; 
+		((VALUE IS?) | (VALUES ARE?)) (anyValue ((THROUGH | THRU) anyValue)?)+; 
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -4192,10 +4181,6 @@ addStatementFormat3:
 
 numericVariableTmp: numericVariable1;
 
-numericVariable1: identifier | numericValue;
-
-numericVariable2: identifier;
-
 // ROUNDED phrase
 // For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
 numericVariableRounded:
@@ -4362,8 +4347,6 @@ alterStatement:
 callStatement:
 	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable (USING callBy+)? callReturning?;
 
-programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable: programNameReferenceOrProgramEntryReference | identifier;
-
 callBy:
 	(BY? (REFERENCE | CONTENT | VALUE))? 
         (anyVariable4 /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
@@ -4373,7 +4356,6 @@ callReturning:
 
 callStatementEnd: END_CALL;
 
-anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
@@ -4418,8 +4400,6 @@ anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeate
 
 cancelStatement:
 	CANCEL programNameVariable+;
-
-programNameVariable: programNameReference1 | identifier;
 
 // p313: CLOSE statement
 // The CLOSE statement terminates the processing of volumes and files.
@@ -4556,13 +4536,9 @@ deleteStatementEnd: END_DELETE;
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-                    DISPLAY identifierOrLiteral1+
+                    DISPLAY anyVariable5+
                     uponEnvironmentName?
                     withNoAdvancing?;
-
-identifierOrLiteral1: identifier | numericValue | alphanumericValue5 | figurativeCharacterValue;
-
-identifierOrLiteral2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 uponEnvironmentName:
 					UPON mnemonicForEnvironmentNameReferenceOrEnvironmentName;
@@ -4710,7 +4686,7 @@ byReferenceOrByValueIdentifiers:
 // The number of selection objects within each set of selection objects must be equal to the number of selection subjects.
 // Each selection object within a set of selection objects must correspond to the selection subject having the same ordinal position within the set of selection subjects, according to the following rules: 
 // - Identifiers, literals, or arithmetic expressions appearing within a selection object must be valid operands for comparison to the corresponding operand in the set of selection subjects. 
-// - condition-1, condition-2, or the word TRUE or FALSE appearing as a selection object must correspond to a conditional expression or the word TRUE or FALSE in the set of selection subjects. 
+// - condition-1, condition-2, or the word TRUE or FALSE appearing as a selection object must correspond to a conditional arithmeticExpression | conditionalExpression or the word TRUE or FALSE in the set of selection subjects. 
 // - The word ANY can correspond to a selection subject of any type.
 // END-EVALUATE phrase
 // This explicit scope terminator serves to delimit the scope of the EVALUATE statement. END-EVALUATE permits a conditional EVALUATE statement to be nested in another conditional statement.
@@ -4718,20 +4694,20 @@ byReferenceOrByValueIdentifiers:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | expression | TRUE | FALSE)
-	  ( ALSO (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | expression | TRUE | FALSE) )*;
+	EVALUATE (anyVariable3 | arithmeticExpression | conditionalExpression | booleanValue)
+	  ( ALSO (anyVariable3 | arithmeticExpression | conditionalExpression | booleanValue) )*;
 
 whenCondition:
-	WHEN LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? (ANY | TRUE | FALSE | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
+	WHEN LeftParenthesisSeparator? (ANY | booleanValue | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? (ANY | booleanValue | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
 
 whenEvaluateCondition: whenCondition;
 
 evaluatePhrase1Choice4:
-	NOT? (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression) evaluateThrough?;
+	NOT? (anyVariable3 | arithmeticExpression) evaluateThrough?;
 
 evaluateThrough:
-	(THROUGH | THRU) (identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | arithmeticExpression);
+	(THROUGH | THRU) (anyVariable3 | arithmeticExpression);
 
 whenOtherCondition:
 	WHEN OTHER;
@@ -5025,7 +5001,7 @@ initializeStatement:
 	INITIALIZE identifier+ (REPLACING initializeReplacing+)?;
 
 initializeReplacing:
-	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS) DATA? BY identifierOrLiteral2;
+	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS) DATA? BY anyVariable3;
 
 // p346: INSPECT statement
 // The INSPECT statement examines characters or groups of characters in a data
@@ -5256,10 +5232,6 @@ inspectPhrase1:
 
 inspectBy: BY alphanumericVariable2;
 
-alphanumericVariable1: identifier | alphanumericValue5 | figurativeCharacterValue;
-
-alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
-
 // p356: INVOKE statement 
 // The INVOKE statement can create object instances of a COBOL or Java class and
 // can invoke a method defined in a COBOL or Java class.
@@ -5475,12 +5447,6 @@ invokeReturning:
 	RETURNING identifier;
 
 invokeStatementEnd: END_INVOKE;
-
-classNameVariable: identifierOrClassName;
-
-methodNameVariable: methodNameReference | identifier;
-
-anyVariable: identifier | numericValue | alphanumericValue5;
 
 // p364: MERGE statement
 // The MERGE statement combines two or more identically sequenced files (that is,
@@ -5769,8 +5735,6 @@ mergeStatement:
 moveStatement:
 	MOVE corresponding? anyVariable2 TO identifier+;
 
-anyVariable2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | repeatedAlphanumericValue2;
-
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
@@ -5949,7 +5913,6 @@ performVarying:
 
 performStatementEnd: END_PERFORM;
 
-numericOrIndexVariable: identifierOrIndexName | numericValue;
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
@@ -6476,12 +6439,11 @@ searchStatement:
 	SEARCH ALL? identifier (VARYING identifierOrIndexName)?;
 
 whenSearchCondition:
-	WHEN  qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)
+	WHEN  (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)) | conditionalExpression
 	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)) | conditionalExpression)*;
 
 searchStatementEnd: END_SEARCH;
 
-anyVariable3: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 // p415: SET statement
 // The SET statement is used to perform an operation as described in this topic.
@@ -6732,9 +6694,6 @@ setStatementForSwitches:
 setStatementForSwitchesWhat:
 	mnemonicForUPSISwitchNameReference+ TO (ON | OFF);
 
-programNameOrProgramEntryVariable: programNameReferenceOrProgramEntryReference | identifier;
-
-integerVariable2: identifier | integerValue;
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according
@@ -7117,8 +7076,6 @@ startStatementEnd: END_START;
 stopStatement:
                  STOP (RUN | numericOrAlphanumericValue);
 
-numericOrAlphanumericValue: numericValue | alphanumericValue5 | figurativeCharacterValue;
-
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
 // more data items or literals into one single data item.
@@ -7235,10 +7192,10 @@ stringStatement:
 
 
 stringStatementWhat:
-	identifierToConcat=identifierOrLiteral2+ DELIMITED BY? stringStatementDelimiter;
+	identifierToConcat=anyVariable3+ DELIMITED BY? stringStatementDelimiter;
 
 stringStatementDelimiter:
-	identifierOrLiteral1 | SIZE;
+	anyVariable5 | SIZE;
 
 stringStatementWith:
 	WITH? POINTER identifier;
@@ -7495,10 +7452,10 @@ unstringStatement:
 	UNSTRING unstringIdentifier=identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
 
 unstringDelimited:
-	DELIMITED BY? ALL? delimitedBy=identifierOrLiteral1 ustringOthersDelimiters*;
+	DELIMITED BY? ALL? delimitedBy=anyVariable5 ustringOthersDelimiters*;
 
 ustringOthersDelimiters:
-	OR ALL? identifierOrLiteral1;
+	OR ALL? anyVariable5;
 
 //unstringReceiver:
 //	identifier unstringDelimiter? unstringCount?;
@@ -7729,9 +7686,7 @@ unstringStatementEnd: END_UNSTRING;
 
 writeStatement:
 	WRITE qualifiedDataName (FROM identifier)?
-	((BEFORE | AFTER) ADVANCING? ((identifierOrInteger (LINE | LINES)?) | mnemonicForEnvironmentNameReference | PAGE)?)?;
-
-identifierOrInteger: identifier | integerValue;
+	((BEFORE | AFTER) ADVANCING? ((integerVariable2 (LINE | LINES)?) | mnemonicForEnvironmentNameReference | PAGE)?)?;
 
 writeStatementEnd: END_WRITE;
 
@@ -8085,13 +8040,13 @@ xmlCount:
 	COUNT IN? identifier;
 
 xmlNamespace:
-	NAMESPACE IS? (identifier | alphanumericValue5 | repeatedAlphanumericValue);
+	NAMESPACE IS? alphanumericVariable2;
 
 xmlNamespacePrefix:
-	NAMESPACE_PREFIX IS? (identifier | alphanumericValue5 | repeatedAlphanumericValue);
+	NAMESPACE_PREFIX IS? alphanumericVariable2;
 
 xmlName:
-	identifier IS? alphanumericValue5 | repeatedAlphanumericValue;
+	identifier IS? alphanumericOrRepeatedAlphanumericValue;
 
 xmlType:
 	identifier IS? (ATTRIBUTE | ELEMENT | CONTENT);
@@ -8122,7 +8077,7 @@ xmlStatementEnd: END_XML;
 // Enterprise COBOL Programming Guide.
 
 codepage:
-            identifier | integerValue;
+            integerVariable2;
 
 // p469: XML PARSE statement
 // The XML PARSE statement is the COBOL language interface to the high-speed

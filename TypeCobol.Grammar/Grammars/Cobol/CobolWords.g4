@@ -514,6 +514,7 @@ tokens
 // [/TYPECOBOL]
 }
 
+
 // --- Cobol Token families ---
 
 // - 1. Numeric literals -
@@ -533,7 +534,6 @@ numericLiteralToken: (IntegerLiteral | DecimalLiteral | FloatingPointLiteral);
 // p15: When a numeric literal appears in a syntax diagram, only the figurative constant ZERO (or ZEROS or ZEROES) can be used. 
 
 numericFigurativeConstant: (ZERO | ZEROS | ZEROES);
-
 
 // ** Syntax rules for NULL/NULLS **
 // -- Definition
@@ -569,8 +569,7 @@ numericFigurativeConstant: (ZERO | ZEROS | ZEROES);
 // 
 // ==> NULL/NULLS tokens are referenced explicitely via nullFigurativeConstant in all CodeElements rules where they are allowed, we don't need to include them in the generic figurativeConstant rule
 
-nullFigurativeConstant: NULL | NULLS;
-
+nullFigurativeConstant: (NULL | NULLS);
 
 // - 2. Alphanumeric literals -
 
@@ -584,8 +583,12 @@ nullFigurativeConstant: NULL | NULLS;
 
 alphanumericLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral);
 
+
 alphanumericOrNationalLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
                                      DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
+
+notNullTerminatedAlphanumericOrNationalLiteralToken: (AlphanumericLiteral | HexadecimalAlphanumericLiteral |
+                                                      DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
 
 // p13: Figurative constants are reserved words that name and refer to specific constant values.
 // p15: The singular and plural forms of NULL, ZERO, SPACE, HIGH-VALUE, LOW-VALUE, and QUOTE can be used interchangeably.
@@ -606,17 +609,6 @@ figurativeConstant: (HIGH_VALUE | HIGH_VALUES |
                      SPACE | SPACES |
                      ZERO  | ZEROS  | ZEROES) |
                      symbolicCharacterReference;
-
-// p33: A literal is a character-string whose value is specified either by the characters of which it is composed or by the use of a figurative constant
-
-// alphanumericLiteral => alphanumericValue1 | repeatedAlphanumericValue;
-
-// alphanumericOrNationalLiteral => alphanumericValue5 | repeatedAlphanumericValue;
-
-// p534: literal
-// Can be numeric, alphanumeric, DBCS, or national.
-
-// literal => alphanumericValue5 | repeatedAlphanumericValue | numericValue;
 
 // ** Syntax rules for ALL literal **
 // -- Definition
@@ -651,13 +643,12 @@ figurativeConstant: (HIGH_VALUE | HIGH_VALUES |
 // 
 // ==> ALL literal figurative constant is referenced explicitely via allFigurativeConstant in all CodeElements rules where it is allowed, we don't need to include it in the generic literal rules
 
-allFigurativeConstant: ALL (figurativeConstant | notNullTerminatedAlphanumericOrNationalLiteral);
+allFigurativeConstant: ALL (figurativeConstant | notNullTerminatedAlphanumericOrNationalLiteralToken);
 
-notNullTerminatedAlphanumericOrNationalLiteral: (AlphanumericLiteral | HexadecimalAlphanumericLiteral |
-                                                 DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral);
 
-// - Commonly used constant values -
-// (not strictly necessary to describe the grammar, but useful to optimize the CodeElements builder code)
+// --- Compile-time constant values used in the Cobol grammar ---
+
+booleanValue: TRUE | FALSE;
 
 integerValue: IntegerLiteral;
 
@@ -667,7 +658,9 @@ characterValue: alphanumericLiteralToken;
 
 characterValue2: alphanumericOrNationalLiteralToken;
 
-figurativeCharacterValue: specialRegister;
+characterValue3: alphanumericLiteralToken | figurativeConstant;
+
+characterValue4: alphanumericOrNationalLiteralToken | figurativeConstant;
 
 alphanumericValue1: alphanumericLiteralToken;
 
@@ -689,13 +682,15 @@ alphanumericValue9: PictureCharacterString;
 
 alphanumericValue10: ExecStatementText;
 
+alphanumericValue11: alphanumericOrNationalLiteralToken | figurativeConstant;
+
 enumeratedValue: UserDefinedWord;
 
 enumeratedValue2: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
 
 enumeratedValue3: ExecTranslatorName;
 
-// - Values which can only be computed 
+// Repeated values which can only be computed 
 //   . at the second stage of parsing
 //   . when compared or affected to a data storage area
 
@@ -703,9 +698,10 @@ repeatedAlphanumericValue: figurativeConstant;
 
 repeatedAlphanumericValue2: figurativeConstant | allFigurativeConstant;
 
-// - 3. Symbols -
 
-// - Commonly used symbols syntax -
+// --- Cobol symbol definitions and symbol references ---
+
+// - Commonly used symbol definition or reference syntax -
 // (not strictly necessary to describe the grammar, but useful to optimize the CodeElements builder code)
 
 symbolDefinition1: alphanumericValue1;
@@ -728,11 +724,9 @@ symbolReference4: alphanumericValue5;
 
 symbolReference5: alphanumericValue6;
 
-// standardCollatingSequence
-symbolReference6: alphanumericValue7;
+symbolReference6: alphanumericValue7; // standardCollatingSequence
 
-// specialRegister
-symbolReference7: alphanumericValue8;
+symbolReference7: alphanumericValue8; // specialRegister
 
 ambiguousSymbolReference1: alphanumericValue1;
 
@@ -868,27 +862,6 @@ paragraphNameReference: symbolReference3;
 // [Type ambiguity] at this parsing stage
 paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference2;
 
-// p66: References to PROCEDURE DIVISION names
-// PROCEDURE DIVISION names that are explicitly referenced in a program must be
-// unique within a section.
-// A section-name is the highest and only qualifier available for a paragraph-name
-// and must be unique if referenced. (Section-names are described under
-// “Procedures” on page 252.)
-// If explicitly referenced, a paragraph-name must not be duplicated within a section.
-// When a paragraph-name is qualified by a section-name, the word SECTION must
-// not appear. A paragraph-name need not be qualified when referred to within the
-// section in which it appears. A paragraph-name or section-name that appears in a
-// program cannot be referenced from any other program.
-
-qualifiedParagraphNameReference: paragraphNameReference (IN | OF) sectionNameReference;
-
-// p252: Procedures
-// Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
-// sections, and a paragraph or group of paragraphs.
-// A procedure-name is a user-defined name that identifies a section or a paragraph.
-
-procedureName: paragraphNameReferenceOrSectionNameReference | qualifiedParagraphNameReference;
-
 // p103 : class-name
 // A user-defined word that identifies the class. class-name can optionally
 // have an entry in the REPOSITORY paragraph of the configuration section
@@ -1009,6 +982,8 @@ alphabetNameReference: symbolReference3;
 
 intrinsicAlphabetNameReference: /* standardCollatingSequence */ symbolReference6;
 
+alphabetName: alphabetNameReference | /* standardCollatingSequence */ intrinsicAlphabetNameReference;
+
 // p 115 : STANDARD-1
 // Specifies the ASCII character set.
 // STANDARD-2
@@ -1051,8 +1026,57 @@ dataNameReference: symbolReference3;
 
 intrinsicDataNameReference: /* specialRegister */ symbolReference7;
 
+// p16: Special registers are reserved words that name storage areas generated by the
+// compiler. Their primary use is to store information produced through specific
+// COBOL features. Each such storage area has a fixed name, and must not be
+// defined within the program.
+// ... p16-p17 : more details on all special registers ...
+// Unless otherwise explicitly restricted, a special register can be used wherever a
+// data-name or identifier that has the same definition as the implicit definition of the
+// special register can be used. Implicit definitions, if applicable, are given in the
+// specification of each special register.
+// You can specify an alphanumeric special register in a function wherever an
+// alphanumeric argument to a function is allowed, unless specifically prohibited.
+// If qualification is allowed, special registers can be qualified as necessary to provide
+// uniqueness. (For more information, see “Qualification ? on page 65.)
+// ... p17-p33 : more details on all special registers ...
+
+specialRegister: (DEBUG_CONTENTS |
+                  DEBUG_ITEM |
+                  DEBUG_LINE |
+                  DEBUG_NAME |
+                  DEBUG_SUB_1 |
+                  DEBUG_SUB_2 |
+                  DEBUG_SUB_3 |
+                  JNIENVPTR |
+                  RETURN_CODE |
+                  SHIFT_IN |
+                  SHIFT_OUT |
+                  SORT_CONTROL |
+                  SORT_CORE_SIZE |
+                  SORT_FILE_SIZE |
+                  SORT_MESSAGE |
+                  SORT_MODE_SIZE |
+                  SORT_RETURN |
+                  TALLY |
+                  WHEN_COMPILED |
+                  XML_CODE |
+                  XML_EVENT |
+                  XML_INFORMATION |
+                  XML_NAMESPACE |
+                  XML_NAMESPACE_PREFIX |
+                  XML_NNAMESPACE |
+                  XML_NNAMESPACE_PREFIX |
+                  XML_NTEXT |
+                  XML_TEXT);
+
+// + LINAGE_COUNTER, ADDRESS OF and LENGTH OF require qualification => they are defined in CobolExpressions.g4
+
 // [Type ambiguity] at this parsing stage
 dataNameReferenceOrFileNameReference: ambiguousSymbolReference2;
+
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrIndexNameReference: ambiguousSymbolReference2;
 
 // [Type ambiguity] at this parsing stage
 dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: ambiguousSymbolReference2;
@@ -1123,52 +1147,6 @@ fileNameReference: symbolReference3;
 xmlSchemaNameDefinition: symbolDefinition3;
 
 xmlSchemaNameReference: symbolReference3;
-
-// p16: Special registers are reserved words that name storage areas generated by the
-// compiler. Their primary use is to store information produced through specific
-// COBOL features. Each such storage area has a fixed name, and must not be
-// defined within the program.
-// ... p16-p17 : more details on all special registers ...
-// Unless otherwise explicitly restricted, a special register can be used wherever a
-// data-name or identifier that has the same definition as the implicit definition of the
-// special register can be used. Implicit definitions, if applicable, are given in the
-// specification of each special register.
-// You can specify an alphanumeric special register in a function wherever an
-// alphanumeric argument to a function is allowed, unless specifically prohibited.
-// If qualification is allowed, special registers can be qualified as necessary to provide
-// uniqueness. (For more information, see “Qualification ? on page 65.)
-// ... p17-p33 : more details on all special registers ...
-
-specialRegister: (DEBUG_CONTENTS |
-                  DEBUG_ITEM |
-                  DEBUG_LINE |
-                  DEBUG_NAME |
-                  DEBUG_SUB_1 |
-                  DEBUG_SUB_2 |
-                  DEBUG_SUB_3 |
-                  JNIENVPTR |
-                  RETURN_CODE |
-                  SHIFT_IN |
-                  SHIFT_OUT |
-                  SORT_CONTROL |
-                  SORT_CORE_SIZE |
-                  SORT_FILE_SIZE |
-                  SORT_MESSAGE |
-                  SORT_MODE_SIZE |
-                  SORT_RETURN |
-                  TALLY |
-                  WHEN_COMPILED |
-                  XML_CODE |
-                  XML_EVENT |
-                  XML_INFORMATION |
-                  XML_NAMESPACE |
-                  XML_NAMESPACE_PREFIX |
-                  XML_NNAMESPACE |
-                  XML_NNAMESPACE_PREFIX |
-                  XML_NTEXT |
-                  XML_TEXT);
-
-// + LINAGE_COUNTER, ADDRESS OF and LENGTH OF require qualification => they are defined in CobolExpressions.g4
 
 
 // - 4. External names -
@@ -1308,7 +1286,7 @@ intrinsicFunctionName: externalName4;
 
 execTranslatorName : externalName5;
 
-// ** Compiler enumerations **
+// ** Compiler enumerations (handled as user defined words) **
 
 // p528: *CONTROL (*CBL) statement
 // With the *CONTROL (or *CBL) statement, you can selectively display or suppress

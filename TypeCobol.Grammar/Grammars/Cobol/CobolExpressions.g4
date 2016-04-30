@@ -8,8 +8,511 @@ grammar CobolExpressions;
 
 import CobolWords;
 
+// --- Qualified names : give explicit context to resolve ambiguous name references ---
 
-expression: arithmeticExpression | conditionalExpression;
+// p65: Qualification
+// A name that exists within a hierarchy of names can be made unique by specifying
+// one or more higher-level names in the hierarchy. The higher-level names are called
+// qualifiers, and the process by which such names are made unique is called
+// qualification.
+// Qualification is specified by placing one or more phrases after a user-specified
+// name, with each phrase made up of the word IN or OF followed by a qualifier. (IN
+// and OF are logically equivalent.)
+// In any hierarchy, the data-name associated with the highest level must be unique if
+// it is referenced, and cannot be qualified.
+// You must specify enough qualification to make the name unique; however, it is not
+// always necessary to specify all the levels of the hierarchy. For example, if there is
+// more than one file whose records contain the field EMPLOYEE-NO, but only one of the
+// files has a record named MASTER-RECORD:
+// - EMPLOYEE-NO OF MASTER-RECORD sufficiently qualifies EMPLOYEE-NO.
+// - EMPLOYEE-NO OF MASTER-RECORD OF MASTER-FILE is valid but unnecessary.
+// Qualification rules
+// The rules for qualifying a name are:
+// - A name can be qualified even though it does not need qualification except in a
+//   REDEFINES clause, in which case it must not be qualified.
+// - Each qualifier must be of a higher level than the name it qualifies and must be
+//   within the same hierarchy.
+// - If there is more than one combination of qualifiers that ensures uniqueness, any
+//   of those combinations can be used.
+// Identical names
+// When programs are directly or indirectly contained within other programs, each
+// program can use identical user-defined words to name resources.
+// A program references the resources that program describes rather than the
+// same-named resources described in another program, even if the names are
+// different types of user-defined words.
+// These same rules apply to classes and their contained methods.
+
+// p252: Procedures
+// Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
+// sections, and a paragraph or group of paragraphs.
+// A procedure-name is a user-defined name that identifies a section or a paragraph.
+
+procedureName: paragraphNameReferenceOrSectionNameReference | qualifiedParagraphNameReference;
+
+// p66: References to PROCEDURE DIVISION names
+// PROCEDURE DIVISION names that are explicitly referenced in a program must be
+// unique within a section.
+// A section-name is the highest and only qualifier available for a paragraph-name
+// and must be unique if referenced. (Section-names are described under
+// “Procedures” on page 252.)
+// If explicitly referenced, a paragraph-name must not be duplicated within a section.
+// When a paragraph-name is qualified by a section-name, the word SECTION must
+// not appear. A paragraph-name need not be qualified when referred to within the
+// section in which it appears. A paragraph-name or section-name that appears in a
+// program cannot be referenced from any other program.
+
+qualifiedParagraphNameReference: paragraphNameReference (IN | OF) sectionNameReference;
+
+// p65: Uniqueness of reference
+// Every user-defined name in a COBOL program is assigned by the user to name a
+// resource for solving a data processing problem. To use a resource, a statement in a
+// COBOL program must contain a reference that uniquely identifies that resource.
+// To ensure uniqueness of reference, a user-defined name can be qualified. A
+// subscript is required for unique reference to a table element, except as specified in
+// “Subscripting” on page 71. A data-name or function-name, any subscripts, and the
+// specified reference-modifier uniquely reference a data item defined by reference
+// modification.
+// When the same name has been assigned in separate programs to two or more
+// occurrences of a resource of a given type, and when qualification by itself does not
+// allow the references in one of those programs to differentiate between the
+// identically named resources, then certain conventions that limit the scope of names
+// apply. The conventions ensure that the resource identified is that described in the
+// program containing the reference. For more information about resolving
+// program-names, see “Resolution of names” on page 62.
+// Unless otherwise specified by the rules for a statement, any subscripts and
+// reference modification are evaluated only once as the first step in executing that
+// statement.
+
+// p67: References to DATA DIVISION names
+// This section discusses the following types of references.
+// - “Simple data reference”
+// - “Identifiers” on page 68
+// Simple data reference
+// The most basic method of referencing data items in a COBOL program is simple
+// data reference, which is data-name-1 without qualification, subscripting, or reference
+// modification. Simple data reference is used to reference a single elementary or
+// group item.
+// data-name-1
+// Can be any data description entry.
+// data-name-1 must be unique in a program.
+
+qualifiedDataName: dataNameReference | qualifiedDataName1;
+
+qualifiedDataName1: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
+
+// p70: If qualification is used to make a condition-name unique, the associated
+// conditional variable can be used as the first qualifier. If qualification is
+// used, the hierarchy of names associated with the conditional variable itself
+// must be used to make the condition-name unique.
+// If references to a conditional variable require subscripting, reference to any
+// of its condition-names also requires the same combination of subscripting.
+// In this information, condition-name refers to a condition-name qualified or
+// subscripted, as necessary.
+// data-name-1
+// Can be a record-name.
+// file-name-1
+// Must be identified by an FD or SD entry in the DATA DIVISION.
+// file-name-1 must be unique within this program.
+// mnemonic-name-1
+// For information about acceptable values for mnemonic-name-1, see
+// “SPECIAL-NAMES paragraph” on page 112.
+
+// p70: Format 1: condition-name in data division
+//conditionNameReferenceInDataDivision: conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
+
+// p70: Format 2: condition-name in SPECIAL-NAMES paragraph
+// conditionNameReferenceInSpecialNamesParagraph: conditionForUPSISwitchName ((IN | OF) mnemonicForUPSISwitchName)*;
+
+// => Impossible to distinguish between the following types at this parsing stage ;
+// - first token : conditionName or conditionForUPSISwitchName
+// - following tokens : dataName or fileName or menmonicForUPSISwitchName
+
+qualifiedConditionName: conditionNameReferenceOrConditionForUPSISwitchNameReference | qualifiedConditionName1;
+
+qualifiedConditionName1: conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
+
+// Ambiguous references in Cobol grammar rules
+
+// [Type ambiguity] at this parsing stage
+qualifiedDataNameOrIndexName: dataNameReferenceOrIndexNameReference | qualifiedDataName1;
+
+
+// --- (Data storage area) Identifiers ---
+
+// - 1. Table elements reference : subscripting data names or condition names -
+
+// p68: Identifiers - Data-name
+
+dataItemReference: qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// p70: Condition-name
+// condition-name-1
+// Can be referenced by statements and entries either in the program that
+// contains the definition of condition-name-1, or in a program contained
+// within that program.
+// If explicitly referenced, a condition-name must be unique or be made
+// unique through qualification or subscripting (or both) except when the
+// scope of names by itself ensures uniqueness of reference.
+
+conditionReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// p71: Subscripting
+// Subscripting is a method of providing table references through the use of
+// subscripts. A subscript is a positive integer whose value specifies the occurrence
+// number of a table element.
+// condition-name-1
+// The conditional variable for condition-name-1 must contain an OCCURS
+// clause or must be subordinate to a data description entry that contains an
+// OCCURS clause.
+// data-name-1
+// Must contain an OCCURS clause or must be subordinate to a data
+// description entry that contains an OCCURS clause.
+// integer-1
+// Can be signed. If signed, it must be positive.
+// data-name-3
+// Must be a numeric elementary item representing an integer.
+// data-name-3 can be qualified.
+// index-name-1
+// Corresponds to a data description entry in the hierarchy of the table being
+// referenced that contains an INDEXED BY phrase that specifies that name.
+// integer-2 , integer-3
+// Cannot be signed.
+// The subscripts, enclosed in parentheses, are written immediately following any
+// qualification for the name of the table element. The number of subscripts in such a
+// reference must equal the number of dimensions in the table whose element is
+// being referenced. That is, there must be a subscript for each OCCURS clause in the
+// hierarchy that contains the data-name including the data-name itself.
+// When more than one subscript is required, they are written in the order of
+// successively less inclusive dimensions of the data organization. If a
+// multidimensional table is thought of as a series of nested tables and the most
+// inclusive or outermost table in the nest is considered to be the major table with the
+// innermost or least inclusive table being the minor table, the subscripts are written
+// from left to right in the order major, intermediate, and minor.
+// For example, if TABLE-THREE is defined as:
+// 01 TABLE-THREE.
+// 05 ELEMENT-ONE OCCURS 3 TIMES.
+// 10 ELEMENT-TWO OCCURS 3 TIMES.
+// 15 ELEMENT-THREE OCCURS 2 TIMES PIC X(8).
+// a valid subscripted reference to TABLE-THREE is:
+// ELEMENT-THREE (2 2 1)
+// Subscripted references can also be reference modified. See the third example under
+// “Reference modification examples” on page 76. A reference to an item must not be
+// subscripted unless the item is a table element or an item or condition-name
+// associated with a table element.
+// Each table element reference must be subscripted except when such reference
+// appears:
+// - In a USE FOR DEBUGGING statement
+// - As the subject of a SEARCH statement
+// - In a REDEFINES clause
+// - In the KEY is phrase of an OCCURS clause
+// The lowest permissible occurrence number represented by a subscript is 1. The
+// highest permissible occurrence number in any particular case is the maximum
+// number of occurrences of the item as specified in the OCCURS clause. 
+
+// p73: Subscripting using data-names
+// When a data-name is used to represent a subscript, it can be used to reference
+// items within different tables. These tables need not have elements of the same size.
+// The same data-name can appear as the only subscript with one item and as one of
+// two or more subscripts with another item. A data-name subscript can be qualified;
+// it cannot be subscripted or indexed. For example, valid subscripted references to
+// TABLE-THREE, assuming that SUB1, SUB2, and SUB3 are all items subordinate to
+// SUBSCRIPT-ITEM, include:
+// ELEMENT-THREE (SUB1 SUB2 SUB3)
+// ELEMENT-THREE IN TABLE-THREE (SUB1 OF SUBSCRIPT-ITEM,
+// SUB2 OF SUBSCRIPT-ITEM, SUB3 OF SUBSCRIPT-ITEM)
+
+// p73: Subscripting using index-names (indexing)
+// Indexing allows such operations as table searching and manipulating specific
+// items. To use indexing, you associate one or more index-names with an item
+// whose data description entry contains an OCCURS clause.
+// An index associated with an index-name acts as a subscript, and its value
+// corresponds to an occurrence number for the item to which the index-name is
+// associated.
+// The INDEXED BY phrase, by which the index-name is identified and associated
+// with its table, is an optional part of the OCCURS clause. There is no separate entry
+// to describe the index associated with index-name. At run time, the contents of the
+// index corresponds to an occurrence number for that specific dimension of the table
+// with which the index is associated.
+// The initial value of an index at run time is undefined, and the index must be
+// initialized before it is used as a subscript. An initial value is assigned to an index
+// with one of the following statements:
+// - The PERFORM statement with the VARYING phrase
+// - The SEARCH statement with the ALL phrase
+// - The SET statement
+// The use of an integer or data-name as a subscript that references a table element or
+// an item within a table element does not cause the alteration of any index
+// associated with that table.
+// An index-name can be used to reference any table. However, the element length of
+// the table being referenced and of the table that the index-name is associated with
+// should match. Otherwise, the reference will not be to the same table element in
+// each table, and you might get runtime errors.
+// Data that is arranged in the form of a table is often searched. The SEARCH
+// statement provides facilities for producing serial and nonserial searches. It is used
+// to search for a table element that satisfies a specific condition and to adjust the
+// value of the associated index to indicate that table element.
+// To be valid during execution, an index value must correspond to a table element
+// occurrence of neither less than one, nor greater than the highest permissible
+// occurrence number.
+// For more information about index-names, see “Index-name” on page 71 and
+// “INDEXED BY phrase” on page 194.
+
+// p74: Relative subscripting
+// In relative subscripting, the name of a table element is followed by a subscript of the
+// form data-name or index-name followed by the operator + or -, and a positive or
+// unsigned integer literal.
+// The operators + and - must be preceded and followed by a space. The value of the
+// subscript used is the same as if the index-name or data-name had been set up or
+// down by the value of the integer. The use of relative indexing does not cause the
+// program to alter the value of the index.
+
+subscript: (integerValue | qualifiedDataNameOrIndexName | ALL) withRelativeSubscripting?;
+
+withRelativeSubscripting: (PlusOperator | MinusOperator) integerValue;
+
+// - 2. Special registers (allocate a storage area on reference) -
+
+autoAllocatedDataItemReference: linageCounterSpecialRegister | addressOfSpecialRegister | lengthOfSpecialRegister;
+
+// p20: A separate LINAGE-COUNTER special register is generated for each FD entry that contains a LINAGE clause. 
+// p69 : Format 3 - LINAGE-COUNTER Must be qualified each time it is referenced if more than one file description entry 
+// that contains a LINAGE clause has been specified in the source unit. 
+
+linageCounterSpecialRegister: LINAGE_COUNTER ((IN | OF) fileNameReference)?;
+
+// p17: The ADDRESS OF special register references the address of a data item in the LINKAGE SECTION, 
+// the LOCAL-STORAGE SECTION, or the WORKING-STORAGE SECTION.
+
+addressOfSpecialRegister: ADDRESS OF storageAreaReference;
+
+// p19: The LENGTH OF special register contains the number of bytes used by a data item.
+// LENGTH OF creates an implicit special register that contains the current byte length of the data item referenced by the identifier.
+
+lengthOfSpecialRegister:  LENGTH OF? storageAreaReference;
+
+// - 3. Intrinsic function calls (allocate a storage area for the result) -
+
+// p77: A function-identifier is a sequence of character strings and separators that uniquely
+// references the data item that results from the evaluation of a function.
+// A function-identifier that makes reference to an alphanumeric or national function
+// can be specified anywhere that a data item of category alphanumeric or category
+// national, respectively, can be referenced and where references to functions are not
+// specifically prohibited, except as follows:
+// - As a receiving operand of any statement
+// - Where a data item is required to have particular characteristics (such as class
+//   and category, size, sign, and permissible values) and the evaluation of the
+//   function according to its definition and the particular arguments specified would
+//   not have these characteristics
+// A function-identifier that makes reference to an integer or numeric function can be
+// used wherever an arithmetic expression can be used.
+
+// p77: A function-identifier that makes reference to an alphanumeric or national function
+// can be specified anywhere that a data item of category alphanumeric or category
+// national, respectively, can be referenced and where references to functions are not
+// specifically prohibited.
+// A function-identifier that makes reference to an integer or numeric function can be
+// used wherever an arithmetic expression can be used.
+
+// p447 : Intrinsic functions
+// An intrinsic function is a function that performs a mathematical, character, or logical
+// operation. You can use intrinsic functions to make reference to a data item whose
+// value is derived automatically during execution.
+// Data processing problems often require the use of values that are not directly
+// accessible in the data storage associated with the object program, but instead must
+// be derived through performing operations on other data. An intrinsic function is a
+// function that performs a mathematical, character, or logical operation, and thereby
+// allows you to make reference to a data item whose value is derived automatically
+// during execution.
+// The intrinsic functions can be grouped into six categories, based on the type of
+// service performed:
+// - Mathematical
+// - Statistical
+// - Date/time
+// - Financial
+// - Character-handling
+// - General
+// You can reference a function by specifying its name, along with any required
+// arguments, in a PROCEDURE DIVISION statement.
+// Functions are elementary data items, and return alphanumeric character, national
+// character, numeric, or integer values. Functions cannot serve as receiving operands.
+
+// p477: The general format of a function-identifier is:
+// function-name-1
+// function-name-1 must be one of the intrinsic function names.
+// argument-1
+// argument-1 must be an identifier, a literal (other than a figurative constant),
+// or an arithmetic expression that satisfies the argument requirements for the
+// specified function.
+// reference-modifier
+// Can be specified only for functions of type alphanumeric or national.
+// A function-identifier can be specified wherever a data item of the type of the
+// function is allowed. The argument to a function can be any function or an
+// expression containing a function, including another evaluation of the same
+// function, whose result meets the requirements for the argument.
+// Within a PROCEDURE DIVISION statement, each function-identifier is evaluated
+// at the same time as any reference modification or subscripting associated with an
+// identifier in that same position would be evaluated.
+
+// ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
+
+functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+
+// p478: argument-1 must be an identifier, a literal (other than a figurative constant),
+// or an arithmetic expression that satisfies the argument requirements for the
+// specified function.
+// p480: An argument must be one of the following items:
+// - A data item identifier
+// - An arithmetic expression
+// - A function-identifier
+// - A literal other than a figurative constant
+// - A special-register
+
+argument:
+	  anyVariable // an identifier can be a special register or a functionIdentifier
+	| arithmeticExpression;
+
+// - 4. Storage areas -
+
+// p16 : Special registers are reserved words that name storage areas generated by the compiler.
+// Each such storage area has a fixed name, and must not be defined within the program.
+// Unless otherwise explicitly restricted, a special register can be used wherever a data-name or identifier that has the same definition 
+// as the implicit definition of the special register can be used. 
+
+// p77: A function-identifier is a sequence of character strings and separators that uniquely references
+// the data item that results from the evaluation of a function. A function-identifier that makes reference 
+// to an alphanumeric or national function can be specified anywhere that a data item of category alphanumeric 
+// or category national, can be referenced and where references to functions are not specifically prohibited.
+
+storageAreaReference:
+	  dataItemReference
+	| intrinsicDataNameReference /* specialRegister */
+	| autoAllocatedDataItemReference /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */
+	| functionIdentifier;
+
+// [Type ambiguity] : storageAreaReference and conditionReference cannot be distinguished at this parsing stage
+storageAreaReferenceOrConditionReference: storageAreaReference;
+
+// - 5. Reference modification : reference only a subset of the storage area -
+
+// p68: Identifiers
+// When used in a syntax diagram in this information, the term identifier refers to a
+// valid combination of a data-name or function-identifier with its qualifiers,
+// subscripts, and reference-modifiers as required for uniqueness of reference.
+// Rules for identifiers associated with a format can however specifically prohibit
+// qualification, subscripting, or reference modification.
+// The term data-name refers to a name that must not be qualified, subscripted, or
+// reference modified unless specifically permitted by the rules for the format.
+// - For a description of qualification, see “Qualification” on page 65.
+// - For a description of subscripting, see “Subscripting” on page 71.
+// - For a description of reference modification, see “Reference modification” on
+//   page 74.
+// p69: Duplication of data-names must not occur in those places where the data-names
+// cannot be made unique by qualification.
+// In the same program, the data-name specified as the subject of the entry whose
+// level-number is 01 that includes the EXTERNAL clause must not be the same
+// data-name specified for any other data description entry that includes the
+// EXTERNAL clause.
+// In the same DATA DIVISION, the data description entries for any two data items
+// for which the same data-name is specified must not include the GLOBAL clause.
+// DATA DIVISION names that are explicitly referenced must either be uniquely
+// defined or made unique through qualification. Unreferenced data items need not
+// be uniquely defined. The highest level in a data hierarchy (a data item associated
+// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
+// must be uniquely named if referenced. Data items associated with level-numbers
+// 02 through 49 are successively lower levels of the hierarchy.
+
+identifier:	storageAreaReferenceOrConditionReference (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+
+// p74: Reference modification
+// Reference modification defines a data item by specifying a leftmost character and
+// optional length for the data item.
+// data-name-1
+// Must reference a data item described explicitly or implicitly with usage
+// DISPLAY, DISPLAY-1, or NATIONAL. A national group item is processed
+// as an elementary data item of category national.
+// data-name-1 can be qualified or subscripted.
+// function-name-1
+// Must reference an alphanumeric or national function.
+// leftmost-character-position
+// Must be an arithmetic expression. The evaluation of leftmost-characterposition
+// must result in a positive nonzero integer that is less than or equal
+// to the number of characters in the data item referenced by data-name-1.
+// length
+// Must be an arithmetic expression.
+// The evaluation of length must result in a positive nonzero integer.
+// The sum of leftmost-character-position and length minus the value 1 must be
+// less than or equal to the number of character positions in data-name-1. If
+// length is omitted, the length used will be equal to the number of character
+// positions in data-name-1 plus 1, minus leftmost-character-position.
+// For usages DISPLAY-1 and NATIONAL, each character position occupies 2 bytes.
+// Reference modification operates on whole character positions and not on the
+// individual bytes of the characters in usages DISPLAY-1 and NATIONAL. For usage
+// DISPLAY, reference modification operates as though each character were a
+// single-byte character.
+// Unless otherwise specified, reference modification is allowed anywhere an
+// identifier or function-identifier that references a data item or function with the
+// same usage as the reference-modified data item is permitted.
+// Each character position referenced by data-name-1 or function-name-1 is assigned an
+// ordinal number incrementing by one from the leftmost position to the rightmost
+// position. The leftmost position is assigned the ordinal number one. If the data
+// description entry for data-name-1 contains a SIGN IS SEPARATE clause, the sign
+// position is assigned an ordinal number within that data item.
+// If data-name-1 is described with usage DISPLAY and category numeric,
+// numeric-edited, alphabetic, alphanumeric-edited, or external floating-point,
+// data-name-1 is operated upon for purposes of reference modification as if it were
+// redefined as a data item of category alphanumeric with the same size as the data
+// item referenced by data-name-1.
+// If data-name-1 is described with usage NATIONAL and category numeric,
+// numeric-edited, national-edited, or external floating-point, data-name-1 is operated
+// upon for purposes of reference modification as if it were redefined as a data item
+// of category national with the same size as the data item referenced by data-name-1.
+// If data-name-1 is a national group item, data-name-1 is processed as an elementary
+// data item of category national.
+// Reference modification creates a unique data item that is a subset of data-name-1 or
+// a subset of the value referenced by function-name-1 and its arguments, if any. This
+// unique data item is considered an elementary data item without the JUSTIFIED
+// clause.
+// When a function is reference-modified, the unique data item has class, category,
+// and usage national if the type of the function is national; otherwise, it has class
+// and category alphanumeric and usage display.
+// When data-name-1 is reference-modified, the unique data item has the same class,
+// category, and usage as that defined for the data item referenced by data-name-1
+// except that:
+// - If data-name-1 has category national-edited, the unique data item has category
+//   national.
+// - If data-name-1 has usage NATIONAL and category numeric-edited, numeric, or
+//   external floating-point, the unique data item has category national.
+// - If data-name-1 has usage DISPLAY, and category numeric-edited,
+//   alphanumeric-edited, numeric, or external floating-point, the unique data item
+//   has category alphanumeric.
+// - If data-name-1 references an alphanumeric group item, the unique data item is
+//   considered to have usage DISPLAY and category alphanumeric.
+// - If data-name-1 references a national group item, the unique data item has usage
+//   NATIONAL and category national.
+// If length is not specified, the unique data item created extends from and includes
+// the character position identified by leftmost-character-position up to and including
+// the rightmost character position of the data item referenced by data-name-1.
+
+// p75: Evaluation of operands
+// Reference modification for an operand is evaluated as follows:
+// - If subscripting is specified for the operand, the reference modification is
+//   evaluated immediately after evaluation of the subscript.
+// - If subscripting is not specified for the operand, the reference modification is
+//   evaluated at the time subscripting would be evaluated if subscripts had been
+//   specified.
+
+referenceModifier: leftMostCharacterPosition=arithmeticExpression ColonSeparator length=arithmeticExpression?;
+
+
+// [Type ambiguity] : indexName cannot be distinguished from identifier at this parsing stage
+identifierOrIndexName: identifier;
+
+// [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
+identifierOrFileName: identifier;
+
+// [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
+identifierOrClassName: identifier;
+
+
 
 // --- Arithmetic Expressions ---
 
@@ -102,8 +605,7 @@ arithmeticExpression:
 	|<assoc=right> arithmeticExpression PowerOperator arithmeticExpression
 	|  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression
 	|  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression
-	|  identifier
-	|  numericValue;
+	|  numericVariable1;
 
 
 // --- Conditional Expressions ---
@@ -517,7 +1019,7 @@ simpleRelation:
 // programPointer : identifier | NULL | NULLS
 // objectReference : identifier | SELF | NULL | NULLS
 
-operand: identifierOrIndexName | numericValue | alphanumericValue5 | repeatedAlphanumericValue2 | nullFigurativeConstant | SELF | arithmeticExpression; // indexName cannot be distinguished from identifier at this parsing stage
+operand: identifierOrIndexName | anyValue | nullFigurativeConstant | SELF | arithmeticExpression; // indexName cannot be distinguished from identifier at this parsing stage
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -542,473 +1044,62 @@ operand: identifierOrIndexName | numericValue | alphanumericValue5 | repeatedAlp
 signCondition: operand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
 
 
-// --- Identifiers ---
-
-// p68: Identifiers
-// When used in a syntax diagram in this information, the term identifier refers to a
-// valid combination of a data-name or function-identifier with its qualifiers,
-// subscripts, and reference-modifiers as required for uniqueness of reference.
-// Rules for identifiers associated with a format can however specifically prohibit
-// qualification, subscripting, or reference modification.
-// The term data-name refers to a name that must not be qualified, subscripted, or
-// reference modified unless specifically permitted by the rules for the format.
-// - For a description of qualification, see “Qualification” on page 65.
-// - For a description of subscripting, see “Subscripting” on page 71.
-// - For a description of reference modification, see “Reference modification” on
-//   page 74.
-// p69: Duplication of data-names must not occur in those places where the data-names
-// cannot be made unique by qualification.
-// In the same program, the data-name specified as the subject of the entry whose
-// level-number is 01 that includes the EXTERNAL clause must not be the same
-// data-name specified for any other data description entry that includes the
-// EXTERNAL clause.
-// In the same DATA DIVISION, the data description entries for any two data items
-// for which the same data-name is specified must not include the GLOBAL clause.
-// DATA DIVISION names that are explicitly referenced must either be uniquely
-// defined or made unique through qualification. Unreferenced data items need not
-// be uniquely defined. The highest level in a data hierarchy (a data item associated
-// with a level indicator (FD or SD in the FILE SECTION) or with level-number 01)
-// must be uniquely named if referenced. Data items associated with level-numbers
-// 02 through 49 are successively lower levels of the hierarchy.
-
-identifier:	storageAreaReferenceOrConditionReference (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
-
-// [Type ambiguity] : storageAreaReference and conditionReference cannot be distinguished at this parsing stage
-storageAreaReferenceOrConditionReference: storageAreaReference;
-
-// p74: Reference modification
-// Reference modification defines a data item by specifying a leftmost character and
-// optional length for the data item.
-// data-name-1
-// Must reference a data item described explicitly or implicitly with usage
-// DISPLAY, DISPLAY-1, or NATIONAL. A national group item is processed
-// as an elementary data item of category national.
-// data-name-1 can be qualified or subscripted.
-// function-name-1
-// Must reference an alphanumeric or national function.
-// leftmost-character-position
-// Must be an arithmetic expression. The evaluation of leftmost-characterposition
-// must result in a positive nonzero integer that is less than or equal
-// to the number of characters in the data item referenced by data-name-1.
-// length
-// Must be an arithmetic expression.
-// The evaluation of length must result in a positive nonzero integer.
-// The sum of leftmost-character-position and length minus the value 1 must be
-// less than or equal to the number of character positions in data-name-1. If
-// length is omitted, the length used will be equal to the number of character
-// positions in data-name-1 plus 1, minus leftmost-character-position.
-// For usages DISPLAY-1 and NATIONAL, each character position occupies 2 bytes.
-// Reference modification operates on whole character positions and not on the
-// individual bytes of the characters in usages DISPLAY-1 and NATIONAL. For usage
-// DISPLAY, reference modification operates as though each character were a
-// single-byte character.
-// Unless otherwise specified, reference modification is allowed anywhere an
-// identifier or function-identifier that references a data item or function with the
-// same usage as the reference-modified data item is permitted.
-// Each character position referenced by data-name-1 or function-name-1 is assigned an
-// ordinal number incrementing by one from the leftmost position to the rightmost
-// position. The leftmost position is assigned the ordinal number one. If the data
-// description entry for data-name-1 contains a SIGN IS SEPARATE clause, the sign
-// position is assigned an ordinal number within that data item.
-// If data-name-1 is described with usage DISPLAY and category numeric,
-// numeric-edited, alphabetic, alphanumeric-edited, or external floating-point,
-// data-name-1 is operated upon for purposes of reference modification as if it were
-// redefined as a data item of category alphanumeric with the same size as the data
-// item referenced by data-name-1.
-// If data-name-1 is described with usage NATIONAL and category numeric,
-// numeric-edited, national-edited, or external floating-point, data-name-1 is operated
-// upon for purposes of reference modification as if it were redefined as a data item
-// of category national with the same size as the data item referenced by data-name-1.
-// If data-name-1 is a national group item, data-name-1 is processed as an elementary
-// data item of category national.
-// Reference modification creates a unique data item that is a subset of data-name-1 or
-// a subset of the value referenced by function-name-1 and its arguments, if any. This
-// unique data item is considered an elementary data item without the JUSTIFIED
-// clause.
-// When a function is reference-modified, the unique data item has class, category,
-// and usage national if the type of the function is national; otherwise, it has class
-// and category alphanumeric and usage display.
-// When data-name-1 is reference-modified, the unique data item has the same class,
-// category, and usage as that defined for the data item referenced by data-name-1
-// except that:
-// - If data-name-1 has category national-edited, the unique data item has category
-//   national.
-// - If data-name-1 has usage NATIONAL and category numeric-edited, numeric, or
-//   external floating-point, the unique data item has category national.
-// - If data-name-1 has usage DISPLAY, and category numeric-edited,
-//   alphanumeric-edited, numeric, or external floating-point, the unique data item
-//   has category alphanumeric.
-// - If data-name-1 references an alphanumeric group item, the unique data item is
-//   considered to have usage DISPLAY and category alphanumeric.
-// - If data-name-1 references a national group item, the unique data item has usage
-//   NATIONAL and category national.
-// If length is not specified, the unique data item created extends from and includes
-// the character position identified by leftmost-character-position up to and including
-// the rightmost character position of the data item referenced by data-name-1.
-
-// p75: Evaluation of operands
-// Reference modification for an operand is evaluated as follows:
-// - If subscripting is specified for the operand, the reference modification is
-//   evaluated immediately after evaluation of the subscript.
-// - If subscripting is not specified for the operand, the reference modification is
-//   evaluated at the time subscripting would be evaluated if subscripts had been
-//   specified.
-
-referenceModifier: leftMostCharacterPosition=arithmeticExpression ColonSeparator length=arithmeticExpression?;
-
-// p16 : Special registers are reserved words that name storage areas generated by the compiler.
-// Each such storage area has a fixed name, and must not be defined within the program.
-// Unless otherwise explicitly restricted, a special register can be used wherever a data-name or identifier that has the same definition 
-// as the implicit definition of the special register can be used. 
-
-// p77: A function-identifier is a sequence of character strings and separators that uniquely references
-// the data item that results from the evaluation of a function. A function-identifier that makes reference 
-// to an alphanumeric or national function can be specified anywhere that a data item of category alphanumeric 
-// or category national, can be referenced and where references to functions are not specifically prohibited.
-
-storageAreaReference:
-	  dataItemReference
-	| /* specialRegister */ intrinsicDataNameReference
-	| /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */ autoAllocatedDataItemReference
-	| functionIdentifier;
-
-// These references automatically allocate a storage area
-
-autoAllocatedDataItemReference: linageCounterSpecialRegister | addressOfSpecialRegister | lengthOfSpecialRegister;
-
-// p20: A separate LINAGE-COUNTER special register is generated for each FD entry that contains a LINAGE clause. 
-// p69 : Format 3 - LINAGE-COUNTER Must be qualified each time it is referenced if more than one file description entry 
-// that contains a LINAGE clause has been specified in the source unit. 
-
-linageCounterSpecialRegister: LINAGE_COUNTER ((IN | OF) fileNameReference)?;
-
-// p17: The ADDRESS OF special register references the address of a data item in the LINKAGE SECTION, 
-// the LOCAL-STORAGE SECTION, or the WORKING-STORAGE SECTION.
-
-addressOfSpecialRegister: ADDRESS OF storageAreaReference;
-
-// p19: The LENGTH OF special register contains the number of bytes used by a data item.
-// LENGTH OF creates an implicit special register that contains the current byte length of the data item referenced by the identifier.
-
-lengthOfSpecialRegister:  LENGTH OF? storageAreaReference;
-
-// p77: A function-identifier is a sequence of character strings and separators that uniquely
-// references the data item that results from the evaluation of a function.
-// A function-identifier that makes reference to an alphanumeric or national function
-// can be specified anywhere that a data item of category alphanumeric or category
-// national, respectively, can be referenced and where references to functions are not
-// specifically prohibited, except as follows:
-// - As a receiving operand of any statement
-// - Where a data item is required to have particular characteristics (such as class
-//   and category, size, sign, and permissible values) and the evaluation of the
-//   function according to its definition and the particular arguments specified would
-//   not have these characteristics
-// A function-identifier that makes reference to an integer or numeric function can be
-// used wherever an arithmetic expression can be used.
-
-// p77: A function-identifier that makes reference to an alphanumeric or national function
-// can be specified anywhere that a data item of category alphanumeric or category
-// national, respectively, can be referenced and where references to functions are not
-// specifically prohibited.
-// A function-identifier that makes reference to an integer or numeric function can be
-// used wherever an arithmetic expression can be used.
-
-// p447 : Intrinsic functions
-// An intrinsic function is a function that performs a mathematical, character, or logical
-// operation. You can use intrinsic functions to make reference to a data item whose
-// value is derived automatically during execution.
-// Data processing problems often require the use of values that are not directly
-// accessible in the data storage associated with the object program, but instead must
-// be derived through performing operations on other data. An intrinsic function is a
-// function that performs a mathematical, character, or logical operation, and thereby
-// allows you to make reference to a data item whose value is derived automatically
-// during execution.
-// The intrinsic functions can be grouped into six categories, based on the type of
-// service performed:
-// - Mathematical
-// - Statistical
-// - Date/time
-// - Financial
-// - Character-handling
-// - General
-// You can reference a function by specifying its name, along with any required
-// arguments, in a PROCEDURE DIVISION statement.
-// Functions are elementary data items, and return alphanumeric character, national
-// character, numeric, or integer values. Functions cannot serve as receiving operands.
-
-// p477: The general format of a function-identifier is:
-// function-name-1
-// function-name-1 must be one of the intrinsic function names.
-// argument-1
-// argument-1 must be an identifier, a literal (other than a figurative constant),
-// or an arithmetic expression that satisfies the argument requirements for the
-// specified function.
-// reference-modifier
-// Can be specified only for functions of type alphanumeric or national.
-// A function-identifier can be specified wherever a data item of the type of the
-// function is allowed. The argument to a function can be any function or an
-// expression containing a function, including another evaluation of the same
-// function, whose result meets the requirements for the argument.
-// Within a PROCEDURE DIVISION statement, each function-identifier is evaluated
-// at the same time as any reference modification or subscripting associated with an
-// identifier in that same position would be evaluated.
-
-// ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
-
-functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
-
-// p478: argument-1 must be an identifier, a literal (other than a figurative constant),
-// or an arithmetic expression that satisfies the argument requirements for the
-// specified function.
-// p480: An argument must be one of the following items:
-// - A data item identifier
-// - An arithmetic expression
-// - A function-identifier
-// - A literal other than a figurative constant
-// - A special-register
-
-argument:
-	  identifier // an identifier can be a special register or a functionIdentifier
-	| numericValue 
-	| alphanumericValue5
-	| arithmeticExpression;
 
 
-// p68: Identifiers - Data-name
 
-dataItemReference: qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-// p70: Condition-name
-// condition-name-1
-// Can be referenced by statements and entries either in the program that
-// contains the definition of condition-name-1, or in a program contained
-// within that program.
-// If explicitly referenced, a condition-name must be unique or be made
-// unique through qualification or subscripting (or both) except when the
-// scope of names by itself ensures uniqueness of reference.
-
-conditionReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
-
-// p71: Subscripting
-// Subscripting is a method of providing table references through the use of
-// subscripts. A subscript is a positive integer whose value specifies the occurrence
-// number of a table element.
-// condition-name-1
-// The conditional variable for condition-name-1 must contain an OCCURS
-// clause or must be subordinate to a data description entry that contains an
-// OCCURS clause.
-// data-name-1
-// Must contain an OCCURS clause or must be subordinate to a data
-// description entry that contains an OCCURS clause.
-// integer-1
-// Can be signed. If signed, it must be positive.
-// data-name-3
-// Must be a numeric elementary item representing an integer.
-// data-name-3 can be qualified.
-// index-name-1
-// Corresponds to a data description entry in the hierarchy of the table being
-// referenced that contains an INDEXED BY phrase that specifies that name.
-// integer-2 , integer-3
-// Cannot be signed.
-// The subscripts, enclosed in parentheses, are written immediately following any
-// qualification for the name of the table element. The number of subscripts in such a
-// reference must equal the number of dimensions in the table whose element is
-// being referenced. That is, there must be a subscript for each OCCURS clause in the
-// hierarchy that contains the data-name including the data-name itself.
-// When more than one subscript is required, they are written in the order of
-// successively less inclusive dimensions of the data organization. If a
-// multidimensional table is thought of as a series of nested tables and the most
-// inclusive or outermost table in the nest is considered to be the major table with the
-// innermost or least inclusive table being the minor table, the subscripts are written
-// from left to right in the order major, intermediate, and minor.
-// For example, if TABLE-THREE is defined as:
-// 01 TABLE-THREE.
-// 05 ELEMENT-ONE OCCURS 3 TIMES.
-// 10 ELEMENT-TWO OCCURS 3 TIMES.
-// 15 ELEMENT-THREE OCCURS 2 TIMES PIC X(8).
-// a valid subscripted reference to TABLE-THREE is:
-// ELEMENT-THREE (2 2 1)
-// Subscripted references can also be reference modified. See the third example under
-// “Reference modification examples” on page 76. A reference to an item must not be
-// subscripted unless the item is a table element or an item or condition-name
-// associated with a table element.
-// Each table element reference must be subscripted except when such reference
-// appears:
-// - In a USE FOR DEBUGGING statement
-// - As the subject of a SEARCH statement
-// - In a REDEFINES clause
-// - In the KEY is phrase of an OCCURS clause
-// The lowest permissible occurrence number represented by a subscript is 1. The
-// highest permissible occurrence number in any particular case is the maximum
-// number of occurrences of the item as specified in the OCCURS clause. 
-
-// p73: Subscripting using data-names
-// When a data-name is used to represent a subscript, it can be used to reference
-// items within different tables. These tables need not have elements of the same size.
-// The same data-name can appear as the only subscript with one item and as one of
-// two or more subscripts with another item. A data-name subscript can be qualified;
-// it cannot be subscripted or indexed. For example, valid subscripted references to
-// TABLE-THREE, assuming that SUB1, SUB2, and SUB3 are all items subordinate to
-// SUBSCRIPT-ITEM, include:
-// ELEMENT-THREE (SUB1 SUB2 SUB3)
-// ELEMENT-THREE IN TABLE-THREE (SUB1 OF SUBSCRIPT-ITEM,
-// SUB2 OF SUBSCRIPT-ITEM, SUB3 OF SUBSCRIPT-ITEM)
-
-// p73: Subscripting using index-names (indexing)
-// Indexing allows such operations as table searching and manipulating specific
-// items. To use indexing, you associate one or more index-names with an item
-// whose data description entry contains an OCCURS clause.
-// An index associated with an index-name acts as a subscript, and its value
-// corresponds to an occurrence number for the item to which the index-name is
-// associated.
-// The INDEXED BY phrase, by which the index-name is identified and associated
-// with its table, is an optional part of the OCCURS clause. There is no separate entry
-// to describe the index associated with index-name. At run time, the contents of the
-// index corresponds to an occurrence number for that specific dimension of the table
-// with which the index is associated.
-// The initial value of an index at run time is undefined, and the index must be
-// initialized before it is used as a subscript. An initial value is assigned to an index
-// with one of the following statements:
-// - The PERFORM statement with the VARYING phrase
-// - The SEARCH statement with the ALL phrase
-// - The SET statement
-// The use of an integer or data-name as a subscript that references a table element or
-// an item within a table element does not cause the alteration of any index
-// associated with that table.
-// An index-name can be used to reference any table. However, the element length of
-// the table being referenced and of the table that the index-name is associated with
-// should match. Otherwise, the reference will not be to the same table element in
-// each table, and you might get runtime errors.
-// Data that is arranged in the form of a table is often searched. The SEARCH
-// statement provides facilities for producing serial and nonserial searches. It is used
-// to search for a table element that satisfies a specific condition and to adjust the
-// value of the associated index to indicate that table element.
-// To be valid during execution, an index value must correspond to a table element
-// occurrence of neither less than one, nor greater than the highest permissible
-// occurrence number.
-// For more information about index-names, see “Index-name” on page 71 and
-// “INDEXED BY phrase” on page 194.
-
-// p74: Relative subscripting
-// In relative subscripting, the name of a table element is followed by a subscript of the
-// form data-name or index-name followed by the operator + or -, and a positive or
-// unsigned integer literal.
-// The operators + and - must be preceded and followed by a space. The value of the
-// subscript used is the same as if the index-name or data-name had been set up or
-// down by the value of the integer. The use of relative indexing does not cause the
-// program to alter the value of the index.
-
-subscript: IntegerLiteral | ALL	| qualifiedDataNameOrIndexName withRelativeSubscripting?;
-
-withRelativeSubscripting: (PlusOperator | MinusOperator) IntegerLiteral;
-
-// p65: Uniqueness of reference
-// Every user-defined name in a COBOL program is assigned by the user to name a
-// resource for solving a data processing problem. To use a resource, a statement in a
-// COBOL program must contain a reference that uniquely identifies that resource.
-// To ensure uniqueness of reference, a user-defined name can be qualified. A
-// subscript is required for unique reference to a table element, except as specified in
-// “Subscripting” on page 71. A data-name or function-name, any subscripts, and the
-// specified reference-modifier uniquely reference a data item defined by reference
-// modification.
-// When the same name has been assigned in separate programs to two or more
-// occurrences of a resource of a given type, and when qualification by itself does not
-// allow the references in one of those programs to differentiate between the
-// identically named resources, then certain conventions that limit the scope of names
-// apply. The conventions ensure that the resource identified is that described in the
-// program containing the reference. For more information about resolving
-// program-names, see “Resolution of names” on page 62.
-// Unless otherwise specified by the rules for a statement, any subscripts and
-// reference modification are evaluated only once as the first step in executing that
-// statement.
-
-// p65: Qualification
-// A name that exists within a hierarchy of names can be made unique by specifying
-// one or more higher-level names in the hierarchy. The higher-level names are called
-// qualifiers, and the process by which such names are made unique is called
-// qualification.
-// Qualification is specified by placing one or more phrases after a user-specified
-// name, with each phrase made up of the word IN or OF followed by a qualifier. (IN
-// and OF are logically equivalent.)
-// In any hierarchy, the data-name associated with the highest level must be unique if
-// it is referenced, and cannot be qualified.
-// You must specify enough qualification to make the name unique; however, it is not
-// always necessary to specify all the levels of the hierarchy. For example, if there is
-// more than one file whose records contain the field EMPLOYEE-NO, but only one of the
-// files has a record named MASTER-RECORD:
-// - EMPLOYEE-NO OF MASTER-RECORD sufficiently qualifies EMPLOYEE-NO.
-// - EMPLOYEE-NO OF MASTER-RECORD OF MASTER-FILE is valid but unnecessary.
-// Qualification rules
-// The rules for qualifying a name are:
-// - A name can be qualified even though it does not need qualification except in a
-//   REDEFINES clause, in which case it must not be qualified.
-// - Each qualifier must be of a higher level than the name it qualifies and must be
-//   within the same hierarchy.
-// - If there is more than one combination of qualifiers that ensures uniqueness, any
-//   of those combinations can be used.
-// Identical names
-// When programs are directly or indirectly contained within other programs, each
-// program can use identical user-defined words to name resources.
-// A program references the resources that program describes rather than the
-// same-named resources described in another program, even if the names are
-// different types of user-defined words.
-// These same rules apply to classes and their contained methods.
-
-// p67: References to DATA DIVISION names
-// This section discusses the following types of references.
-// - “Simple data reference”
-// - “Identifiers” on page 68
-// Simple data reference
-// The most basic method of referencing data items in a COBOL program is simple
-// data reference, which is data-name-1 without qualification, subscripting, or reference
-// modification. Simple data reference is used to reference a single elementary or
-// group item.
-// data-name-1
-// Can be any data description entry.
-// data-name-1 must be unique in a program.
-
-qualifiedDataName: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)*;
-
-// p70: If qualification is used to make a condition-name unique, the associated
-// conditional variable can be used as the first qualifier. If qualification is
-// used, the hierarchy of names associated with the conditional variable itself
-// must be used to make the condition-name unique.
-// If references to a conditional variable require subscripting, reference to any
-// of its condition-names also requires the same combination of subscripting.
-// In this information, condition-name refers to a condition-name qualified or
-// subscripted, as necessary.
-// data-name-1
-// Can be a record-name.
-// file-name-1
-// Must be identified by an FD or SD entry in the DATA DIVISION.
-// file-name-1 must be unique within this program.
-// mnemonic-name-1
-// For information about acceptable values for mnemonic-name-1, see
-// “SPECIAL-NAMES paragraph” on page 112.
-
-// p70: Format 1: condition-name in data division
-//conditionNameReferenceInDataDivision: conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
-
-// p70: Format 2: condition-name in SPECIAL-NAMES paragraph
-// conditionNameReferenceInSpecialNamesParagraph: conditionForUPSISwitchName ((IN | OF) mnemonicForUPSISwitchName)*;
-
-// => Impossible to distinguish between the following types at this parsing stage ;
-// - first token : conditionName or conditionForUPSISwitchName
-// - following tokens : dataName or fileName or menmonicForUPSISwitchName
-
-qualifiedConditionName: conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+// --- Cobol variables :  ---
 
 
-// Ambiguous references in Cobol grammar rules
 
-// [Type ambiguity] : indexName cannot be distinguished from qualifiedDataName at this parsing stage
-qualifiedDataNameOrIndexName: qualifiedDataName;
+characterVariable: dataNameReference | characterValue4;
 
-// [Type ambiguity] : indexName cannot be distinguished from identifier at this parsing stage
-identifierOrIndexName: identifier;
+numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue11;
 
-// [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
-identifierOrFileName: identifier;
 
-// [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
-identifierOrClassName: identifier;
+integerVariable: dataNameReference | integerValue;
+
+
+		
+numericVariable1: identifier | numericValue;
+
+numericVariable2: identifier;
+
+
+alphanumericVariable1: identifier | alphanumericValue11;
+
+alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
+
+
+numericOrAlphanumericValue: numericValue | alphanumericValue11;
+
+
+numericOrIndexVariable: identifierOrIndexName | numericValue;
+
+
+programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable: programNameReferenceOrProgramEntryReference | identifier;
+
+
+anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
+
+programNameVariable: programNameReference1 | identifier;
+
+
+classNameVariable: identifierOrClassName;
+
+methodNameVariable: methodNameReference | identifier;
+
+anyVariable: identifier | numericValue | alphanumericValue5;
+
+anyVariable3: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
+
+anyVariable2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | repeatedAlphanumericValue2;
+
+programNameOrProgramEntryVariable: programNameReferenceOrProgramEntryReference | identifier;
+
+integerVariable2: identifier | integerValue;
+
+alphanumericOrRepeatedAlphanumericValue: alphanumericValue5 | repeatedAlphanumericValue;
+
+anyVariable5: identifier | numericValue | alphanumericValue11;
+
+anyValue: numericValue | alphanumericValue5 | repeatedAlphanumericValue2;
