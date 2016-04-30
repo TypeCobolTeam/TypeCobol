@@ -349,6 +349,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public string Picture { get; set; }
 		public DataType DataType { get; set; }
+		public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 
         public bool IsGroup {
             get { return Picture == null; }

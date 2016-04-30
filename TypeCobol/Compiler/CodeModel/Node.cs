@@ -34,10 +34,52 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public CodeModel.SymbolTable SymbolTable { get; set; }
+
+
+
+		private static Dictionary<string,Attribute> Attributes;
+		static Node() {
+			Attributes = new Dictionary<string,Attribute>();
+			Attributes["TYPE"] = new Typed("TYPE");
+			Attributes["TYPEDEF"] = new TypeDefinition("TYPEDEF");
+		}
+		public string this[string attribute] {
+			get {
+				try { return Attributes[attribute].GetValue(CodeElement, SymbolTable); }
+				catch(KeyNotFoundException ex) { return null; }
+			}
+		}
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
 	public interface NodeVisitor {
 		void Visit(Node node);
+	}
+
+	public interface Attribute {
+		string GetValue(CodeElement ce, SymbolTable table);
+	}
+	internal abstract class NodeAttribute: Attribute {
+		public string Key { get; private set; }
+		public NodeAttribute(string key) { this.Key = key; }
+		public abstract string GetValue(CodeElement ce, SymbolTable table);
+	}
+
+	internal class Typed: NodeAttribute {
+		public Typed(string key): base(key) { }
+		public override string GetValue(CodeElement ce, SymbolTable table) {
+			var data = ce as DataDescriptionEntry;
+			if (data == null || data.IsTypeDefinition) return null;
+			if (!table.IsCustomType(data.DataType)) return null;
+			return data.DataType.Name;
+		}
+	}
+	internal class TypeDefinition: NodeAttribute {
+		public TypeDefinition(string key): base(key) { }
+		public override string GetValue(CodeElement ce, SymbolTable table) {
+			var data = ce as DataDescriptionEntry;
+			if (data == null || !data.IsTypeDefinitionPart) return null;
+			return data.DataType.Name;
+		}
 	}
 }
