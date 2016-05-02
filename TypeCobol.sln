@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "CLI\src\CLI.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI", "CLI\src\CLI.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor.VisualStudio", "Editors\VisualStudio\Editor.VisualStudio.csproj", "{83E6C379-4617-490B-A5C6-225276EA7096}"
 EndProject
@@ -21,6 +22,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen.Test", "Codegen\test\Codegen.Test.csproj", "{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4034CBC5-D3DC-45E5-81F2-605579E6B876} = {4034CBC5-D3DC-45E5-81F2-605579E6B876}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0EE37B65-4DBD-4AAC-8EE2-53D0A890D0F4}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Global
