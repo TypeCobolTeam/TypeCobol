@@ -6,7 +6,7 @@
       <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE" type="BOOL"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">
+      <pattern location="NODE" action="replace" var="LEVEL=$LEVEL,NAME=$NAME">
 %LEVEL  %NAME-value PIC X VALUE LOW-VALUE.
   88  %NAME       VALUE 'T'.
   88  %NAME-false VALUE 'F'.

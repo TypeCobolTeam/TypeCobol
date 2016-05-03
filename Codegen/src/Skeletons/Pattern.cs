@@ -15,6 +15,8 @@ namespace TypeCobol.Codegen.Skeletons {
 		public Dictionary<string,string> Variables { get; internal set; }
 		/// <summary>Code template.</summary>
 		public string Template  { get; internal set; }
+		/// <summary>Variable Delimiter</summary>
+		internal string Delimiter = "%";
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
