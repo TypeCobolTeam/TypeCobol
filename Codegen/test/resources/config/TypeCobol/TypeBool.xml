@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<skeletons>
+
+  <skeleton name="BOOL.DECLARE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE" type="BOOL"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.
+  88  %NAME       VALUE 'T'.
+  88  %NAME-false VALUE 'F'.
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <skeleton name="BOOL.SET">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" receiver="FALSE"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+SET %sender.name-false TO TRUE.
+      </pattern>
+    </patterns>
+  </skeleton>
+
+</skeletons>
