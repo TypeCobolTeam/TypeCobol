@@ -14,24 +14,33 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
+      *01  BOOL            TYPEDEF STRONG.
+      *    05  var         VALUE 'T'.
+      *    05  var-value   VALUE 'F'.
+
        01  x PIC X.
+
       * Booleans declaration
+      *01  Identifier TYPE BOOL.
        01  Identifier-value PIC X VALUE LOW-VALUE.
-           88  Identifier       VALUE 'T'.
-           88  Identifier-false VALUE 'F'.
+         88  Identifier       VALUE 'T'.
+         88  Identifier-false VALUE 'F'.
+      *01  AnotherOne TYPE BOOL.
        01  AnotherOne-value PIC X VALUE LOW-VALUE.
-           88  AnotherOne       VALUE 'T'.
-           88  AnotherOne-false VALUE 'F'.
+         88  AnotherOne       VALUE 'T'.
+         88  AnotherOne-false VALUE 'F'.
       * WARNING: initialization of a group containing booleans
        01  AGroup.
-           05 a PIC X.
-             10 a PIC X.
-             10 b-value PIC X VALUE LOW-VALUE.
-               88  b       VALUE 'T'.
-               88  b-false VALUE 'F'.
-           05 b-value PIC X VALUE LOW-VALUE.
-               88  b       VALUE 'T'.
-               88  b-false VALUE 'F'.
+         05  a PIC X.
+           10  a PIC X.
+      *    10  b TYPE BOOL.
+         10  b-value PIC X VALUE LOW-VALUE.
+           88  b       VALUE 'T'.
+           88  b-false VALUE 'F'.
+      *  05  b TYPE BOOL.
+         05  b-value PIC X VALUE LOW-VALUE.
+           88  b       VALUE 'T'.
+           88  b-false VALUE 'F'.
 
 
 
@@ -40,24 +49,24 @@
 
        TRAITEMENT.
            SET Identifier  TO TRUE
-           SET Identifier  TO FALSE
-		   
+           SET Identifier-false  TO TRUE
+      * OK
            MOVE TRUE         TO Identifier
            MOVE FALSE        TO Identifier
            MOVE AnotherOne   TO Identifier
            MOVE Identifier   TO x
-      * ERROR: a boolean can only receive booleans, TRUE or FALSE
+      * KO: a boolean can only receive booleans, TRUE or FALSE
            MOVE x   TO Identifier
-      * ERROR: a boolean subordinates are read-only
+      * KO: a boolean subordinates are read-only
            MOVE x   TO Identifier-value
            MOVE x   TO Identifier-false OF Identifier-value
-
+      * OK
            MOVE x   TO a      IN AGroup
            MOVE x   TO a OF a IN AGroup
            MOVE Identifier    TO b      IN AGroup
            MOVE Identifier    TO b OF a IN AGroup
            MOVE b IN AGroup   TO b OF a IN AGroup
-      * WARNING: moving to a group containing booleans
+      * KO: moving to a group containing booleans
            MOVE x   TO b      IN AGroup
            MOVE x   TO b OF a IN AGroup
 

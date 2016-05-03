@@ -40,10 +40,10 @@ namespace TypeCobol.Compiler.CodeElements
 		private static Dictionary<string,Attribute> Attributes;
 		static Node() {
 			Attributes = new Dictionary<string,Attribute>();
-			Attributes["NAME"]  = new Named("NAME");
-			Attributes["LEVEL"] = new Level("LEVEL");
-			Attributes["TYPE"]    = new Typed("TYPE");
-			Attributes["TYPEDEF"] = new TypeDefinition("TYPEDEF");
+			Attributes["name"]  = new Named("NAME");
+			Attributes["level"] = new Level("LEVEL");
+			Attributes["type"]    = new Typed("TYPE");
+			Attributes["typedef"] = new TypeDefinition("TYPEDEF");
 		}
 		public string this[string attribute] {
 			get {

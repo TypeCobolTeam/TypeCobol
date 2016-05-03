@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Tools;
 
@@ -9,22 +10,27 @@ namespace TypeCobol.Codegen.Skeletons {
 	}
 	public class ConditionOnNode: Condition {
 		public System.Type Node { get; internal set; }
-		public string Attribute { get; internal set; }
+		public Dictionary<string,string> Attributes { get; internal set; }
 
 		public bool Verify(Node node) {
 			var ce = node.CodeElement;
 			if (ce == null) return false;
-			if (Node != null) {
-				bool okay = Reflection.IsTypeOf(ce.GetType(), Node);
-				if (Attribute == null) return okay;
-				else return okay && node[Attribute] != null;
-			} else 
-			if (Attribute != null) return node[Attribute] != null;
-			return false;
+			if (Node != null && !Reflection.IsTypeOf(ce.GetType(), Node)) return false;
+			foreach(var x in Attributes) {
+				if ("*".Equals(x.Value)) {
+					if (node[x.Key] == null) return false;
+				} else {
+					if (node[x.Key] != x.Value) return false;
+				}
+			}
+			return true;
 		}
 
 		public override string ToString() {
-			return "Node.Type="+Node+(Attribute!=null?(" clause="+Attribute):"");
+			var str = new System.Text.StringBuilder();
+			str.Append("node.Type=").Append(Node);
+			foreach(var x in Attributes) str.Append(' ').Append(x.Key).Append(':').Append(x.Value);
+			return str.ToString();
 		}
 	}
 

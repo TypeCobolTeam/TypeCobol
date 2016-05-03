@@ -14,13 +14,12 @@
       * Booleans declaration
        01  Identifier TYPE BOOL.
        01  AnotherOne TYPE BOOL.
-
       * WARNING: initialization of a group containing booleans
        01  AGroup.
-           05 a PIC X.
-             10 a PIC X.
-             10 b TYPE BOOL.
-           05 b TYPE BOOL.
+           05  a PIC X.
+             10  a PIC X.
+             10  b TYPE BOOL.
+           05  b TYPE BOOL.
 
 
 
@@ -30,23 +29,23 @@
        TRAITEMENT.
            SET Identifier  TO TRUE
            SET Identifier  TO FALSE
-		   
+      * OK
            MOVE TRUE         TO Identifier
            MOVE FALSE        TO Identifier
            MOVE AnotherOne   TO Identifier
            MOVE Identifier   TO x
-      * ERROR: a boolean can only receive booleans, TRUE or FALSE
+      * KO: a boolean can only receive booleans, TRUE or FALSE
            MOVE x   TO Identifier
-      * ERROR: a boolean subordinates are read-only
+      * KO: a boolean subordinates are read-only
            MOVE x   TO Identifier-value
            MOVE x   TO Identifier-false OF Identifier-value
-
+      * OK
            MOVE x   TO a      IN AGroup
            MOVE x   TO a OF a IN AGroup
            MOVE Identifier    TO b      IN AGroup
            MOVE Identifier    TO b OF a IN AGroup
            MOVE b IN AGroup   TO b OF a IN AGroup
-      * WARNING: moving to a group containing booleans
+      * KO: moving to a group containing booleans
            MOVE x   TO b      IN AGroup
            MOVE x   TO b OF a IN AGroup
 

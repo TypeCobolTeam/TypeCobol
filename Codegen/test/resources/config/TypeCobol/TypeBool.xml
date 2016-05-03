@@ -3,10 +3,10 @@
 
   <skeleton name="BOOL.DECLARE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE" type="BOOL"/>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" type="BOOL"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace" var="LEVEL=$LEVEL,NAME=$NAME">
+      <pattern location="NODE" action="replace" var="LEVEL=$level,NAME=$NAME">
 %LEVEL  %NAME-value PIC X VALUE LOW-VALUE.
   88  %NAME       VALUE 'T'.
   88  %NAME-false VALUE 'F'.
