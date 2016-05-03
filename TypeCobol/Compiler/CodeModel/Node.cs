@@ -40,7 +40,9 @@ namespace TypeCobol.Compiler.CodeElements
 		private static Dictionary<string,Attribute> Attributes;
 		static Node() {
 			Attributes = new Dictionary<string,Attribute>();
-			Attributes["TYPE"] = new Typed("TYPE");
+			Attributes["NAME"]  = new Named("NAME");
+			Attributes["LEVEL"] = new Level("LEVEL");
+			Attributes["TYPE"]    = new Typed("TYPE");
 			Attributes["TYPEDEF"] = new TypeDefinition("TYPEDEF");
 		}
 		public string this[string attribute] {
@@ -65,6 +67,22 @@ namespace TypeCobol.Compiler.CodeElements
 		public abstract string GetValue(CodeElement ce, SymbolTable table);
 	}
 
+	internal class Named: NodeAttribute {
+		public Named(string key): base(key) { }
+		public override string GetValue(CodeElement ce, SymbolTable table) {
+			var data = ce as DataDescriptionEntry;
+			if (data == null || data.Name == null) return null;
+			return data.Name.Name;
+		}
+	}
+	internal class Level: NodeAttribute {
+		public Level(string key): base(key) { }
+		public override string GetValue(CodeElement ce, SymbolTable table) {
+			var data = ce as DataDescriptionEntry;
+			if (data == null) return null;
+			return string.Format("{0:00}", data.LevelNumber);
+		}
+	}
 	internal class Typed: NodeAttribute {
 		public Typed(string key): base(key) { }
 		public override string GetValue(CodeElement ce, SymbolTable table) {

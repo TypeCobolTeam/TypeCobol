@@ -148,7 +148,7 @@ namespace TypeCobol.Codegen.Config {
 			foreach(var var in vars.Split(',')) {
 				var kv = var.Split('=');
 				if (kv.Length != 2) continue;
-				string key = kv[0].Trim().Substring(1);//remove starting %
+				string key = kv[0].Trim();
 				string value = kv[1].Trim();
 				pattern.Variables.Add(key, value);
 			}
