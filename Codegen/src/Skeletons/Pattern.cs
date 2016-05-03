@@ -18,6 +18,9 @@ namespace TypeCobol.Codegen.Skeletons {
 		/// <summary>Variable Delimiter</summary>
 		internal string Delimiter = "%";
 
+		internal bool Trim = true;
+		internal bool Indent = true;
+
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
 			if (Name != null) str.Append(Name);

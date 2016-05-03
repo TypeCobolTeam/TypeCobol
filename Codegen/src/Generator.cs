@@ -105,7 +105,16 @@ System.Console.WriteLine(line.Text);
 
 		private string CreateGeneratedText(Node node, Pattern pattern) {
 			var variables = CreateVariables(pattern.Variables, node);
-			return TypeCobol.Codegen.Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
+			string generated = TypeCobol.Codegen.Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
+			if (pattern.Trim) generated = generated.Trim();
+			if (pattern.Indent) {
+				string indent = CreateIndent(node.CodeElement as DataDescriptionEntry);
+				var lines = generated.Split('\n');
+				var str = new System.Text.StringBuilder();
+				foreach(string line in lines) str.Append(indent+line);
+				generated = str.ToString();
+			}
+			return generated;
 		}
 
 		private Dictionary<string,string> CreateVariables(Dictionary<string,string> variables, Node node) {
@@ -118,6 +127,14 @@ System.Console.WriteLine(line.Text);
 				results[key] = value;
 			}
 			return results;
+		}
+
+		private string CreateIndent(DataDescriptionEntry data) {
+			var indent = "       ";
+			if (data != null) {
+				for(int c=0; c<data.Generation; c++) indent += "  ";
+			}
+			return indent;
 		}
 	}
 
@@ -189,7 +206,7 @@ System.Console.WriteLine(line.Text);
 				index = IndexOf(line);
 				output.Remove(line);
 				output.Insert(index++, factory.CreateInsertedLine(factory.CreateCommentedLine(line)));
-				output.Insert(index,   factory.CreateInsertedLine("       "+text));
+				output.Insert(index,   factory.CreateInsertedLine(text));
 			}
 			return false;
 		}
