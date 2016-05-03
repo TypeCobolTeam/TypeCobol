@@ -366,9 +366,7 @@ functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator arg
 // - A literal other than a figurative constant
 // - A special-register
 
-argument:
-	  anyVariable // an identifier can be a special register or a functionIdentifier
-	| arithmeticExpression;
+argument: alphanumericExpression2;
 
 // - 4. Storage areas -
 
@@ -1019,7 +1017,7 @@ simpleRelation:
 // programPointer : identifier | NULL | NULLS
 // objectReference : identifier | SELF | NULL | NULLS
 
-operand: identifierOrIndexName | anyValue | nullFigurativeConstant | SELF | arithmeticExpression; // indexName cannot be distinguished from identifier at this parsing stage
+operand: alphanumericExpressionOrIndexName | nullPointerValue | selfObjectIdentifier; // indexName cannot be distinguished from identifier at this parsing stage
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -1049,57 +1047,62 @@ signCondition: operand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
 
 // --- Cobol variables :  ---
 
-
-
-characterVariable: dataNameReference | characterValue4;
-
-numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue11;
-
+// => fichier "g4temp.txt" sur le bureau
+// TO DO
+// X 1. Refactor set statement grammar + all statements with format
+// X 2. Create nullPointerValue / objectReferenceValue / xxxValueRange / what to do with anyValue ?
+// 3. Refactor identifierOrFileName / identifierOrIndexName ... with precise first token type if possible
+// 4. Create storageArea / numericVariable / alphanumericVariable ... to replace all identifier references 
+// 5. Rename xxxVariable1 to xxxExpression, type expression as argument / comparison, sending / receiving ...
+// 6. Extract all enumerations in xxxEnum rules
+// 7. Vérifier le support des repeatedAlphanumericValue / repeatedAlphanumericValue2 dans les règles finales
 
 integerVariable: dataNameReference | integerValue;
 
-
+integerVariable2: identifier | integerValue;
 		
 numericVariable1: identifier | numericValue;
 
 numericVariable2: identifier;
 
+characterVariable: dataNameReference | characterValue4;
 
 alphanumericVariable1: identifier | alphanumericValue11;
 
 alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
 
 
-numericOrAlphanumericValue: numericValue | alphanumericValue11;
-
-
 numericOrIndexVariable: identifierOrIndexName | numericValue;
 
+numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue11;
 
-programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable: programNameReferenceOrProgramEntryReference | identifier;
-
-
-anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 programNameVariable: programNameReference1 | identifier;
 
+programNameOrProgramEntryVariable: programNameReferenceOrProgramEntryReference | identifier;
 
-classNameVariable: identifierOrClassName;
+programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable: programNameReferenceOrProgramEntryReference | identifier;
+
+classNameOrObjectReferenceVariable: identifierOrClassName;
 
 methodNameVariable: methodNameReference | identifier;
 
+
 anyVariable: identifier | numericValue | alphanumericValue5;
+
+anyVariable2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue2;
 
 anyVariable3: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
-anyVariable2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue | repeatedAlphanumericValue2;
-
-programNameOrProgramEntryVariable: programNameReferenceOrProgramEntryReference | identifier;
-
-integerVariable2: identifier | integerValue;
-
-alphanumericOrRepeatedAlphanumericValue: alphanumericValue5 | repeatedAlphanumericValue;
+anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
 
 anyVariable5: identifier | numericValue | alphanumericValue11;
 
-anyValue: numericValue | alphanumericValue5 | repeatedAlphanumericValue2;
+
+booleanExpression: conditionalExpression | booleanValue;
+
+alphanumericExpression: anyVariable3 | arithmeticExpression;
+
+alphanumericExpression2: anyVariable3 | arithmeticExpression;
+
+alphanumericExpressionOrIndexName: identifierOrIndexName | anyValue  | arithmeticExpression;

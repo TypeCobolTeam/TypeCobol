@@ -3220,7 +3220,9 @@ redefinesClause:
 //   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
-                 /* 66 dataName */ RENAMES dataNameReference ((THROUGH | THRU) dataNameReference)?;
+                 /* 66 dataName */ RENAMES (dataNameReference | dataNamesRange);
+
+dataNamesRange: dataNameReference (THROUGH | THRU) dataNameReference;
 
 // p221: The SIGN clause specifies the position and mode of representation of the
 // operational sign for the signed numeric item to which it applies.
@@ -3416,7 +3418,7 @@ usageClause:
 // FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
 
 valueClause:
-               VALUE IS? (anyValue | nullFigurativeConstant);
+               VALUE IS? anyValue2;
 			   
 // p239: Format 2: condition-name value
 // valueClause:
@@ -3462,7 +3464,9 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-		((VALUE IS?) | (VALUES ARE?)) (anyValue ((THROUGH | THRU) anyValue)?)+; 
+		((VALUE IS?) | (VALUES ARE?)) (anyValue | valuesRange)+; 
+
+valuesRange: anyValue (THROUGH | THRU) anyValue;
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -4139,15 +4143,18 @@ sentenceEnd:
 // TIME Has the implicit PICTURE 9(8). The sequence of data elements (from left to right) is: Two digits for hour of day Two digits for minute of hour Two digits for second of minute Two digits for hundredths of second
 // Thus 2:41 PM is expressed as 14410000.
 
-acceptStatement:
-	ACCEPT identifier (FROM (mnemonicForEnvironmentNameReferenceOrEnvironmentName | (DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME))?;
+acceptStatement: acceptDataTransfer | acceptSystemDateTime;
 
+acceptDataTransfer:
+	ACCEPT identifier (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
 
+acceptSystemDateTime:
+	ACCEPT identifier FROM ((DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
 
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
 addStatement:
-	addStatementFormat3 | addStatementFormat2 | addStatementFormat1;
+	addSimple | addGiving | addCorresponding;
 
 addStatementEnd: END_ADD;
 
@@ -4166,17 +4173,17 @@ addStatementEnd: END_ADD;
 // p298: Format 1: ADD statement
 // All identifiers or literals that precede the keyword TO are added together, and this sum is added to and stored in identifier-2. 
 // This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
-addStatementFormat1:
+addSimple:
 		ADD numericVariable1+ TO numericVariableRounded+;
 
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
-addStatementFormat2:
+addGiving:
 		ADD numericVariable1+ TO? numericVariableTmp GIVING numericVariableRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
-addStatementFormat3:
+addCorresponding:
 		ADD corresponding numericVariable2 TO numericVariableRounded;
 
 numericVariableTmp: numericVariable1;
@@ -4694,33 +4701,25 @@ byReferenceOrByValueIdentifiers:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE (anyVariable3 | arithmeticExpression | conditionalExpression | booleanValue)
-	  ( ALSO (anyVariable3 | arithmeticExpression | conditionalExpression | booleanValue) )*;
+	EVALUATE comparisonLHSExpression
+	  ( ALSO comparisonLHSExpression )*;
+
+comparisonLHSExpression: alphanumericExpression | booleanExpression;
 
 whenCondition:
-	WHEN LeftParenthesisSeparator? (ANY | booleanValue | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? (ANY | booleanValue | conditionalExpression | evaluatePhrase1Choice4) RightParenthesisSeparator? )*;
+	WHEN LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator? )*;
 
 whenEvaluateCondition: whenCondition;
 
-evaluatePhrase1Choice4:
-	NOT? (anyVariable3 | arithmeticExpression) evaluateThrough?;
+comparisonRHSExpression: booleanExpression | NOT? (alphanumericExpression | alphanumericExpressionsRange);
 
-evaluateThrough:
-	(THROUGH | THRU) (anyVariable3 | arithmeticExpression);
+alphanumericExpressionsRange: alphanumericExpression (THROUGH | THRU) alphanumericExpression;
 
 whenOtherCondition:
 	WHEN OTHER;
 
 evaluateStatementEnd: END_EVALUATE;
-
-// p333: Determining values
-// - Any selection subject in which expression-1, expression-2, ... is specified as an arithmetic expression
-// - Any selection subject in which expression-1, expression-2, ... is specified as a conditional expression 
-
-//expression:
-//              arithmeticExpression | conditionalExpression;              
-           
 
 
 // p335: EXIT statement
@@ -4815,8 +4814,13 @@ gobackStatement:
 //                 /*paragraphName PeriodSeparator */ GO TO? PeriodSeparator;
 // When an ALTER statement refers to a paragraph, the paragraph can consist only of the paragraph-name followed by an unconditional or altered GO TO statement.
 
-gotoStatement:
-                 GO TO? procedureName* (DEPENDING ON? identifier)?;
+gotoStatement: gotoSimple | gotoConditional;
+
+gotoSimple:
+	GO TO? procedureName;
+
+gotoConditional:
+	GO TO? procedureName+ DEPENDING ON? identifier;
 
 // p341: IF statement
 // The IF statement evaluates a condition and provides for alternative actions in the
@@ -5438,7 +5442,7 @@ inspectBy: BY alphanumericVariable2;
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (classNameVariable | SELF | SUPER) (methodNameVariable | NEW) (USING invokeUsing+)? invokeReturning?;
+	INVOKE (classNameOrObjectReferenceVariable | selfObjectIdentifier | superObjectIdentifier) (methodNameVariable | NEW) (USING invokeUsing+)? invokeReturning?;
 
 invokeUsing:
 	BY? VALUE anyVariable+;
@@ -5732,8 +5736,13 @@ mergeStatement:
 // ... more details p370->374 Elementary moves ...
 // ... more details p374->375 Group moves ...
 
-moveStatement:
-	MOVE corresponding? anyVariable2 TO identifier+;
+moveStatement: moveSimple | moveCorresponding;
+
+moveSimple:
+	MOVE anyVariable2 TO identifier+;
+
+moveCorresponding:
+	MOVE corresponding identifier TO identifier;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
@@ -5900,7 +5909,7 @@ performStatement:
 
 
 performProcedureStatement:
-	PERFORM procedureName ((THROUGH |THRU) procedureName)? (			  // - Basic PERFORM
+	PERFORM (procedureName | proceduresRange) (			  // - Basic PERFORM
 		(numericVariable1 TIMES)							 // - TIMES phrase PERFORM
 	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
 	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
@@ -6435,12 +6444,25 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p412->414 Binary search ...
 // ... more details p414 Search statement considerations ...
 
-searchStatement:
-	SEARCH ALL? identifier (VARYING identifierOrIndexName)?;
+searchStatement: serialSearch | binarySearch;
+
+serialSearch:
+	SEARCH identifier (VARYING identifierOrIndexName)?;
+
+binarySearch:
+	SEARCH ALL identifier;
 
 whenSearchCondition:
-	WHEN  (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)) | conditionalExpression
-	(AND (qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) (anyVariable3 | arithmeticExpression)) | conditionalExpression)*;
+	WHEN searchCondition (AND searchCondition)*;
+
+searchCondition:
+	serialSearchCondition | binarySearchCondition;
+
+serialSearchCondition: 
+	conditionalExpression;
+
+binarySearchCondition:
+	qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) alphanumericExpression;
 
 searchStatementEnd: END_SEARCH;
 
@@ -6665,24 +6687,26 @@ searchStatementEnd: END_SEARCH;
 
 setStatement:
 	setStatementForAssignation	//SET format 1 for basic table handling
-								//SET format 4 for condition-names
 								//SET format 5 for USAGE IS POINTER
 								//SET format 6 for procedure-pointer and function-pointer data items
 								//SET format 7 for USAGE OBJECT REFERENCE data items
 	| setStatementForIndexes	//SET format 2 for adjusting indexes
-	| setStatementForSwitches;	//SET format 3 for external switches
+	| setStatementForSwitches	//SET format 3 for external switches
+	| setStatementForConditionNames;	//SET format 4 for condition-names
 
+//Format 1: SET for basic table handling
+//Format 5: SET for USAGE IS POINTER
+//Format 6: SET for procedure-pointer and function-pointer data items
+//Format 7: SET for USAGE OBJECT REFERENCE data items
 setStatementForAssignation:
-	SET setStatementForAssignationReceiving=identifier+ TO setStatementForAssignationSending;
-	// where identifier can also be a index name, procedure pointer, function pointer or an object reference Id
+	SET setStatementForAssignationReceiving=identifierOrIndexName+ TO setStatementForAssignationSending;
+	// where setStatementForAssignationReceiving can also be a index name, procedure pointer, function pointer or an object reference Id
 	 
-
 setStatementForAssignationSending:
-	identifier | integerValue	// identifier can also be an index name									//Format 1 + 5
-	| TRUE																								//Format 4
-	| nullFigurativeConstant																			//Format 5 + 6 + 7
-	| ENTRY_ARG programNameOrProgramEntryVariable	//identifier can also be a procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
-	| SELF ;										//identifier can also be an object reference id 	//Format 7 (+NULL)
+	identifierOrIndexName | integerValue			// identifier can also be an index name	//Format 1 + 5
+	| nullPointerValue				                // pointer data item //Format 5 + 6 + 7
+	| ENTRY_ARG programNameOrProgramEntryVariable	// procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| selfObjectIdentifier;         				// object reference id 	//Format 7 (+NULL)
 
 //Format 2: SET for adjusting indexes
 setStatementForIndexes:
@@ -6694,6 +6718,9 @@ setStatementForSwitches:
 setStatementForSwitchesWhat:
 	mnemonicForUPSISwitchNameReference+ TO (ON | OFF);
 
+//Format 4: SET for condition names
+setStatementForConditionNames:
+	SET conditionReference+ TO TRUE;
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according
@@ -6965,8 +6992,10 @@ sortStatement:
 onAscendingDescendingKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
 usingFilenames:  USING  fileNameReference+;
 givingFilenames: GIVING fileNameReference+;
-inputProcedure:  INPUT  PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
-outputProcedure: OUTPUT PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)?;
+inputProcedure:  INPUT  PROCEDURE IS? (procedureName | proceduresRange);
+outputProcedure: OUTPUT PROCEDURE IS? (procedureName | proceduresRange);
+
+proceduresRange: procedureName (THROUGH | THRU) procedureName;
 
 // p429: START statement
 // The START statement provides a means of positioning within an indexed or
@@ -7074,7 +7103,9 @@ startStatementEnd: END_START;
 // Subprogram : Returns directly to the program that called the main program. (Can be the system, which causes the application to end.)
 
 stopStatement:
-                 STOP (RUN | numericOrAlphanumericValue);
+                 STOP (RUN | messageToOperator);
+
+messageToOperator: numericValue | alphanumericValue11;
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
@@ -8046,7 +8077,7 @@ xmlNamespacePrefix:
 	NAMESPACE_PREFIX IS? alphanumericVariable2;
 
 xmlName:
-	identifier IS? alphanumericOrRepeatedAlphanumericValue;
+	identifier IS? alphanumericValue5;
 
 xmlType:
 	identifier IS? (ATTRIBUTE | ELEMENT | CONTENT);
@@ -8277,7 +8308,7 @@ xmlParseStatement:
                      (WITH? ENCODING codepage)? 
                      (RETURNING NATIONAL)?
                      (VALIDATING WITH? (identifier | (FILE xmlSchemaNameReference)))?
-                     PROCESSING PROCEDURE IS? procedureName ((THROUGH | THRU) procedureName)   ?;
+                     PROCESSING PROCEDURE IS? (procedureName | proceduresRange);
 
 //xmlParseStatementConditional:
 //                                xmlParseStatement
