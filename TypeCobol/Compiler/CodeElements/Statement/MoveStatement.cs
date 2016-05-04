@@ -63,10 +63,10 @@ namespace TypeCobol.Compiler.CodeElements
 		ICollection<QualifiedName> SymbolUser.Symbols {
 			get {
 				var symbols = new List<QualifiedName>();
-				var name = asUserDefinedName(Sending);
+				var name = IdentifierUtils.GetQualifiedName(Sending);
 				if (name != null) symbols.Add(name);
 				foreach (var identifier in Receiving) {
-					name = asUserDefinedName(identifier);
+					name = IdentifierUtils.GetQualifiedName(identifier);
 					if (name != null) symbols.Add(name);
 				}
 				return symbols;
@@ -79,25 +79,13 @@ namespace TypeCobol.Compiler.CodeElements
 		ICollection<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>> SymbolWriter.Symbols {
 			get {
 				var list = new List<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>>();
-				var sending = new System.Tuple<QualifiedName,DataType>(asUserDefinedName(Sending),asDataType(Sending));
+				var sending = new System.Tuple<QualifiedName,DataType>(IdentifierUtils.GetQualifiedName(Sending), IdentifierUtils.GetDataType(Sending));
 				foreach(var r in Receiving) {
-					var receiving = asUserDefinedName(r);
+					var receiving = IdentifierUtils.GetQualifiedName(r);
 					list.Add(new System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>(sending, receiving));
 				}
 				return list;
 			}
-		}
-		private QualifiedName asUserDefinedName(Expression expression) {
-			if (!(expression is Identifier)) return null;
-			if (expression is SpecialRegister) return null;
-			if (expression is FunctionReference) return null;
-			return ((Identifier)expression).Name;
-		}
-		private DataType asDataType(Expression expression) {
-			var literal = expression as Literal;
-			if (literal == null) return null;
-			if (literal.IsNumeric) return DataType.Numeric;
-			else return DataType.Alphanumeric;
 		}
 
 		public bool IsUnsafe { get; set; }

@@ -1192,7 +1192,7 @@ namespace TypeCobol.Compiler.Parser
             var statement = new SetStatementForAssignation();
             if (context.identifier() != null)
             {
-                statement.ReceivingFields = new List<Expression>();
+                statement.Receiving = new List<Expression>();
                 foreach ( var identifierContext in context.identifier()) {
                     Expression receiving;
                     if (identifierContext != null)
@@ -1200,7 +1200,7 @@ namespace TypeCobol.Compiler.Parser
                         receiving = SyntaxElementBuilder.CreateIdentifier(identifierContext);
                     }
                     else break;
-                    statement.ReceivingFields.Add(receiving);
+                    statement.Receiving.Add(receiving);
                 }
             }
 
@@ -1208,27 +1208,31 @@ namespace TypeCobol.Compiler.Parser
             {
                if (context.setStatementForAssignationSending().identifier() != null)
                 {
-                    statement.SendingField = SyntaxElementBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
+                    statement.Sending = SyntaxElementBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
                 }
                 else if (context.setStatementForAssignationSending().IntegerLiteral() != null)
                 {
-                    statement.SendingField = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().IntegerLiteral())));
+                    statement.Sending = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().IntegerLiteral())));
                 }
                 else if (context.setStatementForAssignationSending().TRUE() != null)
                 {
-                    statement.SendingField = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().TRUE()));
+                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().TRUE())));
+                }
+                else if (context.setStatementForAssignationSending().FALSE() != null)
+                {
+                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().FALSE())));
                 }
                 else if (context.setStatementForAssignationSending().NULL() != null)
                 {
-                    statement.SendingField = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULL()));
+                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULL()));
                 }
                 else if (context.setStatementForAssignationSending().NULLS() != null)
                 {
-                    statement.SendingField = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
+                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
                 }
                 else if (context.setStatementForAssignationSending().SELF() != null)
                 {
-                    statement.SendingField =
+                    statement.Sending =
                         new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().SELF()));
                 }
             }

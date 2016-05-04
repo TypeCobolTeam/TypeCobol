@@ -44,6 +44,8 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["level"] = new Level("LEVEL");
 			Attributes["type"]    = new Typed("TYPE");
 			Attributes["typedef"] = new TypeDefinition("TYPEDEF");
+			Attributes["sender.type"] = new SenderType("SENDER");
+			Attributes["sender"] = new Sender("RECEIVER");
 		}
 		public string this[string attribute] {
 			get {
@@ -98,6 +100,37 @@ namespace TypeCobol.Compiler.CodeElements
 			var data = ce as DataDescriptionEntry;
 			if (data == null || !data.IsTypeDefinitionPart) return null;
 			return data.DataType.Name;
+		}
+	}
+	internal class SenderType: NodeAttribute {
+		public SenderType(string key): base(key) { }
+		public override string GetValue(CodeElement ce, SymbolTable table) {
+			var writer = ce as SymbolWriter;
+			if (writer == null) return null;
+			foreach(var symbol in writer.Symbols) {
+				var type = symbol.Item1.Item2;
+				if (type == null && symbol.Item1.Item1 != null) {
+					var data = table.Get(symbol.Item1.Item1);
+					if (data.Count > 0) type = data[0].DataType;
+				}
+				if (type == null) continue;
+				return type.Name;
+			}
+			return null;
+		}
+	}
+	internal class Sender: NodeAttribute {
+		public Sender(string key): base(key) { }
+		public override string GetValue(CodeElement ce, SymbolTable table) {
+			var writer = ce as SymbolWriter;
+			if (writer == null) return null;
+			foreach(var symbol in writer.Symbols) {
+				var type = symbol.Item1.Item2;
+//				var data = table.Get(symbol.Item2);
+//				if (data.Count > 0) type = data[0].DataType;
+//				return type.Name;
+			}
+			return null;
 		}
 	}
 }

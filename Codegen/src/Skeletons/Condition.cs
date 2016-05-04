@@ -20,7 +20,7 @@ namespace TypeCobol.Codegen.Skeletons {
 				if ("*".Equals(x.Value)) {
 					if (node[x.Key] == null) return false;
 				} else {
-					if (node[x.Key] != x.Value) return false;
+					if (!x.Value.Equals(node[x.Key], System.StringComparison.InvariantCultureIgnoreCase)) return false;
 				}
 			}
 			return true;
