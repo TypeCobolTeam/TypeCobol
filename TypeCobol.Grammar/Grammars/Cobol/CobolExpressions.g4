@@ -1051,7 +1051,7 @@ signCondition: operand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
 // TO DO
 // X 1. Refactor set statement grammar + all statements with format
 // X 2. Create nullPointerValue / objectReferenceValue / xxxValueRange / what to do with anyValue ?
-// 3. Refactor identifierOrFileName / identifierOrIndexName ... with precise first token type if possible
+// CANCELED 3. Refactor identifierOrFileName / identifierOrIndexName ... with precise first token type if possible
 // 4. Create storageArea / numericVariable / alphanumericVariable ... to replace all identifier references 
 // 5. Rename xxxVariable1 to xxxExpression, type expression as argument / comparison, sending / receiving ...
 // 6. Extract all enumerations in xxxEnum rules
@@ -1065,6 +1065,8 @@ numericVariable1: identifier | numericValue;
 
 numericVariable2: identifier;
 
+numericVariable3: dataNameReference;
+
 characterVariable: dataNameReference | characterValue4;
 
 alphanumericVariable1: identifier | alphanumericValue11;
@@ -1072,7 +1074,7 @@ alphanumericVariable1: identifier | alphanumericValue11;
 alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
 
 
-numericOrIndexVariable: identifierOrIndexName | numericValue;
+numericVariableOrIndexName: identifierOrIndexName | numericValue;
 
 numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue11;
 
@@ -1098,6 +1100,8 @@ anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeate
 
 anyVariable5: identifier | numericValue | alphanumericValue11;
 
+anyVariable6: identifier;
+
 
 booleanExpression: conditionalExpression | booleanValue;
 
@@ -1106,3 +1110,16 @@ alphanumericExpression: anyVariable3 | arithmeticExpression;
 alphanumericExpression2: anyVariable3 | arithmeticExpression;
 
 alphanumericExpressionOrIndexName: identifierOrIndexName | anyValue  | arithmeticExpression;
+
+
+storageArea: identifier;
+
+storageArea2: dataNameReference;
+
+alphanumericStorageArea: identifier;
+
+numericStorageArea: identifier;
+
+storageAreaOrIndex: identifierOrIndexName;
+
+// TO DO => READ statement

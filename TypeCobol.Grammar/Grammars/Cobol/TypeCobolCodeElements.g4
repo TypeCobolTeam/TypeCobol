@@ -23,7 +23,7 @@ legacyQualifiedConditionName:                               conditionNameReferen
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
 moveStatement:
-    MOVE UNSAFE? corresponding? (booleanValue | anyVariable4) TO identifier+;
+    MOVE UNSAFE? (CORRESPONDING | CORR)? (booleanValue | anyVariable4) TO identifier+;
 //         ^                      ^       ^
 //          \                      \       \
 //           \                      --------------  MOVE [TRUE|FALSE] TO <boolean>

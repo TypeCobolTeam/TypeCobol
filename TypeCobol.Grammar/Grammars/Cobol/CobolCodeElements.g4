@@ -19,96 +19,124 @@ cobolCodeElements:
 // (see namespace :  TypeCobol.Compiler.CodeElements)
 
 codeElement:
-            // -- Cobol source program --
-            programIdentification |
-               environmentDivisionHeader |
-                   configurationSectionHeader |
-                       sourceComputerParagraph |
-                       objectComputerParagraph |
-                       specialNamesParagraph |
-                       repositoryParagraph |
-                   inputOutputSectionHeader |
-                       fileControlParagraphHeader |
-                           fileControlEntry |
-                       ioControlParagraphHeader |
-                           ioControlEntry |
-               dataDivisionHeader |
-                   fileSectionHeader |
-                       fileDescriptionEntry |
-                       dataDescriptionEntry |
-                   workingStorageSectionHeader |
-                       // dataDescriptionEntry
-                   localStorageSectionHeader |
-                       // dataDescriptionEntry
-                   linkageSectionHeader |
-                       // dataDescriptionEntry
-               procedureDivisionHeader |
-               declarativesHeader |
-                   sectionHeader | useStatement |
-                       paragraphHeader |
-                           // ... statements ...
-                           sentenceEnd |
-               declarativesEnd |
-                   // sectionHeader
-                       // paragraphName
-                           // statement
-                           // sentenceEnd
-               // ... nested source program ...
-           programEnd |                    
-           // -- Cobol class definition --
-           classIdentification |
-               // environmentDivisionHeader |
-                   // configurationSectionHeader
-                       // sourceComputerParagraph
-                       // objectComputerParagraph
-                       // specialNamesParagraph
-                       // repositoryParagraph
-               factoryIdentification |
-                   // dataDivisionHeader 
-                       // workingStorageSectionHeader 
-                           // dataDescriptionEntry
-                   // procedureDivisionHeader |
-                       methodIdentification |
-                           // environmentDivisionHeader 
-                               // inputOutputSectionHeader
-                                   // fileControlParagraph
-                                   // ioControlParagraph
-                           // dataDivisionHeader 
-                               // fileSectionHeader
-                                   // fileDescriptionEntry
-                                   // dataDescriptionEntry
-                               // workingStorageSectionHeader 
-                                   // dataDescriptionEntry
-                               // localStorageSectionHeader 
-                                   // dataDescriptionEntry
-                               // linkageSectionHeader 
-                                   // dataDescriptionEntry
-                           // procedureDivisionHeader
-                               // ... procedure division content ...
-                       methodEnd |
-               factoryEnd |
-           objectIdentification |
-               //dataDivisionHeader 
-                   // workingStorageSectionHeader 
-                       // dataDescriptionEntry
-               // procedureDivisionHeader 
-                   // ... method definitions ...
-           objectEnd |
-       classEnd |
-       statement |
-//	   orphanScopeTerminator |
-       entryStatement |
-       execStatement |
-       exitMethodStatement |  //TODO
-       exitProgramStatement | //TODO
 
-	     ///////////////////////////
-	    // IMPERATIVE STATEMENTS //
-	   ///////////////////////////
+    // -- Cobol source program --
+    programIdentification |
+        environmentDivisionHeader |
+            configurationSectionHeader |
+                sourceComputerParagraph |
+                objectComputerParagraph |
+                specialNamesParagraph |
+                repositoryParagraph |
+            inputOutputSectionHeader |
+                fileControlParagraphHeader |
+                    fileControlEntry |
+                ioControlParagraphHeader |
+                    ioControlEntry |
+        dataDivisionHeader |
+            fileSectionHeader |
+                fileDescriptionEntry |
+                dataDescriptionEntry |
+            workingStorageSectionHeader |
+                // dataDescriptionEntry
+            localStorageSectionHeader |
+                // dataDescriptionEntry
+            linkageSectionHeader |
+                // dataDescriptionEntry
+        procedureDivisionHeader |
+        declarativesHeader |
+            sectionHeader | useStatement |
+                paragraphHeader |
+                    // ... statements ...
+                    sentenceEnd |
+        declarativesEnd |
+            // sectionHeader
+                // paragraphName
+                    // statement
+                    // sentenceEnd
+        // ... nested source program ...
+    programEnd |              
+		         
+    // -- Cobol class definition --
+    classIdentification |
+        // environmentDivisionHeader |
+            // configurationSectionHeader
+                // sourceComputerParagraph
+                // objectComputerParagraph
+                // specialNamesParagraph
+                // repositoryParagraph
+        factoryIdentification |
+            // dataDivisionHeader 
+                // workingStorageSectionHeader 
+                    // dataDescriptionEntry
+            // procedureDivisionHeader |
+                methodIdentification |
+                    // environmentDivisionHeader 
+                        // inputOutputSectionHeader
+                            // fileControlParagraph
+                            // ioControlParagraph
+                    // dataDivisionHeader 
+                        // fileSectionHeader
+                            // fileDescriptionEntry
+                            // dataDescriptionEntry
+                        // workingStorageSectionHeader 
+                            // dataDescriptionEntry
+                        // localStorageSectionHeader 
+                            // dataDescriptionEntry
+                        // linkageSectionHeader 
+                            // dataDescriptionEntry
+                    // procedureDivisionHeader
+                        // ... procedure division content ...
+                methodEnd |
+        factoryEnd |
+		objectIdentification |
+			//dataDivisionHeader 
+				// workingStorageSectionHeader 
+					// dataDescriptionEntry
+			// procedureDivisionHeader 
+				// ... method definitions ...
+		objectEnd |
+	classEnd |
 
+	// -- Procedure division Statements --
+
+	// --- Decision statements ---
+	evaluateStatement |
+		whenCondition |
+		whenOtherCondition |
+	evaluateStatementEnd |
+	ifStatement |
+		// ... statements ...
+		nextSentenceStatement |
+	elseCondition |
+		// ... statements ...
+	ifStatementEnd |
+
+	// --- Control flow statements ---
 	continueStatement |
+    entryStatement |
+    execStatement |
+    exitMethodStatement |
+    exitProgramStatement |	
+	gobackStatement |
+	stopStatement |
 
-		// --- Arithmetic statements ---
+	// --- Procedure branching statements ---
+	alterStatement |
+	exitStatement |
+	gotoStatement |
+	performStatement |
+	performProcedureStatement |
+	performStatementEnd |
+
+	// --- Program or method linkage statements ---
+	callStatement |
+	callStatementEnd |
+	cancelStatement |
+	invokeStatement |
+	invokeStatementEnd |
+
+	// --- Arithmetic statements ---
 	addStatement |
 	addStatementEnd |
 	computeStatement |
@@ -120,71 +148,18 @@ codeElement:
 	subtractStatement |
 	subtractStatementEnd |
 
-		// --- Data movement statements ---
-	acceptStatement | // only with (DATE, DAY, DAY-OF-WEEK, TIME)
+	// --- Data manipulation statements ---
+	initializeStatement |
 	inspectStatement |
+	moveStatement |
+	setStatement |
 	stringStatement |
 	stringStatementEnd |
 	unstringStatement |
 	unstringStatementEnd |
-
-		// --- Ending statements ---
-	stopStatement | // only STOP RUN
-	gobackStatement |
-
-		// --- I/O statements ---
-//	acceptStatement | // only with <identifier>
-	startStatement |
-	startStatementEnd |
-//	stopStatement | // only with <literal>
-	closeStatement |
-	openStatement |
-	readStatement |
-	readStatementEnd |
-	rewriteStatement |
-	rewriteStatementEnd |
-	writeStatement |
-	writeStatementEnd |
-	deleteStatement |
-	deleteStatementEnd |
-
-		// --- Ordering statements ---
-	mergeStatement |
-	releaseStatement |
-	returnStatement |
-	returnStatementEnd |
-	sortStatement |
-
-		// --- Procedure branching statements ---
-	alterStatement |
-	exitStatement |
-	gotoStatement |
-	performStatement |
-	performProcedureStatement |
-	performStatementEnd |
-
-		// --- Program or Method linkage statements ---
-	callStatement |
-	callStatementEnd |
-	cancelStatement |
-	invokeStatement |
-	invokeStatementEnd |
-
-	  ////////////////////////////
-	 // CONDITIONAL STATEMENTS //
-	////////////////////////////
-
-	// --- Decision statements ---
-	evaluateStatement |
-		whenCondition |
-		whenOtherCondition |
-	evaluateStatementEnd |
-
-	ifStatement |
-		/* ... statements ... | */ nextSentenceStatement |
-	elseCondition | // optional
-		// ... statements ... | nextSentenceStatement
-	ifStatementEnd |
+	xmlGenerateStatement |
+	xmlParseStatement |
+	xmlStatementEnd |
 
 	// --- Table handling statements ---
 	searchStatement |
@@ -193,10 +168,30 @@ codeElement:
 		whenSearchCondition |
 	searchStatementEnd |
 
-	  ////////////////
-	 // EXCEPTIONS //
-	////////////////
+	// --- I/O statements ---
+	acceptStatement |
+	closeStatement |
+	deleteStatement |
+	deleteStatementEnd |
+	displayStatement |
+	openStatement |
+	readStatement |
+	readStatementEnd |
+	rewriteStatement |
+	rewriteStatementEnd |
+	startStatement |
+	startStatementEnd |
+	writeStatement |
+	writeStatementEnd |
 
+	// --- Ordering statements ---
+	mergeStatement |
+	releaseStatement |
+	returnStatement |
+	returnStatementEnd |
+	sortStatement |
+	
+	// --- Conditions for conditional statements  ---
 	atEndCondition |
 	notAtEndCondition |
 	atEndOfPageCondition |
@@ -208,134 +203,8 @@ codeElement:
 	onOverflowCondition |
 	notOnOverflowCondition |
 	onSizeErrorCondition |
-	notOnSizeErrorCondition |
+	notOnSizeErrorCondition;
 
-       //xmlGenerateStatement |
-           // ... exception phrases ...
-       // xmlStatementEnd |
-       //xmlParseStatement
-           // ... exceptionPhrases ...
-       xmlStatementEnd;
-
-
-statement:
-	  imperativeStatement
-//	| compilerDirectingStatement
-	;
-	      ////////////////
-	     // IMPERATIVE //
-	    // STATEMENTS //
-	   ////////////////
-
-imperativeStatement:
-	  dataMovementStatement
-	| ioStatement
-		// p276: A series of imperative statements can be specified wherever an imperative statement is allowed.
-		// p276: A conditional statement that is terminated by its explicit scope terminator is also classified as an imperative statement.
-		// p280: In general, a DELIMITED SCOPE statement uses an explicit scope terminator to
-		// turn a conditional statement into an imperative statement.
-		// The resulting imperative statement can then be nested. Explicit scope terminators
-		// can also be used to terminate the scope of an imperative statement.
-		// p280: Unless explicitly specified otherwise, a delimited scope statement can be specified
-		// wherever an imperative statement is allowed by the rules of the language.
-//	| delimitedScopeStatement
-	;
-
-dataMovementStatement:
-	initializeStatement
-	| moveStatement
-	| setStatement // p278: SET is seen as a table-handling statement, too
-		// STRING and UNSTRING statements are imperative statements, but
-		// p277: Without the ON OVERFLOW or the NOT ON OVERFLOW phrase
-///	| stringStatement
-///	| unstringStatement
-		// XML GENERATE and XML PARSE statements are imperative statements, but
-		// p277: Without the ON EXCEPTION or the NOT ON EXCEPTION phrase
-	| xmlGenerateStatement
-	| xmlParseStatement;
-
-ioStatement:
-		// DELETE, REWRITE and START statement are imperative statements, but
-		// p277: Without the INVALID KEY or the NOT INVALID KEY phrase.
-	displayStatement
-		// READ statement is an imperative statement, but
-		// p277-278: Without the AT END or NOT AT END, and INVALID KEY or NOT INVALID KEY phrases.
-		// WRITE statement is an imperative statement, but
-		// p277-278: Without the INVALID KEY or NOT INVALID KEY, and END-OF-PAGE or NOT END-OF-PAGE phrases.
-	;
-
-
-
-	   /////////////////
-	  // STATEMENT   //
-	 // TERMINATORS //
-	/////////////////
-
-orphanScopeTerminator:
-		// p280: explicit scope terminators
-	  addStatementEnd
-	| callStatementEnd
-	| computeStatementEnd
-	| deleteStatementEnd
-	| divideStatementEnd
-	| evaluateStatementEnd
-	| ifStatementEnd
-	| invokeStatementEnd
-	| multiplyStatementEnd
-	| performStatementEnd
-	| readStatementEnd
-	| returnStatementEnd
-	| rewriteStatementEnd
-	| searchStatementEnd
-	| startStatementEnd
-	| stringStatementEnd
-	| subtractStatementEnd
-	| unstringStatementEnd
-	| writeStatementEnd
-	| xmlStatementEnd
-		// other statement terminators
-	| execStatementEnd
-	;
-
-	  ////////////////
-	 // EXCEPTIONS //
-	////////////////
-
-atEndCondition:
-	AT? END;
-
-notAtEndCondition:
-	NOT AT? END;
-
-atEndOfPageCondition:
-	AT? (END_OF_PAGE | EOP);
-
-notAtEndOfPageCondition:
-	NOT AT? (END_OF_PAGE | EOP);
-
-invalidKeyCondition:
-	INVALID KEY?;
-
-notInvalidKeyCondition:
-	NOT INVALID KEY?;
-
-onExceptionCondition:
-	ON? EXCEPTION;
-
-notOnExceptionCondition:
-	NOT ON? EXCEPTION;
-
-onOverflowCondition:
-	ON? OVERFLOW;
-
-notOnOverflowCondition:
-	NOT ON? OVERFLOW;
-
-onSizeErrorCondition:
-	ON? SIZE ERROR;
-
-notOnSizeErrorCondition:
-	NOT ON? SIZE ERROR;
 
 // --- Individual code elements syntax ---
 
@@ -419,12 +288,11 @@ notOnSizeErrorCondition:
 // clause can be used only in nested programs.
 
 programIdentification:
-                       (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       PROGRAM_ID PeriodSeparator? programName=programNameDefinition
-                       (IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
-                       authoringProperties;
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	PROGRAM_ID PeriodSeparator? programNameDefinition
+	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
+	authoringProperties;
                        
-
 // p83 : The end of a COBOL source program is indicated by the END PROGRAM marker.
 //       If there are no nested programs, the absence of additional source program lines
 //       also indicates the end of a COBOL program.
@@ -435,7 +303,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-              END PROGRAM programNameReference2 PeriodSeparator;
+	END PROGRAM programNameReference2 PeriodSeparator;
 			  
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
@@ -473,15 +341,14 @@ programEnd:
 // a class definition.
 
 classIdentification:
-                       (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                       CLASS_ID PeriodSeparator classNameDefinition INHERITS inheritsFromClassName=classNameReference PeriodSeparator
-                       authoringProperties
-                   ;
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	CLASS_ID PeriodSeparator classNameDefinition INHERITS inheritsFromClassName=classNameReference PeriodSeparator
+	authoringProperties;
 
 // p91 : The end of a COBOL class definition is indicated by the END CLASS marker.
 
 classEnd:
-            END CLASS classNameReference PeriodSeparator;
+	END CLASS classNameReference PeriodSeparator;
 
 // p97 : Factory IDENTIFICATION DIVISION
 // A factory IDENTIFICATION DIVISION contains only a factory paragraph
@@ -492,24 +359,12 @@ classEnd:
 // A factory object is the single common object that is shared by all object instances of
 // the class. The factory definition contains factory data and factory methods.
 
-// p92 : Factory-definition:
-
-//factoryDefinition :
-//                     factoryIdentification
-//                    (dataDivisionHeader 
-//                         workingStorageSection?
-//                    )?
-//                    (procedureDivisionHeader 
-//                         methodDefinition*
-//                    )?
-//                     factoryEnd;
-
 factoryIdentification:
-                         (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                         FACTORY PeriodSeparator;
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	FACTORY PeriodSeparator;
 
 factoryEnd:
-              END FACTORY PeriodSeparator;
+	END FACTORY PeriodSeparator;
 
 // p97 : Object IDENTIFICATION DIVISION
 // An object IDENTIFICATION DIVISION contains only an object paragraph
@@ -519,28 +374,15 @@ factoryEnd:
 // the portion of a class definition that defines the instance objects of the class.
 // The object definition contains object data and object methods.
 
-// p92 : Object-definition:
-
-//objectDefinition :
-//                     objectIdentification
-//                    (dataDivisionHeader 
-//                         workingStorageSection?
-//                    )?
-//                    (procedureDivisionHeader 
-//                         methodDefinition*
-//                    )?
-//                     objectEnd;
-
 objectIdentification:
-                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                        OBJECT PeriodSeparator;
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	OBJECT PeriodSeparator;
 
 objectEnd:
-             END OBJECT PeriodSeparator;
+	END OBJECT PeriodSeparator;
 
 // p93 : A COBOL method definition describes a method. 
 //       You can specify method definitions only within the factory paragraph and the object paragraph of a class definition.
-
 
 // p97 : Method IDENTIFICATION DIVISION
 // For a method, the first paragraph of the IDENTIFICATION DIVISION
@@ -576,14 +418,14 @@ objectEnd:
 // RECURSIVE attribute is specified in the program-ID paragraph.)
 
 methodIdentification:
-                        (IDENTIFICATION | ID) DIVISION PeriodSeparator 
-                        METHOD_ID PeriodSeparator? methodNameDefinition PeriodSeparator?
-                        authoringProperties;
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	METHOD_ID PeriodSeparator? methodNameDefinition PeriodSeparator?
+	authoringProperties;
 
 // p93 : The end of a COBOL method definition is indicated by the END METHOD marker.
 
 methodEnd:
-             END METHOD methodNameReference PeriodSeparator;
+    END METHOD methodNameReference PeriodSeparator;
 
 // p104 : Method signature
 // The signature of a method consists of the name of the method and the number and
@@ -624,7 +466,7 @@ methodEnd:
 // signature in the superclasses of the method definition that would otherwise
 // be accessible. A factory method must not hide an instance method.
 
-// --- Authoring properties commuon to all identification divisions ---
+// --- Authoring properties common to all identification divisions ---
 
 // p105 : Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
 // The optional paragraphs are:
@@ -650,28 +492,26 @@ methodEnd:
 // !! p117 : The other paragraphs are optional and can appear in any order.
 
 authoringProperties:
-                                ( authorParagraph |
-                                  installationParagraph |
-                                  dateWrittenParagraph |
-                                  dateCompiledParagraph |
-                                  securityParagraph )*;
+	(authorParagraph       |
+	 installationParagraph |
+	 dateWrittenParagraph  |
+	 dateCompiledParagraph |
+	 securityParagraph     )*;
 
 authorParagraph:
-                   AUTHOR PeriodSeparator? alphanumericValue3*;
+    AUTHOR PeriodSeparator? alphanumericValue3*;
 
 installationParagraph:
-                         INSTALLATION PeriodSeparator? alphanumericValue3*;
+    INSTALLATION PeriodSeparator? alphanumericValue3*;
 
 dateWrittenParagraph:
-                        DATE_WRITTEN PeriodSeparator? alphanumericValue3*;
+    DATE_WRITTEN PeriodSeparator? alphanumericValue3*;
 
 dateCompiledParagraph:
-                         DATE_COMPILED PeriodSeparator? alphanumericValue3*;
+    DATE_COMPILED PeriodSeparator? alphanumericValue3*;
 
 securityParagraph:
-                     SECURITY PeriodSeparator? alphanumericValue3*;
-
-// ---
+     SECURITY PeriodSeparator? alphanumericValue3*;
 
 // p105 : The comment-entry in any of the optional paragraphs can be any combination of
 // characters from the character set of the computer. The comment-entry is written in
@@ -691,14 +531,12 @@ securityParagraph:
 
 // ==> Lexer token type : CommentEntry
 
+// ---
+
 // p107 :  Environment division
 
 environmentDivisionHeader:
-                             ENVIRONMENT DIVISION PeriodSeparator;
-
-//environmentDivisionContent : 
-//                          configurationSection?
-//                          inputOutputSection?;
+    ENVIRONMENT DIVISION PeriodSeparator;
 
 // p109 : The configuration section is an optional section for programs and classes, and can
 // describe the computer environment on which the program or class is compiled and
@@ -739,7 +577,7 @@ environmentDivisionHeader:
 // section is specified.
 
 configurationSectionHeader:
-                              CONFIGURATION SECTION PeriodSeparator;
+    CONFIGURATION SECTION PeriodSeparator;
 
 // p110 : The SOURCE-COMPUTER paragraph describes the computer on which the source
 // text is to be compiled.
@@ -766,22 +604,20 @@ configurationSectionHeader:
 // p110 : All of the SOURCE-COMPUTER paragraph is syntax checked, but only the WITH
 // DEBUGGING MODE clause has an effect on the execution of the program.
 
-// p110 : The SOURCE-COMPUTER Format
-
-sourceComputerParagraph: 
-                           SOURCE_COMPUTER PeriodSeparator
-                           (computerName=alphanumericValue4 
-                            withDebuggingModeClause? 
-                            PeriodSeparator)?;
-
-withDebuggingModeClause:
-                           WITH? DEBUGGING MODE;
-
 // p110 : computer-name
 // A system-name. For example:
 // IBM-system
 
-// computerName : alphanumericValue4;
+// p110 : The SOURCE-COMPUTER Format
+
+sourceComputerParagraph: 
+    SOURCE_COMPUTER PeriodSeparator
+    (computerName=alphanumericValue4 
+     withDebuggingModeClause? 
+     PeriodSeparator)?;
+
+withDebuggingModeClause:
+    WITH? DEBUGGING MODE;
 
 // p110 : The OBJECT-COMPUTER paragraph specifies the system for which the object
 // program is designated.
@@ -825,21 +661,21 @@ withDebuggingModeClause:
 // p111 : OBJECT-COMPUTER Format
 
 objectComputerParagraph :
-                        OBJECT_COMPUTER PeriodSeparator
-                        (computerName=alphanumericValue4 
-                         memorySizeClause?
-                         programCollatingSequenceClause?
-                         segmentLimitClause?
-                         PeriodSeparator)?;
+    OBJECT_COMPUTER PeriodSeparator
+    (computerName=alphanumericValue4 
+     memorySizeClause?
+     programCollatingSequenceClause?
+     segmentLimitClause?
+     PeriodSeparator)?;
 
 memorySizeClause:
-                    MEMORY SIZE? integerValue (WORDS | CHARACTERS | MODULES);
+    MEMORY SIZE? integerValue (WORDS | CHARACTERS | MODULES);
 
 programCollatingSequenceClause:
-                                  PROGRAM? COLLATING? SEQUENCE IS? alphabetName;
+    PROGRAM? COLLATING? SEQUENCE IS? alphabetName;
 
 segmentLimitClause:
-                      SEGMENT_LIMIT IS? priorityNumber;
+    SEGMENT_LIMIT IS? priorityNumber;
 
 // p111 : priority-number
 // An integer ranging from 1 through 49. 
@@ -876,17 +712,17 @@ priorityNumber: integerValue;
 
 // !! p112 : The clauses in the SPECIAL-NAMES paragraph can appear in any order.
 
-specialNamesParagraph : 
-                      SPECIAL_NAMES PeriodSeparator
-                      ((upsiSwitchNameClause |
-                        environmentNameClause |                        
-                        alphabetClause |
-                        symbolicCharactersClause |
-                        classClause |
-                        currencySignClause |
-                        decimalPointClause |
-                        xmlSchemaClause
-                      )+ PeriodSeparator)?;
+specialNamesParagraph: 
+    SPECIAL_NAMES PeriodSeparator
+    ((upsiSwitchNameClause |
+      environmentNameClause |                        
+      alphabetClause |
+      symbolicCharactersClause |
+      classClause |
+      currencySignClause |
+      decimalPointClause |
+      xmlSchemaClause
+     )+ PeriodSeparator)?;
 
 // p115 : upsiSwitchName
 // A 1-byte user-programmable status indicator (UPSI) switch.
@@ -895,46 +731,49 @@ specialNamesParagraph :
                         // !! Impossible to avoid a TARGET LANGUAGE DEPENDENT semantic predicate here 
                         //    (... ambiguity with environmentNameClause ...)
 upsiSwitchNameClause:   { CurrentToken.Text.StartsWith("UPSI-", System.StringComparison.OrdinalIgnoreCase) }? 
-                        upsiSwitchName ((IS? mnemonicForUPSISwitchNameDefinition conditionNamesForUPSISwitch?) | conditionNamesForUPSISwitch);
+    upsiSwitchName ( (IS? mnemonicForUPSISwitchNameDefinition conditionNamesForUPSISwitch?) | 
+					  conditionNamesForUPSISwitch );
 
 conditionNamesForUPSISwitch:
-                               (onConditionNameForUPSISwitch offConditionNameForUPSISwitch?) |
-                               (offConditionNameForUPSISwitch onConditionNameForUPSISwitch?);
+    (onConditionNameForUPSISwitch offConditionNameForUPSISwitch?) |
+    (offConditionNameForUPSISwitch onConditionNameForUPSISwitch?);
 
 onConditionNameForUPSISwitch:
-                                ON STATUS? IS? conditionForUPSISwitchNameDefinition;
+    ON STATUS? IS? conditionForUPSISwitchNameDefinition;
 
 offConditionNameForUPSISwitch:
-                                 OFF STATUS? IS? conditionForUPSISwitchNameDefinition;
+    OFF STATUS? IS? conditionForUPSISwitchNameDefinition;
+							
+// p114 : environment-name-1 
+// System devices or standard system actions taken by the compiler.
 								 
-environmentNameClause : 
-                          environmentName IS? mnemonicForEnvironmentNameDefinition;
+environmentNameClause: 
+    environmentName IS? mnemonicForEnvironmentNameDefinition;
 
 // p 115 : The ALPHABET clause provides a means of relating an alphabet-name to a
 // specified character code set or collating sequence.
 // The related character code set or collating sequence can be used for alphanumeric
 // data, but not for DBCS or national data.
 
-alphabetClause : 
-                   ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence);
+alphabetClause: 
+    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence);
 
 userDefinedCollatingSequence:
-                                (charactersLiteral | charactersRange | charactersEqualSet)+;
+    (charactersLiteral | charactersRange | charactersEqualSet)+;
 
 // In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
 // it may contain SEVERAL characters
 
-charactersLiteral: 
-                     characterInCollatingSequence;
+charactersLiteral: characterInCollatingSequence;
 
 // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
 // it can contain ONLY ONE characters
 
 charactersRange:
-                   characterInCollatingSequence (THROUGH | THRU) characterInCollatingSequence;
+    startCharacter=characterInCollatingSequence (THROUGH | THRU) endCharacter=characterInCollatingSequence;
 
 charactersEqualSet:
-                      characterInCollatingSequence (ALSO characterInCollatingSequence)+;
+    characterInCollatingSequence (ALSO characterInCollatingSequence)+;
 
 // p116 : literal-1, literal-2, literal-3
 // Specifies that the collating sequence for alphanumeric data is
@@ -1009,18 +848,19 @@ charactersEqualSet:
 // national literal, a DBCS literal, or a symbolic-character figurative
 // constant must not be specified.
 
-characterInCollatingSequence : characterValue3 | ordinalPositionInCollatingSequence;
+characterInCollatingSequence: 
+	characterValue3 | ordinalPositionInCollatingSequence;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
 // SYMBOLIC CHARACTERS symbolic-character-1
 // Provides a means of specifying one or more symbolic characters.
 
-symbolicCharactersClause :
-                             SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
+symbolicCharactersClause:
+    SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
 
 symbolicCharactersOrdinalPositions:
-                                symbolicCharacterDefinition+ (ARE|IS)? ordinalPositionInCollatingSequence+;
+    symbolicCharacterDefinition+ (ARE|IS)? ordinalPositionInCollatingSequence+;
 
 // p116 : literal-1, literal-2, literal-3
 // - Each numeric literal specified must be an unsigned integer.
@@ -1039,10 +879,11 @@ ordinalPositionInCollatingSequence: integerValue;
 // characters specified by a THROUGH phrase can be in either
 // ascending or descending order.
 
-classClause : 
-                CLASS characterClassNameDefinition IS? userDefinedCharacterClass;
+classClause: 
+    CLASS characterClassNameDefinition IS? userDefinedCharacterClass;
 
-userDefinedCharacterClass: (charactersLiteral | charactersRange)+;
+userDefinedCharacterClass: 
+	(charactersLiteral | charactersRange)+;
 				
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same
@@ -1127,14 +968,14 @@ userDefinedCharacterClass: (charactersLiteral | charactersRange)+;
 
 // p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
 
-currencySignClause :
-                       CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue)?;
+currencySignClause:
+    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.
 
-decimalPointClause :
-                       DECIMAL_POINT IS? COMMA;
+decimalPointClause:
+     DECIMAL_POINT IS? COMMA;
 
 // p120: The XML-SCHEMA clause provides the means of relating xml-schema-name-1 to an
 // external file identifier: a ddname or environment variable that identifies the actual
@@ -1157,8 +998,8 @@ decimalPointClause :
 // p120 : The compiler folds external-fileid-1 or literal-8 to uppercase to form the ddname or
 //environment variable name for the file.
 
-xmlSchemaClause :
-                    XML_SCHEMA xmlSchemaNameDefinition IS? assignmentName;
+xmlSchemaClause:
+    XML_SCHEMA xmlSchemaNameDefinition IS? assignmentName;
 
 // p121: external-fileid-1
 // Specifies a user-defined word that must conform to the following rules:
@@ -1235,8 +1076,8 @@ xmlSchemaClause :
 // Class Department is "jobjectArray:com.acme.Employee". 
 
 repositoryParagraph: 
-                   REPOSITORY PeriodSeparator 
-                   ((CLASS classNameDefOrRef (IS? externalClassNameDefOrRef /*| javaArrayClassReference*/)?)+ PeriodSeparator)?;
+    REPOSITORY PeriodSeparator 
+    ( (CLASS classNameDefOrRef (IS? externalClassNameDefOrRef)?)+ PeriodSeparator )?;
 
 // p122: java-array-class-reference
 // A reference that enables a COBOL program to access a class that represents
@@ -1261,7 +1102,6 @@ repositoryParagraph:
 
 // javaArrayClassReference : "jobjectArray" | "jobjectArray:externalClassName";
 
-
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
 // The exact contents of the input-output section depend on the file organization and
@@ -1277,7 +1117,7 @@ repositoryParagraph:
 //   The same rules apply to program and method I-O sections.
 
 inputOutputSectionHeader:
-                            INPUT_OUTPUT SECTION PeriodSeparator;
+    INPUT_OUTPUT SECTION PeriodSeparator;
 
 // p125: FILE-CONTROL
 // The keyword FILE-CONTROL identifies the file-control paragraph. This
@@ -1312,28 +1152,28 @@ inputOutputSectionHeader:
 // 2. Line-sequential support is limited to z/OS UNIX files.
 
 fileControlParagraphHeader:
-                             FILE_CONTROL PeriodSeparator;
+    FILE_CONTROL PeriodSeparator;
 
 // p130: The SELECT clause identifies a file in the COBOL program to be associated with an external data set. 
 
-// !! p146 : Within each entry, the SELECT clause must appear first. 
+// !! p126 : Within each entry, the SELECT clause must appear first. 
 // The other clauses can appear in any order, 
 // except that the PASSWORD clause for indexed files, if specified, must immediately follow the RECORD KEY or ALTERNATE RECORD KEY data-name with which it is associated.
 
-fileControlEntry :          
-                    selectClause
-                   (assignClause |
-                    reserveClause |
-                    organizationClause |
-                    paddingCharacterClause |
-                    recordDelimiterClause |
-                    accessModeClause |
-                    recordKeyClause |
-                    alternateRecordKeyClause |                     
-                    relativeKeyClause |
-                    passwordClause |
-                    fileStatusClause)+
-                    PeriodSeparator;
+fileControlEntry:          
+	selectClause
+	(assignClause |
+	 reserveClause |
+	 organizationClause |
+	 paddingCharacterClause |
+	 recordDelimiterClause |
+	 accessModeClause |
+	 recordKeyClause |
+	 alternateRecordKeyClause |                     
+	 relativeKeyClause |
+	 passwordClause |
+	 fileStatusClause)+
+	PeriodSeparator;
                      
 // --- SUMMARY ---
 // The organizationClause tells which one of the formats below must be controlled.
@@ -1356,58 +1196,6 @@ fileControlEntry :
 // - accessMode can only be SEQUENTIAL
 // - passwordClause is not supported in format 4
 
-// --- DETAILS ---
-// p127: Format 1: sequential-file-control-entry
-//sequentialFileControlEntry : 
-//                          SELECT OPTIONAL? fileName 
-//                          ASSIGN TO? assignmentName+
-//                          (RESERVE IntegerLiteral (AREA | AREAS)?)?
-//                          ((ORGANIZATION IS?)? SEQUENTIAL)?
-//                          (PADDING CHARACTER? IS? (dataName | literal))?
-//                          (RECORD DELIMITER IS? (STANDARD_1 | assignmentName))?
-//                          (ACCESS MODE? IS? SEQUENTIAL)?
-//                          (PASSWORD IS? dataName)?
-//                          (FILE? STATUS IS? dataName dataName?)?
-//                          PeriodSeparator;
-// p128: Format 2: indexed-file-control-entry
-//indexedFileControlEntry : 
-//                          SELECT OPTIONAL? fileName 
-//                          ASSIGN TO? assignmentName+
-//                          (RESERVE IntegerLiteral (AREA | AREAS)?)?
-//                          (ORGANIZATION IS?)? INDEXED
-//                          (ACCESS MODE? IS? (SEQUENTIAL | RANDOM | DYNAMIC))?
-//                          RECORD KEY? IS? dataName
-//                          (PASSWORD IS? dataName)?
-//                          (  ALTERNATE RECORD? KEY? IS? dataName (WITH? DUPLICATES)? 
-//                             (PASSWORD IS? dataName)?  )*
-//                          (FILE? STATUS IS? dataName dataName?)?
-//                          PeriodSeparator;
-// p129: Format 3: relative-file-control-entry
-//relativeFileControlEntry : 
-//                          SELECT OPTIONAL? fileName 
-//                          ASSIGN TO? assignmentName+
-//                          (RESERVE IntegerLiteral (AREA | AREAS)?)?
-//                          (ORGANIZATION IS?)? RELATIVE
-//                          (ACCESS MODE? IS? ((SEQUENTIAL (RELATIVE KEY? IS? dataName)?) | 
-//                                             ((RANDOM | DYNAMIC) RELATIVE KEY? IS? dataName)))?
-//                          (PASSWORD IS? dataName)?
-//                          (FILE? STATUS IS? dataName dataName?)?
-//                          PeriodSeparator; 
-// p129: Format 4: line-sequential-file-control-entry
-//lineSequentialFileControlEntry :
-//                          SELECT OPTIONAL? fileName 
-//                          ASSIGN TO? assignmentName+
-//                          (RESERVE IntegerLiteral (AREA | AREAS)?)?
-//                          (ORGANIZATION IS?)? LINE SEQUENTIAL
-//                          (ACCESS MODE? IS? SEQUENTIAL)?
-//                          (FILE? STATUS IS? dataName dataName?)?
-//                          PeriodSeparator;
-
-// p126: Within each entry, the SELECT clause must appear first. The other clauses can
-// appear in any order, except that the PASSWORD clause for indexed files, if
-// specified, must immediately follow the RECORD KEY or ALTERNATE RECORD
-// KEY data-name with which it is associated.
-
 // p130: SELECT OPTIONAL 
 // Can be specified only for files opened in the input, I-O, or extend mode. 
 // You must specify SELECT OPTIONAL for those input files that are not necessarily available each time the object program is executed. 
@@ -1415,14 +1203,14 @@ fileControlEntry :
 // p130: If the file connector referenced by file-name-1 is an external file connector, all file-control entries in the run unit that reference this file connector must have the same specification for the OPTIONAL phrase.
 
 selectClause:
-                SELECT OPTIONAL? fileNameDefinition;
+    SELECT OPTIONAL? fileNameDefinition;
 
 // p130: ASSIGN clause
 // The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.
 // p130: When file-name-1 specifies a sort or a merge file, only the ASSIGN clause can follow the SELECT clause.
 
 assignClause:
-                ASSIGN TO? assignmentName+;
+    ASSIGN TO? assignmentName+;
 
 // p130: assignment-name-1 Identifies the external data file. 
 // It can be specified as a name or as an alphanumeric literal. 
@@ -1479,7 +1267,7 @@ assignClause:
 // If the file connector referenced by file-name-1 in the SELECT clause is an external file connector, all file-control entries in the run unit that reference this file connector must have the same value for the integer specified in the RESERVE clause.
 
 reserveClause:
-                 RESERVE integerValue (AREA | AREAS)?;
+    RESERVE integerValue (AREA | AREAS)?;
 
 // p135: ORGANIZATION clause
 // The ORGANIZATION clause identifies the logical structure of the file. 
@@ -1502,7 +1290,7 @@ reserveClause:
 // ... + a lot more details on file organization p135 -> 137 ...
 
 organizationClause:
-                      (ORGANIZATION IS?)? ((SEQUENTIAL | INDEXED | RELATIVE) | (LINE SEQUENTIAL));
+    (ORGANIZATION IS?)? ((SEQUENTIAL | INDEXED | RELATIVE) | (LINE SEQUENTIAL));
 
 // p137: The PADDING CHARACTER clause specifies a character to be used for block padding on sequential files. 
 // data-name-5 Must be defined in the DATA DIVISION as a one-character data item of category alphabetic, alphanumeric, or national, and must not be defined in the FILE SECTION. data-name-5 can be qualified. 
@@ -1511,7 +1299,7 @@ organizationClause:
 // The PADDING CHARACTER clause is syntax checked, but has no effect on the execution of the program.
 
 paddingCharacterClause:
-                          PADDING CHARACTER? IS? characterVariable;
+    PADDING CHARACTER? IS? characterVariable;
 
 // p138: The RECORD DELIMITER clause indicates the method of determining the length of a variable-length record on an external medium. 
 // It can be specified only for variable-length records. 
@@ -1521,7 +1309,7 @@ paddingCharacterClause:
 // The RECORD DELIMITER clause is syntax checked, but has no effect on the execution of the program.
 
 recordDelimiterClause:
-                         RECORD DELIMITER IS? (STANDARD_1 | literalOrUserDefinedWordOReservedWordExceptCopy);
+    RECORD DELIMITER IS? (STANDARD_1 | literalOrUserDefinedWordOReservedWordExceptCopy);
 
 // p138: The ACCESS MODE clause defines the manner in which the records of the file are made available for processing. 
 // If the ACCESS MODE clause is not specified, sequential access is assumed.
@@ -1535,7 +1323,7 @@ recordDelimiterClause:
 // In addition, for relative file entries, data-name-4 must reference an external data item, and the RELATIVE KEY phrase in each associated file-control entry must reference that same external data item. 
 
 accessModeClause:                    
-                    ACCESS MODE? IS? (SEQUENTIAL | RANDOM | DYNAMIC);
+    ACCESS MODE? IS? (SEQUENTIAL | RANDOM | DYNAMIC);
 
 // p140: The RECORD KEY clause (format 2) specifies the data item within the record that is the prime RECORD KEY for an indexed file. 
 // The values contained in the prime RECORD KEY data item must be unique among records in the file. 
@@ -1552,7 +1340,7 @@ accessModeClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-2 that specify the same relative location in the record and the same length.
 
 recordKeyClause:
-                   RECORD KEY? IS? dataNameReference;
+    RECORD KEY? IS? dataNameReference;
 
 // p141: The ALTERNATE RECORD KEY clause (format 2) specifies a data item within the record that provides an alternative path to the data in an indexed file. 
 // data-name-3 An ALTERNATE RECORD KEY data item. 
@@ -1570,7 +1358,7 @@ recordKeyClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-3 that specify the same relative location in the record and the same length. The file description entries must specify the same number of alternate record keys and the same DUPLICATES phrase.
 
 alternateRecordKeyClause:
-                            ALTERNATE RECORD? KEY? IS? dataNameReference (WITH? DUPLICATES)?;
+    ALTERNATE RECORD? KEY? IS? dataNameReference (WITH? DUPLICATES)?;
 
 // p142: The RELATIVE KEY clause (format 3) identifies a data-name that specifies the relative record number for a specific logical record within a relative file. 
 // data-name-4 Must be defined as an unsigned integer data item whose description does not contain the PICTURE symbol P. 
@@ -1583,7 +1371,7 @@ alternateRecordKeyClause:
 // The ACCESS MODE IS RANDOM clause must not be specified for file-names specified in the USING or GIVING phrase of a SORT or MERGE statement.
 
 relativeKeyClause:
-                     RELATIVE KEY? IS? dataNameReference;
+    RELATIVE KEY? IS? dataNameReference;
             
 // p143: The PASSWORD clause controls access to files. 
 // data-name-6 , data-name-7 Password data items. 
@@ -1600,7 +1388,7 @@ relativeKeyClause:
 // For external files, data-name-6 and data-name-7 must reference external data items. The PASSWORD clauses in each associated file-control entry must reference the same external data items.
 
 passwordClause:
-                  PASSWORD IS? dataNameReference;
+    PASSWORD IS? dataNameReference;
 
 // p143: The FILE STATUS clause monitors the execution of each input-output operation for the file.
 // When the FILE STATUS clause is specified, the system moves a value into the file status key data item after each input-output operation that explicitly or implicitly refers to this file. 
@@ -1618,7 +1406,7 @@ passwordClause:
 // For more information, see DFSMS Macro Instructions for Data Sets.
 
 fileStatusClause:
-                    FILE? STATUS IS? dataNameReference dataNameReference?;
+    FILE? STATUS IS? storageArea2 vsamReturnCode=storageArea2?;
 
 // p125 : I-O-CONTROL
 // The keyword I-O-CONTROL identifies the I-O-CONTROL paragraph.
@@ -1635,7 +1423,7 @@ fileStatusClause:
 // !! The I-O-CONTROL paragraph ends with a separator period.
 
 ioControlParagraphHeader:
-                            I_O_CONTROL PeriodSeparator;
+    I_O_CONTROL PeriodSeparator;
 
 // --- SUMMARY ---
 // 4 different formats can be controlled for an ioControlEntry depending on the type of file.
@@ -1657,33 +1445,14 @@ ioControlParagraphHeader:
 // - rerun ON fileName not supported (assignmentName only)
 // - rerun EVERY ... OF not supported
 // - rerun EVERY ... END OF not supported
-// - AME (SORT | SORT_MERGE AREA) supported
+// - SAME (SORT | SORT_MERGE AREA) supported
 // - multipleFileTapeClause and applyWriteOnlyClause NOT supported
 
-// --- DETAILS ---
-// p145: Format 1: QSAM- i-o-control-entry                
-//qsamIoControlEntry : 
-//                   (RERUN ON? (assignmentName | fileName) EVERY? ((IntegerLiteral RECORDS) | (END OF? (REEL | UNIT))) OF? fileName) |
-//                   (SAME RECORD? AREA? FOR? fileName fileName*) |
-//                   (MULTIPLE FILE TAPE? CONTAINS? (fileName (POSITION IntegerLiteral)?)+) |
-//                   (APPLY WRITE_ONLY ON? fileName+);
-// p145: Format 2: VSAM- i-o-control-entry
-//vsamIoControlEntry :
-//                   (RERUN ON? (assignmentName | fileName) EVERY? IntegerLiteral RECORDS OF? fileName) |
-//                   (SAME RECORD? AREA? FOR? fileName fileName*);
-// p146: Format 3: line-sequential-i-o-control-entry
-//lineSequentialIoControlEntry : 
-//                    SAME RECORD? AREA? FOR? fileName fileName*;
-// p146: Format 3: sort/merge-i-o-control-entry
-//sortMergeIoControlEntry : 
-//                   (RERUN ON? assignmentName) |
-//                   (SAME (RECORD | SORT | SORT_MERGE) AREA? FOR? fileName fileName*);
-
 ioControlEntry:
-                  rerunClause |
-                  sameAreaClause |
-                  multipleFileTapeClause |
-                  applyWriteOnlyClause;
+    rerunClause |
+    sameAreaClause |
+    multipleFileTapeClause |
+    applyWriteOnlyClause;
           
 // p146: The RERUN clause specifies that checkpoint records are to be taken. 
 // Subject to the restrictions given with each phrase, more than one RERUN clause can be specified.
@@ -1712,7 +1481,8 @@ ioControlEntry:
 // The END OF REEL/UNIT phrase can be specified only if file-name-1 is a sequentially organized file.
 
 rerunClause:
-               RERUN ON? assignmentNameOrFileNameReference (EVERY? ((integerValue RECORDS) | (END OF? (REEL | UNIT))) OF? fileNameReference)?;
+    RERUN ON? assignmentNameOrFileNameReference 
+	(EVERY? ( (integerValue RECORDS) | (END OF? (REEL | UNIT)) ) OF? fileNameReference)?;
    
 // p147: The SAME AREA clause is syntax checked, but has no effect on the execution of the program.
 // The SAME AREA clause specifies that two or more files that do not represent sort or merge files are to use the same main storage area during processing.
@@ -1751,13 +1521,13 @@ rerunClause:
 // p149: The SAME SORT-MERGE AREA clause is equivalent to the SAME SORT AREA clause.
 
 sameAreaClause:
-                  SAME (RECORD | SORT_ARG | SORT_MERGE)? AREA? FOR? fileNameReference fileNameReference*;
+    SAME (RECORD | SORT_ARG | SORT_MERGE)? AREA? FOR? fileNameReference+;
 
 // p149: The MULTIPLE FILE TAPE clause (format 1) specifies that two or more files share the same physical reel of tape.
 // This clause is syntax checked, but has no effect on the execution of the program. The function is performed by the system through the LABEL parameter of the DD statement.
 
 multipleFileTapeClause:
-                          MULTIPLE FILE TAPE? CONTAINS? (fileNameReference (POSITION integerValue)?)+;
+    MULTIPLE FILE TAPE? CONTAINS? (fileNameReference (POSITION integerValue)?)+;
 
 // p149: The APPLY WRITE-ONLY clause optimizes buffer and device space allocation for files that have standard sequential organization, have variable-length records, and are blocked.
 // If you specify this phrase, the buffer is truncated only when the space available in the buffer is smaller than the size of the next record. 
@@ -1768,7 +1538,7 @@ multipleFileTapeClause:
 // For an alternate method of achieving the APPLY WRITE-ONLY results, see the description of the compiler option, AWO in the Enterprise COBOL Programming Guide.
 
 applyWriteOnlyClause:
-                        APPLY WRITE_ONLY ON? fileNameReference+;
+    APPLY WRITE_ONLY ON? fileNameReference+;
 
 // p153: Each section in the DATA DIVISION has a specific logical function within a COBOL program, object definition, factory definition, or method and can be omitted when that logical function is not needed. 
 // !! If included, the sections must be written in the order shown. 
@@ -1786,14 +1556,8 @@ applyWriteOnlyClause:
 // p154: Format: object and factory data division => WORKING-STORAGE SECTION only
 
 dataDivisionHeader:
-                      DATA DIVISION PeriodSeparator;
-
-//dataDivisionContent : 
-//                        fileSection?
-//                        workingStorageSection?
-//                        localStorageSection?
-//                        linkageSection?;
-
+    DATA DIVISION PeriodSeparator;
+	
 // p154: The FILE SECTION defines the structure of data files.
 // The FILE SECTION must begin with the header FILE SECTION, followed by a separator period.
 // file-description-entry 
@@ -1807,7 +1571,7 @@ dataDivisionHeader:
 // A method FILE SECTION can define external files only. A single run-unit-level file connector is shared by all programs and methods that contain a declaration of a given external file.
 
 fileSectionHeader:
-                     FILE SECTION PeriodSeparator;
+    FILE SECTION PeriodSeparator;
 
 // p155: The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
 // The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
@@ -1825,7 +1589,7 @@ fileSectionHeader:
 // See Chapter 18, “DATA DIVISION--data description entry,” on page 185 for more information.
 
 workingStorageSectionHeader:
-                               WORKING_STORAGE SECTION PeriodSeparator;
+    WORKING_STORAGE SECTION PeriodSeparator;
 
 // p156: The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.
 // On each invocation, data items defined in the LOCAL-STORAGE SECTION are reallocated. Each data item that has a VALUE clause is initialized to the value specified in that clause.
@@ -1838,7 +1602,7 @@ workingStorageSectionHeader:
 // Method LOCAL-STORAGE content is the same as program LOCAL-STORAGE content except that the GLOBAL clause has no effect (because methods cannot be nested).
 
 localStorageSectionHeader:
-                             LOCAL_STORAGE SECTION PeriodSeparator;                             
+    LOCAL_STORAGE SECTION PeriodSeparator;                             
 
 // p157: The LINKAGE SECTION describes data made available from another program or method. 
 // Record description entries and data item description entries in the LINKAGE SECTION provide names and descriptions, but storage within the program or method is not reserved because the data area exists elsewhere.
@@ -1863,7 +1627,7 @@ localStorageSectionHeader:
 //   any of the above conditions.
 
 linkageSectionHeader:
-                        LINKAGE SECTION PeriodSeparator;
+    LINKAGE SECTION PeriodSeparator;
 
 // p157: Data is grouped into the conceptual units as listed in the topic. 
 // - File data 
@@ -1900,56 +1664,6 @@ linkageSectionHeader:
 // - SD fileName
 // - (IS? EXTERNAL)? (IS? GLOBAL)? not supported
 // - RECORDING MODE not supported
-
-// --- DETAILS ---
-// p170: Format 1: sequential file description entry
-//sequentialFileDescriptionEntry : 
-//                               FD fileName (IS? EXTERNAL)? (IS? GLOBAL)?
-//                               (BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS))?
-//                               (RECORD
-//                                  (CONTAINS? IntegerLiteral CHARACTERS?) |
-//                                  (CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?) |
-//                                  (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataName)?) )?
-//                               (LABEL ((RECORD IS?) | (RECORDS ARE?)) (STANDARD | OMITTTED | dataName*))?
-//                               (VALUE OF (systemName IS? (dataName | literal))+)?
-//                               (DATA ((RECORD IS?) | (RECORDS ARE?)) dataName+)?
-//                               (LINAGE IS? (dataName | IntegerLiteral) LINES? (WITH? FOOTING AT? (dataName | IntegerLiteral))? (LINES? AT? TOP (dataName | IntegerLiteral))? (LINES? AT? BOTTOM (dataName | IntegerLiteral))?)?
-//                               (RECORDING MODE? IS? recordingMode)?
-//                               (CODE_SET IS? alphabetName)?
-//                               PeriodSeparator;
-// p171: Format 2: relative or indexed file description entry
-//relativeOrIndexedFileDescriptionEntry : 
-//                               FD fileName (IS? EXTERNAL)? (IS? GLOBAL)?
-//                               (BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS))?
-//                               (RECORD
-//                                  (CONTAINS? IntegerLiteral CHARACTERS?) |
-//                                  (CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?) |
-//                                  (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataName)?) )?
-//                               (LABEL ((RECORD IS?) | (RECORDS ARE?)) (STANDARD | OMITTTED))?
-//                               (VALUE OF (systemName IS? (dataName | literal))+)?
-//                               (DATA ((RECORD IS?) | (RECORDS ARE?)) dataName+)?
-//                               PeriodSeparator;
-// p172: Format 3: line-sequential file description entry
-//lineSequentialFileDescriptionEntry : 
-//                               FD fileName (IS? EXTERNAL)? (IS? GLOBAL)?
-//                               (RECORD
-//                                  (CONTAINS? IntegerLiteral CHARACTERS?) |
-//                                  (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataName)?) )?
-//                               PeriodSeparator;
-// p173: Format 4: sort/merge file description entry
-//sortMergeFileDescriptionEntry : 
-//                               SD fileName
-//                               (RECORD
-//                                  (CONTAINS? IntegerLiteral CHARACTERS?) |
-//                                  (CONTAINS? IntegerLiteral TO IntegerLiteral CHARACTERS?) |
-//                                  (IS? VARYING IN? SIZE? (FROM? IntegerLiteral)? (TO IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataName)?) )?
-//                               (DATA ((RECORD IS?) | (RECORDS ARE?)) dataName+)?
-//                               (BLOCK CONTAINS? (IntegerLiteral TO)? IntegerLiteral (CHARACTERS | RECORDS))?
-//                               (LABEL ((RECORD IS?) | (RECORDS ARE?)) (STANDARD | OMITTTED | dataName*))?
-//                               (VALUE OF (systemName IS? (dataName | literal))+)?
-//                               (LINAGE IS? (dataName | IntegerLiteral) LINES? (WITH? FOOTING AT? (dataName | IntegerLiteral))? (LINES? AT? TOP (dataName | IntegerLiteral))? (LINES? AT? BOTTOM (dataName | IntegerLiteral))?)?
-//                               (CODE_SET IS? alphabetName)?
-//                               PeriodSeparator;
 
 // p174: The FILE SECTION must contain a level-indicator for each input and output file.
 // For all files except sort or merge files, the FILE SECTION must contain an FD
@@ -1989,19 +1703,19 @@ linkageSectionHeader:
 // FD is the file description level indicator and SD is the sort-merge file description level indicator.
 // levelIndicator : (FD | SD);
 
-fileDescriptionEntry : 
-                    (FD | SD) fileNameReference 
-                   (externalClause |
-                    globalClause |
-                    blockContainsClause |
-                    recordClause |
-                    labelRecordsClause |
-                    valueOfClause |
-                    dataRecordsClause |
-                    linageClause |
-                    recordingModeClause |
-                    codeSetClause)*
-                    PeriodSeparator;
+fileDescriptionEntry: 
+    (FD | SD) fileNameReference 
+    (externalClause |
+     globalClause |
+     blockContainsClause |
+     recordClause |
+     labelRecordsClause |
+     valueOfClause |
+     dataRecordsClause |
+     linageClause |
+     recordingModeClause |
+     codeSetClause)*
+    PeriodSeparator;
 
 // p174 : The EXTERNAL clause specifies that a file connector is external, and permits
 // communication between two programs by the sharing of files.
@@ -2022,7 +1736,7 @@ fileDescriptionEntry :
 // EXTERNAL clause.
 
 externalClause:
-                  IS? EXTERNAL;
+    IS? EXTERNAL;
 
 // p175: The GLOBAL clause specifies that the file connector named by a file-name is a
 // global name. A global file-name is available to the program that declares it and to
@@ -2044,7 +1758,7 @@ externalClause:
 //   containing program.
 
 globalClause:
-                IS? GLOBAL;
+    IS? GLOBAL;
 
 // p175: The BLOCK CONTAINS clause specifies the size of the physical records.
 // The CHARACTERS phrase indicates that the integer specified in the BLOCK
@@ -2110,7 +1824,7 @@ globalClause:
 // clause.
 
 blockContainsClause:
-                       BLOCK CONTAINS? (integerValue TO)? integerValue (CHARACTERS | RECORDS)?;
+    BLOCK CONTAINS? (minNumberOfBytes=integerValue TO)? maxNumberOfBytes=integerValue (CHARACTERS | RECORDS)?;
 
 // p177: When the RECORD clause is used, the record size must be specified as the number
 // of bytes needed to store the record internally, regardless of the USAGE of the data
@@ -2207,9 +1921,9 @@ blockContainsClause:
 //   the data item referenced by data-name-1 had data-name-1 been specified
 
 recordClause:
-                RECORD ((CONTAINS? integerValue CHARACTERS?) |
-                        (CONTAINS? integerValue TO integerValue CHARACTERS?) |
-                        (IS? VARYING IN? SIZE? (FROM? integerValue)? (TO integerValue)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
+    RECORD ((CONTAINS? numberOfBytes=integerValue CHARACTERS?) |
+            (CONTAINS? minNumberOfBytes=integerValue TO maxnumberOfBytes=integerValue CHARACTERS?) |
+            (IS? VARYING IN? SIZE? (FROM? fromNumberOfBytes=integerValue)? (TO toNumberOfBytes=integerValue)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
 
 // p179: For sequential, relative, or indexed files, and for sort/merge SDs, the LABEL
 // RECORDS clause is syntax checked, but has no effect on the execution of the
@@ -2227,7 +1941,7 @@ recordClause:
 // record description entry associated with the file.
 
 labelRecordsClause:
-                      LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataNameReference*);
+    LABEL ((RECORD IS?) | (RECORDS ARE?)) ((STANDARD | OMITTED) | dataNameReference*);
 
 // p180: The VALUE OF clause describes an item in the label records associated with the
 // file.
@@ -2242,7 +1956,7 @@ labelRecordsClause:
 // program.
 
 valueOfClause:
-                 VALUE OF (alphanumericValue4 IS? numericOrAlphanumericVariable)+;
+    VALUE OF (qualifiedDataName IS? numericOrAlphanumericVariable)+;
 
 // p180: The DATA RECORDS clause is syntax checked but serves only as documentation
 // for the names of data records associated with the file.
@@ -2252,7 +1966,7 @@ valueOfClause:
 // with the same name.
 
 dataRecordsClause:
-                     DATA ((RECORD IS?) | (RECORDS ARE?)) dataNameReference+;
+    DATA ((RECORD IS?) | (RECORDS ARE?)) dataNameReference+;
 
 // p180: The LINAGE clause specifies the depth of a logical page in number of lines.
 // Optionally, it also specifies the line number at which the footing area begins and
@@ -2315,10 +2029,10 @@ dataRecordsClause:
 // “LINAGE-COUNTER” on page 20.
 
 linageClause:
-                LINAGE IS? integerVariable LINES? 
-                (WITH? FOOTING AT? integerVariable)? 
-                (LINES? AT? TOP integerVariable)? 
-                (LINES? AT? BOTTOM integerVariable)?;
+    LINAGE IS? numberOfLinesInPage=integerVariable LINES? 
+    (WITH? FOOTING AT? firstLineNumberOfFootingArea=integerVariable)? 
+    (LINES? AT? TOP numberOfLinesInTopMargin=integerVariable)? 
+    (LINES? AT? BOTTOM numberOfLinesInBottomMargin=integerVariable)?;
 
 // p182: The RECORDING MODE clause specifies the format of the physical records in a
 // QSAM file. The clause is ignored for a VSAM file.
@@ -2355,7 +2069,7 @@ linageClause:
 // U clause must be explicitly specified to get recording mode U.
 
 recordingModeClause:
-                       RECORDING MODE? IS? recordingMode;
+    RECORDING MODE? IS? recordingMode;
 
 // p183: The CODE-SET clause specifies the character code used to represent data on a
 // magnetic tape file. When the CODE-SET clause is specified, an alphabet-name
@@ -2381,7 +2095,7 @@ recordingModeClause:
 // program when specified under an SD.
 
 codeSetClause:
-                 CODE_SET IS? alphabetNameReference;
+    CODE_SET IS? alphabetNameReference;
 
 // p158: Record description entries describe the logical records in the file (including the category and format of data within each field of the logical record), different values the data might be assigned, and so forth.
 
@@ -2415,8 +2129,10 @@ codeSetClause:
 // - When the REDEFINES clause is specified, it must immediately follow data-name-1 or FILLER, if either is specified. If data-name-1 or FILLER is not specified, the REDEFINES clause must immediately follow the level-number.
 
 dataDescriptionEntry:
-	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
-	
+	  // Semantic predicate necessary to distinguish 
+	  // dataDescriptionEntry, dataRenamesEntry and dataConditionEntry
+	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 	
+
 	levelNumber (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
@@ -2442,8 +2158,6 @@ dataDescriptionEntry:
 // level-77, or level-88 entry.
 // All level-66 entries associated with one record must immediately follow the last
 // data description entry in that record.
-//dataRenamesEntry:
-//                        '66' dataName renamesClause PeriodSeparator;
 
 dataRenamesEntry: { CurrentToken.Text == "66" }? 
 	levelNumber dataNameDefinition renamesClause PeriodSeparator;
@@ -2457,8 +2171,6 @@ dataRenamesEntry: { CurrentToken.Text == "66" }?
 // conditional variable with which the condition-names are associated.
 // Format 3 can be used to describe elementary items, national group items, or
 // alphanumeric group items.
-//dataConditionNameEntry:
-//                        '88' conditionName valueClause PeriodSeparator;
 
 dataConditionEntry: { CurrentToken.Text == "88" }? 
 	levelNumber conditionNameDefinition valueClauseForCondition PeriodSeparator;
@@ -2589,7 +2301,7 @@ levelNumber: integerValue;
 // its picture character string defines the item as category numeric-edited.
 
 blankWhenZeroClause:
-                       BLANK WHEN? (ZERO | ZEROS | ZEROES);
+    BLANK WHEN? (ZERO | ZEROS | ZEROES);
 
 // p188: The EXTERNAL clause specifies that the storage associated with a data item is
 // associated with the run unit rather than with any particular program or method
@@ -2669,7 +2381,7 @@ blankWhenZeroClause:
 // clause.
 
 justifiedClause:
-                   (JUSTIFIED | JUST) RIGHT?;
+    (JUSTIFIED | JUST) RIGHT?;
 
 // p190: A GROUP-USAGE clause with the NATIONAL phrase specifies that the group
 // item defined by the entry is a national group item. A national group item contains
@@ -2723,7 +2435,7 @@ justifiedClause:
 // within an alphanumeric group.
 
 groupUsageClause:
-                    GROUP_USAGE IS? NATIONAL;
+    GROUP_USAGE IS? NATIONAL;
 
 // p191: The DATA DIVISION language elements used for table handling are the OCCURS
 // clause and the INDEXED BY phrase.
@@ -2750,18 +2462,6 @@ groupUsageClause:
 // - Describes a redefined data item. (However, a redefined item can be subordinate
 //   to an item that contains an OCCURS clause.) See “REDEFINES clause” on page
 //   216.
-
-// p192: Format 1: fixed-length tables
-// occursClause:
-//                 OCCURS IntegerLiteral TIMES?
-//                 ((ASCENDING | DESCENDING) KEY? IS? dataName+)*
-//                 (INDEXED BY? indexName+)?;
-// p195: Format 2: variable-length tables
-// occursClause:
-//                 OCCURS (IntegerLiteral TO)? (IntegerLiteral | UNBOUNDED) TIMES?
-//                 DEPENDING ON? dataName
-//                 ((ASCENDING | DESCENDING) KEY? IS? dataName+)*
-//                 (INDEXED BY? indexName+)?;
                 
 // p192: Fixed-length tables are specified using the OCCURS clause.
 // Because seven subscripts or indexes are allowed, six nested levels and one
@@ -2976,13 +2676,13 @@ groupUsageClause:
 //   – Programs compiled with the THREAD option
 
 occursClause:
-	OCCURS (integerValue TO)? (integerValue | UNBOUNDED) TIMES?
-	occursDependingOn?
-	occursKeys*
+	OCCURS (minNumberOfOccurences=integerValue TO)? (maxNumberOfOccurences=integerValue | UNBOUNDED) TIMES?
+	(DEPENDING ON? varNumberOfOccurences=numericVariable3)?
+	tableSortingKeys*
 	(INDEXED BY? indexNameDefinition+)?;
 
-occursDependingOn: DEPENDING ON? dataNameReference;
-occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
+tableSortingKeys: 
+	(ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
             
 // p198: The PICTURE clause specifies the general characteristics and editing requirements
 // of an elementary item.
@@ -3003,7 +2703,7 @@ occursKeys: (ASCENDING | DESCENDING) KEY? IS? dataNameReference+;
 // elementary data item.
 
 pictureClause:
-                 (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue9;
+    (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue9;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -3162,7 +2862,7 @@ pictureClause:
 // p216: ... more considerations on REDEFINES usage until page  ...
 
 redefinesClause:
-                   /*levelNumber (dataName | FILLER)? */ REDEFINES dataNameReference;
+	REDEFINES dataNameReference;
 
 // p219: The RENAMES clause specifies alternative and possibly overlapping groupings of
 // elementary data items.
@@ -3220,9 +2920,10 @@ redefinesClause:
 //   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
-                 /* 66 dataName */ RENAMES (dataNameReference | dataNamesRange);
+	RENAMES (dataNameReference | dataNamesRange);
 
-dataNamesRange: dataNameReference (THROUGH | THRU) dataNameReference;
+dataNamesRange: 
+	startDataName=dataNameReference (THROUGH | THRU) endDataName=dataNameReference;
 
 // p221: The SIGN clause specifies the position and mode of representation of the
 // operational sign for the signed numeric item to which it applies.
@@ -3263,7 +2964,7 @@ dataNamesRange: dataNameReference (THROUGH | THRU) dataNameReference;
 // - - is the character used for the negative operational sign.
 
 signClause:
-              (SIGN IS?)? (LEADING | TRAILING) (SEPARATE CHARACTER?)?;
+	(SIGN IS?)? (LEADING | TRAILING) (SEPARATE CHARACTER?)?;
 
 // p223: The SYNCHRONIZED clause specifies the alignment of an elementary item on a
 // natural boundary in storage.
@@ -3286,7 +2987,7 @@ signClause:
 // p223-228 : ... more details on the effect of the SYNCHRONIZE clause on other language elements ...
 
 synchronizedClause:
-                      (SYNCHRONIZED | SYNC) (LEFT |RIGHT)?;
+	(SYNCHRONIZED | SYNC) (LEFT |RIGHT)?;
 
 // p228: The USAGE clause specifies the format in which data is represented in storage.
 
@@ -3340,23 +3041,23 @@ synchronizedClause:
 // save the value of an index (referenced by index-name) in an index data item.
 
 usageClause:
-               (USAGE IS?)? ( (BINARY NATIVE?) |
-                              (COMP NATIVE?)   | (COMPUTATIONAL NATIVE?)   |
-                              (COMP_1 NATIVE?) | (COMPUTATIONAL_1 NATIVE?) |
-                              (COMP_2 NATIVE?) | (COMPUTATIONAL_2 NATIVE?) |
-                              (COMP_3 NATIVE?) | (COMPUTATIONAL_3 NATIVE?) |
-                              (COMP_4 NATIVE?) | (COMPUTATIONAL_4 NATIVE?) |
-                              (COMP_5 NATIVE?) | (COMPUTATIONAL_5 NATIVE?) |
-                              (DISPLAY_ARG NATIVE?)   |
-                              (DISPLAY_1 NATIVE?) |
-                              INDEX |
-                              (NATIONAL NATIVE?) |
-                              (OBJECT REFERENCE classNameReference?) |
-                              (PACKED_DECIMAL NATIVE?) |
-                              (POINTER |
-                              PROCEDURE_POINTER |
-                              FUNCTION_POINTER)                            
-                            );
+	(USAGE IS?)? ( (BINARY NATIVE?) |
+					(COMP NATIVE?)   | (COMPUTATIONAL NATIVE?)   |
+					(COMP_1 NATIVE?) | (COMPUTATIONAL_1 NATIVE?) |
+					(COMP_2 NATIVE?) | (COMPUTATIONAL_2 NATIVE?) |
+					(COMP_3 NATIVE?) | (COMPUTATIONAL_3 NATIVE?) |
+					(COMP_4 NATIVE?) | (COMPUTATIONAL_4 NATIVE?) |
+					(COMP_5 NATIVE?) | (COMPUTATIONAL_5 NATIVE?) |
+					(DISPLAY_ARG NATIVE?)   |
+					(DISPLAY_1 NATIVE?) |
+					INDEX |
+					(NATIONAL NATIVE?) |
+					(OBJECT REFERENCE classNameReference?) |
+					(PACKED_DECIMAL NATIVE?) |
+					(POINTER |
+					PROCEDURE_POINTER |
+					FUNCTION_POINTER)                            
+				);
 
 // p237: The VALUE clause specifies the initial contents of a data item or the values
 // associated with a condition-name. The use of the VALUE clause differs depending
@@ -3371,8 +3072,6 @@ usageClause:
 // unpredictable.
 
 // p237: Format 1: literal value
-// valueClause:
-//                VALUE IS? literal;
 // Format 1 specifies the initial value of a data item. Initialization is independent of
 // any BLANK WHEN ZERO or JUSTIFIED clause that is specified.
 // A format-1 VALUE clause specified in a data description entry that contains or is
@@ -3407,8 +3106,6 @@ usageClause:
 // p238 : ... more details - Rules for literal values ...
 
 // p242: Format 3: NULL value
-// valueClause:
-//                VALUE IS? (NULL | NULLS);
 // This format assigns an invalid address as the initial value of an item defined as
 // USAGE POINTER, USAGE PROCEDURE POINTER, or USAGE
 // FUNCTION-POINTER. It also assigns an invalid object reference as the initial
@@ -3418,11 +3115,9 @@ usageClause:
 // FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
 
 valueClause:
-               VALUE IS? anyValue2;
+	VALUE IS? anyValue2;
 			   
 // p239: Format 2: condition-name value
-// valueClause:
-//     /*88 conditionName*/ ((VALUE IS?) | (VALUES ARE?)) (literal ((THROUGH | THRU) literal)?)+;
 // This format associates a value, values, or ranges of values with a condition-name.
 // Each such condition-name requires a separate level-88 entry. Level-number 88 and
 // the condition-name are not part of the format-2 VALUE clause itself. They are
@@ -3464,9 +3159,10 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-		((VALUE IS?) | (VALUES ARE?)) (anyValue | valuesRange)+; 
+	((VALUE IS?) | (VALUES ARE?)) (anyValue | valuesRange)+; 
 
-valuesRange: anyValue (THROUGH | THRU) anyValue;
+valuesRange: 
+	startValue=anyValue (THROUGH | THRU) endValue=anyValue;
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -3495,17 +3191,11 @@ valuesRange: anyValue (THROUGH | THRU) anyValue;
 // -> BY REFERENCE not supported in using phrase
 
 procedureDivisionHeader:
-                       PROCEDURE DIVISION
-                       usingPhrase?
-                       returningPhrase?
-                       PeriodSeparator;
-
-
-// factory and object procedure division header
-
-//procedureDivisionHeader:
-//                       PROCEDURE DIVISION PeriodSeparator;
-
+    PROCEDURE DIVISION
+    (USING programInputParameters+)?
+    (RETURNING programOutputParameter)?
+    PeriodSeparator;
+	
 // p248: The USING phrase specifies the parameters that a program or method receives
 // when the program is called or the method is invoked.
 // The USING phrase is valid in the PROCEDURE DIVISION header of a called
@@ -3583,15 +3273,8 @@ procedureDivisionHeader:
 // are interoperable between COBOL and Java, as listed in “Interoperable
 // data types for COBOL and Java” on page 361.
 
-usingPhrase:
-               USING inputParameters+;
-
-inputParameters:
-                   receivingMode? dataNameReference+;
-
-receivingMode:
-                 BY? REFERENCE  #ByReference | 
-                 BY? VALUE      #ByValue;
+programInputParameters:
+    (BY? (REFERENCE | VALUE))? storageArea2+;
 
 // p250: The RETURNING phrase specifies a data item that is to receive the program or
 // method result.
@@ -3619,8 +3302,8 @@ receivingMode:
 // subprograms. For main programs, use the RETURN-CODE special
 // register to return a value to the operating environment.
 
-returningPhrase:
-                   RETURNING dataNameReference;
+programOutputParameter:
+	storageArea2;
 
 // p246: Format: procedure division
 // 1 The USE statement is described under “USE statement” on page 546.
@@ -3652,10 +3335,6 @@ returningPhrase:
 // - GO TO without a specified procedure name
 // - SEGMENT-LIMIT
 // - USE FOR DEBUGGING
-
-//procedureDivisionContent :
-//                         declaratives?
-//                         section*;      
 
 // p251: Declaratives provide one or more special-purpose sections that are executed when
 // an exceptional condition occurs.
@@ -3695,10 +3374,10 @@ returningPhrase:
 // executed.
 
 declarativesHeader:
-                      DECLARATIVES PeriodSeparator;
+    DECLARATIVES PeriodSeparator;
 
 declarativesEnd:
-                   END DECLARATIVES PeriodSeparator;
+    END DECLARATIVES PeriodSeparator;
 
 // p546 : The USE statement defines the conditions under which the procedures that follow
 // the statement will be executed.
@@ -3707,8 +3386,8 @@ declarativesEnd:
 // - DEBUGGING declarative
 
 useStatement:
-                useStatementForExceptionDeclarative |
-                useStatementForDebuggingDeclarative;
+    useStatementForExceptionDeclarative |
+    useStatementForDebuggingDeclarative;
 
 // p547: EXCEPTION/ERROR declarative
 // The EXCEPTION/ERROR declarative specifies procedures for input/output
@@ -3836,7 +3515,7 @@ useStatementForDebuggingDeclarative:
 // keywords END DECLARATIVES.
 
 sectionHeader:
-                 sectionNameDefinition SECTION priorityNumber? PeriodSeparator;
+    sectionNameDefinition SECTION priorityNumber? PeriodSeparator;
 
 // p252: Segments
 // A segment consists of all sections in a program that have the same
@@ -3870,13 +3549,13 @@ sectionHeader:
 // paragraphs are so contained.
 
 paragraphHeader:
-                   paragraphNameDefinition PeriodSeparator;
+    paragraphNameDefinition PeriodSeparator;
 
 // Sentence
 // One or more statements terminated by a separator period.
 
 sentenceEnd:
-               PeriodSeparator;
+    PeriodSeparator;
 
 // p253: Statement
 // A syntactically valid combination of identifiers and symbols (literals,
@@ -4143,22 +3822,23 @@ sentenceEnd:
 // TIME Has the implicit PICTURE 9(8). The sequence of data elements (from left to right) is: Two digits for hour of day Two digits for minute of hour Two digits for second of minute Two digits for hundredths of second
 // Thus 2:41 PM is expressed as 14410000.
 
-acceptStatement: acceptDataTransfer | acceptSystemDateTime;
+acceptStatement: 
+	acceptDataTransfer | acceptSystemDateTime;
 
 acceptDataTransfer:
-	ACCEPT identifier (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
+	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
 
 acceptSystemDateTime:
-	ACCEPT identifier FROM ((DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
+	ACCEPT alphanumericStorageArea FROM ((DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
 
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
+
 addStatement:
 	addSimple | addGiving | addCorresponding;
 
 addStatementEnd: END_ADD;
 
-//
 // For all formats:
 // identifier-1, identifier-2 
 // In format 1, must name an elementary numeric item. 
@@ -4173,32 +3853,26 @@ addStatementEnd: END_ADD;
 // p298: Format 1: ADD statement
 // All identifiers or literals that precede the keyword TO are added together, and this sum is added to and stored in identifier-2. 
 // This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
+
 addSimple:
-		ADD numericVariable1+ TO numericVariableRounded+;
+	ADD numericVariable1+ TO numericStorageAreaRounded+;
 
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
+
 addGiving:
-		ADD numericVariable1+ TO? numericVariableTmp GIVING numericVariableRounded+;
+	ADD numericVariable1+ TO? toOperand=numericVariable1 GIVING numericStorageAreaRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
-addCorresponding:
-		ADD corresponding numericVariable2 TO numericVariableRounded;
 
-numericVariableTmp: numericVariable1;
+addCorresponding:
+	ADD (CORRESPONDING | CORR) numericVariable2 TO numericStorageAreaRounded;
 
 // ROUNDED phrase
 // For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
-numericVariableRounded:
-		numericVariable2 ROUNDED?;
-		
-// CORRESPONDING phrase (format 3)
-// See “CORRESPONDING phrase” on page 281. 
-corresponding:
-		CORRESPONDING | CORR;
-
-
+numericStorageAreaRounded:
+	numericStorageArea ROUNDED?;
 
 // p301: ALTER statement
 // The ALTER statement changes the transfer point specified in a GO TO statement.
@@ -4221,7 +3895,7 @@ corresponding:
 // - A sort or merge statement with the INPUT or OUTPUT phrase specified
 
 alterStatement:
-                  ALTER (procedureName TO (PROCEED TO)? procedureName)+;
+	ALTER (alteredProcedure=procedureName TO (PROCEED TO)? targetProcedure=procedureName)+;
 
 // p303: CALL statement
 // The CALL statement transfers control from one object program to another within the run unit.
@@ -4352,31 +4026,27 @@ alterStatement:
 // * by content : the address of a copy of the data item is passed, it looks the same as passing by reference for the called subroutine, but but any change is not reflected back to the caller
 
 callStatement:
-	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable (USING callBy+)? callReturning?;
+	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable 
+	(USING callProgramInputParameters+)? 
+	(RETURNING callProgramOutputParameter)?;
 
-callBy:
-	(BY? (REFERENCE | CONTENT | VALUE))? 
-        (anyVariable4 /*| fileName <= impossible to distinguish from identifier */ | OMITTED)+;
+callProgramInputParameters:
+	(BY? (REFERENCE | CONTENT | VALUE))? (anyVariable4 | OMITTED)+;
 
-callReturning:
-	RETURNING identifier;
+callProgramOutputParameter:
+	storageArea;
 
 callStatementEnd: END_CALL;
-
 
 // p305: procedure-pointer-1 
 // Must be defined with USAGE IS PROCEDURE-POINTER and must be set to a valid program entry point; otherwise, the results of the CALL statement are undefined. 
 // After a program has been canceled by COBOL, released by PL/I or C, or deleted by assembler, any procedure-pointers that had been set to that program's entry point are no longer valid. 
-
 // => replaced by programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
-// procedurePointer: dataName;
 
 // p305: function-pointer-1 
 // Must be defined with USAGE IS FUNCTION-POINTER and must be set to a valid function or program entry point; otherwise, the results of the CALL statement are undefined. 
 // After a program has been canceled by COBOL, released by PL/I or C, or deleted by the assembler, any function-pointers that had been set to that function or program's entry point are no longer valid.
-
 // => replaced by programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
-// functionPointer: dataName;
 
 // p311: CANCEL statement
 // The CANCEL statement ensures that the referenced subprogram is entered in initial state the next time that it is called.
@@ -4412,13 +4082,8 @@ cancelStatement:
 // The CLOSE statement terminates the processing of volumes and files.
 // Format 1: CLOSE statement for sequential files
 // Format 3: CLOSE statement for line-sequential files
-//closeStatement:
-//                  CLOSE (fileName ( ((REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))?) |
-//                                    (WITH? ((NO REWIND) | LOCK))  )?)+;
 // Notes: 1 The REEL, UNIT, and NO REWIND phrases are not valid for VSAM files.
 // Format 2: CLOSE statement for indexed and relative file
-//closeStatement:
-//                  CLOSE (fileName (WITH? LOCK)?)+;
 // file-name-1 Designates the file upon which the CLOSE statement is to operate. 
 // If more than one file-name is specified, the files need not have the same organization or access. 
 // file-name-1 must not be a sort or merge file. 
@@ -4435,9 +4100,10 @@ cancelStatement:
 // ... p314->p315 : more details on the Effect of CLOSE statement on file types  / The permissible combinations of CLOSE statement phrases ...
 
 closeStatement:
-	CLOSE closeFileName+;
+	CLOSE closeFileDirective+;
 
-closeFileName: fileNameReference ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?;
+closeFileDirective: 
+	fileNameReference ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO REWIND))? ) | ( WITH? (LOCK | (NO REWIND)) ) )?;
 
 // p317: COMPUTE statement
 // The COMPUTE statement assigns the value of an arithmetic expression to one or more data items.
@@ -4457,15 +4123,10 @@ closeFileName: fileNameReference ( ( (REEL | UNIT) ((FOR? REMOVAL) | (WITH NO RE
 // This explicit scope terminator serves to delimit the scope of the COMPUTE statement. END-COMPUTE permits a conditional COMPUTE statement to be nested in another conditional statement. END-COMPUTE can also be used with an imperative COMPUTE statement.
 // For more information, see “Delimited scope statements” on page 280.
 
-///computeStatementConditional:
-///	computeStatementCore sizeErrorExceptions;
-
 computeStatement:
-	COMPUTE numericVariableRounded+ (EqualOperator | EQUAL) arithmeticExpression;
+	COMPUTE numericStorageAreaRounded+ (EqualOperator | EQUAL) arithmeticExpression;
 
 computeStatementEnd: END_COMPUTE;
-
-
 
 // p319: CONTINUE statement
 // The CONTINUE statement is a no operation statement. CONTINUE indicates that no executable instruction is present.
@@ -4543,67 +4204,33 @@ deleteStatementEnd: END_DELETE;
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-                    DISPLAY anyVariable5+
-                    uponEnvironmentName?
-                    withNoAdvancing?;
+    DISPLAY anyVariable5+ uponOutputDevice? withNoAdvancing?;
 
-uponEnvironmentName:
-					UPON mnemonicForEnvironmentNameReferenceOrEnvironmentName;
+uponOutputDevice:
+	UPON outputDevice=mnemonicForEnvironmentNameReferenceOrEnvironmentName;
 
 withNoAdvancing:
-					WITH? NO ADVANCING;
-
-
+	WITH? NO ADVANCING;
+	
 // p325: DIVIDE statement
 // The DIVIDE statement divides one numeric data item into or by others and sets the values of data items equal to the quotient and remainder.
 // Format 1: DIVIDE statement
-//divideStatement:
-//                   DIVIDE (identifier | literal)+ INTO (identifier ROUNDED?)+
-//                   (ON? SIZE ERROR imperativeStatement)?
-//                   (NOT ON? SIZE ERROR imperativeStatement)?
-//                   END_DIVIDE?;
 // In format 1, the value of identifier-1 or literal-1 is divided into the value of identifier-2, and the quotient is then stored in identifier-2. 
 // For each successive occurrence of identifier-2, the division takes place in the left-to-right order in which identifier-2 is specified.
 //
 // Format 2: DIVIDE statement with INTO and GIVING phrases
-//divideStatement:
-//                   DIVIDE (identifier | literal) INTO (identifier | literal)
-//                   GIVING (identifier ROUNDED?)+
-//                   (ON? SIZE ERROR imperativeStatement)?
-//                   (NOT ON? SIZE ERROR imperativeStatement)?
-//                   END_DIVIDE?;
 // In format 2, the value of identifier-1 or literal-1 is divided into the value of identifier-2 or literal-2.
 // The value of the quotient is stored in each data item referenced by identifier-3.
 // 
 // Format 3: DIVIDE statement with BY and GIVING phrase
-//divideStatement:
-//                   DIVIDE (identifier | literal) BY (identifier | literal)
-//                   GIVING (identifier ROUNDED?)+
-//                   (ON? SIZE ERROR imperativeStatement)?
-//                   (NOT ON? SIZE ERROR imperativeStatement)?
-//                   END_DIVIDE?;
 // In format 3, the value of identifier-1 or literal-1 is divided by the value of identifier-2 or literal-2. 
 // The value of the quotient is stored in each data item referenced by identifier-3.
 //
 // Format 4: DIVIDE statement with INTO and REMAINDER phrases
-//divideStatement:
-//                   DIVIDE (identifier | literal) INTO (identifier | literal)
-//                   GIVING identifier ROUNDED?
-//                   REMAINDER identifier
-//                   (ON? SIZE ERROR imperativeStatement)?
-//                   (NOT ON? SIZE ERROR imperativeStatement)?
-//                   END_DIVIDE?;
 // In format 4, the value of identifier-1 or literal-1 is divided into identifier-2 or literal-2. 
 // The value of the quotient is stored in identifier-3, and the value of the remainder is stored in identifier-4.
 // 
 // Format 5: DIVIDE statement with BY and REMAINDER phrase
-// divideStatement:
-//                   DIVIDE (identifier | literal) BY (identifier | literal)
-//                   GIVING identifier ROUNDED?
-//                   REMAINDER identifier
-//                   (ON? SIZE ERROR imperativeStatement)?
-//                   (NOT ON? SIZE ERROR imperativeStatement)?
-//                   END_DIVIDE?;
 // In format 5, the value of identifier-1 or literal-1 is divided by identifier-2 or literal-2.
 // The value of the quotient is stored in identifier-3, and the value of the remainder is stored in identifier-4.
 // 
@@ -4633,27 +4260,16 @@ withNoAdvancing:
 // This explicit scope terminator serves to delimit the scope of the DIVIDE statement. END-DIVIDE turns a conditional DIVIDE statement into an imperative statement that can be nested in another conditional statement. END-DIVIDE can also be used with an imperative DIVIDE statement.
 
 divideStatement:
-	divideGiving | divideSimple;
+	divideSimple | divideGiving;
 
 divideSimple:
-	DIVIDE dDivisor INTO numericVariableRounded+;
+	DIVIDE divisor=numericVariable1 INTO dividendAndQuotient=numericStorageAreaRounded+;
+
 divideGiving:
-	DIVIDE ((dDivisor INTO dDividend) | (dDividend BY dDivisor)) GIVING ((numericVariableRounded REMAINDER identifier) | numericVariableRounded+);
-
-//DIVIDE dDivisor  INTO                  numericVariableRounded+                       Format 1: numericVariableRoundedi = dDivisor/dQuotienti
-//DIVIDE dDivisor  INTO dDividend GIVING numericVariableRounded+                       Format 2: numericVariableRoundedi = dDivisor/dDividend
-//DIVIDE dDividend BY   dDivisor  GIVING numericVariableRounded+                       Format 3: numericVariableRoundedi = dDivisor/dDividend
-//DIVIDE dDivisor  INTO dDividend GIVING numericVariableRounded REMAINDER numericVariable2   Format 4: numericVariableRounded  = dDivisor/dDividend    identifier = remainder
-//DIVIDE dDividend BY   dDivisor  GIVING numericVariableRounded REMAINDER numericVariable2   Format 5: numericVariableRounded  = dDivisor/dDividend    identifier = remainder
-
-dDivisor:  numericVariable1;
-dDividend: numericVariable1;
-
-//divideStatementConditional:
-//                              divideStatement
-//                              (onSizeErrorCondition imperativeStatement)?
-//                              (notOnSizeErrorCondition imperativeStatement)?
-//                              divideStatementEnd?;
+	DIVIDE ( (divisor1=numericVariable1 INTO dividend1=numericVariable1) | 
+	         (dividend2=numericVariable1 BY divisor2=numericVariable1)   ) 
+	GIVING ( (quotient1=numericStorageAreaRounded REMAINDER remainder=numericStorageArea) | 
+	          quotient2=numericStorageAreaRounded+                              );
 
 divideStatementEnd: END_DIVIDE;
 
@@ -4669,10 +4285,7 @@ divideStatementEnd: END_DIVIDE;
 // For a discussion of the USING phrase, see “The PROCEDURE DIVISION header” on page 247.
 
 entryStatement:
-	ENTRY programEntryDefinition (USING byReferenceOrByValueIdentifiers+)? /*PeriodSeparator*/;
-
-byReferenceOrByValueIdentifiers:
-	(BY? (REFERENCE | VALUE))? identifier+;
+	ENTRY programEntryDefinition (USING programInputParameters+)?;
 
 // p331: EVALUATE statement
 // The EVALUATE statement provides a shorthand notation for a series of nested IF statements. 
@@ -4701,26 +4314,25 @@ byReferenceOrByValueIdentifiers:
 // ... more details on Determining values / Comparing selection subjects and objects / Executing the EVALUATE statement p332 to 334 ...
 
 evaluateStatement:
-	EVALUATE comparisonLHSExpression
-	  ( ALSO comparisonLHSExpression )*;
+	EVALUATE comparisonLHSExpression (ALSO comparisonLHSExpression)*;
 
-comparisonLHSExpression: alphanumericExpression | booleanExpression;
+comparisonLHSExpression:
+	alphanumericExpression | booleanExpression;
 
 whenCondition:
 	WHEN LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator?
   ( ALSO LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator? )*;
 
-whenEvaluateCondition: whenCondition;
+comparisonRHSExpression: 
+	booleanExpression | NOT? (alphanumericExpression | alphanumericExpressionsRange);
 
-comparisonRHSExpression: booleanExpression | NOT? (alphanumericExpression | alphanumericExpressionsRange);
-
-alphanumericExpressionsRange: alphanumericExpression (THROUGH | THRU) alphanumericExpression;
+alphanumericExpressionsRange: 
+	startExpression=alphanumericExpression (THROUGH | THRU) endExpression=alphanumericExpression;
 
 whenOtherCondition:
 	WHEN OTHER;
 
 evaluateStatementEnd: END_EVALUATE;
-
 
 // p335: EXIT statement
 // The EXIT statement provides a common end point for a series of procedures.
@@ -4728,7 +4340,7 @@ evaluateStatementEnd: END_EVALUATE;
 // The EXIT statement is treated as a CONTINUE statement. Any statements following the EXIT statement are executed.
 
 exitStatement:
-                 /* paragraphName PeriodSeparator */ EXIT /*PeriodSeparator*/;
+	EXIT;
 
 // p336: EXIT METHOD statement
 // The EXIT METHOD statement specifies the end of an invoked method.
@@ -4740,7 +4352,7 @@ exitStatement:
 // When there is no next executable statement in an invoked method, an implicit EXIT METHOD statement is executed.
 
 exitMethodStatement:
-                       EXIT METHOD /*PeriodSeparator*/;
+	EXIT METHOD;
 
 // p337: EXIT PROGRAM statement
 // The EXIT PROGRAM statement specifies the end of a called program and returns control to the calling program.
@@ -4754,7 +4366,7 @@ exitMethodStatement:
 // When there is no next executable statement in a called program, an implicit EXIT PROGRAM statement is executed.
 
 exitProgramStatement:
-                        EXIT PROGRAM /*PeriodSeparator*/;
+	EXIT PROGRAM;
 
 // p338: GOBACK statement
 // The GOBACK statement functions like the EXIT PROGRAM statement when it is coded as part of a called program (or the EXIT METHOD statement when GOBACK is coded as part of an invoked method) and like the STOP RUN statement when coded in a main program.
@@ -4768,7 +4380,7 @@ exitProgramStatement:
 // Subprogram -> Returns to the calling program.
 
 gobackStatement:
-                   GOBACK;
+	GOBACK;
 
 // p339: GO TO statement
 // The GO TO statement transfers control from one part of the PROCEDURE DIVISION to another.
@@ -4781,8 +4393,6 @@ gobackStatement:
 // The unconditional GO TO statement transfers control to the first statement in the paragraph or section identified by procedure-name, unless the GO TO statement has been modified by an ALTER statement.
 // For more information, see “ALTER statement” on page 301.
 // Format 1: unconditional GO TO statement
-//gotoStatement:
-//                 GO TO? procedureName;
 // procedure-name-1 
 // Must name a procedure or a section in the same PROCEDURE DIVISION as the GO TO statement.
 // When the unconditional GO TO statement is not the last statement in a sequence of imperative statements, the statements following the GO TO are not executed.
@@ -4791,8 +4401,6 @@ gobackStatement:
 // Conditional GO TO 
 // The conditional GO TO statement transfers control to one of a series of procedures, depending on the value of the data item referenced by identifier-1.
 // Format 2: conditional GO TO statement
-//gotoStatement:
-//                 GO TO? procedureName+ DEPENDING ON? identifier;
 // procedure-name-1 
 // Must be a procedure or a section in the same PROCEDURE DIVISION as the GO TO statement. 
 // The number of procedure-names must not exceed 255. 
@@ -4810,11 +4418,10 @@ gobackStatement:
 // An ALTER statement referring to the paragraph that contains the altered GO TO statement should be executed before the GO TO statement is executed. 
 // Otherwise, the GO TO statement acts like a CONTINUE statement.
 // Format 3: altered GO TO statement
-//gotoStatement:
-//                 /*paragraphName PeriodSeparator */ GO TO? PeriodSeparator;
 // When an ALTER statement refers to a paragraph, the paragraph can consist only of the paragraph-name followed by an unconditional or altered GO TO statement.
 
-gotoStatement: gotoSimple | gotoConditional;
+gotoStatement: 
+	gotoSimple | gotoConditional;
 
 gotoSimple:
 	GO TO? procedureName;
@@ -4896,16 +4503,6 @@ nextSentenceStatement:
 
 ifStatementEnd:
 	END_IF;
-
-///ifStatementWithScope:
-///	ifStatement ifStatementEnd;
-///ifStatement:
-///	IF conditionalExpression THEN? statementOrNextSentence elseStatement?;
-///statementOrNextSentence:
-///	statement+ | nextSentenceStatement;
-///elseStatement:
-///	ELSE statementOrNextSentence;
-
 
 // p343: INITIALIZE statement
 // The INITIALIZE statement sets selected categories of data fields to predetermined
@@ -5002,10 +4599,13 @@ ifStatementEnd:
 //    the same data description entry.
 
 initializeStatement:
-	INITIALIZE identifier+ (REPLACING initializeReplacing+)?;
+	INITIALIZE storageArea+ (REPLACING initializeReplacingDirective+)?;
 
-initializeReplacing:
-	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS) DATA? BY anyVariable3;
+initializeReplacingDirective:
+	dataCategory DATA? BY anyVariable3;
+
+dataCategory:
+	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS);
 
 // p346: INSPECT statement
 // The INSPECT statement examines characters or groups of characters in a data
@@ -5019,31 +4619,9 @@ initializeReplacing:
 //   replacement characters (format 4).
 //
 // p346: Format 1: INSPECT statement with TALLYING phrase
-//inspectStatement:
-//                    INSPECT identifier TALLYING
-//                    (identifier FOR ( (CHARACTERS ((BEFORE | AFTER) INITIAL? (identifier | literal))*) |
-//                                      ((ALL | LEADING) ((identifier | literal) ((BEFORE | AFTER) INITIAL? (identifier | literal))*)+) )+ )+;
-//
 // p347: Format 2: INSPECT statement with REPLACING phrase
-//inspectStatement:
-//                    INSPECT identifier REPLACING
-//                    ( (CHARACTERS BY (identifier| literal) ((BEFORE | AFTER) INITIAL? (identifier | literal))*) |
-//                      ((ALL | LEADING | FIRST) ((identifier | literal) BY (identifier | literal) ((BEFORE | AFTER) INITIAL? (identifier | literal))*)+) )+;
-//
 // p348: Format 3: INSPECT statement with TALLYING and REPLACING phrases
-//inspectStatement:
-//                    INSPECT identifier TALLYING
-//                    (identifier FOR ( (CHARACTERS ((BEFORE | AFTER) INITIAL? (identifier | literal))*) |
-//                                      ((ALL | LEADING) ((identifier | literal) ((BEFORE | AFTER) INITIAL? (identifier | literal))*)+) )+ )+
-//                    REPLACING
-//                    ( (CHARACTERS BY (identifier| literal) ((BEFORE | AFTER) INITIAL? (identifier | literal))*) |
-//                      ((ALL | LEADING | FIRST) ((identifier | literal) BY (identifier | literal) ((BEFORE | AFTER) INITIAL? (identifier | literal))*)+) )+;
-//
 // p349: Format 4: INSPECT statement with CONVERTING phrase
-//inspectStatement4:
-//                    INSPECT identifier CONVERTING
-//                    (identifier | literal) TO (identifier | literal)
-//                    ((BEFORE | AFTER) INITIAL? (identifier | literal))*;
 //
 // identifier-1
 // Is the inspected item and can be any of the following items:
@@ -5214,27 +4792,43 @@ initializeReplacing:
 // ... more details p354->355 : Example of the INSPECT statement ...
 
 inspectStatement:
-	INSPECT identifier (inspectConverting | ((TALLYING inspectTallying+)? (REPLACING (inspectCharacters | inspectIdentifiers)+)?));
+	INSPECT alphanumericStorageArea (  convertingPhrase                  | 
+	                                  (tallyingPhrase? replacingPhrase?) );
 
-inspectConverting:
-	CONVERTING alphanumericVariable1 TO alphanumericVariable2 inspectPhrase1*;
+convertingPhrase:
+	CONVERTING searchedCharacterString =alphanumericVariable1 
+	TO         replacingCharacterString=alphanumericVariable2 
+	countingOrReplacingCondition*;
 
-inspectTallying:
-	identifier FOR (inspectCharacters | inspectIdentifiers);
+tallyingPhrase:
+	TALLYING inspectTallyingOperation+;
 
-inspectCharacters:
-	CHARACTERS inspectBy? inspectPhrase1*;
+inspectTallyingOperation:
+	countField=numericStorageArea FOR (countAllCharacters | countCharacterStrings)+;
 
-inspectIdentifiers:
-	(ALL | LEADING | FIRST) inspectByIdentifiers+;
+countAllCharacters:
+	CHARACTERS countingOrReplacingCondition*;
 
-inspectByIdentifiers:
-	alphanumericVariable1 inspectBy? inspectPhrase1*;
+countCharacterStrings:
+	(ALL | LEADING) countCharacterStringPattern+;
 
-inspectPhrase1:
-	(BEFORE | AFTER) INITIAL? alphanumericVariable1;
+countCharacterStringPattern:
+	searchedCharacterString=alphanumericVariable1 countingOrReplacingCondition*;
 
-inspectBy: BY alphanumericVariable2;
+replacingPhrase:
+	REPLACING (replaceAllCharacters | replaceCharacterStrings)+;
+
+replaceAllCharacters:
+	CHARACTERS BY replacingCharacterString=alphanumericVariable2 countingOrReplacingCondition*;
+
+replaceCharacterStrings:
+	(ALL | LEADING | FIRST) replaceCharacterStringPattern+;
+
+replaceCharacterStringPattern:
+	searchedCharacterString=alphanumericVariable1 BY replacingCharacterString=alphanumericVariable2 countingOrReplacingCondition*;
+
+countingOrReplacingCondition:
+	(BEFORE | AFTER) INITIAL? delimiter=alphanumericVariable1;
 
 // p356: INVOKE statement 
 // The INVOKE statement can create object instances of a COBOL or Java class and
@@ -5442,13 +5036,17 @@ inspectBy: BY alphanumericVariable2;
 // ... more details p362->363 Miscellaneous argument types for COBOL and Java ...
 
 invokeStatement:
-	INVOKE (classNameOrObjectReferenceVariable | selfObjectIdentifier | superObjectIdentifier) (methodNameVariable | NEW) (USING invokeUsing+)? invokeReturning?;
+	INVOKE 
+	(classNameOrObjectReferenceVariable | selfObjectIdentifier | superObjectIdentifier) 
+	(methodNameVariable | NEW) 
+	(USING invokeInputParameter+)? 
+	(RETURNING invokeOutputParameter)?;
 
-invokeUsing:
+invokeInputParameter:
 	BY? VALUE anyVariable+;
 
-invokeReturning:
-	RETURNING identifier;
+invokeOutputParameter:
+	storageArea;
 
 invokeStatementEnd: END_INVOKE;
 
@@ -5655,23 +5253,39 @@ invokeStatementEnd: END_INVOKE;
 
 mergeStatement:
 	MERGE fileNameReference onAscendingDescendingKey+
-		(COLLATING? SEQUENCE IS? alphabetNameReference)?
-		usingFilenames
-		(givingFilenames | outputProcedure);
+	collatingSequence?
+	usingFilenames
+	(givingFilenames | outputProcedure);
 
+// Rules shared with sortStatement
 
+collatingSequence:
+	COLLATING? SEQUENCE IS? alphabetNameReference;
+
+onAscendingDescendingKey: 
+	ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
+
+usingFilenames:  
+	USING fileNameReference+;
+
+givingFilenames: 
+	GIVING fileNameReference+;
+	
+inputProcedure:  
+	INPUT PROCEDURE IS? (procedureName | proceduresRange);
+
+outputProcedure: 
+	OUTPUT PROCEDURE IS? (procedureName | proceduresRange);
+
+proceduresRange: 
+	startProcedure=procedureName (THROUGH | THRU) endProcedure=procedureName;
 
 // p369: MOVE statement
 // The MOVE statement transfers data from one area of storage to one or more other
 // areas.
 //
 // p369: Format 1: MOVE statement
-//moveStatementFormat1:
-//	MOVE identifierOrLiteral TO identifier+;
-//
 // p369: Format 2: MOVE statement with CORRESPONDING phrase
-//moveStatementFormat2:
-//	MOVE corresponding identifier TO identifier;
 //
 // CORR is an abbreviation for, and is equivalent to, CORRESPONDING.
 // identifier-1 , literal-1
@@ -5736,20 +5350,21 @@ mergeStatement:
 // ... more details p370->374 Elementary moves ...
 // ... more details p374->375 Group moves ...
 
-moveStatement: moveSimple | moveCorresponding;
+moveStatement: 
+	moveSimple | moveCorresponding;
 
 moveSimple:
-	MOVE anyVariable2 TO identifier+;
+	MOVE anyVariable2 TO storageArea+;
 
 moveCorresponding:
-	MOVE corresponding identifier TO identifier;
+	MOVE (CORRESPONDING | CORR) anyVariable6 TO storageArea;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
 // items equal to the results.
 
 multiplyStatement:
-	 multiplyStatementFormat2 | multiplyStatementFormat1;
+	multiplySimple | multiplyGiving;
 
 multiplyStatementEnd: END_MULTIPLY;
 
@@ -5758,16 +5373,17 @@ multiplyStatementEnd: END_MULTIPLY;
 // identifier-2; the product is then placed in identifier-2. For each successive occurrence
 // of identifier-2, the multiplication takes place in the left-to-right order in which
 // identifier-2 is specified.
-multiplyStatementFormat1:
-		MULTIPLY numericVariable1 BY numericVariableRounded+;
 
-//
+multiplySimple:
+	MULTIPLY numericVariable1 BY numericStorageAreaRounded+;
+
 //// p377: Format 2: MULTIPLY statement with GIVING phrase
 // In format 2, the value of identifier-1 or literal-1 is multiplied by the value of
 // identifier-2 or literal-2. The product is then stored in the data items referenced by
 // identifier-3.
-multiplyStatementFormat2:
-		MULTIPLY numericVariable1 BY numericVariableTmp GIVING numericVariableRounded+;
+
+multiplyGiving:
+	MULTIPLY numericVariable1 BY byOperand=numericVariable1 GIVING numericStorageAreaRounded+;
 
 // For all formats:
 // identifier-1 , identifier-2
@@ -5797,33 +5413,15 @@ multiplyStatementFormat2:
 // imperative MULTIPLY statement.
 // For more information, see “Delimited scope statements” on page 280. 
 
-
-
 // p379: OPEN statement
 // The OPEN statement initiates the processing of files. It also checks or writes labels,
 // or both. 
 //
 // p379: Format 1: OPEN statement for sequential files
-//openStatement:
-//                 OPEN ( (INPUT (fileName (REVERSED | (WITH? NO REWIND))?)+) |
-//                        (OUTPUT (fileName (WITH? NO REWIND)?)+) |
-//                        (I_O fileName+) |
-//                        (EXTEND fileName+) )+;
 // Notes: The REVERSED and WITH NO REWIND phrases are not valid for VSAM
 // files.
-//
 // p379: Format 2: OPEN statement for indexed and relative files
-//openStatement:
-//                 OPEN ( (INPUT fileName +) |
-//                        (OUTPUT fileName+) |
-//                        (I_O fileName+) |
-//                        (EXTEND fileName+) )+;
-//
 // p380: Format 3: OPEN statement for line-sequential files
-//openStatement:
-//                 OPEN ( (INPUT fileName +) |
-//                        (OUTPUT fileName+) |
-//                        (EXTEND fileName+) )+;
 //
 // The phrases INPUT, OUTPUT, I-O, and EXTEND specify the mode to be used for
 // opening the file. At least one of the phrases INPUT, OUTPUT, I-O, or EXTEND
@@ -5876,13 +5474,20 @@ multiplyStatementFormat2:
 openStatement:
 	OPEN (openInput | openOutput | openIO | openExtend)+;
 
-openInput: INPUT fileNameWithNoRewindOrReversed+;
-openOutput: OUTPUT fileNameWithNoRewind+;
-openIO: I_O fileNameReference+;
-openExtend: EXTEND fileNameReference+;
+openInput: 
+	INPUT fileNameWithNoRewindOrReversed+;
 
-fileNameWithNoRewindOrReversed: fileNameReference ((WITH? NO REWIND) | REVERSED)?;
-fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
+openOutput: 
+	OUTPUT fileNameWithNoRewindOrReversed+;
+
+openIO: 
+	I_O fileNameReference+;
+
+openExtend: 
+	EXTEND fileNameReference+;
+
+fileNameWithNoRewindOrReversed: 
+	fileNameReference ((WITH? NO REWIND) | REVERSED)?;
 
 // p384: PERFORM statement
 // The PERFORM statement transfers control explicitly to one or more procedures
@@ -5897,31 +5502,6 @@ fileNameWithNoRewind: fileNameReference (WITH? NO REWIND)?;
 // The in-line and out-of-line formats cannot be combined. For example, if
 // procedure-name-1 is specified, imperative statements and the
 // END-PERFORM phrase must not be specified.
-// The PERFORM statement formats are:
-
-performStatement:
-	PERFORM (
-		(numericVariable1 TIMES)											   // - TIMES phrase PERFORM
-	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)					  // - UNTIL phrase PERFORM
-	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression )	 // - VARYING phrase PERFORM
-		)?;																				// (nothing) - Basic PERFORM
-
-
-
-performProcedureStatement:
-	PERFORM (procedureName | proceduresRange) (			  // - Basic PERFORM
-		(numericVariable1 TIMES)							 // - TIMES phrase PERFORM
-	  | ((WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression)	// - UNTIL phrase PERFORM
-	  | ( (WITH? TEST (BEFORE | AFTER))? performVarying UNTIL conditionalExpression			  //
-		  ( AFTER identifierOrIndexName FROM numericOrIndexVariable	 // - VARYING phrase PERFORM
-			BY numericVariable1 UNTIL conditionalExpression )* )				//
-		)?;															// (nothing) - Basic PERFORM
-
-performVarying:
-	VARYING identifierOrIndexName FROM numericOrIndexVariable BY numericVariable1;
-
-performStatementEnd: END_PERFORM;
-
 
 // * Basic PERFORM statement
 // The procedures referenced in the basic PERFORM statement are executed once,
@@ -5990,7 +5570,21 @@ performStatementEnd: END_PERFORM;
 // Delimits the scope of the in-line PERFORM statement. Execution of an in-line
 // PERFORM is completed after the last statement contained within it has been
 // executed.
-//
+
+performStatement:
+	PERFORM 
+	( performTimesPhrase   |
+	  performUntilPhrase   |
+	  performVaryingPhrase )?;
+
+performProcedureStatement:
+	PERFORM (procedureName | proceduresRange) 
+	( performTimesPhrase |
+	  performUntilPhrase |
+	  performVaryingPhrase )?;
+
+performStatementEnd: END_PERFORM;
+
 // * PERFORM with TIMES phrase
 // The procedures referred to in the TIMES phrase of the PERFORM statement are
 // executed the number of times specified by the value in identifier-1 or integer-1, up
@@ -6009,7 +5603,10 @@ performStatementEnd: END_PERFORM;
 // has no effect in varying the number of times the procedures are initiated.
 // integer-1
 // Can be a positive signed integer.
-//
+
+performTimesPhrase:
+	numericVariable1 TIMES;
+
 // * PERFORM with UNTIL phrase
 // In the UNTIL phrase format, the procedures referred to are performed until the
 // condition specified by the UNTIL phrase is true. Control is then passed to the next
@@ -6031,7 +5628,13 @@ performStatementEnd: END_PERFORM;
 // statement following the end of the PERFORM statement. If neither the TEST
 // BEFORE nor the TEST AFTER phrase is specified, the TEST BEFORE phrase is
 // assumed.
-//
+
+performUntilPhrase:
+	conditionTestTime? UNTIL conditionalExpression;
+
+conditionTestTime:
+	WITH? TEST (BEFORE | AFTER);
+
 // * PERFORM with VARYING phrase
 // The VARYING phrase increases or decreases the value of one or more identifiers or
 // index-names, according to certain rules.
@@ -6089,38 +5692,15 @@ performStatementEnd: END_PERFORM;
 //   BY phrases during execution changes the number of times the procedures are
 //   executed.
 
-//performProcedureStatement:
-//                             PERFORM procedureName ((THROUGH |THRU) procedureName)? 
-//                                 ( performTimesPhrase | 
-//                                   performUntilPhrase |
-//                                  (performVaryingPhrase performVaryingAfterPhrase*) )?
-//                            ;
-//
-//performStatement:
-//                    PERFORM   ( performTimesPhrase | 
-//                                   performUntilPhrase |
-//                                   performVaryingPhrase )?;
-//
-//performTimesPhrase:
-//                      (identifier | IntegerLiteral) TIMES;
-//
-//performUntilPhrase:
-//                      (WITH? TEST (BEFORE | AFTER))? UNTIL conditionalExpression;
-//
-//performVaryingPhrase:
-//                         (WITH? TEST (BEFORE | AFTER))? VARYING (identifier | indexName) 
-//                         FROM (identifier | indexName | literal) 
-//                         BY (identifier | literal)
-//                         UNTIL conditionalExpression;
-//
-//performVaryingAfterPhrase:
-//                          AFTER (identifier | indexName) 
-//                          FROM (identifier | indexName | literal)
-//                          BY (identifier | literal)
-//                          UNTIL conditionalExpression;
-//                        
+performVaryingPhrase:
+	conditionTestTime? 
+	 VARYING loopVariableDescription 
+	(AFTER   loopVariableDescription)*;
 
-
+loopVariableDescription:
+	loopVariable=storageAreaOrIndex 
+	FROM initialValue=numericVariableOrIndexName BY increment=numericVariable1 
+	UNTIL conditionalExpression;
 
 // p393: READ statement
 // For sequential access, the READ statement makes the next logical record from a file
@@ -6983,19 +6563,13 @@ setStatementForConditionNames:
 // statement.
 
 sortStatement:
-	SORT fileNameReference onAscendingDescendingKey+
-		(WITH? DUPLICATES IN? ORDER?)?
-		(COLLATING? SEQUENCE IS? alphabetNameReference)?
-		(usingFilenames  | inputProcedure)
-		(givingFilenames | outputProcedure);
+	SORT fileNameReference onAscendingDescendingKey+ 
+	(WITH? DUPLICATES IN? ORDER?)?
+	collatingSequence?
+	(usingFilenames  | inputProcedure)
+	(givingFilenames | outputProcedure);
 
-onAscendingDescendingKey: ON? (ASCENDING | DESCENDING) KEY? qualifiedDataName+;
-usingFilenames:  USING  fileNameReference+;
-givingFilenames: GIVING fileNameReference+;
-inputProcedure:  INPUT  PROCEDURE IS? (procedureName | proceduresRange);
-outputProcedure: OUTPUT PROCEDURE IS? (procedureName | proceduresRange);
-
-proceduresRange: procedureName (THROUGH | THRU) procedureName;
+// Rules shared with mergeStatement
 
 // p429: START statement
 // The START statement provides a means of positioning within an indexed or
@@ -7247,20 +6821,20 @@ subtractStatement:
 // repeated for each successive occurrence of identifier-2, in the left-to-right order in
 // which identifier-2 is specified.
 subtractStatementFormat1:
-		SUBTRACT numericVariable1+ FROM numericVariableRounded+;
+		SUBTRACT numericVariable1+ FROM numericStorageAreaRounded+;
 
 // p439: Format 2: SUBTRACT statement with GIVING phrase
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from identifier-2 or literal-2. The result of the subtraction is
 // stored as the new value of each data item referenced by identifier-3.
 subtractStatementFormat2:
-		SUBTRACT numericVariable1+ FROM numericVariableTmp GIVING numericVariableRounded+;
+		SUBTRACT numericVariable1+ FROM fromOperand=numericVariable1 GIVING numericStorageAreaRounded+;
 
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are subtracted from, and the results are
 // stored in, the corresponding elementary data items within identifier-2.
 subtractStatementFormat3:
-		SUBTRACT corresponding numericVariable2 FROM numericVariableRounded;
+		SUBTRACT (CORRESPONDING | CORR) numericVariable2 FROM numericStorageAreaRounded;
 
 subtractStatementEnd: END_SUBTRACT;
 
@@ -8315,6 +7889,45 @@ xmlParseStatement:
 //                                (onExceptionCondition imperativeStatement)?
 //                                (notOnExceptionCondition imperativeStatement)?
 //                                xmlStatementEnd?;
+
+
+// --- Conditions code elements syntax ---
+
+atEndCondition:
+	AT? END;
+
+notAtEndCondition:
+	NOT AT? END;
+
+atEndOfPageCondition:
+	AT? (END_OF_PAGE | EOP);
+
+notAtEndOfPageCondition:
+	NOT AT? (END_OF_PAGE | EOP);
+
+invalidKeyCondition:
+	INVALID KEY?;
+
+notInvalidKeyCondition:
+	NOT INVALID KEY?;
+
+onExceptionCondition:
+	ON? EXCEPTION;
+
+notOnExceptionCondition:
+	NOT ON? EXCEPTION;
+
+onOverflowCondition:
+	ON? OVERFLOW;
+
+notOnOverflowCondition:
+	NOT ON? OVERFLOW;
+
+onSizeErrorCondition:
+	ON? SIZE ERROR;
+
+notOnSizeErrorCondition:
+	NOT ON? SIZE ERROR;
             
 // ------------------------------
 // Start of DB2 coprocessor
