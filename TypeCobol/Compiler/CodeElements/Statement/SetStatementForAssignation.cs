@@ -4,7 +4,7 @@ using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	class SetStatementForAssignation : SetStatement, IdentifierUser, SymbolWriter
+	class SetStatementForAssignation : SetStatement, IdentifierUser, SymbolWriter, Sending
 	{
 		/// <summary>
 		/// index-name, identifier(numeric integer item), pointer, procedure-pointer, function-pointer, object reference id

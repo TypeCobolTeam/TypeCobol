@@ -7,13 +7,13 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>
 	/// p369: The MOVE statement transfers data from one area of storage to one or more other areas.
 	/// </summary>
-	public class MoveStatement : CodeElement, SymbolUser, IdentifierUser, SymbolWriter
+	public class MoveStatement : CodeElement, SymbolUser, IdentifierUser, SymbolWriter, Sending
 	{
 		/// <summary>
 		/// identifier-1 , literal-1
 		/// The sending area.
 		/// </summary>
-		public Expression Sending;
+		public Expression Sending { get; private set; }
 		/// <summary>
 		/// identifier-2
 		/// The receiving areas. identifier-2 must not reference an intrinsic function.

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -44,13 +45,18 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["level"] = new Level("LEVEL");
 			Attributes["type"]    = new Typed("TYPE");
 			Attributes["typedef"] = new TypeDefinition("TYPEDEF");
-			Attributes["sender.type"] = new SenderType("SENDER");
-			Attributes["sender"] = new Sender("RECEIVER");
+			Attributes["sender"] = new Sender("SENDER");
 		}
 		public string this[string attribute] {
 			get {
-				try { return Attributes[attribute].GetValue(CodeElement, SymbolTable); }
-				catch(KeyNotFoundException ex) { return null; }
+				try {
+					object value = CodeElement;
+					foreach(var attr in attribute.Split(new char[] {'.'})) {
+						value = Attributes[attr].GetValue(value, SymbolTable);
+					}
+					if (value == null) return null;
+					return value.ToString();
+				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
 	}
@@ -61,76 +67,62 @@ namespace TypeCobol.Compiler.CodeElements
 	}
 
 	public interface Attribute {
-		string GetValue(CodeElement ce, SymbolTable table);
+		object GetValue(object o, SymbolTable table);
 	}
 	internal abstract class NodeAttribute: Attribute {
 		public string Key { get; private set; }
 		public NodeAttribute(string key) { this.Key = key; }
-		public abstract string GetValue(CodeElement ce, SymbolTable table);
+		public abstract object GetValue(object o, SymbolTable table);
 	}
 
 	internal class Named: NodeAttribute {
 		public Named(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var data = ce as DataDescriptionEntry;
+		public override object GetValue(object o, SymbolTable table) {
+			var data = o as DataDescriptionEntry;
 			if (data == null || data.Name == null) return null;
 			return data.Name.Name;
 		}
 	}
 	internal class Level: NodeAttribute {
 		public Level(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var data = ce as DataDescriptionEntry;
+		public override object GetValue(object o, SymbolTable table) {
+			var data = o as DataDescriptionEntry;
 			if (data == null) return null;
 			return string.Format("{0:00}", data.LevelNumber);
 		}
 	}
 	internal class Typed: NodeAttribute {
 		public Typed(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var data = ce as DataDescriptionEntry;
-			if (data == null || data.IsTypeDefinition) return null;
-			if (!table.IsCustomType(data.DataType)) return null;
-			return data.DataType.Name;
+		public override object GetValue(object o, SymbolTable table) {
+			if (o is DataDescriptionEntry) {
+				var data = o as DataDescriptionEntry;
+				if (data.IsTypeDefinition) return null;
+				if (!table.IsCustomType(data.DataType)) return null;
+				return data.DataType/*.Name*/;
+			} else
+			if (o is Literal) {
+				var l = o as Literal;
+				if (l.IsNumeric) return DataType.Numeric;
+				if (l.IsBoolean) return DataType.Boolean;
+				return DataType.Alphanumeric;
+			} else
+			return null;
 		}
 	}
 	internal class TypeDefinition: NodeAttribute {
 		public TypeDefinition(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var data = ce as DataDescriptionEntry;
+		public override object GetValue(object o, SymbolTable table) {
+			var data = o as DataDescriptionEntry;
 			if (data == null || !data.IsTypeDefinitionPart) return null;
 			return data.DataType.Name;
 		}
 	}
-	internal class SenderType: NodeAttribute {
-		public SenderType(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var writer = ce as SymbolWriter;
-			if (writer == null) return null;
-			foreach(var symbol in writer.Symbols) {
-				var type = symbol.Item1.Item2;
-				if (type == null && symbol.Item1.Item1 != null) {
-					var data = table.Get(symbol.Item1.Item1);
-					if (data.Count > 0) type = data[0].DataType;
-				}
-				if (type == null) continue;
-				return type.Name;
-			}
-			return null;
-		}
-	}
 	internal class Sender: NodeAttribute {
 		public Sender(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var writer = ce as SymbolWriter;
-			if (writer == null) return null;
-			foreach(var symbol in writer.Symbols) {
-				var type = symbol.Item1.Item2;
-//				var data = table.Get(symbol.Item2);
-//				if (data.Count > 0) type = data[0].DataType;
-//				return type.Name;
-			}
-			return null;
+		public override object GetValue(object o, SymbolTable table) {
+			var s = o as Sending;
+			if (s == null) return null;
+			return s.Sending;
 		}
 	}
 }

@@ -3,6 +3,11 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeModel
 {
+	interface Sending {
+		/// <summary>A sending area</summary>
+		Expression Sending { get; }
+	}
+
 	interface SymbolUser
 	{
 		/// <summary>List of symbols used, wether they are written or read-only.</summary>
