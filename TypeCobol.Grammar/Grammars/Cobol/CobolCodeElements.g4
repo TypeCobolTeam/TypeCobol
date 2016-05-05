@@ -499,19 +499,19 @@ authoringProperties:
 	 securityParagraph     )*;
 
 authorParagraph:
-    AUTHOR PeriodSeparator? alphanumericValue3*;
+    AUTHOR PeriodSeparator? alphanumericValue6*;
 
 installationParagraph:
-    INSTALLATION PeriodSeparator? alphanumericValue3*;
+    INSTALLATION PeriodSeparator? alphanumericValue6*;
 
 dateWrittenParagraph:
-    DATE_WRITTEN PeriodSeparator? alphanumericValue3*;
+    DATE_WRITTEN PeriodSeparator? alphanumericValue6*;
 
 dateCompiledParagraph:
-    DATE_COMPILED PeriodSeparator? alphanumericValue3*;
+    DATE_COMPILED PeriodSeparator? alphanumericValue6*;
 
 securityParagraph:
-     SECURITY PeriodSeparator? alphanumericValue3*;
+     SECURITY PeriodSeparator? alphanumericValue6*;
 
 // p105 : The comment-entry in any of the optional paragraphs can be any combination of
 // characters from the character set of the computer. The comment-entry is written in
@@ -849,7 +849,7 @@ charactersEqualSet:
 // constant must not be specified.
 
 characterInCollatingSequence: 
-	characterValue3 | ordinalPositionInCollatingSequence;
+	characterValue2 | ordinalPositionInCollatingSequence;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
@@ -1956,7 +1956,7 @@ labelRecordsClause:
 // program.
 
 valueOfClause:
-    VALUE OF (qualifiedDataName IS? numericOrAlphanumericVariable)+;
+    VALUE OF (qualifiedDataName IS? variable5)+;
 
 // p180: The DATA RECORDS clause is syntax checked but serves only as documentation
 // for the names of data records associated with the file.
@@ -2029,10 +2029,10 @@ dataRecordsClause:
 // “LINAGE-COUNTER” on page 20.
 
 linageClause:
-    LINAGE IS? numberOfLinesInPage=integerVariable LINES? 
-    (WITH? FOOTING AT? firstLineNumberOfFootingArea=integerVariable)? 
-    (LINES? AT? TOP numberOfLinesInTopMargin=integerVariable)? 
-    (LINES? AT? BOTTOM numberOfLinesInBottomMargin=integerVariable)?;
+    LINAGE IS? numberOfLinesInPage=integerVariable2 LINES? 
+    (WITH? FOOTING AT? firstLineNumberOfFootingArea=integerVariable2)? 
+    (LINES? AT? TOP numberOfLinesInTopMargin=integerVariable2)? 
+    (LINES? AT? BOTTOM numberOfLinesInBottomMargin=integerVariable2)?;
 
 // p182: The RECORDING MODE clause specifies the format of the physical records in a
 // QSAM file. The clause is ignored for a VSAM file.
@@ -2677,7 +2677,7 @@ groupUsageClause:
 
 occursClause:
 	OCCURS (minNumberOfOccurences=integerValue TO)? (maxNumberOfOccurences=integerValue | UNBOUNDED) TIMES?
-	(DEPENDING ON? varNumberOfOccurences=numericVariable3)?
+	(DEPENDING ON? varNumberOfOccurences=numericVariable2)?
 	tableSortingKeys*
 	(INDEXED BY? indexNameDefinition+)?;
 
@@ -2703,7 +2703,7 @@ tableSortingKeys:
 // elementary data item.
 
 pictureClause:
-    (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue9;
+    (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue7;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -3115,7 +3115,7 @@ usageClause:
 // FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
 
 valueClause:
-	VALUE IS? anyValue2;
+	VALUE IS? value2;
 			   
 // p239: Format 2: condition-name value
 // This format associates a value, values, or ranges of values with a condition-name.
@@ -3159,10 +3159,10 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-	((VALUE IS?) | (VALUES ARE?)) (anyValue | valuesRange)+; 
+	((VALUE IS?) | (VALUES ARE?)) (value1 | valuesRange)+; 
 
 valuesRange: 
-	startValue=anyValue (THROUGH | THRU) endValue=anyValue;
+	startValue=value1 (THROUGH | THRU) endValue=value1;
 
 // p245: The PROCEDURE DIVISION is an optional division.
 // Program procedure division
@@ -3855,19 +3855,19 @@ addStatementEnd: END_ADD;
 // This process is repeated for each successive occurrence of identifier-2 in the left-to-right order in which identifier-2 is specified.
 
 addSimple:
-	ADD numericVariable1+ TO numericStorageAreaRounded+;
+	ADD numericVariable3+ TO numericStorageAreaRounded+;
 
 // p299: Format 2: ADD statement with GIVING phrase
 // The values of the operands that precede the word GIVING are added together, and the sum is stored as the new value of each data item referenced by identifier-3.
 
 addGiving:
-	ADD numericVariable1+ TO? toOperand=numericVariable1 GIVING numericStorageAreaRounded+;
+	ADD numericVariable3+ TO? toOperand=numericVariable3 GIVING numericStorageAreaRounded+;
 
 // p299: Format 3: ADD statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 
 addCorresponding:
-	ADD (CORRESPONDING | CORR) numericVariable2 TO numericStorageAreaRounded;
+	ADD (CORRESPONDING | CORR) numericVariable1 TO numericStorageAreaRounded;
 
 // ROUNDED phrase
 // For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
@@ -4031,10 +4031,10 @@ callStatement:
 	(RETURNING callProgramOutputParameter)?;
 
 callProgramInputParameters:
-	(BY? (REFERENCE | CONTENT | VALUE))? (anyVariable4 | OMITTED)+;
+	(BY? (REFERENCE | CONTENT | VALUE))? (variableOrFileName | OMITTED)+;
 
 callProgramOutputParameter:
-	storageArea;
+	storageArea1;
 
 callStatementEnd: END_CALL;
 
@@ -4204,7 +4204,7 @@ deleteStatementEnd: END_DELETE;
 // ... more details on DBCS operands p324 ...
 
 displayStatement:
-    DISPLAY anyVariable5+ uponOutputDevice? withNoAdvancing?;
+    DISPLAY variable4+ uponOutputDevice? withNoAdvancing?;
 
 uponOutputDevice:
 	UPON outputDevice=mnemonicForEnvironmentNameReferenceOrEnvironmentName;
@@ -4263,11 +4263,11 @@ divideStatement:
 	divideSimple | divideGiving;
 
 divideSimple:
-	DIVIDE divisor=numericVariable1 INTO dividendAndQuotient=numericStorageAreaRounded+;
+	DIVIDE divisor=numericVariable3 INTO dividendAndQuotient=numericStorageAreaRounded+;
 
 divideGiving:
-	DIVIDE ( (divisor1=numericVariable1 INTO dividend1=numericVariable1) | 
-	         (dividend2=numericVariable1 BY divisor2=numericVariable1)   ) 
+	DIVIDE ( (divisor1=numericVariable3 INTO dividend1=numericVariable3) | 
+	         (dividend2=numericVariable3 BY divisor2=numericVariable3)   ) 
 	GIVING ( (quotient1=numericStorageAreaRounded REMAINDER remainder=numericStorageArea) | 
 	          quotient2=numericStorageAreaRounded+                              );
 
@@ -4317,17 +4317,17 @@ evaluateStatement:
 	EVALUATE comparisonLHSExpression (ALSO comparisonLHSExpression)*;
 
 comparisonLHSExpression:
-	alphanumericExpression | booleanExpression;
+	expression2 | booleanExpression;
 
 whenCondition:
 	WHEN LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator?
   ( ALSO LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator? )*;
 
 comparisonRHSExpression: 
-	booleanExpression | NOT? (alphanumericExpression | alphanumericExpressionsRange);
+	booleanExpression | NOT? (expression2 | alphanumericExpressionsRange);
 
 alphanumericExpressionsRange: 
-	startExpression=alphanumericExpression (THROUGH | THRU) endExpression=alphanumericExpression;
+	startExpression=expression2 (THROUGH | THRU) endExpression=expression2;
 
 whenOtherCondition:
 	WHEN OTHER;
@@ -4599,10 +4599,10 @@ ifStatementEnd:
 //    the same data description entry.
 
 initializeStatement:
-	INITIALIZE storageArea+ (REPLACING initializeReplacingDirective+)?;
+	INITIALIZE storageArea1+ (REPLACING initializeReplacingDirective+)?;
 
 initializeReplacingDirective:
-	dataCategory DATA? BY anyVariable3;
+	dataCategory DATA? BY variable6;
 
 dataCategory:
 	(ALPHABETIC | ALPHANUMERIC | ALPHANUMERIC_EDITED | NATIONAL | NATIONAL_EDITED | NUMERIC | NUMERIC_EDITED | DBCS | EGCS);
@@ -5043,10 +5043,10 @@ invokeStatement:
 	(RETURNING invokeOutputParameter)?;
 
 invokeInputParameter:
-	BY? VALUE anyVariable+;
+	BY? VALUE variable3+;
 
 invokeOutputParameter:
-	storageArea;
+	storageArea1;
 
 invokeStatementEnd: END_INVOKE;
 
@@ -5354,10 +5354,10 @@ moveStatement:
 	moveSimple | moveCorresponding;
 
 moveSimple:
-	MOVE anyVariable2 TO storageArea+;
+	MOVE variable7 TO storageArea1+;
 
 moveCorresponding:
-	MOVE (CORRESPONDING | CORR) anyVariable6 TO storageArea;
+	MOVE (CORRESPONDING | CORR) variable1 TO storageArea1;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
@@ -5375,7 +5375,7 @@ multiplyStatementEnd: END_MULTIPLY;
 // identifier-2 is specified.
 
 multiplySimple:
-	MULTIPLY numericVariable1 BY numericStorageAreaRounded+;
+	MULTIPLY numericVariable3 BY numericStorageAreaRounded+;
 
 //// p377: Format 2: MULTIPLY statement with GIVING phrase
 // In format 2, the value of identifier-1 or literal-1 is multiplied by the value of
@@ -5383,7 +5383,7 @@ multiplySimple:
 // identifier-3.
 
 multiplyGiving:
-	MULTIPLY numericVariable1 BY byOperand=numericVariable1 GIVING numericStorageAreaRounded+;
+	MULTIPLY numericVariable3 BY byOperand=numericVariable3 GIVING numericStorageAreaRounded+;
 
 // For all formats:
 // identifier-1 , identifier-2
@@ -5605,7 +5605,7 @@ performStatementEnd: END_PERFORM;
 // Can be a positive signed integer.
 
 performTimesPhrase:
-	numericVariable1 TIMES;
+	numericVariable3 TIMES;
 
 // * PERFORM with UNTIL phrase
 // In the UNTIL phrase format, the procedures referred to are performed until the
@@ -5700,7 +5700,7 @@ performVaryingPhrase:
 loopVariableDescription:
 	loopVariable=dataOrIndexStorageArea 
 	FROM initialValue=numericVariableOrIndexName
-	BY increment=numericVariable1 
+	BY increment=numericVariable3 
 	UNTIL conditionalExpression;
 
 // p393: READ statement
@@ -5780,7 +5780,7 @@ loopVariableDescription:
 
 readStatement:
 	READ fileNameReference 
-	NEXT? RECORD? (INTO storageArea)? 
+	NEXT? RECORD? (INTO storageArea1)? 
 	(KEY IS? qualifiedDataName)?;
 
 readStatementEnd: END_READ;
@@ -5828,7 +5828,7 @@ readStatementEnd: END_READ;
 // those records placed in it by execution of RELEASE statements.
 
 releaseStatement:
-	RELEASE recordName (FROM anyVariable6)?;
+	RELEASE recordName (FROM variable1)?;
 
 // record-name-1
 // Must specify the name of a logical record in a sort-merge file description
@@ -5900,7 +5900,7 @@ releaseStatement:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-	RETURN fileNameReference RECORD? (INTO storageArea)?;
+	RETURN fileNameReference RECORD? (INTO storageArea1)?;
 
 returnStatementEnd: END_RETURN;
 
@@ -5951,7 +5951,7 @@ returnStatementEnd: END_RETURN;
 // ... more details p406->407 Reusing a logical record, Sequential / Indexed / Relative files ...
 
 rewriteStatement:
-	REWRITE recordName (FROM sendingField=anyVariable6)?;
+	REWRITE recordName (FROM sendingField=variable1)?;
 
 rewriteStatementEnd: END_REWRITE;
 
@@ -5998,10 +5998,10 @@ searchStatement:
 	serialSearch | binarySearch;
 
 serialSearch:
-	SEARCH anyVariable6 (VARYING dataOrIndexStorageArea)?;
+	SEARCH variable1 (VARYING dataOrIndexStorageArea)?;
 
 binarySearch:
-	SEARCH ALL anyVariable6;
+	SEARCH ALL variable1;
 
 whenSearchCondition:
 	WHEN searchCondition (AND searchCondition)*;
@@ -6013,7 +6013,7 @@ serialSearchCondition:
 	conditionalExpression;
 
 binarySearchCondition:
-	(anyVariable7 IS? ((EQUAL TO?) | EqualOperator) alphanumericExpression) | conditionNameConditionOrSwitchStatusCondition;
+	(variable2 IS? ((EQUAL TO?) | EqualOperator) expression2) | conditionNameConditionOrSwitchStatusCondition;
 
 searchStatementEnd: END_SEARCH;
 
@@ -6238,7 +6238,7 @@ setSendingField:
 // Format 2: SET for adjusting indexes
 
 setStatementForIndexes:
-	SET indexStorageArea+ (UP | DOWN) BY integerVariable2;
+	SET indexStorageArea+ (UP | DOWN) BY integerVariable1;
 
 // Format 3: SET for external switches
 
@@ -6631,7 +6631,7 @@ stopStatement:
 	STOP (RUN | messageToOperator);
 
 messageToOperator: 
-	numericValue | alphanumericValue11;
+	numericValue | alphanumericValue3;
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
@@ -6746,11 +6746,11 @@ messageToOperator:
 
 stringStatement:
 	STRING contentToConcatenate+ 
-	INTO receivingField=storageArea
-	(WITH? POINTER characterPositionInReceivingField=anyVariable6)?;
+	INTO receivingField=storageArea1
+	(WITH? POINTER characterPositionInReceivingField=variable1)?;
 	
 contentToConcatenate:
-	sendingField=anyVariable3+ DELIMITED BY? (delimiterCharacters=anyVariable5 | SIZE);
+	sendingField=variable6+ DELIMITED BY? (delimiterCharacters=variable4 | SIZE);
 
 stringStatementEnd: END_STRING;
 
@@ -6768,7 +6768,7 @@ subtractStatement:
 // which identifier-2 is specified.
 
 subtractSimple:
-	SUBTRACT numericVariable1+ FROM numericStorageAreaRounded+;
+	SUBTRACT numericVariable3+ FROM numericStorageAreaRounded+;
 
 // p439: Format 2: SUBTRACT statement with GIVING phrase
 // All identifiers or literals preceding the keyword FROM are added together and
@@ -6776,14 +6776,14 @@ subtractSimple:
 // stored as the new value of each data item referenced by identifier-3.
 
 subtractGiving:
-	SUBTRACT numericVariable1+ FROM fromOperand=numericVariable1 GIVING numericStorageAreaRounded+;
+	SUBTRACT numericVariable3+ FROM fromOperand=numericVariable3 GIVING numericStorageAreaRounded+;
 
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are subtracted from, and the results are
 // stored in, the corresponding elementary data items within identifier-2.
 
 subtractCorresponding:
-	SUBTRACT (CORRESPONDING | CORR) numericVariable2 FROM numericStorageAreaRounded;
+	SUBTRACT (CORRESPONDING | CORR) numericVariable1 FROM numericStorageAreaRounded;
 
 subtractStatementEnd: END_SUBTRACT;
 
@@ -6998,19 +6998,19 @@ subtractStatementEnd: END_SUBTRACT;
 // ... more details p447->448 Example of the UNSTRING statement ...
 
 unstringStatement:
-	UNSTRING sendingField=anyVariable6
+	UNSTRING sendingField=variable1
 	(DELIMITED BY? unstringDelimiter (OR unstringDelimiter)*)? 
 	INTO unstringReceivingFields+ 
-	(WITH? POINTER relativeCharacterPositionDuringProcessing=storageArea)? 
-	(TALLYING IN? incrementByNumberOfDelimitedFields=storageArea)?;
+	(WITH? POINTER relativeCharacterPositionDuringProcessing=storageArea1)? 
+	(TALLYING IN? incrementByNumberOfDelimitedFields=storageArea1)?;
 
 unstringDelimiter:
-	ALL? delimiterCharacters=anyVariable5;
+	ALL? delimiterCharacters=variable4;
 	
 unstringReceivingFields:
-	receivingField=storageArea 
-	(DELIMITER IN? associatedDelimiter=storageArea)? 
-	(COUNT IN? charsTransferredCount=storageArea)?;
+	receivingField=storageArea1 
+	(DELIMITER IN? associatedDelimiter=storageArea1)? 
+	(COUNT IN? charsTransferredCount=storageArea1)?;
 	
 unstringStatementEnd: END_UNSTRING;
 
@@ -7201,9 +7201,9 @@ unstringStatementEnd: END_UNSTRING;
 // ... more details p456 WRITE for relative files ...
 
 writeStatement:
-	WRITE recordName (FROM sendingField=anyVariable6)?
+	WRITE recordName (FROM sendingField=variable1)?
 	((BEFORE | AFTER) ADVANCING? (
-		(numberOfLines=integerVariable2 (LINE | LINES)?)  | 
+		(numberOfLines=integerVariable1 (LINE | LINES)?)  | 
 		 mnemonicForEnvironmentNameReference              | 
 		 PAGE                                             )? )?;
 
@@ -7543,9 +7543,9 @@ writeStatementEnd: END_WRITE;
 // ... more details p468 XML element name and attribute name formation ...
 
 xmlGenerateStatement:
-	XML GENERATE receivingField=storageArea 
-	FROM dataItemToConvertToXml=anyVariable6
-	(COUNT IN? generatedXmlCharsCount=storageArea)?
+	XML GENERATE receivingField=storageArea1 
+	FROM dataItemToConvertToXml=variable1
+	(COUNT IN? generatedXmlCharsCount=storageArea1)?
 	(WITH? ENCODING codepage)?
 	(WITH? XML_DECLARATION)?
 	(WITH? ATTRIBUTES)?
@@ -7556,13 +7556,13 @@ xmlGenerateStatement:
 	(SUPPRESS (xmlSuppressDataItem | xmlSuppressGeneric)+)?;
 		
 xmlNameMapping:
-	subordinateDataItem=anyVariable6 IS? xmlNameToGenerate=alphanumericValue5;
+	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;
 
 xmlTypeMapping:
-	subordinateDataItem=anyVariable6 IS? (ATTRIBUTE | ELEMENT | CONTENT);
+	subordinateDataItem=variable1 IS? (ATTRIBUTE | ELEMENT | CONTENT);
 
 xmlSuppressDataItem:	
-	subordinateDataItem=anyVariable6 
+	subordinateDataItem=variable1 
 	xmlSuppressWhen;
 
 xmlSuppressGeneric:
@@ -7571,7 +7571,7 @@ xmlSuppressGeneric:
 
 // Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 xmlSuppressWhen:
-	WHEN repeatedAlphanumericValue (OR? repeatedAlphanumericValue)*;
+	WHEN repeatedAlphanumericValue1 (OR? repeatedAlphanumericValue1)*;
 
 xmlStatementEnd: END_XML;
 
@@ -7582,7 +7582,7 @@ xmlStatementEnd: END_XML;
 // processing as described in The encoding of XML documents in the
 // Enterprise COBOL Programming Guide.
 
-codepage: integerVariable2;
+codepage: integerVariable1;
 
 // p469: XML PARSE statement
 // The XML PARSE statement is the COBOL language interface to the high-speed
@@ -7778,10 +7778,10 @@ codepage: integerVariable2;
 // ... more information p473->474 Control flow ...
 
 xmlParseStatement:
-                     XML PARSE xmlTextToParse=anyVariable6
+                     XML PARSE xmlTextToParse=variable1
                      (WITH? ENCODING codepage)? 
                      (RETURNING NATIONAL)?
-                     (VALIDATING WITH? (optimizedXmlSchemaData=anyVariable6 | (FILE optimizedXmlSchemaFile=xmlSchemaNameReference)))?
+                     (VALIDATING WITH? (optimizedXmlSchemaData=variable1 | (FILE optimizedXmlSchemaFile=xmlSchemaNameReference)))?
                      PROCESSING PROCEDURE IS? (procedureName | proceduresRange);
 
 
@@ -8157,7 +8157,7 @@ notOnSizeErrorCondition:
 
 execStatement:
                  (EXEC | EXECUTE) execTranslatorName 
-                 alphanumericValue10* 
+                 alphanumericValue8* 
                  execStatementEnd;
 
 execStatementEnd: END_EXEC;

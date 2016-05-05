@@ -32,4 +32,4 @@ tcExtTypedefClause: TYPEDEF STRONG?;
 
 tcExtTypeClause:    TYPE typeNameDefinition;
 
-typeNameDefinition: symbolDefinition3;
+typeNameDefinition: symbolDefinition4;

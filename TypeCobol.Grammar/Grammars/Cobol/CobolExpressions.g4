@@ -47,7 +47,8 @@ import CobolWords;
 // sections, and a paragraph or group of paragraphs.
 // A procedure-name is a user-defined name that identifies a section or a paragraph.
 
-procedureName: paragraphNameReferenceOrSectionNameReference | qualifiedParagraphNameReference;
+procedureName: 
+	paragraphNameReferenceOrSectionNameReference | qualifiedParagraphNameReference;
 
 // p66: References to PROCEDURE DIVISION names
 // PROCEDURE DIVISION names that are explicitly referenced in a program must be
@@ -61,7 +62,8 @@ procedureName: paragraphNameReferenceOrSectionNameReference | qualifiedParagraph
 // section in which it appears. A paragraph-name or section-name that appears in a
 // program cannot be referenced from any other program.
 
-qualifiedParagraphNameReference: paragraphNameReference (IN | OF) sectionNameReference;
+qualifiedParagraphNameReference: 
+	paragraphNameReference (IN | OF) sectionNameReference;
 
 // p65: Uniqueness of reference
 // Every user-defined name in a COBOL program is assigned by the user to name a
@@ -96,9 +98,11 @@ qualifiedParagraphNameReference: paragraphNameReference (IN | OF) sectionNameRef
 // Can be any data description entry.
 // data-name-1 must be unique in a program.
 
-qualifiedDataName: dataNameReference | qualifiedDataName1;
+qualifiedDataName: 
+	dataNameReference | qualifiedDataName1;
 
-qualifiedDataName1: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
+qualifiedDataName1: 
+	dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
 
 // p60: record-name 
 // record-name assigns a name to a record.
@@ -106,7 +110,8 @@ qualifiedDataName1: dataNameReference ((IN | OF) dataNameReferenceOrFileNameRefe
 // or in the case of record description entries in the FILE SECTION, if the GLOBAL clause is specified 
 // in the file description entry for the file name associated with the record description entry. 
 
-recordName: qualifiedDataName;
+recordName: 
+	qualifiedDataName;
 
 // p70: If qualification is used to make a condition-name unique, the associated
 // conditional variable can be used as the first qualifier. If qualification is
@@ -132,14 +137,17 @@ recordName: qualifiedDataName;
 // - first token : conditionName or conditionForUPSISwitchName
 // - following tokens : dataName or fileName or menmonicForUPSISwitchName
 
-qualifiedConditionName: conditionNameReferenceOrConditionForUPSISwitchNameReference | qualifiedConditionName1;
+qualifiedConditionName: 
+	conditionNameReferenceOrConditionForUPSISwitchNameReference | qualifiedConditionName1;
 
-qualifiedConditionName1: conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
+qualifiedConditionName1: 
+	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
 
 // Ambiguous references in Cobol grammar rules
 
 // [Type ambiguity] at this parsing stage
-qualifiedDataNameOrIndexName: dataNameReferenceOrIndexNameReference | qualifiedDataName1;
+qualifiedDataNameOrIndexName: 
+	dataNameReferenceOrIndexNameReference | qualifiedDataName1;
 
 
 // --- (Data storage area) Identifiers ---
@@ -148,7 +156,8 @@ qualifiedDataNameOrIndexName: dataNameReferenceOrIndexNameReference | qualifiedD
 
 // p68: Identifiers - Data-name
 
-dataItemReference: qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+dataItemReference: 
+	qualifiedDataName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p70: Condition-name
 // condition-name-1
@@ -159,7 +168,8 @@ dataItemReference: qualifiedDataName (LeftParenthesisSeparator subscript+ RightP
 // unique through qualification or subscripting (or both) except when the
 // scope of names by itself ensures uniqueness of reference.
 
-conditionReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+conditionReference: 
+	qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
@@ -270,29 +280,35 @@ conditionReference: qualifiedConditionName (LeftParenthesisSeparator subscript+ 
 // down by the value of the integer. The use of relative indexing does not cause the
 // program to alter the value of the index.
 
-subscript: (integerValue | qualifiedDataNameOrIndexName | ALL) withRelativeSubscripting?;
+subscript: 
+	(integerValue | qualifiedDataNameOrIndexName | ALL) withRelativeSubscripting?;
 
-withRelativeSubscripting: (PlusOperator | MinusOperator) integerValue;
+withRelativeSubscripting: 
+	(PlusOperator | MinusOperator) integerValue;
 
 // - 2. Special registers (allocate a storage area on reference) -
 
-autoAllocatedDataItemReference: linageCounterSpecialRegister | addressOfSpecialRegister | lengthOfSpecialRegister;
+autoAllocatedDataItemReference: 
+	linageCounterSpecialRegister | addressOfSpecialRegister | lengthOfSpecialRegister;
 
 // p20: A separate LINAGE-COUNTER special register is generated for each FD entry that contains a LINAGE clause. 
 // p69 : Format 3 - LINAGE-COUNTER Must be qualified each time it is referenced if more than one file description entry 
 // that contains a LINAGE clause has been specified in the source unit. 
 
-linageCounterSpecialRegister: LINAGE_COUNTER ((IN | OF) fileNameReference)?;
+linageCounterSpecialRegister: 
+	LINAGE_COUNTER ((IN | OF) fileNameReference)?;
 
 // p17: The ADDRESS OF special register references the address of a data item in the LINKAGE SECTION, 
 // the LOCAL-STORAGE SECTION, or the WORKING-STORAGE SECTION.
 
-addressOfSpecialRegister: ADDRESS OF storageAreaReference;
+addressOfSpecialRegister: 
+	ADDRESS OF storageAreaReference;
 
 // p19: The LENGTH OF special register contains the number of bytes used by a data item.
 // LENGTH OF creates an implicit special register that contains the current byte length of the data item referenced by the identifier.
 
-lengthOfSpecialRegister:  LENGTH OF? storageAreaReference;
+lengthOfSpecialRegister:  
+	LENGTH OF? storageAreaReference;
 
 // - 3. Intrinsic function calls (allocate a storage area for the result) -
 
@@ -359,7 +375,8 @@ lengthOfSpecialRegister:  LENGTH OF? storageAreaReference;
 
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
-functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+functionIdentifier: 
+	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -371,7 +388,8 @@ functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator arg
 // - A literal other than a figurative constant
 // - A special-register
 
-argument: alphanumericExpression2;
+argument: 
+	expression1;
 
 // - 4. Storage areas -
 
@@ -423,7 +441,8 @@ storageAreaReferenceOrConditionReference: storageAreaReference;
 // must be uniquely named if referenced. Data items associated with level-numbers
 // 02 through 49 are successively lower levels of the hierarchy.
 
-identifier:	storageAreaReferenceOrConditionReference (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
+identifier:	
+	storageAreaReferenceOrConditionReference (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
 // p74: Reference modification
 // Reference modification defines a data item by specifying a leftmost character and
@@ -503,7 +522,8 @@ identifier:	storageAreaReferenceOrConditionReference (LeftParenthesisSeparator r
 //   evaluated at the time subscripting would be evaluated if subscripts had been
 //   specified.
 
-referenceModifier: leftMostCharacterPosition=arithmeticExpression ColonSeparator length=arithmeticExpression?;
+referenceModifier: 
+	leftMostCharacterPosition=arithmeticExpression ColonSeparator length=arithmeticExpression?;
 
 
 // [Type ambiguity] : indexName cannot be distinguished from identifier at this parsing stage
@@ -514,7 +534,6 @@ identifierOrFileName: identifier;
 
 // [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
 identifierOrClassName: identifier;
-
 
 
 // --- Arithmetic Expressions ---
@@ -608,7 +627,7 @@ arithmeticExpression:
 	|<assoc=right> arithmeticExpression PowerOperator arithmeticExpression
 	|  arithmeticExpression (MultiplyOperator | DivideOperator) arithmeticExpression
 	|  arithmeticExpression (PlusOperator | MinusOperator) arithmeticExpression
-	|  numericVariable1;
+	|  numericVariable3;
 
 
 // --- Conditional Expressions ---
@@ -772,7 +791,8 @@ conditionalExpression:
 classCondition:
 	identifier IS? NOT? (characterClassNameReference | dataItemContentType);
 
-dataItemContentType: (NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER | DBCS | KANJI);
+dataItemContentType: 
+	(NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER | DBCS | KANJI);
 
 // p258: Condition-name condition
 // A condition-name condition tests a conditional variable to determine whether its
@@ -821,7 +841,8 @@ dataItemContentType: (NUMERIC | ALPHABETIC | ALPHABETIC_LOWER | ALPHABETIC_UPPER
 // conditionNameCondition: condition-name ;
 // switchStatusCondition: condition-name ;
 
-conditionNameConditionOrSwitchStatusCondition: conditionReference;
+conditionNameConditionOrSwitchStatusCondition: 
+	conditionReference;
 
 // p259: Relation conditions
 // A relation condition specifies the comparison of two operands. The relational
@@ -986,7 +1007,8 @@ conditionNameConditionOrSwitchStatusCondition: conditionReference;
 // Impossible to distinguish generalRelationCondition, dataPointerRelationCondition, programPointerRelationCondition, objectReferenceRelationCondition at this parsing stage
 // => the syntax of these 4 conditions are merged below in one single rule : relationCondition
 
-relationCondition: operand relationalOperator abbreviatedExpression;
+relationCondition: 
+	operand relationalOperator abbreviatedExpression;
 
 // p274: Abbreviated combined relation conditions
 
@@ -1022,7 +1044,10 @@ simpleRelation:
 // programPointer : identifier | NULL | NULLS
 // objectReference : identifier | SELF | NULL | NULLS
 
-operand: alphanumericExpressionOrIndexName | nullPointerValue | selfObjectIdentifier; // indexName cannot be distinguished from identifier at this parsing stage
+operand: 
+	expressionOrIndexName | // indexName cannot be distinguished from identifier at this parsing stage
+	nullPointerValue                  | 
+	selfObjectIdentifier; 
 
 // p269: Sign condition
 // The sign condition determines whether the algebraic value of a numeric operand is
@@ -1044,47 +1069,31 @@ operand: alphanumericExpressionOrIndexName | nullPointerValue | selfObjectIdenti
 // compiler option. For details, see NUMPROC in the Enterprise COBOL Programming
 // Guide.
 
-signCondition: operand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
+signCondition: 
+	operand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
 
 
+// --- Cobol variables : runtime value or literal ---
 
+integerVariable1: identifier | integerValue;
 
-
-// --- Cobol variables :  ---
-
-// => fichier "g4temp.txt" sur le bureau
-// TO DO
-// X 1. Refactor set statement grammar + all statements with format
-// X 2. Create nullPointerValue / objectReferenceValue / xxxValueRange / what to do with anyValue ?
-// CANCELED 3. Refactor identifierOrFileName / identifierOrIndexName ... with precise first token type if possible
-// 4. Create storageArea / numericVariable / alphanumericVariable ... to replace all identifier references 
-// 5. Rename xxxVariable1 to xxxExpression, type expression as argument / comparison, sending / receiving ...
-// 6. Extract all enumerations in xxxEnum rules
-// 7. Vérifier le support des repeatedAlphanumericValue / repeatedAlphanumericValue2 dans les règles finales
-
-integerVariable: dataNameReference | integerValue;
-
-integerVariable2: identifier | integerValue;
-		
-numericVariable1: identifier | numericValue;
-
-numericVariable2: identifier;
-
-numericVariable3: dataNameReference;
-
-characterVariable: dataNameReference | characterValue4;
-
-alphanumericVariable1: identifier | alphanumericValue11;
-
-alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
-
+integerVariable2: dataNameReference | integerValue;
 
 integerVariableOrIndexName: identifierOrIndexName | integerValue;
 
+numericVariable1: identifier;
+		
+numericVariable2: dataNameReference;
+
+numericVariable3: identifier | numericValue;
+
 numericVariableOrIndexName: identifierOrIndexName | numericValue;
 
-numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue11;
+characterVariable: dataNameReference | characterValue4;
 
+alphanumericVariable1: identifier | alphanumericValue3;
+
+alphanumericVariable2: identifier | alphanumericValue2 | repeatedAlphanumericValue1;
 
 programNameVariable: programNameReference1 | identifier;
 
@@ -1096,39 +1105,46 @@ classNameOrObjectReferenceVariable: identifierOrClassName;
 
 methodNameVariable: methodNameReference | identifier;
 
+// Any type of data
 
-anyVariable: identifier | numericValue | alphanumericValue5;
+variable1: identifier;
 
-anyVariable2: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue2;
+variable2: qualifiedDataName;
 
-anyVariable3: identifier | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
+variable3: identifier | numericValue | alphanumericValue2;
 
-anyVariable4: identifierOrFileName | numericValue | alphanumericValue5 | repeatedAlphanumericValue;
+variable4: identifier | numericValue | alphanumericValue3;
 
-anyVariable5: identifier | numericValue | alphanumericValue11;
+variable5: dataNameReference | numericValue | alphanumericValue3;
 
-anyVariable6: identifier;
+variable6: identifier | numericValue | alphanumericValue2 | repeatedAlphanumericValue1;
 
-anyVariable7: qualifiedDataName;
+variable7: identifier | numericValue | alphanumericValue2 | repeatedAlphanumericValue2;
 
+variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedAlphanumericValue1;
+
+
+// --- Cobol expressions ---
 
 booleanExpression: conditionalExpression | booleanValue;
 
-alphanumericExpression: anyVariable3 | arithmeticExpression;
+expression1: variable3 | arithmeticExpression;
 
-alphanumericExpression2: anyVariable3 | arithmeticExpression;
+expression2: variable6 | arithmeticExpression;
 
-alphanumericExpressionOrIndexName: identifierOrIndexName | anyValue  | arithmeticExpression;
+expressionOrIndexName: identifierOrIndexName | value1  | arithmeticExpression;
 
 
-storageArea: identifier;
-
-storageArea2: dataNameReference;
-
-alphanumericStorageArea: identifier;
+// --- Storage areas where statements results are saved ---
 
 numericStorageArea: identifier;
+
+alphanumericStorageArea: identifier;
 
 indexStorageArea: indexNameReference;
 
 dataOrIndexStorageArea: identifierOrIndexName;
+
+storageArea1: identifier;
+
+storageArea2: dataNameReference;
