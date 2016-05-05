@@ -5698,8 +5698,9 @@ performVaryingPhrase:
 	(AFTER   loopVariableDescription)*;
 
 loopVariableDescription:
-	loopVariable=storageAreaOrIndex 
-	FROM initialValue=numericVariableOrIndexName BY increment=numericVariable1 
+	loopVariable=dataOrIndexStorageArea 
+	FROM initialValue=numericVariableOrIndexName
+	BY increment=numericVariable1 
 	UNTIL conditionalExpression;
 
 // p393: READ statement
@@ -5709,18 +5710,7 @@ loopVariableDescription:
 // When the READ statement is executed, the associated file must be open in INPUT
 // or I-O mode.
 // p394: Format 1: READ statement for sequential retrieval
-//readStatement:
-//                 READ fileName NEXT? RECORD? (INTO identifier)?
-//                 (AT? END imperativeStatement)?
-//                 (NOT AT? END imperativeStatement)?
-//                 END_READ?;
 // p394: Format 2: READ statement for random retrieval
-//readStatement:
-//                 READ fileName RECORD? (INTO identifier)?
-//                 (KEY IS? dataName)?
-//                 (INVALID KEY? imperativeStatement)?
-//                 (NOT INVALID KEY? imperativeStatement)?
-//                 END_READ?;
 // file-name-1
 // Must be defined in a DATA DIVISION FD entry.
 // NEXT RECORD
@@ -5789,7 +5779,9 @@ loopVariableDescription:
 // ... more details p399->400 : READ statement notes ...
 
 readStatement:
-	READ fileNameReference NEXT? RECORD? (INTO identifier)? (KEY IS? qualifiedDataName)?;
+	READ fileNameReference 
+	NEXT? RECORD? (INTO storageArea)? 
+	(KEY IS? qualifiedDataName)?;
 
 readStatementEnd: END_READ;
 
@@ -5836,12 +5828,11 @@ readStatementEnd: END_READ;
 // those records placed in it by execution of RELEASE statements.
 
 releaseStatement:
-	RELEASE qualifiedDataName (FROM identifier)?;
+	RELEASE recordName (FROM anyVariable6)?;
 
 // record-name-1
 // Must specify the name of a logical record in a sort-merge file description
 // entry (SD). record-name-1 can be qualified.
-//recordName: qualifiedDataName;
 
 // p403: RETURN statement
 // The RETURN statement transfers records from the final phase of a sorting or
@@ -5909,7 +5900,7 @@ releaseStatement:
 // For more information, see “Delimited scope statements” on page 280.
 
 returnStatement:
-	RETURN fileNameReference RECORD? (INTO identifier)?;
+	RETURN fileNameReference RECORD? (INTO storageArea)?;
 
 returnStatementEnd: END_RETURN;
 
@@ -5960,13 +5951,7 @@ returnStatementEnd: END_RETURN;
 // ... more details p406->407 Reusing a logical record, Sequential / Indexed / Relative files ...
 
 rewriteStatement:
-                    REWRITE qualifiedDataName (FROM identifier)?;
-
-//rewriteStatementConditional:
-//                             rewriteStatement
-//                             (invalidKeyCondition imperativeStatement)?
-//                             (notInvalidKeyCondition imperativeStatement)?
-//                             rewriteStatementEnd?;
+	REWRITE recordName (FROM sendingField=anyVariable6)?;
 
 rewriteStatementEnd: END_REWRITE;
 
@@ -5975,22 +5960,7 @@ rewriteStatementEnd: END_REWRITE;
 // condition and adjusts the associated index to indicate that element.
 //
 // p408: Format 1: SEARCH statement for serial search
-//searchStatement:
-//                   SEARCH identifier
-//                   (VARYING (identifier | indexName))?
-//                   (AT? END imperativeStatement)?
-//                   (WHEN conditionalExpression (imperativeStatement | (NEXT SENTENCE)))+
-//                   END_SEARCH?;
-//
 // p408: Format 2: SEARCH statement for binary search
-//searchStatement:
-//                   SEARCH ALL identifier
-//                   (AT? END imperativeStatement)?
-//                   WHEN 
-//                     ((dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionName) 
-//                     (AND ((dataName IS? ((EQUAL TO?) | EqualOperator) (identifier | literal | arithmeticExpression)) | conditionName))*
-//                     (imperativeStatement | (NEXT SENTENCE))
-//                   END_SEARCH?;
 // 
 // Use format 1 (serial search) when the table that you want to search has not been
 // sorted. Use format 1 to search a sorted table when you want to search serially
@@ -6024,13 +5994,14 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p412->414 Binary search ...
 // ... more details p414 Search statement considerations ...
 
-searchStatement: serialSearch | binarySearch;
+searchStatement: 
+	serialSearch | binarySearch;
 
 serialSearch:
-	SEARCH identifier (VARYING identifierOrIndexName)?;
+	SEARCH anyVariable6 (VARYING dataOrIndexStorageArea)?;
 
 binarySearch:
-	SEARCH ALL identifier;
+	SEARCH ALL anyVariable6;
 
 whenSearchCondition:
 	WHEN searchCondition (AND searchCondition)*;
@@ -6042,10 +6013,9 @@ serialSearchCondition:
 	conditionalExpression;
 
 binarySearchCondition:
-	qualifiedDataName IS? ((EQUAL TO?) | EqualOperator) alphanumericExpression;
+	(anyVariable7 IS? ((EQUAL TO?) | EqualOperator) alphanumericExpression) | conditionNameConditionOrSwitchStatusCondition;
 
 searchStatementEnd: END_SEARCH;
-
 
 // p415: SET statement
 // The SET statement is used to perform an operation as described in this topic.
@@ -6068,8 +6038,6 @@ searchStatementEnd: END_SEARCH;
 // p415: Format 1: SET for basic table handling
 // When this form of the SET statement is executed, the current value of the receiving
 // field is replaced by the value of the sending field (with conversion).
-//setStatement:
-//                SET (indexName | identifier)+ TO (indexName | identifier | IntegerLiteral);
 // index-name-1
 // Receiving field.
 // Must name an index that is specified in the INDEXED BY phrase of an
@@ -6110,8 +6078,6 @@ searchStatementEnd: END_SEARCH;
 // When this form of the SET statement is executed, the value of the receiving index
 // is increased (UP BY) or decreased (DOWN BY) by a value that corresponds to the
 // value in the sending field.
-//setStatement:
-//                SET (indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral);
 // The receiving field is an index specified by index-name-3. The index value both
 // before and after the SET statement execution must correspond to an occurrence
 // number in an associated table.
@@ -6133,8 +6099,6 @@ searchStatementEnd: END_SEARCH;
 // p417: Format 3: SET for external switches
 // When this form of the SET statement is executed, the status of each external switch
 // associated with the specified mnemonic-name is turned ON or OFF.
-//setStatement:
-//                SET (mnemonicName+ TO (ON | OFF))+;
 // mnemonic-name-1
 // Must be associated with an external switch, the status of which can be
 // altered.
@@ -6143,8 +6107,6 @@ searchStatementEnd: END_SEARCH;
 // When this form of the SET statement is executed, the value associated with a
 // condition-name is placed in its conditional variable according to the rules of the
 // VALUE clause.
-//setStatement:
-//                SET conditionName+ TO TRUE; 
 // condition-name-1
 // Must be associated with a conditional variable.
 // If more than one literal is specified in the VALUE clause of condition-name-1, its
@@ -6156,8 +6118,6 @@ searchStatementEnd: END_SEARCH;
 // p418: Format 5: SET for USAGE IS POINTER data items
 // When this form of the SET statement is executed, the current value of the receiving
 // field is replaced by the address value contained in the sending field.
-//setStatement:
-//                SET (identifier | (ADDRESS_OF identifier))+ TO (identifier | (ADDRESS_OF identifier) | NULL | NULLS);
 // identifier-4
 // Receiving fields.
 // Must be described as USAGE IS POINTER.
@@ -6191,8 +6151,6 @@ searchStatementEnd: END_SEARCH;
 // NULL.
 // COBOL function-pointers are more easily used than procedure-pointers for
 // interoperation with C functions.
-//setStatement:
-//                SET dataName+ TO (dataName | (ENTRY (identifier |literal)) | NULL | NULLS);
 // procedure-pointer-data-item-1 , procedure-pointer-data-item-2
 // Must be described as USAGE IS PROCEDURE-POINTER.
 // procedure-pointer-data-item-1 is a receiving field; procedure-pointer-data-item-2
@@ -6242,8 +6200,6 @@ searchStatementEnd: END_SEARCH;
 // p420: Format 7: SET for USAGE OBJECT REFERENCE data items
 // When this format of the SET statement is executed the value in the receiving item
 // is replaced by the value in the sending item.
-//setStatement:
-//                SET identifier TO (identifier | NULL | SELF);
 // object-reference-id-1 and object-reference-id-2 must be defined as USAGE OBJECT
 // REFERENCE. object-reference-id-1 is the receiving item and object-reference-id-2 is the
 // sending item. If object-reference-id-1 is defined as an object reference of a certain
@@ -6255,50 +6211,45 @@ searchStatementEnd: END_SEARCH;
 // of a method. object-reference-id-1 is set to reference the object upon which the
 // currently executing method was invoked.
 
-//SetStatement (1st version)
-///setStatement:
-///                SET ( ((indexName | identifier | (ADDRESS OF identifier))+ TO (indexName | identifier | IntegerLiteral | (ADDRESS OF identifier) | (ENTRY_ARG (identifier | literal)) | (NULL | NULLS | SELF))) |
-///                      ((indexName)+ ((UP BY) | (DOWN BY)) (identifier | IntegerLiteral)) |
-///                      (mnemonicForUPSISwitchName+ TO (ON | OFF))+ |
-///                      (conditionName+ TO TRUE) );
-
-
-
-
 setStatement:
-	setStatementForAssignation	//SET format 1 for basic table handling
-								//SET format 5 for USAGE IS POINTER
-								//SET format 6 for procedure-pointer and function-pointer data items
-								//SET format 7 for USAGE OBJECT REFERENCE data items
-	| setStatementForIndexes	//SET format 2 for adjusting indexes
-	| setStatementForSwitches	//SET format 3 for external switches
-	| setStatementForConditionNames;	//SET format 4 for condition-names
+	setStatementForAssignation	       // SET format 1 for basic table handling
+								       // SET format 5 for USAGE IS POINTER
+								       // SET format 6 for procedure-pointer and function-pointer data items
+								       // SET format 7 for USAGE OBJECT REFERENCE data items
+	| setStatementForIndexes	       // SET format 2 for adjusting indexes
+	| setStatementForSwitches	       // SET format 3 for external switches
+	| setStatementForConditionNames;   // SET format 4 for condition-names
 
-//Format 1: SET for basic table handling
-//Format 5: SET for USAGE IS POINTER
-//Format 6: SET for procedure-pointer and function-pointer data items
-//Format 7: SET for USAGE OBJECT REFERENCE data items
+// Format 1: SET for basic table handling
+// Format 5: SET for USAGE IS POINTER
+// Format 6: SET for procedure-pointer and function-pointer data items
+// Format 7: SET for USAGE OBJECT REFERENCE data items
+// => setReceivingField can be a index name, procedure pointer, function pointer or an object reference Id
+	
 setStatementForAssignation:
-	SET setStatementForAssignationReceiving=identifierOrIndexName+ TO setStatementForAssignationSending;
-	// where setStatementForAssignationReceiving can also be a index name, procedure pointer, function pointer or an object reference Id
+	SET setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 	 
-setStatementForAssignationSending:
-	identifierOrIndexName | integerValue			// identifier can also be an index name	//Format 1 + 5
+setSendingField:
+	integerVariableOrIndexName						// identifier can also be an index name	//Format 1 + 5
 	| nullPointerValue				                // pointer data item //Format 5 + 6 + 7
 	| ENTRY_ARG programNameOrProgramEntryVariable	// procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| selfObjectIdentifier;         				// object reference id 	//Format 7 (+NULL)
 
-//Format 2: SET for adjusting indexes
-setStatementForIndexes:
-	SET indexNameReference+ (UP | DOWN) BY integerVariable2;
+// Format 2: SET for adjusting indexes
 
-//Format 3: SET for external switches
+setStatementForIndexes:
+	SET indexStorageArea+ (UP | DOWN) BY integerVariable2;
+
+// Format 3: SET for external switches
+
 setStatementForSwitches:
-	SET setStatementForSwitchesWhat+;
-setStatementForSwitchesWhat:
+	SET setSwitchPosition+;
+
+setSwitchPosition:
 	mnemonicForUPSISwitchNameReference+ TO (ON | OFF);
 
-//Format 4: SET for condition names
+// Format 4: SET for condition names
+
 setStatementForConditionNames:
 	SET conditionReference+ TO TRUE;
 
@@ -6677,9 +6628,10 @@ startStatementEnd: END_START;
 // Subprogram : Returns directly to the program that called the main program. (Can be the system, which causes the application to end.)
 
 stopStatement:
-                 STOP (RUN | messageToOperator);
+	STOP (RUN | messageToOperator);
 
-messageToOperator: numericValue | alphanumericValue11;
+messageToOperator: 
+	numericValue | alphanumericValue11;
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
@@ -6793,48 +6745,45 @@ messageToOperator: numericValue | alphanumericValue11;
 // ... more details p435->437 Data flow / Example of the STRING statement ...
 
 stringStatement:
-	STRING stringStatementWhat+ INTO identifierInto=identifier stringStatementWith?;
-
-
-stringStatementWhat:
-	identifierToConcat=anyVariable3+ DELIMITED BY? stringStatementDelimiter;
-
-stringStatementDelimiter:
-	anyVariable5 | SIZE;
-
-stringStatementWith:
-	WITH? POINTER identifier;
+	STRING contentToConcatenate+ 
+	INTO receivingField=storageArea
+	(WITH? POINTER characterPositionInReceivingField=anyVariable6)?;
+	
+contentToConcatenate:
+	sendingField=anyVariable3+ DELIMITED BY? (delimiterCharacters=anyVariable5 | SIZE);
 
 stringStatementEnd: END_STRING;
-
-
 
 // p438: SUBTRACT statement
 // The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 // numeric items, from one or more numeric items, and stores the result.
+
 subtractStatement:
-	 subtractStatementFormat3 | subtractStatementFormat2 | subtractStatementFormat1;
+	subtractSimple | subtractGiving | subtractCorresponding;
 
 // p438: Format 1: SUBTRACT statement
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from and stored immediately in identifier-2. This process is
 // repeated for each successive occurrence of identifier-2, in the left-to-right order in
 // which identifier-2 is specified.
-subtractStatementFormat1:
-		SUBTRACT numericVariable1+ FROM numericStorageAreaRounded+;
+
+subtractSimple:
+	SUBTRACT numericVariable1+ FROM numericStorageAreaRounded+;
 
 // p439: Format 2: SUBTRACT statement with GIVING phrase
 // All identifiers or literals preceding the keyword FROM are added together and
 // their sum is subtracted from identifier-2 or literal-2. The result of the subtraction is
 // stored as the new value of each data item referenced by identifier-3.
-subtractStatementFormat2:
-		SUBTRACT numericVariable1+ FROM fromOperand=numericVariable1 GIVING numericStorageAreaRounded+;
+
+subtractGiving:
+	SUBTRACT numericVariable1+ FROM fromOperand=numericVariable1 GIVING numericStorageAreaRounded+;
 
 // p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
 // Elementary data items within identifier-1 are subtracted from, and the results are
 // stored in, the corresponding elementary data items within identifier-2.
-subtractStatementFormat3:
-		SUBTRACT (CORRESPONDING | CORR) numericVariable2 FROM numericStorageAreaRounded;
+
+subtractCorresponding:
+	SUBTRACT (CORRESPONDING | CORR) numericVariable2 FROM numericStorageAreaRounded;
 
 subtractStatementEnd: END_SUBTRACT;
 
@@ -6871,8 +6820,6 @@ subtractStatementEnd: END_SUBTRACT;
 // nested in another conditional statement. END-SUBTRACT can also be used with
 // an imperative SUBTRACT statement.
 // For more information, see “Delimited scope statements” on page 280.
-
-
 
 // p441: UNSTRING statement
 // The UNSTRING statement causes contiguous data in a sending field to be
@@ -7050,39 +6997,22 @@ subtractStatementEnd: END_SUBTRACT;
 // ... more details p447 Values at the end of execution of the UNSTRING statement ...
 // ... more details p447->448 Example of the UNSTRING statement ...
 
-//unstringStatement:
-//	UNSTRING identifier INTO identifier;
-
 unstringStatement:
-	UNSTRING unstringIdentifier=identifier unstringDelimited? INTO unstringReceiver+ unstringPointer? unstringTallying?;
-
-unstringDelimited:
-	DELIMITED BY? ALL? delimitedBy=anyVariable5 ustringOthersDelimiters*;
-
-ustringOthersDelimiters:
-	OR ALL? anyVariable5;
-
-//unstringReceiver:
-//	identifier unstringDelimiter? unstringCount?;
-	
-unstringReceiver:
-	intoIdentifier=identifier unstringDelimiter? unstringCount?;
+	UNSTRING sendingField=anyVariable6
+	(DELIMITED BY? unstringDelimiter (OR unstringDelimiter)*)? 
+	INTO unstringReceivingFields+ 
+	(WITH? POINTER relativeCharacterPositionDuringProcessing=storageArea)? 
+	(TALLYING IN? incrementByNumberOfDelimitedFields=storageArea)?;
 
 unstringDelimiter:
-	DELIMITER IN? identifier;
-
-unstringCount:
-	COUNT IN? identifier;
-
-unstringPointer:
-	WITH? POINTER identifier;
-
-unstringTallying:
-	TALLYING IN? identifier;
-
+	ALL? delimiterCharacters=anyVariable5;
+	
+unstringReceivingFields:
+	receivingField=storageArea 
+	(DELIMITER IN? associatedDelimiter=storageArea)? 
+	(COUNT IN? charsTransferredCount=storageArea)?;
+	
 unstringStatementEnd: END_UNSTRING;
-
-
 
 // p449: WRITE statement
 // The WRITE statement releases a logical record to an output or input/output file.
@@ -7092,27 +7022,8 @@ unstringStatementEnd: END_UNSTRING;
 //   EXTEND mode.
 //
 // p449: Format 1: WRITE statement for sequential files
-//writeStatement:
-//                  WRITE recordName (FROM identifier)?
-//                  ( ( ((BEFORE | AFTER) ADVANCING? (((identifier | IntegerLiteral) (LINE |LINES)?) | mnemonicName | PAGE))?
-//                      (AT? (END_OF_PAGE | EOP) imperativeStatement)? 
-//                      (NOT AT? (END_OF_PAGE | EOP) imperativeStatement)? ) |
-//                    ( (INVALID KEY? imperativeStatement)?
-//                      (NOT INVALID KEY? imperativeStatement)? ) )
-//                  END_WRITE?;
-//
 // p450: Format 2: WRITE statement for indexed and relative files
-//writeStatement:
-//                  WRITE recordName (FROM identifier)?
-//                  (INVALID KEY? imperativeStatement)?
-//                  (NOT INVALID KEY? imperativeStatement)? 
-//                  END_WRITE?;
-//
 // p450: Format 3: WRITE statement for line-sequential files
-//writeStatement:
-//                  WRITE recordName (FROM identifier)?
-//                  (AFTER ADVANCING? (((identifier | IntegerLiteral) (LINE |LINES)?) | PAGE))?
-//                  END_WRITE?;
 //
 // record-name-1
 // Must be defined in a DATA DIVISION FD entry. record-name-1 can be
@@ -7290,12 +7201,13 @@ unstringStatementEnd: END_UNSTRING;
 // ... more details p456 WRITE for relative files ...
 
 writeStatement:
-	WRITE qualifiedDataName (FROM identifier)?
-	((BEFORE | AFTER) ADVANCING? ((integerVariable2 (LINE | LINES)?) | mnemonicForEnvironmentNameReference | PAGE)?)?;
+	WRITE recordName (FROM sendingField=anyVariable6)?
+	((BEFORE | AFTER) ADVANCING? (
+		(numberOfLines=integerVariable2 (LINE | LINES)?)  | 
+		 mnemonicForEnvironmentNameReference              | 
+		 PAGE                                             )? )?;
 
 writeStatementEnd: END_WRITE;
-
-
 
 // p457: XML GENERATE statement
 // The XML GENERATE statement converts data to XML format.
@@ -7631,46 +7543,35 @@ writeStatementEnd: END_WRITE;
 // ... more details p468 XML element name and attribute name formation ...
 
 xmlGenerateStatement:
-	XML GENERATE identifier FROM identifier
-		xmlCount?
-		(WITH? ENCODING codepage)?
-		(WITH? XML_DECLARATION)?
-		(WITH? ATTRIBUTES)?
-		(xmlNamespace xmlNamespacePrefix?)?
-		(NAME OF? xmlName+)?
-		(TYPE OF? xmlType+)?
-		(SUPPRESS xmlSuppress+)?;
+	XML GENERATE receivingField=storageArea 
+	FROM dataItemToConvertToXml=anyVariable6
+	(COUNT IN? generatedXmlCharsCount=storageArea)?
+	(WITH? ENCODING codepage)?
+	(WITH? XML_DECLARATION)?
+	(WITH? ATTRIBUTES)?
+	(NAMESPACE IS? namespace=alphanumericVariable2 
+		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
+	(NAME OF? xmlNameMapping+)?
+	(TYPE OF? xmlTypeMapping+)?
+	(SUPPRESS (xmlSuppressDataItem | xmlSuppressGeneric)+)?;
+		
+xmlNameMapping:
+	subordinateDataItem=anyVariable6 IS? xmlNameToGenerate=alphanumericValue5;
 
-xmlCount:
-	COUNT IN? identifier;
+xmlTypeMapping:
+	subordinateDataItem=anyVariable6 IS? (ATTRIBUTE | ELEMENT | CONTENT);
 
-xmlNamespace:
-	NAMESPACE IS? alphanumericVariable2;
-
-xmlNamespacePrefix:
-	NAMESPACE_PREFIX IS? alphanumericVariable2;
-
-xmlName:
-	identifier IS? alphanumericValue5;
-
-xmlType:
-	identifier IS? (ATTRIBUTE | ELEMENT | CONTENT);
-
-xmlSuppress:
-	(identifier | xmlSuppressGeneric)? whenPhrase;
+xmlSuppressDataItem:	
+	subordinateDataItem=anyVariable6 
+	xmlSuppressWhen;
 
 xmlSuppressGeneric:
-	EVERY ((NUMERIC (ATTRIBUTE | ELEMENT)?) | (NONNUMERIC (ATTRIBUTE | ELEMENT)?) | ATTRIBUTE | ELEMENT);
+	(EVERY (ATTRIBUTE | ELEMENT | ((NUMERIC | NONNUMERIC) (ATTRIBUTE | ELEMENT)?)))?
+	xmlSuppressWhen;
 
-whenPhrase:
+// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
+xmlSuppressWhen:
 	WHEN repeatedAlphanumericValue (OR? repeatedAlphanumericValue)*;
-// only figurative constants allowed: ZERO  ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
-
-//xmlGenerateStatementConditional:
-//                                   xmlGenerateStatement
-//                                   (onExceptionCondition imperativeStatement)?
-//                                   (notOnExceptionCondition imperativeStatement)?
-//                                   xmlStatementEnd?;
 
 xmlStatementEnd: END_XML;
 
@@ -7681,8 +7582,7 @@ xmlStatementEnd: END_XML;
 // processing as described in The encoding of XML documents in the
 // Enterprise COBOL Programming Guide.
 
-codepage:
-            integerVariable2;
+codepage: integerVariable2;
 
 // p469: XML PARSE statement
 // The XML PARSE statement is the COBOL language interface to the high-speed
@@ -7878,17 +7778,11 @@ codepage:
 // ... more information p473->474 Control flow ...
 
 xmlParseStatement:
-                     XML PARSE identifier
+                     XML PARSE xmlTextToParse=anyVariable6
                      (WITH? ENCODING codepage)? 
                      (RETURNING NATIONAL)?
-                     (VALIDATING WITH? (identifier | (FILE xmlSchemaNameReference)))?
+                     (VALIDATING WITH? (optimizedXmlSchemaData=anyVariable6 | (FILE optimizedXmlSchemaFile=xmlSchemaNameReference)))?
                      PROCESSING PROCEDURE IS? (procedureName | proceduresRange);
-
-//xmlParseStatementConditional:
-//                                xmlParseStatement
-//                                (onExceptionCondition imperativeStatement)?
-//                                (notOnExceptionCondition imperativeStatement)?
-//                                xmlStatementEnd?;
 
 
 // --- Conditions code elements syntax ---
@@ -7929,6 +7823,7 @@ onSizeErrorCondition:
 notOnSizeErrorCondition:
 	NOT ON? SIZE ERROR;
             
+
 // ------------------------------
 // Start of DB2 coprocessor
 // IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf
@@ -8208,12 +8103,7 @@ notOnSizeErrorCondition:
 // can use the NOSQLCCSID compiler option. For details, see the related reference about
 // code-page determination below.
 
-//execSqlDeclareStatement:
-//                           EXEC SQL DECLARE UserDefinedWord 
-//                           SqlStatementText
-//                           // (VARIABLE CCSID IntegerLiteral)? 
-//                           // (FOR BIT DATA)?
-//                           END_EXEC PeriodSeparator?;
+// => see CoboloCompilerDirectives.g4
 
 // p424: Delimit SQL statements with EXEC SQL and END-EXEC. The EXEC SQL and END-EXEC
 // delimiters must each be complete on one line. You cannot continue them across

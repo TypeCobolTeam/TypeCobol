@@ -100,6 +100,14 @@ qualifiedDataName: dataNameReference | qualifiedDataName1;
 
 qualifiedDataName1: dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
 
+// p60: record-name 
+// record-name assigns a name to a record.
+// A record-name is global if the GLOBAL clause is specified in the record description that declares the record-name,
+// or in the case of record description entries in the FILE SECTION, if the GLOBAL clause is specified 
+// in the file description entry for the file name associated with the record description entry. 
+
+recordName: qualifiedDataName;
+
 // p70: If qualification is used to make a condition-name unique, the associated
 // conditional variable can be used as the first qualifier. If qualification is
 // used, the hierarchy of names associated with the conditional variable itself
@@ -118,10 +126,7 @@ qualifiedDataName1: dataNameReference ((IN | OF) dataNameReferenceOrFileNameRefe
 // “SPECIAL-NAMES paragraph” on page 112.
 
 // p70: Format 1: condition-name in data division
-//conditionNameReferenceInDataDivision: conditionName ((IN | OF) dataName)* ((IN | OF) fileName)?;
-
 // p70: Format 2: condition-name in SPECIAL-NAMES paragraph
-// conditionNameReferenceInSpecialNamesParagraph: conditionForUPSISwitchName ((IN | OF) mnemonicForUPSISwitchName)*;
 
 // => Impossible to distinguish between the following types at this parsing stage ;
 // - first token : conditionName or conditionForUPSISwitchName
@@ -1074,6 +1079,8 @@ alphanumericVariable1: identifier | alphanumericValue11;
 alphanumericVariable2: identifier | alphanumericValue5 | repeatedAlphanumericValue;
 
 
+integerVariableOrIndexName: identifierOrIndexName | integerValue;
+
 numericVariableOrIndexName: identifierOrIndexName | numericValue;
 
 numericOrAlphanumericVariable: dataNameReference | numericValue | alphanumericValue11;
@@ -1102,6 +1109,8 @@ anyVariable5: identifier | numericValue | alphanumericValue11;
 
 anyVariable6: identifier;
 
+anyVariable7: qualifiedDataName;
+
 
 booleanExpression: conditionalExpression | booleanValue;
 
@@ -1120,6 +1129,6 @@ alphanumericStorageArea: identifier;
 
 numericStorageArea: identifier;
 
-storageAreaOrIndex: identifierOrIndexName;
+indexStorageArea: indexNameReference;
 
-// TO DO => READ statement
+dataOrIndexStorageArea: identifierOrIndexName;
