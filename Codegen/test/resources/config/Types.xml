@@ -4,7 +4,7 @@
   <!-- comment TYPEDEF -->
   <skeleton name="TYPEDEF">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPEDEF"/>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" typedef="*"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="comment"></pattern>
@@ -14,7 +14,7 @@
   <!-- delete and replace TYPE -->
   <skeleton name="TYPE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE"/>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" type="*"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="expand"></pattern>

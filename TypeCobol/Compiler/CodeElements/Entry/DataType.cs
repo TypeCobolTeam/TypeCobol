@@ -107,6 +107,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
+// [TYPECOBOL]
+		public static readonly DataType Boolean            = new DataType("Boolean");
+// [/TYPECOBOL]
 
 	}
 }

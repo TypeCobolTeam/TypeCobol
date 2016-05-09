@@ -157,12 +157,12 @@ namespace TypeCobol.Compiler.Diagnostics {
             if (sa != null) {
                 var ca = c as CodeElementsParser.SetStatementForAssignationContext;
                 for (int i = 0; i < ca.identifier().Length; i++) {
-                    if (i >= sa.ReceivingFields.Count) {
+                    if (i >= sa.Receiving.Count) {
                         var ctxt = ca.identifier()[i];
                         DiagnosticUtils.AddError(sa, "Set: Receiving fields missing or type unknown before TO", ctxt);
                     }
                 }
-                if (sa.SendingField == null) {
+                if (sa.Sending == null) {
                     DiagnosticUtils.AddError(sa, "Set: Sending field missing or type unknown after TO", ca.setStatementForAssignationSending());
                 }
             }

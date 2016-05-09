@@ -46,6 +46,13 @@ namespace TypeCobol.Codegen.Config {
 			if (a == null || a.Length == 0) return defaultvalue;
 			return a;
 		}
+		internal static Dictionary<string,string> GetAttributes(XmlElement e) {
+			var attrs = new Dictionary<string,string>();
+			foreach(XmlAttribute attr in e.Attributes) {
+				attrs[attr.LocalName.ToLower()] = attr.Value;
+			}
+			return attrs;
+		}
 	}
 
 
@@ -83,11 +90,6 @@ namespace TypeCobol.Codegen.Config {
 
 	internal class ConditionListFactory: Factory<List<Condition>> {
 		private static ConditionFactory Factory = new ConditionFactory();
-
-		public ConditionListFactory() {
-			//assembly = Assembly.GetExecutingAssembly();
-			//TypeCobol.Tools.Reflection.GetTypesInNamespace();
-		}
 		public List<Condition> Create(XmlElement e) {
 			var conditions = new List<Condition>();
 			foreach(var child in e.ChildNodes) {
@@ -105,9 +107,11 @@ namespace TypeCobol.Codegen.Config {
 
 		public Condition Create(XmlElement e) {
 			var condition = new ConditionOnNode();
-			string node = XmlParser.GetAttribute(e, XmlParser.ATTR_NODE);
-			condition.Node   = GetType(node);
-			condition.Attribute = XmlParser.GetAttribute(e, XmlParser.ATTR_CLAUSE);
+			condition.Attributes = XmlParser.GetAttributes(e);
+			if (condition.Attributes.ContainsKey("node")) {
+				condition.Node = GetType(condition.Attributes["node"]);
+				condition.Attributes.Remove("node");
+			}
 			return condition;
 		}
 
@@ -148,8 +152,8 @@ namespace TypeCobol.Codegen.Config {
 			foreach(var var in vars.Split(',')) {
 				var kv = var.Split('=');
 				if (kv.Length != 2) continue;
-				string key = kv[0].Trim().Substring(1);//remove starting %
-				string value = kv[1].Trim();
+				string key = kv[0].Trim();
+				string value = kv[1].Trim().ToLower();
 				pattern.Variables.Add(key, value);
 			}
 			pattern.Template = e.InnerText;

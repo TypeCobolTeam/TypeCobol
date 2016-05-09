@@ -4,37 +4,30 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
+	public interface Expression { }
 
-    public interface Expression { }
+	public class Literal : Expression
+	{
+		private SyntaxNumber numberValue;
+		private SyntaxString stringValue;
+		private SyntaxBoolean booleanValue;
+		public bool All = false;
 
-    public class Literal : Expression
-    {
-        private SyntaxNumber numberValue;
-        internal SyntaxString stringValue;
-        public bool All = false;
+		public Literal(SyntaxNumber  numberValue)  { this.numberValue  = numberValue;  }
+		public Literal(SyntaxString  stringValue)  { this.stringValue  = stringValue;  }
+		public Literal(SyntaxBoolean booleanValue) { this.booleanValue = booleanValue; }
 
-        public Literal(SyntaxNumber numberValue)
-        {
-            this.numberValue = numberValue;
-        }
-
-        public Literal(SyntaxString stringValue)
-        {
-            this.stringValue = stringValue;
-        }
-
-        /// <summary>
-        /// Numeric or string value defined by the Token
-        /// </summary>
-        public object Value
-        {
-            get
-            {
-                if (numberValue != null) return numberValue.Value;
-                if (stringValue != null) return stringValue.Value;
-                throw new InvalidOperationException("Malformed literal");
-            }
-        }
+		/// <summary>
+		/// Numeric or string value defined by the Token
+		/// </summary>
+		public object Value {
+			get {
+				if (numberValue  != null) return numberValue.Value;
+				if (stringValue  != null) return stringValue.Value;
+				if (booleanValue != null) return booleanValue.Value;
+				throw new InvalidOperationException("Malformed literal");
+			}
+		}
 
 		public bool IsNumeric {
 			get {
@@ -56,17 +49,16 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 				}
 			}
 		}
+		public bool IsBoolean { get { return booleanValue != null; } }
 
-		public override string ToString() {
-			return Value.ToString();
-		}
-    }
+		public override string ToString() { return Value.ToString(); }
+	}
 
-    public class FigurativeConstant : Literal
-    {
-        public FigurativeConstant(SyntaxString value) : base(value) { }
-    }
+	public class FigurativeConstant : Literal
+	{
+		public FigurativeConstant(SyntaxString value) : base(value) { }
+	}
 
-    public class New : Expression { }
+	public class New : Expression { }
 
 }
