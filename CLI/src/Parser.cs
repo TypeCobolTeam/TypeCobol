@@ -63,7 +63,10 @@ namespace TypeCobol.Server
 			if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
 			else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
 			try { Compiler.CompileOnce(); }
-			catch(Exception ex) { Observer.OnError(ex); }
+			catch(Exception ex) {
+				Observer.OnError(ex);
+				System.Console.WriteLine(ex.ToString());
+			}
 
 			Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;
