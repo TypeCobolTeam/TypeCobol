@@ -6,8 +6,8 @@
        WORKING-STORAGE SECTION.
 
        01  BOOL            TYPEDEF STRONG.
-           05  var         VALUE 'T'.
-           05  var-value   VALUE 'F'.
+         05  var         VALUE 'T'.
+         05  var-value   VALUE 'F'.
 
        01  x PIC X.
 
@@ -16,10 +16,10 @@
        01  AnotherOne TYPE BOOL.
       * WARNING: initialization of a group containing booleans
        01  AGroup.
-           05  a PIC X.
-             10  a PIC X.
-             10  b TYPE BOOL.
-           05  b TYPE BOOL.
+         05  a PIC X.
+           10  a PIC X.
+           10  b TYPE BOOL.
+         05  b TYPE BOOL.
 
 
 

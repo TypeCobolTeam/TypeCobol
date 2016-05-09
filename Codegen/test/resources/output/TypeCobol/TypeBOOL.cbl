@@ -14,9 +14,9 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-      *01  BOOL            TYPEDEF STRONG.
-      *    05  var         VALUE 'T'.
-      *    05  var-value   VALUE 'F'.
+       01  BOOL            TYPEDEF STRONG.
+           05  var         VALUE 'T'.
+           05  var-value   VALUE 'F'.
 
        01  x PIC X.
 
@@ -31,13 +31,13 @@
          88  AnotherOne-false VALUE 'F'.
       * WARNING: initialization of a group containing booleans
        01  AGroup.
-         05  a PIC X.
-           10  a PIC X.
-      *    10  b TYPE BOOL.
+           05  a PIC X.
+             10  a PIC X.
+      *      10  b TYPE BOOL.
          10  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
            88  b-false VALUE 'F'.
-      *  05  b TYPE BOOL.
+      *    05  b TYPE BOOL.
          05  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
            88  b-false VALUE 'F'.
@@ -49,7 +49,8 @@
 
        TRAITEMENT.
            SET Identifier  TO TRUE
-           SET Identifier-false  TO TRUE
+      *    SET Identifier  TO FALSE
+       SET Identifier-false TO TRUE.
       * OK
            MOVE TRUE         TO Identifier
            MOVE FALSE        TO Identifier

@@ -169,7 +169,6 @@ namespace TypeCobol.Compiler.Parser
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
 				var customTypeDescription = ComputeType(data, currencies);
-				if (data.IsGroup) groups.Push(data);
 
 				if (!data.IsTypeDefinitionPart) {
 					CurrentProgram.SymbolTable.Add(data);
@@ -235,6 +234,7 @@ namespace TypeCobol.Compiler.Parser
 					updated = true;
 				}
 			}
+			if (updated || data.IsGroup) groups.Push(data);
 			return updated;
 		}
 

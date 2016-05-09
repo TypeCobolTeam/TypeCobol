@@ -19,8 +19,8 @@
       <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="boolean" sender="FALSE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">
-SET %sender.name-false TO TRUE.
+      <pattern location="NODE" action="replace" var="NAME=$receiver.name">
+SET %NAME-false TO TRUE.
       </pattern>
     </patterns>
   </skeleton>
