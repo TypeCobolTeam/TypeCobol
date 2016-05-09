@@ -40,9 +40,11 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
 							TableOfIntrisic.Add(data);
-					foreach(var type in value.CustomTypes.Values)
+					foreach(var type in value.CustomTypes)
 						TableOfIntrisic.RegisterCustomType(type);
 				}
+				try { TableOfIntrisic.GetCustomType("BOOL"); }
+				catch(ArgumentException ex) { TableOfIntrisic.RegisterCustomType(new CustomTypeDefinition("BOOL")); }
 			}
 		}
 

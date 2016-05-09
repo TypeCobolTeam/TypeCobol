@@ -5,12 +5,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01  BOOL            TYPEDEF STRONG.
-         05  var         VALUE 'T'.
-         05  var-value   VALUE 'F'.
-
        01  x PIC X.
-
       * Booleans declaration
        01  Identifier TYPE BOOL.
        01  AnotherOne TYPE BOOL.

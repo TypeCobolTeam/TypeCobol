@@ -167,7 +167,7 @@ namespace TypeCobol.Server
                     continue;
                 }
                 
-                foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes.Values)
+                foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes)
 					table.RegisterCustomType(type);//TODO check if already there
 			}
 			return table;

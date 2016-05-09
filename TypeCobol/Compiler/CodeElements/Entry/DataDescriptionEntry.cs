@@ -1011,7 +1011,7 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsInitialValueNull { get; set; }
 
 // [TYPECOBOL]
-		public bool IsTypeDefinition = false;
+		public virtual bool IsTypeDefinition { get; set; }
 		public bool IsTypeDefinitionPart {
 			get {
 				var parent = this;

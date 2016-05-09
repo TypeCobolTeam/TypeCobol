@@ -112,4 +112,16 @@ namespace TypeCobol.Compiler.CodeElements
 // [/TYPECOBOL]
 
 	}
+
+	public interface TypeDefinition {
+		bool IsTypeDefinition { get; }
+		DataType DataType { get; }
+	}
+	public class CustomTypeDefinition: DataDescriptionEntry, TypeDefinition {
+		public CustomTypeDefinition(string name, bool strong=true) {
+			this.LevelNumber = 1;
+			this.DataType = new DataType(name, strong);
+		}
+		public override bool IsTypeDefinition { get { return true; } }
+	}
 }
