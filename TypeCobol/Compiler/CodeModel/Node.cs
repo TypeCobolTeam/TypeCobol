@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -40,13 +41,23 @@ namespace TypeCobol.Compiler.CodeElements
 		private static Dictionary<string,Attribute> Attributes;
 		static Node() {
 			Attributes = new Dictionary<string,Attribute>();
-			Attributes["TYPE"] = new Typed("TYPE");
-			Attributes["TYPEDEF"] = new TypeDefinition("TYPEDEF");
+			Attributes["name"]  = new Named("NAME");
+			Attributes["level"] = new Level("LEVEL");
+			Attributes["type"]    = new Typed("TYPE");
+			Attributes["typedef"] = new TypeDefinition("TYPEDEF");
+			Attributes["sender"] = new Sender("SENDER");
+			Attributes["receiver"] = new Receiver("RECEIVER");
 		}
 		public string this[string attribute] {
 			get {
-				try { return Attributes[attribute].GetValue(CodeElement, SymbolTable); }
-				catch(KeyNotFoundException ex) { return null; }
+				try {
+					object value = CodeElement;
+					foreach(var attr in attribute.Split(new char[] {'.'})) {
+						value = Attributes[attr].GetValue(value, SymbolTable);
+					}
+					if (value == null) return null;
+					return value.ToString();
+				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
 	}
@@ -57,29 +68,78 @@ namespace TypeCobol.Compiler.CodeElements
 	}
 
 	public interface Attribute {
-		string GetValue(CodeElement ce, SymbolTable table);
+		object GetValue(object o, SymbolTable table);
 	}
 	internal abstract class NodeAttribute: Attribute {
 		public string Key { get; private set; }
 		public NodeAttribute(string key) { this.Key = key; }
-		public abstract string GetValue(CodeElement ce, SymbolTable table);
+		public abstract object GetValue(object o, SymbolTable table);
 	}
 
+	internal class Named: NodeAttribute {
+		public Named(string key): base(key) { }
+		public override object GetValue(object o, SymbolTable table) {
+			if (o is DataDescriptionEntry) {
+				var data = o as DataDescriptionEntry;
+				if (data.Name == null) return null;
+				return data.Name.Name;
+			} else
+			if (o is Identifier) {
+				return (o as Identifier).Name;
+			} else
+			return null;
+		}
+	}
+	internal class Level: NodeAttribute {
+		public Level(string key): base(key) { }
+		public override object GetValue(object o, SymbolTable table) {
+			var data = o as DataDescriptionEntry;
+			if (data == null) return null;
+			return string.Format("{0:00}", data.LevelNumber);
+		}
+	}
 	internal class Typed: NodeAttribute {
 		public Typed(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var data = ce as DataDescriptionEntry;
-			if (data == null || data.IsTypeDefinition) return null;
-			if (!table.IsCustomType(data.DataType)) return null;
-			return data.DataType.Name;
+		public override object GetValue(object o, SymbolTable table) {
+			if (o is DataDescriptionEntry) {
+				var data = o as DataDescriptionEntry;
+				if (data.IsTypeDefinition) return null;
+				if (!table.IsCustomType(data.DataType)) return null;
+				return data.DataType/*.Name*/;
+			} else
+			if (o is Literal) {
+				var l = o as Literal;
+				if (l.IsNumeric) return DataType.Numeric;
+				if (l.IsBoolean) return DataType.Boolean;
+				return DataType.Alphanumeric;
+			} else
+			return null;
 		}
 	}
 	internal class TypeDefinition: NodeAttribute {
 		public TypeDefinition(string key): base(key) { }
-		public override string GetValue(CodeElement ce, SymbolTable table) {
-			var data = ce as DataDescriptionEntry;
+		public override object GetValue(object o, SymbolTable table) {
+			var data = o as DataDescriptionEntry;
 			if (data == null || !data.IsTypeDefinitionPart) return null;
 			return data.DataType.Name;
+		}
+	}
+	internal class Sender: NodeAttribute {
+		public Sender(string key): base(key) { }
+		public override object GetValue(object o, SymbolTable table) {
+			var s = o as Sending;
+			if (s == null) return null;
+			return s.Expression;
+		}
+	}
+	internal class Receiver: NodeAttribute {
+		public Receiver(string key): base(key) { }
+		public override object GetValue(object o, SymbolTable table) {
+			var s = o as Receiving;
+			if (s == null) return null;
+			if (s.Expressions.Count < 1) return null;
+			if (s.Expressions.Count == 1) return s.Expressions[0];
+			return s.Expressions;
 		}
 	}
 }

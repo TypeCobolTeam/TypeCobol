@@ -86,6 +86,7 @@ System.Console.WriteLine(line.Text);
 					if ("comment".Equals(pattern.Action)) return new Comment(Output);
 					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
 					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
+					if ("replace".Equals(pattern.Action)) return new Replace(Output, CreateGeneratedText(node, pattern));
 				}
 			}
 			return new Write(Output);// no peculiar codegen --> write as is
@@ -100,6 +101,40 @@ System.Console.WriteLine(line.Text);
 				if (active) return skeleton;//TODO: what if more than 1 skel activates?
 			}
 			return null;
+		}
+
+		private string CreateGeneratedText(Node node, Pattern pattern) {
+			var variables = CreateVariables(pattern.Variables, node);
+			string generated = TypeCobol.Codegen.Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
+			if (pattern.Trim) generated = generated.Trim();
+			if (pattern.Indent) {
+				string indent = CreateIndent(node.CodeElement as DataDescriptionEntry);
+				var lines = generated.Split('\n');
+				var str = new System.Text.StringBuilder();
+				foreach(string line in lines) str.Append(indent+line);
+				generated = str.ToString();
+			}
+			return generated;
+		}
+
+		private Dictionary<string,string> CreateVariables(Dictionary<string,string> variables, Node node) {
+			string delimiter = "$";
+			var results = new Dictionary<string,string>();
+			foreach(var key in variables.Keys) {
+				string value = variables[key];
+				if (value.StartsWith(delimiter)) //remove starting delimiter
+					value = node[value.Trim().Substring(delimiter.Length)];
+				results[key] = value;
+			}
+			return results;
+		}
+
+		private string CreateIndent(DataDescriptionEntry data) {
+			var indent = "       ";
+			if (data != null) {
+				for(int c=0; c<data.Generation; c++) indent += "  ";
+			}
+			return indent;
 		}
 	}
 
@@ -152,6 +187,28 @@ System.Console.WriteLine(line.Text);
 				Replace(line, factory.CreateCommentedLine(line));
 			}
 			return true;
+		}
+	}
+
+	public class Replace: Write {
+		private List<ICobolTextLine> Output;
+		private string text;
+
+		public Replace(List<ICobolTextLine> output, string text)
+			: base(output) {
+			this.text = text;
+		}
+
+		public override bool Execute(Node node, List<ITokensLine> lines) {
+			var data = node.CodeElement as DataDescriptionEntry;
+			int index = -1;
+			foreach(var line in lines) {
+				index = IndexOf(line);
+				output.Remove(line);
+				output.Insert(index++, factory.CreateInsertedLine(factory.CreateCommentedLine(line)));
+				output.Insert(index,   factory.CreateInsertedLine(text));
+			}
+			return false;
 		}
 	}
 
