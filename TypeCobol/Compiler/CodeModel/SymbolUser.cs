@@ -5,7 +5,11 @@ namespace TypeCobol.Compiler.CodeModel
 {
 	interface Sending {
 		/// <summary>A sending area</summary>
-		Expression Sending { get; }
+		Expression Expression { get; }
+	}
+	interface Receiving {
+		/// <summary>List of receiving areas</summary>
+		IList<Expression> Expressions { get; }
 	}
 
 	interface SymbolUser

@@ -46,6 +46,7 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["type"]    = new Typed("TYPE");
 			Attributes["typedef"] = new TypeDefinition("TYPEDEF");
 			Attributes["sender"] = new Sender("SENDER");
+			Attributes["receiver"] = new Receiver("RECEIVER");
 		}
 		public string this[string attribute] {
 			get {
@@ -78,9 +79,15 @@ namespace TypeCobol.Compiler.CodeElements
 	internal class Named: NodeAttribute {
 		public Named(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
-			var data = o as DataDescriptionEntry;
-			if (data == null || data.Name == null) return null;
-			return data.Name.Name;
+			if (o is DataDescriptionEntry) {
+				var data = o as DataDescriptionEntry;
+				if (data.Name == null) return null;
+				return data.Name.Name;
+			} else
+			if (o is Identifier) {
+				return (o as Identifier).Name;
+			} else
+			return null;
 		}
 	}
 	internal class Level: NodeAttribute {
@@ -122,7 +129,17 @@ namespace TypeCobol.Compiler.CodeElements
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as Sending;
 			if (s == null) return null;
-			return s.Sending;
+			return s.Expression;
+		}
+	}
+	internal class Receiver: NodeAttribute {
+		public Receiver(string key): base(key) { }
+		public override object GetValue(object o, SymbolTable table) {
+			var s = o as Receiving;
+			if (s == null) return null;
+			if (s.Expressions.Count < 1) return null;
+			if (s.Expressions.Count == 1) return s.Expressions[0];
+			return s.Expressions;
 		}
 	}
 }

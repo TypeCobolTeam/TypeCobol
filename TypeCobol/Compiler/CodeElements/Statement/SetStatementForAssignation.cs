@@ -4,17 +4,19 @@ using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	class SetStatementForAssignation : SetStatement, IdentifierUser, SymbolWriter, Sending
+	class SetStatementForAssignation : SetStatement, IdentifierUser, SymbolWriter, Sending,Receiving
 	{
 		/// <summary>
 		/// index-name, identifier(numeric integer item), pointer, procedure-pointer, function-pointer, object reference id
 		/// </summary>
 		public List<Expression> Receiving { get; set; }
+		IList<Expression> Receiving.Expressions { get { return Receiving; } }
 		/// <summary>
 		/// index-name, identifier, positive integer, address of, null, nulls, entry identifier|literal, object reference id, pointer,
 		/// procedure-pointer, function-pointer,
 		/// </summary>
 		public Expression Sending { get; set; }
+		Expression Sending.Expression { get { return Sending; } }
 
 		public override string ToString()
 		{

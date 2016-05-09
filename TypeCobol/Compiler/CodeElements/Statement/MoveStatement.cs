@@ -7,18 +7,26 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>
 	/// p369: The MOVE statement transfers data from one area of storage to one or more other areas.
 	/// </summary>
-	public class MoveStatement : CodeElement, SymbolUser, IdentifierUser, SymbolWriter, Sending
+	public class MoveStatement : CodeElement, SymbolUser, IdentifierUser, SymbolWriter, Sending,Receiving
 	{
 		/// <summary>
 		/// identifier-1 , literal-1
 		/// The sending area.
 		/// </summary>
 		public Expression Sending { get; private set; }
+		Expression Sending.Expression { get { return Sending; } }
 		/// <summary>
 		/// identifier-2
 		/// The receiving areas. identifier-2 must not reference an intrinsic function.
 		/// </summary>
 		public IList<Identifier> Receiving;
+		IList<Expression> Receiving.Expressions {
+			get {
+				var list = new List<Expression>();
+				foreach(var item in Receiving) list.Add(item as Expression);
+				return list;
+			}
+		}
 		/// <summary>
 		/// CORR is an abbreviation for, and is equivalent to, CORRESPONDING.
 		///
