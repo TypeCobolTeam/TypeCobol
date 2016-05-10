@@ -5,8 +5,13 @@ namespace TypeCobol.Compiler.CodeElements
 	public class DataType {
 		public string Name { get; private set; }
 		public bool IsStrong { get; private set; }
+		public bool IsNestable { get; private set; }
 
-		public DataType(string name, bool strong=false) { Name = name; IsStrong = strong; }
+		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
+			Name = name;
+			this.IsStrong = IsStrong;
+			this.IsNestable = IsNestable;
+		}
 
 		public override string ToString() { return Name; }
 
@@ -108,7 +113,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
 // [TYPECOBOL]
-		public static readonly DataType Boolean            = new DataType("Boolean");
+		public static readonly DataType Boolean            = new DataType("BOOL", true, false);
 // [/TYPECOBOL]
 
 	}
@@ -119,9 +124,8 @@ namespace TypeCobol.Compiler.CodeElements
 		System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get; }
 	}
 	public class CustomTypeDefinition: DataDescriptionEntry, TypeDefinition {
-		public CustomTypeDefinition(string name, bool strong=true) {
-			this.LevelNumber = 1;
-			this.DataType = new DataType(name, strong);
+		public CustomTypeDefinition(DataType type) {
+			this.DataType = type;
 		}
 		public override bool IsTypeDefinition { get { return true; } }
 	}

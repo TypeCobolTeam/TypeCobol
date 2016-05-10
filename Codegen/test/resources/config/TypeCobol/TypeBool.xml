@@ -16,7 +16,7 @@
 
   <skeleton name="BOOL.SET">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="boolean" sender="FALSE"/>
+      <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace" var="NAME=$receiver.name">

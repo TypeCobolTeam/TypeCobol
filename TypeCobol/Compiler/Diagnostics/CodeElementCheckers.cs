@@ -280,7 +280,17 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
 					DiagnosticUtils.AddError(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe");
 				}
+				CheckNesting(e, receiving);
 			}
+		}
+		private bool CheckNesting(CodeElement e, DataDescriptionEntry data) {
+			foreach(var sub in data.Subordinates) {
+				if (sub.DataType != null && !sub.DataType.IsNestable) {
+					DiagnosticUtils.AddError(e, "Group contains type "+sub.DataType.Name+" variables");
+					return false;
+				} else if (!CheckNesting(e, sub)) return false;
+			}
+			return true;
 		}
 	}
 

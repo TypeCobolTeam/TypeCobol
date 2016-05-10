@@ -43,9 +43,13 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var type in value.CustomTypes)
 						TableOfIntrisic.RegisterCustomType(type);
 				}
-				try { TableOfIntrisic.GetCustomType("BOOL"); }
-				catch(ArgumentException ex) { TableOfIntrisic.RegisterCustomType(new CustomTypeDefinition("BOOL")); }
+				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
 			}
+		}
+
+		private void RegisterCustomType(SymbolTable table,DataType type) {
+			try { table.GetCustomType(type.Name); }
+			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
 		}
 
         public ProgramDispatcher Dispatcher { get; internal set; }
@@ -170,12 +174,20 @@ namespace TypeCobol.Compiler.Parser
 				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
-				var customTypeDescription = ComputeType(data, currencies);
+				var customtype = ComputeType(data, currencies);
+				if (customtype != null && !customtype.DataType.IsNestable && hasParent) {
+					DiagnosticUtils.AddError(data, "Type "+customtype.DataType.Name+" should not be subordinate to another item");
+					var parent = data.TopLevel;
+					while(parent != null) {
+						DiagnosticUtils.AddError(parent, "Group items should not contain type "+customtype.DataType.Name+" items");
+						parent = parent.TopLevel;
+					}
+				}
 
 				if (!data.IsTypeDefinitionPart) {
 					CurrentProgram.SymbolTable.Add(data);
-					if (customTypeDescription != null) {
-						foreach(var sub in customTypeDescription.Subordinates) {
+					if (customtype != null) {
+						foreach(var sub in customtype.Subordinates) {
 							// add a clone so parent/child relations are not spoiled
 							var clone = sub.Clone() as DataDescriptionEntry;
 							data.Subordinates.Add(clone);
