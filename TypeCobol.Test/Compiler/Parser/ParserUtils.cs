@@ -211,12 +211,12 @@ namespace TypeCobol.Test.Compiler.Parser
         }
 
 // [TYPECOBOL]
-		private static void Dump(StringBuilder str, IEnumerable<DataDescriptionEntry> typedefs) {
+		private static void Dump(StringBuilder str, IEnumerable<TypeDefinition> typedefs) {
 			int c = 0;
 			string header = "CUSTOM TYPES:\n";
 			str.Append(header);
 			foreach(var typedef in typedefs) {
-				str.Append(" * ").AppendLine(typedef.Name.ToString());
+				str.Append(" * ").AppendLine(typedef.DataType.Name.ToString());
 				foreach(var sub in typedef.Subordinates)
 					DumpInTypeDef(str, sub, 2);
 				c++;

@@ -116,6 +116,7 @@ namespace TypeCobol.Compiler.CodeElements
 	public interface TypeDefinition {
 		bool IsTypeDefinition { get; }
 		DataType DataType { get; }
+		System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get; }
 	}
 	public class CustomTypeDefinition: DataDescriptionEntry, TypeDefinition {
 		public CustomTypeDefinition(string name, bool strong=true) {

@@ -22,9 +22,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// Level-88 entries must immediately follow the data description entry for the
     /// conditional variable with which the condition-names are associated.
     /// </summary>
-    public partial class DataDescriptionEntry : CodeElement, ICloneable
+    public partial class DataDescriptionEntry : CodeElement, TypeDefinition, ICloneable
     {
-        public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry) { }
+		public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) {
+			this.Subordinates = new List<DataDescriptionEntry>();
+		}
 
 		public object Clone() {
 			var clone = this.MemberwiseClone() as DataDescriptionEntry;
@@ -355,7 +357,7 @@ namespace TypeCobol.Compiler.CodeElements
             get { return Picture == null; }
             private set { IsGroup = value; }
         }
-        public IList<DataDescriptionEntry> Subordinates = new List<DataDescriptionEntry>();
+        public ICollection<DataDescriptionEntry> Subordinates { get; private set; }
 
         /// <summary>
         /// p216:

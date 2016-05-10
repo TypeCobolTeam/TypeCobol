@@ -147,7 +147,7 @@ namespace TypeCobol.Compiler.Parser
 			AddEntries(node, entries);
 			_exit();
 		}
-		private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
+		private void AddEntries(Node root, IEnumerable<DataDescriptionEntry> entries) {
 			foreach(var entry in entries) {
 				var child = new Node(entry);
 				_enter(child);
@@ -244,7 +244,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="data">Data description to update</param>
 		/// <param name="currencies">Currency characters, used to know if data is numeric or numeric edited</param>
 		/// <returns>Representation of the corresponding TYPEDEF if data is of a custom TYPE, or null if data type is unknown of from COBOL standard.</returns>
-		private DataDescriptionEntry ComputeType(DataDescriptionEntry data, char[] currencies) {
+		private TypeDefinition ComputeType(DataDescriptionEntry data, char[] currencies) {
 			if (data.DataType != null) return null;
 			if (data.Picture == null) {
 				data.DataType = DataType.Unknown;
@@ -266,7 +266,7 @@ namespace TypeCobol.Compiler.Parser
 				return null;
 			}
 		}
-		private DataDescriptionEntry GetCustomType(string name) {
+		private TypeDefinition GetCustomType(string name) {
 			try { return CurrentProgram.SymbolTable.GetCustomType(name); }
 			catch(ArgumentException ex) { return null; }
 		}
