@@ -105,7 +105,7 @@ namespace TypeCobol.Compiler.CodeElements
 				var data = o as DataDescriptionEntry;
 				if (data.IsTypeDefinition) return null;
 				if (!table.IsCustomType(data.DataType)) return null;
-				return data.DataType/*.Name*/;
+				return data.DataType;
 			} else
 			if (o is Literal) {
 				var l = o as Literal;

@@ -225,9 +225,13 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public bool IsCustomType(DataType type) {
 			if (type == null) return false;
-			foreach(var key in types.Keys)
-				if (key.Equals(type.Name))
-					return true;
+			SymbolTable table = this;
+			while(table != null) {
+				foreach(var key in table.types.Keys)
+					if (key.Equals(type.Name))
+						return true;
+				table = table.EnclosingScope;
+			}
 			return false;
 		}
 
