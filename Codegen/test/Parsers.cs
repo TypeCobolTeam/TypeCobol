@@ -115,7 +115,11 @@ namespace TypeCobol.Codegen {
 
 			// compare with expected result
 			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path));
-			Assert.AreEqual(expected, writer.ToString());
+			Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
+		}
+
+		private string ReplaceLineBreaks(string text) {
+			return text.Replace("\r\n","\n").Replace("\r","\n");
 		}
 		internal static Parser ParseSource(string path, DocumentFormat format) {
 			var parser = new Parser("Codegen.Test");
