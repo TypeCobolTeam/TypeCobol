@@ -169,9 +169,9 @@ namespace TypeCobol.Test.Compiler.Parser
             if (program == null) str.Append("?");
             else {
                 str.Append(program.ProgramName);
-                str.Append(" common:");    Dump(str, program.IsCommon);
-                str.Append(" initial:");   Dump(str, program.IsInitial);
-                str.Append(" recursive:"); Dump(str, program.IsRecursive);
+                str.Append(" common:").Append(program.IsCommon);
+                str.Append(" initial:").Append(program.IsInitial);
+                str.Append(" recursive:").Append(program.IsRecursive);
                 str.AppendLine();
                 Dump(str, program.AuthoringProperties);
             }

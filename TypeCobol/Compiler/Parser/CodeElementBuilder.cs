@@ -54,21 +54,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 programIdentification.ProgramName = new ProgramName(programName);
             }
-            Token commonFlag = ParseTreeUtils.GetFirstToken(context.COMMON());
-            if (commonFlag != null)
-            {
-                programIdentification.IsCommon = new SyntaxBoolean(commonFlag);
-            }
-            Token initialFlag = ParseTreeUtils.GetFirstToken(context.INITIAL());
-            if (initialFlag != null)
-            {
-                programIdentification.IsInitial = new SyntaxBoolean(initialFlag);
-            }
-            Token recursiveFlag = ParseTreeUtils.GetFirstToken(context.RECURSIVE());
-            if (recursiveFlag != null)
-            {
-                programIdentification.IsRecursive = new SyntaxBoolean(recursiveFlag);
-            }
+			programIdentification.IsCommon = context.COMMON() != null;
+			programIdentification.IsInitial = context.INITIAL() != null;
+			programIdentification.IsRecursive = context.RECURSIVE() != null;
 
             Context = context;
             CodeElement = programIdentification;
@@ -894,10 +882,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             } //else don't set UponMnemonicOrEnvironmentName. it will remains null
 
-
-            //With no advancing
-            Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
-            statement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
+			statement.IsWithNoAdvancing = context.withNoAdvancing() != null;
 
             Context = context;
             CodeElement = statement;
