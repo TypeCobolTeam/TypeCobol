@@ -231,7 +231,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// data that possesses the global attribute either in the containing program or in
         /// any program that directly or indirectly contains the containing program.
         /// </summary>
-        public bool IsGlobal { get; set; }
+		public bool IsGlobal {
+			get {
+				if (_global) return true;
+				var typedef = GetTypeDefinition();
+				return typedef != null && typedef._global;
+			}
+			set { _global = value; }
+		}
+		private bool _global = false;
 
         /// <summary>
         /// p189:
@@ -1015,15 +1023,15 @@ namespace TypeCobol.Compiler.CodeElements
 // [TYPECOBOL]
 		public virtual bool IsTypeDefinition { get; set; }
 		public bool IsTypeDefinitionPart {
-			get {
-				var parent = this;
-				while(parent != null) {
-					if (parent.IsTypeDefinition) return true;
-					parent = parent.TopLevel;
-				}
-				return false;
+			get { return GetTypeDefinition() != null; }
+		}
+		private DataDescriptionEntry GetTypeDefinition() {
+			var parent = this;
+			while(parent != null) {
+				if (parent.IsTypeDefinition) return parent;
+				parent = parent.TopLevel;
 			}
-			private set { throw new InvalidOperationException(); }
+			return null;
 		}
 // [/TYPECOBOL]
 
