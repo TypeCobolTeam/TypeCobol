@@ -134,6 +134,7 @@
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\CodeElementCheckers.cs" />
+    <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
     <Compile Include="Compiler\Parser\CodeElementDispatcher.cs" />
     <Compile Include="Compiler\Parser\ProgramClassDocument.cs" />
