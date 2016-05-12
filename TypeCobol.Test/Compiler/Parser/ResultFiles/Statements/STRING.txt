@@ -87,7 +87,6 @@
 
 [[DisplayStatement]] [65,71:display]<DISPLAY> --> [73,84+:"marche pas"]<AlphanumericLiteral>(",Y,Y){marche pas}
 - variables = "marche pas"
-- WithNoAdvancing = False
 
 [[StringStatement]] [1,6:string]<STRING> --> [46,51:result]<UserDefinedWord>
 - variables to concat =  "testOverFlow"    delimited by Size
@@ -97,11 +96,9 @@
 
 [[DisplayStatement]] [65,71:display]<DISPLAY> --> [73,84:"marche pas"]<AlphanumericLiteral>(",Y,Y){marche pas}
 - variables = "marche pas"
-- WithNoAdvancing = False
 
 [[NotOnOverflowCondition]] [86,88:not]<NOT> --> [93,100:overflow]<OVERFLOW>
 
 [[DisplayStatement]] [102,108:display]<DISPLAY> --> [110,120+:"ça marche"]<AlphanumericLiteral>(",Y,Y){ça marche}
 - variables = "ça marche"
-- WithNoAdvancing = False
 

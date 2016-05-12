@@ -14,8 +14,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public List<Index> ReceivingIndexs { get; set; }
 
-        public SyntaxBoolean UpBy { get; set; }
-        public SyntaxBoolean DownBy { get; set; }
+		public bool UpBy   { get; set; }
+		public bool DownBy { get; set; }
 
         /// <summary>
         ///     identifier(numeric integer item) or positive integer
@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string ToString()
         {
-            if (ReceivingIndexs == null && UpBy == null && SendingField == null)
+            if (ReceivingIndexs == null && !UpBy && SendingField == null)
             {
                 return base.ToString();
             }
@@ -37,22 +37,12 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.Append(receivingIndex);
                 }
             }
-            if (UpBy != null && UpBy.Value)
-            {
 
-                sb.Append(" UP BY ");
-            } else if (DownBy != null && DownBy.Value)
-            {
-                sb.Append(" DOWN BY ");
-            }
-            else
-            {
-                sb.Append(" ");
-            }
-            if (SendingField != null)
-            {
-                sb.Append(SendingField);
-            }
+			if (UpBy) sb.Append(" UP BY ");
+			else if (DownBy) sb.Append(" DOWN BY ");
+			else sb.Append(" ");
+			if (SendingField != null) sb.Append(SendingField);
+
             sb.AppendLine(" ");
             return sb.ToString();
         }

@@ -95,7 +95,6 @@
 
 [[DisplayStatement]] [7,13:DISPLAY]<DISPLAY> --> [15,18+:"OK"]<AlphanumericLiteral>(",Y,Y){OK}
 - variables = "OK"
-- WithNoAdvancing = False
 
 [[IfStatementEnd]] [5,10:END-IF]<END_IF> --> [5,10:END-IF]<END_IF>
 
@@ -103,7 +102,6 @@
 
 [[DisplayStatement]] [5,11:DISPLAY]<DISPLAY> --> [13,16+:"KO"]<AlphanumericLiteral>(",Y,Y){KO}
 - variables = "KO"
-- WithNoAdvancing = False
 
 [[EvaluateStatementEnd]] [1,12:END-EVALUATE]<END_EVALUATE> --> [1,12:END-EVALUATE]<END_EVALUATE>
 

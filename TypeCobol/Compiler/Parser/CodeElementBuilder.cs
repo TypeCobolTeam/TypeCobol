@@ -1240,14 +1240,8 @@ namespace TypeCobol.Compiler.Parser
                 }
                 statement.ReceivingIndexs = indexs;
             }
-            if (context.UP() != null)
-            {
-                statement.UpBy = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(context.UP()));
-            }
-            if (context.DOWN() != null)
-            {
-                statement.DownBy = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(context.DOWN()));
-            }
+			statement.UpBy   = (context.UP() != null);
+			statement.DownBy = (context.DOWN() != null);
 
             if (context.identifier() != null)
             {
@@ -1282,15 +1276,9 @@ namespace TypeCobol.Compiler.Parser
                         }
                         setExternalSwitch.MnemonicForEnvironmentNames = mnemonics;
                     }
-                    if (switchesWhatContext.ON() != null)
-                    {
-                        setExternalSwitch.ToOn = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(switchesWhatContext.ON()));
-                    }
-                    if (switchesWhatContext.OFF() != null)
-                    {
-                        setExternalSwitch.ToOff = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(switchesWhatContext.OFF()));
-                    }
-                    setExternalSwitchs.Add(setExternalSwitch);
+					setExternalSwitch.ToOn = (switchesWhatContext.ON() != null);
+					setExternalSwitch.ToOff= (switchesWhatContext.OFF() != null);
+					setExternalSwitchs.Add(setExternalSwitch);
                 }
                 statement.SetExternalSwitches = setExternalSwitchs;
             }
@@ -1366,20 +1354,14 @@ namespace TypeCobol.Compiler.Parser
                     //else don't set IdentifierToConcat. It will remains null
 
 
-                    if (stringStatementWhatContext.stringStatementDelimiter() != null)
-                    {
-                        if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null)
-                        {
-                            stringStatementWhat.DelimiterIdentifier =
-                                CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(),
-                                    statement, "String");
-                        }
-                        else if (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null)
-                        {
-                            Token sizeToken = ParseTreeUtils.GetFirstToken(stringStatementWhatContext.stringStatementDelimiter().SIZE());
-                            stringStatementWhat.Size = new SyntaxBoolean(sizeToken);
-                        }
-                    }
+					if (stringStatementWhatContext.stringStatementDelimiter() != null) {
+						if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null) {
+							stringStatementWhat.DelimiterIdentifier =
+								CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(), statement, "String");
+						} else {
+							stringStatementWhat.DelimitedBySize = (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null);
+						}
+					}
                     statementWhatList.Add(stringStatementWhat);
                 }
 
