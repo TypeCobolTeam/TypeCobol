@@ -78,62 +78,56 @@ namespace TypeCobol.Test.Compiler.Parser
             return DumpResult(result.CodeElements, result.ParserDiagnostics);
         }
 
-        public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics)
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(DiagnosticsToString(diagnostics));
-            builder.Append(CodeElementsToString(elements));
-            return builder.ToString();
-        }
+		public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics) {
+			StringBuilder builder = new StringBuilder();
+			builder.Append(DiagnosticsToString(diagnostics));
+			builder.Append(CodeElementsToString(elements));
+			return builder.ToString();
+		}
 
-        public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics)
-        {
-            StringBuilder builder = new StringBuilder();
-            bool hasDiagnostic = false;
-            foreach (Diagnostic d in diagnostics)
-            {
-                if (d is ParserDiagnostic)
-                {
-                    builder.AppendLine(((ParserDiagnostic)d).ToStringWithRuleStack());
-                }
-                else
-                {
-                    builder.AppendLine(d.ToString());
-                }
-                hasDiagnostic = true;
-            }
-            if(hasDiagnostic)
-            {
-                builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
-                return builder.ToString();
-            }
-            else
-            {
-                return String.Empty;
-            }
-        }
+		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics) {
+			StringBuilder builder = new StringBuilder();
+			bool hasDiagnostic = false;
+			var done = new List<string>();
+			foreach (Diagnostic d in diagnostics) {
+				string errmsg;
+				if (d is ParserDiagnostic)
+					 errmsg = ((ParserDiagnostic)d).ToStringWithRuleStack();
+				else errmsg = d.ToString();
 
+				// don't add same error twice
+				bool found = false;
+				foreach(var other in done)
+					if (errmsg.Equals(other)) found = true;
+				if (found) continue;
+				done.Add(errmsg);
 
-        public static string CodeElementsToString(IEnumerable<CodeElement> elements)
-        {
-            StringBuilder builder = new StringBuilder();
-            bool hasCodeElement = false;
-            foreach (CodeElement e in elements)
-            {
-                builder.AppendLine(e.ToString());
-                hasCodeElement = true;
-            }
-            //TODO log Diagnostics linked to codeElement directly after, to increase test readability
-            if (hasCodeElement)
-            {
-                builder.Insert(0, "--- Code Elements ---" + Environment.NewLine);
-                return builder.ToString();
-            }
-            else
-            {
-                return String.Empty;
-            }
-        }
+				builder.AppendLine(errmsg);
+				hasDiagnostic = true;
+			}
+			if(hasDiagnostic) {
+				builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
+				return builder.ToString();
+			} else {
+				return String.Empty;
+			}
+		}
+
+		public static string CodeElementsToString(IEnumerable<CodeElement> elements) {
+			StringBuilder builder = new StringBuilder();
+			bool hasCodeElement = false;
+			foreach (CodeElement e in elements) {
+				builder.AppendLine(e.ToString());
+				hasCodeElement = true;
+			}
+			//TODO log Diagnostics linked to codeElement directly after, to increase test readability
+			if (hasCodeElement) {
+				builder.Insert(0, "--- Code Elements ---" + Environment.NewLine);
+				return builder.ToString();
+			} else {
+				return String.Empty;
+			}
+		}
 
         internal static string DumpResult(Program program, Class cls, IList<Diagnostic> diagnostics)
         {

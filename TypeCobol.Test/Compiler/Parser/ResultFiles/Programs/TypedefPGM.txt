@@ -1,14 +1,14 @@
 ﻿--- Diagnostics ---
-[1,31]<27,Error,Syntax>Syntax error : Type TypeNotDefined is not referenced. ([1>31] on line 26)
 [14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries (RuleStack=codeElement>dataDescriptionEntry>tcExtTypedefClause, OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF> on line 30)
 [29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator (RuleStack=codeElement>dataDescriptionEntry, OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF> on line 35)
-[1,41]<27,Error,Syntax>Syntax error : Type ClausesOrderKO is not referenced. ([1>41] on line 36)
-[1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 42)
 [27,32]<27,Error,Syntax>Syntax error : Elementary TYPEDEF cannot be STRONG (RuleStack=codeElement>dataDescriptionEntry>tcExtTypedefClause, OffendingSymbol=[27,32:STRONG]<STRONG> on line 46)
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 50)
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 52)
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 55)
 [26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 60)
+[1,31]<27,Error,Syntax>Syntax error : Type TypeNotDefined is not referenced. ([1>31] on line 26)
+[1,41]<27,Error,Syntax>Syntax error : Type ClausesOrderKO is not referenced. ([1>41] on line 36)
+[1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 42)
 [1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 71)
 
 --- Program ---
