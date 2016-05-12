@@ -3,7 +3,35 @@ using System.Collections.Specialized;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions {
 
-	public interface QualifiedName: IList<string> {
+    /* Extract of SymbolInformation
+        
+        /// <summary>
+        /// Several names can be qualified by the names of enclosing scopes, for example :
+        ///    paragraphName IN sectionName
+        ///    dataName1 IN dataName2 IN fileName
+        ///    conditionName IN dataName3 IN dataName4
+        /// In this case, this property contains the ordered list of qualifying tokens, for exemple :
+        ///    paragraphName => QualifiedBy = { sectionName }
+        ///    dataName1 => QualifiedBy = { dataName2, fileName }
+        ///    conditionName => QualifiedBy = { dataName3, dataName4 }
+        /// </summary>
+        public Token[] QualifedBy { get; set; }
+
+        /// <summary>
+        /// Several names can be qualified by the names of enclosing scopes, for example :
+        ///    paragraphName IN sectionName
+        ///    dataName1 IN dataName2 IN fileName
+        ///    conditionName IN dataName3 IN dataName4
+        /// In this case, this property contains the ordered list of qualifying tokens, for exemple :
+        ///    sectionName => QualifierFor = paragraphName
+        ///    fileName => QualifierFor = dataName2
+        ///    dataName2 => QualifierFor = dataName1
+        /// </summary>
+        public Token QualifierFor { get; set; }
+
+     */
+     
+    public interface QualifiedName: IList<string> {
 		string Head { get; }
 		bool IsExplicit { get; }
 	}

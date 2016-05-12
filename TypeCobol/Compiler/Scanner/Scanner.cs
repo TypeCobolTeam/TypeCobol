@@ -1175,7 +1175,7 @@ namespace TypeCobol.Compiler.Scanner
                     currentIndex = fstCurrentIndex;
                     int endIndex = fstCurrentIndex - 1;
                     Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
-                    token.LiteralValue = new IntegerLiteralValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
+                    token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
                     return token;
                 }
             }
@@ -1235,7 +1235,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         tokensLine.AddDiagnostic(MessageCode.InvalidExponentInFloatingPointLiteral, token);
                     }
-                    token.LiteralValue = new FloatingPointLiteralValue(fpMatch.Groups[1].Value, fpMatch.Groups[2].Value, mantissaDecimalPart, fpMatch.Groups[4].Value, exponent);
+                    token.LiteralValue = new FloatingPointLiteralTokenValue(fpMatch.Groups[1].Value, fpMatch.Groups[2].Value, mantissaDecimalPart, fpMatch.Groups[4].Value, exponent);
                     return token;
                 }
                 else
@@ -1256,13 +1256,13 @@ namespace TypeCobol.Compiler.Scanner
                     currentIndex += decMatch.Length;
                     int endIndex = startIndex + decMatch.Length - 1;
                     TokenType type;
-                    LiteralValue value;
+                    LiteralTokenValue value;
                     if(decMatch.Groups[3].Value.Length > 0) {
                         type = TokenType.DecimalLiteral;
-                        value = new DecimalLiteralValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
+                        value = new DecimalLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value, decMatch.Groups[3].Value);
                     } else {
                         type = TokenType.IntegerLiteral;
-                        value = new IntegerLiteralValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
+                        value = new IntegerLiteralTokenValue(decMatch.Groups[1].Value, decMatch.Groups[2].Value);
                     }
                     Token token = new Token(type, startIndex, endIndex, tokensLine);
                     token.LiteralValue = value;
@@ -1369,10 +1369,10 @@ namespace TypeCobol.Compiler.Scanner
             Token token = new Token(tokenType, startIndex, endIndex, usingVirtualSpaceAtEndOfLine, tokensLine, true, closingDelimiterFound, delimiter);
             
             // compute the value of the literal, depending on the exact literal type            
-            AlphanumericLiteralValue value = null;
+            AlphanumericLiteralTokenValue value = null;
             if (tokenType != TokenType.HexadecimalAlphanumericLiteral && tokenType != TokenType.HexadecimalNationalLiteral)
             {
-                value = new AlphanumericLiteralValue(sbValue.ToString());
+                value = new AlphanumericLiteralTokenValue(sbValue.ToString());
             }
             else if (tokenType == TokenType.HexadecimalAlphanumericLiteral)
             {
@@ -1393,7 +1393,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaAlphaLiteral, token);
                 }
-                value = new AlphanumericLiteralValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
+                value = new AlphanumericLiteralTokenValue(hexadecimalChars, tokensLine.ScanState.EncodingForAlphanumericLiterals);
             }
             else if (tokenType == TokenType.HexadecimalNationalLiteral)
             {
@@ -1407,7 +1407,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     tokensLine.AddDiagnostic(MessageCode.InvalidNumberOfCharsInHexaNationalLiteral, token);
                 }
-                value = new AlphanumericLiteralValue(hexadecimalChars, Encoding.Unicode);
+                value = new AlphanumericLiteralTokenValue(hexadecimalChars, Encoding.Unicode);
             }
             token.LiteralValue = value;
 

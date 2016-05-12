@@ -992,7 +992,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal static int CreateInteger(ITerminalNode node) {
             var token = ParseTreeUtils.GetTokenFromTerminalNode(node);
-            return (int)((TypeCobol.Compiler.Scanner.IntegerLiteralValue)token.LiteralValue).Number;
+            return (int)((TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)token.LiteralValue).Number;
         }
 
 		internal static string CreateString(CodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {

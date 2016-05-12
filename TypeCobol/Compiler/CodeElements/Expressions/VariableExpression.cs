@@ -1,36 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace TypeCobol.Compiler.CodeElements
+namespace TypeCobol.Compiler.CodeElements.Expressions
 {
-    /// <summary>
-    /// Reference to a symbol in the Cobol syntax
-    /// </summary>
-    public class SymbolReference<S> where S : Symbol
-    {
-        public SymbolReference(S symbolReference)
-        {
-            Symbol = symbolReference;
-        }
-
-        /// <summary>
-        /// Reference to a symbol in the source text
-        /// </summary>
-        public S Symbol { get; private set; }
-
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            return Symbol.Name;
-        }
-    }
-
     /// <summary>
     /// In several productions, the Cobol grammar expects either a literal value or a symbol reference
     /// </summary>
-    public class LiteralOrSymbolReference<L, S> where S : Symbol
+    public class LiteralOrSymbolReference<L, S> where S : SymbolReference
     {
         /// <summary>
         /// Constructor for a literal value
@@ -71,7 +46,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            if(IsLiteral)
+            if (IsLiteral)
             {
                 return LiteralValue.ToString();
             }

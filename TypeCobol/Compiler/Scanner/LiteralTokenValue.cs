@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Scanner
 {
     /// <summary>
-    /// Base class for all types of literal values
+    /// Base class for all types of literal token values
     /// </summary>
-    public abstract class LiteralValue
+    public abstract class LiteralTokenValue
     {
-        public LiteralValue(LiteralValueType type)
+        public LiteralTokenValue(LiteralTokenValueType type)
         {
             Type = type;
         }
 
-        public LiteralValueType Type { get; private set; }
+        public LiteralTokenValueType Type { get; private set; }
     }
 
-    public enum LiteralValueType
+    public enum LiteralTokenValueType
     {
         Alphanumeric,
         FigurativeConstant,
@@ -33,14 +30,14 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Value for all alphanumeric literal tokens
     /// </summary>
-    public class AlphanumericLiteralValue : LiteralValue
+    public class AlphanumericLiteralTokenValue : LiteralTokenValue
     {
-        public AlphanumericLiteralValue(string text) : base(LiteralValueType.Alphanumeric)
+        public AlphanumericLiteralTokenValue(string text) : base(LiteralTokenValueType.Alphanumeric)
         {
             Text = text;
         }
 
-        public AlphanumericLiteralValue(string hexadecimalChars, Encoding encoding) : base(LiteralValueType.Alphanumeric)
+        public AlphanumericLiteralTokenValue(string hexadecimalChars, Encoding encoding) : base(LiteralTokenValueType.Alphanumeric)
         {
             Text = encoding.GetString(StringToByteArray(hexadecimalChars));
         }
@@ -81,9 +78,9 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Value for token type IntegerLiteral
     /// </summary>
-    public class IntegerLiteralValue : LiteralValue
+    public class IntegerLiteralTokenValue : LiteralTokenValue
     {
-        public IntegerLiteralValue(string sign, string number) : base(LiteralValueType.Integer)
+        public IntegerLiteralTokenValue(string sign, string number) : base(LiteralTokenValueType.Integer)
         {
             HasSign = !String.IsNullOrEmpty(sign);
             Number = Int64.Parse(number);
@@ -112,9 +109,9 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Value for token type DecimalLiteral
     /// </summary>
-    public class DecimalLiteralValue : LiteralValue
+    public class DecimalLiteralTokenValue : LiteralTokenValue
     {
-        public DecimalLiteralValue(string sign, string integerPart, string decimalPart) : base(LiteralValueType.Decimal)
+        public DecimalLiteralTokenValue(string sign, string integerPart, string decimalPart) : base(LiteralTokenValueType.Decimal)
         {
             IntegerValue = Int64.Parse(integerPart + decimalPart);
             DecimalDigits = decimalPart.Length;
@@ -149,18 +146,18 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Value for token type DecimalLiteral
     /// </summary>
-    public class FloatingPointLiteralValue : LiteralValue
+    public class FloatingPointLiteralTokenValue : LiteralTokenValue
     {
-        public FloatingPointLiteralValue(string mantissaSign, string mantissaIntegerPart, string mantissaDecimalPart, string exponentSign, string exponentNumber) : base(LiteralValueType.FloatingPoint)
+        public FloatingPointLiteralTokenValue(string mantissaSign, string mantissaIntegerPart, string mantissaDecimalPart, string exponentSign, string exponentNumber) : base(LiteralTokenValueType.FloatingPoint)
         {
-            Mantissa = new DecimalLiteralValue(mantissaSign, mantissaIntegerPart, mantissaDecimalPart);
-            Exponent = new IntegerLiteralValue(exponentSign, exponentNumber);
+            Mantissa = new DecimalLiteralTokenValue(mantissaSign, mantissaIntegerPart, mantissaDecimalPart);
+            Exponent = new IntegerLiteralTokenValue(exponentSign, exponentNumber);
 
             Number = Mantissa.Number * Math.Pow(10, Exponent.Number);
         }
 
-        public DecimalLiteralValue Mantissa { get; private set; }
-        public IntegerLiteralValue Exponent { get; private set; }
+        public DecimalLiteralTokenValue Mantissa { get; private set; }
+        public IntegerLiteralTokenValue Exponent { get; private set; }
 
         public double Number { get; private set; }
 

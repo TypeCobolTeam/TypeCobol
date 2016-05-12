@@ -7,8 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum SymbolType
     {
-        // Symbols defined and referenced in the program
-
+        // Symbols defined in the program
         AlphabetName,
         ClassName,
         CharacterClassName,
@@ -25,12 +24,10 @@ namespace TypeCobol.Compiler.CodeElements
         ProgramEntry,
         ProgramName,
         SectionName,
-        SpecialRegisterName, // implicitely defined
         SymbolicCharacter,
         XmlSchemaName,
 
-        // External names referenced in the program
-
+        // External names defined by the environment
         AssignmentName,
         EnvironmentName,
         ExecTranslatorName,
@@ -39,10 +36,7 @@ namespace TypeCobol.Compiler.CodeElements
         TextName,
         UPSISwitchName,
 
-        /// <summary>
-        /// Type to use when the parser can't determine the exact SymbolType.
-        /// The actual type will be resolved in a next compiler phase
-        /// </summary>
-        Unknown
+        // Used when the type of the symbol has not yet been resolved
+        TO_BE_RESOLVED
     }
 }
