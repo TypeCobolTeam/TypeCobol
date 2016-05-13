@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public IEnumerator<string> GetEnumerator() {
 			if (FileName != null) yield return FileName.Name;
 			foreach (var dataname in DataNames) yield return dataname.Name;
-			yield return Symbol.Name;
+			if (Symbol != null) yield return Symbol.Name;
 		}
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
 

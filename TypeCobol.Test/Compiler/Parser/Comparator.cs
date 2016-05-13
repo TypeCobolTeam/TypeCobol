@@ -81,6 +81,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new RPNName(),
                 new NYName(),
                 new PGMName(),
+                new MemoryName(),
             };
 
         private IList<string> samples;
@@ -365,6 +366,46 @@ namespace TypeCobol.Test.Compiler.Parser
         }
     }
 
+	internal class MemoryComparator: FilesComparator
+	{
+		public MemoryComparator(string name, Names resultnames = null, bool debug = false)
+			: base(name, resultnames, debug) { }
+
+		public override void Compare(CompilationUnit result, StreamReader reader) {
+			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
+			Compare(pcd.Program.SymbolTable, reader);
+		}
+
+		internal void Compare(SymbolTable table, StreamReader expected) {
+			string result = Dump(table);
+			if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
+			ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
+		}
+
+		private string Dump(SymbolTable table) {
+			var str = new System.Text.StringBuilder();
+			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
+			foreach(var line in table.DataEntries) {
+				foreach(var data in line.Value) {
+					if (data.LevelNumber == 1) Dump(str, data);
+				}
+			}
+			return str.ToString();
+		}
+		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0, int baseaddress = 1) {
+			var res = new System.Text.StringBuilder();
+			for(int i=0;i<indent;i++) res.Append("  ");
+			if (data.LevelNumber > 1) res.Append(String.Format("{0,2} ", data.LevelNumber));
+			res.Append(data.Name);
+			while(res.Length < 36) res.Append(' ');
+			res.Append(String.Format(" {0,6:0} ", data.Offset+baseaddress));//start
+			res.Append(String.Format(" {0,6:0} ", data.Offset+data.Bytes));//end
+			res.Append(String.Format(" {0,6:0} ", data.Bytes));//length
+			str.AppendLine(res.ToString());
+			foreach(var child in data.Subordinates) Dump(str, child, indent+1);
+		}
+	}
+
 
 
     internal interface Names
@@ -401,6 +442,12 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         public string CreateName(string name) { return name + "PGM"; }
         public System.Type GetComparatorType() { return typeof(ProgramsComparator); }
+    }
+
+    internal class MemoryName : Names
+    {
+        public string CreateName(string name) { return name + "MEM"; }
+        public System.Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 
     internal class AbstractPath
