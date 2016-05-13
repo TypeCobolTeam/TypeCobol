@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -150,21 +151,58 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
     }
+    
+    public enum CharacterEncodingType
+    {
+        Alphanumeric,
+        DBCS,
+        National,
+        AlphanumericOrNational,
+        AlphanumericOrDBCSOrNational
+    }
 
     /// <summary>
     /// Value for tokens : 
     /// AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
     /// DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral |
     /// HIGH_VALUE | HIGH_VALUES | LOW_VALUE  | LOW_VALUES | QUOTE | QUOTES | SPACE | SPACES | ZERO  | ZEROS  | ZEROES |
+    /// symbolicCharacterReference => SymbolReference
+    /// 
+    /// + not allowed for derived class CharacterValue
+    /// UserDefinedWord | CommentEntry | PictureCharacterString | ExecStatementText | SymbolicCharacter
+    /// DEBUG_CONTENTS | DEBUG_ITEM | DEBUG_LINE | ... special registers ... | XML_NTEXT | XML_TEXT
+    /// STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC
+    /// 
+    /// + only allowed for derived class EnumValue
+    /// UserDefinedWord
+    /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
+    /// ExecTranslatorName
     /// </summary>
-    public class CharacterValue : LiteralValue<char>
+    public class AlphanumericValue : LiteralValue<string>
     {
-        public CharacterValue(Token t) : base(t) { }
+        public AlphanumericValue(Token t) : base(t)
+        { }
 
-        public override char Value
+        public AlphanumericValue(SymbolReference symbolicCharacterReference) : base(symbolicCharacterReference.NameLiteral.Token)
+        {
+            IsSymbolicCharacterReference = true;
+        }
+
+        public bool IsSymbolicCharacterReference { get; private set; }
+
+        public bool ValueNeedsCompilationContext
         {
             get
             {
+                if(IsSymbolicCharacterReference)
+                {
+                    return false;
+                }                
+                if(Token.TokenType >= TokenType.ADDRESS && Token.TokenType <= TokenType.XML_TEXT)
+                {
+                    // Special registers
+                    return false;
+                }
                 switch (Token.TokenType)
                 {
                     case TokenType.AlphanumericLiteral:
@@ -173,29 +211,57 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.DBCSLiteral:
                     case TokenType.NationalLiteral:
                     case TokenType.HexadecimalNationalLiteral:
-                        string strValue = ((AlphanumericLiteralTokenValue)Token.LiteralValue).Text;
-                        if (!String.IsNullOrEmpty(strValue))
-                        {
-                            return strValue[0];
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException("Unexpected literal token type");
-                        }
+                        return false; ;
                     case TokenType.HIGH_VALUE:
                     case TokenType.HIGH_VALUES:
                     case TokenType.LOW_VALUE:
                     case TokenType.LOW_VALUES:
+                        // Represents one or more occurrences of the character that has 
+                        // the highest/lowest ordinal position in the collating sequence used. 
+                        return true;
                     case TokenType.QUOTE:
                     case TokenType.QUOTES:
+                        // The quotation mark character ("), if the QUOTE compiler option is in effect 
+                        // The apostrophe character (’), if the APOST compiler option is in effect 
+                        return true;
                     case TokenType.SPACE:
                     case TokenType.SPACES:
                     case TokenType.ZERO:
                     case TokenType.ZEROS:
                     case TokenType.ZEROES:
+                        return false;
+                    case TokenType.PictureCharacterString:
+                    case TokenType.CommentEntry:
+                    case TokenType.ExecStatementText:
+                    case TokenType.FunctionName:
+                    case TokenType.ExecTranslatorName:
+                    case TokenType.UserDefinedWord:
+                    case TokenType.SymbolicCharacter:
+                        return false;
+                    case TokenType.STANDARD_1:
+                    case TokenType.STANDARD_2:
+                    case TokenType.NATIVE:
+                    case TokenType.EBCDIC:
+                        return false;
                     default:
-                        throw new NotImplementedException();
+                        throw new InvalidOperationException("Unexpected literal value");
                 }
+            }
+        }
+
+        public bool ValueNeedsSymbolicCharactersMap
+        {
+            get
+            {
+                return IsSymbolicCharacterReference;
+            }
+        }
+
+        public virtual bool ValueNeedsCharactersCountContext
+        {
+            get
+            {
+                return false;
             }
         }
 
@@ -203,6 +269,16 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
+                if(IsSymbolicCharacterReference)
+                {
+                    // symbolic - character always represents an alphanumeric character
+                    return CharacterEncodingType.Alphanumeric;
+                }
+                if (Token.TokenType >= TokenType.ADDRESS && Token.TokenType <= TokenType.XML_TEXT)
+                {
+                    // Special registers
+                    return CharacterEncodingType.Alphanumeric;
+                }
                 switch (Token.TokenType)
                 {
                     case TokenType.AlphanumericLiteral:
@@ -238,16 +314,39 @@ namespace TypeCobol.Compiler.CodeElements
                         // used in a context that requires an alphanumeric character, an alphanumeric character zero is used
                         // context requires a national character zero, a national character zero is used
                         return CharacterEncodingType.AlphanumericOrNational;
+                    case TokenType.PictureCharacterString:
+                    case TokenType.CommentEntry:
+                    case TokenType.ExecStatementText:
+                    case TokenType.FunctionName:
+                    case TokenType.ExecTranslatorName:
+                    case TokenType.UserDefinedWord:
+                    case TokenType.SymbolicCharacter:
+                        return CharacterEncodingType.Alphanumeric;
+                    case TokenType.STANDARD_1:
+                    case TokenType.STANDARD_2:
+                    case TokenType.NATIVE:
+                    case TokenType.EBCDIC:
+                        return CharacterEncodingType.Alphanumeric;
                     default:
                         throw new InvalidOperationException("Unexpected literal value");
                 }
             }
         }
 
-        public bool ValueNeedsContext
+        public override string Value
         {
             get
             {
+                if(ValueNeedsCompilationContext || ValueNeedsSymbolicCharactersMap || ValueNeedsCharactersCountContext)
+                {
+                    throw new InvalidOperationException("Impossible to evaluate literal value without context information");
+                }
+
+                if (Token.TokenType >= TokenType.ADDRESS && Token.TokenType <= TokenType.XML_TEXT)
+                {
+                    // Special registers
+                    return Token.Text;
+                }
                 switch (Token.TokenType)
                 {
                     case TokenType.AlphanumericLiteral:
@@ -256,151 +355,193 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.DBCSLiteral:
                     case TokenType.NationalLiteral:
                     case TokenType.HexadecimalNationalLiteral:
-                        return false; ;
-                    case TokenType.HIGH_VALUE:
-                    case TokenType.HIGH_VALUES:
-                    case TokenType.LOW_VALUE:
-                    case TokenType.LOW_VALUES:
-                        // treated as an alphanumeric literal in a context that requires an alphanumeric character
-                        // treated as a national literal when used in a context that requires a national literal 
-                        return true;
-                    case TokenType.QUOTE:
-                    case TokenType.QUOTES:
-                        return true;
+                        return ((AlphanumericLiteralTokenValue)Token.LiteralValue).Text;
                     case TokenType.SPACE:
                     case TokenType.SPACES:
+                        return " ";
                     case TokenType.ZERO:
                     case TokenType.ZEROS:
                     case TokenType.ZEROES:
-
+                        return "0";
+                    case TokenType.PictureCharacterString:
+                    case TokenType.CommentEntry:
+                    case TokenType.ExecStatementText:
+                    case TokenType.FunctionName:
+                    case TokenType.ExecTranslatorName:
+                    case TokenType.UserDefinedWord:
+                    case TokenType.SymbolicCharacter:
+                        return Token.Text;
+                    case TokenType.STANDARD_1:
+                    case TokenType.STANDARD_2:
+                    case TokenType.NATIVE:
+                    case TokenType.EBCDIC:
+                        return Token.Text;
                     default:
-                        throw new InvalidOperationException("Unexpected literal value");
+                        throw new InvalidOperationException("Unexpected literal token type");
                 }
             }
         }
+        
+        public virtual string GetValueInContext(
+            CollatingSequence usedCollatingSequence, bool apostCompilerOption,
+            IDictionary<string, string> symbolicCharactersMap,
+            int charactersCountContext)
+        {
+            if (IsSymbolicCharacterReference)
+            {
+                string symbolicCharacterValue = null;
+                if (symbolicCharactersMap.TryGetValue(Token.Text, out symbolicCharacterValue))
+                {
+                    return symbolicCharacterValue;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Undefined symbolic character reference");
+                }
+            }
+            switch (Token.TokenType)
+            {
+                case TokenType.HIGH_VALUE:
+                case TokenType.HIGH_VALUES:
+                    // Represents one or more occurrences of the character that has 
+                    // the highest/lowest ordinal position in the collating sequence used. 
+                    return usedCollatingSequence.GetHighValueChar().ToString();
+                case TokenType.LOW_VALUE:
+                case TokenType.LOW_VALUES:
+                    // Represents one or more occurrences of the character that has 
+                    // the highest/lowest ordinal position in the collating sequence used. 
+                    return usedCollatingSequence.GetLowValueChar().ToString();
+                case TokenType.QUOTE:
+                case TokenType.QUOTES:
+                    // The quotation mark character ("), if the QUOTE compiler option is in effect 
+                    // The apostrophe character (’), if the APOST compiler option is in effect 
+                    if (apostCompilerOption)
+                    {
+                        return "'";
+                    }
+                    else
+                    {
+                        return "\"";
+                    }
+                default:
+                    return Value;
+            }
+        }        
     }
+
+
 
     /// <summary>
-    /// Value for tokens : 
-    /// symbolicCharacterReference => SymbolReference
+    /// Value for tokens :
+    /// UserDefinedWord
+    /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
+    /// ExecTranslatorName
     /// </summary>
-    public class SymbolicCharacterValue : CharacterValue
+    public class EnumeratedValue : AlphanumericValue
     {
-        public SymbolicCharacterValue(SymbolReference symbolicCharacter) : 
-            base(symbolicCharacter.NameLiteral.Token)
+        public EnumeratedValue(Token t, Type enumType) : base(t)
         {
+            EnumType = enumType;
 
+            // List of accepted token types is more restrictive than for the base class
+            switch (Token.TokenType)
+            {
+                case TokenType.UserDefinedWord:
+                case TokenType.FunctionName:
+                case TokenType.LENGTH:
+                case TokenType.RANDOM:
+                case TokenType.WHEN_COMPILED:
+                case TokenType.ExecTranslatorName:
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected literal token type");
+            }
         }
-    }
 
-    public enum CharacterEncodingType
-    {
-        Alphanumeric,
-        DBCS,
-        National,
-        AlphanumericOrNational,
-        AlphanumericOrDBCSOrNational
+        /// <summary>
+        /// C# enum type representing all the possible values
+        /// </summary>
+        public Type EnumType { get; private set; }
+
+        /// <summary>
+        /// C# enum value equivalent of this alphanumeric literal
+        /// </summary>
+        public object EnumValue
+        {
+            get { return Enum.Parse(EnumType, Value); }
+        }
     }
 
     /// <summary>
     /// Value for tokens : 
     /// AlphanumericLiteral | HexadecimalAlphanumericLiteral | NullTerminatedAlphanumericLiteral |
     /// DBCSLiteral | NationalLiteral | HexadecimalNationalLiteral |
-    /// HIGH_VALUE | HIGH_VALUES | LOW_VALUE  | LOW_VALUES | QUOTE | QUOTES | SPACE | SPACES | ZERO  | ZEROS  | ZEROES |
-    /// symbolicCharacterReference => SymbolReference
-    /// UserDefinedWord | CommentEntry | PictureCharacterString | ExecStatementText | SymbolicCharacter
-    /// DEBUG_CONTENTS | DEBUG_ITEM | DEBUG_LINE | ... special registers ... | XML_NTEXT | XML_TEXT
-    /// STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC
+    /// HIGH_VALUE | HIGH_VALUES | LOW_VALUE  | LOW_VALUES | QUOTE | QUOTES | SPACE | SPACES | ZERO  | ZEROS  | ZEROES
     /// </summary>
-    public class AlphanumericValue : LiteralValue<string>
+    public class CharacterValue : AlphanumericValue
     {
-        public AlphanumericValue(Token t) : base(t) { }
+        public CharacterValue(Token t) : base(t)
+        {
+            // List of accepted token types is more restrictive than for the base class
+            switch (Token.TokenType)
+            {
+                case TokenType.AlphanumericLiteral:
+                case TokenType.HexadecimalAlphanumericLiteral:
+                case TokenType.NullTerminatedAlphanumericLiteral:
+                case TokenType.DBCSLiteral:
+                case TokenType.NationalLiteral:
+                case TokenType.HexadecimalNationalLiteral:
+                case TokenType.HIGH_VALUE:
+                case TokenType.HIGH_VALUES:
+                case TokenType.LOW_VALUE:
+                case TokenType.LOW_VALUES:
+                case TokenType.QUOTE:
+                case TokenType.QUOTES:
+                case TokenType.SPACE:
+                case TokenType.SPACES:
+                case TokenType.ZERO:
+                case TokenType.ZEROS:
+                case TokenType.ZEROES:
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected literal token type");
+            }
+        }
 
-        public override string Value
+        public CharacterValue(SymbolReference symbolicCharacterReference) : base(symbolicCharacterReference)
+        { }
+
+        public char CharValue
         {
             get
             {
-                if (Token.TokenFamily == TokenFamily.Symbol ||
-                    Token.TokenFamily == TokenFamily.SyntaxKeyword)
+                string strValue = base.Value;
+                if (!String.IsNullOrEmpty(strValue))
                 {
-                    return Token.Text;
-                }
-                else if (Token.TokenFamily == TokenFamily.AlphanumericLiteral)
-                {
-                    return Token.Text;
-                    //                    return ((AlphanumericLiteralValue)Token.LiteralValue).Text;
-                }
-                else if (Token.TokenFamily == TokenFamily.FigurativeConstantKeyword)
-                {
-                    return Token.Text;
-                    //                    return ((AlphanumericLiteralValue)Token.LiteralValue).Text;
+                    return strValue[0];
                 }
                 else
                 {
-                    throw new InvalidOperationException("A string value can not be defined by a token of type : " + Token.TokenType);
+                    throw new InvalidOperationException("Unexpected literal token type");
                 }
             }
         }
 
-        /// <summary>
-        /// Value for tokens : 
-        /// symbolicCharacterReference => SymbolReference
-        /// </summary>
-        public class SymbolicCharacterAlphanumericValue : AlphanumericValue
+        public char GetCharValueInContext(
+             CollatingSequence usedCollatingSequence, bool apostCompilerOption,
+             IDictionary<string, string> symbolicCharactersMap)
         {
-            public SymbolicCharacterAlphanumericValue(SymbolReference symbolicCharacter) :
-                base(symbolicCharacter.NameLiteral.Token)
+            string strValue = base.GetValueInContext(usedCollatingSequence, apostCompilerOption, symbolicCharactersMap, 1);
+            if (!String.IsNullOrEmpty(strValue))
             {
-
+                return strValue[0];
+            }
+            else
+            {
+                throw new InvalidOperationException("Unexpected literal token type");
             }
         }
-
-        /// <summary>
-        /// Value for tokens :
-        /// UserDefinedWord
-        /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
-        /// ExecTranslatorName
-        /// </summary>
-        public class EnumeratedValue : AlphanumericValue
-        {
-            public EnumeratedValue(Token t, Type enumType) : base(t)
-            {
-                EnumType = enumType;
-            }
-
-            public override string Value
-            {
-                get
-                {
-                    switch (Token.TokenType)
-                    {
-                        case TokenType.UserDefinedWord:
-                        case TokenType.FunctionName:
-                        case TokenType.LENGTH:
-                        case TokenType.RANDOM:
-                        case TokenType.WHEN_COMPILED:
-                        case TokenType.ExecTranslatorName:
-                            return Token.Text;
-                        default:
-                            throw new InvalidOperationException("Unexpected literal token type");
-                    }
-                }
-            }
-
-            /// <summary>
-            /// C# enum type representing all the possible values
-            /// </summary>
-            public Type EnumType { get; private set; }
-
-            /// <summary>
-            /// C# enum value equivalent of this alphanumeric literal
-            /// </summary>
-            public object EnumValue
-            {
-                get { return Enum.Parse(EnumType, Value); }
-            }
-        }
-     }
+    }
 
     /// <summary>
     /// Value for tokens :
@@ -408,21 +549,43 @@ namespace TypeCobol.Compiler.CodeElements
     /// symbolicCharacterReference => SymbolReference
     /// ALL figurativeConstant | ALL notNullTerminatedAlphanumericOrNationalLiteralToken
     /// </summary>
-    public class RepeatedAlphanumericValue : AlphanumericValue
+    public class RepeatedCharacterValue : CharacterValue
     {
-        public RepeatedAlphanumericValue(Token optionalALL, Token t) : base(t)
+        public RepeatedCharacterValue(Token optionalALLToken, Token t) : base(t)
         {
-            OptionalALLToken = optionalALL;
+            ALLToken = optionalALLToken;
         }
 
-        public Token OptionalALLToken { get; private set; }
+        public RepeatedCharacterValue(Token optionalALLToken, SymbolReference symbolicCharacterReference) : base(symbolicCharacterReference)
+        {
+            ALLToken = optionalALLToken;
+        }
+
+        public Token ALLToken { get; private set; }
+
+        public override bool ValueNeedsCharactersCountContext
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public override string Value
         {
             get
             {
-               throw new InvalidOperationException("Can't compute literal value without context information");
+               throw new InvalidOperationException("Can't compute literal value without characters count context");
             }
+        }
+
+        public override string GetValueInContext(
+            CollatingSequence usedCollatingSequence, bool apostCompilerOption,
+            IDictionary<string, string> symbolicCharactersMap,
+            int charactersCountContext)
+        {
+            char repeatedChar = base.GetCharValueInContext(usedCollatingSequence, apostCompilerOption, symbolicCharactersMap);
+            return new string(repeatedChar, charactersCountContext);
         }
     }
 
@@ -468,7 +631,7 @@ namespace TypeCobol.Compiler.CodeElements
             AlphanumericValue = alphanumericValue;
         }
 
-        public Value(RepeatedAlphanumericValue repeatedAlphanumericValue)
+        public Value(RepeatedCharacterValue repeatedAlphanumericValue)
         {
             LiteralType = ValueLiteralType.RepeatedAlphanumeric;
             RepeatedAlphanumericValue = repeatedAlphanumericValue;
@@ -494,7 +657,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public AlphanumericValue AlphanumericValue { get; private set; }
 
-        public RepeatedAlphanumericValue RepeatedAlphanumericValue { get; private set; }
+        public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
 
         public NullPointerValue NullPointerValue { get; private set; }        
     }

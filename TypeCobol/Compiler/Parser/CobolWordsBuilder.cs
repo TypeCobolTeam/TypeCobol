@@ -9,206 +9,402 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
-    internal static class SyntaxElementBuilder
+    internal static class CobolWordsBuilder
     {
-        public static SyntaxNumber CreateSyntaxNumber(CodeElementsParser.NumericLiteralContext context)
+        // --- Compile-time constant values used in the Cobol grammar ---
+
+        internal static BooleanValue CreateBooleanValue(CodeElementsParser.BooleanValueContext context)
         {
-            if (context.IntegerLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-            }
-            if (context.DecimalLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.DecimalLiteral()));
-            }
-            if (context.FloatingPointLiteral() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.FloatingPointLiteral()));
-            }
-            if (context.ZERO() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZERO()));
-            }
-            if (context.ZEROS() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROS()));
-            }
-            if (context.ZEROES() != null)
-            {
-                return new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.ZEROES()));
-            }
-            throw new InvalidOperationException("This is not a number!");
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new BooleanValue(valueToken);
         }
 
-        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumericLiteralContext context)
+        internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context)
         {
-            if (context.NullTerminatedAlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.NullTerminatedAlphanumericLiteral()));
-            }
-            if (context.alphanumericLiteralBase() != null)
-            {
-                return CreateSyntaxString(context.alphanumericLiteralBase());
-            }
-            throw new InvalidOperationException("This is not a string!");
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new IntegerValue(valueToken);
         }
 
-        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumericLiteralBaseContext context)
+        internal static NumericValue CreateNumericValue(CodeElementsParser.NumericValueContext context)
         {
-            if (context.AlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral()));
-            }
-            if (context.HexadecimalAlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalAlphanumericLiteral()));
-            }
-            if (context.figurativeConstant() != null)
-            {
-                var figurativeConstant = context.figurativeConstant();
-                return CreateSyntaxString(figurativeConstant);
-                throw new InvalidOperationException("Figurative constant not recognised");
-            }
-            throw new InvalidOperationException("This is not a string!");
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new NumericValue(valueToken);
         }
 
-        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumOrNationalLiteralContext context)
+        internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue1Context context)
         {
-            if (context.NullTerminatedAlphanumericLiteral() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.NullTerminatedAlphanumericLiteral()));
-            }
-            if (context.alphanumOrNationalLiteralBase() != null)
-            {
-                return CreateSyntaxString(context.alphanumOrNationalLiteralBase());
-            }
-            throw new InvalidOperationException("This is not a string!");
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new CharacterValue(valueToken);
         }
 
-        public static SyntaxString CreateSyntaxString(CodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
+        internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue2Context context)
         {
-            if (context.AlphanumericLiteral() != null)
+            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
             {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.AlphanumericLiteral()));
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                return new CharacterValue(symbolicCharacterReference);
             }
-            if (context.HexadecimalAlphanumericLiteral() != null)
+            else
             {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalAlphanumericLiteral()));
+                Token valueToken = ParseTreeUtils.GetFirstToken(context);
+                return new CharacterValue(valueToken);
             }
-
-            if (context.figurativeConstant() != null)
-            {
-                var figurativeConstant = context.figurativeConstant();
-                return CreateSyntaxString(figurativeConstant);
-            }
-            throw new InvalidOperationException("This is not a string!");
         }
 
-        private static SyntaxString CreateSyntaxString(CodeElementsParser.FigurativeConstantContext figurativeConstant)
+        internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue3Context context)
         {
-            if (figurativeConstant.HIGH_VALUE() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.HIGH_VALUE()));
-            }
-            if (figurativeConstant.HIGH_VALUES() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.HIGH_VALUES()));
-            }
-            if (figurativeConstant.LOW_VALUE() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.LOW_VALUE()));
-            }
-            if (figurativeConstant.LOW_VALUES() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.LOW_VALUES()));
-            }
-            if (figurativeConstant.NULL() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.NULL()));
-            }
-            if (figurativeConstant.NULLS() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.NULLS()));
-            }
-            if (figurativeConstant.QUOTE() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.QUOTE()));
-            }
-            if (figurativeConstant.QUOTES() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.QUOTES()));
-            }
-            if (figurativeConstant.SPACE() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.SPACE()));
-            }
-            if (figurativeConstant.SPACES() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.SPACES()));
-            }
-            if (figurativeConstant.ZERO() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.ZERO()));
-            }
-            if (figurativeConstant.ZEROES() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.ZEROES()));
-            }
-            if (figurativeConstant.ZEROS() != null)
-            {
-                return new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(figurativeConstant.ZEROS()));
-            }
-            throw new InvalidOperationException("Figurative constant not recognised");
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new CharacterValue(valueToken);
         }
 
-        public static SyntaxNational CreateSyntaxNational(CodeElementsParser.AlphanumOrNationalLiteralBaseContext context)
+        internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue4Context context)
         {
-            if (context.NationalLiteral() != null)
+            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
             {
-                return new SyntaxNational(ParseTreeUtils.GetTokenFromTerminalNode(context.NationalLiteral()));
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                return new CharacterValue(symbolicCharacterReference);
             }
-            if (context.HexadecimalNationalLiteral() != null)
+            else
             {
-                return new SyntaxNational(ParseTreeUtils.GetTokenFromTerminalNode(context.HexadecimalNationalLiteral()));
+                Token valueToken = ParseTreeUtils.GetFirstToken(context);
+                return new CharacterValue(valueToken);
             }
-            //TODO figurative constant
-            throw new InvalidOperationException("This is not a national!");
         }
 
-        public static Literal CreateLiteral(CodeElementsParser.LiteralContext context)
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue1Context context)
         {
-            if (context == null) return null;
-            if (context.numericLiteral() != null)
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue2Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue3Context context)
+        {
+            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
             {
-                SyntaxNumber numberValue = CreateSyntaxNumber(context.numericLiteral());
-                return new Literal(numberValue);
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                return new AlphanumericValue(symbolicCharacterReference);
             }
-            return CreateLiteral(context.alphanumOrNationalLiteral());
+            else
+            {
+                Token valueToken = ParseTreeUtils.GetFirstToken(context);
+                return new AlphanumericValue(valueToken);
+            }
         }
 
-        internal static Literal CreateLiteral(CodeElementsParser.AlphanumericLiteralContext context)
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue4Context context)
         {
-            if (context == null) return null;
-            SyntaxString stringValue = CreateSyntaxString(context);
-            var literal = new Literal(stringValue);
-            literal.All = context.ALL() != null;
-            return literal;
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
         }
 
-        internal static Literal CreateLiteral(CodeElementsParser.AlphanumOrNationalLiteralContext context)
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue5Context context)
         {
-            if (context == null) return null;
-            SyntaxString stringValue = CreateSyntaxString(context);
-            var literal = new Literal(stringValue);
-            literal.All = context.ALL() != null;
-            return literal;
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue6Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue7Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue8Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue9Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue10Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue11Context context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new AlphanumericValue(valueToken);
+        }
+
+        internal static EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue1Context context, Type enumType)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new EnumeratedValue(valueToken, enumType);
+        }
+
+        internal static EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue2Context context, Type enumType)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new EnumeratedValue(valueToken, enumType);
+        }
+
+        internal static EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue3Context context, Type enumType)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new EnumeratedValue(valueToken, enumType);
+        }
+
+        internal static RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue1Context context)
+        {
+            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
+            {
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                return new RepeatedCharacterValue(null, symbolicCharacterReference);
+            }
+            else
+            {
+                Token valueToken = ParseTreeUtils.GetFirstToken(context);
+                return new RepeatedCharacterValue(null, valueToken);
+            }
+        }
+
+        internal static RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue2Context context)
+        {
+            Token optionalALLToken = null;
+            if (context.allFigurativeConstant() != null)
+            {
+                optionalALLToken = ParseTreeUtils.GetFirstToken(context);
+            }
+
+            CodeElementsParser.FigurativeConstantContext figurativeConstantContext = context.figurativeConstant();
+            if(context.allFigurativeConstant() != null && context.allFigurativeConstant().figurativeConstant() != null)
+            {
+                figurativeConstantContext = context.allFigurativeConstant().figurativeConstant();
+            }
+
+            if (figurativeConstantContext != null && figurativeConstantContext.symbolicCharacterReference() != null)
+            {
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(figurativeConstantContext.symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
+            }
+            else
+            {
+                IParseTree valueNode = figurativeConstantContext;
+                if(valueNode == null)
+                {
+                    valueNode = context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken();
+                }
+                Token valueToken = ParseTreeUtils.GetFirstToken(valueNode);
+                return new RepeatedCharacterValue(optionalALLToken, valueToken);
+            }
+        }
+
+        internal static NullPointerValue CreateNullPointerValue(CodeElementsParser.NullPointerValueContext context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new NullPointerValue(valueToken);
+        }
+
+        internal static Value CreateValue(CodeElementsParser.Value1Context context)
+        {            
+            if(context.numericValue() != null)
+            {
+                NumericValue numericValue = CreateNumericValue(context.numericValue());
+                return new Value(numericValue);
+            }
+            else if (context.alphanumericValue2() != null)
+            {
+                AlphanumericValue alphanumericValue = CreateAlphanumericValue(context.alphanumericValue2());
+                return new Value(alphanumericValue);
+            }
+            else if (context.repeatedCharacterValue2() != null)
+            {
+                RepeatedCharacterValue repeatedCharacterValue = CreateRepeatedCharacterValue(context.repeatedCharacterValue2());
+                return new Value(repeatedCharacterValue);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal static Value CreateValue(CodeElementsParser.Value2Context context)
+        {
+            if (context.numericValue() != null)
+            {
+                NumericValue numericValue = CreateNumericValue(context.numericValue());
+                return new Value(numericValue);
+            }
+            else if (context.alphanumericValue2() != null)
+            {
+                AlphanumericValue alphanumericValue = CreateAlphanumericValue(context.alphanumericValue2());
+                return new Value(alphanumericValue);
+            }
+            else if (context.repeatedCharacterValue2() != null)
+            {
+                RepeatedCharacterValue repeatedCharacterValue = CreateRepeatedCharacterValue(context.repeatedCharacterValue2());
+                return new Value(repeatedCharacterValue);
+            }
+            else if (context.nullPointerValue() != null)
+            {
+                NullPointerValue nullPointerValue = CreateNullPointerValue(context.nullPointerValue());
+                return new Value(nullPointerValue);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+
+        // --- Cobol symbol definitions and symbol references ---
+
+        internal static SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition1Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            return new SymbolDefinition(nameLiteral, symbolType);
+        }
+
+        internal static SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition2Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue2());
+            return new SymbolDefinition(nameLiteral, symbolType);
+        }
+
+        internal static SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition4Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            return new SymbolDefinition(nameLiteral, symbolType);
+        }
+
+        internal static SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition5Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue5());
+            return new SymbolDefinition(nameLiteral, symbolType);
+        }
+
+        internal static SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition11Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue11());
+            return new SymbolDefinition(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference1Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference2Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue2());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference4Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference5Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue5());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference9Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue9());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference10Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue10());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference11Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue11());
+            return new SymbolReference(nameLiteral, symbolType);
+        }
+
+        internal static AmbiguousSymbolReference CreateAmbiguousSymbolReference(CodeElementsParser.AmbiguousSymbolReference1Context context, SymbolType[] candidateTypes)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            return new AmbiguousSymbolReference(nameLiteral, candidateTypes);
+        }
+
+        internal static AmbiguousSymbolReference CreateAmbiguousSymbolReference(CodeElementsParser.AmbiguousSymbolReference4Context context, SymbolType[] candidateTypes)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            return new AmbiguousSymbolReference(nameLiteral, candidateTypes);
+        }
+
+        internal static SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference1Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            return new SymbolDefinitionOrReference(nameLiteral, symbolType);
+        }
+
+        internal static SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference4Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            return new SymbolDefinitionOrReference(nameLiteral, symbolType);
+        }
+
+        internal static ExternalName CreateExternalName(CodeElementsParser.ExternalName1Context context, SymbolType symbolType, Type enumType)
+        {
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue1(), enumType);
+            return new ExternalName(nameLiteral, symbolType);
+        }
+
+        internal static ExternalName CreateExternalName(CodeElementsParser.ExternalName2Context context, SymbolType symbolType, Type enumType)
+        {
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue2(), enumType);
+            return new ExternalName(nameLiteral, symbolType);
+        }
+
+        internal static ExternalName CreateExternalName(CodeElementsParser.ExternalName3Context context, SymbolType symbolType, Type enumType)
+        {
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue3(), enumType);
+            return new ExternalName(nameLiteral, symbolType);
+        }
+
+        internal static ExternalName CreateExternalName(CodeElementsParser.ExternalName5Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue5());
+            return new ExternalName(nameLiteral, symbolType);
+        }
+
+        internal static ExternalNameOrSymbolReference CreateExternalNameOrSymbolReference(CodeElementsParser.ExternalNameOrSymbolReference4Context context, SymbolType[] candidateTypes)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            return new ExternalNameOrSymbolReference(nameLiteral, candidateTypes);
+        }
+
+        internal static ExternalNameOrSymbolReference CreateExternalNameOrSymbolReference(CodeElementsParser.ExternalNameOrSymbolReference5Context context, SymbolType[] candidateTypes)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue5());
+            return new ExternalNameOrSymbolReference(nameLiteral, candidateTypes);
         }
 
 
 
+        // -- OLD CODE --
 
-
-		internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context) {
+        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context) {
 			IList<Identifier> identifiers = new List<Identifier>();
 			if (context != null) {
 				foreach (var identifier in context) {
@@ -556,24 +752,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			return names;
 		}
-
-        internal static AlphabetName CreateAlphabetName(CodeElementsParser.AlphabetNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new AlphabetName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        internal static ClassName CreateClassName(CodeElementsParser.ClassNameDefinitionContext context)
-        {
-            if (context == null) return null;
-            return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        internal static ClassName CreateClassName(CodeElementsParser.ClassNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new ClassName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
+        
 
 		private static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.QDataOrFileContext> context) {
 			var list = new List<CodeElementsParser.DataNameReferenceOrFileNameReferenceContext>();
@@ -628,87 +807,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             return datanames;
         }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameDefinitionContext context)
-        {
-            if (context == null) return null;
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrIndexNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static DataName CreateDataName(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        // TO DO : create a ConditionName object here ...
-        public static DataName CreateDataName(CodeElementsParser.ConditionNameDefinitionContext context)
-        {
-            if (context == null) return null;
-            return new DataName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static ConditionName CreateConditionName(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        {
-            if (context == null) return null;
-            // TO DO : lookup symbol table to determine the type of the symbol
-            return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-		internal static ConditionName CreateConditionName(CodeElementsParser.ConditionNameDefinitionContext context) {
-			if (context == null) return null;
-			// TO DO : lookup symbol table to determine the type of the symbol
-			return new ConditionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-		}
-
+        
         internal static IList<FileName> CreateFileNames(IReadOnlyList<CodeElementsParser.FileNameReferenceContext> context)
         {
             List<FileName> filenames = new List<FileName>();
@@ -721,36 +820,7 @@ namespace TypeCobol.Compiler.Parser
             filenames.Reverse();
             return filenames;
         }
-
-        public static FileName CreateFileName(CodeElementsParser.FileNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new FileName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static LinageCounter CreateLinageCounter(CodeElementsParser.FileNameReferenceContext context) {
-            if (context == null) return null;
-            return new LinageCounter(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        private static LinageCounter CreateLinageCounter(CodeElementsParser.LinageCounterSpecialRegisterDeclContext context) {
-            if (context == null || context.fileNameReference() == null) return null;
-            var filename = CreateFileName(context.fileNameReference());
-            return new LinageCounter(filename.NameToken);
-        }
-
-        public static IndexName CreateIndexName(CodeElementsParser.IndexNameDefinitionContext context)
-        {
-            if (context == null) return null;
-            return new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static IndexName CreateIndexName(CodeElementsParser.IndexNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
+        
         internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CodeElementsParser.ProcedureNameContext> context)
         {
             List<QualifiedProcedureName> procedurenames = new List<QualifiedProcedureName>();
@@ -782,24 +852,6 @@ namespace TypeCobol.Compiler.Parser
                 SectionName sectionName = new SectionName(sectionToken);
                 return new QualifiedProcedureName(paragraphName, sectionName);
             }
-        }
-
-        public static ParagraphName CreateParagraphName(CodeElementsParser.ParagraphNameDefinitionContext context)
-        {
-            if (context == null) return null;
-            return new ParagraphName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static SectionName CreateSectionName(CodeElementsParser.SectionNameDefinitionContext context)
-        {
-            if (context == null) return null;
-            return new SectionName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
-        }
-
-        public static XmlSchemaName CreateXmlSchemaName(CodeElementsParser.XmlSchemaNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new XmlSchemaName(ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord()));
         }
 
 		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceContext context) {
@@ -908,26 +960,7 @@ namespace TypeCobol.Compiler.Parser
             return new Length(CreateDataReference(context.dataReference()));
         }
 
-
-
-
-        internal static MnemonicForEnvironmentName CreateMnemonic(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
-        {
-            if (context == null) return null;
-            return new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(context));
-        }
-
-        internal static MnemonicOrEnvironmentName CreateMnemonic(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
-        {
-            if (context == null) return null;
-            return new MnemonicOrEnvironmentName(ParseTreeUtils.GetFirstToken(context));
-        }
-
-        public static Index CreateIndex(CodeElementsParser.IndexNameReferenceContext indexName)
-        {
-            if (indexName == null) return null;
-            return new Index(new IndexName(ParseTreeUtils.GetTokenFromTerminalNode(indexName.UserDefinedWord())));
-        }
+               
 
         public static Expression CreateAddressOfIdentifier(ITerminalNode address, CodeElementsParser.IdentifierContext identifier)
         {
@@ -939,8 +972,8 @@ namespace TypeCobol.Compiler.Parser
         public static Expression CreateIdentifierOrLiteral(CodeElementsParser.IdentifierOrLiteralContext context)
         {
             if (context == null) return null;
-            if (context.identifier() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifier());
-            if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
+            if (context.identifier() != null) return CobolWordsBuilder.CreateIdentifier(context.identifier());
+            if (context.literal() != null) return CobolWordsBuilder.CreateLiteral(context.literal());
             return null;
         }
 
@@ -954,58 +987,6 @@ namespace TypeCobol.Compiler.Parser
                 return new Literal(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
             return null;
         }
-
-        internal static IList<FigurativeConstant> CreateFigurativeConstants(IReadOnlyList<CodeElementsParser.FigurativeConstantContext> context)
-        {
-            IList<FigurativeConstant> constants = new List<FigurativeConstant>();
-            foreach (var c in context)
-            {
-                var constant = CreateFigurativeConstant(c);
-                if (constant != null) constants.Add(constant);
-            }
-            return constants;
-        }
-
-        internal static FigurativeConstant CreateFigurativeConstant(CodeElementsParser.FigurativeConstantContext context)
-        {
-            if (context.HIGH_VALUE()  != null) return CreateFigurativeConstant(context.HIGH_VALUE());
-            if (context.HIGH_VALUES() != null) return CreateFigurativeConstant(context.HIGH_VALUES());
-            if (context.LOW_VALUE()  != null) return CreateFigurativeConstant(context.LOW_VALUE());
-            if (context.LOW_VALUES() != null) return CreateFigurativeConstant(context.LOW_VALUES());
-            if (context.NULL()  != null) return CreateFigurativeConstant(context.NULL());
-            if (context.NULLS() != null) return CreateFigurativeConstant(context.NULLS());
-            if (context.SPACE()  != null) return CreateFigurativeConstant(context.SPACE());
-            if (context.SPACES() != null) return CreateFigurativeConstant(context.SPACES());
-            if (context.QUOTE()  != null) return CreateFigurativeConstant(context.QUOTE());
-            if (context.QUOTES() != null) return CreateFigurativeConstant(context.QUOTES());
-            if (context.ZERO()   != null) return CreateFigurativeConstant(context.ZERO());
-            if (context.ZEROS()  != null) return CreateFigurativeConstant(context.ZEROS());
-            if (context.ZEROES() != null) return CreateFigurativeConstant(context.ZEROES());
-            if (context.symbolicCharacterReference() != null) return CreateFigurativeConstant(context.symbolicCharacterReference().SymbolicCharacter());
-            return null;
-        }
-
-        private static FigurativeConstant CreateFigurativeConstant(ITerminalNode node)
-        {
-            return new FigurativeConstant(new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(node)));
-        }
-
-        internal static int CreateInteger(ITerminalNode node) {
-            var token = ParseTreeUtils.GetTokenFromTerminalNode(node);
-            return (int)((TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)token.LiteralValue).Number;
-        }
-
-		internal static string CreateString(CodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
-			var str = GetString(context);
-			if (str == null) return null;
-			if (str[0] == 'X' || str[0] == 'x') str = str.Substring(1);
-			return str.Substring(1,str.Length-2); // remove '' or ""
-		}
-		private static string GetString(CodeElementsParser.AlphanumOrHexadecimalLiteralContext context) {
-			if (context.AlphanumericLiteral() != null) return context.AlphanumericLiteral().Symbol.Text;
-			if (context.HexadecimalAlphanumericLiteral() != null) return context.HexadecimalAlphanumericLiteral().Symbol.Text;
-			return null;
-		}
 	}
 
 }

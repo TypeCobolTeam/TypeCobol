@@ -61,7 +61,7 @@ namespace TypeCobol.Compiler.Parser
             var filenames = new List<OpenFileName>();
             foreach (var filename in context.fileNameWithNoRewindOrReversed())
             {
-                var f = SyntaxElementBuilder.CreateFileName(filename.fileNameReference());
+                var f = CobolWordsBuilder.CreateFileName(filename.fileNameReference());
                 bool norewind = filename.NO() != null;
                 bool reversed = filename.REVERSED() != null;
                 if (f != null) filenames.Add(new OpenFileName(f, norewind, reversed));
@@ -75,7 +75,7 @@ namespace TypeCobol.Compiler.Parser
             var filenames = new List<OpenFileName>();
             foreach (var filename in context.fileNameWithNoRewind())
             {
-                var f = SyntaxElementBuilder.CreateFileName(filename.fileNameReference());
+                var f = CobolWordsBuilder.CreateFileName(filename.fileNameReference());
                 bool norewind = filename.NO() != null;
                 if (f != null) filenames.Add(new OpenFileName(f, norewind));
             }
@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Parser
             var filenames = new List<OpenFileName>();
             foreach (var filename in context.fileNameReference())
             {
-                var f = SyntaxElementBuilder.CreateFileName(filename);
+                var f = CobolWordsBuilder.CreateFileName(filename);
                 if (f != null) filenames.Add(new OpenFileName(f));
             }
             return filenames;
@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Parser
             var filenames = new List<OpenFileName>();
             foreach (var filename in context.fileNameReference())
             {
-                var f = SyntaxElementBuilder.CreateFileName(filename);
+                var f = CobolWordsBuilder.CreateFileName(filename);
                 if (f != null) filenames.Add(new OpenFileName(f));
             }
             return filenames;
@@ -123,7 +123,7 @@ namespace TypeCobol.Compiler.Parser
         private CloseFileName CreateCloseFileName(CodeElementsParser.CloseFileNameContext context)
         {
             if (context == null) return null;
-            var filename = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
+            var filename = CobolWordsBuilder.CreateFileName(context.fileNameReference());
             return new CloseFileName(filename, context.REEL() != null || context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
         }
 
@@ -133,9 +133,9 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new ReadStatement(
-                SyntaxElementBuilder.CreateFileName(context.fileNameReference()),
-                SyntaxElementBuilder.CreateIdentifier(context.identifier()),
-                SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName()),
+                CobolWordsBuilder.CreateFileName(context.fileNameReference()),
+                CobolWordsBuilder.CreateIdentifier(context.identifier()),
+                CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName()),
                 context.NEXT() != null,
                 context.RECORD() != null
                 );
@@ -145,12 +145,12 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new WriteStatement(
-                SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName()),
-                SyntaxElementBuilder.CreateIdentifier(context.identifier()),
+                CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName()),
+                CobolWordsBuilder.CreateIdentifier(context.identifier()),
                 context.BEFORE() != null,
                 context.AFTER() != null,
                 new ArithmeticExpressionBuilder().CreateNumberOrIdentifier(context.identifierOrInteger()),
-                SyntaxElementBuilder.CreateMnemonic(context.mnemonicForEnvironmentNameReference()),
+                CobolWordsBuilder.CreateMnemonic(context.mnemonicForEnvironmentNameReference()),
                 context.PAGE() != null
                 );
         }
@@ -159,8 +159,8 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             return new RewriteStatement(
-                SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName()),
-                SyntaxElementBuilder.CreateIdentifier(context.identifier())
+                CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName()),
+                CobolWordsBuilder.CreateIdentifier(context.identifier())
                 );
         }
     }

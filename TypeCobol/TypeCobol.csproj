@@ -134,7 +134,7 @@
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\LiteralValue.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\VariableExpression.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
@@ -317,7 +317,7 @@
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassParserStep.cs" />
     <Compile Include="Compiler\Parser\StatementsBuilder.cs" />
-    <Compile Include="Compiler\Parser\SyntaxElementBuilder.cs" />
+    <Compile Include="Compiler\Parser\CobolWordsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementsDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />

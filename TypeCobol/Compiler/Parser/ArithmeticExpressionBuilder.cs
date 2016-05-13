@@ -13,11 +13,11 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             if (context.identifier() != null)
             {
-                return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                return CobolWordsBuilder.CreateIdentifier(context.identifier());
             }
             if (context.numericLiteral() != null)
             {
-                return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
+                return new Number(CobolWordsBuilder.CreateSyntaxNumber(context.numericLiteral()));
             }
             return null;
         }
@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             if (context.identifier() != null)
             {
-                return SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                return CobolWordsBuilder.CreateIdentifier(context.identifier());
             }
             if (context.IntegerLiteral() != null)
             {
@@ -63,8 +63,8 @@ namespace TypeCobol.Compiler.Parser
         
 
         internal ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context) {
-            if (context.identifier() != null) return new ArithmeticIdentifier(SyntaxElementBuilder.CreateIdentifier(context.identifier()));
-            if (context.numericLiteral() != null) return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
+            if (context.identifier() != null) return new ArithmeticIdentifier(CobolWordsBuilder.CreateIdentifier(context.identifier()));
+            if (context.numericLiteral() != null) return new Number(CobolWordsBuilder.CreateSyntaxNumber(context.numericLiteral()));
 
             ArithmeticExpression result = null;
             char op = CreateOperator(context);

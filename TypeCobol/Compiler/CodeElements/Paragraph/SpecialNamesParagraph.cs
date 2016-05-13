@@ -190,5 +190,15 @@ namespace TypeCobol.Compiler.CodeElements
     public class CollatingSequence
     {
         // to do ...
+
+        public char GetLowValueChar()
+        {
+            throw new NotImplementedException();
+        }
+
+        public char GetHighValueChar()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

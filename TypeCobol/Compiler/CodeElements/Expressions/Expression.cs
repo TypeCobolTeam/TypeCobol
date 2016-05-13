@@ -54,11 +54,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		public override string ToString() { return Value.ToString(); }
 	}
 
-	public class FigurativeConstant : Literal
-	{
-		public FigurativeConstant(SyntaxString value) : base(value) { }
-	}
-
 	public class New : Expression { }
 
 }

@@ -164,8 +164,8 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterClassIdentification(CodeElementsParser.ClassIdentificationContext context)
         {
             var classIdentification = new ClassIdentification();
-            classIdentification.ClassName = SyntaxElementBuilder.CreateClassName(context.classNameDefinition());
-            classIdentification.InheritsFrom = SyntaxElementBuilder.CreateClassName(context.inheritsFromClassName);
+            classIdentification.ClassName = CobolWordsBuilder.CreateClassName(context.classNameDefinition());
+            classIdentification.InheritsFrom = CobolWordsBuilder.CreateClassName(context.inheritsFromClassName);
 
             Context = context;
             CodeElement = classIdentification;
@@ -426,13 +426,13 @@ namespace TypeCobol.Compiler.Parser
 
 			DataDescriptionEntry entry = new DataDescriptionEntry();
 			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+				entry.LevelNumber = CobolWordsBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
 			}
-			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
+			entry.DataName = CobolWordsBuilder.CreateDataName(context.dataNameDefinition());
 			//entry.IsFiller = (dataname == null || context.FILLER() != null);
 
 			var redefines = context.redefinesClause();
-			if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
+			if (redefines != null) entry.RedefinesDataName = CobolWordsBuilder.CreateDataName(redefines.dataNameReference());
 
 			var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
 			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
@@ -473,12 +473,12 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context) {
 			DataDescriptionEntry entry = new DataDescriptionEntry();
 			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+				entry.LevelNumber = CobolWordsBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
 			}
-			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
+			entry.DataName = CobolWordsBuilder.CreateDataName(context.dataNameDefinition());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
 
-			var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataNameReference());
+			var names = CobolWordsBuilder.CreateDataNames(context.renamesClause().dataNameReference());
 			if (names.Count > 0) entry.RenamesFromDataName = names[0];
 			if (names.Count > 1) entry.RenamesToDataName   = names[1];
 			//note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
@@ -490,9 +490,9 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context) {
 			var entry = new DataDescriptionEntry();
 			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+				entry.LevelNumber = CobolWordsBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
 			}
-			entry.ConditionName = SyntaxElementBuilder.CreateConditionName(context.conditionNameDefinition());
+			entry.ConditionName = CobolWordsBuilder.CreateConditionName(context.conditionNameDefinition());
 			entry.IsConditionNameDescription = true;
 			UpdateDataDescriptionEntryWithValueClauseForCondition(entry, context.valueClauseForCondition());
 
@@ -513,7 +513,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return;
             entry.Usage = CreateDataUsage(context);
-            entry.ObjectReference = SyntaxElementBuilder.CreateClassName(context.classNameReference());
+            entry.ObjectReference = CobolWordsBuilder.CreateClassName(context.classNameReference());
         }
 
         private void UpdateDataDescriptionEntryWithOccursClause(DataDescriptionEntry entry, CodeElementsParser.OccursClauseContext context)
@@ -523,7 +523,7 @@ namespace TypeCobol.Compiler.Parser
 
             bool isVariable = (context.occursDependingOn() != null);
             if (isVariable) {
-                entry.OccursDependingOn = SyntaxElementBuilder.CreateDataName(context.occursDependingOn().dataNameReference());
+                entry.OccursDependingOn = CobolWordsBuilder.CreateDataName(context.occursDependingOn().dataNameReference());
             }
             isVariable = isVariable || (context.UNBOUNDED() != null) || (context.TO() != null);
 
@@ -543,7 +543,7 @@ namespace TypeCobol.Compiler.Parser
                         if (context.UNBOUNDED() != null) {
                             // 3) OCCURS min TO UNBOUNDED DEPENDING ON...
                             // 4) OCCURS min UNBOUNDED DEPENDING ON... -syntax error (TO missing)
-                            entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                            entry.MinOccurencesCount = CobolWordsBuilder.CreateInteger(integers[0]);
                             entry.NoMaxOccurencesCount = true;
                         } else {
                             // 5) OCCURS max DEPENDING ON...
@@ -552,18 +552,18 @@ namespace TypeCobol.Compiler.Parser
                             // WARNING! due to our grammar, we cannot discriminate between 6) and 7)
                             // this shouldn't be a problem as both cases are syntax errors
                             entry.MinOccurencesCount = 1;
-                            entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                            entry.MaxOccurencesCount = CobolWordsBuilder.CreateInteger(integers[0]);
                         }
                     } else {
                             // 8) OCCURS exact ... (fixed length)
-                        entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
+                        entry.MinOccurencesCount = CobolWordsBuilder.CreateInteger(integers[0]);
                         entry.MaxOccurencesCount = entry.MinOccurencesCount;
                     }
                 } else { // isVariable == true && integers.Length == 2
                             // 9) OCCURS min TO max DEPENDING ON...
                             //10) OCCURS min max DEPENDING ON... -syntax error (TO missing)
-                    entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
-                    entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[1]);
+                    entry.MinOccurencesCount = CobolWordsBuilder.CreateInteger(integers[0]);
+                    entry.MaxOccurencesCount = CobolWordsBuilder.CreateInteger(integers[1]);
                 }
             }
 
@@ -576,7 +576,7 @@ namespace TypeCobol.Compiler.Parser
                     if (key.ASCENDING()  != null) direction = KeyDirection.Ascending;
                     if (key.DESCENDING() != null) direction = KeyDirection.Descending;
                     foreach(var name in key.dataNameReference()) {
-                        var data = SyntaxElementBuilder.CreateDataName(name);
+                        var data = CobolWordsBuilder.CreateDataName(name);
                         if (data == null) continue;
                         entry.TableOccurenceKeys.Add(data);
                         entry.TableOccurenceKeyDirections.Add(direction);
@@ -587,7 +587,7 @@ namespace TypeCobol.Compiler.Parser
             var indexes = context.indexNameDefinition();
             if (indexes != null) {
                 entry.IndexedBy = new List<IndexName>();
-                foreach(var index in indexes) entry.IndexedBy.Add(SyntaxElementBuilder.CreateIndexName(index));
+                foreach(var index in indexes) entry.IndexedBy.Add(CobolWordsBuilder.CreateIndexName(index));
             }
         }
 
@@ -616,7 +616,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return;
             var value = context.literal();
-            if (value != null) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(value); // format 1
+            if (value != null) entry.InitialValue = CobolWordsBuilder.CreateLiteral(value); // format 1
             entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
         }
 
@@ -624,8 +624,8 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return;
             var values = context.literal();
-            if (values.Length > 0) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(values[0]); // format 1 and 2
-            if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
+            if (values.Length > 0) entry.InitialValue = CobolWordsBuilder.CreateLiteral(values[0]); // format 1 and 2
+            if (values.Length > 1) entry.ThroughValue = CobolWordsBuilder.CreateLiteral(values[1]); // format 2
         }
 
         // -- InputOutput Section --
@@ -671,9 +671,9 @@ namespace TypeCobol.Compiler.Parser
 			string currencyStr = null;
 			string currencyChar = "$";
 			if (currencies.Length > 0)
-				currencyStr = SyntaxElementBuilder.CreateString(currencies[0]);
+				currencyStr = CobolWordsBuilder.CreateString(currencies[0]);
 			if (currencies.Length > 1)
-				currencyChar = SyntaxElementBuilder.CreateString(currencies[1]);
+				currencyChar = CobolWordsBuilder.CreateString(currencies[1]);
 			paragraph.CurrencySymbols[currencyChar] = currencyStr;
 		}
 
@@ -765,9 +765,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (alter == null) {
                     alter = new AlterStatement.Alter();
-                    alter.Procedure1 = SyntaxElementBuilder.CreateProcedureName(p);
+                    alter.Procedure1 = CobolWordsBuilder.CreateProcedureName(p);
                 } else {
-                    alter.Procedure2 = SyntaxElementBuilder.CreateProcedureName(p);
+                    alter.Procedure2 = CobolWordsBuilder.CreateProcedureName(p);
                     statement.Items.Add(alter);
                     alter = null;
                 }
@@ -796,7 +796,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     if (c.alphanumericLiteral() != null)
                     {
-                        var item = SyntaxElementBuilder.CreateLiteral(c.alphanumericLiteral());
+                        var item = CobolWordsBuilder.CreateLiteral(c.alphanumericLiteral());
                         statement.Items.Add(item);
                     }
                 }
@@ -807,7 +807,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     if (c.identifier() != null)
                     {
-                        var item = SyntaxElementBuilder.CreateIdentifier(c.identifier());
+                        var item = CobolWordsBuilder.CreateIdentifier(c.identifier());
                         statement.Items.Add(item);
                     }
                 }
@@ -825,7 +825,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterDeleteStatement(CodeElementsParser.DeleteStatementContext context)
         {
             var statement = new DeleteStatement();
-            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
+            statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
             Context = context;
             CodeElement = statement;
         }
@@ -914,11 +914,11 @@ namespace TypeCobol.Compiler.Parser
         {
             if (idOrLiteral.identifier() != null)
             {
-                return SyntaxElementBuilder.CreateIdentifier(idOrLiteral.identifier());
+                return CobolWordsBuilder.CreateIdentifier(idOrLiteral.identifier());
             }
             if (idOrLiteral.literal() != null)
             {
-                return SyntaxElementBuilder.CreateLiteral(idOrLiteral.literal());
+                return CobolWordsBuilder.CreateLiteral(idOrLiteral.literal());
             }
                 //TODO manage figurativeConstant here or as a literal ?
 
@@ -931,11 +931,11 @@ namespace TypeCobol.Compiler.Parser
             var statement = new EntryStatement();
             if (context.programEntryDefinition() != null)
             {
-                statement.ProgramName = SyntaxElementBuilder.CreateLiteral(context.programEntryDefinition().alphanumericLiteral());
+                statement.ProgramName = CobolWordsBuilder.CreateLiteral(context.programEntryDefinition().alphanumericLiteral());
             }
             foreach(var by in context.byReferenceOrByValueIdentifiers()) {
                 var u = new EntryStatement.Using<Identifier>();
-                var identifiers = SyntaxElementBuilder.CreateIdentifiers(by.identifier());
+                var identifiers = CobolWordsBuilder.CreateIdentifiers(by.identifier());
                 foreach (var i in identifiers) u.Add(i);
                 u.ByValue = by.VALUE() != null;
                 statement.Usings.Add(u);
@@ -1159,8 +1159,8 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterReleaseStatement(CodeElementsParser.ReleaseStatementContext context)
         {
             var statement = new ReleaseStatement();
-            statement.RecordName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
-            statement.From = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+            statement.RecordName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
+            statement.From = CobolWordsBuilder.CreateIdentifier(context.identifier());
             Context = context;
             CodeElement = statement;
         }
@@ -1197,7 +1197,7 @@ namespace TypeCobol.Compiler.Parser
                     Expression receiving;
                     if (identifierContext != null)
                     {
-                        receiving = SyntaxElementBuilder.CreateIdentifier(identifierContext);
+                        receiving = CobolWordsBuilder.CreateIdentifier(identifierContext);
                     }
                     else break;
                     statement.Receiving.Add(receiving);
@@ -1208,7 +1208,7 @@ namespace TypeCobol.Compiler.Parser
             {
                if (context.setStatementForAssignationSending().identifier() != null)
                 {
-                    statement.Sending = SyntaxElementBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
+                    statement.Sending = CobolWordsBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
                 }
                 else if (context.setStatementForAssignationSending().IntegerLiteral() != null)
                 {
@@ -1251,7 +1251,7 @@ namespace TypeCobol.Compiler.Parser
                 var indexs = new List<Index>();
                 foreach (var indexNameContext in context.indexNameReference())
                 {
-                    indexs.Add(SyntaxElementBuilder.CreateIndex(indexNameContext));
+                    indexs.Add(CobolWordsBuilder.CreateIndex(indexNameContext));
                 }
                 statement.ReceivingIndexs = indexs;
             }
@@ -1266,7 +1266,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.identifier() != null)
             {
-                statement.SendingField = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                statement.SendingField = CobolWordsBuilder.CreateIdentifier(context.identifier());
             } 
             else if (context.IntegerLiteral() != null)
             {
@@ -1331,8 +1331,8 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterStartStatement(CodeElementsParser.StartStatementContext context)
         {
             var statement = new StartStatement();
-            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
-            statement.DataName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
+            statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
+            statement.DataName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
             if (context.relationalOperator() != null)
                 statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
             
@@ -1349,7 +1349,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new StopStatement();
             if (context.literal() != null)
-                statement.Literal = SyntaxElementBuilder.CreateLiteral(context.literal());
+                statement.Literal = CobolWordsBuilder.CreateLiteral(context.literal());
             statement.IsStopRun = context.RUN() != null;
 
             Context = context;
@@ -1405,13 +1405,13 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.identifierInto != null)
             {
-                statement.IntoIdentifier = SyntaxElementBuilder.CreateIdentifier(context.identifierInto);
+                statement.IntoIdentifier = CobolWordsBuilder.CreateIdentifier(context.identifierInto);
             } //else don't set statement.IntoIdentifier
 
 
             if (context.stringStatementWith() != null)
             {
-                statement.PointerIdentifier = SyntaxElementBuilder.CreateIdentifier(context.stringStatementWith().identifier());
+                statement.PointerIdentifier = CobolWordsBuilder.CreateIdentifier(context.stringStatementWith().identifier());
             } //else don't set statement.PointerIdentifier
 
             Context = context;
@@ -1461,7 +1461,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.unstringIdentifier != null)
             {
-                statement.UnstringIdentifier = SyntaxElementBuilder.CreateIdentifier(context.unstringIdentifier);
+                statement.UnstringIdentifier = CobolWordsBuilder.CreateIdentifier(context.unstringIdentifier);
             }
 
             if (context.unstringDelimited() != null)
@@ -1493,18 +1493,18 @@ namespace TypeCobol.Compiler.Parser
                     var unstringReceiver = new UnstringReceiver();
                     if (unstringReceiverContext.intoIdentifier != null)
                     {
-                        unstringReceiver.IntoIdentifier = SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.intoIdentifier);
+                        unstringReceiver.IntoIdentifier = CobolWordsBuilder.CreateIdentifier(unstringReceiverContext.intoIdentifier);
                     }
                     if (unstringReceiverContext.unstringDelimiter() != null &&
                         unstringReceiverContext.unstringDelimiter().identifier() != null)
                     {
                         unstringReceiver.DelimiterIdentifier =
-                            SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.unstringDelimiter().identifier());
+                            CobolWordsBuilder.CreateIdentifier(unstringReceiverContext.unstringDelimiter().identifier());
                     }
                     if (unstringReceiverContext.unstringCount() != null && unstringReceiverContext.unstringCount().identifier() != null)
                     {
                         unstringReceiver.CountIdentifier =
-                            SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.unstringCount().identifier());
+                            CobolWordsBuilder.CreateIdentifier(unstringReceiverContext.unstringCount().identifier());
                     }
                     unstringReceiverList.Add(unstringReceiver);
                 }
@@ -1513,12 +1513,12 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.unstringPointer() != null && context.unstringPointer().identifier() != null)
             {
-                statement.WithPointer = SyntaxElementBuilder.CreateIdentifier(context.unstringPointer().identifier());
+                statement.WithPointer = CobolWordsBuilder.CreateIdentifier(context.unstringPointer().identifier());
             }
 
             if (context.unstringTallying() != null && context.unstringTallying().identifier() != null)
             {
-                statement.Tallying = SyntaxElementBuilder.CreateIdentifier(context.unstringTallying().identifier());
+                statement.Tallying = CobolWordsBuilder.CreateIdentifier(context.unstringTallying().identifier());
             }
 
             Context = context;

@@ -1,7 +1,7 @@
 ﻿using System;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements
+namespace TypeCobol.Compiler.CodeElements.Obsolete
 {
     /// <summary>
     /// Boolean value defined by a single Token in the Cobol syntax

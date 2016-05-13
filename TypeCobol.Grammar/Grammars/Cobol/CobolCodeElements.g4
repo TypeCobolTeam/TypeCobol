@@ -969,7 +969,7 @@ userDefinedCharacterClass:
 // p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
 
 currencySignClause:
-    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue)?;
+    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue1)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.
@@ -7571,7 +7571,7 @@ xmlSuppressGeneric:
 
 // Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 xmlSuppressWhen:
-	WHEN repeatedAlphanumericValue1 (OR? repeatedAlphanumericValue1)*;
+	WHEN repeatedCharacterValue1 (OR? repeatedCharacterValue1)*;
 
 xmlStatementEnd: END_XML;
 

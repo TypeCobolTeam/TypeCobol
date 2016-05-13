@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ALPHABETIC_UPPER() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.ALPHABETIC_UPPER()));
             if (context.DBCS() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.DBCS()));
             if (context.KANJI() != null) type = new ClassName(ParseTreeUtils.GetFirstToken(context.KANJI()));
-            LogicalExpression condition = new ClassCondition(SyntaxElementBuilder.CreateIdentifier(context.identifier()), type);
+            LogicalExpression condition = new ClassCondition(CobolWordsBuilder.CreateIdentifier(context.identifier()), type);
             if (context.NOT() != null) condition = new NOT(condition);
             return condition;
         }
@@ -54,14 +54,14 @@ namespace TypeCobol.Compiler.Parser
 
         private LogicalExpression createCondition(CodeElementsParser.ConditionReferenceContext context) {
             if (context == null) return null;
-            QualifiedName conditionname = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedConditionName());
-            IList<Subscript> subscripts = SyntaxElementBuilder.CreateSubscripts(context.subscript());
+            QualifiedName conditionname = CobolWordsBuilder.CreateQualifiedName(context.qualifiedConditionName());
+            IList<Subscript> subscripts = CobolWordsBuilder.CreateSubscripts(context.subscript());
             return new Condition(conditionname, subscripts);
         }
 
         private LogicalExpression createCondition(CodeElementsParser.QualifiedConditionNameContext context) {
             if (context == null) return null;
-            return new Condition(SyntaxElementBuilder.CreateQualifiedName(context));
+            return new Condition(CobolWordsBuilder.CreateQualifiedName(context));
         }
 
         internal char CreateOperator(CodeElementsParser.RelationalOperatorContext context)
@@ -114,8 +114,8 @@ namespace TypeCobol.Compiler.Parser
 
         private Expression createOperand(CodeElementsParser.OperandContext context) {
             if (context == null) return null;
-            if (context.identifierOrIndexName() != null) return SyntaxElementBuilder.CreateIdentifier(context.identifierOrIndexName());
-            if (context.literal() != null) return SyntaxElementBuilder.CreateLiteral(context.literal());
+            if (context.identifierOrIndexName() != null) return CobolWordsBuilder.CreateIdentifier(context.identifierOrIndexName());
+            if (context.literal() != null) return CobolWordsBuilder.CreateLiteral(context.literal());
             if (context.arithmeticExpression() != null) return new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression());
             // indexName cannot be distinguished from identifier at the parsing stage
             return null;
@@ -178,7 +178,7 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
 
             if (context.identifier() != null) {
-                var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                var identifier = CobolWordsBuilder.CreateIdentifier(context.identifier());
                 if (context.ADDRESS() != null || context.OF() != null) return new Pointer(identifier);
                 return identifier;
             }

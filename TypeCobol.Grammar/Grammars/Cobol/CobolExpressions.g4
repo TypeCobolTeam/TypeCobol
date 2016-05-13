@@ -1093,7 +1093,7 @@ characterVariable: dataNameReference | characterValue4;
 
 alphanumericVariable1: identifier | alphanumericValue3;
 
-alphanumericVariable2: identifier | alphanumericValue2 | repeatedAlphanumericValue1;
+alphanumericVariable2: identifier | alphanumericValue2 | repeatedCharacterValue1;
 
 programNameVariable: programNameReference1 | identifier;
 
@@ -1117,11 +1117,11 @@ variable4: identifier | numericValue | alphanumericValue3;
 
 variable5: dataNameReference | numericValue | alphanumericValue3;
 
-variable6: identifier | numericValue | alphanumericValue2 | repeatedAlphanumericValue1;
+variable6: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue1;
 
-variable7: identifier | numericValue | alphanumericValue2 | repeatedAlphanumericValue2;
+variable7: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue2;
 
-variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedAlphanumericValue1;
+variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1;
 
 
 // --- Cobol expressions ---

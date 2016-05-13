@@ -2,7 +2,7 @@
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements
+namespace TypeCobol.Compiler.CodeElements.Obsolete
 {
     /// <summary>
     /// String value defined by a single Token in the Cobol syntax

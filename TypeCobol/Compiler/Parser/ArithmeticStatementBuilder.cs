@@ -109,7 +109,7 @@ namespace TypeCobol.Compiler.Parser
             Expression left = null;
             if (leftContext != null)
             {
-                left = SyntaxElementBuilder.CreateIdentifier(leftContext);
+                left = CobolWordsBuilder.CreateIdentifier(leftContext);
             }
             if (left != null && rightContext != null)
             {
@@ -121,7 +121,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal static Expression CreateIdentifierRounded(CodeElementsParser.IdentifierRoundedContext operand)
         {
-            Expression identifier = SyntaxElementBuilder.CreateIdentifier(operand.identifier());
+            Expression identifier = CobolWordsBuilder.CreateIdentifier(operand.identifier());
             if (operand.ROUNDED() != null) identifier = new Rounded(identifier);
             return identifier;
         }
@@ -207,7 +207,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (quotients.Count > 1 && context.REMAINDER() != null)
                     DiagnosticUtils.AddError(statement, "Error: only one <identifier> allowed before REMAINDER", context);
-                var identifier = SyntaxElementBuilder.CreateIdentifier(context.identifier());
+                var identifier = CobolWordsBuilder.CreateIdentifier(context.identifier());
                 var remainder = ArithmeticOperation.Create(numerator, '/', denominator);
                 statement.Affectations.Add(identifier, remainder);
             }

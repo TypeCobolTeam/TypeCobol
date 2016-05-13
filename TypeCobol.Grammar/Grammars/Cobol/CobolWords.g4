@@ -727,7 +727,7 @@ integerValue: IntegerLiteral;
 
 numericValue: numericLiteralToken | numericFigurativeConstant;
 
-characterValue: alphanumericLiteralToken;
+characterValue1: alphanumericLiteralToken;
 
 characterValue2: alphanumericLiteralToken | figurativeConstant;
 
@@ -763,13 +763,13 @@ enumeratedValue2: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
 
 enumeratedValue3: ExecTranslatorName;
 
-// Repeated values which can only be computed 
+// Repeated character values which can only be computed 
 //   . at the second stage of parsing
 //   . when compared or affected to a data storage area
 
-repeatedAlphanumericValue1: figurativeConstant;
+repeatedCharacterValue1: figurativeConstant;
 
-repeatedAlphanumericValue2: figurativeConstant | allFigurativeConstant;
+repeatedCharacterValue2: figurativeConstant | allFigurativeConstant;
 
 // Pointers or object references
 
@@ -777,9 +777,9 @@ nullPointerValue: nullFigurativeConstant;
 
 // Any type of value
 
-value1: numericValue | alphanumericValue2 | repeatedAlphanumericValue2;
+value1: numericValue | alphanumericValue2 | repeatedCharacterValue2;
 
-value2: numericValue | alphanumericValue2 | repeatedAlphanumericValue2 | nullPointerValue;
+value2: numericValue | alphanumericValue2 | repeatedCharacterValue2 | nullPointerValue;
 
 
 // --- Cobol symbol definitions and symbol references ---
