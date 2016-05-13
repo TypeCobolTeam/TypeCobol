@@ -1,0 +1,47 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID.   TEST-Bool.
+  AUTHOR.       SMEDILOL.
+  DATE-WRITTEN. APRIL 2016
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+
+
+01  check          TYPE bool.
+01  trtOk          TYPE Bool.
+
+
+PROCEDURE DIVISION.
+*******************
+TEST-Bool.
+  MOVE        check     TO   trtOk
+
+  MOVE        true     TO   check
+  MOVE        false     TO   check
+
+  SET check to TRUE
+  Set check to false
+ 
+  if check
+    continue
+  end-if
+  if check = true
+      continue
+  end-if
+  if not check
+      continue
+  end-if
+  if check = false
+      continue
+  end-if
+	evaluate true
+		when check
+		 continue
+		when trtOk
+		 continue
+		when check = false
+		 continue
+    end-evaluate
+  .

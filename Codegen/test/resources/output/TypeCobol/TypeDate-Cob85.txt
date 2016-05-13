@@ -1,0 +1,64 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID.   TEST-DATE.
+  AUTHOR.       SMEDILOL.
+  DATE-WRITTEN. APRIL 2016
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+
+01  olddate        PIC X(08).
+*01  today          TYPE DATE.
+01 today.
+  02  YYYY         PIC 9(04).
+  02  MM           PIC 9(02).
+  02  DD           PIC 9(02).
+*01  tomorrow       TYPE date.
+01 tomorrow.
+  02  YYYY         PIC 9(04).
+  02  MM           PIC 9(02).
+  02  DD           PIC 9(02).
+01 groupe.
+*  05 date1        type date.
+   05 date1.
+		06  YYYY         PIC 9(04).
+		06  MM           PIC 9(02).
+		06  DD           PIC 9(02).
+PROCEDURE DIVISION.
+*******************
+TEST-DATE.
+*** legal: from typed to typed
+  MOVE        today     TO   tomorrow
+*** legal: from typed to untyped
+  MOVE        today     TO   olddate
+
+*** legal: from trusted untyped to typed
+  MOVE  olddate   TO   today
+*** legal: properties are read-only
+  DISPLAY     YYYY of today
+  DISPLAY     YYYY of today 
+
+  evaluate tomorrow
+    when 20160104
+	  continue
+    when 20160101
+	  continue
+	when 01010101
+	  continue
+    when other
+	  continue
+  end-evaluate
+
+  move today(1:4) to olddate
+
+*** legal:
+  initialize today
+  initialize groupe
+  move spaces   to groupe
+  move olddate  to groupe
+
+  string YYYY of today MM of today DD of today 
+		delimited by size into olddate
+  end-string
+  .
