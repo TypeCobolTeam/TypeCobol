@@ -78,62 +78,56 @@ namespace TypeCobol.Test.Compiler.Parser
             return DumpResult(result.CodeElements, result.ParserDiagnostics);
         }
 
-        public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics)
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(DiagnosticsToString(diagnostics));
-            builder.Append(CodeElementsToString(elements));
-            return builder.ToString();
-        }
+		public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics) {
+			StringBuilder builder = new StringBuilder();
+			builder.Append(DiagnosticsToString(diagnostics));
+			builder.Append(CodeElementsToString(elements));
+			return builder.ToString();
+		}
 
-        public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics)
-        {
-            StringBuilder builder = new StringBuilder();
-            bool hasDiagnostic = false;
-            foreach (Diagnostic d in diagnostics)
-            {
-                if (d is ParserDiagnostic)
-                {
-                    builder.AppendLine(((ParserDiagnostic)d).ToStringWithRuleStack());
-                }
-                else
-                {
-                    builder.AppendLine(d.ToString());
-                }
-                hasDiagnostic = true;
-            }
-            if(hasDiagnostic)
-            {
-                builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
-                return builder.ToString();
-            }
-            else
-            {
-                return String.Empty;
-            }
-        }
+		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics) {
+			StringBuilder builder = new StringBuilder();
+			bool hasDiagnostic = false;
+			var done = new List<string>();
+			foreach (Diagnostic d in diagnostics) {
+				string errmsg;
+				if (d is ParserDiagnostic)
+					 errmsg = ((ParserDiagnostic)d).ToStringWithRuleStack();
+				else errmsg = d.ToString();
 
+				// don't add same error twice
+				bool found = false;
+				foreach(var other in done)
+					if (errmsg.Equals(other)) found = true;
+				if (found) continue;
+				done.Add(errmsg);
 
-        public static string CodeElementsToString(IEnumerable<CodeElement> elements)
-        {
-            StringBuilder builder = new StringBuilder();
-            bool hasCodeElement = false;
-            foreach (CodeElement e in elements)
-            {
-                builder.AppendLine(e.ToString());
-                hasCodeElement = true;
-            }
-            //TODO log Diagnostics linked to codeElement directly after, to increase test readability
-            if (hasCodeElement)
-            {
-                builder.Insert(0, "--- Code Elements ---" + Environment.NewLine);
-                return builder.ToString();
-            }
-            else
-            {
-                return String.Empty;
-            }
-        }
+				builder.AppendLine(errmsg);
+				hasDiagnostic = true;
+			}
+			if(hasDiagnostic) {
+				builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
+				return builder.ToString();
+			} else {
+				return String.Empty;
+			}
+		}
+
+		public static string CodeElementsToString(IEnumerable<CodeElement> elements) {
+			StringBuilder builder = new StringBuilder();
+			bool hasCodeElement = false;
+			foreach (CodeElement e in elements) {
+				builder.AppendLine(e.ToString());
+				hasCodeElement = true;
+			}
+			//TODO log Diagnostics linked to codeElement directly after, to increase test readability
+			if (hasCodeElement) {
+				builder.Insert(0, "--- Code Elements ---" + Environment.NewLine);
+				return builder.ToString();
+			} else {
+				return String.Empty;
+			}
+		}
 
         internal static string DumpResult(Program program, Class cls, IList<Diagnostic> diagnostics)
         {
@@ -169,9 +163,9 @@ namespace TypeCobol.Test.Compiler.Parser
             if (program == null) str.Append("?");
             else {
                 str.Append(program.ProgramName);
-                str.Append(" common:");    Dump(str, program.IsCommon);
-                str.Append(" initial:");   Dump(str, program.IsInitial);
-                str.Append(" recursive:"); Dump(str, program.IsRecursive);
+                str.Append(" common:").Append(program.IsCommon);
+                str.Append(" initial:").Append(program.IsInitial);
+                str.Append(" recursive:").Append(program.IsRecursive);
                 str.AppendLine();
                 Dump(str, program.AuthoringProperties);
             }
@@ -211,14 +205,17 @@ namespace TypeCobol.Test.Compiler.Parser
         }
 
 // [TYPECOBOL]
-		private static void Dump(StringBuilder str, Dictionary<string,DataDescriptionEntry> typedefs) {
-			if (typedefs.Count > 0) str.Append("CUSTOM TYPES:\n");
-			foreach(string typedef in typedefs.Keys) {
-				var entry = typedefs[typedef];
-				str.Append(" * ").AppendLine(typedef);
-				foreach(var sub in entry.Subordinates)
+		private static void Dump(StringBuilder str, IEnumerable<TypeDefinition> typedefs) {
+			int c = 0;
+			string header = "CUSTOM TYPES:\n";
+			str.Append(header);
+			foreach(var typedef in typedefs) {
+				str.Append(" * ").AppendLine(typedef.DataType.Name.ToString());
+				foreach(var sub in typedef.Subordinates)
 					DumpInTypeDef(str, sub, 2);
+				c++;
 			}
+			if (c==0) str.Length -= header.Length;
 		}
 
 		private static void DumpInTypeDef(StringBuilder str, DataDescriptionEntry entry, int indent) {

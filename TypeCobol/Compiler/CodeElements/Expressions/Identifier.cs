@@ -297,11 +297,27 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	{
 		public static bool IsSubscripted(Identifier identifier) {
 			var array = identifier as Subscriptable;
-			return array != null && array.Subscripts.Count > 0;
+			var name = identifier.Name as Subscripted;
+			return (array != null && array.Subscripts.Count > 0)
+				|| (name != null && new List<Subscript>(name.Subscripts).Count > 0);
 		}
 		public static bool IsReferenceModified(Identifier identifier) {
 			var substring = identifier as ReferenceModifiable;
 			return substring != null && substring.ReferenceModifier != null;
+		}
+
+		public static QualifiedName GetQualifiedName(Expression expression) {
+			if (!(expression is Identifier)) return null;
+			if (expression is SpecialRegister) return null;
+			if (expression is FunctionReference) return null;
+			return ((Identifier)expression).Name;
+		}
+		public static DataType GetDataType(Expression expression) {
+			var literal = expression as Literal;
+			if (literal == null) return null;
+			if (literal.IsNumeric) return DataType.Numeric;
+			if (literal.IsBoolean) return DataType.Boolean;
+			else return DataType.Alphanumeric;
 		}
 	}
 }

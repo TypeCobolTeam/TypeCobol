@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
@@ -199,19 +200,23 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
-		public Dictionary<string,DataDescriptionEntry> CustomTypes = new Dictionary<string,DataDescriptionEntry>();
+		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>();
+
+		public IEnumerable<TypeDefinition> CustomTypes {
+			get { return new List<TypeDefinition>(types.Values); }
+		}
 
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
-		public void RegisterCustomType(DataDescriptionEntry data) {
-			if (!data.IsTypeDefinition) throw new System.ArgumentException(data.Name+" is not a TYPEDEF data description");
-			CustomTypes[data.Name.Name] = data;
+		public void RegisterCustomType(TypeDefinition data) {
+			if (!data.IsTypeDefinition) throw new System.ArgumentException(data.DataType.Name+" is not a TYPEDEF data description");
+			types[data.DataType.Name] = data;
 		}
 
-		public DataDescriptionEntry GetCustomType(string type) {
+		public TypeDefinition GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
-				try { return table.CustomTypes[type]; }
+				try { return table.types[type]; }
 				catch(KeyNotFoundException ex) { } // should be in parent scope
 				table = table.EnclosingScope;
 			}
@@ -220,10 +225,33 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public bool IsCustomType(DataType type) {
 			if (type == null) return false;
-			foreach(var key in CustomTypes.Keys)
-				if (key.Equals(type.Name))
-					return true;
+			SymbolTable table = this;
+			while(table != null) {
+				foreach(var key in table.types.Keys)
+					if (key.Equals(type.Name))
+						return true;
+				table = table.EnclosingScope;
+			}
 			return false;
+		}
+
+
+
+		public override string ToString() {
+			var str = new StringBuilder();
+			foreach(var line in DataEntries) {
+				foreach (var data in line.Value) {
+					Dump(str, data, 1);
+					str.Append('\n');
+				}
+			}
+			// no enclosing scope dump
+			return str.ToString();
+		}
+		private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0) {
+			for (int c=0; c<indent; c++) str.Append("  ");
+			str.Append(data);
+			return str;
 		}
 	}
 }

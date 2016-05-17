@@ -10,6 +10,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public interface Subscripted {
 		Subscript this[string name] { get; }
+		IEnumerable<Subscript> Subscripts { get; }
 	}
 
 
@@ -97,22 +98,21 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 	public class SubscriptedQualifiedName: Subscripted, QualifiedName {
-		protected OrderedDictionary names = new OrderedDictionary();
+		protected List<KeyValuePair<string,Subscript>> names = new List<KeyValuePair<string,Subscript>>();
 
 		public SubscriptedQualifiedName(bool isExplicit = true) {
 			this.IsExplicit = isExplicit;
 		}
 
-		public void Add(string name, Subscript index) {
-			names.Add(name, index);
+		internal void Add(string name,Subscript subscript) {
+			names.Add(new KeyValuePair<string,Subscript>(name, subscript));
 		}
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			foreach(var key in names.Keys) {
-				str.Append(key);
-				var subscript = names[key] as Subscript;
-				if (subscript != null) str.Append('[').Append(subscript.ToString()).Append(']');
+			foreach(var item in names) {
+				str.Append(item.Key);
+				if (item.Value != null) str.Append('[').Append(item.Value.ToString()).Append(']');
 				str.Append('.');
 			}
 			if (names.Count > 0) str.Length -= 1;
@@ -122,16 +122,15 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 		public string Head {
 			get {
-				object head = null;
-				foreach(string name in names.Keys) head = name;
-				return (string)head;
+				if (names.Count < 1) return null;
+				return names[names.Count-1].Key;
 			}
 		}
 		public bool IsExplicit { get; private set; }
 
 		public IEnumerator<string> GetEnumerator() {
-			foreach (var key in names.Keys)
-				yield return (string)key;
+			foreach (var item in names)
+				yield return (string)item.Key;
 		}
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
 
@@ -141,10 +140,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public bool IsReadOnly {
 			get { return false; }
 		}
-		public void Add(string name)               { names.Add(name, null); }
-		public void Insert(int index, string name) { names.Insert(index, name, null); }
+		public void Add(string name)               { names.Add(new KeyValuePair<string,Subscript>(name, null)); }
+		public void Insert(int index, string name) { names.Insert(index, new KeyValuePair<string,Subscript>(name, null)); }
 		public void RemoveAt(int index)            { names.RemoveAt(index); }
-		public bool Remove(string name)            { names.Remove(name); return true; }
+		public bool Remove(string name) {
+			foreach(var item in names)
+				if (item.Key.Equals(name)) names.Remove(item);
+			return true;
+		}
 		public void Clear()                        { names.Clear(); }
 		public bool Contains(string name) {
 			foreach(string n in this)
@@ -181,7 +184,19 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		}
 
 		public Subscript this[string name] {
-			get { return (Subscript)names[name]; }
+			get {
+				foreach(var item in names)
+					if (item.Key.Equals(name)) return item.Value;
+					//TODO what if same name more than once?
+				return null;
+			}
+		}
+		public IEnumerable<Subscript> Subscripts {
+			get {
+				foreach(var item in names)
+					if (item.Value != null)
+						yield return item.Value;
+			}
 		}
 
 
@@ -222,6 +237,5 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			names.Reverse();
 			return names;
 		}
-
 	}
 }

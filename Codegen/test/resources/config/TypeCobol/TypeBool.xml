@@ -3,10 +3,10 @@
 
   <skeleton name="BOOL.DECLARE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" clause="TYPE" type="BOOL"/>
+      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" type="BOOL"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace" var="LEVEL=$LEVEL,NAME=$NAME">
+      <pattern location="NODE" action="replace" var="LEVEL=$level,NAME=$NAME">
 %LEVEL  %NAME-value PIC X VALUE LOW-VALUE.
   88  %NAME       VALUE 'T'.
   88  %NAME-false VALUE 'F'.
@@ -16,11 +16,11 @@
 
   <skeleton name="BOOL.SET">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" receiver="FALSE"/>
+      <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">
-SET %sender.name-false TO TRUE.
+      <pattern location="NODE" action="replace" var="NAME=$receiver.name">
+SET %NAME-false TO TRUE.
       </pattern>
     </patterns>
   </skeleton>

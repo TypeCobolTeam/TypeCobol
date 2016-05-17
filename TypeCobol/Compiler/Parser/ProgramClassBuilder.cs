@@ -40,10 +40,16 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
 							TableOfIntrisic.Add(data);
-					foreach(var type in value.CustomTypes.Values)
+					foreach(var type in value.CustomTypes)
 						TableOfIntrisic.RegisterCustomType(type);
 				}
+				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
 			}
+		}
+
+		private void RegisterCustomType(SymbolTable table,DataType type) {
+			try { table.GetCustomType(type.Name); }
+			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
 		}
 
         public ProgramDispatcher Dispatcher { get; internal set; }
@@ -145,7 +151,7 @@ namespace TypeCobol.Compiler.Parser
 			AddEntries(node, entries);
 			_exit();
 		}
-		private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
+		private void AddEntries(Node root, IEnumerable<DataDescriptionEntry> entries) {
 			foreach(var entry in entries) {
 				var child = new Node(entry);
 				_enter(child);
@@ -168,13 +174,20 @@ namespace TypeCobol.Compiler.Parser
 				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
-				var customTypeDescription = ComputeType(data, currencies);
-				if (data.IsGroup) groups.Push(data);
+				var customtype = ComputeType(data, currencies);
+				if (customtype != null && !customtype.DataType.IsNestable && hasParent) {
+					DiagnosticUtils.AddError(data, "Type "+customtype.DataType.Name+" should not be subordinate to another item");
+					var parent = data.TopLevel;
+					while(parent != null) {
+						DiagnosticUtils.AddError(parent, "Group items should not contain type "+customtype.DataType.Name+" items");
+						parent = parent.TopLevel;
+					}
+				}
 
 				if (!data.IsTypeDefinitionPart) {
 					CurrentProgram.SymbolTable.Add(data);
-					if (customTypeDescription != null) {
-						foreach(var sub in customTypeDescription.Subordinates) {
+					if (customtype != null) {
+						foreach(var sub in customtype.Subordinates) {
 							// add a clone so parent/child relations are not spoiled
 							var clone = sub.Clone() as DataDescriptionEntry;
 							data.Subordinates.Add(clone);
@@ -235,6 +248,7 @@ namespace TypeCobol.Compiler.Parser
 					updated = true;
 				}
 			}
+			if (updated || data.IsGroup) groups.Push(data);
 			return updated;
 		}
 
@@ -242,7 +256,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="data">Data description to update</param>
 		/// <param name="currencies">Currency characters, used to know if data is numeric or numeric edited</param>
 		/// <returns>Representation of the corresponding TYPEDEF if data is of a custom TYPE, or null if data type is unknown of from COBOL standard.</returns>
-		private DataDescriptionEntry ComputeType(DataDescriptionEntry data, char[] currencies) {
+		private TypeDefinition ComputeType(DataDescriptionEntry data, char[] currencies) {
 			if (data.DataType != null) return null;
 			if (data.Picture == null) {
 				data.DataType = DataType.Unknown;
@@ -264,7 +278,7 @@ namespace TypeCobol.Compiler.Parser
 				return null;
 			}
 		}
-		private DataDescriptionEntry GetCustomType(string name) {
+		private TypeDefinition GetCustomType(string name) {
 			try { return CurrentProgram.SymbolTable.GetCustomType(name); }
 			catch(ArgumentException ex) { return null; }
 		}

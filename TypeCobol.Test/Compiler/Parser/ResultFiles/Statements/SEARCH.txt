@@ -21,9 +21,9 @@
 
 [[AtEndCondition]] [3,4:AT]<AT> --> [6,8:END]<END>
 
-Set  fatalError TO TRUE
+Set  fatalError TO True
 
-Set  otherVariable TO TRUE
+Set  otherVariable TO True
 
 [[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,26:errorProcedure]<UserDefinedWord>
 

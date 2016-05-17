@@ -40,31 +40,20 @@ namespace TypeCobol.Test.Compiler.Parser
             this.compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false);
         }
 
-        public void Parse()
-        {
-            try
-            {
-                this.compiler.CompileOnce();
-            }
-            catch(Exception e)
-            {
-                this.observer.OnError(e);
-            }
-        }
+		public void Parse() {
+			try { this.compiler.CompileOnce(); }
+			catch(Exception e) { this.observer.OnError(e); }
+		}
 
-        public string ToJSON()
-        {
-            return new TestJSONSerializer().ToJSON(this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
-        }
+		public string ToJSON() {
+			return new TestJSONSerializer().ToJSON(this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
+		}
 
-
-        public void Compare()
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path)))
-            {
-                this.comparator.Compare(this.compiler.CompilationResultsForProgram, reader);
-            }
-        }
+		public void Compare() {
+			using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path))) {
+				this.comparator.Compare(this.compiler.CompilationResultsForProgram, reader);
+			}
+		}
     }
 
     internal class TestObserver
@@ -133,55 +122,45 @@ namespace TypeCobol.Test.Compiler.Parser
             return name.Remove(name.Length - finder.paths.sextension.Length);
         }
 
-        public void Test(bool debug = false, bool json = false)
-        {
-            if (this.samples.Count < 1) throw new System.Exception("No sample file!");
-            var errors = new StringBuilder();
-            foreach (var sample in this.samples)
-            {
-                IList<FilesComparator> comparators = GetComparators(sample, debug);
-                if (comparators.Count < 1)
-                {
-                    System.Console.WriteLine(" /!\\ ERROR: Missing result file \"" + sample + "\"");
-                    errors.AppendLine("Missing result file \"" + sample + "\"");
-                    continue;
-                }
-                foreach (var comparator in comparators)
-                {
-                    System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
-                    var unit = new TestUnit(sample, debug);
-                    unit.comparator = comparator;
-                    unit.Init(this.extensions);
-                    try
-                    {
-                        unit.Parse();
-                        if (unit.observer.HasErrors)
-                        {
-                            System.Console.WriteLine(" /!\\ EXCEPTION\n" + unit.observer.DumpErrors());
-                            errors.AppendLine(unit.observer.DumpErrors());
-                        }
+		public void Test(bool debug = false, bool json = false) {
+			if (this.samples.Count < 1) throw new System.Exception("No sample file!");
+			var errors = new StringBuilder();
+			foreach (var sample in this.samples) {
+				IList<FilesComparator> comparators = GetComparators(sample, debug);
+				if (comparators.Count < 1) {
+					System.Console.WriteLine(" /!\\ ERROR: Missing result file \"" + sample + "\"");
+					errors.AppendLine("Missing result file \"" + sample + "\"");
+					continue;
+				}
+				foreach (var comparator in comparators) {
+					System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+					var unit = new TestUnit(sample, debug);
+					unit.comparator = comparator;
+					unit.Init(this.extensions);
+					unit.Parse();
+					if (unit.observer.HasErrors) {
+						System.Console.WriteLine(" /!\\ EXCEPTION\n" + unit.observer.DumpErrors());
+						errors.AppendLine(unit.observer.DumpErrors());
+					}
 
-                        if (json)
-                        {
-                            string filename = comparator.paths.result.full.ToString();
-                            string name = System.IO.Path.GetFileName(filename);
-                            string extension = System.IO.Path.GetExtension(filename);
-                            filename = filename.Substring(0, filename.Length - extension.Length);
-                            string[] lines = { unit.ToJSON() };
-                            System.IO.File.WriteAllLines(filename + ".json", lines);
-                        }
+					if (json) {
+						string filename = comparator.paths.result.full.ToString();
+						string name = System.IO.Path.GetFileName(filename);
+						string extension = System.IO.Path.GetExtension(filename);
+						filename = filename.Substring(0, filename.Length - extension.Length);
+						string[] lines = { unit.ToJSON() };
+						System.IO.File.WriteAllLines(filename + ".json", lines);
+					}
 
-                        unit.Compare();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        System.Console.WriteLine(" /!\\ MISMATCH\n" + ex.Message);
-                        errors.Append("E");
-                    }
-                }
-            }
-            if (errors.Length > 0) throw new System.Exception(errors.ToString());
-        }
+					try { unit.Compare(); }
+					catch (System.Exception ex) {
+						System.Console.WriteLine(" /!\\ MISMATCH\n" + ex.Message);
+						errors.Append("E");
+					}
+				}
+			}
+			if (errors.Length > 0) throw new System.Exception(errors.ToString());
+		}
 
         private IList<FilesComparator> GetComparators(string sample, bool debug)
         {
@@ -210,39 +189,35 @@ namespace TypeCobol.Test.Compiler.Parser
         void Compare(CompilationUnit result, StreamReader expected);
     }
 
-    internal class FilesComparator : Comparator
-    {
-        internal Paths paths;
-        internal bool debug;
+	internal class FilesComparator : Comparator
+	{
+		internal Paths paths;
+		internal bool debug;
 
-        public FilesComparator(string name) : this(name, null, false) { }
-        public FilesComparator(string name, Names resultnames) : this(name, resultnames, false) { }
-        public FilesComparator(string name, bool debug) : this(name, null, debug) { }
-        public FilesComparator(string name, Names resultnames = null, bool debug = false)
-        {
-            this.paths = new Paths(name, resultnames != null? resultnames : new EmptyName());
-            this.debug = debug;
-        }
+		public FilesComparator(string name) : this(name, null, false) { }
+		public FilesComparator(string name, Names resultnames) : this(name, resultnames, false) { }
+		public FilesComparator(string name, bool debug) : this(name, null, debug) { }
+		public FilesComparator(string name, Names resultnames = null, bool debug = false) {
+			this.paths = new Paths(name, resultnames != null? resultnames : new EmptyName());
+			this.debug = debug;
+		}
 
-        public virtual void Compare(CompilationUnit result, StreamReader reader)
-        {
-            Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.CodeElementsDocumentSnapshot.ParserDiagnostics, reader);
-        }
+		public virtual void Compare(CompilationUnit result, StreamReader reader) {
+			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.CodeElementsDocumentSnapshot.ParserDiagnostics, reader);
+		}
 
-        internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-            string result = ParserUtils.DumpResult(elements, diagnostics);
-            if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
-        }
+		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected) {
+			string result = ParserUtils.DumpResult(elements, diagnostics);
+			if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
+			ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
+		}
 
-        internal DocumentFormat getSampleFormat()
-        {
-            if (paths.sample.name.Contains(".rdz"))
-                return DocumentFormat.RDZReferenceFormat;
-            return DocumentFormat.FreeUTF8Format;
-        }
-    }
+		internal DocumentFormat getSampleFormat() {
+			if (paths.sample.name.Contains(".rdz"))
+				return DocumentFormat.RDZReferenceFormat;
+			return DocumentFormat.FreeUTF8Format;
+		}
+	}
 
     internal class ArithmeticComparator : FilesComparator
     {

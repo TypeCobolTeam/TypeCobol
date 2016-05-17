@@ -5,12 +5,7 @@ namespace TypeCobol.Compiler.CodeElements
 {
     public class ProgramIdentification : CodeElement
     {
-        public ProgramIdentification() : base(CodeElementType.ProgramIdentification)
-        {
-            IsCommon = SyntaxBoolean.False;
-            IsInitial = SyntaxBoolean.False;
-            IsRecursive = SyntaxBoolean.False;
-        }
+        public ProgramIdentification() : base(CodeElementType.ProgramIdentification) { }
 
         /// <summary>
         /// program-name
@@ -50,7 +45,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// attribute is not supported for programs compiled with the THREAD
         /// option.
         /// </summary>
-        public SyntaxBoolean IsInitial { get; set; }
+        public bool IsInitial { get; set; }
 
         // -- ONLY IN OUTERMOST PROGRAM --
 
@@ -67,7 +62,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RECURSIVE clause is required for programs compiled with the
         /// THREAD option.
         /// </summary>
-        public SyntaxBoolean IsRecursive { get; set; }
+        public bool IsRecursive { get; set; }
 
         // -- ONLY IN NESTED PROGRAMS --
 
@@ -78,7 +73,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// common program and programs contained within them. The COMMON
         /// clause can be used only in nested programs.
         /// </summary>
-        public SyntaxBoolean IsCommon { get; set; }
+        public bool IsCommon { get; set; }
 
         /// <summary>
         /// Debug string
