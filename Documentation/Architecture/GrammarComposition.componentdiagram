@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<componentModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" dslVersion="1.0.0.0" Id="64867159-64d2-44d8-8b5f-0b414f80e5ad" name="GrammarComposition" linkedPackageId="baaa1a4a-45fb-4e3c-a150-8804e26d8998" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ComponentDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="dbc4ab00-300f-4a92-91d6-7bfd8c21a8f3">
+      <profileInstance Id="7243dfd6-487a-4d9b-bb5b-da1d84dbfff5" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="8b8e8ef6-3e7e-4377-8faf-caa41fd308ec">
+      <profileInstance Id="6e661f24-f525-43cc-9e00-1df803b37394" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <componentModelHasComponents>
+      <component Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" name="CobolCodeElement" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="482e9670-4a19-4f17-9b39-68a44a7c56c6" />
+        <generalsInternal>
+          <generalization Id="6369e6eb-9b0d-4690-9677-472006de1673" isSubstitutable="false">
+            <componentMoniker Id="ba05ac01-0d9a-4096-8c46-6689a05b5cb7" LastKnownName="CobolBase" />
+            <elementDefinition Id="798e1fbf-2644-4320-865e-1e2e81515f0d" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="ba05ac01-0d9a-4096-8c46-6689a05b5cb7" name="CobolBase" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="750973a2-1f8c-4987-9b27-ace5f5f72ccd" />
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="92770d60-69be-4cf4-8887-bf5dc44eba4d" name="Cobol2002CodeElements" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="090ff777-8cc7-44bc-8d4e-0851ea3b8e06" />
+        <generalsInternal>
+          <generalization Id="8ad4b8b6-9b26-4662-b4c3-d37411c57789" isSubstitutable="false">
+            <componentMoniker Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" LastKnownName="CobolCodeElement" />
+            <elementDefinition Id="c940fe05-14db-4c88-b114-09ab1a1781f9" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="08c68b3c-2794-4c98-b3a4-1ff372539200" name="CobolProgramClass" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0359efa9-5283-4df8-baec-2fe9d7e2e441" />
+        <suppliersInternal>
+          <dependency Id="567f086d-0549-4552-b931-044922dc7a39">
+            <componentMoniker Id="4047129e-7593-4c83-bdc5-578f74bd4995" LastKnownName="CodeElements" />
+            <elementDefinition Id="4f784767-8d2d-4291-bab2-80bf104f591b" />
+          </dependency>
+        </suppliersInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="047ea525-ae44-4795-8e21-21db4ea22a4e" name="TypeCobolCodeElements" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="94e92c41-71a3-477c-830d-92ee2504a4d9" />
+        <generalsInternal>
+          <generalization Id="fed342b9-77e5-4230-9138-2a2110ae29d8" isSubstitutable="false">
+            <componentMoniker Id="92770d60-69be-4cf4-8887-bf5dc44eba4d" LastKnownName="Cobol2002CodeElements" />
+            <elementDefinition Id="93f39945-71f4-46a3-b029-02d0daf230cc" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="4047129e-7593-4c83-bdc5-578f74bd4995" name="CodeElements" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="feb9ef08-c5d4-40fc-9cda-dd303936b1e6" />
+        <generalsInternal>
+          <generalization Id="9dd05a97-cd7a-41f1-88dc-f8cf384cc14b" isSubstitutable="false">
+            <componentMoniker Id="047ea525-ae44-4795-8e21-21db4ea22a4e" LastKnownName="TypeCobolCodeElements" />
+            <elementDefinition Id="7016504d-d87b-4b8c-8bf2-76da24c5a532" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="94327e19-8805-4eeb-bac9-9b823e2b156e" name="CobolCompilerDirectives" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="31b8ba72-604a-4501-a3fd-72928bcd7e77" />
+        <generalsInternal>
+          <generalization Id="2ddd7e7a-0175-40d9-8b07-96805b46aa25" isSubstitutable="false">
+            <componentMoniker Id="ba05ac01-0d9a-4096-8c46-6689a05b5cb7" LastKnownName="CobolBase" />
+            <elementDefinition Id="c0b2522f-499d-4396-8667-0ca3c55cbc93" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+  </packagedElements>
+  <package Id="baaa1a4a-45fb-4e3c-a150-8804e26d8998" name="FileCompileSequence">
+    <elementDefinition Id="d928bd81-ef7a-4ddc-a3dd-9d8217d026b4" />
+  </package>
+</componentModel>
