@@ -209,18 +209,15 @@ namespace TypeCobol.Compiler.Parser
 			return result;
 		}
 
-		private int ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
+		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
 			if (data.Subordinates.Count < 1) {
 				data.Offset = offset;
-				data.Bytes = ComputeSize(data.Picture, data.DataType);
-				offset += data.Bytes;
+				offset += data.MemoryArea.Length;
 			}
 			else {
-				data.Bytes = 0;
 				foreach(var child in data.Subordinates)
-					data.Bytes += ComputeMemoryProfile(child, ref offset);
+					ComputeMemoryProfile(child, ref offset);
 			}
-			return data.Bytes;
 		}
 
 		/// <summary>Naive size computation</summary>

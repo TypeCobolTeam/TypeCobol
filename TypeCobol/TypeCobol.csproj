@@ -130,6 +130,7 @@
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SymbolInformation.cs" />
+    <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />

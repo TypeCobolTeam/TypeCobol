@@ -387,22 +387,59 @@ namespace TypeCobol.Test.Compiler.Parser
 			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
 			foreach(var line in table.DataEntries) {
 				foreach(var data in line.Value) {
-					if (data.LevelNumber == 1) Dump(str, data);
+					int offset = 0;
+					if (data.LevelNumber == 1) Dump(str, data, ref offset, 0);
 				}
 			}
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0, int baseaddress = 1) {
+		private void Dump(StringBuilder str, DataDescriptionEntry data, ref int offset, int indent, string indexes = "", int baseaddress = 1) {
+			int level = data.LevelNumber;
+			string name = (data.Name != null?data.Name.ToString():"?");
+			foreach(var e in data.MemoryArea) {
+				str.AppendLine(CreateLine(level, name, e, data.MemoryArea.Count, indent));
+				string strindexes = CreateIndexes(indexes, e.Index);
+				foreach(var child in data.Subordinates) Dump(str, child, ref offset, indent+1, strindexes);
+
+				if (data.Subordinates.Count == 0) offset += data.MemoryArea.UnitLength;
+			}
+		}
+		private string CreateLine(int level, string name, TableElementInMemory mem, int max, int indent, string strindexes = "") {
 			var res = new System.Text.StringBuilder();
-			for(int i=0;i<indent;i++) res.Append("  ");
-			if (data.LevelNumber > 1) res.Append(String.Format("{0,2} ", data.LevelNumber));
-			res.Append(data.Name);
-			while(res.Length < 36) res.Append(' ');
+			BeginFirstColumn(res, indent, level, name);
+			EndFirstColumn(res, strindexes, mem.Index, max);
+			EndLine(res, mem.Offset, mem.Length);
+			return res.ToString();
+		}
+		private void BeginFirstColumn(StringBuilder str, int indent, int level, string name) {
+			for(int i=0; i<indent; i++) str.Append("  ");
+			if (level > 1) str.Append(String.Format("{0,2} ", level));
+			str.Append(name);
+		}
+		private void EndFirstColumn(StringBuilder str, string strprefix, int index, int max) {
+			if (strprefix.Length > 0 || (index >= 0 && max > 1)) {
+				str.Append('(').Append(CreateIndexes(strprefix,index)).Append(')');
+			}
+			while(str.Length < 36) str.Append(' ');
+		}
+		private void EndLine(StringBuilder str, int offset, int size, int baseaddress = 1) {
+			str.Append(String.Format(" {0,6:0} ", baseaddress + offset));//start
+			str.Append(String.Format(" {0,6:0} ", offset + size));//end
+			str.Append(String.Format(" {0,6:0} ", size));//length
+		}
+/*
+		private string CreateLine(DataDescriptionEntry data, int indent, string strindexes = "", int index = -1, int max = 1, int baseaddress = 1) {
+			var res = new System.Text.StringBuilder();
+			BeginFirstColumn(res, indent, data.LevelNumber, (data.Name != null?data.Name.ToString():"?"));
+			EndFirstColumn(res, strindexes, index, max);
 			res.Append(String.Format(" {0,6:0} ", data.Offset+baseaddress));//start
 			res.Append(String.Format(" {0,6:0} ", data.Offset+data.Bytes));//end
 			res.Append(String.Format(" {0,6:0} ", data.Bytes));//length
-			str.AppendLine(res.ToString());
-			foreach(var child in data.Subordinates) Dump(str, child, indent+1);
+			return res.ToString();
+		}
+*/
+		private string CreateIndexes(string prefix, int index) {
+			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1).ToString()):"");
 		}
 	}
 
