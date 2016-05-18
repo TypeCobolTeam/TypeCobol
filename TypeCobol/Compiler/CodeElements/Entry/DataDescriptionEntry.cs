@@ -376,14 +376,32 @@ namespace TypeCobol.Compiler.CodeElements
 		private DataType datatype = null;
 		public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 
-		public TableInMemory MemoryArea { get; private set; }
+		public DataInMemory MemoryArea { get; private set; }
 		private void updateMemoryArea() {
-			int offset = MemoryArea != null? MemoryArea.Offset : 0;
-			MemoryArea = new TableInMemory(Picture, DataType, offset, Occurences);
+			int offset = SiblingOffset;
+			int length = DataInMemory.GetPictureSize(Picture) * DataInMemory.GetTypeSize(DataType);
+			if (IsTableOccurence)
+				 MemoryArea = new TableInMemory(length, offset, Occurences);
+			else MemoryArea = new DataInMemory(length, offset);
 		}
-		public int Offset{
-			get { return MemoryArea != null? MemoryArea.Offset : 0; }
-			set { MemoryArea.Offset = value; }
+		public int Length {
+			get {
+				if (Subordinates.Count == 0) return MemoryArea.Length;
+				int length = 0;
+				foreach(var s in Subordinates) length += s.Length;
+				return length;
+			}
+		}
+		public int SiblingOffset {
+			get {
+				if (TopLevel == null) return 0;
+				var siblings = new List<DataDescriptionEntry>(TopLevel.Subordinates);
+				int offset = 0;
+				foreach(var s in siblings)
+					if (s == this) return offset;
+					else offset += s.MemoryArea.Length;
+				throw new IndexOutOfRangeException();
+			}
 		}
 		private Occurences Occurences {
 			get {

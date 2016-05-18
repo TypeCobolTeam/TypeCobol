@@ -211,27 +211,13 @@ namespace TypeCobol.Compiler.Parser
 
 		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
 			if (data.Subordinates.Count < 1) {
-				data.Offset = offset;
+				data.MemoryArea.Offset = offset;
 				offset += data.MemoryArea.Length;
 			}
 			else {
 				foreach(var child in data.Subordinates)
 					ComputeMemoryProfile(child, ref offset);
 			}
-		}
-
-		/// <summary>Naive size computation</summary>
-		/// <param name="picture">Picture, for length</param>
-		/// <param name="type">Data type, for unit size</param>
-		/// <returns>A size for the data that will be correct in simple cases, but wrong in real-world cases.</returns>
-		private int ComputeSize(string picture, DataType type) {
-			int unitsize = 1;//TODO
-			if (picture == null) return unitsize;
-			var betweenparentheses = picture.Split("()".ToCharArray());
-			int length = 1;
-			if (betweenparentheses.Length > 1)
-				length = int.Parse(betweenparentheses[1]);
-			return length * unitsize;
 		}
 
 		private void AddGeneratedSymbols(DataDescriptionEntry data) {

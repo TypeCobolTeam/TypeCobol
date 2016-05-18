@@ -18,44 +18,58 @@ namespace TypeCobol.Compiler.CodeModel {
 		int End    { get; }
 	}
 
-	public class TableElementInMemory: COBOLMemoryArea {
-		public int Offset { get; private set; }
-		public int Length { get; private set; }
-		public int Index  { get; private set; }
-		public int Start  { get { return Offset+1; } }
-		public int End    { get { return Offset+Length; } }
+	public class DataInMemory: COBOLMemoryArea {
+		public virtual int Offset { get; set; }
+		/// <summary>Length (in bytes)</summary>
+		public virtual int Length { get; private set; }
+		public virtual int Start  { get { return Offset+1; } }
+		public virtual int End    { get { return Offset+Length; } }
 
-		public TableElementInMemory(int index, int length, int offset=0) {
-			Offset = offset;
-			Index  = index;
+		public DataInMemory(int length, int offset=0) {
 			Length = length;
+			Offset = offset;
+		}
+
+		public static int GetPictureSize(string picture) {
+			if (picture == null) return 1;
+			var betweenparentheses = picture.Split("()".ToCharArray());
+			if (betweenparentheses.Length > 1)
+				return int.Parse(betweenparentheses[1]);
+			return 1;
+		}
+		public static int GetTypeSize(DataType type) {
+			return 1; //TODO
 		}
 	}
 
-	public class TableInMemory: COBOLMemoryArea, IList<TableElementInMemory> {
-		public int Offset { get; set; }
-		public int Length { get { return UnitLength * MaxOccurences.Count; } }
+	public class TableElementInMemory: DataInMemory {
+		/// <summary>Index of the elements in the table</summary>
+		public virtual int Index  { get; private set; }
+
+		public TableElementInMemory(int index, int length, int offset=0)
+			: base(length, offset) {
+			Index  = index;
+		}
+	}
+
+	public class TableInMemory: DataInMemory, IList<TableElementInMemory> {
+		/// <summary>Length (in bytes) of the table</summary>
+		public override int Length { get { return UnitLength * MaxOccurences.Count; } }
+		/// <summary>Length (in bytes) of one element in the table (all elements have the same length)</summary>
 		public int UnitLength    { get; private set; }
+		/// <summary>Maximum number of elements in the table</summary>
 		public Occurences MaxOccurences { get; private set; }
-		public int Start  { get { return Offset+1; } }
-		public int End    { get { return Offset+Length; } }
 
 		/// <summary>Naive size computation</summary>
 		/// <param name="picture">Picture, for length</param>
 		/// <param name="type">Data type, for unit size</param>
 		/// <param name="offset">Offset relative to level-01 parent</param>
-		/// <returns>A size for the data that will be correct in simple cases, but wrong in real-world cases.</returns>
-		public TableInMemory(string picture, DataType type, int offset, Occurences max) {
-			Offset = offset;
+		/// <param name="max">Number of elements in the table</param>
+		public TableInMemory(int length, int offset, Occurences max)
+			: base(-1, offset) {
 			MaxOccurences = max;
-			UnitLength = 1;//TODO compute from type
-			if (picture != null) {
-				var betweenparentheses = picture.Split("()".ToCharArray());
-				if (betweenparentheses.Length > 1)
-					UnitLength = int.Parse(betweenparentheses[1]);
-			}
+			UnitLength = length;
 		}
-
 
 
 		public IEnumerator<TableElementInMemory> GetEnumerator() {
@@ -81,7 +95,7 @@ namespace TypeCobol.Compiler.CodeModel {
 		public TableElementInMemory this[int index] {
 			get {
 				if (index < 0 || (MaxOccurences.isBounded && index >= MaxOccurences.Count))
-					throw new IndexOutOfRangeException(index+" outside of [0;"+MaxOccurences+"[");
+					throw new ArgumentOutOfRangeException(index+" outside of [0;"+MaxOccurences+"[");
 				return new TableElementInMemory(index, UnitLength, Offset + index*UnitLength);
 			}
 			set { throw new NotSupportedException(); }
@@ -102,6 +116,6 @@ namespace TypeCobol.Compiler.CodeModel {
 	}
 	public class Unbounded: Occurences {
 		public bool isBounded { get { return false; } }
-		public int Count { get { throw new ArgumentOutOfRangeException("Unbounded"); } }
+		public int Count { get { throw new IndexOutOfRangeException("Unbounded"); } }
 	}
 }

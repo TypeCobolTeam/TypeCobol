@@ -396,19 +396,24 @@ namespace TypeCobol.Test.Compiler.Parser
 		private void Dump(StringBuilder str, DataDescriptionEntry data, ref int offset, int indent, string indexes = "", int baseaddress = 1) {
 			int level = data.LevelNumber;
 			string name = (data.Name != null?data.Name.ToString():"?");
-			foreach(var e in data.MemoryArea) {
-				str.AppendLine(CreateLine(level, name, e, data.MemoryArea.Count, indent));
-				string strindexes = CreateIndexes(indexes, e.Index);
-				foreach(var child in data.Subordinates) Dump(str, child, ref offset, indent+1, strindexes);
-
-				if (data.Subordinates.Count == 0) offset += data.MemoryArea.UnitLength;
+			if (data.MemoryArea is TableInMemory) {
+				var table = data.MemoryArea as TableInMemory;
+				foreach(var e in table) {
+					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
+					string strindexes = CreateIndexes(indexes, e.Index);
+					foreach(var child in data.Subordinates) Dump(str, child, ref offset, indent+1, strindexes);
+				}
+			} else {
+				str.AppendLine(CreateLine(level, name, offset, data.Length, 0, 1, indent));
+				foreach(var child in data.Subordinates) Dump(str, child, ref offset, indent+1, indexes);
 			}
+			if (data.Subordinates.Count == 0) offset += data.Length;
 		}
-		private string CreateLine(int level, string name, TableElementInMemory mem, int max, int indent, string strindexes = "") {
+		private string CreateLine(int level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
 			var res = new System.Text.StringBuilder();
 			BeginFirstColumn(res, indent, level, name);
-			EndFirstColumn(res, strindexes, mem.Index, max);
-			EndLine(res, mem.Offset, mem.Length);
+			EndFirstColumn(res, strindexes, index, max);
+			EndLine(res, offset, length);
 			return res.ToString();
 		}
 		private void BeginFirstColumn(StringBuilder str, int indent, int level, string name) {
