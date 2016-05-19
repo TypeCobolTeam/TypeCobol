@@ -154,7 +154,7 @@ namespace TypeCobol.Compiler.CodeModel
 			return filtered;
 		}
 
-		private IList<DataDescriptionEntry> Get(string key) {
+		public IList<DataDescriptionEntry> Get(string key) {
 			var values = new List<DataDescriptionEntry>();
 			if (DataEntries.ContainsKey(key))
 				values.AddRange(DataEntries[key]);

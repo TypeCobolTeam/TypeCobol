@@ -213,7 +213,7 @@ namespace TypeCobol.Compiler.Parser
 			if (data.Subordinates.Count < 1) {
 				int length = picture2Size(data.Picture) * type2Size(data.DataType);
 				// TODO REDEFINES
-				data.MemoryArea = CreateMemoryArea(offset, length, data.IsTableOccurence, data.Occurences);
+				data.MemoryArea = CreateMemoryArea(data, offset, length);
 				offset += data.MemoryArea.Length; // offset for next sibling or for toplevel's next sibling
 			} else {
 				int length = 0;
@@ -223,7 +223,7 @@ namespace TypeCobol.Compiler.Parser
 					if (os < 0) os = child.MemoryArea.Offset;// parent offset = first child offset
 					length += child.MemoryArea.Length;
 				}
-				data.MemoryArea = CreateMemoryArea(os, length, data.IsTableOccurence, data.Occurences);
+				data.MemoryArea = CreateMemoryArea(data, os, length);
 			}
 		}
 		private static int picture2Size(string picture) {
@@ -236,9 +236,24 @@ namespace TypeCobol.Compiler.Parser
 		private static int type2Size(DataType type) {
 			return 1; //TODO
 		}
-		private static DataInMemory CreateMemoryArea(int offset, int length, bool table, Occurences occurences) {
-			if (table) return new TableInMemory(length, offset, occurences);
+		private DataInMemory CreateMemoryArea(DataDescriptionEntry data, int offset, int length) {
+			if (data.RedefinesDataName != null) {
+				var matches = Program.SymbolTable.Get(data.RedefinesDataName.Name);
+				if (matches.Count == 1) {
+					offset = matches[0].MemoryArea.Offset;
+					UpdateChildrenOffsets(data, offset);
+				}
+			}
+			if (data.IsTableOccurence) return new TableInMemory(length, offset, data.Occurences);
 			else return new DataInMemory(length, offset);
+		}
+
+		private void UpdateChildrenOffsets(DataDescriptionEntry data, int offset) {
+			foreach(var child in data.Subordinates) {
+				UpdateChildrenOffsets(child, offset);
+				child.MemoryArea.Offset = offset;
+				offset += child.MemoryArea.Length;
+			}
 		}
 
 		private void AddGeneratedSymbols(DataDescriptionEntry data) {
