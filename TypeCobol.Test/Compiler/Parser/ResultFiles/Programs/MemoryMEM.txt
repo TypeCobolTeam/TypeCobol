@@ -21,7 +21,7 @@ TEST1-GROUP1                              1    3260    3260
    5 TEST1-SGROUP4                     2755    2964     210 
     10 TEST1-ELT7                      2755    2764      10 
     10 TEST1-ELT8                      2765    2964     200 
-   5 TEST1-SGROUP5                     3055    3260     206 <
+   5 TEST1-SGROUP5                     3055    3260     206 
     10 TEST1-ELT9                      3055    3154     100 
     10 TEST1-ELT10                     3155    3256     102 
     10 TEST1-ELT11                     3257    3260       4 

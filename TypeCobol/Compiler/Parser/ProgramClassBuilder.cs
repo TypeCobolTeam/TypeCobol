@@ -219,9 +219,21 @@ namespace TypeCobol.Compiler.Parser
 				int length = 0;
 				int os = -1;
 				foreach(var child in data.Subordinates) {
+					COBOLMemoryArea rmem = null;
+					if (child.RedefinesDataName != null) {
+						rmem = GetRedefinedMemory(child.RedefinesDataName.Name);
+						offset = rmem.Offset;
+					}
 					ComputeMemoryProfile(child, ref offset);
 					if (os < 0) os = child.MemoryArea.Offset;// parent offset = first child offset
-					length += child.MemoryArea.Length;
+					if (rmem != null) {
+						if (child.MemoryArea.Length > rmem.Length) {
+System.Console.WriteLine("TODO: "+child.Name+'('+child.MemoryArea.Length+") REDEFINES smaller area "+child.RedefinesDataName.Name+'('+rmem.Length+')');
+							length += child.MemoryArea.Length - rmem.Length;//warn: redefines smaller area
+						} else {
+							offset += rmem.Length - child.MemoryArea.Length;//catch with redefined offset
+						}
+					} else length += child.MemoryArea.Length;
 				}
 				data.MemoryArea = CreateMemoryArea(data, os, length);
 			}
@@ -236,25 +248,20 @@ namespace TypeCobol.Compiler.Parser
 		private static int type2Size(DataType type) {
 			return 1; //TODO
 		}
-		private DataInMemory CreateMemoryArea(DataDescriptionEntry data, int offset, int length) {
-			if (data.RedefinesDataName != null) {
-				var matches = Program.SymbolTable.Get(data.RedefinesDataName.Name);
-				if (matches.Count == 1) {
-					offset = matches[0].MemoryArea.Offset;
-					UpdateChildrenOffsets(data, offset);
-				}
+		private COBOLMemoryArea GetRedefinedMemory(string redefined) {
+			var matches = Program.SymbolTable.Get(redefined);
+			if (matches.Count != 1) {
+System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
+				return null;
 			}
+			return matches[0].MemoryArea;
+		}
+		private COBOLMemoryArea CreateMemoryArea(DataDescriptionEntry data, int offset, int length) {
 			if (data.IsTableOccurence) return new TableInMemory(length, offset, data.Occurences);
 			else return new DataInMemory(length, offset);
 		}
 
-		private void UpdateChildrenOffsets(DataDescriptionEntry data, int offset) {
-			foreach(var child in data.Subordinates) {
-				UpdateChildrenOffsets(child, offset);
-				child.MemoryArea.Offset = offset;
-				offset += child.MemoryArea.Length;
-			}
-		}
+
 
 		private void AddGeneratedSymbols(DataDescriptionEntry data) {
 			if (data.DataType == null) return;

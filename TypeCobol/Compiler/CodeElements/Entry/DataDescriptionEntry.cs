@@ -362,7 +362,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public DataType DataType { get; set; }
 		public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 
-		public DataInMemory MemoryArea { get; set; }
+		public COBOLMemoryArea MemoryArea { get; set; }
 		public Occurences Occurences {
 			get {
 				if (IsTableOccurence) {
