@@ -51,6 +51,35 @@ TEST2-GROUP1                              1    3260    3260
     10 TEST2-ELT9                      3055    3154     100 
     10 TEST2-ELT10                     3155    3256     102 
     10 TEST2-ELT11                     3257    3260       4 
+TEST3-GROUP1                              1    3306    3306 
+   5 TEST3-SGROUP1                        1     354     354 
+    10 TEST3-ELT1                         1       4       4 
+    10 TEST3-ELT2                         5     354     350 
+   5 TEST3-SGROUP1R                       1     400     400 
+    10 TEST3-ELT1R                        1      50      50 
+    10 TEST3-ELT2R                       51     400     350 
+   5 TEST3-SGROUP2                      401    2800    2400 
+    10 TEST3-ELT3                       401     600     200 
+    10 TEST3-ELT4                       601    1600    1000 
+    10 TEST3-ELT5(1)                   1601    1720     120 
+    10 TEST3-ELT5(2)                   1721    1840     120 
+    10 TEST3-ELT5(3)                   1841    1960     120 
+    10 TEST3-ELT5(4)                   1961    2080     120 
+    10 TEST3-ELT5(5)                   2081    2200     120 
+    10 TEST3-ELT5(6)                   2201    2320     120 
+    10 TEST3-ELT5(7)                   2321    2440     120 
+    10 TEST3-ELT5(8)                   2441    2560     120 
+    10 TEST3-ELT5(9)                   2561    2680     120 
+    10 TEST3-ELT5(10)                  2681    2800     120 
+   5 TEST3-SGROUP3                     2801    3100     300 
+    10 TEST3-ELT6                      2801    3100     300 
+   5 TEST3-SGROUP4                     2801    3010     210 
+    10 TEST3-ELT7                      2801    2810      10 
+    10 TEST3-ELT8                      2811    3010     200 
+   5 TEST3-SGROUP5                     3101    3306     206 
+    10 TEST3-ELT9                      3101    3200     100 
+    10 TEST3-ELT10                     3201    3302     102 
+    10 TEST3-ELT11                     3303    3306       4 
 TEST5-GROUP1                              1     342     342 
    5 TEST5-SGROUP1(1)                     1     114     114 
     10 TEST5-ELT1(1)                      1       4       4 
