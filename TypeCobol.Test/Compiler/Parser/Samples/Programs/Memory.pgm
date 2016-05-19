@@ -68,6 +68,32 @@ WORKING-STORAGE SECTION.
         10  TEST3-ELT10          PIC X(102).
         10  TEST3-ELT11          PIC X(004).
 
+* TEST 4: correct REDEFINES and RENAMES clause
+01  TEST4-GROUP1.
+    05  TEST4-SGROUP1.
+        10  TEST4-ELT1           PIC X(04).
+        10  TEST4-ELT2           PIC X(350).
+    05  TEST4-SGROUP1R REDEFINES TEST4-SGROUP1.
+        10  TEST4-ELT1R          PIC X(50).
+        10  TEST4-ELT2R          PIC X(250).
+    05  TEST4-SGROUP2.
+        10  TEST4-ELT3           PIC X(200).
+        10  TEST4-ELT4           PIC X(1000).
+        10  TEST4-ELT5 PIC X(120)
+            OCCURS 10  TIMES.
+    05  TEST4-SGROUP3.
+        10  TEST4-ELT6           PIC X(300).
+    05  TEST4-SGROUP4 REDEFINES TEST4-SGROUP3.
+        10  TEST4-ELT7           PIC X(10).
+        10  TEST4-ELT8           PIC X(0200).
+    05  TEST4-SGROUP5.
+        10  TEST4-ELT9           PIC X(100).
+        10  TEST4-ELT10          PIC X(102).
+        10  TEST4-ELT11          PIC X(004).
+ 66  TEST4-SGROUP2R RENAMES TEST4-ELT2
+                    THRU    TEST4-ELT4.
+
+
 01  TEST5-GROUP1.
     05  TEST5-SGROUP1 OCCURS 3.
         10  TEST5-ELT1           PIC X(04).

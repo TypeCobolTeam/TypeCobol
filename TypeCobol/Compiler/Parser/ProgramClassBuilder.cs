@@ -312,7 +312,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			bool updated = false;
 			while(!updated && groups.Count > 0) {
 				var toplevel = groups.Peek();
-				if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
+				if (data.LevelNumber <= toplevel.LevelNumber || data.LevelNumber == 66) groups.Pop();
 				else {
 					toplevel.Subordinates.Add(data);
 					data.TopLevel = toplevel;
