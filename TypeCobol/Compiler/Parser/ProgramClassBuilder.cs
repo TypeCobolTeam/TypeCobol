@@ -200,8 +200,8 @@ namespace TypeCobol.Compiler.Parser
 					}
 				}
 			}
-			int offset = 0;
 			foreach(var data in result) {
+				int offset = 0;
 				ComputeMemoryProfile(data, ref offset);
 				if (data.IsTypeDefinition && data.Subordinates.Count < 1 && data.Picture == null)
 					DiagnosticUtils.AddError(data, data.Name+" has no description.");
