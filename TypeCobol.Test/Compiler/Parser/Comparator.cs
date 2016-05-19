@@ -155,7 +155,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
 					try { unit.Compare(); }
 					catch (System.Exception ex) {
-						System.Console.WriteLine(" /!\\ MISMATCH\n" + ex.Message);
+						System.Console.WriteLine(" /!\\ MISMATCH\n" + ex);
 						errors.Append("E");
 					}
 				}
@@ -387,13 +387,12 @@ namespace TypeCobol.Test.Compiler.Parser
 			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
 			foreach(var line in table.DataEntries) {
 				foreach(var data in line.Value) {
-					int offset = 0;
-					if (data.LevelNumber == 1) Dump(str, data, ref offset, 0);
+					if (data.LevelNumber == 1) Dump(str, data, 0);
 				}
 			}
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, DataDescriptionEntry data, ref int offset, int indent, string indexes = "", int baseaddress = 1) {
+		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent, string indexes = "", int baseaddress = 1) {
 			int level = data.LevelNumber;
 			string name = (data.Name != null?data.Name.ToString():"?");
 			if (data.MemoryArea is TableInMemory) {
@@ -401,13 +400,12 @@ namespace TypeCobol.Test.Compiler.Parser
 				foreach(var e in table) {
 					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
 					string strindexes = CreateIndexes(indexes, e.Index);
-					foreach(var child in data.Subordinates) Dump(str, child, ref offset, indent+1, strindexes);
+					foreach(var child in data.Subordinates) Dump(str, child, indent+1, strindexes);
 				}
 			} else {
-				str.AppendLine(CreateLine(level, name, offset, data.Length, 0, 1, indent));
-				foreach(var child in data.Subordinates) Dump(str, child, ref offset, indent+1, indexes);
+				str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
+				foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
 			}
-			if (data.Subordinates.Count == 0) offset += data.Length;
 		}
 		private string CreateLine(int level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
 			var res = new System.Text.StringBuilder();
@@ -432,17 +430,6 @@ namespace TypeCobol.Test.Compiler.Parser
 			str.Append(String.Format(" {0,6:0} ", offset + size));//end
 			str.Append(String.Format(" {0,6:0} ", size));//length
 		}
-/*
-		private string CreateLine(DataDescriptionEntry data, int indent, string strindexes = "", int index = -1, int max = 1, int baseaddress = 1) {
-			var res = new System.Text.StringBuilder();
-			BeginFirstColumn(res, indent, data.LevelNumber, (data.Name != null?data.Name.ToString():"?"));
-			EndFirstColumn(res, strindexes, index, max);
-			res.Append(String.Format(" {0,6:0} ", data.Offset+baseaddress));//start
-			res.Append(String.Format(" {0,6:0} ", data.Offset+data.Bytes));//end
-			res.Append(String.Format(" {0,6:0} ", data.Bytes));//length
-			return res.ToString();
-		}
-*/
 		private string CreateIndexes(string prefix, int index) {
 			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1).ToString()):"");
 		}

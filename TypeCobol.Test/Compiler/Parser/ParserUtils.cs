@@ -275,7 +275,6 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void CheckWithResultReader(string testName, string result, StreamReader reader)
         {
             string expectedResult = reader.ReadToEnd();
-
             TestUtils.compareLines(testName, result, expectedResult);
         }
     }

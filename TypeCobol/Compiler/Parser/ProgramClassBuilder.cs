@@ -211,13 +211,34 @@ namespace TypeCobol.Compiler.Parser
 
 		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
 			if (data.Subordinates.Count < 1) {
-				data.MemoryArea.Offset = offset;
-				offset += data.MemoryArea.Length;
-			}
-			else {
-				foreach(var child in data.Subordinates)
+				int length = picture2Size(data.Picture) * type2Size(data.DataType);
+				// TODO REDEFINES
+				data.MemoryArea = CreateMemoryArea(offset, length, data.IsTableOccurence, data.Occurences);
+				offset += data.MemoryArea.Length; // offset for next sibling or for toplevel's next sibling
+			} else {
+				int length = 0;
+				int os = -1;
+				foreach(var child in data.Subordinates) {
 					ComputeMemoryProfile(child, ref offset);
+					if (os < 0) os = child.MemoryArea.Offset;// parent offset = first child offset
+					length += child.MemoryArea.Length;
+				}
+				data.MemoryArea = CreateMemoryArea(os, length, data.IsTableOccurence, data.Occurences);
 			}
+		}
+		private static int picture2Size(string picture) {
+			if (picture == null) return 1;
+			var betweenparentheses = picture.Split("()".ToCharArray());
+			if (betweenparentheses.Length > 1)
+				return int.Parse(betweenparentheses[1]);
+			return 1;
+		}
+		private static int type2Size(DataType type) {
+			return 1; //TODO
+		}
+		private static DataInMemory CreateMemoryArea(int offset, int length, bool table, Occurences occurences) {
+			if (table) return new TableInMemory(length, offset, occurences);
+			else return new DataInMemory(length, offset);
 		}
 
 		private void AddGeneratedSymbols(DataDescriptionEntry data) {

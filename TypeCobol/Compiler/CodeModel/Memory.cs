@@ -29,17 +29,6 @@ namespace TypeCobol.Compiler.CodeModel {
 			Length = length;
 			Offset = offset;
 		}
-
-		public static int GetPictureSize(string picture) {
-			if (picture == null) return 1;
-			var betweenparentheses = picture.Split("()".ToCharArray());
-			if (betweenparentheses.Length > 1)
-				return int.Parse(betweenparentheses[1]);
-			return 1;
-		}
-		public static int GetTypeSize(DataType type) {
-			return 1; //TODO
-		}
 	}
 
 	public class TableElementInMemory: DataInMemory {
@@ -60,11 +49,6 @@ namespace TypeCobol.Compiler.CodeModel {
 		/// <summary>Maximum number of elements in the table</summary>
 		public Occurences MaxOccurences { get; private set; }
 
-		/// <summary>Naive size computation</summary>
-		/// <param name="picture">Picture, for length</param>
-		/// <param name="type">Data type, for unit size</param>
-		/// <param name="offset">Offset relative to level-01 parent</param>
-		/// <param name="max">Number of elements in the table</param>
 		public TableInMemory(int length, int offset, Occurences max)
 			: base(-1, offset) {
 			MaxOccurences = max;

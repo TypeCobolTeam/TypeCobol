@@ -358,52 +358,12 @@ namespace TypeCobol.Compiler.CodeElements
         ///
         ///   character-string can contain a maximum of 50 characters.
         /// </summary>
-        public string Picture {
-			get { return picture; }
-			set {
-				picture = value;
-				updateMemoryArea();
-			}
-		}
-		private string picture = null;
-		public DataType DataType {
-			get { return datatype; }
-			set {
-				datatype = value;
-				updateMemoryArea();
-			}
-		}
-		private DataType datatype = null;
+        public string Picture { get; set; }
+		public DataType DataType { get; set; }
 		public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 
-		public DataInMemory MemoryArea { get; private set; }
-		private void updateMemoryArea() {
-			int offset = SiblingOffset;
-			int length = DataInMemory.GetPictureSize(Picture) * DataInMemory.GetTypeSize(DataType);
-			if (IsTableOccurence)
-				 MemoryArea = new TableInMemory(length, offset, Occurences);
-			else MemoryArea = new DataInMemory(length, offset);
-		}
-		public int Length {
-			get {
-				if (Subordinates.Count == 0) return MemoryArea.Length;
-				int length = 0;
-				foreach(var s in Subordinates) length += s.Length;
-				return length;
-			}
-		}
-		public int SiblingOffset {
-			get {
-				if (TopLevel == null) return 0;
-				var siblings = new List<DataDescriptionEntry>(TopLevel.Subordinates);
-				int offset = 0;
-				foreach(var s in siblings)
-					if (s == this) return offset;
-					else offset += s.MemoryArea.Length;
-				throw new IndexOutOfRangeException();
-			}
-		}
-		private Occurences Occurences {
+		public DataInMemory MemoryArea { get; set; }
+		public Occurences Occurences {
 			get {
 				if (IsTableOccurence) {
 					if (NoMaxOccurencesCount) return new Unbounded();
@@ -745,25 +705,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// SECTION. Either alphanumeric groups or national groups can be
         /// unbounded.
         /// </summary>
-        public int MaxOccurencesCount {
-			get {
-				return maxoccurencescount;
-			}
-			set {
-				maxoccurencescount = value;
-				updateMemoryArea();
-			}
-		}
-		private int maxoccurencescount = 0;
+        public int MaxOccurencesCount { get; set; }
 		public bool NoMaxOccurencesCount {
 			get {
 				return MaxOccurencesCount == Int32.MaxValue;
 			}
 			set {
-				if (value) {
-					MaxOccurencesCount = Int32.MaxValue;
-					updateMemoryArea();
-				}
+				if (value) MaxOccurencesCount = Int32.MaxValue;
 				else throw new InvalidOperationException("Set me only to TRUE; or else set MaxOccurencesCount.");
 			}
 		}
