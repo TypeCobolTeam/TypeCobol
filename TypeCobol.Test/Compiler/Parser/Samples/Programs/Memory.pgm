@@ -1,0 +1,77 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. MemoryLayout.
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+
+* TEST 1: group with variable-length table
+01  TEST1-GROUP1.
+    05  TEST1-SGROUP1.
+        10  TEST1-ELT1           PIC 9(04).
+        10  TEST1-ELT2           PIC X(350).
+    05  TEST1-SGROUP2.
+        10  TEST1-ELT3           PIC X(200).
+        10  TEST1-ELT4           PIC X(1000).
+        10  TEST1-ELT5 PIC X(120)
+                 OCCURS 1 TO 10  TIMES
+                 DEPENDING ON TEST1-ELT1.
+    05  TEST1-SGROUP3.
+        10  TEST1-ELT6           PIC X(300).
+    05  TEST1-SGROUP4 REDEFINES TEST1-SGROUP3.
+        10  TEST1-ELT7           PIC X(10).
+        10  TEST1-ELT8           PIC X(0200).
+    05  TEST1-SGROUP5.
+        10  TEST1-ELT9           PIC X(100).
+        10  TEST1-ELT10          PIC X(102).
+        10  TEST1-ELT11          PIC X(004).
+
+* TEST 2: same group, fixed table
+01  TEST2-GROUP1.
+    05  TEST2-SGROUP1.
+        10  TEST2-ELT1           PIC 9(04).
+        10  TEST2-ELT2           PIC X(350).
+    05  TEST2-SGROUP2.
+        10  TEST2-ELT3           PIC X(200).
+        10  TEST2-ELT4           PIC X(1000).
+        10  TEST2-ELT5 PIC X(120)
+            OCCURS 10  TIMES.
+    05  TEST2-SGROUP3.
+        10  TEST2-ELT6           PIC X(300).
+    05  TEST2-SGROUP4 REDEFINES TEST2-SGROUP3.
+        10  TEST2-ELT7           PIC X(10).
+        10  TEST2-ELT8           PIC X(0200).
+    05  TEST2-SGROUP5.
+        10  TEST2-ELT9           PIC X(100).
+        10  TEST2-ELT10          PIC X(102).
+        10  TEST2-ELT11          PIC X(004).
+
+* TEST 3: group with REDEFINES clause
+01  TEST3-GROUP1.
+    05  TEST3-SGROUP1.
+        10  TEST3-ELT1           PIC X(04).
+        10  TEST3-ELT2           PIC X(350).
+    05  TEST3-SGROUP1R REDEFINES TEST3-SGROUP1.
+        10  TEST3-ELT1R          PIC X(50).
+        10  TEST3-ELT2R          PIC X(350).
+    05  TEST3-SGROUP2.
+        10  TEST3-ELT3           PIC X(200).
+        10  TEST3-ELT4           PIC X(1000).
+        10  TEST3-ELT5 PIC X(120)
+            OCCURS 10  TIMES.
+    05  TEST3-SGROUP3.
+        10  TEST3-ELT6           PIC X(300).
+    05  TEST3-SGROUP4 REDEFINES TEST3-SGROUP3.
+        10  TEST3-ELT7           PIC X(10).
+        10  TEST3-ELT8           PIC X(0200).
+    05  TEST3-SGROUP5.
+        10  TEST3-ELT9           PIC X(100).
+        10  TEST3-ELT10          PIC X(102).
+        10  TEST3-ELT11          PIC X(004).
+
+01  TEST5-GROUP1.
+    05  TEST5-SGROUP1 OCCURS 3.
+        10  TEST5-ELT1           PIC X(04).
+        10  TEST5-SSGROUP1       OCCURS 2.
+            15  TEST5-ELT2       PIC X(20).
+            15  TEST5-ELT3       PIC X(05).
+            15  TEST5-ELT4       PIC X(03) OCCURS 10.

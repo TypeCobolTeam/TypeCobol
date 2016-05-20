@@ -40,31 +40,20 @@ namespace TypeCobol.Test.Compiler.Parser
             this.compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false);
         }
 
-        public void Parse()
-        {
-            try
-            {
-                this.compiler.CompileOnce();
-            }
-            catch(Exception e)
-            {
-                this.observer.OnError(e);
-            }
-        }
+		public void Parse() {
+			try { this.compiler.CompileOnce(); }
+			catch(Exception e) { this.observer.OnError(e); }
+		}
 
-        public string ToJSON()
-        {
-            return new TestJSONSerializer().ToJSON(this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
-        }
+		public string ToJSON() {
+			return new TestJSONSerializer().ToJSON(this.compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
+		}
 
-
-        public void Compare()
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path)))
-            {
-                this.comparator.Compare(this.compiler.CompilationResultsForProgram, reader);
-            }
-        }
+		public void Compare() {
+			using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(comparator.paths.result.project.path))) {
+				this.comparator.Compare(this.compiler.CompilationResultsForProgram, reader);
+			}
+		}
     }
 
     internal class TestObserver
@@ -92,6 +81,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new RPNName(),
                 new NYName(),
                 new PGMName(),
+                new MemoryName(),
             };
 
         private IList<string> samples;
@@ -133,55 +123,45 @@ namespace TypeCobol.Test.Compiler.Parser
             return name.Remove(name.Length - finder.paths.sextension.Length);
         }
 
-        public void Test(bool debug = false, bool json = false)
-        {
-            if (this.samples.Count < 1) throw new System.Exception("No sample file!");
-            var errors = new StringBuilder();
-            foreach (var sample in this.samples)
-            {
-                IList<FilesComparator> comparators = GetComparators(sample, debug);
-                if (comparators.Count < 1)
-                {
-                    System.Console.WriteLine(" /!\\ ERROR: Missing result file \"" + sample + "\"");
-                    errors.AppendLine("Missing result file \"" + sample + "\"");
-                    continue;
-                }
-                foreach (var comparator in comparators)
-                {
-                    System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
-                    var unit = new TestUnit(sample, debug);
-                    unit.comparator = comparator;
-                    unit.Init(this.extensions);
-                    try
-                    {
-                        unit.Parse();
-                        if (unit.observer.HasErrors)
-                        {
-                            System.Console.WriteLine(" /!\\ EXCEPTION\n" + unit.observer.DumpErrors());
-                            errors.AppendLine(unit.observer.DumpErrors());
-                        }
+		public void Test(bool debug = false, bool json = false) {
+			if (this.samples.Count < 1) throw new System.Exception("No sample file!");
+			var errors = new StringBuilder();
+			foreach (var sample in this.samples) {
+				IList<FilesComparator> comparators = GetComparators(sample, debug);
+				if (comparators.Count < 1) {
+					System.Console.WriteLine(" /!\\ ERROR: Missing result file \"" + sample + "\"");
+					errors.AppendLine("Missing result file \"" + sample + "\"");
+					continue;
+				}
+				foreach (var comparator in comparators) {
+					System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+					var unit = new TestUnit(sample, debug);
+					unit.comparator = comparator;
+					unit.Init(this.extensions);
+					unit.Parse();
+					if (unit.observer.HasErrors) {
+						System.Console.WriteLine(" /!\\ EXCEPTION\n" + unit.observer.DumpErrors());
+						errors.AppendLine(unit.observer.DumpErrors());
+					}
 
-                        if (json)
-                        {
-                            string filename = comparator.paths.result.full.ToString();
-                            string name = System.IO.Path.GetFileName(filename);
-                            string extension = System.IO.Path.GetExtension(filename);
-                            filename = filename.Substring(0, filename.Length - extension.Length);
-                            string[] lines = { unit.ToJSON() };
-                            System.IO.File.WriteAllLines(filename + ".json", lines);
-                        }
+					if (json) {
+						string filename = comparator.paths.result.full.ToString();
+						string name = System.IO.Path.GetFileName(filename);
+						string extension = System.IO.Path.GetExtension(filename);
+						filename = filename.Substring(0, filename.Length - extension.Length);
+						string[] lines = { unit.ToJSON() };
+						System.IO.File.WriteAllLines(filename + ".json", lines);
+					}
 
-                        unit.Compare();
-                    }
-                    catch (System.Exception ex)
-                    {
-                        System.Console.WriteLine(" /!\\ MISMATCH\n" + ex.Message);
-                        errors.Append("E");
-                    }
-                }
-            }
-            if (errors.Length > 0) throw new System.Exception(errors.ToString());
-        }
+					try { unit.Compare(); }
+					catch (System.Exception ex) {
+						System.Console.WriteLine(" /!\\ MISMATCH\n" + ex);
+						errors.Append("E");
+					}
+				}
+			}
+			if (errors.Length > 0) throw new System.Exception(errors.ToString());
+		}
 
         private IList<FilesComparator> GetComparators(string sample, bool debug)
         {
@@ -210,39 +190,35 @@ namespace TypeCobol.Test.Compiler.Parser
         void Compare(CompilationUnit result, StreamReader expected);
     }
 
-    internal class FilesComparator : Comparator
-    {
-        internal Paths paths;
-        internal bool debug;
+	internal class FilesComparator : Comparator
+	{
+		internal Paths paths;
+		internal bool debug;
 
-        public FilesComparator(string name) : this(name, null, false) { }
-        public FilesComparator(string name, Names resultnames) : this(name, resultnames, false) { }
-        public FilesComparator(string name, bool debug) : this(name, null, debug) { }
-        public FilesComparator(string name, Names resultnames = null, bool debug = false)
-        {
-            this.paths = new Paths(name, resultnames != null? resultnames : new EmptyName());
-            this.debug = debug;
-        }
+		public FilesComparator(string name) : this(name, null, false) { }
+		public FilesComparator(string name, Names resultnames) : this(name, resultnames, false) { }
+		public FilesComparator(string name, bool debug) : this(name, null, debug) { }
+		public FilesComparator(string name, Names resultnames = null, bool debug = false) {
+			this.paths = new Paths(name, resultnames != null? resultnames : new EmptyName());
+			this.debug = debug;
+		}
 
-        public virtual void Compare(CompilationUnit result, StreamReader reader)
-        {
-            Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.CodeElementsDocumentSnapshot.ParserDiagnostics, reader);
-        }
+		public virtual void Compare(CompilationUnit result, StreamReader reader) {
+			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.CodeElementsDocumentSnapshot.ParserDiagnostics, reader);
+		}
 
-        internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-            string result = ParserUtils.DumpResult(elements, diagnostics);
-            if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
-        }
+		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected) {
+			string result = ParserUtils.DumpResult(elements, diagnostics);
+			if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
+			ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
+		}
 
-        internal DocumentFormat getSampleFormat()
-        {
-            if (paths.sample.name.Contains(".rdz"))
-                return DocumentFormat.RDZReferenceFormat;
-            return DocumentFormat.FreeUTF8Format;
-        }
-    }
+		internal DocumentFormat getSampleFormat() {
+			if (paths.sample.name.Contains(".rdz"))
+				return DocumentFormat.RDZReferenceFormat;
+			return DocumentFormat.FreeUTF8Format;
+		}
+	}
 
     internal class ArithmeticComparator : FilesComparator
     {
@@ -390,6 +366,75 @@ namespace TypeCobol.Test.Compiler.Parser
         }
     }
 
+	internal class MemoryComparator: FilesComparator
+	{
+		public MemoryComparator(string name, Names resultnames = null, bool debug = false)
+			: base(name, resultnames, debug) { }
+
+		public override void Compare(CompilationUnit result, StreamReader reader) {
+			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
+			Compare(pcd.Program.SymbolTable, reader);
+		}
+
+		internal void Compare(SymbolTable table, StreamReader expected) {
+			string result = Dump(table);
+			if (this.debug) System.Console.WriteLine("\"" + this.paths.name + "\" result:\n" + result);
+			ParserUtils.CheckWithResultReader(this.paths.name, result, expected);
+		}
+
+		private string Dump(SymbolTable table) {
+			var str = new System.Text.StringBuilder();
+			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
+			foreach(var line in table.DataEntries) {
+				foreach(var data in line.Value) {
+					if (data.LevelNumber == 1) Dump(str, data, 0);
+				}
+			}
+			return str.ToString();
+		}
+		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent, string indexes = "", int baseaddress = 1) {
+			int level = data.LevelNumber;
+			string name = (data.Name != null?data.Name.ToString():"?");
+			if (data.MemoryArea is TableInMemory) {
+				var table = data.MemoryArea as TableInMemory;
+				foreach(var e in table) {
+					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
+					string strindexes = CreateIndexes(indexes, e.Index);
+					foreach(var child in data.Subordinates) Dump(str, child, indent+1, strindexes);
+				}
+			} else {
+				str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
+				foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
+			}
+		}
+		private string CreateLine(int level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
+			var res = new System.Text.StringBuilder();
+			BeginFirstColumn(res, indent, level, name);
+			EndFirstColumn(res, strindexes, index, max);
+			EndLine(res, offset, length);
+			return res.ToString();
+		}
+		private void BeginFirstColumn(StringBuilder str, int indent, int level, string name) {
+			for(int i=0; i<indent; i++) str.Append("  ");
+			if (level > 1) str.Append(String.Format("{0,2} ", level));
+			str.Append(name);
+		}
+		private void EndFirstColumn(StringBuilder str, string strprefix, int index, int max) {
+			if (strprefix.Length > 0 || (index >= 0 && max > 1)) {
+				str.Append('(').Append(CreateIndexes(strprefix,index)).Append(')');
+			}
+			while(str.Length < 36) str.Append(' ');
+		}
+		private void EndLine(StringBuilder str, int offset, int size, int baseaddress = 1) {
+			str.Append(String.Format(" {0,6:0} ", baseaddress + offset));//start
+			str.Append(String.Format(" {0,6:0} ", offset + size));//end
+			str.Append(String.Format(" {0,6:0} ", size));//length
+		}
+		private string CreateIndexes(string prefix, int index) {
+			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1).ToString()):"");
+		}
+	}
+
 
 
     internal interface Names
@@ -426,6 +471,12 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         public string CreateName(string name) { return name + "PGM"; }
         public System.Type GetComparatorType() { return typeof(ProgramsComparator); }
+    }
+
+    internal class MemoryName : Names
+    {
+        public string CreateName(string name) { return name + "MEM"; }
+        public System.Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 
     internal class AbstractPath

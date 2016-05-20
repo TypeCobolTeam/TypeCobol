@@ -32,33 +32,22 @@ namespace TypeCobol.Compiler.CodeElements
                         sb.Append(mnemonicForEnvironmentName);
                     }
                 }
-                if (externalSwitch.ToOn != null && externalSwitch.ToOn.Value)
-                {
-                    sb.AppendLine(" TO ON");
-                }
-                else if (externalSwitch.ToOff != null && externalSwitch.ToOff.Value)
-                {
-                    sb.AppendLine(" TO OFF");
-                } else
-                {
-                    sb.AppendLine("");
-                }
+				if (externalSwitch.ToOn) sb.AppendLine(" TO ON");
+				else if (externalSwitch.ToOff) sb.AppendLine(" TO OFF");
+				else sb.AppendLine("");
             }
             return sb.ToString();
         }
     }
 
-    public class SetExternalSwitch
-    {
-        public List<MnemonicForEnvironmentName> MnemonicForEnvironmentNames { get; set; }
-
-        public SyntaxBoolean ToOn { get; set; }
-
-        public SyntaxBoolean ToOff { get; set; }
-
+	public class SetExternalSwitch
+	{
+		public List<MnemonicForEnvironmentName> MnemonicForEnvironmentNames { get; set; }
+		public bool ToOn  { get; set; }
+		public bool ToOff { get; set; }
 
         //TO avoid creating a new StringBuilder and as SetExternalSwitch is only used by SetStatementForSwitches
         //This CodeElement doesn't define a ToString() method
         //public override string ToString()
-    }
+	}
 }

@@ -19,32 +19,20 @@ namespace TypeCobol.Compiler.CodeElements
             Type = type;
         }
 
-        /// <summary>
-        /// Name of the symbol
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                if(NameToken.TokenFamily == TokenFamily.Symbol || 
-                        NameToken.TokenFamily == TokenFamily.SpecialRegisterKeyword )
-                {
-                    return NameToken.Text;
-                }
-                else if(NameToken.TokenFamily == TokenFamily.AlphanumericLiteral)
-                {
-                    return ((AlphanumericLiteralValue)NameToken.LiteralValue).Text;
-                }
-                else if(NameToken.TokenType == TokenType.SymbolicCharacter)
-                {
-                    return NameToken.Text;
-                }
-                else
-                {
-                    throw new InvalidOperationException("A symbol token can not be of type : " + NameToken.TokenType);
-                }
-            }
-        }
+		/// <summary>Name of the symbol</summary>
+		public string Name {
+			get {
+				if (NameToken.TokenFamily == TokenFamily.Symbol
+				 || NameToken.TokenFamily == TokenFamily.SpecialRegisterKeyword )
+					return NameToken.Text;
+				if (NameToken.TokenFamily == TokenFamily.AlphanumericLiteral)
+					return ((AlphanumericLiteralValue)NameToken.LiteralValue).Text;
+				if (NameToken.TokenType == TokenType.SymbolicCharacter
+				 || NameToken.TokenType == TokenType.ALL)
+					return NameToken.Text;
+				throw new InvalidOperationException("A symbol token can not be of type : " + NameToken.TokenType);
+			}
+		}
 
         /// <summary>
         /// Token defining the name of the symbol in source text

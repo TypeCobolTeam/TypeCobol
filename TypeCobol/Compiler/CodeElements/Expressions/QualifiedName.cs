@@ -10,6 +10,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public interface Subscripted {
 		Subscript this[string name] { get; }
+		IEnumerable<Subscript> Subscripts { get; }
 	}
 
 
@@ -44,7 +45,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public IEnumerator<string> GetEnumerator() {
 			if (FileName != null) yield return FileName.Name;
 			foreach (var dataname in DataNames) yield return dataname.Name;
-			yield return Symbol.Name;
+			if (Symbol != null) yield return Symbol.Name;
 		}
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
 
@@ -188,6 +189,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 					if (item.Key.Equals(name)) return item.Value;
 					//TODO what if same name more than once?
 				return null;
+			}
+		}
+		public IEnumerable<Subscript> Subscripts {
+			get {
+				foreach(var item in names)
+					if (item.Value != null)
+						yield return item.Value;
 			}
 		}
 

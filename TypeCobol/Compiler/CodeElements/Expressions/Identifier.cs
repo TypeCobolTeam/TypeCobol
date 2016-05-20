@@ -297,7 +297,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 	{
 		public static bool IsSubscripted(Identifier identifier) {
 			var array = identifier as Subscriptable;
-			return array != null && array.Subscripts.Count > 0;
+			var name = identifier.Name as Subscripted;
+			return (array != null && array.Subscripts.Count > 0)
+				|| (name != null && new List<Subscript>(name.Subscripts).Count > 0);
 		}
 		public static bool IsReferenceModified(Identifier identifier) {
 			var substring = identifier as ReferenceModifiable;

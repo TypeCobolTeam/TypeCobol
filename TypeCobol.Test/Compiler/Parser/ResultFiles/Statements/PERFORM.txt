@@ -9,7 +9,6 @@
 
 [[DisplayStatement]] [3,9:DISPLAY]<DISPLAY> --> [11,17+:"HELLO"]<AlphanumericLiteral>(",Y,Y){HELLO}
 - variables = "HELLO"
-- WithNoAdvancing = False
 
 [[PerformStatementEnd]] [1,11:END-PERFORM]<END_PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
 

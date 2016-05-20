@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -22,9 +23,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// Level-88 entries must immediately follow the data description entry for the
     /// conditional variable with which the condition-names are associated.
     /// </summary>
-    public partial class DataDescriptionEntry : CodeElement, ICloneable
+    public partial class DataDescriptionEntry : CodeElement, TypeDefinition, ICloneable
     {
-        public DataDescriptionEntry() : base(CodeElementType.DataDescriptionEntry) { }
+		public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) {
+			this.Subordinates = new List<DataDescriptionEntry>();
+		}
 
 		public object Clone() {
 			var clone = this.MemberwiseClone() as DataDescriptionEntry;
@@ -229,7 +232,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// data that possesses the global attribute either in the containing program or in
         /// any program that directly or indirectly contains the containing program.
         /// </summary>
-        public bool IsGlobal { get; set; }
+		public bool IsGlobal {
+			get {
+				if (_global) return true;
+				var typedef = GetTypeDefinition();
+				return typedef != null && typedef._global;
+			}
+			set { _global = value; }
+		}
+		private bool _global = false;
 
         /// <summary>
         /// p189:
@@ -351,11 +362,22 @@ namespace TypeCobol.Compiler.CodeElements
 		public DataType DataType { get; set; }
 		public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 
+		public COBOLMemoryArea MemoryArea { get; set; }
+		public Occurences Occurences {
+			get {
+				if (IsTableOccurence) {
+					if (NoMaxOccurencesCount) return new Unbounded();
+					else return new Bounded(MaxOccurencesCount);
+				}
+				else return new Unique();
+			}
+		}
+
         public bool IsGroup {
             get { return Picture == null; }
             private set { IsGroup = value; }
         }
-        public IList<DataDescriptionEntry> Subordinates = new List<DataDescriptionEntry>();
+        public ICollection<DataDescriptionEntry> Subordinates { get; private set; }
 
         /// <summary>
         /// p216:
@@ -1011,17 +1033,17 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsInitialValueNull { get; set; }
 
 // [TYPECOBOL]
-		public bool IsTypeDefinition = false;
+		public virtual bool IsTypeDefinition { get; set; }
 		public bool IsTypeDefinitionPart {
-			get {
-				var parent = this;
-				while(parent != null) {
-					if (parent.IsTypeDefinition) return true;
-					parent = parent.TopLevel;
-				}
-				return false;
+			get { return GetTypeDefinition() != null; }
+		}
+		private DataDescriptionEntry GetTypeDefinition() {
+			var parent = this;
+			while(parent != null) {
+				if (parent.IsTypeDefinition) return parent;
+				parent = parent.TopLevel;
 			}
-			private set { throw new InvalidOperationException(); }
+			return null;
 		}
 // [/TYPECOBOL]
 

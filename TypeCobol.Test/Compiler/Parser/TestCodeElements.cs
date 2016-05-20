@@ -35,12 +35,12 @@ namespace TypeCobol.Test.Compiler.Parser
             tuple = ParseOneCodeElement<DisplayStatement>("display 'toto'");
             Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
             Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
-            Assert.IsTrue(tuple.Item2.IsWithNoAdvancing.Value == false);
+            Assert.IsFalse(tuple.Item2.IsWithNoAdvancing);
 
             tuple = ParseOneCodeElement<DisplayStatement>("display toto no advancing no advancing", false);
             Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
             Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
-            Assert.IsTrue(tuple.Item2.IsWithNoAdvancing.Value);
+            Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);
 
 
             ParseDisplayStatement("display toto", 1);
@@ -108,7 +108,7 @@ namespace TypeCobol.Test.Compiler.Parser
                     Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName.Type == uponMnemonicOrEnvName);
                 }
             }
-            Assert.IsTrue(!tuple.Item2.IsWithNoAdvancing.Value | isWithNoAdvancing);
+            Assert.IsTrue(!tuple.Item2.IsWithNoAdvancing | isWithNoAdvancing);
 
 
             foreach (var varToDisp in varsToDisplay)

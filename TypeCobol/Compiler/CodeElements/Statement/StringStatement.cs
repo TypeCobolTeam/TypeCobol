@@ -114,47 +114,33 @@ namespace TypeCobol.Compiler.CodeElements
 
     }
 
-    public class StringStatementWhat
-    {
+	public class StringStatementWhat
+	{
+		/// <summary>
+		/// identifier-1 or literal-1
+		/// </summary>
+		public List<Expression> IdentifierToConcat { get; set; }
 
-        /// <summary>
-        /// identifier-1 or literal-1
-        /// </summary>
-        public List<Expression> IdentifierToConcat { get; set; }
+		private Expression _delimiterIdentifier;
+		/// <summary>
+		/// identifier-2 or literal-2
+		/// </summary>
+		public Expression DelimiterIdentifier {
+			get { return _delimiterIdentifier; }
+			set {
+				if (DelimitedBySize) throw new Exception("TODO");
+				_delimiterIdentifier = value;
+			}
+		}
 
-        private Expression _delimiterIdentifier;
-
-        /// <summary>
-        /// identifier-2 or literal-2
-        /// </summary>
-        public Expression DelimiterIdentifier {
-            get { return _delimiterIdentifier; }
-            set
-            {
-                if (Size != null)
-                {
-                    //TODO
-                    throw new Exception();
-                }
-                _delimiterIdentifier = value;
-            }
-        }
-
-        private SyntaxBoolean _size;
-
-        public SyntaxBoolean Size
-        {
-            get{return _size;}
-            set
-            {
-                if (DelimiterIdentifier != null)
-                {
-                    //TODO
-                    throw new Exception();
-                }
-                _size = value;
-            }
-        }
+		private bool _size;
+		public bool DelimitedBySize {
+			get { return _size; }
+			set {
+				if (DelimiterIdentifier != null) throw new Exception("TODO");
+				_size = value;
+			}
+		}
 
 
 
@@ -163,7 +149,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public override string ToString()
         {
-            if (IdentifierToConcat == null && DelimiterIdentifier == null && Size == null)
+            if (IdentifierToConcat == null && DelimiterIdentifier == null && !DelimitedBySize)
             {
                 return base.ToString();
             }
@@ -186,10 +172,8 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.AppendLine(" delimited by " + DelimiterIdentifier);
                 }
 
-                if (Size != null && Size.Value)
-                {
-                    sb.AppendLine(" delimited by Size");
-                }
+				if (DelimitedBySize) sb.AppendLine(" delimited by Size");
+
                 return sb.ToString();
             }
         }

@@ -22,30 +22,57 @@ WORKING-STORAGE SECTION.
     14 Accel2d  TYPE Vect2.
     10 Speed2d  TYPE Vect2.
 
-01 groupe1.
-  05 groupe2 TYPEDEF.
-    10 groupe3 PIC 9.
+* KO: no TYPEDEF for this TYPE
+01 unknown TYPE TypeNotDefined.
 
+* KO: TYPEDEF is for Level-01 items
+01 LevelKOGroup.
+  05 LevelKO TYPEDEF.
+    10 LevelKOItem PIC 9.
+01 varLevelKO TYPE LevelKO.
+
+* KO: TYPEDEF clause must be before the rest
 01 ClausesOrderKO pic X(15) TYPEDEF.
-01 test1 type ClausesOrderKO.
-01 ClausesOrderOK TYPEDEF pic X(15).
-01 test2 type ClausesOrderOK.
+01 varClausesOrderKO TYPE ClausesOrderKO.
+* OK: ... like this
+01 ClausesOrderOK TYPEDEF PIC X(15).
+01 varClausesOrderOK TYPE ClausesOrderOK.
 
-01 MyType3 TYPEDEF STRONG pic X(15).
-01 test3 type MyType3.
+* KO: no subordinates or picture = no description
 01 NoDescription TYPEDEF STRONG.
-01 test4 TYPE NoDescription.
-01 MyType5 redefines MyType4 TYPEDEF STRONG.
-   05 MyType5-a pic X.
+01 varNoDescription TYPE NoDescription.
 
-01 test5 TYPE MyType5.
+* KO: elementary items cannot be STRONG
+01 CannotBeStrong TYPEDEF STRONG PIC X(15).
+01 varCannotBeStrong TYPE CannotBeStrong.
 
-01 MyExternalType TYPEDEF.
-  02 MyExternalType-name PIC X(15) external.
-01 MyExternalType2 TYPEDEF external.
-  02 MyExternalType2-name PIC X(15).
+* KO: no REDEFINES clause with TYPEDEF
+01 NoRedefines1 REDEFINES ClausesOrderOK TYPEDEF PIC X.
+01 varNoRedefines1 TYPE NoRedefines1.
+01 NoRedefines2 REDEFINES ClausesOrderOK TYPEDEF STRONG.
+   05 NoRedefines1Item PIC X.
+01 varNoRedefines2 TYPE NoRedefines2.
+01 NoRedefines3 REDEFINES TypeNotDefined TYPEDEF.
+   05 NoRedefines1Item PIC X.
+01 varNoRedefines3 TYPE NoRedefines3.
+*KO, Cobol 2014 is not clear, but TypeCobol forbid it for now. Better be more restrictive.
+01 varNoRedefines4 TYPEDEF.
+    05 varNoRedefines4A pic X.
+    05 varNoRedefines4B redefines varNoRedefines4A pic 9.
 
-01 unknowType type TypeNotDefined.
+*KO varNoRedefines5bis can't rededines data from another TYPEDEF
+01 varNoRedefines5 TYPEDEF.
+    05 varNoRedefines5-a pic X.
+01 varNoRedefines5bis TYPEDEF.
+    05 varNoRedefines5bis-a redefines varNoRedefines5-a pic 9.
+
+* KO: no EXTERNAL clause with TYPEDEF
+01 ExternalType1 TYPEDEF EXTERNAL.
+  02 varExternalType1 PIC X(15).
+* KO: External must be at level 01
+01 ExternalType2 TYPEDEF.
+  02 varExternalType2 PIC X(15) EXTERNAL.
+
 
 
 PROCEDURE DIVISION.
