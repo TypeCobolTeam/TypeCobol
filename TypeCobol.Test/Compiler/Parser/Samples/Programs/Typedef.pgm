@@ -55,11 +55,21 @@ WORKING-STORAGE SECTION.
 01 NoRedefines3 REDEFINES TypeNotDefined TYPEDEF.
    05 NoRedefines1Item PIC X.
 01 varNoRedefines3 TYPE NoRedefines3.
+*KO, Cobol 2014 is not clear, but TypeCobol forbid it for now. Better be more restrictive.
+01 varNoRedefines4 TYPEDEF.
+    05 varNoRedefines4A pic X.
+    05 varNoRedefines4B redefines varNoRedefines4A pic 9.
+
+*KO varNoRedefines5bis can't rededines data from another TYPEDEF
+01 varNoRedefines5 TYPEDEF.
+    05 varNoRedefines5-a pic X.
+01 varNoRedefines5bis TYPEDEF.
+    05 varNoRedefines5bis-a redefines varNoRedefines5-a pic 9.
 
 * KO: no EXTERNAL clause with TYPEDEF
 01 ExternalType1 TYPEDEF EXTERNAL.
   02 varExternalType1 PIC X(15).
-* OK: ... whereas this is allowed
+* KO: External must be at level 01
 01 ExternalType2 TYPEDEF.
   02 varExternalType2 PIC X(15) EXTERNAL.
 

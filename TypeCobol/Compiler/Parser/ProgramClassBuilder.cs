@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.Parser
 						TableOfIntrisic.RegisterCustomType(type);
 				}
 				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
-			}
+            }
 		}
 
 		private void RegisterCustomType(SymbolTable table,DataType type) {
@@ -183,6 +183,21 @@ namespace TypeCobol.Compiler.Parser
 						parent = parent.TopLevel;
 					}
 				}
+
+            //[TypeCobol]
+			    if (data.IsTypeDefinitionPart)
+			    {
+                    //Redefines is not allowed under a TYPEDEF
+                    if (data.RedefinesDataName != null)
+			        {
+			            DiagnosticUtils.AddError(data, "Typedef can't contains redefined item: " + data);
+			        }
+                    if (data.IsRenamesDataNameDescription)
+                    {
+                        DiagnosticUtils.AddError(data, "Typedef can't contains renamed item: " + data);
+                    }
+                }
+            //[/TypeCobol
 
 				if (!data.IsTypeDefinitionPart) {
 					CurrentProgram.SymbolTable.Add(data);

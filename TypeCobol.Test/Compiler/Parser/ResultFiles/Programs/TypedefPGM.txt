@@ -5,11 +5,17 @@
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 50)
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 52)
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 55)
-[26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 60)
+[26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 70)
+[33,40]<27,Error,Syntax>Syntax error : External is only allowed for level 01 (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL> on line 74)
 [1,31]<27,Error,Syntax>Syntax error : Type TypeNotDefined is not referenced. ([1>31] on line 26)
 [1,41]<27,Error,Syntax>Syntax error : Type ClausesOrderKO is not referenced. ([1>41] on line 36)
 [1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 42)
-[1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 71)
+[1,55]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: TYPEDEF NoRedefines1 {1} NoRedefines1 ([1>55] on line 50)
+[1,56]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: TYPEDEF NoRedefines2 {1} GROUP(0) [ ]NoRedefines2 ([1>56] on line 52)
+[1,49]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: TYPEDEF NoRedefines3 {1} GROUP(0) [ ]NoRedefines3 ([1>49] on line 55)
+[5,57]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines4B {5} Numeric <of> varNoRedefines4 ([5>57] on line 61)
+[5,62]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis ([5>62] on line 67)
+[1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 81)
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -33,6 +39,13 @@ CUSTOM TYPES:
      - NoRedefines1Item {5} Alphanumeric <of> NoRedefines2
  * NoRedefines3
      - NoRedefines1Item {5} Alphanumeric <of> NoRedefines3
+ * varNoRedefines4
+     - varNoRedefines4A {5} Alphanumeric <of> varNoRedefines4
+     - varNoRedefines4B {5} Numeric <of> varNoRedefines4
+ * varNoRedefines5
+     - varNoRedefines5-a {5} Alphanumeric <of> varNoRedefines5
+ * varNoRedefines5bis
+     - varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis
  * ExternalType1
      - varExternalType1 {2} Alphanumeric <of> ExternalType1
  * ExternalType2

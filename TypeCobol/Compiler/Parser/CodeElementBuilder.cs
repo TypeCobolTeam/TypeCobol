@@ -448,13 +448,19 @@ namespace TypeCobol.Compiler.Parser
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-			foreach(var typeclause in context.tcExtTypeClause()) {
-				var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-				if (token != null) entry.Picture = "TYPE:"+token.Text;
+			foreach(var typeclause in context.tcExtTypeClause())
+			{
+			    var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
+			    if (token != null) entry.Picture = "TYPE:"+token.Text;
 			}
-// [/TYPECOBOL]
+            // [/TYPECOBOL]
 
-			Context = context;
+		    if (entry.IsExternal && entry.LevelNumber != 01)
+		    {
+                DiagnosticUtils.AddError(entry, "External is only allowed for level 01", external);
+            }
+
+		    Context = context;
 			CodeElement = entry;
 		}
 
