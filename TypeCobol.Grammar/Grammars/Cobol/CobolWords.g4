@@ -1305,6 +1305,15 @@ intrinsicFunctionName: externalName2;
 // p423: To communicate with DB2, do these steps:
 // Code any SQL statements that you need, delimiting them with EXEC SQL and END-EXEC statements.
 // execStatement: (EXEC | EXECUTE) execTranslatorName  ExecStatementText* END_EXEC;
+// Names of specialized Cobol preprocessors or coprocessors :
+// DB2 coprocessor
+//   SQL,
+// IMS SQL coprocessor
+//   SQLIMS,
+// Integrated CICS translator
+//   CICS,
+// Integrated CICS translator
+//   DLI
 
 execTranslatorName : externalName3;
 

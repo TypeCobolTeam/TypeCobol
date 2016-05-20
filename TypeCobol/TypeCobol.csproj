@@ -142,6 +142,7 @@
     <Compile Include="Compiler\Diagnostics\CodeElementCheckers.cs" />
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
+    <Compile Include="Compiler\Parser\CobolExpressionsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementDispatcher.cs" />
     <Compile Include="Compiler\Parser\ProgramClassDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsLinesTokenSource.cs" />

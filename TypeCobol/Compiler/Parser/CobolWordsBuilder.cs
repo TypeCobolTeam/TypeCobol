@@ -401,592 +401,397 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
+        // --- Specific symbol types ---
 
-        // -- OLD CODE --
-
-        internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context) {
-			IList<Identifier> identifiers = new List<Identifier>();
-			if (context != null) {
-				foreach (var identifier in context) {
-				   var i = CreateIdentifier(identifier);
-					if (i != null) identifiers.Add(i);
-				}
-			}
-			return identifiers;
-		}
-
-		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierContext context) {
-			if (context == null) return null;
-			Identifier identifier = CreateDataReferenceOrConditionReference(context.dataReferenceOrConditionReference());
-			if (identifier != null) return identifier;
-			identifier = CreateSpecialRegister(context.specialRegister());
-			if (identifier != null) return identifier;
-			identifier = CreateFunctionReference(context.functionIdentifier());
-			if (identifier != null) return identifier;
-			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModifiable;
-			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-			return identifier;
-		}
-
-		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrIndexNameContext context) {
-			if (context == null) return null;
-			Identifier identifier = CreateDataReferenceOrConditionReferenceOrIndexName(context.dataReferenceOrConditionReferenceOrIndexName());
-			if (identifier != null) return identifier;
-			identifier = CreateSpecialRegister(context.specialRegister());
-			if (identifier != null) return identifier;
-			identifier = CreateFunctionReference(context.functionIdentifier());
-			if (identifier != null) return identifier;
-			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModifiable;
-			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-			return identifier;
-		}
-
-		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrFileNameContext context) {
-			if (context == null) return null;
-			Identifier identifier = CreateDataReferenceOrConditionReferenceOrFileName(context.dataReferenceOrConditionReferenceOrFileName());
-			if (identifier != null) return identifier;
-			identifier = CreateSpecialRegister(context.specialRegister());
-			if (identifier != null) return identifier;
-			identifier = CreateFunctionReference(context.functionIdentifier());
-			if (identifier != null) return identifier;
-			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModifiable;
-			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-			return identifier;
-		}
-
-		public static Identifier CreateIdentifier(CodeElementsParser.IdentifierOrClassNameContext context) {
-			if (context == null) return null;
-			Identifier identifier = CreateDataReferenceOrConditionReferenceOrClassName(context.dataReferenceOrConditionReferenceOrClassName());
-			if (identifier != null) return identifier;
-			identifier = CreateSpecialRegister(context.specialRegister());
-			if (identifier != null) return identifier;
-			identifier = CreateFunctionReference(context.functionIdentifier());
-			if (identifier != null) return identifier;
-			identifier = CreateLinageCounter(context.linageCounterSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateLengthOf(context.lengthOfSpecialRegisterDecl());
-			if (identifier != null) return identifier;
-			identifier = CreateAddressOf(context.addressOfSpecialRegisterDecl());
-			var substring = identifier as ReferenceModifiable;
-			if (substring != null) substring.ReferenceModifier = CreateReferenceModifier(context.referenceModifier());
-			return identifier;
-		}
-
-		public static Token GetSymbolTokenIfIdentifierIsOneUserDefinedWord(CodeElementsParser.IdentifierOrClassNameContext identifier) {
-			if (identifier.referenceModifier() == null) {
-				var dataReferenceOrConditionReferenceOrClassName = identifier.dataReferenceOrConditionReferenceOrClassName();
-				if (dataReferenceOrConditionReferenceOrClassName != null) {
-					if (dataReferenceOrConditionReferenceOrClassName.subscript() == null) {
-						var qualifiedName = dataReferenceOrConditionReferenceOrClassName.qualifiedDataNameOrQualifiedConditionNameOrClassName();
-						var legacy = qualifiedName.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
-						if (legacy != null) {
-							if (legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null) 
-								return ParseTreeUtils.GetFirstToken(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-						} else {
-							if (qualifiedName.qDataOrFileOrUPSI() == null)
-								return ParseTreeUtils.GetFirstToken(qualifiedName.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-						}
-					}
-				}
-			}
-			return null;
-		}
-
-        private static Identifier CreateFunctionReference(CodeElementsParser.FunctionIdentifierContext context)
+        internal static SymbolDefinition CreateProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
         {
-            if (context == null || context.FUNCTION() == null) return null;
-            var symbol = new FunctionName(ParseTreeUtils.GetFirstToken(context.intrinsicFunctionName()));
-            var parameters = CreateFunctionParameters(context.argument());
-            return new FunctionReference(symbol, parameters);
+            return CreateSymbolDefinition(context.symbolDefinition5(), SymbolType.ProgramName);
         }
 
-        private static IList<FunctionParameter> CreateFunctionParameters(IReadOnlyList<CodeElementsParser.ArgumentContext> context)
+        internal static SymbolReference CreateProgramNameReference(CodeElementsParser.ProgramNameReference1Context context)
         {
-            if (context == null) return null;
-            IList<FunctionParameter> parameters = new List<FunctionParameter>();
-            foreach (var argument in context) parameters.Add(CreateFunctionParameter(argument));
-            return parameters;
+            return CreateSymbolReference(context.symbolReference1(), SymbolType.ProgramName);
         }
 
-        private static FunctionParameter CreateFunctionParameter(CodeElementsParser.ArgumentContext context)
+        internal static SymbolReference CreateProgramNameReference(CodeElementsParser.ProgramNameReference2Context context)
         {
-            if (context.literal() != null) return new FunctionParameter(CreateLiteral(context.literal()));
-            //if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
-            if (context.identifier() != null) return new FunctionParameter(CreateIdentifier(context.identifier()));
-            return null;
+            return CreateSymbolReference(context.symbolReference5(), SymbolType.ProgramName);
         }
 
-        private static Identifier CreateSpecialRegister(CodeElementsParser.SpecialRegisterContext context)
+        internal static SymbolDefinition CreateProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
         {
-            if (context == null) return null;
-            return new SpecialRegister(new SpecialRegisterName(ParseTreeUtils.GetFirstToken(context)));
+            return CreateSymbolDefinition(context.symbolDefinition1(), SymbolType.ProgramEntry);
         }
 
-		private static DataReference CreateDataReference(CodeElementsParser.DataReferenceContext context) {
-			if (context == null) return null;
-			QualifiedName name = CreateQualifiedName(context);
-			IList<Subscript> subscripts = null;
-			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
-			return new DataReference(name, subscripts);
-		}
-
-		private static DataReference CreateDataReferenceOrConditionReference(CodeElementsParser.DataReferenceOrConditionReferenceContext context) {
-			if (context == null) return null;
-			QualifiedName name = CreateQualifiedName(context);
-			IList<Subscript> subscripts = null;
-			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
-			return new DataReference(name, subscripts);
-		}
-
-		private static DataReference CreateDataReferenceOrConditionReferenceOrIndexName(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context) {
-			if (context == null) return null;
-			QualifiedName name = CreateQualifiedName(context);
-			IList<Subscript> subscripts = null;
-			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
-			return new DataReference(name, subscripts);
-		}
-
-		private static DataReference CreateDataReferenceOrConditionReferenceOrFileName(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context) {
-			if (context == null) return null;
-			QualifiedName name = CreateQualifiedName(context);
-			IList<Subscript> subscripts = null;
-			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
-			return new DataReference(name, subscripts);
-		}
-
-		private static DataReference CreateDataReferenceOrConditionReferenceOrClassName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context) {
-			if (context == null) return null;
-			QualifiedName name = CreateQualifiedName(context);
-			IList<Subscript> subscripts = null;
-			if (!(name is Subscripted)) subscripts = CreateSubscripts(context);
-			return new DataReference(name, subscripts);
-		}
-
-		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceContext context) {
-			if (context == null) return null;
-			return CreateQualifiedName(context.qualifiedDataName());
-		}
-		private static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedDataNameOrIndexName();
-			if (legacy != null) {
-				var dataname = CreateDataName(legacy.dataNameReferenceOrIndexNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFile()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateDataName(context.dataNameReferenceOrIndexNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceContext ctxt) {
-			if (ctxt == null) return null;
-			var context = ctxt.qualifiedDataNameOrQualifiedConditionName();
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedDataNameOrConditionName();
-			if (legacy != null) {
-				var dataname = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFileOrUPSI()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext ctxt) {
-			if (ctxt == null) return null;
-			var context = ctxt.qualifiedDataNameOrQualifiedConditionNameOrIndexName();
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
-			if (legacy != null) {
-				var dataname = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFileOrUPSI()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext ctxt) {
-			if (ctxt == null) return null;
-			var context = ctxt.qualifiedDataNameOrQualifiedConditionNameOrFileName();
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
-			if (legacy != null) {
-				var dataname = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFileOrUPSI()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-		private static QualifiedName CreateQualifiedName(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext ctxt) {
-			if (ctxt == null) return null;
-			var context = ctxt.qualifiedDataNameOrQualifiedConditionNameOrClassName();
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
-			if (legacy != null) {
-				var dataname = CreateDataName(legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFileOrUPSI()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateDataName(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-
-		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedDataNameContext context) {
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedDataName();
-			if (legacy != null) {
-				var dataname = CreateDataName(legacy.dataNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFile()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateDataName(context.dataNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-		public static QualifiedName CreateQualifiedName(CodeElementsParser.QualifiedConditionNameContext context) {
-			if (context == null) return null;
-			var legacy = context.legacyQualifiedConditionName();
-			if (legacy != null) {
-				var dataname = CreateConditionName(legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-				var qualifiers = CreateDataNames(legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-				return CreateQualifiedName(dataname, qualifiers, true, false);
-			} else {
-				var qname = new SubscriptedQualifiedName();
-				Symbol symbol;
-				foreach(var c in context.qDataOrFileOrUPSI()) {
-					if (c == null) continue; //TODO? else qname.IsExplicit = false;
-					symbol = CreateDataName(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-					AddToSubscriptedQualifiedName(qname, symbol, c.subscript());
-				}
-				symbol = CreateConditionName(context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-				AddToSubscriptedQualifiedName(qname, symbol, context.subscript());
-				return qname;
-			}
-		}
-		private static void AddToSubscriptedQualifiedName(SubscriptedQualifiedName qname, Symbol symbol, CodeElementsParser.SubscriptContext context) {
-			string name = symbol!=null?symbol.Name:null;
-			var subscript = CreateSubscript(context);
-			var pair = new Tuple<string,Subscript>(name,subscript);//TODO? test name|subscript == null
-			if (pair != null) qname.Add(pair.Item1, pair.Item2);
-			//TODO? else qname.IsExplicit = false;
-		}
-		private static QualifiedName CreateQualifiedName(Symbol name, List<DataName> qualifiers, bool reverse, bool isExplicit) {
-			if (reverse) qualifiers.Reverse();
-			// TODO: need to lookup symbol table to distinguish data name and file name
-			FileName filename = null; // may be first element of qualifiers
-			return new SyntacticQualifiedName(name, qualifiers, filename, isExplicit);
-		}
-
-		internal static IList<QualifiedName> CreateQualifiedNames(IReadOnlyList<CodeElementsParser.QualifiedDataNameContext> context) {
-			var names = new List<QualifiedName>();
-			foreach (var name in context) {
-				var x = CreateQualifiedName(name);
-				if (x != null) names.Add(x);
-			}
-			return names;
-		}
-        
-
-		private static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.QDataOrFileContext> context) {
-			var list = new List<CodeElementsParser.DataNameReferenceOrFileNameReferenceContext>();
-			foreach(var c in context)
-				if (c.dataNameReferenceOrFileNameReference() != null)
-					list.Add(c.dataNameReferenceOrFileNameReference());
-			//TODO: subscripting
-			return CreateDataNames(list);
-		}
-
-        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceContext> context)
+        internal static AmbiguousSymbolReference CreateProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
         {
-            List<DataName> datanames = new List<DataName>();
-            if (context != null)
-                foreach (var dataname in context)
-                {
-                    var name = CreateDataName(dataname);
-                    if (name != null) datanames.Add(name);
-                }
-            return datanames;
-        }
-                
-        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceOrFileNameReferenceContext> context)
-        {
-            List<DataName> datanames = new List<DataName>();
-            if (context != null)
-                foreach (var dataname in context)
-                {
-                    var name = CreateDataName(dataname);
-                    if (name != null) datanames.Add(name);
-                }
-            return datanames;
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference1(), new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry });
         }
 
-		private static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.QDataOrFileOrUPSIContext> context) {
-			var list = new List<CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext>();
-			foreach(var c in context)
-				if (c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() != null)
-					list.Add(c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			//TODO: subscripting
-			return CreateDataNames(list);
-		}
-
-        public static List<DataName> CreateDataNames(IReadOnlyList<CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext> context)
+        internal static SymbolDefinition CreateSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
         {
-            List<DataName> datanames = new List<DataName>();
-            if (context != null)
-                foreach (var dataname in context)
-                {
-                    var name = CreateDataName(dataname);
-                    if (name != null) datanames.Add(name);
-                }
-            return datanames;
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.SectionName);
+        }
+
+        internal static SymbolReference CreateSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.SectionName);
+        }
+
+        internal static SymbolDefinition CreateParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ParagraphName);
+        }
+
+        internal static SymbolReference CreateParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.ParagraphName);
+        }
+
+        internal static AmbiguousSymbolReference CreateParagraphNameReferenceOrSectionNameReference(CodeElementsParser.ParagraphNameReferenceOrSectionNameReferenceContext context)
+        {
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.ParagraphName, SymbolType.SectionName });
+        }
+
+        internal static SymbolDefinition CreateClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ClassName);
+        }
+
+        internal static SymbolReference CreateClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.ClassName);
+        }
+
+        internal static SymbolDefinitionOrReference CreateClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
+        {
+            return CreateSymbolDefinitionOrReference(context.symbolDefinitionOrReference4(), SymbolType.ClassName);
+        }
+
+        internal static SymbolDefinitionOrReference CreateExternalClassNameDefOrRef(CodeElementsParser.ExternalClassNameDefOrRefContext context)
+        {
+            return CreateSymbolDefinitionOrReference(context.symbolDefinitionOrReference1(), SymbolType.ExternalClassName);
+        }
+
+        internal static SymbolDefinition CreateMethodNameDefinition(CodeElementsParser.MethodNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition2(), SymbolType.MethodName);
+        }
+
+        internal static SymbolReference CreateMethodNameReference(CodeElementsParser.MethodNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference2(), SymbolType.MethodName);
+        }
+
+        internal static SymbolDefinition CreateMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MnemonicForEnvironmentName);
+        }
+
+        internal static SymbolReference CreateMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.MnemonicForEnvironmentName);
+        }
+
+        internal static ExternalNameOrSymbolReference CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
+        {
+            return CreateExternalNameOrSymbolReference(context.externalNameOrSymbolReference4(), new SymbolType[] { SymbolType.EnvironmentName, SymbolType.MnemonicForEnvironmentName });
+        }
+
+        internal static SymbolDefinition CreateMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MnemonicForUPSISwitchName);
+        }
+
+        internal static SymbolReference CreateMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.MnemonicForUPSISwitchName);
+        }
+
+        internal static SymbolDefinition CreateConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ConditionForUPSISwitchName);
+        }
+
+        internal static SymbolDefinition CreateSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition11(), SymbolType.SymbolicCharacter);
+        }
+
+        internal static SymbolReference CreateSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference10(), SymbolType.SymbolicCharacter);
+        }
+
+        internal static SymbolDefinition CreateAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.AlphabetName);
+        }
+
+        internal static SymbolReference CreateAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.AlphabetName);
+        }
+
+        internal static SymbolReference CreateIntrinsicAlphabetNameReference(CodeElementsParser.IntrinsicAlphabetNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference10(), SymbolType.AlphabetName);
+        }
+
+        internal static SymbolReference CreateAlphabetName(CodeElementsParser.AlphabetNameContext context)
+        {
+            if (context.alphabetNameReference() != null)
+            {
+                return CreateAlphabetNameReference(context.alphabetNameReference());
+            }
+            else
+            {
+                return CreateIntrinsicAlphabetNameReference(context.intrinsicAlphabetNameReference());
+            }
+        }
+
+        internal static SymbolDefinition CreateCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.CharacterClassName);
+        }
+
+        internal static SymbolReference CreateCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.CharacterClassName);
+        }
+
+        internal static SymbolDefinition CreateDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
+        }
+
+        internal static SymbolReference CreateDataNameReference(CodeElementsParser.DataNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.DataName);
+        }
+
+        internal static AmbiguousSymbolReference CreateDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
+        {
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.FileName });
+        }
+
+        internal static AmbiguousSymbolReference CreateDataNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrIndexNameReferenceContext context)
+        {
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.IndexName });
+        }
+
+        internal static AmbiguousSymbolReference CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
+        {
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName });
+        }
+
+        internal static SymbolDefinition CreateConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ConditionName);
+        }
+
+        internal static AmbiguousSymbolReference CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+        {
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName });
+        }
+
+        internal static SymbolDefinition CreateIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.IndexName);
+        }
+
+        internal static SymbolReference CreateIndexNameReference(CodeElementsParser.IndexNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.IndexName);
+        }
+
+        internal static SymbolDefinition CreateFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.FileName);
+        }
+
+        internal static SymbolReference CreateFileNameReference(CodeElementsParser.FileNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.FileName);
+        }
+
+        internal static SymbolDefinition CreateXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.XmlSchemaName);
+        }
+
+        internal static SymbolReference CreateXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.XmlSchemaName);
+        }
+
+
+        // --- Specific external names ---
+
+        /// <summary>
+        /// System devices or standard system actions taken by the compiler.
+        /// </summary>
+        public enum EnvironmentNameEnum
+        {
+            // System logical input unit : ACCEPT
+            SYSIN, SYSIPT,
+            // System logical output unit : DISPLAY
+            SYSOUT, SYSLIST, SYSLST,
+            // System punch device : DISPLAY
+            SYSPUNCH, SYSPCH,
+            // Console : ACCEPT and DISPLAY
+            CONSOLE,
+            // Skip to channel 1 through channel 12, respectively : WRITE ADVANCING
+            C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12,
+            // Suppress spacing : WRITE ADVANCING
+            CSP,
+            // Pocket select 1 through 5 on punch devices : WRITE ADVANCING
+            S01, S02, S03, S04, S05,
+            // Advanced Function Printing : WRITE ADVANCING
+            AFP_5A
+        }
+
+        internal static ExternalName CreateEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
+        {
+            return CreateExternalName(context.externalName1(), SymbolType.EnvironmentName, typeof(EnvironmentNameEnum));
+        }
+
+        /// <summary>
+        /// A 1-byte user-programmable status indicator (UPSI) switch.
+        /// </summary>
+        public enum UPSISwitchNameEnum
+        {
+            UPSI_0, UPSI_1, UPSI_2, UPSI_3, UPSI_4, UPSI_5, UPSI_6, UPSI_7
+        }
+
+        internal static ExternalName CreateUPSISwitchName(CodeElementsParser.UpsiSwitchNameContext context)
+        {
+            return CreateExternalName(context.externalName1(), SymbolType.UPSISwitchName, typeof(UPSISwitchNameEnum));
+        }
+
+        internal static ExternalName CreateTextName(CodeElementsParser.TextNameContext context)
+        {
+            return CreateExternalName(context.externalName5(), SymbolType.TextName);
+        }
+
+        internal static ExternalName CreateLibraryName(CodeElementsParser.LibraryNameContext context)
+        {
+            return CreateExternalName(context.externalName5(), SymbolType.LibraryName);
+        }
+
+        internal static ExternalName CreateQualifiedTextName(CodeElementsParser.QualifiedTextNameContext context)
+        {
+            ExternalName textName = CreateTextName(context.textName());
+            if (context.libraryName() == null)
+            {
+                return textName;
+            }
+            else
+            {
+                ExternalName libraryName = CreateLibraryName(context.libraryName());
+                return new QualifiedTextName(textName, libraryName);
+            }
+        }
+
+        internal static ExternalName CreateAssignmentName(CodeElementsParser.AssignmentNameContext context)
+        {
+            return CreateExternalName(context.externalName5(), SymbolType.AssignmentName);
+        }
+
+        internal static ExternalNameOrSymbolReference CreateAssignmentNameOrFileNameReference(CodeElementsParser.AssignmentNameOrFileNameReferenceContext context)
+        {
+            return CreateExternalNameOrSymbolReference(context.externalNameOrSymbolReference5(), new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName });
+        }
+
+        /// <summary>
+        /// Intrinsic function names defined by the Cobol language.
+        /// </summary>
+        public enum FunctionNameEnum
+        {
+            ACOS, ANNUITY, ASIN, ATAN,
+            CHAR, COS, CURRENT_DATE,
+            DATE_OF_INTEGER, DATE_TO_YYYYMMDD, DAY_OF_INTEGER, DAY_TO_YYYYDDD,
+            DISPLAY_OF, FACTORIAL,
+            INTEGER, INTEGER_OF_DATE, INTEGER_OF_DAY, INTEGER_PART,
+            LENGTH, LOG, LOG10, LOWER_CASE,
+            MAX, MEAN, MEDIAN, MIDRANGE, MIN, MOD,
+            NATIONAL_OF, NUMVAL, NUMVAL_C,
+            ORD, ORD_MAX, ORD_MIN,
+            PRESENT_VALUE,
+            RANDOM, RANGE, REM, REVERSE,
+            SIN, SQRT, STANDARD_DEVIATION, SUM,
+            TAN,
+            ULENGTH, UPOS, UPPER_CASE, USUBSTR, USUPPLEMENTARY, UVALID, UWIDTH,
+            VARIANCE,
+            WHEN_COMPILED,
+            YEAR_TO_YYYY
+        }
+
+        internal static ExternalName CreateIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context)
+        {
+            return CreateExternalName(context.externalName2(), SymbolType.FunctionName, typeof(FunctionNameEnum));
+        }
+
+        /// <summary>
+        /// Names of specialized Cobol preprocessors or coprocessors
+        /// </summary>
+        public enum ExecTranslatorNameEnum
+        {
+            // DB2 coprocessor
+            SQL,
+            // IMS SQL coprocessor
+            SQLIMS,
+            // Integrated CICS translator
+            CICS,
+            // Integrated CICS translator
+            DLI
+        }
+
+        internal static ExternalName CreateExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
+        {
+            return CreateExternalName(context.externalName3(), SymbolType.ExecTranslatorName, typeof(ExecTranslatorNameEnum));
+        }
+
+
+        // --- Compiler enumerations ---
+
+        /// <summary>
+        /// With the *CONTROL (or *CBL) statement, you can selectively display or suppress
+        /// the listing of source code, object code, and storage maps throughout the source text. 
+        /// </summary>
+        public enum ControlCblOptionEnum
+        {
+            // 
+            // These are not reserved words, but the only possible values are the following
+            SOURCE, NOSOURCE,
+            LIST, NOLIST,
+            MAP, NOMAP
+        }
+
+        internal static EnumeratedValue CreateControlCblOption(CodeElementsParser.ControlCblOptionContext context)
+        {
+            return CreateEnumeratedValue(context.enumeratedValue1(), typeof(ControlCblOptionEnum));
+        }
+
+        /// <summary>
+        /// The RECORDING MODE clause specifies the format of the physical records in a QSAM file. 
+        /// The clause is ignored for a VSAM file.
+        /// </summary>
+        public enum RecordingModeEnum
+        {
+            // Recording mode F (fixed)
+            F,
+            // Recording mode V (variable)
+            V,
+            // Recording mode U (fixed or variable)
+            U,
+            // Recording mode S (spanned)
+            S
         }
         
-        internal static IList<FileName> CreateFileNames(IReadOnlyList<CodeElementsParser.FileNameReferenceContext> context)
+        internal static EnumeratedValue CreateRecordingMode(CodeElementsParser.RecordingModeContext context)
         {
-            List<FileName> filenames = new List<FileName>();
-            if (context != null)
-                foreach (var filename in context)
-                {
-                    var name = CreateFileName(filename);
-                    if (name != null) filenames.Add(name);
-                }
-            filenames.Reverse();
-            return filenames;
-        }
-        
-        internal static IList<QualifiedProcedureName> CreateProcedureNames(IReadOnlyList<CodeElementsParser.ProcedureNameContext> context)
-        {
-            List<QualifiedProcedureName> procedurenames = new List<QualifiedProcedureName>();
-            if (context != null)
-                foreach (var procedurename in context)
-                {
-                    var name = CreateProcedureName(procedurename);
-                    if (name != null) procedurenames.Add(name);
-                }
-            procedurenames.Reverse();
-            return procedurenames;
-        }
-
-        internal static QualifiedProcedureName CreateProcedureName(CodeElementsParser.ProcedureNameContext context)
-        {
-            if (context.paragraphNameOrSectionNameReference() != null)
-            {
-                Token symbolToken = ParseTreeUtils.GetFirstToken(context.paragraphNameOrSectionNameReference());
-                // TO DO : use here the symbol table to check if the name is a paragraph or a section
-                // In the meantime, because sections are obsolete, we just assume it is always a paragraph name
-                ParagraphName paragraphName = new ParagraphName(symbolToken);
-                return new QualifiedProcedureName(paragraphName, null);
-            }
-            else //if(context.qualifiedParagraphNameReference() != null)
-            {
-                Token paragraphToken = ParseTreeUtils.GetFirstToken(context.qualifiedParagraphNameReference().paragraphNameReference());
-                Token sectionToken = ParseTreeUtils.GetFirstToken(context.qualifiedParagraphNameReference().sectionNameReference());
-                ParagraphName paragraphName = new ParagraphName(paragraphToken);
-                SectionName sectionName = new SectionName(sectionToken);
-                return new QualifiedProcedureName(paragraphName, sectionName);
-            }
-        }
-
-		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceContext context) {
-			if (context == null) return null;
-			//TODO: subscripting
-			return CreateSubscripts(context.subscript());
-		}
-
-		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceContext context) {
-			if (context == null) return null;
-			var subscripts = CreateSubscripts(context.subscript());
-			//TODO: subscripting (probably not more correct than other CreateSubscripts() methods, but allows SEARCH test to pass)
-			if (context.qualifiedDataNameOrQualifiedConditionName() != null) {
-				var s = CreateSubscript(context.qualifiedDataNameOrQualifiedConditionName().subscript());
-				if (s != null) subscripts.Add(s);
-			}
-			return subscripts;
-		}
-
-		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrIndexNameContext context) {
-			if (context == null) return null;
-			//TODO: subscripting
-			return CreateSubscripts(context.subscript());
-		}
-
-		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrFileNameContext context) {
-			if (context == null) return null;
-			//TODO: subscripting
-			return CreateSubscripts(context.subscript());
-		}
-
-		private static IList<Subscript> CreateSubscripts(CodeElementsParser.DataReferenceOrConditionReferenceOrClassNameContext context) {
-			if (context == null) return null;
-			//TODO: subscripting
-			return CreateSubscripts(context.subscript());
-		}
-
-        public static IList<Subscript> CreateSubscripts(IReadOnlyList<CodeElementsParser.SubscriptContext> context)
-        {
-            if (context == null) return null;
-            var subscripts = new List<Subscript>();
-            foreach (var subscript in context) subscripts.Add(CreateSubscript(subscript));
-            return subscripts;
-        }
-
-
-        public static Subscript CreateSubscript(CodeElementsParser.SubscriptContext context)
-        {
-            if (context == null) return null;
-
-            Subscript subscript = new Subscript();
-            if (context.IntegerLiteral() != null)
-            {
-                subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-            }
-            if (context.ALL() != null)
-            {
-                var token = ParseTreeUtils.GetTokenFromTerminalNode(context.ALL());
-                subscript.indexname = new IndexName(token);
-            }
-            if (context.qualifiedDataNameOrIndexName() != null)
-            {
-                subscript.dataname = CreateQualifiedName(context.qualifiedDataNameOrIndexName());
-                InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
-            }
-            //if (context.indexName() != null)
-            //{
-            //    subscript.indexname = CreateIndexName(context.indexName());
-            //    InitializeSubscriptOperatorAndLiteral(subscript, context.withRelativeSubscripting());
-            //}
-            return subscript;
-        }
-
-        private static void InitializeSubscriptOperatorAndLiteral(Subscript subscript, CodeElementsParser.WithRelativeSubscriptingContext context)
-        {
-            if (context == null) return;
-            if (context.PlusOperator() != null) subscript.op = '+';
-            if (context.MinusOperator() != null) subscript.op = '-';
-            if (context.IntegerLiteral() != null) subscript.offset = new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral()));
-        }
-
-        private static Substring CreateReferenceModifier(CodeElementsParser.ReferenceModifierContext context)
-        {
-            if (context == null) return null;
-            var builder = new ArithmeticExpressionBuilder();
-            ArithmeticExpression left = null, right = null;
-            //if (context.leftMostCharacterPosition() != null)
-            //    left = builder.CreateArithmeticExpression(context.leftMostCharacterPosition().arithmeticExpression());
-            //if (context.length() != null)
-            //    right = builder.CreateArithmeticExpression(context.length().arithmeticExpression());
-            if (left == null && right == null) return null;
-            return new Substring(left, right);
-        }
-
-
-
-        private static Address CreateAddressOf(CodeElementsParser.AddressOfSpecialRegisterDeclContext context)
-        {
-            if (context == null || context.dataReference() == null) return null;
-            return new Address(CreateDataReference(context.dataReference()));
-        }
-
-        private static Length CreateLengthOf(CodeElementsParser.LengthOfSpecialRegisterDeclContext context)
-        {
-            if (context == null || context.dataReference() == null) return null;
-            return new Length(CreateDataReference(context.dataReference()));
-        }
-
-               
-
-        public static Expression CreateAddressOfIdentifier(ITerminalNode address, CodeElementsParser.IdentifierContext identifier)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        public static Expression CreateIdentifierOrLiteral(CodeElementsParser.IdentifierOrLiteralContext context)
-        {
-            if (context == null) return null;
-            if (context.identifier() != null) return CobolWordsBuilder.CreateIdentifier(context.identifier());
-            if (context.literal() != null) return CobolWordsBuilder.CreateLiteral(context.literal());
-            return null;
-        }
-
-
-        internal static Expression CreateEncoding(CodeElementsParser.CodepageContext context)
-        {
-            if (context == null) return null;
-            if (context.identifier() != null)
-                return CreateIdentifier(context.identifier());
-            if (context.IntegerLiteral() != null)
-                return new Literal(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
-            return null;
-        }
+            return CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum));
+        }        
 	}
-
 }

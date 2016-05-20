@@ -84,38 +84,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public IDictionary<XmlSchemaName, string> XmlSchemaNames { get; set; }
     }
-
-    /// <summary>
-    /// System devices or standard system actions taken by the compiler.
-    /// </summary>
-    public enum EnvironmentNameEnum
-    {
-        // System logical input unit : ACCEPT
-        SYSIN, SYSIPT,
-        // System logical output unit : DISPLAY
-        SYSOUT, SYSLIST, SYSLST,
-        // System punch device : DISPLAY
-        SYSPUNCH, SYSPCH,
-        // Console : ACCEPT and DISPLAY
-        CONSOLE,
-        // Skip to channel 1 through channel 12, respectively : WRITE ADVANCING
-        C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12,
-        // Suppress spacing : WRITE ADVANCING
-        CSP,
-        // Pocket select 1 through 5 on punch devices : WRITE ADVANCING
-        S01, S02, S03, S04, S05,
-        // Advanced Function Printing : WRITE ADVANCING
-        AFP_5A
-    }
-
-    /// <summary>
-    /// A 1-byte user-programmable status indicator (UPSI) switch.
-    /// </summary>
-    public enum UPSISwitchName
-    {
-        UPSI_0, UPSI_1, UPSI_2, UPSI_3, UPSI_4, UPSI_5, UPSI_6, UPSI_7
-    }
-
+    
     /// <summary>
     /// User-programmable status indicator
     /// </summary>

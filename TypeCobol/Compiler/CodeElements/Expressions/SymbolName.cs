@@ -117,6 +117,17 @@ namespace TypeCobol.Compiler.CodeElements
         public SymbolReference(LiteralValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolReference, type)
         { }
+
+        /// <summary>
+        /// Used to resolve the symbol reference in a hierarchy of names
+        /// </summary>
+        public virtual string DefinitionPathPattern
+        {
+            get
+            {
+                return "\\." + Name + "$"; 
+            }
+        }
     }
 
     /// <summary>

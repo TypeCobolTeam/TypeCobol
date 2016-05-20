@@ -1,5 +1,101 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Specialized;
+
+namespace TypeCobol.Compiler.CodeElements
+{
+    /// <summary>
+    /// A name that exists within a hierarchy of names can be made unique 
+    /// by specifying one or more higher-level names in the hierarchy. 
+    /// The higher-level names are called qualifiers, and the process by which 
+    /// such names are made unique is called qualification.
+    /// </summary>
+    public class QualifiedSymbolReference : SymbolReference
+    {
+        public QualifiedSymbolReference(SymbolReference qualifiedSymbol, SymbolReference qualifierSymbol) :
+            base(qualifiedSymbol.NameLiteral, qualifiedSymbol.Type)
+        {
+            QualifiedSymbol = qualifiedSymbol;
+            QualifierSymbol = qualifierSymbol;
+        }
+
+        public SymbolReference QualifiedSymbol { get; private set; }
+
+        public SymbolReference QualifierSymbol { get; private set; }
+
+        /// <summary>
+        /// Used to resolve the symbol reference in a hierarchy of names
+        /// </summary>
+        public override string DefinitionPathPattern
+        {
+            get
+            {
+                return "\\." + QualifiedSymbol.Name + "\\..*" + QualifiedSymbol.DefinitionPathPattern;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Specific case of qualified symbol name with no hierarchy of names : 
+    /// paragraphNameReference (IN | OF) sectionNameReference
+    /// </summary>
+    public class QualifiedParagraphNameReference : SymbolReference
+    {
+        public QualifiedParagraphNameReference(SymbolReference paragraphName, SymbolReference sectionName) :
+            base(paragraphName.NameLiteral, paragraphName.Type)
+        {
+            SectionName = sectionName;
+        }        
+
+        public SymbolReference SectionName { get; private set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            if (SectionName == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return base.ToString() + " IN " + SectionName.ToString();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Unique case of qualified external name : 
+    /// textName (IN | OF) libraryName
+    /// </summary>
+    public class QualifiedTextName : ExternalName
+    {
+        public QualifiedTextName(ExternalName textName, ExternalName libraryName) :
+            base(textName.NameLiteral, textName.Type)
+        {
+            LibraryName = libraryName;
+        }
+
+        public ExternalName LibraryName { get; private set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            if (LibraryName == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return base.ToString() + " IN " + LibraryName.ToString();
+            }
+        }
+    }
+}
+
+
+// -- OLD CODE --
 
 namespace TypeCobol.Compiler.CodeElements.Expressions {
 
@@ -30,7 +126,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
         public Token QualifierFor { get; set; }
 
      */
-     
+
     public interface QualifiedName: IList<string> {
 		string Head { get; }
 		bool IsExplicit { get; }

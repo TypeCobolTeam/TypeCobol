@@ -204,17 +204,6 @@ namespace TypeCobol.Compiler.CodeElements
         public LiteralOrSymbolReference<int, DataName> LogicalPageBottomMarginLineCount { get; set; }
 
         /// <summary>
-        /// The RECORDING MODE clause specifies the format of the physical records in a QSAM file. 
-        /// Permitted values for RECORDING MODE are:
-        /// * Recording mode F (fixed)
-        /// * Recording mode V (variable)
-        /// * Recording mode U (fixed or variable)
-        /// * Recording mode S (spanned)
-        /// The clause is ignored for a VSAM file.
-        /// </summary>
-        public QSAMRecordingMode QSAMRecordingMode { get; set; }
-
-        /// <summary>
         /// The CODE-SET clause specifies the character code used to represent data on a
         /// magnetic tape file. When the CODE-SET clause is specified, an alphabet-name
         /// identifies the character code convention used to represent data on the input-output
