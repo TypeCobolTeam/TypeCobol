@@ -54,21 +54,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 programIdentification.ProgramName = new ProgramName(programName);
             }
-            Token commonFlag = ParseTreeUtils.GetFirstToken(context.COMMON());
-            if (commonFlag != null)
-            {
-                programIdentification.IsCommon = new SyntaxBoolean(commonFlag);
-            }
-            Token initialFlag = ParseTreeUtils.GetFirstToken(context.INITIAL());
-            if (initialFlag != null)
-            {
-                programIdentification.IsInitial = new SyntaxBoolean(initialFlag);
-            }
-            Token recursiveFlag = ParseTreeUtils.GetFirstToken(context.RECURSIVE());
-            if (recursiveFlag != null)
-            {
-                programIdentification.IsRecursive = new SyntaxBoolean(recursiveFlag);
-            }
+			programIdentification.IsCommon = context.COMMON() != null;
+			programIdentification.IsInitial = context.INITIAL() != null;
+			programIdentification.IsRecursive = context.RECURSIVE() != null;
 
             Context = context;
             CodeElement = programIdentification;
@@ -460,13 +448,19 @@ namespace TypeCobol.Compiler.Parser
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-			foreach(var typeclause in context.tcExtTypeClause()) {
-				var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-				if (token != null) entry.Picture = "TYPE:"+token.Text;
+			foreach(var typeclause in context.tcExtTypeClause())
+			{
+			    var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
+			    if (token != null) entry.Picture = "TYPE:"+token.Text;
 			}
-// [/TYPECOBOL]
+            // [/TYPECOBOL]
 
-			Context = context;
+		    if (entry.IsExternal && entry.LevelNumber != 01)
+		    {
+                DiagnosticUtils.AddError(entry, "External is only allowed for level 01", external);
+            }
+
+		    Context = context;
 			CodeElement = entry;
 		}
 
@@ -894,10 +888,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             } //else don't set UponMnemonicOrEnvironmentName. it will remains null
 
-
-            //With no advancing
-            Token withNoAdvancing = ParseTreeUtils.GetFirstToken(context.withNoAdvancing());
-            statement.IsWithNoAdvancing = new SyntaxBoolean(withNoAdvancing);
+			statement.IsWithNoAdvancing = context.withNoAdvancing() != null;
 
             Context = context;
             CodeElement = statement;
@@ -1255,14 +1246,8 @@ namespace TypeCobol.Compiler.Parser
                 }
                 statement.ReceivingIndexs = indexs;
             }
-            if (context.UP() != null)
-            {
-                statement.UpBy = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(context.UP()));
-            }
-            if (context.DOWN() != null)
-            {
-                statement.DownBy = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(context.DOWN()));
-            }
+			statement.UpBy   = (context.UP() != null);
+			statement.DownBy = (context.DOWN() != null);
 
             if (context.identifier() != null)
             {
@@ -1297,15 +1282,9 @@ namespace TypeCobol.Compiler.Parser
                         }
                         setExternalSwitch.MnemonicForEnvironmentNames = mnemonics;
                     }
-                    if (switchesWhatContext.ON() != null)
-                    {
-                        setExternalSwitch.ToOn = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(switchesWhatContext.ON()));
-                    }
-                    if (switchesWhatContext.OFF() != null)
-                    {
-                        setExternalSwitch.ToOff = new SyntaxBoolean(ParseTreeUtils.GetFirstToken(switchesWhatContext.OFF()));
-                    }
-                    setExternalSwitchs.Add(setExternalSwitch);
+					setExternalSwitch.ToOn = (switchesWhatContext.ON() != null);
+					setExternalSwitch.ToOff= (switchesWhatContext.OFF() != null);
+					setExternalSwitchs.Add(setExternalSwitch);
                 }
                 statement.SetExternalSwitches = setExternalSwitchs;
             }
@@ -1381,20 +1360,14 @@ namespace TypeCobol.Compiler.Parser
                     //else don't set IdentifierToConcat. It will remains null
 
 
-                    if (stringStatementWhatContext.stringStatementDelimiter() != null)
-                    {
-                        if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null)
-                        {
-                            stringStatementWhat.DelimiterIdentifier =
-                                CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(),
-                                    statement, "String");
-                        }
-                        else if (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null)
-                        {
-                            Token sizeToken = ParseTreeUtils.GetFirstToken(stringStatementWhatContext.stringStatementDelimiter().SIZE());
-                            stringStatementWhat.Size = new SyntaxBoolean(sizeToken);
-                        }
-                    }
+					if (stringStatementWhatContext.stringStatementDelimiter() != null) {
+						if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null) {
+							stringStatementWhat.DelimiterIdentifier =
+								CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(), statement, "String");
+						} else {
+							stringStatementWhat.DelimitedBySize = (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null);
+						}
+					}
                     statementWhatList.Add(stringStatementWhat);
                 }
 

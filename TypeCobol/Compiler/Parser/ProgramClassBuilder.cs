@@ -40,10 +40,16 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
 							TableOfIntrisic.Add(data);
-					foreach(var type in value.CustomTypes.Values)
+					foreach(var type in value.CustomTypes)
 						TableOfIntrisic.RegisterCustomType(type);
 				}
-			}
+				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
+            }
+		}
+
+		private void RegisterCustomType(SymbolTable table,DataType type) {
+			try { table.GetCustomType(type.Name); }
+			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
 		}
 
         public ProgramDispatcher Dispatcher { get; internal set; }
@@ -145,7 +151,7 @@ namespace TypeCobol.Compiler.Parser
 			AddEntries(node, entries);
 			_exit();
 		}
-		private void AddEntries(Node root, IList<DataDescriptionEntry> entries) {
+		private void AddEntries(Node root, IEnumerable<DataDescriptionEntry> entries) {
 			foreach(var entry in entries) {
 				var child = new Node(entry);
 				_enter(child);
@@ -168,12 +174,35 @@ namespace TypeCobol.Compiler.Parser
 				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
-				var customTypeDescription = ComputeType(data, currencies);
+				var customtype = ComputeType(data, currencies);
+				if (customtype != null && !customtype.DataType.IsNestable && hasParent) {
+					DiagnosticUtils.AddError(data, "Type "+customtype.DataType.Name+" should not be subordinate to another item");
+					var parent = data.TopLevel;
+					while(parent != null) {
+						DiagnosticUtils.AddError(parent, "Group items should not contain type "+customtype.DataType.Name+" items");
+						parent = parent.TopLevel;
+					}
+				}
+
+            //[TypeCobol]
+			    if (data.IsTypeDefinitionPart)
+			    {
+                    //Redefines is not allowed under a TYPEDEF
+                    if (data.RedefinesDataName != null)
+			        {
+			            DiagnosticUtils.AddError(data, "Typedef can't contains redefined item: " + data);
+			        }
+                    if (data.IsRenamesDataNameDescription)
+                    {
+                        DiagnosticUtils.AddError(data, "Typedef can't contains renamed item: " + data);
+                    }
+                }
+            //[/TypeCobol
 
 				if (!data.IsTypeDefinitionPart) {
 					CurrentProgram.SymbolTable.Add(data);
-					if (customTypeDescription != null) {
-						foreach(var sub in customTypeDescription.Subordinates) {
+					if (customtype != null) {
+						foreach(var sub in customtype.Subordinates) {
 							// add a clone so parent/child relations are not spoiled
 							var clone = sub.Clone() as DataDescriptionEntry;
 							data.Subordinates.Add(clone);
@@ -187,11 +216,67 @@ namespace TypeCobol.Compiler.Parser
 				}
 			}
 			foreach(var data in result) {
+				int offset = 0;
+				ComputeMemoryProfile(data, ref offset);
 				if (data.IsTypeDefinition && data.Subordinates.Count < 1 && data.Picture == null)
 					DiagnosticUtils.AddError(data, data.Name+" has no description.");
 			}
 			return result;
 		}
+
+		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
+			if (data.Subordinates.Count < 1) {
+				int length = picture2Size(data.Picture) * type2Size(data.DataType);
+				// TODO REDEFINES
+				data.MemoryArea = CreateMemoryArea(data, offset, length);
+				offset += data.MemoryArea.Length; // offset for next sibling or for toplevel's next sibling
+			} else {
+				int length = 0;
+				int os = -1;
+				foreach(var child in data.Subordinates) {
+					COBOLMemoryArea rmem = null;
+					if (child.RedefinesDataName != null) {
+						rmem = GetRedefinedMemory(child.RedefinesDataName.Name);
+						offset = rmem.Offset;
+					}
+					ComputeMemoryProfile(child, ref offset);
+					if (os < 0) os = child.MemoryArea.Offset;// parent offset = first child offset
+					if (rmem != null) {
+						if (child.MemoryArea.Length > rmem.Length) {
+System.Console.WriteLine("TODO: "+child.Name+'('+child.MemoryArea.Length+") REDEFINES smaller area "+child.RedefinesDataName.Name+'('+rmem.Length+')');
+							length += child.MemoryArea.Length - rmem.Length;//warn: redefines smaller area
+						} else {
+							offset += rmem.Length - child.MemoryArea.Length;//catch with redefined offset
+						}
+					} else length += child.MemoryArea.Length;
+				}
+				data.MemoryArea = CreateMemoryArea(data, os, length);
+			}
+		}
+		private static int picture2Size(string picture) {
+			if (picture == null) return 1;
+			var betweenparentheses = picture.Split("()".ToCharArray());
+			if (betweenparentheses.Length > 1)
+				return int.Parse(betweenparentheses[1]);
+			return 1;
+		}
+		private static int type2Size(DataType type) {
+			return 1; //TODO
+		}
+		private COBOLMemoryArea GetRedefinedMemory(string redefined) {
+			var matches = Program.SymbolTable.Get(redefined);
+			if (matches.Count != 1) {
+System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
+				return null;
+			}
+			return matches[0].MemoryArea;
+		}
+		private COBOLMemoryArea CreateMemoryArea(DataDescriptionEntry data, int offset, int length) {
+			if (data.IsTableOccurence) return new TableInMemory(length, offset, data.Occurences);
+			else return new DataInMemory(length, offset);
+		}
+
+
 
 		private void AddGeneratedSymbols(DataDescriptionEntry data) {
 			if (data.DataType == null) return;
@@ -242,7 +327,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="data">Data description to update</param>
 		/// <param name="currencies">Currency characters, used to know if data is numeric or numeric edited</param>
 		/// <returns>Representation of the corresponding TYPEDEF if data is of a custom TYPE, or null if data type is unknown of from COBOL standard.</returns>
-		private DataDescriptionEntry ComputeType(DataDescriptionEntry data, char[] currencies) {
+		private TypeDefinition ComputeType(DataDescriptionEntry data, char[] currencies) {
 			if (data.DataType != null) return null;
 			if (data.Picture == null) {
 				data.DataType = DataType.Unknown;
@@ -264,7 +349,7 @@ namespace TypeCobol.Compiler.Parser
 				return null;
 			}
 		}
-		private DataDescriptionEntry GetCustomType(string name) {
+		private TypeDefinition GetCustomType(string name) {
 			try { return CurrentProgram.SymbolTable.GetCustomType(name); }
 			catch(ArgumentException ex) { return null; }
 		}

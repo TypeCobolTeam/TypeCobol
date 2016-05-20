@@ -36,13 +36,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var value     = GetContext(data, context.valueClause());
 
 			if (data.Name == null) {
-				if (data.IsExternal)
-					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
-				if (data.IsGlobal)
+                if (data.IsExternal)
+                    DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+                if (data.IsGlobal)
 					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
 			}
-		}
-		private void OnDataConditionEntry(DataDescriptionEntry data, CodeElementsParser.DataConditionEntryContext context) {
+        }
+        private void OnDataConditionEntry(DataDescriptionEntry data, CodeElementsParser.DataConditionEntryContext context) {
 			if (data.LevelNumber != 88)
 				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber());
 			if (data.Name == null && !data.IsFiller)
@@ -278,9 +278,19 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 				var receiving = lr[0];
 				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
-					DiagnosticUtils.AddError(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe");
+					DiagnosticUtils.AddWarning(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe", receiving.Token);
 				}
+				CheckNesting(e, receiving);
 			}
+		}
+		private bool CheckNesting(CodeElement e, DataDescriptionEntry data) {
+			foreach(var sub in data.Subordinates) {
+				if (sub.DataType != null && !sub.DataType.IsNestable) {
+					DiagnosticUtils.AddError(e, "Group contains type "+sub.DataType.Name+" variables");
+					return false;
+				} else if (!CheckNesting(e, sub)) return false;
+			}
+			return true;
 		}
 	}
 

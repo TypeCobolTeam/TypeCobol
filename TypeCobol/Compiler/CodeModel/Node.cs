@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["name"]  = new Named("NAME");
 			Attributes["level"] = new Level("LEVEL");
 			Attributes["type"]    = new Typed("TYPE");
-			Attributes["typedef"] = new TypeDefinition("TYPEDEF");
+			Attributes["typedef"] = new TypeDefined("TYPEDEF");
 			Attributes["sender"] = new Sender("SENDER");
 			Attributes["receiver"] = new Receiver("RECEIVER");
 		}
@@ -105,7 +105,7 @@ namespace TypeCobol.Compiler.CodeElements
 				var data = o as DataDescriptionEntry;
 				if (data.IsTypeDefinition) return null;
 				if (!table.IsCustomType(data.DataType)) return null;
-				return data.DataType/*.Name*/;
+				return data.DataType;
 			} else
 			if (o is Literal) {
 				var l = o as Literal;
@@ -116,8 +116,8 @@ namespace TypeCobol.Compiler.CodeElements
 			return null;
 		}
 	}
-	internal class TypeDefinition: NodeAttribute {
-		public TypeDefinition(string key): base(key) { }
+	internal class TypeDefined: NodeAttribute {
+		public TypeDefined(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
 			var data = o as DataDescriptionEntry;
 			if (data == null || !data.IsTypeDefinitionPart) return null;

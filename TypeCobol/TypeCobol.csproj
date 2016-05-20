@@ -135,10 +135,12 @@
     <Compile Include="Compiler\CodeElements\Expressions\LiteralValue.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
+    <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\CodeElementCheckers.cs" />
+    <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
     <Compile Include="Compiler\Parser\CodeElementDispatcher.cs" />
     <Compile Include="Compiler\Parser\ProgramClassDocument.cs" />

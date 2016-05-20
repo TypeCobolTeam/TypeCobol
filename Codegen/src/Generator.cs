@@ -232,7 +232,7 @@ System.Console.WriteLine(line.Text);
 			return false;
 		}
 
-		private void insertChildren(DataDescriptionEntry type, ref int line, int level, int generation) {
+		private void insertChildren(TypeDefinition type, ref int line, int level, int generation) {
 			foreach(var child in type.Subordinates) {
 				bool isCustomTypeToo = !child.IsTypeDefinition && table.IsCustomType(child.DataType);
 				ICobolTextLine inserted = factory.CreateDataDefinition(child, level, generation, isCustomTypeToo);

@@ -76,14 +76,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// - If the total count exceeds the maximum, as many records are written as are needed to display all operands. Any operand being printed or displayed when the end of a record is reached is continued in the next record.
         /// ... more details on DBCS operands p324 ...
         /// </summary>
-        public SyntaxBoolean IsWithNoAdvancing { get; set; }
+		public bool IsWithNoAdvancing { get; set; }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (IdentifierOrLiteral == null && IsWithNoAdvancing == null && UponMnemonicOrEnvironmentName == null )
+            if (IdentifierOrLiteral == null && !IsWithNoAdvancing && UponMnemonicOrEnvironmentName == null )
             {
                 return base.ToString();
             }
@@ -106,10 +106,7 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.AppendLine("- UponMnemonicOrEnvironmentName[" + UponMnemonicOrEnvironmentName.Type + "] = " + UponMnemonicOrEnvironmentName);
                 }
 
-                if (IsWithNoAdvancing != null)
-                {
-                    sb.AppendLine("- WithNoAdvancing = " + IsWithNoAdvancing.Value);
-                }
+				if (IsWithNoAdvancing) sb.AppendLine("- WithNoAdvancing");
                 return sb.ToString();
             }
         }

@@ -27,5 +27,11 @@ namespace TypeCobol.Compiler.Parser
             var diagnostic = new ParserDiagnostic(message, ParseTreeUtils.GetFirstToken(context), new RuleStackBuilder().GetRuleStack(context), Diagnostics.MessageCode.SyntaxWarningInParser);
             e.Diagnostics.Add(diagnostic);
         }
+
+        internal static void AddWarning(CodeElement e, string message, Scanner.Token token)
+        {
+            var diagnostic = new ParserDiagnostic(message, token, null, Diagnostics.MessageCode.SyntaxWarningInParser);
+            e.Diagnostics.Add(diagnostic);
+        }
     }
 }
