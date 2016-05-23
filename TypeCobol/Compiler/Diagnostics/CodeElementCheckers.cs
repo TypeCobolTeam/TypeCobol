@@ -278,7 +278,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 				var receiving = lr[0];
 				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
-					DiagnosticUtils.AddWarning(e, "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe", receiving.Token);
+					string message = "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe";
+					DiagnosticUtils.AddError(e, message, Diagnostics.MessageCode.SyntaxWarningInParser);
 				}
 				CheckNesting(e, receiving);
 			}
