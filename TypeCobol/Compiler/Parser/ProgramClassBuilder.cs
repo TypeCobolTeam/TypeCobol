@@ -227,7 +227,6 @@ namespace TypeCobol.Compiler.Parser
 		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
 			if (data.Subordinates.Count < 1) {
 				int length = picture2Size(data.Picture) * type2Size(data.DataType);
-				// TODO REDEFINES
 				data.MemoryArea = CreateMemoryArea(data, offset, length);
 				offset += data.MemoryArea.Length; // offset for next sibling or for toplevel's next sibling
 			} else {

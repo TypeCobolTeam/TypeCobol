@@ -93,7 +93,7 @@ WORKING-STORAGE SECTION.
  66  TEST4-SGROUP2R RENAMES TEST4-ELT2
                     THRU    TEST4-ELT4.
 
-
+* TEST 5: multi-dimensional table
 01  TEST5-GROUP1.
     05  TEST5-SGROUP1 OCCURS 3.
         10  TEST5-ELT1           PIC X(04).
