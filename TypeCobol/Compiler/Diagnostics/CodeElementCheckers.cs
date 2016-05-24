@@ -216,15 +216,19 @@ namespace TypeCobol.Compiler.Diagnostics {
 			foreach (var identifier in element.Identifiers) {
 				var found = table.Get(identifier.Name);
 				if (found.Count < 1) {
-					DiagnosticUtils.AddError(e, "Symbol "+identifier.Name+" is not referenced");
+					DiagnosticUtils.AddError(e, CamLCase(IdentifierUtils.ToHumanReadable(identifier))+' '+identifier.Name+" is not referenced");
 					return;
 				}
 				if (found.Count > 1)
-					DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+identifier.Name);
+					DiagnosticUtils.AddError(e, "Ambiguous reference to "+IdentifierUtils.ToHumanReadable(identifier)+' '+identifier.Name);
 
 				foreach(var error in checkSubscripting(identifier.Name, found[0]))
 					DiagnosticUtils.AddError(e, error);
 			}
+		}
+
+		private string CamLCase(string str) {
+			return char.ToUpper(str[0]) + str.Substring(1);
 		}
 
 		private IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {

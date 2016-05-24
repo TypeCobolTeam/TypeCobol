@@ -213,13 +213,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		public override string ToString() {
 			var str = new StringBuilder();
 			str.Append(Symbol != null ? Symbol.ToString() : "?");
-			if (this.Parameters.Count > 0)
-			{
-				str.Append("( ");
-				foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
-				if (str[str.Length - 2] == ',') str.Length -= 2;
-				str.Append(')');
-			}
+			str.Append('(');
+			foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
+			if (this.Parameters.Count > 0) str.Length -= 2;
+			str.Append(')');
 			if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
 			return str.ToString();
 		}
@@ -318,6 +315,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			if (literal.IsNumeric) return DataType.Numeric;
 			if (literal.IsBoolean) return DataType.Boolean;
 			else return DataType.Alphanumeric;
+		}
+		public static string ToHumanReadable(Identifier identifier) {
+			if (identifier is Condition) return "condition";
+			if (identifier is FunctionReference) return "function";
+			if (identifier is SpecialRegister) return "special register";
+			return "symbol";
 		}
 	}
 }
