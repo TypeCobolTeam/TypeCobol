@@ -216,18 +216,24 @@ namespace TypeCobol.Compiler.Diagnostics {
 			foreach (var identifier in element.Identifiers) {
 				var found = table.Get(identifier.Name);
 				if (found.Count < 1) {
-					DiagnosticUtils.AddError(e, CamLCase(IdentifierUtils.ToHumanReadable(identifier))+' '+identifier.Name+" is not referenced");
+					if (table.GetFunction(identifier.Name) == null)
+						DiagnosticUtils.AddError(e, CamLCase(ToHumanReadable(identifier))+' '+identifier.Name+" is not referenced");
 					return;
 				}
 				if (found.Count > 1)
-					DiagnosticUtils.AddError(e, "Ambiguous reference to "+IdentifierUtils.ToHumanReadable(identifier)+' '+identifier.Name);
+					DiagnosticUtils.AddError(e, "Ambiguous reference to "+ToHumanReadable(identifier)+' '+identifier.Name);
 
 				foreach(var error in checkSubscripting(identifier.Name, found[0]))
 					DiagnosticUtils.AddError(e, error);
 			}
 		}
-
-		private string CamLCase(string str) {
+		private static string ToHumanReadable(Identifier identifier) {
+			if (identifier is Condition) return "condition";
+			if (identifier is FunctionReference) return "function";
+			if (identifier is SpecialRegister) return "special register";
+			return "symbol";
+		}
+		private static string CamLCase(string str) {
 			return char.ToUpper(str[0]) + str.Substring(1);
 		}
 

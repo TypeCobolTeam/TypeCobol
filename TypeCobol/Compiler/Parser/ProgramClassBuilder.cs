@@ -44,6 +44,7 @@ namespace TypeCobol.Compiler.Parser
 						TableOfIntrisic.RegisterCustomType(type);
 				}
 				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
+				TableOfIntrisic.Register(new TypeCobol.Compiler.CodeElements.Functions.Function("POW"));
             }
 		}
 

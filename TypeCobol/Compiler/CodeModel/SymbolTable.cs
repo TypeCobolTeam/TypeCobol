@@ -2,6 +2,7 @@
 using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -195,6 +196,27 @@ namespace TypeCobol.Compiler.CodeModel
 			/// Cobol does not distinguish between programs and functions/procedures.
 			/// </summary>
 			Program,
+		}
+
+
+
+		/// <summary>Functions repository</summary>
+		protected Dictionary<QualifiedName,Function> functions = new Dictionary<QualifiedName,Function>();
+
+		internal Function GetFunction(string name) {
+			return GetFunction(new URI(name));
+		}
+		internal Function GetFunction(QualifiedName name) {
+			try { return functions[name]; }
+			catch(KeyNotFoundException ex) {
+				if (EnclosingScope == null) return null;
+				else return EnclosingScope.GetFunction(name);
+			}
+		}
+		/// <summary>Make a function definied in the current scope.</summary>
+		/// <param name="function">Function definition</param>
+		internal void Register(Function function) {
+			functions[function.Name] = function;
 		}
 
 

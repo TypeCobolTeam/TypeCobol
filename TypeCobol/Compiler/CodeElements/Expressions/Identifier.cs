@@ -316,11 +316,5 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			if (literal.IsBoolean) return DataType.Boolean;
 			else return DataType.Alphanumeric;
 		}
-		public static string ToHumanReadable(Identifier identifier) {
-			if (identifier is Condition) return "condition";
-			if (identifier is FunctionReference) return "function";
-			if (identifier is SpecialRegister) return "special register";
-			return "symbol";
-		}
 	}
 }

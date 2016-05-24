@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		}
 		public virtual bool Equals(QualifiedName other) {
 			if (other == null) return false;
-			if (other.IsExplicit != IsExplicit) return false;
+//			if (other.IsExplicit != IsExplicit) return false;
 			if (other.Count != Count) return false;
 			for(int c = 0; c < Count; c++)
 				if (!other[c].Equals(this[c])) return false;
@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		}
 		public override int GetHashCode() {
 			int hash = 13;
-			hash = hash*7 + IsExplicit.GetHashCode();
+//			hash = hash*7 + IsExplicit.GetHashCode();
 			hash = hash*7 + Count.GetHashCode();
 			foreach(string part in this)
 				hash = hash*7 + part.GetHashCode();
