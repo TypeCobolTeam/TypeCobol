@@ -7,9 +7,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value defined by a single token in the Cobol syntax
     /// </summary>
-    public abstract class LiteralValue<T>
+    public abstract class SyntaxValue<T>
     {
-        public LiteralValue(Token t) { Token = t; }
+        public SyntaxValue(Token t) { Token = t; }
 
         /// <summary>
         /// Token defining the value
@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens : TRUE | FALSE
     /// </summary>
-    public class BooleanValue : LiteralValue<bool>
+    public class BooleanValue : SyntaxValue<bool>
     {
         public BooleanValue(Token t) : base(t) { }
 
@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens : IntegerLiteral
     /// </summary>
-    public class IntegerValue : LiteralValue<long>
+    public class IntegerValue : SyntaxValue<long>
     {
         public IntegerValue(Token t) : base(t) { }
 
@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens : IntegerLiteral | DecimalLiteral | FloatingPointLiteral | ZERO | ZEROS | ZEROES
     /// </summary>
-    public class NumericValue : LiteralValue<double>
+    public class NumericValue : SyntaxValue<double>
     {
         public NumericValue(Token t) : base(t) { }
 
@@ -178,7 +178,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
-    public class AlphanumericValue : LiteralValue<string>
+    public class AlphanumericValue : SyntaxValue<string>
     {
         public AlphanumericValue(Token t) : base(t)
         { }
@@ -592,7 +592,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens : NULL
     /// </summary>
-    public class NullPointerValue : LiteralValue<bool>
+    public class NullPointerValue : SyntaxValue<bool>
     {
         public NullPointerValue(Token t) : base(t) { }
 

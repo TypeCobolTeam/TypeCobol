@@ -131,9 +131,11 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\LiteralValue.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\obsolete\QualifiedName.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\SyntaxValue.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\obsolete\Variable.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
@@ -160,7 +162,7 @@
     <Compile Include="Compiler\CodeElements\Expressions\obsolete\SyntaxNational.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\LogicalExpression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\Identifier.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\obsolete\Identifier.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\obsolete\SyntaxBoolean.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\obsolete\SyntaxEnum.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\obsolete\SyntaxNumber.cs" />

@@ -1,59 +1,158 @@
 ﻿using System;
 
-namespace TypeCobol.Compiler.CodeElements.Expressions
+namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
-    /// In several productions, the Cobol grammar expects either a literal value or a symbol reference
+    /// Compile-time value given by a syntax literal
+    ///  OR
+    /// Runtime value read in a storage area
     /// </summary>
-    public class LiteralOrSymbolReference<L, S> where S : SymbolReference
+    public abstract class VariableBase
     {
-        /// <summary>
-        /// Constructor for a literal value
-        /// </summary>
-        public LiteralOrSymbolReference(L literalValue)
+        public VariableBase(VariableDataType dataType, StorageArea storageArea)
         {
-            IsLiteral = true;
-            LiteralValue = literalValue;
+            DataType = dataType;
+            StorageArea = storageArea;
         }
 
-        /// <summary>
-        /// Constructor for a symbol reference
-        /// </summary>
-        public LiteralOrSymbolReference(S symbolReference)
+        public VariableDataType DataType { get; private set; }
+
+        public StorageArea StorageArea { get; private set; }
+    }
+
+    public enum VariableDataType
+    {
+        Any,
+        Integer,
+        Numeric,
+        Character,
+        Alphanumeric,
+        ProgramName,
+        ProgramNameOrProgramEntry,
+        ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer,
+        ClassNameOrObjectReference,
+        MethodName
+    }
+
+    public class IntegerVariable : VariableBase
+    {
+        public IntegerVariable(StorageArea storageArea) : 
+            base(VariableDataType.Integer, storageArea)
+        { }
+
+        public IntegerVariable(IntegerValue value) :
+            base(VariableDataType.Integer, null)
         {
-            IsLiteral = false;
+            Value = value;
+        }
+
+        public IntegerValue Value { get; private set; }
+    }
+
+    public class NumericVariable : VariableBase
+    {
+        public NumericVariable(StorageArea storageArea) :
+            base(VariableDataType.Numeric, storageArea)
+        { }
+
+        public NumericVariable(NumericValue value) :
+            base(VariableDataType.Numeric, null)
+        {
+            Value = value;
+        }
+
+        public NumericValue Value { get; private set; }
+    }
+
+    public class CharacterVariable : VariableBase
+    {
+        public CharacterVariable(StorageArea storageArea) :
+            base(VariableDataType.Character, storageArea)
+        { }
+
+        public CharacterVariable(CharacterValue value) :
+            base(VariableDataType.Character, null)
+        {
+            Value = value;
+        }
+
+        public CharacterValue Value { get; private set; }
+    }
+
+    public class AlphanumericVariable : VariableBase
+    {
+        public AlphanumericVariable(StorageArea storageArea) :
+            base(VariableDataType.Alphanumeric, storageArea)
+        { }
+
+        public AlphanumericVariable(AlphanumericValue value) :
+            base(VariableDataType.Alphanumeric, null)
+        {
+            Value = value;
+        }
+
+        public AlphanumericVariable(RepeatedCharacterValue repeadtedValue) :
+            base(VariableDataType.Alphanumeric, null)
+        {
+            RepeatedCharacterValue = repeadtedValue;
+        }
+
+        public AlphanumericValue Value { get; private set; }
+
+        public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
+    }
+
+    public class SymbolReferenceVariable : VariableBase
+    {
+        public SymbolReferenceVariable(VariableDataType symbolType, StorageArea storageArea) :
+            base(symbolType, storageArea)
+        { }
+
+        public SymbolReferenceVariable(VariableDataType symbolType, SymbolReference symbolReference) :
+            base(symbolType, null)
+        {
             SymbolReference = symbolReference;
         }
 
-        /// <summary>
-        /// True if the developer specified a literal value.
-        /// False if the developer specified a symbol reference.
-        /// </summary>
-        public bool IsLiteral { get; private set; }
+        public SymbolReference SymbolReference { get; private set; }
+    }
 
-        /// <summary>
-        /// Literal value
-        /// </summary>
-        public L LiteralValue { get; private set; }
+    public class Variable : VariableBase
+    {
+        public Variable(StorageArea storageArea) :
+            base(VariableDataType.Any, storageArea)
+        { }
 
-        /// <summary>
-        /// Symbol reference
-        /// </summary>
-        public S SymbolReference { get; private set; }
-
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
+        public Variable(NumericValue value) :
+            base(VariableDataType.Any, null)
         {
-            if (IsLiteral)
-            {
-                return LiteralValue.ToString();
-            }
-            else
-            {
-                return SymbolReference.ToString();
-            }
+           NumericValue = value;
         }
+
+        public Variable(AlphanumericValue value) :
+            base(VariableDataType.Any, null)
+        {
+            AlphanumericValue = value;
+        }
+
+        public Variable(RepeatedCharacterValue repeadtedValue) :
+            base(VariableDataType.Any, null)
+        {
+            RepeatedCharacterValue = repeadtedValue;
+        }
+
+        public Variable(SymbolReference symbolReference) :
+            base(VariableDataType.Any, null)
+        {
+            SymbolReference = symbolReference;
+        }
+
+        public NumericValue NumericValue { get; private set; }
+
+        public AlphanumericValue AlphanumericValue { get; private set; }
+
+        public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
+
+        public SymbolReference SymbolReference { get; private set; }
     }
 }

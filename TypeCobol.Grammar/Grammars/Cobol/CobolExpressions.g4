@@ -138,10 +138,7 @@ recordName:
 // - following tokens : dataName or fileName or menmonicForUPSISwitchName
 
 qualifiedConditionName: 
-	conditionNameReferenceOrConditionForUPSISwitchNameReference | qualifiedConditionName1;
-
-qualifiedConditionName1: 
-	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
+	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
 // Ambiguous references in Cobol grammar rules
 
@@ -281,7 +278,7 @@ conditionReference:
 // program to alter the value of the index.
 
 subscript: 
-	(integerValue | qualifiedDataNameOrIndexName | ALL) withRelativeSubscripting?;
+	((integerValue | qualifiedDataNameOrIndexName) withRelativeSubscripting?) | ALL;
 
 withRelativeSubscripting: 
 	(PlusOperator | MinusOperator) integerValue;

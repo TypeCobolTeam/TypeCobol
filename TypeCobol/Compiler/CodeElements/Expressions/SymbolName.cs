@@ -1,5 +1,4 @@
 ﻿using System;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract class SymbolInformation
     {
-        public SymbolInformation(LiteralValue<string> nameLiteral, SymbolRole role, SymbolType type)
+        public SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
         {
             NameLiteral = nameLiteral;
             Role = role;
@@ -18,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Token defining the name of the symbol in source text
         /// </summary>
-        public LiteralValue<string> NameLiteral { get; private set; }
+        public SyntaxValue<string> NameLiteral { get; private set; }
         
         /// <summary>
         /// Name of the symbol
@@ -28,12 +27,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Role of this symbol Token
         /// </summary>
-        public SymbolRole Role { get; set; }
+        public SymbolRole Role { get; protected set; }
         
         /// <summary>
         /// Type of the symbol
         /// </summary>
-        public SymbolType Type { get; set; }
+        public SymbolType Type { get; private set; }
 
         // -- Override Equals & GetHashCode --
 
@@ -66,28 +65,6 @@ namespace TypeCobol.Compiler.CodeElements
     }
 
     /// <summary>
-    /// Properties of a symbol Token in the Cobol grammar - when its type is ambiguous
-    /// </summary>
-    public abstract class AmbiguousSymbolInformation : SymbolInformation
-    {
-        public AmbiguousSymbolInformation(LiteralValue<string> nameLiteral, SymbolRole role, SymbolType[] candidateTypes) :
-            base(nameLiteral, role, SymbolType.TO_BE_RESOLVED)
-        {
-            CandidateTypes = candidateTypes;
-        }
-
-        /// <summary>
-        /// During the first parsing stage, the syntax alone does not always
-        /// enable the parser to guess a unique symbol type for a given token.
-        /// The parser inserts in this property a list of all possible symbol
-        /// types for this token : only a lookup in the symbol tables at a
-        /// later stage will resolve the ambiguity and give a final value
-        /// to the Type property.
-        /// </summary>
-        public SymbolType[] CandidateTypes { get; set; }
-    }
-
-    /// <summary>
     /// Role of a symbol Token in the Cobol grammar
     /// </summary>
     public enum SymbolRole
@@ -104,7 +81,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SymbolDefinition : SymbolInformation
     {
-        public SymbolDefinition(LiteralValue<string> nameLiteral, SymbolType type) :
+        public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolDefinition, type)
         { }
     }
@@ -114,9 +91,24 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SymbolReference : SymbolInformation
     {
-        public SymbolReference(LiteralValue<string> nameLiteral, SymbolType type) :
+        public SymbolReference(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolReference, type)
-        { }
+        {
+            IsAmbiguous = false;
+            IsQualified = false;
+        }
+
+        /// <summary>
+        /// True of the type of the symbol reference is ambiguous 
+        /// during the first parsing phase
+        /// </summary>
+        public bool IsAmbiguous { get; protected set; }
+        
+        /// <summary>
+        /// True if the symbol reference is qualified by parent symbols
+        /// in a symbols hierarchy
+        /// </summary>
+        public bool IsQualified { get; protected set; }
 
         /// <summary>
         /// Used to resolve the symbol reference in a hierarchy of names
@@ -133,23 +125,75 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Reference to a previously defined symbol in the Cobol syntax - when its type is ambiguous 
     /// </summary>
-    public class AmbiguousSymbolReference : AmbiguousSymbolInformation
+    public class AmbiguousSymbolReference : SymbolReference
     {
-        public AmbiguousSymbolReference(LiteralValue<string> nameLiteral, SymbolType[] candidateTypes) :
-            base(nameLiteral, SymbolRole.SymbolReference, candidateTypes)
-        { }
+        public AmbiguousSymbolReference(SyntaxValue<string> nameLiteral, SymbolType[] candidateTypes) :
+            base(nameLiteral, SymbolType.TO_BE_RESOLVED)
+        {
+            IsAmbiguous = true;
+            CandidateTypes = candidateTypes;
+        }
+
+        /// <summary>
+        /// During the first parsing stage, the syntax alone does not always
+        /// enable the parser to guess a unique symbol type for a given token.
+        /// The parser inserts in this property a list of all possible symbol
+        /// types for this token : only a lookup in the symbol tables at a
+        /// later stage will resolve the ambiguity and give a final value
+        /// to the Type property.
+        /// </summary>
+        public SymbolType[] CandidateTypes { get; set; }
+    }
+
+    /// <summary>
+    /// A name that exists within a hierarchy of names can be made unique 
+    /// by specifying one or more higher-level names in the hierarchy. 
+    /// The higher-level names are called qualifiers, and the process by which 
+    /// such names are made unique is called qualification.
+    /// </summary>
+    public class QualifiedSymbolReference : SymbolReference
+    {
+        public QualifiedSymbolReference(SymbolReference qualifiedSymbol, SymbolReference qualifierSymbol) :
+            base(qualifiedSymbol.NameLiteral, qualifiedSymbol.Type)
+        {
+            IsAmbiguous = qualifiedSymbol.IsAmbiguous;
+            IsQualified = true;
+            QualifiedSymbol = qualifiedSymbol;
+            QualifierSymbol = qualifierSymbol;
+        }
+
+        public SymbolReference QualifiedSymbol { get; private set; }
+
+        public SymbolReference QualifierSymbol { get; private set; }
+
+        /// <summary>
+        /// Used to resolve the symbol reference in a hierarchy of names
+        /// </summary>
+        public override string DefinitionPathPattern
+        {
+            get
+            {
+                return "\\." + QualifiedSymbol.Name + "\\..*" + QualifiedSymbol.DefinitionPathPattern;
+            }
+        }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            return QualifiedSymbol.ToString() + " IN " + QualifierSymbol.ToString();
+        }
     }
 
     /// <summary>
     /// Role ambiguity between :
     /// Declaration of a new symbol in the Cobol syntax
-    /// Reference to a previously defined symbol in the Cobol syntax
-    /// </summary>
     public class SymbolDefinitionOrReference : SymbolInformation
     {
-        public SymbolDefinitionOrReference(LiteralValue<string> nameLiteral, SymbolType type) :
+        public SymbolDefinitionOrReference(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolDefinitionOrReference, type)
-        { }
+        { }    
     }
 
     /// <summary>
@@ -160,9 +204,42 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ExternalName : SymbolInformation
     {
-        public ExternalName(LiteralValue<string> nameLiteral, SymbolType type) :
+        public ExternalName(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.ExternalName, type)
         { }
+    }
+
+    /// <summary>
+    /// Unique case of qualified external name : 
+    /// textName (IN | OF) libraryName
+    /// </summary>
+    public class QualifiedTextName : ExternalName
+    {
+        public QualifiedTextName(ExternalName textName, ExternalName libraryName) :
+            base(textName.NameLiteral, textName.Type)
+        {
+            TextName = textName;
+            LibraryName = libraryName;
+        }
+
+        public ExternalName TextName { get; private set; }
+
+        public ExternalName LibraryName { get; private set; }
+
+        /// <summary>
+        /// Debug string
+        /// </summary>
+        public override string ToString()
+        {
+            if (LibraryName == null)
+            {
+                return base.ToString();
+            }
+            else
+            {
+                return base.ToString() + " IN " + LibraryName.ToString();
+            }
+        }
     }
 
     /// <summary>
@@ -170,10 +247,12 @@ namespace TypeCobol.Compiler.CodeElements
     /// Reference to an external name defined by the environment
     /// Reference to a previously defined symbol in the Cobol syntax
     /// </summary>
-    public class ExternalNameOrSymbolReference : AmbiguousSymbolInformation
+    public class ExternalNameOrSymbolReference : AmbiguousSymbolReference
     {
-        public ExternalNameOrSymbolReference(LiteralValue<string> nameLiteral, SymbolType[] candidateTypes) :
-            base(nameLiteral, SymbolRole.ExternalNameOrSymbolReference, candidateTypes)
-        { }
+        public ExternalNameOrSymbolReference(SyntaxValue<string> nameLiteral, SymbolType[] candidateTypes) :
+            base(nameLiteral, candidateTypes)
+        {
+            Role = SymbolRole.ExternalNameOrSymbolReference;
+        }
     }
 }

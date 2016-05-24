@@ -2,7 +2,7 @@
 using System.Text;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements.Expressions
+namespace TypeCobol.Compiler.CodeElements.Obsolete
 {
     public class Pointer : Expression {
         public Identifier identifier { get; private set; }
