@@ -16,6 +16,7 @@
 [5,57]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines4B {5} Numeric <of> varNoRedefines4 ([5>57] on line 61)
 [5,62]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis ([5>62] on line 67)
 [1,22]<27,Error,Syntax>Syntax error : Symbol Coord3d.X is not referenced ([1>22] on line 81)
+[1,22]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol Y ([1>22] on line 81)
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

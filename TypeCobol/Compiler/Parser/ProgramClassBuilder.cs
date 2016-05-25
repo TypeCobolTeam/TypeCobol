@@ -237,7 +237,8 @@ namespace TypeCobol.Compiler.Parser
 					COBOLMemoryArea rmem = null;
 					if (child.RedefinesDataName != null) {
 						rmem = GetRedefinedMemory(child.RedefinesDataName.Name);
-						offset = rmem.Offset;
+						// rmem can be null if we try to redefine something in a TYPEDEF
+						if (rmem != null) offset = rmem.Offset;
 					}
 					ComputeMemoryProfile(child, ref offset);
 					if (os < 0) os = child.MemoryArea.Offset;// parent offset = first child offset
