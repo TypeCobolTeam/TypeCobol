@@ -5699,7 +5699,7 @@ performVaryingPhrase:
 
 loopVariableDescription:
 	loopVariable=dataOrIndexStorageArea 
-	FROM initialValue=numericVariableOrIndexName
+	FROM initialValue=numericVariableOrIndex
 	BY increment=numericVariable3 
 	UNTIL conditionalExpression;
 
@@ -6230,7 +6230,7 @@ setStatementForAssignation:
 	SET setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 	 
 setSendingField:
-	integerVariableOrIndexName						// identifier can also be an index name	//Format 1 + 5
+	integerVariableOrIndex						// identifier can also be an index name	//Format 1 + 5
 	| nullPointerValue				                // pointer data item //Format 5 + 6 + 7
 	| ENTRY_ARG programNameOrProgramEntryVariable	// procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| selfObjectIdentifier;         				// object reference id 	//Format 7 (+NULL)

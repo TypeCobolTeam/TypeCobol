@@ -5,7 +5,7 @@ namespace TypeCobol.Compiler.CodeElements
 {
     public class IfStatement : CodeElement
     {
-        public LogicalExpression condition = null;
+        public ConditionalExpression condition = null;
 
         public IfStatement() : base(CodeElementType.IfStatement) { }
     }

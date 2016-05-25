@@ -2,11 +2,10 @@
 using System.Text;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements.Expressions
-{
-    public abstract class LogicalExpression : Expression { }
+namespace TypeCobol.Compiler.CodeElements.Obsolete
+    public abstract class ConditionalExpression : Expression { }
 
-    public class LogicOperation : LogicalExpression
+    public class LogicOperation : ConditionalExpression
     {
         public Expression left { get; set; }
         public Expression right { get; set; }
@@ -63,7 +62,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             : base(left, op, right) { }
     }
 
-    public class Boolean : LogicalExpression
+    public class Boolean : ConditionalExpression
     {
         public SyntaxBoolean value { get; set; }
         public Boolean(SyntaxBoolean value)
@@ -84,7 +83,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class ClassCondition : LogicalExpression
+    public class ClassCondition : ConditionalExpression
     {
         public Expression expression { get; set; }
         public Symbol type { get; set; }
@@ -101,7 +100,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
     }
 
-    public class SignCondition : LogicalExpression
+    public class SignCondition : ConditionalExpression
     {
         public Expression operand { get; private set; }
         public enum Type { ZERO, POSITIVE, NEGATIVE, UNKNOWN }
@@ -121,15 +120,5 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
             str.Append(type).Append(" ?");
             return str.ToString();
         }
-    }
-
-    public class Null : LogicalExpression
-    {
-        public override string ToString() { return "NIL"; }
-    }
-
-    public class Self : LogicalExpression
-    {
-        public override string ToString() { return "SELF"; }
     }
 }

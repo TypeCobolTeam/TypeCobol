@@ -183,9 +183,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-    public class FilePropertiesStorageArea : StorageArea
+    public class FilePropertiesSpecialRegister : StorageArea
     {
-        public FilePropertiesStorageArea(Token specialRegisterName, SymbolReference fileNameReference) :
+        public FilePropertiesSpecialRegister(Token specialRegisterName, SymbolReference fileNameReference) :
             base(StorageAreaKind.FilePropertySpecialRegister)
         {
             SpecialRegisterName = specialRegisterName;

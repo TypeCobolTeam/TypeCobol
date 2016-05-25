@@ -428,9 +428,7 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }        
     }
-
-
-
+    
     /// <summary>
     /// Value for tokens :
     /// UserDefinedWord

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements.Expressions
+namespace TypeCobol.Compiler.CodeElements.Obsolete
 {
 
     public abstract class ArithmeticExpression : Expression { }

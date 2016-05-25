@@ -1005,7 +1005,7 @@ conditionNameConditionOrSwitchStatusCondition:
 // => the syntax of these 4 conditions are merged below in one single rule : relationCondition
 
 relationCondition: 
-	operand relationalOperator abbreviatedExpression;
+	conditionOperand relationalOperator abbreviatedExpression;
 
 // p274: Abbreviated combined relation conditions
 
@@ -1014,8 +1014,8 @@ abbreviatedExpression:
 	|  NOT abbreviatedExpression
 	|  abbreviatedExpression AND abbreviatedExpression
 	|  abbreviatedExpression OR abbreviatedExpression
-	|  relationalOperator operand
-	|  operand;
+	|  relationalOperator conditionOperand
+	|  conditionOperand;
 
 relationalOperator:
 	IS? ((NOT? strictRelation) | simpleRelation);
@@ -1041,9 +1041,10 @@ simpleRelation:
 // programPointer : identifier | NULL | NULLS
 // objectReference : identifier | SELF | NULL | NULLS
 
-operand: 
-	expressionOrIndexName | // indexName cannot be distinguished from identifier at this parsing stage
-	nullPointerValue                  | 
+conditionOperand: 
+	arithmeticExpression |
+	variableOrIndex  | 
+	nullPointerValue | 
 	selfObjectIdentifier; 
 
 // p269: Sign condition
@@ -1067,7 +1068,7 @@ operand:
 // Guide.
 
 signCondition: 
-	operand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
+	conditionOperand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
 
 
 // --- Cobol variables : runtime value or literal ---
@@ -1076,7 +1077,7 @@ integerVariable1: identifier | integerValue;
 
 integerVariable2: dataNameReference | integerValue;
 
-integerVariableOrIndexName: identifierOrIndexName | integerValue;
+integerVariableOrIndex: identifierOrIndexName | integerValue;
 
 numericVariable1: identifier;
 		
@@ -1084,7 +1085,7 @@ numericVariable2: dataNameReference;
 
 numericVariable3: identifier | numericValue;
 
-numericVariableOrIndexName: identifierOrIndexName | numericValue;
+numericVariableOrIndex: identifierOrIndexName | numericValue;
 
 characterVariable: dataNameReference | characterValue4;
 
@@ -1118,6 +1119,8 @@ variable6: identifier | numericValue | alphanumericValue2 | repeatedCharacterVal
 
 variable7: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue2;
 
+variableOrIndex: identifierOrIndexName | value1;
+
 variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1;
 
 
@@ -1128,8 +1131,6 @@ booleanExpression: conditionalExpression | booleanValue;
 expression1: variable3 | arithmeticExpression;
 
 expression2: variable6 | arithmeticExpression;
-
-expressionOrIndexName: identifierOrIndexName | value1  | arithmeticExpression;
 
 
 // --- Storage areas where statements results are saved ---
