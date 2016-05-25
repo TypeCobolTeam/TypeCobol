@@ -212,32 +212,37 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program) {
 			var element = e as TypeCobol.Compiler.CodeModel.IdentifierUser;
-			var table = program.SymbolTable;
 			foreach (var identifier in element.Identifiers) {
-				var found = table.Get(identifier.Name);
-				if (found.Count < 1) {
-					if (table.GetFunction(identifier.Name) == null)
-						DiagnosticUtils.AddError(e, CamLCase(ToHumanReadable(identifier))+' '+identifier.Name+" is not referenced");
-					return;
-				}
-				if (found.Count > 1)
-					DiagnosticUtils.AddError(e, "Ambiguous reference to "+ToHumanReadable(identifier)+' '+identifier.Name);
-
-				foreach(var error in checkSubscripting(identifier.Name, found[0]))
-					DiagnosticUtils.AddError(e, error);
+				CheckIdentifier(e, program.SymbolTable, identifier);
 			}
 		}
-		private static string ToHumanReadable(Identifier identifier) {
-			if (identifier is Condition) return "condition";
-			if (identifier is FunctionReference) return "function";
-			if (identifier is SpecialRegister) return "special register";
-			return "symbol";
+		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
+			var found = table.Get(identifier.Name);
+			if (found.Count < 1) {
+				if (table.GetFunction(identifier.Name) == null)
+					DiagnosticUtils.AddError(e, "Symbol "+identifier.Name+" is not referenced");
+			}
+			if (found.Count > 1)
+				DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+identifier.Name);
+
+			var fun = identifier as FunctionReference;
+			if (fun != null) foreach(var param in fun.Parameters) CheckExpression(e, table, param.Value as Expression);
+
+			foreach(var def in found)
+				foreach(var error in checkSubscripting(identifier.Name, def))
+					DiagnosticUtils.AddError(e, error);
 		}
-		private static string CamLCase(string str) {
-			return char.ToUpper(str[0]) + str.Substring(1);
+		private static void CheckExpression(CodeElement e, SymbolTable table, Expression expression) {
+			if (expression == null) return;
+			if (expression is Identifier) CheckIdentifier(e, table, expression as Identifier);
+			if (expression is ArithmeticOperation) {
+				var aerith = expression as ArithmeticOperation;
+				CheckExpression(e, table, aerith.left);
+				CheckExpression(e, table, aerith.right);
+			}
 		}
 
-		private IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
+		private static IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
 			var errors = new List<string>();
 			if (qname is Subscripted) {
 				var sname = qname as Subscripted;
@@ -330,6 +335,44 @@ namespace TypeCobol.Compiler.Diagnostics {
 			foreach(var type in READONLY_DATATYPES) {
 				if (type.Equals(receiving.TopLevel.DataType.Name)) {
 					DiagnosticUtils.AddError(e, type+" properties are read-only");
+				}
+			}
+		}
+	}
+
+	class FunctionChecker: ProgramListener {
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext context, Program program) {
+			var element = e as TypeCobol.Compiler.CodeModel.IdentifierUser;
+			foreach (var identifier in element.Identifiers) {
+				CheckIdentifier(e, program.SymbolTable, identifier);
+			}
+		}
+		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
+			var fun = identifier as FunctionReference;
+			if (fun == null) return;// we only check functions
+			var def = table.GetFunction(fun.Name);
+			if (def == null) return;// ambiguity is not our job
+			if (fun.Parameters.Count > def.Parameters.Count)
+				DiagnosticUtils.AddError(e, "Function "+def.Name+" only takes "+def.Parameters.Count+" parameters");
+			for(int c=0; c<def.Parameters.Count; c++) {
+				var expected = def.Parameters[c];
+				if (c < fun.Parameters.Count) {
+					var actual = fun.Parameters[c].Value;
+					if (actual is Identifier) {
+						var found = table.Get(((Identifier)actual).Name);
+						if (found.Count != 1) continue;// ambiguity is not our job
+						var type = found[0].DataType;
+						if (!type.Equals(expected.Type))
+							DiagnosticUtils.AddError(e, "Function "+def.Name+" expected parameter "+(c+1)+" of type "+expected.Type+" (actual: "+type+')');
+						var length = found[0].MemoryArea.Length;
+						if (length > expected.Length)
+							DiagnosticUtils.AddError(e, "Function "+def.Name+" expected parameter "+(c+1)+" of max length "+expected.Length+" (actual: "+length+')');
+					}
+				} else {
+					DiagnosticUtils.AddError(e, "Function "+def.Name+" is missing parameter "+(c+1)+" of type "+expected.Type);
 				}
 			}
 		}
