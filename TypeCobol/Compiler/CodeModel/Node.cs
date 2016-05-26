@@ -38,6 +38,39 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
+		public string ID {
+			get {
+				if (CodeElement is ProgramIdentification) return ((ProgramIdentification)CodeElement).ProgramName.Name;
+				if (CodeElement is DataDivisionHeader) return "data-division";
+				if (CodeElement is LinkageSectionHeader) return "linkage";
+				if (CodeElement is LocalStorageSectionHeader) return "local-storage";
+				if (CodeElement is WorkingStorageSectionHeader) return "working-storage";
+				if (CodeElement is DataDescriptionEntry) return ((DataDescriptionEntry)CodeElement).QualifiedName.ToString();
+				if (CodeElement is EnvironmentDivisionHeader) return "environment-division";
+				if (CodeElement is ProcedureDivisionHeader) return "procedure-division";
+				if (CodeElement is ParagraphHeader) return ((ParagraphHeader)CodeElement).ParagraphName.Name;
+				return null;
+			}
+		}
+		public string URI {
+			get {
+				if (ID == null) return null;
+				string puri = Parent == null?null:Parent.URI;
+				if (puri == null) return ID;
+				return puri+'.'+ID;
+			}
+		}
+		public Node Get(string uri) {
+			if (uri.Equals(URI)) return this;
+			foreach(var child in Children) {
+				var found = child.Get(uri);
+				if (found != null) return found;
+			}
+			return null;
+		}
+
+
+
 		private static Dictionary<string,Attribute> Attributes;
 		static Node() {
 			Attributes = new Dictionary<string,Attribute>();
