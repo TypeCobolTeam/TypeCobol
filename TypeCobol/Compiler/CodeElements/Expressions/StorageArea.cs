@@ -127,14 +127,14 @@ namespace TypeCobol.Compiler.CodeElements
             NumericExpression = numericExpression;
         }
 
-        public SubscriptExpression(bool all)
+        public SubscriptExpression(Token allToken)
         {
-            ALL = all;
+            ALL = new SyntaxProperty<bool>(true, allToken);
         }
 
         public ArithmeticExpression NumericExpression { get; private set; }
 
-        public bool ALL { get; private set; }
+        public SyntaxProperty<bool> ALL { get; private set; }
     }
 
     /// <summary>
@@ -183,9 +183,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-    public class FilePropertiesSpecialRegister : StorageArea
+    public class FilePropertySpecialRegister : StorageArea
     {
-        public FilePropertiesSpecialRegister(Token specialRegisterName, SymbolReference fileNameReference) :
+        public FilePropertySpecialRegister(Token specialRegisterName, SymbolReference fileNameReference) :
             base(StorageAreaKind.FilePropertySpecialRegister)
         {
             SpecialRegisterName = specialRegisterName;

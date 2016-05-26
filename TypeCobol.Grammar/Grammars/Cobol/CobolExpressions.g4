@@ -278,7 +278,7 @@ conditionReference:
 // program to alter the value of the index.
 
 subscript: 
-	((integerValue | qualifiedDataNameOrIndexName) withRelativeSubscripting?) | ALL;
+	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL;
 
 withRelativeSubscripting: 
 	(PlusOperator | MinusOperator) integerValue;
@@ -386,7 +386,7 @@ functionIdentifier:
 // - A special-register
 
 argument: 
-	expression1;
+	variableOrExpression1;
 
 // - 4. Storage areas -
 
@@ -1073,11 +1073,15 @@ signCondition:
 
 // --- Cobol variables : runtime value or literal ---
 
+booleanVariableOrExpression: booleanValue | conditionalExpression;
+
 integerVariable1: identifier | integerValue;
 
 integerVariable2: dataNameReference | integerValue;
 
-integerVariableOrIndex: identifierOrIndexName | integerValue;
+integerVariableOrIndex1: identifierOrIndexName | integerValue;
+
+integerVariableOrIndex2: qualifiedDataNameOrIndexName | integerValue;
 
 numericVariable1: identifier;
 		
@@ -1123,14 +1127,9 @@ variableOrIndex: identifierOrIndexName | value1;
 
 variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1;
 
+variableOrExpression1: variable3 | arithmeticExpression;
 
-// --- Cobol expressions ---
-
-booleanExpression: conditionalExpression | booleanValue;
-
-expression1: variable3 | arithmeticExpression;
-
-expression2: variable6 | arithmeticExpression;
+variableOrExpression2: variable6 | arithmeticExpression;
 
 
 // --- Storage areas where statements results are saved ---

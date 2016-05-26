@@ -2,7 +2,7 @@
 using System.Text;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements.Expressions
+namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// Base class for all Cobol expression nodes
@@ -373,24 +373,39 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
     }
 
     /// <summary>
-    /// Wrapper to use a numeric variable in an expression tree
+    /// Wrapper to use an integer or numeric variable in an arithmetic expression tree
     /// </summary>
     public class NumericVariableOperand : ArithmeticExpression
     {
+        public NumericVariableOperand(IntegerVariable variable) :
+            base(ExpressionNodeType.NumericVariable)
+        {
+            IntegerVariable = variable;
+        }
+
         public NumericVariableOperand(NumericVariable variable) :
             base(ExpressionNodeType.NumericVariable)
         {
-            Variable = variable;
+            NumericVariable = variable;
         }
 
-        public NumericVariable Variable { get; private set; }
+        public IntegerVariable IntegerVariable { get; private set; }
+
+        public NumericVariable NumericVariable { get; private set; }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            return Variable.ToString();
+            if (IntegerVariable != null)
+            {
+                return IntegerVariable.ToString();
+            }
+            else
+            {
+                return NumericVariable.ToString();
+            }
         }
     }
 }

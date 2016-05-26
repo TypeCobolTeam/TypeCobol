@@ -4317,17 +4317,17 @@ evaluateStatement:
 	EVALUATE comparisonLHSExpression (ALSO comparisonLHSExpression)*;
 
 comparisonLHSExpression:
-	expression2 | booleanExpression;
+	variableOrExpression2 | booleanVariableOrExpression;
 
 whenCondition:
 	WHEN LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator?
   ( ALSO LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator? )*;
 
 comparisonRHSExpression: 
-	booleanExpression | NOT? (expression2 | alphanumericExpressionsRange);
+	booleanVariableOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
 
 alphanumericExpressionsRange: 
-	startExpression=expression2 (THROUGH | THRU) endExpression=expression2;
+	startExpression=variableOrExpression2 (THROUGH | THRU) endExpression=variableOrExpression2;
 
 whenOtherCondition:
 	WHEN OTHER;
@@ -6013,7 +6013,7 @@ serialSearchCondition:
 	conditionalExpression;
 
 binarySearchCondition:
-	(variable2 IS? ((EQUAL TO?) | EqualOperator) expression2) | conditionNameConditionOrSwitchStatusCondition;
+	(variable2 IS? ((EQUAL TO?) | EqualOperator) variableOrExpression2) | conditionNameConditionOrSwitchStatusCondition;
 
 searchStatementEnd: END_SEARCH;
 
@@ -6230,7 +6230,7 @@ setStatementForAssignation:
 	SET setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 	 
 setSendingField:
-	integerVariableOrIndex						// identifier can also be an index name	//Format 1 + 5
+	integerVariableOrIndex1						// identifier can also be an index name	//Format 1 + 5
 	| nullPointerValue				                // pointer data item //Format 5 + 6 + 7
 	| ENTRY_ARG programNameOrProgramEntryVariable	// procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| selfObjectIdentifier;         				// object reference id 	//Format 7 (+NULL)

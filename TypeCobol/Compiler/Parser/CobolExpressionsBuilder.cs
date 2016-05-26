@@ -1,15 +1,236 @@
 ﻿using System;
+using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
     internal static class CobolExpressionsBuilder
     {
+        // --- Qualified names : give explicit context to resolve ambiguous name references ---
+
+        internal static SymbolReference CreateProcedureName(CodeElementsParser.ProcedureNameContext context)
+        {
+            if(context.paragraphNameReferenceOrSectionNameReference() != null)
+            {
+                return CobolWordsBuilder.CreateParagraphNameReferenceOrSectionNameReference(
+                    context.paragraphNameReferenceOrSectionNameReference());
+            }
+            else
+            {
+                return CreateQualifiedParagraphNameReference(context.qualifiedParagraphNameReference());
+            }
+        }
+
+        internal static SymbolReference CreateQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
+        {
+            return new QualifiedSymbolReference(
+                    CobolWordsBuilder.CreateParagraphNameReference(context.paragraphNameReference()),
+                    CobolWordsBuilder.CreateSectionNameReference(context.sectionNameReference()));
+        }
+
+        internal static SymbolReference CreateQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context)
+        {
+            if(context.dataNameReference() != null)
+            {
+                return CobolWordsBuilder.CreateDataNameReference(context.dataNameReference());
+            }
+            else
+            {
+                return CreateQualifiedDataName1(context.qualifiedDataName1());
+            }
+        }
+
+        internal static SymbolReference CreateQualifiedDataName1(CodeElementsParser.QualifiedDataName1Context context)
+        {
+            SymbolReference qualifiedDataName = new QualifiedSymbolReference(
+                    CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()),
+                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReference(context.dataNameReferenceOrFileNameReference()[0]));
+
+            for (int i = 1; i < context.dataNameReferenceOrFileNameReference().Length; i++)
+            {
+                qualifiedDataName = new QualifiedSymbolReference(
+                    qualifiedDataName,
+                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReference(context.dataNameReferenceOrFileNameReference()[i]));
+            }
+            return qualifiedDataName;
+        }
+
+        internal static SymbolReference CreateRecordName(CodeElementsParser.RecordNameContext context)
+        {
+            // Could add here a specific property to mark the data name as a record name
+            return CreateQualifiedDataName(context.qualifiedDataName());
+        }
+
+        internal static SymbolReference CreateQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context)
+        {
+            if(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null ||
+                context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Length == 0)
+            {
+                return CobolWordsBuilder.CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(
+                    context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
+            }
+            else
+            {
+                SymbolReference qualifiedDataName = new QualifiedSymbolReference(
+                    CobolWordsBuilder.CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(
+                        context.conditionNameReferenceOrConditionForUPSISwitchNameReference()),
+                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(
+                        context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference()[0]));
+
+                for (int i = 1; i < context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Length; i++)
+                {
+                    qualifiedDataName = new QualifiedSymbolReference(
+                        qualifiedDataName,
+                        CobolWordsBuilder.CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(
+                            context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference()[i]));
+                }
+                return qualifiedDataName;
+            }
+        }
+
+        internal static SymbolReference CreateQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context)
+        {
+            if (context.dataNameReferenceOrIndexNameReference() != null)
+            {
+                return CobolWordsBuilder.CreateDataNameReferenceOrIndexNameReference(context.dataNameReferenceOrIndexNameReference());
+            }
+            else
+            {
+                return CreateQualifiedDataName1(context.qualifiedDataName1());
+            }
+        }
 
 
+        // --- (Data storage area) Identifiers ---
 
+        // - 1. Table elements reference : subscripting data names or condition names -
+
+        internal static StorageArea CreateDataItemReference(CodeElementsParser.DataItemReferenceContext context)
+        {
+            SymbolReference qualifiedDataName = CreateQualifiedDataName(context.qualifiedDataName());
+            if (context.subscript() == null || context.subscript().Length == 0)
+            {
+                return new DataOrConditionStorageArea(qualifiedDataName);
+            }
+            else
+            {
+                return new DataOrConditionStorageArea(qualifiedDataName,
+                    CreateSubscriptExpressions(context.subscript()));
+            }
+        }
+
+        internal static StorageArea CreateConditionReference(CodeElementsParser.ConditionReferenceContext context)
+        {
+            SymbolReference qualifiedConditionName = CreateQualifiedConditionName(context.qualifiedConditionName());
+            if (context.subscript() == null || context.subscript().Length == 0)
+            {
+                return new DataOrConditionStorageArea(qualifiedConditionName);
+            }
+            else
+            {
+                return new DataOrConditionStorageArea(qualifiedConditionName,
+                    CreateSubscriptExpressions(context.subscript()));
+            }
+        }
+        
+        internal static SubscriptExpression[] CreateSubscriptExpressions(CodeElementsParser.SubscriptContext[] contextArray)
+        {
+            SubscriptExpression[] subscriptExpressions = new SubscriptExpression[contextArray.Length];
+            for(int i = 0; i < contextArray.Length; i++)
+            {
+                CodeElementsParser.SubscriptContext context = contextArray[i];
+                if(context.ALL() != null)
+                {
+                    subscriptExpressions[i] = new SubscriptExpression(
+                        ParseTreeUtils.GetFirstToken(context.ALL()));
+                }
+                else
+                {
+                    IntegerVariable integerVariable = CreateIntegerVariable(context.integerVariableOrIndex2());
+                    ArithmeticExpression arithmeticExpression = new NumericVariableOperand(integerVariable);
+                    if(context.withRelativeSubscripting() != null)
+                    {
+                        SyntaxProperty<ArithmeticOperator> arithmeticOperator = null;
+                        if(context.withRelativeSubscripting().PlusOperator() != null)
+                        {
+                            arithmeticOperator = new SyntaxProperty<ArithmeticOperator>(
+                                ArithmeticOperator.Plus,
+                                ParseTreeUtils.GetFirstToken(context.withRelativeSubscripting().PlusOperator()));
+                        }
+                        else
+                        {
+                            arithmeticOperator = new SyntaxProperty<ArithmeticOperator>(
+                                ArithmeticOperator.Minus,
+                                ParseTreeUtils.GetFirstToken(context.withRelativeSubscripting().MinusOperator()));
+                        }
+
+                        IntegerVariable integerVariable2 = new IntegerVariable(
+                            CobolWordsBuilder.CreateIntegerValue(context.withRelativeSubscripting().integerValue()));
+                        ArithmeticExpression numericOperand2 = new NumericVariableOperand(integerVariable2);
+
+                        arithmeticExpression = new ArithmeticOperation(
+                            arithmeticExpression,
+                            arithmeticOperator,
+                            numericOperand2);
+                    }
+                    subscriptExpressions[i] = new SubscriptExpression(arithmeticExpression);
+                }
+            }
+            return subscriptExpressions;
+        }
+
+        // - 2. Special registers (allocate a storage area on reference) -
+
+        internal static StorageArea CreateLinageCounterSpecialRegister(CodeElementsParser.LinageCounterSpecialRegisterContext context)
+        {
+            return new FilePropertySpecialRegister(
+                ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
+                CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
+        }
+
+        internal static StorageArea CreateAddressOfSpecialRegister(CodeElementsParser.AddressOfSpecialRegisterContext context)
+        {
+            return new StorageAreaPropertySpecialRegister(
+                ParseTreeUtils.GetFirstToken(context.ADDRESS()),
+                CreateStorageAreaReference(context.storageAreaReference()));
+        }
+
+        internal static StorageArea CreateLengthOfSpecialRegister(CodeElementsParser.LengthOfSpecialRegisterContext context)
+        {
+            return new StorageAreaPropertySpecialRegister(
+                ParseTreeUtils.GetFirstToken(context.LENGTH()),
+                CreateStorageAreaReference(context.storageAreaReference()));
+        }
+
+        // - 3. Intrinsic function calls (allocate a storage area for the result) -
+
+        internal static StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
+        {
+            return new IntrinsicFunctionCallResultStorageArea(
+                CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName()),
+                CreateArguments(context.argument()));
+        }
+
+        private static Expression[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static StorageArea CreateStorageAreaReference(CodeElementsParser.StorageAreaReferenceContext storageAreaReferenceContext)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        internal static IntegerVariable CreateIntegerVariable(CodeElementsParser.IntegerVariableOrIndex2Context integerVariableOrIndex2Context)
+        {
+            throw new NotImplementedException();
+        }
 
         // -- OLD CODE --
-
+        /*
         internal static IList<Identifier> CreateIdentifiers(IReadOnlyList<CodeElementsParser.IdentifierContext> context)
         {
             IList<Identifier> identifiers = new List<Identifier>();
@@ -659,6 +880,6 @@ namespace TypeCobol.Compiler.Parser
             if (context.IntegerLiteral() != null)
                 return new Literal(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
             return null;
-        }
+        }*/
     }
 }

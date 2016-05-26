@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
-    /// Property defined by a list of tokens in the Cobol syntax
+    /// Property defined by a keyword token in the Cobol syntax
     /// </summary>
     public class SyntaxProperty<T>
     {
-        public SyntaxProperty(T value, IList<Token> tokens)
+        public SyntaxProperty(T value, Token token)
         {
             Value = value;
-            Tokens = tokens;
+            Token = token;
         }
 
         /// <summary>
@@ -21,9 +20,9 @@ namespace TypeCobol.Compiler.CodeElements
         public T Value { get; private set; }
 
         /// <summary>
-        /// Tokens defining the value of the property
+        /// Token defining the value of the property
         /// </summary>
-        public IList<Token> Tokens { get; private set; }
+        public Token Token { get; private set; }
 
         /// <summary>
         /// Debug string
