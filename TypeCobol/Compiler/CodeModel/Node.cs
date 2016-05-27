@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
 	public class Node {
-		private IList<Node> children_ = new List<Node>();
+		private readonly IList<Node> children_ = new List<Node>();
 		public IList<Node> Children {
-			get { return new System.Collections.ObjectModel.ReadOnlyCollection<Node>(children_); }
+			get { return children_; }
 			private set { throw new System.InvalidOperationException(); }
 		}
 		public CodeElement CodeElement { get; internal set; }
 		public Node Parent { get; internal set; }
 
+		public Node(): this(null) { }
 		public Node(CodeElement e) { CodeElement = e; }
 
 		internal void Add(Node child) {
@@ -38,6 +40,16 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
+		public virtual IEnumerable<ITextLine> Lines {
+			get {
+				var lines = new List<ITextLine>();
+				if (CodeElement == null) return lines;
+				foreach(var token in CodeElement.ConsumedTokens)
+					if (!lines.Contains(token.TokensLine))
+						lines.Add(token.TokensLine);
+				return lines;
+			}
+		}
 		public string ID {
 			get {
 				if (CodeElement is ProgramIdentification) return ((ProgramIdentification)CodeElement).ProgramName.Name;

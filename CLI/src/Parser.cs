@@ -148,7 +148,7 @@ namespace TypeCobol.Server
 
 
 
-		internal static Parser Parse(string path, DocumentFormat format) {
+		public static Parser Parse(string path, DocumentFormat format) {
 			var parser = new Parser();
 			parser.Init(path, format);
 			parser.Parse(path);
