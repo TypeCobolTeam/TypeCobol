@@ -20,8 +20,7 @@ namespace TypeCobol.Server
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public TypeCobol.Compiler.CodeModel.SymbolTable CustomSymbols = null;
 
-		public Parser(string name)
-		{
+		public Parser() {
 			Observer = new Observer();
 			Inits = new Dictionary<string,bool>();
 			Compilers = new Dictionary<string,FileCompiler>();
@@ -145,6 +144,15 @@ namespace TypeCobol.Server
 				errors[1].AddRange(Converter.AsDiagnostics(Results.ProgramClassDocumentSnapshot.Diagnostics));
 				return errors;
 			}
+		}
+
+
+
+		internal static Parser Parse(string path, DocumentFormat format) {
+			var parser = new Parser();
+			parser.Init(path, format);
+			parser.Parse(path);
+			return parser;
 		}
 	}
 

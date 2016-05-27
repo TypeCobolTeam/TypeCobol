@@ -109,7 +109,7 @@ namespace TypeCobol.Codegen {
 		}
 
 		private void ParseGenerateCompare(string path, List<Skeleton> skeletons) {
-			var document = ParseSource(Path.Combine(ROOT, INPUT, path), DocumentFormat.RDZReferenceFormat);
+			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), DocumentFormat.RDZReferenceFormat);
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			var writer = new System.IO.StringWriter();
 			// write parsing errors
@@ -129,12 +129,6 @@ namespace TypeCobol.Codegen {
 
 		private string ReplaceLineBreaks(string text) {
 			return text.Replace("\r\n","\n").Replace("\r","\n");
-		}
-		internal static Parser ParseSource(string path, DocumentFormat format) {
-			var parser = new Parser("Codegen.Test");
-			parser.Init(path, format);
-			parser.Parse(path);
-			return parser;
 		}
 
 		private void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors, string type, Compiler.Text.ColumnsLayout columns) {
