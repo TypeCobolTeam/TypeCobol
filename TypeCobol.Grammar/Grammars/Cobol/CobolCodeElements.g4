@@ -4317,14 +4317,14 @@ evaluateStatement:
 	EVALUATE comparisonLHSExpression (ALSO comparisonLHSExpression)*;
 
 comparisonLHSExpression:
-	variableOrExpression2 | booleanVariableOrExpression;
+	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
 	WHEN LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator?
   ( ALSO LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator? )*;
 
 comparisonRHSExpression: 
-	booleanVariableOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
+	booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
 
 alphanumericExpressionsRange: 
 	startExpression=variableOrExpression2 (THROUGH | THRU) endExpression=variableOrExpression2;

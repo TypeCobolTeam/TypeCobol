@@ -135,10 +135,10 @@ namespace TypeCobol.Compiler.CodeElements
             AlphanumericValue = value;
         }
 
-        public Variable(RepeatedCharacterValue repeadtedValue) :
+        public Variable(RepeatedCharacterValue repeatedValue) :
             base(VariableDataType.Any, null)
         {
-            RepeatedCharacterValue = repeadtedValue;
+            RepeatedCharacterValue = repeatedValue;
         }
 
         public Variable(SymbolReference symbolReference) :
@@ -146,6 +146,10 @@ namespace TypeCobol.Compiler.CodeElements
         {
             SymbolReference = symbolReference;
         }
+
+        protected Variable() :
+            base(VariableDataType.Any, null)
+        { }
 
         public NumericValue NumericValue { get; private set; }
 
@@ -155,4 +159,51 @@ namespace TypeCobol.Compiler.CodeElements
 
         public SymbolReference SymbolReference { get; private set; }
     }
+
+    public class VariableOrExpression : Variable
+    {
+        public VariableOrExpression(StorageArea storageArea) :
+            base(storageArea)
+        { }
+
+        public VariableOrExpression(NumericValue value) :
+            base(value)
+        { }
+
+        public VariableOrExpression(AlphanumericValue value) :
+            base(value)
+        { }
+
+        public VariableOrExpression(RepeatedCharacterValue repeatedValue) :
+            base(repeatedValue)
+        { }
+
+        public VariableOrExpression(SymbolReference symbolReference) :
+            base(symbolReference)
+        { }
+
+        public VariableOrExpression(ArithmeticExpression arithmeticExpression) 
+        {
+            ArithmeticExpression = arithmeticExpression;
+        }
+
+        public ArithmeticExpression ArithmeticExpression { get; private set; }
+    }
+
+    public class BooleanValueOrExpression
+    {
+        public BooleanValueOrExpression(BooleanValue booleanValue)
+        {
+            BooleanValue = booleanValue;
+        }
+
+        public BooleanValueOrExpression(ConditionalExpression conditionalExpression)
+        {
+            Expression = conditionalExpression;
+        }
+
+        public BooleanValue BooleanValue { get; private set; }
+
+        public ConditionalExpression Expression { get; private set; }
+    }    
 }

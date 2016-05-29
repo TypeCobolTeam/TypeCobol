@@ -94,18 +94,20 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ClassCondition : ConditionalExpression
     {
-        public ClassCondition(StorageArea dataItem, SymbolReference characterClassNameReference) :
+        public ClassCondition(StorageArea dataItem, SymbolReference characterClassNameReference, SyntaxProperty<bool> invertResult) :
             base(ExpressionNodeType.ClassCondition)
         {
             DataItem = dataItem;
             CharacterClassNameReference = characterClassNameReference;
+            InvertResult = invertResult;
         }
 
-        public ClassCondition(StorageArea dataItem, SyntaxProperty<DataItemContentType> dataItemContentType) :
+        public ClassCondition(StorageArea dataItem, SyntaxProperty<DataItemContentType> dataItemContentType, SyntaxProperty<bool> invertResult) :
             base(ExpressionNodeType.ClassCondition)
         {
             DataItem = dataItem;
             DataItemContentType = dataItemContentType;
+            InvertResult = invertResult;
         }
 
         public StorageArea DataItem { get; private set; }
@@ -114,12 +116,14 @@ namespace TypeCobol.Compiler.CodeElements
 
         public SyntaxProperty<DataItemContentType> DataItemContentType { get; private set; }
 
+        public SyntaxProperty<bool> InvertResult { get; private set; }
+
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            return new StringBuilder(DataItem.ToString()).Append(" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
+            return new StringBuilder(DataItem.ToString()).Append(InvertResult.Value?" NOT ":" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
         }
     }
 
@@ -127,8 +131,8 @@ namespace TypeCobol.Compiler.CodeElements
     {
         Numeric,
         Alphabetic,
-        Alphabetic_Lower,
-        Alphabetic_Upper,
+        AlphabeticLower,
+        AlphabeticUpper,
         DBCS,
         Kanji
     }
@@ -327,11 +331,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ArithmeticOperation : ArithmeticExpression
     {
-        public ArithmeticOperation(ArithmeticExpression leftOperand, SyntaxProperty<ArithmeticOperator> relationalOperator, ArithmeticExpression rightOperand) :
+        public ArithmeticOperation(ArithmeticExpression leftOperand, SyntaxProperty<ArithmeticOperator> arithmeticOperator, ArithmeticExpression rightOperand) :
             base(ExpressionNodeType.ArithmeticOperation)
         {
             LeftOperand = leftOperand;
-            Operator = relationalOperator;
+            Operator = arithmeticOperator;
             RightOperand = rightOperand;
         }
 

@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Parser
     /// <summary>
     ///     Build a CodeElement object while visiting its parse tree
     /// </summary>
-    internal class CodeElementBuilder : CodeElementsBaseListener
+    internal class CobolCodeElementBuilder : CodeElementsBaseListener
     {
         private CodeElement _ce;
         private ParserRuleContext Context;

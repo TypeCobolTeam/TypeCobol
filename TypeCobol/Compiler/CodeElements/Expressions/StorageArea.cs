@@ -25,7 +25,25 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Optional reference modification : enables to delimit only a subset of the original storage area 
         /// </summary>
-        public void ApplyReferenceModifier(ArithmeticExpression leftmostCharacterPosition, ArithmeticExpression length)
+        public void ApplyReferenceModifier(ReferenceModifier referenceModifier)
+        {
+            ReferenceModifier = referenceModifier;
+        }
+
+        /// <summary>
+        /// Reference modification defines a data item by specifying a leftmost character and
+        /// optional length for the data item.
+        /// </summary>
+        public ReferenceModifier ReferenceModifier { get; private set; }
+    }
+
+    /// <summary>
+    /// Reference modification defines a data item by specifying a leftmost character and
+    /// optional length for the data item.
+    /// </summary>
+    public class ReferenceModifier
+    {
+        public ReferenceModifier(ArithmeticExpression leftmostCharacterPosition, ArithmeticExpression length)
         {
             LeftmostCharacterPosition = leftmostCharacterPosition;
             Length = length;

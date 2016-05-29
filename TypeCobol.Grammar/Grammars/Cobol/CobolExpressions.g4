@@ -104,6 +104,10 @@ qualifiedDataName:
 qualifiedDataName1: 
 	dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
 
+// [Type ambiguity] at this parsing stage
+qualifiedDataNameOrIndexName: 
+	dataNameReferenceOrIndexNameReference | qualifiedDataName1;
+
 // p60: record-name 
 // record-name assigns a name to a record.
 // A record-name is global if the GLOBAL clause is specified in the record description that declares the record-name,
@@ -143,8 +147,23 @@ qualifiedConditionName:
 // Ambiguous references in Cobol grammar rules
 
 // [Type ambiguity] at this parsing stage
-qualifiedDataNameOrIndexName: 
-	dataNameReferenceOrIndexNameReference | qualifiedDataName1;
+qualifiedDataNameOrQualifiedConditionName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference | qualifiedDataNameOrQualifiedConditionName1;
+
+qualifiedDataNameOrQualifiedConditionName1:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
+
+// [Type ambiguity] at this parsing stage
+qualifiedDataNameOrQualifiedConditionNameOrIndexName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference | qualifiedDataNameOrQualifiedConditionName1;
+
+// [Type ambiguity] at this parsing stage
+qualifiedDataNameOrQualifiedConditionNameOrFileName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference | qualifiedDataNameOrQualifiedConditionName1;
+
+// [Type ambiguity] at this parsing stage
+qualifiedDataNameOrQualifiedConditionNameOrClassName:
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference | qualifiedDataNameOrQualifiedConditionName1;
 
 
 // --- (Data storage area) Identifiers ---
@@ -168,6 +187,22 @@ dataItemReference:
 conditionReference: 
 	qualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
 
+// [Type ambiguity] : dataItemReference and conditionReference cannot be distinguished at this parsing stage
+dataItemReferenceOrConditionReference: 
+	qualifiedDataNameOrQualifiedConditionName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// [Type ambiguity] : indexName cannot be distinguished from identifier at this parsing stage
+dataItemReferenceOrConditionReferenceOrIndexName: 
+	qualifiedDataNameOrQualifiedConditionNameOrIndexName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+
+// [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
+dataItemReferenceOrConditionReferenceOrFileName: 
+	qualifiedDataNameOrQualifiedConditionNameOrFileName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+	
+// [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
+dataItemReferenceOrConditionReferenceOrClassName: 
+	qualifiedDataNameOrQualifiedConditionNameOrClassName (LeftParenthesisSeparator subscript+ RightParenthesisSeparator)?;
+	
 // p71: Subscripting
 // Subscripting is a method of providing table references through the use of
 // subscripts. A subscript is a positive integer whose value specifies the occurrence
@@ -402,12 +437,33 @@ argument:
 
 storageAreaReference:
 	  dataItemReference
-	| intrinsicDataNameReference /* specialRegister */
+	| otherStorageAreaReference;
+
+otherStorageAreaReference: 
+	  intrinsicDataNameReference /* specialRegister */
 	| autoAllocatedDataItemReference /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */
 	| functionIdentifier;
 
 // [Type ambiguity] : storageAreaReference and conditionReference cannot be distinguished at this parsing stage
-storageAreaReferenceOrConditionReference: storageAreaReference;
+storageAreaReferenceOrConditionReference:
+	  dataItemReferenceOrConditionReference
+	| otherStorageAreaReference;
+
+// [Type ambiguity] : indexName cannot be distinguished from identifier at this parsing stage
+storageAreaReferenceOrConditionReferenceOrIndexName:
+	  dataItemReferenceOrConditionReferenceOrIndexName
+	| otherStorageAreaReference;
+
+// [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
+storageAreaReferenceOrConditionReferenceOrFileName:
+	  dataItemReferenceOrConditionReferenceOrFileName
+	| otherStorageAreaReference;
+
+// [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
+storageAreaReferenceOrConditionReferenceOrClassName:
+	  dataItemReferenceOrConditionReferenceOrClassName
+	| otherStorageAreaReference;
+
 
 // - 5. Reference modification : reference only a subset of the storage area -
 
@@ -524,13 +580,16 @@ referenceModifier:
 
 
 // [Type ambiguity] : indexName cannot be distinguished from identifier at this parsing stage
-identifierOrIndexName: identifier;
+identifierOrIndexName:
+	storageAreaReferenceOrConditionReferenceOrIndexName (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
 // [Type ambiguity] : fileName cannot be distinguished from identifier at this parsing stage
-identifierOrFileName: identifier;
+identifierOrFileName:
+	storageAreaReferenceOrConditionReferenceOrFileName (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
 // [Type ambiguity] : className cannot be distinguished from identifier at this parsing stage
-identifierOrClassName: identifier;
+identifierOrClassName:
+	storageAreaReferenceOrConditionReferenceOrClassName (LeftParenthesisSeparator referenceModifier RightParenthesisSeparator)?;
 
 
 // --- Arithmetic Expressions ---
@@ -1073,7 +1132,7 @@ signCondition:
 
 // --- Cobol variables : runtime value or literal ---
 
-booleanVariableOrExpression: booleanValue | conditionalExpression;
+booleanValueOrExpression: booleanValue | conditionalExpression;
 
 integerVariable1: identifier | integerValue;
 

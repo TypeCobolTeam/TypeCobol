@@ -132,6 +132,7 @@
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
     <Content Include="Compiler\CodeElements\Expressions\obsolete\QualifiedName.cs.txt" />
+    <Content Include="Compiler\CodeElements\Expressions\obsolete\CobolExpressionsBuilder.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxValue.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
@@ -309,10 +310,9 @@
     <Compile Include="Compiler\File\LocalDirectoryLibrary.cs" />
     <Compile Include="Compiler\File\SourceFileProvider.cs" />
     <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
-    <Compile Include="Compiler\Parser\CodeElementBuilder.cs" />
+    <Compile Include="Compiler\Parser\CobolCodeElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\ArithmeticStatementBuilder.cs" />
-    <Compile Include="Compiler\Parser\ArithmeticExpressionBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
     <Compile Include="Compiler\Parser\FileOperationBuilder.cs" />

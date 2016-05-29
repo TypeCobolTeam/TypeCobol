@@ -115,7 +115,7 @@ namespace TypeCobol.Compiler.Parser
 
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
-            CodeElementBuilder codeElementBuilder = new CodeElementBuilder();
+            CobolCodeElementBuilder codeElementBuilder = new CobolCodeElementBuilder();
             codeElementBuilder.Dispatcher = new CodeElementDispatcher();
             codeElementBuilder.Dispatcher.CreateListeners();
 

@@ -1103,6 +1103,18 @@ dataNameReferenceOrIndexNameReference: ambiguousSymbolReference4;
 // [Type ambiguity] at this parsing stage
 dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: ambiguousSymbolReference4;
 
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference4;
+
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference: ambiguousSymbolReference4;
+
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference: ambiguousSymbolReference4;
+
+// [Type ambiguity] at this parsing stage
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference: ambiguousSymbolReference4;
+
 // p115 : condition-1, condition-2
 // Condition-names follow the rules for user-defined names. At least one
 // character must be alphabetic. The value associated with the
