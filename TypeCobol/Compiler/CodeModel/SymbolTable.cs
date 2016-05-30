@@ -216,7 +216,7 @@ namespace TypeCobol.Compiler.CodeModel
 		/// <summary>Make a function definied in the current scope.</summary>
 		/// <param name="function">Function definition</param>
 		internal void Register(Function function) {
-			functions[function.Name] = function;
+			functions[function.QualifiedName] = function;
 		}
 
 
