@@ -317,7 +317,6 @@
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
     <Compile Include="Compiler\Parser\FileOperationBuilder.cs" />
     <Compile Include="Compiler\Parser\ICodeElementsLine.cs" />
-    <Compile Include="Compiler\Parser\LogicalExpressionBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementsParserStep.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassParserStep.cs" />

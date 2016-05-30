@@ -1130,7 +1130,7 @@ signCondition:
 	conditionOperand IS? NOT? (POSITIVE | NEGATIVE | ZERO);
 
 
-// --- Cobol variables : runtime value or literal ---
+// --- Cobol variables : runtime value read from storage area or literal ---
 
 booleanValueOrExpression: booleanValue | conditionalExpression;
 
@@ -1182,16 +1182,16 @@ variable6: identifier | numericValue | alphanumericValue2 | repeatedCharacterVal
 
 variable7: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue2;
 
-variableOrIndex: identifierOrIndexName | value1;
+variableOrIndex: identifierOrIndexName | numericValue | alphanumericValue2 | repeatedCharacterValue2;
 
 variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1;
 
-variableOrExpression1: variable3 | arithmeticExpression;
+variableOrExpression1: identifier | numericValue | alphanumericValue2 | arithmeticExpression;
 
-variableOrExpression2: variable6 | arithmeticExpression;
+variableOrExpression2: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue1 | arithmeticExpression;
 
 
-// --- Storage areas where statements results are saved ---
+// --- Receiving data items : storage areas where statements results are saved ---
 
 numericStorageArea: identifier;
 

@@ -204,7 +204,8 @@ namespace TypeCobol.Compiler.CodeElements
         GreaterThan,
         GreaterThanOrEqualTo,
         LessThan,
-        LessThanOrEqualTo
+        LessThanOrEqualTo,
+        NotEqualTo
     }
 
     /// <summary>

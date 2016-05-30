@@ -222,7 +222,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class IntrinsicFunctionCallResultStorageArea : StorageArea
     {
-        public IntrinsicFunctionCallResultStorageArea(ExternalName intrinsicFunctionName, Expression[] arguments) :
+        public IntrinsicFunctionCallResultStorageArea(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) :
             base(StorageAreaKind.IntrinsicFunctionCallResult)
         {
             IntrinsicFunctionName = intrinsicFunctionName;
@@ -231,6 +231,6 @@ namespace TypeCobol.Compiler.CodeElements
 
         public ExternalName IntrinsicFunctionName { get; private set; }
 
-        public Expression[] Arguments { get; private set; }
+        public VariableOrExpression[] Arguments { get; private set; }
     }
 }

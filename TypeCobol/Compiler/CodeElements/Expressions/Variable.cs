@@ -9,18 +9,18 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract class VariableBase
     {
-        public VariableBase(VariableDataType dataType, StorageArea storageArea)
+        public VariableBase(StorageDataType dataType, StorageArea storageArea)
         {
             DataType = dataType;
             StorageArea = storageArea;
         }
 
-        public VariableDataType DataType { get; private set; }
+        public StorageDataType DataType { get; private set; }
 
         public StorageArea StorageArea { get; private set; }
     }
 
-    public enum VariableDataType
+    public enum StorageDataType
     {
         Any,
         Integer,
@@ -37,11 +37,11 @@ namespace TypeCobol.Compiler.CodeElements
     public class IntegerVariable : VariableBase
     {
         public IntegerVariable(StorageArea storageArea) : 
-            base(VariableDataType.Integer, storageArea)
+            base(StorageDataType.Integer, storageArea)
         { }
 
         public IntegerVariable(IntegerValue value) :
-            base(VariableDataType.Integer, null)
+            base(StorageDataType.Integer, null)
         {
             Value = value;
         }
@@ -52,11 +52,11 @@ namespace TypeCobol.Compiler.CodeElements
     public class NumericVariable : VariableBase
     {
         public NumericVariable(StorageArea storageArea) :
-            base(VariableDataType.Numeric, storageArea)
+            base(StorageDataType.Numeric, storageArea)
         { }
 
         public NumericVariable(NumericValue value) :
-            base(VariableDataType.Numeric, null)
+            base(StorageDataType.Numeric, null)
         {
             Value = value;
         }
@@ -67,11 +67,11 @@ namespace TypeCobol.Compiler.CodeElements
     public class CharacterVariable : VariableBase
     {
         public CharacterVariable(StorageArea storageArea) :
-            base(VariableDataType.Character, storageArea)
+            base(StorageDataType.Character, storageArea)
         { }
 
         public CharacterVariable(CharacterValue value) :
-            base(VariableDataType.Character, null)
+            base(StorageDataType.Character, null)
         {
             Value = value;
         }
@@ -82,17 +82,17 @@ namespace TypeCobol.Compiler.CodeElements
     public class AlphanumericVariable : VariableBase
     {
         public AlphanumericVariable(StorageArea storageArea) :
-            base(VariableDataType.Alphanumeric, storageArea)
+            base(StorageDataType.Alphanumeric, storageArea)
         { }
 
         public AlphanumericVariable(AlphanumericValue value) :
-            base(VariableDataType.Alphanumeric, null)
+            base(StorageDataType.Alphanumeric, null)
         {
             Value = value;
         }
 
         public AlphanumericVariable(RepeatedCharacterValue repeadtedValue) :
-            base(VariableDataType.Alphanumeric, null)
+            base(StorageDataType.Alphanumeric, null)
         {
             RepeatedCharacterValue = repeadtedValue;
         }
@@ -104,11 +104,11 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class SymbolReferenceVariable : VariableBase
     {
-        public SymbolReferenceVariable(VariableDataType symbolType, StorageArea storageArea) :
+        public SymbolReferenceVariable(StorageDataType symbolType, StorageArea storageArea) :
             base(symbolType, storageArea)
         { }
 
-        public SymbolReferenceVariable(VariableDataType symbolType, SymbolReference symbolReference) :
+        public SymbolReferenceVariable(StorageDataType symbolType, SymbolReference symbolReference) :
             base(symbolType, null)
         {
             SymbolReference = symbolReference;
@@ -120,35 +120,35 @@ namespace TypeCobol.Compiler.CodeElements
     public class Variable : VariableBase
     {
         public Variable(StorageArea storageArea) :
-            base(VariableDataType.Any, storageArea)
+            base(StorageDataType.Any, storageArea)
         { }
 
         public Variable(NumericValue value) :
-            base(VariableDataType.Any, null)
+            base(StorageDataType.Any, null)
         {
            NumericValue = value;
         }
 
         public Variable(AlphanumericValue value) :
-            base(VariableDataType.Any, null)
+            base(StorageDataType.Any, null)
         {
             AlphanumericValue = value;
         }
 
         public Variable(RepeatedCharacterValue repeatedValue) :
-            base(VariableDataType.Any, null)
+            base(StorageDataType.Any, null)
         {
             RepeatedCharacterValue = repeatedValue;
         }
 
         public Variable(SymbolReference symbolReference) :
-            base(VariableDataType.Any, null)
+            base(StorageDataType.Any, null)
         {
             SymbolReference = symbolReference;
         }
 
         protected Variable() :
-            base(VariableDataType.Any, null)
+            base(StorageDataType.Any, null)
         { }
 
         public NumericValue NumericValue { get; private set; }
@@ -206,4 +206,13 @@ namespace TypeCobol.Compiler.CodeElements
 
         public ConditionalExpression Expression { get; private set; }
     }    
+
+    public class ReceivingStorageArea : VariableBase
+    {
+        public ReceivingStorageArea(StorageDataType dataType, StorageArea storageArea) : 
+            base(dataType, storageArea)
+        {
+            storageArea.IsReceivingField = true;
+        }
+    }
 }
