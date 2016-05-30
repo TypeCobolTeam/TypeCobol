@@ -122,7 +122,7 @@ namespace TypeCobol.Codegen.Config {
 				namespaces[nspace] = TypeCobol.Tools.Reflection.GetTypesInNamespace(nspace);
 			foreach(var type in namespaces[nspace])
 				if (type.FullName.Equals(fullname)) return type;
-			return null;
+			throw new System.ArgumentException("Undefined type: "+fullname);
 		}
 	}
 
