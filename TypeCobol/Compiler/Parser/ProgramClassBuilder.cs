@@ -44,6 +44,7 @@ namespace TypeCobol.Compiler.Parser
 						TableOfIntrisic.RegisterCustomType(type);
 				}
 				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
+				TableOfIntrisic.Register(CodeElements.Functions.SampleFactory.Create("POW"));
             }
 		}
 
@@ -227,7 +228,6 @@ namespace TypeCobol.Compiler.Parser
 		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
 			if (data.Subordinates.Count < 1) {
 				int length = picture2Size(data.Picture) * type2Size(data.DataType);
-				// TODO REDEFINES
 				data.MemoryArea = CreateMemoryArea(data, offset, length);
 				offset += data.MemoryArea.Length; // offset for next sibling or for toplevel's next sibling
 			} else {
@@ -237,7 +237,8 @@ namespace TypeCobol.Compiler.Parser
 					COBOLMemoryArea rmem = null;
 					if (child.RedefinesDataName != null) {
 						rmem = GetRedefinedMemory(child.RedefinesDataName.Name);
-						offset = rmem.Offset;
+						// rmem can be null if we try to redefine something in a TYPEDEF
+						if (rmem != null) offset = rmem.Offset;
 					}
 					ComputeMemoryProfile(child, ref offset);
 					if (os < 0) os = child.MemoryArea.Offset;// parent offset = first child offset
@@ -312,7 +313,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			bool updated = false;
 			while(!updated && groups.Count > 0) {
 				var toplevel = groups.Peek();
-				if (data.LevelNumber <= toplevel.LevelNumber) groups.Pop();
+				if (data.LevelNumber <= toplevel.LevelNumber || data.LevelNumber == 66) groups.Pop();
 				else {
 					toplevel.Subordinates.Add(data);
 					data.TopLevel = toplevel;

@@ -1,6 +1,6 @@
       * 2 CodeElements errors
-      * "1"@(60:12>60:67): [27:1] Syntax error : Writing Alphanumeric to InternalRef:INTERNAL-REF is unsafe
-      * "1"@(61:12>61:67): [27:1] Syntax error : Writing INTERNAL-REF to ExternalRef:EXTERNAL-REF is unsafe
+      * "1"@(60:12>60:67): [29:2] Warning : Writing Alphanumeric to InternalRef:INTERNAL-REF is unsafe
+      * "1"@(61:12>61:67): [29:2] Warning : Writing INTERNAL-REF to ExternalRef:EXTERNAL-REF is unsafe
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Types.
        

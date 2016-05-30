@@ -330,7 +330,7 @@ namespace TypeCobol.Compiler.Parser
         private static FunctionParameter CreateFunctionParameter(CodeElementsParser.ArgumentContext context)
         {
             if (context.literal() != null) return new FunctionParameter(CreateLiteral(context.literal()));
-            //if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
+            if (context.arithmeticExpression() != null) return new FunctionParameter(new ArithmeticExpressionBuilder().CreateArithmeticExpression(context.arithmeticExpression()));
             if (context.identifier() != null) return new FunctionParameter(CreateIdentifier(context.identifier()));
             return null;
         }
