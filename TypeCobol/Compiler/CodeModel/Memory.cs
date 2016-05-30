@@ -6,7 +6,7 @@ using TypeCobol.Compiler.CodeElements;
 namespace TypeCobol.Compiler.CodeModel {
 
 	public interface MemoryArea {
-		/// <summary>Address of the start of the area</summary>
+		/// <summary>Offset (in bytes) relative to toplevel item</summary>
 		int Offset { get; }
 		/// <summary>Area length (in bytes)</summary>
 		int Length { get; }
@@ -20,7 +20,6 @@ namespace TypeCobol.Compiler.CodeModel {
 
 	public class DataInMemory: COBOLMemoryArea {
 		public virtual int Offset { get; set; }
-		/// <summary>Length (in bytes)</summary>
 		public virtual int Length { get; private set; }
 		public virtual int Start  { get { return Offset+1; } }
 		public virtual int End    { get { return Offset+Length; } }

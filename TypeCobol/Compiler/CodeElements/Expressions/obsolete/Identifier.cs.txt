@@ -213,13 +213,10 @@ namespace TypeCobol.Compiler.CodeElements.Obsolete
 		public override string ToString() {
 			var str = new StringBuilder();
 			str.Append(Symbol != null ? Symbol.ToString() : "?");
-			if (this.Parameters.Count > 0)
-			{
-				str.Append("( ");
-				foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
-				if (str[str.Length - 2] == ',') str.Length -= 2;
-				str.Append(')');
-			}
+			str.Append('(');
+			foreach (var parameter in this.Parameters) str.Append(parameter).Append(", ");
+			if (this.Parameters.Count > 0) str.Length -= 2;
+			str.Append(')');
 			if (this.ReferenceModifier != null) str.Append(this.ReferenceModifier.ToString());
 			return str.ToString();
 		}

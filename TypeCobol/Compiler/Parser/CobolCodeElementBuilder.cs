@@ -2161,11 +2161,20 @@ namespace TypeCobol.Compiler.Parser
 
         // ** Runtime functions **
 
-        public override void EnterIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+		public override void EnterIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context) {
+			ITerminalNode node = null;
+			if (context.UserDefinedWord() != null) node = context.UserDefinedWord();
+			else
+			if (context.FunctionName() != null) node = context.FunctionName();
+			else
+			if (context.LENGTH() != null) node = context.LENGTH();
+			else
+			if (context.RANDOM() != null) node = context.RANDOM();
+			else
+			if (context.WHEN_COMPILED() != null) node = context.WHEN_COMPILED();
+			Token symbolToken = ParseTreeUtils.GetFirstToken(node);
+			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
+			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
         public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)

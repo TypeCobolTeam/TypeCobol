@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[3,34]<27,Error,Syntax>Syntax error : Writing Alphanumeric to today:TC-DATE is unsafe ([3>34] on line 29)
+[3,34]<29,Warning,Semantics>Warning : Writing Alphanumeric to today:TC-DATE is unsafe ([3>34] on line 29)
 [3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 35)
 [3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 36)
 

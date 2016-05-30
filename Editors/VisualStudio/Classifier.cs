@@ -45,7 +45,7 @@ namespace TypeCobol.Editor
         internal Classifier(IClassificationTypeRegistryService registry)
         {
             this.registry = registry;
-            this.parser = new TypeCobol.Server.Parser("V$");
+            this.parser = new TypeCobol.Server.Parser();
         }
 
         /// <summary>

@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
 	public class Node {
-		private IList<Node> children_ = new List<Node>();
+		private readonly IList<Node> children_ = new List<Node>();
 		public IList<Node> Children {
-			get { return new System.Collections.ObjectModel.ReadOnlyCollection<Node>(children_); }
+			get { return children_; }
 			private set { throw new System.InvalidOperationException(); }
 		}
 		public CodeElement CodeElement { get; internal set; }
 		public Node Parent { get; internal set; }
 
+		public Node(): this(null) { }
 		public Node(CodeElement e) { CodeElement = e; }
 
 		internal void Add(Node child) {
@@ -35,6 +37,49 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public CodeModel.SymbolTable SymbolTable { get; set; }
+
+
+
+		public virtual IEnumerable<ITextLine> Lines {
+			get {
+				var lines = new List<ITextLine>();
+				if (CodeElement == null) return lines;
+				foreach(var token in CodeElement.ConsumedTokens)
+					if (!lines.Contains(token.TokensLine))
+						lines.Add(token.TokensLine);
+				return lines;
+			}
+		}
+		public string ID {
+			get {
+				if (CodeElement is ProgramIdentification) return ((ProgramIdentification)CodeElement).ProgramName.Name;
+				if (CodeElement is DataDivisionHeader) return "data-division";
+				if (CodeElement is LinkageSectionHeader) return "linkage";
+				if (CodeElement is LocalStorageSectionHeader) return "local-storage";
+				if (CodeElement is WorkingStorageSectionHeader) return "working-storage";
+				if (CodeElement is DataDescriptionEntry) return ((DataDescriptionEntry)CodeElement).QualifiedName.ToString();
+				if (CodeElement is EnvironmentDivisionHeader) return "environment-division";
+				if (CodeElement is ProcedureDivisionHeader) return "procedure-division";
+				if (CodeElement is ParagraphHeader) return ((ParagraphHeader)CodeElement).ParagraphName.Name;
+				return null;
+			}
+		}
+		public string URI {
+			get {
+				if (ID == null) return null;
+				string puri = Parent == null?null:Parent.URI;
+				if (puri == null) return ID;
+				return puri+'.'+ID;
+			}
+		}
+		public Node Get(string uri) {
+			if (uri.Equals(URI)) return this;
+			foreach(var child in Children) {
+				var found = child.Get(uri);
+				if (found != null) return found;
+			}
+			return null;
+		}
 
 
 

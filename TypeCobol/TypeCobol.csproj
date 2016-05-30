@@ -169,6 +169,7 @@
     <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxNumber.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxProperty.cs" />
     <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxString.cs.txt" />
+    <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
     <Compile Include="Compiler\CodeElements\Header\ConfigurationSectionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\DataDivisionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\DeclarativesEnd.cs" />

@@ -4,7 +4,7 @@
       * "1"@(14:10>14:21): [27:1] Syntax error : Group items should not contain type BOOL items
       * "1"@(16:12>16:27): [27:1] Syntax error : Type BOOL should not be subordinate to another item
       * "1"@(17:10>17:25): [27:1] Syntax error : Type BOOL should not be subordinate to another item
-      * "1"@(33:12>33:33): [27:1] Syntax error : Writing Alphanumeric to Identifier:BOOL is unsafe
+      * "1"@(33:12>33:33): [29:2] Warning : Writing Alphanumeric to Identifier:BOOL is unsafe
       * "1"@(35:12>35:39): [27:1] Syntax error : Symbol Identifier-value is not referenced
       * "1"@(36:12>36:59): [27:1] Syntax error : Symbol Identifier-value.Identifier-false is not referenced
       * "1"@(43:12>43:34): [27:1] Syntax error : Group contains type BOOL variables

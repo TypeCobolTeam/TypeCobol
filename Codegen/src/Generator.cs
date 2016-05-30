@@ -43,23 +43,6 @@ System.Console.WriteLine(line.Text);
 			}
 		}
 
-		private Stack<ITextLine> CreateStack<T>(IReadOnlyList<T> input) where T:ITextLine {
-			// we create a stack of text lines, so each tree node could choose to:
-			// - write generated code without unstacking --> insert code
-			// - unstack and write without modification  --> copy code
-			// - unstack, modify and then write          --> alter code
-			// - unstack and do nothing with it          --> delete code
-			// each node could then pass the stack or not to its children
-			var lines = new Stack<ITextLine>(Input);// Lines are reversed...
-			lines = new Stack<ITextLine>(lines);// ... so, put them back in order
-			//while(Lines.Count > 0) Writer.WriteLine(Lines.Pop().Text);
-			return lines;
-			// this stack thingie is far from perfect however, as a node far away in the tree traversal
-			// (eg. in PROCEDURE DIVISION) could want to insert code between some lines that are already
-			// written/unstacked (eg. in DATA DIVISION) ...
-			// => we should rather do all the text modifications, and only then write stuff
-		}
-
 		public void Visit(Node node) {
 			var lines = new List<Compiler.Scanner.ITokensLine>();
 			var indexes = new List<int>();
@@ -175,7 +158,7 @@ System.Console.WriteLine(line.Text);
 	public class Delete: Write {
 		public Delete(List<ICobolTextLine> output): base(output) { }
 		public override bool Execute(Node node, List<ITokensLine> lines) {
-			for(int c=0; c<lines.Count; c++) output.Remove(lines[c]);
+			foreach(var line in lines) output.Remove(line);
 			return true;
 		}
 	}

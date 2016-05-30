@@ -95,7 +95,7 @@ namespace TypeCobol.Server
 			else writer = new ConsoleWriter(w);
 			writer.Outputs = config.OutputFiles;
 
-			var parser = new Parser("TypeCobol.Server");
+			var parser = new Parser();
 			parser.CustomSymbols = loadCopies(config.Copies);
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
@@ -154,7 +154,7 @@ namespace TypeCobol.Server
 		}
 
 		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> copies) {
-			var parser = new Parser("TypeCobol.Server.loading");
+			var parser = new Parser();
 			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
 			foreach(string path in copies) {
 				parser.Init(path);
@@ -174,7 +174,7 @@ namespace TypeCobol.Server
 		}
 
 		private static void runServer(string pipename) {
-			var parser = new Parser("TypeCobol.Server");
+			var parser = new Parser();
 			var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
 			Commands.Register(66, new Parse(parser, pipe, pipe));
 			Commands.Register(67, new Initialize(parser, pipe, pipe));
