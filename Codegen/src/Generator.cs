@@ -10,23 +10,19 @@ namespace TypeCobol.Codegen {
 
 	public class Generator: NodeVisitor {
 
-		private IReadOnlyList<ICobolTextLine> Input;
-		private List<ICobolTextLine> Output;
-		private TextWriter Writer;
-		private Tools.CodeElementDiagnostics Converter;
-		private List<Skeleton> Skeletons;
+		private readonly List<ICobolTextLine> Output;
+		private readonly TextWriter Writer;
+		private readonly List<Skeleton> Skeletons;
 
 		/// <summary>Table of symbols</summary>
 		private SymbolTable Table;
 
 
 		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter, List<Skeleton> skeletons) {
-			Input = source;
 			Output = new List<ICobolTextLine>();
-			Output.AddRange(Input);
+			Output.AddRange(source);
 			Writer = destination;
-			Converter = converter;
-			Skeletons = skeletons != null? skeletons : new List<Skeletons.Skeleton>();
+			Skeletons = skeletons ?? new List<Skeleton>();
 		}
 
 		/// <summary>Generates code</summary>
@@ -44,7 +40,7 @@ System.Console.WriteLine(line.Text);
 		}
 
 		public void Visit(Node node) {
-			var lines = new List<Compiler.Scanner.ITokensLine>();
+			var lines = new List<ITokensLine>();
 			var indexes = new List<int>();
 			if (node.CodeElement != null) {
 				foreach(var token in node.CodeElement.ConsumedTokens) {
@@ -66,6 +62,7 @@ System.Console.WriteLine(line.Text);
 			var skeleton = GetActiveSkeleton(node);
 			if (skeleton != null) {
 				foreach(var pattern in skeleton) {
+					var n = GetLocation(node, pattern.Location);
 					if ("comment".Equals(pattern.Action)) return new Comment(Output);
 					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
 					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
@@ -74,7 +71,6 @@ System.Console.WriteLine(line.Text);
 			}
 			return new Write(Output);// no peculiar codegen --> write as is
 		}
-
 		private Skeleton GetActiveSkeleton(Node node) {
 			foreach(var skeleton in Skeletons) {
 				bool active = false;
@@ -85,10 +81,18 @@ System.Console.WriteLine(line.Text);
 			}
 			return null;
 		}
+		private Node GetLocation(Node node, string location) {
+			if (location == null || location.ToLower().Equals("node")) return node;
+			Node root = node;
+			while(root.Parent != null) root = root.Parent;
+			var result = root.Get(location);
+			if (result != null) return result;
+			throw new System.ArgumentException("Undefined URI: "+location);
+		}
 
 		private string CreateGeneratedText(Node node, Pattern pattern) {
 			var variables = CreateVariables(pattern.Variables, node);
-			string generated = TypeCobol.Codegen.Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
+			string generated = Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
 			if (pattern.Trim) generated = generated.Trim();
 			if (pattern.Indent) {
 				string indent = CreateIndent(node.CodeElement as DataDescriptionEntry);
@@ -174,8 +178,7 @@ System.Console.WriteLine(line.Text);
 	}
 
 	public class Replace: Write {
-		private List<ICobolTextLine> Output;
-		private string text;
+		private readonly string text;
 
 		public Replace(List<ICobolTextLine> output, string text)
 			: base(output) {
@@ -184,9 +187,8 @@ System.Console.WriteLine(line.Text);
 
 		public override bool Execute(Node node, List<ITokensLine> lines) {
 			var data = node.CodeElement as DataDescriptionEntry;
-			int index = -1;
 			foreach(var line in lines) {
-				index = IndexOf(line);
+				var index = IndexOf(line);
 				output.Remove(line);
 				output.Insert(index++, factory.CreateInsertedLine(factory.CreateCommentedLine(line)));
 				output.Insert(index,   factory.CreateInsertedLine(text));
@@ -277,11 +279,11 @@ System.Console.WriteLine(line.Text);
 		public string SourceText { get { throw new System.InvalidOperationException(); } }
 		public TextArea Comment { get { throw new System.InvalidOperationException(); } }
 		public string CommentText { get { throw new System.InvalidOperationException(); } }
-		public TypeCobol.Compiler.Concurrency.CompilationStep CompilationStep {
+		public Compiler.Concurrency.CompilationStep CompilationStep {
 			get { throw new System.InvalidOperationException(); }
 			set { throw new System.InvalidOperationException(); }
 		}
-		public bool CanStillBeUpdatedBy(TypeCobol.Compiler.Concurrency.CompilationStep updatingStep) { throw new System.InvalidOperationException(); }
+		public bool CanStillBeUpdatedBy(Compiler.Concurrency.CompilationStep updatingStep) { throw new System.InvalidOperationException(); }
 		// from ITextLine
 		public string TextSegment(int startIndex, int endIndexInclusive) { throw new System.InvalidOperationException(); }
 		public int Length { get { throw new System.InvalidOperationException(); } }
@@ -308,7 +310,7 @@ System.Console.WriteLine(line.Text);
 	}
 
 	public class InsertedLine: LineForCodegen {
-		private string text;
+		private readonly string text;
 		public InsertedLine(string text)
 			: base(null) {
 			this.text = text;
@@ -342,14 +344,14 @@ System.Console.WriteLine(line.Text);
 		}
 	}
 	public class RemoveCustomTypeDeclaration: Edit {
-		private string typename;
+		private readonly string typename;
 		public RemoveCustomTypeDeclaration(string typename) {
 			this.typename = typename;
 		}
 		public string Edit(string span) {
 			int start = span.IndexOf("TYPE ");
 			if (start == -1 ) return span; // nothing to do
-			int end = span.IndexOf(" "+typename, start);
+			int end = span.IndexOf(" "+typename, start) ;
 			if (end != -1) end += typename.Length +1;
 			else end = start + "TYPE ".Length;
 			for(start=start-1; span[start]==' '; start--) ;

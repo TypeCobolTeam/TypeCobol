@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 		public Node Get(string uri) {
-			if (uri.Equals(URI)) return this;
+			if (URI != null && URI.EndsWith(uri)) return this;
 			foreach(var child in Children) {
 				var found = child.Get(uri);
 				if (found != null) return found;
@@ -92,6 +92,7 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["typedef"] = new TypeDefined("TYPEDEF");
 			Attributes["sender"] = new Sender("SENDER");
 			Attributes["receiver"] = new Receiver("RECEIVER");
+			Attributes["functions"] = new UsesFunctions("FUNCTIONS");
 		}
 		public string this[string attribute] {
 			get {
@@ -185,6 +186,16 @@ namespace TypeCobol.Compiler.CodeElements
 			if (s.Expressions.Count < 1) return null;
 			if (s.Expressions.Count == 1) return s.Expressions[0];
 			return s.Expressions;
+		}
+	}
+	internal class UsesFunctions: NodeAttribute {
+		public UsesFunctions(string key): base(key) { }
+		public override object GetValue(object o, SymbolTable table) {
+			var s = o as IdentifierUser;
+			if (s == null) return null;
+			if (s.Identifiers.Count < 1) return null;
+			//if (s.Identifiers.Count == 1) return new List<Identifier>(s.Identifiers)[0];
+			return s.Identifiers;
 		}
 	}
 }
