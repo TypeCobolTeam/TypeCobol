@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// method name. Method names are used directly, without translation. The
         /// method name is processed in a case-sensitive manner.
         /// </summary>
-        public MethodName MethodName { get; set; }
+        public SymbolDefinition MethodName { get; set; }
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.

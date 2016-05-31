@@ -14,19 +14,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// AUTHOR
         /// Name of the author of the program. 
         /// </summary>
-        public SyntaxProperty<string> Author { get; set; }
+        public AlphanumericValue[] Author { get; set; }
 
         /// <summary>
         /// INSTALLATION
         /// Name of the company or location.
         /// </summary>
-        public SyntaxProperty<string> Installation { get; set; }
+        public AlphanumericValue[] Installation { get; set; }
 
         /// <summary>
         /// DATE-WRITTEN
         /// Date the program was written.
         /// </summary>
-        public SyntaxProperty<string> DateWritten { get; set; }
+        public AlphanumericValue[] DateWritten { get; set; }
 
         /// <summary>
         /// DATE-COMPILED
@@ -37,13 +37,31 @@ namespace TypeCobol.Compiler.CodeElements
         /// DATE-COMPILED is printed. For example:
         /// DATE-COMPILED. 06/30/10.
         /// </summary>
-        public SyntaxProperty<string> DateCompiled { get; set; }
+        public AlphanumericValue[] DateCompiled { get; set; }
 
         /// <summary>
         /// SECURITY
         /// Level of confidentiality of the program.
         /// </summary>
-        public SyntaxProperty<string> Security { get; set; }
+        public AlphanumericValue[] Security { get; set; }
+
+
+        /// <summary>
+        /// Get the text corresponding to one of the authoring properties
+        /// </summary>
+        public string GetPropertyValue(AlphanumericValue[] commentEntries)
+        {
+            StringBuilder sb = new StringBuilder();
+            if(commentEntries != null)
+            {
+                for(int i = 0; i < commentEntries.Length; i++)
+                {
+                    if (i > 0) sb.Append(' ');
+                    sb.Append(commentEntries[i].Value);
+                }
+            }
+            return sb.ToString();
+        }
 
         /// <summary>
         /// Debug string
@@ -53,23 +71,23 @@ namespace TypeCobol.Compiler.CodeElements
             StringBuilder sb = new StringBuilder();
             if(Author != null)
             {
-                sb.AppendLine("- AUTHOR = " + Author.Value.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- AUTHOR = " + GetPropertyValue(Author));
             }
             if (DateCompiled != null)
             {
-                sb.AppendLine("- DATE-COMPILED = " + DateCompiled.Value.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- DATE-COMPILED = " + GetPropertyValue(DateCompiled));
             }
             if (DateWritten != null)
             {
-                sb.AppendLine("- DATE-WRITTEN = " + DateWritten.Value.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- DATE-WRITTEN = " + GetPropertyValue(DateWritten));
             }
             if (Installation != null)
             {
-                sb.AppendLine("- INSTALLATION = " + Installation.Value.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- INSTALLATION = " + GetPropertyValue(Installation));
             }
             if (Security != null)
             {
-                sb.AppendLine("- SECURITY = " + Security.Value.Replace("\r", " ").Replace("\n", " "));
+                sb.AppendLine("- SECURITY = " + GetPropertyValue(Security));
             }
             return sb.ToString();
         }

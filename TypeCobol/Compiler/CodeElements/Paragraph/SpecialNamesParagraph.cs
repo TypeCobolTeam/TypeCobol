@@ -19,23 +19,23 @@ namespace TypeCobol.Compiler.CodeElements
     public class SpecialNamesParagraph : CodeElement
     {
 		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph) {
-			CurrencySymbols = new Dictionary<string, string>();
+			CurrencySymbols = new Dictionary<AlphanumericValue, CharacterValue>();
 		}
 
         /// <summary>
         /// Relates IBM-specified environment-names to user-defined mnemonic-names
         /// </summary>
-        public IDictionary<MnemonicForEnvironmentName, EnvironmentName> MnemonicsForEnvironmentNames { get; set; }
+        public IDictionary<SymbolDefinition, ExternalName> MnemonicsForEnvironmentNames { get; set; }
 
         /// <summary>
         /// Relates IBM-specified user-programmable status indicator switches to user-defined mnemonic-names
         /// </summary>
-        public IDictionary<MnemonicForUPSISwitchName, UPSISwitchName> MnemonicsForUPSISwitchNames { get; set; }
+        public IDictionary<SymbolDefinition, ExternalName> MnemonicsForUPSISwitchNames { get; set; }
 
         /// <summary>
         /// A condition-name can be associated with the on status or off status of each UPSI switch specified.
         /// </summary>
-        public IDictionary<ConditionName, Tuple<UPSISwitchName, UPSISwitchStatus>> ConditionNamesForUPSISwitchStatus { get; set; }
+        public IDictionary<SymbolDefinition, Tuple<ExternalName, UPSISwitchStatus>> ConditionNamesForUPSISwitchStatus { get; set; }
 
         /// <summary>
         /// The ALPHABET clause provides a means of relating an alphabet-name to a
@@ -43,18 +43,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// The related character code set or collating sequence can be used for alphanumeric
         /// data, but not for DBCS or national data.
         /// </summary>
-        public IDictionary<AlphabetName, CollatingSequence> AlphabetNames { get; set; }
+        public IDictionary<SymbolDefinition, CollatingSequence> AlphabetNames { get; set; }
 
         /// <summary>
         /// The SYMBOLIC CHARACTERS clause provides a means of specifying one or more symbolic characters.
         /// Each character represented is an alphanumeric character (applicable only to single-byte character).
         /// </summary>
-        public IDictionary<SymbolicCharacter, Tuple<int, AlphabetName>> SymbolicCharacters { get; set; }
+        public IDictionary<SymbolDefinition, Tuple<IntegerValue, SymbolReference>> SymbolicCharacters { get; set; }
 
         /// <summary>
         /// The CLASS clause provides a means for relating a name to the specified set of characters listed in that clause.
         /// </summary>
-        public IDictionary<CharacterClassName, IList<char>> CharsetClassNames { get; set; }
+        public IDictionary<SymbolDefinition, IList<CharacterValue>> CharsetClassNames { get; set; }
 
         /// <summary>
         /// The CURRENCY SIGN clause affects numeric-edited data items whose PICTURE
@@ -69,20 +69,20 @@ namespace TypeCobol.Compiler.CodeElements
         /// The CURRENCY SIGN clause specifies a currency sign value and the currency
         /// symbol used to represent that currency sign value in a PICTURE clause.
         /// </summary>
-        public IDictionary<string, string> CurrencySymbols { get; set; }
+        public IDictionary<AlphanumericValue, CharacterValue> CurrencySymbols { get; set; }
 
         /// <summary>
         /// The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
         /// and the comma in PICTURE character-strings and in numeric literals.
         /// </summary>
-        public bool DecimalPointIsComma { get; set; }
+        public SyntaxProperty<bool> DecimalPointIsComma { get; set; }
 
         /// <summary>
         /// The XML-SCHEMA clause provides the means of relating xml-schema-name-1 to an
         /// external file identifier: a ddname or environment variable that identifies the actual
         /// external file that contains the optimized XML schema.
         /// </summary>
-        public IDictionary<XmlSchemaName, string> XmlSchemaNames { get; set; }
+        public IDictionary<SymbolDefinition, ExternalName> XmlSchemaNames { get; set; }
     }
     
     /// <summary>

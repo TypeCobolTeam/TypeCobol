@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// computer-name
         /// A system-name. For example: IBM-system
         /// </summary>
-        public string ComputerName { get; set; }
+        public AlphanumericValue ComputerName { get; set; }
 
         /// <summary>
         /// WITH DEBUGGING MODE
@@ -35,6 +35,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// You can code debugging lines in the ENVIRONMENT DIVISION (after the
         /// OBJECT-COMPUTER paragraph), and in the data and procedure divisions.
         /// </summary>
-        public bool DebuggingMode { get; set; }
+        public SyntaxProperty<bool> DebuggingMode { get; set; }
     }
 }

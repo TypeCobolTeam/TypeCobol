@@ -6,11 +6,9 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.CodeElements.Symbols;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -49,14 +47,20 @@ namespace TypeCobol.Compiler.Parser
         {
             var programIdentification = new ProgramIdentification();
 
-            Token programName = ParseTreeUtils.GetFirstToken(context.programNameDefinition());
-            if (programName != null)
+            programIdentification.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
+            if (context.COMMON() != null)
             {
-                programIdentification.ProgramName = new ProgramName(programName);
+                programIdentification.IsCommon = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
             }
-			programIdentification.IsCommon = context.COMMON() != null;
-			programIdentification.IsInitial = context.INITIAL() != null;
-			programIdentification.IsRecursive = context.RECURSIVE() != null;
+            if (context.INITIAL() != null)
+            {
+                programIdentification.IsInitial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
+            }
+            if (context.RECURSIVE() != null)
+            {
+                programIdentification.IsRecursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
+            }
+            programIdentification.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
 
             Context = context;
             CodeElement = programIdentification;
@@ -66,94 +70,21 @@ namespace TypeCobol.Compiler.Parser
         {
             var programEnd = new ProgramEnd();
 
-            Token programName = ParseTreeUtils.GetFirstToken(context.programNameReference2());
-            if (programName != null)
-            {
-                programEnd.ProgramName = new ProgramName(programName);
-            }
-
+            programEnd.ProgramName = CobolWordsBuilder.CreateProgramNameReference(context.programNameReference2());
+            
             Context = context;
             CodeElement = programEnd;
         }
-
-        public override void EnterAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context)
-        {
-            var authoringProperties = new AuthoringProperties();
-
-            if (context.authorParagraph().Length > 0)
-            {
-                authoringProperties.Author =
-                    BuildCommentEntriesProperty(context.authorParagraph().SelectMany(p => p.CommentEntry()));
-            }
-            if (context.dateCompiledParagraph().Length > 0)
-            {
-                authoringProperties.DateCompiled =
-                    BuildCommentEntriesProperty(context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()));
-            }
-            if (context.dateWrittenParagraph().Length > 0)
-            {
-                authoringProperties.DateWritten =
-                    BuildCommentEntriesProperty(context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()));
-            }
-            if (context.installationParagraph().Length > 0)
-            {
-                authoringProperties.Installation =
-                    BuildCommentEntriesProperty(context.installationParagraph().SelectMany(p => p.CommentEntry()));
-            }
-            if (context.securityParagraph().Length > 0)
-            {
-                authoringProperties.Security =
-                    BuildCommentEntriesProperty(context.securityParagraph().SelectMany(p => p.CommentEntry()));
-            }
-
-            if (CodeElement is ProgramIdentification)
-            {
-                ((ProgramIdentification) CodeElement).AuthoringProperties = authoringProperties;
-            }
-            else if (CodeElement is ClassIdentification)
-            {
-                ((ClassIdentification) CodeElement).AuthoringProperties = authoringProperties;
-            }
-            else if (CodeElement is MethodIdentification)
-            {
-                ((MethodIdentification) CodeElement).AuthoringProperties = authoringProperties;
-            }
-        }
-
-        private SyntaxProperty<string> BuildCommentEntriesProperty(IEnumerable<ITerminalNode> commentEntriesNodes)
-        {
-            var tokensList = new List<Token>();
-            var sbCommentEntries = new StringBuilder();
-
-            bool isFirstLine = true;
-            foreach (ITerminalNode commentEntryNode in commentEntriesNodes)
-            {
-                Token token = ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode);
-                tokensList.Add(token);
-
-                if (isFirstLine)
-                {
-                    sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
-                    isFirstLine = false;
-                }
-                else
-                {
-                    sbCommentEntries.AppendLine();
-                    sbCommentEntries.Append(ParseTreeUtils.GetTokenFromTerminalNode(commentEntryNode).Text);
-                }
-            }
-
-            return new SyntaxProperty<string>(sbCommentEntries.ToString(), tokensList);
-        }
-
-
+        
         // -- Class --
 
         public override void EnterClassIdentification(CodeElementsParser.ClassIdentificationContext context)
         {
             var classIdentification = new ClassIdentification();
-            classIdentification.ClassName = CobolWordsBuilder.CreateClassName(context.classNameDefinition());
-            classIdentification.InheritsFrom = CobolWordsBuilder.CreateClassName(context.inheritsFromClassName);
+
+            classIdentification.ClassName = CobolWordsBuilder.CreateClassNameDefinition(context.classNameDefinition());
+            classIdentification.InheritsFrom = CobolWordsBuilder.CreateClassNameReference(context.inheritsFromClassName);
+            classIdentification.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
 
             Context = context;
             CodeElement = classIdentification;
@@ -163,11 +94,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var classEnd = new ClassEnd();
 
-            Token className = ParseTreeUtils.GetFirstToken(context.classNameReference());
-            if (className != null)
-            {
-                classEnd.ClassName = new ClassName(className);
-            }
+            classEnd.ClassName = CobolWordsBuilder.CreateClassNameReference(context.classNameReference());
 
             Context = context;
             CodeElement = classEnd;
@@ -201,11 +128,8 @@ namespace TypeCobol.Compiler.Parser
         {
             var methodIdentification = new MethodIdentification();
 
-            Token methodName = ParseTreeUtils.GetFirstToken(context.methodNameDefinition());
-            if (methodName != null)
-            {
-                methodIdentification.MethodName = new MethodName(methodName);
-            }
+            methodIdentification.MethodName = CobolWordsBuilder.CreateMethodNameDefinition(context.methodNameDefinition());
+            methodIdentification.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
 
             Context = context;
             CodeElement = methodIdentification;
@@ -215,14 +139,55 @@ namespace TypeCobol.Compiler.Parser
         {
             var methodEnd = new MethodEnd();
 
-            Token methodName = ParseTreeUtils.GetFirstToken(context.methodNameReference());
-            if (methodName != null)
-            {
-                methodEnd.MethodName = new MethodName(methodName);
-            }
+            methodEnd.MethodName = CobolWordsBuilder.CreateMethodNameReference(context.methodNameReference());
 
             Context = context;
             CodeElement = methodEnd;
+        }
+
+        // --- Authoring properties common to all identification divisions ---
+
+        internal static AuthoringProperties CreateAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context)
+        {
+            var authoringProperties = new AuthoringProperties();
+
+            if (context.authorParagraph().Length > 0)
+            {
+                var alphanumericValueContexts = context.authorParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+                authoringProperties.Author = CreateAlphanumericValues(alphanumericValueContexts);
+            }
+            if (context.dateCompiledParagraph().Length > 0)
+            {
+                var alphanumericValueContexts = context.dateCompiledParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+                authoringProperties.DateCompiled = CreateAlphanumericValues(alphanumericValueContexts);
+            }
+            if (context.dateWrittenParagraph().Length > 0)
+            {
+                var alphanumericValueContexts = context.dateWrittenParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+                authoringProperties.DateWritten = CreateAlphanumericValues(alphanumericValueContexts);
+            }
+            if (context.installationParagraph().Length > 0)
+            {
+                var alphanumericValueContexts = context.installationParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+                authoringProperties.Installation = CreateAlphanumericValues(alphanumericValueContexts);
+            }
+            if (context.securityParagraph().Length > 0)
+            {
+                var alphanumericValueContexts = context.securityParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+                authoringProperties.Security = CreateAlphanumericValues(alphanumericValueContexts);
+            }
+
+            return authoringProperties;
+        }
+
+        private static AlphanumericValue[] CreateAlphanumericValues(CodeElementsParser.AlphanumericValue6Context[] alphanumericValueContexts)
+        {
+            AlphanumericValue[] alphanumericValues = new AlphanumericValue[alphanumericValueContexts.Length];
+            for (int i = 0; i < alphanumericValueContexts.Length; i++)
+            {
+                alphanumericValues[i] = CobolWordsBuilder.CreateAlphanumericValue(alphanumericValueContexts[i]);
+            }
+            return alphanumericValues;
         }
 
         // -- Division --
