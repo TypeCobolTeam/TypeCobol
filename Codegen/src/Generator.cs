@@ -36,10 +36,12 @@ namespace TypeCobol.Codegen {
 			Actions = new List<Action>();
 			// STEP 1: modify tree to adapt it to destination language
 			tree.Accept(this);
+			var groups = new List<string>();
 			foreach (var action in Actions) {
+				if (groups.Contains(action.Group)) continue;
 				action.Execute();
+				groups.Add(action.Group);
 			}
-
 			var writer = new TreeToCode(Input);
 			// STEP 2: convert tree to destination language code
 			tree.Accept(writer);
@@ -150,23 +152,23 @@ namespace TypeCobol.Codegen {
 	}
 
 	public interface Action {
+		string Group { get; }
 		void Execute();
 	}
 
 	public class CreateNode: Action {
+		public string Group { get; private set; }
 		internal Node Parent;
-		private string Group;
 		private Node Child;
 
 		public CreateNode(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter) {
 			this.Parent = parent;
-			this.Group = group;
+			this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
 			this.Child = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
 		}
 
 		public void Execute() {
-			//TODO check Group
 			Parent.Children.Add(Child);
 		}
 	}

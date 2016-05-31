@@ -8,7 +8,7 @@ namespace TypeCobol.Codegen.Nodes {
 	internal class GeneratedNode: Node, Generated {
 		private Solver Solver;
 
-		public GeneratedNode(TypeCobol.Codegen.Skeletons.Templates.RazorEngine solver): base(null) {
+		public GeneratedNode(Solver solver): base(null) {
 			this.Solver = solver;
 		}
 
@@ -16,7 +16,7 @@ namespace TypeCobol.Codegen.Nodes {
 		public override IEnumerable<ITextLine> Lines {
 			get {
 				if (_cache == null) {
-					string text = ((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)Solver).Replace();
+					string text = Solver.Replace();
 					_cache = new List<ITextLine>();
 					foreach(string line in text.Split('\n')) {
 						_cache.Add(new TextLineSnapshot(-1, line, null));

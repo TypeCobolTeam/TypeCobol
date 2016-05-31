@@ -27,6 +27,7 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 			}
 		}
 		public string Copy { get { return Program+"cpy"; } }
+		public string Lib  { get { return Program; } }
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder(Name!=null? Name.ToString() : "?");

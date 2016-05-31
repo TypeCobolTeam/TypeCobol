@@ -7,17 +7,17 @@
     </conditions>
     <patterns>
       <!--pattern location="data.working.start" group="$FUNCTION.lib" var="program=$FUNCTION.program,copy=$FUNCTION.copy"-->
-      <pattern location="data-division.working-storage" action="create" group="$FUNCTION.lib" var="function=$function">
+      <pattern location="data-division.working-storage" action="create" group="%function.Lib-VARS" var="function=$function">
 01 %function.Copy COPY %function.Copy.
 01 %function.Program PIC X(08) VALUE '%function.Program'.
       </pattern>
       <pattern location="data-division.working-storage" action="create" group="functions">
 01 RETURN-CODE PIC X(08).
       </pattern>
-      <pattern location="data-division.working-storage" action="create" group="$FUNCTION.name" var="type=$function.Result.Definition">
+      <pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
 01 %function.Name-RESULT %function.Result.Definition.
       </pattern>
-      <pattern location="procedure-division" action="create" group="$FUNCTION.lib">
+      <pattern location="procedure-division" action="create" group="%function.Lib-CALL">
 IF %function.Copy-POINTER-TABLE = LOW_VALUE
     CALL %function.Program USING %function.Copy
 END-IF
