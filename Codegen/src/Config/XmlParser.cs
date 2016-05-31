@@ -84,6 +84,14 @@ namespace TypeCobol.Codegen.Config {
 					skeleton.Patterns.AddRange(PFactory.Create(ce));
 				}
 			}
+
+			skeleton.Properties = new List<string>();
+			string vars = e.GetAttribute(XmlParser.ATTR_VARIABLES);
+			foreach(var var in vars.Split(',')) {
+				string property = var.Trim();
+				if (property.Length > 0) skeleton.Properties.Add(property);
+			}
+
 			return skeleton;
 		}
 	}

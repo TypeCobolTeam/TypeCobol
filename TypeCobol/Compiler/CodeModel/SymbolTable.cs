@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
@@ -206,12 +205,14 @@ namespace TypeCobol.Compiler.CodeModel
 		internal Function GetFunction(string name) {
 			return GetFunction(new URI(name));
 		}
-		internal Function GetFunction(QualifiedName name) {
+		internal Function GetFunction(QualifiedName name, bool searchInDefaultLib = true) {
 			try { return functions[name]; }
-			catch(KeyNotFoundException ex) {
-				if (EnclosingScope == null) return null;
-				else return EnclosingScope.GetFunction(name);
+			catch(KeyNotFoundException ex) { }
+			if (searchInDefaultLib && CurrentScope == Scope.Intrinsic) {
+				return GetFunction(new URI("TC-DEFAULT."+name.ToString()), false);
 			}
+			if (EnclosingScope == null) return null;
+			return EnclosingScope.GetFunction(name);
 		}
 		/// <summary>Make a function definied in the current scope.</summary>
 		/// <param name="function">Function definition</param>
@@ -260,7 +261,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		public override string ToString() {
-			var str = new StringBuilder();
+			var str = new System.Text.StringBuilder();
 			foreach(var line in DataEntries) {
 				foreach (var data in line.Value) {
 					Dump(str, data, 1);
@@ -270,7 +271,7 @@ namespace TypeCobol.Compiler.CodeModel
 			// no enclosing scope dump
 			return str.ToString();
 		}
-		private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0) {
+		private static System.Text.StringBuilder Dump(System.Text.StringBuilder str, DataDescriptionEntry data, int indent = 0) {
 			for (int c=0; c<indent; c++) str.Append("  ");
 			str.Append(data);
 			return str;

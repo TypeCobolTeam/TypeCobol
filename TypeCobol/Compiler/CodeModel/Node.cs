@@ -94,15 +94,14 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["receiver"] = new Receiver("RECEIVER");
 			Attributes["functions"] = new UsesFunctions("FUNCTIONS");
 		}
-		public string this[string attribute] {
+		public object this[string attribute] {
 			get {
 				try {
 					object value = CodeElement;
 					foreach(var attr in attribute.Split(new char[] {'.'})) {
 						value = Attributes[attr].GetValue(value, SymbolTable);
 					}
-					if (value == null) return null;
-					return value.ToString();
+					return value;
 				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
@@ -193,9 +192,16 @@ namespace TypeCobol.Compiler.CodeElements
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as IdentifierUser;
 			if (s == null) return null;
-			if (s.Identifiers.Count < 1) return null;
+			var functions = new List<FunctionReference>();
+			foreach(var id in s.Identifiers) {
+				var fun = id as FunctionReference;
+				if (fun == null) continue;
+				var definition = table.GetFunction(fun.Name);
+				functions.Add(fun);
+			}
+			if (functions.Count < 1) return null;
 			//if (s.Identifiers.Count == 1) return new List<Identifier>(s.Identifiers)[0];
-			return s.Identifiers;
+			return functions;
 		}
 	}
 }

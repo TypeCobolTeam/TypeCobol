@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <skeletons>
 
-  <skeleton name="FUN.CALL">
+  <skeleton name="FUN.CALL" var=" functions ,receiver ">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeModel.IdentifierUser" functions="*"/>
     </conditions>

@@ -2,6 +2,7 @@
 using System.IO;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -55,22 +56,22 @@ System.Console.WriteLine(line.Text);
 		}
 
 		private bool ProcessNode(Node node, List<ITokensLine> lines) {
-			return GetAction(node).Execute(node, lines);
+			foreach (var action in GetActions(node)) action.Execute(node, lines);
+			return true;
 		}
-
-		private Action GetAction(Node node) {
+		private IEnumerable<Action> GetActions(Node node) {
+			var actions = new List<Action>();
 			var skeleton = GetActiveSkeleton(node);
 			if (skeleton != null) {
+				var properties = GetProperties(node, skeleton.Properties);
 				foreach(var pattern in skeleton) {
-					var n = GetLocation(node, pattern.Location);
-					if ("comment".Equals(pattern.Action)) return new Comment(Output);
-					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
-					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
-					if ("replace".Equals(pattern.Action)) return new Replace(Output, CreateGeneratedText(node, pattern));
+					var action = GetAction(node, pattern);
+					if (action != null) actions.Add(action);
 				}
 			}
-			return new Write(Output);// no peculiar codegen --> write as is
+			return actions;
 		}
+
 		private Skeleton GetActiveSkeleton(Node node) {
 			foreach(var skeleton in Skeletons) {
 				bool active = false;
@@ -81,6 +82,32 @@ System.Console.WriteLine(line.Text);
 			}
 			return null;
 		}
+
+		private Dictionary<string,object> GetProperties(Node node, IEnumerable<string> properties) {
+			var result = new Dictionary<string,object>();
+			var errors = new System.Text.StringBuilder();
+			foreach(var pname in properties) {
+				if (node[pname] != null) result[pname] = node[pname];
+				else errors.Append(pname).Append(',');
+			}
+			if (errors.Length > 0) {
+				errors.Length -= 1;
+				throw new System.ArgumentException("Undefined properties for node: "+errors.ToString());
+			}
+			return result;
+		}
+
+		private Action GetAction(Node node, Pattern pattern) {
+			var dstnode = GetLocation(node, pattern.Location);
+System.Console.WriteLine("pattern.Action="+pattern.Action+" --- pattern.Location="+pattern.Location+" > "+(dstnode.CodeElement!=null?dstnode.CodeElement.GetType().Name:"?"));
+//					if ("comment".Equals(pattern.Action)) return new Comment(Output);
+//					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
+//					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
+//					if ("replace".Equals(pattern.Action)) return new Replace(Output, CreateGeneratedText(node, pattern));
+//					return new Write(Output);// no peculiar codegen --> write as is
+			return null;
+		}
+
 		private Node GetLocation(Node node, string location) {
 			if (location == null || location.ToLower().Equals("node")) return node;
 			Node root = node;
@@ -89,6 +116,8 @@ System.Console.WriteLine(line.Text);
 			if (result != null) return result;
 			throw new System.ArgumentException("Undefined URI: "+location);
 		}
+
+
 
 		private string CreateGeneratedText(Node node, Pattern pattern) {
 			var variables = CreateVariables(pattern.Variables, node);
@@ -110,7 +139,7 @@ System.Console.WriteLine(line.Text);
 			foreach(var key in variables.Keys) {
 				string value = variables[key];
 				if (value.StartsWith(delimiter)) //remove starting delimiter
-					value = node[value.Trim().Substring(delimiter.Length)];
+					value = node[value.Trim().Substring(delimiter.Length)].ToString();
 				results[key] = value;
 			}
 			return results;
