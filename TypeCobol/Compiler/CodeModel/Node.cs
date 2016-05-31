@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
 
@@ -105,6 +106,17 @@ namespace TypeCobol.Compiler.CodeElements
 				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
+
+
+
+
+
+		public static int CountAllChildren(Node node) {
+			int count = node.Children.Count;
+			foreach(var child in node.Children)
+				count += CountAllChildren(child);
+			return count;
+		}
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
@@ -192,16 +204,44 @@ namespace TypeCobol.Compiler.CodeElements
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as IdentifierUser;
 			if (s == null) return null;
-			var functions = new List<FunctionReference>();
+			var functions = new List<Function>();
 			foreach(var id in s.Identifiers) {
-				var fun = id as FunctionReference;
-				if (fun == null) continue;
-				var definition = table.GetFunction(fun.Name);
-				functions.Add(fun);
+				var reference = id as FunctionReference;
+				if (reference == null) continue;
+				var declaration = table.GetFunction(reference.Name);
+				if (declaration == null) continue; // undefined symbol, not our job
+				functions.Add(CreateFrom(reference, declaration));
 			}
 			if (functions.Count < 1) return null;
 			//if (s.Identifiers.Count == 1) return new List<Identifier>(s.Identifiers)[0];
 			return functions;
+		}
+
+		private Function CreateFrom(FunctionReference reference, Function declaration) {
+			if (declaration.Parameters.Count != reference.Parameters.Count)
+				System.Console.WriteLine("ERROR: "+declaration.QualifiedName+" called with "+reference.Parameters.Count+" parameters (expected:"+declaration.Parameters.Count+")");
+			var parameters = new List<Parameter>();
+			for(int c = 0; c < declaration.Parameters.Count; c++) {
+				var declared = declaration.Parameters[c];
+				Parameter merged;
+				try {
+					var referenced = reference.Parameters[c];
+					merged = new CallParameter(referenced.Value.ToString(), referenced.Value is Identifier);
+					merged.Type = declared.Type;
+					merged.Length = declared.Length;
+					merged.IsCustom = declared.IsCustom;
+				}
+				catch(System.ArgumentOutOfRangeException) {
+					System.Console.WriteLine("ERROR: missing parameter "+(c+1)+" from call to "+declaration.QualifiedName);
+					merged = declared;
+				}
+				parameters.Add(merged);
+			}
+			return new Function(declaration.QualifiedName, declaration.Result, parameters);
+		}
+
+		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {
+			throw new System.NotImplementedException();
 		}
 	}
 }

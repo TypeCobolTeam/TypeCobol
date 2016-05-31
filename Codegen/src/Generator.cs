@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -11,15 +12,16 @@ namespace TypeCobol.Codegen {
 
 	public class Generator: NodeVisitor {
 
+		private readonly IReadOnlyList<ICobolTextLine> Input;
 		private readonly List<ICobolTextLine> Output;
 		private readonly TextWriter Writer;
 		private readonly List<Skeleton> Skeletons;
 
-		/// <summary>Table of symbols</summary>
-		private SymbolTable Table;
+		private List<Action> Actions = null;
 
 
 		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter, List<Skeleton> skeletons) {
+			Input = source;
 			Output = new List<ICobolTextLine>();
 			Output.AddRange(source);
 			Writer = destination;
@@ -31,41 +33,32 @@ namespace TypeCobol.Codegen {
 		/// <param name="table">Table of symbols</param>
 		/// <param name="columns">Columns layout</param>
 		public void Generate(Node tree, SymbolTable table, ColumnsLayout columns = ColumnsLayout.FreeTextFormat) {
-			Table = table;
+			Actions = new List<Action>();
+			// STEP 1: modify tree to adapt it to destination language
 			tree.Accept(this);
-
-			foreach(var line in Output) {
-System.Console.WriteLine(line.Text);
-				Writer.WriteLine(line.Text);
+			foreach (var action in Actions) {
+				action.Execute();
 			}
+
+			var writer = new TreeToCode(Input);
+			// STEP 2: convert tree to destination language code
+			tree.Accept(writer);
+			Writer.Write(writer.Output.ToString());
 		}
 
 		public void Visit(Node node) {
-			var lines = new List<ITokensLine>();
-			var indexes = new List<int>();
-			if (node.CodeElement != null) {
-				foreach(var token in node.CodeElement.ConsumedTokens) {
-					if (!lines.Contains(token.TokensLine)) {
-						lines.Add(token.TokensLine);
-					}
-				}
-			}
-
-			bool children = ProcessNode(node, lines);
-			if (children) foreach(var child in node.Children) child.Accept(this);
+			var actions = GetActions(node);
+			Actions.AddRange(actions);
+			foreach(var child in node.Children) child.Accept(this);
 		}
 
-		private bool ProcessNode(Node node, List<ITokensLine> lines) {
-			foreach (var action in GetActions(node)) action.Execute(node, lines);
-			return true;
-		}
-		private IEnumerable<Action> GetActions(Node node) {
+		private ICollection<Action> GetActions(Node node) {
 			var actions = new List<Action>();
 			var skeleton = GetActiveSkeleton(node);
 			if (skeleton != null) {
 				var properties = GetProperties(node, skeleton.Properties);
 				foreach(var pattern in skeleton) {
-					var action = GetAction(node, pattern);
+					var action = GetAction(node, properties, pattern);
 					if (action != null) actions.Add(action);
 				}
 			}
@@ -97,9 +90,11 @@ System.Console.WriteLine(line.Text);
 			return result;
 		}
 
-		private Action GetAction(Node node, Pattern pattern) {
-			var dstnode = GetLocation(node, pattern.Location);
-System.Console.WriteLine("pattern.Action="+pattern.Action+" --- pattern.Location="+pattern.Location+" > "+(dstnode.CodeElement!=null?dstnode.CodeElement.GetType().Name:"?"));
+		private Action GetAction(Node source, Dictionary<string,object> properties, Pattern pattern) {
+			var destination = GetLocation(source, pattern.Location);
+			if ("create".Equals(pattern.Action)) {
+				return new CreateNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
+			}
 //					if ("comment".Equals(pattern.Action)) return new Comment(Output);
 //					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
 //					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
@@ -155,10 +150,36 @@ System.Console.WriteLine("pattern.Action="+pattern.Action+" --- pattern.Location
 	}
 
 	public interface Action {
+		void Execute();
+	}
+
+	public class CreateNode: Action {
+		internal Node Parent;
+		private string Group;
+		private Node Child;
+
+		public CreateNode(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter) {
+			this.Parent = parent;
+			this.Group = group;
+			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
+			this.Child = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
+		}
+
+		public void Execute() {
+			//TODO check Group
+			Parent.Children.Add(Child);
+		}
+	}
+
+
+
+
+
+	public interface OldAction {
 		bool Execute(Node node, List<ITokensLine> lines);
 	}
 
-	public class Write: Action {
+	public class Write: OldAction {
 		protected List<ICobolTextLine> output;
 		protected CodeLineFactory factory;
 		public Write(List<ICobolTextLine> output) {

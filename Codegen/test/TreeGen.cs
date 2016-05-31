@@ -67,22 +67,16 @@ namespace TypeCobol.Codegen {
 			Assert.AreEqual(1, root.Children[2].Children.Count);//8
 			Assert.AreEqual(0, root.Children[2].Children[0].Children.Count);//9
 			// direct & indirect children
-			Assert.AreEqual(9, CountChildren(root));//0
-			Assert.AreEqual(5, CountChildren(root.Children[0]));//1
-			Assert.AreEqual(0, CountChildren(root.Children[0].Children[0]));//2
-			Assert.AreEqual(0, CountChildren(root.Children[0].Children[1]));//3
-			Assert.AreEqual(2, CountChildren(root.Children[0].Children[2]));//4
-			Assert.AreEqual(0, CountChildren(root.Children[0].Children[2].Children[0]));//5
-			Assert.AreEqual(0, CountChildren(root.Children[0].Children[2].Children[1]));//6
-			Assert.AreEqual(0, CountChildren(root.Children[1]));//7
-			Assert.AreEqual(1, CountChildren(root.Children[2]));//8
-			Assert.AreEqual(0, CountChildren(root.Children[2].Children[0]));//9
-		}
-		private int CountChildren(Compiler.CodeElements.Node node) {
-			int count = node.Children.Count;
-			foreach(var child in node.Children)
-				count += CountChildren(child);
-			return count;
+			Assert.AreEqual(9, Node.CountAllChildren(root));//0
+			Assert.AreEqual(5, Node.CountAllChildren(root.Children[0]));//1
+			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[0]));//2
+			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[1]));//3
+			Assert.AreEqual(2, Node.CountAllChildren(root.Children[0].Children[2]));//4
+			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[2].Children[0]));//5
+			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[2].Children[1]));//6
+			Assert.AreEqual(0, Node.CountAllChildren(root.Children[1]));//7
+			Assert.AreEqual(1, Node.CountAllChildren(root.Children[2]));//8
+			Assert.AreEqual(0, Node.CountAllChildren(root.Children[2].Children[0]));//9
 		}
 	}
 
