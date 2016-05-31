@@ -13,12 +13,12 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private IList<ITextLine> _cache = null;
-		IEnumerable<ITextLine> Lines {
+		public override IEnumerable<ITextLine> Lines {
 			get {
 				if (_cache == null) {
 					string text = ((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)Solver).Replace();
 					_cache = new List<ITextLine>();
-					foreach(string line in text.Split()) {
+					foreach(string line in text.Split('\n')) {
 						_cache.Add(new TextLineSnapshot(-1, line, null));
 					}
 				}

@@ -94,6 +94,7 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["sender"] = new Sender("SENDER");
 			Attributes["receiver"] = new Receiver("RECEIVER");
 			Attributes["functions"] = new UsesFunctions("FUNCTIONS");
+			Attributes["function"] = new UsesFunctions("FUNCTION");
 		}
 		public object this[string attribute] {
 			get {
@@ -213,7 +214,7 @@ namespace TypeCobol.Compiler.CodeElements
 				functions.Add(CreateFrom(reference, declaration));
 			}
 			if (functions.Count < 1) return null;
-			//if (s.Identifiers.Count == 1) return new List<Identifier>(s.Identifiers)[0];
+			if (!Key.ToLower().EndsWith("s") && functions.Count == 1) return new List<Function>(functions)[0];//TODO hacky!!
 			return functions;
 		}
 
