@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Text;
@@ -41,7 +42,7 @@ namespace TypeCobol.Codegen {
 					// before we copy an original line of code, we must still write non-source
 					// lines (eg. comments or empty lines) so they are preserved in Output
 					WriteInputLinesUpTo(line);
-				Write(line);
+				Write(line, node.Comment);
 			}
 			return generated == null || ((Generated)node).IsLeaf;
 		}
@@ -57,44 +58,80 @@ namespace TypeCobol.Codegen {
 			int lines = 0;
 			while (offset < Input.Count) {
 				if (Input[offset] == line) break;
-				Write(Input[offset]);
+				Write(Input[offset], null);
 				lines++;
 			}
 			return lines;
 		}
 
-		private void Write(ITextLine line) {
-			var lines = Indent(line);
-			//TODO: format what is written to free format or 80 columns
-			foreach(var l in lines) Output.WriteLine(l.Text);
-			offset++;
+		private void Write(ITextLine line, bool? isComment) {
+			foreach(var l in Indent(line, isComment)) {
+				Output.WriteLine(l.Text);
+				offset++;
+			}
 		}
 
-		private IEnumerable<ITextLine> Indent(ITextLine line) {
+		private IEnumerable<ITextLine> Indent(ITextLine line, bool? isComment) {
 			var results = new List<ITextLine>();
 			var cobol = line as CobolTextLine;
 			if (cobol != null) {
 				if (Layout == ColumnsLayout.CobolReferenceFormat) {
-					results.Add(line);
+					results.Add(SetComment(line, isComment));
 				} else
 				if (Layout == ColumnsLayout.FreeTextFormat) {
-					results.Add(new TextLineSnapshot(-1, cobol.SourceText ?? "", null));
+					results.Add(SetComment(new TextLineSnapshot(-1, cobol.SourceText ?? "", null), isComment));
 				} else
 					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
 			} else {
 				if (Layout == ColumnsLayout.CobolReferenceFormat) {
-					bool isComment = line.Text.Trim().StartsWith("*");
-					var lines = CobolTextLine.Create(line.Text, isComment, Layout, line.InitialLineIndex);
-					foreach(var l in lines) results.Add(l);
+					var lines = CobolTextLine.Create(line.Text, Layout, line.InitialLineIndex);
+					foreach(var l in lines) results.Add(SetComment(l, isComment));
 				} else
 				if (Layout == ColumnsLayout.FreeTextFormat) {
-					results.Add(line);
+					results.Add(SetComment(line, isComment));
 				} else
 					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
 			}
 			if (results.Count < 1)
 				throw new System.NotImplementedException("Unsuported ITextLine type: "+line.GetType());
 			return results;
+		}
+
+		private static ITextLine SetComment(ITextLine line, bool? isComment) {
+			if (isComment == true)
+				return Comment(line);
+			else
+			if (isComment == false)
+				return Uncomment(line);
+			else // null
+				return line;
+		}
+		private static ITextLine Comment(ITextLine line) {
+			var cobol = line as CobolTextLine;
+			if (cobol != null) {
+				StringBuilder text = new StringBuilder(cobol.Text);
+				text[6] = '*';
+				var lines = CobolTextLine.Create("*"+cobol.SourceText, cobol.ColumnsLayout, cobol.InitialLineIndex);
+				foreach(var l in lines) return l;// there's only one in the collection
+				throw new System.NotImplementedException("I should have at least one item!");
+			} else {
+				return new TextLineSnapshot(line.InitialLineIndex, "*"+line.Text, null);
+			}
+		}
+		private static ITextLine Uncomment(ITextLine line) {
+			var cobol = line as CobolTextLine;
+			if (cobol != null) {
+				StringBuilder text = new StringBuilder(cobol.Text);
+				text[6] = ' ';
+				var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.InitialLineIndex);
+				foreach(var l in lines) return l;// there's only one in the collection
+				throw new System.NotImplementedException("I should have at least one item!");
+			} else {
+				StringBuilder text = new StringBuilder(line.Text);
+				int index = line.Text.IndexOf('*');
+				text[index] = ' ';
+				return new TextLineSnapshot(line.InitialLineIndex, text.ToString(), null);
+			}
 		}
 	}
 

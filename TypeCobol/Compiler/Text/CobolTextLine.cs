@@ -75,7 +75,7 @@ namespace TypeCobol.Compiler.Text
             return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
         }
 
-		public static ICollection<ITextLine> Create(string text, bool isComment, ColumnsLayout layout, int index = -1) {
+		public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, int index = -1) {
 			if (layout == ColumnsLayout.FreeTextFormat) {
 				var result = new List<ITextLine>();
 				result.Add(new TextLineSnapshot(index, text, null));

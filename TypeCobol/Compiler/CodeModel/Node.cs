@@ -118,6 +118,8 @@ namespace TypeCobol.Compiler.CodeElements
 				count += CountAllChildren(child);
 			return count;
 		}
+
+		public bool? Comment = null;
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>

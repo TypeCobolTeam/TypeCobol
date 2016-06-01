@@ -3,7 +3,6 @@ using System.IO;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -101,6 +100,9 @@ namespace TypeCobol.Codegen {
 			if ("replace".Equals(pattern.Action)) {
 				return new ReplaceNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
 			}
+			if ("comment".Equals(pattern.Action)) {
+				return new CommentNode(destination);
+			}
 //					if ("comment".Equals(pattern.Action)) return new Comment(Output);
 //					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
 //					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
@@ -194,6 +196,19 @@ namespace TypeCobol.Codegen {
 			int index = parent.Children.IndexOf(Old);
 			parent.Children.RemoveAt(index);//?TODO create Comment node
 			parent.Children.Insert(index, New);
+		}
+	}
+
+	public class CommentNode: Action {
+		public string Group { get; private set; }
+		internal Node Node;
+
+		public CommentNode(Node node) {
+			this.Node = node;
+		}
+
+		public void Execute() {
+			this.Node.Comment = true;
 		}
 	}
 
