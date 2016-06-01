@@ -87,20 +87,35 @@ namespace TypeCobol.Codegen {
 			var result = new Dictionary<string,object>();
 			var errors = new System.Text.StringBuilder();
 			foreach(var pname in properties) {
-				if (node[pname] != null) result[pname] = node[pname];
-				else errors.Append(pname).Append(',');
+			    if (node[pname] != null)
+			    {
+			        result[pname] = node[pname];
+			    }
+			    else
+			    {
+			        errors.Append(node.GetType()).Append("[").Append(pname).Append("]").Append(',').Append(node.CodeElement.InputStream);
+			        
+			    }
 			}
 			if (errors.Length > 0) {
 				errors.Length -= 1;
-				throw new System.ArgumentException("Undefined properties for node: "+errors.ToString());
+				throw new System.ArgumentException("Undefined properties for node: "+errors);
 			}
 			return result;
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="properties"></param>
+        /// <param name="pattern"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
 		private Action GetAction(Node source, Dictionary<string,object> properties, Pattern pattern) {
 			var destination = GetLocation(source, pattern.Location);
 			if ("create".Equals(pattern.Action)) {
-				return new CreateNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
+				return new CreateNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, pattern.Position);
 			}
 			if ("replace".Equals(pattern.Action)) {
 				return new ReplaceNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
@@ -174,16 +189,26 @@ namespace TypeCobol.Codegen {
 		public string Group { get; private set; }
 		internal Node Parent;
 		private Node Child;
+	    private int? position;
 
-		public CreateNode(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter) {
+		public CreateNode(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter, int? position) {
 			this.Parent = parent;
 			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
 			this.Child = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
+		    this.position = position;
 		}
 
 		public void Execute() {
-			Parent.Children.Add(Child);
+		    if (position != null)
+		    {
+                Console.WriteLine("insert new node at position " + position);
+                Parent.Children.Insert((int) position, Child);
+            }
+		    else
+		    {
+		        Parent.Children.Add(Child);
+		    }
 		}
 	}
 
@@ -202,8 +227,9 @@ namespace TypeCobol.Codegen {
 		public void Execute() {
 			var parent = Old.Parent;
 			int index = parent.Children.IndexOf(Old);
-			parent.Children.RemoveAt(index);//?TODO create Comment node
-			parent.Children.Insert(index, New);
+		    Old.Comment = true;
+			parent.Children.Insert(index+1, New);
+            
 		}
 	}
 
