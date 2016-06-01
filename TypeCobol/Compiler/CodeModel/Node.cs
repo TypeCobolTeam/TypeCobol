@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
@@ -94,13 +95,14 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["sender"] = new Sender("SENDER");
 			Attributes["receiver"] = new Receiver("RECEIVER");
 			Attributes["functions"] = new UsesFunctions("FUNCTIONS");
-			Attributes["function"] = new UsesFunctions("FUNCTION");
+			Attributes["function"] = new UsesFunctions("FUNCTION", true);
+			Attributes["function-name"] = new UsesFunctions("FUNCTION", true, true);
 		}
 		public object this[string attribute] {
 			get {
 				try {
 					object value = CodeElement;
-					foreach(var attr in attribute.Split(new char[] {'.'})) {
+					foreach(var attr in attribute.Split('.')) {
 						value = Attributes[attr].GetValue(value, SymbolTable);
 					}
 					return value;
@@ -196,28 +198,43 @@ namespace TypeCobol.Compiler.CodeElements
 		public Receiver(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as Receiving;
-			if (s == null) return null;
-			if (s.Expressions.Count < 1) return null;
+			if (s == null) return null
+            if (s.Expressions.Count < 1) return null;
 			if (s.Expressions.Count == 1) return s.Expressions[0];
 			return s.Expressions;
 		}
 	}
-	internal class UsesFunctions: NodeAttribute {
-		public UsesFunctions(string key): base(key) { }
+	internal class UsesFunctions: NodeAttribute
+	{
+	    private bool ReturnFirstFunctionOnly = false;
+        private bool ReturnFunctionName = false;
+
+        public UsesFunctions(string key, bool returnFirstFunctionOnly = false, bool returnFunctionName = false) : base(key)
+	    {
+	        this.ReturnFirstFunctionOnly = returnFirstFunctionOnly;
+            this.ReturnFunctionName = returnFunctionName;
+	    }
 		public override object GetValue(object o, SymbolTable table) {
-			var s = o as IdentifierUser;
+            var s = o as IdentifierUser;
 			if (s == null) return null;
 			var functions = new List<Function>();
 			foreach(var id in s.Identifiers) {
 				var reference = id as FunctionReference;
 				if (reference == null) continue;
-				var declaration = table.GetFunction(reference.Name);
+                var declaration = table.GetFunction(reference.Name);
 				if (declaration == null) continue; // undefined symbol, not our job
-				functions.Add(CreateFrom(reference, declaration));
+                functions.Add(CreateFrom(reference, declaration));
 			}
 			if (functions.Count < 1) return null;
-			if (!Key.ToLower().EndsWith("s") && functions.Count == 1) return new List<Function>(functions)[0];//TODO hacky!!
-			return functions;
+		    if (ReturnFirstFunctionOnly)
+		    {
+		        if (ReturnFunctionName)
+		            return functions[0].Name;
+		        else
+		            return functions[0];
+		    }
+            //TODO support list of functions name
+            return functions;
 		}
 
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
