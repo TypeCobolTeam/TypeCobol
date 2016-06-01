@@ -103,6 +103,9 @@ namespace TypeCobol.Codegen {
 			if ("comment".Equals(pattern.Action)) {
 				return new CommentNode(destination);
 			}
+			if ("expand".Equals(pattern.Action)) {
+				return new ExpandNode(destination);
+			}
 //					if ("comment".Equals(pattern.Action)) return new Comment(Output);
 //					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
 //					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
@@ -208,10 +211,35 @@ namespace TypeCobol.Codegen {
 		}
 
 		public void Execute() {
-			this.Node.Comment = true;
+			Comment(this.Node);
+		}
+		private static void Comment(Node node) {
+			node.Comment = true;
+			foreach(var child in node.Children) Comment(child);
 		}
 	}
 
+	public class ExpandNode: Action {
+		public string Group { get; private set; }
+		internal Node Node;
+
+		public ExpandNode(Node node) {
+			this.Node = node;
+		}
+
+		public void Execute() {
+			// comment out original "line" (=~ non expanded node)
+			this.Node.Comment = true;
+			this.Node.Children.Clear();
+var ce = this.Node.CodeElement;
+var d = ce as DataDescriptionEntry;
+System.Console.WriteLine("Execute("+(ce==null?"?":(d==null?ce.GetType().Name:d.QualifiedName.ToString()))+"), children="+this.Node.Children.Count);
+//			new CommentNode(this.Node).Execute();
+			// retrieve data
+			int index = this.Node.Parent.Children.IndexOf(this.Node);
+			this.Node.Parent.Children.Insert(index+1, new TypedDataNode(this.Node));
+		}
+	}
 
 
 
