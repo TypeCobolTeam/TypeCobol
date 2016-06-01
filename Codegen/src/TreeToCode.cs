@@ -49,12 +49,14 @@ namespace TypeCobol.Codegen {
 
 		/// <summary>
 		/// Write all lines between the last written line (ie. Input[offset-1]) and a given line.
-		/// If line is not contained in Input, or if line is contained in Input but before offset,
-		///	all remaining Input will be written. In other words: don't fall in one of these cases.
+		/// If line is contained in Input but before offset, all remaining Input will be written.
+		///	In other words: don't fall in this case.
 		/// </summary>
 		/// <param name="line"></param>
 		/// <returns>Number of lines written during this method call.</returns>
 		private int WriteInputLinesUpTo(ITextLine line) {
+			if (!IsInInput(line)) return 0;
+
 			int lines = 0;
 			while (offset < Input.Count) {
 				if (Input[offset] == line) break;
@@ -62,6 +64,15 @@ namespace TypeCobol.Codegen {
 				lines++;
 			}
 			return lines;
+		}
+
+		private bool IsInInput(ITextLine line) {
+			int c = offset;
+			while (c < Input.Count) {
+				if (Input[c] == line) return true;
+				c++;
+			}
+			return false;
 		}
 
 		private void Write(ITextLine line, bool? isComment) {
