@@ -37,7 +37,7 @@ System.Console.WriteLine("### "+data.QualifiedName+": "+_cache.Count+" lines");
 			line.Append(level.ToString("00")).Append(' ').Append(data.Name.Name);
 			if (!isCustomType) line.Append(" PIC ").Append(data.Picture);
 			line.Append('.');
-			return new TextLineSnapshot(-1, "$"+line.ToString(), null);
+			return new TextLineSnapshot(-1, line.ToString(), null);
 		}
 
 

@@ -26,7 +26,11 @@ namespace TypeCobol.Codegen {
 
 		public void Visit(Node node) {
 			bool doVisitChildren = Process(node);
-			if (doVisitChildren) foreach(var child in node.Children) child.Accept(this);
+var data = node.CodeElement as DataDescriptionEntry;
+bool customType;
+try { customType = data != null && node.SymbolTable.GetCustomType(data.DataType.Name) != null; }
+catch(System.ArgumentException) { customType = false; } // TODO hacky ! :(
+			if (!customType && doVisitChildren) foreach(var child in node.Children) child.Accept(this);
 		}
 
 		private bool Process(Node node) {
