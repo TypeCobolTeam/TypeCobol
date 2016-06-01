@@ -38,11 +38,12 @@ namespace TypeCobol.Codegen {
 			tree.Accept(this);
 			var groups = new List<string>();
 			foreach (var action in Actions) {
-				if (groups.Contains(action.Group)) continue;
+				if (action.Group != null && groups.Contains(action.Group)) continue;
 				action.Execute();
-				groups.Add(action.Group);
+				if (action.Group != null) groups.Add(action.Group);
 			}
-			var writer = new TreeToCode(Input);
+
+			var writer = new TreeToCode(Input, columns);
 			// STEP 2: convert tree to destination language code
 			tree.Accept(writer);
 			Writer.Write(writer.Output.ToString());
@@ -96,6 +97,9 @@ namespace TypeCobol.Codegen {
 			var destination = GetLocation(source, pattern.Location);
 			if ("create".Equals(pattern.Action)) {
 				return new CreateNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
+			}
+			if ("replace".Equals(pattern.Action)) {
+				return new ReplaceNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
 			}
 //					if ("comment".Equals(pattern.Action)) return new Comment(Output);
 //					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
@@ -163,13 +167,33 @@ namespace TypeCobol.Codegen {
 
 		public CreateNode(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter) {
 			this.Parent = parent;
-			this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
+			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
 			this.Child = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
 		}
 
 		public void Execute() {
 			Parent.Children.Add(Child);
+		}
+	}
+
+	public class ReplaceNode: Action {
+		public string Group { get; private set; }
+		internal Node Old;
+		private Node New;
+
+		public ReplaceNode(Node node, string template, Dictionary<string,object> variables, string group, string delimiter) {
+			this.Old = node;
+			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
+			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
+			this.New = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
+		}
+
+		public void Execute() {
+			var parent = Old.Parent;
+			int index = parent.Children.IndexOf(Old);
+			parent.Children.RemoveAt(index);//?TODO create Comment node
+			parent.Children.Insert(index, New);
 		}
 	}
 

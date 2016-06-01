@@ -9,15 +9,18 @@ namespace TypeCobol.Codegen {
 
 		/// <summary>Input source code</summary>
 		public readonly IList<ICobolTextLine> Input;
+		/// <summary>Columns layout of the generated text</summary>
+		private ColumnsLayout Layout;
 		/// <summary>Generated code is written here</summary>
 		public System.IO.StringWriter Output;
 		/// <summary>Index in Input of the next line to write</summary>
 		private int offset = 0;
 
-		public TreeToCode(IEnumerable<ICobolTextLine> source = null) {
+		public TreeToCode(IEnumerable<ICobolTextLine> source = null, ColumnsLayout layout = ColumnsLayout.FreeTextFormat) {
 			if (source == null) Input = new List<ICobolTextLine>();
 			else Input = new List<ICobolTextLine>(source);
 			Output = new System.IO.StringWriter();
+			this.Layout = layout;
 		}
 
 		public void Visit(Node node) {
@@ -61,9 +64,37 @@ namespace TypeCobol.Codegen {
 		}
 
 		private void Write(ITextLine line) {
+			var lines = Indent(line);
 			//TODO: format what is written to free format or 80 columns
-			Output.WriteLine(line.Text);
+			foreach(var l in lines) Output.WriteLine(l.Text);
 			offset++;
+		}
+
+		private IEnumerable<ITextLine> Indent(ITextLine line) {
+			var results = new List<ITextLine>();
+			var cobol = line as CobolTextLine;
+			if (cobol != null) {
+				if (Layout == ColumnsLayout.CobolReferenceFormat) {
+					results.Add(line);
+				} else
+				if (Layout == ColumnsLayout.FreeTextFormat) {
+					results.Add(new TextLineSnapshot(-1, cobol.SourceText ?? "", null));
+				} else
+					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
+			} else {
+				if (Layout == ColumnsLayout.CobolReferenceFormat) {
+					bool isComment = line.Text.Trim().StartsWith("*");
+					var lines = CobolTextLine.Create(line.Text, isComment, Layout, line.InitialLineIndex);
+					foreach(var l in lines) results.Add(l);
+				} else
+				if (Layout == ColumnsLayout.FreeTextFormat) {
+					results.Add(line);
+				} else
+					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
+			}
+			if (results.Count < 1)
+				throw new System.NotImplementedException("Unsuported ITextLine type: "+line.GetType());
+			return results;
 		}
 	}
 

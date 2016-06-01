@@ -224,18 +224,18 @@ namespace TypeCobol.Compiler.CodeElements
 			var parameters = new List<Parameter>();
 			for(int c = 0; c < declaration.Parameters.Count; c++) {
 				var declared = declaration.Parameters[c];
+				string value = "SPACE";
+				bool byReference = false;
 				Parameter merged;
 				try {
 					var referenced = reference.Parameters[c];
-					merged = new CallParameter(referenced.Value.ToString(), referenced.Value is Identifier);
-					merged.Type = declared.Type;
-					merged.Length = declared.Length;
-					merged.IsCustom = declared.IsCustom;
-				}
-				catch(System.ArgumentOutOfRangeException) {
-					System.Console.WriteLine("ERROR: missing parameter "+(c+1)+" from call to "+declaration.QualifiedName);
-					merged = declared;
-				}
+					value = referenced.Value.ToString();
+					byReference = referenced.Value is Identifier;
+				} catch(System.ArgumentOutOfRangeException) { }
+				merged = new CallParameter(value, byReference);
+				merged.Type = declared.Type;
+				merged.Length = declared.Length;
+				merged.IsCustom = declared.IsCustom;
 				parameters.Add(merged);
 			}
 			return new Function(declaration.QualifiedName, declaration.Result, parameters);
