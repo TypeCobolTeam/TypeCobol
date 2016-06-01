@@ -35,7 +35,7 @@ CALL %function.Name USING
     BY REFERENCE %function.Name-RESULT
 
 IF RETURN-CODE = ZERO
-* TODO original statement like MOVE or stuff
+    MOVE %function.Name-RESULT TO %receiver
 ELSE
 *    TODO: error management
 END-IF

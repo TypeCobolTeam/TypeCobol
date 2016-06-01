@@ -16,22 +16,103 @@
        01  y PIC 9(3).
        01  z PIC 9(5).
        01  b TYPE BOOL.
+       01 TC-DEFAULTcpy COPY TC-DEFAULTcpy.                                   
+       01 TC-DEFAULT PIC X(08) VALUE 'TC-DEFAULT'.                            
+       01 RETURN-CODE PIC X(08).                                              
+       01 POW-RESULT PIC X(8).                                                
 
        PROCEDURE DIVISION.
 
        TRAITEMENT.
-           SET x TO FUNCTION POW (x y)
-      * KO: wrong number of parameters
-           SET x TO FUNCTION POW (y)
-           SET x TO FUNCTION POW (x y z)
-      * KO: undefined parameters
-           SET x TO FUNCTION POW (i j)
-      * KO: 2nd parameter of wrong type
-           SET x TO FUNCTION POW (x b)
-      * KO: 2nd parameter too-large
-           SET x TO FUNCTION POW (z z)
-      * KO: function undeclared
-           SET x TO FUNCTION POWAAA (x y)
-           .
+                                                                              
+       IF TC-DEFAULTcpy-POINTER-TABLE = LOW_VALUE                             
+           CALL TC-DEFAULT USING TC-DEFAULTcpy                                
+       END-IF                                                                 
+                                                                              
+                                                                              
+       CALL POW USING                                                         
+           BY REFERENCE x                                                     
+           BY REFERENCE y                                                     
+                                                                              
+           BY REFERENCE RETURN-CODE                                           
+           BY REFERENCE POW-RESULT                                            
+                                                                              
+       IF RETURN-CODE = ZERO                                                  
+           MOVE POW-RESULT TO x                                               
+       ELSE                                                                   
+      *    TODO: error management                                             
+       END-IF                                                                 
+                                                                              
+                                                                              
+       CALL POW USING                                                         
+           BY REFERENCE y                                                     
+           BY CONTENT SPACE                                                   
+                                                                              
+           BY REFERENCE RETURN-CODE                                           
+           BY REFERENCE POW-RESULT                                            
+                                                                              
+       IF RETURN-CODE = ZERO                                                  
+           MOVE POW-RESULT TO x                                               
+       ELSE                                                                   
+      *    TODO: error management                                             
+       END-IF                                                                 
+                                                                              
+                                                                              
+       CALL POW USING                                                         
+           BY REFERENCE x                                                     
+           BY REFERENCE y                                                     
+                                                                              
+           BY REFERENCE RETURN-CODE                                           
+           BY REFERENCE POW-RESULT                                            
+                                                                              
+       IF RETURN-CODE = ZERO                                                  
+           MOVE POW-RESULT TO x                                               
+       ELSE                                                                   
+      *    TODO: error management                                             
+       END-IF                                                                 
+                                                                              
+                                                                              
+       CALL POW USING                                                         
+           BY REFERENCE i                                                     
+           BY REFERENCE j                                                     
+                                                                              
+           BY REFERENCE RETURN-CODE                                           
+           BY REFERENCE POW-RESULT                                            
+                                                                              
+       IF RETURN-CODE = ZERO                                                  
+           MOVE POW-RESULT TO x                                               
+       ELSE                                                                   
+      *    TODO: error management                                             
+       END-IF                                                                 
+                                                                              
+                                                                              
+       CALL POW USING                                                         
+           BY REFERENCE x                                                     
+           BY REFERENCE b                                                     
+                                                                              
+           BY REFERENCE RETURN-CODE                                           
+           BY REFERENCE POW-RESULT                                            
+                                                                              
+       IF RETURN-CODE = ZERO                                                  
+           MOVE POW-RESULT TO x                                               
+       ELSE                                                                   
+      *    TODO: error management                                             
+       END-IF                                                                 
+                                                                              
+                                                                              
+       CALL POW USING                                                         
+           BY REFERENCE z                                                     
+           BY REFERENCE z                                                     
+                                                                              
+           BY REFERENCE RETURN-CODE                                           
+           BY REFERENCE POW-RESULT                                            
+                                                                              
+       IF RETURN-CODE = ZERO                                                  
+           MOVE POW-RESULT TO x                                               
+       ELSE                                                                   
+      *    TODO: error management                                             
+       END-IF                                                                 
+                                                                              
+           .                                                                  
 
        END PROGRAM Functions.

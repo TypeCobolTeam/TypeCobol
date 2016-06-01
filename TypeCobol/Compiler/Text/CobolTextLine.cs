@@ -87,7 +87,9 @@ namespace TypeCobol.Compiler.Text
 				bool wasComment = text.Trim().StartsWith("*");
 				if (wasComment) {
 					indicator = '*';
-					indent = text.Substring(0, text.IndexOf('*'));
+					int i = text.IndexOf('*');
+					indent = text.Substring(0, i);
+					text = text.Substring(i+1);
 				}
 				return CreateCobolLines(layout, index, indicator, indent, text);
 			}
