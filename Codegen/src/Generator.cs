@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
@@ -42,10 +43,14 @@ namespace TypeCobol.Codegen {
 				if (action.Group != null) groups.Add(action.Group);
 			}
 
-			var writer = new TreeToCode(Input, columns);
+			var treeToCode = new TreeToCode(Input, columns);
 			// STEP 2: convert tree to destination language code
-			tree.Accept(writer);
-			Writer.Write(writer.Output.ToString());
+			tree.Accept(treeToCode);
+            
+			Writer.Write(treeToCode.Output.ToString());
+            Writer.Flush();
+		    
+            Console.WriteLine(treeToCode.Output.ToString());
 		}
 
 		public void Visit(Node node) {
