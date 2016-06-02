@@ -9879,7 +9879,7 @@ length: arithmeticExpression;
 
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
-intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;
+intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the

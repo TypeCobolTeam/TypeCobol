@@ -45,3 +45,7 @@ setStatementForAssignationSending:
     | TRUE | (NULL | NULLS) | SELF
     | (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))
     ;
+
+// rules modified to support custom-designed functions (of arity 0..n)
+functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
+intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;

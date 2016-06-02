@@ -14,6 +14,7 @@
        TRAITEMENT.
            MOVE FUNCTION POW (x y)    TO x
       * KO: wrong number of parameters
+           MOVE FUNCTION POW ()       TO x
            MOVE FUNCTION POW (y)      TO x
            MOVE FUNCTION POW (x y z)  TO x
       * KO: undefined parameters
