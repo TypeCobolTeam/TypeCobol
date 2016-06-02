@@ -89,7 +89,7 @@ namespace TypeCobol.Codegen.Config {
 
 			input = skeleton.Patterns[2].Template;
 			expected = 
-"01 fun-RESULT PIC X(8).\n";
+"01 fun-RESULT PIC 9(8).\n";
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
 			input = skeleton.Patterns[3].Template;
@@ -100,7 +100,7 @@ namespace TypeCobol.Codegen.Config {
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
 			input = skeleton.Patterns[4].Template;
-			variables = new Dictionary<string,object> { {"function", SampleFactory.CreateCall("fun", "mylib")} };
+			variables = new Dictionary<string,object> { {"function", SampleFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
 			expected = "\n"+
 "CALL fun USING\n"+
 "    BY REFERENCE param1\n"+
@@ -110,7 +110,7 @@ namespace TypeCobol.Codegen.Config {
 "    BY REFERENCE fun-RESULT\n"+
 "\n"+
 "IF RETURN-CODE = ZERO\n"+
-"* TODO original statement like MOVE or stuff\n"+
+"    MOVE fun-RESULT TO myresult\n"+
 "ELSE\n"+
 "*    TODO: error management\n"+
 "END-IF\n";
