@@ -3,7 +3,6 @@ using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
 
@@ -130,35 +129,15 @@ namespace TypeCobol.Server
 				}
 
 				if (config.Codegen) {
-                    var skeletons = ParseConfig(config.skeletonPath);
-
-                    var stream = new StreamWriter(config.OutputFiles[c]);
-                    Codegen.Generator codegen = new Codegen.Generator(stream, parser.Results.TokensLines, parser.Converter, skeletons);
-                    //var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Results.ProgramClassDocumentSnapshot);
-
-                    var program = parser.Results.ProgramClassDocumentSnapshot.Program;
-                    codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, ColumnsLayout.CobolReferenceFormat);
-                    
-
-                    //               if (codegen.IsValid) {
-                    //	var stream = new StreamWriter(config.OutputFiles[c]);
-                    //	codegen.WriteCobol(stream);
-                    //	System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
-                    //} else {
-                    //	// might be a problem regarding the input file format
-                    //	AddError(writer, "Codegen failed for \""+path+"\" (no Program). Check file format/encoding?", path);
-                    //}
-                }
-            }
+					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
+					var codegen = new TypeCobol.Codegen.Generator(new StreamWriter(config.OutputFiles[c]), parser.Results.TokensLines, parser.Converter, skeletons);
+					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
+					codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, ColumnsLayout.CobolReferenceFormat);
+				}
+			}
 			writer.Write();
 			writer.Flush();
 		}
-
-        public static List<Skeleton> ParseConfig(string path)
-        {
-            var parser = Codegen.Config.Config.CreateParser(Path.GetExtension(path));
-            return parser.Parse(path);
-        }
 
         private static void AddError(AbstractErrorWriter writer, string message, string path) {
 			var error = new TypeCobol.Tools.Diagnostic();

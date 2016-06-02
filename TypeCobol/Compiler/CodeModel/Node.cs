@@ -198,7 +198,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public Receiver(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as Receiving;
-			if (s == null) return null
+			if (s == null) return null;
             if (s.Expressions.Count < 1) return null;
 			if (s.Expressions.Count == 1) return s.Expressions[0];
 			return s.Expressions;

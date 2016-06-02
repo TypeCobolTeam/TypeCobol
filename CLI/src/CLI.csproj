@@ -55,6 +55,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Codegen\src\Codegen.csproj">
+      <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
+      <Name>Codegen</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
       <Name>TypeCobol</Name>
