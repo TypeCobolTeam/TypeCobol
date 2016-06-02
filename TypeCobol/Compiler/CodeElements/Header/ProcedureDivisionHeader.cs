@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// The argument receiving mode can be : BY REFERENCE or BY VALUE
         /// </summary>
-        public IList<InputParameter> UsingParameters { get; set; }
+        public IList<InputParameter> InputParameters { get; set; }
 
         /// <summary>
         /// The RETURNING phrase specifies a data item that is to receive the program or
@@ -28,24 +28,24 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RETURNING data item must be a level-01 or level-77 item in the LINKAGE SECTION.
         /// The RETURNING data item is an output-only parameter.
         /// </summary>
-        public DataName ReturningDataName { get; set; }
+        public ReceivingStorageArea OutputParameter { get; set; }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (UsingParameters == null && ReturningDataName == null)
+            if (InputParameters == null && OutputParameter == null)
             {
                 return base.ToString();
             }
             else
             {
                 StringBuilder sb = new StringBuilder(base.ToString());
-                if (UsingParameters != null)
+                if (InputParameters != null)
                 {
                     sb.Append("- InputParameters =");
-                    foreach (InputParameter inputParam in UsingParameters)
+                    foreach (InputParameter inputParam in InputParameters)
                     {
                         sb.Append(' ');
                         if (inputParam.ReceivingMode != null)
@@ -53,13 +53,13 @@ namespace TypeCobol.Compiler.CodeElements
                             sb.Append(inputParam.ReceivingMode);
                             sb.Append(':');
                         }
-                        sb.Append(inputParam.DataName);
+                        sb.Append(inputParam.StorageArea);
                     }
                     sb.AppendLine();
                 }                
-                if (ReturningDataName != null)
+                if (OutputParameter != null)
                 {
-                    sb.AppendLine("- ReturningDataName = " + ReturningDataName);
+                    sb.AppendLine("- ReturningDataName = " + OutputParameter);
                 }                
                 return sb.ToString();
             }
@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Each USING identifier must be defined as a level-01 or level-77 item in the
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// </summary>
-        public DataName DataName { get; set; }
+        public ReceivingStorageArea StorageArea { get; set; }
     }
 
     /// <summary>

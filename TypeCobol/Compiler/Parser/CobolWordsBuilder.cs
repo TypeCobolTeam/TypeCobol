@@ -782,7 +782,7 @@ namespace TypeCobol.Compiler.Parser
         /// With the *CONTROL (or *CBL) statement, you can selectively display or suppress
         /// the listing of source code, object code, and storage maps throughout the source text. 
         /// </summary>
-        public enum ControlCblOptionEnum
+        public enum ControlCblOption
         {
             // 
             // These are not reserved words, but the only possible values are the following
@@ -793,7 +793,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal static EnumeratedValue CreateControlCblOption(CodeElementsParser.ControlCblOptionContext context)
         {
-            return CreateEnumeratedValue(context.enumeratedValue1(), typeof(ControlCblOptionEnum));
+            return CreateEnumeratedValue(context.enumeratedValue1(), typeof(ControlCblOption));
         }
 
         /// <summary>

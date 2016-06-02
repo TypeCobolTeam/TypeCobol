@@ -138,6 +138,7 @@
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
     <Content Include="Compiler\CodeElements\Expressions\obsolete\Variable.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
+    <Compile Include="Compiler\CodeModel\DataDefinitionNode.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
@@ -381,7 +382,7 @@
     <Compile Include="Compiler\TypeChecker\CobolTypeChecker.cs" />
     <Compile Include="Tools\DiagnosticUtils.cs" />
     <Compile Include="Tools\Generator\CodeElements\CodeElement.cs" />
-    <Compile Include="Tools\Generator\CodeElements\DataDescriptionEntry.cs" />
+    <Compile Include="Tools\Generator\CodeElements\DataDefinitionNode.cs" />
     <Compile Include="Tools\Generator\CodeGenerator.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolStats.cs" />
     <Compile Include="Tools\Reflection.cs" />

@@ -1922,7 +1922,7 @@ blockContainsClause:
 
 recordClause:
     RECORD ((CONTAINS? numberOfBytes=integerValue CHARACTERS?) |
-            (CONTAINS? minNumberOfBytes=integerValue TO maxnumberOfBytes=integerValue CHARACTERS?) |
+            (CONTAINS? minNumberOfBytes=integerValue TO maxNumberOfBytes=integerValue CHARACTERS?) |
             (IS? VARYING IN? SIZE? (FROM? fromNumberOfBytes=integerValue)? (TO toNumberOfBytes=integerValue)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
 
 // p179: For sequential, relative, or indexed files, and for sort/merge SDs, the LABEL

@@ -1,10 +1,10 @@
 ﻿using System.IO;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Generator;
 
-namespace TypeCobol.Compiler.CodeElements {
+namespace TypeCobol.Compiler.CodeModel {
 
-	public partial class DataDescriptionEntry {
+	public partial class DataDefinitionNode
+    {
 		/// <summary><see cref="TypeCobol.Generator.CodeGenerator"/></summary>
 		public override void WriteCode(TextWriter stream, SymbolTable scope, ref int line, ref int offset, DocumentFormat format) {
 			// TYPEDEFS and subordinates have no equivalent in COBOL
@@ -56,22 +56,32 @@ namespace TypeCobol.Compiler.CodeElements {
 			}
 		}
 
+        public bool IsGlobal
+        {
+            get
+            {
+                if (_global) return true;
+                var typedef = GetTypeDefinition();
+                return typedef != null && typedef._global;
+            }
+            set { _global = value; }
+        }
+        private bool _global = false;
 
-
-		/// <summary>
-		/// All DataDescriptionEntries that either are of a custom type (TYPE declaration),
-		/// or have one of their TopLevel items be of a custom type, must not be rewritten "as is".
-		/// </summary>
-		/// <param name="scope">Custom types for this scope</param>
-		/// <param name="TrueParentGeneration">
-		/// Generation of the first not generated data item found among this data top-level items.
-		/// </param>
-		/// <param name="HowFarRemoved">
-		/// How many "generations" between this data declaration and its first "not generated"
-		/// top-level item. If this data is a TYPE user, HowFarRemoved will be 0
-		/// </param>
-		/// <returns>True if this data uses TYPE or has a TYPE user among its top-level data.</returns>
-		private bool IsGenerated(SymbolTable scope, out int TrueParentGeneration, out int HowFarRemoved) {
+        /// <summary>
+        /// All DataDescriptionEntries that either are of a custom type (TYPE declaration),
+        /// or have one of their TopLevel items be of a custom type, must not be rewritten "as is".
+        /// </summary>
+        /// <param name="scope">Custom types for this scope</param>
+        /// <param name="TrueParentGeneration">
+        /// Generation of the first not generated data item found among this data top-level items.
+        /// </param>
+        /// <param name="HowFarRemoved">
+        /// How many "generations" between this data declaration and its first "not generated"
+        /// top-level item. If this data is a TYPE user, HowFarRemoved will be 0
+        /// </param>
+        /// <returns>True if this data uses TYPE or has a TYPE user among its top-level data.</returns>
+        private bool IsGenerated(SymbolTable scope, out int TrueParentGeneration, out int HowFarRemoved) {
 			TrueParentGeneration = Generation;
 			HowFarRemoved = 0;
 			var current = this;

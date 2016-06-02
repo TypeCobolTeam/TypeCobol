@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// section-name, because it cannot be qualified, must be unique
         /// within the program in which it is defined.
         /// </summary>
-        public SectionName SectionName { get; set; }
+        public SymbolDefinition SectionName { get; set; }
 
         /// <summary>
         /// An integer or a positive signed numeric literal ranging in value
@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Segments with a priority-number of 50 through 99 are independent
         /// segments.
         /// </summary>
-        public SyntaxNumber PriorityNumber { get; set; }
+        public IntegerValue PriorityNumber { get; set; }
 
         /// <summary>
         /// Debug string

@@ -51,6 +51,9 @@ namespace TypeCobol.Compiler.CodeElements
         // -- Data Division --
         FileDescriptionEntry,
         DataDescriptionEntry,
+        DataRedefinesEntry,
+        DataRenamesEntry,
+        DataConditionEntry,
         // -- InputOutput Section --
         FileControlEntry,
         IOControlEntry,
