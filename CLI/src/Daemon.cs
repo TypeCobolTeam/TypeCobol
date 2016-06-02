@@ -130,7 +130,7 @@ namespace TypeCobol.Server
 
 				if (config.Codegen) {
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
-					var codegen = new TypeCobol.Codegen.Generator(new StreamWriter(config.OutputFiles[c]), parser.Results.TokensLines, parser.Converter, skeletons);
+					var codegen = new TypeCobol.Codegen.Generator(new StreamWriter(config.OutputFiles[c]), parser.Results.TokensLines, skeletons);
 					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
 					codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, ColumnsLayout.CobolReferenceFormat);
 				}

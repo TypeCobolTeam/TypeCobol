@@ -20,10 +20,8 @@ namespace TypeCobol.Codegen {
 		private List<Action> Actions = null;
 
 
-		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, Tools.CodeElementDiagnostics converter, List<Skeleton> skeletons) {
+		public Generator(TextWriter destination, IReadOnlyList<ICobolTextLine> source, List<Skeleton> skeletons) {
 			Input = source;
-			Output = new List<ICobolTextLine>();
-			Output.AddRange(source);
 			Writer = destination;
 			Skeletons = skeletons ?? new List<Skeleton>();
 		}
@@ -43,14 +41,13 @@ namespace TypeCobol.Codegen {
 				if (action.Group != null) groups.Add(action.Group);
 			}
 
-			var treeToCode = new TreeToCode(Input, columns);
 			// STEP 2: convert tree to destination language code
-			tree.Accept(treeToCode);
-            
-			Writer.Write(treeToCode.Output.ToString());
-            Writer.Flush();
-		    
-            Console.WriteLine(treeToCode.Output.ToString());
+			var converter = new TreeToCode(Input, columns);
+			tree.Accept(converter);
+			Writer.Write(converter.Output.ToString());
+			Writer.Flush();
+
+			Console.WriteLine(converter.Output.ToString());
 		}
 
 		public void Visit(Node node) {
@@ -104,33 +101,21 @@ namespace TypeCobol.Codegen {
 			return result;
 		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="properties"></param>
-        /// <param name="pattern"></param>
-        /// <param name="position"></param>
-        /// <returns></returns>
 		private Action GetAction(Node source, Dictionary<string,object> properties, Pattern pattern) {
 			var destination = GetLocation(source, pattern.Location);
 			if ("create".Equals(pattern.Action)) {
-				return new CreateNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, pattern.Position);
+				return new Create(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, pattern.Position);
 			}
 			if ("replace".Equals(pattern.Action)) {
-				return new ReplaceNode(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
+				return new Replace(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
 			}
 			if ("comment".Equals(pattern.Action)) {
-				return new CommentNode(destination);
+				return new Comment(destination);
 			}
 			if ("expand".Equals(pattern.Action)) {
-				return new ExpandNode(destination);
+				return new Expand(destination);
 			}
-//					if ("comment".Equals(pattern.Action)) return new Comment(Output);
-//					if ("delete" .Equals(pattern.Action)) return new Delete(Output);
-//					if ("expand" .Equals(pattern.Action)) return new GenerateCustomTypedDataDescription(Output, Table);
-//					if ("replace".Equals(pattern.Action)) return new Replace(Output, CreateGeneratedText(node, pattern));
-//					return new Write(Output);// no peculiar codegen --> write as is
+			System.Console.WriteLine("Unknown action: \""+pattern.Action+"\"");
 			return null;
 		}
 
@@ -185,13 +170,13 @@ namespace TypeCobol.Codegen {
 		void Execute();
 	}
 
-	public class CreateNode: Action {
+	public class Create: Action {
 		public string Group { get; private set; }
 		internal Node Parent;
 		private Node Child;
 	    private int? position;
 
-		public CreateNode(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter, int? position) {
+		public Create(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter, int? position) {
 			this.Parent = parent;
 			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
@@ -212,12 +197,12 @@ namespace TypeCobol.Codegen {
 		}
 	}
 
-	public class ReplaceNode: Action {
+	public class Replace: Action {
 		public string Group { get; private set; }
 		internal Node Old;
 		private Node New;
 
-		public ReplaceNode(Node node, string template, Dictionary<string,object> variables, string group, string delimiter) {
+		public Replace(Node node, string template, Dictionary<string,object> variables, string group, string delimiter) {
 			this.Old = node;
 			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
@@ -233,28 +218,28 @@ namespace TypeCobol.Codegen {
 		}
 	}
 
-	public class CommentNode: Action {
+	public class Comment: Action {
 		public string Group { get; private set; }
 		internal Node Node;
 
-		public CommentNode(Node node) {
+		public Comment(Node node) {
 			this.Node = node;
 		}
 
 		public void Execute() {
-			Comment(this.Node);
+			comment(this.Node);
 		}
-		private static void Comment(Node node) {
+		private static void comment(Node node) {
 			node.Comment = true;
-			foreach(var child in node.Children) Comment(child);
+			foreach(var child in node.Children) comment(child);
 		}
 	}
 
-	public class ExpandNode: Action {
+	public class Expand: Action {
 		public string Group { get; private set; }
 		internal Node Node;
 
-		public ExpandNode(Node node) {
+		public Expand(Node node) {
 			this.Node = node;
 		}
 
@@ -269,245 +254,6 @@ System.Console.WriteLine("Execute("+(ce==null?"?":(d==null?ce.GetType().Name:d.Q
 			// retrieve data
 			int index = this.Node.Parent.Children.IndexOf(this.Node);
 			this.Node.Parent.Children.Insert(index+1, new TypedDataNode(this.Node));
-		}
-	}
-
-
-
-
-	public interface OldAction {
-		bool Execute(Node node, List<ITokensLine> lines);
-	}
-
-	public class Write: OldAction {
-		protected List<ICobolTextLine> output;
-		protected CodeLineFactory factory;
-		public Write(List<ICobolTextLine> output) {
-			this.output = output;
-			this.factory = new CodeLineFactory();
-		}
-		public virtual bool Execute(Node node, List<ITokensLine> lines) {
-			// nothing to do
-			return true;
-		}
-
-		protected int IndexOf(ITokensLine line) {
-			int index = 0;
-			foreach(var l in output)
-				if (l == line) return index;
-				else index++;
-			return -1;
-		}
-
-		protected int Replace(ITokensLine oldline, ICobolTextLine newline) {
-			int index = IndexOf(oldline);
-			if (index > -1) {
-				output.Remove(oldline);
-				output.Insert(index, newline);
-			}
-			return index;
-		}
-	}
-
-	public class Delete: Write {
-		public Delete(List<ICobolTextLine> output): base(output) { }
-		public override bool Execute(Node node, List<ITokensLine> lines) {
-			foreach(var line in lines) output.Remove(line);
-			return true;
-		}
-	}
-
-	public class Comment: Write {
-		public Comment(List<ICobolTextLine> output): base(output) { }
-		public override bool Execute(Node node, List<ITokensLine> lines) {
-			foreach(var line in lines) {
-				Replace(line, factory.CreateCommentedLine(line));
-			}
-			return true;
-		}
-	}
-
-	public class Replace: Write {
-		private readonly string text;
-
-		public Replace(List<ICobolTextLine> output, string text)
-			: base(output) {
-			this.text = text;
-		}
-
-		public override bool Execute(Node node, List<ITokensLine> lines) {
-			var data = node.CodeElement as DataDescriptionEntry;
-			foreach(var line in lines) {
-				var index = IndexOf(line);
-				output.Remove(line);
-				output.Insert(index++, factory.CreateInsertedLine(factory.CreateCommentedLine(line)));
-				output.Insert(index,   factory.CreateInsertedLine(text));
-			}
-			return false;
-		}
-	}
-
-	public class GenerateCustomTypedDataDescription: Write {
-		protected SymbolTable table;
-		public GenerateCustomTypedDataDescription(List<ICobolTextLine> output, SymbolTable table)
-			: base(output) {
-			this.table = table;
-		}
-		public override bool Execute(Node node, List<ITokensLine> lines) {
-			var data = node.CodeElement as DataDescriptionEntry;
-			int index = -1;
-			foreach(var line in lines) {
-				index = IndexOf(line);
-				output.Remove(line);
-				output.Insert(index++, factory.CreateInsertedLine(factory.CreateCommentedLine(line)));
-				output.Insert(index, factory.CreateCustomTypedData(line, data.DataType.Name));
-			}
-			var type = table.GetCustomType(data.DataType.Name);
-			insertChildren(type, ref index, data.LevelNumber+1, data.Generation);
-			return false;
-		}
-
-		private void insertChildren(TypeDefinition type, ref int line, int level, int generation) {
-			foreach(var child in type.Subordinates) {
-				bool isCustomTypeToo = !child.IsTypeDefinition && table.IsCustomType(child.DataType);
-				ICobolTextLine inserted = factory.CreateDataDefinition(child, level, generation, isCustomTypeToo);
-				output.Insert(++line, inserted);
-				if (isCustomTypeToo) {
-					var indent = "            ";
-					for(int c=0; c<generation; c++) indent += "  ";
-					output.Insert(++line, factory.CreateCommentedLine(factory.CreateInsertedLine(indent+child.Name+" TYPE "+child.DataType.Name)));
-					insertChildren(table.GetCustomType(child.DataType.Name), ref line, level+1, generation+1);
-				}
-			}
-		}
-	}
-
-	public class CodeLineFactory {
-		public ICobolTextLine CreateEmptyLine() {
-			return new EmptyLine();
-		}
-		public ICobolTextLine CreateCommentedLine(ITextLine line) {
-			return new CommentedLine(line);
-		}
-		public ICobolTextLine CreateInsertedLine(ITextLine line) {
-			return new InsertedLine(line.Text);
-		}
-		public ICobolTextLine CreateInsertedLine(string line) {
-			return new InsertedLine(line);
-		}
-
-		public ICobolTextLine CreateCustomTypedData(ITokensLine line, string typename) {
-			return new EditedLine(line, new RemoveCustomTypeDeclaration(typename));
-		}
-
-		internal ICobolTextLine CreateDataDefinition(DataDescriptionEntry data, int level, int generation, bool isCustomType) {
-			var line = new System.Text.StringBuilder("           ");
-			for(int c=0; c<generation; c++) line.Append("  ");
-			line.Append(level.ToString("00")).Append(' ').Append(data.Name.Name);
-			if (!isCustomType) line.Append(" PIC ").Append(data.Picture);
-			line.Append('.');
-			return new InsertedLine(line.ToString());
-		}
-	}
-
-	public class LineForCodegen: ICobolTextLine {
-		protected ITextLine OriginalLine;
-		public LineForCodegen(ITextLine line) {
-			this.OriginalLine = line;
-		}
-
-		/// <summary>That's the only thing we need. The rest of what's implemented throws InvalidOperationException.</summary>
-		public virtual string Text { get { return OriginalLine.Text; } }
-
-        /// from ICobolTextLine
-		public CobolTextLineType Type { get { throw new System.InvalidOperationException(); } }
-		public TextArea SequenceNumber { get { throw new System.InvalidOperationException(); } }
-		public string SequenceNumberText { get { throw new System.InvalidOperationException(); } }
-		public TextArea Indicator { get { throw new System.InvalidOperationException(); } }
-		public char IndicatorChar { get { throw new System.InvalidOperationException(); } }
-		public TextArea Source { get { throw new System.InvalidOperationException(); } }
-		public string SourceText { get { throw new System.InvalidOperationException(); } }
-		public TextArea Comment { get { throw new System.InvalidOperationException(); } }
-		public string CommentText { get { throw new System.InvalidOperationException(); } }
-		public Compiler.Concurrency.CompilationStep CompilationStep {
-			get { throw new System.InvalidOperationException(); }
-			set { throw new System.InvalidOperationException(); }
-		}
-		public bool CanStillBeUpdatedBy(Compiler.Concurrency.CompilationStep updatingStep) { throw new System.InvalidOperationException(); }
-		// from ITextLine
-		public string TextSegment(int startIndex, int endIndexInclusive) { throw new System.InvalidOperationException(); }
-		public int Length { get { throw new System.InvalidOperationException(); } }
-		public bool IsReadOnly { get { throw new System.InvalidOperationException(); } }
-		public int InitialLineIndex { get { throw new System.InvalidOperationException(); } }
-		public object LineTrackingReferenceInSourceDocument { get { throw new System.InvalidOperationException(); } }
-	}
-
-	public class EmptyLine: LineForCodegen {
-		public EmptyLine(): base(null) { }
-		public override string Text { get { return ""; } }
-	}
-
-	public class CommentedLine: LineForCodegen {
-		public CommentedLine(ITextLine line): base(line) { }
-		public override string Text {
-			get {
-				string edited = OriginalLine.Text;
-				edited = edited.Remove(6, 1);
-				edited = edited.Insert(6, "*");
-				return edited;
-			}
-		}
-	}
-
-	public class InsertedLine: LineForCodegen {
-		private readonly string text;
-		public InsertedLine(string text)
-			: base(null) {
-			this.text = text;
-		}
-		public override string Text { get { return text; } }
-	}
-
-	public class EditedLine: LineForCodegen {
-		protected Edit edit;
-		public EditedLine(ITextLine line, Edit edit)
-			: base(line) {
-			this.edit = edit;
-		}
-		public override string Text {
-			get { return edit.Edit(OriginalLine.Text); }
-		}
-	}
-
-	public interface Edit {
-		string Edit(string span);
-	}
-	public class RemoveTypeDefinition: Edit {
-		public string Edit(string span) {
-			int start = span.IndexOf(" TYPEDEF");
-			if (start == -1 ) return span; // nothing to do
-			int end = start + " TYPEDEF".Length;
-			for(start=start-1; span[start]==' '; start--) ;
-			start++;
-			span = span.Replace(span.Substring(start,end-start), "");
-			return span;
-		}
-	}
-	public class RemoveCustomTypeDeclaration: Edit {
-		private readonly string typename;
-		public RemoveCustomTypeDeclaration(string typename) {
-			this.typename = typename;
-		}
-		public string Edit(string span) {
-			int start = span.IndexOf("TYPE ");
-			if (start == -1 ) return span; // nothing to do
-			int end = span.IndexOf(" "+typename, start) ;
-			if (end != -1) end += typename.Length +1;
-			else end = start + "TYPE ".Length;
-			for(start=start-1; span[start]==' '; start--) ;
-			start++;
-			span = span.Replace(span.Substring(start,end-start), "");
-			return span;
 		}
 	}
 }
