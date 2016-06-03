@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <skeletons>
 
-  <skeleton name="BOOL.DECLARE" var="level,name,receiver">
+  <skeleton name="BOOL.DECLARE" var="level,name">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" type="BOOL"/>
     </conditions>
@@ -14,7 +14,7 @@
     </patterns>
   </skeleton>
 
-  <skeleton name="BOOL.SET">
+  <skeleton name="BOOL.SET" var="receiver">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" sender="FALSE"/>
     </conditions>
