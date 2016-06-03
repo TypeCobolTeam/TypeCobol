@@ -84,19 +84,17 @@ namespace TypeCobol.Codegen {
 			var result = new Dictionary<string,object>();
 			var errors = new System.Text.StringBuilder();
 			foreach(var pname in properties) {
-			    if (node[pname] != null)
-			    {
-			        result[pname] = node[pname];
-			    }
-			    else
-			    {
-			        errors.Append(node.GetType()).Append("[").Append(pname).Append("]").Append(',').Append(node.CodeElement.InputStream);
-			        
-			    }
+				if (node[pname] != null) {
+					result[pname] = node[pname];
+				} else {
+					errors.Append(pname).Append(", ");
+				}
 			}
 			if (errors.Length > 0) {
-				errors.Length -= 1;
-				throw new System.ArgumentException("Undefined properties for node: "+errors);
+				errors.Length -= 2;
+				errors.Insert(0, "Undefined properties for "+node.GetType().Name+": ");
+				errors.Append(". (line:\"").Append(node.CodeElement.InputStream).Append("\")");
+				throw new System.ArgumentException(errors.ToString());
 			}
 			return result;
 		}
