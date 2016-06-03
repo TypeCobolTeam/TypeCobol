@@ -17,7 +17,7 @@
       <pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
 01 %function.Name-RESULT %function.Result.Definition.
       </pattern>
-      <pattern location="procedure-division" action="create" group="%function.Lib-CALL">
+      <pattern location="procedure-division.begin" action="create" group="%function.Lib-CALL">
 IF %function.Copy-POINTER-TABLE = LOW_VALUE
     CALL %function.Program USING %function.Copy
 END-IF
@@ -28,8 +28,7 @@ END-IF
   foreach (var p in %function.Parameters) {
     funparams += "    BY " + p.Mode + " " + p.Value + "\n";
   }
-}
-CALL %function.Name USING
+}CALL %function.Name USING
 @funparams
     BY REFERENCE RETURN-CODE
     BY REFERENCE %function.Name-RESULT

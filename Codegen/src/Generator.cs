@@ -102,9 +102,10 @@ namespace TypeCobol.Codegen {
 		}
 
 		private Action GetAction(Node source, Dictionary<string,object> properties, Pattern pattern) {
-			var destination = GetLocation(source, pattern.Location);
+			int? index;
+			var destination = GetLocation(source, pattern.Location, out index);
 			if ("create".Equals(pattern.Action)) {
-				return new Create(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, pattern.Position);
+				return new Create(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, index);
 			}
 			if ("replace".Equals(pattern.Action)) {
 				return new Replace(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
@@ -119,10 +120,20 @@ namespace TypeCobol.Codegen {
 			return null;
 		}
 
-		private Node GetLocation(Node node, string location) {
+		private Node GetLocation(Node node, string location, out int? index) {
+			index = null;
+			if (location.EndsWith(".begin")) {
+				location = location.Substring(0, location.Length - ".begin".Length);
+				index = 0;
+			} else
+			if (location.EndsWith(".end")) {
+				location = location.Substring(0, location.Length - ".end".Length);
+			}
+
 			if (location == null || location.ToLower().Equals("node")) return node;
 			Node root = node;
 			while(root.Parent != null) root = root.Parent;
+
 			var result = root.Get(location);
 			if (result != null) return result;
 			throw new System.ArgumentException("Undefined URI: "+location);

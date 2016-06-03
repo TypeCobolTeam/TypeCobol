@@ -101,7 +101,7 @@ namespace TypeCobol.Codegen.Config {
 
 			input = skeleton.Patterns[4].Template;
 			variables = new Dictionary<string,object> { {"function", SampleFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
-			expected = "\n"+
+			expected =
 "CALL fun USING\n"+
 "    BY REFERENCE param1\n"+
 "    BY CONTENT '42'\n"+
