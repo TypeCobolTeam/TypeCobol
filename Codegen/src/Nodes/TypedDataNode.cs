@@ -25,7 +25,6 @@ namespace TypeCobol.Codegen.Nodes {
 					bool isCustomType = type != null;
 					_cache.Add(CreateDataDefinition(data, level, generation, true));
 					InsertChildren(data, level+1, generation+1);
-System.Console.WriteLine("### "+data.QualifiedName+": "+_cache.Count+" lines");
 				}
 				return _cache;
 			}
@@ -44,7 +43,6 @@ System.Console.WriteLine("### "+data.QualifiedName+": "+_cache.Count+" lines");
 		private void InsertChildren(TypeDefinition type, int level, int generation) {
 			foreach(var child in type.Subordinates) {
 				bool isCustomTypeToo = !child.IsTypeDefinition && Node.SymbolTable.IsCustomType(child.DataType);
-System.Console.WriteLine("> "+child.QualifiedName+" : "+isCustomTypeToo);
 				_cache.Add(CreateDataDefinition(child, level, generation, isCustomTypeToo));
 				if (isCustomTypeToo) InsertChildren(Node.SymbolTable.GetCustomType(child.DataType.Name), level+1, generation+1);
 			}

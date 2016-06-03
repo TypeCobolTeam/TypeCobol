@@ -26,19 +26,12 @@ namespace TypeCobol.Codegen {
 
 		public void Visit(Node node) {
 			bool doVisitChildren = Process(node);
-var data = node.CodeElement as DataDescriptionEntry;
-bool customType;
-try { customType = data != null && node.SymbolTable.GetCustomType(data.DataType.Name) != null; }
-catch(System.ArgumentException) { customType = false; } // TODO hacky ! :(
-			if (!customType && doVisitChildren) foreach(var child in node.Children) child.Accept(this);
+			if (doVisitChildren) foreach(var child in node.Children) child.Accept(this);
 		}
 
 		private bool Process(Node node) {
 			string text = "";
 			var generated = node as Generated;
-var ce = node.CodeElement;
-var d = ce as DataDescriptionEntry;
-System.Console.WriteLine("Process("+(ce==null?"?":(d==null?ce.GetType().Name:d.QualifiedName.ToString()))+"), children="+node.Children.Count);
 			foreach(var line in node.Lines) {
 				if (generated != null)
 					// if we write generated code, we INSERT one line of code between Input lines;
@@ -63,18 +56,12 @@ System.Console.WriteLine("Process("+(ce==null?"?":(d==null?ce.GetType().Name:d.Q
 		/// <returns>Number of lines written during this method call.</returns>
 		private int WriteInputLinesUpTo(ITextLine line) {
 			if (!IsInInput(line)) return 0;
-string str = "";
 			int lines = 0;
 			while (offset < Input.Count) {
 				if (Input[offset] == line) break;
-str += "\""+Input[offset].Text+"\",\n";
 				Write(Input[offset], null);
 				lines++;
 			}
-if (lines > 0) {
-System.Console.WriteLine(">>> WriteInputLinesUpTo("+line.Text+")");
-System.Console.WriteLine("<<< "+lines+" written: "+str.Substring(0,str.Length-2));
-}
 			return lines;
 		}
 

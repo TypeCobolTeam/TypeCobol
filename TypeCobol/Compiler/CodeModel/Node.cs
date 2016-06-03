@@ -19,11 +19,12 @@ namespace TypeCobol.Compiler.CodeElements
 		public Node(): this(null) { }
 		public Node(CodeElement e) { CodeElement = e; }
 
-		internal void Add(Node child) {
-			children_.Add(child);
+		public void Add(Node child, int index = -1) {
+			if (index < 0) children_.Add(child);
+			else children_.Insert(index, child);
 			child.Parent = this;
 		}
-		internal void Remove() {
+		public void Remove() {
 			Parent.children_.Remove(this);
 			Parent = null;
 		}

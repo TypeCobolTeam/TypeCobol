@@ -185,15 +185,7 @@ namespace TypeCobol.Codegen {
 		}
 
 		public void Execute() {
-		    if (position != null)
-		    {
-                Console.WriteLine("insert new node at position " + position);
-                Parent.Children.Insert((int) position, Child);
-            }
-		    else
-		    {
-		        Parent.Children.Add(Child);
-		    }
+			Parent.Add(Child, (position ?? -1));
 		}
 	}
 
@@ -213,7 +205,7 @@ namespace TypeCobol.Codegen {
 			var parent = Old.Parent;
 			int index = parent.Children.IndexOf(Old);
 		    Old.Comment = true;
-			parent.Children.Insert(index+1, New);
+			parent.Add(New, index+1);
             
 		}
 	}
@@ -247,13 +239,9 @@ namespace TypeCobol.Codegen {
 			// comment out original "line" (=~ non expanded node)
 			this.Node.Comment = true;
 			this.Node.Children.Clear();
-var ce = this.Node.CodeElement;
-var d = ce as DataDescriptionEntry;
-System.Console.WriteLine("Execute("+(ce==null?"?":(d==null?ce.GetType().Name:d.QualifiedName.ToString()))+"), children="+this.Node.Children.Count);
-//			new CommentNode(this.Node).Execute();
 			// retrieve data
 			int index = this.Node.Parent.Children.IndexOf(this.Node);
-			this.Node.Parent.Children.Insert(index+1, new TypedDataNode(this.Node));
+			if (index > -1) this.Node.Parent.Children.Insert(index+1, new TypedDataNode(this.Node));
 		}
 	}
 }
