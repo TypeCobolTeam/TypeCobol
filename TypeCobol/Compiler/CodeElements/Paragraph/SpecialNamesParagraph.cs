@@ -18,9 +18,8 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SpecialNamesParagraph : CodeElement
     {
-		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph) {
-			CurrencySymbols = new Dictionary<AlphanumericValue, CharacterValue>();
-		}
+		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
+        { }
 
         /// <summary>
         /// Relates IBM-specified environment-names to user-defined mnemonic-names
@@ -54,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// The CLASS clause provides a means for relating a name to the specified set of characters listed in that clause.
         /// </summary>
-        public IDictionary<SymbolDefinition, IList<CharacterValue>> CharsetClassNames { get; set; }
+        public IDictionary<SymbolDefinition, UserDefinedCollatingSequence> CharsetClassNames { get; set; }
 
         /// <summary>
         /// The CURRENCY SIGN clause affects numeric-edited data items whose PICTURE
@@ -91,6 +90,13 @@ namespace TypeCobol.Compiler.CodeElements
     public enum UPSISwitchStatus
     {
         On, Off
+    }
+
+    public abstract class CollatingSequence { }
+
+    public class InstrinsicCollatingSequence : CollatingSequence
+    {
+        public SymbolReference IntrinsicAlphabetName { get; set; }
     }
 
     /// <summary>
@@ -156,18 +162,47 @@ namespace TypeCobol.Compiler.CodeElements
     /// of the collating sequence, the LOW-VALUE character would be
     /// D.)
     /// </summary>
-    public class CollatingSequence
+    public class UserDefinedCollatingSequence : CollatingSequence
     {
-        // to do ...
+        public CharacterSetInCollatingSequence[] CharacterSets { get; set; }
+    }
 
-        public char GetLowValueChar()
-        {
-            throw new NotImplementedException();
-        }
+    public abstract  class CharacterSetInCollatingSequence { }
 
-        public char GetHighValueChar()
-        {
-            throw new NotImplementedException();
-        }
+    // In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
+    // it may contain SEVERAL characters
+
+    public class SingleCharacterInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public CharacterInCollatingSequence Character { get; set; }
+    }
+
+    public class CharactersInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public AlphanumericValue CharactersInAlphanmericValue { get; set; }
+        
+        public IntegerValue OrdinalPositionInCollatingSequence { get; set; }
+    }
+
+    // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
+    // it can contain ONLY ONE characters
+
+    public class CharactersRangeInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public CharacterInCollatingSequence StartCharacter { get; set; }
+
+        public CharacterInCollatingSequence EndCharacter { get; set; }
+    }
+
+    public class CharactersEqualSetInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public CharacterInCollatingSequence[] EqualCharacters { get; set; }
+    }
+    
+    public class CharacterInCollatingSequence
+    {
+        public CharacterValue CharacterValue { get; set; }
+
+        public IntegerValue OrdinalPositionInCollatingSequence { get; set; }
     }
 }

@@ -613,11 +613,8 @@ configurationSectionHeader:
 sourceComputerParagraph: 
     SOURCE_COMPUTER PeriodSeparator
     (computerName=alphanumericValue4 
-     withDebuggingModeClause? 
+     (WITH? DEBUGGING MODE)? 
      PeriodSeparator)?;
-
-withDebuggingModeClause:
-    WITH? DEBUGGING MODE;
 
 // p110 : The OBJECT-COMPUTER paragraph specifies the system for which the object
 // program is designated.
@@ -756,15 +753,16 @@ environmentNameClause:
 // data, but not for DBCS or national data.
 
 alphabetClause: 
-    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence);
+    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence+);
 
 userDefinedCollatingSequence:
-    (charactersLiteral | charactersRange | charactersEqualSet)+;
+    (charactersInCollatingSequence | charactersRange | charactersEqualSet);
 
 // In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
 // it may contain SEVERAL characters
 
-charactersLiteral: characterInCollatingSequence;
+charactersInCollatingSequence:
+	alphanumericValue1 | ordinalPositionInCollatingSequence;
 
 // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
 // it can contain ONLY ONE characters
@@ -880,10 +878,10 @@ ordinalPositionInCollatingSequence: integerValue;
 // ascending or descending order.
 
 classClause: 
-    CLASS characterClassNameDefinition IS? userDefinedCharacterClass;
+    CLASS characterClassNameDefinition IS? userDefinedCharacterClass+;
 
 userDefinedCharacterClass: 
-	(charactersLiteral | charactersRange)+;
+	(charactersInCollatingSequence | charactersRange);
 				
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same
@@ -1077,7 +1075,10 @@ xmlSchemaClause:
 
 repositoryParagraph: 
     REPOSITORY PeriodSeparator 
-    ( (CLASS classNameDefOrRef (IS? externalClassNameDefOrRef)?)+ PeriodSeparator )?;
+    ( repositoryClassDeclaration+ PeriodSeparator )?;
+
+repositoryClassDeclaration:
+	CLASS classNameDefOrRef (IS? externalClassNameDefOrRef)?;
 
 // p122: java-array-class-reference
 // A reference that enables a COBOL program to access a class that represents
@@ -1358,7 +1359,7 @@ recordKeyClause:
 // For files defined with the EXTERNAL clause, all file description entries in the run unit that are associated with the file must have data description entries for data-name-3 that specify the same relative location in the record and the same length. The file description entries must specify the same number of alternate record keys and the same DUPLICATES phrase.
 
 alternateRecordKeyClause:
-    ALTERNATE RECORD? KEY? IS? dataNameReference (WITH? DUPLICATES)?;
+    ALTERNATE RECORD? KEY? IS? recordKey=dataNameReference (WITH? DUPLICATES)? (PASSWORD IS? password=dataNameReference)?;
 
 // p142: The RELATIVE KEY clause (format 3) identifies a data-name that specifies the relative record number for a specific logical record within a relative file. 
 // data-name-4 Must be defined as an unsigned integer data item whose description does not contain the PICTURE symbol P. 
@@ -1406,7 +1407,7 @@ passwordClause:
 // For more information, see DFSMS Macro Instructions for Data Sets.
 
 fileStatusClause:
-    FILE? STATUS IS? storageArea2 vsamReturnCode=storageArea2?;
+    FILE? STATUS IS? fileStatus=storageArea2 vsamReturnCode=storageArea2?;
 
 // p125 : I-O-CONTROL
 // The keyword I-O-CONTROL identifies the I-O-CONTROL paragraph.
@@ -1527,7 +1528,10 @@ sameAreaClause:
 // This clause is syntax checked, but has no effect on the execution of the program. The function is performed by the system through the LABEL parameter of the DD statement.
 
 multipleFileTapeClause:
-    MULTIPLE FILE TAPE? CONTAINS? (fileNameReference (POSITION integerValue)?)+;
+    MULTIPLE FILE TAPE? CONTAINS? physicalReelOfTape+;
+
+physicalReelOfTape:
+	fileNameReference (POSITION integerValue)?;
 
 // p149: The APPLY WRITE-ONLY clause optimizes buffer and device space allocation for files that have standard sequential organization, have variable-length records, and are blocked.
 // If you specify this phrase, the buffer is truncated only when the space available in the buffer is smaller than the size of the next record. 

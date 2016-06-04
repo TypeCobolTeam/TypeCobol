@@ -325,7 +325,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Because seven subscripts or indexes are allowed, six nested levels and one
         /// outermost level of the format-1 OCCURS clause are allowed.
         /// </summary>
-        public SyntaxProperty<bool> IsTableOccurence { get; set; }
+        public bool IsTableOccurence { get { return MaxOccurencesCount != null || HasUnboundedNumberOfOccurences != null; } }
 
         /// <summary>
         /// p192 (Fixed-length tables):
@@ -408,7 +408,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// DEPENDING ON clause is a variably located item. That is, its location is affected by
         /// the value of the OCCURS DEPENDING ON object.
         /// </summary>
-        public SymbolReference OccursDependingOn { get; set; }
+        public NumericVariable OccursDependingOn { get; set; }
         
         /// <summary>
         /// p192:
@@ -520,7 +520,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// - + is the character used for the positive operational sign.
         /// - - is the character used for the negative operational sign.
         /// </summary>
-        public SyntaxProperty<bool> IsSignSeparate { get; set; }
+        public SyntaxProperty<bool> SignIsSeparate { get; set; }
 
         /// <summary>
         /// p221:
@@ -945,7 +945,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class TableSortingKey
     {
-        public TableSortingKey(SymbolReference sortKey, SortDirection sortDirection)
+        public TableSortingKey(SymbolReference sortKey, SyntaxProperty<SortDirection> sortDirection)
         {
             SortKey = sortKey;
             SortDirection = sortDirection;
@@ -953,7 +953,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public SymbolReference SortKey { get; private set; }
 
-        public SortDirection SortDirection { get; private set; }
+        public SyntaxProperty<SortDirection> SortDirection { get; private set; }
     }
 
     /// <summary>
