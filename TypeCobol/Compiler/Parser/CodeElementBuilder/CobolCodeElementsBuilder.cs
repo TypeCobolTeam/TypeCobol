@@ -9,13 +9,14 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
+using Antlr4.Runtime.Misc;
 
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
     ///     Build a CodeElement object while visiting its parse tree
     /// </summary>
-    internal class CobolCodeElementBuilder : CodeElementsBaseListener
+    internal class CobolCodeElementsBuilder : CodeElementsBaseListener
     {
         private CodeElement _ce;
         private ParserRuleContext Context;
@@ -1483,16 +1484,15 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterUseStatement(CodeElementsParser.UseStatementContext context)
         {
-            => Continue here
             Context = context;
-            var builder = new StatementsBuilder();
             if (context.useStatementForExceptionDeclarative() != null)
-                CodeElement = builder.CreateUseStatement(context.useStatementForExceptionDeclarative());
-            else
-            if (context.useStatementForDebuggingDeclarative() != null)
-                CodeElement = builder.CreateUseStatement(context.useStatementForDebuggingDeclarative());
-            else
-                Console.WriteLine("?TODO: USE?");
+            {
+                CodeElement = CobolStatementsBuilder.CreateUseStatementForExceptionDeclarative(context.useStatementForExceptionDeclarative());
+            }
+            else if (context.useStatementForDebuggingDeclarative() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateUseStatementForDebuggingDeclarative(context.useStatementForDebuggingDeclarative());
+            }
         }
 
         // -- Section --
@@ -1531,45 +1531,29 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new SentenceEnd();
         }
         
-        // Statements
+        // -- Statements --
 
         public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateAcceptStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateAcceptStatement(context);
         }
-        
-          ///////////////////////////
-         // ARITHMETIC STATEMENTS //
-        ///////////////////////////
 
-        public override void EnterAddStatementFormat1(CodeElementsParser.AddStatementFormat1Context context)
+        public override void EnterAddStatement(CodeElementsParser.AddStatementContext context)
         {
-            var builder = new ArithmeticStatementBuilder('+');
-            builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
             Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterAddStatementFormat2(CodeElementsParser.AddStatementFormat2Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('+');
-            if (context.GIVING() != null)
+            if(context.addSimple() != null)
             {
-                builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
-                    context.identifierRounded());
+                CodeElement = CobolStatementsBuilder.CreateAddStatement(context.addSimple());
             }
-
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterAddStatementFormat3(CodeElementsParser.AddStatementFormat3Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('+');
-            builder.InitializeFormat3Statement(context.identifier(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
+            else if (context.addGiving() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateAddGivingStatement(context.addGiving());
+            }
+            else if (context.addCorresponding() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateAddCorrespondingStatement(context.addCorresponding());
+            }
         }
 
         public override void EnterAddStatementEnd(CodeElementsParser.AddStatementEndContext context)
@@ -1578,55 +1562,18 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new AddStatementEnd();
         }
 
-        public override void EnterComputeStatement(CodeElementsParser.ComputeStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ComputeStatementBuilder().CreateComputeStatement(context);
-        }
-        public override void EnterComputeStatementEnd(CodeElementsParser.ComputeStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new ComputeStatementEnd();
-        }
-
-        public override void EnterDivideStatement(CodeElementsParser.DivideStatementContext context)
-        {
-            Context = context;
-            CodeElement = new DivideStatementBuilder().CreateStatement(context);
-        }
-        public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new DivideStatementEnd();
-        }
-
-
-
         public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context)
-        {
-            var statement = new AlterStatement();
-            // context.procedureName().Length %2 != 0 can never happen outside of syntax errors
-            AlterStatement.Alter alter = null;
-            foreach (var p in context.procedureName())
-            {
-                if (alter == null) {
-                    alter = new AlterStatement.Alter();
-                    alter.Procedure1 = CobolWordsBuilder.CreateProcedureName(p);
-                } else {
-                    alter.Procedure2 = CobolWordsBuilder.CreateProcedureName(p);
-                    statement.Items.Add(alter);
-                    alter = null;
-                }
-            }
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateAlterStatement(context);
         }
 
         public override void EnterCallStatement(CodeElementsParser.CallStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateCallStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateCallStatement(context);
         }
+
         public override void EnterCallStatementEnd(CodeElementsParser.CallStatementEndContext context)
         {
             Context = context;
@@ -1634,32 +1581,27 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterCancelStatement(CodeElementsParser.CancelStatementContext context)
-        {
-            var statement = new CancelStatement();
-            if (context.programNameReference1() != null)
-            {
-                foreach (var c in context.programNameReference1())
-                {
-                    if (c.alphanumericLiteral() != null)
-                    {
-                        var item = CobolWordsBuilder.CreateLiteral(c.alphanumericLiteral());
-                        statement.Items.Add(item);
-                    }
-                }
-            }
-            if (context.programNameFromData() != null)
-            {
-                foreach (var c in context.programNameFromData())
-                {
-                    if (c.identifier() != null)
-                    {
-                        var item = CobolWordsBuilder.CreateIdentifier(c.identifier());
-                        statement.Items.Add(item);
-                    }
-                }
-            }
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateCancelStatement(context);
+        }
+
+        public override void EnterCloseStatement(CodeElementsParser.CloseStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateCloseStatement(context);
+        }
+
+        public override void EnterComputeStatement(CodeElementsParser.ComputeStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateComputeStatement(context);
+        }
+
+        public override void EnterComputeStatementEnd(CodeElementsParser.ComputeStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new ComputeStatementEnd();
         }
 
         public override void EnterContinueStatement(CodeElementsParser.ContinueStatementContext context)
@@ -1669,144 +1611,70 @@ namespace TypeCobol.Compiler.Parser
         }
 
         public override void EnterDeleteStatement(CodeElementsParser.DeleteStatementContext context)
-        {
-            var statement = new DeleteStatement();
-            statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateDeleteStatement(context);
         }
+
         public override void EnterDeleteStatementEnd(CodeElementsParser.DeleteStatementEndContext context)
         {
             Context = context;
             CodeElement = new DeleteStatementEnd();
         }
 
-        /// <summary>
-        ///     Create a MnemonicOrEnvironmentName from a token.
-        ///     This method first check if the token match an environment name from EnvironmentNameEnum
-        ///     If so, it's an EnvironmentName
-        ///     otherwise, it's a mnemonic environment name
-        /// </summary>
-        /// <param name="mnemonicOrEnvironmentName">a token corresponding to environment or a mnemonic environment name</param>
-        /// <returns>A MnemonicOrEnvironmentName of the correct CodeElementType: EnvironmentName or MnemonicForEnvironmentName</returns>
-        public static MnemonicOrEnvironmentName CreateMnemonicOrEnvironmentName(Token mnemonicOrEnvironmentName)
-        {
-            EnvironmentNameEnum envNameValue;
-            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
-            {
-                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
-            }
-            //if this happens, it means it's a mnemonic environment name
-            return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
-        }
-
         public override void EnterDisplayStatement(CodeElementsParser.DisplayStatementContext context)
-        {
-            var statement = new DisplayStatement();
-
-            //Identifiers & literals
-            if (context.identifierOrLiteral() != null)
-            {
-                var expressions = new List<Expression>();
-                foreach (CodeElementsParser.IdentifierOrLiteralContext idOrLiteral in context.identifierOrLiteral())
-                {
-                    Expression identifier = CreateIdentifierOrLiteral(idOrLiteral, statement, "Display");
-                    if (identifier != null)
-                    {
-                        expressions.Add(identifier);
-                    }
-                }
-                statement.IdentifierOrLiteral = expressions;
-            }
-            //else don't set the displayStement. It will remains null
-
-            //(mnemonic) Environment name
-            if (context.uponEnvironmentName() != null)
-            {
-                Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicForEnvironmentNameReferenceOrEnvironmentName());
-                if (mnemonicOrEnvironmentName != null)
-                {
-                    statement.UponMnemonicOrEnvironmentName = new MnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
-//            EnvironmentNameEnum envNameValue;
-//            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
-//            {
-//                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
-//            }
-//            else
-//            {
-//                //if this happens, it means it's a mnemonic environment name
-//                return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
-//            }
-                }
-            } //else don't set UponMnemonicOrEnvironmentName. it will remains null
-
-			statement.IsWithNoAdvancing = context.withNoAdvancing() != null;
-
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateDisplayStatement(context);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="idOrLiteral"></param>
-        /// <param name="statement">Only used in case of error to link the error with the current statement</param>
-        /// <param name="statementName">Only used in case of error to have the name of the current statement</param>
-        /// <returns></returns>
-        public Expression CreateIdentifierOrLiteral(CodeElementsParser.IdentifierOrLiteralContext idOrLiteral, CodeElement statement,
-            string statementName)
+        public override void EnterDivideStatement(CodeElementsParser.DivideStatementContext context)
         {
-            if (idOrLiteral.identifier() != null)
+            Context = context;
+            if (context.divideSimple() != null)
             {
-                return CobolWordsBuilder.CreateIdentifier(idOrLiteral.identifier());
+                CodeElement = CobolStatementsBuilder.CreateDivideStatement(context.divideSimple());
             }
-            if (idOrLiteral.literal() != null)
+            else if (context.divideGiving() != null)
             {
-                return CobolWordsBuilder.CreateLiteral(idOrLiteral.literal());
+                CodeElement = CobolStatementsBuilder.CreateDivideGivingStatement(context.divideGiving());
             }
-                //TODO manage figurativeConstant here or as a literal ?
-
-            DiagnosticUtils.AddError(statement, statementName + ": required <identifier> or <literal>", idOrLiteral);
-            return null;
         }
 
+        public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new DivideStatementEnd();
+        }
+        
         public override void EnterEntryStatement(CodeElementsParser.EntryStatementContext context)
-        {
-            var statement = new EntryStatement();
-            if (context.programEntryDefinition() != null)
-            {
-                statement.ProgramName = CobolWordsBuilder.CreateLiteral(context.programEntryDefinition().alphanumericLiteral());
-            }
-            foreach(var by in context.byReferenceOrByValueIdentifiers()) {
-                var u = new EntryStatement.Using<Identifier>();
-                var identifiers = CobolWordsBuilder.CreateIdentifiers(by.identifier());
-                foreach (var i in identifiers) u.Add(i);
-                u.ByValue = by.VALUE() != null;
-                statement.Usings.Add(u);
-            }
-
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateEntryStatement(context);
+        }
+
+        public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateEvaluateStatement(context); ;
+        }
+
+        public override void EnterEvaluateStatementEnd(CodeElementsParser.EvaluateStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new EvaluateStatementEnd();
         }
 
         public override void EnterExecStatement(CodeElementsParser.ExecStatementContext context)
         {
-            var statement = new ExecStatement();
-            Token node = null;
-            if (context.execTranslatorName() != null)
-            {
-                node = ParseTreeUtils.GetTokenFromTerminalNode(context.execTranslatorName().ExecTranslatorName());
-            }
-            if (node != null) statement.Compiler = node.Text;
-            var str = new StringBuilder();
-            foreach (var line in context.ExecStatementText())
-            {
-                node = ParseTreeUtils.GetTokenFromTerminalNode(line);
-                if (node != null) str.Append(node.Text);
-            }
-            statement.Code = str.ToString();
-
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateExecStatement(context);
+        }
+
+        public override void EnterExitStatement(CodeElementsParser.ExitStatementContext context)
+        {
+            Context = context;
+            CodeElement = new ExitStatement();
         }
 
         public override void EnterExitMethodStatement(CodeElementsParser.ExitMethodStatementContext context)
@@ -1820,13 +1688,7 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = new ExitProgramStatement();
         }
-
-        public override void EnterExitStatement(CodeElementsParser.ExitStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ExitStatement();
-        }
-
+                
         public override void EnterGobackStatement(CodeElementsParser.GobackStatementContext context)
         {
             Context = context;
@@ -1836,18 +1698,20 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterGotoStatement(CodeElementsParser.GotoStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateGotoStatement(context);
+            if (context.gotoSimple() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateGotoStatement(context.gotoSimple());
+            }
+            if (context.gotoConditional() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateGotoConditionalStatement(context.gotoConditional());
+            }
         }
 
-
         public override void EnterIfStatement(CodeElementsParser.IfStatementContext context)
-        {
-            var statement = new IfStatement();
-            if (context.conditionalExpression() != null) {
-                statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
-            }
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateIfStatement(context);
         }
 
         public override void EnterElseCondition(CodeElementsParser.ElseConditionContext context)
@@ -1862,59 +1726,60 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new IfStatementEnd();
         }
 
-
-        public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context)
+        public override void EnterNextSentenceStatement(CodeElementsParser.NextSentenceStatementContext context)
         {
             Context = context;
-            CodeElement = new EvaluateStatement();
+            CodeElement = new NextSentenceStatement();
         }
-
-        public override void EnterEvaluateStatementEnd(CodeElementsParser.EvaluateStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new EvaluateStatementEnd();
-        }
-
 
         public override void EnterInitializeStatement(CodeElementsParser.InitializeStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateInitializeStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateInitializeStatement(context);
         }
 
         public override void EnterInspectStatement(CodeElementsParser.InspectStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateInspectStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateInspectStatement(context);
         }
 
         public override void EnterInvokeStatement(CodeElementsParser.InvokeStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateInvokeStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateInvokeStatement(context);
+        }
+
+        public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateMergeStatement(context);
         }
 
         public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateMoveStatement(context);
+            if (context.moveSimple() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateMoveStatement(context.moveSimple());
+            }
+            else if (context.moveCorresponding() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateMoveCorrespondingStatement(context.moveCorresponding());
+            }
         }
 
-        public override void EnterMultiplyStatementFormat1(CodeElementsParser.MultiplyStatementFormat1Context context)
+        public override void EnterMultiplyStatement(CodeElementsParser.MultiplyStatementContext context)
         {
-            var builder = new ArithmeticStatementBuilder('×');
-            builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
             Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterMultiplyStatementFormat2(CodeElementsParser.MultiplyStatementFormat2Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('×');
-            builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
-                context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
+            if (context.multiplySimple() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateMultiplyStatement(context.multiplySimple());
+            }
+            else if (context.multiplyGiving() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateMultiplyGivingStatement(context.multiplyGiving());
+            }
         }
 
         public override void EnterMultiplyStatementEnd(CodeElementsParser.MultiplyStatementEndContext context)
@@ -1922,73 +1787,23 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = new MultiplyStatementEnd();
         }
-
-
-        public override void EnterNextSentenceStatement(CodeElementsParser.NextSentenceStatementContext context)
-        {
-            Context = context;
-            CodeElement = new NextSentenceStatement();
-        }
-
+        
         public override void EnterOpenStatement(CodeElementsParser.OpenStatementContext context)
         {
             Context = context;
-            CodeElement = new FileOperationBuilder().CreateOpenStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateOpenStatement(context);
         }
-
-        public override void EnterCloseStatement(CodeElementsParser.CloseStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateCloseStatement(context);
-        }
-
-        public override void EnterReadStatement(CodeElementsParser.ReadStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateReadStatement(context);
-        }
-
-        public override void EnterReadStatementEnd(CodeElementsParser.ReadStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new ReadStatementEnd();
-        }
-
-        public override void EnterWriteStatement(CodeElementsParser.WriteStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateWriteStatement(context);
-        }
-
-        public override void EnterWriteStatementEnd(CodeElementsParser.WriteStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new WriteStatementEnd();
-        }
-
-        public override void EnterRewriteStatement(CodeElementsParser.RewriteStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateRewriteStatement(context);
-        }
-
-        public override void EnterRewriteStatementEnd(CodeElementsParser.RewriteStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new RewriteStatementEnd();
-        }
-
 
         public override void EnterPerformStatement(CodeElementsParser.PerformStatementContext context)
         {
             Context = context;
-            CodeElement = new PerformStatement();
+            CodeElement = CobolStatementsBuilder.CreatePerformStatement(context);
         }
 
         public override void EnterPerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context)
         {
             Context = context;
-            CodeElement = new PerformProcedureStatement();
+            CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement();
         }
 
         public override void EnterPerformStatementEnd(CodeElementsParser.PerformStatementEndContext context)
@@ -1997,179 +1812,100 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new PerformStatementEnd();
         }
 
+        public override void EnterReadStatement(CodeElementsParser.ReadStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateReadStatement(context);
+        }
 
+        public override void EnterReadStatementEnd(CodeElementsParser.ReadStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new ReadStatementEnd();
+        }
 
         public override void EnterReleaseStatement(CodeElementsParser.ReleaseStatementContext context)
-        {
-            var statement = new ReleaseStatement();
-            statement.RecordName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
-            statement.From = CobolWordsBuilder.CreateIdentifier(context.identifier());
+        {            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateReleaseStatement(context);
         }
 
         public override void EnterReturnStatement(CodeElementsParser.ReturnStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateReturnStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateReturnStatement(context);
         }
+
         public override void EnterReturnStatementEnd(CodeElementsParser.ReturnStatementEndContext context)
         {
             Context = context;
             CodeElement = new ReturnStatementEnd();
         }
+        
+        public override void EnterRewriteStatement(CodeElementsParser.RewriteStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateRewriteStatement(context);
+        }
+
+        public override void EnterRewriteStatementEnd(CodeElementsParser.RewriteStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new RewriteStatementEnd();
+        }
 
         public override void EnterSearchStatement(CodeElementsParser.SearchStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateSearchStatement(context);
+            if (context.serialSearch() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSerialSearchStatement(context.serialSearch());
+            }
+            else if (context.binarySearch() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateBinarySearchStatement(context.binarySearch());
+            }
         }
+
         public override void EnterSearchStatementEnd(CodeElementsParser.SearchStatementEndContext context)
         {
             Context = context;
             CodeElement = new SearchStatementEnd();
         }
 
-        public override void EnterSetStatementForAssignation(CodeElementsParser.SetStatementForAssignationContext context)
-        {
-            var statement = new SetStatementForAssignation();
-            if (context.identifier() != null)
-            {
-                statement.Receiving = new List<Expression>();
-                foreach ( var identifierContext in context.identifier()) {
-                    Expression receiving;
-                    if (identifierContext != null)
-                    {
-                        receiving = CobolWordsBuilder.CreateIdentifier(identifierContext);
-                    }
-                    else break;
-                    statement.Receiving.Add(receiving);
-                }
-            }
-
-            if (context.setStatementForAssignationSending() != null)
-            {
-               if (context.setStatementForAssignationSending().identifier() != null)
-                {
-                    statement.Sending = CobolWordsBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
-                }
-                else if (context.setStatementForAssignationSending().IntegerLiteral() != null)
-                {
-                    statement.Sending = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().IntegerLiteral())));
-                }
-                else if (context.setStatementForAssignationSending().TRUE() != null)
-                {
-                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().TRUE())));
-                }
-                else if (context.setStatementForAssignationSending().FALSE() != null)
-                {
-                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().FALSE())));
-                }
-                else if (context.setStatementForAssignationSending().NULL() != null)
-                {
-                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULL()));
-                }
-                else if (context.setStatementForAssignationSending().NULLS() != null)
-                {
-                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
-                }
-                else if (context.setStatementForAssignationSending().SELF() != null)
-                {
-                    statement.Sending =
-                        new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().SELF()));
-                }
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-
-        public override void EnterSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context)
-        {
-            var statement = new SetStatementForIndex();
-
-            if (context.indexNameReference() != null)
-            {
-                var indexs = new List<Index>();
-                foreach (var indexNameContext in context.indexNameReference())
-                {
-                    indexs.Add(CobolWordsBuilder.CreateIndex(indexNameContext));
-                }
-                statement.ReceivingIndexs = indexs;
-            }
-			statement.UpBy   = (context.UP() != null);
-			statement.DownBy = (context.DOWN() != null);
-
-            if (context.identifier() != null)
-            {
-                statement.SendingField = CobolWordsBuilder.CreateIdentifier(context.identifier());
-            } 
-            else if (context.IntegerLiteral() != null)
-            {
-                statement.SendingField = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext context)
-        {
-            var statement = new SetStatementForSwitches();
-
-            if (context.setStatementForSwitchesWhat() != null)
-            {
-                var setExternalSwitchs = new List<SetExternalSwitch>();
-                foreach (var switchesWhatContext in context.setStatementForSwitchesWhat())
-                {
-                    var setExternalSwitch = new SetExternalSwitch();
-                    
-                    if (switchesWhatContext.mnemonicForUPSISwitchNameReference() != null)
-                    {
-                        var mnemonics = new List<MnemonicForEnvironmentName>();
-                        foreach (var mnemonicContext in switchesWhatContext.mnemonicForUPSISwitchNameReference())
-                        {
-                           mnemonics.Add(new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(mnemonicContext)));
-                        }
-                        setExternalSwitch.MnemonicForEnvironmentNames = mnemonics;
-                    }
-					setExternalSwitch.ToOn = (switchesWhatContext.ON() != null);
-					setExternalSwitch.ToOff= (switchesWhatContext.OFF() != null);
-					setExternalSwitchs.Add(setExternalSwitch);
-                }
-                statement.SetExternalSwitches = setExternalSwitchs;
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-
-
-        public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context)
+        public override void EnterSetStatement(CodeElementsParser.SetStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateMergeStatement(context);
+            if (context.setStatementForAssignation() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(context.setStatementForAssignation());
+            }
+            else if (context.setStatementForIndexes() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(context.setStatementForIndexes());
+            }
+            else if (context.setStatementForSwitches() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(context.setStatementForSwitches());
+            }
+            else if (context.setStatementForConditionNames() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSetStatementForConditionNames(context.setStatementForConditionNames());
+            }
         }
 
         public override void EnterSortStatement(CodeElementsParser.SortStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateSortStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateSortStatement(context);
         }
 
         public override void EnterStartStatement(CodeElementsParser.StartStatementContext context)
         {
-            var statement = new StartStatement();
-            statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
-            statement.DataName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
-            if (context.relationalOperator() != null)
-                statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
-            
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateStartStatement(context);
         }
+
         public override void EnterStartStatementEnd(CodeElementsParser.StartStatementEndContext context)
         {
             Context = context;
@@ -2178,69 +1914,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterStopStatement(CodeElementsParser.StopStatementContext context)
         {
-            var statement = new StopStatement();
-            if (context.literal() != null)
-                statement.Literal = CobolWordsBuilder.CreateLiteral(context.literal());
-            statement.IsStopRun = context.RUN() != null;
-
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateStopStatement(context);
         }
 
         public override void EnterStringStatement(CodeElementsParser.StringStatementContext context)
         {
-            var statement = new StringStatement();
-
-            if (context.stringStatementWhat() != null)
-            {
-                var statementWhatList = new List<StringStatementWhat>();
-                foreach (CodeElementsParser.StringStatementWhatContext stringStatementWhatContext in context.stringStatementWhat())
-                {
-                    var stringStatementWhat = new StringStatementWhat();
-
-                    if (stringStatementWhatContext.identifierToConcat != null)
-                    {
-                        var identifierToConcat = new List<Expression>();
-                        foreach (
-                            CodeElementsParser.IdentifierOrLiteralContext idOrLiteral in
-                                stringStatementWhatContext.identifierOrLiteral())
-                        {
-                            identifierToConcat.Add(CreateIdentifierOrLiteral(idOrLiteral, statement, "String"));
-                        }
-                        stringStatementWhat.IdentifierToConcat = identifierToConcat;
-                    }
-                    //else don't set IdentifierToConcat. It will remains null
-
-
-					if (stringStatementWhatContext.stringStatementDelimiter() != null) {
-						if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null) {
-							stringStatementWhat.DelimiterIdentifier =
-								CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(), statement, "String");
-						} else {
-							stringStatementWhat.DelimitedBySize = (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null);
-						}
-					}
-                    statementWhatList.Add(stringStatementWhat);
-                }
-
-                statement.StringStatementWhat = statementWhatList;
-            }
-            //else don't set statement.StringStatementWhat
-
-
-            if (context.identifierInto != null)
-            {
-                statement.IntoIdentifier = CobolWordsBuilder.CreateIdentifier(context.identifierInto);
-            } //else don't set statement.IntoIdentifier
-
-
-            if (context.stringStatementWith() != null)
-            {
-                statement.PointerIdentifier = CobolWordsBuilder.CreateIdentifier(context.stringStatementWith().identifier());
-            } //else don't set statement.PointerIdentifier
-
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateStringStatement(context);
         }
 
         public override void EnterStringStatementEnd(CodeElementsParser.StringStatementEndContext context)
@@ -2249,29 +1930,21 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new StringStatementEnd();
         }
 
-        public override void EnterSubtractStatementFormat1(CodeElementsParser.SubtractStatementFormat1Context context)
+        public override void EnterSubtractStatement(CodeElementsParser.SubtractStatementContext context)
         {
-            var builder = new ArithmeticStatementBuilder('-');
-            builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
             Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterSubtractStatementFormat2(CodeElementsParser.SubtractStatementFormat2Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('-');
-            builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
-                context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterSubtractStatementFormat3(CodeElementsParser.SubtractStatementFormat3Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('-');
-            builder.InitializeFormat3Statement(context.identifier(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
+            if (context.subtractSimple() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSubtractStatement(context.subtractSimple());
+            }
+            else if (context.subtractGiving() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSubtractGivingStatement(context.subtractGiving());
+            }
+            else if (context.subtractCorresponding() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateSubtractCorrespondingStatement(context.subtractCorresponding());
+            }
         }
 
         public override void EnterSubtractStatementEnd(CodeElementsParser.SubtractStatementEndContext context)
@@ -2282,90 +1955,38 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterUnstringStatement(CodeElementsParser.UnstringStatementContext context)
         {
-            var statement = new UnstringStatement();
-
-            if (context.unstringIdentifier != null)
-            {
-                statement.UnstringIdentifier = CobolWordsBuilder.CreateIdentifier(context.unstringIdentifier);
-            }
-
-            if (context.unstringDelimited() != null)
-            {
-                if (context.unstringDelimited().delimitedBy != null)
-                {
-                    statement.DelimitedBy = CreateIdentifierOrLiteral(context.unstringDelimited().delimitedBy, statement, "unstring");
-                }
-
-                if (context.unstringDelimited().ustringOthersDelimiters() != null)
-                {
-                    var otherDelimiters = new List<Expression>();
-                    foreach (
-                        CodeElementsParser.UstringOthersDelimitersContext ustringOthersDelimitersContext in
-                            context.unstringDelimited().ustringOthersDelimiters())
-                    {
-                        otherDelimiters.Add(CreateIdentifierOrLiteral(ustringOthersDelimitersContext.identifierOrLiteral(), statement,
-                            "Unstring"));
-                    }
-                    statement.OtherDelimiters = otherDelimiters;
-                }
-            }
-
-            if (context.unstringReceiver() != null)
-            {
-                var unstringReceiverList = new List<UnstringReceiver>();
-                foreach (CodeElementsParser.UnstringReceiverContext unstringReceiverContext in context.unstringReceiver())
-                {
-                    var unstringReceiver = new UnstringReceiver();
-                    if (unstringReceiverContext.intoIdentifier != null)
-                    {
-                        unstringReceiver.IntoIdentifier = CobolWordsBuilder.CreateIdentifier(unstringReceiverContext.intoIdentifier);
-                    }
-                    if (unstringReceiverContext.unstringDelimiter() != null &&
-                        unstringReceiverContext.unstringDelimiter().identifier() != null)
-                    {
-                        unstringReceiver.DelimiterIdentifier =
-                            CobolWordsBuilder.CreateIdentifier(unstringReceiverContext.unstringDelimiter().identifier());
-                    }
-                    if (unstringReceiverContext.unstringCount() != null && unstringReceiverContext.unstringCount().identifier() != null)
-                    {
-                        unstringReceiver.CountIdentifier =
-                            CobolWordsBuilder.CreateIdentifier(unstringReceiverContext.unstringCount().identifier());
-                    }
-                    unstringReceiverList.Add(unstringReceiver);
-                }
-                statement.UnstringReceivers = unstringReceiverList;
-            }
-
-            if (context.unstringPointer() != null && context.unstringPointer().identifier() != null)
-            {
-                statement.WithPointer = CobolWordsBuilder.CreateIdentifier(context.unstringPointer().identifier());
-            }
-
-            if (context.unstringTallying() != null && context.unstringTallying().identifier() != null)
-            {
-                statement.Tallying = CobolWordsBuilder.CreateIdentifier(context.unstringTallying().identifier());
-            }
-
             Context = context;
-            CodeElement = statement;
+            CodeElement = CobolStatementsBuilder.CreateUnstringStatement(context);
         }
 
         public override void EnterUnstringStatementEnd(CodeElementsParser.UnstringStatementEndContext context)
         {
             Context = context;
             CodeElement = new UnstringStatementEnd();
-        }        
+        }
 
+        public override void EnterWriteStatement(CodeElementsParser.WriteStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateWriteStatement(context);
+        }
+
+        public override void EnterWriteStatementEnd(CodeElementsParser.WriteStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new WriteStatementEnd();
+        }
+        
         public override void EnterXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateXmlGenerateStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateXmlGenerateStatement(context);
         }
 
         public override void EnterXmlParseStatement(CodeElementsParser.XmlParseStatementContext context)
         {
             Context = context;
-            CodeElement = new StatementsBuilder().CreateXmlParseStatement(context);
+            CodeElement = CobolStatementsBuilder.CreateXmlParseStatement(context);
         }
 
         public override void EnterXmlStatementEnd(CodeElementsParser.XmlStatementEndContext context)
@@ -2374,19 +1995,7 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new XmlStatementEnd();
         }
 
-        // Statement conditions
-
-        public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenConditionalExpression();
-        }
-
-        public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenOtherCondition();
-        }
+        // -- Statement conditions --
 
         public override void EnterAtEndCondition(CodeElementsParser.AtEndConditionContext context)
         {
@@ -2410,6 +2019,32 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = new NotAtEndOfPageCondition();
+        }
+
+
+
+        public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context)
+        {
+            Context = context;
+            CodeElement = new WhenConditionalExpression();
+        }
+
+        public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context)
+        {
+            Context = context;
+            CodeElement = new WhenOtherCondition();
+        }
+
+        public override void EnterInvalidKeyCondition(CodeElementsParser.InvalidKeyConditionContext context)
+        {
+            Context = context;
+            CodeElement = new InvalidKeyCondition();
+        }
+
+        public override void EnterNotInvalidKeyCondition(CodeElementsParser.NotInvalidKeyConditionContext context)
+        {
+            Context = context;
+            CodeElement = new NotInvalidKeyCondition();
         }
 
         public override void EnterOnExceptionCondition(CodeElementsParser.OnExceptionConditionContext context)
@@ -2436,18 +2071,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new NotOnOverflowCondition();
         }
 
-        public override void EnterInvalidKeyCondition(CodeElementsParser.InvalidKeyConditionContext context)
-        {
-            Context = context;
-            CodeElement = new InvalidKeyCondition();
-        }
-
-        public override void EnterNotInvalidKeyCondition(CodeElementsParser.NotInvalidKeyConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotInvalidKeyCondition();
-        }
-
         public override void EnterOnSizeErrorCondition(CodeElementsParser.OnSizeErrorConditionContext context)
         {
             Context = context;
@@ -2458,569 +2081,6 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = new NotOnSizeErrorCondition();
-        }
-
-        // -- Symbols --
-
-        // ** Program names and Program entries **
-
-        public override void EnterProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramEntry);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterProgramNameReference1(CodeElementsParser.ProgramNameReference1Context context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterProgramNameReference2(CodeElementsParser.ProgramNameReference2Context context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // + runtime references
-        // => programNameFromDataOrProgramEntryFromData
-        // => programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
-
-        // ** Section names and Paragraph names **
-
-        public override void EnterSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SectionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ParagraphName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SectionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ParagraphName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterParagraphNameOrSectionNameReference(CodeElementsParser.ParagraphNameOrSectionNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.SectionName, SymbolType.ParagraphName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void ExitQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
-        {
-            if (context.sectionNameReference() != null)
-            {
-                Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.paragraphNameReference());
-                Token[] qualifierTokens = new Token[] { ParseTreeUtils.GetFirstToken(context.sectionNameReference()) };
-                UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-            }
-        }
-
-        // ** Class names and Method names **
-
-        public override void EnterClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMethodNameDefinition(CodeElementsParser.MethodNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MethodName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.ClassName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-        
-        public override void EnterExternalClassNameDefOrRef(CodeElementsParser.ExternalClassNameDefOrRefContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ExternalClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMethodNameReference(CodeElementsParser.MethodNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MethodName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // + runtime references 
-        // => methodNameFromData
-
-        // ** Environment names, UPSI switch names and associated Mnemonics, Condition  **
-
-        public override void EnterEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.EnvironmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterUpsiSwitchName(CodeElementsParser.UpsiSwitchNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.UPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForEnvironmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForUPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionForUPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForEnvironmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.MnemonicForEnvironmentName, SymbolType.EnvironmentName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForUPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // ** Character sets **
-
-        public override void EnterSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SymbolicCharacter);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SymbolicCharacter);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.AlphabetName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.AlphabetName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.CharacterClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.CharacterClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // ** Data item, Data conditions and Indexes **
-
-        public override void EnterDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.DataName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReference(CodeElementsParser.DataNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterSpecialRegister(CodeElementsParser.SpecialRegisterContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // Data name reference already handled above :
-        // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
-        
-        // Data name reference already handled above :
-        // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        
-        public override void EnterConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // Condition name reference already handled above :
-        // => public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-
-        // Condition name reference already handled above :
-        // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        
-		public override void ExitQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReference(),
-					legacy.dataNameReferenceOrFileNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReference(),
-					context.qDataOrFile());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataNameOrIndexName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrIndexNameReference(),
-					legacy.dataNameReferenceOrFileNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrIndexNameReference(),
-					context.qDataOrFile());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedConditionName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataNameOrConditionName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrIndexName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrIndexNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrFileName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context) {
-			Token qualifiedToken;
-			Token[] qualifierTokens;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrClassName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context) {
-			Token qualifiedToken;
-			Token[] qualifierTokens;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-
-		private void GetTokensForSymbolInformation(out Token qualifiedToken, out Token[] qualifierTokens, IParseTree node, IParseTree[] nodes) {
-			if (node != null)  qualifiedToken  = ParseTreeUtils.GetFirstToken(node);
-			else qualifiedToken = null;
-			if (nodes != null) qualifierTokens = nodes.Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-			else qualifierTokens = null;
-		}
-
-		private void UpdateSymbolInformationForQualifiedNames(Token qualifiedToken, Token[] qualifierTokens) {
-			if (qualifiedToken != null) {
-				SymbolInformation qualifiedSymbolInfo = CodeElement.SymbolInformationForTokens[qualifiedToken];
-				qualifiedSymbolInfo.QualifedBy = qualifierTokens;
-			}
-			if (qualifierTokens != null)
-			foreach (var qualifierToken in qualifierTokens) {
-				SymbolInformation qualifierSymbolInfo = CodeElement.SymbolInformationForTokens[qualifierToken];
-				qualifierSymbolInfo.QualifierFor = qualifiedToken;
-			}
-		}
-
-        public override void EnterIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.IndexName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterIndexNameReference(CodeElementsParser.IndexNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.IndexName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrIndexNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.IndexName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.IndexName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-               
-        // ** Files **
-
-        public override void EnterFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.FileName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterFileNameReference(CodeElementsParser.FileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.FileName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // File name reference already handled above :
-        // => public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
-
-        // File name reference already handled above :
-        // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
-
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.FileName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.XmlSchemaName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterAssignmentName(CodeElementsParser.AssignmentNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.AssignmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterAssignmentNameOrFileNameReference(CodeElementsParser.AssignmentNameOrFileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        // ** Runtime functions **
-
-		public override void EnterIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context) {
-			ITerminalNode node = null;
-			if (context.UserDefinedWord() != null) node = context.UserDefinedWord();
-			else
-			if (context.FunctionName() != null) node = context.FunctionName();
-			else
-			if (context.LENGTH() != null) node = context.LENGTH();
-			else
-			if (context.RANDOM() != null) node = context.RANDOM();
-			else
-			if (context.WHEN_COMPILED() != null) node = context.WHEN_COMPILED();
-			Token symbolToken = ParseTreeUtils.GetFirstToken(node);
-			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
-			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.ExecTranslatorName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
     }
 }
