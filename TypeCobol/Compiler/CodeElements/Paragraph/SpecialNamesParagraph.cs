@@ -92,7 +92,12 @@ namespace TypeCobol.Compiler.CodeElements
         On, Off
     }
 
-    public abstract class CollatingSequence { }
+    public abstract class CollatingSequence
+    {
+        public char GetLowValueChar() { return Char.MinValue; }
+
+        public char GetHighValueChar() { return Char.MaxValue; }
+    }
 
     public class InstrinsicCollatingSequence : CollatingSequence
     {

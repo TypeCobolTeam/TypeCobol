@@ -2,6 +2,18 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    // Hierarchy of classes :
+    // --------------------
+    // SymbolInformation
+    //     SymbolDefinition
+    //     SymbolReference
+    //         AmbiguousSymbolReference
+    //             ExternalNameOrSymbolReference
+    //         QualifiedSymbolReference
+    //     SymbolDefinitionOrReference
+    //     ExternalName
+    //         QualifiedTextName
+
     /// <summary>
     /// Properties of a symbol Token in the Cobol grammar
     /// </summary>
@@ -95,7 +107,7 @@ namespace TypeCobol.Compiler.CodeElements
             base(nameLiteral, SymbolRole.SymbolReference, type)
         {
             IsAmbiguous = false;
-            IsQualified = false;
+            IsQualifiedReference = false;
         }
 
         /// <summary>
@@ -105,10 +117,10 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsAmbiguous { get; protected set; }
         
         /// <summary>
-        /// True if the symbol reference is qualified by parent symbols
-        /// in a symbols hierarchy
+        /// True if the symbol reference is a combination of child and
+        /// parent symbols in a symbols hierarchy
         /// </summary>
-        public bool IsQualified { get; protected set; }
+        public bool IsQualifiedReference { get; protected set; }
 
         /// <summary>
         /// Used to resolve the symbol reference in a hierarchy of names
@@ -157,7 +169,7 @@ namespace TypeCobol.Compiler.CodeElements
             base(qualifiedSymbol.NameLiteral, qualifiedSymbol.Type)
         {
             IsAmbiguous = qualifiedSymbol.IsAmbiguous;
-            IsQualified = true;
+            IsQualifiedReference = true;
             QualifiedSymbol = qualifiedSymbol;
             QualifierSymbol = qualifierSymbol;
         }

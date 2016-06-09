@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Diagnostics;
-using Antlr4.Runtime.Misc;
 
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
-    ///     Build a CodeElement object while visiting its parse tree
+    /// Build a CodeElement object while visiting its parse tree
     /// </summary>
     internal class CobolCodeElementsBuilder : CodeElementsBaseListener
     {
@@ -32,14 +28,34 @@ namespace TypeCobol.Compiler.Parser
         public CodeElementDispatcher Dispatcher { get; internal set; }
 
         /// <summary>
-        ///     Initialization code run before parsing each new CodeElement
+        /// Initialization code run before parsing each new CodeElement
         /// </summary>
         public override void EnterCodeElement(CodeElementsParser.CodeElementContext context)
         {
             CodeElement = null;
             Context = null;
+            symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
+            CobolWordsBuilder = new CobolWordsBuilder(symbolInformationForTokens);
+            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
+            CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder);
         }
 
+        private IDictionary<Token, SymbolInformation> symbolInformationForTokens;
+        private CobolWordsBuilder CobolWordsBuilder { get; set; }
+        private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
+        private CobolStatementsBuilder CobolStatementsBuilder { get; set; }
+
+        /// <summary>
+        /// Code run after parsing each new CodeElement
+        /// </summary>
+        public override void ExitCodeElement(CodeElementsParser.CodeElementContext context)
+        {
+            if(CodeElement != null && symbolInformationForTokens.Keys.Count > 0)
+            {
+                CodeElement.SymbolInformationForTokens = symbolInformationForTokens;
+            }
+        }
+        
         // Code structure
 
         // -- Program --
@@ -148,7 +164,7 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Authoring properties common to all identification divisions ---
 
-        internal static AuthoringProperties CreateAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context)
+        internal AuthoringProperties CreateAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context)
         {
             var authoringProperties = new AuthoringProperties();
 
@@ -181,7 +197,7 @@ namespace TypeCobol.Compiler.Parser
             return authoringProperties;
         }
 
-        private static AlphanumericValue[] CreateAlphanumericValues(CodeElementsParser.AlphanumericValue6Context[] alphanumericValueContexts)
+        private AlphanumericValue[] CreateAlphanumericValues(CodeElementsParser.AlphanumericValue6Context[] alphanumericValueContexts)
         {
             AlphanumericValue[] alphanumericValues = new AlphanumericValue[alphanumericValueContexts.Length];
             for (int i = 0; i < alphanumericValueContexts.Length; i++)
@@ -486,7 +502,7 @@ namespace TypeCobol.Compiler.Parser
             return charactersRange;
         }
 
-        private static CharactersInCollatingSequence CreateCharactersInCollatingSequence(CodeElementsParser.CharactersInCollatingSequenceContext charsInCSContext)
+        private CharactersInCollatingSequence CreateCharactersInCollatingSequence(CodeElementsParser.CharactersInCollatingSequenceContext charsInCSContext)
         {
             var charactersInCollatingSequence = new CharactersInCollatingSequence();
             if (charsInCSContext.alphanumericValue1() != null)
@@ -966,7 +982,7 @@ namespace TypeCobol.Compiler.Parser
                 for (int i = 0; i < valueOfClauseContext.qualifiedDataName().Length; i++)
                 {
                     entry.ValueOfLabelRecords.Add(
-                        CobolExpressionsBuilder.CreateQualifiedDataName(valueOfClauseContext.qualifiedDataName()[i]),
+                        CobolWordsBuilder.CreateQualifiedDataName(valueOfClauseContext.qualifiedDataName()[i]),
                         CobolExpressionsBuilder.CreateVariable(valueOfClauseContext.variable5()[i]));
                 }
             }
@@ -1536,7 +1552,14 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context)
         {
             Context = context;
-            CodeElement = CobolStatementsBuilder.CreateAcceptStatement(context);
+            if (context.acceptDataTransfer() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(context.acceptDataTransfer());
+            }
+            else if(context.acceptSystemDateTime() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateAcceptSystemDateTime(context.acceptSystemDateTime());
+            }
         }
 
         public override void EnterAddStatement(CodeElementsParser.AddStatementContext context)

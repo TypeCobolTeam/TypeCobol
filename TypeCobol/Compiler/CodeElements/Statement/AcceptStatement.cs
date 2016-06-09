@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -36,6 +36,8 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class AcceptStatement : CodeElement
     {
+        public AcceptStatement() : base(CodeElementType.AcceptStatement) { }
+
         /// <summary>
         /// p294:
         /// identifier-1
@@ -61,7 +63,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// – external floating-point (with usage DISPLAY or NATIONAL)
         /// A national group item is processed an an elementary data item of category national.
         /// </summary>
-        public Identifier Receiving;
+        public ReceivingStorageArea ReceivingStorageArea { get; set; }
 
         /// <summary>
         /// p294:
@@ -78,7 +80,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// If the device is the same as that used for READ statements for a LINE
         /// SEQUENTIAL file, results are unpredictable.
         /// </summary>
-        public MnemonicOrEnvironmentName Input;
+        public SymbolReference FromMnemonicOrEnvironmentName { get; set; }
 
         /// <summary>
         /// The conceptual data items DATE, DATE YYYYMMDD, DAY, DAY YYYYDDD,
@@ -89,12 +91,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// rules of the MOVE statement. If the receiving area is of usage NATIONAL, the
         /// data is converted to national character representation.
         /// </summary>
-        public DateMode Mode;
-
-        public AcceptStatement() : base(CodeElementType.AcceptStatement) { }
+        public SyntaxProperty<DateSource> FromDateSource { get; set; }
     }
 
-    public enum DateMode
+    public enum DateSource
     {
         UNKNOWN,
         /// <summary>

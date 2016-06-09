@@ -2,177 +2,25 @@
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
-    internal static class CobolExpressionsBuilder
-    {
-        // --- Qualified names : give explicit context to resolve ambiguous name references ---
-
-        internal static SymbolReference CreateProcedureName(CodeElementsParser.ProcedureNameContext context)
+    internal class CobolExpressionsBuilder
+    {        
+        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder)
         {
-            if(context.paragraphNameReferenceOrSectionNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateParagraphNameReferenceOrSectionNameReference(
-                    context.paragraphNameReferenceOrSectionNameReference());
-            }
-            else
-            {
-                return CreateQualifiedParagraphNameReference(context.qualifiedParagraphNameReference());
-            }
+            CobolWordsBuilder = cobolWordsBuilder;
         }
 
-        internal static SymbolReference CreateQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
-        {
-            return new QualifiedSymbolReference(
-                    CobolWordsBuilder.CreateParagraphNameReference(context.paragraphNameReference()),
-                    CobolWordsBuilder.CreateSectionNameReference(context.sectionNameReference()));
-        }
-
-        internal static SymbolReference CreateQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context)
-        {
-            if(context.dataNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateDataNameReference(context.dataNameReference());
-            }
-            else
-            {
-                return CreateQualifiedDataName1(context.qualifiedDataName1());
-            }
-        }
-
-        internal static SymbolReference CreateQualifiedDataName1(CodeElementsParser.QualifiedDataName1Context context)
-        {
-            SymbolReference qualifiedDataName = new QualifiedSymbolReference(
-                    CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()),
-                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReference(context.dataNameReferenceOrFileNameReference()[0]));
-
-            for (int i = 1; i < context.dataNameReferenceOrFileNameReference().Length; i++)
-            {
-                qualifiedDataName = new QualifiedSymbolReference(
-                    qualifiedDataName,
-                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReference(context.dataNameReferenceOrFileNameReference()[i]));
-            }
-            return qualifiedDataName;
-        }
-
-        internal static SymbolReference CreateQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context)
-        {
-            if (context.dataNameReferenceOrIndexNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateDataNameReferenceOrIndexNameReference(context.dataNameReferenceOrIndexNameReference());
-            }
-            else
-            {
-                return CreateQualifiedDataName1(context.qualifiedDataName1());
-            }
-        }
-
-        internal static SymbolReference CreateRecordName(CodeElementsParser.RecordNameContext context)
-        {
-            // Could add here a specific property to mark the data name as a record name
-            return CreateQualifiedDataName(context.qualifiedDataName());
-        }
-
-        internal static SymbolReference CreateQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context)
-        {
-            if(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference() == null ||
-                context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Length == 0)
-            {
-                return CobolWordsBuilder.CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(
-                    context.conditionNameReferenceOrConditionForUPSISwitchNameReference());
-            }
-            else
-            {
-                SymbolReference qualifiedDataName = new QualifiedSymbolReference(
-                    CobolWordsBuilder.CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(
-                        context.conditionNameReferenceOrConditionForUPSISwitchNameReference()),
-                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(
-                        context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference()[0]));
-
-                for (int i = 1; i < context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Length; i++)
-                {
-                    qualifiedDataName = new QualifiedSymbolReference(
-                        qualifiedDataName,
-                        CobolWordsBuilder.CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(
-                            context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference()[i]));
-                }
-                return qualifiedDataName;
-            }
-        }
-
-        internal static SymbolReference CreateQualifiedDataNameOrQualifiedConditionName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context)
-        {
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
-            }
-            else
-            {
-                return CreateQualifiedDataNameOrQualifiedConditionName1(context.qualifiedDataNameOrQualifiedConditionName1());
-            }
-        }
-
-        internal static SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.QualifiedDataNameOrQualifiedConditionName1Context context)
-        {
-            SymbolReference qualifiedDataNameOrConditionNameOrConditionForUPSISwitchName = new QualifiedSymbolReference(
-                    CobolWordsBuilder.CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference()),
-                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference()[0]));
-
-            for (int i = 1; i < context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference().Length; i++)
-            {
-                qualifiedDataNameOrConditionNameOrConditionForUPSISwitchName = new QualifiedSymbolReference(
-                    qualifiedDataNameOrConditionNameOrConditionForUPSISwitchName,
-                    CobolWordsBuilder.CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(context.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference()[i]));
-            }
-            return qualifiedDataNameOrConditionNameOrConditionForUPSISwitchName;
-        }
-
-        internal static SymbolReference CreateQualifiedDataNameOrQualifiedConditionNameOrIndexName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrIndexNameContext context)
-        {
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference());
-            }
-            else
-            {
-                return CreateQualifiedDataNameOrQualifiedConditionName1(context.qualifiedDataNameOrQualifiedConditionName1());
-            }
-        }
-
-        internal static SymbolReference CreateQualifiedDataNameOrQualifiedConditionNameOrFileName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context)
-        {
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference());
-            }
-            else
-            {
-                return CreateQualifiedDataNameOrQualifiedConditionName1(context.qualifiedDataNameOrQualifiedConditionName1());
-            }
-        }
-
-        internal static SymbolReference CreateQualifiedDataNameOrQualifiedConditionNameOrClassName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context)
-        {
-            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference() != null)
-            {
-                return CobolWordsBuilder.CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference());
-            }
-            else
-            {
-                return CreateQualifiedDataNameOrQualifiedConditionName1(context.qualifiedDataNameOrQualifiedConditionName1());
-            }
-        }
-
+        private CobolWordsBuilder CobolWordsBuilder { get; set; }
 
         // --- (Data storage area) Identifiers ---
 
         // - 1. Table elements reference : subscripting data names or condition names -
 
-        internal static DataOrConditionStorageArea CreateDataItemReference(CodeElementsParser.DataItemReferenceContext context)
+        internal DataOrConditionStorageArea CreateDataItemReference(CodeElementsParser.DataItemReferenceContext context)
         {
-            SymbolReference qualifiedDataName = CreateQualifiedDataName(context.qualifiedDataName());
+            SymbolReference qualifiedDataName = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
             if (context.subscript() == null || context.subscript().Length == 0)
             {
                 return new DataOrConditionStorageArea(qualifiedDataName);
@@ -184,9 +32,9 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static DataOrConditionStorageArea CreateConditionReference(CodeElementsParser.ConditionReferenceContext context)
+        internal DataOrConditionStorageArea CreateConditionReference(CodeElementsParser.ConditionReferenceContext context)
         {
-            SymbolReference qualifiedConditionName = CreateQualifiedConditionName(context.qualifiedConditionName());
+            SymbolReference qualifiedConditionName = CobolWordsBuilder.CreateQualifiedConditionName(context.qualifiedConditionName());
             if (context.subscript() == null || context.subscript().Length == 0)
             {
                 return new DataOrConditionStorageArea(qualifiedConditionName);
@@ -198,9 +46,9 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static DataOrConditionStorageArea CreateDataItemReferenceOrConditionReference(CodeElementsParser.DataItemReferenceOrConditionReferenceContext context)
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReference(CodeElementsParser.DataItemReferenceOrConditionReferenceContext context)
         {
-            SymbolReference qualifiedDataNameOrQualifiedConditionName = CreateQualifiedDataNameOrQualifiedConditionName(context.qualifiedDataNameOrQualifiedConditionName());
+            SymbolReference qualifiedDataNameOrQualifiedConditionName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionName(context.qualifiedDataNameOrQualifiedConditionName());
             if (context.subscript() == null || context.subscript().Length == 0)
             {
                 return new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionName);
@@ -212,9 +60,9 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrIndexName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrIndexNameContext context)
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrIndexName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrIndexNameContext context)
         {
-            SymbolReference qualifiedDataNameOrQualifiedConditionNameOrIndexName = CreateQualifiedDataNameOrQualifiedConditionNameOrIndexName(context.qualifiedDataNameOrQualifiedConditionNameOrIndexName());
+            SymbolReference qualifiedDataNameOrQualifiedConditionNameOrIndexName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionNameOrIndexName(context.qualifiedDataNameOrQualifiedConditionNameOrIndexName());
             DataOrConditionStorageArea storageArea = null;
             if (context.subscript() == null || context.subscript().Length == 0)
             {
@@ -229,9 +77,9 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
-        internal static DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrFileName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrFileNameContext context)
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrFileName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrFileNameContext context)
         {
-            SymbolReference qualifiedDataNameOrQualifiedConditionNameOrFileName = CreateQualifiedDataNameOrQualifiedConditionNameOrFileName(context.qualifiedDataNameOrQualifiedConditionNameOrFileName());
+            SymbolReference qualifiedDataNameOrQualifiedConditionNameOrFileName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionNameOrFileName(context.qualifiedDataNameOrQualifiedConditionNameOrFileName());
             DataOrConditionStorageArea storageArea = null;
             if (context.subscript() == null || context.subscript().Length == 0)
             {
@@ -246,9 +94,9 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
-        internal static DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrClassName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrClassNameContext context)
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrClassName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrClassNameContext context)
         {
-            SymbolReference qualifiedDataNameOrQualifiedConditionNameOrClassName = CreateQualifiedDataNameOrQualifiedConditionNameOrClassName(context.qualifiedDataNameOrQualifiedConditionNameOrClassName());
+            SymbolReference qualifiedDataNameOrQualifiedConditionNameOrClassName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionNameOrClassName(context.qualifiedDataNameOrQualifiedConditionNameOrClassName());
             DataOrConditionStorageArea storageArea = null;
             if (context.subscript() == null || context.subscript().Length == 0)
             {
@@ -263,7 +111,7 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
-        internal static SubscriptExpression[] CreateSubscriptExpressions(CodeElementsParser.SubscriptContext[] contextArray)
+        internal SubscriptExpression[] CreateSubscriptExpressions(CodeElementsParser.SubscriptContext[] contextArray)
         {
             SubscriptExpression[] subscriptExpressions = new SubscriptExpression[contextArray.Length];
             for(int i = 0; i < contextArray.Length; i++)
@@ -311,21 +159,21 @@ namespace TypeCobol.Compiler.Parser
 
         // - 2. Special registers (allocate a storage area on reference) -
 
-        internal static StorageArea CreateLinageCounterSpecialRegister(CodeElementsParser.LinageCounterSpecialRegisterContext context)
+        internal StorageArea CreateLinageCounterSpecialRegister(CodeElementsParser.LinageCounterSpecialRegisterContext context)
         {
             return new FilePropertySpecialRegister(
                 ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
                 CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
         }
 
-        internal static StorageArea CreateAddressOfSpecialRegister(CodeElementsParser.AddressOfSpecialRegisterContext context)
+        internal StorageArea CreateAddressOfSpecialRegister(CodeElementsParser.AddressOfSpecialRegisterContext context)
         {
             return new StorageAreaPropertySpecialRegister(
                 ParseTreeUtils.GetFirstToken(context.ADDRESS()),
                 CreateStorageAreaReference(context.storageAreaReference()));
         }
 
-        internal static StorageArea CreateLengthOfSpecialRegister(CodeElementsParser.LengthOfSpecialRegisterContext context)
+        internal StorageArea CreateLengthOfSpecialRegister(CodeElementsParser.LengthOfSpecialRegisterContext context)
         {
             return new StorageAreaPropertySpecialRegister(
                 ParseTreeUtils.GetFirstToken(context.LENGTH()),
@@ -334,14 +182,14 @@ namespace TypeCobol.Compiler.Parser
 
         // - 3. Intrinsic function calls (allocate a storage area for the result) -
 
-        internal static StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
+        internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
         {
             return new IntrinsicFunctionCallResultStorageArea(
                 CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName()),
                 CreateArguments(context.argument()));
         }
 
-        private static VariableOrExpression[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
+        private VariableOrExpression[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
         {
             VariableOrExpression[] arguments = new VariableOrExpression[argumentContext.Length];
             for(int i = 0; i < argumentContext.Length; i++)
@@ -351,7 +199,7 @@ namespace TypeCobol.Compiler.Parser
             return arguments;
         }
 
-        internal static StorageArea CreateStorageAreaReference(CodeElementsParser.StorageAreaReferenceContext context)
+        internal StorageArea CreateStorageAreaReference(CodeElementsParser.StorageAreaReferenceContext context)
         {
             if(context.dataItemReference() != null)
             {
@@ -363,7 +211,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static StorageArea CreateOtherStorageAreaReference(CodeElementsParser.OtherStorageAreaReferenceContext context)
+        internal StorageArea CreateOtherStorageAreaReference(CodeElementsParser.OtherStorageAreaReferenceContext context)
         {
             if (context.intrinsicDataNameReference() != null)
             {
@@ -392,7 +240,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static StorageArea CreateStorageAreaReferenceOrConditionReference(CodeElementsParser.StorageAreaReferenceOrConditionReferenceContext context)
+        internal StorageArea CreateStorageAreaReferenceOrConditionReference(CodeElementsParser.StorageAreaReferenceOrConditionReferenceContext context)
         {
             if (context.dataItemReferenceOrConditionReference() != null)
             {
@@ -404,7 +252,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static StorageArea CreateStorageAreaReferenceOrConditionReferenceOrIndexName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrIndexNameContext context)
+        internal StorageArea CreateStorageAreaReferenceOrConditionReferenceOrIndexName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrIndexNameContext context)
         {
             if (context.dataItemReferenceOrConditionReferenceOrIndexName() != null)
             {
@@ -416,7 +264,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static StorageArea CreateStorageAreaReferenceOrConditionReferenceOrFileName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrFileNameContext context)
+        internal StorageArea CreateStorageAreaReferenceOrConditionReferenceOrFileName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrFileNameContext context)
         {
             if (context.dataItemReferenceOrConditionReferenceOrFileName() != null)
             {
@@ -428,7 +276,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static StorageArea CreateStorageAreaReferenceOrConditionReferenceOrClassName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrClassNameContext context)
+        internal StorageArea CreateStorageAreaReferenceOrConditionReferenceOrClassName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrClassNameContext context)
         {
             if (context.dataItemReferenceOrConditionReferenceOrClassName() != null)
             {
@@ -440,7 +288,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static StorageArea CreateIdentifier(CodeElementsParser.IdentifierContext context)
+        internal StorageArea CreateIdentifier(CodeElementsParser.IdentifierContext context)
         {
             StorageArea storageArea = CreateStorageAreaReferenceOrConditionReference(context.storageAreaReferenceOrConditionReference());
             if(context.referenceModifier() != null)
@@ -451,7 +299,7 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
-        private static ReferenceModifier CreateReferenceModifier(CodeElementsParser.ReferenceModifierContext context)
+        private ReferenceModifier CreateReferenceModifier(CodeElementsParser.ReferenceModifierContext context)
         {
             ArithmeticExpression leftmostCharacterPosition = CreateArithmeticExpression(context.leftMostCharacterPosition);
             ArithmeticExpression length = null;
@@ -462,7 +310,7 @@ namespace TypeCobol.Compiler.Parser
             return new ReferenceModifier(leftmostCharacterPosition, length);
         }
 
-        internal static StorageArea CreateIdentifierOrIndexName(CodeElementsParser.IdentifierOrIndexNameContext context)
+        internal StorageArea CreateIdentifierOrIndexName(CodeElementsParser.IdentifierOrIndexNameContext context)
         {
             StorageArea storageArea = CreateStorageAreaReferenceOrConditionReferenceOrIndexName(context.storageAreaReferenceOrConditionReferenceOrIndexName());
             if (context.referenceModifier() != null)
@@ -473,7 +321,7 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
-        internal static StorageArea CreateIdentifierOrFileName(CodeElementsParser.IdentifierOrFileNameContext context)
+        internal StorageArea CreateIdentifierOrFileName(CodeElementsParser.IdentifierOrFileNameContext context)
         {
             StorageArea storageArea = CreateStorageAreaReferenceOrConditionReferenceOrFileName(context.storageAreaReferenceOrConditionReferenceOrFileName());
             if (context.referenceModifier() != null)
@@ -484,7 +332,7 @@ namespace TypeCobol.Compiler.Parser
             return storageArea;
         }
 
-        internal static StorageArea CreateIdentifierOrClassName(CodeElementsParser.IdentifierOrClassNameContext context)
+        internal StorageArea CreateIdentifierOrClassName(CodeElementsParser.IdentifierOrClassNameContext context)
         {
             StorageArea storageArea = CreateStorageAreaReferenceOrConditionReferenceOrClassName(context.storageAreaReferenceOrConditionReferenceOrClassName());
             if (context.referenceModifier() != null)
@@ -498,7 +346,7 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Arithmetic Expressions ---
 
-        internal static ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context)
+        internal ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context)
         {
             if(context.numericVariable3() != null)
             {
@@ -579,7 +427,7 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Conditional Expressions ---
 
-        internal static ConditionalExpression CreateConditionalExpression(CodeElementsParser.ConditionalExpressionContext context)
+        internal ConditionalExpression CreateConditionalExpression(CodeElementsParser.ConditionalExpressionContext context)
         {
 
             if(context.classCondition() != null)
@@ -641,7 +489,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static ConditionalExpression CreateClassCondition(CodeElementsParser.ClassConditionContext context)
+        internal ConditionalExpression CreateClassCondition(CodeElementsParser.ClassConditionContext context)
         {
             SyntaxProperty<bool> invertResult = null;
             if (context.NOT() != null)
@@ -695,20 +543,20 @@ namespace TypeCobol.Compiler.Parser
             return classCondition;
         }
 
-        internal static ConditionalExpression CreateConditionNameConditionOrSwitchStatusCondition(CodeElementsParser.ConditionNameConditionOrSwitchStatusConditionContext context)
+        internal ConditionalExpression CreateConditionNameConditionOrSwitchStatusCondition(CodeElementsParser.ConditionNameConditionOrSwitchStatusConditionContext context)
         {
             return new ConditionNameConditionOrSwitchStatusCondition(
                 CreateConditionReference(context.conditionReference()));
         }
 
-        internal static ConditionalExpression CreateRelationCondition(CodeElementsParser.RelationConditionContext context)
+        internal ConditionalExpression CreateRelationCondition(CodeElementsParser.RelationConditionContext context)
         {
             ConditionOperand subjectOperand = CreateConditionOperand(context.conditionOperand());
             SyntaxProperty<RelationalOperator> relationalOperator = CreateRelationalOperator(context.relationalOperator());
             return CreateAbbreviatedExpression(subjectOperand, relationalOperator, context.abbreviatedExpression());
         }
 
-        private static ConditionalExpression CreateAbbreviatedExpression(ConditionOperand subjectOperand, SyntaxProperty<RelationalOperator> distributedRelationalOperator, CodeElementsParser.AbbreviatedExpressionContext context)
+        private ConditionalExpression CreateAbbreviatedExpression(ConditionOperand subjectOperand, SyntaxProperty<RelationalOperator> distributedRelationalOperator, CodeElementsParser.AbbreviatedExpressionContext context)
         {
             if (context.conditionOperand() != null)
             {
@@ -763,7 +611,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private static ConditionOperand CreateConditionOperand(CodeElementsParser.ConditionOperandContext context)
+        private ConditionOperand CreateConditionOperand(CodeElementsParser.ConditionOperandContext context)
         {
             ConditionOperand conditionOperand = null;
             if (context.arithmeticExpression() != null)
@@ -789,7 +637,7 @@ namespace TypeCobol.Compiler.Parser
             return conditionOperand;
         }
 
-        private static SyntaxProperty<RelationalOperator> CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
+        private SyntaxProperty<RelationalOperator> CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
         {
             if(context.strictRelation() != null)
             {
@@ -867,7 +715,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static ConditionalExpression CreateSignCondition(CodeElementsParser.SignConditionContext context)
+        internal ConditionalExpression CreateSignCondition(CodeElementsParser.SignConditionContext context)
         {
             SyntaxProperty<bool> invertResult = null;
             if (context.NOT() != null)
@@ -905,7 +753,7 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Cobol variables : runtime value or literal ---
 
-        internal static BooleanValueOrExpression CreateBooleanValueOrExpression(CodeElementsParser.BooleanValueOrExpressionContext context)
+        internal BooleanValueOrExpression CreateBooleanValueOrExpression(CodeElementsParser.BooleanValueOrExpressionContext context)
         {
             if(context.booleanValue() != null)
             {
@@ -919,7 +767,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static IntegerVariable CreateIntegerVariable(CodeElementsParser.IntegerVariable1Context context)
+        internal IntegerVariable CreateIntegerVariable(CodeElementsParser.IntegerVariable1Context context)
         {
             if(context.identifier() != null)
             {
@@ -933,7 +781,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static IntegerVariable CreateIntegerVariable(CodeElementsParser.IntegerVariable2Context context)
+        internal IntegerVariable CreateIntegerVariable(CodeElementsParser.IntegerVariable2Context context)
         {
             if (context.dataNameReference() != null)
             {
@@ -948,7 +796,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static IntegerVariable CreateIntegerVariableOrIndex(CodeElementsParser.IntegerVariableOrIndex1Context context)
+        internal IntegerVariable CreateIntegerVariableOrIndex(CodeElementsParser.IntegerVariableOrIndex1Context context)
         {
             if (context.identifierOrIndexName() != null)
             {
@@ -962,13 +810,13 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static IntegerVariable CreateIntegerVariableOrIndex(CodeElementsParser.IntegerVariableOrIndex2Context context)
+        internal IntegerVariable CreateIntegerVariableOrIndex(CodeElementsParser.IntegerVariableOrIndex2Context context)
         {
             if (context.qualifiedDataNameOrIndexName() != null)
             {
                 return new IntegerVariable(
                     new DataOrConditionStorageArea(
-                        CreateQualifiedDataNameOrIndexName(context.qualifiedDataNameOrIndexName())));
+                        CobolWordsBuilder.CreateQualifiedDataNameOrIndexName(context.qualifiedDataNameOrIndexName())));
             }
             else
             {
@@ -977,20 +825,20 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable1Context context)
+        internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable1Context context)
         {
             return new NumericVariable(
                 CreateIdentifier(context.identifier()));
         }
 
-        internal static NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable2Context context)
+        internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable2Context context)
         {
             return new NumericVariable(
                     new DataOrConditionStorageArea(
                         CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
         }
 
-        internal static NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context)
+        internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context)
         {
             if(context.identifier() != null)
             {
@@ -1004,7 +852,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static NumericVariable CreateNumericVariableOrIndex(CodeElementsParser.NumericVariableOrIndexContext context)
+        internal NumericVariable CreateNumericVariableOrIndex(CodeElementsParser.NumericVariableOrIndexContext context)
         {
             if (context.identifierOrIndexName() != null)
             {
@@ -1018,7 +866,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static CharacterVariable CreateCharacterVariable(CodeElementsParser.CharacterVariableContext context)
+        internal CharacterVariable CreateCharacterVariable(CodeElementsParser.CharacterVariableContext context)
         {
             if (context.dataNameReference() != null)
             {
@@ -1033,7 +881,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static AlphanumericVariable CreateAlphanumericVariable(CodeElementsParser.AlphanumericVariable1Context context)
+        internal AlphanumericVariable CreateAlphanumericVariable(CodeElementsParser.AlphanumericVariable1Context context)
         {
             if (context.identifier() != null)
             {
@@ -1047,7 +895,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static AlphanumericVariable CreateAlphanumericVariable(CodeElementsParser.AlphanumericVariable2Context context)
+        internal AlphanumericVariable CreateAlphanumericVariable(CodeElementsParser.AlphanumericVariable2Context context)
         {
             if (context.identifier() != null)
             {
@@ -1069,7 +917,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static SymbolReferenceVariable CreateProgramNameVariable(CodeElementsParser.ProgramNameVariableContext context)
+        internal SymbolReferenceVariable CreateProgramNameVariable(CodeElementsParser.ProgramNameVariableContext context)
         {
             if (context.programNameReference1() != null)
             {
@@ -1083,7 +931,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static SymbolReferenceVariable CreateProgramNameOrProgramEntryVariable(CodeElementsParser.ProgramNameOrProgramEntryVariableContext context)
+        internal SymbolReferenceVariable CreateProgramNameOrProgramEntryVariable(CodeElementsParser.ProgramNameOrProgramEntryVariableContext context)
         {
             if (context.programNameReferenceOrProgramEntryReference() != null)
             {
@@ -1097,7 +945,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
+        internal SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
         {
             if (context.programNameReferenceOrProgramEntryReference() != null)
             {
@@ -1111,13 +959,13 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static SymbolReferenceVariable CreateClassNameOrObjectReferenceVariable(CodeElementsParser.ClassNameOrObjectReferenceVariableContext context)
+        internal SymbolReferenceVariable CreateClassNameOrObjectReferenceVariable(CodeElementsParser.ClassNameOrObjectReferenceVariableContext context)
         {
             StorageArea storageArea = CreateIdentifierOrClassName(context.identifierOrClassName());
             return new SymbolReferenceVariable(StorageDataType.ClassNameOrObjectReference, storageArea);
         }
 
-        internal static SymbolReferenceVariable CreateMethodNameVariable(CodeElementsParser.MethodNameVariableContext context)
+        internal SymbolReferenceVariable CreateMethodNameVariable(CodeElementsParser.MethodNameVariableContext context)
         {
             if (context.methodNameReference() != null)
             {
@@ -1131,20 +979,20 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable1Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable1Context context)
         {
             StorageArea storageArea = CreateIdentifier(context.identifier());
             return new Variable(storageArea);
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable2Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable2Context context)
         {
-            SymbolReference qualifiedDataName = CreateQualifiedDataName(context.qualifiedDataName());
+            SymbolReference qualifiedDataName = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
             StorageArea storageArea = new DataOrConditionStorageArea(qualifiedDataName);
             return new Variable(storageArea);
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable3Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable3Context context)
         {
             if (context.identifier() != null)
             {
@@ -1163,7 +1011,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable4Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable4Context context)
         {
             if (context.identifier() != null)
             {
@@ -1182,7 +1030,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable5Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable5Context context)
         {
             if (context.dataNameReference() != null)
             {
@@ -1202,7 +1050,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable6Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable6Context context)
         {
             if (context.identifier() != null)
             {
@@ -1226,7 +1074,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariable(CodeElementsParser.Variable7Context context)
+        internal Variable CreateVariable(CodeElementsParser.Variable7Context context)
         {
             if (context.identifier() != null)
             {
@@ -1250,7 +1098,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariableOrIndex(CodeElementsParser.VariableOrIndexContext context)
+        internal Variable CreateVariableOrIndex(CodeElementsParser.VariableOrIndexContext context)
         {
             if(context.identifierOrIndexName() != null)
             {
@@ -1274,7 +1122,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static Variable CreateVariableOrFileName(CodeElementsParser.VariableOrFileNameContext context)
+        internal Variable CreateVariableOrFileName(CodeElementsParser.VariableOrFileNameContext context)
         {
             if (context.identifierOrFileName() != null)
             {
@@ -1298,7 +1146,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression1Context context)
+        internal VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression1Context context)
         {
             if (context.identifier() != null)
             {
@@ -1322,7 +1170,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal static VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression2Context context)
+        internal VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression2Context context)
         {
             if (context.identifier() != null)
             {
@@ -1354,19 +1202,19 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Storage areas where statements results are saved ---
 
-        internal static ReceivingStorageArea CreateNumericStorageArea(CodeElementsParser.NumericStorageAreaContext context)
+        internal ReceivingStorageArea CreateNumericStorageArea(CodeElementsParser.NumericStorageAreaContext context)
         {
             return new ReceivingStorageArea(StorageDataType.Numeric,
                 CreateIdentifier(context.identifier()));
         }
 
-        internal static ReceivingStorageArea CreateAlphanumericStorageArea(CodeElementsParser.AlphanumericStorageAreaContext context)
+        internal ReceivingStorageArea CreateAlphanumericStorageArea(CodeElementsParser.AlphanumericStorageAreaContext context)
         {
             return new ReceivingStorageArea(StorageDataType.Alphanumeric,
                 CreateIdentifier(context.identifier()));
         }
 
-        internal static ReceivingStorageArea CreateIndexStorageArea(CodeElementsParser.IndexStorageAreaContext context)
+        internal ReceivingStorageArea CreateIndexStorageArea(CodeElementsParser.IndexStorageAreaContext context)
         {
             StorageArea indexStorageArea = new IndexStorageArea(
                 CobolWordsBuilder.CreateIndexNameReference(context.indexNameReference()));
@@ -1374,19 +1222,19 @@ namespace TypeCobol.Compiler.Parser
             return new ReceivingStorageArea(StorageDataType.Numeric, indexStorageArea);
         }
 
-        internal static ReceivingStorageArea CreateDataOrIndexStorageArea(CodeElementsParser.DataOrIndexStorageAreaContext context)
+        internal ReceivingStorageArea CreateDataOrIndexStorageArea(CodeElementsParser.DataOrIndexStorageAreaContext context)
         {
             return new ReceivingStorageArea(StorageDataType.Numeric,
                 CreateIdentifierOrIndexName(context.identifierOrIndexName()));
         }
 
-        internal static ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea1Context context)
+        internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea1Context context)
         {
             return new ReceivingStorageArea(StorageDataType.Any,
                 CreateIdentifier(context.identifier()));
         }
 
-        internal static ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea2Context context)
+        internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea2Context context)
         {
             return new ReceivingStorageArea(StorageDataType.Any,
                 new DataOrConditionStorageArea(
