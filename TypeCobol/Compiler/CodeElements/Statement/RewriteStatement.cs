@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,8 +10,11 @@ namespace TypeCobol.Compiler.CodeElements
     ///
     /// The REWRITE statement is not supported for line-sequential files.
     /// </summary>
-    public class RewriteStatement : CodeElement
+    public class RewriteStatement : StatementElement
     {
+        public RewriteStatement() : base(CodeElementType.RewriteStatement, StatementType.RewriteStatement)
+        { }
+
         /// <summary>
         /// p405:
         /// Must be the name of a logical record in a DATA DIVISION FD entry. The
@@ -42,12 +45,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// processing facilities").
         /// </summary>
         Identifier From;
-
-        public RewriteStatement(QualifiedName recordname, Identifier identifier)
-            : base(CodeElementType.RewriteStatement)
-        {
-            this.RecordName = recordname;
-            this.From = identifier;
-        }
+        
     }
 }

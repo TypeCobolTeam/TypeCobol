@@ -7,36 +7,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// The ACCEPT statement transfers data or system date-related information into the
     /// data area referenced by the specified identifier. There is no editing or error
     /// checking of the incoming data.
-    ///
-    /// p294:
-    /// Format 1: Data transfer
-    /// Format 1 transfers data from an input source into the data item referenced by
-    /// identifier-1 (the receiving area). When the FROM phrase is omitted, the system
-    /// input device is assumed.
-    /// Format 1 is useful for exceptional situations in a program when operator
-    /// intervention (to supply a given message, code, or exception indicator) is required.
-    /// The operator must of course be supplied with the appropriate messages with
-    /// which to reply.
-    ///
-    /// pp295-296
-    /// Format 2: System date-related information transfer
-    /// System information contained in the specified conceptual data items DATE, DATE
-    /// YYYYMMDD, DAY, DAY YYYYDDD, DAY-OF-WEEK, or TIME, can be transferred
-    /// into the data item referenced by identifier-2. The transfer must follow the rules for
-    /// the MOVE statement without the CORRESPONDING phrase.
-    /// For more information, see “MOVE statement” on page 369.
-    ///
-    /// Format 2 accesses the current date in two formats: the day of the week or the time
-    /// of day as carried by the system (which can be useful in identifying when a
-    /// particular run of an object program was executed). You can also use format 2 to
-    /// supply the date in headings and footings.
-    /// The current date and time can also be accessed with the intrinsic function
-    /// CURRENT-DATE, which also supports four-digit year values and provides
-    /// additional information (see “CURRENT-DATE” on page 490).
     /// </summary>
-    public class AcceptStatement : CodeElement
+    public abstract class AcceptStatement : StatementElement
     {
-        public AcceptStatement() : base(CodeElementType.AcceptStatement) { }
+        public AcceptStatement(StatementType statementType) : base(CodeElementType.AcceptStatement, statementType) { }
 
         /// <summary>
         /// p294:
@@ -64,6 +38,23 @@ namespace TypeCobol.Compiler.CodeElements
         /// A national group item is processed an an elementary data item of category national.
         /// </summary>
         public ReceivingStorageArea ReceivingStorageArea { get; set; }
+    }
+
+    /// <summary>
+    /// p294:
+    /// Format 1: Data transfer
+    /// Format 1 transfers data from an input source into the data item referenced by
+    /// identifier-1 (the receiving area). When the FROM phrase is omitted, the system
+    /// input device is assumed.
+    /// Format 1 is useful for exceptional situations in a program when operator
+    /// intervention (to supply a given message, code, or exception indicator) is required.
+    /// The operator must of course be supplied with the appropriate messages with
+    /// which to reply.
+    /// </summary>
+    public class AcceptFromInputDeviceStatement : AcceptStatement
+    {
+        public AcceptFromInputDeviceStatement() : base(StatementType.AcceptFromInputDeviceStatement)
+        { }
 
         /// <summary>
         /// p294:
@@ -80,7 +71,30 @@ namespace TypeCobol.Compiler.CodeElements
         /// If the device is the same as that used for READ statements for a LINE
         /// SEQUENTIAL file, results are unpredictable.
         /// </summary>
-        public SymbolReference FromMnemonicOrEnvironmentName { get; set; }
+        public ExternalNameOrSymbolReference InputDevice { get; set; }
+    }
+
+    /// <summary>
+    /// pp295-296
+    /// Format 2: System date-related information transfer
+    /// System information contained in the specified conceptual data items DATE, DATE
+    /// YYYYMMDD, DAY, DAY YYYYDDD, DAY-OF-WEEK, or TIME, can be transferred
+    /// into the data item referenced by identifier-2. The transfer must follow the rules for
+    /// the MOVE statement without the CORRESPONDING phrase.
+    /// For more information, see “MOVE statement” on page 369.
+    ///
+    /// Format 2 accesses the current date in two formats: the day of the week or the time
+    /// of day as carried by the system (which can be useful in identifying when a
+    /// particular run of an object program was executed). You can also use format 2 to
+    /// supply the date in headings and footings.
+    /// The current date and time can also be accessed with the intrinsic function
+    /// CURRENT-DATE, which also supports four-digit year values and provides
+    /// additional information (see “CURRENT-DATE” on page 490). 
+    /// </summary>
+    public class AcceptFromSystemDateStatement : AcceptStatement
+    { 
+        public AcceptFromSystemDateStatement() : base(StatementType.AcceptFromInputDeviceStatement)
+        { }
 
         /// <summary>
         /// The conceptual data items DATE, DATE YYYYMMDD, DAY, DAY YYYYDDD,
@@ -91,10 +105,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// rules of the MOVE statement. If the receiving area is of usage NATIONAL, the
         /// data is converted to national character representation.
         /// </summary>
-        public SyntaxProperty<DateSource> FromDateSource { get; set; }
+        public SyntaxProperty<SystemDateFormat> SystemDateFormat { get; set; }
     }
 
-    public enum DateSource
+    public enum SystemDateFormat
     {
         UNKNOWN,
         /// <summary>

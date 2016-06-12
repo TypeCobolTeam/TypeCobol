@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,8 +7,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// The STOP statement halts execution of the object program either permanently or
     /// temporarily.
     /// </summary>
-    public class StopStatement : CodeElement
+    public class StopStatement : StatementElement
     {
+        public StopStatement() : base(CodeElementType.StopStatement, StatementType.StopStatement)
+        { }
+
         /// <summary>
         /// p432:
         /// literal
@@ -48,6 +51,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public bool IsStopRun = false;
 
-        public StopStatement() : base(CodeElementType.StopStatement) { }
     }
 }

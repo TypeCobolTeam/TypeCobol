@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -13,8 +12,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// contain CALL statements; however, only programs defined with the RECURSIVE
     /// clause can execute a CALL statement that directly or indirectly calls itself.
     /// </summary>
-    public class CallStatement : CodeElement
+    public class CallStatement : StatementElement
     {
+        public CallStatement() : base(CodeElementType.CallStatement, StatementType.CallStatement)
+        { }
+
         /// <summary>
         /// p304:
         /// identifier-1, literal-1
@@ -129,10 +131,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// that include the RETURNING phrase.
         /// </summary>
         public Identifier Returning;
-
-        public CallStatement() : base(CodeElementType.CallStatement) { }
-
-
+        
         public class Program
         {
             /// <summary>

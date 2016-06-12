@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -9,8 +9,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// * The associated sequential file must be open in OUTPUT or EXTEND mode.
     /// * The associated indexed or relative file must be open in OUTPUT, I-O, or EXTEND mode.
     /// </summary>
-    public class WriteStatement : CodeElement
+    public class WriteStatement : StatementElement
     {
+        public WriteStatement() : base(CodeElementType.WriteStatement, StatementType.WriteStatement)
+        { }
+
         /// <summary>
         /// p450:
         /// Must be defined in a DATA DIVISION FD entry. record-name-1 can be
@@ -104,18 +107,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// printable line of the next page, as specified in that clause. If the LINAGE clause
         /// is omitted, the repositioning is to line 1 of the next succeeding page.
         /// </summary>
-        bool Page;
-
-        public WriteStatement(QualifiedName recordname, Identifier identifier, bool before, bool after, Expression lines, MnemonicForEnvironmentName mnemonic, bool page)
-            : base(CodeElementType.WriteStatement)
-        {
-            this.RecordName = recordname;
-            this.Identifier = identifier;
-            this.IsBeforeAdvancing = before;
-            this.IsAfterAdvancing = after;
-            this.Mnemonic = mnemonic;
-            this.Lines = lines;
-            this.Page = page;
-        }
+        bool Page;        
     }
 }

@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,8 +10,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// When the START statement is executed, the associated indexed or relative file must
     /// be open in either INPUT or I-O mode.
     /// </summary>
-    public class StartStatement : CodeElement
+    public class StartStatement : StatementElement
     {
+        public StartStatement() : base(CodeElementType.StartStatement, StatementType.StartStatement)
+        { }
+
         /// <summary>
         /// p429:
         /// file-name-1
@@ -42,6 +45,5 @@ namespace TypeCobol.Compiler.CodeElements
 
         public char Operator = '?';
 
-        public StartStatement() : base(CodeElementType.StartStatement) { }
     }
 }

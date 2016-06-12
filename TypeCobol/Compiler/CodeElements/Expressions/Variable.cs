@@ -212,7 +212,8 @@ namespace TypeCobol.Compiler.CodeElements
         public ReceivingStorageArea(StorageDataType dataType, StorageArea storageArea) : 
             base(dataType, storageArea)
         {
-            storageArea.IsReceivingField = true;
+            storageArea.IsReadFrom = false;
+            storageArea.IsWrittenTo = true;
         }
     }
 }

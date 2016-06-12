@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -39,9 +38,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// * An explicit transfer of control with a PERFORM or GO TO statement
     /// * A sort or merge statement with the INPUT or OUTPUT phrase specified
     /// </summary>
-    public class AlterStatement : CodeElement
+    public class AlterStatement : StatementElement
     {
-        public AlterStatement() : base(CodeElementType.AlterStatement) { }
+        public AlterStatement() : base(CodeElementType.AlterStatement, StatementType.AlterStatement) { }
 
         public IList<Alter> Items = new List<Alter>();
 

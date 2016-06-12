@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -16,8 +15,12 @@ namespace TypeCobol.Compiler.CodeElements
     /// The MERGE statement is not supported for programs compiled with the THREAD
     /// compiler option.
     /// </summary>
-    public class MergeStatement : CodeElement
+    public class MergeStatement : StatementElement
     {
+        public MergeStatement() : base(CodeElementType.MergeStatement, StatementType.MergeStatement)
+        { }
+
+
         /// <summary>
         /// p364:
         /// file-name-1
@@ -235,6 +238,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public IList<QualifiedProcedureName> Output;
 
-        public MergeStatement() : base(CodeElementType.MergeStatement) { }
     }
 }

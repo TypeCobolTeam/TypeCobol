@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-
     /// <summary>
     /// p346:
     /// The INSPECT statement examines characters or groups of characters in a data item.
@@ -16,8 +14,12 @@ namespace TypeCobol.Compiler.CodeElements
     /// * Converts all occurrences of specific characters in a data item to user-supplied
     /// replacement characters (format 4).
     /// </summary>
-    public class InspectStatement : CodeElement
+    public class InspectStatement : StatementElement
     {
+        public InspectStatement() : base(CodeElementType.InspectStatement, StatementType.InspectStatement)
+        { }
+
+
         /// <summary>
         /// p349:
         /// identifier-1
@@ -32,9 +34,6 @@ namespace TypeCobol.Compiler.CodeElements
         public IList<Tallying> TallyingList = new List<Tallying>();
         public IList<Subject> ReplacingCharacters  = new List<Subject>();
         public IList<ALF> ReplacingIdentifiers = new List<ALF>();
-
-        public InspectStatement() : base(CodeElementType.InspectStatement) { }
-
 
 
         /// <summary>

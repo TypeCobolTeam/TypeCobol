@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -14,8 +14,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// When the RETURN statement is executed, the next record from file-name-1 is made
     /// available for processing by the OUTPUT PROCEDURE.
     /// </summary>
-    public class ReturnStatement : CodeElement
+    public class ReturnStatement : StatementElement
     {
+        public ReturnStatement() : base(CodeElementType.ReturnStatement, StatementType.ReturnStatement)
+        { }
+
         /// <summary>
         /// p403:
         /// Must be described in a DATA DIVISION SD entry.
@@ -64,10 +67,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         Identifier Into;
 
-        public ReturnStatement(FileName filename, Identifier into)
-            : base(CodeElementType.ReturnStatement) {
-            this.FileName = filename;
-            this.Into = into;
-        }
     }
 }

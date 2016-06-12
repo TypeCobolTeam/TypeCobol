@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class StringStatement : CodeElement
+    public class StringStatement : StatementElement
     {
+        public StringStatement() : base(CodeElementType.StringStatement, StatementType.StringStatement)
+        { }
 
         /// <summary>
         /// 
@@ -74,9 +75,7 @@ namespace TypeCobol.Compiler.CodeElements
         public List<NotOnOverflowCondition> NotOnOverflowStatement { get; set; }
 
 
-        public StringStatement() : base(CodeElementType.StringStatement)
-        {
-        }
+        
 
         /// <summary>
         /// Debug string

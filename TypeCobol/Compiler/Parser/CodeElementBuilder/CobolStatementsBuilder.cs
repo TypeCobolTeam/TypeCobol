@@ -63,9 +63,9 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        internal UseForDebuggingStatement CreateUseStatementForDebuggingDeclarative(CodeElementsParser.UseStatementForDebuggingDeclarativeContext context)
+        internal UseForDebuggingProcedureStatement CreateUseStatementForDebuggingDeclarative(CodeElementsParser.UseStatementForDebuggingDeclarativeContext context)
         {
-            var statement = new UseForDebuggingStatement();
+            var statement = new UseForDebuggingProcedureStatement();
             if (context.procedureName() != null && context.procedureName().Length > 0)
             {
                 statement.ProcedureNames = new SymbolReference[context.procedureName().Length];
@@ -86,56 +86,56 @@ namespace TypeCobol.Compiler.Parser
         // ACCEPT STATEMENT //
         //////////////////////
 
-        internal AcceptStatement CreateAcceptDataTransferStatement(CodeElementsParser.AcceptDataTransferContext context)
+        internal AcceptFromInputDeviceStatement CreateAcceptDataTransferStatement(CodeElementsParser.AcceptDataTransferContext context)
         {
-            var statement = new AcceptStatement();
+            var statement = new AcceptFromInputDeviceStatement();
             statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
             if (context.mnemonicForEnvironmentNameReferenceOrEnvironmentName() != null)
             {
-                statement.FromMnemonicOrEnvironmentName = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(context.mnemonicForEnvironmentNameReferenceOrEnvironmentName());
+                statement.InputDevice = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(context.mnemonicForEnvironmentNameReferenceOrEnvironmentName());
             }
             return statement;
         }
 
-        internal AcceptStatement CreateAcceptSystemDateTime(CodeElementsParser.AcceptSystemDateTimeContext context)
+        internal AcceptFromSystemDateStatement CreateAcceptSystemDateTime(CodeElementsParser.AcceptSystemDateTimeContext context)
         {
-            var statement = new AcceptStatement();
+            var statement = new AcceptFromSystemDateStatement();
             statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
             if (context.YYYYMMDD() != null)
             {
-                statement.FromDateSource = new SyntaxProperty<DateSource>(DateSource.DATE_YYYYMMDD,
+                statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYYYMMDD,
                     ParseTreeUtils.GetFirstToken(context.YYYYMMDD()));
             }
             else if (context.DATE() != null)
             {
-                statement.FromDateSource = new SyntaxProperty<DateSource>(DateSource.DATE_YYMMDD,
+                statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYMMDD,
                     ParseTreeUtils.GetFirstToken(context.DATE()));
             }
             else if (context.YYYYDDD() != null)
             {
-                statement.FromDateSource = new SyntaxProperty<DateSource>(DateSource.DAY_YYYYDDD,
+                statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DAY_YYYYDDD,
                     ParseTreeUtils.GetFirstToken(context.YYYYDDD()));
             }
             else if (context.DAY() != null)
             {
-                statement.FromDateSource = new SyntaxProperty<DateSource>(DateSource.DAY_YYDDD,
+                statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DAY_YYDDD,
                     ParseTreeUtils.GetFirstToken(context.DAY()));
             }
             else if (context.DAY_OF_WEEK() != null)
             {
-                statement.FromDateSource = new SyntaxProperty<DateSource>(DateSource.DAY_OF_WEEK,
+                statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DAY_OF_WEEK,
                     ParseTreeUtils.GetFirstToken(context.DAY_OF_WEEK()));
             }
             else if (context.TIME() != null)
             {
-                statement.FromDateSource = new SyntaxProperty<DateSource>(DateSource.TIME,
+                statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.TIME,
                     ParseTreeUtils.GetFirstToken(context.TIME()));
             }
             return statement;
         }
 
         ////////////////////
-        // ADD STATEMENT //
+        // ADD STATEMENT //  
         ////////////////////
 
         internal CodeElement CreateAddStatement(CodeElementsParser.AddSimpleContext addSimpleContext)
@@ -402,6 +402,11 @@ namespace TypeCobol.Compiler.Parser
         }
 
         internal CodeElement CreateDivideGivingStatement(CodeElementsParser.DivideGivingContext divideGivingContext)
+        {
+            return new DivideStatementBuilder().CreateStatement(context);
+        }
+
+        internal CodeElement CreateDivideRemainderStatement(CodeElementsParser.DivideRemainderContext divideRemainderContext)
         {
             return new DivideStatementBuilder().CreateStatement(context);
         }
@@ -1027,7 +1032,7 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        internal CodeElement CreateSetStatementForConditionNames(CodeElementsParser.SetStatementForConditionNamesContext setStatementForConditionNamesContext)
+        internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext setStatementForConditionsContext)
         {
             throw new NotImplementedException();
         }

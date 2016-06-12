@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -13,8 +13,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// Within an INPUT PROCEDURE, at least one RELEASE statement must be
     /// specified.
     /// </summary>
-    public class ReleaseStatement : CodeElement
+    public class ReleaseStatement : StatementElement
     {
+        public ReleaseStatement() : base(CodeElementType.ReleaseStatement, StatementType.ReleaseStatement)
+        { }
+
         /// <summary>
         /// p401:
         /// When the RELEASE statement is executed, the current contents of record-name-1 are
@@ -56,6 +59,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public Identifier From;
 
-        public ReleaseStatement() : base(CodeElementType.ReleaseStatement) { }
     }
 }

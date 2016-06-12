@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements
+﻿using System;
+
+namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// NEXT SENTENCE in IF statements:
@@ -22,8 +24,6 @@
     /// If ELSE NEXT SENTENCE is specified, control passes to an implicit CONTINUE
     /// STATEMENT immediately preceding the next separator period.
     ///
-    ///
-    ///
     /// NEXT SENTENCE in SEARCH statements:
     /// p409:
     /// NEXT SENTENCE transfers control to the first statement following the closest
@@ -40,8 +40,8 @@
     /// The function of the NEXT SENTENCE phrase is the same for a serial search and a
     /// binary search.
     /// </summary>
-    public class NextSentenceStatement : CodeElement
+    public class NextSentenceStatement : StatementElement
     {
-        public NextSentenceStatement() : base(CodeElementType.NextSentenceStatement) { }
+        public NextSentenceStatement() : base(CodeElementType.NextSentenceStatement, StatementType.NextSentenceStatement) { }
     }
 }

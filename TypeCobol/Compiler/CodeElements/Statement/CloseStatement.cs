@@ -17,8 +17,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// statement can be executed for the file and before data is moved to a record
     /// description entry associated with the file.
     /// </summary>
-    public class CloseStatement : CodeElement
+    public class CloseStatement : StatementElement
     {
+        public CloseStatement() : base(CodeElementType.CloseStatement, StatementType.CloseStatement)
+        { }
+
         /// <summary>
         /// p313:
         /// Designates the file upon which the CLOSE statement is to operate. If more
@@ -27,11 +30,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         IList<CloseFileName> FileNames;
 
-        public CloseStatement(IList<CloseFileName> filenames)
-            : base(CodeElementType.CloseStatement)
-        {
-            this.FileNames = (filenames != null ? filenames : new List<CloseFileName>());
-        }
+        
     }
 
     public class CloseFileName

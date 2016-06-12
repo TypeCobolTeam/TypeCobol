@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,8 +7,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// The INVOKE statement can create object instances of a COBOL or Java class and
     /// can invoke a method defined in a COBOL or Java class.
     /// </summary>
-    public class InvokeStatement : CodeElement
+    public class InvokeStatement : StatementElement
     {
+        public InvokeStatement() : base(CodeElementType.InvokeStatement, StatementType.InvokeStatement)
+        { }
+
         /// <summary>
         /// p356:
         /// identifier-1
@@ -251,6 +253,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public Identifier Returning;
 
-        public InvokeStatement() : base(CodeElementType.InvokeStatement) { }
     }
 }

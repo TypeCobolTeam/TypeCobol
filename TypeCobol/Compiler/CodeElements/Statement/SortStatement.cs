@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -16,8 +15,11 @@ namespace TypeCobol.Compiler.CodeElements
     ///
     /// The SORT statement is not supported for programs compiled with the THREAD option.
     /// </summary>
-    public class SortStatement : CodeElement
+    public class SortStatement : StatementElement
     {
+        public SortStatement() : base(CodeElementType.SortStatement, StatementType.SortStatement)
+        { }
+
         /// <summary>
         /// p422:
         /// file-name-1
@@ -247,8 +249,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// page 335).
         /// </summary>
         public IList<QualifiedProcedureName> Output;
-
-        public SortStatement() : base(CodeElementType.SortStatement) { }
     }
 
     /// <summary>

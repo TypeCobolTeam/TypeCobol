@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,8 +10,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// When the READ statement is executed, the associated file must be open in INPUT
     /// or I-O mode.
     /// </summary>
-    public class ReadStatement : CodeElement
+    public class ReadStatement : StatementElement
     {
+        public ReadStatement() : base(CodeElementType.ReadStatement, StatementType.ReadStatement)
+        { }
+
         /// <summary>
         /// p394:
         /// Must be defined in a DATA DIVISION FD entry.
@@ -70,16 +73,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// You must specify the NEXT RECORD phrase to retrieve records
         /// sequentially from files in dynamic access mode.
         /// </summary>
-        bool IsRecord;
-
-        public ReadStatement(FileName filename, Identifier into, QualifiedName key, bool next, bool record)
-            : base(CodeElementType.ReadStatement)
-        {
-            this.FileName = filename;
-            this.Into = into;
-            this.Key = key;
-            this.IsNext = next;
-            this.IsRecord = record;
-        }
+        bool IsRecord;        
     }
 }

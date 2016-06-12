@@ -132,9 +132,8 @@ tokens
     OnSizeErrorCondition,
     NotOnSizeErrorCondition,
     ElseCondition,
-    WhenEvaluateCondition,
-    WhenOtherCondition,
     WhenCondition,
+    WhenOtherCondition,
 
     // Statement ends
 

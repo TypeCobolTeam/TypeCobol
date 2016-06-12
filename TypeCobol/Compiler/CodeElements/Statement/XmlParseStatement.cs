@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,8 +9,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// The XML PARSE statement parses an XML document into its individual pieces and
     /// passes each piece, one at a time, to a user-written processing procedure.
     /// </summary>
-    public class XmlParseStatement : CodeElement
+    public class XmlParseStatement : StatementElement
     {
+        public XmlParseStatement() : base(CodeElementType.XmlParseStatement, StatementType.XmlParseStatement)
+        { }
+
         /// <summary>
         /// p469:
         /// identifier-1
@@ -137,7 +139,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// Specifies the last section or paragraph in the processing procedure.
         /// </summary>
         public IList<QualifiedProcedureName> Procedures = new List<QualifiedProcedureName>();
-
-        public XmlParseStatement() : base(CodeElementType.XmlParseStatement) { }
     }
 }

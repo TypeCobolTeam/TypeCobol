@@ -1662,6 +1662,10 @@ namespace TypeCobol.Compiler.Parser
             {
                 CodeElement = CobolStatementsBuilder.CreateDivideGivingStatement(context.divideGiving());
             }
+            else if (context.divideRemainder() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateDivideRemainderStatement(context.divideRemainder());
+            }
         }
 
         public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context)
@@ -1911,9 +1915,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(context.setStatementForSwitches());
             }
-            else if (context.setStatementForConditionNames() != null)
+            else if (context.setStatementForConditions() != null)
             {
-                CodeElement = CobolStatementsBuilder.CreateSetStatementForConditionNames(context.setStatementForConditionNames());
+                CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(context.setStatementForConditions());
             }
         }
 
@@ -2043,13 +2047,11 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = new NotAtEndOfPageCondition();
         }
-
-
-
+        
         public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context)
         {
             Context = context;
-            CodeElement = new WhenConditionalExpression();
+            CodeElement = new WhenCondition();
         }
 
         public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context)

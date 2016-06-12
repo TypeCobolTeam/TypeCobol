@@ -8,9 +8,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// The program procedure division consists of optional declaratives, and
     /// procedures that contain sections, paragraphs, sentences, and statements.
     /// </summary>
-    public class ProcedureDivisionHeader : CodeElement
+    public class ProcedureDivisionHeader : StatementElement
     {
-        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader)
+        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader, StatementType.ProcedureDivisionHeader)
         { }
 
         /// <summary>

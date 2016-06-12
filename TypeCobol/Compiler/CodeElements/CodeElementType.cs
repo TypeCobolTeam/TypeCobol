@@ -130,9 +130,8 @@ namespace TypeCobol.Compiler.CodeElements
         OnSizeErrorCondition,
         NotOnSizeErrorCondition,
         ElseCondition,
-        WhenEvaluateCondition,
+        WhenCondition,
         WhenOtherCondition,
-        WhenConditionalExpression,
 
         // Statement ends
 

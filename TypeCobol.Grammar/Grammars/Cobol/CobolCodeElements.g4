@@ -3871,7 +3871,7 @@ addGiving:
 // Elementary data items within identifier-1 are added to and stored in the corresponding elementary items within identifier-2.
 
 addCorresponding:
-	ADD (CORRESPONDING | CORR) numericVariable1 TO numericStorageAreaRounded;
+	ADD (CORRESPONDING | CORR) groupItem=dataItemReference TO toGroupItem=dataItemReference ROUNDED?;
 
 // ROUNDED phrase
 // For formats 1, 2, and 3, see “ROUNDED phrase” on page 282. 
@@ -4264,7 +4264,7 @@ withNoAdvancing:
 // This explicit scope terminator serves to delimit the scope of the DIVIDE statement. END-DIVIDE turns a conditional DIVIDE statement into an imperative statement that can be nested in another conditional statement. END-DIVIDE can also be used with an imperative DIVIDE statement.
 
 divideStatement:
-	divideSimple | divideGiving;
+	divideSimple | divideGiving | divideRemainder;
 
 divideSimple:
 	DIVIDE divisor=numericVariable3 INTO dividendAndQuotient=numericStorageAreaRounded+;
@@ -4272,8 +4272,13 @@ divideSimple:
 divideGiving:
 	DIVIDE ( (divisor1=numericVariable3 INTO dividend1=numericVariable3) | 
 	         (dividend2=numericVariable3 BY divisor2=numericVariable3)   ) 
-	GIVING ( (quotient1=numericStorageAreaRounded REMAINDER remainder=numericStorageArea) | 
-	          quotient2=numericStorageAreaRounded+                              );
+	GIVING quotient2=numericStorageAreaRounded+;
+
+divideRemainder:
+	DIVIDE ( (divisor1=numericVariable3 INTO dividend1=numericVariable3) | 
+	         (dividend2=numericVariable3 BY divisor2=numericVariable3)   ) 
+	GIVING quotient1=numericStorageAreaRounded 
+	REMAINDER remainder=numericStorageArea;
 
 divideStatementEnd: END_DIVIDE;
 
@@ -5361,7 +5366,7 @@ moveSimple:
 	MOVE variable7 TO storageArea1+;
 
 moveCorresponding:
-	MOVE (CORRESPONDING | CORR) variable1 TO storageArea1;
+	MOVE (CORRESPONDING | CORR) fromGroupItem=dataItemReference TO toGroupItem=dataItemReference;
 
 // p376: MULTIPLY statement
 // The MULTIPLY statement multiplies numeric items and sets the values of data
@@ -5381,7 +5386,7 @@ multiplyStatementEnd: END_MULTIPLY;
 multiplySimple:
 	MULTIPLY numericVariable3 BY numericStorageAreaRounded+;
 
-//// p377: Format 2: MULTIPLY statement with GIVING phrase
+// p377: Format 2: MULTIPLY statement with GIVING phrase
 // In format 2, the value of identifier-1 or literal-1 is multiplied by the value of
 // identifier-2 or literal-2. The product is then stored in the data items referenced by
 // identifier-3.
@@ -6222,7 +6227,7 @@ setStatement:
 								       // SET format 7 for USAGE OBJECT REFERENCE data items
 	| setStatementForIndexes	       // SET format 2 for adjusting indexes
 	| setStatementForSwitches	       // SET format 3 for external switches
-	| setStatementForConditionNames;   // SET format 4 for condition-names
+	| setStatementForConditions;       // SET format 4 for condition-names
 
 // Format 1: SET for basic table handling
 // Format 5: SET for USAGE IS POINTER
@@ -6254,7 +6259,7 @@ setSwitchPosition:
 
 // Format 4: SET for condition names
 
-setStatementForConditionNames:
+setStatementForConditions:
 	SET conditionReference+ TO TRUE;
 
 // p422: SORT statement
@@ -6787,7 +6792,7 @@ subtractGiving:
 // stored in, the corresponding elementary data items within identifier-2.
 
 subtractCorresponding:
-	SUBTRACT (CORRESPONDING | CORR) numericVariable1 FROM numericStorageAreaRounded;
+	SUBTRACT (CORRESPONDING | CORR) groupItem=dataItemReference FROM fromGroupItem=dataItemReference ROUNDED?;
 
 subtractStatementEnd: END_SUBTRACT;
 

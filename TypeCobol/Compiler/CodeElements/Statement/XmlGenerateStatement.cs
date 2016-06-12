@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,9 +6,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// p457:
     /// The XML GENERATE statement converts data to XML format.
     /// </summary>
-    public class XmlGenerateStatement : CodeElement
+    public class XmlGenerateStatement : StatementElement
     {
-        public XmlGenerateStatement() : base(CodeElementType.XmlGenerateStatement) { }
+        public XmlGenerateStatement() : base(CodeElementType.XmlGenerateStatement, StatementType.XmlGenerateStatement)
+        { }
 
         /// <summary>
         /// pp458-459:

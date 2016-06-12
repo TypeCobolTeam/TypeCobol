@@ -22,8 +22,11 @@
     ///
     /// The file position indicator is not affected by execution of the DELETE statement.
     /// </summary>
-    public class DeleteStatement : CodeElement
+    public class DeleteStatement : StatementElement
     {
+        public DeleteStatement() : base(CodeElementType.DeleteStatement, StatementType.DeleteStatement)
+        { }
+
         /// <summary>
         /// p320:
         /// file-name-1
@@ -32,6 +35,5 @@
         /// </summary>
         public FileName FileName = null;
 
-        public DeleteStatement() : base(CodeElementType.DeleteStatement) { }
     }
 }

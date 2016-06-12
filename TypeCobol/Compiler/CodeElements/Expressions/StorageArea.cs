@@ -1,5 +1,4 @@
 ﻿using System;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -13,14 +12,21 @@ namespace TypeCobol.Compiler.CodeElements
         public StorageArea(StorageAreaKind kind)
         {
             Kind = kind;
+            IsReadFrom = true;
+            IsWrittenTo = false;
         }
 
         public StorageAreaKind Kind { get; protected set;  }
 
         /// <summary>
+        /// True if this storage area is read from by the program
+        /// </summary>
+        public bool IsReadFrom { get; set; }
+
+        /// <summary>
         /// True if this storage area is written to by the program
         /// </summary>
-        public bool IsReceivingField { get; set; }
+        public bool IsWrittenTo { get; set; }
 
         /// <summary>
         /// Optional reference modification : enables to delimit only a subset of the original storage area 

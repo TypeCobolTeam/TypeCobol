@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -27,8 +27,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// compiler option. For details, see PGMNAME in the Enterprise COBOL Programming
     /// Guide.
     /// </summary>
-    public class EntryStatement : CodeElement
+    public class EntryStatement : StatementElement
     {
+        public EntryStatement() : base(CodeElementType.EntryStatement, StatementType.EntryStatement)
+        { }
+
         /// <summary>
         /// p330:
         /// literal-1
@@ -51,7 +54,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public IList<Using<Identifier>> Usings = new List<Using<Identifier>>();
 
-        public EntryStatement() : base(CodeElementType.EntryStatement) { }
+
 
         /// <summary>
         /// pp248-249:

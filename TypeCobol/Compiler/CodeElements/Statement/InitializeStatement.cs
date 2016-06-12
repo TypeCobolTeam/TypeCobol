@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,8 +7,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// values. The INITIALIZE statement is functionally equivalent to one or more MOVE
     /// statements.
     /// </summary>
-    public class InitializeStatement : CodeElement
+    public class InitializeStatement : StatementElement
     {
+        public InitializeStatement() : base(CodeElementType.InitializeStatement, StatementType.InitializeStatement)
+        { }
+
         /// <summary>
         /// Receiving areas.
         /// identifier-1 must reference one of the following items:
@@ -60,8 +62,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public IList<Replacing> Sending = new List<Replacing>();
 
-        public InitializeStatement() : base(CodeElementType.InitializeStatement)
-        { }
+
 
         /// <summary>
         /// REPLACING phrase

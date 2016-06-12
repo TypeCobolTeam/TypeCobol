@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,17 +9,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// DISPLAY statement transfers the contents of each operand to the output device. 
     /// The contents are displayed on the output device in the order, left to right, in which the operands are listed.
     /// </summary>
-    public class DisplayStatement : CodeElement
+    public class DisplayStatement : StatementElement
     {
-        public DisplayStatement() : base(CodeElementType.DisplayStatement)
-        {
-            //no initialisation here on purpose
-            //CodeElementBuilder will set all properties of this CodElement
-            
-            
-            //IdentifierOrLiteral = new List<Expression>();
-            //IsWithNoAdvancing = SyntaxBoolean.False;
-        }
+        public DisplayStatement() : base(CodeElementType.DisplayStatement, StatementType.DisplayStatement)
+        { }
 
         /// <summary>
         /// identifier-1 

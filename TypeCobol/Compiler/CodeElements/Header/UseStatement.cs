@@ -11,7 +11,13 @@ namespace TypeCobol.Compiler.CodeElements
     /// * DEBUGGING declarative
     ///
     /// For general information about declaratives, see “Declaratives” on page 251.
-    ///
+    /// </summary>
+    public abstract class UseStatement : CodeElement
+    {
+        public UseStatement() : base(CodeElementType.UseStatement) { }
+    }
+
+    /// <summary>
     /// p547:
     /// The EXCEPTION/ERROR declarative specifies procedures for input/output
     /// exception or error handling that are to be executed in addition to the standard
@@ -87,10 +93,8 @@ namespace TypeCobol.Compiler.CodeElements
     /// Steps 3 and 4 are repeated until the last examined program is the outermost
     /// program, or until a qualifying declarative has been found.
     /// </summary>
-    public class UseAfterIOExceptionStatement : CodeElement
+    public class UseAfterIOExceptionStatement : UseStatement
     {
-        public UseAfterIOExceptionStatement() : base(CodeElementType.UseStatement) { }
-
         /// <summary>
         /// The order of precedence for selecting a declarative is: 
         /// 1. A file-specific declarative (that is, a declarative of the form USE AFTER ERROR ON file-name-1) within the program that contains the statement that caused the qualifying condition.
@@ -180,10 +184,8 @@ namespace TypeCobol.Compiler.CodeElements
     /// debugging procedure there must be no reference to any nondeclarative
     /// procedures.
     /// </summary>
-    public class UseForDebuggingStatement : CodeElement
+    public class UseForDebuggingProcedureStatement : UseStatement
     {
-        public UseForDebuggingStatement() : base(CodeElementType.UseStatement) { }
-
         /// <summary>
         /// p550:
         /// procedure-name-1

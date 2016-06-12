@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,15 +7,24 @@ namespace TypeCobol.Compiler.CodeElements
     /// The SEARCH statement searches a table for an element that satisfies the specified
     /// condition and adjusts the associated index to indicate that element.
     /// </summary>
-    public class SearchStatement : CodeElement
+    public abstract class SearchStatement : StatementElement
     {
-        /// <summary>
-        /// p409:
-        /// Use format 2 (binary search) when you want to efficiently search across all
-        /// occurrences in a table. The table must previously have been sorted.
-        /// </summary>
-        public bool All = false;
-        /// <summary>
+        public SearchStatement(StatementType statementType) : base(CodeElementType.SearchStatement, statementType)
+        { }
+    }
+
+    /// <summary>
+    /// p408: Format 1: SEARCH statement for serial search
+    /// Use format 1 (serial search) when the table that you want to search has not been
+    /// sorted. Use format 1 to search a sorted table when you want to search serially
+    /// through the table or you want to control subscripts or indexes.
+    /// </summary>
+    public class SearchSerialStatement : SearchStatement
+    { 
+        public SearchSerialStatement() : base(StatementType.SearchSerialStatement)
+        { }
+
+         /// <summary>
         /// p409:
         /// identifier-1 (serial search)
         /// identifier-1 identifies the table that is to be searched. identifier-1 references
@@ -74,7 +83,25 @@ namespace TypeCobol.Compiler.CodeElements
         /// through the table or you want to control subscripts or indexes.
         /// </summary>
         public bool IsVarying { get { return VaryingIdentifier != null || VaryingIndex != null; } }
+        
+    }
 
-        public SearchStatement() : base(CodeElementType.SearchStatement) { }
+    /// <summary>
+    /// p408: Format 2: SEARCH statement for binary search
+    /// Use format 2 (binary search) when you want to efficiently search across all
+    /// occurrences in a table. The table must previously have been sorted.
+    /// </summary>
+    public class SearchBinaryStatement : SearchStatement
+    {
+        public SearchBinaryStatement() : base(StatementType.SearchBinaryStatement)
+        { }
+
+        /// <summary>
+        /// p409:
+        /// Use format 2 (binary search) when you want to efficiently search across all
+        /// occurrences in a table. The table must previously have been sorted.
+        /// </summary>
+        public bool All = false;
+
     }
 }

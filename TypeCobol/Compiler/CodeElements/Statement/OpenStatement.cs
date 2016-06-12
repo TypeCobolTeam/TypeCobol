@@ -45,8 +45,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// p379:
     /// The OPEN statement initiates the processing of files. It also checks or writes labels, or both.
     /// </summary>
-    public class OpenStatement : CodeElement
+    public class OpenStatement : StatementElement
     {
+        public OpenStatement() : base(CodeElementType.OpenStatement, StatementType.OpenStatement)
+        { }
+
         /// <summary>
         /// p380:
         /// Designate [FileNames] upon which the OPEN statement is to operate. If more
@@ -55,11 +58,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         Dictionary<OpenMode, IList<OpenFileName>> FileNames;
 
-        public OpenStatement(Dictionary<OpenMode, IList<OpenFileName>> filenames)
-            : base(CodeElementType.OpenStatement)
-        {
-            this.FileNames = (filenames != null ? filenames : new Dictionary<OpenMode, IList<OpenFileName>>());
-        }
+        
     }
 
     /// <summary>
