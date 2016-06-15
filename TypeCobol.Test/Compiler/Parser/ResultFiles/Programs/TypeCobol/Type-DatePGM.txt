@@ -1,28 +1,25 @@
 ﻿--- Diagnostics ---
-[3,34]<29,Warning,Semantics>Warning : Writing Alphanumeric to today:TC-DATE is unsafe ([3>34] on line 29)
-[3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 35)
-[3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 36)
+[25,28]<27,Error,Syntax>Syntax error : mismatched input 'Date' expecting UserDefinedWord (RuleStack=codeElement>dataDescriptionEntry>cob2002TypeClause, OffendingSymbol=[25,28:Date]<DATE> on line 17)
+[25,28]<27,Error,Syntax>Syntax error : mismatched input 'Date' expecting UserDefinedWord (RuleStack=codeElement>dataDescriptionEntry>cob2002TypeClause, OffendingSymbol=[25,28:Date]<DATE> on line 18)
+[25,28]<27,Error,Syntax>Syntax error : mismatched input 'Date' expecting UserDefinedWord (RuleStack=codeElement>dataDescriptionEntry>cob2002TypeClause, OffendingSymbol=[25,28:Date]<DATE> on line 20)
+[3,42]<27,Error,Syntax>Syntax error : Symbol today.YYYY is not referenced ([3>42] on line 35)
+[3,42]<27,Error,Syntax>Syntax error : Symbol today.YYYY is not referenced ([3>42] on line 36)
 
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
  author: WIZTIGERS. written: APRIL 2016 compiled: ? installation: ? security: ?
 CUSTOM TYPES:
- * TC-DATE
-     - YYYY {10} Numeric <of> TC-DATE
-     - MM {10} Numeric <of> TC-DATE
-     - DD {10} Numeric <of> TC-DATE
+ * W-DATE
+     - yyyy {5} Numeric <of> W-DATE
+     - mm {5} Numeric <of> W-DATE
+     - dd {5} Numeric <of> W-DATE
 SYMBOL TABLE:
+  TYPEDEF W-DATE {1} GROUP(3) [ yyyy mm dd ]W-DATE
+  yyyy {5} Numeric <of> W-DATE
+  mm {5} Numeric <of> W-DATE
+  dd {5} Numeric <of> W-DATE
   olddate {1} Alphanumeric
-  today {1} TC-DATE
-  YYYY {2} Numeric <of> today
-  YYYY {2} Numeric <of> tomorrow
-  YYYY {6} Numeric <of> date1 <of> groupe
-  MM {2} Numeric <of> today
-  MM {2} Numeric <of> tomorrow
-  MM {6} Numeric <of> date1 <of> groupe
-  DD {2} Numeric <of> today
-  DD {2} Numeric <of> tomorrow
-  DD {6} Numeric <of> date1 <of> groupe
-  tomorrow {1} TC-DATE
+  today {1} GROUP(0) [ ]
+  tomorrow {1} GROUP(0) [ ]
   groupe {1} GROUP(1) [ date1 ]
-  date1 {5} TC-DATE <of> groupe
+  date1 {5} GROUP(0) [ ] <of> groupe

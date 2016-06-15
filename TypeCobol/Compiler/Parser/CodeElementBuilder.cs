@@ -441,26 +441,26 @@ namespace TypeCobol.Compiler.Parser
 			UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
 			UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
 			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
-// [TYPECOBOL]
-			entry.IsTypeDefinition = context.tcExtTypedefClause() != null;
+
+            // [Cobol 2002]
+			entry.IsTypeDefinition = context.cob2002TypedefClause() != null;
 			if (entry.IsTypeDefinition && entry.Name != null) {
-				bool strong = context.tcExtTypedefClause().STRONG() != null;
+				bool strong = context.cob2002TypedefClause().STRONG() != null;
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-			foreach(var typeclause in context.tcExtTypeClause())
+			foreach(var typeclause in context.cob2002TypeClause())
 			{
-			    var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-			    if (token != null) entry.Picture = "TYPE:"+token.Text;
+			    if (typeclause.UserDefinedWord() != null)
+			    {
+			        var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
+                    if (token != null) entry.Picture = "TYPE:"+token.Text;
+                }
+			    
 			}
-            // [/TYPECOBOL]
+            // [/Cobol 2002]
 
-		    if (entry.IsExternal && entry.LevelNumber != 01)
-		    {
-                DiagnosticUtils.AddError(entry, "External is only allowed for level 01", external);
-            }
-
-		    Context = context;
+            Context = context;
 			CodeElement = entry;
 		}
 

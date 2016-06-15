@@ -115,8 +115,9 @@
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\MemoryMEM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\TablesPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\Type-BoolPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\Type-DatePGM.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\TypedefPGM.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\Cobol2002\TypedefPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\EmptyPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\SimplePGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Simple.0.txt" />
@@ -284,8 +285,9 @@
     <None Include="Compiler\Parser\Samples\FD.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Memory.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Bool.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Date.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\Typedef.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\DoubleColon.pgm" />
     <None Include="Compiler\Pipeline\Samples\BigBatch.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />

@@ -40,8 +40,8 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
 							TableOfIntrisic.Add(data);
-					foreach(var type in value.CustomTypes)
-						TableOfIntrisic.RegisterCustomType(type);
+				    foreach(var type in value.CustomTypes)
+				        TableOfIntrisic.RegisterCustomType(type);
 				}
 				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
 				TableOfIntrisic.Register(CodeElements.Functions.SampleFactory.Create("POW"));
@@ -165,13 +165,14 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="nodes">DataDescriptionEntry[] array -typically <section context>.DataDescriptionEntry()</param>
 		/// <returns>nodes parameter, but with each element having its TopLevel and Subordinates properties initialized</returns>
 		private IList<DataDescriptionEntry> CreateDataDescriptionEntries(Antlr4.Runtime.Tree.ITerminalNode[] nodes) {
-			IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
+            IList<DataDescriptionEntry> result = new List<DataDescriptionEntry>();
 			if (nodes == null) return result;
-			char[] currencies = GetCurrencies();
+            char[] currencies = GetCurrencies();
 			Stack<DataDescriptionEntry> groups = new Stack<DataDescriptionEntry>();
 
 			foreach (var node in nodes) {
 				DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
+
 				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
@@ -185,23 +186,23 @@ namespace TypeCobol.Compiler.Parser
 					}
 				}
 
-            //[TypeCobol]
-			    if (data.IsTypeDefinitionPart)
-			    {
+
+                //Rules that apply to item under a TYPEDEF, the TYPEDEF item itself is check by others rules
+                //TODO move these rules in a new TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
+                if (data.IsTypeDefinitionPart && !data.IsTypeDefinition)
+                {
                     //Redefines is not allowed under a TYPEDEF
                     if (data.RedefinesDataName != null)
-			        {
-			            DiagnosticUtils.AddError(data, "Typedef can't contains redefined item: " + data);
-			        }
+                    {
+                        DiagnosticUtils.AddError(data, "Typedef can't contains redefined item: " + data);
+                    }
                     if (data.IsRenamesDataNameDescription)
                     {
                         DiagnosticUtils.AddError(data, "Typedef can't contains renamed item: " + data);
                     }
                 }
-            //[/TypeCobol
 
-				if (!data.IsTypeDefinitionPart) {
-					CurrentProgram.SymbolTable.Add(data);
+                CurrentProgram.SymbolTable.Add(data);
 					if (customtype != null) {
 						foreach(var sub in customtype.Subordinates) {
 							// add a clone so parent/child relations are not spoiled
@@ -214,7 +215,6 @@ namespace TypeCobol.Compiler.Parser
 							AddGeneratedSymbols(clone);
 						}
 					}
-				}
 			}
 			foreach(var data in result) {
 				int offset = 0;
@@ -257,9 +257,20 @@ System.Console.WriteLine("TODO: "+child.Name+'('+child.MemoryArea.Length+") REDE
 		private static int picture2Size(string picture) {
 			if (picture == null) return 1;
 			var betweenparentheses = picture.Split("()".ToCharArray());
-			if (betweenparentheses.Length > 1)
-				return int.Parse(betweenparentheses[1]);
-			return 1;
+		    if (betweenparentheses.Length > 1)
+		    {
+                //caught a FormatException during unit tests
+                //TODO check what to do in this case
+		        try
+		        {
+		            return int.Parse(betweenparentheses[1]);
+		        }
+		        catch (FormatException)
+		        {
+		            return 1;
+		        }
+		    }
+		    return 1;
 		}
 		private static int type2Size(DataType type) {
 			return 1; //TODO
@@ -717,26 +728,26 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
         {
             return
                 (CodeElement)AsCodeElement(context.ContinueStatement()) ??
-/* TODO
-	| evaluateStatementExplicitScope
-	| ifStatementExplicitScope
-	| searchStatementExplicitScope
- */
-// -- arithmetic --
+                /* TODO
+                    | evaluateStatementExplicitScope
+                    | ifStatementExplicitScope
+                    | searchStatementExplicitScope
+                 */
+                // -- arithmetic --
                 (CodeElement)AsCodeElement(context.AddStatement()) ??
                 (CodeElement)AsCodeElement(context.ComputeStatement()) ??
                 (CodeElement)AsCodeElement(context.DivideStatement()) ??
                 (CodeElement)AsCodeElement(context.MultiplyStatement()) ??
                 (CodeElement)AsCodeElement(context.SubtractStatement()) ??
-/* TODO
-	| addStatementExplicitScope
-	| computeStatementExplicitScope
-	| divideStatementExplicitScope
-	| multiplyStatementExplicitScope
-	| subtractStatementExplicitScope
- */
+                /* TODO
+                    | addStatementExplicitScope
+                    | computeStatementExplicitScope
+                    | divideStatementExplicitScope
+                    | multiplyStatementExplicitScope
+                    | subtractStatementExplicitScope
+                 */
 
-// -- data movement --
+                // -- data movement --
                 (CodeElement)AsCodeElement(context.AcceptStatement()) ?? // (DATE, DAY, DAY-OF-WEEK, TIME)
                 (CodeElement)AsCodeElement(context.InitializeStatement()) ??
                 (CodeElement)AsCodeElement(context.InspectStatement()) ??
@@ -746,19 +757,19 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
                 (CodeElement)AsCodeElement(context.UnstringStatement()) ??
                 (CodeElement)AsCodeElement(context.XmlGenerateStatement()) ??
                 (CodeElement)AsCodeElement(context.XmlParseStatement()) ??
-/* TODO
-	| stringStatementExplicitScope
-	| unstringStatementExplicitScope
-	| xmlGenerateStatementExplicitScope
-	| xmlParseStatementExplicitScope
- */
-// -- ending --
+                /* TODO
+                    | stringStatementExplicitScope
+                    | unstringStatementExplicitScope
+                    | xmlGenerateStatementExplicitScope
+                    | xmlParseStatementExplicitScope
+                 */
+                // -- ending --
                 (CodeElement)AsCodeElement(context.StopStatement()) ?? // RUN
                 (CodeElement)AsCodeElement(context.ExitMethodStatement()) ??
                 (CodeElement)AsCodeElement(context.ExitProgramStatement()) ??
                 (CodeElement)AsCodeElement(context.GobackStatement()) ??
-// -- input-output --
-//              (CodeElement)AsCodeElement(context.AcceptStatement()) ?? // identifier
+                // -- input-output --
+                //              (CodeElement)AsCodeElement(context.AcceptStatement()) ?? // identifier
                 (CodeElement)AsCodeElement(context.CloseStatement()) ??
                 (CodeElement)AsCodeElement(context.DeleteStatement()) ??
                 (CodeElement)AsCodeElement(context.DisplayStatement()) ??
@@ -766,41 +777,41 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
                 (CodeElement)AsCodeElement(context.ReadStatement()) ??
                 (CodeElement)AsCodeElement(context.RewriteStatement()) ??
                 (CodeElement)AsCodeElement(context.StartStatement()) ??
-//              (CodeElement)AsCodeElement(context.StopStatement()) ?? // literal
+                //              (CodeElement)AsCodeElement(context.StopStatement()) ?? // literal
                 (CodeElement)AsCodeElement(context.WriteStatement()) ??
-/* TODO
-	| deleteStatementExplicitScope
-	| readStatementExplicitScope
-	| rewriteStatementExplicitScope
-	| startStatementExplicitScope
-	| writeStatementExplicitScope
- */
-// -- ordering --
+                /* TODO
+                    | deleteStatementExplicitScope
+                    | readStatementExplicitScope
+                    | rewriteStatementExplicitScope
+                    | startStatementExplicitScope
+                    | writeStatementExplicitScope
+                 */
+                // -- ordering --
                 (CodeElement)AsCodeElement(context.MergeStatement()) ??
                 (CodeElement)AsCodeElement(context.ReleaseStatement()) ??
                 (CodeElement)AsCodeElement(context.ReturnStatement()) ??
                 (CodeElement)AsCodeElement(context.SortStatement()) ??
-/* TODO
-	| returnStatementExplicitScope
- */
-// -- procedure-branching --
+                /* TODO
+                    | returnStatementExplicitScope
+                 */
+                // -- procedure-branching --
                 (CodeElement)AsCodeElement(context.AlterStatement()) ??
                 (CodeElement)AsCodeElement(context.ExitStatement()) ??
                 (CodeElement)AsCodeElement(context.GotoStatement()) ??
                 (CodeElement)AsCodeElement(context.PerformProcedureStatement()) ??
-/* TODO
-	| performStatementWithBody
- */
-// -- program or method linkage --
+                /* TODO
+                    | performStatementWithBody
+                 */
+                // -- program or method linkage --
                 (CodeElement)AsCodeElement(context.CallStatement()) ??
                 (CodeElement)AsCodeElement(context.CancelStatement()) ??
                 (CodeElement)AsCodeElement(context.InvokeStatement()) ??
-/* TODO
-	| callStatementExplicitScope
-	| invokeStatementExplicitScope
- */
+                /* TODO
+                    | callStatementExplicitScope
+                    | invokeStatementExplicitScope
+                 */
                 (CodeElement)AsCodeElement(context.ExecStatement()) ??
                 null;
         }
-	}
+    }
 }

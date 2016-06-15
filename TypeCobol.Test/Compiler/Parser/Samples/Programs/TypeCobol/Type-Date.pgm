@@ -8,16 +8,16 @@ DATA DIVISION.
 **************
 WORKING-STORAGE SECTION.
 
-01  TC-DATE        TYPEDEF STRONG.
-  10  YYYY         PIC 9(04).
-  10  MM           PIC 9(02).
-  10  DD           PIC 9(02).
+01 W-DATE TYPEDEF STRONG.
+    05 yyyy pic 9(04).
+    05 mm pic 9(02).
+    05 dd pic 9(02).
 
 01  olddate        PIC X(08).
-01  today          TYPE TC-DATE.
-01  tomorrow       TYPE TC-DATE.
+01  today          TYPE Date.
+01  tomorrow       TYPE Date.
 01 groupe.
-   05 date1        type TC-DATE.
+   05 date1        type Date.
 PROCEDURE DIVISION.
 *******************
 TEST-DATE.

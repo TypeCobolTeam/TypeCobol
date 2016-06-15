@@ -2,6 +2,8 @@
   PROGRAM-ID. TypeCobol.
 
 DATA DIVISION.
+
+
 WORKING-STORAGE SECTION.
 
 01 Feature TYPEDEF.
@@ -76,6 +78,11 @@ WORKING-STORAGE SECTION.
 
 
 PROCEDURE DIVISION.
+01 OutOfPerimeter2 TYPEDEF.
+  02 OutOfPerimeter2-var1 PIC X.
+
 MOVE X OF Coord2d OF Accel2d OF Movment2d OF Point TO X OF Coord2d OF Speed2d OF Movment2d OF Point.
 MOVE Y OF Coord2d OF Position2d TO Z OF Coord3d OF Position2d.
 MOVE X OF Coord3d TO Y.
+
+*------>Except a Type is not referenced on lines 34, 45, 49, 59

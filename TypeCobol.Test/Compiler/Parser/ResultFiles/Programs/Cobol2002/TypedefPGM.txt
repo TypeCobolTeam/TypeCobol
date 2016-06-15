@@ -1,0 +1,117 @@
+﻿--- Diagnostics ---
+[14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries (RuleStack=codeElement>dataDescriptionEntry>cob2002TypedefClause, OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF> on line 32)
+[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator (RuleStack=codeElement>dataDescriptionEntry, OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF> on line 37)
+[27,32]<27,Error,Syntax>Syntax error : Elementary TYPEDEF cannot be STRONG (RuleStack=codeElement>dataDescriptionEntry>cob2002TypedefClause, OffendingSymbol=[27,32:STRONG]<STRONG> on line 48)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 52)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 54)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 57)
+[26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 72)
+[33,40]<27,Error,Syntax>Syntax error : External is only allowed for level 01 (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL> on line 76)
+[1,27]<27,Error,Syntax>Syntax error : mismatched input '01OutOfPerimeter2TYPEDEF.' expecting {<EOF>, ProgramIdentification, ProgramEnd, SectionHeader, ParagraphHeader, SentenceEnd, AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement} (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision, OffendingSymbol=TYPEDEF OutOfPerimeter2 {1} GROUP(0) [ ]OutOfPerimeter2 on line 81)
+[1,31]<27,Error,Syntax>Syntax error : Type TypeNotDefined is not referenced. ([1>31] on line 28)
+[1,41]<27,Error,Syntax>Syntax error : Type ClausesOrderKO is not referenced. ([1>41] on line 38)
+[1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 44)
+[5,57]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines4B {5} Numeric <of> varNoRedefines4 ([5>57] on line 63)
+[5,62]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis ([5>62] on line 69)
+
+--- Program ---
+PROGRAM: TypeCobol common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+CUSTOM TYPES:
+ * Feature
+     - Feature-name[10] {2} Alphanumeric <of> Feature
+ * Vect2
+     - Coord2d {11} GROUP(2) [ X Y ] <of> Vect2
+       - X {15} Numeric <of> Coord2d <of> Vect2
+       - Y {12} Numeric <of> Coord2d <of> Vect2
+     - Coord3d {5} GROUP(1) [ Z ] <of> Vect2
+       - Z {10} Numeric <of> Coord3d <of> Vect2
+ * LevelKO
+     - LevelKOItem {10} Numeric <of> LevelKO <of> LevelKOGroup
+ * ClausesOrderOK
+ * NoDescription
+ * CannotBeStrong
+ * NoRedefines1
+ * NoRedefines2
+     - NoRedefines1Item {5} Alphanumeric <of> NoRedefines2
+ * NoRedefines3
+     - NoRedefines1Item {5} Alphanumeric <of> NoRedefines3
+ * varNoRedefines4
+     - varNoRedefines4A {5} Alphanumeric <of> varNoRedefines4
+     - varNoRedefines4B {5} Numeric <of> varNoRedefines4
+ * varNoRedefines5
+     - varNoRedefines5-a {5} Alphanumeric <of> varNoRedefines5
+ * varNoRedefines5bis
+     - varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis
+ * ExternalType1
+     - varExternalType1 {2} Alphanumeric <of> ExternalType1
+ * ExternalType2
+     - varExternalType2 {2} Alphanumeric <of> ExternalType2
+SYMBOL TABLE:
+  TYPEDEF Feature {1} GROUP(1) [ Feature-name ]Feature
+  Feature-name[10] {2} Alphanumeric <of> Feature
+  Feature-name[10] {4} Alphanumeric <of> Feature-list <of> Equipment-id <of> Equipment
+  Equipment {1} GROUP(1) [ Equipment-id ]
+  Equipment-id[100] {2} GROUP(1) [ Feature-list ] <of> Equipment
+  Feature-list {3} Feature <of> Equipment-id <of> Equipment
+  TYPEDEF Vect2 {1} GROUP(2) [ Coord2d Coord3d ]Vect2
+  Coord2d {11} GROUP(2) [ X Y ] <of> Vect2
+  Coord2d {6} GROUP(2) [ X Y ] <of> Position2d <of> Point
+  Coord2d {15} GROUP(2) [ X Y ] <of> Accel2d <of> Movment2d <of> Point
+  Coord2d {11} GROUP(2) [ X Y ] <of> Speed2d <of> Movment2d <of> Point
+  X {15} Numeric <of> Coord2d <of> Vect2
+  X {7} Numeric <of> Coord2d <of> Position2d <of> Point
+  X {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
+  X {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  Y {12} Numeric <of> Coord2d <of> Vect2
+  Y {7} Numeric <of> Coord2d <of> Position2d <of> Point
+  Y {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
+  Y {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  Coord3d {5} GROUP(1) [ Z ] <of> Vect2
+  Coord3d {6} GROUP(1) [ Z ] <of> Position2d <of> Point
+  Coord3d {15} GROUP(1) [ Z ] <of> Accel2d <of> Movment2d <of> Point
+  Coord3d {11} GROUP(1) [ Z ] <of> Speed2d <of> Movment2d <of> Point
+  Z {10} Numeric <of> Coord3d <of> Vect2
+  Z {7} Numeric <of> Coord3d <of> Position2d <of> Point
+  Z {16} Numeric <of> Coord3d <of> Accel2d <of> Movment2d <of> Point
+  Z {12} Numeric <of> Coord3d <of> Speed2d <of> Movment2d <of> Point
+  Point {1} GROUP(2) [ Position2d Movment2d ]
+  Position2d {5} Vect2 <of> Point
+  Movment2d {5} GROUP(2) [ Accel2d Speed2d ] <of> Point
+  Accel2d {14} Vect2 <of> Movment2d <of> Point
+  Speed2d {10} Vect2 <of> Movment2d <of> Point
+  unknown {1} 
+  LevelKOGroup {1} GROUP(1) [ LevelKO ]
+  TYPEDEF LevelKO {5} GROUP(1) [ LevelKOItem ]LevelKO <of> LevelKOGroup
+  LevelKOItem {10} Numeric <of> LevelKO <of> LevelKOGroup
+  LevelKOItem {2} Numeric <of> varLevelKO
+  varLevelKO {1} LevelKO
+  ClausesOrderKO {1} Alphanumeric
+  varClausesOrderKO {1} 
+  TYPEDEF ClausesOrderOK {1} ClausesOrderOK
+  varClausesOrderOK {1} ClausesOrderOK
+  TYPEDEF NoDescription {1} GROUP(0) [ ]NoDescription
+  varNoDescription {1} NoDescription
+  TYPEDEF CannotBeStrong {1} CannotBeStrong
+  varCannotBeStrong {1} CannotBeStrong
+  TYPEDEF NoRedefines1 {1} NoRedefines1
+  varNoRedefines1 {1} NoRedefines1
+  TYPEDEF NoRedefines2 {1} GROUP(1) [ NoRedefines1Item ]NoRedefines2
+  NoRedefines1Item {5} Alphanumeric <of> NoRedefines2
+  NoRedefines1Item {2} Alphanumeric <of> varNoRedefines2
+  NoRedefines1Item {5} Alphanumeric <of> NoRedefines3
+  NoRedefines1Item {2} Alphanumeric <of> varNoRedefines3
+  varNoRedefines2 {1} NoRedefines2
+  TYPEDEF NoRedefines3 {1} GROUP(1) [ NoRedefines1Item ]NoRedefines3
+  varNoRedefines3 {1} NoRedefines3
+  TYPEDEF varNoRedefines4 {1} GROUP(2) [ varNoRedefines4A varNoRedefines4B ]varNoRedefines4
+  varNoRedefines4A {5} Alphanumeric <of> varNoRedefines4
+  varNoRedefines4B {5} Numeric <of> varNoRedefines4
+  TYPEDEF varNoRedefines5 {1} GROUP(1) [ varNoRedefines5-a ]varNoRedefines5
+  varNoRedefines5-a {5} Alphanumeric <of> varNoRedefines5
+  TYPEDEF varNoRedefines5bis {1} GROUP(1) [ varNoRedefines5bis-a ]varNoRedefines5bis
+  varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis
+  TYPEDEF ExternalType1 {1} GROUP(1) [ varExternalType1 ]ExternalType1
+  varExternalType1 {2} Alphanumeric <of> ExternalType1
+  TYPEDEF ExternalType2 {1} GROUP(1) [ varExternalType2 ]ExternalType2
+  varExternalType2 {2} Alphanumeric <of> ExternalType2

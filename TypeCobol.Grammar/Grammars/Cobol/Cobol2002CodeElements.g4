@@ -10,7 +10,7 @@ cobolCodeElements: codeElement* EOF;
 dataDescriptionEntry:
 	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
 
-		levelNumber (dataNameDefinition | FILLER)? redefinesClause? tcExtTypedefClause?
+		levelNumber (dataNameDefinition | FILLER)? redefinesClause? cob2002TypedefClause?
 		( pictureClause
 		| blankWhenZeroClause
 		| externalClause
@@ -22,12 +22,12 @@ dataDescriptionEntry:
 		| synchronizedClause
 		| usageClause
 		| valueClause
-		| tcExtTypeClause
+		| cob2002TypeClause
 		)* PeriodSeparator
 	)
 	| dataRenamesEntry
 	| dataConditionEntry;
 
-tcExtTypedefClause: TYPEDEF STRONG?;
+cob2002TypedefClause: TYPEDEF STRONG?;
 
-tcExtTypeClause:    TYPE UserDefinedWord;
+cob2002TypeClause:    TYPE UserDefinedWord;
