@@ -20,7 +20,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 				OnDataDescriptionEntry(data, c as CodeElementsParser.DataDescriptionEntryContext);
 			if (c is CodeElementsParser.DataConditionEntryContext)
 				OnDataConditionEntry(data, c as CodeElementsParser.DataConditionEntryContext);
-		}
+            if (c is CodeElementsParser.DataRenamesEntryContext)
+                OnDataRenamesEntry(data, (CodeElementsParser.DataRenamesEntryContext) c);
+        }
 
 		private void OnDataDescriptionEntry(DataDescriptionEntry data, CodeElementsParser.DataDescriptionEntryContext context) {
 			var picture   = GetContext(data, context.pictureClause());
@@ -34,6 +36,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var sign      = GetContext(data, context.signClause());
 			var occurs    = GetContext(data, context.occursClause());
 			var value     = GetContext(data, context.valueClause());
+
 
 		    if (data.Name == null)
 		    {
@@ -57,10 +60,23 @@ namespace TypeCobol.Compiler.Diagnostics {
 				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
 		}
 		private void OnDataRenamesEntry(DataDescriptionEntry data, CodeElementsParser.DataRenamesEntryContext context) {
-			if (data.LevelNumber != 66)
-				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
-			if (data.Name == null && !data.IsFiller)
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());
+
+
+		    if (data.LevelNumber != 66)
+		    {
+                //(source page 379 of ISO Cobol 2014) 
+                DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
+		    }
+		    if (data.Name == null && !data.IsFiller)
+		    {
+                //(source page 379 of ISO Cobol 2014) 
+                DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());
+		    }
+		    if (data.RenamesFromDataName.Equals(data.RenamesToDataName))
+		    {
+                //(source page 379 of ISO Cobol 2014) 
+                DiagnosticUtils.AddError(data, "Renamed items can't be the same " + data.RenamesFromDataName + " and " + data.RenamesToDataName, context);
+            }
 		}
 
         /// <summary>

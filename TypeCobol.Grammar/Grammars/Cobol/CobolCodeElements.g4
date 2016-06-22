@@ -3579,7 +3579,7 @@ redefinesClause:
 //   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
-                 /* 66 dataName */ RENAMES dataNameReference ((THROUGH | THRU) dataNameReference)?;
+                 /* 66 dataName */ RENAMES qualifiedDataName ((THROUGH | THRU) qualifiedDataName)?;
 
 // p221: The SIGN clause specifies the position and mode of representation of the
 // operational sign for the signed numeric item to which it applies.

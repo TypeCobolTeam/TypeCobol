@@ -420,7 +420,8 @@ namespace TypeCobol.Compiler.Parser
 			//entry.IsFiller = (dataname == null || context.FILLER() != null);
 
 			var redefines = context.redefinesClause();
-			if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
+			if (redefines != null)
+                entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
 
 			var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
 			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
@@ -472,7 +473,8 @@ namespace TypeCobol.Compiler.Parser
 			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
 
-			var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataNameReference());
+
+			var names = SyntaxElementBuilder.CreateQualifiedNames(context.renamesClause().qualifiedDataName());
 			if (names.Count > 0) entry.RenamesFromDataName = names[0];
 			if (names.Count > 1) entry.RenamesToDataName   = names[1];
 			//note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
