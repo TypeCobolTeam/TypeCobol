@@ -44,7 +44,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 		            foreach (var external in context.externalClause())
 		                DiagnosticUtils.AddError(data, message, external);
 		        }
-		    }
+
+                if (data.DataType.IsStrong &&  data.InitialValue != null)
+                {
+                    string message = "Strong Typedef can't contains value clause:";
+                    foreach (var valeuClause in context.valueClause())
+                        DiagnosticUtils.AddError(data, message, valeuClause);
+                }
+
+            }
         }
 	}
 }

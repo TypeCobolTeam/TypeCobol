@@ -177,11 +177,14 @@ namespace TypeCobol.Compiler.Parser
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
 				var customtype = ComputeType(data, currencies);
-				if (customtype != null && !customtype.DataType.IsNestable && hasParent) {
+
+
+                //TODO move these rules in a new TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
+                if (customtype != null && !customtype.DataType.IsNestable && hasParent) {
 					DiagnosticUtils.AddError(data, "Type "+customtype.DataType.Name+" should not be subordinate to another item");
 					var parent = data.TopLevel;
 					while(parent != null) {
-						DiagnosticUtils.AddError(parent, "Group items should not contain type "+customtype.DataType.Name+" items");
+						DiagnosticUtils.AddError(parent, "Group items should not contain non nestable type "+customtype.DataType.Name+" items");
 						parent = parent.TopLevel;
 					}
 				}
@@ -189,7 +192,8 @@ namespace TypeCobol.Compiler.Parser
 
                 //Rules that apply to item under a TYPEDEF, the TYPEDEF item itself is check by others rules
                 //TODO move these rules in a new TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
-                if (data.IsTypeDefinitionPart && !data.IsTypeDefinition)
+			    var typeDefinition = data.GetTypeDefinition();
+                if (typeDefinition != null && !data.IsTypeDefinition)
                 {
                     //Redefines is not allowed under a TYPEDEF
                     if (data.RedefinesDataName != null)
@@ -200,21 +204,61 @@ namespace TypeCobol.Compiler.Parser
                     {
                         DiagnosticUtils.AddError(data, "Typedef can't contains renamed item: " + data);
                     }
+                    //If
+                    if (typeDefinition.DataType.IsStrong && data.InitialValue != null)
+                    {
+                        DiagnosticUtils.AddError(data, "Item under a Strong Typedef can't contains value clause: " + data);
+                    }
                 }
 
-                CurrentProgram.SymbolTable.Add(data);
-					if (customtype != null) {
-						foreach(var sub in customtype.Subordinates) {
-							// add a clone so parent/child relations are not spoiled
-							var clone = sub.Clone() as DataDescriptionEntry;
-							data.Subordinates.Add(clone);
-							clone.TopLevel = data;
-							UpdateLevelNumbers(clone, data.LevelNumber);
+                //TODO move these rules in a new CobolTxxxxChecker and TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
+                if (data.RedefinesDataName != null)
+			    {
+			        var redfinedItems = CurrentProgram.SymbolTable.Get(data.RedefinesDataName.Name);
+			        if (redfinedItems.Count == 0)
+			        {
+			            DiagnosticUtils.AddError(data, data + " redefines a variable not referenced " + data.RedefinesDataName);
+			        }
+			        else if (redfinedItems.Count > 1)
+			        {
+                        DiagnosticUtils.AddError(data, data + " redefines an ambiguous variable  " + data.RedefinesDataName);
+                    }
+			        else
+			        {
+			            if (redfinedItems[0].IsTypeDefinitionPart)
+			            {
+                            DiagnosticUtils.AddError(data, data + " can't redefines a TYPEDEF " + data.RedefinesDataName);
+                        }
+                        if (redfinedItems[0].GetFirstStrongDataDescriptionEntry() != null)
+                        {
+                            DiagnosticUtils.AddError(data, data + " can't redefines a STRONG TYPE " + data.RedefinesDataName);
+                        }
+                    }
+			    }
+                //TODO move these rules in a new CobolTxxxxChecker and TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
+                if (data.RenamesFromDataName != null)
+			    {
+			        CheckRenameClause(data, data.RenamesFromDataName);
+			    }
+                //TODO move these rules in a new CobolTxxxxChecker and TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
+                if (data.RenamesToDataName != null)
+			    {
+                    CheckRenameClause(data, data.RenamesToDataName);
+                }
 
-							CurrentProgram.SymbolTable.Add(clone);
-							AddGeneratedSymbols(clone);
-						}
+			    CurrentProgram.SymbolTable.Add(data);
+				if (customtype != null) {
+					foreach(var sub in customtype.Subordinates) {
+						// add a clone so parent/child relations are not spoiled
+						var clone = sub.Clone() as DataDescriptionEntry;
+						data.Subordinates.Add(clone);
+						clone.TopLevel = data;
+						UpdateLevelNumbers(clone, data.LevelNumber);
+
+						CurrentProgram.SymbolTable.Add(clone);
+						AddGeneratedSymbols(clone);
 					}
+				}
 			}
 			foreach(var data in result) {
 				int offset = 0;
@@ -225,7 +269,34 @@ namespace TypeCobol.Compiler.Parser
 			return result;
 		}
 
-		private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
+        private void CheckRenameClause(DataDescriptionEntry data, QualifiedName renamesFrom)
+        {
+            var renames = CurrentProgram.SymbolTable.Get(renamesFrom);
+            if (renames.Count == 0)
+            {
+                DiagnosticUtils.AddError(data, data + " rename a variable not referenced " + renamesFrom);
+            }
+            else if (renames.Count > 1)
+            {
+                DiagnosticUtils.AddError(data, data + " rename an ambiguous variable  " + renamesFrom);
+            }
+            else
+            {
+
+                if (renames[0].IsTypeDefinitionPart)
+                {
+                    DiagnosticUtils.AddError(data, data + " can't renames a TYPEDEF " + renamesFrom);
+                }
+                if (renames[0].GetFirstStrongDataDescriptionEntry() != null)
+                {
+                    DiagnosticUtils.AddError(data, data + " can't renames a strongly typed variable" + renamesFrom);
+                }
+
+                
+            }
+        }
+
+        private void ComputeMemoryProfile(DataDescriptionEntry data, ref int offset) {
 			if (data.Subordinates.Count < 1) {
 				int length = picture2Size(data.Picture) * type2Size(data.DataType);
 				data.MemoryArea = CreateMemoryArea(data, offset, length);

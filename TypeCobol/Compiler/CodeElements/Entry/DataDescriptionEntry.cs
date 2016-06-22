@@ -1033,28 +1033,47 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsInitialValueNull { get; set; }
 
 // [TYPECOBOL]
-		public virtual bool IsTypeDefinition { get; set; }
-		public bool IsTypeDefinitionPart {
-			get { return GetTypeDefinition() != null; }
-		}
-		private DataDescriptionEntry GetTypeDefinition() {
-			var parent = this;
-			while(parent != null) {
-				if (parent.IsTypeDefinition) return parent;
-				parent = parent.TopLevel;
-			}
-			return null;
-		}
+        public virtual bool IsTypeDefinition { get; set; }
+
+        public bool IsTypeDefinitionPart {
+            get { return GetTypeDefinition() != null; }
+        }
+
+        /// <summary>
+        /// Return the current DataDescription or the first parent which is a Strong Type
+        /// If this method returns a DataDescriptionEntry, it means that the current DataDescriptionEntry is a strongly typed.
+        /// </summary>
+        /// <returns></returns>
+        public DataDescriptionEntry GetFirstStrongDataDescriptionEntry()
+        {
+            var parent = this;
+            while (parent != null)
+            {
+                if (parent.DataType.IsStrong) return parent;
+                parent = parent.TopLevel;
+            }
+            return null;
+        }
+
+        public DataDescriptionEntry GetTypeDefinition()
+        {
+            var parent = this;
+            while(parent != null) {
+                if (parent.IsTypeDefinition) return parent;
+                parent = parent.TopLevel;
+            }
+            return null;
+        }
 // [/TYPECOBOL]
 
 
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-// [TYPECOBOL]
+            // [Cobol2002]
 			if (IsTypeDefinition) str.Append("TYPEDEF ");
-// [/TYPECOBOL]
-			if (IsFiller) str.Append("<filler>");
+            // [/Cobol2002]
+            if (IsFiller) str.Append("<filler>");
 			else if (Name==null) str.Append("?");
 			str.Append(Name);
 			if (IsTableOccurence) {
