@@ -93,7 +93,7 @@ namespace TypeCobol.Test.Compiler.Parser
             string root = CreateSamplesRoot(folder);
             this.extensions = extensions;
             string[] paths = Directory.GetFiles(root, extensions[0], (deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
-            this.samples = Filter(paths, (ignored != null ? ignored : new string[0]), folder);
+            this.samples = Filter(paths, (ignored ?? new string[0]), folder);
         }
 
         private string CreateSamplesRoot(string folder)
@@ -116,15 +116,25 @@ namespace TypeCobol.Test.Compiler.Parser
             return names;
         }
 
+        /// <summary>
+        /// Return the number of test runs
+        /// </summary>
+        /// <returns></returns>
+        public int getTestCount()
+        {
+            return samples.Count;
+        }
+
         private string GetName(string path)
         {
-            string root = finder.paths.sample.full.folder;
-            string name = path.Remove(0, root.Length + 1);
-            return name.Remove(name.Length - finder.paths.sextension.Length);
+            return (Path.GetDirectoryName(path) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(path)).Substring(finder.paths.sample.full.folder.Length);
+
+            //string root = finder.paths.sample.full.folder;
+            //string name = path.Remove(0, root.Length + 1);
+            //return name.Remove(name.Length - finder.paths.sextension.Length);
         }
 
 		public void Test(bool debug = false, bool json = false) {
-			if (this.samples.Count < 1) throw new System.Exception("No sample file!");
 			var errors = new StringBuilder();
 			foreach (var sample in this.samples) {
 				IList<FilesComparator> comparators = GetComparators(sample, debug);
@@ -134,7 +144,7 @@ namespace TypeCobol.Test.Compiler.Parser
 					continue;
 				}
 				foreach (var comparator in comparators) {
-					System.Console.WriteLine("Check result file \"" + comparator.paths.result.full.path + "\" with " + comparator);
+					System.Console.WriteLine(comparator.paths.result.project.path + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(sample, debug);
 					unit.comparator = comparator;
 					unit.Init(this.extensions);
