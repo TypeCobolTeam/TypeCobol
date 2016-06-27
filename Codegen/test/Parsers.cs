@@ -4,7 +4,6 @@ using System.IO;
 using TypeCobol.Codegen.Config;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler; // DocumentFormat
-using TypeCobol.Server; // Parser
 using TypeCobol.Tools; // CodeElementDiagnostics
 
 namespace TypeCobol.Codegen {

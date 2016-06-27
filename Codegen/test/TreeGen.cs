@@ -19,7 +19,7 @@ namespace TypeCobol.Codegen {
 			root1.Accept(writer1);
 			System.Console.WriteLine(writer1.Output);
 			//new TreeToCode().execute(root);
-			var document = Server.Parser.Parse("resources/input/TypeCobol/FUNCTION.cbl", Compiler.DocumentFormat.RDZReferenceFormat);
+			var document = Parser.Parse("resources/input/TypeCobol/FUNCTION.cbl", Compiler.DocumentFormat.RDZReferenceFormat);
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			var root = program.SyntaxTree.Root;
