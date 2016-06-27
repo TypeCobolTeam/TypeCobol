@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TypeCobol.Test {
 
@@ -18,8 +19,8 @@ namespace TypeCobol.Test {
 			int STOP_AFTER_AS_MANY_ERRORS = 1000;
 			string regex = "*.PGM";
 			string samples = @"Samples";
-			string path = PlatformUtils.GetPathForProjectFile(samples);
-			string[] files = System.IO.Directory.GetFiles(path, regex, System.IO.SearchOption.AllDirectories);
+			string root = PlatformUtils.GetPathForProjectFile(samples);
+			string[] files = Directory.GetFiles(root, regex, System.IO.SearchOption.AllDirectories);
 			string[] include = { };
 			string[] exclude = { };
 			bool codegen = false;
@@ -31,7 +32,7 @@ namespace TypeCobol.Test {
 			int totalNumberOfErrors = 0;
 			foreach (var file in files) {
 
-				string filename = System.IO.Path.GetFileName(file);
+				string filename = Path.GetFileName(file);
 				System.IO.File.AppendAllText("CheckGrammarResults.txt", (filename + ':'));
 				bool ignore = include.Length > 0 && !include.Contains(filename);
 				if (!ignore) ignore = exclude.Contains(filename);
@@ -40,9 +41,10 @@ namespace TypeCobol.Test {
 					System.IO.File.AppendAllText("CheckGrammarResults.txt", " ignored.\n");
 					continue;
 				}
+				string path = Path.Combine(root, filename);
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
-				var unit = ParserUtils.ParseCobolFile(filename, format, samples);
+				var document = Parser.Parse(path, format);
 				watch.Stop();
 				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
 				TimeSpan elapsed = watch.Elapsed;
@@ -52,13 +54,13 @@ namespace TypeCobol.Test {
 
 				tested++;
 				bool okay = true;
-				if(hasErrors(unit.CodeElementsDocumentSnapshot)) {
+				if(hasErrors(document.Results.CodeElementsDocumentSnapshot)) {
 					okay = false;
-					totalNumberOfErrors += checkErrors(filename, unit.CodeElementsDocumentSnapshot.ParserDiagnostics);
+					totalNumberOfErrors += checkErrors(filename, document.Results.CodeElementsDocumentSnapshot.ParserDiagnostics);
 				}
-				if(hasErrors(unit.ProgramClassDocumentSnapshot)) {
+				if(hasErrors(document.Results.ProgramClassDocumentSnapshot)) {
 					okay = false;
-					totalNumberOfErrors += checkErrors(filename, unit.ProgramClassDocumentSnapshot.Diagnostics);
+					totalNumberOfErrors += checkErrors(filename, document.Results.ProgramClassDocumentSnapshot.Diagnostics);
 				}
 				if (!okay) {
 					nbFilesInError++;
@@ -66,10 +68,15 @@ namespace TypeCobol.Test {
 				}
 
 				if (codegen) {
-					var generator = new TypeCobol.Compiler.Generator.TypeCobolGenerator(null, format, unit.ProgramClassDocumentSnapshot);
-					var stream = new System.IO.StreamWriter(filename+".gen");
-					generator.WriteCobol(stream);
-					stream.Close();
+					var writer = new StringWriter();
+					var generator = new TypeCobol.Codegen.Generator(writer, document.Results.TokensLines, null);
+					var program = document.Results.ProgramClassDocumentSnapshot.Program;
+					var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
+					generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
+					writer.Close();
+
+					string expected = File.ReadAllText(path);
+					Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
 				}
 			}
 			string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);
@@ -90,6 +97,10 @@ namespace TypeCobol.Test {
 			Console.WriteLine(result);
 			System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
 			return diagnostics.Count();
+		}
+
+		private string ReplaceLineBreaks(string text) {
+			return text.Replace("\r\n","\n").Replace("\r","\n");
 		}
 	}
 }
