@@ -269,7 +269,7 @@ namespace TypeCobol.Compiler.Parser
 			return result;
 		}
 
-        private void CheckRenameClause(DataDescriptionEntry data, QualifiedName renamesFrom)
+        private void CheckRenameClause(DataDescriptionEntry data, TypeCobol.Compiler.CodeElements.Expressions.QualifiedName renamesFrom)
         {
             var renames = CurrentProgram.SymbolTable.Get(renamesFrom);
             if (renames.Count == 0)
