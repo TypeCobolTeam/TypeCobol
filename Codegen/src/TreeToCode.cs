@@ -16,6 +16,8 @@ namespace TypeCobol.Codegen {
 		public System.IO.StringWriter Output;
 		/// <summary>Index in Input of the next line to write</summary>
 		private int offset = 0;
+		/// <summary>Last line written</summary>
+		private ITextLine lastline = null;
 
 		public TreeToCode(IEnumerable<ICobolTextLine> source = null, ColumnsLayout layout = ColumnsLayout.FreeTextFormat) {
 			if (source == null) Input = new List<ICobolTextLine>();
@@ -75,10 +77,13 @@ namespace TypeCobol.Codegen {
 		}
 
 		private void Write(ITextLine line, bool? isComment) {
+			if (line == lastline) return;
+			int c = 0;
 			foreach(var l in Indent(line, isComment)) {
 				Output.WriteLine(l.Text);
 				offset++;
 			}
+			lastline = line;
 		}
 
 		private IEnumerable<ITextLine> Indent(ITextLine line, bool? isComment) {
