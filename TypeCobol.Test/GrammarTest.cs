@@ -29,7 +29,8 @@ namespace TypeCobol.Test {
 			System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
 			int tested = 0, nbFilesInError = 0, ignores = 0;
 			TimeSpan sum = new TimeSpan(0);
-			int totalNumberOfErrors = 0;
+			int parseErrors = 0;
+			int codegenErrors = 0;
 			foreach (var file in files) {
 
 				string filename = Path.GetFileName(file);
@@ -56,11 +57,11 @@ namespace TypeCobol.Test {
 				bool okay = true;
 				if(hasErrors(document.Results.CodeElementsDocumentSnapshot)) {
 					okay = false;
-					totalNumberOfErrors += checkErrors(filename, document.Results.CodeElementsDocumentSnapshot.ParserDiagnostics);
+					parseErrors += checkErrors(filename, document.Results.CodeElementsDocumentSnapshot.ParserDiagnostics);
 				}
 				if(hasErrors(document.Results.ProgramClassDocumentSnapshot)) {
 					okay = false;
-					totalNumberOfErrors += checkErrors(filename, document.Results.ProgramClassDocumentSnapshot.Diagnostics);
+					parseErrors += checkErrors(filename, document.Results.ProgramClassDocumentSnapshot.Diagnostics);
 				}
 				if (!okay) {
 					nbFilesInError++;
@@ -83,7 +84,7 @@ namespace TypeCobol.Test {
 					}
 					var errors = new System.Text.StringBuilder();
 					string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
-					if (linesKO.Count > 0) errors.AppendLine("Lines mismatch:");
+					if (linesKO.Count > 0 || expected.Count != actual.Count) errors.AppendLine("--- Lines mismatch ---");
 					foreach (int i in linesKO)
 						errors.AppendLine(String.Format("@{0:"+fmt+"}: expected \"{1}\", actual \"{2}\"", i, expected[i], actual[i]));
 					for(int i=actual.Count; i<expected.Count; i++)
@@ -91,13 +92,17 @@ namespace TypeCobol.Test {
 					for(int i=expected.Count; i<actual.Count; i++)
 						errors.AppendLine(String.Format("@{0:"+fmt+"}: unexpected line \"{1}\"", i, actual[i]));
 					if (errors.Length > 0) {
+						codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
 						System.IO.File.AppendAllText("CheckGrammarResults.txt", errors.ToString());
 						if (okay) nbFilesInError++;
 					}
 				}
 			}
 			string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);
-			string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\nTotal number of errors: "+ totalNumberOfErrors+  "\ntotal time: " + total;
+			string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\n";
+			if (parseErrors > 0)   message += "Parsing errors: "+ parseErrors   + '\n';
+			if (codegenErrors > 0) message += "Codegen errors: "+ codegenErrors + '\n';
+			message += "Total time: " + total;
 			System.IO.File.AppendAllText("CheckGrammarResults.txt", message);
 			if (nbFilesInError > 0) Assert.Fail('\n'+message);
 		}
