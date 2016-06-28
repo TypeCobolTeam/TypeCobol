@@ -23,7 +23,7 @@ namespace TypeCobol.Test {
 			string[] files = Directory.GetFiles(root, regex, System.IO.SearchOption.AllDirectories);
 			string[] include = { };
 			string[] exclude = { };
-			bool codegen = false;
+			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
 			System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
@@ -75,8 +75,25 @@ namespace TypeCobol.Test {
 					generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 					writer.Close();
 
-					string expected = File.ReadAllText(path);
-					Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
+					var expected = AsLines(File.ReadAllText(path));
+					var actual = AsLines(writer.ToString());
+					var linesKO = new List<int>();
+					for(int i=0; i<Math.Min(expected.Count, actual.Count); i++) {
+						if (!expected[i].Equals(actual[i])) linesKO.Add(i);
+					}
+					var errors = new System.Text.StringBuilder();
+					string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
+					if (linesKO.Count > 0) errors.AppendLine("Lines mismatch:");
+					foreach (int i in linesKO)
+						errors.AppendLine(String.Format("@{0:"+fmt+"}: expected \"{1}\", actual \"{2}\"", i, expected[i], actual[i]));
+					for(int i=actual.Count; i<expected.Count; i++)
+						errors.AppendLine(String.Format("@{0:"+fmt+"}: missing line \"{1}\"", i, expected[i]));
+					for(int i=expected.Count; i<actual.Count; i++)
+						errors.AppendLine(String.Format("@{0:"+fmt+"}: unexpected line \"{1}\"", i, actual[i]));
+					if (errors.Length > 0) {
+						System.IO.File.AppendAllText("CheckGrammarResults.txt", errors.ToString());
+						if (okay) nbFilesInError++;
+					}
 				}
 			}
 			string total = String.Format("{0:00}m{1:00}s{2:000}ms", sum.Minutes, sum.Seconds, sum.Milliseconds);
@@ -99,8 +116,13 @@ namespace TypeCobol.Test {
 			return diagnostics.Count();
 		}
 
-		private string ReplaceLineBreaks(string text) {
-			return text.Replace("\r\n","\n").Replace("\r","\n");
+		private List<string> AsLines(string text) {
+			return text.Replace("\r\n","\n").Replace("\r","\n").Split(new char[]{'\n'}).ToList<string>();
+		}
+		private string Lines2FormatString(int lines) {
+			string res = "0";
+			for (int i=1; i<lines.ToString().Length; i++) res += "0";
+			return res;
 		}
 	}
 }
