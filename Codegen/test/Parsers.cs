@@ -106,7 +106,8 @@ namespace TypeCobol.Codegen {
 		}
 
 		private void ParseGenerateCompare(string path, List<Skeleton> skeletons) {
-			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), DocumentFormat.RDZReferenceFormat);
+			var format = DocumentFormat.RDZReferenceFormat;
+			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format);
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			var writer = new StringWriter();
 			// write parsing errors
@@ -121,7 +122,7 @@ namespace TypeCobol.Codegen {
 			writer.Close();
 
 			// compare with expected result
-			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path));
+			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
 			Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
 		}
 

@@ -75,7 +75,7 @@ namespace TypeCobol.Test {
 					generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 					writer.Close();
 
-					var expected = AsLines(File.ReadAllText(path));
+					var expected = AsLines(File.ReadAllText(path, format.Encoding));
 					var actual = AsLines(writer.ToString());
 					var linesKO = new List<int>();
 					for(int i=0; i<Math.Min(expected.Count, actual.Count); i++) {
