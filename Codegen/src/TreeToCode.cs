@@ -66,6 +66,11 @@ namespace TypeCobol.Codegen {
 			}
 			return lines;
 		}
+		/// <summary>Write input lines up to the end.</summary>
+		public void Finalize() {
+			while (offset < Input.Count)
+				Write(Input[offset], null);
+		}
 
 		private bool IsInInput(ITextLine line) {
 			int c = offset;

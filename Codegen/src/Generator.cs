@@ -44,6 +44,7 @@ namespace TypeCobol.Codegen {
 			// STEP 2: convert tree to destination language code
 			var converter = new TreeToCode(Input, columns);
 			tree.Accept(converter);
+			converter.Finalize();
 			Writer.Write(converter.Output.ToString());
 			Writer.Flush();
 
