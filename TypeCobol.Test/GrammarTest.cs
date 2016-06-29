@@ -85,12 +85,25 @@ namespace TypeCobol.Test {
 					var errors = new System.Text.StringBuilder();
 					string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
 					if (linesKO.Count > 0 || expected.Count != actual.Count) errors.AppendLine("--- Lines mismatch ---");
-					foreach (int i in linesKO)
-						errors.AppendLine(String.Format("@{0:"+fmt+"}: expected \"{1}\", actual \"{2}\"", i, expected[i], actual[i]));
+					int start = -1;
+					for (int i=0; i<linesKO.Count; i++) {
+						int currentline = linesKO[i];
+						bool follows = i > 0 && linesKO[i-1] == currentline-1;
+						if (!follows) {
+							start = currentline;
+							before(errors, expected, currentline,3, fmt);
+						}
+						bool preceeds = i+1 < linesKO.Count && linesKO[i+1] == currentline+1;
+						if (!preceeds) {
+							diff(errors, expected, actual, start, currentline, fmt);
+							after(errors, expected, currentline,3, fmt);
+							start = -1;
+						}
+					}
 					for(int i=actual.Count; i<expected.Count; i++)
-						errors.AppendLine(String.Format("@{0:"+fmt+"}: missing line \"{1}\"", i, expected[i]));
+						errors.AppendLine(String.Format("-{0:"+fmt+"} {1}", i, expected[i]));
 					for(int i=expected.Count; i<actual.Count; i++)
-						errors.AppendLine(String.Format("@{0:"+fmt+"}: unexpected line \"{1}\"", i, actual[i]));
+						errors.AppendLine(String.Format("+{0:"+fmt+"} {1}", i, actual[i]));
 					if (errors.Length > 0) {
 						codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
 						System.IO.File.AppendAllText("CheckGrammarResults.txt", errors.ToString());
@@ -128,6 +141,30 @@ namespace TypeCobol.Test {
 			string res = "0";
 			for (int i=1; i<lines.ToString().Length; i++) res += "0";
 			return res;
+		}
+		/// <param name="output"></param>
+		/// <param name="input">Input text</param>
+		/// <param name="index">Line index</param>
+		/// <param name="before">Number of line before line index</param>
+		/// <param name="fmt"></param>
+		private void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
+			for(int line=index-before; line<index; line++)
+				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line, input[line]));
+		}
+		private void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
+			for (int i=start; i<=end; i++)
+				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i, expected[i]));
+			for (int i=start; i<=end; i++)
+				output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i, actual[i]));
+		}
+		/// <param name="output"></param>
+		/// <param name="input">Input text</param>
+		/// <param name="index">Line index</param>
+		/// <param name="after">Number of line after line index</param>
+		/// <param name="fmt"></param>
+		private void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
+			for(int line=index+1; line<=index+after; line++)
+				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line, input[line]));
 		}
 	}
 }
