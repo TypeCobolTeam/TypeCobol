@@ -546,33 +546,31 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
         }
 
 
-        public override void EnterEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
-            _del();// delete the node we attached in EnterStatement
-            _enter(new Node(AsCodeElement(context.EvaluateStatement())));
-        }
-        public override void EnterWhenConditionClause(CobolProgramClassParser.WhenConditionClauseContext context) {
-            _enter(new Node(null)); // WHEN group
-            var nodes = new List<Node>();
-            foreach(var condition in context.WhenCondition()) {
-                var node = new Node(AsCodeElement(condition));
-                nodes.Add(node);
-                CurrentProgram.SyntaxTree.Add(node);
-            }
-            CurrentProgram.SyntaxTree.Push(nodes[nodes.Count-1]);
-        }
-        public override void ExitWhenConditionClause(CobolProgramClassParser.WhenConditionClauseContext context) {
-            _exit(); // last WHEN
-            _exit(); // WHEN group
-        }
-        public override void EnterWhenOtherClause(CobolProgramClassParser.WhenOtherClauseContext context) {
-            _enter(new Node(AsCodeElement(context.WhenOtherCondition())));
-        }
-        public override void ExitWhenOtherClause(CobolProgramClassParser.WhenOtherClauseContext context) {
-            _exit();
-        }
-        public override void ExitEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
-            ExitConditionalStatement(context.EvaluateStatementEnd());
-        }
+		public override void EnterEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
+			_del();// delete the node we attached in EnterStatement
+			_enter(new Node(AsCodeElement(context.EvaluateStatement())));// enter EVALUATE
+		}
+		public override void EnterWhenConditionClause(CobolProgramClassParser.WhenConditionClauseContext context) {
+			_enter(new Node(null));// enter WHEN group
+			foreach(var condition in context.WhenCondition()) {
+				_enter(new Node(AsCodeElement(condition)));
+				_exit();
+			}
+			_exit();// exit WHEN group
+			_enter(new Node(null));// enter THEN
+		}
+		public override void ExitWhenConditionClause(CobolProgramClassParser.WhenConditionClauseContext context) {
+			_exit();// exit THEN
+		}
+		public override void EnterWhenOtherClause(CobolProgramClassParser.WhenOtherClauseContext context) {
+			_enter(new Node(AsCodeElement(context.WhenOtherCondition())));// enter WHEN OTHER
+		}
+		public override void ExitWhenOtherClause(CobolProgramClassParser.WhenOtherClauseContext context) {
+			_exit();// exit WHEN OTHER
+		}
+		public override void ExitEvaluateStatementWithBody(CobolProgramClassParser.EvaluateStatementWithBodyContext context) {
+			ExitConditionalStatement(context.EvaluateStatementEnd());// exit EVALUATE
+		}
 
 
         public override void EnterPerformStatementWithBody(CobolProgramClassParser.PerformStatementWithBodyContext context) {
