@@ -403,12 +403,8 @@ methodDefinition :
 
 // p109 : CONFIGURATION SECTION Format:
 
-configurationSection:
-                     ConfigurationSectionHeader
-                   ( SourceComputerParagraph
-                   | ObjectComputerParagraph
-                   | SpecialNamesParagraph
-                   | RepositoryParagraph )*;
+configurationSection: ConfigurationSectionHeader configurationParagraph*;
+configurationParagraph: SourceComputerParagraph | ObjectComputerParagraph | SpecialNamesParagraph | RepositoryParagraph;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
