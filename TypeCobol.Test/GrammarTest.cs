@@ -149,13 +149,13 @@ namespace TypeCobol.Test {
 		/// <param name="fmt"></param>
 		private void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
 			for(int line=index-before; line<index; line++)
-				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line, input[line]));
+				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
 		private void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
 			for (int i=start; i<=end; i++)
-				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i, expected[i]));
+				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
 			for (int i=start; i<=end; i++)
-				output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i, actual[i]));
+				output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i+1, actual[i]));
 		}
 		/// <param name="output"></param>
 		/// <param name="input">Input text</param>
@@ -164,7 +164,7 @@ namespace TypeCobol.Test {
 		/// <param name="fmt"></param>
 		private void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
 			for(int line=index+1; line<=index+after; line++)
-				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line, input[line]));
+				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
 	}
 }
