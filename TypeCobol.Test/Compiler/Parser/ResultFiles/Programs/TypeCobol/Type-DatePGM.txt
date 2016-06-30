@@ -1,25 +1,20 @@
 ﻿--- Diagnostics ---
-[25,28]<27,Error,Syntax>Syntax error : mismatched input 'Date' expecting UserDefinedWord (RuleStack=codeElement>dataDescriptionEntry>cob2002TypeClause, OffendingSymbol=[25,28:Date]<DATE> on line 17)
-[25,28]<27,Error,Syntax>Syntax error : mismatched input 'Date' expecting UserDefinedWord (RuleStack=codeElement>dataDescriptionEntry>cob2002TypeClause, OffendingSymbol=[25,28:Date]<DATE> on line 18)
-[25,28]<27,Error,Syntax>Syntax error : mismatched input 'Date' expecting UserDefinedWord (RuleStack=codeElement>dataDescriptionEntry>cob2002TypeClause, OffendingSymbol=[25,28:Date]<DATE> on line 20)
-[3,42]<27,Error,Syntax>Syntax error : Symbol today.YYYY is not referenced ([3>42] on line 35)
-[3,42]<27,Error,Syntax>Syntax error : Symbol today.YYYY is not referenced ([3>42] on line 36)
+[3,34]<27,Error,Syntax>Syntax error : Writing Alphanumeric to today:DATE is unsafe ([3>34] on line 24)
+[3,42]<27,Error,Syntax>Syntax error : today.YYYY is read-only ([3>42] on line 30)
+[3,42]<27,Error,Syntax>Syntax error : today.YYYY is read-only ([3>42] on line 31)
 
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
  author: WIZTIGERS. written: APRIL 2016 compiled: ? installation: ? security: ?
-CUSTOM TYPES:
- * W-DATE
-     - yyyy {5} Numeric <of> W-DATE
-     - mm {5} Numeric <of> W-DATE
-     - dd {5} Numeric <of> W-DATE
 SYMBOL TABLE:
-  TYPEDEF W-DATE {1} GROUP(3) [ yyyy mm dd ]W-DATE
-  yyyy {5} Numeric <of> W-DATE
-  mm {5} Numeric <of> W-DATE
-  dd {5} Numeric <of> W-DATE
   olddate {1} Alphanumeric
-  today {1} GROUP(0) [ ]
-  tomorrow {1} GROUP(0) [ ]
+  today {1} GROUP(3) [ yyyy mm dd ] DATE
+  tomorrow {1} GROUP(3) [ yyyy mm dd ] DATE
+  yyyy {5} Numeric <of> today
+  yyyy {5} Numeric <of> tomorrow
+  mm {5} Numeric <of> today
+  mm {5} Numeric <of> torrow
+  dd {5} Numeric <of> today
+  dd {5} Numeric <of> tomorrow
   groupe {1} GROUP(1) [ date1 ]
-  date1 {5} GROUP(0) [ ] <of> groupe
+  date1 {5} DATE <of> groupe

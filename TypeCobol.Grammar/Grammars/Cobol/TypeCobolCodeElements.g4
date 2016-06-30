@@ -24,6 +24,9 @@ legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName: dataNameReferenceOrC
 legacyQualifiedDataNameOrQualifiedConditionNameOrFileName:  dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference  ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 legacyQualifiedDataNameOrQualifiedConditionNameOrClassName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
+// rule modified to support:
+// - TYPE DATE (instead of TC-DATE or something)
+cob2002TypeClause:    TYPE (UserDefinedWord | DATE);
 
 // rule modified to support:
 // - MOVE UNSAFE <custom type> TO <custom type>

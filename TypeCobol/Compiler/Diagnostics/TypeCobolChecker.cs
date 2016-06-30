@@ -14,18 +14,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 	class ReadOnlyPropertiesChecker : NodeListener
 	{
 
-		private static string[] READONLY_DATATYPES = { "TC-DATE" };
+		private static string[] READONLY_DATATYPES = { "DATE", };
 
-		public IList<Type> GetCodeElements()
-		{
+		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
 		}
-		public void OnNode(Node node, ParserRuleContext c, Program program)
-		{
+		public void OnNode(Node node, ParserRuleContext c, Program program) {
 			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
 			var table = program.SymbolTable;
-			foreach (var pair in element.Symbols)
-			{
+			foreach (var pair in element.Symbols) {
 				if (pair.Item2 == null) continue; // no receiving item
 				var lr = table.Get(pair.Item2);
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
@@ -34,19 +31,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 			}
 		}
 
-		private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving)
-		{
+		private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving) {
 			if (receiving.TopLevel == null) return;
 			if (receiving.TopLevel.DataType == null) return;
-			foreach (var type in READONLY_DATATYPES)
-			{
-				if (type.Equals(receiving.TopLevel.DataType.Name.ToLower()))
-				{
+			foreach (var type in READONLY_DATATYPES) {
+				if (type.Equals(receiving.TopLevel.DataType.Name.ToLower())) {
 					DiagnosticUtils.AddError(e, type + " properties are read-only");
 				}
 			}
 		}
 	}
+
+
 
 	class FunctionChecker: NodeListener {
 		public IList<Type> GetCodeElements() {

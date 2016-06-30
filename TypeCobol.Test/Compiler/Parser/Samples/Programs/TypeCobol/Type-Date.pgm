@@ -8,16 +8,11 @@ DATA DIVISION.
 **************
 WORKING-STORAGE SECTION.
 
-01 W-DATE TYPEDEF STRONG.
-    05 yyyy pic 9(04).
-    05 mm pic 9(02).
-    05 dd pic 9(02).
-
 01  olddate        PIC X(08).
-01  today          TYPE Date.
-01  tomorrow       TYPE Date.
+01  today          TYPE date.
+01  tomorrow       TYPE DATE.
 01 groupe.
-   05 date1        type Date.
+   05 date1        type DaTe.
 PROCEDURE DIVISION.
 *******************
 TEST-DATE.
