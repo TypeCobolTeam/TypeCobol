@@ -9,6 +9,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
 			Name = name;
+			if (name == null) throw new NullReferenceException("DataType.Name must be not null");
 			this.IsStrong = IsStrong;
 			this.IsNestable = IsNestable;
 		}
@@ -26,7 +27,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public static bool operator ==(DataType x, DataType y) {
 			if (Object.ReferenceEquals(x, null) && Object.ReferenceEquals(y, null)) return true;
 			if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-			return x.Name == y.Name;
+			return x.Name.ToUpper() == y.Name.ToUpper();
 		}
 		public static bool operator !=(DataType x, DataType y) {
 			return !(x == y);
