@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
 			Name = name;
-			if (name == null) throw new NullReferenceException("DataType.Name must be not null");
+			if (name == null) throw new ArgumentNullException();
 			this.IsStrong = IsStrong;
 			this.IsNestable = IsNestable;
 		}
@@ -155,6 +155,7 @@ namespace TypeCobol.Compiler.CodeElements
 	public class StringDataName: DataName {
 		private string name_;
 		public override string Name { get { return name_; } }
+		/// <param name="name">Cannot be null</param>
         public StringDataName(string name): base(null) { name_ = name; }
 
 		public override bool Equals(object obj) {

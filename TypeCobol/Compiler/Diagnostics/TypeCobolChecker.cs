@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (receiving.TopLevel == null) return;
 			if (receiving.TopLevel.DataType == null) return;
 			foreach (var type in READONLY_DATATYPES) {
-				if (type.Equals(receiving.TopLevel.DataType.Name.ToLower())) {
+				if (type.Equals(receiving.TopLevel.DataType.Name.ToUpper())) {
 					DiagnosticUtils.AddError(e, type + " properties are read-only");
 				}
 			}

@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
 [3,34]<27,Error,Syntax>Syntax error : Writing Alphanumeric to today:DATE is unsafe ([3>34] on line 24)
-[3,42]<27,Error,Syntax>Syntax error : today.YYYY is read-only ([3>42] on line 30)
-[3,42]<27,Error,Syntax>Syntax error : today.YYYY is read-only ([3>42] on line 31)
+[3,42]<27,Error,Syntax>Syntax error : DATE properties are read-only ([3>42] on line 30)
+[3,42]<27,Error,Syntax>Syntax error : DATE properties are read-only ([3>42] on line 31)
 
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
