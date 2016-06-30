@@ -49,9 +49,13 @@ namespace TypeCobol.Compiler.Parser
             }
 		}
 
-		private void RegisterCustomType(SymbolTable table,DataType type) {
+		private void RegisterCustomType(SymbolTable table, DataType type) {
 			try { table.GetCustomType(type.Name); }
 			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
+		}
+		private void RegisterCustomType(SymbolTable table, TypeDefinition type) {
+			try { table.GetCustomType(type.DataType.Name); }
+			catch(ArgumentException ex) { table.RegisterCustomType(type); }
 		}
 
         public NodeDispatcher Dispatcher { get; internal set; }
