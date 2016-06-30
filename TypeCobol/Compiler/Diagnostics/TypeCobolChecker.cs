@@ -77,7 +77,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 						var found = table.Get(((Identifier)actual).Name);
 						if (found.Count != 1) continue;// ambiguity is not our job
 						var type = found[0].DataType;
-						if (type != expected.Type) {
+						// type check. please note:
+						// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect of it
+						// 2- if both are null, wee WANT it to break: in TypeCobol EVERYTHING should be typed,
+						//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
+						if (type == null || type != expected.Type) {
 							var message = String.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", def.Name, c+1, expected.Type, type);
 							DiagnosticUtils.AddError(e, message);
 						}
@@ -86,10 +90,10 @@ namespace TypeCobol.Compiler.Diagnostics {
 							var message = String.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", def.Name, c+1, expected.Length, length);
 							DiagnosticUtils.AddError(e, message);
 						}
-					} else {
-						var message = String.Format("Function {0} is missing parameter {1} of type {2}", def.Name, c+1, expected.Type);
-						DiagnosticUtils.AddError(e, message);
 					}
+				} else {
+					var message = String.Format("Function {0} is missing parameter {1} of type {2}", def.Name, c+1, expected.Type);
+					DiagnosticUtils.AddError(e, message);
 				}
 			}
 		}
