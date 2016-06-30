@@ -53,15 +53,16 @@ namespace TypeCobol.Compiler.Parser
 			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
 		}
 
-        public ProgramDispatcher Dispatcher { get; internal set; }
+        public NodeDispatcher Dispatcher { get; internal set; }
 
 		private void _add(Node node) {
 			node.SymbolTable = CurrentProgram.SymbolTable;
 			Program.SyntaxTree.Add(node);
 		}
 		private void _enter(CodeElement e, ParserRuleContext context) {
-			_enter(new Node(e));
-			if (e!=null) Dispatcher.OnCodeElement(e, context, CurrentProgram);
+			var node = new Node(e);
+			_enter(node);
+			if (e!=null) Dispatcher.OnNode(node, context, CurrentProgram);
 		}
 		private void _enter(Node node) {
 			node.SymbolTable = CurrentProgram.SymbolTable;

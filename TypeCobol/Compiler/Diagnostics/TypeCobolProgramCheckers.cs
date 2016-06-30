@@ -11,7 +11,7 @@ using TypeCobol.Compiler.Parser.Generated;
 namespace TypeCobol.Compiler.Diagnostics {
 
 
-    class ReadOnlyPropertiesChecker : ProgramListener
+    class ReadOnlyPropertiesChecker : NodeListener
     {
 
         private static string[] READONLY_DATATYPES = { "TC-DATE"};
@@ -20,9 +20,9 @@ namespace TypeCobol.Compiler.Diagnostics {
         {
             return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
         }
-        public void OnCodeElement(CodeElement e, ParserRuleContext c, Program program)
+        public void OnNode(Node node, ParserRuleContext c, Program program)
         {
-            var element = e as TypeCobol.Compiler.CodeModel.SymbolWriter;
+            var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
             var table = program.SymbolTable;
             foreach (var pair in element.Symbols)
             {
@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                 var lr = table.Get(pair.Item2);
                 if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
                 var receiving = lr[0];
-                checkReadOnly(e, receiving);
+                checkReadOnly(node.CodeElement, receiving);
             }
         }
 
@@ -48,19 +48,19 @@ namespace TypeCobol.Compiler.Diagnostics {
         }
     }
 
-    class FunctionChecker : ProgramListener
+    class FunctionChecker : NodeListener
     {
         public IList<Type> GetCodeElements()
         {
             return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
         }
 
-        public void OnCodeElement(CodeElement e, ParserRuleContext context, Program program)
+        public void OnNode(Node node, ParserRuleContext context, Program program)
         {
-            var element = e as TypeCobol.Compiler.CodeModel.IdentifierUser;
+            var element = node.CodeElement as TypeCobol.Compiler.CodeModel.IdentifierUser;
             foreach (var identifier in element.Identifiers)
             {
-                CheckIdentifier(e, program.SymbolTable, identifier);
+                CheckIdentifier(node.CodeElement, program.SymbolTable, identifier);
             }
         }
 

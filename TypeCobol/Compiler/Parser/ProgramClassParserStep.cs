@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.Parser
             ParseTreeWalker walker = new ParseTreeWalker();
             ProgramClassBuilder programClassBuilder = new ProgramClassBuilder();
 			programClassBuilder.CustomSymbols = customSymbols;
-            programClassBuilder.Dispatcher = new ProgramDispatcher();
+            programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
             walker.Walk(programClassBuilder, codeElementParseTree);
                         
