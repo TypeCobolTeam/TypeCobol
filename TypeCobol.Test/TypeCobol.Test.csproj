@@ -99,7 +99,7 @@
     <Compile Include="Compiler\Text\TestPictureParsing.cs" />
     <Compile Include="Compiler\Text\TestReadOnlyTextDocument.cs" />
     <Compile Include="*.cs" />
-	<Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
+    <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,12 +109,12 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure6.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure5.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure4.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure3.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure2.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure1.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\CopyProcedure6.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\CopyProcedure5.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\CopyProcedure4.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\CopyProcedure3.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\CopyProcedure2.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\CopyProcedure1.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\Cobol2002\Typedef2PGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\MemoryMEM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\TablesPGM.txt" />
@@ -286,7 +286,12 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure*.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure1.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure2.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure3.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure4.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure5.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure6.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef2.tcbl" />
     <None Include="Compiler\Parser\Samples\Programs\Memory.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.tcbl" />
