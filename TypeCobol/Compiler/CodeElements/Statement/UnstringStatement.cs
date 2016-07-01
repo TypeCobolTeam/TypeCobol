@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class UnstringStatement : CodeElement
+    public class UnstringStatement : CodeElement, Receiving
     {
         /// <summary>
         /// identifier-1
@@ -131,6 +132,19 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.AppendLine(Tallying.ToString());
                 }
                 return sb.ToString();
+            }
+        }
+
+        public IList<Expression> Expressions
+        {
+            get
+            {
+                var result = new List<Expression>();
+                foreach (var unstringReceiver in this.UnstringReceivers)
+                {
+                    result.Add(unstringReceiver.IntoIdentifier);
+                }
+                return result;
             }
         }
     }

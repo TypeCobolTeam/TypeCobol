@@ -136,7 +136,7 @@
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\Cobol85Checkers.cs" />
-    <Compile Include="Compiler\Diagnostics\Cobol02Checker.cs" />
+    <Compile Include="Compiler\Diagnostics\Cobol2002Checker.cs" />
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
     <Compile Include="Compiler\Parser\CodeElementDispatcher.cs" />

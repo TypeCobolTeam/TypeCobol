@@ -450,14 +450,12 @@ namespace TypeCobol.Compiler.Parser
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-			foreach(var typeclause in context.cob2002TypeClause()) {
-				Token token = null;
-				if (typeclause.UserDefinedWord() != null)
-					token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-				if (typeclause.DATE() != null)
-					token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.DATE());
-				if (token != null) entry.Picture = "TYPE:"+token.Text.ToUpper();
-			}
+		    var cob2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cob2002TypeClause());
+		    if (cob2002TypeClause != null)
+		    {
+		        var token = (cob2002TypeClause.UserDefinedWord() ?? cob2002TypeClause.DATE())?.Symbol;
+		        if (token != null) entry.Picture = "TYPE:" + token.Text.ToUpper();
+		    }
             // [/Cobol 2002]
 
             Context = context;
