@@ -444,16 +444,16 @@ namespace TypeCobol.Compiler.Parser
 			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
 
             // [Cobol 2002]
-			entry.IsTypeDefinition = context.cob2002TypedefClause() != null;
+			entry.IsTypeDefinition = context.cobol2002TypedefClause() != null;
 			if (entry.IsTypeDefinition && entry.Name != null) {
-				bool strong = context.cob2002TypedefClause().STRONG() != null;
+				bool strong = context.cobol2002TypedefClause().STRONG() != null;
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-		    var cob2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cob2002TypeClause());
-		    if (cob2002TypeClause != null)
+		    var cobol2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cobol2002TypeClause());
+		    if (cobol2002TypeClause != null)
 		    {
-		        var token = (cob2002TypeClause.UserDefinedWord() ?? cob2002TypeClause.DATE())?.Symbol;
+		        var token = (cobol2002TypeClause.UserDefinedWord() ?? cobol2002TypeClause.DATE())?.Symbol;
 		        if (token != null) entry.Picture = "TYPE:" + token.Text.ToUpper();
 		    }
             // [/Cobol 2002]

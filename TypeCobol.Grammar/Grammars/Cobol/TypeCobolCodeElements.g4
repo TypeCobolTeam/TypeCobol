@@ -26,7 +26,7 @@ legacyQualifiedDataNameOrQualifiedConditionNameOrClassName: dataNameReferenceOrC
 
 // rule modified to support:
 // - TYPE DATE (instead of TC-DATE or something)
-cob2002TypeClause:    TYPE (UserDefinedWord | DATE);
+cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
 
 // rule modified to support:
 // - MOVE UNSAFE <custom type> TO <custom type>
