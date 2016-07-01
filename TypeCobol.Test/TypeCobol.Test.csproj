@@ -98,13 +98,9 @@
     <Compile Include="Compiler\Scanner\TestTokenTypes.cs" />
     <Compile Include="Compiler\Text\TestPictureParsing.cs" />
     <Compile Include="Compiler\Text\TestReadOnlyTextDocument.cs" />
-    <Compile Include="GrammarTest.cs" />
-    <Compile Include="PlatformUtils.cs" />
-    <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
+    <Compile Include="*.cs" />
+	<Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QualifiedName.cs" />
-    <Compile Include="TestCollection.cs" />
-    <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Compiler\File\Samples\EbcdicRefFormatWithBadChars.TXT" />
@@ -113,6 +109,13 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure6.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure5.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure4.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure3.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure2.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CopyProcedure1.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\Cobol2002\Typedef2PGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\MemoryMEM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\TablesPGM.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Programs\TypeCobol\Type-BoolPGM.txt" />
@@ -283,12 +286,14 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure*.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef2.tcbl" />
     <None Include="Compiler\Parser\Samples\Programs\Memory.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Bool.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Date.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\DoubleColon.pgm" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.tcbl" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Bool.tcbl" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Type-Date.tcbl" />
+    <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef.tcbl" />
+    <None Include="Compiler\Parser\Samples\Programs\TypeCobol\DoubleColon.tcbl" />
     <None Include="Compiler\Pipeline\Samples\BigBatch.cbl" />
     <None Include="Compiler\Parser\Samples\Programs\Empty.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Simple.pgm" />
@@ -377,13 +382,27 @@
     <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceSingleToMultiple.cbl" />
     <None Include="Compiler\Text\Samples\MSVCINP free format.cpy" />
     <None Include="Compiler\Text\Samples\MSVCOUT.cpy" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\MultiLines.rdz.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\MultiLines.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\Replace3PGM.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\Replace2PGM.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\ReplacePGM.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\InnerPgmWithEvaluatePGM.txt" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\PgmRecursivePGM.txt" />
+    <None Include="NewTestsToFix\Parser\Samples\InnerPgmWithEvaluate.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\MultiLines.rdz.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\PgmRecursive.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\MultiLines.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\Replace3.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\Replace2.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\Replace.cbl" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
-      <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
+      <Project>{4034CBC5-D3DC-45E5-81F2-605579E6B876}</Project>
       <Name>Codegen</Name>
     </ProjectReference>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
