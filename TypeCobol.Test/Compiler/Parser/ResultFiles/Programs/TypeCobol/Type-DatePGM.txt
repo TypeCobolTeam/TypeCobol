@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[3,34]<27,Error,Syntax>Syntax error : Writing Alphanumeric to today:DATE is unsafe ([3>34] on line 24)
+[3,34]<29,Warning,Semantics>Warning : Writing Alphanumeric to today:DATE is unsafe ([3>34] on line 24)
 [3,42]<27,Error,Syntax>Syntax error : DATE properties are read-only ([3>42] on line 30)
 [3,42]<27,Error,Syntax>Syntax error : DATE properties are read-only ([3>42] on line 31)
 

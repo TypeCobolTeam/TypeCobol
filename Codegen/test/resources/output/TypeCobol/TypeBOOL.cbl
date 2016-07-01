@@ -1,7 +1,7 @@
 ﻿      * 10 CodeElements errors
-      * "1"@(13:8>13:18): [27:1] Syntax error : Group items should not contain type BOOL items
-      * "1"@(13:8>13:18): [27:1] Syntax error : Group items should not contain type BOOL items
-      * "1"@(14:10>14:21): [27:1] Syntax error : Group items should not contain type BOOL items
+      * "1"@(13:8>13:18): [27:1] Syntax error : Group items should not contain non nestable type BOOL items
+      * "1"@(13:8>13:18): [27:1] Syntax error : Group items should not contain non nestable type BOOL items
+      * "1"@(14:10>14:21): [27:1] Syntax error : Group items should not contain non nestable type BOOL items
       * "1"@(16:12>16:27): [27:1] Syntax error : Type BOOL should not be subordinate to another item
       * "1"@(17:10>17:25): [27:1] Syntax error : Type BOOL should not be subordinate to another item
       * "1"@(33:12>33:33): [29:2] Warning : Writing Alphanumeric to Identifier:BOOL is unsafe

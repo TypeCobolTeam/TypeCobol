@@ -318,7 +318,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 				var receiving = lr[0];
 				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
 					string message = "Writing "+sending+" to "+receiving.Name+":"+receiving.DataType+" is unsafe";
-					DiagnosticUtils.AddError(node.CodeElement, message);
+					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SyntaxWarningInParser);
 				}
 				CheckNesting(node.CodeElement, receiving);
 			}
