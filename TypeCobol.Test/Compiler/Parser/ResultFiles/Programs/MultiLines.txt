@@ -1,0 +1,26 @@
+﻿--- Code Elements ---
+[[ProgramIdentification]] [2,15:IDENTIFICATION]<IDENTIFICATION> --> [17,17+:.]<PeriodSeparator>
+- ProgramName = PGM
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[EnvironmentDivisionHeader]] [2,12:ENVIRONMENT]<ENVIRONMENT> --> [22,22+:.]<PeriodSeparator>
+
+[[ConfigurationSectionHeader]] [2,14:CONFIGURATION]<CONFIGURATION> --> [23,23+:.]<PeriodSeparator>
+
+[[SourceComputerParagraph]] [2,16:SOURCE-COMPUTER]<SOURCE_COMPUTER> --> [26,26+:.]<PeriodSeparator>
+
+[[ObjectComputerParagraph]] [2,16:OBJECT-COMPUTER]<OBJECT_COMPUTER> --> [26,26+:.]<PeriodSeparator>
+
+[[DataDivisionHeader]] [2,5:DATA]<DATA> --> [15,15+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [2,16:WORKING-STORAGE]<WORKING_STORAGE> --> [25,25+:.]<PeriodSeparator>
+
+GROUP {1} GROUP(2) [ VAR1 VAR2 ]
+VAR1 {5} Alphanumeric <of> GROUP
+VAR2 {5} Alphanumeric <of> GROUP
+[[ProcedureDivisionHeader]] [2,10:PROCEDURE]<PROCEDURE> --> [20,20+:.]<PeriodSeparator>
+
+[[SentenceEnd]] [6,6+:.]<PeriodSeparator> --> [6,6+:.]<PeriodSeparator>
+

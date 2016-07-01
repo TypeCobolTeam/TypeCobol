@@ -1,0 +1,14 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. TypeCobol.
+
+DATA DIVISION.
+
+
+WORKING-STORAGE SECTION.
+
+
+
+PROCEDURE DIVISION.
+*KO: (Rule: #5) -  TYPEDEF  clause can only be specified in the  WORKING-STORAGE ,  LOCAL-STORAGE ,  LINKAGE , or  FILE  sections of a program.
+01 OutOfPerimeter2 TYPEDEF.
+  02 OutOfPerimeter2-var1 PIC X.

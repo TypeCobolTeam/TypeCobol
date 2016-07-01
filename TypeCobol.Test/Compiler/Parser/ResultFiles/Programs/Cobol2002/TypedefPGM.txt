@@ -1,31 +1,31 @@
 ﻿--- Diagnostics ---
-[14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries (RuleStack=codeElement>dataDescriptionEntry>cob2002TypedefClause, OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF> on line 37)
-[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator (RuleStack=codeElement>dataDescriptionEntry, OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF> on line 42)
-[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 55)
-[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 58)
-[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 64)
-[26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 85)
-[33,40]<27,Error,Syntax>Syntax error : External is only allowed for level 01 (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL> on line 89)
-[27,32]<27,Error,Syntax>Syntax error : Elementary TYPEDEF cannot be STRONG (RuleStack=codeElement>dataDescriptionEntry>cob2002TypedefClause, OffendingSymbol=[27,32:STRONG]<STRONG> on line 93)
-[29,33]<27,Error,Syntax>Syntax error : Strong Typedef can't contains value clause: (RuleStack=codeElement>dataDescriptionEntry>valueClause, OffendingSymbol=[29,33:value]<VALUE> on line 105)
-[10,20]<27,Error,Syntax>Syntax error : no viable alternative at input '"me@me.com"' (RuleStack=codeElement>unstringStatement>identifier, OffendingSymbol=[10,20:"me@me.com"]<AlphanumericLiteral>(",Y,Y){me@me.com} on line 195)
-[10,20]<27,Error,Syntax>Syntax error : no viable alternative at input '"me@me.com"' (RuleStack=codeElement>unstringStatement>identifier, OffendingSymbol=[10,20:"me@me.com"]<AlphanumericLiteral>(",Y,Y){me@me.com} on line 197)
-[1,27]<27,Error,Syntax>Syntax error : mismatched input '01OutOfPerimeter2TYPEDEF.' expecting {<EOF>, ProgramIdentification, ProgramEnd, SectionHeader, ParagraphHeader, SentenceEnd, AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement} (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision, OffendingSymbol=TYPEDEF OutOfPerimeter2 {1} GROUP(0) [ ]OutOfPerimeter2 on line 177)
-[1,31]<27,Error,Syntax>Syntax error : Type TypeNotDefined is not referenced. ([1>31] on line 28)
-[1,33]<27,Error,Syntax>Syntax error : Type TypeDefinedAfter is not referenced. ([1>33] on line 31)
-[1,41]<27,Error,Syntax>Syntax error : Type ClausesOrderKO is not referenced. ([1>41] on line 43)
-[1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 49)
-[1,49]<27,Error,Syntax>Syntax error : TYPEDEF NoRedefines3 {1} GROUP(0) [ ]NoRedefines3 redefines a variable not referenced TypeNotDefined ([1>49] on line 64)
-[5,57]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines4B {5} Numeric <of> varNoRedefines4 ([5>57] on line 74)
-[5,57]<27,Error,Syntax>Syntax error : varNoRedefines4B {5} Numeric <of> varNoRedefines4 can't redefines a TYPEDEF varNoRedefines4A ([5>57] on line 74)
-[5,62]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis ([5>62] on line 82)
-[5,62]<27,Error,Syntax>Syntax error : varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis can't redefines a TYPEDEF varNoRedefines5-a ([5>62] on line 82)
-[5,35]<27,Error,Syntax>Syntax error : Item under a Strong Typedef can't contains value clause: TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP ([5>35] on line 106)
-[5,34]<27,Error,Syntax>Syntax error : Item under a Strong Typedef can't contains value clause: TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP ([5>34] on line 107)
-[5,62]<27,Error,Syntax>Syntax error : USE-TYPE-GRP-STRONG-RED {10} GROUP(0) [ ] <of> USE-TYPE-GRP can't redefines a STRONG TYPE USE-TYPE-GRP-STRONG ([5>62] on line 124)
-[6,66]<27,Error,Syntax>Syntax error : USE-TYPE-GRP-STRONG-RED-2 {11} GROUP(0) [ ] <of> useTypeGrp2Strong <of> useTypeGrp2 redefines an ambiguous variable  TYPE-GRP-STRONG-PART3 ([6>66] on line 133)
-[1,68]<27,Error,Syntax>Syntax error : TYPE-GRP-STRONG-REN {66} GROUP(0) [ ] can't renames a strongly typed variableuseStrongType1.strongType1-PART1 ([1>68] on line 143)
-[1,68]<27,Error,Syntax>Syntax error : TYPE-GRP-STRONG-REN {66} GROUP(0) [ ] can't renames a strongly typed variableuseStrongType1.strongType1-PART2 ([1>68] on line 143)
+[14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries (RuleStack=codeElement>dataDescriptionEntry>cob2002TypedefClause, OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF> on line 45)
+[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator (RuleStack=codeElement>dataDescriptionEntry, OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF> on line 50)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 63)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 66)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 72)
+[26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 93)
+[33,40]<27,Error,Syntax>Syntax error : External is only allowed for level 01 (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL> on line 97)
+[27,32]<27,Error,Syntax>Syntax error : Elementary TYPEDEF cannot be STRONG (RuleStack=codeElement>dataDescriptionEntry>cob2002TypedefClause, OffendingSymbol=[27,32:STRONG]<STRONG> on line 101)
+[29,33]<27,Error,Syntax>Syntax error : Strong Typedef can't contains value clause: (RuleStack=codeElement>dataDescriptionEntry>valueClause, OffendingSymbol=[29,33:value]<VALUE> on line 113)
+[10,20]<27,Error,Syntax>Syntax error : no viable alternative at input '"me@me.com"' (RuleStack=codeElement>unstringStatement>identifier, OffendingSymbol=[10,20:"me@me.com"]<AlphanumericLiteral>(",Y,Y){me@me.com} on line 199)
+[10,20]<27,Error,Syntax>Syntax error : no viable alternative at input '"me@me.com"' (RuleStack=codeElement>unstringStatement>identifier, OffendingSymbol=[10,20:"me@me.com"]<AlphanumericLiteral>(",Y,Y){me@me.com} on line 201)
+[1,31]<27,Error,Syntax>Syntax error : Type TYPENOTDEFINED is not referenced. ([1>31] on line 36)
+[1,33]<27,Error,Syntax>Syntax error : Type TYPEDEFINEDAFTER is not referenced. ([1>33] on line 39)
+[1,41]<27,Error,Syntax>Syntax error : Type CLAUSESORDERKO is not referenced. ([1>41] on line 51)
+[1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 57)
+[1,49]<27,Error,Syntax>Syntax error : TYPEDEF NoRedefines3 {1} GROUP(0) [ ]NoRedefines3 redefines a variable not referenced TypeNotDefined ([1>49] on line 72)
+[5,57]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines4B {5} Numeric <of> varNoRedefines4 ([5>57] on line 82)
+[5,57]<27,Error,Syntax>Syntax error : varNoRedefines4B {5} Numeric <of> varNoRedefines4 can't redefines a TYPEDEF varNoRedefines4A ([5>57] on line 82)
+[5,62]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis ([5>62] on line 90)
+[5,62]<27,Error,Syntax>Syntax error : varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis can't redefines a TYPEDEF varNoRedefines5-a ([5>62] on line 90)
+[5,35]<27,Error,Syntax>Syntax error : Item under a Strong Typedef can't contains value clause: TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP ([5>35] on line 114)
+[5,34]<27,Error,Syntax>Syntax error : Item under a Strong Typedef can't contains value clause: TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP ([5>34] on line 115)
+[5,62]<27,Error,Syntax>Syntax error : USE-TYPE-GRP-STRONG-RED {10} GROUP(0) [ ] <of> USE-TYPE-GRP can't redefines a STRONG TYPE USE-TYPE-GRP-STRONG ([5>62] on line 132)
+[6,66]<27,Error,Syntax>Syntax error : USE-TYPE-GRP-STRONG-RED-2 {11} GROUP(0) [ ] <of> useTypeGrp2Strong <of> useTypeGrp2 redefines an ambiguous variable  TYPE-GRP-STRONG-PART3 ([6>66] on line 141)
+[1,68]<27,Error,Syntax>Syntax error : TYPE-GRP-STRONG-REN {66} GROUP(0) [ ] can't renames a strongly typed variableuseStrongType1.strongType1-PART1 ([1>68] on line 151)
+[1,68]<27,Error,Syntax>Syntax error : TYPE-GRP-STRONG-REN {66} GROUP(0) [ ] can't renames a strongly typed variableuseStrongType1.strongType1-PART2 ([1>68] on line 151)
+[1,63]<27,Error,Syntax>Syntax error : Strongly typed variable can't be used as a receiving operand of StringStatement ([1>63] on line 194)
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -90,23 +90,59 @@ SYMBOL TABLE:
   Coord2d {6} GROUP(2) [ X Y ] <of> Position2d <of> Point
   Coord2d {15} GROUP(2) [ X Y ] <of> Accel2d <of> Movment2d <of> Point
   Coord2d {11} GROUP(2) [ X Y ] <of> Speed2d <of> Movment2d <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
   X {15} Numeric <of> Coord2d <of> Vect2
   X {7} Numeric <of> Coord2d <of> Position2d <of> Point
   X {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
   X {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
   Y {12} Numeric <of> Coord2d <of> Vect2
   Y {7} Numeric <of> Coord2d <of> Position2d <of> Point
   Y {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
   Y {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
   Coord3d {5} GROUP(1) [ Z ] <of> Vect2
   Coord3d {6} GROUP(1) [ Z ] <of> Position2d <of> Point
   Coord3d {15} GROUP(1) [ Z ] <of> Accel2d <of> Movment2d <of> Point
   Coord3d {11} GROUP(1) [ Z ] <of> Speed2d <of> Movment2d <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
   Z {10} Numeric <of> Coord3d <of> Vect2
   Z {7} Numeric <of> Coord3d <of> Position2d <of> Point
   Z {16} Numeric <of> Coord3d <of> Accel2d <of> Movment2d <of> Point
   Z {12} Numeric <of> Coord3d <of> Speed2d <of> Movment2d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
   Point {1} GROUP(2) [ Position2d Movment2d ]
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
   Position2d {5} Vect2 <of> Point
   Movment2d {5} GROUP(2) [ Accel2d Speed2d ] <of> Point
   Accel2d {14} Vect2 <of> Movment2d <of> Point
