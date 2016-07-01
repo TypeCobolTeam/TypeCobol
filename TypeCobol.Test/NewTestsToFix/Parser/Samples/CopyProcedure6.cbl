@@ -2,5 +2,5 @@
 PROGRAM-ID. TypeCobol.
 PROCEDURE DIVISION.
 move a to b
-copy CPY
+copy CPYProc.
 .
