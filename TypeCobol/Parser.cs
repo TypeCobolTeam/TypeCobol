@@ -9,7 +9,7 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Concurrency;
 
-namespace TypeCobol.Server
+namespace TypeCobol
 {
 	public class Parser
 	{

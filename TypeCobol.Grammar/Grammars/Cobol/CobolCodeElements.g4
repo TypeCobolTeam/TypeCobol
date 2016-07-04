@@ -2924,10 +2924,10 @@ redefinesClause:
 //   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
-	RENAMES (dataNameReference | dataNamesRange);
+	RENAMES (qualifiedDataName | dataNamesRange);
 
 dataNamesRange: 
-	startDataName=dataNameReference (THROUGH | THRU) endDataName=dataNameReference;
+	startDataName=qualifiedDataName (THROUGH | THRU) endDataName=qualifiedDataName;
 
 // p221: The SIGN clause specifies the position and mode of representation of the
 // operational sign for the signed numeric item to which it applies.
@@ -8115,7 +8115,7 @@ notOnSizeErrorCondition:
 // can use the NOSQLCCSID compiler option. For details, see the related reference about
 // code-page determination below.
 
-// => see CoboloCompilerDirectives.g4
+// => see CobolCompilerDirectives.g4
 
 // p424: Delimit SQL statements with EXEC SQL and END-EXEC. The EXEC SQL and END-EXEC
 // delimiters must each be complete on one line. You cannot continue them across

@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Test.Compiler.File;
+using TypeCobol.Test.Compiler.Parser;
+using TypeCobol.Test.Compiler.Preprocessor;
+using TypeCobol.Test.Compiler.Scanner;
+using TypeCobol.Test.Compiler.Text;
+
+namespace TypeCobol.Test {
+
+    [TestClass]
+    public class NewTestsToFix
+    {
+        static string root = PlatformUtils.GetPathForProjectFile("NewTestsToFix" + Path.DirectorySeparatorChar + "Parser");
+        static string sampleRoot = root + Path.DirectorySeparatorChar + "Samples";
+        static string resultRoot = root + Path.DirectorySeparatorChar + "ResultFiles";
+
+        [TestMethod]
+        [TestCategory("NewTestsToFix-Parsing")]
+        [TestProperty("Time", "fast")]
+        public void NewCobol85TestsToFix()
+        {
+            int nbOfTests = 0;
+            
+            
+            foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
+            {
+                var dirname = Path.GetFileName(directory);
+                string[] extensions = {"*.cbl", "*.pgm", "*.cpy" };
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) +
+                                         "]:");
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+                folderTester.Test();
+                nbOfTests += folderTester.GetTestCount();
+                Console.Write("\n");
+            }
+
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+
+            //This test use TypeChecker which is specific to TypeCobol
+            //As specifications of TypeCobol are not final yet this test can't be used
+            //            TestParser.Check_ParserIntegration();
+        }
+
+        /// <summary>
+        /// Check only files with *.tcbl extensions
+        /// </summary>
+        [TestMethod]
+        [TestCategory("NewTestsToFix-Parsing")]
+        [TestProperty("Time", "fast")]
+        public void NewTcblTestsToFix()
+        {
+            int nbOfTests = 0;
+
+            foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
+            {
+                var dirname = Path.GetFileName(directory);
+                string[] extensions = { "*.tcbl", "*.cpy" };
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+                folderTester.Test();
+                nbOfTests += folderTester.GetTestCount();
+                Console.Write("\n");
+            }
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
+
+        public static IEnumerable<String> GetCurrentAndSubDirectories(string root)
+        {
+            yield return root;
+            var directories =  Directory.GetDirectories(root);
+            foreach (var dir in directories)
+            {
+                yield return dir;
+            }
+        }
+    }
+}

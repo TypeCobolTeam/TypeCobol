@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
@@ -7,6 +8,10 @@ namespace TypeCobol.Test.Compiler.Parser
 {
     static class TestParser
     {
+        static string root = PlatformUtils.GetPathForProjectFile("Compiler" + Path.DirectorySeparatorChar + "Parser");
+        static string sampleRoot = root + Path.DirectorySeparatorChar + "Samples";
+        static string resultRoot = root + Path.DirectorySeparatorChar + "ResultFiles";
+
         public static void Check_ParserIntegration()
         {
             string textName = "TESTPGM1";
@@ -31,62 +36,60 @@ namespace TypeCobol.Test.Compiler.Parser
             }
         }
 
-        public static void Check_BeforeAfterInsertionBatched() {
-            TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
-            TextChangedEvent e;
-            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Simple");
-            unit.comparator = new Multipass(unit.comparator.paths.name);
-            unit.Init(new string[] { "*.pgm", "*.cpy", });
+        public static void Check_BeforeAfterInsertionBatched()
+        {
+            Paths paths = new Paths(sampleRoot, resultRoot, sampleRoot + Path.DirectorySeparatorChar + "Programs" + Path.DirectorySeparatorChar + "Simple.pgm", new Multipass.IndexNames());
+            TestUnit unit = new TestUnit(new Multipass(paths));
+            unit.Init(new[] { "*.pgm", "*.cpy" });
             unit.Parse();
 
-            e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
+            var e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
             e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.", e);
 
             // clear document
-            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
 
-            names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
+            var names = unit.Comparator.paths.Resultnames as Multipass.IndexNames;
             names.index = 2;
-            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            Console.WriteLine("Compare with result file: "+unit.Comparator.paths.Result);
             unit.Compare();//with Simple.2.txt
         }
 
-        public static void Check_BeforeAfterInsertion() {
-            TypeCobol.Test.Compiler.Parser.Multipass.IndexNames names;
-            TextChangedEvent e;
-            TestUnit unit = new TestUnit("Programs"+System.IO.Path.DirectorySeparatorChar+"Simple");
-            unit.comparator = new Multipass(unit.comparator.paths.name);
-            unit.Init(new string[] { "*.pgm", "*.cpy", });
+        public static void Check_BeforeAfterInsertion()
+        {
+            Paths paths = new Paths(sampleRoot, resultRoot, sampleRoot + Path.DirectorySeparatorChar + "Programs" + Path.DirectorySeparatorChar + "Simple.pgm", new Multipass.IndexNames());
+            TestUnit unit = new TestUnit(new Multipass(paths));
+            unit.Init(new[] { "*.pgm", "*.cpy" });
             unit.Parse();
-            names = unit.comparator.paths.resultnames as TypeCobol.Test.Compiler.Parser.Multipass.IndexNames;
+            var names = unit.Comparator.paths.Resultnames as Multipass.IndexNames;
             names.index = 0;
             unit.Compare();//with Simple.0.txt
 
             // explicitely close program by adding END PROGRAM line
             var e2 = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
-            e = updateLine(TextChangeType.LineUpdated, 1, "  PROGRAM-ID. Simple.");
+            var e = updateLine(TextChangeType.LineUpdated, 1, "  PROGRAM-ID. Simple.");
             e.TextChanges.Add(e2.TextChanges[0]);
-            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
             names.index++;
-            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            Console.WriteLine("Compare with result file: "+unit.Comparator.paths.Result);
             unit.Compare();//with Simple.1.txt
 
             // change program name ; now first and last line have differing program id
             e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.");
-            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
             names.index++;
-            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            Console.WriteLine("Compare with result file: "+unit.Comparator.paths.Result);
             unit.Compare();//with Simple.2.txt
 
             // clear document
             e = updateLine(TextChangeType.DocumentCleared, /* the following parameters are not used when DocumentCleared*/ 0, null);
-            unit.compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
             names.index++;
-            System.Console.WriteLine("Compare with result file: "+unit.comparator.paths.result.full);
+            Console.WriteLine("Compare with result file: "+unit.Comparator.paths.Result);
             unit.Compare();//with Simple.3.txt
         }
 

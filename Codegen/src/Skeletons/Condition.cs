@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Codegen.Skeletons {
@@ -17,10 +16,11 @@ namespace TypeCobol.Codegen.Skeletons {
 			if (ce == null) return false;
 			if (Node != null && !Reflection.IsTypeOf(ce.GetType(), Node)) return false;
 			foreach(var x in Attributes) {
+				string property = node[x.Key]!=null? node[x.Key].ToString() : null;
 				if ("*".Equals(x.Value)) {
-					if (node[x.Key] == null) return false;
+					if (property == null) return false;
 				} else {
-					if (!x.Value.Equals(node[x.Key], System.StringComparison.InvariantCultureIgnoreCase)) return false;
+					if (!x.Value.Equals(property, System.StringComparison.InvariantCultureIgnoreCase)) return false;
 				}
 			}
 			return true;

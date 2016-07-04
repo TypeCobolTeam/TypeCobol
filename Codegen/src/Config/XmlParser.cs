@@ -9,7 +9,7 @@ namespace TypeCobol.Codegen.Config {
 		internal static string TAG_SKELETON     = "skeleton";
 		internal static string TAG_CONDITION_LIST = "conditions";
 		internal static string TAG_CONDITION      = "condition";
-		internal static string ATTR_NODE        = "node";
+        internal static string ATTR_NODE        = "node";
 		internal static string ATTR_CLAUSE      = "clause";
 		internal static string TAG_PATTERN_LIST = "patterns";
 		internal static string TAG_PATTERN      = "pattern";
@@ -18,11 +18,12 @@ namespace TypeCobol.Codegen.Config {
 		internal static string ATTR_LOCATION    = "location";
 		internal static string ATTR_ACTION      = "action";
 		internal static string ATTR_VARIABLES   = "var";
+        internal static string ATTR_POSITION = "position";
 
-		/// <summary>Parses an XML file.</summary>
-		/// <param name="path">Path to an XML file</param>
-		/// <returns>List of <see cref="Skeleton"/> defined in <paramref name="path"/></returns>
-		public List<Skeleton> Parse(string path) {
+        /// <summary>Parses an XML file.</summary>
+        /// <param name="path">Path to an XML file</param>
+        /// <returns>List of <see cref="Skeleton"/> defined in <paramref name="path"/></returns>
+        public List<Skeleton> Parse(string path) {
 			var xml = new XmlDocument();
 			xml.Load(path);
 
@@ -83,7 +84,16 @@ namespace TypeCobol.Codegen.Config {
 				if (name.Equals(XmlParser.TAG_PATTERN_LIST)) {
 					skeleton.Patterns.AddRange(PFactory.Create(ce));
 				}
+
 			}
+
+			skeleton.Properties = new List<string>();
+			string vars = e.GetAttribute(XmlParser.ATTR_VARIABLES);
+			foreach(var var in vars.Split(',')) {
+				string property = var.Trim();
+				if (property.Length > 0) skeleton.Properties.Add(property);
+			}
+
 			return skeleton;
 		}
 	}
@@ -122,7 +132,7 @@ namespace TypeCobol.Codegen.Config {
 				namespaces[nspace] = TypeCobol.Tools.Reflection.GetTypesInNamespace(nspace);
 			foreach(var type in namespaces[nspace])
 				if (type.FullName.Equals(fullname)) return type;
-			return null;
+			throw new System.ArgumentException("Undefined type: "+fullname);
 		}
 	}
 
@@ -156,7 +166,21 @@ namespace TypeCobol.Codegen.Config {
 				string value = kv[1].Trim().ToLower();
 				pattern.Variables.Add(key, value);
 			}
-			pattern.Template = e.InnerText;
+
+            string pos = XmlParser.GetAttribute(e, XmlParser.ATTR_POSITION);
+            if (pos != null)
+            {
+                try
+                {
+                    pattern.Position = int.Parse(pos);
+                }
+                catch (System.FormatException)
+                {
+                    //do not set pattern.Position
+                }
+            }
+
+            pattern.Template = e.InnerText;
 			return pattern;
 		}
 	}

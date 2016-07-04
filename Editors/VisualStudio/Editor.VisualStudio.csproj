@@ -94,10 +94,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CLI\src\CLI.csproj">
-      <Project>{5bef9d4c-b1fb-455d-a2ea-b4db5108ecfd}</Project>
-      <Name>TypeCobol.Server</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
       <Name>TypeCobol</Name>

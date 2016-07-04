@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Parser
 
             // Init parser
             ITokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
-            CobolProgramClassParser cobolParser = new CobolProgramClassParser(tokenStream);
+            ProgramClassParser cobolParser = new ProgramClassParser(tokenStream);
             // -> activate full ambiguities detection
             //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
 
@@ -37,13 +37,13 @@ namespace TypeCobol.Compiler.Parser
             cobolParser.AddErrorListener(errorListener);
 
             // Try to parse a Cobol program or class
-            CobolProgramClassParser.CobolCompilationUnitContext codeElementParseTree = cobolParser.cobolCompilationUnit();
+            ProgramClassParser.CobolCompilationUnitContext codeElementParseTree = cobolParser.cobolCompilationUnit();
 
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
             ProgramClassBuilder programClassBuilder = new ProgramClassBuilder();
 			programClassBuilder.CustomSymbols = customSymbols;
-            programClassBuilder.Dispatcher = new ProgramDispatcher();
+            programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
             walker.Walk(programClassBuilder, codeElementParseTree);
                         

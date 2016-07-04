@@ -40,12 +40,12 @@ namespace TypeCobol.Editor
     class Classifier : IClassifier
     {
         private IClassificationTypeRegistryService registry;
-        private TypeCobol.Server.Parser parser;
+        private Parser parser;
 
         internal Classifier(IClassificationTypeRegistryService registry)
         {
             this.registry = registry;
-            this.parser = new TypeCobol.Server.Parser();
+            this.parser = new Parser();
         }
 
         /// <summary>

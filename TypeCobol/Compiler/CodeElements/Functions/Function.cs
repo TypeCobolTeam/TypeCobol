@@ -27,6 +27,7 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 			}
 		}
 		public string Copy { get { return Program+"cpy"; } }
+		public string Lib  { get { return Program; } }
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder(Name!=null? Name.ToString() : "?");
@@ -53,6 +54,10 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		public string Definition {
 			get {
 				if (IsCustom) return "TYPE "+Type.Name;
+			    if (Type == DataType.Numeric)
+			    {
+                    return "PIC 9" + (Length > 0 ? "(" + Length + ")" : "");
+                }
 				return "PIC X"+(Length>0?"("+Length+")":"");
 			}
 		}

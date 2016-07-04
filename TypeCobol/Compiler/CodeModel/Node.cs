@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
 
@@ -17,11 +19,12 @@ namespace TypeCobol.Compiler.CodeElements
 		public Node(): this(null) { }
 		public Node(CodeElement e) { CodeElement = e; }
 
-		internal void Add(Node child) {
-			children_.Add(child);
+		public void Add(Node child, int index = -1) {
+			if (index < 0) children_.Add(child);
+			else children_.Insert(index, child);
 			child.Parent = this;
 		}
-		internal void Remove() {
+		public void Remove() {
 			Parent.children_.Remove(this);
 			Parent = null;
 		}
@@ -73,7 +76,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 		public Node Get(string uri) {
-			if (uri.Equals(URI)) return this;
+			if (URI != null && URI.EndsWith(uri)) return this;
 			foreach(var child in Children) {
 				var found = child.Get(uri);
 				if (found != null) return found;
@@ -92,19 +95,34 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["typedef"] = new TypeDefined("TYPEDEF");
 			Attributes["sender"] = new Sender("SENDER");
 			Attributes["receiver"] = new Receiver("RECEIVER");
+			Attributes["functions"] = new UsesFunctions("FUNCTIONS");
+			Attributes["function"] = new UsesFunctions("FUNCTION", true);
+			Attributes["function-name"] = new UsesFunctions("FUNCTION", true, true);
 		}
-		public string this[string attribute] {
+		public object this[string attribute] {
 			get {
 				try {
 					object value = CodeElement;
-					foreach(var attr in attribute.Split(new char[] {'.'})) {
+					foreach(var attr in attribute.Split('.')) {
 						value = Attributes[attr].GetValue(value, SymbolTable);
 					}
-					if (value == null) return null;
-					return value.ToString();
+					return value;
 				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
+
+
+
+
+
+		public static int CountAllChildren(Node node) {
+			int count = node.Children.Count;
+			foreach(var child in node.Children)
+				count += CountAllChildren(child);
+			return count;
+		}
+
+		public bool? Comment = null;
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
@@ -182,9 +200,69 @@ namespace TypeCobol.Compiler.CodeElements
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as Receiving;
 			if (s == null) return null;
-			if (s.Expressions.Count < 1) return null;
+            if (s.Expressions.Count < 1) return null;
 			if (s.Expressions.Count == 1) return s.Expressions[0];
 			return s.Expressions;
+		}
+	}
+	internal class UsesFunctions: NodeAttribute
+	{
+	    private bool ReturnFirstFunctionOnly = false;
+        private bool ReturnFunctionName = false;
+
+        public UsesFunctions(string key, bool returnFirstFunctionOnly = false, bool returnFunctionName = false) : base(key)
+	    {
+	        this.ReturnFirstFunctionOnly = returnFirstFunctionOnly;
+            this.ReturnFunctionName = returnFunctionName;
+	    }
+		public override object GetValue(object o, SymbolTable table) {
+            var s = o as IdentifierUser;
+			if (s == null) return null;
+			var functions = new List<Function>();
+			foreach(var id in s.Identifiers) {
+				var reference = id as FunctionReference;
+				if (reference == null) continue;
+                var declaration = table.GetFunction(reference.Name);
+				if (declaration == null) continue; // undefined symbol, not our job
+                functions.Add(CreateFrom(reference, declaration));
+			}
+			if (functions.Count < 1) return null;
+		    if (ReturnFirstFunctionOnly)
+		    {
+		        if (ReturnFunctionName)
+		            return functions[0].Name;
+		        else
+		            return functions[0];
+		    }
+            //TODO support list of functions name
+            return functions;
+		}
+
+		private Function CreateFrom(FunctionReference reference, Function declaration) {
+			if (declaration.Parameters.Count != reference.Parameters.Count)
+				System.Console.WriteLine("ERROR: "+declaration.QualifiedName+" called with "+reference.Parameters.Count+" parameters (expected:"+declaration.Parameters.Count+")");
+			var parameters = new List<Parameter>();
+			for(int c = 0; c < declaration.Parameters.Count; c++) {
+				var declared = declaration.Parameters[c];
+				string value = "SPACE";
+				bool byReference = false;
+				Parameter merged;
+				try {
+					var referenced = reference.Parameters[c];
+					value = referenced.Value.ToString();
+					byReference = referenced.Value is Identifier;
+				} catch(System.ArgumentOutOfRangeException) { }
+				merged = new CallParameter(value, byReference);
+				merged.Type = declared.Type;
+				merged.Length = declared.Length;
+				merged.IsCustom = declared.IsCustom;
+				parameters.Add(merged);
+			}
+			return new Function(declaration.QualifiedName, declaration.Result, parameters);
+		}
+
+		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {
+			throw new System.NotImplementedException();
 		}
 	}
 }

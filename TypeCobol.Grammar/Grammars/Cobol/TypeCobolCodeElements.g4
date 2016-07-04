@@ -18,7 +18,9 @@ qDataOrFileOrUPSI: dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNa
 legacyQualifiedDataName:                                    dataNameReference                                                                                  ((IN | OF) dataNameReferenceOrFileNameReference)*;
 legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
-intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;
+// rule modified to support:
+// - TYPE DATE (instead of TC-DATE or something)
+cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
 
 // rule modified to support:
 // - MOVE UNSAFE <custom type> TO <custom type>
@@ -40,3 +42,7 @@ setStatementForAssignationSending:
     | TRUE | (NULL | NULLS) | SELF
     | (ENTRY_ARG programNameOrProgramEntryVariable)
     ;
+
+// rules modified to support custom-designed functions (of arity 0..n)
+functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
+intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;

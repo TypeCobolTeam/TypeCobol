@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using TypeCobol.Codegen.Skeletons;
 
@@ -19,5 +20,9 @@ namespace TypeCobol.Codegen.Config {
 			catch(System.Exception) { type = _parsers[".xml"]; }
 			return (ConfigParser)Activator.CreateInstance(type);
 		}
+
+		public static List<Skeleton> Parse(string path) {
+			return CreateParser(Path.GetExtension(path)).Parse(path);
+        }
 	}
 }

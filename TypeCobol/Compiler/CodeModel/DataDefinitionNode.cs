@@ -61,7 +61,6 @@ namespace TypeCobol.Compiler.CodeModel
             if (TopLevel == null) return null;
             return TopLevel.GetAncestor(generation - 1);
         }
-
         public int Generation
         {
             get
@@ -108,11 +107,29 @@ namespace TypeCobol.Compiler.CodeModel
 
         // [TYPECOBOL]
         public virtual bool IsTypeDefinition { get; set; }
+
         public bool IsTypeDefinitionPart
         {
             get { return GetTypeDefinition() != null; }
         }
-        private DataDescriptionEntry GetTypeDefinition()
+
+        /// <summary>
+        /// Return the current DataDescription or the first parent which is a Strong Type
+        /// If this method returns a DataDescriptionEntry, it means that the current DataDescriptionEntry is a strongly typed.
+        /// </summary>
+        /// <returns></returns>
+        public DataDescriptionEntry GetFirstStrongDataDescriptionEntry()
+        {
+            var parent = this;
+            while (parent != null)
+            {
+                if (parent.DataType.IsStrong) return parent;
+                parent = parent.TopLevel;
+            }
+            return null;
+        }
+
+        public DataDescriptionEntry GetTypeDefinition()
         {
             var parent = this;
             while (parent != null)
@@ -123,13 +140,13 @@ namespace TypeCobol.Compiler.CodeModel
             return null;
         }
         // [/TYPECOBOL]
-        
+
         public override string ToString()
         {
             var str = new System.Text.StringBuilder();
-            // [TYPECOBOL]
+            // [Cobol2002]
             if (IsTypeDefinition) str.Append("TYPEDEF ");
-            // [/TYPECOBOL]
+            // [/Cobol2002]
             if (IsFiller) str.Append("<filler>");
             else if (Name == null) str.Append("?");
             str.Append(Name);

@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         // --- Antlr4.Runtime.IToken implementation ---
-        // ... used by the CobolProgramClassParser  ...
+        // ... used by the ProgramClassParser  ...
 
         public string Text
         {

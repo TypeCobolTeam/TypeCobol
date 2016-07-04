@@ -1342,19 +1342,23 @@ namespace TypeCobol.Compiler.Parser
                 entry.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
             }
 
-            /* [TYPECOBOL]
-			entry.IsTypeDefinition = context.tcExtTypedefClause() != null;
+            /* // [Cobol 2002]
+			entry.IsTypeDefinition = context.cobol2002TypedefClause() != null;
 			if (entry.IsTypeDefinition && entry.Name != null) {
-				bool strong = context.tcExtTypedefClause().STRONG() != null;
+				bool strong = context.cobol2002TypedefClause().STRONG() != null;
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-			foreach(var typeclause in context.tcExtTypeClause())
-			{
-			    var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-			    if (token != null) entry.Picture = "TYPE:"+token.Text;
+		    var cobol2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cobol2002TypeClause());
+			if (cobol2002TypeClause != null) {
+				Token token = null;
+				if (cobol2002TypeClause.UserDefinedWord() != null)
+					token = ParseTreeUtils.GetTokenFromTerminalNode(cobol2002TypeClause.UserDefinedWord());
+				if (cobol2002TypeClause.DATE() != null)
+					token = ParseTreeUtils.GetTokenFromTerminalNode(cobol2002TypeClause.DATE());
+				if (token != null) entry.Picture = "TYPE:"+token.Text.ToUpper();
 			}
-               [/TYPECOBOL] */
+            // [/Cobol 2002] */
 
             Context = context;
             CodeElement = entry;

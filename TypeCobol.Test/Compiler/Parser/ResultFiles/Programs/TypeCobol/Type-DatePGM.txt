@@ -1,19 +1,14 @@
 ﻿--- Diagnostics ---
-[3,34]<29,Warning,Semantics>Warning : Writing Alphanumeric to today:TC-DATE is unsafe ([3>34] on line 29)
-[3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 35)
-[3,42]<27,Error,Syntax>Syntax error : TC-DATE properties are read-only ([3>42] on line 36)
+[3,34]<30,Error,Semantics>Semantic error: Can't write non typed Alphanumeric to strongly typed variable today:DATE (use unsafe keyword for that) ([3>34] on line 24)
+[3,42]<27,Error,Syntax>Syntax error : DATE properties are read-only ([3>42] on line 30)
+[3,42]<27,Error,Syntax>Syntax error : DATE properties are read-only ([3>42] on line 31)
 
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
  author: WIZTIGERS. written: APRIL 2016 compiled: ? installation: ? security: ?
-CUSTOM TYPES:
- * TC-DATE
-     - YYYY {10} Numeric <of> TC-DATE
-     - MM {10} Numeric <of> TC-DATE
-     - DD {10} Numeric <of> TC-DATE
 SYMBOL TABLE:
   olddate {1} Alphanumeric
-  today {1} TC-DATE
+  today {1} DATE
   YYYY {2} Numeric <of> today
   YYYY {2} Numeric <of> tomorrow
   YYYY {6} Numeric <of> date1 <of> groupe
@@ -23,6 +18,6 @@ SYMBOL TABLE:
   DD {2} Numeric <of> today
   DD {2} Numeric <of> tomorrow
   DD {6} Numeric <of> date1 <of> groupe
-  tomorrow {1} TC-DATE
+  tomorrow {1} DATE
   groupe {1} GROUP(1) [ date1 ]
-  date1 {5} TC-DATE <of> groupe
+  date1 {5} DATE <of> groupe

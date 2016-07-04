@@ -1,0 +1,4 @@
+﻿
+
+Got a :
+[31,39]<27,Error,Syntax>Syntax error : mismatched input '9' expecting PictureCharacterString (RuleStack=codeElement>dataDescriptionEntry>pictureClause, OffendingSymbol=[31,39:9]<IntegerLiteral>{9} on line 14)

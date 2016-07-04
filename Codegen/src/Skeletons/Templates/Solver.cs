@@ -8,5 +8,7 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
 		/// <param name="delimiter">Variable delimiter</param>
 		/// <returns>Substituted text</returns>
 		string Replace(string template, Dictionary<string,object> variables, string delimiter);
+
+		string Replace();
 	}
 }

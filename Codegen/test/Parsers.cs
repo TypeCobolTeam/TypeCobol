@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Codegen.Config;
 using TypeCobol.Codegen.Skeletons;
-
 using TypeCobol.Compiler; // DocumentFormat
-using TypeCobol.Compiler.Parser; // ProgramClassDocument
-using TypeCobol.Server; // Parser
 using TypeCobol.Tools; // CodeElementDiagnostics
 
 namespace TypeCobol.Codegen {
@@ -109,21 +106,23 @@ namespace TypeCobol.Codegen {
 		}
 
 		private void ParseGenerateCompare(string path, List<Skeleton> skeletons) {
-			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), DocumentFormat.RDZReferenceFormat);
+			var format = DocumentFormat.RDZReferenceFormat;
+			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format);
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-			var writer = new System.IO.StringWriter();
+			var writer = new StringWriter();
 			// write parsing errors
 			WriteErrors(writer, document.Errors[0], "CodeElements", columns);
 			WriteErrors(writer, document.Errors[1], "ProgramClass", columns);
 			// write generated code
-			var codegen = new Generator(writer, document.Results.TokensLines, document.Converter, skeletons);
+			var codegen = new Generator(writer, document.Results.TokensLines, skeletons);
 			var program = document.Results.ProgramClassDocumentSnapshot.Program;
+
 			codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 			// flush
 			writer.Close();
 
 			// compare with expected result
-			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path));
+			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
 			Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
 		}
 

@@ -1,0 +1,4 @@
+grammar TypeCobolProgram;
+
+import CobolProgramClass;
+
