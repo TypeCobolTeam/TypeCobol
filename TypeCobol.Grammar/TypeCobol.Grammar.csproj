@@ -82,7 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
-    <Antlr4 Include="Grammars\Cobol\CobolProgramClass.g4">
+    <Antlr4 Include="Grammars\Cobol\ProgramClass.g4">
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="Grammars\Cobol\TokenTypes.xlsx" />

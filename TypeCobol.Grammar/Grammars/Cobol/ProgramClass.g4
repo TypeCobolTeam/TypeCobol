@@ -6,7 +6,7 @@
 // elementary CodeElements recognized by the first step of the Cobol parser.
 // -----------------------------------------------------------------------
 
-grammar CobolProgramClass;
+grammar ProgramClass;
 
 // Code Elements produced by the first parsing step (see CobolCodeElements.g4 grammar)
 // are listed as TOKEN TYPES in this grammar.

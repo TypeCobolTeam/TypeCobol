@@ -90,20 +90,20 @@
     <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolCompilerDirectivesVisitor.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassBaseListener.cs">
-      <Link>Compiler\Parser\Generated\CobolProgramClassBaseListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\ProgramClassBaseListener.cs">
+      <Link>Compiler\Parser\Generated\ProgramClassBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\CobolProgramClassBaseVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\ProgramClassBaseVisitor.cs">
+      <Link>Compiler\Parser\Generated\ProgramClassBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassListener.cs">
-      <Link>Compiler\Parser\Generated\CobolProgramClassListener.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\ProgramClassListener.cs">
+      <Link>Compiler\Parser\Generated\ProgramClassListener.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassParser.cs">
-      <Link>Compiler\Parser\Generated\CobolProgramClassParser.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\ProgramClassParser.cs">
+      <Link>Compiler\Parser\Generated\ProgramClassParser.cs</Link>
     </Compile>
-    <Compile Include="..\TypeCobol.Grammar\obj\Debug\CobolProgramClassVisitor.cs">
-      <Link>Compiler\Parser\Generated\CobolProgramClassVisitor.cs</Link>
+    <Compile Include="..\TypeCobol.Grammar\obj\Debug\ProgramClassVisitor.cs">
+      <Link>Compiler\Parser\Generated\ProgramClassVisitor.cs</Link>
     </Compile>
     <Compile Include="..\TypeCobol.Grammar\obj\Debug\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
