@@ -286,12 +286,6 @@
     <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
     <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
     <None Include="Compiler\Parser\Samples\FD.cbl" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure1.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure2.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure3.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure4.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure5.pgm" />
-    <None Include="Compiler\Parser\Samples\Programs\CopyProcedure6.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef2.tcbl" />
     <None Include="Compiler\Parser\Samples\Programs\Memory.pgm" />
     <None Include="Compiler\Parser\Samples\Programs\TypeCobol\Tables.tcbl" />
@@ -394,6 +388,14 @@
     <Content Include="NewTestsToFix\Parser\ResultFiles\ReplacePGM.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\InnerPgmWithEvaluatePGM.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\PgmRecursivePGM.txt" />
+    <None Include="NewTestsToFix\Parser\Samples\CopyProcedure1.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\CopyProcedure2.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\CopyProcedure3.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\CopyProcedure4.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\CopyProcedure5.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\CopyProcedure6.cbl" />
+    <None Include="NewTestsToFix\Parser\Samples\CPYProc.cpy" />
+    <None Include="NewTestsToFix\Parser\Samples\CPYData.cpy" />
     <None Include="NewTestsToFix\Parser\Samples\InnerPgmWithEvaluate.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\MultiLines.rdz.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\PgmRecursive.cbl" />

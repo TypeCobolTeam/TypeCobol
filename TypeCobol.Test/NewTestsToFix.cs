@@ -29,8 +29,7 @@ namespace TypeCobol.Test {
             foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);
-                string[] extensions = {"*.cbl"};
-                if (dirname == "Programs") extensions = new[] {"*.pgm", "*.cpy"};
+                string[] extensions = {"*.cbl", "*.pgm", "*.cpy" };
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) +
                                          "]:");
                 var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
@@ -60,8 +59,7 @@ namespace TypeCobol.Test {
             foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);
-                string[] extensions = { "*.tcbl" };
-                if (dirname == "Programs") extensions = new[] { "*.tcbl", "*.cpy" };
+                string[] extensions = { "*.tcbl", "*.cpy" };
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
                 var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
                 folderTester.Test();
