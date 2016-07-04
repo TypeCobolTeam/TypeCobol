@@ -4035,7 +4035,10 @@ callStatement:
 	(RETURNING callProgramOutputParameter)?;
 
 callProgramInputParameters:
-	(BY? (REFERENCE | CONTENT | VALUE))? (variableOrFileName | OMITTED)+;
+	(BY? (REFERENCE | CONTENT | VALUE))? variableOrFileNameOrOmitted+;
+
+variableOrFileNameOrOmitted: 
+	variableOrFileName | OMITTED;
 
 callProgramOutputParameter:
 	storageArea1;

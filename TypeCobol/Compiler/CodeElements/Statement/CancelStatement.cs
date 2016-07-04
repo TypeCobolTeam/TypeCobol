@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// contents of an identifier specified in an associated CALL statement.
         /// Do not specify the name of a class or a method in the CANCEL statement.
         /// </summary>
-        public IList<Expression> Items = new List<Expression>();
+        public SymbolReferenceVariable[] Programs { get; set; }
 
     }
 }

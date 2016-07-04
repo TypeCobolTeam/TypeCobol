@@ -226,9 +226,9 @@ namespace TypeCobol.Compiler.CodeElements
     ///  AND
     /// Storage area allocated by the compiler to hold the result of the call.
     /// </summary>
-    public class IntrinsicFunctionCallResultStorageArea : StorageArea
+    public class IntrinsicFunctionCallResult : StorageArea
     {
-        public IntrinsicFunctionCallResultStorageArea(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) :
+        public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) :
             base(StorageAreaKind.IntrinsicFunctionCallResult)
         {
             IntrinsicFunctionName = intrinsicFunctionName;

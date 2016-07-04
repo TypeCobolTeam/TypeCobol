@@ -319,7 +319,7 @@
     <Content Include="Compiler\Parser\CodeElementBuilder\obsolete\ArithmeticStatementBuilder.cs.txt" />
     <Compile Include="Compiler\Parser\CodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
-    <Compile Include="Compiler\Parser\CodeElementBuilder\FileOperationBuilder.cs" />
+    <Content Include="Compiler\Parser\CodeElementBuilder\obsolete\FileOperationBuilder.cs.txt" />
     <Compile Include="Compiler\Parser\ICodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\CodeElementsParserStep.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder\ProgramClassBuilder.cs" />

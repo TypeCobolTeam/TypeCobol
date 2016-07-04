@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -59,7 +58,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// deleted by the assembler, any function-pointers that had been set to that
         /// function or program's entry point are no longer valid.
         /// </summary>
-        public Program Subprogram;
+        public SymbolReferenceVariable ProgramOrProgramEntryOrProcedureOrFunction { get; set; }
 
         /// <summary>
         /// p305:
@@ -81,7 +80,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// describe the same number of character positions as the description of the
         /// corresponding data items in the calling program.
         /// </summary>
-        public IList<Using> Usings = new List<Using>();
+        public IList<CallInputParameter> InputParameters { get; set; }
 
         /// <summary>
         /// pp308-309:
@@ -130,89 +129,63 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RETURN-CODE special register is not set by execution of CALL statements
         /// that include the RETURNING phrase.
         /// </summary>
-        public Identifier Returning;
-        
-        public class Program
-        {
-            /// <summary>
-            /// p304: identifier-1 must be an alphanumeric, alphabetic, or numeric data item 
-            /// described with USAGE DISPLAY such that its value can be a program-name.
-            /// </summary>
-            private Identifier Identifier;
-            /// <summary>
-            /// p304: literal-1 must be an alphanumeric literal.
-            /// </summary>
-            private Literal Literal;
-            /// <summary>
-            /// p305: Must be defined with USAGE IS FUNCTION-POINTER or PROCEDURE-POINTER 
-            /// and must be set to a valid function or program entry point; otherwise, 
-            /// the results of the CALL statement are undefined.
-            /// </summary>
-            private DataName FunctionOrProcedurePointer;
+        public ReceivingStorageArea OutputParameter { get; set; }
+    }
+    
+    /// <summary>
+    /// The USING phrase specifies arguments that are passed to the target program.
+    /// </summary>
+    public class CallInputParameter
+    {
+        /// <summary>
+        /// Argument sending mode : BY REFERENCE, BY CONTENT or BY VALUE
+        /// </summary>
+        public SyntaxProperty<SendingMode> SendingMode { get; set; }
 
-            public Program(Identifier identifier)
-            {
-                this.Identifier = identifier;
-            }
+        /// <summary>
+        /// Each USING identifier must be defined as a level-01 or level-77 item in the
+        /// LINKAGE SECTION of the called subprogram or invoked method.
+        /// </summary>
+        public Variable SendingVariable { get; set; }
 
-            public Program(Literal literal)
-            {
-                this.Literal = literal;
-            }
-
-            public Program(DataName pointer)
-            {
-                this.FunctionOrProcedurePointer = pointer;
-            }
-        }
-
-        public class Using
-        {
-            /// <summary>
-            /// p306:
-            /// The BY CONTENT, BY REFERENCE, and BY VALUE phrases apply to parameters
-            /// that follow them until another BY CONTENT, BY REFERENCE, or BY VALUE
-            /// phrase is encountered. BY REFERENCE is assumed if you do not specify a BY
-            /// CONTENT, BY REFERENCE, or BY VALUE phrase prior to the first parameter.
-            /// </summary>
-            public enum Mode { REFERENCE, CONTENT, VALUE, UNKNOWN }
-
-            public Mode UsingMode;
-            public Identifier Identifier;
-            public Literal Literal;
-            public FileName Filename;
-            public Omitted Omitted;
-
-            internal Using(Mode mode, Identifier value)
-            {
-                this.UsingMode = mode;
-                this.Identifier = value;
-            }
-            internal Using(Mode mode, Literal value)
-            {
-                this.UsingMode = mode;
-                this.Literal = value;
-            }
-            internal Using(Mode mode, FileName value)
-            {
-                this.UsingMode = mode;
-                this.Filename = value;
-            }
-            internal Using(Mode mode, Omitted value)
-            {
-                this.UsingMode = mode;
-                this.Omitted = value;
-            }
-        }
-
+        /// <summary>
+        /// Indicates that no argument is passed.
+        /// </summary>
+        public SyntaxProperty<bool> IsOmitted { get; set; }
     }
 
     /// <summary>
-    /// p306: Indicates that no argument is passed.
+    /// Argument sending mode for CallInputParameter
     /// </summary>
-    public class Omitted : Expression {
-        Token Token;
-        public Omitted(Token token) { this.Token = token; }
+    public enum SendingMode
+    {
+        /// <summary>
+        /// If the BY REFERENCE phrase is either specified or implied for a parameter, 
+        /// the corresponding data item in the calling program occupies the same storage area 
+        /// as the data item in the called program. 
+        /// </summary>
+        ByReference,
+        /// <summary>
+        /// If the BY CONTENT phrase is specified or implied for a parameter, the called program 
+        /// cannot change the value of this parameter as referenced in the CALL statement's USING 
+        /// phrase, though the called program can change the value of the data item referenced 
+        /// by the corresponding data-name in the called program's PROCEDURE DIVISION header. 
+        /// Changes to the parameter in the called program do not affect the corresponding argument
+        /// in the calling program. 
+        /// </summary>
+        ByContent,
+        /// <summary>
+        /// If the BY VALUE phrase is specified or implied for an argument, the value of the argument
+        /// is passed, not a reference to the sending data item. The called program can modify 
+        /// the formal parameter that corresponds to the BY VALUE argument, but any such changes do
+        /// not affect the argument because the called program has access to a temporary copy of 
+        /// the sending data item.
+        /// Although BY VALUE arguments are primarily intended for communication with non-COBOL programs 
+        /// (such as C), they can also be used for COBOL-to-COBOL invocations. In this case, BY VALUE
+        /// must be specified or implied for both the argument in the CALL USING phrase and the 
+        /// corresponding formal parameter in the PROCEDURE DIVISION USING phrase. 
+        /// </summary>
+        ByValue
     }
 
 }

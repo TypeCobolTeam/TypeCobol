@@ -22,21 +22,16 @@ namespace TypeCobol.Compiler.CodeElements
         public AddSimpleStatement() : base(StatementType.AddSimpleStatement)
         { }
 
-        /// <summary>
-        /// p285:
-        /// When an arithmetic statement has multiple results, execution conceptually
-        /// proceeds as follows:
-        /// 1. The statement performs all arithmetic operations to find the result to be placed
-        /// in the receiving items, and stores that result in a temporary location.
-        /// </summary>
-        public ArithmeticExpression IntermediateResult { get; set; }
+        public NumericVariable[] VariablesAddedTogether { get; set; }
 
-        /// <summary>
-        /// 2. A sequence of statements transfers or combines the value of this temporary
-        /// result with each single receiving field. The statements are considered to be
-        /// written in the same left-to-right order in which the multiple results are listed.
-        /// </summary>
-        public Tuple<ReceivingStorageArea, ArithmeticExpression>[] Affectations { get; set; }    
+        public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }    
+    }
+
+    public class RoundedResult
+    {
+        public ReceivingStorageArea ReceivingStorageArea { get; set; }
+
+        public SyntaxProperty<bool> IsRounded { get; set; }
     }
 
     /// <summary>
@@ -47,6 +42,12 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public AddGivingStatement() : base(StatementType.AddGivingStatement)
         { }
+
+        public NumericVariable[] VariablesAddedTogether { get; set; }
+
+        public NumericVariable ToOperand { get; set; }
+
+        public RoundedResult[] ReceivingStorageAreas { get; set; }
     }
 
     /// <summary>
@@ -57,5 +58,11 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public AddCorrespondingStatement() : base(StatementType.AddCorrespondingStatement)
         { }
+
+        public StorageArea GroupItem { get; set; }
+
+        public StorageArea ToGroupItem { get; set; }
+
+        public SyntaxProperty<bool> IsRounded { get; set; }
     }
 }

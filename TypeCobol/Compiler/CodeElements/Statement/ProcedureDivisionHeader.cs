@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// The argument receiving mode can be : BY REFERENCE or BY VALUE
         /// </summary>
-        public IList<InputParameter> InputParameters { get; set; }
+        public IList<ProgramInputParameter> InputParameters { get; set; }
 
         /// <summary>
         /// The RETURNING phrase specifies a data item that is to receive the program or
@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.CodeElements
                 if (InputParameters != null)
                 {
                     sb.Append("- InputParameters =");
-                    foreach (InputParameter inputParam in InputParameters)
+                    foreach (ProgramInputParameter inputParam in InputParameters)
                     {
                         sb.Append(' ');
                         if (inputParam.ReceivingMode != null)
@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements
                             sb.Append(inputParam.ReceivingMode);
                             sb.Append(':');
                         }
-                        sb.Append(inputParam.StorageArea);
+                        sb.Append(inputParam.ReceivingStorageArea);
                     }
                     sb.AppendLine();
                 }                
@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// The USING phrase specifies the parameters that a program or method receives
     /// when the program is called or the method is invoked.
     /// </summary>
-    public class InputParameter
+    public class ProgramInputParameter
     {
         /// <summary>
         /// Argument receiving mode : BY REFERENCE or BY VALUE
@@ -81,11 +81,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// Each USING identifier must be defined as a level-01 or level-77 item in the
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// </summary>
-        public ReceivingStorageArea StorageArea { get; set; }
+        public ReceivingStorageArea ReceivingStorageArea { get; set; }
     }
 
     /// <summary>
-    /// Argument receiving mode for InputParameter
+    /// Argument receiving mode for ProgramInputParameter
     /// </summary>
     public enum ReceivingMode
     {

@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// List of all instrinsic function calls we need to execute for this statement
         /// </summary>
-        public IntrinsicFunctionCallResultStorageArea[] FunctionCalls { get; set; }
+        public IntrinsicFunctionCallResult[] FunctionCalls { get; set; }
     }
 
     /// <summary>

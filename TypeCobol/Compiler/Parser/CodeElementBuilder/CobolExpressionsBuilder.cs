@@ -184,7 +184,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
         {
-            return new IntrinsicFunctionCallResultStorageArea(
+            return new IntrinsicFunctionCallResult(
                 CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName()),
                 CreateArguments(context.argument()));
         }

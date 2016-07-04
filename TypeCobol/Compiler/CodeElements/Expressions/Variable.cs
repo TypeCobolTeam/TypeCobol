@@ -215,5 +215,21 @@ namespace TypeCobol.Compiler.CodeElements
             storageArea.IsReadFrom = false;
             storageArea.IsWrittenTo = true;
         }
+
+        public DataSourceType DataSourceType { get; set; }
+
+        public StorageArea[] SendingStorageAreas { get; set; }
+    }
+    
+    public enum DataSourceType
+    {
+        ComputeExpression,
+        MoveFromStorageArea,
+        ReadFromDatabase,
+        ReadFromFile,
+        ReadFromInputDevice,
+        ReadFromSystemCall,
+        ReceiveFromCalledProgram,
+        ReceiveFromCallingProgram
     }
 }

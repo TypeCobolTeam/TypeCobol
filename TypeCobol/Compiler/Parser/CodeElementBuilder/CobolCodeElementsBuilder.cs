@@ -1444,46 +1444,8 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
         {
-            var procedureDivisionHeader = new ProcedureDivisionHeader();
-
-            if (context.programInputParameters() != null)
-            {
-                foreach (var inputParametersContext in context.programInputParameters())
-                {
-                    SyntaxProperty<ReceivingMode> receivingMode = null;
-                    if (inputParametersContext.REFERENCE() != null)
-                    {
-                        receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference,
-                            ParseTreeUtils.GetFirstToken(inputParametersContext.REFERENCE()));
-                    }
-                    else if (inputParametersContext.VALUE() != null)
-                    {
-                        receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue,
-                            ParseTreeUtils.GetFirstToken(inputParametersContext.VALUE()));
-                    }
-                    foreach (var storageAreaContext in inputParametersContext.storageArea2())
-                    {
-                        if (procedureDivisionHeader.InputParameters == null)
-                        {
-                            procedureDivisionHeader.InputParameters = new List<InputParameter>();
-                        }
-
-                        var inputParameter = new InputParameter {
-                            ReceivingMode = receivingMode,
-                            StorageArea = CobolExpressionsBuilder.CreateStorageArea(storageAreaContext) };
-                        procedureDivisionHeader.InputParameters.Add(inputParameter);
-                    }
-                }
-            }
-
-            if (context.programOutputParameter() != null)
-            {
-                procedureDivisionHeader.OutputParameter =
-                    CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
-            }
-
             Context = context;
-            CodeElement = procedureDivisionHeader;
+            CodeElement = CobolStatementsBuilder.CreateProcedureDivisionHeader(context);
         }
 
         public override void EnterDeclarativesHeader(CodeElementsParser.DeclarativesHeaderContext context)
@@ -1503,12 +1465,70 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             if (context.useStatementForExceptionDeclarative() != null)
             {
-                CodeElement = CobolStatementsBuilder.CreateUseStatementForExceptionDeclarative(context.useStatementForExceptionDeclarative());
+                CodeElement = CreateUseStatementForExceptionDeclarative(context.useStatementForExceptionDeclarative());
             }
             else if (context.useStatementForDebuggingDeclarative() != null)
             {
-                CodeElement = CobolStatementsBuilder.CreateUseStatementForDebuggingDeclarative(context.useStatementForDebuggingDeclarative());
+                CodeElement = CreateUseStatementForDebuggingDeclarative(context.useStatementForDebuggingDeclarative());
             }
+        }
+
+        internal UseAfterIOExceptionStatement CreateUseStatementForExceptionDeclarative(CodeElementsParser.UseStatementForExceptionDeclarativeContext context)
+        {
+            var statement = new UseAfterIOExceptionStatement();
+            if (context.GLOBAL() != null)
+            {
+                statement.IsGlobal = new SyntaxProperty<bool>(true,
+                    ParseTreeUtils.GetFirstToken(context.GLOBAL()));
+            }
+            if (context.fileNameReference() != null && context.fileNameReference().Length > 0)
+            {
+                statement.FileNames = new SymbolReference[context.fileNameReference().Length];
+                for (int i = 0; i < context.fileNameReference().Length; i++)
+                {
+                    statement.FileNames[i] = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()[i]);
+                }
+            }
+            if (context.INPUT() != null)
+            {
+                statement.OpenMode = new SyntaxProperty<OpenMode>(OpenMode.INPUT,
+                    ParseTreeUtils.GetFirstToken(context.INPUT()));
+            }
+            else if (context.OUTPUT() != null)
+            {
+                statement.OpenMode = new SyntaxProperty<OpenMode>(OpenMode.OUTPUT,
+                    ParseTreeUtils.GetFirstToken(context.OUTPUT()));
+            }
+            else if (context.I_O() != null)
+            {
+                statement.OpenMode = new SyntaxProperty<OpenMode>(OpenMode.IO,
+                    ParseTreeUtils.GetFirstToken(context.I_O()));
+            }
+            else if (context.EXTEND() != null)
+            {
+                statement.OpenMode = new SyntaxProperty<OpenMode>(OpenMode.EXTEND,
+                    ParseTreeUtils.GetFirstToken(context.EXTEND()));
+            }
+            return statement;
+        }
+
+        internal UseForDebuggingProcedureStatement CreateUseStatementForDebuggingDeclarative(CodeElementsParser.UseStatementForDebuggingDeclarativeContext context)
+        {
+            var statement = new UseForDebuggingProcedureStatement();
+            if (context.procedureName() != null && context.procedureName().Length > 0)
+            {
+                statement.ProcedureNames = new SymbolReference[context.procedureName().Length];
+                for (int i = 0; i < context.procedureName().Length; i++)
+                {
+                    statement.ProcedureNames[i] = CobolWordsBuilder.CreateProcedureName(context.procedureName()[i]);
+                }
+            }
+            if (context.ALL() != null)
+            {
+                statement.AllProcedures = new SyntaxProperty<bool>(true,
+                    ParseTreeUtils.GetFirstToken(context.ALL()));
+            }
+            return statement;
         }
 
         // -- Section --
