@@ -60,7 +60,7 @@ namespace TypeCobol.Test.Compiler.Parser
     internal class TestObserver
     {
         private readonly IList<Exception> errors = new List<Exception>();
-        public bool HasErrors => errors.Count > 0;
+        public bool HasErrors { get { return errors.Count > 0; } }
 
         public string DumpErrors()
         {
@@ -475,9 +475,9 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <summary>
         /// The complete path to the sample file
         /// </summary>
-        public string SamplePath { get; }
+        public string SamplePath { get; private set; }
 
-        public Names Resultnames { get; }
+        public Names Resultnames { get; private set; }
 
         public Paths(string sampleRoot, string resultRoot, string samplePath, Names resultnames)
         {
@@ -493,7 +493,7 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <summary>
         /// Returns the sample filename with its extension
         /// </summary>
-        internal string SampleName => Path.GetFileName(SamplePath);
+        internal string SampleName { get { return Path.GetFileName(SamplePath); } }
 
         /// <summary>
         /// Return the complete path to the result file

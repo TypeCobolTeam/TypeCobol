@@ -451,11 +451,14 @@ namespace TypeCobol.Compiler.Parser
 			}
 
 		    var cobol2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cobol2002TypeClause());
-		    if (cobol2002TypeClause != null)
-		    {
-		        var token = (cobol2002TypeClause.UserDefinedWord() ?? cobol2002TypeClause.DATE())?.Symbol;
-		        if (token != null) entry.Picture = "TYPE:" + token.Text.ToUpper();
-		    }
+			if (cobol2002TypeClause != null) {
+				Token token = null;
+				if (cobol2002TypeClause.UserDefinedWord() != null)
+					token = ParseTreeUtils.GetTokenFromTerminalNode(cobol2002TypeClause.UserDefinedWord());
+				if (cobol2002TypeClause.DATE() != null)
+					token = ParseTreeUtils.GetTokenFromTerminalNode(cobol2002TypeClause.DATE());
+				if (token != null) entry.Picture = "TYPE:"+token.Text.ToUpper();
+			}
             // [/Cobol 2002]
 
             Context = context;
