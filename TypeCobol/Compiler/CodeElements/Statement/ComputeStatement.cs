@@ -18,5 +18,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ComputeStatement() : base(CodeElementType.ComputeStatement, StatementType.ComputeStatement)
         { }
+
+        public RoundedResult[] ReceivingStorageAreas { get; set; }
+
+        public ArithmeticExpression ArithmeticExpression { get; set; }
     }
 }

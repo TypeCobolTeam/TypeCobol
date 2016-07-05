@@ -21,6 +21,10 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public DivideSimpleStatement() : base(StatementType.DivideSimpleStatement)
         { }
+
+        public NumericVariable Divisor { get; set; }
+
+        public RoundedResult[] DividendsAndQuotients { get; set; }
     }
 
     /// <summary>
@@ -36,6 +40,12 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public DivideGivingStatement() : base(StatementType.DivideGivingStatement)
         { }
+
+        public NumericVariable Divisor { get; set; }
+
+        public NumericVariable Dividend { get; set; }
+
+        public RoundedResult[] Quotients { get; set; }
     }
 
     /// <summary>
@@ -51,5 +61,13 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public DivideRemainderStatement() : base(StatementType.DivideRemainderStatement)
         { }
+
+        public NumericVariable Divisor { get; set; }
+
+        public NumericVariable Dividend { get; set; }
+
+        public RoundedResult Quotient { get; set; }
+
+        public ReceivingStorageArea Remainder { get; set; }
     }
 }

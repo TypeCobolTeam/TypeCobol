@@ -36,9 +36,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// Can be any literal or any figurative constant as specified in “Figurative constants” on page 13. 
         /// When a figurative constant is specified, only a single occurrence of that figurative constant is displayed
         /// </summary>
-        public IList<Expression> IdentifierOrLiteral { get; set; }
-
-
+        public Variable[] Variables { get; set; }
+        
         /// <summary>
         /// UPON 
         /// environment-name-1 or the environment name associated with mnemonic-name-1 must be associated with an output device. See “SPECIAL-NAMES paragraph” on page 112. 
@@ -54,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// When the UPON phrase is omitted, the system's logical output device is assumed. The list of valid environment-names in a DISPLAY statement is shown in Table 5 on page 114. 
         /// For details on routing DISPLAY output to stdout, see Displaying values on a screen or in a file (
         /// </summary>
-        public MnemonicOrEnvironmentName UponMnemonicOrEnvironmentName { get; set; }
+        public AmbiguousSymbolReference OutputDeviceName { get; set; }
 
         /// <summary>
         /// WITH NO ADVANCING 
@@ -68,24 +67,24 @@ namespace TypeCobol.Compiler.CodeElements
         /// - If the total count exceeds the maximum, as many records are written as are needed to display all operands. Any operand being printed or displayed when the end of a record is reached is continued in the next record.
         /// ... more details on DBCS operands p324 ...
         /// </summary>
-		public bool IsWithNoAdvancing { get; set; }
+		public SyntaxProperty<bool> IsWithNoAdvancing { get; set; }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (IdentifierOrLiteral == null && !IsWithNoAdvancing && UponMnemonicOrEnvironmentName == null )
+            if (Variables == null && IsWithNoAdvancing == null && OutputDeviceName == null )
             {
                 return base.ToString();
             }
             else
             {
                 var sb = new StringBuilder(base.ToString());
-                if (IdentifierOrLiteral != null)
+                if (Variables != null)
                 {
                     sb.Append("- variables =");
-                    foreach (var varToDisplay in IdentifierOrLiteral)
+                    foreach (var varToDisplay in Variables)
                     {
                         sb.Append(' ');
                         sb.Append(varToDisplay);
@@ -93,12 +92,12 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.AppendLine();
                 }
 
-                if (UponMnemonicOrEnvironmentName != null)
+                if (OutputDeviceName != null)
                 {
-                    sb.AppendLine("- UponMnemonicOrEnvironmentName[" + UponMnemonicOrEnvironmentName.Type + "] = " + UponMnemonicOrEnvironmentName);
+                    sb.AppendLine("- OutputDeviceName = " + OutputDeviceName.Name);
                 }
 
-				if (IsWithNoAdvancing) sb.AppendLine("- WithNoAdvancing");
+				if (IsWithNoAdvancing != null) sb.AppendLine("- WithNoAdvancing");
                 return sb.ToString();
             }
         }

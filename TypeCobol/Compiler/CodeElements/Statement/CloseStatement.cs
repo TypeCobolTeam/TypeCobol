@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -28,12 +28,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// than one file-name is specified, the files need not have the same
         /// organization or access. [Each filename] must not be a sort or merge file.
         /// </summary>
-        IList<CloseFileName> FileNames;
-
+        public CloseFileInstruction[] CloseFileInstructions { get; set; }
         
     }
 
-    public class CloseFileName
+    public class CloseFileInstruction
     {
         /// <summary>
         /// p313:
@@ -41,7 +40,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// than one file-name is specified, the files need not have the same
         /// organization or access. [FileName] must not be a sort or merge file.
         /// </summary>
-        FileName FileName;
+        public SymbolReference FileName { get; set; }
 
         /// <summary>
         /// p314:
@@ -51,7 +50,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// p313:
         /// The REEL, UNIT, and NO REWIND phrases are not valid for VSAM files.
         /// </summary>
-        bool IsReelUnit;
+        public SyntaxProperty<bool> IsReelUnit { get; set; }
+
         /// <summary>
         /// p314:
         /// WITH NO REWIND and FOR REMOVAL
@@ -60,7 +60,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// successful and a status key value is set to indicate the file was on a
         /// non-reel medium.
         /// </summary>
-        bool IsForRemoval;
+        public SyntaxProperty<bool> IsForRemoval { get; set; }
+
         /// <summary>
         /// p314:
         /// WITH NO REWIND and FOR REMOVAL
@@ -69,19 +70,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// successful and a status key value is set to indicate the file was on a
         /// non-reel medium.
         /// </summary>
-        bool IsNoRewind;
+        public SyntaxProperty<bool> IsWithNoRewind { get; set; }
+
         /// <summary>
         /// issue #62: LOCK is notified when you don't want the file can be opened again during the execution of program.
         /// </summary>
-        bool IsLock;
-
-        public CloseFileName(FileName filename, bool reelunit, bool forremoval, bool norewind, bool lock_)
-        {
-            this.FileName = filename;
-            this.IsReelUnit = reelunit;
-            this.IsForRemoval = forremoval;
-            this.IsNoRewind = norewind;
-            this.IsLock = lock_;
-        }
+        public SyntaxProperty<bool> IsWithLock { get; set; }
     }
 }

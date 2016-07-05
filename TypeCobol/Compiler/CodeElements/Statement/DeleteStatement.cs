@@ -33,7 +33,7 @@
         /// Must be defined in an FD entry in the DATA DIVISION and must be the
         /// name of an indexed or relative file.
         /// </summary>
-        public FileName FileName = null;
+        public SymbolReference FileName { get; set; }
 
     }
 }

@@ -288,21 +288,27 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateCloseStatement(CodeElementsParser.CloseStatementContext context)
         {
-            if (context.closeFileName() == null) return null;
-            var filenames = new List<CloseFileName>();
-            foreach (var filename in context.closeFileName())
-            {
-                CloseFileName f = CreateCloseFileName(filename);
-                if (f != null) filenames.Add(f);
-            }
-            return new CloseStatement(filenames);
-        }
+            var statement = new CloseStatement();
 
-        private CloseFileName CreateCloseFileName(CodeElementsParser.CloseFileNameContext context)
+            statement.CloseFileInstructions = BuildObjectArrrayFromParserRules(context.closeFileDirective(),
+                ctx => CreateCloseFileInstruction(ctx));
+
+            return statement;
+        }       
+
+        private CloseFileInstruction CreateCloseFileInstruction(CodeElementsParser.CloseFileDirectiveContext context)
         {
-            if (context == null) return null;
-            var filename = CobolWordsBuilder.CreateFileName(context.fileNameReference());
-            return new CloseFileName(filename, context.REEL() != null || context.UNIT() != null, context.REMOVAL() != null, context.NO() != null, context.LOCK() != null);
+            var instruction = new CloseFileInstruction();
+            instruction.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            instruction.IsReelUnit = CreateSyntaxProperty(true, context.REEL());
+            if(instruction.IsReelUnit == null)
+            {
+                instruction.IsReelUnit = CreateSyntaxProperty(true, context.UNIT());
+            }
+            instruction.IsForRemoval = CreateSyntaxProperty(true, context.REMOVAL());
+            instruction.IsWithNoRewind = CreateSyntaxProperty(true, context.REWIND());
+            instruction.IsWithLock = CreateSyntaxProperty(true, context.LOCK());
+            return instruction;
         }
 
         ///////////////////////
@@ -311,7 +317,14 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateComputeStatement(CodeElementsParser.ComputeStatementContext context)
         {
-            return new ComputeStatementBuilder().CreateComputeStatement(context);
+            var statement = new ComputeStatement();
+
+            statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(),
+                ctx => CreateRoundedResult(ctx));
+
+            statement.ArithmeticExpression = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression());
+
+            return statement;
         }
 
         //////////////////////
@@ -321,7 +334,9 @@ namespace TypeCobol.Compiler.Parser
         internal CodeElement CreateDeleteStatement(CodeElementsParser.DeleteStatementContext context)
         {
             var statement = new DeleteStatement();
-            statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
+
+            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+
             return statement;
         }
 
@@ -333,43 +348,19 @@ namespace TypeCobol.Compiler.Parser
         {
             var statement = new DisplayStatement();
 
-            //Identifiers & literals
-            if (context.identifierOrLiteral() != null)
+            statement.Variables = BuildObjectArrrayFromParserRules(context.variable4(),
+                ctx => CobolExpressionsBuilder.CreateVariable(ctx));
+
+            if(context.uponOutputDevice() != null)
             {
-                var expressions = new List<Expression>();
-                foreach (CodeElementsParser.IdentifierOrLiteralContext idOrLiteral in context.identifierOrLiteral())
-                {
-                    Expression identifier = CreateIdentifierOrLiteral(idOrLiteral, statement, "Display");
-                    if (identifier != null)
-                    {
-                        expressions.Add(identifier);
-                    }
-                }
-                statement.IdentifierOrLiteral = expressions;
+                statement.OutputDeviceName = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(
+                    context.uponOutputDevice().mnemonicForEnvironmentNameReferenceOrEnvironmentName());
             }
-            //else don't set the displayStement. It will remains null
-
-            //(mnemonic) Environment name
-            if (context.uponEnvironmentName() != null)
+            if (context.withNoAdvancing() != null)
             {
-                Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicForEnvironmentNameReferenceOrEnvironmentName());
-                if (mnemonicOrEnvironmentName != null)
-                {
-                    statement.UponMnemonicOrEnvironmentName = new MnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
-                    //            EnvironmentNameEnum envNameValue;
-                    //            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
-                    //            {
-                    //                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
-                    //            }
-                    //            else
-                    //            {
-                    //                //if this happens, it means it's a mnemonic environment name
-                    //                return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
-                    //            }
-                }
-            } //else don't set UponMnemonicOrEnvironmentName. it will remains null
+                statement.IsWithNoAdvancing = CreateSyntaxProperty(true, context.withNoAdvancing().ADVANCING());
+            }
 
-            statement.IsWithNoAdvancing = context.withNoAdvancing() != null;
             return statement;
         }
 
@@ -377,19 +368,67 @@ namespace TypeCobol.Compiler.Parser
         // DIVIDE STATEMENT //
         //////////////////////
 
-        internal CodeElement CreateDivideStatement(CodeElementsParser.DivideSimpleContext divideSimpleContext)
+        internal CodeElement CreateDivideStatement(CodeElementsParser.DivideSimpleContext context)
         {
-            return new DivideStatementBuilder().CreateStatement(context);
+            var statement = new DivideSimpleStatement();
+
+            statement.Divisor = CobolExpressionsBuilder.CreateNumericVariable(context.divisor);
+            statement.DividendsAndQuotients = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(),
+                ctx => CreateRoundedResult(ctx));
+
+            return statement;
         }
 
-        internal CodeElement CreateDivideGivingStatement(CodeElementsParser.DivideGivingContext divideGivingContext)
+        internal CodeElement CreateDivideGivingStatement(CodeElementsParser.DivideGivingContext context)
         {
-            return new DivideStatementBuilder().CreateStatement(context);
+            var statement = new DivideGivingStatement();
+
+            if(context.divisor1 != null)
+            {
+                statement.Divisor = CobolExpressionsBuilder.CreateNumericVariable(context.divisor1);
+            }
+            else if (context.divisor2 != null)
+            {
+                statement.Divisor = CobolExpressionsBuilder.CreateNumericVariable(context.divisor2);
+            }
+            if (context.dividend1 != null)
+            {
+                statement.Dividend = CobolExpressionsBuilder.CreateNumericVariable(context.dividend1);
+            }
+            else if (context.dividend2 != null)
+            {
+                statement.Dividend = CobolExpressionsBuilder.CreateNumericVariable(context.dividend2);
+            }
+            statement.Quotients = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(),
+                ctx => CreateRoundedResult(ctx));
+
+            return statement;
         }
 
-        internal CodeElement CreateDivideRemainderStatement(CodeElementsParser.DivideRemainderContext divideRemainderContext)
+        internal CodeElement CreateDivideRemainderStatement(CodeElementsParser.DivideRemainderContext context)
         {
-            return new DivideStatementBuilder().CreateStatement(context);
+            var statement = new DivideRemainderStatement();
+
+            if (context.divisor1 != null)
+            {
+                statement.Divisor = CobolExpressionsBuilder.CreateNumericVariable(context.divisor1);
+            }
+            else if (context.divisor2 != null)
+            {
+                statement.Divisor = CobolExpressionsBuilder.CreateNumericVariable(context.divisor2);
+            }
+            if (context.dividend1 != null)
+            {
+                statement.Dividend = CobolExpressionsBuilder.CreateNumericVariable(context.dividend1);
+            }
+            else if (context.dividend2 != null)
+            {
+                statement.Dividend = CobolExpressionsBuilder.CreateNumericVariable(context.dividend2);
+            }
+            statement.Quotient = CreateRoundedResult(context.numericStorageAreaRounded());
+            statement.Remainder = CobolExpressionsBuilder.CreateNumericStorageArea(context.numericStorageArea());
+
+            return statement;
         }
 
         /////////////////////
