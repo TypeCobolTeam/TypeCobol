@@ -58,9 +58,9 @@ namespace TypeCobol.Compiler.Parser
 			catch(ArgumentException ex) { table.RegisterCustomType(type); }
 		}
 
+
+
 		public NodeDispatcher Dispatcher { get; internal set; }
-
-
 
 		private void Enter(Node node, ParserRuleContext context = null) {
 			node.SymbolTable = CurrentProgram.SymbolTable;
@@ -74,6 +74,13 @@ namespace TypeCobol.Compiler.Parser
 		}
 		private void Delete() {
 			Program.SyntaxTree.Delete();
+		}
+
+		private void AttachIfExists(Antlr4.Runtime.Tree.ITerminalNode node) {
+			var ce = AsCodeElement(node);
+			if (ce == null) return;
+			Enter(new Node(ce));
+			Exit();
 		}
 
 		/// <summary>
@@ -101,11 +108,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context) {
-			var end = AsCodeElement(context.ProgramEnd());
-			if (end != null) {
-				Enter(new Node(end), context);
-				Exit();
-			}
+			AttachIfExists(context.ProgramEnd());
 			Exit();
 			programsStack.Pop();
 		}
@@ -515,11 +518,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			Enter(new Node(null), context);
 		}
 		public override void ExitSentence(ProgramClassParser.SentenceContext context) {
-			var end = AsCodeElement(context.SentenceEnd());
-			if (end != null) {
-				Enter(new Node(end));
-				Exit();
-			}
+			AttachIfExists(context.SentenceEnd());
 			Exit();
 		}
 
@@ -558,19 +557,11 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		public override void EnterElseClause(ProgramClassParser.ElseClauseContext context) {
 			Exit();// we want ELSE to be child of IF, not THEN, so exit THEN
 			Enter(new Node(AsCodeElement(context.ElseCondition())), context);// ELSE
-			var next = AsCodeElement(context.NextSentenceStatement());
-			if (next != null) {
-				Enter(new Node(next));
-				Exit();
-			}
+			AttachIfExists(context.NextSentenceStatement());
 		}
 		public override void ExitIfStatementWithBody(ProgramClassParser.IfStatementWithBodyContext context) {
 			Exit(); // Exit ELSE (if any) or THEN
-			var end = AsCodeElement(context.IfStatementEnd());
-			if (end != null) {
-				Enter(new Node(end));
-				Exit();
-			}
+			AttachIfExists(context.IfStatementEnd());
 			// DO NOT Exit() IF node because this will be done in ExitStatement
 		}
 
@@ -598,7 +589,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			Exit();// exit WHEN OTHER
 		}
 		public override void ExitEvaluateStatementWithBody(ProgramClassParser.EvaluateStatementWithBodyContext context) {
-			ExitConditionalStatement(context.EvaluateStatementEnd());// exit EVALUATE
+			AttachIfExists(context.EvaluateStatementEnd());// exit EVALUATE
 		}
 
 
@@ -607,7 +598,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			Enter(new Node(AsCodeElement(context.PerformStatement())), context);
 		}
 		public override void ExitPerformStatementWithBody(ProgramClassParser.PerformStatementWithBodyContext context) {
-			ExitConditionalStatement(context.PerformStatementEnd());
+			AttachIfExists(context.PerformStatementEnd());
 		}
 
 		public override void EnterSearchStatementWithBody(ProgramClassParser.SearchStatementWithBodyContext context) {
@@ -616,17 +607,13 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		}
 		public override void EnterWhenSearchConditionClause(ProgramClassParser.WhenSearchConditionClauseContext context) {
 			Enter(new Node(AsCodeElement(context.WhenCondition())), context);
-			var next = AsCodeElement(context.NextSentenceStatement());
-			if (next != null) {
-				Enter(new Node(next));
-				Exit();
-			}
+			AttachIfExists(context.NextSentenceStatement());
 		}
 		public override void ExitWhenSearchConditionClause(ProgramClassParser.WhenSearchConditionClauseContext context) {
 			Exit(); // WHEN
 		}
 		public override void ExitSearchStatementWithBody(ProgramClassParser.SearchStatementWithBodyContext context) {
-			ExitConditionalStatement(context.SearchStatementEnd());
+			AttachIfExists(context.SearchStatementEnd());
 		}
 
 
@@ -635,128 +622,119 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			Enter(new Node(AsCodeElement(context.AddStatement())), context);
 		}
 		public override void ExitAddStatementConditional(ProgramClassParser.AddStatementConditionalContext context) {
-			ExitConditionalStatement(context.AddStatementEnd());
+			AttachIfExists(context.AddStatementEnd());
 		}
 		public override void EnterComputeStatementConditional(ProgramClassParser.ComputeStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.ComputeStatement())), context);
 		}
 		public override void ExitComputeStatementConditional(ProgramClassParser.ComputeStatementConditionalContext context) {
-			ExitConditionalStatement(context.ComputeStatementEnd());
+			AttachIfExists(context.ComputeStatementEnd());
 		}
 		public override void EnterDivideStatementConditional(ProgramClassParser.DivideStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.DivideStatement())), context);
 		}
 		public override void ExitDivideStatementConditional(ProgramClassParser.DivideStatementConditionalContext context) {
-			ExitConditionalStatement(context.DivideStatementEnd());
+			AttachIfExists(context.DivideStatementEnd());
 		}
 		public override void EnterMultiplyStatementConditional(ProgramClassParser.MultiplyStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.MultiplyStatement())), context);
 		}
 		public override void ExitMultiplyStatementConditional(ProgramClassParser.MultiplyStatementConditionalContext context) {
-			ExitConditionalStatement(context.MultiplyStatementEnd());
+			AttachIfExists(context.MultiplyStatementEnd());
 		}
 		public override void EnterSubtractStatementConditional(ProgramClassParser.SubtractStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.SubtractStatement())), context);
 		}
 		public override void ExitSubtractStatementConditional(ProgramClassParser.SubtractStatementConditionalContext context) {
-			ExitConditionalStatement(context.SubtractStatementEnd());
+			AttachIfExists(context.SubtractStatementEnd());
 		}
 		public override void EnterDeleteStatementConditional(ProgramClassParser.DeleteStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.DeleteStatement())), context);
 		}
 		public override void ExitDeleteStatementConditional(ProgramClassParser.DeleteStatementConditionalContext context) {
-			ExitConditionalStatement(context.DeleteStatementEnd());
+			AttachIfExists(context.DeleteStatementEnd());
 		}
 		public override void EnterReadStatementConditional(ProgramClassParser.ReadStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.ReadStatement())), context);
 		}
 		public override void ExitReadStatementConditional(ProgramClassParser.ReadStatementConditionalContext context) {
-			ExitConditionalStatement(context.ReadStatementEnd());
+			AttachIfExists(context.ReadStatementEnd());
 		}
 		public override void EnterWriteStatementConditional(ProgramClassParser.WriteStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.WriteStatement())), context);
 		}
 		public override void ExitWriteStatementConditional(ProgramClassParser.WriteStatementConditionalContext context) {
-			ExitConditionalStatement(context.WriteStatementEnd());
+			AttachIfExists(context.WriteStatementEnd());
 		}
 		public override void EnterRewriteStatementConditional(ProgramClassParser.RewriteStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.RewriteStatement())), context);
 		}
 		public override void ExitRewriteStatementConditional(ProgramClassParser.RewriteStatementConditionalContext context) {
-			ExitConditionalStatement(context.RewriteStatementEnd());
+			AttachIfExists(context.RewriteStatementEnd());
 		}
 		public override void EnterStartStatementConditional(ProgramClassParser.StartStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.StartStatement())), context);
 		}
 		public override void ExitStartStatementConditional(ProgramClassParser.StartStatementConditionalContext context) {
-			ExitConditionalStatement(context.StartStatementEnd());
+			AttachIfExists(context.StartStatementEnd());
 		}
 		public override void EnterReturnStatementConditional(ProgramClassParser.ReturnStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.ReturnStatement())), context);
 		}
 		public override void ExitReturnStatementConditional(ProgramClassParser.ReturnStatementConditionalContext context) {
-			ExitConditionalStatement(context.ReturnStatementEnd());
+			AttachIfExists(context.ReturnStatementEnd());
 		}
 		public override void EnterStringStatementConditional(ProgramClassParser.StringStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.StringStatement())), context);
 		}
 		public override void ExitStringStatementConditional(ProgramClassParser.StringStatementConditionalContext context) {
-			ExitConditionalStatement(context.StringStatementEnd());
+			AttachIfExists(context.StringStatementEnd());
 		}
 		public override void EnterUnstringStatementConditional(ProgramClassParser.UnstringStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.UnstringStatement())), context);
 		}
 		public override void ExitUnstringStatementConditional(ProgramClassParser.UnstringStatementConditionalContext context) {
-			ExitConditionalStatement(context.UnstringStatementEnd());
+			AttachIfExists(context.UnstringStatementEnd());
 		}
 		public override void EnterCallStatementConditional(ProgramClassParser.CallStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.CallStatement())), context);
 		}
 		public override void ExitCallStatementConditional(ProgramClassParser.CallStatementConditionalContext context) {
-			ExitConditionalStatement(context.CallStatementEnd());
+			AttachIfExists(context.CallStatementEnd());
 		}
 		public override void EnterInvokeStatementConditional(ProgramClassParser.InvokeStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.InvokeStatement())), context);
 		}
 		public override void ExitInvokeStatementConditional(ProgramClassParser.InvokeStatementConditionalContext context) {
-			ExitConditionalStatement(context.InvokeStatementEnd());
+			AttachIfExists(context.InvokeStatementEnd());
 		}
 		public override void EnterXmlGenerateStatementConditional(ProgramClassParser.XmlGenerateStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.XmlGenerateStatement())), context);
 		}
 		public override void ExitXmlGenerateStatementConditional(ProgramClassParser.XmlGenerateStatementConditionalContext context) {
-			ExitConditionalStatement(context.XmlStatementEnd());
+			AttachIfExists(context.XmlStatementEnd());
 		}
 		public override void EnterXmlParseStatementConditional(ProgramClassParser.XmlParseStatementConditionalContext context) {
 			Delete();// delete the node we attached in EnterStatement
 			Enter(new Node(AsCodeElement(context.XmlParseStatement())), context);
 		}
 		public override void ExitXmlParseStatementConditional(ProgramClassParser.XmlParseStatementConditionalContext context) {
-			ExitConditionalStatement(context.XmlStatementEnd());
-		}
-
-		private void ExitConditionalStatement(Antlr4.Runtime.Tree.ITerminalNode terminal) {
-			var end = AsCodeElement(terminal);
-			if (end != null) {
-				Enter(new Node(end));
-				Exit();
-			}
-			// DO NOT Exit() because this will be done in ExitStatement
+			AttachIfExists(context.XmlStatementEnd());
 		}
 
 		public override void EnterOnSizeError(ProgramClassParser.OnSizeErrorContext context) {
