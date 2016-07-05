@@ -149,32 +149,47 @@ namespace TypeCobol.Compiler.Parser
 			Exit();
 		}
 
-		public override void EnterWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
-			var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
-			AddStorageNode(context.WorkingStorageSectionHeader(), entries);
+		/// <summary>parent: DATA DIVISION</summary>
+		/// <param name="context">FILE SECTION</param>
+		public override void EnterFileSection(ProgramClassParser.FileSectionContext context) {
+			Enter(new Node(AsCodeElement(context.FileSectionHeader())), context);
+			//TODO: FILE & DATA DESCRIPTION ENTRIES
 		}
-
-		public override void EnterLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
-			var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
-			AddStorageNode(context.LocalStorageSectionHeader(), entries);
-		}
-
-		public override void EnterLinkageSection(ProgramClassParser.LinkageSectionContext context) {
-			var entries = CreateDataDescriptionEntries(context.DataDescriptionEntry());
-			AddStorageNode(context.LinkageSectionHeader(), entries);
-		}
-
-		private void AddStorageNode(Antlr4.Runtime.Tree.ITerminalNode terminal, IList<DataDescriptionEntry> entries) {
-			var node = new Node(AsCodeElement(terminal));
-			Enter(node);
-			AddEntries(node, entries);
+		public override void ExitFileSection(ProgramClassParser.FileSectionContext context) {
 			Exit();
 		}
-		private void AddEntries(Node root, IEnumerable<DataDescriptionEntry> entries) {
+		/// <summary>parent: DATA DIVISION</summary>
+		/// <param name="context">WORKING-STORAGE SECTION</param>
+		public override void EnterWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
+			Enter(new Node(AsCodeElement(context.WorkingStorageSectionHeader())), context);
+			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+		}
+		public override void ExitWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
+			Exit();
+		}
+		/// <summary>parent: DATA DIVISION</summary>
+		/// <param name="context">LOCAL-STORAGE SECTION</param>
+		public override void EnterLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
+			Enter(new Node(AsCodeElement(context.LocalStorageSectionHeader())), context);
+			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+		}
+		public override void ExitLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
+			Exit();
+		}
+		/// <summary>parent: DATA DIVISION</summary>
+		/// <param name="context">LINKAGE SECTION</param>
+		public override void EnterLinkageSection(ProgramClassParser.LinkageSectionContext context) {
+			Enter(new Node(AsCodeElement(context.LinkageSectionHeader())), context);
+			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+		}
+		public override void ExitLinkageSection(ProgramClassParser.LinkageSectionContext context) {
+			Exit();
+		}
+		private void AddEntries(IEnumerable<DataDescriptionEntry> entries) {
 			foreach(var entry in entries) {
 				var child = new Node(entry);
 				Enter(child);
-				AddEntries(child, entry.Subordinates);
+				AddEntries(entry.Subordinates);
 				Exit();
 			}
 		}
