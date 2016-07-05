@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Parser
 			foreach(var listener in listeners) {
 				var types = listener.GetCodeElements();
 				foreach (var expected in types) {
-					if (TypeCobol.Tools.Reflection.IsTypeOf(node!=null? node.CodeElement.GetType():null, expected)) {
+					if (TypeCobol.Tools.Reflection.IsTypeOf(node.CodeElement!=null? node.CodeElement.GetType():null, expected)) {
 						listener.OnNode(node, context, program);
 						break; // only notify each listener once for a given CodeElement
 					}
