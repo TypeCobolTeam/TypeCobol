@@ -3,7 +3,13 @@ grammar TypeCobolCodeElements;
 import Cobol2002CodeElements;
 
 // --- Starting rule ---
-cobolCodeElements: codeElement* EOF;
+cobolCodeElements: (codeElement | tcCodeElement)* EOF;
+
+tcCodeElement:
+	  functionDeclarationHeader
+	| functionProcedureDivisionHeader
+	| functionDeclarationHeader
+	;
 
 qualifiedDataName:                                    (qDataOrFile*       dataNameReference                                                                                  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataName;
 qualifiedDataNameOrIndexName:                         (qDataOrFile*       dataNameReferenceOrIndexNameReference                                                              (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrIndexName;
