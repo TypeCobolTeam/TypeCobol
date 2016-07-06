@@ -1,10 +1,12 @@
-﻿      * 10 CodeElements errors
+﻿      * 12 CodeElements errors
       * "1"@(13:8>13:18): [27:1] Syntax error : Group items should not contain non nestable type BOOL items
       * "1"@(13:8>13:18): [27:1] Syntax error : Group items should not contain non nestable type BOOL items
       * "1"@(14:10>14:21): [27:1] Syntax error : Group items should not contain non nestable type BOOL items
       * "1"@(16:12>16:27): [27:1] Syntax error : Type BOOL should not be subordinate to another item
       * "1"@(17:10>17:25): [27:1] Syntax error : Type BOOL should not be subordinate to another item
-      * "1"@(33:12>33:33): [29:2] Warning : Writing Alphanumeric to Identifier:BOOL is unsafe
+      * "1"@(25:12>25:34): [27:1] Syntax error : Strongly typed variable can't be used as a receiving operand of SetStatement
+      * "1"@(26:12>26:35): [27:1] Syntax error : Strongly typed variable can't be used as a receiving operand of SetStatement
+      * "4"@(33:12>33:33): [30:1] Semantic error: Can't write non typed Alphanumeric to strongly typed variable Identifier:BOOL (use unsafe keyword for that)
       * "1"@(35:12>35:39): [27:1] Syntax error : Symbol Identifier-value is not referenced
       * "1"@(36:12>36:59): [27:1] Syntax error : Symbol Identifier-value.Identifier-false is not referenced
       * "1"@(43:12>43:34): [27:1] Syntax error : Group contains type BOOL variables
