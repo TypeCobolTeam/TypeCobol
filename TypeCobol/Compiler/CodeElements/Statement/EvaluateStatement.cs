@@ -12,5 +12,20 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public EvaluateStatement() : base(CodeElementType.EvaluateStatement, StatementType.EvaluateStatement)
         { }
+
+        /// <summary>
+        /// Operands before the WHEN phrase 
+        /// Are interpreted in one of two ways, depending on how they are specified: 
+        /// - Individually, they are called selection subjects. 
+        /// - Collectively, they are called a set of selection subjects. 
+        /// </summary>
+        public EvaluateSelectionSubject[] SelectionSubjects { get; set; }
+    }
+
+    public class EvaluateSelectionSubject
+    {
+        public VariableOrExpression AlphanumericComparisonVariable { get; set; }
+
+        public BooleanValueOrExpression BooleanComparisonVariable { get; set; }
     }
 }

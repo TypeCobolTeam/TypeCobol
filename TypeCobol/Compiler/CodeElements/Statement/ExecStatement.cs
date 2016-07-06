@@ -16,12 +16,13 @@ namespace TypeCobol.Compiler.CodeElements
         { }
         
         /// <summary>
-        /// Secondary compiler to delegate the analysis of Code to.
+        /// Secondary compiler used to translate CodeLines
         /// </summary>
-        public string Compiler;
+        public ExternalName ExecTranslatorName { get; set; }
+
         /// <summary>
-        /// Source code to be analyzed by Compiler
+        /// Source code to be analyzed by the secondary compiler
         /// </summary>
-        public string Code;
+        public AlphanumericValue[] CodeLines { get; set; }
     }
 }

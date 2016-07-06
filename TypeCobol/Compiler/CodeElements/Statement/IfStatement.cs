@@ -12,6 +12,6 @@ namespace TypeCobol.Compiler.CodeElements
         public IfStatement() : base(CodeElementType.IfStatement, StatementType.IfStatement)
         { }
 
-        public ConditionalExpression condition = null;
+        public ConditionalExpression Condition { get; set; }
     }
 }

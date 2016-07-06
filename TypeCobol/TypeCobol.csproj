@@ -131,12 +131,9 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\QualifiedName.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\CobolExpressionsBuilder.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxValue.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\Variable.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
     <Compile Include="Compiler\CodeElements\StatementElement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\AddStatement.cs" />
@@ -144,6 +141,7 @@
     <Compile Include="Compiler\CodeElements\Statement\DivideStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\MultiplyStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SubstractStatement.cs" />
+    <Compile Include="Compiler\CodeElements\Statement\WhenSearchCondition.cs" />
     <Compile Include="Compiler\CodeModel\DataDefinitionNode.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />
@@ -154,7 +152,6 @@
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs" />
-    <Content Include="Compiler\Parser\CodeElementBuilder\obsolete\SymbolInformationForTokens.cs.txt" />
     <Compile Include="Compiler\Parser\CodeElementDispatcher.cs" />
     <Compile Include="Compiler\Parser\ProgramClassDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsLinesTokenSource.cs" />
@@ -167,17 +164,8 @@
     <Compile Include="Compiler\CodeElements\Entry\FileDescriptionEntry.cs" />
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\ArithmeticExpression.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\Index.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxNational.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\ConditionalExpression.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\Identifier.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxBoolean.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxEnum.cs.txt" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxNumber.cs.txt" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxProperty.cs" />
-    <Content Include="Compiler\CodeElements\Expressions\obsolete\SyntaxString.cs.txt" />
     <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
     <Compile Include="Compiler\CodeElements\Header\ConfigurationSectionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\DataDivisionHeader.cs" />
@@ -317,10 +305,8 @@
     <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolCodeElementsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
-    <Content Include="Compiler\Parser\CodeElementBuilder\obsolete\ArithmeticStatementBuilder.cs.txt" />
     <Compile Include="Compiler\Parser\CodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
-    <Content Include="Compiler\Parser\CodeElementBuilder\obsolete\FileOperationBuilder.cs.txt" />
     <Compile Include="Compiler\Parser\ICodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\CodeElementsParserStep.cs" />
     <Compile Include="Compiler\Parser\ProgramClassBuilder\ProgramClassBuilder.cs" />

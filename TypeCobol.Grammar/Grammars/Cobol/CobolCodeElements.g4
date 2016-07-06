@@ -164,7 +164,6 @@ codeElement:
 	// --- Table handling statements ---
 	searchStatement |
 		// atEndCondition ... imperative statements ...
-		// whenCondition |
 		whenSearchCondition |
 	searchStatementEnd |
 
@@ -4332,11 +4331,11 @@ comparisonLHSExpression:
 	variableOrExpression2 | booleanValueOrExpression;
 
 whenCondition:
-	WHEN LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator?
-  ( ALSO LeftParenthesisSeparator? (ANY | comparisonRHSExpression) RightParenthesisSeparator? )*;
+	WHEN LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
+  ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*;
 
 comparisonRHSExpression: 
-	booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
+	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);
 
 alphanumericExpressionsRange: 
 	startExpression=variableOrExpression2 (THROUGH | THRU) endExpression=variableOrExpression2;

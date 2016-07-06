@@ -15,20 +15,6 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public GotoStatement(StatementType statementType) : base(CodeElementType.GotoStatement, statementType)
         { }
-
-        /// <summary>
-        /// p339:
-        /// procedure-name-1 (Unconditional)
-        /// Must name a procedure or a section in the same PROCEDURE DIVISION
-        /// as the GO TO statement.
-        ///
-        /// p340:
-        /// procedure-name-1 (Conditional)
-        /// Must be a procedure or a section in the same PROCEDURE DIVISION as
-        /// the GO TO statement. The number of procedure-names must not exceed
-        /// 255.
-        /// </summary>
-        public IList<QualifiedProcedureName> Procedures = new List<QualifiedProcedureName>();
     }
 
     /// <summary>
@@ -52,21 +38,12 @@ namespace TypeCobol.Compiler.CodeElements
         { }
 
         /// <summary>
-        /// p340:
-        /// The altered GO TO statement transfers control to the first statement of the
-        /// paragraph named in the ALTER statement.
-        ///
-        /// You cannot specify the altered GO TO statement in the following cases:
-        /// * A program or method that has the RECURSIVE attribute
-        /// * A program compiled with the THREAD compiler option
-        /// An ALTER statement referring to the paragraph that contains the altered GO TO
-        /// statement should be executed before the GO TO statement is executed. Otherwise,
-        /// the GO TO statement acts like a CONTINUE statement.
-        ///
-        /// When an ALTER statement refers to a paragraph, the paragraph can consist only of
-        /// the paragraph-name followed by an unconditional or altered GO TO statement.
+        /// p339:
+        /// procedure-name-1 (Unconditional)
+        /// Must name a procedure or a section in the same PROCEDURE DIVISION
+        /// as the GO TO statement.
         /// </summary>
-        public bool IsAltered { get { return this.Procedures.Count == 0 && this.DependingOn == null; } }
+        public SymbolReference ProcedureName { get; set; }
     }
 
     /// <summary>
@@ -77,7 +54,16 @@ namespace TypeCobol.Compiler.CodeElements
     public class GotoConditionalStatement : GotoStatement
     {
         public GotoConditionalStatement() : base(StatementType.GotoConditionalStatement)
-        { } 
+        { }
+
+        /// <summary>
+        /// p340:
+        /// procedure-name-1 (Conditional)
+        /// Must be a procedure or a section in the same PROCEDURE DIVISION as
+        /// the GO TO statement. The number of procedure-names must not exceed
+        /// 255.
+        /// </summary>
+        public SymbolReference[] ProcedureNames { get; set; }
 
         /// <summary>
         /// p340:
@@ -95,6 +81,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// GO TO statement), no control transfer occurs. Instead, control passes to the
         /// next statement in the normal sequence of execution.
         /// </summary>
-        public Identifier DependingOn = null;
+        public StorageArea DependingOn { get; set; }
     }
 }

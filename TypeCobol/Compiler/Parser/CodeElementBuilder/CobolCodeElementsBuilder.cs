@@ -1397,15 +1397,15 @@ namespace TypeCobol.Compiler.Parser
 
             entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
             entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
-            if (context.renamesClause().dataNameReference() != null)
+            if (context.renamesClause().qualifiedDataName() != null)
             {
-                entry.RenamesFromDataName = CobolWordsBuilder.CreateDataNameReference(context.renamesClause().dataNameReference());
+                entry.RenamesFromDataName = CobolWordsBuilder.CreateQualifiedDataName(context.renamesClause().qualifiedDataName());
             }
             else if (context.renamesClause().dataNamesRange() != null)
             {
-                entry.RenamesFromDataName = CobolWordsBuilder.CreateDataNameReference(
+                entry.RenamesFromDataName = CobolWordsBuilder.CreateQualifiedDataName(
                     context.renamesClause().dataNamesRange().startDataName);
-                entry.RenamesToDataName = CobolWordsBuilder.CreateDataNameReference(
+                entry.RenamesToDataName = CobolWordsBuilder.CreateQualifiedDataName(
                     context.renamesClause().dataNamesRange().endDataName);
             }
 
@@ -2075,13 +2075,19 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context)
         {
             Context = context;
-            CodeElement = new WhenCondition();
+            CodeElement = CobolStatementsBuilder.CreateWhenSearchCondition();
         }
 
         public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context)
         {
             Context = context;
             CodeElement = new WhenOtherCondition();
+        }
+
+        public override void EnterWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateWhenSearchCondition();
         }
 
         public override void EnterInvalidKeyCondition(CodeElementsParser.InvalidKeyConditionContext context)

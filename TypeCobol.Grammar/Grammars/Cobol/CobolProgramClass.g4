@@ -134,6 +134,7 @@ tokens
     ElseCondition,
     WhenCondition,
     WhenOtherCondition,
+	WhenSearchCondition,
 
     // Statement ends
 
@@ -1019,7 +1020,7 @@ searchStatementWithBody:
 	SearchStatementEnd?;
 
 whenSearchConditionClause: 
-	WhenCondition 
+	WhenSearchCondition 
 	(statement+ | NextSentenceStatement);
 
 startStatementConditional:
