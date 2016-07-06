@@ -1,23 +1,17 @@
 ﻿using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.CodeElements {
 
-	public class DeclareFunctionHeader: CodeElement {
+	public class FunctionDeclarationHeader: CodeElement {
 
 		public QualifiedName Name { get; private set; }
 		public AccessModifier Visibility { get; private set; }
 
-		public DeclareFunctionHeader(QualifiedName Name, AccessModifier Visibility)
-			: base(CodeElementType.ParagraphHeader) {//TODO CodeElementType.DeclareFunctionHeader!
+		public FunctionDeclarationHeader(QualifiedName Name, AccessModifier Visibility)
+			: base(CodeElementType.ObjectIdentification) {//TODO CodeElementType.FunctionDeclarationHeader
 			this.Name = Name;
 			this.Visibility = Visibility;
-		}
-
-
-
-		public enum AccessModifier {
-			Public,
-			Private
 		}
 
 	}

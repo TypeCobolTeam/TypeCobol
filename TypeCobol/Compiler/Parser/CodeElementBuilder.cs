@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.CodeElements.Symbols;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -2182,7 +2183,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
 		public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
-			var visibility = context.PUBLIC() != null ? DeclareFunctionHeader.AccessModifier.Public : DeclareFunctionHeader.AccessModifier.Private;
+			var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
 			QualifiedName name = null;
 			if (context.UserDefinedWord() != null) {
 				var token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
@@ -2190,7 +2191,14 @@ namespace TypeCobol.Compiler.Parser
 			}
 
 			Context = context;
-			CodeElement = new DeclareFunctionHeader(name, visibility);
+			CodeElement = new FunctionDeclarationHeader(name, visibility);
+		}
+		public override void EnterFunctionProcedureDivisionHeader(CodeElementsParser.FunctionProcedureDivisionHeaderContext context) {
+			//TODO
+		}
+		public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
+			Context = context;
+			CodeElement = new FunctionDeclarationEnd();
 		}
 
         public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)

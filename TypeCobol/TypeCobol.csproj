@@ -130,7 +130,8 @@
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
     <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
-    <Compile Include="Compiler\CodeElements\Header\DeclareFunctionHeader.cs" />
+    <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationHeader.cs" />
+    <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationEnd.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SymbolInformation.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />

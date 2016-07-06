@@ -2,6 +2,7 @@
 using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements.Functions {
+
 	public class Function {
 		public QualifiedName QualifiedName;
 		public IList<Parameter> Parameters;
@@ -78,6 +79,13 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 			get { return ByReference?"REFERENCE":"CONTENT"; }
 		}
 	}
+
+	public enum AccessModifier {
+		Public,
+		Private
+	}
+
+
 
 	public class SampleFactory {
 		public static Function Create(string name, string library = "TC-DEFAULT") {
