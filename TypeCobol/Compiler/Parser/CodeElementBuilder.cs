@@ -32,14 +32,16 @@ namespace TypeCobol.Compiler.Parser
         }
         public CodeElementDispatcher Dispatcher { get; internal set; }
 
-        /// <summary>
-        ///     Initialization code run before parsing each new CodeElement
-        /// </summary>
-        public override void EnterCodeElement(CodeElementsParser.CodeElementContext context)
-        {
-            CodeElement = null;
-            Context = null;
-        }
+		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
+		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
+			CodeElement = null;
+			Context = null;
+		}
+		/// <summary>Initialization code run before parsing each new TypeCobol CodeElement</summary>
+		public override void EnterTcCodeElement(CodeElementsParser.TcCodeElementContext context) {
+			CodeElement = null;
+			Context = null;
+		}
 
         // Code structure
 
@@ -2178,6 +2180,18 @@ namespace TypeCobol.Compiler.Parser
 			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
 			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
+
+		public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
+			var visibility = context.PUBLIC() != null ? DeclareFunctionHeader.AccessModifier.Public : DeclareFunctionHeader.AccessModifier.Private;
+			QualifiedName name = null;
+			if (context.UserDefinedWord() != null) {
+				var token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
+				name = new URI(token.Text);
+			}
+
+			Context = context;
+			CodeElement = new DeclareFunctionHeader(name, visibility);
+		}
 
         public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
         {
