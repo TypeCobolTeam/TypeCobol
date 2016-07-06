@@ -8,7 +8,7 @@ cobolCodeElements: (codeElement | tcCodeElement)* EOF;
 tcCodeElement:
 	  functionDeclarationHeader
 	| functionProcedureDivisionHeader
-	| functionDeclarationHeader
+	| functionDeclarationEnd
 	;
 
 qualifiedDataName:                                    (qDataOrFile*       dataNameReference                                                                                  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataName;
