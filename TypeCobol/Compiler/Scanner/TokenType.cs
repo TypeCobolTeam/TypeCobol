@@ -48,12 +48,12 @@ namespace TypeCobol.Compiler.Scanner
         FigurativeConstantKeyword=173,
         // 187 -> 188 : Keywords - Special object identifiers
         SpecialObjetIdentifierKeyword=187,
-        // 189 -> 450 : Keywords - Syntax tokens  
+        // 189 -> 457 : Keywords - Syntax tokens
         SyntaxKeyword=189,
-        // 451 -> 455 : Compiler directives
-        CompilerDirective = 456,
-        // 456 -> end : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 459
+        // 458 -> 460 : Compiler directives
+        CompilerDirective = 458,
+        // 461 -> end : Internal token groups - used by the preprocessor only
+        InternalTokenGroup = 461
     }
 
     public enum TokenType
@@ -535,13 +535,15 @@ namespace TypeCobol.Compiler.Scanner
 		DECLARE = 453,
 		END_DECLARE = 454,
 		UNSAFE = 455,
+		PUBLIC = 456,
+		PRIVATE = 457,
 // [/TYPECOBOL]
         // Group of tokens produced by the preprocessor
         // - compiler directives
-        CompilerDirective = 456,
-        CopyImportDirective = 457,
-        ReplaceDirective = 458,
+        CompilerDirective = 458,
+        CopyImportDirective = 459,
+        ReplaceDirective = 460,
         // - internal token groups -> used by the preprocessor only
-        ContinuationTokenGroup = 459
+        ContinuationTokenGroup = 461
     }
 }

@@ -516,6 +516,8 @@ tokens
 	DECLARE,
 	END_DECLARE,
 	UNSAFE,
+	PUBLIC,
+	PRIVATE,
 // [/TYPECOBOL]
 }
 
