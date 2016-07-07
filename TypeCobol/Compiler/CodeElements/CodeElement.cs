@@ -43,30 +43,33 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
         
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder("[[");
-            sb.Append(Type);
-            sb.Append("]] ");
-            sb.Append(ConsumedTokens[0]).ToString();
-            sb.Append(" --> ");
-            sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
-            bool displayLineNumbers = false;
-            if (displayLineNumbers)
-            {
-                int first = ConsumedTokens[0].Line;
-                int last  = ConsumedTokens[ConsumedTokens.Count-1].Line;
-                sb.Append(" on lines ");
-                sb.Append(first);
-                sb.Append(">");
-                sb.Append(last);
-            }
-            sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
-            return sb.ToString();
-        }
+		/// <summary>
+		/// Debug string
+		/// </summary>
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder("[[");
+			sb.Append(Type);
+			sb.Append("]] ");
+			if (ConsumedTokens == null || ConsumedTokens.Count < 1) {
+				sb.Append("No Consumed Tokens").AppendLine();
+			} else {
+				sb.Append(ConsumedTokens[0]).ToString();
+				sb.Append(" --> ");
+				sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
+				bool displayLineNumbers = false;
+				if (displayLineNumbers) {
+					int first = ConsumedTokens[0].Line;
+					int last  = ConsumedTokens[ConsumedTokens.Count-1].Line;
+					sb.Append(" on lines ");
+					sb.Append(first);
+					sb.Append(">");
+					sb.Append(last);
+				}
+			}
+			sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
+			return sb.ToString();
+		}
 
         // --- Antlr4.Runtime.IToken implementation ---
         // ... used by the ProgramClassParser  ...
