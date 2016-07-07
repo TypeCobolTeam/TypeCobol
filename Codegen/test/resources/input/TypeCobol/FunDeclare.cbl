@@ -3,16 +3,23 @@
        
        PROCEDURE DIVISION.
        
-       DECLARE FUNCTION Fun0 PUBLIC
+       DECLARE DoesNothing PUBLIC.
+         PROCEDURE DIVISION.
+           DISPLAY 'I DO NOTHING'
+           .
+       END-DECLARE.
+
+       DECLARE ReturnsZero PUBLIC.
          DATA DIVISION.
          LINKAGE SECTION.
            01 result PIC 9(04).
-         PROCEDURE DIVISION RETURNING result.
-           GOBACK result 3
+         PROCEDURE DIVISION
+             RETURNING result.
+           MOVE 0 TO result.
            .
        END-DECLARE.
        
-       DECLARE FUNCTION Fun1 PRIVATE
+       DECLARE StrangelyReturnsItsInput PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -22,13 +29,13 @@
              RETURNING result
          .
            IF x = 0
-             GOBACK result 2
+             MOVE 0 TO result
            ELSE
-             GOBACK result x
+             MOVE x TO result
            END-IF.
        END-DECLARE.
        
-       DECLARE FUNCTION Fun2 PRIVATE
+       DECLARE SumThreeWithClutterInLinkage PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -48,20 +55,20 @@
            ADD z to result.
        END-DECLARE.
        
-       DECLARE FUNCTION Fun3 PRIVATE
+       DECLARE SwapParameters PRIVATE.
          DATA DIVISION.
+         WORKING-STORAGE SECTION.
+           01 tmp PIC 9(04).
          LINKAGE SECTION.
            01 x PIC 9(04).
            01 y PIC 9(04).
-         WORKING-STORAGE SECTION.
-           01 tmp PIC 9(04).
          PROCEDURE DIVISION
              INPUT  x y
              OUTPUT x y
          .
-           SET tmp TO x
-       	   SET x TO y
-       	   SET y TO tmp
+           MOVE x TO tmp
+           MOVE y TO x
+           MOVE tmp TO y
            .
        END-DECLARE.
        
