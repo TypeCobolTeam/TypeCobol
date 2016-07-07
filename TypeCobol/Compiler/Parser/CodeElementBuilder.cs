@@ -244,6 +244,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
         {
+// [TYPECOBOL]
+			if (context.inputPhrase() != null || context.outputPhrase() != null) {
+				Context = context;
+				CodeElement = new FunctionDeclarationProfile();
+				return;
+			}
+// [/TYPECOBOL]
+
             var procedureDivisionHeader = new ProcedureDivisionHeader();
 
             if (context.usingPhrase() != null)
@@ -262,7 +270,7 @@ namespace TypeCobol.Compiler.Parser
                     foreach (CodeElementsParser.DataNameReferenceContext dataNameContext in inputParametersContext.dataNameReference())
                     {
                         Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
-                        var inputParameter = new InputParameter {ReceivingMode = receivingMode, DataName = new DataName(dataName)};
+                        var inputParameter = new InputParameter(new DataName(dataName), receivingMode);
 
                         if (procedureDivisionHeader.UsingParameters == null)
                         {
@@ -270,15 +278,6 @@ namespace TypeCobol.Compiler.Parser
                         }
                         procedureDivisionHeader.UsingParameters.Add(inputParameter);
                     }
-                }
-            }
-
-            if (context.returningPhrase() != null)
-            {
-                Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataNameReference());
-                if (dataName != null)
-                {
-                    procedureDivisionHeader.ReturningDataName = new DataName(dataName);
                 }
             }
 
@@ -2182,6 +2181,8 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
+
+// [TYPECOBOL]
 		public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
 			var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
 			QualifiedName name = null;
@@ -2189,17 +2190,47 @@ namespace TypeCobol.Compiler.Parser
 				var token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
 				name = new URI(token.Text);
 			}
-
 			Context = context;
 			CodeElement = new FunctionDeclarationHeader(name, visibility);
 		}
-		public override void EnterFunctionProcedureDivisionHeader(CodeElementsParser.FunctionProcedureDivisionHeaderContext context) {
-			//TODO
+		public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
+			var ce = CodeElement as FunctionDeclarationProfile;
+			foreach (var parameter in context.inputParameters())
+				ce.InputParameters = CreateParameters(parameter);
+		}
+		private IList<InputParameter> CreateParameters(CodeElementsParser.InputParametersContext context) {
+			var parameters = new List<InputParameter>();
+			var by = ReceivingMode.ByReference;
+			IList<Token> tokens = null;
+			if (context.receivingMode() != null) {
+				if (context.receivingMode() is CodeElementsParser.ByValueContext) by = ReceivingMode.ByValue;
+				tokens = ParseTreeUtils.GetTokensList(context.receivingMode());
+			}
+			var mode = new SyntaxProperty<ReceivingMode>(by, tokens);
+			foreach(var dataname in context.dataNameReference()) {
+				parameters.Add(new InputParameter(SyntaxElementBuilder.CreateDataName(dataname), mode));
+			}
+			return parameters;
+		}
+		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
+			var ce = CodeElement as FunctionDeclarationProfile;
+			foreach(var dataname in context.dataNameReference())
+				ce.OutputParameters.Add(SyntaxElementBuilder.CreateDataName(dataname));
+		}
+		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
+			var dataname = SyntaxElementBuilder.CreateDataName(context.dataNameReference());
+			if (CodeElement is ProcedureDivisionHeader)
+				((ProcedureDivisionHeader)CodeElement).ReturningDataName = dataname;
+			else//if (CodeElement is FunctionDeclarationProfile)
+				// let's say if we break here it's an implementation error!
+				((FunctionDeclarationProfile)CodeElement).OutputParameters.Add(dataname);
 		}
 		public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 			Context = context;
 			CodeElement = new FunctionDeclarationEnd();
 		}
+// [/TYPECOBOL]
+
 
         public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
         {

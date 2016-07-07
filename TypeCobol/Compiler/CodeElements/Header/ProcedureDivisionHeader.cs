@@ -10,8 +10,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ProcedureDivisionHeader : CodeElement
     {
-        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader)
-        { }
+        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader) { }
 
         /// <summary>
         /// The USING phrase specifies the parameters that a program or method receives
@@ -82,6 +81,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// </summary>
         public DataName DataName { get; set; }
+
+		public InputParameter(DataName name, SyntaxProperty<ReceivingMode> mode) {
+			this.DataName = name;
+			this.ReceivingMode = mode;
+		}
     }
 
     /// <summary>

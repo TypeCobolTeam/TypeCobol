@@ -215,8 +215,15 @@ codeElement:
        // xmlStatementEnd |
        //xmlParseStatement
            // ... exceptionPhrases ...
-       xmlStatementEnd;
+       xmlStatementEnd
 
+// [TYPECOBOL]
+	   | tcCodeElement;
+
+// what is there is not important as long as its not epsilon
+tcCodeElement: PUBLIC | PRIVATE | UNSAFE
+// [/TYPECOBOL]
+		;
 
 statement:
 	  imperativeStatement

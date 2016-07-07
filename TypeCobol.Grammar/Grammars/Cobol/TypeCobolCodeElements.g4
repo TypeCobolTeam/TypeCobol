@@ -3,11 +3,10 @@ grammar TypeCobolCodeElements;
 import Cobol2002CodeElements;
 
 // --- Starting rule ---
-cobolCodeElements: (codeElement | tcCodeElement)* EOF;
+cobolCodeElements: codeElement* EOF;
 
 tcCodeElement:
 	  functionDeclarationHeader
-	| functionProcedureDivisionHeader
 	| functionDeclarationEnd
 	;
 
@@ -58,17 +57,19 @@ setStatementForAssignationSending:
 // rules modified to support custom-designed functions (of arity 0..n)
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;
-functionDeclarationHeader: DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC);
 
+functionDeclarationHeader:
+	DECLARE UserDefinedWord (PRIVATE | PUBLIC) PeriodSeparator;
+
+
+// alternate PROCEDURE DIVISION to allow function declarations
 // - no USING
 // - INPUT and OUTPUT phrases
-functionProcedureDivisionHeader:
-	PROCEDURE DIVISION
-	inputPhrase?
-	(outputPhrase | returningPhrase)?
-	PeriodSeparator;
+// - no nested function declaration
+// - no DECLARATIVES
+procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? (outputPhrase | returningPhrase)? PeriodSeparator;
 
 inputPhrase:  INPUT  inputParameters+;
-outputPhrase: OUTPUT inputParameters+;
+outputPhrase: OUTPUT dataNameReference+;
 
-functionDeclarationEnd: END_DECLARE;
+functionDeclarationEnd: END_DECLARE PeriodSeparator;
