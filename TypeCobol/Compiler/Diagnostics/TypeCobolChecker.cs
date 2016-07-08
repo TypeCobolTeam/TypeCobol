@@ -152,8 +152,10 @@ namespace TypeCobol.Compiler.Diagnostics {
 				var used = GetParameter(inparameters, pd.Name);
 				if (used == null)
 					used = GetParameter(outparameters, pd.Name);
-				if (used == null)
-					DiagnosticUtils.AddError(linkage.CodeElement, pd.Name+" is not a parameter.");
+				if (used == null) {
+					var data = GetParameter(linkage, pd.Name);
+					DiagnosticUtils.AddError(data, pd.Name+" is not a parameter.");
+				}
 			}
 System.Console.WriteLine(visibility+" "+header.Name+':'+(profile==null?'?':'!')+'('+inputs.Count+';'+outputs.Count+")");
 foreach(var p in inparameters)  System.Console.WriteLine(" > "+p);
@@ -165,6 +167,15 @@ System.Console.WriteLine("=> FUNCTION: "+function);
 		private Parameter GetParameter(IList<Parameter> parameters, string name) {
 			foreach(var p in parameters)
 				if (p.Name.Equals(name)) return p;
+			return null;
+		}
+		private DataDescriptionEntry GetParameter(Node node, string name) {
+			var data = node.CodeElement as DataDescriptionEntry;
+			if (data != null && data.QualifiedName.Matches(name)) return data;
+			foreach(var child in node.Children) {
+				var found = GetParameter(child, name);
+				if (found != null) return found;
+			}
 			return null;
 		}
 	}

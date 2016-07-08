@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 	public interface QualifiedName: IList<string> {
 		string Head { get; }
 		bool IsExplicit { get; }
+		bool Matches(string uri);
 	}
 
 	public interface Subscripted {
@@ -82,6 +83,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			foreach(string part in this)
 				hash = hash*7 + part.GetHashCode();
 			return hash;
+		}
+
+		public bool Matches(string uri) {
+			return this.ToString().Equals(uri);
 		}
 	}
 
