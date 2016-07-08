@@ -61,12 +61,12 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (fun == null) return;// we only check functions
 			var def = table.GetFunction(fun.Name);
 			if (def == null) return;// ambiguity is not our job
-			if (fun.Parameters.Count > def.Parameters.Count) {
-				var message = String.Format("Function {0} only takes {1} parameters", def.Name, def.Parameters.Count);
+			if (fun.Parameters.Count > def.InputParameters.Count) {
+				var message = String.Format("Function {0} only takes {1} parameters", def.Name, def.InputParameters.Count);
 				DiagnosticUtils.AddError(e, message);
 			}
-			for (int c = 0; c < def.Parameters.Count; c++) {
-				var expected = def.Parameters[c];
+			for (int c = 0; c < def.InputParameters.Count; c++) {
+				var expected = def.InputParameters[c];
 				if (c < fun.Parameters.Count) {
 					var actual = fun.Parameters[c].Value;
 					if (actual is Identifier) {
@@ -158,7 +158,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 System.Console.WriteLine(visibility+" "+header.Name+':'+(profile==null?'?':'!')+'('+inputs.Count+';'+outputs.Count+")");
 foreach(var p in inparameters)  System.Console.WriteLine(" > "+p);
 foreach(var p in outparameters) System.Console.WriteLine(" < "+p);
-			var function = new Function(header.Name, outparameters[0], inparameters);
+			var function = new Function(header.Name, inparameters, outparameters);
 System.Console.WriteLine("=> FUNCTION: "+function);
 		}
 

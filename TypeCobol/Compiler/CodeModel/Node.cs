@@ -271,11 +271,11 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
-			if (declaration.Parameters.Count != reference.Parameters.Count)
-				System.Console.WriteLine("ERROR: "+declaration.QualifiedName+" called with "+reference.Parameters.Count+" parameters (expected:"+declaration.Parameters.Count+")");
+			if (declaration.InputParameters.Count != reference.Parameters.Count)
+				System.Console.WriteLine("ERROR: "+declaration.QualifiedName+" called with "+reference.Parameters.Count+" parameters (expected:"+declaration.InputParameters.Count+")");
 			var parameters = new List<Parameter>();
-			for(int c = 0; c < declaration.Parameters.Count; c++) {
-				var declared = declaration.Parameters[c];
+			for(int c = 0; c < declaration.InputParameters.Count; c++) {
+				var declared = declaration.InputParameters[c];
 				string value = "SPACE";
 				bool byReference = false;
 				Parameter merged;
@@ -290,7 +290,7 @@ namespace TypeCobol.Compiler.CodeElements
 				merged.IsCustom = declared.IsCustom;
 				parameters.Add(merged);
 			}
-			return new Function(declaration.QualifiedName, declaration.Result, parameters);
+			return new Function(declaration.QualifiedName, parameters, declaration.OutputParameters);
 		}
 
 		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {

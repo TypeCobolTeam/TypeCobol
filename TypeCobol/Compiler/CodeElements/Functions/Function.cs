@@ -5,16 +5,21 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 
 	public class Function {
 		public QualifiedName QualifiedName;
-		public IList<Parameter> Parameters;
-		public Parameter Result;
+		public IList<Parameter> InputParameters;
+		public IList<Parameter> OutputParameters;
 
-		public Function(string name, string program, Parameter result, IList<Parameter> parameters = null)
-		  : this(new URI(program+'.'+name), result, parameters) { }
+		public Parameter Result {
+			get {
+				if (OutputParameters.Count > 1)
+					throw new System.InvalidOperationException(QualifiedName.ToString()+" has "+OutputParameters.Count+" returns");
+				return OutputParameters[0];
+			}
+		}
 
-		public Function(QualifiedName name, Parameter result, IList<Parameter> parameters = null) {
+		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs) {
 			this.QualifiedName = name;
-			this.Parameters = parameters ?? new List<Parameter>();
-			this.Result = result;
+			this.InputParameters  = inputs  ?? new List<Parameter>();
+			this.OutputParameters = outputs ?? new List<Parameter>();
 		}
 
 		public string Name { get { return QualifiedName.Head; } }
@@ -33,9 +38,12 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		public override string ToString() {
 			var str = new System.Text.StringBuilder(Name!=null? Name.ToString() : "?");
 			str.Append('(');
-			foreach(var p in Parameters) str.Append(p.ToString()).Append(", ");
-			if (Parameters.Count > 0) str.Length -= 2;
-			str.Append(')').Append(':').Append(Result.ToString());
+			foreach(var p in InputParameters) str.Append(p.ToString()).Append(", ");
+			if (InputParameters.Count > 0) str.Length -= 2;
+			str.Append("):(");
+			foreach(var p in OutputParameters) str.Append(p.ToString()).Append(", ");
+			if (OutputParameters.Count > 0) str.Length -= 2;
+			str.Append(')');
 			return str.ToString();
 		}
 	}
@@ -91,19 +99,23 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 
 	public class SampleFactory {
 		public static Function Create(string name, string library = "TC-DEFAULT") {
-			return new Function(name, library,
-				new Parameter(null, false, DataType.Numeric, 8),
+			return new Function(new URI(library+"."+name),
 				new List<Parameter>() {
 					new Parameter(null, false, DataType.Numeric),
 					new Parameter(null, false, DataType.Numeric, 3),
+				},
+				new List<Parameter>() {
+					new Parameter(null, false, DataType.Numeric, 8),
 				});
 		}
 		public static Function CreateCall(string name, string library = "TC-DEFAULT") {
-			return new Function(name, library,
-				new Parameter(null, false, DataType.Numeric, 8),
+			return new Function(new URI(library+"."+name),
 				new List<Parameter>() {
 					new CallParameter("param1"),
 					new CallParameter("'42'", false),
+				},
+				new List<Parameter>() {
+					new Parameter(null, false, DataType.Numeric, 8),
 				});
 		}
 	}
