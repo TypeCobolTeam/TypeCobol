@@ -7,12 +7,12 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
 
-	class ReadOnlyPropertiesChecker : NodeListener
-	{
+	class ReadOnlyPropertiesChecker: NodeListener {
 
 		private static string[] READONLY_DATATYPES = { "DATE", };
 
@@ -92,6 +92,80 @@ namespace TypeCobol.Compiler.Diagnostics {
 					DiagnosticUtils.AddError(e, message);
 				}
 			}
+		}
+	}
+
+
+
+	class FunctionDeclarationChecker: NodeListener {
+
+		public IList<Type> GetCodeElements() {
+			return new List<Type> { typeof(FunctionDeclarationHeader), };
+		}
+		public void OnNode(Node node, ParserRuleContext context, Program program) {
+			var header = node.CodeElement as FunctionDeclarationHeader;
+			var visibility = header.Visibility;
+			IList<InputParameter> inputs = new List<InputParameter>();
+			IList<DataName> outputs = new List<DataName>();
+			Node profile = null;
+			var profiles = node.GetChildren(typeof(FunctionDeclarationProfile));
+			if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
+				DiagnosticUtils.AddError(header, "Function \""+header.Name+"\" has no parameters and does nothing.");
+			else if (profiles.Count > 1)
+				foreach(var p in profiles)
+					DiagnosticUtils.AddError(p.CodeElement, "Function \""+header.Name+"\" can have only one parameters profile.");
+			else profile = profiles[0];
+			if (profile != null) {
+				var p = ((FunctionDeclarationProfile)profile.CodeElement);
+				inputs  = p.InputParameters;
+				outputs = p.OutputParameters;
+			}
+			var parametersdeclared = new List<Parameter>();
+			var linkage = node.Get("linkage");
+			if (linkage == null) {
+				if (inputs.Count > 0 || outputs.Count > 0)
+					DiagnosticUtils.AddError(header, "Missing LINKAGE SECTION for parameters declaration.");
+			} else {
+				var data = linkage.GetChildren(typeof(DataDescriptionEntry));
+				foreach(var n in data) {
+					var d = (DataDescriptionEntry)n.CodeElement;
+					bool custom = false;//TODO
+					parametersdeclared.Add(new Parameter(d.Name.Name, custom, d.DataType, d.MemoryArea.Length));
+				}
+			}
+			var inparameters = new List<Parameter>();
+			foreach(var p in inputs) {
+				string pname = p.DataName.Name;
+				Parameter param = GetParameter(parametersdeclared, pname);
+				if (param != null) inparameters.Add(param);
+				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
+			}
+			var outparameters = new List<Parameter>();
+			foreach(var p in outputs) {
+				string pname = p.Name;
+				Parameter param = GetParameter(parametersdeclared, pname);
+				if (param != null) outparameters.Add(param);
+				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
+			}
+			if (outparameters.Count < 1) outparameters.Add(new Parameter("return-code", false, DataType.Numeric));
+			foreach(var pd in parametersdeclared) {
+				var used = GetParameter(inparameters, pd.Name);
+				if (used == null)
+					used = GetParameter(outparameters, pd.Name);
+				if (used == null)
+					DiagnosticUtils.AddError(linkage.CodeElement, pd.Name+" is not a parameter.");
+			}
+System.Console.WriteLine(visibility+" "+header.Name+':'+(profile==null?'?':'!')+'('+inputs.Count+';'+outputs.Count+")");
+foreach(var p in inparameters)  System.Console.WriteLine(" > "+p);
+foreach(var p in outparameters) System.Console.WriteLine(" < "+p);
+			var function = new Function(header.Name, outparameters[0], inparameters);
+System.Console.WriteLine("=> FUNCTION: "+function);
+		}
+
+		private Parameter GetParameter(IList<Parameter> parameters, string name) {
+			foreach(var p in parameters)
+				if (p.Name.Equals(name)) return p;
+			return null;
 		}
 	}
 

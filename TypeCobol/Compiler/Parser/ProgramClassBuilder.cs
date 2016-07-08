@@ -510,7 +510,10 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		/// <summary>Parent node: PROCEDURE DIVISION</summary>
 		/// <param name="context">DECLARE FUNCTION</param>
 		public override void EnterFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
-			Enter(new Node(AsCodeElement(context.FunctionDeclarationHeader())), context);
+			var header = (FunctionDeclarationHeader)AsCodeElement(context.FunctionDeclarationHeader());
+			header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
+
+			Enter(new Node(header), context);
 			CodeElement profile = AsCodeElement(context.ProcedureDivisionHeader());
 			if (profile is ProcedureDivisionHeader) {
 				// there are neither INPUT nor OUTPUT defined,

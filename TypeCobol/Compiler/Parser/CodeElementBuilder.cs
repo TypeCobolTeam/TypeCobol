@@ -2219,6 +2219,9 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
 			var dataname = SyntaxElementBuilder.CreateDataName(context.dataNameReference());
+			//TODO? dataname should be a QualifiedName,
+			//      because LINKAGE data items can be complex,
+			//      with group items and name collision and crap
 			if (CodeElement is ProcedureDivisionHeader)
 				((ProcedureDivisionHeader)CodeElement).ReturningDataName = dataname;
 			else//if (CodeElement is FunctionDeclarationProfile)

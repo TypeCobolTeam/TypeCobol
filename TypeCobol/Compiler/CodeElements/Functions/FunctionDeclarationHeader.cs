@@ -8,13 +8,14 @@ namespace TypeCobol.Compiler.CodeElements {
 
 		public QualifiedName Name { get; private set; }
 		public AccessModifier Visibility { get; private set; }
-		public FunctionDeclarationProfile Profile { get; internal set; }
 
 		public FunctionDeclarationHeader(QualifiedName Name, AccessModifier Visibility)
 			: base(CodeElementType.FunctionDeclarationHeader) {
 			this.Name = Name;
 			this.Visibility = Visibility;
-			this.Profile = new FunctionDeclarationProfile();
+		}
+		public void SetLibrary(string libname) {
+			Name = new URI(libname + "." + Name.ToString());
 		}
 	}
 }
