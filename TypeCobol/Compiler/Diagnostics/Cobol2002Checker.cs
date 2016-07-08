@@ -75,30 +75,37 @@ namespace TypeCobol.Compiler.Diagnostics
         public void OnNode(Node node, ParserRuleContext context, Program program)
         {
             var ce = node.CodeElement;
-            if (ce is InitializeStatement || ce is MoveStatement || ce is ReadStatement || ce is ReleaseStatement 
-                || ce is ReturnStatement || ce is RewriteStatement || ce is WriteStatement)
+            if (ce is Receiving == false)
+                return;
+            if (ce is InitializeStatement || ce is MoveStatement || ce is ReadStatement || ce is ReleaseStatement
+                                                                                            //SetStatement is not specified in our specs, but as
+                                                                                            // a level 88 variable can't be strongly typed
+                                                                                            //we don't need to check this case
+                                                                                            //   +
+                                                                                            // SET myBool TO TRUE where myBool is of type BOOL need to works
+                || ce is ReturnStatement || ce is RewriteStatement || ce is WriteStatement || ce is SetStatement)
                 return;
 
-			if (ce is Receiving) {
-				var receivedList = (ce as Receiving).Expressions;
-                SymbolTable symbolTable = program.SymbolTable;
-                foreach (var received in receivedList)
+            var receivedList = ((Receiving) ce).Expressions;
+            SymbolTable symbolTable = program.SymbolTable;
+            foreach (var received in receivedList)
+            {
+                if (received is Identifier)
                 {
-                    if (received is Identifier)
+                    IList<DataDescriptionEntry> identifiers = symbolTable.Get(((Identifier) received).Name);
+                    foreach (var identifier in identifiers)
                     {
-                        IList<DataDescriptionEntry> identifiers = symbolTable.Get(((Identifier) received).Name);
-                        foreach (var identifier in identifiers)
+                        var first = identifier.GetFirstStrongDataDescriptionEntry();
+                        if (first == null) continue;
+                        if (first.DataType.IsStrong)
                         {
-							var first = identifier.GetFirstStrongDataDescriptionEntry();
-							if (first == null) continue;
-							if (first.DataType.IsStrong)
-                            {
-                                DiagnosticUtils.AddError(ce, "Strongly typed variable can't be used as a receiving operand of " +ce.Type);
-                            }
+                            //Rule#11 about TYPE
+                            DiagnosticUtils.AddError(ce, "Strongly typed variable can't be used as a receiving operand of " +ce.Type);
                         }
                     }
                 }
             }
+            
         }
     }
 }
