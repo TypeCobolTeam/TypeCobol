@@ -4,6 +4,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -28,6 +29,23 @@ namespace TypeCobol.Compiler.CodeElements
 			Parent.children_.Remove(this);
 			Parent = null;
 		}
+		public IList<Node> GetChildren(Type type) {
+			var results = new List<Node>();
+			foreach(var child in Children)
+				if (child.CodeElement != null && Reflection.IsTypeOf(child.CodeElement.GetType(), type))
+					results.Add(child);
+			return results;
+		}
+		public Node GetParent(Type type) {
+			var current = this;
+			while (current != null)
+				if (current.CodeElement != null && Reflection.IsTypeOf(current.CodeElement.GetType(), type))
+					return current;
+				else current = current.Parent;
+			return null;
+		}
+
+
 
 		/// <summary>Implementation of the GoF Visitor pattern.</summary>
 		public void Accept(NodeVisitor visitor) {
@@ -35,8 +53,15 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public override string ToString() {
-			if (CodeElement==null) return GetType().Name+"?";
-			else return CodeElement.GetType().Name;
+			var str = new System.Text.StringBuilder();
+			Dump(str, 0, this);
+			return str.ToString();
+		}
+
+		private void Dump(System.Text.StringBuilder str, int level, Node node) {
+			for(int c=0; c<level; c++) str.Append("  ");
+			str.AppendLine(node.CodeElement==null?"?":node.CodeElement.GetType().Name);
+			foreach(var child in node.Children) Dump(str, level+1, child);
 		}
 
 		public CodeModel.SymbolTable SymbolTable { get; set; }
@@ -73,6 +98,13 @@ namespace TypeCobol.Compiler.CodeElements
 				string puri = Parent == null?null:Parent.URI;
 				if (puri == null) return ID;
 				return puri+'.'+ID;
+			}
+		}
+		public Node Root {
+			get {
+				var current = this;
+				while (current.Parent != null) current = current.Parent;
+				return current;
 			}
 		}
 		public Node Get(string uri) {
