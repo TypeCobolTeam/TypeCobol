@@ -229,13 +229,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public class URI: AbstractQualifiedName {
 		public string Value { get; private set; }
-		public char Separator { get { return '.'; } }
+		public char Separator { get; private set; }
 		private string[] parts;
 
-		public URI(string uri) {
+		public URI(string uri, char separator = '.') {
 			if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
+			this.Separator = separator != null ? separator : '.';
 			this.Value = uri;
-			this.parts = Value.Split(Separator);
+			this.parts = Value.Split(this.Separator);
 		}
 
 		public override string ToString() { return Value; }
