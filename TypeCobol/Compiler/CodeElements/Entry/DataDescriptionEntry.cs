@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
@@ -359,6 +360,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///   character-string can contain a maximum of 50 characters.
         /// </summary>
         public string Picture { get; set; }
+        [NotNull]
         public DataType DataType { get; set; }
         public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 

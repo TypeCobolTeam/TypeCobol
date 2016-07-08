@@ -33,8 +33,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving) {
 			if (receiving.TopLevel == null) return;
-			if (receiving.TopLevel.DataType == null) return;
-			foreach (var type in READONLY_DATATYPES) {
+		    foreach (var type in READONLY_DATATYPES) {
 				if (type.Equals(receiving.TopLevel.DataType.Name.ToUpper())) {
 					DiagnosticUtils.AddError(e, type + " properties are read-only");
 				}
@@ -126,7 +125,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (inputs.Count > 0 || outputs.Count > 0)
 					DiagnosticUtils.AddError(header, "Missing LINKAGE SECTION for parameters declaration.");
 			} else {
-				var data = linkage.GetChildren(typeof(DataDescriptionEntry));
+			    var data = linkage.GetChildren(typeof(DataDescriptionEntry));
 				foreach(var n in data) {
 					var d = (DataDescriptionEntry)n.CodeElement;
 					bool custom = false;//TODO

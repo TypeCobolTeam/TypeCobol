@@ -36,7 +36,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     string message = "TYPEDEF clause can only be specified for level 01 entries";
                     DiagnosticUtils.AddError(data, message, context.cobol2002TypedefClause());
                 }
-                if (data.Picture != null && (data.DataType != null && data.DataType.IsStrong))
+                if (data.Picture != null && data.DataType.IsStrong)
                 {
                     string message = "Elementary TYPEDEF cannot be STRONG";
                     string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
