@@ -10,6 +10,19 @@
        01  b TYPE BOOL.
 
        PROCEDURE DIVISION.
+       
+       DECLARE POW PRIVATE.
+         DATA DIVISION.
+         LINKAGE SECTION.
+           01 x PIC 9(04).
+           01 y PIC 9(04).
+           01 result PIC 9(04).
+         PROCEDURE DIVISION
+             INPUT x y
+             RETURNING result
+         .
+           CONTINUE.
+       END-DECLARE.
 
        TRAITEMENT.
            MOVE FUNCTION POW (x y)    TO x

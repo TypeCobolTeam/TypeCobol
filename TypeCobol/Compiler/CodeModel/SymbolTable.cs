@@ -206,11 +206,10 @@ namespace TypeCobol.Compiler.CodeModel
 			return GetFunction(new URI(name));
 		}
 		internal Function GetFunction(QualifiedName name, bool searchInDefaultLib = true) {
-			try { return functions[name]; }
-			catch(KeyNotFoundException ex) { }
-			if (searchInDefaultLib && CurrentScope == Scope.Intrinsic) {
+			foreach(var function in functions)
+				if (function.Key.Matches(name)) return function.Value;
+			if (searchInDefaultLib && CurrentScope == Scope.Intrinsic)
 				return GetFunction(new URI("TC-DEFAULT."+name.ToString()), false);
-			}
 			if (EnclosingScope == null) return null;
 			return EnclosingScope.GetFunction(name);
 		}

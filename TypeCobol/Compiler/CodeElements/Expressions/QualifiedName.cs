@@ -7,6 +7,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		string Head { get; }
 		bool IsExplicit { get; }
 		bool Matches(string uri);
+		bool Matches(QualifiedName name);
 	}
 
 	public interface Subscripted {
@@ -86,7 +87,10 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		}
 
 		public bool Matches(string uri) {
-			return this.ToString().Equals(uri);
+			return this.ToString().EndsWith(uri);
+		}
+		public bool Matches(QualifiedName name) {
+			return this.Matches(name.ToString());
 		}
 	}
 

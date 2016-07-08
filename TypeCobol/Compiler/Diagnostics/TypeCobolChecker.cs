@@ -157,11 +157,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 					DiagnosticUtils.AddError(data, pd.Name+" is not a parameter.");
 				}
 			}
-System.Console.WriteLine(visibility+" "+header.Name+':'+(profile==null?'?':'!')+'('+inputs.Count+';'+outputs.Count+")");
-foreach(var p in inparameters)  System.Console.WriteLine(" > "+p);
-foreach(var p in outparameters) System.Console.WriteLine(" < "+p);
 			var function = new Function(header.Name, inparameters, outparameters);
-System.Console.WriteLine("=> FUNCTION: "+function);
+			node.SymbolTable.Register(function);
 		}
 
 		private Parameter GetParameter(IList<Parameter> parameters, string name) {

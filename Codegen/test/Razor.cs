@@ -74,7 +74,7 @@ namespace TypeCobol.Codegen.Config {
 			var skeleton = parser.Parse(path)[0];
 			Solver solver = new RazorEngine();
 			string input, expected;
-			var variables = new Dictionary<string,object> { {"function", SampleFactory.Create("fun", "mylib")} };
+			var variables = new Dictionary<string,object> { {"function", RazorFactory.Create("fun", "mylib")} };
 
 			input = skeleton.Patterns[0].Template;
 			expected =
@@ -100,7 +100,7 @@ namespace TypeCobol.Codegen.Config {
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
 			input = skeleton.Patterns[4].Template;
-			variables = new Dictionary<string,object> { {"function", SampleFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
+			variables = new Dictionary<string,object> { {"function", RazorFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
 			expected =
 "CALL fun USING\n"+
 "    BY REFERENCE param1\n"+
@@ -116,5 +116,29 @@ namespace TypeCobol.Codegen.Config {
 "END-IF\n";
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 		}
+
+		private class RazorFactory {
+			public static Function Create(string name, string library = "TC-DEFAULT") {
+				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
+					new List<Parameter>() {
+						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric),
+						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 3),
+					},
+					new List<Parameter>() {
+						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 8),
+					});
+			}
+			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
+				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
+					new List<Parameter>() {
+						new CallParameter("param1"),
+						new CallParameter("'42'", false),
+					},
+					new List<Parameter>() {
+						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 8),
+					});
+			}
+		}
+
 	}
 }
