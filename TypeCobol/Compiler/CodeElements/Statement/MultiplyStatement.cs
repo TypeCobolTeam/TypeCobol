@@ -10,6 +10,8 @@ namespace TypeCobol.Compiler.CodeElements
     public abstract class MultiplyStatement : StatementElement
     {
         public MultiplyStatement(StatementType statementType) : base(CodeElementType.MultiplyStatement, statementType) { }
+
+        public NumericVariable Operand { get; set; }
     }
 
     /// <summary>
@@ -23,6 +25,8 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public MultiplySimpleStatement() : base(StatementType.MultiplySimpleStatement)
         { }
+
+        public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
     }
 
     /// <summary>
@@ -35,5 +39,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public MultiplyGivingStatement() : base(StatementType.MultiplyGivingStatement)
         { }
+
+        public NumericVariable ByOperand { get; set; }
+
+        public RoundedResult[] ReceivingStorageAreas { get; set; }
     }
 }
