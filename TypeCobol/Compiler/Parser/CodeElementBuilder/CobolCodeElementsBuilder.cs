@@ -1854,7 +1854,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterPerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context)
         {
             Context = context;
-            CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement();
+            CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement(context);
         }
 
         public override void EnterPerformStatementEnd(CodeElementsParser.PerformStatementEndContext context)

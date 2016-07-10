@@ -986,99 +986,81 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateOpenStatement(CodeElementsParser.OpenStatementContext context)
         {
-            var filenames = new Dictionary<OpenMode, IList<OpenFileName>>();
-            var list = new List<OpenFileName>();
-            if (context.openInput() != null)
+            var statement = new OpenStatement();
+
+            statement.OpenFileInstructions = new List<OpenFileInstruction>(1);
+            if(context.openInput() != null && context.openInput().Length > 0)
             {
-                foreach (var c in context.openInput())
+                foreach(var inputCtx in context.openInput())
                 {
-                    IList<OpenFileName> l = CreateOpenFileNames(c);
-                    if (l != null) list.AddRange(l);
+                    SyntaxProperty<OpenMode> openMode = CreateSyntaxProperty(OpenMode.INPUT,
+                        inputCtx.INPUT());
+                    CreateFileInstructions(statement.OpenFileInstructions, inputCtx.fileNameWithNoRewindOrReversed(), openMode);
                 }
             }
-            filenames.Add(OpenMode.INPUT, list);
-            list = new List<OpenFileName>();
-            if (context.openOutput() != null)
+            if (context.openOutput() != null && context.openOutput().Length > 0)
             {
-                foreach (var c in context.openOutput())
+                foreach (var outputCtx in context.openOutput())
                 {
-                    IList<OpenFileName> l = CreateOpenFileNames(c);
-                    if (l != null) list.AddRange(l);
+                    SyntaxProperty<OpenMode> openMode = CreateSyntaxProperty(OpenMode.OUTPUT,
+                        outputCtx.OUTPUT());
+                    CreateFileInstructions(statement.OpenFileInstructions, outputCtx.fileNameWithNoRewindOrReversed(), openMode);
                 }
             }
-            filenames.Add(OpenMode.OUTPUT, list);
-            list = new List<OpenFileName>();
-            if (context.openIO() != null)
+            if (context.openIO() != null && context.openIO().Length > 0)
             {
-                foreach (var c in context.openIO())
+                foreach (var ioCtx in context.openIO())
                 {
-                    IList<OpenFileName> l = CreateOpenFileNames(c);
-                    if (l != null) list.AddRange(l);
+                    SyntaxProperty<OpenMode> openMode = CreateSyntaxProperty(OpenMode.IO,
+                        ioCtx.I_O());
+                    CreateFileInstructions(statement.OpenFileInstructions, ioCtx.fileNameReference(), openMode);
                 }
             }
-            filenames.Add(OpenMode.IO, list);
-            list = new List<OpenFileName>();
-            if (context.openExtend() != null)
+            if (context.openExtend() != null && context.openExtend().Length > 0)
             {
-                foreach (var c in context.openExtend())
+                foreach (var extendCtx in context.openExtend())
                 {
-                    IList<OpenFileName> l = CreateOpenFileNames(c);
-                    if (l != null) list.AddRange(l);
+                    SyntaxProperty<OpenMode> openMode = CreateSyntaxProperty(OpenMode.EXTEND,
+                        extendCtx.EXTEND());
+                    CreateFileInstructions(statement.OpenFileInstructions, extendCtx.fileNameReference(), openMode);
                 }
             }
-            filenames.Add(OpenMode.EXTEND, list);
-            return new OpenStatement(filenames);
+
+            return statement;
         }
 
-        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenInputContext context)
+        private void CreateFileInstructions(IList<OpenFileInstruction> openFileInstructions, CodeElementsParser.FileNameReferenceContext[] fileNameReferenceContexts, SyntaxProperty<OpenMode> openMode)
         {
-            if (context.fileNameWithNoRewindOrReversed() == null) return null;
-            var filenames = new List<OpenFileName>();
-            foreach (var filename in context.fileNameWithNoRewindOrReversed())
+            foreach (var fileNameReferenceCtx in fileNameReferenceContexts)
             {
-                var f = CobolWordsBuilder.CreateFileName(filename.fileNameReference());
-                bool norewind = filename.NO() != null;
-                bool reversed = filename.REVERSED() != null;
-                if (f != null) filenames.Add(new OpenFileName(f, norewind, reversed));
+                var openFileInstruction = new OpenFileInstruction();
+                openFileInstruction.OpenMode = openMode;
+                openFileInstruction.FileName = CobolWordsBuilder.CreateFileNameReference(
+                    fileNameReferenceCtx);
+                openFileInstructions.Add(openFileInstruction);
             }
-            return filenames;
         }
 
-        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenOutputContext context)
+        private void CreateFileInstructions(IList<OpenFileInstruction> openFileInstructions, CodeElementsParser.FileNameWithNoRewindOrReversedContext[] fileWithPropsContexts, SyntaxProperty<OpenMode> openMode)
         {
-            if (context.fileNameWithNoRewind() == null) return null;
-            var filenames = new List<OpenFileName>();
-            foreach (var filename in context.fileNameWithNoRewind())
+            foreach (var fileWithPropsCtx in fileWithPropsContexts)
             {
-                var f = CobolWordsBuilder.CreateFileName(filename.fileNameReference());
-                bool norewind = filename.NO() != null;
-                if (f != null) filenames.Add(new OpenFileName(f, norewind));
+                var openFileInstruction = new OpenFileInstruction();
+                openFileInstruction.OpenMode = openMode;
+                openFileInstruction.FileName = CobolWordsBuilder.CreateFileNameReference(
+                    fileWithPropsCtx.fileNameReference());
+                if (fileWithPropsCtx.REWIND() != null)
+                {
+                    openFileInstruction.IsWithNoRewind = CreateSyntaxProperty(true,
+                        fileWithPropsCtx.REWIND());
+                }
+                else if (fileWithPropsCtx.REVERSED() != null)
+                {
+                    openFileInstruction.IsReversed = CreateSyntaxProperty(true,
+                        fileWithPropsCtx.REVERSED());
+                }
+                openFileInstructions.Add(openFileInstruction);
             }
-            return filenames;
-        }
-
-        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenIOContext context)
-        {
-            if (context.fileNameReference() == null) return null;
-            var filenames = new List<OpenFileName>();
-            foreach (var filename in context.fileNameReference())
-            {
-                var f = CobolWordsBuilder.CreateFileName(filename);
-                if (f != null) filenames.Add(new OpenFileName(f));
-            }
-            return filenames;
-        }
-
-        private IList<OpenFileName> CreateOpenFileNames(CodeElementsParser.OpenExtendContext context)
-        {
-            if (context.fileNameReference() == null) return null;
-            var filenames = new List<OpenFileName>();
-            foreach (var filename in context.fileNameReference())
-            {
-                var f = CobolWordsBuilder.CreateFileName(filename);
-                if (f != null) filenames.Add(new OpenFileName(f));
-            }
-            return filenames;
         }
 
         ///////////////////////
@@ -1087,12 +1069,95 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreatePerformStatement(CodeElementsParser.PerformStatementContext context)
         {
-            return new PerformStatement();
+            var statement = new PerformStatement();
+
+            CreatePerformStatementIteration(statement, context.performTimesPhrase(), context.performUntilPhrase(), context.performVaryingPhrase());
+
+            return statement;
         }
 
-        internal CodeElement CreatePerformProcedureStatement()
+        internal CodeElement CreatePerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context)
         {
-            return new PerformProcedureStatement();
+            var statement = new PerformProcedureStatement();
+
+            if(context.procedureName() != null)
+            {
+                statement.Procedure = CobolWordsBuilder.CreateProcedureName(context.procedureName());
+            }
+            else if(context.proceduresRange() != null)
+            {
+                statement.Procedure = CobolWordsBuilder.CreateProcedureName(context.proceduresRange().startProcedure);
+                statement.ThroughProcedure = CobolWordsBuilder.CreateProcedureName(context.proceduresRange().endProcedure);
+            }
+            CreatePerformStatementIteration(statement, context.performTimesPhrase(), context.performUntilPhrase(), context.performVaryingPhrase());
+
+            return statement;
+        }
+
+        private void CreatePerformStatementIteration(PerformStatement statement, CodeElementsParser.PerformTimesPhraseContext timesCtx, CodeElementsParser.PerformUntilPhraseContext untilCtx, CodeElementsParser.PerformVaryingPhraseContext varyingCtx)
+        {
+            if(timesCtx != null)
+            {
+                statement.IterationType = CreateSyntaxProperty(PerformIterationType.Times,
+                    timesCtx.TIMES());
+                statement.TimesIterationCount = CobolExpressionsBuilder.CreateNumericVariable(
+                    timesCtx.numericVariable3());
+            }
+            else if(untilCtx != null)
+            {
+                statement.IterationType = CreateSyntaxProperty(PerformIterationType.Until,
+                    untilCtx.UNTIL());
+                if(untilCtx.conditionTestTime() != null)
+                {
+                    CreateConditionTestTime(statement, untilCtx.conditionTestTime());
+                }
+                statement.UntilTerminationCondition = CobolExpressionsBuilder.CreateConditionalExpression(
+                    untilCtx.conditionalExpression());
+            }
+            else if(varyingCtx != null)
+            {
+                statement.IterationType = CreateSyntaxProperty(PerformIterationType.Varying,
+                    varyingCtx.VARYING());
+                if (varyingCtx.conditionTestTime() != null)
+                {
+                    CreateConditionTestTime(statement, varyingCtx.conditionTestTime());
+                }
+                statement.VaryingLoopDescriptions = BuildObjectArrrayFromParserRules(
+                    varyingCtx.loopVariableDescription(),
+                    ctx => CreatePerformLoopDescription(ctx));
+            }
+        }
+
+        private void CreateConditionTestTime(PerformStatement statement, CodeElementsParser.ConditionTestTimeContext conditionTestTimeCtx)
+        {
+            if (conditionTestTimeCtx.BEFORE() != null)
+            {
+                statement.TerminationConditionTestTime = CreateSyntaxProperty(
+                    TerminationConditionTestTime.BeforeIteration,
+                    conditionTestTimeCtx.BEFORE());
+            }
+            else if (conditionTestTimeCtx.AFTER() != null)
+            {
+                statement.TerminationConditionTestTime = CreateSyntaxProperty(
+                    TerminationConditionTestTime.AfterIteration,
+                    conditionTestTimeCtx.AFTER());
+            }
+        }
+
+        private PerformLoopDescription CreatePerformLoopDescription(CodeElementsParser.LoopVariableDescriptionContext context)
+        {
+            var loop = new PerformLoopDescription();
+
+            loop.LoopVariable = CobolExpressionsBuilder.CreateDataOrIndexStorageArea(
+                context.loopVariable);
+            loop.InitialValue = CobolExpressionsBuilder.CreateNumericVariableOrIndex(
+                context.initialValue);
+            loop.Increment = CobolExpressionsBuilder.CreateNumericVariable(
+                context.increment);
+            loop.TerminationCondition = CobolExpressionsBuilder.CreateConditionalExpression(
+                context.conditionalExpression());
+
+            return loop;
         }
 
         ////////////////////
@@ -1101,14 +1166,18 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateReadStatement(CodeElementsParser.ReadStatementContext context)
         {
-            if (context == null) return null;
-            return new ReadStatement(
-                CobolWordsBuilder.CreateFileName(context.fileNameReference()),
-                CobolWordsBuilder.CreateIdentifier(context.identifier()),
-                CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName()),
-                context.NEXT() != null,
-                context.RECORD() != null
-                );
+            var statement = new ReadStatement();
+
+            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            statement.KeyDataItem = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
+            if(context.NEXT() != null)
+            {
+                statement.ReadNextRecord = CreateSyntaxProperty(true, context.NEXT());
+            }
+            statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateStorageArea(
+                context.storageArea1());
+
+            return statement;
         }
 
         ///////////////////////
@@ -1118,8 +1187,12 @@ namespace TypeCobol.Compiler.Parser
         internal CodeElement CreateReleaseStatement(CodeElementsParser.ReleaseStatementContext context)
         {
             var statement = new ReleaseStatement();
-            statement.RecordName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
-            statement.From = CobolWordsBuilder.CreateIdentifier(context.identifier());
+
+            // !! TO DO !! RecordName should be of type ReceivingStorageArea, because
+            // it can be the target of a MOVE when FROM is used
+            statement.RecordName = CobolWordsBuilder.CreateRecordName(context.recordName());
+            statement.FromVariable = CobolExpressionsBuilder.CreateVariable(context.variable1());
+
             return statement;
         }
         
@@ -1129,10 +1202,11 @@ namespace TypeCobol.Compiler.Parser
 
         internal ReturnStatement CreateReturnStatement(Generated.CodeElementsParser.ReturnStatementContext context)
         {
-            if (context == null) return null;
-            var filename = CobolWordsBuilder.CreateFileName(context.fileNameReference());
-            var identifier = CobolWordsBuilder.CreateIdentifier(context.identifier());
-            var statement = new ReturnStatement(filename, identifier);
+            var statement = new ReturnStatement();
+
+            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            statement.IntoStorageArea = CobolExpressionsBuilder.CreateStorageArea(context.storageArea1());
+            
             return statement;
         }
         
@@ -1142,11 +1216,15 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateRewriteStatement(CodeElementsParser.RewriteStatementContext context)
         {
-            if (context == null) return null;
-            return new RewriteStatement(
-                CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName()),
-                CobolWordsBuilder.CreateIdentifier(context.identifier())
-                );
+            var statement = new RewriteStatement();
+
+            statement.RecordName = CobolWordsBuilder.CreateRecordName(context.recordName());
+            if (context.sendingField != null)
+            {
+                statement.FromVariable = CobolExpressionsBuilder.CreateVariable(context.sendingField);
+            }
+
+            return statement;
         }
         
         //////////////////////

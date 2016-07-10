@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// current record are available. If any data items lie beyond the length of the
         /// current record, their contents are undefined.
         /// </summary>
-        FileName FileName;
+        public SymbolReference FileName { get; set; }
 
         /// <summary>
         /// When there is only one record description associated with file-name-1 or all
@@ -65,7 +65,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// The record areas associated with file-name-1 and identifier-1 must not be the same
         /// storage area.
         /// </summary>
-        Identifier Into;
-
+        public ReceivingStorageArea IntoStorageArea { get; set; }
     }
 }

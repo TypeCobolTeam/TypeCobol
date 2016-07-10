@@ -20,7 +20,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must be the name of a logical record in a DATA DIVISION FD entry. The
         /// record-name can be qualified.
         /// </summary>
-        QualifiedName RecordName;
+        public SymbolReference RecordName { get; set; }
+
         /// <summary>
         /// p405:
         /// FROM phrase
@@ -44,7 +45,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// in identifier-1 (“INTO and FROM phrases” on page 291 under "Common
         /// processing facilities").
         /// </summary>
-        Identifier From;
+        public Variable FromVariable { get; set; }
         
     }
 }

@@ -28,8 +28,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must specify the name of a logical record in a sort-merge file description
         /// entry (SD). record-name-1 can be qualified.
         /// </summary>
-        public QualifiedName RecordName;
-
+        public SymbolReference RecordName { get; set; }
+        
         /// <summary>
         /// p401:
         /// FROM phrase
@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// in identifier-1. (See “INTO and FROM phrases” on page 291 under
         /// "Common processing facilities".)
         /// </summary>
-        public Identifier From;
+        public Variable FromVariable { get; set; }
 
     }
 }
