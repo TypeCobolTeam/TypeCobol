@@ -73,7 +73,7 @@
 - variables = when-compiled
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [32,32:)]<RightParenthesisSeparator>
-- variables = max( 1, 5)
+- variables = max(1, 5)
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [39,44:mycopy]<UserDefinedWord>
 - variables = toto toto mycopy.toto
