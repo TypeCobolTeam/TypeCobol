@@ -237,7 +237,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public void OnNode(Node node, ParserRuleContext c, Program program) {
 			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.IdentifierUser;
 			foreach (var identifier in element.Identifiers) {
-				CheckIdentifier(node.CodeElement, program.SymbolTable, identifier);
+				CheckIdentifier(node.CodeElement, program.CurrentTable, identifier);
 			}
 		}
 		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {

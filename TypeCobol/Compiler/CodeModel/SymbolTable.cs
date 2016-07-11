@@ -67,8 +67,8 @@ namespace TypeCobol.Compiler.CodeModel
 
 		private Scope GetScope(DataDescriptionEntry data) {
 			if (data.IsGlobal) return Scope.Global;
-            //External is not a global or above global scope, so use Scope.Program for this kind of data
-            return Scope.Program;
+			//External is not a global or above global scope, so use current scope for this kind of data
+			return CurrentScope;
 		}
 		private SymbolTable GetTable(SymbolTable.Scope scope) {
 			if (CurrentScope == scope) return this;
@@ -195,6 +195,9 @@ namespace TypeCobol.Compiler.CodeModel
 			/// Cobol does not distinguish between programs and functions/procedures.
 			/// </summary>
 			Program,
+// [TYPECOBOL]
+			Function,
+// [/TYPECOBOL]
 		}
 
 
@@ -261,19 +264,34 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
+			bool verbose = false;
+			if (verbose) str.AppendLine("--- "+scope2str());
 			foreach(var line in DataEntries) {
 				foreach (var data in line.Value) {
 					Dump(str, data, 1);
 					str.Append('\n');
 				}
 			}
-			// no enclosing scope dump
+			if (verbose) {
+				if (EnclosingScope != null)
+					str.Append(EnclosingScope.ToString());
+			}// else no enclosing scope dump
 			return str.ToString();
 		}
 		private static System.Text.StringBuilder Dump(System.Text.StringBuilder str, DataDescriptionEntry data, int indent = 0) {
 			for (int c=0; c<indent; c++) str.Append("  ");
 			str.Append(data);
 			return str;
+		}
+		private string scope2str() {
+			var str = new System.Text.StringBuilder();
+			var current = this;
+			while(current != null) {
+				str.Insert(0,current.CurrentScope+":");
+				current = current.EnclosingScope;
+			}
+			str.Length -= 1;
+			return str.ToString();
 		}
 	}
 }

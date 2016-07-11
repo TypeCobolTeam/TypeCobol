@@ -68,6 +68,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         public SymbolTable SymbolTable;
 
+		public SymbolTable CurrentTable {
+			get { return SyntaxTree.CurrentNode.SymbolTable; }
+		}
+
         /// <summary>
         /// Abstract Syntax Tree of this program.
         /// Syntax trees of nested programs (if any) are nodes/subtrees of this one.

@@ -61,8 +61,8 @@ namespace TypeCobol.Compiler.Parser
 
 		public NodeDispatcher Dispatcher { get; internal set; }
 
-		private void Enter(Node node, ParserRuleContext context = null) {
-			node.SymbolTable = CurrentProgram.SymbolTable;
+		private void Enter(Node node, ParserRuleContext context = null, SymbolTable table = null) {
+			node.SymbolTable = table ?? CurrentProgram.CurrentTable;
 			Program.SyntaxTree.Enter(node, context);
 		}
 		private void Exit() {
@@ -103,7 +103,7 @@ namespace TypeCobol.Compiler.Parser
 				Enter(CurrentProgram.SyntaxTree.Root, context);
 			}
 			CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
-			Enter(new Node(AsCodeElement(context.ProgramIdentification())), context);
+			Enter(new Node(AsCodeElement(context.ProgramIdentification())), context, CurrentProgram.SymbolTable);
 		}
 
 		public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context) {
@@ -205,7 +205,7 @@ namespace TypeCobol.Compiler.Parser
 			foreach (var node in nodes) {
 				DataDescriptionEntry data = node.Symbol as DataDescriptionEntry;
 
-				if (data.IsTypeDefinition) CurrentProgram.SymbolTable.RegisterCustomType(data);
+				if (data.IsTypeDefinition) CurrentProgram.CurrentTable.RegisterCustomType(data);
 				bool hasParent = ComputeParent(data, groups);
 				if (!hasParent) result.Add(data);
 				var customtype = ComputeType(data, currencies);
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Parser
 				//TODO move these rules in a new CobolTxxxxChecker and TypeCobolTypeDefChecker (or Cobol2002TypeDefChecker)
 				if (data.RedefinesDataName != null)
 				{
-					var redfinedItems = CurrentProgram.SymbolTable.Get(data.RedefinesDataName.Name);
+					var redfinedItems = CurrentProgram.CurrentTable.Get(data.RedefinesDataName.Name);
 					if (redfinedItems.Count == 0)
 					{
 						DiagnosticUtils.AddError(data, data + " redefines a variable not referenced " + data.RedefinesDataName);
@@ -278,7 +278,7 @@ namespace TypeCobol.Compiler.Parser
 					CheckRenameClause(data, data.RenamesToDataName);
 				}
 
-				CurrentProgram.SymbolTable.Add(data);
+				CurrentProgram.CurrentTable.Add(data);
 				if (customtype != null) {
 					foreach(var sub in customtype.Subordinates) {
 						// add a clone so parent/child relations are not spoiled
@@ -287,7 +287,7 @@ namespace TypeCobol.Compiler.Parser
 						clone.TopLevel = data;
 						UpdateLevelNumbers(clone, data.LevelNumber);
 
-						CurrentProgram.SymbolTable.Add(clone);
+						CurrentProgram.CurrentTable.Add(clone);
 						AddGeneratedSymbols(clone);
 					}
 				}
@@ -303,7 +303,7 @@ namespace TypeCobol.Compiler.Parser
 
 		private void CheckRenameClause(DataDescriptionEntry data, TypeCobol.Compiler.CodeElements.Expressions.QualifiedName renamesFrom)
 		{
-			var renames = CurrentProgram.SymbolTable.Get(renamesFrom);
+			var renames = CurrentProgram.CurrentTable.Get(renamesFrom);
 			if (renames.Count == 0)
 			{
 				DiagnosticUtils.AddError(data, data + " rename a variable not referenced " + renamesFrom);
@@ -402,8 +402,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				data.Subordinates.Add(clone);
 				clone.TopLevel = data;
 				UpdateLevelNumbers(clone, data.LevelNumber);
-				CurrentProgram.SymbolTable.Add(clone);
-
+				CurrentProgram.CurrentTable.Add(clone);
 				AddGeneratedSymbols(clone);
 			}
 		}
@@ -451,7 +450,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			if (data.Picture.StartsWith("TYPE:")) {
 				string typename = data.Picture.Substring(5);
 				try {
-					var customTypeGroup = CurrentProgram.SymbolTable.GetCustomType(typename);
+					var customTypeGroup = CurrentProgram.CurrentTable.GetCustomType(typename);
 					data.DataType = customTypeGroup.DataType;
 					return customTypeGroup;
 				} catch(ArgumentException ex) {
@@ -465,7 +464,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			}
 		}
 		private TypeDefinition GetCustomType(string name) {
-			try { return CurrentProgram.SymbolTable.GetCustomType(name); }
+			try { return CurrentProgram.CurrentTable.GetCustomType(name); }
 			catch(ArgumentException ex) { return null; }
 		}
 
@@ -511,8 +510,8 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		public override void EnterFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
 			var header = (FunctionDeclarationHeader)AsCodeElement(context.FunctionDeclarationHeader());
 			header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
+			Enter(new Node(header), context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));
 
-			Enter(new Node(header), context);
 			CodeElement profile = AsCodeElement(context.ProcedureDivisionHeader());
 			if (profile is ProcedureDivisionHeader) {
 				// there are neither INPUT nor OUTPUT defined,
@@ -568,7 +567,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			foreach(var identifier in identifiers.Identifiers) {
 				if (identifier.Name is TypeCobol.Compiler.CodeElements.Expressions.Subscripted) continue;
 				if (identifier is TypeCobol.Compiler.CodeElements.Expressions.Subscriptable) {
-					var found = CurrentProgram.SymbolTable.Get(identifier.Name);
+					var found = CurrentProgram.CurrentTable.Get(identifier.Name);
 					if (found.Count != 1) continue;// ambiguity is not our job
 					List<string> errors;
 					var qelement = TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName.Create(identifier, found[0], out errors);
