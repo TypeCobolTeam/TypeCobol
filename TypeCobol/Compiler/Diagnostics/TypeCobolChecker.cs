@@ -157,7 +157,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 				}
 			}
 			var function = new Function(header.Name, inparameters, outparameters);
-			node.SymbolTable.Register(function);
+			node.SymbolTable.EnclosingScope.Register(function);
 		}
 
 		private Parameter GetParameter(IList<Parameter> parameters, string name) {
