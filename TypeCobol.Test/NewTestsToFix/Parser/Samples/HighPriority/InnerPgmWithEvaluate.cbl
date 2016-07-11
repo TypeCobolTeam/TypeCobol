@@ -14,6 +14,7 @@
      END-EVALUATE
      EVALUATE BB
         WHEN 'C'
+		 continue
      END-EVALUATE                                               
      .
  END PROGRAM.
