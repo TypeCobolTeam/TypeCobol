@@ -47,7 +47,7 @@ namespace TypeCobol.Compiler.CodeModel
 		/// - They are condition-names or index-names associated with data items that satisfy
 		///   any of the above conditions.
 		/// </summary>
-		public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>();
+		public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>(System.StringComparer.InvariantCultureIgnoreCase);
 
 		public Scope CurrentScope { get; internal set; }
 		public SymbolTable EnclosingScope { get; internal set; }
@@ -225,7 +225,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
-		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>();
+		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>(System.StringComparer.InvariantCultureIgnoreCase);
 
 		public IEnumerable<TypeDefinition> CustomTypes {
 			get { return new List<TypeDefinition>(types.Values); }
