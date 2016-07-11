@@ -22,8 +22,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public IList<Identifier> Receiving;
 		IList<Expression> Receiving.Expressions {
 			get {
-				var list = new List<Expression>();
-				foreach(var item in Receiving) list.Add(item as Expression);
+                
+                var list = new List<Expression>();
+                list.AddRange(Receiving);
 				return list;
 			}
 		}

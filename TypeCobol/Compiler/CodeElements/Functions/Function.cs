@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		public Parameter Result {
 			get {
 				if (OutputParameters.Count > 1)
-					throw new System.InvalidOperationException(QualifiedName.ToString()+" has "+OutputParameters.Count+" returns");
+					throw new System.InvalidOperationException(QualifiedName+" has "+OutputParameters.Count+" returns");
 				return OutputParameters[0];
 			}
 		}
@@ -36,12 +36,12 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		public string Lib  { get { return Program; } }
 
 		public override string ToString() {
-			var str = new System.Text.StringBuilder(Name!=null? Name.ToString() : "?");
+			var str = new System.Text.StringBuilder(Name ?? "?");
 			str.Append('(');
-			foreach(var p in InputParameters) str.Append(p.ToString()).Append(", ");
+			foreach(var p in InputParameters) str.Append(p).Append(", ");
 			if (InputParameters.Count > 0) str.Length -= 2;
 			str.Append("):(");
-			foreach(var p in OutputParameters) str.Append(p.ToString()).Append(", ");
+			foreach(var p in OutputParameters) str.Append(p).Append(", ");
 			if (OutputParameters.Count > 0) str.Length -= 2;
 			str.Append(')');
 			return str.ToString();
@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		}
 
 		public override string ToString() {
-			return (Name!=null? Name.ToString():"?")+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
+			return (Name ?? "?")+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
 		}
 	}
 	public class CallParameter: Parameter {

@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.CodeElements {
 			this.Visibility = Visibility;
 		}
 		public void SetLibrary(string libname) {
-			Name = new URI(libname + "." + Name.ToString());
+			Name = new URI(libname + "." + Name);
 		}
 	}
 }

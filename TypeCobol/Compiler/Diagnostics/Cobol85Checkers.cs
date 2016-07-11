@@ -130,11 +130,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallByContext context){
 			foreach(var e in statement.Usings) {
 				if (e.Identifier != null) {
-					if (e.Identifier as FunctionReference != null)
+					if (e.Identifier is FunctionReference)
 						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
-					if (e.Identifier as LinageCounter != null)
+					if (e.Identifier is LinageCounter)
 						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", context);
-					if (e.UsingMode == CallStatement.Using.Mode.REFERENCE && e.Identifier as Length != null)
+					if (e.UsingMode == CallStatement.Using.Mode.REFERENCE && e.Identifier is Length)
 						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
 					//TODO what about special registers ?
 				}
@@ -325,7 +325,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		private bool CheckNesting(CodeElement e, DataDescriptionEntry data) {
 			foreach(var sub in data.Subordinates) {
-				if (sub.DataType != null && !sub.DataType.IsNestable) {
+				if (!sub.DataType.IsNestable) {
 					DiagnosticUtils.AddError(e, "Group contains type "+sub.DataType.Name+" variables");
 					return false;
 				} else if (!CheckNesting(e, sub)) return false;
