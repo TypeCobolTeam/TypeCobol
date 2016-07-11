@@ -394,7 +394,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     PartialWordReplaceOperation partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
                     string originalTokenText = originalToken.Text;
                     string partToReplace = partialWordReplaceOperation.ComparisonToken.Text;
-                    string replacementPart = partialWordReplaceOperation.PartialReplacementToken.Text;
+                    //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
+                    var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
                     // The index below is always >= 0 because CompareForReplace() above was true
                     int indexOfPartToReplace = originalTokenText.IndexOf(partToReplace, StringComparison.OrdinalIgnoreCase);
                     string replacedTokenText =

@@ -290,6 +290,8 @@
     <None Include="Compiler\Parser\Samples\Programs\Cobol2002\Typedef2.tcbl" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\LowPriority\RemarksWithEmptyLine rdz.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\LowPriority\RemarksWithEmptyLinePGM.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmEmptyPartialWordReplace.txt" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmEmptyPartialWordReplace.cpy" />
     <None Include="NewTestsToFix\Parser\Samples\LowPriority\RemarksWithEmptyLine rdz.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\LowPriority\RemarksWithEmptyLine.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\LowPriority\Memory.pgm" />
