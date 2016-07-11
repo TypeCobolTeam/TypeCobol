@@ -48,7 +48,7 @@ namespace TypeCobol.Codegen {
 			Writer.Write(converter.Output.ToString());
 			Writer.Flush();
 
-			Console.WriteLine(converter.Output.ToString());
+//			Console.WriteLine(converter.Output.ToString());
 		}
 
 		public void Visit(Node node) {
@@ -240,6 +240,10 @@ namespace TypeCobol.Codegen {
 	public class Expand: Action {
 		public string Group { get; private set; }
 		internal Node Node;
+		private Dictionary<Type,Type> Generators = new Dictionary<Type,Type> {
+				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
+				{ typeof(FunctionDeclarationHeader), typeof(FunctionDeclarationToProgram) },
+			};
 
 		public Expand(Node node) {
 			this.Node = node;
@@ -251,7 +255,16 @@ namespace TypeCobol.Codegen {
 			this.Node.Children.Clear();
 			// retrieve data
 			int index = this.Node.Parent.Children.IndexOf(this.Node);
-			if (index > -1) this.Node.Parent.Children.Insert(index+1, new TypedDataNode(this.Node));
+			if (index > -1) {
+				var typegen = GetGeneratedNode(this.Node.CodeElement.GetType());
+				var nodegen = (Node)Activator.CreateInstance(typegen, this.Node);
+				this.Node.Parent.Children.Insert(index+1, nodegen);
+			}
+		}
+
+		private Type GetGeneratedNode(Type type) {
+			try { return Generators[type]; }
+			catch(KeyNotFoundException) { throw new ArgumentException("Unknown type "+type); }
 		}
 	}
 }

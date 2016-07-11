@@ -42,4 +42,13 @@ END-IF
     </patterns>
   </skeleton>
 
+  <skeleton name="FUN.DECLARE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader" />
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
+    </patterns>
+  </skeleton>
+
 </skeletons>
