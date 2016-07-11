@@ -14,9 +14,9 @@
        DECLARE POW PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
-           01 x PIC 9(04).
-           01 y PIC 9(04).
-           01 result PIC 9(04).
+           01 x PIC 9(05).
+           01 y PIC 9(03).
+           01 result PIC 9(08).
          PROCEDURE DIVISION
              INPUT x y
              RETURNING result

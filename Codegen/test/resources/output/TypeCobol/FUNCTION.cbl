@@ -1,13 +1,13 @@
 ﻿      * 9 CodeElements errors
-      * "1"@(17:12>17:42): [27:1] Syntax error : Function POW is missing parameter 1 of type Numeric
-      * "1"@(17:12>17:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
-      * "1"@(18:12>18:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
-      * "1"@(19:12>19:42): [27:1] Syntax error : Function POW only takes 2 parameters
-      * "1"@(21:12>21:42): [27:1] Syntax error : Symbol i is not referenced
-      * "1"@(21:12>21:42): [27:1] Syntax error : Symbol j is not referenced
-      * "1"@(23:12>23:42): [27:1] Syntax error : Function POW expected parameter 2 of type Numeric (actual: BOOL)
-      * "1"@(25:12>25:42): [27:1] Syntax error : Function POW expected parameter 2 of max length 3 (actual: 5)
-      * "1"@(27:12>27:42): [27:1] Syntax error : Symbol POWAAA is not referenced
+      * "1"@(30:12>30:42): [27:1] Syntax error : Function POW is missing parameter 1 of type Numeric
+      * "1"@(30:12>30:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
+      * "1"@(31:12>31:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
+      * "1"@(32:12>32:42): [27:1] Syntax error : Function POW only takes 2 parameters
+      * "1"@(34:12>34:42): [27:1] Syntax error : Symbol i is not referenced
+      * "1"@(34:12>34:42): [27:1] Syntax error : Symbol j is not referenced
+      * "1"@(36:12>36:42): [27:1] Syntax error : Function POW expected parameter 2 of type Numeric (actual: BOOL)
+      * "1"@(38:12>38:42): [27:1] Syntax error : Function POW expected parameter 2 of max length 3 (actual: 5)
+      * "1"@(40:12>40:42): [27:1] Syntax error : Symbol POWAAA is not referenced
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Functions.
 
@@ -18,8 +18,8 @@
        01  y PIC 9(3).
        01  z PIC 9(5).
        01  b TYPE BOOL.
-       01 TC-DEFAULTcpy COPY TC-DEFAULTcpy.                                   
-       01 TC-DEFAULT PIC X(08) VALUE 'TC-DEFAULT'.                            
+       01 Functionscpy COPY Functionscpy.                                     
+       01 Functions PIC X(08) VALUE 'Functions'.                              
                                                                               
        01 RETURN-CODE PIC X(08).                                              
                                                                               
@@ -27,10 +27,23 @@
                                                                               
 
        PROCEDURE DIVISION.
-       IF TC-DEFAULTcpy-POINTER-TABLE = LOW_VALUE                             
-           CALL TC-DEFAULT USING TC-DEFAULTcpy                                
+       IF Functionscpy-POINTER-TABLE = LOW_VALUE                              
+           CALL Functions USING Functionscpy                                  
        END-IF                                                                 
                                                                               
+       
+       PROGRAM-ID. POW.
+         DATA DIVISION.
+         LINKAGE SECTION.
+           01 x PIC 9(05).
+           01 y PIC 9(03).
+           01 result PIC 9(08).
+         PROCEDURE DIVISION
+             USING x y
+             RETURNING result
+         .
+           CONTINUE.
+       END PROGRAM POW.
 
        TRAITEMENT.
       *    MOVE FUNCTION POW (x y)    TO x                                    
