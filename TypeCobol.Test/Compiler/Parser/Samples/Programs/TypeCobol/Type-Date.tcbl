@@ -29,10 +29,12 @@ TEST-DATE.
 *** illegal: properties are read-only
   MOVE        2015      TO   today :: YYYY
   MOVE UNSAFE 2015      TO   today :: YYYY
-* --- convert something to date
-*  CONVERT db2date       TO   today
-* --- shallow control like in COBOL 20002
-*  VALIDATE                   today
+*** illegal: from untyped to typed
+  move 'error'          to today(1:5)
+*  legal from typed to untyped
+  move today(1:)        to olddate
+*  legal from a non typed var (under a type) to untyped
+  move today :: YYYY    to olddate(1:4)
 
 
 *** legal:
