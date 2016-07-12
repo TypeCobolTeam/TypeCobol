@@ -11,11 +11,9 @@ procedureDivision:
 functionDeclaration:
 	FunctionDeclarationHeader
 	dataDivision?
-	ProcedureDivisionHeader
-		section*
+	functionProcedureDivision?
 	FunctionDeclarationEnd
 	;
 
-// no FILE SECTION
-functionDataDivision:
-	DataDivisionHeader workingStorageSection? localStorageSection? linkageSection?;
+functionProcedureDivision:
+	ProcedureDivisionHeader section*;

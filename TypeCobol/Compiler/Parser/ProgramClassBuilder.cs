@@ -102,8 +102,8 @@ namespace TypeCobol.Compiler.Parser
 				CurrentProgram = new NestedProgram(enclosing);
 				Enter(CurrentProgram.SyntaxTree.Root, context);
 			}
-			CurrentProgram.Identification = (ProgramIdentification)context.ProgramIdentification().Symbol;
-			Enter(new Node(AsCodeElement(context.ProgramIdentification())), context, CurrentProgram.SymbolTable);
+			CurrentProgram.Identification = (ProgramIdentification)AsCodeElement(context.ProgramIdentification());
+			Enter(new Node(CurrentProgram.Identification), context, CurrentProgram.SymbolTable);
 		}
 
 		public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context) {
@@ -511,7 +511,15 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			var header = (FunctionDeclarationHeader)AsCodeElement(context.FunctionDeclarationHeader());
 			header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
 			Enter(new Node(header), context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));
-
+		}
+		public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
+			Enter(new Node(AsCodeElement(context.FunctionDeclarationEnd())), context);
+			Exit();
+			Exit();// exit DECLARE FUNCTION
+		}
+		/// <summary>Parent node: DECLARE FUNCTION</summary>
+		/// <param name="context">PROCEDURE DIVISION</param>
+		public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			CodeElement profile = AsCodeElement(context.ProcedureDivisionHeader());
 			if (profile is ProcedureDivisionHeader) {
 				// there are neither INPUT nor OUTPUT defined,
@@ -520,9 +528,8 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				profile = new FunctionDeclarationProfile(profile as ProcedureDivisionHeader);
 			}
 			Enter(new Node(profile), context);
-			Exit();
 		}
-		public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
+		public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			Exit();
 		}
 
