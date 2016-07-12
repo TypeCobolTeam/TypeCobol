@@ -21,6 +21,7 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("NewTestsToFix-Parsing")]
         [TestProperty("Time", "fast")]
+		[Ignore]
         public void NewCobol85TestsToFix()
         {
             int nbOfTests = 0;
@@ -52,6 +53,7 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("NewTestsToFix-Parsing")]
         [TestProperty("Time", "fast")]
+		[Ignore]
         public void NewTcblTestsToFix()
         {
             int nbOfTests = 0;
