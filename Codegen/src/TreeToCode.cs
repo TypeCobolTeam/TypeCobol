@@ -60,11 +60,28 @@ namespace TypeCobol.Codegen {
 			if (!IsInInput(line)) return 0;
 			int lines = 0;
 			while (offset < Input.Count) {
-				if (Input[offset] == line) break;
-				Write(Input[offset], null);
+				var l = Input[offset];
+				if (l == line) break;
+				if (ShouldCopy(l)) Write(l, null);
+				// offset is normally increased by a call to Write,
+				// so don't forget to do it to avoid infinite loop
+				else offset++;
 				lines++;
 			}
 			return lines;
+		}
+		/// <summary>
+		/// Only copy from input to output lines that are comment or blank.
+		/// Everything else is either:
+		///  - COBOL source, written by original AST nodes
+		///  - TypeCobol source, written by AST generated nodes
+		///  - invalid lines (wtf?)
+		/// Source lines are of type Source, Debug or Continuation in CobolTextLineType enum.
+		/// </summary>
+		/// <param name="line"></param>
+		/// <returns></returns>
+		private bool ShouldCopy(ICobolTextLine line) {
+			return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank;
 		}
 		/// <summary>Write input lines up to the end.</summary>
 		public void Finalize() {
@@ -81,13 +98,21 @@ namespace TypeCobol.Codegen {
 			return false;
 		}
 
+		/// <summary>
+		/// Writes one line of Input as one or more lines in Output.
+		///	A single line, once indented, can output as many lines, especially on 80 colons.
+		///	The value of offset is increased once as part of the Write operation.
+		/// </summary>
+		/// <param name="line">Input[offset]</param>
+		/// <param name="isComment">Must line be commented ?</param>
 		private void Write(ITextLine line, bool? isComment) {
 			if (line == lastline) return;
 			int c = 0;
 			foreach(var l in Indent(line, isComment)) {
 				Output.WriteLine(l.Text);
-				offset++;
+				c++;
 			}
+			offset++;
 			lastline = line;
 		}
 
