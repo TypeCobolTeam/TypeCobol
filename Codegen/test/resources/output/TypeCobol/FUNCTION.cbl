@@ -32,18 +32,20 @@
        END-IF                                                                 
                                                                               
        
-       PROGRAM-ID. POW.
+      *DECLARE POW PRIVATE.                                                   
+       PROGRAM-ID. POW.                                                       
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(05).
            01 y PIC 9(03).
            01 result PIC 9(08).
-         PROCEDURE DIVISION
-             USING x y
-             RETURNING result
-         .
+         PROCEDURE DIVISION                                                   
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
+             RETURNING result                                                 
+         .                                                                    
            CONTINUE.
-       END PROGRAM POW.
+       END PROGRAM POW.                                                       
 
        TRAITEMENT.
       *    MOVE FUNCTION POW (x y)    TO x                                    
