@@ -15,7 +15,6 @@ namespace TypeCobol.Codegen.Nodes {
 			FunctionDeclarationProfile profile = null;
 			foreach(var child in node.Children) {
 				var ce = child.CodeElement;
-				System.Console.WriteLine("::"+(ce!=null?ce.GetType().Name:"?"));
 				if (child.CodeElement is FunctionDeclarationProfile) {
 					profile = (FunctionDeclarationProfile)child.CodeElement;
 					var pdiv = new ProcedureDivision(profile);
