@@ -271,8 +271,6 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
-			if (declaration.InputParameters.Count != reference.Parameters.Count)
-				System.Console.WriteLine("ERROR: "+declaration.QualifiedName+" called with "+reference.Parameters.Count+" parameters (expected:"+declaration.InputParameters.Count+")");
 			var parameters = new List<Parameter>();
 			for(int c = 0; c < declaration.InputParameters.Count; c++) {
 				var declared = declaration.InputParameters[c];
