@@ -1,0 +1,23 @@
+﻿--- Program ---
+PROGRAM: DateFunctions common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+CUSTOM TYPES:
+ * DateJulian
+     - YYYY {10} Numeric <of> DateJulian
+     - DDD {10} Numeric <of> DateJulian
+ * DateDB2
+     - YYYY {10} Numeric <of> DateDB2
+     - filler-X {10} Alphanumeric <of> DateDB2
+     - MM {10} Numeric <of> DateDB2
+     - filler-X {10} Alphanumeric <of> DateDB2
+     - DD {10} Numeric <of> DateDB2
+SYMBOL TABLE:
+  TYPEDEF DateJulian {1} GROUP(2) [ YYYY DDD ]DateJulian
+  YYYY {10} Numeric <of> DateJulian
+  YYYY {10} Numeric <of> DateDB2
+  DDD {10} Numeric <of> DateJulian
+  TYPEDEF DateDB2 {1} GROUP(5) [ YYYY filler-X MM filler-X DD ]DateDB2
+  filler-X {10} Alphanumeric <of> DateDB2
+  filler-X {10} Alphanumeric <of> DateDB2
+  MM {10} Numeric <of> DateDB2
+  DD {10} Numeric <of> DateDB2

@@ -1,0 +1,152 @@
+﻿ID DIVISION.
+PROGRAM-ID. DateFunctions.
+
+data division.
+working-storage section.
+	01 DateJulian    TYPEDEF STRONG.
+         10 YYYY PIC 9(04).
+         10 DDD  PIC 9(03).     
+       01 DateDB2 TYPEDEF STRONG.
+         10  YYYY PIC 9(04).
+         10  filler-X PIC X.
+         10  MM PIC 9(02).
+         10  filler-X PIC X.
+         10  DD PIC 9(02).
+
+PROCEDURE DIVISION.
+declare currentDate PRIVATE.
+data division.
+linkage section.
+01 result type Date.
+procedure division returning result.
+    accept result from DATE YYYYMMDD.
+end-declare.
+
+declare currentDateFreeFormat PRIVATE.
+data division.
+linkage section.
+    01 dateType pic X.
+    01 direction pic X.
+    01 separator pic X.
+    01 LL pic X(02).
+    01 PP pic X(02).
+    01 result pic X(10).
+procedure division input dateType direction separator LL PP returning result.
+end-declare.
+
+declare currentDateDB2 PRIVATE.
+data division.
+linkage section.
+    01 result type DateDB2.
+procedure division returning result.
+end-declare.
+
+declare currentDateJulian PRIVATE.
+data division.
+linkage section.
+    01 result type DateJulian.
+procedure division returning result.
+end-declare.
+
+declare convertToDate PRIVATE.
+data division.
+linkage section.
+    01 inputDate type DateDB2.
+    01 result type Date.
+procedure division input inputDate returning result.
+end-declare.
+
+declare convertToDate PRIVATE.
+data division.
+linkage section.
+    01 inputDate type DateJulian.
+    01 result type Date.
+procedure division input inputDate returning result.
+end-declare.
+
+declare convertToDateDB2 PRIVATE.
+data division.
+linkage section.
+    01 inputDate type Date.
+    01 result type DateDB2.
+procedure division input inputDate returning result.
+end-declare.
+declare convertToDateDB2 PRIVATE.
+data division.
+linkage section.
+    01 inputDate type DateJulian.
+    01 result type DateDB2.
+procedure division input inputDate returning result.
+end-declare.
+
+declare convertToDateJulian PRIVATE.
+data division.
+linkage section.
+    01 inputDate type Date.
+    01 result type DateJulian.
+procedure division input inputDate returning result.
+end-declare.
+
+declare convertToDateJulian PRIVATE.
+data division.
+linkage section.
+    01 inputDate type DateDB2.
+    01 result type DateJulian.
+procedure division input inputDate returning result.
+end-declare.
+
+
+declare isDateValid PRIVATE.
+data division.
+linkage section.
+    01 inputDate type Date.
+    01 result type Bool.
+procedure division input inputDate returning result.
+end-declare.
+declare isDateValid PRIVATE.
+data division.
+linkage section.
+    01 inputDate type DateDB2.
+    01 result type Bool.
+procedure division input inputDate returning result.
+end-declare.
+declare isDateValid PRIVATE.
+data division.
+linkage section.
+    01 inputDate type DateJulian.
+    01 result type Bool.
+procedure division input inputDate returning result.
+end-declare.
+
+
+
+declare addDaysToDate PRIVATE.
+data division.
+linkage section.
+    01 dateToAdd type Date.
+    01 nbOFDays pic 9(04).
+    01 result type Date.
+procedure division input dateToAdd nbOFDays returning result.
+end-declare.
+declare addDaysToDate PRIVATE.
+data division.
+linkage section.
+    01 dateToAdd type Date.
+    01 nbOFDays     pic 9(04).
+    01 typeOfDays   pic X.
+    01 calendar     pic X.
+    01 result type Date.
+procedure division input dateToAdd nbOFDays typeOfDays calendar returning result.
+end-declare.
+
+
+declare daysBetween PRIVATE.
+data division.
+linkage section.
+    01 date1       type Date.
+    01 date2       type Date.
+    01 result      pic 9(04).
+procedure division input date1 date2 returning result.
+end-declare.
+
+.
