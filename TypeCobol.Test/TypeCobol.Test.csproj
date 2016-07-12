@@ -28,6 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -109,6 +110,8 @@
     <Content Include="Compiler\Parser\ResultFiles\Expressions\FunctionIdentifiersNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\Expressions\AbbreviatedNY.txt" />
     <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CRandLF.rdz.txt" />
+    <Content Include="Compiler\Parser\ResultFiles\Programs\CRandLFPGM.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\MidPriority\Condition.rdz.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\HighPriority\CopyProcedure6.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\HighPriority\CopyProcedure5.txt" />
@@ -291,7 +294,11 @@
     <Content Include="NewTestsToFix\Parser\ResultFiles\LowPriority\RemarksWithEmptyLine rdz.txt" />
     <Content Include="NewTestsToFix\Parser\ResultFiles\LowPriority\RemarksWithEmptyLinePGM.txt" />
     <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmEmptyPartialWordReplace.txt" />
+    <None Include="Compiler\Parser\Samples\Programs\CRandLF.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\CRandLF.rdz.cbl" />
     <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmEmptyPartialWordReplace.cpy" />
+    <Content Include="NewTestsToFix\Parser\ResultFiles\LowPriority\EILegacyRemarks.rdz.txt" />
+    <None Include="NewTestsToFix\Parser\Samples\LowPriority\EILegacyRemarks.rdz.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\LowPriority\RemarksWithEmptyLine rdz.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\LowPriority\RemarksWithEmptyLine.cbl" />
     <None Include="NewTestsToFix\Parser\Samples\LowPriority\Memory.pgm" />
