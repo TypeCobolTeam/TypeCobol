@@ -3,7 +3,7 @@ PROGRAM-ID. DateFunctions.
 
 data division.
 working-storage section.
-	01 DateJulian    TYPEDEF STRONG.
+    01 DateJulian    TYPEDEF STRONG.
          10 YYYY PIC 9(04).
          10 DDD  PIC 9(03).     
        01 DateDB2 TYPEDEF STRONG.
