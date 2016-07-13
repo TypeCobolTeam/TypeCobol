@@ -4,9 +4,10 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 namespace TypeCobol.Compiler.CodeElements.Functions {
 
 	public class Function {
-		public QualifiedName QualifiedName;
-		public IList<Parameter> InputParameters;
-		public IList<Parameter> OutputParameters;
+		public AccessModifier Visibility { get; private set; }
+		public QualifiedName QualifiedName { get; private set; }
+		public IList<Parameter> InputParameters { get; private set; }
+		public IList<Parameter> OutputParameters { get; private set; }
 
 		public Parameter Result {
 			get {
@@ -16,10 +17,11 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 			}
 		}
 
-		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs) {
+		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, AccessModifier visibility = AccessModifier.Private) {
 			this.QualifiedName = name;
 			this.InputParameters  = inputs  ?? new List<Parameter>();
 			this.OutputParameters = outputs ?? new List<Parameter>();
+			this.Visibility = visibility;
 		}
 
 		public string Name { get { return QualifiedName.Head; } }

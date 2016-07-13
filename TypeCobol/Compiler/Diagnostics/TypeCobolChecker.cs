@@ -156,7 +156,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 					DiagnosticUtils.AddError(data, pd.Name+" is not a parameter.");
 				}
 			}
-			var function = new Function(header.Name, inparameters, outparameters);
+			var function = new Function(header.Name, inparameters, outparameters, visibility);
 			node.SymbolTable.EnclosingScope.Register(function);
 		}
 
