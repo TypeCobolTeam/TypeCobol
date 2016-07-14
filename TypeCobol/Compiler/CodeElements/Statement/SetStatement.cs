@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -24,104 +26,112 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Format 1: SET for basic table handling
     /// set index-name or identifier(numeric integer item) TO index-name or identifier(numeric integer item) or positive integer
-    ///         List<Expression> Receiving    //index-name or identifier(numeric integer item)
-    ///         Expression Sending             //index-name or identifier(numeric integer item) or positive integer
-    /// 
+   /// 
     /// Format 5: SET for USAGE IS POINTER data items
-    ///         List<Expression> Receiving   //identifier(pointer), address of
-    ///         Expression Sending            //identifier, address of, null, nulls
+    /// set (address of)? identifier(pointer) TO (address of)? identifier | NULL
     /// 
     /// Format 6: SET for procedure-pointer and function-pointer data items
     /// set procedureOrFunctionPointer to procedureOrFunctionPointer | (ENTRY identifier|literal) | NULL | pointer
-    ///         List<Expression> Receiving   //index-name or identifier(numeric integer item)
-    ///         Expression Sending            //index-name or identifier(numeric integer item) or positive integer
     /// 
     /// Format 7: SET for USAGE OBJECT REFERENCE data items
     /// set objectReference to objectReference | NULL | SELF
-    ///         List<Expression> Receiving   //index-name or identifier(numeric integer item)
-    ///         Expression Sending            //index-name or identifier(numeric integer item) or positive integer
     /// </summary>
-    public class SetStatementForAssignation : SetStatement
+    public class SetStatementForAssignment : SetStatement
     {
-        public SetStatementForAssignation() : base(StatementType.SetStatementForAssignation)
+        public SetStatementForAssignment() : base(StatementType.SetStatementForAssignment)
         { }
 
         /// <summary>
         /// index-name, identifier(numeric integer item), pointer, procedure-pointer, function-pointer, object reference id
         /// </summary>
-        public List<Expression> Receiving { get; set; }
-        IList<Expression> Receiving.Expressions { get { return Receiving; } }
+        public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
+
         /// <summary>
         /// index-name, identifier, positive integer, address of, null, nulls, entry identifier|literal, object reference id, pointer,
         /// procedure-pointer, function-pointer,
         /// </summary>
-        public Expression Sending { get; set; }
-        Expression Sending.Expression { get { return Sending; } }
+        public SetSendingVariable SendingVariable { get; set; }
 
         public override string ToString()
         {
-            if (Receiving == null && Sending == null)
+            if (ReceivingStorageAreas == null && SendingVariable == null)
             {
                 return base.ToString();
             }
-            var sb = new System.Text.StringBuilder("Set ");
-            if (Receiving != null)
+            var sb = new StringBuilder("Set ");
+            if (ReceivingStorageAreas != null)
             {
-                foreach (Expression receivingField in Receiving)
+                foreach (var receivingField in ReceivingStorageAreas)
                 {
                     sb.Append(' ');
                     sb.Append(receivingField);
                 }
             }
             sb.Append(" TO ");
-            if (Sending != null)
+            if (SendingVariable != null)
             {
-                sb.AppendLine(Sending.ToString());
+                sb.AppendLine(SendingVariable.ToString());
             }
             return sb.ToString();
         }
 
-        ICollection<Identifier> IdentifierUser.Identifiers
-        {
-            get
-            {
-                var identifiers = new List<Identifier>();
-                if (Sending is Identifier) identifiers.Add(Sending as Identifier);
-                foreach (var expression in Receiving)
-                    if (expression is Identifier)
-                        identifiers.Add(expression as Identifier);
-                return identifiers;
-            }
-        }
+        // [TypeCobol]
+        //public bool IsUnsafe { get { return true; } }
+    }
+
+    /// <summary>
+    /// Sending field for SET statement for assignation
+	/// </summary>
+    public class SetSendingVariable
+    {
+        /// <summary>
+        /// integerVariableOrIndex1						// identifier can also be an index name	//Format 1 + 5
+        /// </summary>
+        public IntegerVariable IntegerVariableOrIndex { get; set; }
 
         /// <summary>
-        /// Regarding the sending element, only one of the pair elements is not null:
-        /// either we know its qualified name, or its type.
+        /// nullPointerValue				            // pointer data item //Format 5 + 6 + 7
         /// </summary>
-        ICollection<System.Tuple<System.Tuple<QualifiedName, DataType>, QualifiedName>> SymbolWriter.Symbols
+        public NullPointerValue NullPointerValue { get; set; }
+
+        /// <summary>
+        /// ENTRY_ARG programNameOrProgramEntryVariable	// procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+        /// </summary>
+        public SymbolReferenceVariable ProgramNameOrProgramEntryVariable { get; set; }
+
+        /// <summary>
+        /// selfObjectIdentifier;         				// object reference id 	//Format 7 (+NULL)
+        /// </summary>
+        public Token SelfObjectIdentifier { get; set; }
+
+        public override string ToString()
         {
-            get
+            if(IntegerVariableOrIndex != null)
             {
-                var list = new List<System.Tuple<System.Tuple<QualifiedName, DataType>, QualifiedName>>();
-                var sending = new System.Tuple<QualifiedName, DataType>(IdentifierUtils.GetQualifiedName(Sending), IdentifierUtils.GetDataType(Sending));
-                foreach (var r in Receiving)
-                {
-                    var receiving = IdentifierUtils.GetQualifiedName(r);
-                    list.Add(new System.Tuple<System.Tuple<QualifiedName, DataType>, QualifiedName>(sending, receiving));
-                }
-                return list;
+                return IntegerVariableOrIndex.ToString();
+            }
+            else if(NullPointerValue != null)
+            {
+                return NullPointerValue.ToString();
+            }
+            else if(ProgramNameOrProgramEntryVariable != null)
+            {
+                return ProgramNameOrProgramEntryVariable.ToString();
+            }
+            else if(SelfObjectIdentifier != null)
+            {
+                return SelfObjectIdentifier.ToString();
+            }
+            else
+            {
+                return string.Empty;
             }
         }
-        public bool IsUnsafe { get { return true; } }
-
     }
 
     /// <summary>
     /// Format 2: SET for adjusting indexes
     /// set index-name UP|DOWN BY identifier(numeric integer item) or positive integer
-    ///         List<Identifier> ReceivingIndexs    //index-name
-    ///         SyntaxBoolean UpBy
-    ///         Expression Sending             //identifier(numeric integer item) or positive integer
     /// </summary>
     public class SetStatementForIndexes : SetStatement
     {
@@ -129,48 +139,52 @@ namespace TypeCobol.Compiler.CodeElements
         { }
 
         /// <summary>
-        ///     index-name
+        /// index-name
         /// </summary>
-        public List<Index> ReceivingIndexs { get; set; }
-
-        public bool UpBy { get; set; }
-        public bool DownBy { get; set; }
+        public ReceivingStorageArea[] ReceivingIndexes { get; set; }
 
         /// <summary>
-        ///     identifier(numeric integer item) or positive integer
+        /// UP | DOWN
         /// </summary>
-        public Expression SendingField { get; set; }
+        public SyntaxProperty<IndexIncrementDirection> IncrementDirection { get; set; }
+
+        /// <summary>
+        /// identifier(numeric integer item) or positive integer
+        /// </summary>
+        public IntegerVariable SendingVariable{ get; set; }
 
         public override string ToString()
         {
-            if (ReceivingIndexs == null && !UpBy && SendingField == null)
-            {
-                return base.ToString();
-            }
             var sb = new StringBuilder("Set ");
-            if (ReceivingIndexs != null)
+            if (ReceivingIndexes != null)
             {
-                foreach (var receivingIndex in ReceivingIndexs)
+                foreach (var receivingIndex in ReceivingIndexes)
                 {
                     sb.Append(' ');
                     sb.Append(receivingIndex);
                 }
             }
-
-            if (UpBy) sb.Append(" UP BY ");
-            else if (DownBy) sb.Append(" DOWN BY ");
+            if (IncrementDirection != null)
+            {
+                if (IncrementDirection.Value == IndexIncrementDirection.Up) sb.Append(" UP BY ");
+                else if (IncrementDirection.Value == IndexIncrementDirection.Down) sb.Append(" DOWN BY ");
+            }
             else sb.Append(" ");
-            if (SendingField != null) sb.Append(SendingField);
-
+            if (SendingVariable != null) sb.Append(SendingVariable);
             sb.AppendLine(" ");
             return sb.ToString();
         }
     }
 
+    public enum IndexIncrementDirection
+    {
+        Up,
+        Down
+    }
+
     /// <summary>
     /// Format 3: SET for external switches
     /// set externalSwitches to ON|OFF
-    ///         List<SetExternalSwitch> SetExternalSwitches
     /// </summary>
     internal class SetStatementForSwitches : SetStatement
     {
@@ -178,45 +192,43 @@ namespace TypeCobol.Compiler.CodeElements
         { }
 
         /// <summary>
-        /// 
+        /// mnemonicForUPSISwitchNameReference+ TO (ON | OFF)
         /// </summary>
-        public List<SetExternalSwitch> SetExternalSwitches { get; set; }
+        public IList<SetUPSISwitchInstruction> SetUPSISwitchInstructions { get; set; }
 
 
         public override string ToString()
         {
-            if (SetExternalSwitches == null)
-            {
-                return base.ToString();
-            }
             var sb = new StringBuilder("SET ");
-            foreach (SetExternalSwitch externalSwitch in SetExternalSwitches)
+            foreach (var setSwitchPositionInstruction in SetUPSISwitchInstructions)
             {
-                if (externalSwitch.MnemonicForEnvironmentNames != null)
+                if (setSwitchPositionInstruction.MnemonicForUPSISwitchName != null)
                 {
-                    foreach (var mnemonicForEnvironmentName in externalSwitch.MnemonicForEnvironmentNames)
-                    {
-                        sb.Append(' ');
-                        sb.Append(mnemonicForEnvironmentName);
-                    }
+                    sb.Append(' ');
+                    sb.Append(setSwitchPositionInstruction.MnemonicForUPSISwitchName);
                 }
-                if (externalSwitch.ToOn) sb.AppendLine(" TO ON");
-                else if (externalSwitch.ToOff) sb.AppendLine(" TO OFF");
+                if (setSwitchPositionInstruction.SwitchPosition != null)
+                {
+                    if (setSwitchPositionInstruction.SwitchPosition.Value == UPSISwitchPosition.On) sb.AppendLine(" TO ON");
+                    else if (setSwitchPositionInstruction.SwitchPosition.Value == UPSISwitchPosition.Off) sb.AppendLine(" TO OFF");
+                }
                 else sb.AppendLine("");
             }
             return sb.ToString();
         }
     }
 
-    public class SetExternalSwitch
+    public class SetUPSISwitchInstruction
     {
-        public List<MnemonicForEnvironmentName> MnemonicForEnvironmentNames { get; set; }
-        public bool ToOn { get; set; }
-        public bool ToOff { get; set; }
+        public SymbolReference MnemonicForUPSISwitchName { get; set; }
 
-        //TO avoid creating a new StringBuilder and as SetExternalSwitch is only used by SetStatementForSwitches
-        //This CodeElement doesn't define a ToString() method
-        //public override string ToString()
+        public SyntaxProperty<UPSISwitchPosition> SwitchPosition { get; set; }
+    }
+
+    public enum UPSISwitchPosition
+    {
+        On,
+        Off
     }
 
     /// <summary>
@@ -230,22 +242,22 @@ namespace TypeCobol.Compiler.CodeElements
         { }
 
         /// <summary>
-        ///     identifier (condition-name)
+        /// identifier (condition-name)
         /// </summary>
-        public List<Identifier> ConditionIdentifiers { get; set; }
+        public DataOrConditionStorageArea[] Conditions { get; set; }
 
+        /// <summary>
+        /// Always TRUE
+        /// </summary>
+        public BooleanValue SendingValue { get; set; }
 
         public override string ToString()
         {
-            if (ConditionIdentifiers == null)
-            {
-                return base.ToString();
-            }
             var sb = new StringBuilder(base.ToString());
-            foreach (Identifier conditionIdentifier in ConditionIdentifiers)
+            foreach (var condition in Conditions)
             {
                 sb.Append(' ');
-                sb.Append(conditionIdentifier);
+                sb.Append(condition);
             }
             sb.AppendLine(" TO TRUE");
             return sb.ToString();

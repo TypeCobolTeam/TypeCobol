@@ -99,7 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
         SearchSerialStatement,
         SearchBinaryStatement,
         WhenSearchCondition,
-        SetStatementForAssignation,
+        SetStatementForAssignment,
         SetStatementForIndexes,
         SetStatementForSwitches,
         SetStatementForConditions,

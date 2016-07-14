@@ -2075,7 +2075,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context)
         {
             Context = context;
-            CodeElement = CobolStatementsBuilder.CreateWhenSearchCondition();
+            CodeElement = CobolStatementsBuilder.CreateWhenCondition(context);
         }
 
         public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context)
@@ -2087,7 +2087,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context)
         {
             Context = context;
-            CodeElement = CobolStatementsBuilder.CreateWhenSearchCondition();
+            CodeElement = CobolStatementsBuilder.CreateWhenSearchCondition(context);
         }
 
         public override void EnterInvalidKeyCondition(CodeElementsParser.InvalidKeyConditionContext context)

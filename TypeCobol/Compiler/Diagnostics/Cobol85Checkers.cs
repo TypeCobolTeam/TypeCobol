@@ -177,7 +177,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			return new List<Type>() { typeof(TypeCobol.Compiler.CodeElements.SetStatementForIndex), };
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var sa = e as TypeCobol.Compiler.CodeElements.SetStatementForAssignation;
+			var sa = e as TypeCobol.Compiler.CodeElements.SetStatementForAssignment;
 			if (sa != null) {
 				var ca = c as CodeElementsParser.SetStatementForAssignationContext;
 				for (int i = 0; i < ca.identifier().Length; i++) {

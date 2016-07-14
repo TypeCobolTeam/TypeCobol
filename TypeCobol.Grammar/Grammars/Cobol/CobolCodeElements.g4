@@ -6009,22 +6009,25 @@ searchStatement:
 	serialSearch | binarySearch;
 
 serialSearch:
-	SEARCH variable1 (VARYING dataOrIndexStorageArea)?;
+	SEARCH identifier (VARYING dataOrIndexStorageArea)?;
 
 binarySearch:
-	SEARCH ALL variable1;
+	SEARCH ALL identifier;
 
 whenSearchCondition:
-	WHEN searchCondition (AND searchCondition)*;
+	WHEN conditionalExpression;
 
-searchCondition:
-	serialSearchCondition | binarySearchCondition;
-
-serialSearchCondition: 
-	conditionalExpression;
-
-binarySearchCondition:
-	(variable2 IS? ((EQUAL TO?) | EqualOperator) variableOrExpression2) | conditionNameConditionOrSwitchStatusCondition;
+// IMPORTANT :
+// The more restrictive syntax for binary search can not be distinguished 
+// from the full syntax allowed for serial search at this parsing stage.
+// We need to check the following restriction at the second parsing stage :
+//
+// whenBinarySearchCondition :
+//     WHEN binarySearchCondition (AND searchCondition)*
+//
+// binarySearchCondition:
+//     (variable2 IS? ((EQUAL TO?) | EqualOperator) variableOrExpression2) | 
+//     conditionNameConditionOrSwitchStatusCondition;
 
 searchStatementEnd: END_SEARCH;
 
@@ -6223,7 +6226,7 @@ searchStatementEnd: END_SEARCH;
 // currently executing method was invoked.
 
 setStatement:
-	setStatementForAssignation	       // SET format 1 for basic table handling
+	setStatementForAssignment	       // SET format 1 for basic table handling
 								       // SET format 5 for USAGE IS POINTER
 								       // SET format 6 for procedure-pointer and function-pointer data items
 								       // SET format 7 for USAGE OBJECT REFERENCE data items
@@ -6758,7 +6761,7 @@ messageToOperator:
 stringStatement:
 	STRING contentToConcatenate+ 
 	INTO receivingField=storageArea1
-	(WITH? POINTER characterPositionInReceivingField=variable1)?;
+	(WITH? POINTER characterPositionInReceivingField=storageArea1)?;
 	
 contentToConcatenate:
 	sendingField=variable6+ DELIMITED BY? (delimiterCharacters=variable4 | SIZE);

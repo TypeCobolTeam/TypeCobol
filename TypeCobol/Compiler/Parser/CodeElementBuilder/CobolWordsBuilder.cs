@@ -25,6 +25,12 @@ namespace TypeCobol.Compiler.Parser
             return new BooleanValue(valueToken);
         }
 
+        internal BooleanValue CreateBooleanValue(ITerminalNode context)
+        {
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new BooleanValue(valueToken);
+        }
+
         internal IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context)
         {
             Token valueToken = ParseTreeUtils.GetFirstToken(context);

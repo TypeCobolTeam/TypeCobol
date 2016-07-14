@@ -1231,35 +1231,25 @@ namespace TypeCobol.Compiler.Parser
         // SEARCH STATEMENT //
         //////////////////////
 
-        internal CodeElement CreateSerialSearchStatement(CodeElementsParser.SerialSearchContext serialSearchContext)
+        internal CodeElement CreateSerialSearchStatement(CodeElementsParser.SerialSearchContext context)
         {
-            throw new NotImplementedException();
+            var statement = new SearchSerialStatement();
+
+            statement.TableToSearch = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+            if(context.dataOrIndexStorageArea() != null)
+            {
+                statement.VaryingSearchIndex = CobolExpressionsBuilder.CreateDataOrIndexStorageArea(context.dataOrIndexStorageArea());
+            }
+
+            return statement;
         }
 
-        internal CodeElement CreateBinarySearchStatement(CodeElementsParser.BinarySearchContext binarySearchContext)
+        internal CodeElement CreateBinarySearchStatement(CodeElementsParser.BinarySearchContext context)
         {
-            var statement = new SearchStatement();
-            statement.All = context.ALL() != null;
-            // SEARCH ALL? identifier
-            var identifier1 = context.identifier();
-            if (identifier1 != null)
-            {
-                statement.Element = CobolWordsBuilder.CreateIdentifier(identifier1);
-                if (IdentifierUtils.IsSubscripted(statement.Element))
-                    DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", context);
-                if (IdentifierUtils.IsReferenceModified(statement.Element))
-                    DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", context);
-            }
-            var identifier2 = context.identifierOrIndexName();
-            // SEARCH ... VARYING identifier
-            if (identifier2 != null)
-            {
-                statement.VaryingIdentifier = CobolWordsBuilder.CreateIdentifier(identifier2);
-                // TO DO : lookup symbol table to distinguish between identifier or index name
-                // statement.VaryingIndex = SyntaxElementBuilder.CreateIndexName(identifier2);
-            }
-            if (statement.All && statement.IsVarying)
-                DiagnosticUtils.AddError(statement, "Illegal VARYING after SEARCH ALL", context);
+            var statement = new SearchBinaryStatement();
+
+            statement.TableToSearch = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+
             return statement;
         }
 
@@ -1267,118 +1257,108 @@ namespace TypeCobol.Compiler.Parser
         // SET STATEMENT //
         ///////////////////
 
-        internal CodeElement CreateSetStatementForAssignation(CodeElementsParser.SetStatementForAssignationContext setStatementForAssignationContext)
+        internal CodeElement CreateSetStatementForAssignation(CodeElementsParser.SetStatementForAssignmentContext context)
         {
-            var statement = new SetStatementForAssignation();
-            if (context.identifier() != null)
-            {
-                statement.Receiving = new List<Expression>();
-                foreach (var identifierContext in context.identifier())
-                {
-                    Expression receiving;
-                    if (identifierContext != null)
-                    {
-                        receiving = CobolWordsBuilder.CreateIdentifier(identifierContext);
-                    }
-                    else break;
-                    statement.Receiving.Add(receiving);
-                }
-            }
+            var statement = new SetStatementForAssignment();
 
-            if (context.setStatementForAssignationSending() != null)
-            {
-                if (context.setStatementForAssignationSending().identifier() != null)
-                {
-                    statement.Sending = CobolWordsBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
-                }
-                else if (context.setStatementForAssignationSending().IntegerLiteral() != null)
-                {
-                    statement.Sending = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().IntegerLiteral())));
-                }
-                else if (context.setStatementForAssignationSending().TRUE() != null)
-                {
-                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().TRUE())));
-                }
-                else if (context.setStatementForAssignationSending().FALSE() != null)
-                {
-                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().FALSE())));
-                }
-                else if (context.setStatementForAssignationSending().NULL() != null)
-                {
-                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULL()));
-                }
-                else if (context.setStatementForAssignationSending().NULLS() != null)
-                {
-                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
-                }
-                else if (context.setStatementForAssignationSending().SELF() != null)
-                {
-                    statement.Sending =
-                        new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().SELF()));
-                }
-            }
+           statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.dataOrIndexStorageArea(),
+               ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
+
+            statement.SendingVariable = CreateSendingVariable(context.setSendingField());
+
             return statement;
         }
 
-        internal CodeElement CreateSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext setStatementForIndexesContext)
+        private SetSendingVariable CreateSendingVariable(CodeElementsParser.SetSendingFieldContext context)
         {
-            var statement = new SetStatementForIndex();
+            var variable = new SetSendingVariable();
+            if(context.integerVariableOrIndex1() != null)
+            {
+                variable.IntegerVariableOrIndex = CobolExpressionsBuilder.CreateIntegerVariableOrIndex(
+                    context.integerVariableOrIndex1());
+            }
+            else if(context.nullPointerValue() != null)
+            {
+                variable.NullPointerValue = CobolWordsBuilder.CreateNullPointerValue(context.nullPointerValue());
+            }
+            else if(context.programNameOrProgramEntryVariable() != null)
+            {
+                variable.ProgramNameOrProgramEntryVariable = CobolExpressionsBuilder.CreateProgramNameOrProgramEntryVariable(
+                    context.programNameOrProgramEntryVariable());
+            }
+            else if(context.selfObjectIdentifier() != null)
+            {
+                variable.SelfObjectIdentifier = ParseTreeUtils.GetFirstToken(context.selfObjectIdentifier());
+            }
+            return variable;
+        }
 
-            if (context.indexNameReference() != null)
-            {
-                var indexs = new List<Index>();
-                foreach (var indexNameContext in context.indexNameReference())
-                {
-                    indexs.Add(CobolWordsBuilder.CreateIndex(indexNameContext));
-                }
-                statement.ReceivingIndexs = indexs;
-            }
-            statement.UpBy = (context.UP() != null);
-            statement.DownBy = (context.DOWN() != null);
+        internal CodeElement CreateSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context)
+        {
+            var statement = new SetStatementForIndexes();
 
-            if (context.identifier() != null)
+            statement.ReceivingIndexes = BuildObjectArrrayFromParserRules(context.indexStorageArea(),
+                ctx => CobolExpressionsBuilder.CreateIndexStorageArea(ctx));
+
+            if(context.UP() != null)
             {
-                statement.SendingField = CobolWordsBuilder.CreateIdentifier(context.identifier());
+                statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Up,
+                    context.UP());
             }
-            else if (context.IntegerLiteral() != null)
+            else if (context.DOWN() != null)
             {
-                statement.SendingField = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
+                statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Down,
+                    context.DOWN());
             }
+            statement.SendingVariable = CobolExpressionsBuilder.CreateIntegerVariable(context.integerVariable1());
+
             return statement;
         }
 
-        internal CodeElement CreateSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext setStatementForSwitchesContext)
+        internal CodeElement CreateSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext context)
         {
             var statement = new SetStatementForSwitches();
 
-            if (context.setStatementForSwitchesWhat() != null)
+            if (context.setSwitchPosition() != null && context.setSwitchPosition().Length > 0)
             {
-                var setExternalSwitchs = new List<SetExternalSwitch>();
-                foreach (var switchesWhatContext in context.setStatementForSwitchesWhat())
+                statement.SetUPSISwitchInstructions = new List<SetUPSISwitchInstruction>();
+                SyntaxProperty<UPSISwitchPosition> upsiSwitchPosition = null;
+                foreach (var setSwitchContext in context.setSwitchPosition())
                 {
-                    var setExternalSwitch = new SetExternalSwitch();
-
-                    if (switchesWhatContext.mnemonicForUPSISwitchNameReference() != null)
+                    if (setSwitchContext.ON() != null)
                     {
-                        var mnemonics = new List<MnemonicForEnvironmentName>();
-                        foreach (var mnemonicContext in switchesWhatContext.mnemonicForUPSISwitchNameReference())
-                        {
-                            mnemonics.Add(new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(mnemonicContext)));
-                        }
-                        setExternalSwitch.MnemonicForEnvironmentNames = mnemonics;
+                        upsiSwitchPosition = CreateSyntaxProperty<UPSISwitchPosition>(UPSISwitchPosition.On,
+                            setSwitchContext.ON());
                     }
-                    setExternalSwitch.ToOn = (switchesWhatContext.ON() != null);
-                    setExternalSwitch.ToOff = (switchesWhatContext.OFF() != null);
-                    setExternalSwitchs.Add(setExternalSwitch);
+                    else if (setSwitchContext.OFF() != null)
+                    {
+                        upsiSwitchPosition = CreateSyntaxProperty<UPSISwitchPosition>(UPSISwitchPosition.Off,
+                            setSwitchContext.OFF());
+                    }
+
+                    foreach (var mnemonicContext in setSwitchContext.mnemonicForUPSISwitchNameReference())
+                    {
+                        var setSwitchInstruction = new SetUPSISwitchInstruction();
+                        setSwitchInstruction.MnemonicForUPSISwitchName = CobolWordsBuilder.CreateMnemonicForUPSISwitchNameReference(mnemonicContext);
+                        setSwitchInstruction.SwitchPosition = upsiSwitchPosition;
+                        statement.SetUPSISwitchInstructions.Add(setSwitchInstruction);
+                    }
                 }
-                statement.SetExternalSwitches = setExternalSwitchs;
             }
+
             return statement;
         }
 
-        internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext setStatementForConditionsContext)
+        internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext context)
         {
-            throw new NotImplementedException();
+            var statement = new SetStatementForConditions();
+
+            statement.Conditions = BuildObjectArrrayFromParserRules(context.conditionReference(),
+                ctx => CobolExpressionsBuilder.CreateConditionReference(ctx));
+
+            statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
+
+            return statement;
         }
         
         ////////////////////
@@ -1630,9 +1610,9 @@ namespace TypeCobol.Compiler.Parser
             return statement;
         }
 
-        ////////////////////
-        // WHEN CONDITION //
-        ////////////////////
+        /////////////////////////////
+        // WHEN EVALUATE CONDITION //
+        /////////////////////////////
 
         internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context)
         {
@@ -1675,11 +1655,11 @@ namespace TypeCobol.Compiler.Parser
         // WHEN SEARCH CONDITION //
         ///////////////////////////
 
-        internal CodeElement CreateWhenSearchCondition()
+        internal CodeElement CreateWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context)
         {
-            throw new NotImplementedException();
-            statement.SelectionSubjects = BuildObjectArrrayFromParserRules(context.comparisonLHSExpression(),
-                    ctx => CreateEvaluateSelectionSubject(ctx));
+            var statement = new WhenSearchCondition();
+
+            statement.ConditionalExpression = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
 
             return statement;
         }
