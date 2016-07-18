@@ -51,6 +51,9 @@ namespace TypeCobol.Compiler.CodeElements
         // -- Data Division --
         FileDescriptionEntry,
         DataDescriptionEntry,
+        DataRedefinesEntry,
+        DataRenamesEntry,
+        DataConditionEntry,
         // -- InputOutput Section --
         FileControlEntry,
         IOControlEntry,
@@ -127,9 +130,9 @@ namespace TypeCobol.Compiler.CodeElements
         OnSizeErrorCondition,
         NotOnSizeErrorCondition,
         ElseCondition,
-        WhenEvaluateCondition,
+        WhenCondition,
         WhenOtherCondition,
-        WhenConditionalExpression,
+        WhenSearchCondition,
 
         // Statement ends
 

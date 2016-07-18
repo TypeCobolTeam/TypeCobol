@@ -11,23 +11,13 @@ tcCodeElement:
 	;
 
 qualifiedDataName:                                    (qDataOrFile*       dataNameReference                                                                                  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataName;
-qualifiedDataNameOrIndexName:                         (qDataOrFile*       dataNameReferenceOrIndexNameReference                                                              (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrIndexName;
 qualifiedConditionName:                               (qDataOrFileOrUPSI* conditionNameReferenceOrConditionForUPSISwitchNameReference                                        (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedConditionName;
-qualifiedDataNameOrQualifiedConditionName:            (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference                     (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrConditionName;
-qualifiedDataNameOrQualifiedConditionNameOrIndexName: (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName;
-qualifiedDataNameOrQualifiedConditionNameOrFileName:  (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrQualifiedConditionNameOrFileName;
-qualifiedDataNameOrQualifiedConditionNameOrClassName: (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrQualifiedConditionNameOrClassName;
 
 qDataOrFile:       dataNameReferenceOrFileNameReference                                     (LeftParenthesisSeparator subscript RightParenthesisSeparator)? ColonSeparator ColonSeparator;
 qDataOrFileOrUPSI: dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)? ColonSeparator ColonSeparator;
 
 legacyQualifiedDataName:                                    dataNameReference                                                                                  ((IN | OF) dataNameReferenceOrFileNameReference)*;
-legacyQualifiedDataNameOrIndexName:                         dataNameReferenceOrIndexNameReference                                                              ((IN | OF) dataNameReferenceOrFileNameReference)*;
 legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrConditionName:                     dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference                     ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrQualifiedConditionNameOrFileName:  dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference  ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrQualifiedConditionNameOrClassName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 
 // rule modified to support:
 // - TYPE DATE (instead of TC-DATE or something)
@@ -38,7 +28,7 @@ cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
 moveStatement:
-    MOVE UNSAFE? corresponding? (TRUE | FALSE | identifierOrLiteral) TO identifier+;
+    MOVE UNSAFE? (CORRESPONDING | CORR)? (booleanValue | variableOrFileName) TO identifier+;
 //         ^                      ^       ^
 //          \                      \       \
 //           \                      --------------  MOVE [TRUE|FALSE] TO <boolean>
@@ -51,7 +41,7 @@ setStatementForAssignationSending:
     identifier | IntegerLiteral
     | FALSE                         // <----- SET <boolean> TO FALSE
     | TRUE | (NULL | NULLS) | SELF
-    | (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))
+    | (ENTRY_ARG programNameOrProgramEntryVariable)
     ;
 
 // rules modified to support custom-designed functions (of arity 0..n)
@@ -68,7 +58,7 @@ functionDeclarationHeader:
 // - no DECLARATIVES
 procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? (outputPhrase | returningPhrase)? PeriodSeparator;
 
-inputPhrase:  INPUT  inputParameters+;
-outputPhrase: OUTPUT dataNameReference+;
+inputPhrase:  INPUT  programInputParameters+;
+outputPhrase: OUTPUT storageArea2+;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
