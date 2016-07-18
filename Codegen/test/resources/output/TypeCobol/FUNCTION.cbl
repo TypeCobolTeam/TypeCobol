@@ -32,7 +32,7 @@
        END-IF                                                                 
                                                                               
        
-      *DECLARE POW PRIVATE.                                                   
+      *DECLARE function POW PRIVATE.                                          
        PROGRAM-ID. POW.                                                       
          DATA DIVISION.
          LINKAGE SECTION.

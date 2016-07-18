@@ -14,7 +14,7 @@ working-storage section.
          10  DD PIC 9(02).
 
 PROCEDURE DIVISION.
-declare currentDate PRIVATE.
+declare function currentDate PRIVATE.
 data division.
 linkage section.
 01 result type Date.
@@ -22,7 +22,7 @@ procedure division returning result.
     accept result from DATE YYYYMMDD.
 end-declare.
 
-declare currentDateFreeFormat PRIVATE.
+declare function currentDateFreeFormat PRIVATE.
 data division.
 linkage section.
     01 dateType pic X.
@@ -34,21 +34,21 @@ linkage section.
 procedure division input dateType direction separator LL PP returning result.
 end-declare.
 
-declare currentDateDB2 PRIVATE.
+declare function currentDateDB2 PRIVATE.
 data division.
 linkage section.
     01 result type DateDB2.
 procedure division returning result.
 end-declare.
 
-declare currentDateJulian PRIVATE.
+declare function currentDateJulian PRIVATE.
 data division.
 linkage section.
     01 result type DateJulian.
 procedure division returning result.
 end-declare.
 
-declare convertToDate PRIVATE.
+declare function convertToDate PRIVATE.
 data division.
 linkage section.
     01 inputDate type DateDB2.
@@ -56,7 +56,7 @@ linkage section.
 procedure division input inputDate returning result.
 end-declare.
 
-declare convertToDate PRIVATE.
+declare function convertToDate PRIVATE.
 data division.
 linkage section.
     01 inputDate type DateJulian.
@@ -64,14 +64,14 @@ linkage section.
 procedure division input inputDate returning result.
 end-declare.
 
-declare convertToDateDB2 PRIVATE.
+declare function convertToDateDB2 PRIVATE.
 data division.
 linkage section.
     01 inputDate type Date.
     01 result type DateDB2.
 procedure division input inputDate returning result.
 end-declare.
-declare convertToDateDB2 PRIVATE.
+declare function convertToDateDB2 PRIVATE.
 data division.
 linkage section.
     01 inputDate type DateJulian.
@@ -79,7 +79,7 @@ linkage section.
 procedure division input inputDate returning result.
 end-declare.
 
-declare convertToDateJulian PRIVATE.
+declare function convertToDateJulian PRIVATE.
 data division.
 linkage section.
     01 inputDate type Date.
@@ -87,7 +87,7 @@ linkage section.
 procedure division input inputDate returning result.
 end-declare.
 
-declare convertToDateJulian PRIVATE.
+declare function convertToDateJulian PRIVATE.
 data division.
 linkage section.
     01 inputDate type DateDB2.
@@ -96,21 +96,21 @@ procedure division input inputDate returning result.
 end-declare.
 
 
-declare isDateValid PRIVATE.
+declare function isDateValid PRIVATE.
 data division.
 linkage section.
     01 inputDate type Date.
     01 result type Bool.
 procedure division input inputDate returning result.
 end-declare.
-declare isDateValid PRIVATE.
+declare function isDateValid PRIVATE.
 data division.
 linkage section.
     01 inputDate type DateDB2.
     01 result type Bool.
 procedure division input inputDate returning result.
 end-declare.
-declare isDateValid PRIVATE.
+declare function isDateValid PRIVATE.
 data division.
 linkage section.
     01 inputDate type DateJulian.
@@ -120,7 +120,7 @@ end-declare.
 
 
 
-declare addDaysToDate PRIVATE.
+declare function addDaysToDate PRIVATE.
 data division.
 linkage section.
     01 dateToAdd type Date.
@@ -128,7 +128,7 @@ linkage section.
     01 result type Date.
 procedure division input dateToAdd nbOFDays returning result.
 end-declare.
-declare addDaysToDate PRIVATE.
+declare function addDaysToDate PRIVATE.
 data division.
 linkage section.
     01 dateToAdd type Date.
@@ -140,7 +140,7 @@ procedure division input dateToAdd nbOFDays typeOfDays calendar returning result
 end-declare.
 
 
-declare daysBetween PRIVATE.
+declare function daysBetween PRIVATE.
 data division.
 linkage section.
     01 date1       type Date.

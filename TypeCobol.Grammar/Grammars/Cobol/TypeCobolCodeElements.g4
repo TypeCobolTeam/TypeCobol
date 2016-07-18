@@ -56,10 +56,9 @@ setStatementForAssignationSending:
 
 // rules modified to support custom-designed functions (of arity 0..n)
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
-intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;
 
 functionDeclarationHeader:
-	DECLARE UserDefinedWord (PRIVATE | PUBLIC) PeriodSeparator;
+	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) PeriodSeparator;
 
 
 // alternate PROCEDURE DIVISION to allow function declarations

@@ -2169,8 +2169,6 @@ namespace TypeCobol.Compiler.Parser
 			ITerminalNode node = null;
 			if (context.UserDefinedWord() != null) node = context.UserDefinedWord();
 			else
-			if (context.FunctionName() != null) node = context.FunctionName();
-			else
 			if (context.LENGTH() != null) node = context.LENGTH();
 			else
 			if (context.RANDOM() != null) node = context.RANDOM();

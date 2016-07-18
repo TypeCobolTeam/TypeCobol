@@ -11,7 +11,7 @@
 
        PROCEDURE DIVISION.
        
-       DECLARE POW PRIVATE.
+       DECLARE function POW PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(05).

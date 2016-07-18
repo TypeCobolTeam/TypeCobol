@@ -1,13 +1,15 @@
 ﻿      * 3 CodeElements errors
-      * "1"@(44:12>44:26): [27:1] Syntax error : a is not a parameter.
-      * "1"@(45:12>45:26): [27:1] Syntax error : b is not a parameter.
-      * "1"@(46:12>46:26): [27:1] Syntax error : c is not a parameter.
+      * "1"@(46:12>46:26): [27:1] Syntax error : a is not a parameter.
+      * "1"@(47:12>47:26): [27:1] Syntax error : b is not a parameter.
+      * "1"@(48:12>48:26): [27:1] Syntax error : c is not a parameter.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
        PROCEDURE DIVISION.
+      *code généré pour gérer les pointeurs
+            .
        
-      *DECLARE DoesNothing PUBLIC.                                            
+      *DECLARE function DoesNothing PUBLIC.                                   
        PROGRAM-ID. DoesNothing.                                               
          PROCEDURE DIVISION                                                   
          .                                                                    
@@ -15,7 +17,7 @@
            .
        END PROGRAM DoesNothing.                                               
 
-      *DECLARE ReturnsZero PUBLIC.                                            
+      *DECLARE function ReturnsZero PUBLIC.                                   
        PROGRAM-ID. ReturnsZero.                                               
          DATA DIVISION.
          LINKAGE SECTION.
@@ -27,7 +29,7 @@
            .
        END PROGRAM ReturnsZero.                                               
        
-      *DECLARE StrangelyReturnsItsInput PRIVATE.                              
+      *DECLARE function StrangelyReturnsItsInput PRIVATE.                     
        PROGRAM-ID. StrangelyReturnsItsInput.                                  
          DATA DIVISION.
          LINKAGE SECTION.
@@ -44,7 +46,7 @@
            END-IF.
        END PROGRAM StrangelyReturnsItsInput.                                  
        
-      *DECLARE SumThreeWithClutterInLinkage PRIVATE.                          
+      *DECLARE function SumThreeWithClutterInLinkage PRIVATE.                 
        PROGRAM-ID. SumThreeWithClutterInLinkage.                              
          DATA DIVISION.
          LINKAGE SECTION.
@@ -67,7 +69,7 @@
            ADD z to result.
        END PROGRAM SumThreeWithClutterInLinkage.                              
        
-      *DECLARE SwapParameters PRIVATE.                                        
+      *DECLARE function SwapParameters PRIVATE.                               
        PROGRAM-ID. SwapParameters.                                            
          DATA DIVISION.
          WORKING-STORAGE SECTION.

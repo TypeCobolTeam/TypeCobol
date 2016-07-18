@@ -401,7 +401,7 @@ copyCompilerStatementBody:
 
 copyReplacingOperand:
                         pseudoText | 
-                        UserDefinedWord | FunctionName |
+                        UserDefinedWord |
                         literal | 
                         reservedWord ; // <- should be any CobolWord except COPY
 

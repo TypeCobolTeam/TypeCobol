@@ -2,14 +2,16 @@
        PROGRAM-ID. FunDeclare.
        
        PROCEDURE DIVISION.
+      *code généré pour gérer les pointeurs
+            .
        
-       DECLARE DoesNothing PUBLIC.
+       DECLARE function DoesNothing PUBLIC.
          PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING'
            .
        END-DECLARE.
 
-       DECLARE ReturnsZero PUBLIC.
+       DECLARE function ReturnsZero PUBLIC.
          DATA DIVISION.
          LINKAGE SECTION.
            01 result PIC 9(04).
@@ -19,7 +21,7 @@
            .
        END-DECLARE.
        
-       DECLARE StrangelyReturnsItsInput PRIVATE.
+       DECLARE function StrangelyReturnsItsInput PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -35,7 +37,7 @@
            END-IF.
        END-DECLARE.
        
-       DECLARE SumThreeWithClutterInLinkage PRIVATE.
+       DECLARE function SumThreeWithClutterInLinkage PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -55,7 +57,7 @@
            ADD z to result.
        END-DECLARE.
        
-       DECLARE SwapParameters PRIVATE.
+       DECLARE function SwapParameters PRIVATE.
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).

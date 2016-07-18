@@ -6,6 +6,7 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler; // DocumentFormat
 using TypeCobol.Tools; // CodeElementDiagnostics
 
+
 namespace TypeCobol.Codegen {
 
 	[TestClass]
@@ -132,12 +133,11 @@ namespace TypeCobol.Codegen {
 
 			// compare with expected result
 			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
-			Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
-		}
 
-		private string ReplaceLineBreaks(string text) {
-			return text.Replace("\r\n","\n").Replace("\r","\n");
-		}
+            
+            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected);
+            //Assert.AreEqual(ReplaceLineBreaks(expected), result);
+        }
 
 		private void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors, string type, Compiler.Text.ColumnsLayout columns) {
 			string comment = GetComment(columns);
