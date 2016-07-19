@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Symbols;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
