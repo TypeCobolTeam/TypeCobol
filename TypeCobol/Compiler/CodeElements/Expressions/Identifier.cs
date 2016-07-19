@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-	public interface Identifier : Expression {
+	public interface Identifier {
 		QualifiedName Name { get; }
 	}
 	public interface Subscriptable {

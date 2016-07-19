@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.CodeModel
 {

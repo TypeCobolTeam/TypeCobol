@@ -45,7 +45,14 @@ namespace TypeCobol.Compiler.Parser
 
 		// Code structure
 
-		// -- Program --
+		  ////////////////////
+		 // IDENTIFICATION //
+		////////////////////
+
+
+
+		 // PROGRAM IDENTIFICATION
+		////////////////////////////
 
 		public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
 			var programIdentification = new ProgramIdentification();
@@ -74,7 +81,9 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 
-		// -- Class --
+
+		 // CLASS IDENTIFICATION
+		//////////////////////////
 
 		public override void EnterClassIdentification(CodeElementsParser.ClassIdentificationContext context) {
 			var classIdentification = new ClassIdentification();
@@ -94,6 +103,11 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = classEnd;
 		}
 
+
+
+		 // FACTORY IDENTIFICATION
+		////////////////////////////
+
 		public override void EnterFactoryIdentification(CodeElementsParser.FactoryIdentificationContext context) {
 			Context = context;
 			CodeElement = new FactoryIdentification();
@@ -104,6 +118,9 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new FactoryEnd();
 		}
 
+		 // OBJECT IDENTIFICATION
+		///////////////////////////
+
 		public override void EnterObjectIdentification(CodeElementsParser.ObjectIdentificationContext context) {
 			Context = context;
 			CodeElement = new ObjectIdentification();
@@ -113,6 +130,9 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = new ObjectEnd();
 		}
+
+		 // METHOD IDENTIFICATION
+		///////////////////////////
 
 		public override void EnterMethodIdentification(CodeElementsParser.MethodIdentificationContext context) {
 			var methodIdentification = new MethodIdentification();
@@ -168,19 +188,26 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-		// -- Environment Division --
+		  //////////////////////////
+		 // ENVIRONMENT DIVISION //
+		//////////////////////////
 
 		public override void EnterEnvironmentDivisionHeader(CodeElementsParser.EnvironmentDivisionHeaderContext context) {
 			Context = context;
 			CodeElement = new EnvironmentDivisionHeader();
 		}
 
-		// -- Configuration Section --
+
+
+		 // CONFIGURATION SECTION
+		///////////////////////////
 
 		public override void EnterConfigurationSectionHeader(CodeElementsParser.ConfigurationSectionHeaderContext context) {
 			Context = context;
 			CodeElement = new ConfigurationSectionHeader();
 		}
+
+		// --- SOURCE-COMPUTER PARAGRAPH ---
 
 		public override void EnterSourceComputerParagraph(CodeElementsParser.SourceComputerParagraphContext context)
 		{
@@ -195,6 +222,8 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = paragraph;
 		}
+
+		// --- OBJECT-COMPUTER PARAGRAPH ---
 
 		public override void EnterObjectComputerParagraph(CodeElementsParser.ObjectComputerParagraphContext context) {
 			var paragraph = new ObjectComputerParagraph();
@@ -226,6 +255,8 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = paragraph;
 		}
+
+		// --- SPECIAL-NAMES PARAGRAPH ---
 
 		public override void EnterSpecialNamesParagraph(CodeElementsParser.SpecialNamesParagraphContext context)
 		{
@@ -463,6 +494,8 @@ namespace TypeCobol.Compiler.Parser
 			return chars;
 		}
 
+		// --- REPOSITORY PARAGRAPH ---
+
 		public override void EnterRepositoryParagraph(CodeElementsParser.RepositoryParagraphContext context) {
 			var paragraph = new RepositoryParagraph();
 			if(context.repositoryClassDeclaration() != null &  context.repositoryClassDeclaration().Length > 0) {
@@ -485,7 +518,293 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+		 // INPUT-OUTPUT SECTION
+		//////////////////////////
 
+		public override void EnterInputOutputSectionHeader(CodeElementsParser.InputOutputSectionHeaderContext context) {
+			Context = context;
+			CodeElement = new InputOutputSectionHeader();
+		}
+
+		public override void EnterFileControlParagraphHeader(CodeElementsParser.FileControlParagraphHeaderContext context) {
+			Context = context;
+			CodeElement = new FileControlParagraphHeader();
+		}
+
+		public override void EnterFileControlEntry(CodeElementsParser.FileControlEntryContext context)
+		{
+			var entry = new FileControlEntry();
+
+			if (context.selectClause() != null)
+			{
+				entry.FileName = CobolWordsBuilder.CreateFileNameDefinition(context.selectClause().fileNameDefinition());
+				if (context.selectClause().OPTIONAL() != null)
+				{
+					entry.IsOptional = new SyntaxProperty<bool>(true,
+						ParseTreeUtils.GetFirstToken(context.selectClause().OPTIONAL()));
+				}
+			}
+			if (context.assignClause() != null && context.assignClause().Length > 0)
+			{
+				var assignClauseContext = context.assignClause()[0];
+				entry.ExternalDataSet = CobolWordsBuilder.CreateAssignmentName(assignClauseContext.assignmentName()[0]);
+			}
+			if (context.reserveClause() != null && context.reserveClause().Length > 0)
+			{
+				var reserveClauseContext = context.reserveClause()[0];
+				entry.ReserveIOBuffersCount = CobolWordsBuilder.CreateIntegerValue(reserveClauseContext.integerValue());
+			}
+			if (context.accessModeClause() != null && context.accessModeClause().Length > 0)
+			{
+				var accessModeClauseContext = context.accessModeClause()[0];
+				if (accessModeClauseContext.SEQUENTIAL() != null)
+				{
+					entry.AccessMode = new SyntaxProperty<FileAccessMode>(FileAccessMode.Sequential,
+						ParseTreeUtils.GetFirstToken(accessModeClauseContext.SEQUENTIAL()));
+				}
+				else if (accessModeClauseContext.RANDOM() != null)
+				{
+					entry.AccessMode = new SyntaxProperty<FileAccessMode>(FileAccessMode.Random,
+						ParseTreeUtils.GetFirstToken(accessModeClauseContext.RANDOM()));
+				}
+				else if (accessModeClauseContext.DYNAMIC() != null)
+				{
+					entry.AccessMode = new SyntaxProperty<FileAccessMode>(FileAccessMode.Dynamic,
+						ParseTreeUtils.GetFirstToken(accessModeClauseContext.DYNAMIC()));
+				}
+			}
+			if (context.fileStatusClause() != null && context.fileStatusClause().Length > 0)
+			{
+				var fileStatusClauseContext = context.fileStatusClause()[0];
+				entry.FileStatus = CobolExpressionsBuilder.CreateStorageArea(fileStatusClauseContext.fileStatus);
+				if (fileStatusClauseContext.vsamReturnCode != null)
+				{
+					entry.VSAMReturnCode = CobolExpressionsBuilder.CreateStorageArea(fileStatusClauseContext.vsamReturnCode);
+				}
+			}
+
+			SyntaxProperty<FileRecordsOrganization> recordsOrganization = null;
+			CharacterVariable paddingCharacter = null;
+			Token recordDelimiter = null;
+			SymbolReference recordKey = null;
+			AlternateRecordKey[] alternateRecordKeys = null;
+			SymbolReference relativeKey = null;
+			SymbolReference password = null;
+			if (context.organizationClause() != null && context.organizationClause().Length > 0)
+			{
+				var organizationClauseContext = context.organizationClause()[0];
+				if (organizationClauseContext.SEQUENTIAL() != null)
+				{
+					recordsOrganization = new SyntaxProperty<FileRecordsOrganization>(FileRecordsOrganization.Sequential,
+						ParseTreeUtils.GetFirstToken(organizationClauseContext.SEQUENTIAL()));
+				}
+				else if (organizationClauseContext.INDEXED() != null)
+				{
+					recordsOrganization = new SyntaxProperty<FileRecordsOrganization>(FileRecordsOrganization.Indexed,
+						ParseTreeUtils.GetFirstToken(organizationClauseContext.INDEXED()));
+				}
+				else if (organizationClauseContext.RELATIVE() != null)
+				{
+					recordsOrganization = new SyntaxProperty<FileRecordsOrganization>(FileRecordsOrganization.Relative,
+						ParseTreeUtils.GetFirstToken(organizationClauseContext.RELATIVE()));
+				}
+				if (organizationClauseContext.LINE() != null)
+				{
+					recordsOrganization = new SyntaxProperty<FileRecordsOrganization>(FileRecordsOrganization.LineSequential,
+						ParseTreeUtils.GetFirstToken(organizationClauseContext.LINE()));
+				}
+			}
+			if (context.paddingCharacterClause() != null && context.paddingCharacterClause().Length > 0)
+			{
+				var paddingCharacterClauseContext = context.paddingCharacterClause()[0];
+				paddingCharacter = CobolExpressionsBuilder.CreateCharacterVariable(paddingCharacterClauseContext.characterVariable());
+			}
+			if (context.recordDelimiterClause() != null && context.recordDelimiterClause().Length > 0)
+			{
+				var recordDelimiterClauseContext = context.recordDelimiterClause()[0];
+				if (recordDelimiterClauseContext.STANDARD_1() != null)
+				{
+					recordDelimiter = ParseTreeUtils.GetFirstToken(recordDelimiterClauseContext.STANDARD_1());
+				}
+				else if (recordDelimiterClauseContext.literalOrUserDefinedWordOReservedWordExceptCopy() != null)
+				{
+					recordDelimiter = ParseTreeUtils.GetFirstToken(recordDelimiterClauseContext.literalOrUserDefinedWordOReservedWordExceptCopy());
+				}
+			}
+			if (context.recordKeyClause() != null && context.recordKeyClause().Length > 0)
+			{
+				var recordKeyClauseContext = context.recordKeyClause()[0];
+				recordKey = CobolWordsBuilder.CreateDataNameReference(recordKeyClauseContext.dataNameReference());
+			}
+			if (context.alternateRecordKeyClause() != null && context.alternateRecordKeyClause().Length > 0)
+			{
+				alternateRecordKeys = new AlternateRecordKey[context.alternateRecordKeyClause().Length];
+				for (int i = 0; i < context.alternateRecordKeyClause().Length; i++)
+				{
+					var alternateRecordKeyClauseContext = context.alternateRecordKeyClause()[i];
+					alternateRecordKeys[i] = new AlternateRecordKey();
+					alternateRecordKeys[i].RecordKey = CobolWordsBuilder.CreateDataNameReference(alternateRecordKeyClauseContext.recordKey);
+					if (alternateRecordKeyClauseContext.DUPLICATES() != null)
+					{
+						alternateRecordKeys[i].AllowDuplicates = new SyntaxProperty<bool>(true,
+							ParseTreeUtils.GetFirstToken(alternateRecordKeyClauseContext.DUPLICATES()));
+					}
+					if (alternateRecordKeyClauseContext.password != null)
+					{
+						alternateRecordKeys[i].Password = CobolWordsBuilder.CreateDataNameReference(alternateRecordKeyClauseContext.password);
+					}
+				}
+			}
+			if (context.relativeKeyClause() != null && context.relativeKeyClause().Length > 0)
+			{
+				var relativeKeyClauseContext = context.relativeKeyClause()[0];
+				relativeKey = CobolWordsBuilder.CreateDataNameReference(relativeKeyClauseContext.dataNameReference());
+			}
+			if (context.passwordClause() != null && context.passwordClause().Length > 0)
+			{
+				var passwordClauseContext = context.passwordClause()[0];
+				password = CobolWordsBuilder.CreateDataNameReference(passwordClauseContext.dataNameReference());
+			}
+			if (recordsOrganization != null)
+			{
+				switch (recordsOrganization.Value)
+				{
+					case FileRecordsOrganization.Sequential:
+					case FileRecordsOrganization.LineSequential:
+						var sequentialFileStructure = new SequentialFileStructure();
+						sequentialFileStructure.RecordsOrganization = recordsOrganization;
+						sequentialFileStructure.PaddingCharacter = paddingCharacter;
+						sequentialFileStructure.RecordDelimiter = recordDelimiter;
+						sequentialFileStructure.Password = password;
+						entry.Structure = sequentialFileStructure;
+						break;
+					case FileRecordsOrganization.Indexed:
+						var indexedFileStructure = new IndexedFileStructure();
+						indexedFileStructure.RecordsOrganization = recordsOrganization;
+						indexedFileStructure.RecordKey = recordKey;
+						indexedFileStructure.Password = password;
+						indexedFileStructure.AlternateRecordKeys = alternateRecordKeys;
+						entry.Structure = indexedFileStructure;
+						break;
+					case FileRecordsOrganization.Relative:
+						var relativeFileStructure = new RelativeFileStructure();
+						relativeFileStructure.RecordsOrganization = recordsOrganization;
+						relativeFileStructure.RelativeKey = relativeKey;
+						relativeFileStructure.Password = password;
+						entry.Structure = relativeFileStructure;
+						break;
+				}
+			}
+
+			Context = context;
+			CodeElement = entry;
+		}
+		
+		public override void EnterIoControlParagraphHeader(CodeElementsParser.IoControlParagraphHeaderContext context) {
+			Context = context;
+			CodeElement = new IOControlParagraphHeader();
+		}
+
+		public override void EnterIoControlEntry(CodeElementsParser.IoControlEntryContext context)
+		{
+			IOControlEntry entry = null;
+			if (context.rerunClause() != null)
+			{
+				var rerunClauseContext = context.rerunClause();
+				var rerunEntry = new RerunIOControlEntry();
+				rerunEntry.OnExternalDataSetOrFileName = CobolWordsBuilder.CreateAssignmentNameOrFileNameReference(
+					rerunClauseContext.assignmentNameOrFileNameReference());
+				if (rerunClauseContext.RECORDS() != null)
+				{
+					rerunEntry.CheckPointFrequency = new SyntaxProperty<CheckPointFrequency>(CheckPointFrequency.EveryRecordCount,
+						ParseTreeUtils.GetFirstToken(rerunClauseContext.RECORDS()));
+					rerunEntry.EveryRecordCount = CobolWordsBuilder.CreateIntegerValue(rerunClauseContext.integerValue());
+				}
+				else if (rerunClauseContext.REEL() != null)
+				{
+					rerunEntry.CheckPointFrequency = new SyntaxProperty<CheckPointFrequency>(CheckPointFrequency.EveryEndOfReelUnit,
+						ParseTreeUtils.GetFirstToken(rerunClauseContext.REEL()));
+				}
+				else if (rerunClauseContext.UNIT() != null)
+				{
+					rerunEntry.CheckPointFrequency = new SyntaxProperty<CheckPointFrequency>(CheckPointFrequency.EveryEndOfReelUnit,
+						ParseTreeUtils.GetFirstToken(rerunClauseContext.UNIT()));
+				}
+				if (rerunClauseContext.fileNameReference() != null)
+				{
+					rerunEntry.OfFileName = CobolWordsBuilder.CreateFileNameReference(rerunClauseContext.fileNameReference());
+				}
+				entry = rerunEntry;
+			}
+			else if (context.sameAreaClause() != null)
+			{
+				var sameAreaClauseContext = context.sameAreaClause();
+				var sameAreaEntry = new SameAreaIOControlEntry();
+				if (sameAreaClauseContext.RECORD() != null)
+				{
+					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameRecordArea,
+						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.RECORD()));
+				}
+				else if (sameAreaClauseContext.SORT_ARG() != null)
+				{
+					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameSortArea,
+						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.SORT_ARG()));
+				}
+				else if (sameAreaClauseContext.SORT_MERGE() != null)
+				{
+					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameSortMergeArea,
+						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.SORT_MERGE()));
+				}
+				sameAreaEntry.FileNames = new SymbolReference[sameAreaClauseContext.fileNameReference().Length];
+				for (int i = 0; i < sameAreaClauseContext.fileNameReference().Length; i++)
+				{
+					var fileNameReferenceContext = sameAreaClauseContext.fileNameReference()[i];
+					sameAreaEntry.FileNames[i] = CobolWordsBuilder.CreateFileNameReference(fileNameReferenceContext);
+				}
+				entry = sameAreaEntry;
+			}
+			else if (context.multipleFileTapeClause() != null)
+			{
+				var multipleFTClauseContext = context.multipleFileTapeClause();
+				var multipleFileEntry = new MultipleFileTapeIOControlEntry();
+				multipleFileEntry.PhysicalReelOfTape = new PhysicalReelOfTape[multipleFTClauseContext.physicalReelOfTape().Length];
+				for (int i = 0; i < multipleFTClauseContext.physicalReelOfTape().Length; i++)
+				{
+					var physicalReelOfTapeContext = multipleFTClauseContext.physicalReelOfTape()[i];
+					var physicalReelOfTape = new PhysicalReelOfTape();
+					physicalReelOfTape.FileName = CobolWordsBuilder.CreateFileNameReference(physicalReelOfTapeContext.fileNameReference());
+					if (physicalReelOfTapeContext.integerValue() != null)
+					{
+						physicalReelOfTape.FilePosition = CobolWordsBuilder.CreateIntegerValue(physicalReelOfTapeContext.integerValue());
+					}
+					multipleFileEntry.PhysicalReelOfTape[i] = physicalReelOfTape;
+				}
+				entry = multipleFileEntry;
+			}
+			else if (context.applyWriteOnlyClause() != null)
+			{
+				var applyWOClauseContext = context.applyWriteOnlyClause();
+				var applyWOEntry = new ApplyWriteOnlyIOControlEntry();
+				applyWOEntry.FileNames = new SymbolReference[applyWOClauseContext.fileNameReference().Length];
+				for (int i = 0; i < applyWOClauseContext.fileNameReference().Length; i++)
+				{
+					var fileNameReferenceContext = applyWOClauseContext.fileNameReference()[i];
+					applyWOEntry.FileNames[i] = CobolWordsBuilder.CreateFileNameReference(fileNameReferenceContext);
+				}
+				entry = applyWOEntry;
+			}
+
+			Context = context;
+			CodeElement = entry;
+		}
+
+
+
+
+
+		  ///////////////////
+		 // DATA DIVISION //
+		///////////////////
 
         public override void EnterDataDivisionHeader(CodeElementsParser.DataDivisionHeaderContext context)
         {
@@ -570,13 +889,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = sectionHeader;
         }
 
-        public override void EnterInputOutputSectionHeader(
-            CodeElementsParser.InputOutputSectionHeaderContext context)
-        {
-            Context = context;
-            CodeElement = new InputOutputSectionHeader();
-        }
-
         public override void EnterFileSectionHeader(CodeElementsParser.FileSectionHeaderContext context)
         {
             Context = context;
@@ -617,20 +929,6 @@ namespace TypeCobol.Compiler.Parser
 
             Context = context;
             CodeElement = paragraphHeader;
-        }
-
-        public override void EnterFileControlParagraphHeader(
-            CodeElementsParser.FileControlParagraphHeaderContext context)
-        {
-            Context = context;
-            CodeElement = new FileControlParagraphHeader();
-        }
-
-        public override void EnterIoControlParagraphHeader(
-            CodeElementsParser.IoControlParagraphHeaderContext context)
-        {
-            Context = context;
-            CodeElement = new IOControlParagraphHeader();
         }
 
         // -- Sentence --
@@ -868,20 +1166,6 @@ namespace TypeCobol.Compiler.Parser
             var values = context.literal();
             if (values.Length > 0) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(values[0]); // format 1 and 2
             if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
-        }
-
-        // -- InputOutput Section --
-
-        public override void EnterFileControlEntry(CodeElementsParser.FileControlEntryContext context)
-        {
-            Context = context;
-            CodeElement = new FileControlEntry();
-        }
-
-        public override void EnterIoControlEntry(CodeElementsParser.IoControlEntryContext context)
-        {
-            Context = context;
-            CodeElement = new IOControlEntry();
         }
 
         // Paragraphs

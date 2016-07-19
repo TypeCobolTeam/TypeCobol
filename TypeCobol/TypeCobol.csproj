@@ -134,8 +134,10 @@
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxValue.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
     <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
     <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationHeader.cs" />
     <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationProfile.cs" />

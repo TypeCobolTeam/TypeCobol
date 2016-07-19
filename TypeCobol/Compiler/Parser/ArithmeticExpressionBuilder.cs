@@ -62,11 +62,11 @@ namespace TypeCobol.Compiler.Parser
 
         
 
-        internal ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context) {
+        internal TypeCobol.Compiler.CodeElements.Expressions.ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context) {
             if (context.identifier() != null) return new ArithmeticIdentifier(SyntaxElementBuilder.CreateIdentifier(context.identifier()));
             if (context.numericLiteral() != null) return new Number(SyntaxElementBuilder.CreateSyntaxNumber(context.numericLiteral()));
 
-            ArithmeticExpression result = null;
+            TypeCobol.Compiler.CodeElements.Expressions.ArithmeticExpression result = null;
             char op = CreateOperator(context);
             var members = context.arithmeticExpression();
             if (members.Length > 1) {

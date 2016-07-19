@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// when checkpoints are to be taken and 
     /// the storage areas to be shared by different files. 
     /// </summary>
-    public class IOControlEntry : CodeElement
+    public abstract class IOControlEntry : CodeElement
     {
         public IOControlEntry() : base(CodeElementType.IOControlEntry)
         { }
@@ -21,21 +21,17 @@ namespace TypeCobol.Compiler.CodeElements
     /// When the RERUN clause is omitted, checkpoint records are not written. 
     /// There can be only one SORT/MERGE I-O-CONTROL paragraph in a program, and it cannot be specified in contained programs. It will have a global effect on all SORT and MERGE statements in the program unit. 
     /// </summary>
-    public class RerunClause : IOControlEntry
+    public class RerunIOControlEntry : IOControlEntry
     {
         /// <summary>
         /// assignment-name-1 The external data set for the checkpoint file. It must not be the same assignment-name as that specified in any ASSIGN clause throughout the entire program, including contained and containing programs. 
         /// For QSAM files, assignment-name-1 has the format: label-? S-? name 
         /// The QSAM file must reside on a tape or direct access device.
-        /// </summary>
-        public SymbolReference<AssignmentName> OnExternalDataSet { get; set; }
-
-        /// <summary>
         /// file-name-1 Must be a sequentially organized file. 
         /// VSAM and QSAM considerations: 
         /// The file named in the RERUN clause must be a file defined in the same program as the I-O-CONTROL paragraph, even if the file is defined as GLOBAL. 
         /// </summary>
-        public SymbolReference<FileName> OnFileName { get; set; }
+        public ExternalNameOrSymbolReference OnExternalDataSetOrFileName { get; set; }
 
         /// <summary>
         /// EVERY integer-1 RECORDS 
@@ -43,15 +39,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// EVERY END OF REEL/UNIT
         /// A checkpoint record is to be written whenever end-of-volume for file-name-1 occurs.
         /// </summary>
-        public CheckPointFrequency CheckPointFrequency { get; set; }
+        public SyntaxProperty<CheckPointFrequency> CheckPointFrequency { get; set; }
 
         /// <summary>
         /// A checkpoint record is to be written for every integer-1 records in file-name-1 that are processed. 
         /// If you specify the integer-1 RECORDS phrase, you must specify assignment-name-1. 
         /// </summary>
-        public int EveryRecordCount { get; set; }
-
-        public SymbolReference<FileName> OfFileName { get; set; }
+        public IntegerValue EveryRecordCount { get; set; }
+        
+        public SymbolReference OfFileName { get; set; }
     }
 
     /// <summary>
@@ -89,11 +85,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// The SAME SORT AREA clause is syntax checked but has no effect on the execution of the program. 
     /// The SAME SORT-MERGE AREA clause is equivalent to the SAME SORT AREA clause.
     /// </summary>
-    public class SameAreaClause : IOControlEntry
+    public class SameAreaIOControlEntry : IOControlEntry
     {
-        public SameAreaType SameAreaType { get; set; }
+        public SyntaxProperty<SameAreaType> SameAreaType { get; set; }
 
-        public IList<SymbolReference<FileName>> FileNames { get; set; }
+        public SymbolReference[] FileNames { get; set; }
     }
 
     /// <summary>
@@ -115,11 +111,16 @@ namespace TypeCobol.Compiler.CodeElements
     /// This clause is syntax checked, but has no effect on the execution of the program. 
     /// The function is performed by the system through the LABEL parameter of the DD statement.
     /// </summary>
-    public class MultipleFileTapeClause : IOControlEntry
+    public class MultipleFileTapeIOControlEntry : IOControlEntry
     {
-        IList<SymbolReference<FileName>> FileNames { get; set; }
+        public PhysicalReelOfTape[] PhysicalReelOfTape { get; set; }
+    }
 
-        IList<int> FilePositions { get; set; }
+    public class PhysicalReelOfTape
+    {
+        public SymbolReference FileName { get; set; }
+
+        public IntegerValue FilePosition { get; set; }
     }
 
     /// <summary>
@@ -129,11 +130,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// APPLY WRITE-ONLY is effective only for QSAM files. 
     /// For an alternate method of achieving the APPLY WRITE-ONLY results, see the description of the compiler option, AWO in the Enterprise COBOL Programming Guide.
     /// </summary>
-    public class ApplyWriteOnlyClause : IOControlEntry
+    public class ApplyWriteOnlyIOControlEntry : IOControlEntry
     {
         /// <summary>
         /// file-name-2 Each file must have standard sequential organization.    
         /// </summary>
-        IList<SymbolReference<FileName>> FileNames { get; set; }
+        public SymbolReference[] FileNames { get; set; }
     }
 }
