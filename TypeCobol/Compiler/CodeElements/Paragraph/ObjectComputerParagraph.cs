@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// computer-name
         /// A system-name. For example: IBM-system
         /// </summary>
-        public string ComputerName { get; set; }
+        public AlphanumericValue ComputerName { get; set; }
 
         /// <summary>
         /// MEMORY SIZE integer
@@ -23,13 +23,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// program, in words, characters or modules. The MEMORY SIZE clause is
         /// syntax checked but has no effect on the execution of the program.
         /// </summary>
-        public long MemorySize { get; set; }
+        public IntegerValue MemorySize { get; set; }
 
         /// <summary>
         /// Specifies the amount of main storage needed to run the object
         /// program, in words, characters or modules.
         /// </summary>
-        public MemorySizeUnit MemorySizeUnit { get; set; }
+        public SyntaxProperty<MemorySizeUnit> MemorySizeUnit { get; set; }
 
         /// <summary>
         /// The collating sequence used in this program is the collating sequence
@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// If the PROGRAM COLLATING SEQUENCE clause is omitted, the EBCDIC
         /// collating sequence is used.
         /// </summary>
-        public SymbolReference<AlphabetName> CollatingSequence { get; set; }
+        public SymbolReference CollatingSequence { get; set; }
 
         /// <summary>
         /// The SEGMENT-LIMIT clause is syntax checked but has no effect on the
@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// All sections with priority-numbers 0 through 49 are fixed permanent segments. 
         /// Segmentation is not supported for programs compiled with the THREAD option.
         /// </summary>
-        public int SegmentLimit { get; set; }
+        public IntegerValue SegmentLimit { get; set; }
     }
 
     /// <summary>

@@ -166,13 +166,326 @@ namespace TypeCobol.Compiler.Parser
 			return alphanumericValues;
 		}
 
-        // -- Division --
 
-        public override void EnterEnvironmentDivisionHeader(CodeElementsParser.EnvironmentDivisionHeaderContext context)
-        {
-            Context = context;
-            CodeElement = new EnvironmentDivisionHeader();
-        }
+
+		// -- Environment Division --
+
+		public override void EnterEnvironmentDivisionHeader(CodeElementsParser.EnvironmentDivisionHeaderContext context) {
+			Context = context;
+			CodeElement = new EnvironmentDivisionHeader();
+		}
+
+		// -- Configuration Section --
+
+		public override void EnterConfigurationSectionHeader(CodeElementsParser.ConfigurationSectionHeaderContext context) {
+			Context = context;
+			CodeElement = new ConfigurationSectionHeader();
+		}
+
+		public override void EnterSourceComputerParagraph(CodeElementsParser.SourceComputerParagraphContext context)
+		{
+			var paragraph = new SourceComputerParagraph();
+			if(context.computerName != null) {
+				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
+			}
+			if(context.DEBUGGING() != null) {
+				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
+			}
+
+			Context = context;
+			CodeElement = paragraph;
+		}
+
+		public override void EnterObjectComputerParagraph(CodeElementsParser.ObjectComputerParagraphContext context) {
+			var paragraph = new ObjectComputerParagraph();
+			if(context.computerName != null) {
+				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
+			}
+			if(context.memorySizeClause() != null) {
+				var memorySizeClauseContext = context.memorySizeClause();
+				paragraph.MemorySize = CobolWordsBuilder.CreateIntegerValue(memorySizeClauseContext.integerValue());
+				if(memorySizeClauseContext.WORDS() != null) {
+					paragraph.MemorySizeUnit = new SyntaxProperty<MemorySizeUnit>(MemorySizeUnit.Words, ParseTreeUtils.GetFirstToken(memorySizeClauseContext.WORDS()));
+				} else
+				if (memorySizeClauseContext.CHARACTERS() != null) {
+					paragraph.MemorySizeUnit = new SyntaxProperty<MemorySizeUnit>(MemorySizeUnit.Characters, ParseTreeUtils.GetFirstToken(memorySizeClauseContext.CHARACTERS()));
+				} else
+				if (memorySizeClauseContext.MODULES() != null) {
+					paragraph.MemorySizeUnit = new SyntaxProperty<MemorySizeUnit>(MemorySizeUnit.Modules, ParseTreeUtils.GetFirstToken(memorySizeClauseContext.MODULES()));
+				}
+			}
+			if(context.programCollatingSequenceClause() != null) {
+				var collatingSeqClauseContext = context.programCollatingSequenceClause();
+				paragraph.CollatingSequence = CobolWordsBuilder.CreateAlphabetName(collatingSeqClauseContext.alphabetName());
+			}
+			if(context.segmentLimitClause() != null) {
+				var segmentLimitClauseContext = context.segmentLimitClause();
+				paragraph.SegmentLimit = CobolWordsBuilder.CreateIntegerValue(segmentLimitClauseContext.priorityNumber().integerValue());
+			}
+
+			Context = context;
+			CodeElement = paragraph;
+		}
+
+		public override void EnterSpecialNamesParagraph(CodeElementsParser.SpecialNamesParagraphContext context)
+		{
+			var paragraph = new SpecialNamesParagraph();
+			
+			if(context.upsiSwitchNameClause() != null && context.upsiSwitchNameClause().Length > 0)
+			{
+				foreach (var upsiSwitchNameContext in context.upsiSwitchNameClause())
+				{
+					var upsiSwitchName = CobolWordsBuilder.CreateUPSISwitchName(upsiSwitchNameContext.upsiSwitchName());
+					if (upsiSwitchNameContext.mnemonicForUPSISwitchNameDefinition() != null)
+					{
+						var mnemonicForUPSISwitchName = CobolWordsBuilder.CreateMnemonicForUPSISwitchNameDefinition(
+							upsiSwitchNameContext.mnemonicForUPSISwitchNameDefinition());
+						if(paragraph.MnemonicsForUPSISwitchNames == null)
+						{
+							paragraph.MnemonicsForUPSISwitchNames = new Dictionary<SymbolDefinition, ExternalName>();
+						}
+						paragraph.MnemonicsForUPSISwitchNames.Add(mnemonicForUPSISwitchName, upsiSwitchName);
+					}
+					if(upsiSwitchNameContext.conditionNamesForUPSISwitch() != null)
+					{
+						if (paragraph.ConditionNamesForUPSISwitchStatus == null)
+						{
+							paragraph.ConditionNamesForUPSISwitchStatus = new Dictionary<SymbolDefinition, Tuple<ExternalName, UPSISwitchStatus>>();
+						}
+						if (upsiSwitchNameContext.conditionNamesForUPSISwitch().offConditionNameForUPSISwitch() != null)
+						{
+							var conditionForUPSISwitchName = CobolWordsBuilder.CreateConditionForUPSISwitchNameDefinition(
+								upsiSwitchNameContext.conditionNamesForUPSISwitch().offConditionNameForUPSISwitch().conditionForUPSISwitchNameDefinition());
+							paragraph.ConditionNamesForUPSISwitchStatus.Add(conditionForUPSISwitchName,
+								new Tuple<ExternalName, UPSISwitchStatus>(upsiSwitchName, UPSISwitchStatus.Off));
+						}
+						if (upsiSwitchNameContext.conditionNamesForUPSISwitch().onConditionNameForUPSISwitch() != null)
+						{
+							var conditionForUPSISwitchName = CobolWordsBuilder.CreateConditionForUPSISwitchNameDefinition(
+								upsiSwitchNameContext.conditionNamesForUPSISwitch().onConditionNameForUPSISwitch().conditionForUPSISwitchNameDefinition());
+							paragraph.ConditionNamesForUPSISwitchStatus.Add(conditionForUPSISwitchName,
+								new Tuple<ExternalName, UPSISwitchStatus>(upsiSwitchName, UPSISwitchStatus.On));
+						}
+					}
+				}
+				
+			}
+			if (context.environmentNameClause() != null && context.environmentNameClause().Length > 0)
+			{
+				if(paragraph.MnemonicsForEnvironmentNames == null)
+				{
+					paragraph.MnemonicsForEnvironmentNames = new Dictionary<SymbolDefinition, ExternalName>();
+				}
+				foreach(var environmentNameContext in context.environmentNameClause())
+				{
+					var environmentName = CobolWordsBuilder.CreateEnvironmentName(
+						environmentNameContext.environmentName());
+					var mnemonicForEnvironmentName = CobolWordsBuilder.CreateMnemonicForEnvironmentNameDefinition(
+						environmentNameContext.mnemonicForEnvironmentNameDefinition());
+					paragraph.MnemonicsForEnvironmentNames.Add(mnemonicForEnvironmentName, environmentName);
+				}
+			}
+			if (context.alphabetClause() != null && context.alphabetClause().Length > 0)
+			{
+				if(paragraph.AlphabetNames == null)
+				{
+					paragraph.AlphabetNames = new Dictionary<SymbolDefinition, CollatingSequence>();
+				}
+				foreach(var alphabetContext in context.alphabetClause())
+				{
+					var alphabetName = CobolWordsBuilder.CreateAlphabetNameDefinition(alphabetContext.alphabetNameDefinition());
+					if(alphabetContext.intrinsicAlphabetNameReference() != null)
+					{
+						var intrinsicCollatingSequence = new InstrinsicCollatingSequence();
+						intrinsicCollatingSequence.IntrinsicAlphabetName = CobolWordsBuilder.CreateIntrinsicAlphabetNameReference(
+							alphabetContext.intrinsicAlphabetNameReference());
+						paragraph.AlphabetNames.Add(alphabetName, intrinsicCollatingSequence);
+					}
+					else if(alphabetContext.userDefinedCollatingSequence() != null && alphabetContext.userDefinedCollatingSequence().Length > 0)
+					{
+						var userDefinedCollatingSequence = new UserDefinedCollatingSequence();
+						userDefinedCollatingSequence.CharacterSets = new CharacterSetInCollatingSequence[alphabetContext.userDefinedCollatingSequence().Length];
+						for (int i = 0; i < alphabetContext.userDefinedCollatingSequence().Length; i++)
+						{
+							var userDefinedCSContext = alphabetContext.userDefinedCollatingSequence()[i];
+							if (userDefinedCSContext.charactersInCollatingSequence() != null)
+							{
+								var charsInCSContext = userDefinedCSContext.charactersInCollatingSequence();
+								var characters = CreateCharactersInCollatingSequence(charsInCSContext);
+								userDefinedCollatingSequence.CharacterSets[i] = characters;
+							}
+							else if (userDefinedCSContext.charactersRange() != null)
+							{
+								var charactersRangeContext = userDefinedCSContext.charactersRange();
+								CharactersRangeInCollatingSequence charactersRange = CreateCharactersRange(charactersRangeContext);
+								userDefinedCollatingSequence.CharacterSets[i] = charactersRange;
+							}
+							else if (userDefinedCSContext.charactersEqualSet() != null)
+							{
+								var charactersEqualSetContext = userDefinedCSContext.charactersEqualSet();
+								var charactersEqualSet = new CharactersEqualSetInCollatingSequence();
+								charactersEqualSet.EqualCharacters = new CharacterInCollatingSequence[charactersEqualSetContext.characterInCollatingSequence().Length];
+								for (int j = 0; j < charactersEqualSetContext.characterInCollatingSequence().Length; j++)
+								{
+									var characterInCSContext = charactersEqualSetContext.characterInCollatingSequence()[j];
+									charactersEqualSet.EqualCharacters[j] = CreateCharacterInCollatingSequence(characterInCSContext);
+								}
+								userDefinedCollatingSequence.CharacterSets[i] = charactersEqualSet;
+							}
+						}
+						paragraph.AlphabetNames.Add(alphabetName, userDefinedCollatingSequence);
+					}
+				}
+			}
+			if (context.symbolicCharactersClause() != null && context.symbolicCharactersClause().Length > 0)
+			{
+				if(paragraph.SymbolicCharacters == null)
+				{
+					paragraph.SymbolicCharacters = new Dictionary<SymbolDefinition, Tuple<IntegerValue, SymbolReference>>();
+				}
+				foreach(var symbolicCharactersContext in context.symbolicCharactersClause())
+				{
+					SymbolReference alphabetName = null;
+					if (symbolicCharactersContext.alphabetNameReference() != null)
+					{
+						alphabetName = CobolWordsBuilder.CreateAlphabetNameReference(symbolicCharactersContext.alphabetNameReference());
+					}
+					foreach(var symbolicCharOPContext in symbolicCharactersContext.symbolicCharactersOrdinalPositions())
+					{
+						for (int i = 0; i < Math.Min(symbolicCharOPContext.symbolicCharacterDefinition().Length, symbolicCharOPContext.ordinalPositionInCollatingSequence().Length); i++)
+						{
+							var symbolicCharacter = CobolWordsBuilder.CreateSymbolicCharacterDefinition(symbolicCharOPContext.symbolicCharacterDefinition()[i]);
+							var ordinalPosition = CobolWordsBuilder.CreateIntegerValue(symbolicCharOPContext.ordinalPositionInCollatingSequence()[i].integerValue());
+							paragraph.SymbolicCharacters.Add(symbolicCharacter,
+								new Tuple<IntegerValue, SymbolReference>(ordinalPosition, alphabetName));
+						}
+					}
+				}
+			}
+			if (context.classClause() != null && context.classClause().Length > 0)
+			{
+				if(paragraph.CharsetClassNames == null)
+				{
+					paragraph.CharsetClassNames = new Dictionary<SymbolDefinition, UserDefinedCollatingSequence>();
+				}
+				foreach(var classContext in context.classClause())
+				{
+					var characterClassName = CobolWordsBuilder.CreateCharacterClassNameDefinition(classContext.characterClassNameDefinition());
+					var userDefinedCharacterClass = new UserDefinedCollatingSequence();
+					userDefinedCharacterClass.CharacterSets = new CharacterSetInCollatingSequence[classContext.userDefinedCharacterClass().Length];
+					for (int i = 0; i < classContext.userDefinedCharacterClass().Length; i++)
+					{
+						var userDefinedCCContext = classContext.userDefinedCharacterClass()[i];
+						if (userDefinedCCContext.charactersInCollatingSequence() != null)
+						{
+							userDefinedCharacterClass.CharacterSets[i] = CreateCharactersInCollatingSequence(
+								userDefinedCCContext.charactersInCollatingSequence());
+						}
+						else if (userDefinedCCContext.charactersRange() != null)
+						{
+							userDefinedCharacterClass.CharacterSets[i] = CreateCharactersRange(
+								userDefinedCCContext.charactersRange());
+						}
+					}
+					paragraph.CharsetClassNames.Add(characterClassName, userDefinedCharacterClass);
+				}
+			}
+			if (context.currencySignClause() != null && context.currencySignClause().Length > 0)
+			{
+				if(paragraph.CurrencySymbols == null)
+				{
+					paragraph.CurrencySymbols = new Dictionary<AlphanumericValue, CharacterValue>();
+				}
+				foreach (var currencySignContext in context.currencySignClause())
+				{
+					var currencySign = CobolWordsBuilder.CreateAlphanumericValue(currencySignContext.alphanumericValue1());
+					CharacterValue characterValue = null;
+					if (currencySignContext.characterValue1() != null)
+					{
+						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.characterValue1());
+					}
+					paragraph.CurrencySymbols.Add(currencySign, characterValue);
+				}
+			}
+			if (context.decimalPointClause() != null && context.decimalPointClause().Length > 0)
+			{
+				var decimalPointContext = context.decimalPointClause()[0];
+				if (decimalPointContext.COMMA() != null)
+				{
+					paragraph.DecimalPointIsComma = new SyntaxProperty<bool>(true,
+						ParseTreeUtils.GetFirstToken(decimalPointContext.COMMA()));
+				}
+			}
+			if (context.xmlSchemaClause() != null && context.xmlSchemaClause().Length > 0)
+			{
+				if(paragraph.XmlSchemaNames == null)
+				{
+					paragraph.XmlSchemaNames = new Dictionary<SymbolDefinition, ExternalName>();
+				}
+				foreach (var xmlSchemaContext in context.xmlSchemaClause())
+				{
+					var xmlSchemName = CobolWordsBuilder.CreateXmlSchemaNameDefinition(xmlSchemaContext.xmlSchemaNameDefinition());
+					var assignmentName = CobolWordsBuilder.CreateAssignmentName(xmlSchemaContext.assignmentName());
+					paragraph.XmlSchemaNames.Add(xmlSchemName, assignmentName);
+				}
+			}
+
+			Context = context;
+			CodeElement = paragraph;
+		}
+
+		private CharactersRangeInCollatingSequence CreateCharactersRange(CodeElementsParser.CharactersRangeContext context) {
+			var charactersRange = new CharactersRangeInCollatingSequence();
+			charactersRange.StartCharacter = CreateCharacterInCollatingSequence(context.startCharacter);
+			charactersRange.EndCharacter = CreateCharacterInCollatingSequence(context.endCharacter);
+			return charactersRange;
+		}
+
+		private CharactersInCollatingSequence CreateCharactersInCollatingSequence(CodeElementsParser.CharactersInCollatingSequenceContext context) {
+			var chars = new CharactersInCollatingSequence();
+			if (context.alphanumericValue1() != null) {
+				chars.CharactersInAlphanmericValue = CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue1());
+			} else
+			if (context.ordinalPositionInCollatingSequence() != null) {
+				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().integerValue());
+			}
+			return chars;
+		}
+
+		private CharacterInCollatingSequence CreateCharacterInCollatingSequence(CodeElementsParser.CharacterInCollatingSequenceContext context) {
+			var chars = new CharacterInCollatingSequence();
+			if (context.characterValue2() != null) {
+				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.characterValue2());
+			} else
+			if (context.ordinalPositionInCollatingSequence() != null) {
+				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().integerValue());
+			}
+			return chars;
+		}
+
+		public override void EnterRepositoryParagraph(CodeElementsParser.RepositoryParagraphContext context) {
+			var paragraph = new RepositoryParagraph();
+			if(context.repositoryClassDeclaration() != null &  context.repositoryClassDeclaration().Length > 0) {
+				if(paragraph.ClassNames == null) {
+					paragraph.ClassNames = new Dictionary<SymbolDefinitionOrReference, SymbolDefinitionOrReference>();
+				}
+				foreach(var c in context.repositoryClassDeclaration()) {
+					var className = CobolWordsBuilder.CreateClassNameDefOrRef(c.classNameDefOrRef());
+					SymbolDefinitionOrReference externalClassName = null;
+					if(c.externalClassNameDefOrRef() != null) {
+						externalClassName = CobolWordsBuilder.CreateExternalClassNameDefOrRef(c.externalClassNameDefOrRef());
+					}
+					paragraph.ClassNames.Add(className, externalClassName);
+				}
+			}
+
+			Context = context;
+			CodeElement = paragraph;
+		}
+
+
+
+
 
         public override void EnterDataDivisionHeader(CodeElementsParser.DataDivisionHeaderContext context)
         {
@@ -255,13 +568,6 @@ namespace TypeCobol.Compiler.Parser
 
             Context = context;
             CodeElement = sectionHeader;
-        }
-
-        public override void EnterConfigurationSectionHeader(
-            CodeElementsParser.ConfigurationSectionHeaderContext context)
-        {
-            Context = context;
-            CodeElement = new ConfigurationSectionHeader();
         }
 
         public override void EnterInputOutputSectionHeader(
@@ -579,45 +885,6 @@ namespace TypeCobol.Compiler.Parser
         }
 
         // Paragraphs
-
-        // --Configuration Section --
-
-        public override void EnterSourceComputerParagraph(CodeElementsParser.SourceComputerParagraphContext context)
-        {
-            Context = context;
-            CodeElement = new SourceComputerParagraph();
-        }
-
-        public override void EnterObjectComputerParagraph(CodeElementsParser.ObjectComputerParagraphContext context)
-        {
-            Context = context;
-            CodeElement = new ObjectComputerParagraph();
-        }
-
-		public override void EnterSpecialNamesParagraph(CodeElementsParser.SpecialNamesParagraphContext context) {
-			var paragraph = new SpecialNamesParagraph();
-			foreach(var clause in context.currencySignClause())
-				CreateCurrencySign(paragraph, clause);
-
-			Context = context;
-			CodeElement = paragraph;
-		}
-		public void CreateCurrencySign(SpecialNamesParagraph paragraph, CodeElementsParser.CurrencySignClauseContext context) {
-			var currencies = context.alphanumOrHexadecimalLiteral();
-			string currencyStr = null;
-			string currencyChar = "$";
-			if (currencies.Length > 0)
-				currencyStr = SyntaxElementBuilder.CreateString(currencies[0]);
-			if (currencies.Length > 1)
-				currencyChar = SyntaxElementBuilder.CreateString(currencies[1]);
-			paragraph.CurrencySymbols[currencyChar] = currencyStr;
-		}
-
-        public override void EnterRepositoryParagraph(CodeElementsParser.RepositoryParagraphContext context)
-        {
-            Context = context;
-            CodeElement = new RepositoryParagraph();
-        }
 
         // Statements
 

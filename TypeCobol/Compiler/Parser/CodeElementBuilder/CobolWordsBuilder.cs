@@ -876,7 +876,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// System devices or standard system actions taken by the compiler.
         /// </summary>
-        public enum EnvironmentNameEnum
+        public enum EnvironmentName
         {
             // System logical input unit : ACCEPT
             SYSIN, SYSIPT,
@@ -898,7 +898,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal ExternalName CreateEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
         {
-            return CreateExternalName(context.externalName1(), SymbolType.EnvironmentName, typeof(EnvironmentNameEnum));
+            return CreateExternalName(context.externalName1(), SymbolType.EnvironmentName, typeof(EnvironmentName));
         }
 
         /// <summary>

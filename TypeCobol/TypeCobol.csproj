@@ -287,7 +287,6 @@
     <Compile Include="Compiler\CodeElements\Statement\XmlParseStatement.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SpecialRegisterName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\FunctionName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\EnvironmentName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\MnemonicOrEnvironmentName.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\Symbol.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SymbolReference.cs" />
