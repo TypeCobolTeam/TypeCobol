@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// An alphanumeric literal or national literal that contains the name of the
         /// method.
         /// </summary>
-        public MethodName MethodName { get; set; }
+        public SymbolReference MethodName { get; set; }
 
         /// <summary>
         /// Debug string
