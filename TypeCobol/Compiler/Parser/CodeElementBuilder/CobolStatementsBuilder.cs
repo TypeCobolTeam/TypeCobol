@@ -1536,17 +1536,15 @@ namespace TypeCobol.Compiler.Parser
 				);
 		}
 
-		////////////////////////////
-		// XML GENERATE STATEMENT //
+		  ////////////////////////////
+		 // XML GENERATE STATEMENT //
 		//////////////////////////// 
 
-		internal XmlGenerateStatement CreateXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context)
-		{
+		internal XmlGenerateStatement CreateXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context) {
 			var statement = new XmlGenerateStatement();
 			statement.Encoding = CobolWordsBuilder.CreateEncoding(context.codepage());
 			int c = 0;
-			foreach (var identifier in context.identifier()) // context.identifier().Count is 2 outside of syntax errors
-			{
+			foreach (var identifier in context.identifier()) { // context.identifier().Count is 2 outside of syntax errors
 				if (c == 0) statement.Receiving = CobolWordsBuilder.CreateIdentifier(identifier);
 				if (c == 1) statement.Data = CobolWordsBuilder.CreateIdentifier(identifier);
 				c++;
@@ -1555,127 +1553,87 @@ namespace TypeCobol.Compiler.Parser
 			statement.Encoding = CobolWordsBuilder.CreateEncoding(context.codepage());
 			statement.IsXMLDeclaration = context.XML_DECLARATION() != null;
 			statement.IsAttributes = context.ATTRIBUTES() != null;
-			if (context.xmlNamespace() != null)
-			{
+			if (context.xmlNamespace() != null) {
 				statement.Namespace = CreateIdentifierOrAlphanumericOrNationalLiteral(
 					context.xmlNamespace().identifier(), context.xmlNamespace().alphanumOrNationalLiteral());
 			}
-			if (context.xmlNamespacePrefix() != null)
-			{
-				statement.NamespacePrefix = CreateIdentifierOrAlphanumericOrNationalLiteral(
-					context.xmlNamespacePrefix().identifier(), context.xmlNamespacePrefix().alphanumOrNationalLiteral());
+			if (context.namespacePrefix() != null) {
+				statement.NamespacePrefix = CobolExpressionsBuilder.CreateAlphanumericVariable(context.namespacePrefix());
 			}
-			foreach (var namecontext in context.xmlName())
-			{
-				try {
-					var x = CreateXmlName(namecontext);
-					if (x != null) statement.Names.Add(x);
-				} catch(System.InvalidOperationException ex) {
-					DiagnosticUtils.AddError(statement, "Expected: Alphanumeric or National literal", namecontext);
-				}
+			foreach (var namecontext in context.xmlNameMapping()) {
+				statement.Names.Add(CreateXmlName(namecontext));
 			}
-			foreach (var typecontext in context.xmlType())
-			{
-				var x = CreateXmlType(typecontext);
-				if (x != null) statement.Types.Add(x);
+			foreach (var typecontext in context.xmlTypeMapping()) {
+				statement.Types.Add(CreateXmlType(typecontext));
 			}
-			foreach (var suppresscontext in context.xmlSuppress())
-			{
-				var x = CreateXmlSuppression(statement, suppresscontext);
-				if (x != null) statement.Suppressions.Add(x);
+			foreach (var suppresscontext in context.xmlSuppressDataItem()) {
+				statement.Suppressions.Add(CreateXmlSuppression(suppresscontext));
+			}
+			foreach (var suppresscontext in context.xmlSuppressGeneric()) {
+				statement.Suppressions.Add(CreateXmlSuppression(suppresscontext));
 			}
 			return statement;
 		}
 
-		private Expression CreateIdentifierOrAlphanumericOrNationalLiteral(CodeElementsParser.IdentifierContext identifier, 
-																				  CodeElementsParser.AlphanumOrNationalLiteralContext literal) {
-			Expression result = CobolWordsBuilder.CreateIdentifier(identifier);
-			if (result != null) return result;
-			return CobolWordsBuilder.CreateLiteral(literal);
+		private XmlGenerateStatement.Name CreateXmlName(CodeElementsParser.XmlNameMappingContext context) {
+			var mapping = new XmlGenerateStatement.Name();
+			mapping.Old = CobolExpressionsBuilder.CreateVariable(context.variable1());
+			mapping.New = CobolExpressionsBuilder.CreateAlphanumericVariable(context.xmlNameToGenerate());
+			return mapping;
 		}
 
-		private XmlGenerateStatement.Name CreateXmlName(CodeElementsParser.XmlNameContext context)
-		{
-			if (context == null) return null;
-			var result = new XmlGenerateStatement.Name();
-			result.Old = CobolWordsBuilder.CreateIdentifier(context.identifier());
-			result.New = CobolWordsBuilder.CreateLiteral(context.alphanumOrNationalLiteral());
-			return result;
-		}
-
-		private XmlGenerateStatement.Type CreateXmlType(CodeElementsParser.XmlTypeContext context)
-		{
-			if (context == null) return null;
+		private XmlGenerateStatement.Type CreateXmlType(CodeElementsParser.XmlTypeMappingContext context) {
 			var result = new XmlGenerateStatement.Type();
-			result.Data = CobolWordsBuilder.CreateIdentifier(context.identifier());
+			result.Data = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			if (context.ATTRIBUTE() != null) result.DataType = XmlGenerateStatement.Type.Mode.ATTRIBUTE;
 			if (context.ELEMENT()   != null) result.DataType = XmlGenerateStatement.Type.Mode.ELEMENT;
 			if (context.CONTENT()   != null) result.DataType = XmlGenerateStatement.Type.Mode.CONTENT;
 			return result;
 		}
 
-		private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElement e, CodeElementsParser.XmlSuppressContext context)
-		{
+		private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElementsParser.XmlSuppressGenericContext context) {
 			XmlGenerateStatement.Suppression result = new XmlGenerateStatement.Suppression();
-			result.Specific = CobolWordsBuilder.CreateIdentifier(context.identifier());
-			result.Generic = CreateXmlSuppressionMode(context.xmlSuppressGeneric());
-			result.When = new List<FigurativeConstant>();
-			if (context.whenPhrase() != null)
-			{
-				string[] allowed = { "ZERO", "ZEROES", "ZEROS", "SPACE", "SPACES", "LOW-VALUE", "LOW-VALUES", "HIGH-VALUE", "HIGH-VALUES" };
-				foreach (var c in context.whenPhrase().figurativeConstant())
-				{
-					var constant = CobolWordsBuilder.CreateFigurativeConstant(c);
-					if (constant != null)
-					{
-						if (System.Array.IndexOf(allowed, constant.Value) < 0)
-							DiagnosticUtils.AddError(e, "XML GENERATE: Illegal figurative constant " + constant.Value, c);
-						result.When.Add(constant);
-					}
-				}
+			result.Generic = XmlGenerateStatement.Suppression.Mode.UNKNOWN;
+			if (context.ATTRIBUTE() != null) {
+				if (context.NUMERIC() != null)
+					 result.Generic = XmlGenerateStatement.Suppression.Mode.NUMERIC_ATTRIBUTE;
+				else if (context.NONNUMERIC() != null)
+					 result.Generic = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ATTRIBUTE;
+				else result.Generic = XmlGenerateStatement.Suppression.Mode.ATTRIBUTE;
 			}
+			else if (context.ELEMENT() != null) {
+				if (context.NUMERIC() != null)
+					 result.Generic = XmlGenerateStatement.Suppression.Mode.NUMERIC_ELEMENT;
+				else if (context.NONNUMERIC() != null)
+					 result.Generic = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ELEMENT;
+				else result.Generic = XmlGenerateStatement.Suppression.Mode.ELEMENT;
+			}
+			result.When = CreateRepeatedCharacterValues(context.xmlSuppressWhen());
+		}
+		private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElementsParser.XmlSuppressDataItemContext context) {
+			XmlGenerateStatement.Suppression result = new XmlGenerateStatement.Suppression();
+			result.Specific = CobolExpressionsBuilder.CreateVariable(context.variable1());
+			result.When = CreateRepeatedCharacterValues(context.xmlSuppressWhen());
 			return result;
 		}
 
-		private XmlGenerateStatement.Suppression.Mode CreateXmlSuppressionMode(CodeElementsParser.XmlSuppressGenericContext context)
-		{
-			if (context == null) return XmlGenerateStatement.Suppression.Mode.UNKNOWN;
-			var result = XmlGenerateStatement.Suppression.Mode.UNKNOWN;
-			if (context.ATTRIBUTE() != null)
-			{
-				if (context.NUMERIC() != null) {
-					result = XmlGenerateStatement.Suppression.Mode.NUMERIC_ATTRIBUTE;
-				}
-				else
-				if (context.NONNUMERIC() != null) {
-					result = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ATTRIBUTE;
-				}
-				else result = XmlGenerateStatement.Suppression.Mode.ATTRIBUTE;
+		private IList<RepeatedCharacterValue> CreateRepeatedCharacterValues(CodeElementsParser.XmlSuppressWhenContext xmlSuppressWhenContext) {
+			var values = new List<RepeatedCharacterValue>();
+			if (context.xmlSuppressWhen() == null) return values;
+			foreach(var repeat in context.xmlSuppressWhen().repeatedCharacterValue1()) {
+				values.Add(CobolWordsBuilder.CreateRepeatedCharacterValue(repeat));
 			}
-			if (context.ELEMENT() != null)
-			{
-				if (context.NUMERIC() != null) {
-					result = XmlGenerateStatement.Suppression.Mode.NUMERIC_ELEMENT;
-				}
-				else
-				if (context.NONNUMERIC() != null) {
-					result = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ELEMENT;
-				}
-				else result = XmlGenerateStatement.Suppression.Mode.ELEMENT;
-			}
-			return result;
+			return values;
 		}
 
-		/////////////////////////
-		// XML PARSE STATEMENT //
+		  /////////////////////////
+		 // XML PARSE STATEMENT //
 		/////////////////////////
 
-		internal XmlParseStatement CreateXmlParseStatement(CodeElementsParser.XmlParseStatementContext context)
-		{
+		internal XmlParseStatement CreateXmlParseStatement(CodeElementsParser.XmlParseStatementContext context) {
 			var statement = new XmlParseStatement();
 			int c = 0;
-			foreach (var identifier in context.identifier())
-			{
+			foreach (var identifier in context.identifier()) {
 				if (c == 0) statement.Identifier = CobolWordsBuilder.CreateIdentifier(identifier);
 				if (c == 1) statement.ValidatingIdentifier = CobolWordsBuilder.CreateIdentifier(identifier);
 				c++;
@@ -1683,8 +1641,7 @@ namespace TypeCobol.Compiler.Parser
 			statement.Encoding = CobolWordsBuilder.CreateEncoding(context.codepage());
 			statement.IsReturningNational = context.RETURNING() != null;
 			statement.ValidatingFile = CobolWordsBuilder.CreateXmlSchemaName(context.xmlSchemaNameReference());
-			foreach (var procedure in context.procedureName())
-			{
+			foreach (var procedure in context.procedureName()) {
 				var procedurename = CobolWordsBuilder.CreateProcedureName(procedure);
 				if (procedurename != null) statement.Procedures.Add(procedurename);
 			}
@@ -1693,30 +1650,20 @@ namespace TypeCobol.Compiler.Parser
 
 		// -- Utility methods --
 
-		private O[] BuildObjectArrrayFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject)
-		{
+		private O[] BuildObjectArrrayFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject) {
 			O[] objectArray = null;
-			if (parserRules != null && parserRules.Length > 0)
-			{
+			if (parserRules != null && parserRules.Length > 0) {
 				objectArray = new O[parserRules.Length];
-				for (int i = 0; i < parserRules.Length; i++)
-				{
+				for (int i = 0; i < parserRules.Length; i++) {
 					objectArray[i] = createObject(parserRules[i]);
 				}
 			}
 			return objectArray;
 		}
 
-		private SyntaxProperty<T> CreateSyntaxProperty<T>(T value, ITerminalNode terminalNode)
-		{
-			if (terminalNode == null)
-			{
-				return null;
-			}
-			else
-			{
-				return new SyntaxProperty<T>(value, ParseTreeUtils.GetFirstToken(terminalNode));
-			}
+		private SyntaxProperty<T> CreateSyntaxProperty<T>(T value, ITerminalNode terminalNode) {
+			if (terminalNode == null) return null;
+			return new SyntaxProperty<T>(value, ParseTreeUtils.GetFirstToken(terminalNode));
 		}       
 	}
 }

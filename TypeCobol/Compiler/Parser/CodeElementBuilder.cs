@@ -1582,6 +1582,23 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new UnstringStatementEnd();
 		}
 
+		// --- XML STATEMENTS ---
+
+		public override void EnterXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateXmlGenerateStatement(context);
+		}
+
+		public override void EnterXmlParseStatement(CodeElementsParser.XmlParseStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateXmlParseStatement(context);
+		}
+
+		public override void EnterXmlStatementEnd(CodeElementsParser.XmlStatementEndContext context) {
+			Context = context;
+			CodeElement = new XmlStatementEnd();
+		}
+
 
 
 
@@ -1728,24 +1745,6 @@ namespace TypeCobol.Compiler.Parser
                 CodeElement = builder.CreateUseStatement(context.useStatementForDebuggingDeclarative());
             else
                 Console.WriteLine("?TODO: USE?");
-        }
-
-        public override void EnterXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateXmlGenerateStatement(context);
-        }
-
-        public override void EnterXmlParseStatement(CodeElementsParser.XmlParseStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateXmlParseStatement(context);
-        }
-
-        public override void EnterXmlStatementEnd(CodeElementsParser.XmlStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new XmlStatementEnd();
         }
 
         // Statement conditions

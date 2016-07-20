@@ -7,9 +7,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// p457:
     /// The XML GENERATE statement converts data to XML format.
     /// </summary>
-    public class XmlGenerateStatement : CodeElement
+    public class XmlGenerateStatement : StatementElement
     {
-        public XmlGenerateStatement() : base(CodeElementType.XmlGenerateStatement) { }
+        public XmlGenerateStatement() : base(CodeElementType.XmlGenerateStatement, StatementType.XmlGenerateStatement)
+        { }
 
         /// <summary>
         /// pp458-459:
@@ -261,7 +262,7 @@ namespace TypeCobol.Compiler.CodeElements
             /// the description of identifier-2. If identifier-6 is specified more than once in
             /// the NAME phrase, the last specification is used.
             /// </summary>
-            public Identifier Old;
+            public Variable Old;
 
             /// <summary>
             /// p462:
@@ -271,8 +272,8 @@ namespace TypeCobol.Compiler.CodeElements
             /// is a national literal, identifier-1 must reference a data item of category
             /// national or the encoding phrase must specify 1208.
             /// </summary>
-            public Literal New;
-        }
+            public AlphanumericVariable New;
+		}
 
         /// <summary>
         /// p462:
@@ -334,7 +335,7 @@ namespace TypeCobol.Compiler.CodeElements
             /// If the XML GENERATE statement also includes a WITH ATTRIBUTES
             /// phrase, the TYPE phrase has precedence for identifier-7.
             /// </summary>
-            public Identifier Data;
+            public Variable Data;
 
             public Mode DataType = Mode.UNKNOWN;
         }
@@ -411,7 +412,7 @@ namespace TypeCobol.Compiler.CodeElements
             /// identified by the generic-suppression-phrase must be of class alphanumeric
             /// or national.
             /// </summary>
-            public Identifier Specific;
+            public Variable Specific;
 
             /// <summary>
             /// p464:
@@ -428,7 +429,7 @@ namespace TypeCobol.Compiler.CodeElements
             /// has zero length. The root element is always generated, even if all the items
             /// subordinate to identifier-2 are suppressed.
             /// </summary>
-            public IList<FigurativeConstant> When;
-        }
+            public IList<RepeatedCharacterValue> When;
+		}
     }
 }
