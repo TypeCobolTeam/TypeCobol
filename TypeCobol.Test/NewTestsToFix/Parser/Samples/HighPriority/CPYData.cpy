@@ -1,1 +1,1 @@
-﻿01 test pic X.
+﻿01 myVar pic X.

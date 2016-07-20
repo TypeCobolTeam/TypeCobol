@@ -1,7 +1,7 @@
 ﻿IDENTIFICATION DIVISION.
 PROGRAM-ID. TypeCobol.
 DATA DIVISION.
-WORKING storage section.
+WORKING-storage section.
 copy CPYData.
 
 PROCEDURE DIVISION.
