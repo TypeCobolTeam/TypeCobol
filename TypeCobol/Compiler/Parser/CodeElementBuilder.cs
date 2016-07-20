@@ -1168,317 +1168,268 @@ namespace TypeCobol.Compiler.Parser
             if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
         }
 
-        // Paragraphs
-
-        // Statements
-
-        public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateAcceptStatement(context);
-        }
 
 
 
-          ///////////////////////////
-         // ARITHMETIC STATEMENTS //
-        ///////////////////////////
 
-        public override void EnterAddStatementFormat1(CodeElementsParser.AddStatementFormat1Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('+');
-            builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterAddStatementFormat2(CodeElementsParser.AddStatementFormat2Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('+');
-            if (context.GIVING() != null)
-            {
-                builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
-                    context.identifierRounded());
-            }
-
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterAddStatementFormat3(CodeElementsParser.AddStatementFormat3Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('+');
-            builder.InitializeFormat3Statement(context.identifier(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterAddStatementEnd(CodeElementsParser.AddStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new AddStatementEnd();
-        }
-
-        public override void EnterComputeStatement(CodeElementsParser.ComputeStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ComputeStatementBuilder().CreateComputeStatement(context);
-        }
-        public override void EnterComputeStatementEnd(CodeElementsParser.ComputeStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new ComputeStatementEnd();
-        }
-
-        public override void EnterDivideStatement(CodeElementsParser.DivideStatementContext context)
-        {
-            Context = context;
-            CodeElement = new DivideStatementBuilder().CreateStatement(context);
-        }
-        public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new DivideStatementEnd();
-        }
+		  ////////////////
+		 // PARAGRAPHS //
+		////////////////
 
 
+		 // STATEMENTS
+		////////////////
 
-        public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context)
-        {
-            var statement = new AlterStatement();
-            // context.procedureName().Length %2 != 0 can never happen outside of syntax errors
-            AlterStatement.Alter alter = null;
-            foreach (var p in context.procedureName())
-            {
-                if (alter == null) {
-                    alter = new AlterStatement.Alter();
-                    alter.Procedure1 = SyntaxElementBuilder.CreateProcedureName(p);
-                } else {
-                    alter.Procedure2 = SyntaxElementBuilder.CreateProcedureName(p);
-                    statement.Items.Add(alter);
-                    alter = null;
-                }
-            }
-            Context = context;
-            CodeElement = statement;
-        }
+		// --- ARITHMETIC STATEMENTS ---
 
-        public override void EnterCallStatement(CodeElementsParser.CallStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateCallStatement(context);
-        }
-        public override void EnterCallStatementEnd(CodeElementsParser.CallStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new CallStatementEnd();
-        }
+		public override void EnterAddStatement(CodeElementsParser.AddStatementContext context) {
+			Context = context;
+			if(context.addSimple() != null) {
+				CodeElement = CobolStatementsBuilder.CreateAddStatement(context.addSimple());
+			} else
+			if (context.addGiving() != null) {
+				CodeElement = CobolStatementsBuilder.CreateAddGivingStatement(context.addGiving());
+			} else
+			if (context.addCorresponding() != null) {
+				CodeElement = CobolStatementsBuilder.CreateAddCorrespondingStatement(context.addCorresponding());
+			}
+		}
+		public override void EnterAddStatementEnd(CodeElementsParser.AddStatementEndContext context) {
+			Context = context;
+			CodeElement = new AddStatementEnd();
+		}
 
-        public override void EnterCancelStatement(CodeElementsParser.CancelStatementContext context)
-        {
-            var statement = new CancelStatement();
-            if (context.programNameReference1() != null)
-            {
-                foreach (var c in context.programNameReference1())
-                {
-                    if (c.alphanumericLiteral() != null)
-                    {
-                        var item = SyntaxElementBuilder.CreateLiteral(c.alphanumericLiteral());
-                        statement.Items.Add(item);
-                    }
-                }
-            }
-            if (context.programNameFromData() != null)
-            {
-                foreach (var c in context.programNameFromData())
-                {
-                    if (c.identifier() != null)
-                    {
-                        var item = SyntaxElementBuilder.CreateIdentifier(c.identifier());
-                        statement.Items.Add(item);
-                    }
-                }
-            }
-            Context = context;
-            CodeElement = statement;
-        }
+		public override void EnterComputeStatement(CodeElementsParser.ComputeStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateComputeStatement(context);
+		}
+		public override void EnterComputeStatementEnd(CodeElementsParser.ComputeStatementEndContext context) {
+			Context = context;
+			CodeElement = new ComputeStatementEnd();
+		}
 
-        public override void EnterContinueStatement(CodeElementsParser.ContinueStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ContinueStatement();
-        }
+		public override void EnterDivideStatement(CodeElementsParser.DivideStatementContext context) {
+			Context = context;
+			if (context.divideSimple() != null) {
+				CodeElement = CobolStatementsBuilder.CreateDivideStatement(context.divideSimple());
+			} else
+			if (context.divideGiving() != null) {
+				CodeElement = CobolStatementsBuilder.CreateDivideGivingStatement(context.divideGiving());
+			} else
+			if (context.divideRemainder() != null) {
+				CodeElement = CobolStatementsBuilder.CreateDivideRemainderStatement(context.divideRemainder());
+			}
+		}
+		public override void EnterDivideStatementEnd(CodeElementsParser.DivideStatementEndContext context) {
+			Context = context;
+			CodeElement = new DivideStatementEnd();
+		}
 
-        public override void EnterDeleteStatement(CodeElementsParser.DeleteStatementContext context)
-        {
-            var statement = new DeleteStatement();
-            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
-            Context = context;
-            CodeElement = statement;
-        }
-        public override void EnterDeleteStatementEnd(CodeElementsParser.DeleteStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new DeleteStatementEnd();
-        }
+		public override void EnterMultiplyStatement(CodeElementsParser.MultiplyStatementContext context) {
+			Context = context;
+			if (context.multiplySimple() != null) {
+				CodeElement = CobolStatementsBuilder.CreateMultiplyStatement(context.multiplySimple());
+			} else
+			if (context.multiplyGiving() != null) {
+				CodeElement = CobolStatementsBuilder.CreateMultiplyGivingStatement(context.multiplyGiving());
+			}
+		}
+		public override void EnterMultiplyStatementEnd(CodeElementsParser.MultiplyStatementEndContext context) {
+			Context = context;
+			CodeElement = new MultiplyStatementEnd();
+		}
 
-        /// <summary>
-        ///     Create a MnemonicOrEnvironmentName from a token.
-        ///     This method first check if the token match an environment name from EnvironmentNameEnum
-        ///     If so, it's an EnvironmentName
-        ///     otherwise, it's a mnemonic environment name
-        /// </summary>
-        /// <param name="mnemonicOrEnvironmentName">a token corresponding to environment or a mnemonic environment name</param>
-        /// <returns>A MnemonicOrEnvironmentName of the correct CodeElementType: EnvironmentName or MnemonicForEnvironmentName</returns>
-        public static MnemonicOrEnvironmentName CreateMnemonicOrEnvironmentName(Token mnemonicOrEnvironmentName)
-        {
-            EnvironmentNameEnum envNameValue;
-            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
-            {
-                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
-            }
-            //if this happens, it means it's a mnemonic environment name
-            return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
-        }
+		public override void EnterSubtractStatement(CodeElementsParser.SubtractStatementContext context) {
+			Context = context;
+			if (context.subtractSimple() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSubtractStatement(context.subtractSimple());
+			}
+			else
+			if (context.subtractGiving() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSubtractGivingStatement(context.subtractGiving());
+			} else
+			if (context.subtractCorresponding() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSubtractCorrespondingStatement(context.subtractCorresponding());
+			}
+		}
+		public override void EnterSubtractStatementEnd(CodeElementsParser.SubtractStatementEndContext context) {
+			Context = context;
+			CodeElement = new SubtractStatementEnd();
+		}
 
-        public override void EnterDisplayStatement(CodeElementsParser.DisplayStatementContext context)
-        {
-            var statement = new DisplayStatement();
 
-            //Identifiers & literals
-            if (context.identifierOrLiteral() != null)
-            {
-                var expressions = new List<Expression>();
-                foreach (CodeElementsParser.IdentifierOrLiteralContext idOrLiteral in context.identifierOrLiteral())
-                {
-                    Expression identifier = CreateIdentifierOrLiteral(idOrLiteral, statement, "Display");
-                    if (identifier != null)
-                    {
-                        expressions.Add(identifier);
-                    }
-                }
-                statement.IdentifierOrLiteral = expressions;
-            }
-            //else don't set the displayStement. It will remains null
 
-            //(mnemonic) Environment name
-            if (context.uponEnvironmentName() != null)
-            {
-                Token mnemonicOrEnvironmentName = ParseTreeUtils.GetFirstToken(context.uponEnvironmentName().mnemonicForEnvironmentNameReferenceOrEnvironmentName());
-                if (mnemonicOrEnvironmentName != null)
-                {
-                    statement.UponMnemonicOrEnvironmentName = new MnemonicOrEnvironmentName(mnemonicOrEnvironmentName);
-//            EnvironmentNameEnum envNameValue;
-//            if (Enum.TryParse(mnemonicOrEnvironmentName.Text, true, out envNameValue))
-//            {
-//                return new EnvironmentName(mnemonicOrEnvironmentName, envNameValue);
-//            }
-//            else
-//            {
-//                //if this happens, it means it's a mnemonic environment name
-//                return new MnemonicForEnvironmentName(mnemonicOrEnvironmentName);
-//            }
-                }
-            } //else don't set UponMnemonicOrEnvironmentName. it will remains null
+		// --- FILE STATEMENTS ---
+		
+		public override void EnterOpenStatement(CodeElementsParser.OpenStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateOpenStatement(context);
+		}
 
-			statement.IsWithNoAdvancing = context.withNoAdvancing() != null;
+		public override void EnterCloseStatement(CodeElementsParser.CloseStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateCloseStatement(context);
+		}
 
-            Context = context;
-            CodeElement = statement;
-        }
+		public override void EnterReadStatement(CodeElementsParser.ReadStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateReadStatement(context);
+		}
 
-        /// <summary>
-        /// </summary>
-        /// <param name="idOrLiteral"></param>
-        /// <param name="statement">Only used in case of error to link the error with the current statement</param>
-        /// <param name="statementName">Only used in case of error to have the name of the current statement</param>
-        /// <returns></returns>
-        public Expression CreateIdentifierOrLiteral(CodeElementsParser.IdentifierOrLiteralContext idOrLiteral, CodeElement statement,
-            string statementName)
-        {
-            if (idOrLiteral.identifier() != null)
-            {
-                return SyntaxElementBuilder.CreateIdentifier(idOrLiteral.identifier());
-            }
-            if (idOrLiteral.literal() != null)
-            {
-                return SyntaxElementBuilder.CreateLiteral(idOrLiteral.literal());
-            }
-                //TODO manage figurativeConstant here or as a literal ?
+		public override void EnterReadStatementEnd(CodeElementsParser.ReadStatementEndContext context) {
+			Context = context;
+			CodeElement = new ReadStatementEnd();
+		}
 
-            DiagnosticUtils.AddError(statement, statementName + ": required <identifier> or <literal>", idOrLiteral);
-            return null;
-        }
+		public override void EnterWriteStatement(CodeElementsParser.WriteStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateWriteStatement(context);
+		}
 
-        public override void EnterEntryStatement(CodeElementsParser.EntryStatementContext context)
-        {
-            var statement = new EntryStatement();
-            if (context.programEntryDefinition() != null)
-            {
-                statement.ProgramName = SyntaxElementBuilder.CreateLiteral(context.programEntryDefinition().alphanumericLiteral());
-            }
-            foreach(var by in context.byReferenceOrByValueIdentifiers()) {
-                var u = new EntryStatement.Using<Identifier>();
-                var identifiers = SyntaxElementBuilder.CreateIdentifiers(by.identifier());
-                foreach (var i in identifiers) u.Add(i);
-                u.ByValue = by.VALUE() != null;
-                statement.Usings.Add(u);
-            }
+		public override void EnterWriteStatementEnd(CodeElementsParser.WriteStatementEndContext context) {
+			Context = context;
+			CodeElement = new WriteStatementEnd();
+		}
+		
+		public override void EnterRewriteStatement(CodeElementsParser.RewriteStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateRewriteStatement(context);
+		}
 
-            Context = context;
-            CodeElement = statement;
-        }
+		public override void EnterRewriteStatementEnd(CodeElementsParser.RewriteStatementEndContext context) {
+			Context = context;
+			CodeElement = new RewriteStatementEnd();
+		}
 
-        public override void EnterExecStatement(CodeElementsParser.ExecStatementContext context)
-        {
-            var statement = new ExecStatement();
-            Token node = null;
-            if (context.execTranslatorName() != null)
-            {
-                node = ParseTreeUtils.GetTokenFromTerminalNode(context.execTranslatorName().ExecTranslatorName());
-            }
-            if (node != null) statement.Compiler = node.Text;
-            var str = new StringBuilder();
-            foreach (var line in context.ExecStatementText())
-            {
-                node = ParseTreeUtils.GetTokenFromTerminalNode(line);
-                if (node != null) str.Append(node.Text);
-            }
-            statement.Code = str.ToString();
 
-            Context = context;
-            CodeElement = statement;
-        }
 
-        public override void EnterExitMethodStatement(CodeElementsParser.ExitMethodStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ExitMethodStatement();
-        }
+		// --- ACCEPT ---
 
-        public override void EnterExitProgramStatement(CodeElementsParser.ExitProgramStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ExitProgramStatement();
-        }
+		public override void EnterAcceptStatement(CodeElementsParser.AcceptStatementContext context) {
+			Context = context;
+			if (context.acceptDataTransfer() != null) {
+				CodeElement = CobolStatementsBuilder.CreateAcceptDataTransferStatement(context.acceptDataTransfer());
+			} else
+			if(context.acceptSystemDateTime() != null) {
+				CodeElement = CobolStatementsBuilder.CreateAcceptSystemDateTime(context.acceptSystemDateTime());
+			}
+		}
 
-        public override void EnterExitStatement(CodeElementsParser.ExitStatementContext context)
-        {
-            Context = context;
-            CodeElement = new ExitStatement();
-        }
+		// --- ALTER ---
 
-        public override void EnterGobackStatement(CodeElementsParser.GobackStatementContext context)
-        {
-            Context = context;
-            CodeElement = new GobackStatement();
-        }
+		public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {            
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateAlterStatement(context);
+		}
 
-        public override void EnterGotoStatement(CodeElementsParser.GotoStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateGotoStatement(context);
-        }
+		// --- CALL ---
+
+		public override void EnterCallStatement(CodeElementsParser.CallStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateCallStatement(context);
+		}
+
+		public override void EnterCallStatementEnd(CodeElementsParser.CallStatementEndContext context) {
+			Context = context;
+			CodeElement = new CallStatementEnd();
+		}
+
+		// --- CANCEL ---
+
+		public override void EnterCancelStatement(CodeElementsParser.CancelStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateCancelStatement(context);
+		}
+
+		// --- CONTINUE ---
+
+		public override void EnterContinueStatement(CodeElementsParser.ContinueStatementContext context) {
+			Context = context;
+			CodeElement = new ContinueStatement();
+		}
+
+		// --- DELETE ---
+
+		public override void EnterDeleteStatement(CodeElementsParser.DeleteStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateDeleteStatement(context);
+		}
+
+		public override void EnterDeleteStatementEnd(CodeElementsParser.DeleteStatementEndContext context) {
+			Context = context;
+			CodeElement = new DeleteStatementEnd();
+		}
+
+		// --- DISPLAY ---
+
+		public override void EnterDisplayStatement(CodeElementsParser.DisplayStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateDisplayStatement(context);
+		}
+
+		// --- ENTRY ---
+		
+		public override void EnterEntryStatement(CodeElementsParser.EntryStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateEntryStatement(context);
+		}
+
+		// --- EVALUATE ---
+
+		public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateEvaluateStatement(context); ;
+		}
+
+		public override void EnterEvaluateStatementEnd(CodeElementsParser.EvaluateStatementEndContext context) {
+			Context = context;
+			CodeElement = new EvaluateStatementEnd();
+		}
+
+		// --- EXEC ---
+
+		public override void EnterExecStatement(CodeElementsParser.ExecStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateExecStatement(context);
+		}
+
+		// --- EXIT ---
+
+		public override void EnterExitStatement(CodeElementsParser.ExitStatementContext context) {
+			Context = context;
+			CodeElement = new ExitStatement();
+		}
+
+		public override void EnterExitMethodStatement(CodeElementsParser.ExitMethodStatementContext context) {
+			Context = context;
+			CodeElement = new ExitMethodStatement();
+		}
+
+		public override void EnterExitProgramStatement(CodeElementsParser.ExitProgramStatementContext context) {
+			Context = context;
+			CodeElement = new ExitProgramStatement();
+		}
+
+		// --- GOBACK ---
+				
+		public override void EnterGobackStatement(CodeElementsParser.GobackStatementContext context) {
+			Context = context;
+			CodeElement = new GobackStatement();
+		}
+
+		// --- GOTO ---
+
+		public override void EnterGotoStatement(CodeElementsParser.GotoStatementContext context) {
+			Context = context;
+			if (context.gotoSimple() != null) {
+				CodeElement = CobolStatementsBuilder.CreateGotoStatement(context.gotoSimple());
+			}
+			if (context.gotoConditional() != null) {
+				CodeElement = CobolStatementsBuilder.CreateGotoConditionalStatement(context.gotoConditional());
+			}
+		}
+
+
 
 
         public override void EnterIfStatement(CodeElementsParser.IfStatementContext context)
@@ -1502,20 +1453,6 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = new IfStatementEnd();
         }
-
-
-        public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context)
-        {
-            Context = context;
-            CodeElement = new EvaluateStatement();
-        }
-
-        public override void EnterEvaluateStatementEnd(CodeElementsParser.EvaluateStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new EvaluateStatementEnd();
-        }
-
 
         public override void EnterInitializeStatement(CodeElementsParser.InitializeStatementContext context)
         {
@@ -1541,82 +1478,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new StatementsBuilder().CreateMoveStatement(context);
         }
 
-        public override void EnterMultiplyStatementFormat1(CodeElementsParser.MultiplyStatementFormat1Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('×');
-            builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterMultiplyStatementFormat2(CodeElementsParser.MultiplyStatementFormat2Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('×');
-            builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
-                context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterMultiplyStatementEnd(CodeElementsParser.MultiplyStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new MultiplyStatementEnd();
-        }
-
 
         public override void EnterNextSentenceStatement(CodeElementsParser.NextSentenceStatementContext context)
         {
             Context = context;
             CodeElement = new NextSentenceStatement();
-        }
-
-        public override void EnterOpenStatement(CodeElementsParser.OpenStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateOpenStatement(context);
-        }
-
-        public override void EnterCloseStatement(CodeElementsParser.CloseStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateCloseStatement(context);
-        }
-
-        public override void EnterReadStatement(CodeElementsParser.ReadStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateReadStatement(context);
-        }
-
-        public override void EnterReadStatementEnd(CodeElementsParser.ReadStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new ReadStatementEnd();
-        }
-
-        public override void EnterWriteStatement(CodeElementsParser.WriteStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateWriteStatement(context);
-        }
-
-        public override void EnterWriteStatementEnd(CodeElementsParser.WriteStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new WriteStatementEnd();
-        }
-
-        public override void EnterRewriteStatement(CodeElementsParser.RewriteStatementContext context)
-        {
-            Context = context;
-            CodeElement = new FileOperationBuilder().CreateRewriteStatement(context);
-        }
-
-        public override void EnterRewriteStatementEnd(CodeElementsParser.RewriteStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new RewriteStatementEnd();
         }
 
 
@@ -1890,37 +1756,6 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new StringStatementEnd();
         }
 
-        public override void EnterSubtractStatementFormat1(CodeElementsParser.SubtractStatementFormat1Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('-');
-            builder.InitializeFormat1Statement(context.identifierOrNumericLiteral(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterSubtractStatementFormat2(CodeElementsParser.SubtractStatementFormat2Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('-');
-            builder.InitializeFormat2Statement(context.identifierOrNumericLiteral(), context.identifierOrNumericLiteralTmp(),
-                context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterSubtractStatementFormat3(CodeElementsParser.SubtractStatementFormat3Context context)
-        {
-            var builder = new ArithmeticStatementBuilder('-');
-            builder.InitializeFormat3Statement(context.identifier(), context.identifierRounded());
-            Context = context;
-            CodeElement = builder.statement;
-        }
-
-        public override void EnterSubtractStatementEnd(CodeElementsParser.SubtractStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new SubtractStatementEnd();
-        }
-
         public override void EnterUnstringStatement(CodeElementsParser.UnstringStatementContext context)
         {
             var statement = new UnstringStatement();
@@ -2185,14 +2020,6 @@ namespace TypeCobol.Compiler.Parser
         {
             Token symbolToken = ParseTreeUtils.GetFirstToken(context);
             SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ParagraphName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-
-        public override void EnterParagraphNameOrSectionNameReference(CodeElementsParser.ParagraphNameOrSectionNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.SectionName, SymbolType.ParagraphName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
             CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
@@ -2684,20 +2511,6 @@ namespace TypeCobol.Compiler.Parser
 			var ce = CodeElement as FunctionDeclarationProfile;
 			foreach (var parameter in context.inputParameters())
 				ce.InputParameters = CreateParameters(parameter);
-		}
-		private IList<InputParameter> CreateParameters(CodeElementsParser.InputParametersContext context) {
-			var parameters = new List<InputParameter>();
-			var by = ReceivingMode.ByReference;
-			IList<Token> tokens = null;
-			if (context.receivingMode() != null) {
-				if (context.receivingMode() is CodeElementsParser.ByValueContext) by = ReceivingMode.ByValue;
-				tokens = ParseTreeUtils.GetTokensList(context.receivingMode());
-			}
-			var mode = new SyntaxProperty<ReceivingMode>(by, tokens);
-			foreach(var dataname in context.dataNameReference()) {
-				parameters.Add(new InputParameter(SyntaxElementBuilder.CreateDataName(dataname), mode));
-			}
-			return parameters;
 		}
 		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
 			var ce = CodeElement as FunctionDeclarationProfile;

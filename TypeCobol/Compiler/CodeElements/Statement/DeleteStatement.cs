@@ -22,16 +22,18 @@
     ///
     /// The file position indicator is not affected by execution of the DELETE statement.
     /// </summary>
-    public class DeleteStatement : CodeElement
+    public class DeleteStatement : StatementElement
     {
+        public DeleteStatement() : base(CodeElementType.DeleteStatement, StatementType.DeleteStatement)
+        { }
+
         /// <summary>
         /// p320:
         /// file-name-1
         /// Must be defined in an FD entry in the DATA DIVISION and must be the
         /// name of an indexed or relative file.
         /// </summary>
-        public FileName FileName = null;
+        public SymbolReference FileName { get; set; }
 
-        public DeleteStatement() : base(CodeElementType.DeleteStatement) { }
     }
 }

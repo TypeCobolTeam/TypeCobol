@@ -29,9 +29,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// possesses the INITIAL attribute is equivalent to executing a CANCEL statement
     /// referencing that program.
     /// </summary>
-    public class GobackStatement : CodeElement
+    public class GobackStatement : StatementElement
     {
-        public GobackStatement() : base(CodeElementType.GobackStatement)
+        public GobackStatement() : base(CodeElementType.GobackStatement, StatementType.GobackStatement)
         { }
     }
 }
