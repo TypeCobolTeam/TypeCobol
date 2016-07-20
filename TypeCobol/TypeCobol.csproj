@@ -253,8 +253,6 @@
     <Compile Include="Compiler\CodeElements\Statement\CancelStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\CloseStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\ContinueStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\SetStatementForAssignation.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\SetStatementForSwitches.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DeleteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\DisplayStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\EntryStatement.cs" />
@@ -280,8 +278,6 @@
     <Compile Include="Compiler\CodeElements\Statement\RewriteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SearchStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SetStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\SetStatementForCondition.cs" />
-    <Compile Include="Compiler\CodeElements\Statement\SetStatementForIndex.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SortStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StartStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\StopStatement.cs" />

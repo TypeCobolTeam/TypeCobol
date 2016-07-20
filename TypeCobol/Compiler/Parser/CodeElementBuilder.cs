@@ -1599,8 +1599,23 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new XmlStatementEnd();
 		}
 
+		// --- SET STATEMENT ---
 
-
+		public override void EnterSetStatement(CodeElementsParser.SetStatementContext context) {
+			Context = context;
+			if (context.setStatementForAssignation() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(context.setStatementForAssignation());
+			} else
+			if (context.setStatementForIndexes() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(context.setStatementForIndexes());
+			} else
+			if (context.setStatementForSwitches() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(context.setStatementForSwitches());
+			} else
+			if (context.setStatementForConditions() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(context.setStatementForConditions());
+			}
+		}
 
 
 
@@ -1609,128 +1624,6 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = new StatementsBuilder().CreateMoveStatement(context);
         }
-
-
-
-
-        public override void EnterSetStatementForAssignation(CodeElementsParser.SetStatementForAssignationContext context)
-        {
-            var statement = new SetStatementForAssignation();
-            if (context.identifier() != null)
-            {
-                statement.Receiving = new List<Expression>();
-                foreach ( var identifierContext in context.identifier()) {
-                    Expression receiving;
-                    if (identifierContext != null)
-                    {
-                        receiving = SyntaxElementBuilder.CreateIdentifier(identifierContext);
-                    }
-                    else break;
-                    statement.Receiving.Add(receiving);
-                }
-            }
-
-            if (context.setStatementForAssignationSending() != null)
-            {
-               if (context.setStatementForAssignationSending().identifier() != null)
-                {
-                    statement.Sending = SyntaxElementBuilder.CreateIdentifier(context.setStatementForAssignationSending().identifier());
-                }
-                else if (context.setStatementForAssignationSending().IntegerLiteral() != null)
-                {
-                    statement.Sending = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().IntegerLiteral())));
-                }
-                else if (context.setStatementForAssignationSending().TRUE() != null)
-                {
-                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().TRUE())));
-                }
-                else if (context.setStatementForAssignationSending().FALSE() != null)
-                {
-                    statement.Sending = new Literal(new SyntaxBoolean(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().FALSE())));
-                }
-                else if (context.setStatementForAssignationSending().NULL() != null)
-                {
-                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULL()));
-                }
-                else if (context.setStatementForAssignationSending().NULLS() != null)
-                {
-                    statement.Sending = new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().NULLS()));
-                }
-                else if (context.setStatementForAssignationSending().SELF() != null)
-                {
-                    statement.Sending =
-                        new SyntaxString(ParseTreeUtils.GetTokenFromTerminalNode(context.setStatementForAssignationSending().SELF()));
-                }
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-
-        public override void EnterSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context)
-        {
-            var statement = new SetStatementForIndex();
-
-            if (context.indexNameReference() != null)
-            {
-                var indexs = new List<Index>();
-                foreach (var indexNameContext in context.indexNameReference())
-                {
-                    indexs.Add(SyntaxElementBuilder.CreateIndex(indexNameContext));
-                }
-                statement.ReceivingIndexs = indexs;
-            }
-			statement.UpBy   = (context.UP() != null);
-			statement.DownBy = (context.DOWN() != null);
-
-            if (context.identifier() != null)
-            {
-                statement.SendingField = SyntaxElementBuilder.CreateIdentifier(context.identifier());
-            } 
-            else if (context.IntegerLiteral() != null)
-            {
-                statement.SendingField = new Number(new SyntaxNumber(ParseTreeUtils.GetTokenFromTerminalNode(context.IntegerLiteral())));
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext context)
-        {
-            var statement = new SetStatementForSwitches();
-
-            if (context.setStatementForSwitchesWhat() != null)
-            {
-                var setExternalSwitchs = new List<SetExternalSwitch>();
-                foreach (var switchesWhatContext in context.setStatementForSwitchesWhat())
-                {
-                    var setExternalSwitch = new SetExternalSwitch();
-                    
-                    if (switchesWhatContext.mnemonicForUPSISwitchNameReference() != null)
-                    {
-                        var mnemonics = new List<MnemonicForEnvironmentName>();
-                        foreach (var mnemonicContext in switchesWhatContext.mnemonicForUPSISwitchNameReference())
-                        {
-                           mnemonics.Add(new MnemonicForEnvironmentName(ParseTreeUtils.GetFirstToken(mnemonicContext)));
-                        }
-                        setExternalSwitch.MnemonicForEnvironmentNames = mnemonics;
-                    }
-					setExternalSwitch.ToOn = (switchesWhatContext.ON() != null);
-					setExternalSwitch.ToOff= (switchesWhatContext.OFF() != null);
-					setExternalSwitchs.Add(setExternalSwitch);
-                }
-                statement.SetExternalSwitches = setExternalSwitchs;
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-
-
-
 
 
 
