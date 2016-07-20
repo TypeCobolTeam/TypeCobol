@@ -1429,6 +1429,8 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
+
+
 		// --- IF ---
 
 		public override void EnterIfStatement(CodeElementsParser.IfStatementContext context) {
@@ -1447,6 +1449,8 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = new IfStatementEnd();
 		}
+
+
 
 		// --- INITIALIZE ---
 
@@ -1478,29 +1482,29 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+		// --- PERFORM ---
+
+		public override void EnterPerformStatement(CodeElementsParser.PerformStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreatePerformStatement(context);
+		}
+
+		public override void EnterPerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement(context);
+		}
+
+		public override void EnterPerformStatementEnd(CodeElementsParser.PerformStatementEndContext context) {
+			Context = context;
+			CodeElement = new PerformStatementEnd();
+		}
+
+
+
         public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
         {
             Context = context;
             CodeElement = new StatementsBuilder().CreateMoveStatement(context);
-        }
-
-
-        public override void EnterPerformStatement(CodeElementsParser.PerformStatementContext context)
-        {
-            Context = context;
-            CodeElement = new PerformStatement();
-        }
-
-        public override void EnterPerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context)
-        {
-            Context = context;
-            CodeElement = new PerformProcedureStatement();
-        }
-
-        public override void EnterPerformStatementEnd(CodeElementsParser.PerformStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new PerformStatementEnd();
         }
 
 
