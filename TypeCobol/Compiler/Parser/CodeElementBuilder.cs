@@ -1747,91 +1747,81 @@ namespace TypeCobol.Compiler.Parser
                 Console.WriteLine("?TODO: USE?");
         }
 
-        // Statement conditions
 
-        public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenConditionalExpression();
-        }
+		  //////////////////////////
+		 // STATEMENT CONDITIONS //
+		//////////////////////////
 
-        public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context)
-        {
-            Context = context;
-            CodeElement = new WhenOtherCondition();
-        }
+		public override void EnterAtEndCondition(CodeElementsParser.AtEndConditionContext context) {
+			Context = context;
+			CodeElement = new AtEndCondition();
+		}
+		public override void EnterNotAtEndCondition(CodeElementsParser.NotAtEndConditionContext context) {
+			Context = context;
+			CodeElement = new NotAtEndCondition();
+		}
 
-        public override void EnterAtEndCondition(CodeElementsParser.AtEndConditionContext context)
-        {
-            Context = context;
-            CodeElement = new AtEndCondition();
-        }
+		public override void EnterAtEndOfPageCondition(CodeElementsParser.AtEndOfPageConditionContext context) {
+			Context = context;
+			CodeElement = new AtEndOfPageCondition();
+		}
+		public override void EnterNotAtEndOfPageCondition(CodeElementsParser.NotAtEndOfPageConditionContext context) {
+			Context = context;
+			CodeElement = new NotAtEndOfPageCondition();
+		}
 
-        public override void EnterNotAtEndCondition(CodeElementsParser.NotAtEndConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotAtEndCondition();
-        }
+		public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateWhenCondition(context);
+		}
+		public override void EnterWhenOtherCondition(CodeElementsParser.WhenOtherConditionContext context) {
+			Context = context;
+			CodeElement = new WhenOtherCondition();
+		}
 
-        public override void EnterAtEndOfPageCondition(CodeElementsParser.AtEndOfPageConditionContext context)
-        {
-            Context = context;
-            CodeElement = new AtEndOfPageCondition();
-        }
+		public override void EnterWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateWhenSearchCondition(context);
+		}
 
-        public override void EnterNotAtEndOfPageCondition(CodeElementsParser.NotAtEndOfPageConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotAtEndOfPageCondition();
-        }
+		public override void EnterInvalidKeyCondition(CodeElementsParser.InvalidKeyConditionContext context) {
+			Context = context;
+			CodeElement = new InvalidKeyCondition();
+		}
+		public override void EnterNotInvalidKeyCondition(CodeElementsParser.NotInvalidKeyConditionContext context) {
+			Context = context;
+			CodeElement = new NotInvalidKeyCondition();
+		}
 
-        public override void EnterOnExceptionCondition(CodeElementsParser.OnExceptionConditionContext context)
-        {
-            Context = context;
-            CodeElement = new OnExceptionCondition();
-        }
+		public override void EnterOnExceptionCondition(CodeElementsParser.OnExceptionConditionContext context) {
+			Context = context;
+			CodeElement = new OnExceptionCondition();
+		}
 
-        public override void EnterNotOnExceptionCondition(CodeElementsParser.NotOnExceptionConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotOnExceptionCondition();
-        }
+		public override void EnterNotOnExceptionCondition(CodeElementsParser.NotOnExceptionConditionContext context) {
+			Context = context;
+			CodeElement = new NotOnExceptionCondition();
+		}
 
-        public override void EnterOnOverflowCondition(CodeElementsParser.OnOverflowConditionContext context)
-        {
-            Context = context;
-            CodeElement = new OnOverflowCondition();
-        }
+		public override void EnterOnOverflowCondition(CodeElementsParser.OnOverflowConditionContext context) {
+			Context = context;
+			CodeElement = new OnOverflowCondition();
+		}
+		public override void EnterNotOnOverflowCondition(CodeElementsParser.NotOnOverflowConditionContext context) {
+			Context = context;
+			CodeElement = new NotOnOverflowCondition();
+		}
 
-        public override void EnterNotOnOverflowCondition(CodeElementsParser.NotOnOverflowConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotOnOverflowCondition();
-        }
+		public override void EnterOnSizeErrorCondition(CodeElementsParser.OnSizeErrorConditionContext context) {
+			Context = context;
+			CodeElement = new OnSizeErrorCondition();
+		}
+		public override void EnterNotOnSizeErrorCondition(CodeElementsParser.NotOnSizeErrorConditionContext context) {
+			Context = context;
+			CodeElement = new NotOnSizeErrorCondition();
+		}
 
-        public override void EnterInvalidKeyCondition(CodeElementsParser.InvalidKeyConditionContext context)
-        {
-            Context = context;
-            CodeElement = new InvalidKeyCondition();
-        }
 
-        public override void EnterNotInvalidKeyCondition(CodeElementsParser.NotInvalidKeyConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotInvalidKeyCondition();
-        }
-
-        public override void EnterOnSizeErrorCondition(CodeElementsParser.OnSizeErrorConditionContext context)
-        {
-            Context = context;
-            CodeElement = new OnSizeErrorCondition();
-        }
-
-        public override void EnterNotOnSizeErrorCondition(CodeElementsParser.NotOnSizeErrorConditionContext context)
-        {
-            Context = context;
-            CodeElement = new NotOnSizeErrorCondition();
-        }
 
         // -- Symbols --
 
