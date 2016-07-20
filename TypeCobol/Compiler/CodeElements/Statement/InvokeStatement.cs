@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,21 +7,10 @@ namespace TypeCobol.Compiler.CodeElements
     /// The INVOKE statement can create object instances of a COBOL or Java class and
     /// can invoke a method defined in a COBOL or Java class.
     /// </summary>
-    public class InvokeStatement : CodeElement
+    public class InvokeStatement : StatementElement
     {
-        /// <summary>
-        /// p356:
-        /// identifier-1
-        /// Must be defined as USAGE OBJECT REFERENCE. The contents of
-        /// identifier-1 specify the object on which a method is invoked.
-        /// When identifier-1 is specified, either literal-1 or identifier-2 must be specified,
-        /// identifying the name of the method to be invoked.
-        ///
-        /// The results of the INVOKE statement are undefined if either:
-        /// * identifier-1 does not contain a valid reference to an object.
-        /// * identifier-1 contains NULL.
-        /// </summary>
-        public Identifier Instance;
+        public InvokeStatement() : base(CodeElementType.InvokeStatement, StatementType.InvokeStatement)
+        { }
 
         /// <summary>
         /// p356:
@@ -40,9 +28,20 @@ namespace TypeCobol.Compiler.CodeElements
         /// You must specify class-name-1 in the REPOSITORY paragraph of the
         /// configuration section of the class or program that contains the INVOKE
         /// statement.
+        /// 
+        /// p356:
+        /// identifier-1
+        /// Must be defined as USAGE OBJECT REFERENCE. The contents of
+        /// identifier-1 specify the object on which a method is invoked.
+        /// When identifier-1 is specified, either literal-1 or identifier-2 must be specified,
+        /// identifying the name of the method to be invoked.
+        ///
+        /// The results of the INVOKE statement are undefined if either:
+        /// * identifier-1 does not contain a valid reference to an object.
+        /// * identifier-1 contains NULL.
         /// </summary>
-        public ClassName ClassName;
-
+        public SymbolReferenceVariable ClassNameOrObjectReference { get; set; }
+                
         /// <summary>
         /// p357:
         /// SELF
@@ -50,7 +49,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// method. When SELF is specified, the INVOKE statement must appear
         /// within the PROCEDURE DIVISION of a method.
         /// </summary>
-        public bool IsSelf;
+        public SyntaxProperty<bool> SelfOjectIdentifier { get; set; }
+         
         /// <summary>
         /// p357:
         /// SUPER
@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// method and methods defined in any class derived from that class; thus the
         /// method invoked will be one that is inherited from an ancestor class.
         /// </summary>
-        public bool IsSuper;
+        public SyntaxProperty<bool> SuperObjectIdentifier { get; set; }
 
         /// <summary>
         /// p357:
@@ -90,7 +90,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// select the method with matching signature that is supported by the object.
         ///
         /// The method can be overloaded.
-        ///
+        /// </summary>
+        public SymbolReferenceVariable MethodName { get; set; }
+
+        /// <summary>
         /// p357:
         /// The NEW operand specifies that the INVOKE statement is to create a new
         /// object instance of the class class-name-1. class-name-1 must be specified.
@@ -112,7 +115,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// When NEW is specified, you must also specify a RETURNING phrase as
         /// described in “RETURNING phrase” on page 359.
         /// </summary>
-        public Expression MethodName;
+        public SyntaxProperty<bool> ConstructorMethod { get; set; }
 
         /// <summary>
         /// p358:
@@ -175,7 +178,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// responsibility of the programmer. Conformance requirements are not verified by
         /// the compiler.
         /// </summary>
-        public IList<Expression> Usings;
+        public IList<Variable> InputParameters { get; set; }
 
         /// <summary>
         /// p459:
@@ -249,8 +252,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// responsibility of the programmer. Conformance requirements are not verified by
         /// the compiler.
         /// </summary>
-        public Identifier Returning;
-
-        public InvokeStatement() : base(CodeElementType.InvokeStatement) { }
+        public ReceivingStorageArea OutputParameter { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -16,8 +15,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// The MERGE statement is not supported for programs compiled with the THREAD
     /// compiler option.
     /// </summary>
-    public class MergeStatement : CodeElement
+    public class MergeStatement : StatementElement
     {
+        public MergeStatement() : base(CodeElementType.MergeStatement, StatementType.MergeStatement)
+        { }
+        
         /// <summary>
         /// p364:
         /// file-name-1
@@ -34,7 +36,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// file-name-3, ... , are accepted by the merge program and then merged according to
         /// the keys specified.
         /// </summary>
-        public FileName FileName;
+        public SymbolReference FileName { get; set; }
+
         /// <summary>
         /// p365-366:
         /// ASCENDING/DESCENDING KEY phrase
@@ -96,7 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// other key data items, the comparisons are performed according to the rules for
         /// comparison of operands in a relation condition.
         /// </summary>
-        public IList<KeyDataItem> Keys;
+        public IList<SortingKey> SortingKeys { get; set; }
 
         /// <summary>
         /// p366:
@@ -144,7 +147,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// COLLATING SEQUENCE clause of the OBJECT-COMPUTER paragraph are
         /// omitted, the EBCDIC collating sequence is used.
         /// </summary>
-        public AlphabetName CollatingSequence;
+        public SymbolReference CollatingSequence { get; set; }
 
         /// <summary>
         /// pp366-367:
@@ -167,7 +170,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// must not be greater than the largest record described for file-name-1. For more
         /// information, see Sorting and merging files in the Enterprise COBOL Programming Guide.
         /// </summary>
-        public IList<FileName> Using;
+        public SymbolReference[] InputFiles { get; set; }
 
         /// <summary>
         /// p367:
@@ -192,7 +195,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// DECLARATIVE procedures are specified for these files for output operations, the
         /// declaratives will be driven for errors if errors occur.
         /// </summary>
-        public IList<FileName> Giving;
+        public SymbolReference[] OutputFiles { get; set; }
 
         /// <summary>
         /// pp367-368:
@@ -233,8 +236,101 @@ namespace TypeCobol.Compiler.CodeElements
         /// terminated after the last statement completes execution. The last statement in an
         /// OUTPUT PROCEDURE can be the EXIT statement (see “EXIT statement” on page 335).
         /// </summary>
-        public IList<QualifiedProcedureName> Output;
+        public SymbolReference OutputProcedure { get; set; }
+        public SymbolReference ThroughOutputProcedure { get; set; }
+    }
 
-        public MergeStatement() : base(CodeElementType.MergeStatement) { }
+    /// <summary>
+    /// p423:
+    /// data-name-1
+    /// Specifies a KEY data item on which the SORT statement will be based.
+    /// Each such data-name must identify a data item in a record associated with
+    /// file-name-1. The data-names following the word KEY are listed from left to
+    /// right in the SORT statement in order of decreasing significance without
+    /// regard to how they are divided into KEY phrases. The leftmost data-name
+    /// is the major key, the next data-name is the next most significant key, and
+    /// so forth. The following rules apply:
+    /// * A specific KEY data item must be physically located in the same position
+    /// and have the same data format in each input file. However, it need not
+    /// have the same data-name.
+    /// * If file-name-1 has more than one record description, the KEY data items
+    /// need be described in only one of the record descriptions.
+    /// * If file-name-1 contains variable-length records, all of the KEY data-items
+    /// must be contained within the first n character positions of the record,
+    /// where n equals the minimum records size specified for file-name-1.
+    /// * KEY data items must not contain an OCCURS clause or be subordinate
+    /// to an item that contains an OCCURS clause.
+    /// * KEY data items cannot be:
+    ///   – Variably located
+    ///   – Group items that contain variable-occurrence data items
+    ///   – Category numeric described with usage NATIONAL (national decimal item)
+    ///   – Category external floating-point described with usage NATIONAL
+    ///   (national floating-point item)
+    ///   – Category DBCS
+    /// * KEY data items can be qualified.
+    /// * KEY data items can be any of the following data categories:
+    ///   – Alphabetic, alphanumeric, alphanumeric-edited
+    ///   – Numeric (except numeric with usage NATIONAL)
+    ///   – Numeric-edited (with usage DISPLAY or NATIONAL)
+    ///   – Internal floating-point or display floating-point
+    ///   – National or national-edited
+    ///
+    /// pp423-424:
+    /// If file-name-3 references an indexed file, the first specification of data-name-1 must
+    /// be associated with an ASCENDING phrase and the data item referenced by that
+    /// data-name-1 must occupy the same character positions in this record as the data
+    /// item associated with the major record key for that file.
+    ///
+    /// The direction of the sorting operation depends on the specification of the
+    /// ASCENDING or DESCENDING keywords as follows:
+    /// * When ASCENDING is specified, the sequence is from the lowest key value to
+    /// the highest key value.
+    /// * When DESCENDING is specified, the sequence is from the highest key value to
+    /// the lowest.
+    /// * If the KEY data item is described with usage NATIONAL, the sequence of the
+    /// KEY values is based on the binary values of the national characters.
+    /// * If the KEY data item is internal floating point, the sequence of key values will be
+    /// in numeric order.
+    /// * When the COLLATING SEQUENCE phrase is not specified, the key
+    /// comparisons are performed according to the rules for comparison of operands in
+    /// a relation condition. See “General relation conditions” on page 260).
+    /// * When the COLLATING SEQUENCE phrase is specified, the indicated collating
+    /// sequence is used for key data items of alphabetic, alphanumeric,
+    /// alphanumeric-edited, external floating-point, and numeric-edited categories. For
+    /// all other key data items, the comparisons are performed according to the rules
+    /// for comparison of operands in a relation condition.
+    /// </summary>
+    public class SortingKey
+    {
+        /// <summary>
+        /// pp423-424:
+        /// The direction of the sorting operation depends on the specification of the
+        /// ASCENDING or DESCENDING keywords as follows:
+        /// * When ASCENDING is specified, the sequence is from the lowest key value to
+        /// the highest key value.
+        /// </summary>
+        public SyntaxProperty<SortingDirection> Direction { get; set; }
+
+        /// <summary>
+        /// p423:
+        /// data-name-1
+        /// Specifies a KEY data item on which the SORT statement will be based.
+        /// Each such data-name must identify a data item in a record associated with
+        /// file-name-1.
+        /// </summary>
+        public SymbolReference DataItem { get; set; }
+    }
+
+    /// <summary>
+    /// pp423-424:
+    /// The direction of the sorting operation depends on the specification of the
+    /// ASCENDING or DESCENDING keywords as follows:
+    /// * When DESCENDING is specified, the sequence is from the highest key value to
+    /// the lowest.
+    /// </summary>
+    public enum SortingDirection
+    {
+        Ascending,
+        Descending
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -8,8 +7,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// values. The INITIALIZE statement is functionally equivalent to one or more MOVE
     /// statements.
     /// </summary>
-    public class InitializeStatement : CodeElement
+    public class InitializeStatement : StatementElement
     {
+        public InitializeStatement() : base(CodeElementType.InitializeStatement, StatementType.InitializeStatement)
+        { }
+
         /// <summary>
         /// Receiving areas.
         /// identifier-1 must reference one of the following items:
@@ -46,81 +48,83 @@ namespace TypeCobol.Compiler.CodeElements
         /// valid receiving fields or sending fields, respectively, for the implied MOVE
         /// statements.
         /// </summary>
-        public IList<Identifier> Receiving;
+        public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
+
+        // Sending areas.
+        //
+        // p344:
+        // When the REPLACING phrase is not specified:
+        // * SPACE is the implied sending item for receiving items of category alphabetic,
+        // alphanumeric, alphanumeric-edited, DBCS, national, or national-edited.
+        // * ZERO is the implied sending item for receiving items of category numeric or
+        // numeric-edited.
 
         /// <summary>
-        /// Sending areas.
-        ///
-        /// p344:
-        /// When the REPLACING phrase is not specified:
-        /// * SPACE is the implied sending item for receiving items of category alphabetic,
-        /// alphanumeric, alphanumeric-edited, DBCS, national, or national-edited.
-        /// * ZERO is the implied sending item for receiving items of category numeric or
-        /// numeric-edited.
+        /// If the REPLACING phrase is specified:
+        //    - If identifier-1 references an alphanumeric group item or a national group
+        //      item, any elementary item within the data item referenced by identifier-1 is
+        //      initialized only if it belongs to a category specified in the REPLACING
+        //      phrase.
+        //    Initialization takes place as if the data item referenced by identifier-2 or literal-1
+        //    were the sending operand in an implicit MOVE statement to the receiving item.
         /// </summary>
-        public IList<Replacing> Sending = new List<Replacing>();
+        public InitializeReplacingInstruction[] ReplacingInstructions { get; set; }
+    }
 
-        public InitializeStatement() : base(CodeElementType.InitializeStatement)
-        { }
+    /// <summary>
+    /// REPLACING phrase
+    /// When the REPLACING phrase is specified:
+    /// * identifier-2 must reference an item of a category that is valid as a sending
+    /// operand in a MOVE statement to an item of the corresponding category
+    /// specified in the REPLACING phrase.
+    /// * literal-1 must be of a category that is valid as a sending operand in a MOVE
+    /// statement to an item of the corresponding category specified in the REPLACING
+    /// phrase.
+    /// * A floating-point literal, a data item of category internal floating-point, or a data
+    /// item of category external floating point is treated as if it were in the NUMERIC
+    /// category.
+    /// * The same category cannot be repeated in a REPLACING phrase.
+    ///
+    /// With the exception of EGCS, the keyword after the word REPLACING corresponds
+    /// to a category of data shown in “Classes and categories of data” on page 162.
+    ///
+    /// EGCS in the REPLACING phrase is synonymous with DBCS.
+    /// </summary>
+
+    public class InitializeReplacingInstruction
+    {
+        public SyntaxProperty<InitializeDataCategory> ReplaceDataCategory { get; set; }
 
         /// <summary>
-        /// REPLACING phrase
-        /// When the REPLACING phrase is specified:
-        /// * identifier-2 must reference an item of a category that is valid as a sending
-        /// operand in a MOVE statement to an item of the corresponding category
-        /// specified in the REPLACING phrase.
-        /// * literal-1 must be of a category that is valid as a sending operand in a MOVE
-        /// statement to an item of the corresponding category specified in the REPLACING
-        /// phrase.
-        /// * A floating-point literal, a data item of category internal floating-point, or a data
-        /// item of category external floating point is treated as if it were in the NUMERIC
-        /// category.
-        /// * The same category cannot be repeated in a REPLACING phrase.
+        /// pp343-344:
+        /// Sending areas
+        /// When identifier-2 references a national group item, identifier-2 is processed
+        /// as an elementary data item of category national.
+        /// identifier-2 must reference an elementary data item (or a national group
+        /// item treated as elementary) that is valid as a sending operand in a MOVE
+        /// statement with identifier-1 as the receiving operand.
+        /// literal-1 must be a literal that is valid as a sending operand in a MOVE
+        /// statement with identifier-1 as the receiving operand.
         ///
-        /// With the exception of EGCS, the keyword after the word REPLACING corresponds
-        /// to a category of data shown in “Classes and categories of data” on page 162.
-        ///
-        /// EGCS in the REPLACING phrase is synonymous with DBCS.
+        /// pp344:
+        /// Special registers can be specified for identifier-1 and identifier-2 only if they are
+        /// valid receiving fields or sending fields, respectively, for the implied MOVE
+        /// statements.
         /// </summary>
-        public class Replacing
-        {
-            public enum Mode
-            {
-                ALPHABETIC,
-                ALPHANUMERIC,
-                ALPHANUMERIC_EDITED,
-                NATIONAL,
-                NATIONAL_EDITED,
-                NUMERIC,
-                NUMERIC_EDITED,
-                DBCS,
-                EGCS,
-                UNKNOWN,
-            }
-            /// <summary>
-            /// pp343-344:
-            /// Sending areas
-            /// When identifier-2 references a national group item, identifier-2 is processed
-            /// as an elementary data item of category national.
-            /// identifier-2 must reference an elementary data item (or a national group
-            /// item treated as elementary) that is valid as a sending operand in a MOVE
-            /// statement with identifier-1 as the receiving operand.
-            /// literal-1 must be a literal that is valid as a sending operand in a MOVE
-            /// statement with identifier-1 as the receiving operand.
-            ///
-            /// pp344:
-            /// Special registers can be specified for identifier-1 and identifier-2 only if they are
-            /// valid receiving fields or sending fields, respectively, for the implied MOVE
-            /// statements.
-            /// </summary>
-            public Expression Receiving;
-            public Mode ReceivingMode;
+        public Variable BySendingVariable { get; set; }
+    }      
 
-            public Replacing(Expression receiving, Mode mode)
-            {
-                this.Receiving = receiving;
-                this.ReceivingMode = mode;
-            }
-        }
+    public enum InitializeDataCategory
+    {
+        UNKNOWN,
+        ALPHABETIC,
+        ALPHANUMERIC,
+        ALPHANUMERIC_EDITED,
+        NATIONAL,
+        NATIONAL_EDITED,
+        NUMERIC,
+        NUMERIC_EDITED,
+        DBCS,
+        EGCS        
     }
 }

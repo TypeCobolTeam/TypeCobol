@@ -1448,26 +1448,35 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new IfStatementEnd();
 		}
 
+		// --- INITIALIZE ---
+
+		public override void EnterInitializeStatement(CodeElementsParser.InitializeStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateInitializeStatement(context);
+		}
+
+		// --- INSPECT ---
+
+		public override void EnterInspectStatement(CodeElementsParser.InspectStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateInspectStatement(context);
+		}
+
+		// --- INVOKE ---
+
+		public override void EnterInvokeStatement(CodeElementsParser.InvokeStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateInvokeStatement(context);
+		}
+
+		// --- MERGE ---
+
+		public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateMergeStatement(context);
+		}
 
 
-
-        public override void EnterInitializeStatement(CodeElementsParser.InitializeStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateInitializeStatement(context);
-        }
-
-        public override void EnterInspectStatement(CodeElementsParser.InspectStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateInspectStatement(context);
-        }
-
-        public override void EnterInvokeStatement(CodeElementsParser.InvokeStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateInvokeStatement(context);
-        }
 
         public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
         {
@@ -1644,11 +1653,6 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateMergeStatement(context);
-        }
 
         public override void EnterSortStatement(CodeElementsParser.SortStatementContext context)
         {
