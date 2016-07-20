@@ -1,0 +1,1 @@
+000000*Don't except any errors
