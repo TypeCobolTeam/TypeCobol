@@ -254,14 +254,6 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 		
-		// TO DO : Implement these controls at the next parsing step, after symbol type resolution
-		// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", e);
-		// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", e);
-		// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", e);
-		// DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", e);
-		// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", e);
-		// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", token, rulestack);
-		
 		  //////////////////////
 		 // CANCEL STATEMENT //
 		//////////////////////

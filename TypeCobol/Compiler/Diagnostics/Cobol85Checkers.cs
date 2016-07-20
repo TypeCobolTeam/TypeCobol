@@ -121,31 +121,28 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var statement = e as CallStatement;
 			var context = c as CodeElementsParser.CallStatementContext;
 
-			//foreach (var call in context.callBy()) CheckCallUsings(statement, call);
+			foreach (var call in context.callProgramInputParameters()) CheckCallUsings(statement, call);
 
 			if (context.callReturning() != null && statement.Returning == null)
 				DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callReturning());
 		}
 
-		private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallByContext context){
-			foreach(var e in statement.Usings) {
-				if (e.Identifier != null) {
-					if (e.Identifier is FunctionReference)
-						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
-					if (e.Identifier is LinageCounter)
-						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", context);
-					if (e.UsingMode == CallStatement.Using.Mode.REFERENCE && e.Identifier is Length)
-						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
-					//TODO what about special registers ?
-				}
-				if (e.Literal != null) {
-					if (e.UsingMode == CallStatement.Using.Mode.REFERENCE)
-						DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-				}
-				if (e.Filename != null) {
-					if (e.UsingMode == CallStatement.Using.Mode.CONTENT || e.UsingMode == CallStatement.Using.Mode.VALUE)
-						DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-				}
+		private void CheckCallUsings(CallStatement statement,CodeElementsParser.CallProgramInputParametersContext context) {
+			foreach(var input in statement.InputParameters) {
+				// TODO these checks should be done during semantic phase, after symbol type resolution
+				// TODO if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
+				//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
+				// TODO if input is a function reference:
+				//	DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
+				// TODO if input is LINAGE COUNTER:
+				//	DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", context);
+				// TODO if input is LENGTH or identifier AND input.SendingMode.Value == SendingMode.ByReference:
+				// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+				//TODO what about special registers ?
+				if (input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
+					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+				if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
+					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", token, rulestack);
 			}
 		}
 	}

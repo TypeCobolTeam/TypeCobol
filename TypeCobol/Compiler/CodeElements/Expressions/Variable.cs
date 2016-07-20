@@ -158,6 +158,10 @@ namespace TypeCobol.Compiler.CodeElements
         public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
 
         public SymbolReference SymbolReference { get; private set; }
+
+		public bool IsLiteral {
+			get { return NumericValue != null || AlphanumericValue != null; }
+		}
     }
 
     public class VariableOrExpression : Variable
