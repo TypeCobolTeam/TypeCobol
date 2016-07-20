@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class UnstringStatement : CodeElement, Receiving
+    public class UnstringStatement : StatementElement
     {
+        public UnstringStatement() : base(CodeElementType.UnstringStatement, StatementType.UnstringStatement) { }
+
+/*      public IList<Expression> Expressions {
+            get {
+                var result = new List<Expression>();
+                foreach (var unstringReceiver in this.UnstringReceivers) {
+                    result.Add(unstringReceiver.IntoIdentifier);
+                }
+                return result;
+            }
+        }
+*/
         /// <summary>
         /// identifier-1
         /// </summary>
@@ -59,8 +70,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public List<NotOnOverflowCondition> NotOnOverflowStatement { get; set; }
 
-        public UnstringStatement() : base(CodeElementType.UnstringStatement)
-        { }
+       
 
         /// <summary>
         /// Debug string
@@ -132,19 +142,6 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.AppendLine(Tallying.ToString());
                 }
                 return sb.ToString();
-            }
-        }
-
-        public IList<Expression> Expressions
-        {
-            get
-            {
-                var result = new List<Expression>();
-                foreach (var unstringReceiver in this.UnstringReceivers)
-                {
-                    result.Add(unstringReceiver.IntoIdentifier);
-                }
-                return result;
             }
         }
     }

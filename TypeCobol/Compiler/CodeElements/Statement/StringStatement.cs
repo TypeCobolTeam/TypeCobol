@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class StringStatement : CodeElement, Receiving
+    public class StringStatement : StatementElement
     {
+        public StringStatement() : base(CodeElementType.StringStatement, StatementType.StringStatement) { }
+
+
+// TODO        public IList<Expression> Expressions { get {return new List<Expression> {this.IntoIdentifier};} }
 
         /// <summary>
         /// 
@@ -75,9 +78,7 @@ namespace TypeCobol.Compiler.CodeElements
         public List<NotOnOverflowCondition> NotOnOverflowStatement { get; set; }
 
 
-        public StringStatement() : base(CodeElementType.StringStatement)
-        {
-        }
+        
 
         /// <summary>
         /// Debug string
@@ -113,7 +114,6 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public IList<Expression> Expressions { get {return new List<Expression> {this.IntoIdentifier};} }
     }
 
 	public class StringStatementWhat

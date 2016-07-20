@@ -1535,6 +1535,52 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new SearchStatementEnd();
 		}
 
+		// --- SORT ---
+
+		public override void EnterSortStatement(CodeElementsParser.SortStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateSortStatement(context);
+		}
+
+		// --- START ---
+
+		public override void EnterStartStatement(CodeElementsParser.StartStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateStartStatement(context);
+		}
+		public override void EnterStartStatementEnd(CodeElementsParser.StartStatementEndContext context) {
+			Context = context;
+			CodeElement = new StartStatementEnd();
+		}
+
+		// --- STOP ---
+
+		public override void EnterStopStatement(CodeElementsParser.StopStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateStopStatement(context);
+		}
+
+		// --- STRING ---
+
+		public override void EnterStringStatement(CodeElementsParser.StringStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateStringStatement(context);
+		}
+		public override void EnterStringStatementEnd(CodeElementsParser.StringStatementEndContext context) {
+			Context = context;
+			CodeElement = new StringStatementEnd();
+		}
+
+		// --- UNSTRING ---
+
+		public override void EnterUnstringStatement(CodeElementsParser.UnstringStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateUnstringStatement(context);
+		}
+		public override void EnterUnstringStatementEnd(CodeElementsParser.UnstringStatementEndContext context) {
+			Context = context;
+			CodeElement = new UnstringStatementEnd();
+		}
 
 
 
@@ -1668,177 +1714,8 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public override void EnterSortStatement(CodeElementsParser.SortStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateSortStatement(context);
-        }
-
-        public override void EnterStartStatement(CodeElementsParser.StartStatementContext context)
-        {
-            var statement = new StartStatement();
-            statement.FileName = SyntaxElementBuilder.CreateFileName(context.fileNameReference());
-            statement.DataName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
-            if (context.relationalOperator() != null)
-                statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
-            
-            Context = context;
-            CodeElement = statement;
-        }
-        public override void EnterStartStatementEnd(CodeElementsParser.StartStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new StartStatementEnd();
-        }
-
-        public override void EnterStopStatement(CodeElementsParser.StopStatementContext context)
-        {
-            var statement = new StopStatement();
-            if (context.literal() != null)
-                statement.Literal = SyntaxElementBuilder.CreateLiteral(context.literal());
-            statement.IsStopRun = context.RUN() != null;
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterStringStatement(CodeElementsParser.StringStatementContext context)
-        {
-            var statement = new StringStatement();
-
-            if (context.stringStatementWhat() != null)
-            {
-                var statementWhatList = new List<StringStatementWhat>();
-                foreach (CodeElementsParser.StringStatementWhatContext stringStatementWhatContext in context.stringStatementWhat())
-                {
-                    var stringStatementWhat = new StringStatementWhat();
-
-                    if (stringStatementWhatContext.identifierToConcat != null)
-                    {
-                        var identifierToConcat = new List<Expression>();
-                        foreach (
-                            CodeElementsParser.IdentifierOrLiteralContext idOrLiteral in
-                                stringStatementWhatContext.identifierOrLiteral())
-                        {
-                            identifierToConcat.Add(CreateIdentifierOrLiteral(idOrLiteral, statement, "String"));
-                        }
-                        stringStatementWhat.IdentifierToConcat = identifierToConcat;
-                    }
-                    //else don't set IdentifierToConcat. It will remains null
 
 
-					if (stringStatementWhatContext.stringStatementDelimiter() != null) {
-						if (stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral() != null) {
-							stringStatementWhat.DelimiterIdentifier =
-								CreateIdentifierOrLiteral(stringStatementWhatContext.stringStatementDelimiter().identifierOrLiteral(), statement, "String");
-						} else {
-							stringStatementWhat.DelimitedBySize = (stringStatementWhatContext.stringStatementDelimiter().SIZE() != null);
-						}
-					}
-                    statementWhatList.Add(stringStatementWhat);
-                }
-
-                statement.StringStatementWhat = statementWhatList;
-            }
-            //else don't set statement.StringStatementWhat
-
-
-            if (context.identifierInto != null)
-            {
-                statement.IntoIdentifier = SyntaxElementBuilder.CreateIdentifier(context.identifierInto);
-            } //else don't set statement.IntoIdentifier
-
-
-            if (context.stringStatementWith() != null)
-            {
-                statement.PointerIdentifier = SyntaxElementBuilder.CreateIdentifier(context.stringStatementWith().identifier());
-            } //else don't set statement.PointerIdentifier
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterStringStatementEnd(CodeElementsParser.StringStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new StringStatementEnd();
-        }
-
-        public override void EnterUnstringStatement(CodeElementsParser.UnstringStatementContext context)
-        {
-            var statement = new UnstringStatement();
-
-            if (context.unstringIdentifier != null)
-            {
-                statement.UnstringIdentifier = SyntaxElementBuilder.CreateIdentifier(context.unstringIdentifier);
-            }
-
-            if (context.unstringDelimited() != null)
-            {
-                if (context.unstringDelimited().delimitedBy != null)
-                {
-                    statement.DelimitedBy = CreateIdentifierOrLiteral(context.unstringDelimited().delimitedBy, statement, "unstring");
-                }
-
-                if (context.unstringDelimited().ustringOthersDelimiters() != null)
-                {
-                    var otherDelimiters = new List<Expression>();
-                    foreach (
-                        CodeElementsParser.UstringOthersDelimitersContext ustringOthersDelimitersContext in
-                            context.unstringDelimited().ustringOthersDelimiters())
-                    {
-                        otherDelimiters.Add(CreateIdentifierOrLiteral(ustringOthersDelimitersContext.identifierOrLiteral(), statement,
-                            "Unstring"));
-                    }
-                    statement.OtherDelimiters = otherDelimiters;
-                }
-            }
-
-            if (context.unstringReceiver() != null)
-            {
-                var unstringReceiverList = new List<UnstringReceiver>();
-                foreach (CodeElementsParser.UnstringReceiverContext unstringReceiverContext in context.unstringReceiver())
-                {
-                    var unstringReceiver = new UnstringReceiver();
-                    if (unstringReceiverContext.intoIdentifier != null)
-                    {
-                        unstringReceiver.IntoIdentifier = SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.intoIdentifier);
-                    }
-                    if (unstringReceiverContext.unstringDelimiter() != null &&
-                        unstringReceiverContext.unstringDelimiter().identifier() != null)
-                    {
-                        unstringReceiver.DelimiterIdentifier =
-                            SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.unstringDelimiter().identifier());
-                    }
-                    if (unstringReceiverContext.unstringCount() != null && unstringReceiverContext.unstringCount().identifier() != null)
-                    {
-                        unstringReceiver.CountIdentifier =
-                            SyntaxElementBuilder.CreateIdentifier(unstringReceiverContext.unstringCount().identifier());
-                    }
-                    unstringReceiverList.Add(unstringReceiver);
-                }
-                statement.UnstringReceivers = unstringReceiverList;
-            }
-
-            if (context.unstringPointer() != null && context.unstringPointer().identifier() != null)
-            {
-                statement.WithPointer = SyntaxElementBuilder.CreateIdentifier(context.unstringPointer().identifier());
-            }
-
-            if (context.unstringTallying() != null && context.unstringTallying().identifier() != null)
-            {
-                statement.Tallying = SyntaxElementBuilder.CreateIdentifier(context.unstringTallying().identifier());
-            }
-
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterUnstringStatementEnd(CodeElementsParser.UnstringStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new UnstringStatementEnd();
-        }
 
         public override void EnterUseStatement(CodeElementsParser.UseStatementContext context)
         {
