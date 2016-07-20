@@ -1429,30 +1429,27 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
+		// --- IF ---
+
+		public override void EnterIfStatement(CodeElementsParser.IfStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateIfStatement(context);
+		}
+		public override void EnterElseCondition(CodeElementsParser.ElseConditionContext context) {
+			Context = context;
+			CodeElement = new ElseCondition();
+		}
+		public override void EnterNextSentenceStatement(CodeElementsParser.NextSentenceStatementContext context) {
+			Context = context;
+			CodeElement = new NextSentenceStatement();
+		}
+		public override void EnterIfStatementEnd(CodeElementsParser.IfStatementEndContext context) {
+			Context = context;
+			CodeElement = new IfStatementEnd();
+		}
 
 
 
-        public override void EnterIfStatement(CodeElementsParser.IfStatementContext context)
-        {
-            var statement = new IfStatement();
-            if (context.conditionalExpression() != null) {
-                statement.condition = new LogicalExpressionBuilder().createCondition(context.conditionalExpression());
-            }
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterElseCondition(CodeElementsParser.ElseConditionContext context)
-        {
-            Context = context;
-            CodeElement = new ElseCondition();
-        }
-
-        public override void EnterIfStatementEnd(CodeElementsParser.IfStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new IfStatementEnd();
-        }
 
         public override void EnterInitializeStatement(CodeElementsParser.InitializeStatementContext context)
         {
@@ -1476,13 +1473,6 @@ namespace TypeCobol.Compiler.Parser
         {
             Context = context;
             CodeElement = new StatementsBuilder().CreateMoveStatement(context);
-        }
-
-
-        public override void EnterNextSentenceStatement(CodeElementsParser.NextSentenceStatementContext context)
-        {
-            Context = context;
-            CodeElement = new NextSentenceStatement();
         }
 
 

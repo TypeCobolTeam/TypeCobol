@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 		}
 	}
 
-    public class Condition : LogicalExpression, Identifier, Subscriptable
+    public class Condition : Identifier, Subscriptable
     {
         /// <summary>ConditionName</summary>
         public QualifiedName Name { get; private set; }
