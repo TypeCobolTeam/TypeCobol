@@ -1501,6 +1501,46 @@ namespace TypeCobol.Compiler.Parser
 
 
 
+		// --- RELEASE	 ---
+
+		public override void EnterReleaseStatement(CodeElementsParser.ReleaseStatementContext context) {            
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateReleaseStatement(context);
+		}
+
+		// --- RETURN ---
+
+		public override void EnterReturnStatement(CodeElementsParser.ReturnStatementContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateReturnStatement(context);
+		}
+		public override void EnterReturnStatementEnd(CodeElementsParser.ReturnStatementEndContext context) {
+			Context = context;
+			CodeElement = new ReturnStatementEnd();
+		}
+
+		// --- SEARCH ---
+
+		public override void EnterSearchStatement(CodeElementsParser.SearchStatementContext context) {
+			Context = context;
+			if (context.serialSearch() != null) {
+				CodeElement = CobolStatementsBuilder.CreateSerialSearchStatement(context.serialSearch());
+			} else
+			if (context.binarySearch() != null) {
+				CodeElement = CobolStatementsBuilder.CreateBinarySearchStatement(context.binarySearch());
+			}
+		}
+		public override void EnterSearchStatementEnd(CodeElementsParser.SearchStatementEndContext context) {
+			Context = context;
+			CodeElement = new SearchStatementEnd();
+		}
+
+
+
+
+
+
+
         public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
         {
             Context = context;
@@ -1509,36 +1549,6 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public override void EnterReleaseStatement(CodeElementsParser.ReleaseStatementContext context)
-        {
-            var statement = new ReleaseStatement();
-            statement.RecordName = SyntaxElementBuilder.CreateQualifiedName(context.qualifiedDataName());
-            statement.From = SyntaxElementBuilder.CreateIdentifier(context.identifier());
-            Context = context;
-            CodeElement = statement;
-        }
-
-        public override void EnterReturnStatement(CodeElementsParser.ReturnStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateReturnStatement(context);
-        }
-        public override void EnterReturnStatementEnd(CodeElementsParser.ReturnStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new ReturnStatementEnd();
-        }
-
-        public override void EnterSearchStatement(CodeElementsParser.SearchStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateSearchStatement(context);
-        }
-        public override void EnterSearchStatementEnd(CodeElementsParser.SearchStatementEndContext context)
-        {
-            Context = context;
-            CodeElement = new SearchStatementEnd();
-        }
 
         public override void EnterSetStatementForAssignation(CodeElementsParser.SetStatementForAssignationContext context)
         {
