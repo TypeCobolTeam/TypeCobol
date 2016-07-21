@@ -1213,8 +1213,8 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		/////////////////////
-		// START STATEMENT //
+		  /////////////////////
+		 // START STATEMENT //
 		/////////////////////
 
 		internal CodeElement CreateStartStatement(CodeElementsParser.StartStatementContext context)
@@ -1227,15 +1227,24 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		////////////////////
-		// STOP STATEMENT //
+		  ////////////////////
+		 // STOP STATEMENT //
 		////////////////////
 
 		internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
 		{
 			var statement = new StopStatement();
-			if (context.literal() != null)
-				statement.Literal = CobolWordsBuilder.CreateLiteral(context.literal());
+			var msg = context.messageToOperator();
+			if (msg != null) {
+				if (msg.numericValue() != null) {
+					var value = CobolWordsBuilder.CreateNumericValue(msg.numericValue());
+					if (value != null) statement.SetLiteral(value);
+				}
+				if (msg.alphanumericValue3() != null) {
+					var value = CobolWordsBuilder.CreateAlphanumericValue(msg.alphanumericValue3());
+					if (value != null) statement.SetLiteral(value);
+				}
+			}
 			statement.IsStopRun = context.RUN() != null;
 			return statement;
 		}

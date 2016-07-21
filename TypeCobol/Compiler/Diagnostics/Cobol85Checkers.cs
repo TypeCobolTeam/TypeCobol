@@ -225,9 +225,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var statement = e as StopStatement;
 			var context = c as CodeElementsParser.StopStatementContext;
-			if (context.literal() != null)
-				if (statement.Literal != null && statement.Literal.All)
-					DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
+// TODO
+//			if (statement.Literal != null && statement.Literal.All)
+//				DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
 		}
 	}
 
@@ -264,8 +264,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (expression is Identifier) CheckIdentifier(e, table, expression as Identifier);
 			if (expression is ArithmeticOperation) {
 				var aerith = expression as ArithmeticOperation;
-				CheckExpression(e, table, aerith.left);
-				CheckExpression(e, table, aerith.right);
+				CheckExpression(e, table, aerith.LeftOperand);
+				CheckExpression(e, table, aerith.RightOperand);
 			}
 		}
 

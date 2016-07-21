@@ -920,7 +920,7 @@ namespace TypeCobol.Compiler.Parser
 				StorageArea storageArea = CreateIdentifier(context.identifier());
 				return new SymbolReferenceVariable(StorageDataType.ProgramName, storageArea);
 			}
-			return null
+			return null;
 		}
 
 		internal SymbolReferenceVariable CreateProgramNameOrProgramEntryVariable(CodeElementsParser.ProgramNameOrProgramEntryVariableContext context)

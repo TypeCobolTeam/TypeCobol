@@ -31,7 +31,23 @@ namespace TypeCobol.Compiler.CodeElements
         /// Do not use the STOP literal statement in programs compiled with the THREAD
         /// compiler option.
         /// </summary>
-        public Literal Literal = null;
+		public object Literal {
+			get {
+				if (numeric != null) return numeric;
+				if (alphanum != null) return alphanum;
+				return null;
+			}
+		}
+
+		private NumericValue numeric { get; set; }
+		private AlphanumericValue alphanum { get; set; }
+
+		internal void SetLiteral<T>(SyntaxValue<T> value) {
+			if (value is NumericValue) numeric = value;
+			else
+			if (value is AlphanumericValue) alphanum = value;
+			else throw new ArgumentException();
+		}
 
         /// <summary>
         /// p432:
@@ -50,6 +66,5 @@ namespace TypeCobol.Compiler.CodeElements
         /// (Can be the system, which causes the application to end.)
         /// </summary>
         public bool IsStopRun = false;
-
-    }
+	}
 }

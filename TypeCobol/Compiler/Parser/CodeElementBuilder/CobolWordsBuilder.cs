@@ -95,19 +95,15 @@ namespace TypeCobol.Compiler.Parser
             return new AlphanumericValue(valueToken);
         }
 
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue3Context context)
-        {
-            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-            {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
-                return new AlphanumericValue(symbolicCharacterReference);
-            }
-            else
-            {
-                Token valueToken = ParseTreeUtils.GetFirstToken(context);
-                return new AlphanumericValue(valueToken);
-            }
-        }
+		internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue3Context context) {
+			if (context == null) return null;
+			var c = context.figurativeConstant();
+			if (c != null && c.symbolicCharacterReference() != null) {
+				return new AlphanumericValue(CreateSymbolReference(c.symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter));
+			}
+			Token token = ParseTreeUtils.GetFirstToken(context);
+			return new AlphanumericValue(token);
+		}
 
         internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue4Context context)
         {
