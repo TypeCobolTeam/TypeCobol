@@ -14,9 +14,9 @@ namespace TypeCobol
 	public class Parser
 	{
 		public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
-		private Dictionary<string,bool> Inits;
-		private Dictionary<string,FileCompiler> Compilers;
-		private FileCompiler Compiler = null;
+        protected Dictionary<string,bool> Inits;
+        protected Dictionary<string,FileCompiler> Compilers;
+        protected FileCompiler Compiler = null;
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public TypeCobol.Compiler.CodeModel.SymbolTable CustomSymbols = null;
 
