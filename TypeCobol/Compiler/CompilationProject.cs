@@ -168,7 +168,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
-        public ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName)
+        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
             CompilationDocument resultDocument = null;
