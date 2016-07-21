@@ -169,31 +169,36 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 	}
 
-	class SetStatementChecker: CodeElementListener
+	class SetStatementForAssignmentChecker: CodeElementListener
 	{
 		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(TypeCobol.Compiler.CodeElements.SetStatementForIndex), };
+			return new List<Type>() { typeof(SetStatementForAssignment), };
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var sa = e as TypeCobol.Compiler.CodeElements.SetStatementForAssignation;
-			if (sa != null) {
-				var ca = c as CodeElementsParser.SetStatementForAssignationContext;
-				for (int i = 0; i < ca.identifier().Length; i++) {
-					if (i >= sa.Receiving.Count) {
-						var ctxt = ca.identifier()[i];
-						DiagnosticUtils.AddError(sa, "Set: Receiving fields missing or type unknown before TO", ctxt);
-					}
-				}
-				if (sa.Sending == null) {
-					DiagnosticUtils.AddError(sa, "Set: Sending field missing or type unknown after TO", ca.setStatementForAssignationSending());
+			var set = e as SetStatementForAssignment;
+			var context = c as CodeElementsParser.SetStatementForAssignationContext;
+			for (int i = 0; i < context.dataOrIndexStorageArea().Length; i++) {
+				if (i >= set.ReceivingStorageAreas.Length) {
+					var ctxt = context.dataOrIndexStorageArea()[i];
+					DiagnosticUtils.AddError(set, "Set: Receiving fields missing or type unknown before TO", ctxt);
 				}
 			}
-			var si = e as TypeCobol.Compiler.CodeElements.SetStatementForIndex;
-			if (si != null) {
-				if (si.SendingField == null) {
-					var ci = c as CodeElementsParser.SetStatementForIndexesContext;
-					DiagnosticUtils.AddError(si, "Set xxx up/down by xxx: Sending field missing or type unknown", ci);
-				}
+			if (set.SendingVariable == null) {
+				DiagnosticUtils.AddError(set, "Set: Sending field missing or type unknown after TO", context.setSendingField());
+			}
+		}
+	}
+
+	class SetStatementForIndexesChecker: CodeElementListener
+	{
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(SetStatementForIndexes), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+			var set = e as SetStatementForIndexes;
+			if (set.SendingVariable == null) {
+				var context = c as CodeElementsParser.SetStatementForIndexesContext;
+				DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context.integerVariable1());
 			}
 		}
 	}

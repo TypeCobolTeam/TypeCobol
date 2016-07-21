@@ -1602,23 +1602,26 @@ namespace TypeCobol.Compiler.Parser
 		// --- SET STATEMENT ---
 
 		public override void EnterSetStatement(CodeElementsParser.SetStatementContext context) {
-			Context = context;
 			if (context.setStatementForAssignation() != null) {
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(context.setStatementForAssignation());
+				Context = context.setStatementForAssignation();
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(Context);
 			} else
 			if (context.setStatementForIndexes() != null) {
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(context.setStatementForIndexes());
+				Context = context.setStatementForIndexes();
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(Context);
 			} else
 			if (context.setStatementForSwitches() != null) {
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(context.setStatementForSwitches());
+				Context = context.setStatementForSwitches();
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(Context);
 			} else
 			if (context.setStatementForConditions() != null) {
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(context.setStatementForConditions());
+				Context = context.setStatementForConditions();
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(Context);
 			}
 		}
 
 
-
+//TODO
         public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
         {
             Context = context;
