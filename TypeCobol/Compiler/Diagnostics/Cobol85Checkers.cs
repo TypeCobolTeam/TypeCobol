@@ -101,14 +101,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 	class AddStatementChecker: CodeElementListener
 	{
 		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(AddStatement), };
+			return new List<Type>() { typeof(AddGivingStatement), };
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var statement = e as AddStatement;
-			var context = c as CodeElementsParser.AddStatementFormat2Context;
-			if (context == null) return; //we only check format 2
-			if (context.GIVING() == null)
-				DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.identifierOrNumericLiteralTmp());
+			var statement = e as AddGivingStatement;
+			var context = c as CodeElementsParser.AddStatementContext;
+			if (statement.ToOperand == null)
+				DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.addGiving());
 		}
 	}
 
@@ -123,11 +122,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 			foreach (var call in context.callProgramInputParameters()) CheckCallUsings(statement, call);
 
-			if (context.callReturning() != null && statement.Returning == null)
-				DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callReturning());
+			if (context.callProgramOutputParameter() != null && statement.OutputParameter == null)
+				DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callProgramOutputParameter());
 		}
 
-		private void CheckCallUsings(CallStatement statement,CodeElementsParser.CallProgramInputParametersContext context) {
+		private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallProgramInputParametersContext context) {
 			foreach(var input in statement.InputParameters) {
 				// TODO these checks should be done during semantic phase, after symbol type resolution
 				// TODO if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
@@ -141,8 +140,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 				//TODO what about special registers ?
 				if (input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-				if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
-					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", token, rulestack);
+				if (input.IsOmitted.Value && input.SendingMode.Value == SendingMode.ByValue)
+					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
 			}
 		}
 	}

@@ -838,18 +838,12 @@ namespace TypeCobol.Compiler.Parser
 						CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
 		}
 
-		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context)
-		{
+		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context) {
 			if(context.identifier() != null)
-			{
-				return new NumericVariable(
-					CreateIdentifier(context.identifier()));
-			}
-			else
-			{
-				return new NumericVariable(
-					CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-			}
+				return new NumericVariable(CreateIdentifier(context.identifier()));
+			if (context.numericValue() != null)
+				return new NumericVariable(CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+			return null;
 		}
 
 		internal NumericVariable CreateNumericVariableOrIndex(CodeElementsParser.NumericVariableOrIndexContext context)
@@ -1228,10 +1222,9 @@ namespace TypeCobol.Compiler.Parser
 				CreateIdentifierOrIndexName(context.identifierOrIndexName()));
 		}
 
-		internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea1Context context)
-		{
-			return new ReceivingStorageArea(StorageDataType.Any,
-				CreateIdentifier(context.identifier()));
+		internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea1Context context) {
+			if (context == null || context.identifier() == null) return null;
+			return new ReceivingStorageArea(StorageDataType.Any, CreateIdentifier(context.identifier()));
 		}
 
 		internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea2Context context)

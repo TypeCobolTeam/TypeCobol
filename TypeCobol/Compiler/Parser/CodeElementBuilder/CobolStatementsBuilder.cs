@@ -225,11 +225,9 @@ namespace TypeCobol.Compiler.Parser
 					}
 				}
 			}
-			if (context.callProgramOutputParameter() != null)
-			{
-				statement.OutputParameter =
-					CobolExpressionsBuilder.CreateStorageArea(context.callProgramOutputParameter().storageArea1());
-				statement.OutputParameter.DataSourceType = DataSourceType.ReceiveFromCalledProgram;
+			if (context.callProgramOutputParameter() != null) {
+				statement.OutputParameter = CobolExpressionsBuilder.CreateStorageArea(context.callProgramOutputParameter().storageArea1());
+				if (statement.OutputParameter != null) statement.OutputParameter.DataSourceType = DataSourceType.ReceiveFromCalledProgram;
 			}
 
 			return statement;

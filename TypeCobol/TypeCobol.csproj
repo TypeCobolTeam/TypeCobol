@@ -171,7 +171,6 @@
     <Compile Include="Compiler\CodeElements\Entry\FileDescriptionEntry.cs" />
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\ArithmeticExpression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Index.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxNational.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
