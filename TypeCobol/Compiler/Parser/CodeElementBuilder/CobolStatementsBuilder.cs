@@ -1422,40 +1422,29 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		/////////////////////////////
-		// WHEN EVALUATE CONDITION //
+		  /////////////////////////////
+		 // WHEN EVALUATE CONDITION //
 		/////////////////////////////
 
-		internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context)
-		{
+		internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
-
-			statement.SelectionObjects = BuildObjectArrrayFromParserRules(context.comparisonRHSExpression(),
-					ctx => CreateEvaluateSelectionObject(ctx));
-
+			statement.SelectionObjects = BuildObjectArrrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
 			return statement;
 		}
 
-		private EvaluateSelectionObject CreateEvaluateSelectionObject(CodeElementsParser.ComparisonRHSExpressionContext context)
-		{
+		private EvaluateSelectionObject CreateEvaluateSelectionObject(CodeElementsParser.ComparisonRHSExpressionContext context) {
 			var selectionObject = new EvaluateSelectionObject();
-			if(context.ANY() != null)
-			{
+			if(context.ANY() != null) {
 				selectionObject.IsAny = CreateSyntaxProperty(true, context.ANY());
-			}     
-			else if (context.booleanValueOrExpression() != null)
-			{
+			} else
+			if (context.booleanValueOrExpression() != null) {
 				selectionObject.BooleanComparisonVariable = CobolExpressionsBuilder.CreateBooleanValueOrExpression(context.booleanValueOrExpression());
-			}
-			else
-			{
+			} else {
 				selectionObject.InvertAlphanumericComparison = CreateSyntaxProperty(true, context.NOT());
-				if (context.variableOrExpression2() != null)
-				{
+				if (context.variableOrExpression2() != null) {
 					selectionObject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
-				}
-				else if(context.alphanumericExpressionsRange() != null)
-				{
+				} else
+				if(context.alphanumericExpressionsRange() != null) {
 					selectionObject.AlphanumericComparisonVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.alphanumericExpressionsRange().startExpression);
 					selectionObject.AlphanumericComparisonVariable2 = CobolExpressionsBuilder.CreateVariableOrExpression(context.alphanumericExpressionsRange().endExpression);
 				}
