@@ -6,6 +6,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -155,16 +156,17 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var statement = e as CancelStatement;
 			var context = ctxt as CodeElementsParser.CancelStatementContext;
 
-			foreach (var item in statement.Items)
-			{
-				var literal = item as TypeCobol.Compiler.CodeElements.Expressions.Literal;
-				if (literal != null && (literal.Value is double || literal.Value is long)) {
+			foreach (var item in statement.Programs) {
+				if (item == null) continue;//TODO
+				if (item.SymbolReference == null) continue;// DO nothing
+				if (string.IsNullOrWhiteSpace(item.SymbolReference.Name) || item.SymbolReference.Name.IsNumeric()) {
 					// we should link this error to the specific context.identifierOrLiteral[i] context
 					// corresponding to statement.Items[i], but since refactor in #157 it's not trivial anymore
-					DiagnosticUtils.AddError(statement, "CANCEL: <literal> must be alphanumeric", context);
+					DiagnosticUtils.AddError(statement, "CANCEL: <program name> must be alphanumeric", context);
 				}
 			}
 		}
+
 	}
 
 	class SetStatementChecker: CodeElementListener

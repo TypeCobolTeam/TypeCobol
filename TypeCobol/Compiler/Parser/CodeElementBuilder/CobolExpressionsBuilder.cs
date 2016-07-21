@@ -911,18 +911,16 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		internal SymbolReferenceVariable CreateProgramNameVariable(CodeElementsParser.ProgramNameVariableContext context)
-		{
-			if (context.programNameReference1() != null)
-			{
+		internal SymbolReferenceVariable CreateProgramNameVariable(CodeElementsParser.ProgramNameVariableContext context) {
+			if (context.programNameReference1() != null) {
 				SymbolReference symbolReference = CobolWordsBuilder.CreateProgramNameReference(context.programNameReference1());
 				return new SymbolReferenceVariable(StorageDataType.ProgramName, symbolReference);
 			}
-			else
-			{
+			if (context.identifier() != null) {
 				StorageArea storageArea = CreateIdentifier(context.identifier());
 				return new SymbolReferenceVariable(StorageDataType.ProgramName, storageArea);
 			}
+			return null
 		}
 
 		internal SymbolReferenceVariable CreateProgramNameOrProgramEntryVariable(CodeElementsParser.ProgramNameOrProgramEntryVariableContext context)

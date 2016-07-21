@@ -409,6 +409,7 @@
     <Compile Include="Tools\Reflection.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolCompiler.cs" />
     <Compile Include="Tools\CodeGenerator.cs" />
+    <Compile Include="Tools\Strings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
