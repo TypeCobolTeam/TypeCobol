@@ -21,56 +21,37 @@ namespace TypeCobol.Compiler.Parser
 		private CobolWordsBuilder CobolWordsBuilder { get; set; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
 
-		///////////////////////////////
-		// PROCEDURE DIVISION HEADER //
+		  ///////////////////////////////
+		 // PROCEDURE DIVISION HEADER //
 		///////////////////////////////
 
-		internal ProcedureDivisionHeader CreateProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
-		{
+		internal ProcedureDivisionHeader CreateProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context) {
 			var statement = new ProcedureDivisionHeader();
-
-			statement.InputParameters = CreateProgramInputParameters(context.programInputParameters());
-			if (context.programOutputParameter() != null)
-			{
-				statement.OutputParameter =
-					CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
+			statement.InputParameters = CreateInputParameters(context.programInputParameters());
+			if (context.programOutputParameter() != null) {
+				statement.OutputParameter = CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
 			}
-
 			return statement;
 		}
 
-		private IList<ProgramInputParameter> CreateProgramInputParameters(CodeElementsParser.ProgramInputParametersContext[] programInputParametersContexts)
-		{
-			IList<ProgramInputParameter> inputParameters = null;
-			if (programInputParametersContexts != null)
-			{
-				foreach (var inputParametersContext in programInputParametersContexts)
-				{
-					SyntaxProperty<ReceivingMode> receivingMode = null;
-					if (inputParametersContext.REFERENCE() != null)
-					{
-						receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference,
-							ParseTreeUtils.GetFirstToken(inputParametersContext.REFERENCE()));
-					}
-					else if (inputParametersContext.VALUE() != null)
-					{
-						receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue,
-							ParseTreeUtils.GetFirstToken(inputParametersContext.VALUE()));
-					}
-					foreach (var storageAreaContext in inputParametersContext.storageArea2())
-					{
-						if (inputParameters == null)
-						{
-							inputParameters = new List<ProgramInputParameter>(1);
-						}
-						var inputParameter = new ProgramInputParameter
-						{
-							ReceivingMode = receivingMode,
-							ReceivingStorageArea = CobolExpressionsBuilder.CreateStorageArea(storageAreaContext)
-						};
-						inputParameter.ReceivingStorageArea.DataSourceType = DataSourceType.ReceiveFromCallingProgram;
-						inputParameters.Add(inputParameter);
-					}
+		private IList<InputParameter> CreateInputParameters(CodeElementsParser.ProgramInputParametersContext[] contexts) {
+			if (contexts == null) return null;
+			IList<InputParameter> inputParameters = new List<InputParameter>();
+			foreach (var context in contexts) {
+				SyntaxProperty<ReceivingMode> receivingMode = null;
+				if (context.REFERENCE() != null) {
+					receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
+				} else
+				if (context.VALUE() != null) {
+					receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
+				}
+				foreach (var storageAreaContext in context.storageArea2()) {
+					var inputParameter = new InputParameter {
+						ReceivingMode = receivingMode,
+						ReceivingStorageArea = CobolExpressionsBuilder.CreateStorageArea(storageAreaContext)
+					};
+					inputParameter.ReceivingStorageArea.DataSourceType = DataSourceType.ReceiveFromCallingProgram;
+					inputParameters.Add(inputParameter);
 				}
 			}
 			return inputParameters;
