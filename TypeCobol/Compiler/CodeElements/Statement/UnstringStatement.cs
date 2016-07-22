@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.CodeElements
 			public Variable Variable { get; set; }
 
 			public override string ToString() {
-				return (All != null && All.Value? "ALL ") + (Variable != null? Variable.ToString() : "?");
+				return (All != null && All.Value? "ALL " : "") + (Variable != null? Variable.ToString() : "?");
 			}
 		}
 		/// <summary>identifier-2, identifier-3, literal-1, literal-2</summary>
@@ -100,8 +100,9 @@ namespace TypeCobol.Compiler.CodeElements
 				foreach (var receiver in Receivers) str.Append(receiver);
 				str.AppendLine();
 			}
-			if (WithPointer != null) str.Append(" WITH POINTER ").AppendLine(WithPointer);
-			if (Tallying != null) str.Append(" TALLYING IN ").AppendLine(Tallying);
+			if (WithPointer != null) str.Append(" WITH POINTER ").AppendLine(WithPointer.ToString());
+			if (Tallying != null) str.Append(" TALLYING IN ").AppendLine(Tallying.ToString());
+			return str.ToString();
 		}
     }
 }
