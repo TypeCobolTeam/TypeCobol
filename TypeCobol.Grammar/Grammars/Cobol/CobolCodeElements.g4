@@ -7574,7 +7574,7 @@ xmlGenerateStatement:
 	(WITH? ENCODING codepage)?
 	(WITH? XML_DECLARATION)?
 	(WITH? ATTRIBUTES)?
-	(NAMESPACE IS? namespace=alphanumericVariable2 
+	(NAMESPACE IS? namespaaaaace=alphanumericVariable2 
 		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
 	(NAME OF? xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?

@@ -971,8 +971,8 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		internal Variable CreateVariable(CodeElementsParser.Variable1Context context)
-		{
+		internal Variable CreateVariable(CodeElementsParser.Variable1Context context) {
+			if (context == null) return null;
 			StorageArea storageArea = CreateIdentifier(context.identifier());
 			return new Variable(storageArea);
 		}

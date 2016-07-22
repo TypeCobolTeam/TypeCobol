@@ -697,26 +697,20 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.XmlSchemaName);
         }
 
-        internal SymbolReference CreateXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
-        {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.XmlSchemaName);
-        }
+		internal SymbolReference CreateXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context) {
+			if (context == null) return null;
+			return CreateSymbolReference(context.symbolReference4(), SymbolType.XmlSchemaName);
+		}
 
 
         // --- Qualified names : give explicit context to resolve ambiguous name references ---
 
-        internal SymbolReference CreateProcedureName(CodeElementsParser.ProcedureNameContext context)
-        {
-            if (context.paragraphNameReferenceOrSectionNameReference() != null)
-            {
-                return CreateParagraphNameReferenceOrSectionNameReference(
-                    context.paragraphNameReferenceOrSectionNameReference());
-            }
-            else
-            {
-                return CreateQualifiedParagraphNameReference(context.qualifiedParagraphNameReference());
-            }
-        }
+		internal SymbolReference CreateProcedureName(CodeElementsParser.ProcedureNameContext context) {
+			if (context == null) return null;
+			if (context.paragraphNameReferenceOrSectionNameReference() != null)
+				 return CreateParagraphNameReferenceOrSectionNameReference(context.paragraphNameReferenceOrSectionNameReference());
+			else return CreateQualifiedParagraphNameReference(context.qualifiedParagraphNameReference());
+		}
 
         internal SymbolReference CreateQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
         {
