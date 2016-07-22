@@ -1140,7 +1140,8 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext context) {
 			var statement = new SetStatementForConditions();
 			statement.Conditions = BuildObjectArrrayFromParserRules(context.conditionReference(), ctx => CobolExpressionsBuilder.CreateConditionReference(ctx));
-			statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
+			if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
+			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
 			return statement;
 		}
 		

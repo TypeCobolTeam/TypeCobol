@@ -4,31 +4,18 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    /// <summary>
-    /// Value defined by a single token in the Cobol syntax
-    /// </summary>
-    public abstract class SyntaxValue<T>
-    {
-        public SyntaxValue(Token t) { Token = t; }
+	/// <summary>Value defined by a single token in the Cobol syntax</summary>
+	public abstract class SyntaxValue<T> {
+		public SyntaxValue(Token t) { Token = t; }
 
-        /// <summary>
-        /// Token defining the value
-        /// </summary>
+		/// <summary>Token defining the value</summary>
         public Token Token { get; private set; }
 
-        /// <summary>
-        /// Strongly typed value defined by the token
-        /// </summary>
-        public abstract T Value { get; }
+		/// <summary>Strongly typed value defined by the token</summary>
+		public abstract T Value { get; }
 
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
-    }
+		public override string ToString() { return Value.ToString(); }
+	}
 
     /// <summary>
     /// Value for tokens : TRUE | FALSE
@@ -178,10 +165,8 @@ namespace TypeCobol.Compiler.CodeElements
     /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
-    public class AlphanumericValue : SyntaxValue<string>
-    {
-        public AlphanumericValue(Token t) : base(t)
-        { }
+	public class AlphanumericValue : SyntaxValue<string> {
+        public AlphanumericValue(Token t) : base(t) { }
 
         public AlphanumericValue(SymbolReference symbolicCharacterReference) : base(symbolicCharacterReference.NameLiteral.Token)
         {

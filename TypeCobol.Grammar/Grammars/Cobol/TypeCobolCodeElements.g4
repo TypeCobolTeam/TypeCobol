@@ -10,14 +10,20 @@ tcCodeElement:
 	| functionDeclarationEnd
 	;
 
-qualifiedDataName:                                    (qDataOrFile*       dataNameReference                                                                                  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataName;
-qualifiedConditionName:                               (qDataOrFileOrUPSI* conditionNameReferenceOrConditionForUPSISwitchNameReference                                        (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedConditionName;
 
-qDataOrFile:       dataNameReferenceOrFileNameReference                                     (LeftParenthesisSeparator subscript RightParenthesisSeparator)? ColonSeparator ColonSeparator;
-qDataOrFileOrUPSI: dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)? ColonSeparator ColonSeparator;
+qualifiedDataName1: cobolQualifiedDataName1 | tcQualifiedDataName1;
+cobolQualifiedDataName1: // was qualifiedDataName1
+	dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
+tcQualifiedDataName1: // new feature
+	(ColonSeparator ColonSeparator dataNameReferenceOrFileNameReference)+ dataNameReference;
 
-legacyQualifiedDataName:                                    dataNameReference                                                                                  ((IN | OF) dataNameReferenceOrFileNameReference)*;
-legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+qualifiedConditionName: cobolQualifiedConditionName | tcQualifiedConditionName;
+cobolQualifiedConditionName: // was qualifiedConditionName
+	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+tcQualifiedConditionName: // new feature
+	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference;
+
+
 
 // rule modified to support:
 // - TYPE DATE (instead of TC-DATE or something)
@@ -37,12 +43,8 @@ moveStatement:
 
 // rule modified to support:
 // - SET <boolean> TO FALSE
-setStatementForAssignationSending:
-    identifier | IntegerLiteral
-    | FALSE                         // <----- SET <boolean> TO FALSE
-    | TRUE | (NULL | NULLS) | SELF
-    | (ENTRY_ARG programNameOrProgramEntryVariable)
-    ;
+setStatementForConditions:
+	SET conditionReference+ TO (TRUE | FALSE);
 
 // rules modified to support custom-designed functions (of arity 0..n)
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;

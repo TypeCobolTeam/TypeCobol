@@ -32,15 +32,30 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public CodeElementDispatcher Dispatcher { get; internal set; }
 
+
+		private CobolWordsBuilder CobolWordsBuilder { get; set; }
+		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
+		private CobolStatementsBuilder CobolStatementsBuilder { get; set; }
+
 		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
 		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
+			CobolWordsBuilder = new CobolWordsBuilder(new Dictionary<Token, SymbolInformation>());
+			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
+			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder);
 		}
 		/// <summary>Initialization code run before parsing each new TypeCobol CodeElement</summary>
 		public override void EnterTcCodeElement(CodeElementsParser.TcCodeElementContext context) {
 			CodeElement = null;
 			Context = null;
+		}
+
+		/// <summary>Code run after parsing each new CodeElement</summary>
+		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
+			if(CodeElement != null && CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
+				CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
+			}
 		}
 
 		// Code structure
@@ -1604,19 +1619,19 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterSetStatement(CodeElementsParser.SetStatementContext context) {
 			if (context.setStatementForAssignation() != null) {
 				Context = context.setStatementForAssignation();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(Context);
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(context.setStatementForAssignation());
 			} else
 			if (context.setStatementForIndexes() != null) {
 				Context = context.setStatementForIndexes();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(Context);
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(context.setStatementForIndexes());
 			} else
 			if (context.setStatementForSwitches() != null) {
 				Context = context.setStatementForSwitches();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(Context);
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForSwitches(context.setStatementForSwitches());
 			} else
 			if (context.setStatementForConditions() != null) {
 				Context = context.setStatementForConditions();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(Context);
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(context.setStatementForConditions());
 			}
 		}
 
@@ -1718,7 +1733,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 
-
+/*
         // -- Symbols --
 
         // ** Program names and Program entries **
@@ -2265,6 +2280,13 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 
+        public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
+        {
+            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.ExecTranslatorName);
+            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+        }
+*/
 
 // [TYPECOBOL]
 		public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
@@ -2304,12 +2326,5 @@ namespace TypeCobol.Compiler.Parser
 		}
 // [/TYPECOBOL]
 
-
-        public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.ExecTranslatorName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
     }
 }

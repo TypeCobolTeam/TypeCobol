@@ -6255,10 +6255,10 @@ setStatementForAssignation:
 	SET setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 	 
 setSendingField:
-	integerVariableOrIndex1						// identifier can also be an index name	//Format 1 + 5
-	| nullPointerValue				                // pointer data item //Format 5 + 6 + 7
-	| ENTRY_ARG programNameOrProgramEntryVariable	// procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
-	| selfObjectIdentifier;         				// object reference id 	//Format 7 (+NULL)
+	  integerVariableOrIndex1                       // identifier can also be an index name	//Format 1 + 5
+	| nullPointerValue                              // pointer data item //Format 5 + 6 + 7
+	| ENTRY_ARG programNameOrProgramEntryVariable   // procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| selfObjectIdentifier;                         // object reference id 	//Format 7 (+NULL)
 
 // Format 2: SET for adjusting indexes
 
