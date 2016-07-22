@@ -4,11 +4,15 @@ using System.Text;
 
 namespace TypeCobol.Compiler.CodeElements
 {
+	public interface Returning {
+		ReceivingStorageArea ReturningParameter { get; set; }
+	}
+
 	/// <summary>
 	/// The program procedure division consists of optional declaratives, and
 	/// procedures that contain sections, paragraphs, sentences, and statements.
 	/// </summary>
-	public class ProcedureDivisionHeader : StatementElement {
+	public class ProcedureDivisionHeader : StatementElement, Returning {
 		public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader, StatementType.ProcedureDivisionHeader) { }
 
 		/// <summary>
@@ -26,10 +30,10 @@ namespace TypeCobol.Compiler.CodeElements
 		/// The RETURNING data item must be a level-01 or level-77 item in the LINKAGE SECTION.
 		/// The RETURNING data item is an output-only parameter.
 		/// </summary>
-		public ReceivingStorageArea OutputParameter { get; set; }
+		public ReceivingStorageArea ReturningParameter { get; set; }
 
 		public override string ToString() {
-			if (InputParameters == null && OutputParameter == null)
+			if (InputParameters == null && ReturningParameter == null)
 				return base.ToString();
 
 			StringBuilder sb = new StringBuilder(base.ToString());
@@ -45,8 +49,8 @@ namespace TypeCobol.Compiler.CodeElements
 				}
 				sb.AppendLine();
 			}
-			if (OutputParameter != null) {
-				sb.AppendLine("- ReturningDataName = " + OutputParameter);
+			if (ReturningParameter != null) {
+				sb.AppendLine("- ReturningDataName = " + ReturningParameter);
 			}
 			return sb.ToString();
 		}
@@ -63,7 +67,6 @@ namespace TypeCobol.Compiler.CodeElements
 		/// Argument receiving mode : BY REFERENCE or BY VALUE
 		/// </summary>
 		public SyntaxProperty<ReceivingMode> ReceivingMode { get; set; }
-
 		/// <summary>
 		/// Each USING identifier must be defined as a level-01 or level-77 item in the
 		/// LINKAGE SECTION of the called subprogram or invoked method.

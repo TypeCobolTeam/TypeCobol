@@ -25,16 +25,7 @@ namespace TypeCobol.Compiler.Parser
 		 // PROCEDURE DIVISION HEADER //
 		///////////////////////////////
 
-		internal ProcedureDivisionHeader CreateProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context) {
-			var statement = new ProcedureDivisionHeader();
-			statement.InputParameters = CreateInputParameters(context.usingPhrase().programInputParameters());
-			if (context.returningPhrase() != null && context.returningPhrase().programOutputParameter() != null) {
-				statement.OutputParameter = CobolExpressionsBuilder.CreateStorageArea(context.returningPhrase().programOutputParameter().storageArea2());
-			}
-			return statement;
-		}
-
-		private IList<InputParameter> CreateInputParameters(CodeElementsParser.ProgramInputParametersContext[] contexts) {
+		internal IList<InputParameter> CreateInputParameters(CodeElementsParser.ProgramInputParametersContext[] contexts) {
 			if (contexts == null) return null;
 			IList<InputParameter> inputParameters = new List<InputParameter>();
 			foreach (var context in contexts) {

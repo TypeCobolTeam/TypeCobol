@@ -45,11 +45,6 @@ namespace TypeCobol.Compiler.Parser
 			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
 			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder);
 		}
-		/// <summary>Initialization code run before parsing each new TypeCobol CodeElement</summary>
-		public override void EnterTcCodeElement(CodeElementsParser.TcCodeElementContext context) {
-			CodeElement = null;
-			Context = null;
-		}
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
@@ -827,48 +822,22 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new DataDivisionHeader();
         }
 
-        public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
-        {
-// [TYPECOBOL]
-			if (context.inputPhrase() != null || context.outputPhrase() != null) {
-				Context = context;
-				CodeElement = new FunctionDeclarationProfile();
-				return;
-			}
-// [/TYPECOBOL]
+		  ////////////////////////
+		 // PROCEDURE DIVISION //
+		////////////////////////
 
-            var procedureDivisionHeader = new ProcedureDivisionHeader();
-
-            if (context.usingPhrase() != null)
-            {
-                foreach (CodeElementsParser.InputParametersContext inputParametersContext in context.usingPhrase().inputParameters())
-                {
-                    SyntaxProperty<ReceivingMode> receivingMode = null;
-                    if (inputParametersContext.receivingMode() != null)
-                    {
-                        receivingMode = new SyntaxProperty<ReceivingMode>(
-                            inputParametersContext.receivingMode() is CodeElementsParser.ByValueContext
-                                ? ReceivingMode.ByValue
-                                : ReceivingMode.ByReference,
-                            ParseTreeUtils.GetTokensList(inputParametersContext.receivingMode()));
-                    }
-                    foreach (CodeElementsParser.DataNameReferenceContext dataNameContext in inputParametersContext.dataNameReference())
-                    {
-                        Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
-                        var inputParameter = new InputParameter(new DataName(dataName), receivingMode);
-
-                        if (procedureDivisionHeader.UsingParameters == null)
-                        {
-                            procedureDivisionHeader.UsingParameters = new List<InputParameter>();
-                        }
-                        procedureDivisionHeader.UsingParameters.Add(inputParameter);
-                    }
-                }
-            }
-
+		public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context) {
             Context = context;
-            CodeElement = procedureDivisionHeader;
-        }
+            CodeElement = new ProcedureDivisionHeader();
+		}
+		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
+			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());
+			((ProcedureDivisionHeader)CodeElement).InputParameters = inputs;
+		}
+		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
+			var receiving = CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
+			((Returning)CodeElement).ReturningParameter = receiving;
+		}
 
         public override void EnterDeclarativesHeader(CodeElementsParser.DeclarativesHeaderContext context)
         {
@@ -2300,25 +2269,16 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new FunctionDeclarationHeader(name, visibility);
 		}
 		public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
-			var ce = CodeElement as FunctionDeclarationProfile;
-			foreach (var parameter in context.inputParameters())
-				ce.InputParameters = CreateParameters(parameter);
+			var profile = new FunctionDeclarationProfile(CodeElement as ProcedureDivisionHeader);
+			profile.InputParameters = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());
+			CodeElement = profile;
 		}
 		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
-			var ce = CodeElement as FunctionDeclarationProfile;
-			foreach(var dataname in context.dataNameReference())
-				ce.OutputParameters.Add(SyntaxElementBuilder.CreateDataName(dataname));
-		}
-		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
-			var dataname = SyntaxElementBuilder.CreateDataName(context.dataNameReference());
-			//TODO? dataname should be a QualifiedName,
-			//      because LINKAGE data items can be complex,
-			//      with group items and name collision and crap
-			if (CodeElement is ProcedureDivisionHeader)
-				((ProcedureDivisionHeader)CodeElement).ReturningDataName = dataname;
-			else//if (CodeElement is FunctionDeclarationProfile)
-				// let's say if we break here it's an implementation error!
-				((FunctionDeclarationProfile)CodeElement).OutputParameters.Add(dataname);
+			var div = CodeElement as ProcedureDivisionHeader;
+			if (div != null) CodeElement = new FunctionDeclarationProfile(div);
+			var profile = (FunctionDeclarationProfile)CodeElement;
+			foreach(var output in context.storageArea2())
+				profile.OutputParameters.Add(CobolExpressionsBuilder.CreateStorageArea(output));
 		}
 		public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 			Context = context;

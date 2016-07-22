@@ -2,21 +2,25 @@
 
 namespace TypeCobol.Compiler.CodeElements {
 
-	public class FunctionDeclarationProfile: CodeElement {
+	public class FunctionDeclarationProfile: StatementElement, Returning {
+		public FunctionDeclarationProfile()
+			: base(CodeElementType.FunctionDeclarationHeader, StatementType.ProcedureDivisionHeader)
+		{
+			InputParameters = new List<InputParameter>();
+			OutputParameters = new List<ReceivingStorageArea>();
+		}
+
+		public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
+			this.InputParameters = other.InputParameters();
+			this.ReturningParameter = other.OutputParameter;
+			this.ConsumedTokens = other.ConsumedTokens;
+		}
 
 		/// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
 		public IList<InputParameter> InputParameters  { get; internal set; }
 		/// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
-		public IList<DataName> OutputParameters { get; internal set; }
-
-		public FunctionDeclarationProfile(): base(CodeElementType.ProcedureDivisionHeader) {
-			InputParameters = new List<InputParameter>();
-			OutputParameters = new List<DataName>();
-		}
-
-		public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
-			if (other.ReturningDataName != null) OutputParameters.Add(other.ReturningDataName);
-			this.ConsumedTokens = other.ConsumedTokens;
-		}
+		public IList<ReceivingStorageArea> OutputParameters { get; internal set; }
+		/// <summary>RETURNING dataname</summary>
+		public ReceivingStorageArea ReturningParameter { get; set; }
 	}
 }
