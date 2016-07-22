@@ -1211,10 +1211,9 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateStartStatement(CodeElementsParser.StartStatementContext context) {
 			var statement = new StartStatement();
-			statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
-			statement.DataName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
-			if (context.relationalOperator() != null)
-				statement.Operator = CreateOperator(context.relationalOperator());
+			statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+			statement.DataName = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
+			statement.Operator = CreateOperator(context.relationalOperator());
 			return statement;
 		}
 
@@ -1393,17 +1392,14 @@ namespace TypeCobol.Compiler.Parser
 			return selectionObject;
 		}
 
+		  ///////////////////////////
+		 // WHEN SEARCH CONDITION //
 		///////////////////////////
-		// WHEN SEARCH CONDITION //
-		///////////////////////////
 
-		internal CodeElement CreateWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context)
-		{
-			var statement = new WhenSearchCondition();
-
-			statement.ConditionalExpression = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
-
-			return statement;
+		internal CodeElement CreateWhenSearchCondition(CodeElementsParser.WhenSearchConditionContext context) {
+			var condition = new WhenSearchCondition();
+			condition.Condition = CobolExpressionsBuilder.CreateConditionalExpression(context.conditionalExpression());
+			return condition;
 		}
 
 		  /////////////////////
@@ -1412,15 +1408,15 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateWriteStatement(CodeElementsParser.WriteStatementContext context) {
 			if (context == null) return null;
-			return new WriteStatement(
-				CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName()),
-				CobolWordsBuilder.CreateIdentifier(context.identifier()),
-				context.BEFORE() != null,
-				context.AFTER() != null,
-				new ArithmeticExpressionBuilder().CreateNumberOrIdentifier(context.identifierOrInteger()),
-				CobolWordsBuilder.CreateMnemonic(context.mnemonicForEnvironmentNameReference()),
-				context.PAGE() != null
-				);
+			var statement = new WriteStatement();
+			statement.RecordName = CobolWordsBuilder.CreateRecordName(context.recordName());
+			statement.Identifier = CobolExpressionsBuilder.CreateVariable(context.sendingField);
+			statement.IsBeforeAdvancing = CreateSyntaxProperty(true, context.BEFORE());
+			statement.IsAfterAdvancing  = CreateSyntaxProperty(true, context.AFTER());
+			statement.Lines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
+			statement.Mnemonic = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
+			statement.Page = CreateSyntaxProperty(true, context.PAGE());
+			return statement;
 		}
 
 		  ////////////////////////////

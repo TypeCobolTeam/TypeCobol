@@ -78,4 +78,13 @@ namespace TypeCobol.Compiler.CodeElements
         public SearchBinaryStatement() : base(StatementType.SearchBinaryStatement)
         { }
     }
+
+	/// <summary>
+	/// Conditional expression case for the SEARCH statement.
+	/// </summary>
+	public class WhenSearchCondition : StatementElement {
+		public WhenSearchCondition() : base(CodeElementType.WhenSearchCondition, StatementType.WhenSearchCondition) { }
+
+		public ConditionalExpression Condition { get; set; }
+	}
 }
