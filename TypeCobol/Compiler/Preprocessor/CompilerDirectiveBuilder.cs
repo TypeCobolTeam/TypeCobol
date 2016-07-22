@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public override void EnterControlCblOption(CobolCompilerDirectivesParser.ControlCblOptionContext context) 
         {
             string option = null;
-            ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref option);
+            ParseTreeUtils.TryGetUserDefinedWord(context.enumeratedValue1().UserDefinedWord(), ref option);
             if (option != null)
             {
                 ControlCblDirective.ControlCblOption optionValue;
@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
                 else
                 {
-                    Token errorToken = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
+                    Token errorToken = ParseTreeUtils.GetTokenFromTerminalNode(context.enumeratedValue1().UserDefinedWord());
                     Diagnostic diag = new Diagnostic(
                         MessageCode.InvalidControlCblCompilerStatementOption, 
                         errorToken.Column, errorToken.EndColumn,
@@ -83,7 +83,7 @@ namespace TypeCobol.Compiler.Preprocessor
             
             if (context.copyCompilerStatementBody() != null)
             {
-                var textNameContext = context.copyCompilerStatementBody().textName();
+                var textNameContext = context.copyCompilerStatementBody().qualifiedTextName().textName();
                 if (textNameContext != null)
                 {
                     string textName = GetTextName(textNameContext);
@@ -95,15 +95,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     if (textName != null)
                     {
                         // Get token for the text name
-                        Token textNameToken = null;
-                        if (textNameContext.UserDefinedWord() != null)
-                        {
-                            textNameToken = (Token)textNameContext.UserDefinedWord().Symbol;
-                        }
-                        if (textNameContext.AlphanumericLiteral() != null)
-                        {
-                            textNameToken = (Token)textNameContext.AlphanumericLiteral().Symbol;
-                        }
+                        Token textNameToken = (Token)textNameContext.externalName5().alphanumericValue5().UserDefinedWord().Symbol;
 
                         // Find the list of copy text names variations declared by previous REMARKS compiler directives
                         List<RemarksDirective.TextNameVariation> copyTextNamesVariations = ((TokensLine)textNameToken.TokensLine).InitialScanState.CopyTextNamesVariations;
@@ -127,7 +119,7 @@ namespace TypeCobol.Compiler.Preprocessor
 #endif
                 }
 
-                var libraryNameContext = context.copyCompilerStatementBody().libraryName();
+                var libraryNameContext = context.copyCompilerStatementBody().qualifiedTextName().libraryName();
                 if (libraryNameContext != null)
                 {
                     copyDirective.LibraryName = GetLibraryName(libraryNameContext);
@@ -188,37 +180,16 @@ namespace TypeCobol.Compiler.Preprocessor
                 {
                     // Get relevant tokens
                     IList<IToken> operandTokens = null;
-                    // Pseudo-text => List of tokens
-                    if (replacingOperandContext.pseudoText() != null)
-                    {
-                        if (replacingOperandContext.pseudoText()._pseudoTextTokens != null)
-                        {
-                            operandTokens = replacingOperandContext.pseudoText()._pseudoTextTokens;
-                        }
-                    }
-                    // Single token 
-                    else
-                    {
-                        ITerminalNode terminalNode = null;
-                        if (replacingOperandContext.literal() != null)
-                        {
-                            terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.literal());
-                        }
-                        else if (replacingOperandContext.UserDefinedWord() != null)
-                        {
-                            terminalNode = replacingOperandContext.UserDefinedWord();
-                        }
-                        else if (replacingOperandContext.reservedWord() != null)
-                        {
-                            terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.reservedWord());
-                        }
-                        if (terminalNode != null)
-                        {
-                            operandTokens = new List<IToken>(1);
-                            operandTokens.Add(terminalNode.Symbol);
-                        }
-                    }
-
+					if (replacingOperandContext.pseudoText() != null) { // Pseudo-text => List of tokens
+						if (replacingOperandContext.pseudoText()._pseudoTextTokens != null)
+							operandTokens = replacingOperandContext.pseudoText()._pseudoTextTokens;
+					} else { // Single token
+						if (replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy() != null) {
+							var terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy());
+							operandTokens = new List<IToken>(1);
+							operandTokens.Add(terminalNode.Symbol);
+						}
+					}
                     BuildReplaceOperation(copyDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens, ref replacementToken, ref replacementTokens, ref pseudoTextIndex, operandTokens);
                 }
             }
@@ -366,7 +337,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             if (context.copyCompilerStatementBody() != null)
             {
-                var textNameContext = context.copyCompilerStatementBody().textName();
+                var textNameContext = context.copyCompilerStatementBody().qualifiedTextName().textName();
                 if (textNameContext != null)
                 {
                     string textName = GetTextName(textNameContext);
@@ -374,7 +345,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     copyDirective.TextNameSymbol = ParseTreeUtils.GetFirstToken(textNameContext);
                 }
 
-                var libraryNameContext = context.copyCompilerStatementBody().libraryName();
+                var libraryNameContext = context.copyCompilerStatementBody().qualifiedTextName().libraryName();
                 if (libraryNameContext != null)
                 {
                     copyDirective.LibraryName = GetLibraryName(libraryNameContext);
@@ -536,10 +507,7 @@ namespace TypeCobol.Compiler.Preprocessor
             TitleDirective titleDirective = new TitleDirective();
             CompilerDirective = titleDirective;
 
-            string title = null;
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref title);
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.NationalLiteral(), ref title);
-            ParseTreeUtils.TryGetAlphanumericLiteralValue(context.DBCSLiteral(), ref title);
+            string title =  ParseTreeUtils.GetAlphanumericLiteral(context.alphanumericValue2());
             titleDirective.Title = title;
         }
     }
