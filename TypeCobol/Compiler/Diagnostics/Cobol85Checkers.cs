@@ -107,7 +107,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var statement = e as AddGivingStatement;
 			var context = c as CodeElementsParser.AddStatementContext;
-			if (statement.ToOperand == null)
+			if (statement.Operand == null)
 				DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.addGiving());
 		}
 	}

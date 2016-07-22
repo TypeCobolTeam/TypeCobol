@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///
         /// - identifier-3 must not described with the JUSTIFIED clause.
         /// </summary>
-        public Identifier IntoIdentifier { get; set; }
+        public ReceivingStorageArea IntoIdentifier { get; set; }
         
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// identifier-4 must not be described with the symbol P in its PICTURE
         /// character-string.
         /// </summary>
-        public Identifier PointerIdentifier { get; set; }
+        public ReceivingStorageArea PointerIdentifier { get; set; }
 
         /// <summary>
         /// Executed when the pointer value (explicit or implicit):
@@ -121,13 +121,13 @@ namespace TypeCobol.Compiler.CodeElements
 		/// <summary>
 		/// identifier-1 or literal-1
 		/// </summary>
-		public List<Expression> IdentifierToConcat { get; set; }
+		public List<Variable> IdentifierToConcat { get; set; }
 
-		private Expression _delimiterIdentifier;
+		private Variable _delimiterIdentifier;
 		/// <summary>
 		/// identifier-2 or literal-2
 		/// </summary>
-		public Expression DelimiterIdentifier {
+		public Variable DelimiterIdentifier {
 			get { return _delimiterIdentifier; }
 			set {
 				if (DelimitedBySize) throw new Exception("TODO");

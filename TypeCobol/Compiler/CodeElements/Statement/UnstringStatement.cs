@@ -22,32 +22,44 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// identifier-1
         /// </summary>
-        public Identifier UnstringIdentifier { get; set; }
+        public Variable UnstringIdentifier { get; set; }
 
-        /// <summary>
-        /// Identifier-2 or  literal-1
-        /// </summary>
-        public Expression DelimitedBy { get; set; }
+		public class Delimiter {
+			public SyntaxProperty<bool> All { get; set; }
+			public Variable Variable { get; set; }
 
-        /// <summary>
-        /// identifier-3 or literal-2
-        /// </summary>
-        public List<Expression> OtherDelimiters { get; set; } 
+			public override string ToString() {
+				return (All != null && All.Value? "ALL ") + (Variable != null? Variable.ToString() : "?");
+			}
+		}
+		/// <summary>identifier-2, identifier-3, literal-1, literal-2</summary>
+		public IList<Delimiter> Delimiters { get; set; } 
 
-        /// <summary>
-        /// identifier-4 or identifier-5 or identifier-6
-        /// </summary>
-        public List<UnstringReceiver> UnstringReceivers { get; set; }
+		public class Receiver {
+			/// <summary>identifier-4</summary>
+			public ReceivingStorageArea StorageArea { get; set; }
+			/// <summary>identifier-5</summary>
+			public ReceivingStorageArea Delimiter { get; set; }
+			/// <summary>identifier-6</summary>
+			public ReceivingStorageArea Count { get; set; }
 
-        /// <summary>
-        /// identifier-7
-        /// </summary>
-        public Identifier WithPointer { get; set; }
+			public override string ToString() {
+				var str = new StringBuilder();
+				if (StorageArea != null) str.Append(StorageArea);
+				else str.Append("?");
+				if (Delimiter != null) str.Append(" DELIMITER IN ").Append(Delimiter);
+				if (Count != null) str.Append(" COUNT IN ").Append(Count);
+				return str.ToString();
+			}
+		}
+		/// <summary>identifier-4, identifier-5, identifier-6</summary>
+        public IList<Receiver> Receivers { get; set; }
 
-        /// <summary>
-        /// identifier-8
-        /// </summary>
-        public Identifier Tallying { get; set; }
+		/// <summary>identifier-7</summary>
+		public ReceivingStorageArea WithPointer { get; set; }
+
+		/// <summary>identifier-8</summary>
+		public ReceivingStorageArea Tallying { get; set; }
 
         /// <summary>
         /// Executed when the pointer value (explicit or implicit):
@@ -72,95 +84,24 @@ namespace TypeCobol.Compiler.CodeElements
 
        
 
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            if (UnstringIdentifier == null && DelimitedBy == null && OtherDelimiters == null && UnstringReceivers == null && WithPointer == null && Tallying == null && OnOverflowStatement == null && NotOnOverflowStatement == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                var sb = new StringBuilder("");
-                if (UnstringIdentifier != null)
-                {
-                    sb.AppendLine("unstring " + UnstringIdentifier);
-                }
-                if (DelimitedBy != null || OtherDelimiters != null)
-                {
-                    sb.Append(" delimited by ");
-
-                    if (DelimitedBy != null)
-                    {
-                        sb.Append(DelimitedBy);
-                    }
-                    if (OtherDelimiters != null)
-                    {
-                        foreach (var otherDelimiter in OtherDelimiters)
-                        {
-                            sb.Append(" or ");
-                            sb.Append(otherDelimiter);
-                        }
-                    }
-                    sb.AppendLine("");
-                }
-
-                if (UnstringReceivers != null)
-                {
-                    sb.Append("INTO ");
-                    foreach (var unstringReceiver in UnstringReceivers)
-                    {
-                        if (unstringReceiver.IntoIdentifier != null)
-                        {
-                            sb.Append(' ');
-                            sb.Append(unstringReceiver.IntoIdentifier);
-                        }                       
-                        if (unstringReceiver.DelimiterIdentifier != null)
-                        {
-                            sb.Append(" DELIMITER IN ");
-                            sb.Append(unstringReceiver.DelimiterIdentifier);
-                        }
-                        if (unstringReceiver.CountIdentifier != null)
-                        {
-                            sb.Append(" COUNT IN ");
-                            sb.Append(unstringReceiver.CountIdentifier);
-                        }
-                    }
-                    sb.AppendLine("");
-                }
-
-                if (WithPointer != null)
-                {
-                    sb.Append(" WITH POINTER ");
-                    sb.AppendLine(WithPointer.ToString());
-                }
-                if (Tallying != null)
-                {
-                    sb.Append(" TALLYING IN ");
-                    sb.AppendLine(Tallying.ToString());
-                }
-                return sb.ToString();
-            }
-        }
-    }
-
-    public class UnstringReceiver
-    {
-        /// <summary>
-        /// identifier-4
-        /// </summary>
-        public Identifier IntoIdentifier { get; set; }
-
-        /// <summary>
-        /// identifier-5
-        /// </summary>
-        public Identifier DelimiterIdentifier { get; set; }
-
-        /// <summary>
-        /// identifier-6
-        /// </summary>
-        public Identifier CountIdentifier { get; set; }
+		public override string ToString() {
+			if (UnstringIdentifier == null && Delimiters == null && Receivers == null && WithPointer == null && Tallying == null && OnOverflowStatement == null && NotOnOverflowStatement == null)
+				return base.ToString();
+			var str = new StringBuilder("");
+			if (UnstringIdentifier != null) str.AppendLine("UNSTRING " + UnstringIdentifier);
+			if (Delimiters.Count > 0) {
+				str.Append(" DELIMITED BY ");
+				foreach (var delimiter in Delimiters) str.Append(delimiter).Append(" OR ");
+				str.Length -= 4;
+				str.AppendLine();
+			}
+			if (Receivers.Count > 0) {
+				str.Append(" INTO ");
+				foreach (var receiver in Receivers) str.Append(receiver);
+				str.AppendLine();
+			}
+			if (WithPointer != null) str.Append(" WITH POINTER ").AppendLine(WithPointer);
+			if (Tallying != null) str.Append(" TALLYING IN ").AppendLine(Tallying);
+		}
     }
 }
