@@ -355,6 +355,7 @@
     <Compile Include="Compiler\Preprocessor\ReplacedToken.cs" />
     <Compile Include="Compiler\Preprocessor\ReplaceTokensLinesIterator.cs" />
     <Compile Include="Compiler\Scanner\ITokensLine.cs" />
+    <Compile Include="Compiler\Scanner\LiteralTokenValue.cs" />
     <Compile Include="Compiler\Scanner\ScannerStep.cs" />
     <Compile Include="Compiler\Scanner\TokenDiagnostic.cs" />
     <Compile Include="Compiler\Text\ColumnsLayout.cs" />

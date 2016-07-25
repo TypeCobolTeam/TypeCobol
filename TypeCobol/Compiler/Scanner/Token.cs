@@ -260,7 +260,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Enables the lexer to attach a strongly typed value for literals
         /// </summary>
-        public LiteralValue LiteralValue { get; set; }
+        public LiteralTokenValue LiteralValue { get; set; }
 
         // --- Ambiguous tokens resolved after having been created ---
         
