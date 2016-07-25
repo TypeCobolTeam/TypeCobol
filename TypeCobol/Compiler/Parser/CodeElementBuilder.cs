@@ -1213,6 +1213,46 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new DeclarativesHeader();
         }
 
+		public override void EnterUseStatementForDebuggingDeclarative(CodeElementsParser.UseStatementForDebuggingDeclarativeContext context) {
+			Context = context;
+			CodeElement = CreateUseStatementForDebuggingDeclarative(context);
+		}
+		internal UseForDebuggingProcedureStatement CreateUseStatementForDebuggingDeclarative(CodeElementsParser.UseStatementForDebuggingDeclarativeContext context) {
+			var statement = new UseForDebuggingProcedureStatement();
+			if (context.procedureName() != null && context.procedureName().Length > 0) {
+				statement.ProcedureNames = new SymbolReference[context.procedureName().Length];
+				for (int i = 0; i < context.procedureName().Length; i++)
+					statement.ProcedureNames[i] = CobolWordsBuilder.CreateProcedureName(context.procedureName()[i]);
+			}
+			if (context.ALL() != null)
+				statement.AllProcedures = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.ALL()));
+			return statement;
+		}
+
+		public override void EnterUseStatementForExceptionDeclarative(CodeElementsParser.UseStatementForExceptionDeclarativeContext context) {
+			Context = context;
+			CodeElement = CreateUseStatementForExceptionDeclarative(context);
+		}
+		internal UseAfterIOExceptionStatement CreateUseStatementForExceptionDeclarative(CodeElementsParser.UseStatementForExceptionDeclarativeContext context) {
+			var statement = new UseAfterIOExceptionStatement();
+			if (context.GLOBAL() != null)
+				statement.IsGlobal = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.GLOBAL()));
+			if (context.fileNameReference() != null && context.fileNameReference().Length > 0) {
+				statement.FileNames = new SymbolReference[context.fileNameReference().Length];
+				for (int i = 0; i < context.fileNameReference().Length; i++)
+					statement.FileNames[i] = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()[i]);
+			}
+			statement.OpenMode = CreateOpenMode(context);
+			return statement;
+		}
+		private SyntaxProperty<OpenMode> CreateOpenMode(CodeElementsParser.UseStatementForExceptionDeclarativeContext context) {
+			if (context.INPUT() != null) return new SyntaxProperty<OpenMode>(OpenMode.INPUT, ParseTreeUtils.GetFirstToken(context.INPUT()));
+			if (context.OUTPUT() != null) return new SyntaxProperty<OpenMode>(OpenMode.OUTPUT, ParseTreeUtils.GetFirstToken(context.OUTPUT()));
+			if (context.I_O() != null) return new SyntaxProperty<OpenMode>(OpenMode.IO, ParseTreeUtils.GetFirstToken(context.I_O()));
+			if (context.EXTEND() != null) return new SyntaxProperty<OpenMode>(OpenMode.EXTEND, ParseTreeUtils.GetFirstToken(context.EXTEND()));
+			return null;
+		}
+
         public override void EnterDeclarativesEnd(CodeElementsParser.DeclarativesEndContext context)
         {
             Context = context;
@@ -1696,6 +1736,17 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new XmlStatementEnd();
 		}
 
+		// --- MOVE STATEMENT ---
+
+		public override void EnterMoveSimple(CodeElementsParser.MoveSimpleContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateMoveStatement(context);
+		}
+		public override void EnterMoveCorresponding(CodeElementsParser.MoveCorrespondingContext context) {
+			Context = context;
+			CodeElement = CobolStatementsBuilder.CreateMoveCorrespondingStatement(context);
+		}
+
 		// --- SET STATEMENT ---
 
 		public override void EnterSetStatement(CodeElementsParser.SetStatementContext context) {
@@ -1717,28 +1768,6 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-
-//TODO
-        public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
-        {
-            Context = context;
-            CodeElement = new StatementsBuilder().CreateMoveStatement(context);
-        }
-
-
-
-        public override void EnterUseStatement(CodeElementsParser.UseStatementContext context)
-        {
-            Context = context;
-            var builder = new StatementsBuilder();
-            if (context.useStatementForExceptionDeclarative() != null)
-                CodeElement = builder.CreateUseStatement(context.useStatementForExceptionDeclarative());
-            else
-            if (context.useStatementForDebuggingDeclarative() != null)
-                CodeElement = builder.CreateUseStatement(context.useStatementForDebuggingDeclarative());
-            else
-                Console.WriteLine("?TODO: USE?");
-        }
 
 
 		  //////////////////////////

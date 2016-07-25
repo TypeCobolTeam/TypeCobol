@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -12,7 +11,13 @@ namespace TypeCobol.Compiler.CodeElements
     /// * DEBUGGING declarative
     ///
     /// For general information about declaratives, see “Declaratives” on page 251.
-    ///
+    /// </summary>
+    public abstract class UseStatement : CodeElement
+    {
+        public UseStatement() : base(CodeElementType.UseStatement) { }
+    }
+
+    /// <summary>
     /// p547:
     /// The EXCEPTION/ERROR declarative specifies procedures for input/output
     /// exception or error handling that are to be executed in addition to the standard
@@ -88,8 +93,18 @@ namespace TypeCobol.Compiler.CodeElements
     /// Steps 3 and 4 are repeated until the last examined program is the outermost
     /// program, or until a qualifying declarative has been found.
     /// </summary>
-    public class UseErrorsStatement : CodeElement
+    public class UseAfterIOExceptionStatement : UseStatement
     {
+        /// <summary>
+        /// The order of precedence for selecting a declarative is: 
+        /// 1. A file-specific declarative (that is, a declarative of the form USE AFTER ERROR ON file-name-1) within the program that contains the statement that caused the qualifying condition.
+        /// 2. A mode-specific declarative(that is, a declarative of the form USE AFTER ERROR ON INPUT) within the program that contains the statement that caused the qualifying condition. 
+        /// 3. A file-specific declarative that specifies the GLOBAL phrase and is within the program directly containing the program that was last examined for a qualifying declarative. 
+        /// 4. A mode-specific declarative that specifies the GLOBAL phrase and is within the program directly containing the program that was last examined for a qualifying condition.
+        /// Steps 3 and 4 are repeated until the last examined program is the outermost program, or until a qualifying declarative has been found
+        /// </summary>
+        public SyntaxProperty<bool> IsGlobal { get; set; }
+
         /// <summary>
         /// p547:
         /// file-name-1
@@ -103,7 +118,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// name of a file takes precedence over a declarative statement specifying the
         /// open mode of the file.
         /// </summary>
-        public IList<FileName> FileNames = new List<FileName>();
+        public SymbolReference[] FileNames { get; set; }
 
         /// <summary>
         /// p547:
@@ -127,9 +142,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// for all files opened in EXTEND mode or in the process of being opened in
         /// EXTEND mode that get an error.
         /// </summary>
-        public OpenMode Mode;
-
-        public UseErrorsStatement() : base(CodeElementType.UseStatement) { }
+        public SyntaxProperty<OpenMode> OpenMode { get; set; }
     }
 
     /// <summary>
@@ -171,7 +184,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// debugging procedure there must be no reference to any nondeclarative
     /// procedures.
     /// </summary>
-    public class UseDebuggingStatement : CodeElement
+    public class UseForDebuggingProcedureStatement : UseStatement
     {
         /// <summary>
         /// p550:
@@ -180,12 +193,14 @@ namespace TypeCobol.Compiler.CodeElements
         ///
         /// Table 55 [p550] shows, for each valid option, the points during execution when
         /// the USE FOR DEBUGGING procedures are executed.
-        ///
+        /// - Before each execution of the named procedure
+        /// - After the execution of an ALTER statement referring to the named procedure
+        /// 
         /// Any given procedure-name can appear in only one USE FOR
         /// DEBUGGING sentence, and only once in that sentence. All procedures
         /// must appear in the outermost program.
         /// </summary>
-        public IList<QualifiedProcedureName> Procedures = new List<QualifiedProcedureName>();
+        public SymbolReference[] ProcedureNames { get; set; }
 
         /// <summary>
         /// p550:
@@ -194,9 +209,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// sentences. The ALL PROCEDURES phrase can be specified only once in a
         /// program. Only the procedures contained in the outermost program will
         /// trigger execution of the debugging section.
+        /// 
+        /// Table 55 [p550] shows, for each valid option, the points during execution when
+        /// the USE FOR DEBUGGING procedures are executed.
+        /// - Before each execution of each nondebugging procedure in the outermost program
+        /// - After the execution of each ALTER statement in the outermost program (except ALTER statements in declarative procedures)
         /// </summary>
-        public bool AllProcedures = false;
-
-        public UseDebuggingStatement() : base(CodeElementType.UseStatement) { }
+        public SyntaxProperty<bool> AllProcedures { get; set; }
     }
 }
