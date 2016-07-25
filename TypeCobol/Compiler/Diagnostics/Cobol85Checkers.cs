@@ -48,27 +48,27 @@ namespace TypeCobol.Compiler.Diagnostics {
 					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause",
 						global);
 			} else { 
-				if (data.IsExternal && data.LevelNumber != 01)
+				if (data.IsExternal && data.LevelNumber.Value != 01)
 				{
 					DiagnosticUtils.AddError(data, "External is only allowed for level 01", external);
 				}
 			}
 		}
 		private void OnDataConditionEntry(DataDescriptionEntry data, CodeElementsParser.DataConditionEntryContext context) {
-			if (data.LevelNumber != 88)
+			if (data.LevelNumber.Value != 88)
 				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber());
-			if (data.Name == null && !data.IsFiller)
+			if (data.Name == null && !data.IsFiller.Value)
 				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
 		}
 		private void OnDataRenamesEntry(DataDescriptionEntry data, CodeElementsParser.DataRenamesEntryContext context) {
 
 
-			if (data.LevelNumber != 66)
+			if (data.LevelNumber.Value != 66)
 			{
 				//(source page 379 of ISO Cobol 2014) 
 				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
 			}
-			if (data.Name == null && !data.IsFiller)
+			if (data.Name == null && !data.IsFiller.Value)
 			{
 				//(source page 379 of ISO Cobol 2014) 
 				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());

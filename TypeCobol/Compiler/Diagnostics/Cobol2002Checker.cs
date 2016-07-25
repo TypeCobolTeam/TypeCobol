@@ -31,7 +31,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (data.IsTypeDefinition)
             {
-                if (data.LevelNumber != 1)
+                if (data.LevelNumber.Value != 1)
                 {
                     string message = "TYPEDEF clause can only be specified for level 01 entries";
                     DiagnosticUtils.AddError(data, message, context.cobol2002TypedefClause());

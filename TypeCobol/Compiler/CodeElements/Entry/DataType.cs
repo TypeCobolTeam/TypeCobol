@@ -147,7 +147,10 @@ namespace TypeCobol.Compiler.CodeElements
 		public CustomTypeDefinition(DataType type) {
 			this.DataType = type;
 		}
-		public override bool IsTypeDefinition { get { return true; } }
+		public bool IsTypeDefinition { get { return true; } }
+
+		public DataType DataType { get { throw NotImplementedException("TODO"); } }
+		public System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get { throw NotImplementedException("TODO"); } }
 	}
 
 

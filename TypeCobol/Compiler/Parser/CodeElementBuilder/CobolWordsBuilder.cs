@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using System.Collections.Generic;
+using Antlr4.Runtime;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -83,18 +84,6 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue1Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue2Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
 		internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue3Context context) {
 			if (context == null) return null;
 			var c = context.figurativeConstant();
@@ -104,52 +93,15 @@ namespace TypeCobol.Compiler.Parser
 			Token token = ParseTreeUtils.GetFirstToken(context);
 			return new AlphanumericValue(token);
 		}
-
-		internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue4Context context) {
-			Token valueToken = ParseTreeUtils.GetFirstToken(context);
-			return new AlphanumericValue(valueToken);
+		internal AlphanumericValue CreateAlphanumericValue(ParserRuleContext context) {
+			Token token = ParseTreeUtils.GetFirstToken(context);
+			if (token == null) return null;
+			return new AlphanumericValue(token);
 		}
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue5Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue6Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue7Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue8Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue9Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue10Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
-        }
-
-        internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue11Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new AlphanumericValue(valueToken);
+		internal AlphanumericValue CreateAlphanumericValue(ITerminalNode node) {
+			var token = ParseTreeUtils.GetFirstToken(node);
+			if (token == null) return null;
+            return new AlphanumericValue(token);
         }
 
         internal EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue1Context context, Type enumType)
@@ -291,13 +243,13 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinition;
         }
 
-        internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition4Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
-            var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
-            symbolInformationForTokens[nameLiteral.Token] = symbolDefinition;
-            return symbolDefinition;
-        }
+		internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition4Context context, SymbolType symbolType) {
+			if (context == null) return null;
+			AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+			var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
+			symbolInformationForTokens[nameLiteral.Token] = symbolDefinition;
+			return symbolDefinition;
+		}
 
         internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition5Context context, SymbolType symbolType)
         {

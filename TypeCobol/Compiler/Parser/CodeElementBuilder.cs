@@ -896,72 +896,47 @@ namespace TypeCobol.Compiler.Parser
 						entry.RecordSizeDependingOn = CobolWordsBuilder.CreateDataNameReference(recordClauseContext.dataNameReference());
 				}
 			}
-			if (context.labelRecordsClause() != null && context.labelRecordsClause().Length > 0)
-			{
+			if (context.labelRecordsClause() != null && context.labelRecordsClause().Length > 0) {
 				var labelRecordClauseContext = context.labelRecordsClause()[0];
-				if (labelRecordClauseContext.STANDARD() != null)
-				{
-					entry.LabelRecordType = new SyntaxProperty<LabelRecordType>(LabelRecordType.StandardLabels,
-						ParseTreeUtils.GetFirstToken(labelRecordClauseContext.STANDARD()));
+				if (labelRecordClauseContext.STANDARD() != null) {
+					entry.LabelRecordType = new SyntaxProperty<LabelRecordType>(LabelRecordType.StandardLabels, ParseTreeUtils.GetFirstToken(labelRecordClauseContext.STANDARD()));
 				}
-				if (labelRecordClauseContext.OMITTED() != null)
-				{
-					entry.LabelRecordType = new SyntaxProperty<LabelRecordType>(LabelRecordType.Omitted,
-						ParseTreeUtils.GetFirstToken(labelRecordClauseContext.OMITTED()));
-				}
-				else if (labelRecordClauseContext.dataNameReference() != null && labelRecordClauseContext.dataNameReference().Length > 0)
-				{
+				if (labelRecordClauseContext.OMITTED() != null) {
+					entry.LabelRecordType = new SyntaxProperty<LabelRecordType>(LabelRecordType.Omitted, ParseTreeUtils.GetFirstToken(labelRecordClauseContext.OMITTED()));
+				} else
+				if (labelRecordClauseContext.dataNameReference() != null && labelRecordClauseContext.dataNameReference().Length > 0) {
 					entry.LabelRecords = new SymbolReference[labelRecordClauseContext.dataNameReference().Length];
 					for (int i = 0; i < labelRecordClauseContext.dataNameReference().Length; i++)
-					{
-						entry.LabelRecords[i] =
-							CobolWordsBuilder.CreateDataNameReference(labelRecordClauseContext.dataNameReference()[i]);
-					}
+						entry.LabelRecords[i] = CobolWordsBuilder.CreateDataNameReference(labelRecordClauseContext.dataNameReference()[i]);
 				}
 			}
-			if (context.valueOfClause() != null)
-			{
+			if (context.valueOfClause() != null) {
 				var valueOfClauseContext = context.valueOfClause()[0];
 				entry.ValueOfLabelRecords = new Dictionary<SymbolReference, Variable>();
-				for (int i = 0; i < valueOfClauseContext.qualifiedDataName().Length; i++)
-				{
+				for (int i = 0; i < valueOfClauseContext.qualifiedDataName().Length; i++) {
 					entry.ValueOfLabelRecords.Add(
 						CobolWordsBuilder.CreateQualifiedDataName(valueOfClauseContext.qualifiedDataName()[i]),
 						CobolExpressionsBuilder.CreateVariable(valueOfClauseContext.variable5()[i]));
 				}
 			}
-			if (context.dataRecordsClause() != null && context.dataRecordsClause().Length > 0)
-			{
+			if (context.dataRecordsClause() != null && context.dataRecordsClause().Length > 0) {
 				var dataRecordClauseContext = context.dataRecordsClause()[0];
 				entry.DataRecords = new SymbolReference[dataRecordClauseContext.dataNameReference().Length];
 				for (int i = 0; i < dataRecordClauseContext.dataNameReference().Length; i++)
-				{
-					entry.DataRecords[i] =
-						CobolWordsBuilder.CreateDataNameReference(dataRecordClauseContext.dataNameReference()[i]);
-				}
+					entry.DataRecords[i] = CobolWordsBuilder.CreateDataNameReference(dataRecordClauseContext.dataNameReference()[i]);
 			}
-			if (context.linageClause() != null && context.linageClause().Length > 0)
-			{
+			if (context.linageClause() != null && context.linageClause().Length > 0) {
 				var linageClauseContext = context.linageClause()[0];
 				if (linageClauseContext.numberOfLinesInPage != null)
-				{
 					entry.LogicalPageBodyLineCount = CobolExpressionsBuilder.CreateIntegerVariable(linageClauseContext.numberOfLinesInPage);
-				}
 				if (linageClauseContext.firstLineNumberOfFootingArea != null)
-				{
 					entry.LogicalPageFootingLineNumber = CobolExpressionsBuilder.CreateIntegerVariable(linageClauseContext.firstLineNumberOfFootingArea);
-				}
 				if (linageClauseContext.numberOfLinesInTopMargin != null)
-				{
 					entry.LogicalPageTopMarginLineCount = CobolExpressionsBuilder.CreateIntegerVariable(linageClauseContext.numberOfLinesInTopMargin);
-				}
 				if (linageClauseContext.numberOfLinesInBottomMargin != null)
-				{
 					entry.LogicalPageBottomMarginLineCount = CobolExpressionsBuilder.CreateIntegerVariable(linageClauseContext.numberOfLinesInBottomMargin);
-				}
 			}
-			if (context.recordingModeClause() != null && context.recordingModeClause().Length > 0)
-			{
+			if (context.recordingModeClause() != null && context.recordingModeClause().Length > 0) {
 				var recordingModeClauseContext = context.recordingModeClause()[0];
 				entry.RecordingMode = CobolWordsBuilder.CreateRecordingMode(recordingModeClauseContext.recordingMode());
 			}
@@ -971,224 +946,311 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context) {
-			if(context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
-				// For levels 66 and 88, the DataDescriptionEntry is created by the following methods
+			if (context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
+				// For levels 66 and 88, the DataDefinitionEntry is created by the following methods
 				// - EnterDataRenamesEntry
 				// - EnterDataConditionEntry
 				return;
 			}
-
-			DataDescriptionEntry entry = new DataDescriptionEntry();
-			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			if (context.redefinesClause() != null) {
+				// Redefines clause is not a separate rule in the grammar for optimization puroposes,
+				// but we pretend here that it is a separate rule
+				EnterDataRedefinesEntry(context);
+				return;
 			}
-			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
-			//entry.IsFiller = (dataname == null || context.FILLER() != null);
+			var entry = new DataDescriptionEntry();
+			var dataname = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+// [COBOL 2002]
+			if (context.cobol2002TypedefClause() != null) {
+				var typedef = new TypeDefinitionEntry();
+				typedef.IsStrong = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()));
+				typedef.DataType = new DataType(dataname.Name, typedef.IsStrong.Value);
+				entry = typedef;
+			}
+// [/COBOL 2002]
 
-			var redefines = context.redefinesClause();
-			if (redefines != null)
-                entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
 
-			var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
-			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
+			entry.DataName = dataname;
+			if (context.FILLER() != null) entry.IsFiller = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
+			else entry.IsFiller = new SyntaxProperty<bool>(entry.DataName != null, null);
 
-			var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
-			entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
-			var external = DataDescriptionChecker.GetContext(entry, context.externalClause(), false);
-			entry.IsExternal = external != null && external.EXTERNAL() != null;
-			var global = DataDescriptionChecker.GetContext(entry, context.globalClause(), false);
-			entry.IsGlobal = global != null && global.GLOBAL() != null;
-			var justified = DataDescriptionChecker.GetContext(entry, context.justifiedClause(), false);
-			entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
-			var sync = DataDescriptionChecker.GetContext(entry, context.synchronizedClause(), false);
-			entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
-			var group = DataDescriptionChecker.GetContext(entry, context.groupUsageClause(), false);
-			entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
-			UpdateDataDescriptionEntryWithUsageClause(entry, DataDescriptionChecker.GetContext(entry, context.usageClause(), false));
-			UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
-			UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
-			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
+			if (context.pictureClause() != null && context.pictureClause().Length > 0) {
+				var pictureClauseContext = context.pictureClause()[0];
+				entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
+			}
+// [COBOL 2002]
+			else
+			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
+				var typeClause = context.cobol2002TypeClause()[0];
+				if (typeClause.DATE() != null)
+					entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(typeClause.DATE());
+				if (typeClause.UserDefinedWord() != null)
+					entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(typeClause.UserDefinedWord());//TODO? use something other than UDW
+			}
+// [/COBOL 2002]
+			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)
+			{
+				var blankClauseContext = context.blankWhenZeroClause()[0];
+				Token zeroToken = null;
+				if (blankClauseContext.ZERO() != null)
+				{
+					zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZERO());
+				}
+				else if (blankClauseContext.ZEROS() != null)
+				{
+					zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZEROS());
+				}
+				else
+				{
+					zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZEROES());
+				}
+				entry.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
+			}
+			if (context.externalClause() != null && context.externalClause().Length > 0)
+			{
+				var externalClauseContext = context.externalClause()[0];
+				entry.IsExternal = new SyntaxProperty<bool>(true,
+					ParseTreeUtils.GetFirstToken(externalClauseContext.EXTERNAL()));
 
-            // [Cobol 2002]
-			entry.IsTypeDefinition = context.cobol2002TypedefClause() != null;
-			if (entry.IsTypeDefinition && entry.Name != null) {
-				bool strong = context.cobol2002TypedefClause().STRONG() != null;
-				entry.DataType = new DataType(entry.Name.Name, strong);
+				// Check coherence
+				if (entry.IsExternal != null && entry.LevelNumber.Value != 1)
+				{
+					DiagnosticUtils.AddError(entry, "External is only allowed for level 01", externalClauseContext);
+				}
+			}
+			if (context.globalClause() != null && context.globalClause().Length > 0)
+			{
+				var globalClauseContext = context.globalClause()[0];
+				entry.IsGlobal = new SyntaxProperty<bool>(true,
+					ParseTreeUtils.GetFirstToken(globalClauseContext.GLOBAL()));
+			}
+			if (context.justifiedClause() != null && context.justifiedClause().Length > 0)
+			{
+				var justifiedClauseContext = context.justifiedClause()[0];
+				Token justifiedToken = null;
+				if (justifiedClauseContext.JUSTIFIED() != null)
+				{
+					justifiedToken = ParseTreeUtils.GetFirstToken(justifiedClauseContext.JUSTIFIED());
+				}
+				else
+				{
+					justifiedToken = ParseTreeUtils.GetFirstToken(justifiedClauseContext.JUST());
+				}
+				entry.IsJustified = new SyntaxProperty<bool>(true, justifiedToken);
+			}
+			if (context.groupUsageClause() != null && context.groupUsageClause().Length > 0)
+			{
+				var groupUsageClauseContext = context.groupUsageClause()[0];
+				entry.IsJustified = new SyntaxProperty<bool>(true,
+					ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
+			}
+			if (context.occursClause() != null && context.occursClause().Length > 0)
+			{
+				var occursClauseContext = context.occursClause()[0];
+				if (occursClauseContext.minNumberOfOccurences != null)
+				{
+					entry.MinOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.minNumberOfOccurences);
+				}
+				if (occursClauseContext.maxNumberOfOccurences != null)
+				{
+					entry.MaxOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.maxNumberOfOccurences);
+				}
+				if (entry.MinOccurencesCount == null && entry.MaxOccurencesCount != null)
+				{
+					entry.MinOccurencesCount = entry.MaxOccurencesCount;
+				}
+				if (occursClauseContext.UNBOUNDED() != null)
+				{
+					entry.HasUnboundedNumberOfOccurences = new SyntaxProperty<bool>(true,
+						ParseTreeUtils.GetFirstToken(occursClauseContext.UNBOUNDED()));
+				}
+				if (occursClauseContext.varNumberOfOccurences != null)
+				{
+					entry.OccursDependingOn = CobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
+				}
+				if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
+				{
+					int keysCount = 0;
+					foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
+					{
+						keysCount += tableSortingKeysContext.dataNameReference().Length;
+					}
+					entry.TableSortingKeys = new TableSortingKey[keysCount];
+					int keyIndex = 0;
+					foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
+					{
+						SyntaxProperty<SortDirection> sortDirection = null;
+						if (tableSortingKeysContext.ASCENDING() != null)
+						{
+							sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Ascending,
+								ParseTreeUtils.GetFirstToken(tableSortingKeysContext.ASCENDING()));
+						}
+						else
+						{
+							sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Descending,
+								ParseTreeUtils.GetFirstToken(tableSortingKeysContext.DESCENDING()));
+						}
+						foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
+						{
+							SymbolReference sortKey = CobolWordsBuilder.CreateDataNameReference(dataNameReference);
+							entry.TableSortingKeys[keyIndex] = new TableSortingKey(sortKey, sortDirection);
+							keyIndex++;
+						}
+					}
+				}
+				if (occursClauseContext.indexNameDefinition() != null && occursClauseContext.indexNameDefinition().Length > 0)
+				{
+					entry.Indexes = new SymbolDefinition[occursClauseContext.indexNameDefinition().Length];
+					for (int i = 0; i < occursClauseContext.indexNameDefinition().Length; i++)
+					{
+						var indexNameDefinition = occursClauseContext.indexNameDefinition()[i];
+						entry.Indexes[i] = CobolWordsBuilder.CreateIndexNameDefinition(indexNameDefinition);
+					}
+				}
+			}
+			if (context.signClause() != null && context.signClause().Length > 0)
+			{
+				var signClauseContext = context.signClause()[0];
+				if (signClauseContext.LEADING() != null)
+				{
+					entry.SignPosition = new SyntaxProperty<SignPosition>(SignPosition.Leading,
+						ParseTreeUtils.GetFirstToken(signClauseContext.LEADING()));
+				}
+				else
+				{
+					entry.SignPosition = new SyntaxProperty<SignPosition>(SignPosition.Trailing,
+						ParseTreeUtils.GetFirstToken(signClauseContext.TRAILING()));
+				}
+				if (signClauseContext.SEPARATE() != null)
+				{
+					entry.SignIsSeparate = new SyntaxProperty<bool>(true,
+						ParseTreeUtils.GetFirstToken(signClauseContext.SEPARATE()));
+				}
+			}
+			if (context.synchronizedClause() != null && context.synchronizedClause().Length > 0)
+			{
+				var synchronizedClauseContext = context.synchronizedClause()[0];
+				if (synchronizedClauseContext.SYNCHRONIZED() != null)
+				{
+					entry.IsSynchronized = new SyntaxProperty<bool>(true,
+						ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED()));
+				}
+				else
+				{
+					entry.IsSynchronized = new SyntaxProperty<bool>(true,
+						ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNC()));
+				}
+			}
+			if (context.usageClause() != null && context.usageClause().Length > 0) {
+				entry.Usage = CreateUsageClause(context.usageClause()[0]);
+			}
+			if (context.valueClause() != null && context.valueClause() != null)
+			{
+				var valueClauseContext = context.valueClause()[0];
+				entry.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
 			}
 
-		    var cobol2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cobol2002TypeClause());
-			if (cobol2002TypeClause != null) {
-				Token token = null;
-				if (cobol2002TypeClause.UserDefinedWord() != null)
-					token = ParseTreeUtils.GetTokenFromTerminalNode(cobol2002TypeClause.UserDefinedWord());
-				if (cobol2002TypeClause.DATE() != null)
-					token = ParseTreeUtils.GetTokenFromTerminalNode(cobol2002TypeClause.DATE());
-				if (token != null) entry.Picture = "TYPE:"+token.Text.ToUpper();
-			}
-            // [/Cobol 2002]
+			Context = context;
+			CodeElement = entry;
+		}
+		private SyntaxProperty<DataUsage> CreateUsageClause(CodeElementsParser.UsageClauseContext c) {
+			return  CreateDataUsageProperty(DataUsage.Binary, c.BINARY()) ??
+					CreateDataUsageProperty(DataUsage.Binary, c.COMP()) ??
+					CreateDataUsageProperty(DataUsage.Binary, c.COMPUTATIONAL()) ??
+					CreateDataUsageProperty(DataUsage.Binary, c.COMP_4()) ??
+					CreateDataUsageProperty(DataUsage.Binary, c.COMPUTATIONAL_4()) ??
+					CreateDataUsageProperty(DataUsage.FloatingPoint, c.COMP_1()) ??
+					CreateDataUsageProperty(DataUsage.FloatingPoint, c.COMPUTATIONAL_1()) ??
+					CreateDataUsageProperty(DataUsage.LongFloatingPoint, c.COMP_2()) ??
+					CreateDataUsageProperty(DataUsage.LongFloatingPoint, c.COMPUTATIONAL_2()) ??
+					CreateDataUsageProperty(DataUsage.PackedDecimal, c.PACKED_DECIMAL()) ??
+					CreateDataUsageProperty(DataUsage.PackedDecimal, c.COMP_3()) ??
+					CreateDataUsageProperty(DataUsage.PackedDecimal, c.COMPUTATIONAL_3()) ??
+					CreateDataUsageProperty(DataUsage.NativeBinary, c.COMP_5()) ??
+					CreateDataUsageProperty(DataUsage.NativeBinary, c.COMPUTATIONAL_5()) ??
+					CreateDataUsageProperty(DataUsage.Display, c.DISPLAY_ARG()) ??
+					CreateDataUsageProperty(DataUsage.DBCS, c.DISPLAY_1()) ??
+					CreateDataUsageProperty(DataUsage.Index, c.INDEX()) ??
+					CreateDataUsageProperty(DataUsage.National, c.NATIONAL()) ??
+					CreateDataUsageProperty(DataUsage.ObjectReference, c.OBJECT()) ??
+					CreateDataUsageProperty(DataUsage.ObjectReference, c.REFERENCE()) ??
+					CreateDataUsageProperty(DataUsage.Pointer, c.POINTER()) ??
+					CreateDataUsageProperty(DataUsage.FunctionPointer, c.FUNCTION_POINTER()) ??
+					CreateDataUsageProperty(DataUsage.ProcedurePointer, c.PROCEDURE_POINTER()) ??
+					null;
+		}
+		private SyntaxProperty<DataUsage> CreateDataUsageProperty(DataUsage usage, ITerminalNode node) {
+			if (node == null) return null;
+			return new SyntaxProperty<DataUsage>(usage, ParseTreeUtils.GetFirstToken(node));
+		}
 
-            Context = context;
+		private void EnterDataRedefinesEntry(CodeElementsParser.DataDescriptionEntryContext context)
+		{
+			var entry = new DataRedefinesEntry();
+
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			if (context.dataNameDefinition() != null)
+			{
+				entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+			}
+			else if (context.FILLER() != null)
+			{
+				entry.IsFiller = new SyntaxProperty<bool>(true,
+					ParseTreeUtils.GetFirstToken(context.FILLER()));
+			}
+			else
+			{
+				entry.IsFiller = new SyntaxProperty<bool>(true, null);
+			}
+			if (context.redefinesClause() != null)
+			{
+				entry.RedefinesDataName = CobolWordsBuilder.CreateDataNameReference(context.redefinesClause().dataNameReference());
+			}
+
+			Context = context;
 			CodeElement = entry;
 		}
 
 		public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context) {
-			DataDescriptionEntry entry = new DataDescriptionEntry();
-			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			var entry = new DataRenamesEntry();
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+			if (context.renamesClause().qualifiedDataName() != null) {
+				entry.RenamesFromDataName = CobolWordsBuilder.CreateQualifiedDataName(context.renamesClause().qualifiedDataName());
+			} else
+			if (context.renamesClause().dataNamesRange() != null) {
+				entry.RenamesFromDataName = CobolWordsBuilder.CreateQualifiedDataName(context.renamesClause().dataNamesRange().startDataName);
+				entry.RenamesToDataName = CobolWordsBuilder.CreateQualifiedDataName(context.renamesClause().dataNamesRange().endDataName);
 			}
-			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
-            //entry.IsFiller = (dataname == null || context.FILLER() != null);
-
-
-			var names = SyntaxElementBuilder.CreateQualifiedNames(context.renamesClause().qualifiedDataName());
-			if (names.Count > 0) entry.RenamesFromDataName = names[0];
-			if (names.Count > 1) entry.RenamesToDataName   = names[1];
-			//note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
 
 			Context = context;
 			CodeElement = entry;
 		}
 
 		public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context) {
-			var entry = new DataDescriptionEntry();
-			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
-				entry.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			var entry = new DataConditionEntry();
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
+			if (context.valueClauseForCondition() != null && context.valueClauseForCondition().value1() != null && context.valueClauseForCondition().value1().Length > 0) {
+				entry.ConditionValues = new Value[context.valueClauseForCondition().value1().Length];
+				for (int i = 0; i < context.valueClauseForCondition().value1().Length; i++)
+					entry.ConditionValues[i] = CobolWordsBuilder.CreateValue(context.valueClauseForCondition().value1()[i]);
 			}
-			entry.ConditionName = SyntaxElementBuilder.CreateConditionName(context.conditionNameDefinition());
-			entry.IsConditionNameDescription = true;
-			UpdateDataDescriptionEntryWithValueClauseForCondition(entry, context.valueClauseForCondition());
+			if (context.valueClauseForCondition() != null && context.valueClauseForCondition().valuesRange() != null && context.valueClauseForCondition().valuesRange().Length > 0) {
+				entry.ConditionValuesRanges = new ValuesRange[context.valueClauseForCondition().valuesRange().Length];
+				for (int i = 0; i < context.valueClauseForCondition().valuesRange().Length; i++) {
+					var valuesRangeContext = context.valueClauseForCondition().valuesRange()[i];
+					var valuesRange = new ValuesRange(
+						CobolWordsBuilder.CreateValue(valuesRangeContext.startValue),
+						CobolWordsBuilder.CreateValue(valuesRangeContext.endValue));
+					entry.ConditionValuesRanges[i] = valuesRange;
+				}
+			}
 
 			Context = context;
 			CodeElement = entry;
 		}
-
-        private void UpdateDataDescriptionEntryWithSignClause(DataDescriptionEntry entry, CodeElementsParser.SignClauseContext context)
-        {
-            if (context == null) return;
-            entry.SignPosition = SignPosition.None;
-            if (context.TRAILING() != null) entry.SignPosition = SignPosition.Trailing;
-            if (context.LEADING()  != null) entry.SignPosition = SignPosition.Leading;
-            entry.IsSignSeparate = context.SEPARATE() != null;
-        }
-
-        private void UpdateDataDescriptionEntryWithUsageClause(DataDescriptionEntry entry, CodeElementsParser.UsageClauseContext context)
-        {
-            if (context == null) return;
-            entry.Usage = CreateDataUsage(context);
-            entry.ObjectReference = SyntaxElementBuilder.CreateClassName(context.classNameReference());
-        }
-
-        private void UpdateDataDescriptionEntryWithOccursClause(DataDescriptionEntry entry, CodeElementsParser.OccursClauseContext context)
-        {
-            if (context == null) return;
-            entry.IsTableOccurence = true;
-
-            bool isVariable = (context.occursDependingOn() != null);
-            if (isVariable) {
-                entry.OccursDependingOn = SyntaxElementBuilder.CreateDataName(context.occursDependingOn().dataNameReference());
-            }
-            isVariable = isVariable || (context.UNBOUNDED() != null) || (context.TO() != null);
-
-            var integers = context.IntegerLiteral();
-            if (integers != null) {
-                isVariable = isVariable || (integers.Length == 2);
-                if (integers.Length == 0) {
-                    if (isVariable) {
-                            // 1) OCCURS UNBOUNDED DEPENDING ON...
-                        entry.MinOccurencesCount = 1;
-                        entry.MaxOccurencesCount = Int32.MaxValue;
-                    }
-                    // else;   2) OCCURS ... -syntax error (fixed length, exact missing)
-                } else
-                if (integers.Length == 1) {
-                    if (isVariable) {
-                        if (context.UNBOUNDED() != null) {
-                            // 3) OCCURS min TO UNBOUNDED DEPENDING ON...
-                            // 4) OCCURS min UNBOUNDED DEPENDING ON... -syntax error (TO missing)
-                            entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
-                            entry.NoMaxOccurencesCount = true;
-                        } else {
-                            // 5) OCCURS max DEPENDING ON...
-                            // 6) OCCURS min TO DEPENDING ON... -syntax error (max missing)
-                            // 7) OCCURS TO max DEPENDING ON... -syntax error (min missing)
-                            // WARNING! due to our grammar, we cannot discriminate between 6) and 7)
-                            // this shouldn't be a problem as both cases are syntax errors
-                            entry.MinOccurencesCount = 1;
-                            entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
-                        }
-                    } else {
-                            // 8) OCCURS exact ... (fixed length)
-                        entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
-                        entry.MaxOccurencesCount = entry.MinOccurencesCount;
-                    }
-                } else { // isVariable == true && integers.Length == 2
-                            // 9) OCCURS min TO max DEPENDING ON...
-                            //10) OCCURS min max DEPENDING ON... -syntax error (TO missing)
-                    entry.MinOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[0]);
-                    entry.MaxOccurencesCount = SyntaxElementBuilder.CreateInteger(integers[1]);
-                }
-            }
-
-            var keys = context.occursKeys();
-            if (keys != null) {
-                entry.TableOccurenceKeys = new List<DataName>();
-                entry.TableOccurenceKeyDirections = new List<KeyDirection>();
-                foreach(var key in keys) {
-                    var direction = KeyDirection.None;
-                    if (key.ASCENDING()  != null) direction = KeyDirection.Ascending;
-                    if (key.DESCENDING() != null) direction = KeyDirection.Descending;
-                    foreach(var name in key.dataNameReference()) {
-                        var data = SyntaxElementBuilder.CreateDataName(name);
-                        if (data == null) continue;
-                        entry.TableOccurenceKeys.Add(data);
-                        entry.TableOccurenceKeyDirections.Add(direction);
-                    }
-                }
-            }
-
-            var indexes = context.indexNameDefinition();
-            if (indexes != null) {
-                entry.IndexedBy = new List<IndexName>();
-                foreach(var index in indexes) entry.IndexedBy.Add(SyntaxElementBuilder.CreateIndexName(index));
-            }
-        }
-
-        private DataUsage CreateDataUsage(CodeElementsParser.UsageClauseContext context)
-        {
-            if (context.BINARY() != null
-             || context.COMP()   != null || context.COMPUTATIONAL()   != null
-             || context.COMP_4() != null || context.COMPUTATIONAL_4() != null) return DataUsage.Binary;
-            if (context.COMP_1() != null || context.COMPUTATIONAL_1() != null) return DataUsage.FloatingPöint;
-            if (context.COMP_2() != null || context.COMPUTATIONAL_2() != null) return DataUsage.LongFloatingPöint;
-            if (context.PACKED_DECIMAL() != null
-             || context.COMP_3() != null || context.COMPUTATIONAL_3() != null) return DataUsage.PackedDecimal;
-            if (context.COMP_5() != null || context.COMPUTATIONAL_5() != null) return DataUsage.NativeBinary;
-            if (context.DISPLAY_ARG() != null) return DataUsage.Display;
-            if (context.DISPLAY_1()   != null) return DataUsage.DBCS;
-            if (context.INDEX() != null) return DataUsage.Index;
-            if (context.NATIONAL() != null) return DataUsage.National;
-            if (context.OBJECT() != null || context.REFERENCE() != null) return DataUsage.ObjectReference;
-            if (context.POINTER() != null) return DataUsage.Pointer;
-            if (context.FUNCTION_POINTER()  != null) return DataUsage.FunctionPointer;
-            if (context.PROCEDURE_POINTER() != null) return DataUsage.ProcedurePointer;
-            return DataUsage.None;
-        }
-
-        private void UpdateDataDescriptionEntryWithValueClause(DataDescriptionEntry entry, CodeElementsParser.ValueClauseContext context)
-        {
-            if (context == null) return;
-            var value = context.literal();
-            if (value != null) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(value); // format 1
-            entry.IsInitialValueNull = (context.NULL() != null || context.NULLS() != null); // format 3
-        }
-
-        private void UpdateDataDescriptionEntryWithValueClauseForCondition(DataDescriptionEntry entry, CodeElementsParser.ValueClauseForConditionContext context)
-        {
-            if (context == null) return;
-            var values = context.literal();
-            if (values.Length > 0) entry.InitialValue = SyntaxElementBuilder.CreateLiteral(values[0]); // format 1 and 2
-            if (values.Length > 1) entry.ThroughValue = SyntaxElementBuilder.CreateLiteral(values[1]); // format 2
-        }
 
 		  ////////////////////////
 		 // PROCEDURE DIVISION //
