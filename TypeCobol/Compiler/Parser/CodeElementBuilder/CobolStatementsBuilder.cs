@@ -1249,14 +1249,10 @@ namespace TypeCobol.Compiler.Parser
 			var statement = new StopStatement();
 			var msg = context.messageToOperator();
 			if (msg != null) {
-				if (msg.numericValue() != null) {
-					var value = CobolWordsBuilder.CreateNumericValue(msg.numericValue());
-					if (value != null) statement.SetLiteral(value);
-				}
-				if (msg.alphanumericValue3() != null) {
-					var value = CobolWordsBuilder.CreateAlphanumericValue(msg.alphanumericValue3());
-					if (value != null) statement.SetLiteral(value);
-				}
+				if (msg.numericValue() != null)
+					statement.Literal = CobolWordsBuilder.CreateNumericValue(msg.numericValue());
+				if (msg.alphanumericValue3() != null)
+					statement.Literal = CobolWordsBuilder.CreateAlphanumericValue(msg.alphanumericValue3());
 			}
 			statement.IsStopRun = context.RUN() != null;
 			return statement;

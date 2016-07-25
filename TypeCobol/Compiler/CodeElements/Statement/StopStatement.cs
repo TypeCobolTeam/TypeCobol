@@ -37,17 +37,16 @@ namespace TypeCobol.Compiler.CodeElements
 				if (alphanum != null) return alphanum;
 				return null;
 			}
+			internal set {
+				if (value is NumericValue) numeric = (NumericValue)value;
+				else
+				if (value is AlphanumericValue) alphanum = (AlphanumericValue)value;
+				else throw new ArgumentException();
+			}
 		}
 
 		private NumericValue numeric { get; set; }
 		private AlphanumericValue alphanum { get; set; }
-
-		internal void SetLiteral<T>(SyntaxValue<T> value) {
-			if (value is NumericValue) numeric = value;
-			else
-			if (value is AlphanumericValue) alphanum = value;
-			else throw new ArgumentException();
-		}
 
         /// <summary>
         /// p432:
