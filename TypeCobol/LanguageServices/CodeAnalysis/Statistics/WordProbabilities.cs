@@ -126,23 +126,17 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                     candidateSymbolTypes = new List<SymbolType>();
                     NextWordSymbolTypes.Add(nextWordType, candidateSymbolTypes);
                 }
-                if (nextWordSymbolInfo.CandidateSymbolTypes != null)
-                {
-                    foreach (var symbolType in nextWordSymbolInfo.CandidateSymbolTypes)
-                    {
-                        if (!candidateSymbolTypes.Contains(symbolType))
-                        {
-                            candidateSymbolTypes.Add(symbolType);
-                        }
-                    }
-                }
-                else
-                {
-                    if (!candidateSymbolTypes.Contains(nextWordSymbolInfo.Type))
-                    {
-                        candidateSymbolTypes.Add(nextWordSymbolInfo.Type);
-                    }
-                }
+
+				var ambiguous = nextWordSymbolInfo as AmbiguousSymbolReference;
+				if (ambiguous != null && ambiguous.CandidateTypes != null) {
+					foreach(var symbolType in ambiguous.CandidateTypes) {
+						if (!candidateSymbolTypes.Contains(symbolType))
+							candidateSymbolTypes.Add(symbolType);
+					}
+				} else {
+					if (!candidateSymbolTypes.Contains(nextWordSymbolInfo.Type))
+						candidateSymbolTypes.Add(nextWordSymbolInfo.Type);
+				}
             }
         }
 

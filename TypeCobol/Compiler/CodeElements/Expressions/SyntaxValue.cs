@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// True if the literal represents an integer value
         /// </summary>
-        public bool IsInteger
+        public virtual bool IsInteger
         {
             get
             {
@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// If IsInteger is true, returns the integer value for this literal
         /// </summary>
-        public long IntegerValue
+        public virtual long IntegerValue
         {
             get
             {
@@ -173,9 +173,9 @@ namespace TypeCobol.Compiler.CodeElements
             IsSymbolicCharacterReference = true;
         }
 
-        public bool IsSymbolicCharacterReference { get; private set; }
+        public virtual bool IsSymbolicCharacterReference { get; protected set; }
 
-        public bool ValueNeedsCompilationContext
+        public virtual bool ValueNeedsCompilationContext
         {
             get
             {
@@ -234,7 +234,7 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public bool ValueNeedsSymbolicCharactersMap
+        public virtual bool ValueNeedsSymbolicCharactersMap
         {
             get
             {
@@ -250,7 +250,7 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public CharacterEncodingType CharacterEncodingType
+        public virtual CharacterEncodingType CharacterEncodingType
         {
             get
             {
@@ -643,5 +643,51 @@ namespace TypeCobol.Compiler.CodeElements
         public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
 
         public NullPointerValue NullPointerValue { get; private set; }        
+    }
+
+
+
+
+
+	public class GeneratedBooleanValue: BooleanValue {
+		public GeneratedBooleanValue(bool value): base(null) {
+			this.value = value;
+		}
+		private bool value;
+		public override bool Value { get { return value; } }
+	}
+
+	public class GeneratedIntegerValue: IntegerValue {
+		public GeneratedIntegerValue(long value): base(null) {
+			this.value = value;
+		}
+		private long value;
+		public override long Value { get { return value; } }
+	}
+
+	public class GeneratedNumericValue: NumericValue {
+		public GeneratedNumericValue(double value): base(null) {
+			this.value = value;
+		}
+		private double value;
+		public override double Value { get { return value; } }
+		public override bool IsInteger { get { return value % 1 == 0; } }
+		public override long IntegerValue { get { return (long)value; } }
+	}
+
+	public class GeneratedAlphanumericValue: AlphanumericValue {
+        public GeneratedAlphanumericValue(string value): base((Token)null) {
+			this.value = value;
+			encoding = CharacterEncodingType.Alphanumeric;
+			IsSymbolicCharacterReference = false;
+		}
+		private string value;
+		private CharacterEncodingType encoding;
+
+		public bool ValueNeedsCompilationContext { get { return false; } }
+		public bool ValueNeedsSymbolicCharactersMap { get { return false; } }
+		public CharacterEncodingType CharacterEncodingType { get { return encoding; } }
+		public override string Value { get { return value; } }
+		public virtual string GetValueInContext(CollatingSequence sequence, bool option, IDictionary<string, string> map, int count) { return value; }
     }
 }

@@ -11,8 +11,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		}
 
 		public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
-			this.InputParameters = other.InputParameters();
-			this.ReturningParameter = other.OutputParameter;
+			this.InputParameters = other.InputParameters;
+			this.ReturningParameter = other.ReturningParameter;
 			this.ConsumedTokens = other.ConsumedTokens;
 		}
 

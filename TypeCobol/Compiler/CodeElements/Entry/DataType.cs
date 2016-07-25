@@ -126,8 +126,8 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 		private static void CreateMember(DataDescriptionEntry parent, int level, string name, DataType type, int length) {
 			var data = new DataDescriptionEntry();
-			data.LevelNumber = level;
-			data.DataName = new StringDataName(name);
+			data.LevelNumber = new GeneratedIntegerValue(level);
+			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
 			data.DataType = type;
 			data.MemoryArea = new TypeCobol.Compiler.CodeModel.DataInMemory(length, 0);//TODO half-assed
 			data.Picture = String.Format("9 ({0})", data.MemoryArea.Length);
