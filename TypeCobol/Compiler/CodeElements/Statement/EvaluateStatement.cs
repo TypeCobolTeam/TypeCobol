@@ -54,4 +54,11 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public VariableOrExpression AlphanumericComparisonVariable2 { get; set; }
 	}
+
+	/// <summary>
+	/// Default conditional expression case for the EVALUATE statement.
+	/// </summary>
+	public class WhenOtherCondition : StatementElement {
+		public WhenOtherCondition() : base(CodeElementType.WhenOtherCondition, StatementType.WhenOtherCondition) { }
+	}
 }
