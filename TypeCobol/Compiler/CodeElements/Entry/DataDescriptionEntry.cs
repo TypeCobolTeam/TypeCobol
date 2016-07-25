@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Data description entries have three general formats :
 	/// Format 1: data description entry
 	/// </summary>
-	public partial class DataDescriptionEntry : DataDefinitionEntry
+	public class DataDescriptionEntry: DataDefinitionEntry
 	{
 		public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) { }
 
@@ -847,7 +847,7 @@ namespace TypeCobol.Compiler.CodeElements
 	}
 
 	public class TypeDefinitionEntry: DataDescriptionEntry {
-		public TypeDefinitionEntry(): base(CodeElementType.DataDescriptionEntry) { }
+		public TypeDefinitionEntry(): base() { }
 
 		public DataType DataType { get; internal set; }
 		public SyntaxProperty<bool> IsStrong { get; internal set; }
