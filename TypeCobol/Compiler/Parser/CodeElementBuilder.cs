@@ -980,7 +980,6 @@ namespace TypeCobol.Compiler.Parser
 				entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
 			}
 // [COBOL 2002]
-			else
 			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
 				var typeClause = context.cobol2002TypeClause()[0];
 				if (typeClause.DATE() != null)

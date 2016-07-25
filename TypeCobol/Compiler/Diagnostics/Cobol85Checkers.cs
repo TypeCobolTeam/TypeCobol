@@ -11,75 +11,26 @@ using TypeCobol.Tools;
 namespace TypeCobol.Compiler.Diagnostics {
 
 	class DataDescriptionChecker: CodeElementListener {
-
 		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(DataDescriptionEntry) };
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var data = e as DataDescriptionEntry;
-			if (c is CodeElementsParser.DataDescriptionEntryContext)
-				OnDataDescriptionEntry(data, c as CodeElementsParser.DataDescriptionEntryContext);
-			if (c is CodeElementsParser.DataConditionEntryContext)
-				OnDataConditionEntry(data, c as CodeElementsParser.DataConditionEntryContext);
-			if (c is CodeElementsParser.DataRenamesEntryContext)
-				OnDataRenamesEntry(data, (CodeElementsParser.DataRenamesEntryContext) c);
-		}
-
-		private void OnDataDescriptionEntry(DataDescriptionEntry data, CodeElementsParser.DataDescriptionEntryContext context) {
-			var picture   = GetContext(data, context.pictureClause());
-			var blank     = GetContext(data, context.blankWhenZeroClause());
+			var context = c as CodeElementsParser.DataDescriptionEntryContext;
 			var external  = GetContext(data, context.externalClause());
 			var global    = GetContext(data, context.globalClause());
-			var justified = GetContext(data, context.justifiedClause());
-			var sync      = GetContext(data, context.synchronizedClause());
-			var group     = GetContext(data, context.groupUsageClause());
-			var usage     = GetContext(data, context.usageClause());
-			var sign      = GetContext(data, context.signClause());
-			var occurs    = GetContext(data, context.occursClause());
-			var value     = GetContext(data, context.valueClause());
-
-
-			if (data.Name == null)
-			{
-				if (data.IsExternal)
-					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause",
-						external);
-				if (data.IsGlobal)
-					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause",
-						global);
+			if (data.DataName == null) {
+				if (!data.IsFiller.Value)
+					DiagnosticUtils.AddError(data, "Data name or FILLER expected", context.dataNameDefinition());
+				if (data.IsExternal.Value)
+					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
+				if (data.IsGlobal.Value)
+					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
 			} else { 
-				if (data.IsExternal && data.LevelNumber.Value != 01)
-				{
+				if (data.IsExternal.Value && data.LevelNumber.Value != 01)
 					DiagnosticUtils.AddError(data, "External is only allowed for level 01", external);
-				}
 			}
 		}
-		private void OnDataConditionEntry(DataDescriptionEntry data, CodeElementsParser.DataConditionEntryContext context) {
-			if (data.LevelNumber.Value != 88)
-				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber());
-			if (data.Name == null && !data.IsFiller.Value)
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
-		}
-		private void OnDataRenamesEntry(DataDescriptionEntry data, CodeElementsParser.DataRenamesEntryContext context) {
-
-
-			if (data.LevelNumber.Value != 66)
-			{
-				//(source page 379 of ISO Cobol 2014) 
-				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
-			}
-			if (data.Name == null && !data.IsFiller.Value)
-			{
-				//(source page 379 of ISO Cobol 2014) 
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());
-			}
-			if (data.RenamesFromDataName.Equals(data.RenamesToDataName))
-			{
-				//(source page 379 of ISO Cobol 2014) 
-				DiagnosticUtils.AddError(data, "Renamed items can't be the same " + data.RenamesFromDataName + " and " + data.RenamesToDataName, context);
-			}
-		}
-
 		/// <summary>
 		/// Return the first ParserRuleContext in a list.
 		/// If there is more than one context in the parameter list, a diagnostic error is added to the CodeElement parameter.
@@ -96,6 +47,39 @@ namespace TypeCobol.Compiler.Diagnostics {
 					DiagnosticUtils.AddError(e, "Only one such clause allowed", contexts[c]);
 			}
 			return contexts[0];
+		}
+	}
+
+	class DataConditionChecker: CodeElementListener {
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(DataConditionEntry), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+			var data = e as DataConditionEntry;
+			var context = c as CodeElementsParser.DataConditionEntryContext;
+			if (data.LevelNumber.Value != 88)
+				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber());
+			if (data.DataName == null)
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
+		}
+	}
+
+	class DataRenamesChecker: CodeElementListener {
+		public IList<Type> GetCodeElements() {
+			return new List<Type>() { typeof(DataRenamesEntry), };
+		}
+		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+			var data = e as DataRenamesEntry;
+			var context = c as CodeElementsParser.DataConditionEntryContext;
+			if (data.LevelNumber.Value != 66)
+				//(source page 379 of ISO Cobol 2014)
+				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
+			if (data.DataName == null)
+				//(source page 379 of ISO Cobol 2014)
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());
+			if (data.RenamesFromDataName.Equals(data.RenamesToDataName))
+				//(source page 379 of ISO Cobol 2014)
+				DiagnosticUtils.AddError(data, "Renamed items can't be the same " + data.RenamesFromDataName + " and " + data.RenamesToDataName, context);
 		}
 	}
 
@@ -129,14 +113,14 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallProgramInputParametersContext context) {
 			foreach(var input in statement.InputParameters) {
-				// TODO these checks should be done during semantic phase, after symbol type resolution
-				// TODO if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
+				// TODO#249 these checks should be done during semantic phase, after symbol type resolution
+				// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
 				//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-				// TODO if input is a function reference:
+				// TODO#249 if input is a function reference:
 				//	DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
-				// TODO if input is LINAGE COUNTER:
+				// TODO#249 if input is LINAGE COUNTER:
 				//	DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", context);
-				// TODO if input is LENGTH or identifier AND input.SendingMode.Value == SendingMode.ByReference:
+				// TODO#249 if input is LENGTH or identifier AND input.SendingMode.Value == SendingMode.ByReference:
 				// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
 				//TODO what about special registers ?
 				if (input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
@@ -157,7 +141,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var context = ctxt as CodeElementsParser.CancelStatementContext;
 
 			foreach (var item in statement.Programs) {
-				if (item == null) continue;//TODO
+				if (item == null) continue;//TODO#249
 				if (item.SymbolReference == null) continue;// DO nothing
 				if (string.IsNullOrWhiteSpace(item.SymbolReference.Name) || item.SymbolReference.Name.IsNumeric()) {
 					// we should link this error to the specific context.identifierOrLiteral[i] context
@@ -225,7 +209,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var statement = e as StopStatement;
 			var context = c as CodeElementsParser.StopStatementContext;
-// TODO
+// TODO#249
 //			if (statement.Literal != null && statement.Literal.All)
 //				DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
 		}
@@ -271,6 +255,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		private static IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
 			var errors = new List<string>();
+/* TODO#249
 			if (qname is Subscripted) {
 				var sname = qname as Subscripted;
 				for(int i=qname.Count-1; i>=0; i--) {
@@ -282,7 +267,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 						} else
 						if (subscript.IsJustAnOffset) {
 							int offset = int.Parse(subscript.offset.ToString());
-							if (offset > data.MaxOccurencesCount)
+							if (offset > data.MaxOccurencesCount.Value)
 								errors.Add(name+" subscripting out of bounds: "+offset+" > max="+data.MaxOccurencesCount);
 						}//else TODO: check if subscript.dataname subscripting is okay too
 					} else {
@@ -293,6 +278,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 					data = data.TopLevel;
 				}
 			}
+ */
 			return errors;
 		}
 	}
@@ -303,6 +289,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
 		}
 		public void OnNode(Node node, ParserRuleContext c, Program program) {
+/*	TODO#249
 			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
 			if (element== null || element.IsUnsafe) return; // nothing to do
 			var table = program.SymbolTable;
@@ -334,6 +321,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 				} else if (!CheckNesting(e, sub)) return false;
 			}
 			return true;
+ */
 		}
 	}
 
