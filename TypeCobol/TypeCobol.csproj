@@ -315,7 +315,7 @@
     <Compile Include="Compiler\File\LocalDirectoryLibrary.cs" />
     <Compile Include="Compiler\File\SourceFileProvider.cs" />
     <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
-    <Compile Include="Compiler\Parser\CodeElementBuilder.cs" />
+    <Compile Include="Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\CodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
@@ -325,6 +325,7 @@
     <Compile Include="Compiler\Parser\ProgramClassParserStep.cs" />
     <Compile Include="Compiler\Parser\CodeElementsDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />
+    <Compile Include="Compiler\Parser\TypeCobolCodeElementBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CopyTokensLinesIterator.cs" />
     <Compile Include="Compiler\Preprocessor\ImportedTokensDocument.cs" />
