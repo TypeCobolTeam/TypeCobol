@@ -153,22 +153,5 @@ namespace TypeCobol.Compiler.AntlrUtils
             return null;
         }
 
-        // --- Specific utility methods for the Compiler Directives parser --
-
-        public static void TryGetUserDefinedWord(ITerminalNode terminalNode, ref string targetProperty)
-        {
-            if (terminalNode != null && targetProperty == null)
-            {
-                targetProperty = terminalNode.GetText();
-            }
-        }
-
-        public static void TryGetAlphanumericLiteralValue(ITerminalNode terminalNode, ref string targetProperty)
-        {
-            if (terminalNode != null && targetProperty == null)
-            {
-                targetProperty = ((AlphanumericLiteralTokenValue)((Token)terminalNode.Symbol).LiteralValue).Text;
-            }
-        }
-    }
+	}
 }

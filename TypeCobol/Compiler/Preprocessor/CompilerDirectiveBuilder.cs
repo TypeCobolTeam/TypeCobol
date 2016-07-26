@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public override void EnterControlCblOption(CobolCompilerDirectivesParser.ControlCblOptionContext context) 
         {
             string option = null;
-            ParseTreeUtils.TryGetUserDefinedWord(context.enumeratedValue1().UserDefinedWord(), ref option);
+            TryGetUserDefinedWord(context.enumeratedValue1().UserDefinedWord(), ref option);
             if (option != null)
             {
                 ControlCblDirective.ControlCblOption optionValue;
@@ -128,27 +128,29 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context)
-        {
-            string textName = null;
-            if (context != null)
-            {
-                ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref textName);
-                ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref textName);
-            }
-            return textName;
+		private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context) {
+			if (context == null) return null;
+			return GetName(context.externalName5().alphanumericValue5());
         }
-
-        private string GetLibraryName(CobolCompilerDirectivesParser.LibraryNameContext context)
-        {
-            string libraryName = null;
-            if (context != null)
-            {
-                ParseTreeUtils.TryGetAlphanumericLiteralValue(context.AlphanumericLiteral(), ref libraryName);
-                ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref libraryName);
-            }
-            return libraryName;
+		private string GetLibraryName(CobolCompilerDirectivesParser.LibraryNameContext context) {
+			if (context == null) return null;
+			return GetName(context.externalName5().alphanumericValue5());
         }
+		private string GetName(CobolCompilerDirectivesParser.AlphanumericValue5Context context) {
+			if (context == null) return null;
+			string result = null;
+			TryGetAlphanumericLiteralValue(context.alphanumericLiteralToken(), ref result);
+			TryGetUserDefinedWord(context.UserDefinedWord(), ref result);
+			return result;
+		}
+		internal static void TryGetAlphanumericLiteralValue(Preprocessor.Generated.CobolCompilerDirectivesParser.AlphanumericLiteralTokenContext context, ref string property) {
+			TryGetUserDefinedWord(context.AlphanumericLiteral(), ref property);
+			TryGetUserDefinedWord(context.HexadecimalAlphanumericLiteral(), ref property);
+			TryGetUserDefinedWord(context.NullTerminatedAlphanumericLiteral(), ref property);
+		}
+		public static void TryGetUserDefinedWord(ITerminalNode node, ref string property) {
+			if (node != null && property == null) property = node.GetText();
+		}
 
         public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) 
         {
@@ -319,13 +321,13 @@ namespace TypeCobol.Compiler.Preprocessor
             if(context.languageName() != null)
             {
                 string languageName = null;
-                ParseTreeUtils.TryGetUserDefinedWord(context.languageName().UserDefinedWord(), ref languageName);
+                TryGetUserDefinedWord(context.languageName().UserDefinedWord(), ref languageName);
                 enterDirective.LanguageName = languageName;
             }
             if(context.routineName() != null)
             {
                 string routineName = null;
-                ParseTreeUtils.TryGetUserDefinedWord(context.routineName().UserDefinedWord(), ref routineName);
+                TryGetUserDefinedWord(context.routineName().UserDefinedWord(), ref routineName);
                 enterDirective.RoutineName = routineName;
             }
         }
@@ -482,7 +484,7 @@ namespace TypeCobol.Compiler.Preprocessor
             CompilerDirective = serviceReloadDirective;
 
             string userDefinedWord = null;
-            ParseTreeUtils.TryGetUserDefinedWord(context.UserDefinedWord(), ref userDefinedWord);
+            TryGetUserDefinedWord(context.UserDefinedWord(), ref userDefinedWord);
             serviceReloadDirective.UserDefinedWord = userDefinedWord;
         }
                 
