@@ -4,6 +4,7 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements.Expressions
 {
+/*
     public class Pointer : Expression {
         public Identifier identifier { get; private set; }
         public Pointer(Identifier identifier) { this.identifier = identifier; }
@@ -317,4 +318,5 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 			else return DataType.Alphanumeric;
 		}
 	}
+*/
 }

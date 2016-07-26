@@ -27,10 +27,10 @@ namespace TypeCobol.Compiler.Diagnostics {
 				var lr = table.Get(pair.Item2);
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 				var receiving = lr[0];
-				checkReadOnly(node.CodeElement, receiving);
+//TODO#249				checkReadOnly(node.CodeElement, receiving);
 			}
 		}
-
+/*
 		private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving) {
 			if (receiving.TopLevel == null) return;
 		    foreach (var type in READONLY_DATATYPES) {
@@ -39,10 +39,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 				}
 			}
 		}
+*/
 	}
 
 
-
+/*TODO#249
 	class FunctionChecker: NodeListener {
 		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
@@ -93,6 +94,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			}
 		}
 	}
+*/
 
 
 
@@ -105,7 +107,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var header = node.CodeElement as FunctionDeclarationHeader;
 			var visibility = header.Visibility;
 			IList<InputParameter> inputs = new List<InputParameter>();
-			IList<DataName> outputs = new List<DataName>();
+			IList<ReceivingStorageArea> outputs = new List<ReceivingStorageArea>();
 			Node profile = null;
 			var profiles = node.GetChildren(typeof(FunctionDeclarationProfile));
 			if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
@@ -129,22 +131,22 @@ namespace TypeCobol.Compiler.Diagnostics {
 				foreach(var n in data) {
 					var d = (DataDescriptionEntry)n.CodeElement;
 					bool custom = false;//TODO
-					parametersdeclared.Add(new Parameter(d.Name.Name, custom, d.DataType, d.MemoryArea.Length));
+//TODO#249					parametersdeclared.Add(new Parameter(d.DataName.Name, custom, d.DataType, d.MemoryArea.Length));
 				}
 			}
 			var inparameters = new List<Parameter>();
 			foreach(var p in inputs) {
-				string pname = p.DataName.Name;
-				Parameter param = GetParameter(parametersdeclared, pname);
-				if (param != null) inparameters.Add(param);
-				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
+//TODO#249				string pname = p.DataName.Name;
+//				Parameter param = GetParameter(parametersdeclared, pname);
+//				if (param != null) inparameters.Add(param);
+//				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
 			}
 			var outparameters = new List<Parameter>();
 			foreach(var p in outputs) {
-				string pname = p.Name;
-				Parameter param = GetParameter(parametersdeclared, pname);
-				if (param != null) outparameters.Add(param);
-				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
+//TODO#249				string pname = p.Name;
+//				Parameter param = GetParameter(parametersdeclared, pname);
+//				if (param != null) outparameters.Add(param);
+//				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
 			}
 			if (outparameters.Count < 1) outparameters.Add(new Parameter("return-code", false, DataType.Numeric));
 			foreach(var pd in parametersdeclared) {
@@ -167,7 +169,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		private DataDescriptionEntry GetParameter(Node node, string name) {
 			var data = node.CodeElement as DataDescriptionEntry;
-			if (data != null && data.QualifiedName.Matches(name)) return data;
+//TODO#249			if (data != null && data.QualifiedName.Matches(name)) return data;
 			foreach(var child in node.Children) {
 				var found = GetParameter(child, name);
 				if (found != null) return found;

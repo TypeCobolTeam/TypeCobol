@@ -85,7 +85,8 @@ namespace TypeCobol.Compiler.CodeElements
 				if (CodeElement is LinkageSectionHeader) return "linkage";
 				if (CodeElement is LocalStorageSectionHeader) return "local-storage";
 				if (CodeElement is WorkingStorageSectionHeader) return "working-storage";
-				if (CodeElement is DataDescriptionEntry) return ((DataDescriptionEntry)CodeElement).QualifiedName.ToString();
+//				if (CodeElement is DataDescriptionEntry) return ((DataDescriptionEntry)CodeElement).QualifiedName.ToString();
+				if (CodeElement is DataDescriptionEntry) return ((DataDescriptionEntry)CodeElement).DataName.Name;
 				if (CodeElement is EnvironmentDivisionHeader) return "environment-division";
 				if (CodeElement is ProcedureDivisionHeader) return "procedure-division";
 				if (CodeElement is ParagraphHeader) return ((ParagraphHeader)CodeElement).ParagraphName.Name;
@@ -256,7 +257,7 @@ namespace TypeCobol.Compiler.CodeElements
 				if (reference == null) continue;
                 var declaration = table.GetFunction(reference.Name);
 				if (declaration == null) continue; // undefined symbol, not our job
-                functions.Add(CreateFrom(reference, declaration));
+//TODO#249                functions.Add(CreateFrom(reference, declaration));
 			}
 			if (functions.Count < 1) return null;
 		    if (ReturnFirstFunctionOnly)
@@ -269,7 +270,7 @@ namespace TypeCobol.Compiler.CodeElements
             //TODO support list of functions name
             return functions;
 		}
-
+/*
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
 			var parameters = new List<Parameter>();
 			for(int c = 0; c < declaration.InputParameters.Count; c++) {
@@ -290,7 +291,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 			return new Function(declaration.QualifiedName, parameters, declaration.OutputParameters);
 		}
-
+*/
 		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {
 			throw new System.NotImplementedException();
 		}

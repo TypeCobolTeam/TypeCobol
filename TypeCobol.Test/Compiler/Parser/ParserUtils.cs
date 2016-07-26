@@ -197,13 +197,6 @@ namespace TypeCobol.Test.Compiler.Parser
             throw new NotImplementedException("TODO");
         }
 
-        internal static StringBuilder Dump(StringBuilder str, SyntaxBoolean b)
-        {
-            if (b == null) str.Append("?");
-            else str.Append(b.Value);
-            return str;
-        }
-
 // [TYPECOBOL]
 		private static void Dump(StringBuilder str, IEnumerable<TypeDefinition> typedefs) {
 			int c = 0;

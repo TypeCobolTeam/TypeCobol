@@ -43,11 +43,11 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var type in value.CustomTypes)
 						TableOfIntrisic.RegisterCustomType(type);
 				}
-				RegisterCustomType(TableOfIntrisic, DataType.Date);
-				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
+//				RegisterCustomType(TableOfIntrisic, DataType.Date);
+//				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
 			}
 		}
-
+/*
 		private void RegisterCustomType(SymbolTable table, DataType type) {
 			try { table.GetCustomType(type.Name); }
 			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Parser
 			try { table.GetCustomType(type.DataType.Name); }
 			catch(ArgumentException ex) { table.RegisterCustomType(type); }
 		}
-
+*/
 
 
 		public NodeDispatcher Dispatcher { get; internal set; }
@@ -161,7 +161,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="context">WORKING-STORAGE SECTION</param>
 		public override void EnterWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
 			Enter(new Node(AsCodeElement(context.WorkingStorageSectionHeader())), context);
-			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
 			Exit();
@@ -170,7 +170,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="context">LOCAL-STORAGE SECTION</param>
 		public override void EnterLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
 			Enter(new Node(AsCodeElement(context.LocalStorageSectionHeader())), context);
-			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
 			Exit();
@@ -179,11 +179,48 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="context">LINKAGE SECTION</param>
 		public override void EnterLinkageSection(ProgramClassParser.LinkageSectionContext context) {
 			Enter(new Node(AsCodeElement(context.LinkageSectionHeader())), context);
-			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitLinkageSection(ProgramClassParser.LinkageSectionContext context) {
 			Exit();
 		}
+
+		public override void EnterDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context) {
+			if (context.DataDescriptionEntry() != null) {
+				var data = (DataDescriptionEntry)AsCodeElement(context.DataDescriptionEntry());
+				if (data is TypeDefinitionEntry) EnterTypeDefinitionEntry((TypeDefinitionEntry)data);
+				else EnterDataDescriptionEntry(data);
+			}
+			if (context.DataConditionEntry() != null)
+				EnterDataConditionEntry((DataConditionEntry)AsCodeElement(context.DataConditionEntry()));
+			if (context.DataRedefinesEntry() != null)
+				EnterDataRedefinesEntry((DataRedefinesEntry)AsCodeElement(context.DataRedefinesEntry()));
+			if (context.DataRenamesEntry() != null)
+				EnterDataRenamesEntry((DataRenamesEntry)AsCodeElement(context.DataRenamesEntry()));
+		}
+
+		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
+			throw new NotImplementedException();
+		}
+
+		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
+			throw new NotImplementedException();
+		}
+
+		private void EnterDataConditionEntry(DataConditionEntry data) {
+			throw new NotImplementedException();
+		}
+
+		private void EnterDataRedefinesEntry(DataRedefinesEntry data) {
+			throw new NotImplementedException();
+		}
+
+		private void EnterDataRenamesEntry(DataRenamesEntry data) {
+			throw new NotImplementedException();
+		}
+
+
+/*
 		private void AddEntries(IEnumerable<DataDescriptionEntry> entries) {
 			foreach(var entry in entries) {
 				var child = new Node(entry);
@@ -406,8 +443,6 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				AddGeneratedSymbols(clone);
 			}
 		}
-
-
 		private void UpdateLevelNumbers(DataDescriptionEntry clone, int level) {
 			clone.LevelNumber = level+1;
 			if (clone.LevelNumber == 66
@@ -495,6 +530,9 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			}
 			return null;
 		}
+*/
+
+
 
 		public override void EnterProcedureDivision(ProgramClassParser.ProcedureDivisionContext context) {
 			Enter(new Node(AsCodeElement(context.ProcedureDivisionHeader())), context);
@@ -561,13 +599,13 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 		public override void EnterStatement(ProgramClassParser.StatementContext context) {
 			CodeElement statement = AsStatement(context);
-			FixSubscriptableQualifiedNames(statement);
+//TODO#249			FixSubscriptableQualifiedNames(statement);
 			Enter(new Node(statement), context);
 		}
 		public override void ExitStatement(ProgramClassParser.StatementContext context) {
 			Exit();
 		}
-
+/*TODO#249
 		private void FixSubscriptableQualifiedNames(CodeElement statement) {
 			var identifiers = statement as IdentifierUser;
 			if (identifiers == null) return;
@@ -583,7 +621,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				}
 			}
 		}
-
+*/
 
 
 		public override void EnterIfStatementWithBody(ProgramClassParser.IfStatementWithBodyContext context) {
@@ -643,7 +681,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			Enter(new Node(AsCodeElement(context.SearchStatement())), context);
 		}
 		public override void EnterWhenSearchConditionClause(ProgramClassParser.WhenSearchConditionClauseContext context) {
-			Enter(new Node(AsCodeElement(context.WhenCondition())), context);
+			Enter(new Node(AsCodeElement(context.WhenSearchCondition())), context);
 			AttachIfExists(context.NextSentenceStatement());
 		}
 		public override void ExitWhenSearchConditionClause(ProgramClassParser.WhenSearchConditionClauseContext context) {

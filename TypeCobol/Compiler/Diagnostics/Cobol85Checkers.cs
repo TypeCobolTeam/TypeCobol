@@ -217,6 +217,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
 
+/*TODO#249
 	class DeclarationChecker: NodeListener {
 		public IList<Type> GetCodeElements() {
 			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
@@ -243,6 +244,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 				foreach(var error in checkSubscripting(identifier.Name, def))
 					DiagnosticUtils.AddError(e, error);
 		}
+
 		private static void CheckExpression(CodeElement e, SymbolTable table, Expression expression) {
 			if (expression == null) return;
 			if (expression is Identifier) CheckIdentifier(e, table, expression as Identifier);
@@ -255,7 +257,6 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		private static IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
 			var errors = new List<string>();
-/* TODO#249
 			if (qname is Subscripted) {
 				var sname = qname as Subscripted;
 				for(int i=qname.Count-1; i>=0; i--) {
@@ -278,18 +279,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 					data = data.TopLevel;
 				}
 			}
- */
 			return errors;
 		}
 	}
+*/
 
+/*	TODO#249
 	class WriteOperationsChecker: NodeListener {
 
 		public IList<Type> GetCodeElements() {
 			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
 		}
 		public void OnNode(Node node, ParserRuleContext c, Program program) {
-/*	TODO#249
 			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
 			if (element== null || element.IsUnsafe) return; // nothing to do
 			var table = program.SymbolTable;
@@ -321,8 +322,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 				} else if (!CheckNesting(e, sub)) return false;
 			}
 			return true;
- */
 		}
 	}
-
+*/
 }

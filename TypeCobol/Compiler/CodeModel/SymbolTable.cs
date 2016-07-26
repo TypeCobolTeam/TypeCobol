@@ -60,13 +60,13 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 		public void Add(DataDescriptionEntry symbol) {
-			if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
-			Get(symbol).Add(symbol);
-			foreach(var sub in symbol.Subordinates) Add(sub);
+//			if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
+//			Get(symbol).Add(symbol);
+//			foreach(var sub in symbol.Subordinates) Add(sub);
 		}
 
 		private Scope GetScope(DataDescriptionEntry data) {
-			if (data.IsGlobal) return Scope.Global;
+//			if (data.IsGlobal) return Scope.Global;
 			//External is not a global or above global scope, so use current scope for this kind of data
 			return CurrentScope;
 		}
@@ -81,11 +81,12 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 		public List<DataDescriptionEntry> Get(DataDescriptionEntry data) {
-			string key = data.Name.Name;
-			var table = GetTable(GetScope(data)).DataEntries;
-			if (!table.ContainsKey(key))
-				table[key] = new List<DataDescriptionEntry>();
-			return table[key];
+//			string key = data.Name.Name;
+//			var table = GetTable(GetScope(data)).DataEntries;
+//			if (!table.ContainsKey(key))
+//				table[key] = new List<DataDescriptionEntry>();
+//			return table[key];
+			return null;
 		}
 
 		internal IList<DataDescriptionEntry> Get(QualifiedName name) {
@@ -128,12 +129,12 @@ namespace TypeCobol.Compiler.CodeModel
 		/// <param name="generation">"Generation" where to begin the search</param>
 		/// <returns><code>true</code> if an appropriately named top level item was found.</returns>
 		private bool Filter(DataDescriptionEntry entry, string pname, ref int generation) {
-			var parent = entry.GetAncestor(generation);
-			while(parent != null) {
-				if (parent.Name.Name.Equals(pname)) return true;
-				parent = parent.TopLevel;
-				generation++;
-			}
+//			var parent = entry.GetAncestor(generation);
+//			while(parent != null) {
+//				if (parent.Name.Name.Equals(pname)) return true;
+//				parent = parent.TopLevel;
+//				generation++;
+//			}
 			return false;
 		}
 		/// <summary>
@@ -147,9 +148,9 @@ namespace TypeCobol.Compiler.CodeModel
 		private IList<DataDescriptionEntry> Filter(IList<DataDescriptionEntry> values, string pname, int generation) {
 			var filtered = new List<DataDescriptionEntry>();
 			foreach(var entry in values) {
-				var parent = entry.GetAncestor(generation);
-				if (parent == null) continue;
-				if (parent.Name.Name.Equals(pname)) filtered.Add(entry);
+//				var parent = entry.GetAncestor(generation);
+//				if (parent == null) continue;
+//				if (parent.Name.Name.Equals(pname)) filtered.Add(entry);
 			}
 			return filtered;
 		}

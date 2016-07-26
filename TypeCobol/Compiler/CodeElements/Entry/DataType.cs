@@ -116,65 +116,34 @@ namespace TypeCobol.Compiler.CodeElements
 // [TYPECOBOL]
 		public static readonly DataType Boolean            = new DataType("BOOL", true, true);
 
-		public static readonly TypeDefinition Date = CreateDate();
-		private static TypeDefinition CreateDate() {
-			var type = new CustomTypeDefinition(new DataType("DATE", true, true));
-			CreateMember(type, 5, "YYYY", Numeric,4);
-			CreateMember(type, 5, "MM",   Numeric,2);
-			CreateMember(type, 5, "DD",   Numeric,2);
+		public static readonly TypeDefinitionEntry Date = CreateDate();
+		private static TypeDefinitionEntry CreateDate() {
+			var type = new TypeDefinitionEntry();
+			type.DataName = new SymbolDefinition(new GeneratedAlphanumericValue("DATE"), SymbolType.DataName);
+			type.DataType = new DataType("DATE", true, true);
+//TODO#249			type.IsStrong = true;
+			CreateMember(type, 5, "YYYY", 4);
+			CreateMember(type, 5, "MM",   2);
+			CreateMember(type, 5, "DD",   2);
 			return type;
 		}
-		private static void CreateMember(DataDescriptionEntry parent, int level, string name, DataType type, int length) {
+		private static void CreateMember(DataDescriptionEntry parent, int level, string name, int length) {
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
 			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-			data.DataType = type;
-			data.MemoryArea = new TypeCobol.Compiler.CodeModel.DataInMemory(length, 0);//TODO half-assed
-			data.Picture = String.Format("9 ({0})", data.MemoryArea.Length);
-			data.TopLevel = parent;
-			parent.Subordinates.Add(data);
+			string picture = String.Format("9 ({0})", length);
+			data.CustomType = new GeneratedAlphanumericValue(picture);
+//TODO#249			data.TopLevel = parent;
+//TODO#249			parent.Subordinates.Add(data);
 		}
 // [/TYPECOBOL]
 
+
 	}
 
-	public interface TypeDefinition {
+	public interface TypeDefinition { //TODO#249 delete this
 		bool IsTypeDefinition { get; }
 		DataType DataType { get; }
 		System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get; }
-	}
-	public class CustomTypeDefinition: DataDescriptionEntry, TypeDefinition {
-		public CustomTypeDefinition(DataType type) {
-			this.DataType = type;
-		}
-		public bool IsTypeDefinition { get { return true; } }
-
-		public DataType DataType { get { throw NotImplementedException("TODO"); } }
-		public System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get { throw NotImplementedException("TODO"); } }
-	}
-
-
-
-	public class StringDataName: DataName {
-		private string name_;
-		public override string Name { get { return name_; } }
-		/// <param name="name">Cannot be null</param>
-        public StringDataName(string name): base(null) { name_ = name; }
-
-		public override bool Equals(object obj) {
-			var other = obj as StringDataName;
-			if (other == null) return false;
-			return other == this;
-		}
-		public static bool operator ==(StringDataName x, StringDataName y) {
-			if (Object.ReferenceEquals(x, null) && Object.ReferenceEquals(y, null)) return true;
-			if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-			return x.Name.ToUpper() == y.Name.ToUpper();
-		}
-		public static bool operator !=(StringDataName x, StringDataName y) {
-			return !(x == y);
-		}
-
-		public override string ToString() { return Name; }
 	}
 }
