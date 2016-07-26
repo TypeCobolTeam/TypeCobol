@@ -53,7 +53,7 @@ tokens
     // -- Data Division --
     FileDescriptionEntry,
     DataDescriptionEntry,
-	DataRedefinesEntry,
+    DataRedefinesEntry,
     DataRenamesEntry,
     DataConditionEntry,
     // -- InputOutput Section --
@@ -134,7 +134,7 @@ tokens
     ElseCondition,
     WhenCondition,
     WhenOtherCondition,
-	WhenSearchCondition,
+    WhenSearchCondition,
 
     // Statement ends
 
@@ -350,17 +350,17 @@ cobolClass:
 methodDefinition: 
 	MethodIdentification
 	(EnvironmentDivisionHeader
-	 inputOutputSection?
+		inputOutputSection?
 	)?
 	(DataDivisionHeader 
-	 fileSection?
-	 workingStorageSection?
-	 localStorageSection?
-	 linkageSection?
+		fileSection?
+		workingStorageSection?
+		localStorageSection?
+		linkageSection?
 	)?
 	(ProcedureDivisionHeader 
-	 declaratives?
-	 section*
+		declaratives?
+		section*
 	)?
 	MethodEnd;
 
@@ -406,11 +406,8 @@ methodDefinition:
 
 // p109 : CONFIGURATION SECTION Format:
 
-configurationSection: 
-	ConfigurationSectionHeader configurationParagraph*;
-
-configurationParagraph: 
-	SourceComputerParagraph | ObjectComputerParagraph | SpecialNamesParagraph | RepositoryParagraph;
+configurationSection: ConfigurationSectionHeader configurationParagraph*;
+configurationParagraph: SourceComputerParagraph | ObjectComputerParagraph | SpecialNamesParagraph | RepositoryParagraph;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
@@ -472,9 +469,7 @@ fileControlParagraph:
 
 ioControlParagraph: 
 	IOControlParagraphHeader
-	(IOControlEntry+ 
-	 SentenceEnd
-	 )?;
+	(IOControlEntry+ SentenceEnd)?;
 
 // --- DATA DIVISION ---
 
@@ -507,9 +502,7 @@ ioControlParagraph:
 
 fileSection:
 	FileSectionHeader 
-	(FileDescriptionEntry 
-	 dataDefinitionEntry+
-	)*;
+	(FileDescriptionEntry dataDefinitionEntry+)*;
 
 // p155: The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
 // The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
@@ -573,10 +566,10 @@ linkageSection:
 // Four distinct types of data definition entries :
 
 dataDefinitionEntry:
-	DataDescriptionEntry | 
-	DataRedefinesEntry   |
-    DataRenamesEntry     | 
-    DataConditionEntry;
+	  DataDescriptionEntry
+	| DataRedefinesEntry
+	| DataRenamesEntry
+	| DataConditionEntry;
 
 // --- PROCEDURE DIVISION ---
 
@@ -636,9 +629,7 @@ declaratives:
 // keywords END DECLARATIVES.
 
 section:
-	((SectionHeader | ParagraphHeader)
-		paragraph*
-	)
+	((SectionHeader | ParagraphHeader) paragraph*)
 	| sentence+;
 
 // p253: Paragraph
@@ -969,13 +960,8 @@ evaluateStatementWithBody:
 		whenOtherClause?
 	EvaluateStatementEnd?;
 
-whenConditionClause: 
-	WhenCondition+ 
-	statement+;
-
-whenOtherClause: 
-	WhenOtherCondition 
-	statement+;
+whenConditionClause: WhenCondition+ statement+;
+whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:
 	IfStatement
@@ -983,9 +969,7 @@ ifStatementWithBody:
 	elseClause?
 	IfStatementEnd?;
 
-elseClause:
-	ElseCondition 
-	(statement+ | NextSentenceStatement);
+elseClause: ElseCondition (statement+ | NextSentenceStatement);
 
 invokeStatementConditional:
 	InvokeStatement
@@ -1023,9 +1007,7 @@ searchStatementWithBody:
 		whenSearchConditionClause+
 	SearchStatementEnd?;
 
-whenSearchConditionClause: 
-	WhenSearchCondition 
-	(statement+ | NextSentenceStatement);
+whenSearchConditionClause: WhenSearchCondition (statement+ | NextSentenceStatement);
 
 startStatementConditional:
 	StartStatement

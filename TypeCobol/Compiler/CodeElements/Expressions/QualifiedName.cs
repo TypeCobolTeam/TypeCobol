@@ -10,11 +10,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		bool Matches(QualifiedName name);
 	}
 
-	public interface Subscripted {
-		Subscript this[string name] { get; }
-		IEnumerable<Subscript> Subscripts { get; }
-	}
-
 
 
 	public abstract class AbstractQualifiedName: QualifiedName {
@@ -134,103 +129,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public override int Count { get { return DataNames.Count+(FileName!=null?2:1); } }
 	}
 
-
-
-	public class SubscriptedQualifiedName: AbstractQualifiedName, Subscripted {
-		protected List<KeyValuePair<string,Subscript>> names = new List<KeyValuePair<string,Subscript>>();
-
-		public override bool IsExplicit { get { return _explicit; } }
-		private bool _explicit;
-
-		public SubscriptedQualifiedName(bool isExplicit = true) {
-			_explicit = isExplicit;
-		}
-
-		internal void Add(string name,Subscript subscript) {
-			names.Add(new KeyValuePair<string,Subscript>(name, subscript));
-		}
-
-		public override string ToString() {
-			var str = new System.Text.StringBuilder();
-			foreach(var item in names) {
-				str.Append(item.Key);
-				if (item.Value != null) str.Append('[').Append(item.Value.ToString()).Append(']');
-				str.Append('.');
-			}
-			if (names.Count > 0) str.Length -= 1;
-			return str.ToString();
-		}
-
-
-		public override string Head {
-			get {
-				if (names.Count < 1) return null;
-				return names[names.Count-1].Key;
-			}
-		}
-
-		public override IEnumerator<string> GetEnumerator() {
-			foreach (var item in names)
-				yield return (string)item.Key;
-		}
-
-		public override int Count { get { return names.Count; } }
-
-		public Subscript this[string name] {
-			get {
-				foreach(var item in names)
-					if (item.Key.Equals(name)) return item.Value;
-					//TODO what if same name more than once?
-				return null;
-			}
-		}
-		public IEnumerable<Subscript> Subscripts {
-			get {
-				foreach(var item in names)
-					if (item.Value != null)
-						yield return item.Value;
-			}
-		}
-
-
-
-
-
-		/// <summary>Factory method.</summary>
-		/// <param name="identifier">Parsed identifier for this name qualification</param>
-		/// <param name="data">Data declaration the created name will fully-qualify</param>
-		/// <param name="messages">Error messages. If there are some, there is something wrong with <paramref name="identifier"/>'s name qualification</param>
-		/// <returns></returns>
-		public static SubscriptedQualifiedName Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
-			var names = CreatePairs(identifier, data, out messages);
-			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName();
-			foreach(var pair in names) qelement.Add(pair.Item1,pair.Item2);
-			return qelement;
-		}
-
-		private static List<System.Tuple<string,Subscript>> CreatePairs(Identifier identifier, DataDescriptionEntry data, out List<string> errors) {
-			var names = new List<System.Tuple<string,Subscript>>();
-			errors = new List<string>();
-			var subscripts = new List<Subscript>();
-			subscripts.AddRange((identifier as Subscriptable).Subscripts);
-			subscripts.Reverse();
-			int c = 0;
-			var current = data;
-			while (current != null) {
-				string name = current.QualifiedName[current.QualifiedName.Count-1];
-				TypeCobol.Compiler.CodeElements.Expressions.Subscript subscript = null;
-				if (current.IsTableOccurence) {
-					if (c < subscripts.Count) subscript = subscripts[c];
-					c++;
-				}
-				names.Add(new System.Tuple<string,TypeCobol.Compiler.CodeElements.Expressions.Subscript>(name, subscript));
-				current = current.TopLevel;
-			}
-			if (c < subscripts.Count) errors.Add(identifier.Name+": too many subscripts ("+subscripts.Count+" vs expected="+c+')');
-			names.Reverse();
-			return names;
-		}
-	}
 
 
 
