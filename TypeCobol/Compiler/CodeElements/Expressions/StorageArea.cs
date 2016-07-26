@@ -71,12 +71,16 @@ namespace TypeCobol.Compiler.CodeElements
         IntrinsicFunctionCallResult // allocated on reference
     }
 
+	public interface Named {
+		string Name { get; }
+	}
+
     /// <summary>
     /// Storage area for a data symbol or condition symbol defined in the program.
     /// Also used for the storage area allocated by the compiler for the implicitely 
     /// defined special registers (see list in a comment just below).
     /// </summary>
-    public class DataOrConditionStorageArea : StorageArea
+    public class DataOrConditionStorageArea: StorageArea, Named
     {
         public DataOrConditionStorageArea(SymbolReference symbolReference) :
             base(StorageAreaKind.DataOrCondition)
@@ -115,7 +119,9 @@ namespace TypeCobol.Compiler.CodeElements
             get { return alternativeSymbolType; }
         }
         private SymbolType alternativeSymbolType;
-    }
+
+		public string Name { get { return SymbolReference.Name; } }
+	}
 
     /* Implicitely defined special registers :
 
@@ -164,7 +170,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Storage area for an index
     /// </summary>
-    public class IndexStorageArea : StorageArea
+    public class IndexStorageArea : StorageArea, Named
     {
         public IndexStorageArea(SymbolReference indexNameReference) :
             base(StorageAreaKind.Index)
@@ -173,6 +179,8 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public SymbolReference SymbolReference { get; private set; }
+
+		public string Name { get { return SymbolReference.Name; } }
     }
     
     /* Special registers holding properties of other storage areas or symbols
@@ -189,7 +197,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-    public class StorageAreaPropertySpecialRegister : StorageArea
+    public class StorageAreaPropertySpecialRegister : StorageArea, Named
     {
         public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference) :
             base(StorageAreaKind.StorageAreaPropertySpecialRegister)
@@ -201,13 +209,15 @@ namespace TypeCobol.Compiler.CodeElements
         public Token SpecialRegisterName { get; private set; }
 
         public StorageArea StorageAreaReference { get; private set; }
+
+		public string Name { get { return SpecialRegisterName.Text; } }
     }
 
     /// <summary>
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-    public class FilePropertySpecialRegister : StorageArea
+    public class FilePropertySpecialRegister : StorageArea, Named
     {
         public FilePropertySpecialRegister(Token specialRegisterName, SymbolReference fileNameReference) :
             base(StorageAreaKind.FilePropertySpecialRegister)
@@ -219,6 +229,8 @@ namespace TypeCobol.Compiler.CodeElements
         public Token SpecialRegisterName { get; private set; }
 
         public SymbolReference SymbolReference { get; private set; }
+
+		public string Name { get { return SpecialRegisterName.Text; } }
     }
 
     /// <summary>
@@ -226,7 +238,7 @@ namespace TypeCobol.Compiler.CodeElements
     ///  AND
     /// Storage area allocated by the compiler to hold the result of the call.
     /// </summary>
-    public class IntrinsicFunctionCallResult : StorageArea
+    public class IntrinsicFunctionCallResult : StorageArea, Named
     {
         public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) :
             base(StorageAreaKind.IntrinsicFunctionCallResult)
@@ -238,5 +250,7 @@ namespace TypeCobol.Compiler.CodeElements
         public ExternalName IntrinsicFunctionName { get; private set; }
 
         public VariableOrExpression[] Arguments { get; private set; }
+
+		public string Name { get { return IntrinsicFunctionName.Name; } }
     }
 }

@@ -145,7 +145,7 @@ namespace TypeCobol.Codegen {
 			string generated = Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
 			if (pattern.Trim) generated = generated.Trim();
 			if (pattern.Indent) {
-				string indent = CreateIndent(node.CodeElement as DataDescriptionEntry);
+				string indent = CreateIndent(node);
 				var lines = generated.Split('\n');
 				var str = new System.Text.StringBuilder();
 				foreach(string line in lines) str.Append(indent+line);
@@ -166,10 +166,11 @@ namespace TypeCobol.Codegen {
 			return results;
 		}
 
-		private string CreateIndent(DataDescriptionEntry data) {
+		private string CreateIndent(Node node) {
 			var indent = "       ";
-			if (data != null) {
-				for(int c=0; c<data.Generation; c++) indent += "  ";
+			if (node != null) {
+				int generation = node.Generation;
+				for(int c=0; c<generation; c++) indent += "  ";
 			}
 			return indent;
 		}

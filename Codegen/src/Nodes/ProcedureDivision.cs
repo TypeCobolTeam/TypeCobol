@@ -7,7 +7,7 @@ namespace TypeCobol.Codegen.Nodes {
 	internal class ProcedureDivision: Node, Generated {
 
 		public IList<InputParameter> UsingParameters { get; private set; }
-		public DataName ReturningParameter { get; private set; }
+		public ReceivingStorageArea ReturningParameter { get; private set; }
 
 		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
 			UsingParameters = new List<InputParameter>();
@@ -31,7 +31,9 @@ namespace TypeCobol.Codegen.Nodes {
 						string strmode = "BY REFERENCE ";
 						if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
 						string strusing = c==0? "      USING ":"            ";
-						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+parameter.DataName, null));
+						string strname = "?ANONYMOUS?";
+						if (parameter is Named) strname = ((Named)parameter).Name;
+						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 						c++;
 					}
 					if (ReturningParameter != null)

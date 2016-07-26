@@ -19,12 +19,12 @@ namespace TypeCobol.Codegen.Nodes {
 				if (_cache == null) {
 					_cache = new List<ITextLine>();
 					var data = this.Node.CodeElement as DataDescriptionEntry;
-					var type = this.Node.SymbolTable.GetCustomType(data.DataType.Name);
-					int level = data.LevelNumber;
-					int generation = data.Generation;
+					var type = this.Node.SymbolTable.GetCustomType(data.CustomType.Value);
+					int level = (int)data.LevelNumber.Value;
+					int generation = this.Node.Generation;
 					bool isCustomType = type != null;
 					_cache.Add(CreateDataDefinition(data, level, generation, true));
-					InsertChildren(data, level+1, generation+1);
+					InsertChildren(this.Node, level+1, generation+1);
 				}
 				return _cache;
 			}
@@ -33,18 +33,19 @@ namespace TypeCobol.Codegen.Nodes {
 		internal ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int generation, bool isCustomType) {
 			var line = new System.Text.StringBuilder();
 			for(int c = 0; c < generation; c++) line.Append("  ");
-			line.Append(level.ToString("00")).Append(' ').Append(data.Name.Name);
+			line.Append(level.ToString("00")).Append(' ').Append(data.DataName.Name);
 			if (!isCustomType) line.Append(" PIC ").Append(data.Picture);
 			line.Append('.');
 			return new TextLineSnapshot(-1, line.ToString(), null);
 		}
 
 
-		private void InsertChildren(TypeDefinition type, int level, int generation) {
-			foreach(var child in type.Subordinates) {
-				bool isCustomTypeToo = !child.IsTypeDefinition && Node.SymbolTable.IsCustomType(child.DataType);
-				_cache.Add(CreateDataDefinition(child, level, generation, isCustomTypeToo));
-				if (isCustomTypeToo) InsertChildren(Node.SymbolTable.GetCustomType(child.DataType.Name), level+1, generation+1);
+		private void InsertChildren(Node type, int level, int generation) {
+			foreach(var child in type.Children) {
+				var data = child.CodeElement as DataDescriptionEntry;
+//TODO#249				bool isCustomTypeToo = !(data is TypeDefinitionEntry) && Node.SymbolTable.IsCustomType(data.CustomType.Value);
+//TODO#249				_cache.Add(CreateDataDefinition(child, level, generation, isCustomTypeToo));
+//TODO#249				if (isCustomTypeToo) InsertChildren(Node.SymbolTable.GetCustomType(data.CustomType.Value), level+1, generation+1);
 			}
 		}
 

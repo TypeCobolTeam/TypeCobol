@@ -122,7 +122,7 @@ namespace TypeCobol.Compiler.CodeElements
 		private static Dictionary<string,Attribute> Attributes;
 		static Node() {
 			Attributes = new Dictionary<string,Attribute>();
-			Attributes["name"]  = new Named("NAME");
+			Attributes["name"]  = new NamedAttribute("NAME");
 			Attributes["level"] = new Level("LEVEL");
 			Attributes["type"]    = new Typed("TYPE");
 			Attributes["typedef"] = new TypeDefined("TYPEDEF");
@@ -156,6 +156,21 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public bool? Comment = null;
+
+		/// <summary>TODO: Should only belong to DataDefinition Nodes</summary>
+		public int Generation {
+			get {
+				int generation = 0;
+				Node current = this;
+				DataDefinitionEntry data = current.CodeElement as DataDefinitionEntry;
+				while (current != null && data != null && data.LevelNumber.Value > 1 && data.LevelNumber.Value != 66 && data.LevelNumber.Value != 88) {
+					generation++;
+					current = current.Parent;
+					data = current.CodeElement as DataDefinitionEntry;
+				}
+				return generation;
+			}
+		}
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
@@ -172,8 +187,8 @@ namespace TypeCobol.Compiler.CodeElements
 		public abstract object GetValue(object o, SymbolTable table);
 	}
 
-	internal class Named: NodeAttribute {
-		public Named(string key): base(key) { }
+	internal class NamedAttribute: NodeAttribute {
+		public NamedAttribute(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
 			if (o is DataDefinitionEntry) {
 				var data = o as DataDefinitionEntry;

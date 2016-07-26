@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Properties of a symbol Token in the Cobol grammar
     /// </summary>
-    public abstract class SymbolInformation
+    public abstract class SymbolInformation: Named
     {
         public SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
         {
