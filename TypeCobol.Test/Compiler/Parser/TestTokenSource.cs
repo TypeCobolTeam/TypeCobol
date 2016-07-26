@@ -150,7 +150,7 @@ namespace TypeCobol.Test.Compiler.Parser
             if (token.Channel != Token.CHANNEL_CompilerDirectives || token.Column != 1 || token.Line != 30 ||
                 token.StartIndex != 0 || token.StopIndex != 2 || token.Text != "314" ||
                 token.TokenIndex != -1 || token.InputStream == null || token.TokenSource == null ||
-                token.Type != (int)TokenType.IntegerLiteral || ((IntegerLiteralValue)((Token)token).LiteralValue).Number != 314)
+                token.Type != (int)TokenType.IntegerLiteral || ((IntegerLiteralTokenValue)((Token)token).LiteralValue).Number != 314)
             {
                 throw new Exception("TokenFactory second Create method KO");
             }
@@ -192,7 +192,7 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, docFormat);
 
             // Search for first level 88 as a start token
-            Token startToken = compilationDocument.TokensDocumentSnapshot.SourceTokens.First(t => (t.TokenType == TokenType.IntegerLiteral && ((IntegerLiteralValue)t.LiteralValue).Number == 88));
+            Token startToken = compilationDocument.TokensDocumentSnapshot.SourceTokens.First(t => (t.TokenType == TokenType.IntegerLiteral && ((IntegerLiteralTokenValue)t.LiteralValue).Number == 88));
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(

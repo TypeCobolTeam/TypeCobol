@@ -227,6 +227,8 @@ namespace TypeCobol.Test.Compiler.Parser
 
         internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
+			throw new Exception("TODO#249");
+/*
             int c = 0;
             StringBuilder errors = new StringBuilder();
             bool elementsFound = false;
@@ -259,6 +261,7 @@ namespace TypeCobol.Test.Compiler.Parser
             }
             if (statement.Affectations.Count > 0) builder.Length -= 2;
             return builder.ToString();
+*/
         }
     }
 
@@ -375,15 +378,15 @@ namespace TypeCobol.Test.Compiler.Parser
 			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
 			foreach(var line in table.DataEntries) {
 				foreach(var data in line.Value) {
-					if (data.LevelNumber == 1) Dump(str, data, 0);
+					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
 				}
 			}
 			return str.ToString();
 		}
 		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent, string indexes = "", int baseaddress = 1) {
-			int level = data.LevelNumber;
-			string name = (data.Name != null?data.Name.ToString():"?");
-			if (data.MemoryArea is TableInMemory) {
+			long level = data.LevelNumber.Value;
+			string name = (data.DataName != null?data.DataName.Name:"?");
+/*TODO#249			if (data.MemoryArea is TableInMemory) {
 				var table = data.MemoryArea as TableInMemory;
 				foreach(var e in table) {
 					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
@@ -394,15 +397,16 @@ namespace TypeCobol.Test.Compiler.Parser
 				str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
 				foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
 			}
+*/
 		}
-		private string CreateLine(int level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
+		private string CreateLine(long level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
 			var res = new StringBuilder();
 			BeginFirstColumn(res, indent, level, name);
 			EndFirstColumn(res, strindexes, index, max);
 			EndLine(res, offset, length);
 			return res.ToString();
 		}
-		private void BeginFirstColumn(StringBuilder str, int indent, int level, string name) {
+		private void BeginFirstColumn(StringBuilder str, int indent, long level, string name) {
 			for(int i=0; i<indent; i++) str.Append("  ");
 			if (level > 1) str.Append(String.Format("{0,2} ", level));
 			str.Append(name);

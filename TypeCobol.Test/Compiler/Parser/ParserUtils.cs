@@ -176,11 +176,21 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             if (data == null) str.Append("?");
             else {
-                str.Append(" author: "); Dump(str, data.Author);
-                str.Append(" written: "); Dump(str, data.DateWritten);
-                str.Append(" compiled: "); Dump(str, data.DateCompiled);
-                str.Append(" installation: "); Dump(str, data.Installation);
-                str.Append(" security: "); Dump(str, data.Security);
+                str.Append(" author: ");
+				foreach(var value in data.Author) str.Append(value.Value+",");
+				if (data.Author.Length > 0) str.Length -= 1;
+                str.Append(" written: ");
+				foreach(var value in data.DateWritten) str.Append(value.Value+",");
+				if (data.DateWritten.Length > 0) str.Length -= 1;
+                str.Append(" compiled: ");
+				foreach(var value in data.DateCompiled) str.Append(value.Value+",");
+				if (data.DateCompiled.Length > 0) str.Length -= 1;
+                str.Append(" installation: ");
+				foreach(var value in data.Installation) str.Append(value.Value+",");
+				if (data.Installation.Length > 0) str.Length -= 1;
+                str.Append(" security: ");
+				foreach(var value in data.Security) str.Append(value.Value+",");
+				if (data.Security.Length > 0) str.Length -= 1;
             }
             return str;
         }
@@ -214,8 +224,8 @@ namespace TypeCobol.Test.Compiler.Parser
 		private static void DumpInTypeDef(StringBuilder str, DataDescriptionEntry entry, int indent) {
 			for (int i=0; i<indent; i++) str.Append("  ");
 			str.Append(" - ").AppendLine(entry.ToString());
-			foreach(var sub in entry.Subordinates)
-				DumpInTypeDef(str, sub, indent+1);
+//TODO#249			foreach(var sub in entry.Subordinates)
+//				DumpInTypeDef(str, sub, indent+1);
 		}
 // [/TYPECOBOL]
 

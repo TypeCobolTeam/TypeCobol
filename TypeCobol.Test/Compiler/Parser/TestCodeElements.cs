@@ -29,6 +29,7 @@ namespace TypeCobol.Test.Compiler.Parser
         /// </summary>
         public static void Check_DISPLAYCodeElements()
         {
+			throw new Exception("TODO#249");/*
             Tuple<CodeElementsDocument, DisplayStatement> tuple;
 
             //Test using the generic method which parse a single CodeElement
@@ -117,7 +118,7 @@ namespace TypeCobol.Test.Compiler.Parser
             }
 
             return tuple;
-        }
+*/        }
 
 
         /// <summary>
