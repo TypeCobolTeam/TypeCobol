@@ -27,15 +27,15 @@ namespace TypeCobol.Compiler.CodeElements
             {
                 if (Token.TokenType == TokenType.IntegerLiteral)
                 {
-                    return ((IntegerLiteralValue)Token.LiteralValue).Number;
+                    return ((IntegerLiteralTokenValue)Token.LiteralValue).Number;
                 } else
                 if (Token.TokenType == TokenType.DecimalLiteral)
                 {
-                    return ((DecimalLiteralValue)Token.LiteralValue).Number;
+                    return ((DecimalLiteralTokenValue)Token.LiteralValue).Number;
                 } else
                 if (Token.TokenType == TokenType.FloatingPointLiteral)
                 {
-                    return ((FloatingPointLiteralValue)Token.LiteralValue).Number;
+                    return ((FloatingPointLiteralTokenValue)Token.LiteralValue).Number;
                 } else
                 if (Token.TokenType == TokenType.ZERO
                  || Token.TokenType == TokenType.ZEROS
