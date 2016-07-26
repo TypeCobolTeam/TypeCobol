@@ -175,14 +175,14 @@ namespace TypeCobol.Compiler.CodeElements
 	internal class Named: NodeAttribute {
 		public Named(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
-			if (o is DataDescriptionEntry) {
-				var data = o as DataDescriptionEntry;
-				if (data.Name == null) return null;
-				return data.Name.Name;
+			if (o is DataDefinitionEntry) {
+				var data = o as DataDefinitionEntry;
+				if (data.DataName == null) return null;
+				return data.DataName.Name;
 			} else
-			if (o is Identifier) {
-				return (o as Identifier).Name;
-			} else
+//			if (o is Identifier) {
+//TODO#249				return (o as Identifier).Name;
+//			} else
 			return null;
 		}
 	}
@@ -199,24 +199,23 @@ namespace TypeCobol.Compiler.CodeElements
 		public override object GetValue(object o, SymbolTable table) {
 			if (o is DataDescriptionEntry) {
 				var data = o as DataDescriptionEntry;
-				if (data.IsTypeDefinition) return null;
-				if (!table.IsCustomType(data.DataType)) return null;
-				return data.DataType;
+				if (data is TypeDefinitionEntry) return null;
+				return data.CustomType;
 			} else
-			if (o is Literal) {
-				var l = o as Literal;
-				if (l.IsNumeric) return DataType.Numeric;
-				if (l.IsBoolean) return DataType.Boolean;
-				return DataType.Alphanumeric;
-			} else
+//TODO#249			if (o is Literal) {
+//				var l = o as Literal;
+//				if (l.IsNumeric) return DataType.Numeric;
+//				if (l.IsBoolean) return DataType.Boolean;
+//				return DataType.Alphanumeric;
+//			} else
 			return null;
 		}
 	}
 	internal class TypeDefined: NodeAttribute {
 		public TypeDefined(string key): base(key) { }
 		public override object GetValue(object o, SymbolTable table) {
-			var data = o as DataDescriptionEntry;
-			if (data == null || !data.IsTypeDefinitionPart) return null;
+			var data = o as TypeDefinitionEntry;
+			if (data == null) return null;
 			return data.DataType.Name;
 		}
 	}
@@ -249,15 +248,15 @@ namespace TypeCobol.Compiler.CodeElements
             this.ReturnFunctionName = returnFunctionName;
 	    }
 		public override object GetValue(object o, SymbolTable table) {
-            var s = o as IdentifierUser;
-			if (s == null) return null;
+//TODO#249            var s = o as IdentifierUser;
+//			if (s == null) return null;
 			var functions = new List<Function>();
-			foreach(var id in s.Identifiers) {
+/*			foreach(var id in s.Identifiers) {
 				var reference = id as FunctionReference;
 				if (reference == null) continue;
                 var declaration = table.GetFunction(reference.Name);
 				if (declaration == null) continue; // undefined symbol, not our job
-//TODO#249                functions.Add(CreateFrom(reference, declaration));
+                functions.Add(CreateFrom(reference, declaration));
 			}
 			if (functions.Count < 1) return null;
 		    if (ReturnFirstFunctionOnly)
@@ -268,7 +267,7 @@ namespace TypeCobol.Compiler.CodeElements
 		            return functions[0];
 		    }
             //TODO support list of functions name
-            return functions;
+*/            return functions;
 		}
 /*
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
