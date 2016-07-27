@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Codegen.Skeletons.Templates;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {

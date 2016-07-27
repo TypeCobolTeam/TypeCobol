@@ -5,6 +5,8 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Tools;
 using Antlr4.Runtime;
 
 namespace TypeCobol.Compiler.Parser
@@ -73,6 +75,7 @@ namespace TypeCobol.Compiler.Parser
 		private void Delete() {
 			Program.SyntaxTree.Delete();
 		}
+		private Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
 
 		private void AttachIfExists(Antlr4.Runtime.Tree.ITerminalNode node) {
 			var ce = AsCodeElement(node);
@@ -159,29 +162,33 @@ namespace TypeCobol.Compiler.Parser
 		/// <summary>parent: DATA DIVISION</summary>
 		/// <param name="context">WORKING-STORAGE SECTION</param>
 		public override void EnterWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
-			Enter(new Node(AsCodeElement(context.WorkingStorageSectionHeader())), context);
-//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+			Enter(new WorkingStorageSection(AsCodeElement<WorkingStorageSectionHeader>(context.WorkingStorageSectionHeader())), context);
 		}
+
 		public override void ExitWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
-			Exit();
+			while(Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataSection)))
+				Exit(); // Exit last level-01 data definition entry, as long as its subordinates
+			Exit(); // Exit WorkingStorageSection
 		}
 		/// <summary>parent: DATA DIVISION</summary>
 		/// <param name="context">LOCAL-STORAGE SECTION</param>
 		public override void EnterLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
-			Enter(new Node(AsCodeElement(context.LocalStorageSectionHeader())), context);
-//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+			Enter(new LocalStorageSection(AsCodeElement<LocalStorageSectionHeader>(context.LocalStorageSectionHeader())), context);
 		}
 		public override void ExitLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
-			Exit();
+			while(Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataSection)))
+				Exit(); // Exit last level-01 data definition entry, as long as its subordinates
+			Exit(); // Exit LocalStorageSection
 		}
 		/// <summary>parent: DATA DIVISION</summary>
 		/// <param name="context">LINKAGE SECTION</param>
 		public override void EnterLinkageSection(ProgramClassParser.LinkageSectionContext context) {
-			Enter(new Node(AsCodeElement(context.LinkageSectionHeader())), context);
-//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
+			Enter(new LinkageSection(AsCodeElement<LinkageSectionHeader>(context.LinkageSectionHeader())), context);
 		}
 		public override void ExitLinkageSection(ProgramClassParser.LinkageSectionContext context) {
-			Exit();
+			while(Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataSection)))
+				Exit(); // Exit last level-01 data definition entry, as long as its subordinates
+			Exit(); // Exit LinkageSection
 		}
 
 		public override void EnterDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context) {
@@ -197,25 +204,50 @@ namespace TypeCobol.Compiler.Parser
 			if (context.DataRenamesEntry() != null)
 				EnterDataRenamesEntry((DataRenamesEntry)AsCodeElement(context.DataRenamesEntry()));
 		}
+		public override void ExitDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context) {
+			// DO NOTHING: current node will be Exit()ed either:
+			// - by next DataDefinition if current node is not its top-level item
+			// - by enclosing DataSection if it is part of the last level-01 item in it
+		}
 
 		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
-			throw new NotImplementedException();
+			SetCurrentNodeToTopLevelItem(typedef.LevelNumber.Value);
+			Enter(new Node(typedef));
 		}
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
-			throw new NotImplementedException();
+			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+			Enter(new Node(data));
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
-			throw new NotImplementedException();
+			throw new NotImplementedException("TODO#249");
 		}
 
 		private void EnterDataRedefinesEntry(DataRedefinesEntry data) {
-			throw new NotImplementedException();
+			throw new NotImplementedException("TODO#249");
 		}
 
 		private void EnterDataRenamesEntry(DataRenamesEntry data) {
-			throw new NotImplementedException();
+			throw new NotImplementedException("TODO#249");
+		}
+
+		/// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>
+		/// <param name="level">Level number of the next data definition that will be Enter()ed.</param>
+		private void SetCurrentNodeToTopLevelItem(long level) {
+			Node parent = GetTopLevelItem(level);
+			if (parent != null) while (parent != CurrentNode) Exit();
+		}
+
+		private Node GetTopLevelItem(long level) {
+			var parent = CurrentNode;
+			while(parent != null) {
+				var data = parent.CodeElement as DataDefinitionEntry;
+				if (data == null) return null;
+				if (data.LevelNumber.Value < level) return parent;
+				parent = parent.Parent;
+			}
+			return null;
 		}
 
 
@@ -878,6 +910,9 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 		private CodeElement AsCodeElement(Antlr4.Runtime.Tree.ITerminalNode node) {
 			return node != null? (CodeElement)node.Symbol : null;
+		}
+		private T AsCodeElement<T>(Antlr4.Runtime.Tree.ITerminalNode node) where T: CodeElement {
+			return node != null? (T)node.Symbol : null;
 		}
 
 		private CodeElement AsStatement(ProgramClassParser.StatementContext context)

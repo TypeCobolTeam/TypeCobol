@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Parser
 {

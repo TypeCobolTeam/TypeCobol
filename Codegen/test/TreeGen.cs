@@ -31,7 +31,7 @@ namespace TypeCobol.Codegen {
 
 
 
-		public Compiler.CodeElements.Node CreateSampleTree() {
+		public Compiler.Nodes.Node CreateSampleTree() {
 			//		0
 			//     /|\
 			//    1 7 8
@@ -82,7 +82,7 @@ namespace TypeCobol.Codegen {
 
 
 
-	public class Node: Compiler.CodeElements.Node, Generated {
+	public class Node: Compiler.Nodes.Node, Generated {
 		public Node(string Text = ".", bool GenerateChildren = true) {
 			this._lines.Add(new TextLineSnapshot(-1, Text, null));
 			this.IsLeaf = GenerateChildren;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeModel {
 
