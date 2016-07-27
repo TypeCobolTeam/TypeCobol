@@ -759,7 +759,7 @@ alphanumericValue11: SymbolicCharacter;
 
 enumeratedValue1: UserDefinedWord;
 
-enumeratedValue2: FunctionName | LENGTH | RANDOM | WHEN_COMPILED;
+enumeratedValue2: UserDefinedWord | LENGTH | RANDOM | WHEN_COMPILED;
 
 enumeratedValue3: ExecTranslatorName;
 
@@ -1565,7 +1565,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     // Literals - Syntax tokens
     // => excluded
     // Symbols    
-    FunctionName |
+    //FunctionName FunctioName are now treated as UserDefinedWord as you can declare your own function with TC
     ExecTranslatorName |
     PartialCobolWord  |
     UserDefinedWord |
