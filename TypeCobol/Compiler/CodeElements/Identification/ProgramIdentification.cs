@@ -45,7 +45,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// attribute is not supported for programs compiled with the THREAD
         /// option.
         /// </summary>
-        public SyntaxProperty<bool> IsInitial { get; set; }
+        public SyntaxProperty<bool> Initial { get; set; }
+
+        public bool IsInitial { get { return Initial != null && Initial.Value; } }
 
         // -- ONLY IN OUTERMOST PROGRAM --
 
@@ -62,7 +64,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RECURSIVE clause is required for programs compiled with the
         /// THREAD option.
         /// </summary>
-        public SyntaxProperty<bool> IsRecursive { get; set; }
+        public SyntaxProperty<bool> Recursive { get; set; }
+
+        public bool IsRecursive { get { return Recursive != null && Recursive.Value; } }
 
         // -- ONLY IN NESTED PROGRAMS --
 

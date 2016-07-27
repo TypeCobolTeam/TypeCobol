@@ -69,10 +69,10 @@ namespace TypeCobol.Compiler.Parser
 				programIdentification.IsCommon = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
 			}
 			if (context.INITIAL() != null) {
-				programIdentification.IsInitial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
+				programIdentification.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
 			}
 			if (context.RECURSIVE() != null) {
-				programIdentification.IsRecursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
+				programIdentification.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
 			programIdentification.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
 
