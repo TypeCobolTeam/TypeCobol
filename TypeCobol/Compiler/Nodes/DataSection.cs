@@ -15,4 +15,8 @@ namespace TypeCobol.Compiler.Nodes {
 	public class LinkageSection: Node, DataSection {
 		public LinkageSection(LinkageSectionHeader header): base(header) { }
 	}
+
+	public class DataDefinition: Node {
+		public DataDefinition(DataDefinitionEntry data): base(data) { }
+	}
 }

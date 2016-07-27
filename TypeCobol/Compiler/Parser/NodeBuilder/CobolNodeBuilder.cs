@@ -166,8 +166,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		public override void ExitWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
-			while(Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataSection)))
-				Exit(); // Exit last level-01 data definition entry, as long as its subordinates
+			ExitLastLevel1Definition();
 			Exit(); // Exit WorkingStorageSection
 		}
 		/// <summary>parent: DATA DIVISION</summary>
@@ -176,8 +175,7 @@ namespace TypeCobol.Compiler.Parser
 			Enter(new LocalStorageSection(AsCodeElement<LocalStorageSectionHeader>(context.LocalStorageSectionHeader())), context);
 		}
 		public override void ExitLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
-			while(Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataSection)))
-				Exit(); // Exit last level-01 data definition entry, as long as its subordinates
+			ExitLastLevel1Definition();
 			Exit(); // Exit LocalStorageSection
 		}
 		/// <summary>parent: DATA DIVISION</summary>
@@ -186,8 +184,7 @@ namespace TypeCobol.Compiler.Parser
 			Enter(new LinkageSection(AsCodeElement<LinkageSectionHeader>(context.LinkageSectionHeader())), context);
 		}
 		public override void ExitLinkageSection(ProgramClassParser.LinkageSectionContext context) {
-			while(Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataSection)))
-				Exit(); // Exit last level-01 data definition entry, as long as its subordinates
+			ExitLastLevel1Definition();
 			Exit(); // Exit LinkageSection
 		}
 
@@ -212,12 +209,12 @@ namespace TypeCobol.Compiler.Parser
 
 		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber.Value);
-			Enter(new Node(typedef));
+			Enter(new DataDefinition(typedef));
 		}
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
 			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
-			Enter(new Node(data));
+			Enter(new DataDefinition(data));
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
@@ -236,7 +233,12 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="level">Level number of the next data definition that will be Enter()ed.</param>
 		private void SetCurrentNodeToTopLevelItem(long level) {
 			Node parent = GetTopLevelItem(level);
-			if (parent != null) while (parent != CurrentNode) Exit();
+			if (parent != null) {
+				// Exit() previous sibling and all of its last children
+				while (parent != CurrentNode) Exit();
+			} else {
+				ExitLastLevel1Definition();
+			}
 		}
 
 		private Node GetTopLevelItem(long level) {
@@ -248,6 +250,11 @@ namespace TypeCobol.Compiler.Parser
 				parent = parent.Parent;
 			}
 			return null;
+		}
+
+		/// <summary>Exit last level-01 data definition entry, as long as all its subordinates.</summary>
+		private void ExitLastLevel1Definition() {
+			while (Reflection.IsTypeOf(CurrentNode.GetType(), typeof(DataDefinition))) Exit();
 		}
 
 
