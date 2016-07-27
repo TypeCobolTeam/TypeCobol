@@ -85,7 +85,8 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-		internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.AlphanumericValue3Context context) {
+        [CanBeNull]
+        internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.AlphanumericValue3Context context) {
 			if (context == null) return null;
 			var c = context.figurativeConstant();
 			if (c != null && c.symbolicCharacterReference() != null) {
@@ -244,7 +245,8 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinition;
         }
 
-		internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition4Context context, SymbolType symbolType) {
+        [CanBeNull]
+        internal SymbolDefinition CreateSymbolDefinition([CanBeNull] CodeElementsParser.SymbolDefinition4Context context, SymbolType symbolType) {
 			if (context == null) return null;
 			AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
 			var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
@@ -565,7 +567,8 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolReference(context.symbolReference4(), SymbolType.CharacterClassName);
         }
 
-        internal SymbolDefinition CreateDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
+        [CanBeNull]
+        internal SymbolDefinition CreateDataNameDefinition([CanBeNull] CodeElementsParser.DataNameDefinitionContext context)
         {
             if (context == null) return null;
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
@@ -652,7 +655,8 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.XmlSchemaName);
         }
 
-		internal SymbolReference CreateXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context) {
+        [CanBeNull]
+        internal SymbolReference CreateXmlSchemaNameReference([CanBeNull] CodeElementsParser.XmlSchemaNameReferenceContext context) {
 			if (context == null) return null;
 			return CreateSymbolReference(context.symbolReference4(), SymbolType.XmlSchemaName);
 		}
@@ -660,7 +664,8 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Qualified names : give explicit context to resolve ambiguous name references ---
 
-		internal SymbolReference CreateProcedureName(CodeElementsParser.ProcedureNameContext context) {
+        [CanBeNull]
+        internal SymbolReference CreateProcedureName([CanBeNull] CodeElementsParser.ProcedureNameContext context) {
 			if (context == null) return null;
 			if (context.paragraphNameReferenceOrSectionNameReference() != null)
 				 return CreateParagraphNameReferenceOrSectionNameReference(context.paragraphNameReferenceOrSectionNameReference());
