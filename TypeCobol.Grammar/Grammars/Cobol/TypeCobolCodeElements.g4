@@ -58,7 +58,7 @@ functionDeclarationHeader:
 // - INPUT and OUTPUT phrases
 // - no nested function declaration
 // - no DECLARATIVES
-procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? (outputPhrase | returningPhrase)? PeriodSeparator;
+procedureDivisionHeader: PROCEDURE DIVISION (usingPhrase | inputPhrase)? (outputPhrase | returningPhrase)? PeriodSeparator;
 
 inputPhrase:  INPUT  programInputParameters+;
 outputPhrase: OUTPUT storageArea2+;
