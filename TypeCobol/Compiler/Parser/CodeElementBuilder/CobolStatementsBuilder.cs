@@ -997,11 +997,9 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateReadStatement(CodeElementsParser.ReadStatementContext context) {
 			var statement = new ReadStatement();
-			statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
-			statement.KeyDataItem = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
-			if(context.NEXT() != null) {
-				statement.ReadNextRecord = CreateSyntaxProperty(true, context.NEXT());
-			}
+            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+		    statement.KeyDataItem = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
+		    statement.ReadNextRecord = CreateSyntaxProperty(true, context.NEXT());
 			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateStorageArea(context.storageArea1());
 			return statement;
 		}
@@ -1401,9 +1399,9 @@ namespace TypeCobol.Compiler.Parser
 			statement.Identifier = CobolExpressionsBuilder.CreateVariable(context.sendingField);
 			statement.IsBeforeAdvancing = CreateSyntaxProperty(true, context.BEFORE());
 			statement.IsAfterAdvancing  = CreateSyntaxProperty(true, context.AFTER());
-			statement.Lines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
-			statement.Mnemonic = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
-			statement.Page = CreateSyntaxProperty(true, context.PAGE());
+            statement.Lines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
+            statement.Mnemonic = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
+            statement.Page = CreateSyntaxProperty(true, context.PAGE());
 			return statement;
 		}
 

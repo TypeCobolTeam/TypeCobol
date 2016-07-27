@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -143,8 +144,11 @@ namespace TypeCobol.Compiler.Preprocessor
 			TryGetUserDefinedWord(context.UserDefinedWord(), ref result);
 			return result;
 		}
-		internal static void TryGetAlphanumericLiteralValue(Preprocessor.Generated.CobolCompilerDirectivesParser.AlphanumericLiteralTokenContext context, ref string property) {
-			TryGetUserDefinedWord(context.AlphanumericLiteral(), ref property);
+		internal static void TryGetAlphanumericLiteralValue(Preprocessor.Generated.CobolCompilerDirectivesParser.AlphanumericLiteralTokenContext context, ref string property)
+		{
+		    if (context == null)
+		        return;
+            TryGetUserDefinedWord(context.AlphanumericLiteral(), ref property);
 			TryGetUserDefinedWord(context.HexadecimalAlphanumericLiteral(), ref property);
 			TryGetUserDefinedWord(context.NullTerminatedAlphanumericLiteral(), ref property);
 		}

@@ -6,6 +6,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using System.Collections.Generic;
 using Antlr4.Runtime;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -490,8 +491,10 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MnemonicForEnvironmentName);
         }
 
-        internal SymbolReference CreateMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
+        [CanBeNull]
+        internal SymbolReference CreateMnemonicForEnvironmentNameReference([CanBeNull] CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
         {
+            if (context == null) return null;
             return CreateSymbolReference(context.symbolReference4(), SymbolType.MnemonicForEnvironmentName);
         }
 
@@ -564,6 +567,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
         {
+            if (context == null) return null;
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
         }
 
@@ -636,8 +640,10 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.FileName);
         }
 
-        internal SymbolReference CreateFileNameReference(CodeElementsParser.FileNameReferenceContext context)
+        [CanBeNull]
+        internal SymbolReference CreateFileNameReference([CanBeNull] CodeElementsParser.FileNameReferenceContext context)
         {
+            if(context== null) return null;
             return CreateSymbolReference(context.symbolReference4(), SymbolType.FileName);
         }
 
@@ -670,7 +676,9 @@ namespace TypeCobol.Compiler.Parser
             return qualifiedSymbolReference;
         }
 
-		internal SymbolReference CreateQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context) {
+        [CanBeNull]
+		internal SymbolReference CreateQualifiedDataName([CanBeNull]CodeElementsParser.QualifiedDataNameContext context) {
+            if(context == null) return null;
 			if (context.dataNameReference() != null) return CreateDataNameReference(context.dataNameReference());
 			return CreateQualifiedDataName(context.qualifiedDataName1());
 		}

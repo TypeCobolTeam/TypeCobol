@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -767,8 +768,10 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		internal IntegerVariable CreateIntegerVariable(CodeElementsParser.IntegerVariable1Context context)
+        [CanBeNull]
+        internal IntegerVariable CreateIntegerVariable([CanBeNull] CodeElementsParser.IntegerVariable1Context context)
 		{
+            if(context == null) return null;
 			if(context.identifier() != null)
 			{
 				return new IntegerVariable(
