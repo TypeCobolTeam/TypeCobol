@@ -857,7 +857,7 @@ namespace TypeCobol.Compiler.Parser
 				var externalClauseContext = context.externalClause()[0];
 				entry.IsExternal = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(externalClauseContext.EXTERNAL()));
 			}
-			if (context.globalClause() != null) {
+			if (context.globalClause() != null && context.globalClause().Length > 0) {
 				var globalClauseContext = context.globalClause()[0];
 				entry.IsGlobal = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(globalClauseContext.GLOBAL()));
 			}
@@ -908,7 +908,7 @@ namespace TypeCobol.Compiler.Parser
 						entry.LabelRecords[i] = CobolWordsBuilder.CreateDataNameReference(labelRecordClauseContext.dataNameReference()[i]);
 				}
 			}
-			if (context.valueOfClause() != null) {
+			if (context.valueOfClause() != null && context.valueOfClause().Length > 0) {
 				var valueOfClauseContext = context.valueOfClause()[0];
 				entry.ValueOfLabelRecords = new Dictionary<SymbolReference, Variable>();
 				for (int i = 0; i < valueOfClauseContext.qualifiedDataName().Length; i++) {

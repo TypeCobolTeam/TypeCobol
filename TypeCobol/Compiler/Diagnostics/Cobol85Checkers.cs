@@ -123,10 +123,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 				// TODO#249 if input is LENGTH or identifier AND input.SendingMode.Value == SendingMode.ByReference:
 				// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
 				//TODO what about special registers ?
-				if (input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
-					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-				if (input.IsOmitted.Value && input.SendingMode.Value == SendingMode.ByValue)
-					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
+			    if (input.SendingMode != null)
+			    {
+			        if (input.SendingVariable != null && input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
+			            DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+			        if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
+			            DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
+			    }
 			}
 		}
 	}

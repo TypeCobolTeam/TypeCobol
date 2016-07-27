@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -140,18 +141,26 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Argument sending mode : BY REFERENCE, BY CONTENT or BY VALUE
         /// </summary>
+        [CanBeNull]
         public SyntaxProperty<SendingMode> SendingMode { get; set; }
 
         /// <summary>
         /// Each USING identifier must be defined as a level-01 or level-77 item in the
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// </summary>
+        [CanBeNull]
         public Variable SendingVariable { get; set; }
 
         /// <summary>
         /// Indicates that no argument is passed.
         /// </summary>
-        public SyntaxProperty<bool> IsOmitted { get; set; }
+        [CanBeNull]
+        public SyntaxProperty<bool> Omitted { get; set; }
+
+        public bool IsOmitted
+        {
+            get { return Omitted != null && Omitted.Value; }
+        }
     }
 
     /// <summary>
