@@ -321,7 +321,7 @@
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
     <Compile Include="Compiler\Parser\ICodeElementsLine.cs" />
     <Compile Include="Compiler\Parser\CodeElementsParserStep.cs" />
-    <Compile Include="Compiler\Parser\ProgramClassBuilder.cs" />
+    <Compile Include="Compiler\Parser\NodeBuilder\CobolNodeBuilder.cs" />
     <Compile Include="Compiler\Parser\ProgramClassParserStep.cs" />
     <Compile Include="Compiler\Parser\CodeElementsDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />

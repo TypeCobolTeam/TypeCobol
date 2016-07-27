@@ -12,8 +12,7 @@ namespace TypeCobol.Compiler.Parser
 	/// <summary>
 	/// Build a Program or Class object while visiting its parse tree
 	/// </summary>
-	public class ProgramClassBuilder : ProgramClassBaseListener
-	{
+	public class CobolNodeBuilder: ProgramClassBaseListener {
 		/// <summary>
 		/// Program object resulting of the visit the parse tree
 		/// </summary>
