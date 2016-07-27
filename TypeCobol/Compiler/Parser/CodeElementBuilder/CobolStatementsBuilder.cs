@@ -202,7 +202,7 @@ namespace TypeCobol.Compiler.Parser
 						}
 						else if (variableOrFileNameOrOmittedContext.OMITTED() != null)
 						{
-							inputParameter.IsOmitted = CreateSyntaxProperty(true,
+							inputParameter.Omitted = CreateSyntaxProperty(true,
 								variableOrFileNameOrOmittedContext.OMITTED());
 						}
 						statement.InputParameters.Add(inputParameter);
