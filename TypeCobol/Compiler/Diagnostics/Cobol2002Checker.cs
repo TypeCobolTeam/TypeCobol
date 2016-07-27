@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Diagnostics
 				string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
 				DiagnosticUtils.AddError(typedef, message, context.redefinesClause());
 			}
-			if (typedef.IsExternal.Value) {
+			if (typedef.IsExternal) {
 				string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
 				foreach (var external in context.externalClause())
 					DiagnosticUtils.AddError(typedef, message, external);

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 
-namespace TypeCobol.Compiler.CodeElements
-{
+namespace TypeCobol.Compiler.CodeElements {
+
 	/// <summary>
 	/// Base class for all types of data definition entries :
 	/// - DataDescriptionEntry
@@ -88,7 +88,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// If data-name-1 or the FILLER clause is omitted, the data item being described is
 		/// treated as though FILLER had been specified.
 		/// </summary>
-		public SyntaxProperty<bool> IsFiller { get; set; }
+		public SyntaxProperty<bool> Filler { get; internal set; }
+		public bool IsFiller { get { return Filler != null? Filler.Value : false; } }
 
 		/// <summary>
 		/// p198:
@@ -164,7 +165,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// * Use of the EXTERNAL clause does not imply that the associated data-name is a
 		/// global name.
 		/// </summary>
-		public SyntaxProperty<bool> IsExternal { get; set; }
+		public SyntaxProperty<bool> External { get; internal set; }
+		public bool IsExternal { get { return External != null? External.Value : false; } }
 
 		/// <summary>
 		/// p189:
@@ -190,7 +192,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// data that possesses the global attribute either in the containing program or in
 		/// any program that directly or indirectly contains the containing program.
 		/// </summary>
-		public SyntaxProperty<bool> IsGlobal { get; set; }
+		public SyntaxProperty<bool> Global { get; internal set; }
+		public bool IsGlobal { get { return External != null? Global.Value : false; } }
 
 		/// <summary>
 		/// p189:
@@ -728,7 +731,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// If data-name-1 or the FILLER clause is omitted, the data item being described is
 		/// treated as though FILLER had been specified.
 		/// </summary>
-		public SyntaxProperty<bool> IsFiller { get; set; }
+		public SyntaxProperty<bool> Filler { get; internal set; }
+		public bool IsFiller { get { return Filler != null? Filler.Value : false; } }
 
 		/// <summary>
 		/// p216:

@@ -970,8 +970,8 @@ namespace TypeCobol.Compiler.Parser
 			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
 
 			entry.DataName = dataname;
-			if (context.FILLER() != null) entry.IsFiller = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
-			else entry.IsFiller = new SyntaxProperty<bool>(entry.DataName != null, null);
+			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
+			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
 
 			if (context.pictureClause() != null && context.pictureClause().Length > 0) {
 				var pictureClauseContext = context.pictureClause()[0];
@@ -1004,23 +1004,12 @@ namespace TypeCobol.Compiler.Parser
 				}
 				entry.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
 			}
-			if (context.externalClause() != null && context.externalClause().Length > 0)
-			{
-				var externalClauseContext = context.externalClause()[0];
-				entry.IsExternal = new SyntaxProperty<bool>(true,
-					ParseTreeUtils.GetFirstToken(externalClauseContext.EXTERNAL()));
 
-				// Check coherence
-				if (entry.IsExternal != null && entry.LevelNumber.Value != 1)
-				{
-					DiagnosticUtils.AddError(entry, "External is only allowed for level 01", externalClauseContext);
-				}
+			if (context.externalClause() != null && context.externalClause().Length > 0) {
+				entry.External = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.externalClause()[0].EXTERNAL()));
 			}
-			if (context.globalClause() != null && context.globalClause().Length > 0)
-			{
-				var globalClauseContext = context.globalClause()[0];
-				entry.IsGlobal = new SyntaxProperty<bool>(true,
-					ParseTreeUtils.GetFirstToken(globalClauseContext.GLOBAL()));
+			if (context.globalClause() != null && context.globalClause().Length > 0) {
+				entry.Global = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.globalClause()[0].GLOBAL()));
 			}
 			if (context.justifiedClause() != null && context.justifiedClause().Length > 0)
 			{
@@ -1142,7 +1131,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.usageClause() != null && context.usageClause().Length > 0) {
 				entry.Usage = CreateUsageClause(context.usageClause()[0]);
 			}
-			if (context.valueClause() != null && context.valueClause() != null)
+			if (context.valueClause() != null && context.valueClause().Length > 0)
 			{
 				var valueClauseContext = context.valueClause()[0];
 				entry.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
@@ -1187,19 +1176,10 @@ namespace TypeCobol.Compiler.Parser
 			var entry = new DataRedefinesEntry();
 
 			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
-			if (context.dataNameDefinition() != null)
-			{
-				entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
-			}
-			else if (context.FILLER() != null)
-			{
-				entry.IsFiller = new SyntaxProperty<bool>(true,
-					ParseTreeUtils.GetFirstToken(context.FILLER()));
-			}
-			else
-			{
-				entry.IsFiller = new SyntaxProperty<bool>(true, null);
-			}
+			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
+			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
+
 			if (context.redefinesClause() != null)
 			{
 				entry.RedefinesDataName = CobolWordsBuilder.CreateDataNameReference(context.redefinesClause().dataNameReference());

@@ -20,14 +20,14 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var external  = GetContext(data, context.externalClause());
 			var global    = GetContext(data, context.globalClause());
 			if (data.DataName == null) {
-				if (!data.IsFiller.Value)
+				if (!data.IsFiller)
 					DiagnosticUtils.AddError(data, "Data name or FILLER expected", context.dataNameDefinition());
-				if (data.IsExternal.Value)
+				if (data.IsExternal)
 					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
-				if (data.IsGlobal.Value)
+				if (data.IsGlobal)
 					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
-			} else { 
-				if (data.IsExternal.Value && data.LevelNumber.Value != 01)
+			} else {
+				if (data.IsExternal && data.LevelNumber.Value != 01)
 					DiagnosticUtils.AddError(data, "External is only allowed for level 01", external);
 			}
 		}
