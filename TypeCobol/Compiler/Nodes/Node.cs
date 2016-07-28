@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Nodes
 		}
 
 
-
+/*		TODO#249
 		private static Dictionary<string,Attribute> Attributes;
 		static Node() {
 			Attributes = new Dictionary<string,Attribute>();
@@ -144,17 +144,11 @@ namespace TypeCobol.Compiler.Nodes
 				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
+*/		public object this[string attribute] { get { return null; } }
 
 
 
 
-
-		public static int CountAllChildren(Node node) {
-			int count = node.Children.Count;
-			foreach(var child in node.Children)
-				count += CountAllChildren(child);
-			return count;
-		}
 
 		public bool? Comment = null;
 
