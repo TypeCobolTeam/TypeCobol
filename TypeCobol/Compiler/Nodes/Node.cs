@@ -105,6 +105,11 @@ public class Factory: CodeElementNode<FactoryIdentification> {
 	public override string ID { get { return "TODO#248"; } }
 }
 
+public class Method: CodeElementNode<MethodIdentification> {
+	public Method(MethodIdentification identification): base(identification) { }
+	public override string ID { get { return CodeElement.MethodName.Name; } }
+}
+
 public class Object: CodeElementNode<ObjectIdentification> {
 	public Object(ObjectIdentification identification): base(identification) { }
 	public override string ID { get { return "TODO#248"; } }
