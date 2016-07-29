@@ -147,6 +147,7 @@
     <Compile Include="Compiler\Diagnostics\Cobol2002Checker.cs" />
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
+    <Compile Include="Compiler\Nodes\*.cs" />
     <Compile Include="Compiler\Parser\CodeElementDispatcher.cs" />
     <Compile Include="Compiler\Parser\ProgramClassDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsLinesTokenSource.cs" />
