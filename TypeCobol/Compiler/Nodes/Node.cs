@@ -91,8 +91,23 @@ public class Root: CodeElementNode<CodeElement> {
 }
 
 public class Program: CodeElementNode<ProgramIdentification> {
-	public Program(ProgramIdentification program): base(program) { }
+	public Program(ProgramIdentification identification): base(identification) { }
 	public override string ID { get { return CodeElement.ProgramName.Name; } }
+}
+
+public class Class: CodeElementNode<ClassIdentification> {
+	public Class(ClassIdentification identification): base(identification) { }
+	public override string ID { get { return CodeElement.ClassName.Name; } }
+}
+
+public class Factory: CodeElementNode<FactoryIdentification> {
+	public Factory(FactoryIdentification identification): base(identification) { }
+	public override string ID { get { return "TODO#248"; } }
+}
+
+public class Object: CodeElementNode<ObjectIdentification> {
+	public Object(ObjectIdentification identification): base(identification) { }
+	public override string ID { get { return "TODO#248"; } }
 }
 
 
