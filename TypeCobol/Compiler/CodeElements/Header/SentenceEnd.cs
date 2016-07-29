@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Sentence
     /// One or more statements terminated by a separator period.
     /// </summary>
-    public class SentenceEnd : CodeElement
+    public class SentenceEnd : CodeElementEnd
     {
         public SentenceEnd() : base(CodeElementType.SentenceEnd)
         { }

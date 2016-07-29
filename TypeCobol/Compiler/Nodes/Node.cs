@@ -110,6 +110,11 @@ public class Object: CodeElementNode<ObjectIdentification> {
 	public override string ID { get { return "TODO#248"; } }
 }
 
+public class End: CodeElementNode<CodeElementEnd> {
+	public End(CodeElementEnd end): base(end) { }
+	public override string ID { get { return "end"; } }
+}
+
 
 
 } // end of namespace TypeCobol.Compiler.Nodes
