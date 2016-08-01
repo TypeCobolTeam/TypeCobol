@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class SubtractStatementEnd : CodeElement
+    public class SubtractStatementEnd : CodeElementEnd
     {
         public SubtractStatementEnd() : base(CodeElementType.SubtractStatementEnd)
         { }

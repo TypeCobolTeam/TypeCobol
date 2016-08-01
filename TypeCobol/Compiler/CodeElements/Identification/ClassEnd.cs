@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// The end of a COBOL class definition is indicated by the END CLASS marker.
     /// </summary>
-    public class ClassEnd : CodeElement
+    public class ClassEnd : CodeElementEnd
     {
         public ClassEnd() : base(CodeElementType.ClassEnd)
         { }

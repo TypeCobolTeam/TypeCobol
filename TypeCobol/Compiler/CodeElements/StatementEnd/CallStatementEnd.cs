@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class CallStatementEnd : CodeElement
+    public class CallStatementEnd : CodeElementEnd
     {
         public CallStatementEnd() : base(CodeElementType.CallStatementEnd)
         { }
