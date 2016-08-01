@@ -31,7 +31,7 @@ namespace TypeCobol.Codegen {
 
 
 
-		public Compiler.Nodes.Node CreateSampleTree() {
+		public Compiler.CodeElements.Node CreateSampleTree() {
 			//		0
 			//     /|\
 			//    1 7 8
@@ -79,7 +79,7 @@ namespace TypeCobol.Codegen {
 			Assert.AreEqual(0, CountAllChildren(root.Children[2].Children[0]));//9
 		}
 
-		public static int CountAllChildren(Compiler.Nodes.Node node) {
+		public static int CountAllChildren(Compiler.CodeElements.Node node) {
 			int count = node.Children.Count;
 			foreach(var child in node.Children)
 				count += CountAllChildren(child);
@@ -89,7 +89,7 @@ namespace TypeCobol.Codegen {
 
 
 
-	public class Node: Compiler.Nodes.Node, Generated {
+	public class Node: Compiler.CodeElements.Node, Generated {
 		public Node(string Text = ".", bool GenerateChildren = true) {
 			this._lines.Add(new TextLineSnapshot(-1, Text, null));
 			this.IsLeaf = GenerateChildren;

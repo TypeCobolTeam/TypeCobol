@@ -150,14 +150,13 @@
     <Compile Include="Compiler\CodeElements\Statement\MultiplyStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\SubstractStatement.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
-    <Compile Include="Compiler\Nodes\Node.cs" />
+    <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\Cobol85Checkers.cs" />
     <Compile Include="Compiler\Diagnostics\Cobol2002Checker.cs" />
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
-    <Compile Include="Compiler\Nodes\DataSection.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolWordsBuilder.cs" />

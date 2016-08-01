@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {

@@ -5,7 +5,6 @@ using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 

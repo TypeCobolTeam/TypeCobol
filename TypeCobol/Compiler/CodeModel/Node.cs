@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
-namespace TypeCobol.Compiler.Nodes
+namespace TypeCobol.Compiler.CodeElements
 {
 	public class Node {
 		private readonly IList<Node> children_ = new List<Node>();
@@ -301,7 +300,7 @@ namespace TypeCobol.Compiler.Nodes
 			return new Function(declaration.QualifiedName, parameters, declaration.OutputParameters);
 		}
 */
-		private CallParameter CreateFrom(Parameter parameter, string value, bool byReference) {
+		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {
 			throw new System.NotImplementedException();
 		}
 	}

@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.Generator
 			stream.Close();
 		}
 
-		private void WriteCobol(TextWriter stream, Nodes.Node node, ref int line, ref int offset) {
+		private void WriteCobol(TextWriter stream, CodeElements.Node node, ref int line, ref int offset) {
 			var ce = node.CodeElement as TypeCobol.Generator.CodeGenerator;
 			if (ce != null) ce.WriteCode(stream, node.SymbolTable, ref line, ref offset, Format);
 			foreach(var child in node.Children) {

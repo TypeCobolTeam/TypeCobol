@@ -8,7 +8,6 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements.Functions;
-using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
