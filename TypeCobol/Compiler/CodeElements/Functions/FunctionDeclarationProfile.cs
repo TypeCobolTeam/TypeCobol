@@ -8,10 +8,13 @@ namespace TypeCobol.Compiler.CodeElements {
 		public IList<InputParameter> InputParameters  { get; internal set; }
 		/// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
 		public IList<DataName> OutputParameters { get; internal set; }
+		/// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
+		public IList<DataName> InoutParameters { get; internal set; }
 
 		public FunctionDeclarationProfile(): base(CodeElementType.ProcedureDivisionHeader) {
 			InputParameters = new List<InputParameter>();
 			OutputParameters = new List<DataName>();
+			InoutParameters = new List<DataName>();
 		}
 
 		public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {

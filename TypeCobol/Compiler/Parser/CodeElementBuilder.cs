@@ -2182,6 +2182,8 @@ namespace TypeCobol.Compiler.Parser
 
 // [TYPECOBOL]
 		public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
+			// TCRFUN_NO_DEFAULT_ACCESS_MODIFIER: our grammar guarantees that writting no access modifier is a syntax error.
+			//		In this case (or if PRIVATE was written), we set the modifier to Private so visibility is not left empty.
 			var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
 			QualifiedName name = null;
 			if (context.UserDefinedWord() != null) {
@@ -2209,6 +2211,11 @@ namespace TypeCobol.Compiler.Parser
 				parameters.Add(new InputParameter(SyntaxElementBuilder.CreateDataName(dataname), mode));
 			}
 			return parameters;
+		}
+		public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
+			var ce = CodeElement as FunctionDeclarationProfile;
+			foreach(var dataname in context.dataNameReference())
+				ce.InoutParameters.Add(SyntaxElementBuilder.CreateDataName(dataname));
 		}
 		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
 			var ce = CodeElement as FunctionDeclarationProfile;

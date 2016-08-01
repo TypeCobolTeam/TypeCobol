@@ -2,12 +2,14 @@ grammar TypeCobolProgram;
 
 import CobolProgramClass;
 
+// TCRFUN_DECLARATION_AS_NESTED_PROGRAM
 procedureDivision:
 	ProcedureDivisionHeader declaratives? (functionDeclaration | section)*;
 
 // - custom header
-// - no ENVIRONMENT DIVISION
-// - mandatory END-DECLARE
+// TCRFUN_DECLARATION_NO_IDENTIFICATION_DIVISION
+// TCRFUN_DECLARATION_NO_ENVIRONMENT_DIVISION
+// TCRFUN_MANDATORY_END_DECLARE
 functionDeclaration:
 	FunctionDeclarationHeader
 	dataDivision?

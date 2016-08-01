@@ -57,6 +57,7 @@ setStatementForAssignationSending:
 // rules modified to support custom-designed functions (of arity 0..n)
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
+// TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
 functionDeclarationHeader:
 	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) PeriodSeparator;
 
@@ -66,9 +67,11 @@ functionDeclarationHeader:
 // - INPUT and OUTPUT phrases
 // - no nested function declaration
 // - no DECLARATIVES
-procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? (outputPhrase | returningPhrase)? PeriodSeparator;
+// TCRFUN_PARAMETER_DECLARATION_ORDER
+procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? ((inoutPhrase? outputPhrase?) | returningPhrase?) PeriodSeparator;
 
 inputPhrase:  INPUT  inputParameters+;
+inoutPhrase:  INOUT  dataNameReference+;
 outputPhrase: OUTPUT dataNameReference+;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
