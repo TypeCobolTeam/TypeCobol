@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
@@ -263,7 +264,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		public override string ToString() {
-			var str = new System.Text.StringBuilder();
+			var str = new StringBuilder();
 			bool verbose = false;
 			if (verbose) str.AppendLine("--- "+scope2str());
 			foreach(var line in DataEntries) {
@@ -272,19 +273,28 @@ namespace TypeCobol.Compiler.CodeModel
 					str.Append('\n');
 				}
 			}
+			foreach(var fun in functions.Values) {
+				Dump(str, fun, 1);
+				str.Append('\n');
+			}
 			if (verbose) {
 				if (EnclosingScope != null)
 					str.Append(EnclosingScope.ToString());
 			}// else no enclosing scope dump
 			return str.ToString();
 		}
-		private static System.Text.StringBuilder Dump(System.Text.StringBuilder str, DataDescriptionEntry data, int indent = 0) {
+		private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0) {
 			for (int c=0; c<indent; c++) str.Append("  ");
 			str.Append(data);
 			return str;
 		}
+		private static StringBuilder Dump(StringBuilder str, Function fun, int indent = 0) {
+			for (int c=0; c<indent; c++) str.Append("  ");
+			str.Append(fun);
+			return str;
+		}
 		private string scope2str() {
-			var str = new System.Text.StringBuilder();
+			var str = new StringBuilder();
 			var current = this;
 			while(current != null) {
 				str.Insert(0,current.CurrentScope+":");

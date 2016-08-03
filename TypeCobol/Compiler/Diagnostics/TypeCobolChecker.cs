@@ -106,6 +106,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var visibility = header.Visibility;
 			IList<InputParameter> inputs = new List<InputParameter>();
 			IList<DataName> outputs = new List<DataName>();
+			IList<DataName> inouts = new List<DataName>();
+			DataName returning = null;
 			Node profile = null;
 			var profiles = node.GetChildren(typeof(FunctionDeclarationProfile));
 			if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
@@ -118,11 +120,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 				var p = ((FunctionDeclarationProfile)profile.CodeElement);
 				inputs  = p.InputParameters;
 				outputs = p.OutputParameters;
+				inouts  = p.InoutParameters;
+				returning = p.ReturningParameter;
 			}
 			var parametersdeclared = new List<Parameter>();
 			var linkage = node.Get("linkage");
 			if (linkage == null) {
-				if (inputs.Count > 0 || outputs.Count > 0)
+				if (inputs.Count > 0 || outputs.Count > 0 || inouts.Count > 0)
 					DiagnosticUtils.AddError(header, "Missing LINKAGE SECTION for parameters declaration.");
 			} else {
 			    var data = linkage.GetChildren(typeof(DataDescriptionEntry));
@@ -133,36 +137,45 @@ namespace TypeCobol.Compiler.Diagnostics {
 				}
 			}
 			var inparameters = new List<Parameter>();
-			foreach(var p in inputs) {
-				string pname = p.DataName.Name;
-				Parameter param = GetParameter(parametersdeclared, pname);
-				if (param != null) inparameters.Add(param);
-				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
-			}
+			foreach(var p in inputs) CheckParameter(p.DataName.Name, parametersdeclared, inparameters, profile.CodeElement);
 			var outparameters = new List<Parameter>();
-			foreach(var p in outputs) {
-				string pname = p.Name;
-				Parameter param = GetParameter(parametersdeclared, pname);
-				if (param != null) outparameters.Add(param);
-				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
-			}
-			if (outparameters.Count < 1) outparameters.Add(new Parameter("return-code", false, DataType.Numeric));
+			foreach(var p in outputs) CheckParameter(p.Name, parametersdeclared, outparameters, profile.CodeElement);
+			var ioparameters = new List<Parameter>();
+			foreach(var p in inouts) CheckParameter(p.Name, parametersdeclared, ioparameters, profile.CodeElement);
+			Parameter preturning = null;
+			if (returning != null) preturning = CheckParameter(returning.Name, parametersdeclared, profile.CodeElement);
 			foreach(var pd in parametersdeclared) {
-				var used = GetParameter(inparameters, pd.Name);
-				if (used == null)
-					used = GetParameter(outparameters, pd.Name);
+				var used = Validate(preturning, pd.Name);
+				if (used == null) used = GetParameter(inparameters,  pd.Name);
+				if (used == null) used = GetParameter(outparameters, pd.Name);
+				if (used == null) used = GetParameter(ioparameters,  pd.Name);
 				if (used == null) {
 					var data = GetParameter(linkage, pd.Name);
 					DiagnosticUtils.AddError(data, pd.Name+" is not a parameter.");
 				}
 			}
-			var function = new Function(header.Name, inparameters, outparameters, visibility);
+			var function = new Function(header.Name, inparameters, outparameters, ioparameters, preturning, visibility);
+			if (!function.IsProcedure && !function.IsFunction)
+				DiagnosticUtils.AddError(profile.CodeElement, header.Name+" is neither procedure nor function.", context);
 			node.SymbolTable.EnclosingScope.Register(function);
 		}
-
+		private Parameter CheckParameter(string pname, IList<Parameter> declared, CodeElement ce) {
+			var parameter = GetParameter(declared, pname);
+			if (parameter == null) DiagnosticUtils.AddError(ce, pname+" undeclared in LINKAGE SECTION.");
+			return parameter;
+		}
+		private void CheckParameter(string pname, IList<Parameter> declared, IList<Parameter> parameters, CodeElement ce) {
+			var parameter = GetParameter(declared, pname);
+			if (parameter != null) parameters.Add(parameter);
+			else DiagnosticUtils.AddError(ce, pname+" undeclared in LINKAGE SECTION.");
+		}
 		private Parameter GetParameter(IList<Parameter> parameters, string name) {
 			foreach(var p in parameters)
-				if (p.Name.Equals(name)) return p;
+				if (Validate(p, name) != null) return p;
+			return null;
+		}
+		private Parameter Validate(Parameter parameter, string name) {
+			if (parameter != null && parameter.Name.Equals(name)) return parameter;
 			return null;
 		}
 		private DataDescriptionEntry GetParameter(Node node, string name) {

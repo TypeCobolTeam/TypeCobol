@@ -2228,10 +2228,10 @@ namespace TypeCobol.Compiler.Parser
 			//      because LINKAGE data items can be complex,
 			//      with group items and name collision and crap
 			if (CodeElement is ProcedureDivisionHeader)
-				((ProcedureDivisionHeader)CodeElement).ReturningDataName = dataname;
+				((ProcedureDivisionHeader)CodeElement).ReturningParameter = dataname;
 			else//if (CodeElement is FunctionDeclarationProfile)
 				// let's say if we break here it's an implementation error!
-				((FunctionDeclarationProfile)CodeElement).OutputParameters.Add(dataname);
+				((FunctionDeclarationProfile)CodeElement).ReturningParameter = dataname;
 		}
 		public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 			Context = context;

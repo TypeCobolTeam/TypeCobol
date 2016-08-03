@@ -83,23 +83,24 @@ namespace TypeCobol.Codegen.Config {
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
 			input = skeleton.Patterns[1].Template;
-			expected = 
+			expected =
 "01 RETURN-CODE PIC X(08).\n";
 			Assert.AreEqual(expected, solver.Replace(input, null, "%"));
 
 			input = skeleton.Patterns[2].Template;
-			expected = 
-"01 fun-RESULT PIC 9(8).\n";
-			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
-
-			input = skeleton.Patterns[3].Template;
-			expected = 
+//			expected =
+//"01 fun-RESULT PIC 9(8).\n";
+//			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
+//
+//			input = skeleton.Patterns[3].Template;
+			expected =
 "IF mylibcpy-POINTER-TABLE = LOW_VALUE\n"+
 "    CALL mylib USING mylibcpy\n"+
 "END-IF\n";
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
-			input = skeleton.Patterns[4].Template;
+			input = skeleton.Patterns[3].Template;
+//			input = skeleton.Patterns[4].Template;
 			variables = new Dictionary<string,object> { {"function", RazorFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
 			expected =
 "CALL fun USING\n"+

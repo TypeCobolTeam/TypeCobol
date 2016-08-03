@@ -11,13 +11,12 @@ namespace TypeCobol.Codegen.Nodes {
 
 		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
 			UsingParameters = new List<InputParameter>();
-			foreach(var parameter in profile.InputParameters)
-				UsingParameters.Add(parameter);
-			int outputs = profile.OutputParameters.Count;
-			if (outputs > 0)
-				ReturningParameter = profile.OutputParameters[0];
-			if (outputs > 1)
-				System.Console.WriteLine("Cannot properly convert "+outputs+" procedure outputs to standard PROCEDURE DIVISION");
+			// TCRFUN_CODEGEN_PARAMETERS_ORDER
+			foreach(var parameter in profile.InputParameters)  UsingParameters.Add(parameter);
+			foreach(var parameter in profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter));
+			foreach(var parameter in profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter));
+			// TCRFUN_CODEGEN_RETURNING_PARAMETER
+			ReturningParameter = profile.ReturningParameter;
 		}
 
 		private IList<ITextLine> _cache = null;
@@ -27,7 +26,10 @@ namespace TypeCobol.Codegen.Nodes {
 					_cache = new List<ITextLine>();
 					_cache.Add(new TextLineSnapshot(-1, "  PROCEDURE DIVISION", null));
 					int c = 0;
+					var done = new List<string>();
 					foreach(var parameter in UsingParameters) {
+						if (done.Contains(parameter.DataName.Name)) continue;
+						else done.Add(parameter.DataName.Name);
 						string strmode = "BY REFERENCE ";
 						if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
 						string strusing = c==0? "      USING ":"            ";
@@ -43,5 +45,12 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		public bool IsLeaf { get { return false; } }
+	}
+
+	public class GeneratedParameter: InputParameter {
+		public GeneratedParameter(DataName name): base(name, null) {
+			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
+			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
+		}
 	}
 }

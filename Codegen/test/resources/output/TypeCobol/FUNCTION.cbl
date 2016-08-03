@@ -23,8 +23,6 @@
                                                                               
        01 RETURN-CODE PIC X(08).                                              
                                                                               
-       01 POW-RESULT PIC 9(8).                                                
-                                                                              
 
        PROCEDURE DIVISION.
        IF Functionscpy-POINTER-TABLE = LOW_VALUE                              

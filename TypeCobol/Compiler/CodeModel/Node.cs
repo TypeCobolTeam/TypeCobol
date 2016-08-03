@@ -290,9 +290,5 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 			return new Function(declaration.QualifiedName, parameters, declaration.OutputParameters);
 		}
-
-		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {
-			throw new System.NotImplementedException();
-		}
 	}
 }

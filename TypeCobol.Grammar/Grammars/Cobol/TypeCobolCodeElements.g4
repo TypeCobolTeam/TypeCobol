@@ -63,13 +63,14 @@ functionDeclarationHeader:
 
 
 // alternate PROCEDURE DIVISION to allow function declarations
-// - no USING
-// - INPUT and OUTPUT phrases
-// - no nested function declaration
-// - no DECLARATIVES
-// TCRFUN_PARAMETER_DECLARATION_ORDER
+// - TCRFUN_PARAMETER_DECLARATION_ORDER
+// - TCRFUN_0_TO_N_PARAMETERS (possibly 0 parameters because of "?")
+// - TCRFUN_0_TO_1_RETURNING_PARAMETER
+//   - possibly 0 parameters because of "?" --> procedure or void-returning function
+//   - returningPhrase only allows 1 parameter --> function
 procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? ((inoutPhrase? outputPhrase?) | returningPhrase?) PeriodSeparator;
 
+// TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  inputParameters+;
 inoutPhrase:  INOUT  dataNameReference+;
 outputPhrase: OUTPUT dataNameReference+;

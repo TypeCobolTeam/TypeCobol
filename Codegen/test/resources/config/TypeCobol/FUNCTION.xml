@@ -14,9 +14,9 @@
       <pattern location="data-division.working-storage" action="create" group="functions">
 01 RETURN-CODE PIC X(08).
       </pattern>
-      <pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
+      <!--pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
 01 %function.Name-RESULT %function.Result.Definition.
-      </pattern>
+      </pattern-->
       <pattern location="procedure-division.begin" action="create" group="%function.Lib-CALL">
 IF %function.Copy-POINTER-TABLE = LOW_VALUE
     CALL %function.Program USING %function.Copy

@@ -27,14 +27,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RETURNING data item must be a level-01 or level-77 item in the LINKAGE SECTION.
         /// The RETURNING data item is an output-only parameter.
         /// </summary>
-        public DataName ReturningDataName { get; set; }
+        public DataName ReturningParameter { get; set; }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (UsingParameters == null && ReturningDataName == null)
+            if (UsingParameters == null && ReturningParameter == null)
             {
                 return base.ToString();
             }
@@ -56,9 +56,9 @@ namespace TypeCobol.Compiler.CodeElements
                     }
                     sb.AppendLine();
                 }                
-                if (ReturningDataName != null)
+                if (ReturningParameter != null)
                 {
-                    sb.AppendLine("- ReturningDataName = " + ReturningDataName);
+                    sb.AppendLine("- ReturningDataName = " + ReturningParameter);
                 }                
                 return sb.ToString();
             }

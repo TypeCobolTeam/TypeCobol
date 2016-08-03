@@ -10,6 +10,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		public IList<DataName> OutputParameters { get; internal set; }
 		/// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
 		public IList<DataName> InoutParameters { get; internal set; }
+		/// <summary>RETURNING dataname.</summary>
+		public DataName ReturningParameter { get; set; }
 
 		public FunctionDeclarationProfile(): base(CodeElementType.ProcedureDivisionHeader) {
 			InputParameters = new List<InputParameter>();
@@ -18,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		}
 
 		public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
-			if (other.ReturningDataName != null) OutputParameters.Add(other.ReturningDataName);
+			this.ReturningParameter = other.ReturningParameter;
 			this.ConsumedTokens = other.ConsumedTokens;
 		}
 	}

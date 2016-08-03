@@ -82,7 +82,6 @@
          PROCEDURE DIVISION                                                   
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
-             RETURNING x                                                      
          .                                                                    
            MOVE x TO tmp
            MOVE y TO x

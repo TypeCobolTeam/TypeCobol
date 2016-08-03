@@ -8,21 +8,37 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		public QualifiedName QualifiedName { get; private set; }
 		public IList<Parameter> InputParameters { get; private set; }
 		public IList<Parameter> OutputParameters { get; private set; }
+		public IList<Parameter> InoutParameters { get; private set; }
+		public Parameter ReturningParameter { get; private set; }
 
 		public Parameter Result {
 			get {
-				if (OutputParameters.Count > 1)
-					throw new System.InvalidOperationException(QualifiedName+" has "+OutputParameters.Count+" returns");
-				return OutputParameters[0];
+				if (ReturningParameter != null) return ReturningParameter;
+				if (OutputParameters.Count == 1) return OutputParameters[0];
+				throw new System.InvalidOperationException(QualifiedName+" has "+OutputParameters.Count+" output parameters");
 			}
 		}
 
-		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, AccessModifier visibility = AccessModifier.Private) {
+		/// <summary>Creates function.</summary>
+		public Function(QualifiedName name, IList<Parameter> inputs, Parameter returning, AccessModifier visibility = AccessModifier.Private)
+			: this(name, inputs, null, null, returning, visibility) { }
+		/// <summary>Creates procedure.</summary>
+		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, IList<Parameter> inouts = null, AccessModifier visibility = AccessModifier.Private)
+			: this(name, inputs, outputs, inouts, null, visibility) { }
+		/// <summary>Creates functions or procedure</summary>
+		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, IList<Parameter> inouts, Parameter returning, AccessModifier visibility = AccessModifier.Private) {
 			this.QualifiedName = name;
 			this.InputParameters  = inputs  ?? new List<Parameter>();
 			this.OutputParameters = outputs ?? new List<Parameter>();
+			this.InoutParameters  = inouts  ?? new List<Parameter>();
+			this.ReturningParameter = returning;
 			this.Visibility = visibility;
 		}
+
+		/// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
+		public bool IsProcedure { get { return ReturningParameter == null; } }
+		/// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
+		public bool IsFunction  { get { return OutputParameters.Count == 0 && InoutParameters.Count == 0; } }
 
 		public string Name { get { return QualifiedName.Head; } }
 		public string Program {
@@ -45,6 +61,11 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 			str.Append("):(");
 			foreach(var p in OutputParameters) str.Append(p).Append(", ");
 			if (OutputParameters.Count > 0) str.Length -= 2;
+			str.Append("):(");
+			foreach(var p in InoutParameters) str.Append(p).Append(", ");
+			if (InoutParameters.Count > 0) str.Length -= 2;
+			str.Append("):(");
+			if (ReturningParameter != null) str.Append(ReturningParameter);
 			str.Append(')');
 			return str.ToString();
 		}
