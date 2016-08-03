@@ -82,6 +82,7 @@ namespace TypeCobol.Compiler.CodeElements
 			get {
 				if (CodeElement is ProgramIdentification) return ((ProgramIdentification)CodeElement).ProgramName.Name;
 				if (CodeElement is DataDivisionHeader) return "data-division";
+				if (CodeElement is FileSectionHeader) return "file";
 				if (CodeElement is LinkageSectionHeader) return "linkage";
 				if (CodeElement is LocalStorageSectionHeader) return "local-storage";
 				if (CodeElement is WorkingStorageSectionHeader) return "working-storage";

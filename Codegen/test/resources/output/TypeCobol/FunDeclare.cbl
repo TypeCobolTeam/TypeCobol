@@ -1,9 +1,12 @@
-﻿      * 5 CodeElements errors
+﻿      * 6 CodeElements errors
       * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
-      * "1"@(46:12>46:26): [27:1] Syntax error : a is not a parameter.
-      * "1"@(47:12>47:26): [27:1] Syntax error : b is not a parameter.
-      * "1"@(48:12>48:26): [27:1] Syntax error : c is not a parameter.
-      * "1"@(77:8>77:16): [27:1] Syntax error : Illegal non-function item in library
+      * "1"@(26:8>26:14): [27:1] Syntax error : Illegal FILE SECTION in function declaration
+      * "1"@(48:12>48:26): [27:1] Syntax error : a is not a parameter.
+      * "1"@(49:12>49:26): [27:1] Syntax error : b is not a parameter.
+      * "1"@(50:12>50:26): [27:1] Syntax error : c is not a parameter.
+      * "1"@(79:8>79:16): [27:1] Syntax error : Illegal non-function item in library
+      * 1 ProgramClass errors
+      * "1"@(1:12>1:25): [27:1] Syntax error : extraneous input '01totoPICX.' expecting {ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, FunctionDeclarationEnd}
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -34,6 +37,7 @@
       *DECLARE function StrangelyReturnsItsInput PRIVATE.                     
        PROGRAM-ID. StrangelyReturnsItsInput.                                  
          DATA DIVISION.
+         FILE SECTION.
          LINKAGE SECTION.
            01 x PIC 9(04).
            01 result PIC 9(04).

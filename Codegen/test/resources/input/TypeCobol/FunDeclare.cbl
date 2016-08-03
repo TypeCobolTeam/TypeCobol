@@ -23,6 +23,8 @@
        
        DECLARE function StrangelyReturnsItsInput PRIVATE.
          DATA DIVISION.
+         FILE SECTION.
+           01 toto PIC X.
          LINKAGE SECTION.
            01 x PIC 9(04).
            01 result PIC 9(04).

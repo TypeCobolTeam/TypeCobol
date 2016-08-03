@@ -123,6 +123,10 @@ namespace TypeCobol.Compiler.Diagnostics {
 				inouts  = p.InoutParameters;
 				returning = p.ReturningParameter;
 			}
+			var filesection = node.Get("file");
+			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
+				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function declaration", context);
+
 			var parametersdeclared = new List<Parameter>();
 			var linkage = node.Get("linkage");
 			if (linkage == null) {
