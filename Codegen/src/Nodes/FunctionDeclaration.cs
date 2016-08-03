@@ -25,6 +25,8 @@ namespace TypeCobol.Codegen.Nodes {
 				if (child.CodeElement is FunctionDeclarationEnd) {
 					Children.Add(new TypeCobol.Codegen.Nodes.ProgramEnd(ProgramName));
 				} else {
+					// TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
+					// TCRFUN_CODEGEN_DATA_SECTION_AS_IS
 					Children.Add(child);
 				}
 			}
@@ -34,7 +36,7 @@ namespace TypeCobol.Codegen.Nodes {
 		public override IEnumerable<ITextLine> Lines {
 			get {
 				if (_cache == null) {
-					_cache = new List<ITextLine>();
+					_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
 					_cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. "+ProgramName.Head+'.', null));
 				}
 				return _cache;
