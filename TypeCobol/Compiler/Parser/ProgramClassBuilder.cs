@@ -544,8 +544,8 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		}
 
 		public override void EnterParagraph(ProgramClassParser.ParagraphContext context) {
-			if (Program.SyntaxTree.CurrentNode.CodeElement is ParagraphHeader) Exit();
-			Enter(new Node(AsCodeElement(context.ParagraphHeader())), context);
+			if (!(Program.SyntaxTree.CurrentNode.CodeElement is ParagraphHeader))
+				Enter(new Node(AsCodeElement(context.ParagraphHeader())), context);
 		}
 		public override void ExitParagraph(ProgramClassParser.ParagraphContext context) {
 			Exit();

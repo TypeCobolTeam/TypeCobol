@@ -1,7 +1,9 @@
-﻿      * 3 CodeElements errors
+﻿      * 5 CodeElements errors
+      * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(46:12>46:26): [27:1] Syntax error : a is not a parameter.
       * "1"@(47:12>47:26): [27:1] Syntax error : b is not a parameter.
       * "1"@(48:12>48:26): [27:1] Syntax error : c is not a parameter.
+      * "1"@(77:8>77:16): [27:1] Syntax error : Illegal non-function item in library
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -87,6 +89,9 @@
            MOVE tmp TO y
            .
        END PROGRAM SwapParameters.                                            
+
+       ILLEGAL-NON-FUNCTION-PARAGRAPH.
+           CONTINUE.
        
        END PROGRAM FunDeclare.
        

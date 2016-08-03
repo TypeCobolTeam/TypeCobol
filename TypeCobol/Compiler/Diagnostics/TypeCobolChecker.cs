@@ -177,4 +177,38 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
 
+
+	/// <summary>Checks the TypeCobol custom functions rule: TCRFUN_NO_SECTION_OR_PARAGRAPH_IN_LIBRARY.</summary>
+	class LibraryChecker: NodeListener {
+		public IList<Type> GetCodeElements() {
+			return new List<Type> { typeof(ProcedureDivisionHeader), };
+		}
+		public void OnNode(Node node, ParserRuleContext context, Program program) {
+			var pdiv = node.CodeElement as ProcedureDivisionHeader;
+			bool isPublicLibrary = false;
+			var elementsInError = new List<CodeElement>();
+			var errorMessages = new List<string>();
+			foreach(var child in node.Children) {
+				var ce = child.CodeElement;
+				if (child.CodeElement == null) {
+					elementsInError.Add(node.CodeElement);
+					errorMessages.Add("Illegal default section in library.");
+				} else {
+					var function = child.CodeElement as FunctionDeclarationHeader;
+					if (function != null) {
+						isPublicLibrary = isPublicLibrary || function.Visibility == AccessModifier.Public;
+					} else {
+						elementsInError.Add(child.CodeElement);
+						errorMessages.Add("Illegal non-function item in library");
+					}
+				}
+			}
+			if (isPublicLibrary) {
+				for(int c = 0; c < errorMessages.Count; c++)
+					DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);
+			}
+		}
+	}
+
+
 }

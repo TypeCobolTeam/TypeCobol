@@ -73,6 +73,9 @@
            MOVE tmp TO y
            .
        END-DECLARE.
+
+       ILLEGAL-NON-FUNCTION-PARAGRAPH.
+           CONTINUE.
        
        END PROGRAM FunDeclare.
        
