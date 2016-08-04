@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿namespace TypeCobol.Compiler.CodeElements.Functions {
 
-namespace TypeCobol.Compiler.CodeElements.Functions {
+using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 	public class Function {
 		public AccessModifier Visibility { get; private set; }
 		public QualifiedName QualifiedName { get; private set; }
-		public IList<Parameter> InputParameters { get; private set; }
-		public IList<Parameter> OutputParameters { get; private set; }
-		public IList<Parameter> InoutParameters { get; private set; }
-		public Parameter ReturningParameter { get; private set; }
+		public IList<ParameterDescription> InputParameters { get; private set; }
+		public IList<ParameterDescription> OutputParameters { get; private set; }
+		public IList<ParameterDescription> InoutParameters { get; private set; }
+		public ParameterDescription ReturningParameter { get; private set; }
 
-		public Parameter Result {
+		public ParameterDescription Result {
 			get {
 				if (ReturningParameter != null) return ReturningParameter;
 				if (OutputParameters.Count == 1) return OutputParameters[0];
@@ -20,17 +20,17 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		}
 
 		/// <summary>Creates function.</summary>
-		public Function(QualifiedName name, IList<Parameter> inputs, Parameter returning, AccessModifier visibility = AccessModifier.Private)
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private)
 			: this(name, inputs, null, null, returning, visibility) { }
 		/// <summary>Creates procedure.</summary>
-		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, IList<Parameter> inouts = null, AccessModifier visibility = AccessModifier.Private)
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts = null, AccessModifier visibility = AccessModifier.Private)
 			: this(name, inputs, outputs, inouts, null, visibility) { }
 		/// <summary>Creates functions or procedure</summary>
-		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, IList<Parameter> inouts, Parameter returning, AccessModifier visibility = AccessModifier.Private) {
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private) {
 			this.QualifiedName = name;
-			this.InputParameters  = inputs  ?? new List<Parameter>();
-			this.OutputParameters = outputs ?? new List<Parameter>();
-			this.InoutParameters  = inouts  ?? new List<Parameter>();
+			this.InputParameters  = inputs  ?? new List<ParameterDescription>();
+			this.OutputParameters = outputs ?? new List<ParameterDescription>();
+			this.InoutParameters  = inouts  ?? new List<ParameterDescription>();
 			this.ReturningParameter = returning;
 			this.Visibility = visibility;
 		}
@@ -72,12 +72,13 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 	}
 
 	public class Parameter {
-		public string Name;
+		public DataName Name;
 		public DataType Type;
 		public int Length;
 		public bool IsCustom;
 
-		public Parameter(string name, bool isCustom, DataType type, int length=int.MaxValue) {
+		public Parameter(DataName name): this(name, false, null, int.MaxValue) { }
+		public Parameter(DataName name, bool isCustom, DataType type, int length=int.MaxValue) {
 			this.Name = name;
 			this.Type   = type;
 			this.Length = length;
@@ -97,19 +98,7 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		}
 
 		public override string ToString() {
-			return (Name ?? "?")+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
-		}
-	}
-	public class CallParameter: Parameter {
-		public string Value { get; private set; }
-		public bool ByReference { get; private set; }
-		public CallParameter(string Value, bool ByReference = true)
-		  : base (null, false, null) {
-			this.Value = Value;
-			this.ByReference = ByReference;
-		}
-		public string Mode {
-			get { return ByReference?"REFERENCE":"CONTENT"; }
+			return (Name==null? "?":Name.Name)+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
 		}
 	}
 

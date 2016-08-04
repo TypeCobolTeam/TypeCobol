@@ -26,7 +26,7 @@ END-IF
 @{
   var funparams = "";
   foreach (var p in %function.InputParameters) {
-    funparams += "    BY " + p.Mode + " " + p.Value + "\n";
+    funparams += "    BY REFERENCE " + p.Name + "\n";
   }
 }CALL %function.Name USING
 @funparams
@@ -44,7 +44,7 @@ END-IF
 
   <skeleton name="FUN.DECLARE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader" />
+      <condition node="TypeCobol.Compiler.CodeElements.Functions.FunctionDeclarationHeader" />
     </conditions>
     <patterns>
       <pattern location="NODE" action="expand"></pattern>

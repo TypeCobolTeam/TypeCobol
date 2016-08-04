@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeCobol.Codegen.Skeletons.Templates;
 using TypeCobol.Compiler.CodeElements.Functions;
+using TypeCobol.Codegen;
 
 namespace TypeCobol.Codegen.Config {
 
@@ -105,7 +106,7 @@ namespace TypeCobol.Codegen.Config {
 			expected =
 "CALL fun USING\n"+
 "    BY REFERENCE param1\n"+
-"    BY CONTENT '42'\n"+
+"    BY REFERENCE '42'\n"+// yeah, dumb example, but in the spec there are only named parameters
 "\n"+
 "    BY REFERENCE RETURN-CODE\n"+
 "    BY REFERENCE fun-RESULT\n"+
@@ -121,25 +122,55 @@ namespace TypeCobol.Codegen.Config {
 		private class RazorFactory {
 			public static Function Create(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
-					new List<Parameter>() {
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric),
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 3),
+					new List<ParameterDescription>() {
+						new RazorParameter(null),
+						new RazorParameter(null, 3),
 					},
-					new List<Parameter>() {
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 8),
+					new List<ParameterDescription>() {
+						new RazorParameter(null, 8),
 					});
 			}
 			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
-					new List<Parameter>() {
-						new CallParameter("param1"),
-						new CallParameter("'42'", false),
+					new List<ParameterDescription>() {
+						new RazorParameter("param1"),
+						new RazorParameter("'42'", 1, false),
 					},
-					new List<Parameter>() {
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 8),
+					new List<ParameterDescription>() {
+						new RazorParameter(null, 8),
 					});
 			}
 		}
-
+		private class RazorParameter: ParameterDescription {
+			public RazorParameter(string name, int length=int.MaxValue, bool ByReference=true) {
+				DataName = new GeneratedDataName(name);
+				DataType = Compiler.CodeElements.DataType.Numeric;
+				MemoryArea = new Compiler.CodeModel.DataInMemory(length);
+				Picture = "PIC 9("+MemoryArea.Length+")";
+				this.ByReference = ByReference;
+			}
+//			public string Value { get; private set; }
+			public bool ByReference { get; private set; }
+			public string Mode { get { return ByReference?"REFERENCE":"CONTENT"; } }
+		}
+		private class GeneratedDataName: Compiler.CodeElements.DataName {
+			private string name;
+			public GeneratedDataName(string name): base(null) { this.name = name; }
+			public override string Name { get { return name; } }
+		}
+/*
+	public class CallParameter: Parameter {
+		public string Value { get; private set; }
+		public bool ByReference { get; private set; }
+		public CallParameter(string Value, bool ByReference = true)
+		  : base (null, false, null) {
+			this.Value = Value;
+			this.ByReference = ByReference;
+		}
+		public string Mode {
+			get { return ByReference?"REFERENCE":"CONTENT"; }
+		}
+	}
+*/
 	}
 }

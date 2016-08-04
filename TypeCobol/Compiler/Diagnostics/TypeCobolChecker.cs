@@ -76,18 +76,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 						// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect of it
 						// 2- if both are null, wee WANT it to break: in TypeCobol EVERYTHING should be typed,
 						//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
-						if (type == null || type != expected.Type) {
-							var message = String.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", def.Name, c+1, expected.Type, type);
+						if (type == null || type != expected.DataType) {
+							var message = String.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", def.Name, c+1, expected.DataType, type);
 							DiagnosticUtils.AddError(e, message);
 						}
 						var length = found[0].MemoryArea.Length;
-						if (length > expected.Length) {
-							var message = String.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", def.Name, c+1, expected.Length, length);
+						if (length > expected.MemoryArea.Length) {
+							var message = String.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", def.Name, c+1, expected.MemoryArea.Length, length);
 							DiagnosticUtils.AddError(e, message);
 						}
 					}
 				} else {
-					var message = String.Format("Function {0} is missing parameter {1} of type {2}", def.Name, c+1, expected.Type);
+					var message = String.Format("Function {0} is missing parameter {1} of type {2}", def.Name, c+1, expected.DataType);
 					DiagnosticUtils.AddError(e, message);
 				}
 			}
@@ -103,85 +103,61 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		public void OnNode(Node node, ParserRuleContext context, Program program) {
 			var header = node.CodeElement as FunctionDeclarationHeader;
-			var visibility = header.Visibility;
-			IList<InputParameter> inputs = new List<InputParameter>();
-			IList<DataName> outputs = new List<DataName>();
-			IList<DataName> inouts = new List<DataName>();
-			DataName returning = null;
-			Node profile = null;
+			FunctionDeclarationProfile profile = null;
 			var profiles = node.GetChildren(typeof(FunctionDeclarationProfile));
 			if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
 				DiagnosticUtils.AddError(header, "Function \""+header.Name+"\" has no parameters and does nothing.");
 			else if (profiles.Count > 1)
 				foreach(var p in profiles)
 					DiagnosticUtils.AddError(p.CodeElement, "Function \""+header.Name+"\" can have only one parameters profile.");
-			else profile = profiles[0];
-			if (profile != null) {
-				var p = ((FunctionDeclarationProfile)profile.CodeElement);
-				inputs  = p.InputParameters;
-				outputs = p.OutputParameters;
-				inouts  = p.InoutParameters;
-				returning = p.ReturningParameter;
-			}
+			else profile = (FunctionDeclarationProfile)profiles[0].CodeElement;
+
 			var filesection = node.Get("file");
 			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function declaration", context);
 
-			var parametersdeclared = new List<Parameter>();
-			var linkage = node.Get("linkage");
-			if (linkage == null) {
-				if (inputs.Count > 0 || outputs.Count > 0 || inouts.Count > 0)
-					DiagnosticUtils.AddError(header, "Missing LINKAGE SECTION for parameters declaration.");
-			} else {
-			    var data = linkage.GetChildren(typeof(DataDescriptionEntry));
-				foreach(var n in data) {
-					var d = (DataDescriptionEntry)n.CodeElement;
-					bool custom = false;//TODO
-					parametersdeclared.Add(new Parameter(d.Name.Name, custom, d.DataType, d.MemoryArea.Length));
-				}
-			}
-			var inparameters = new List<Parameter>();
-			foreach(var p in inputs) CheckParameter(p.DataName.Name, parametersdeclared, inparameters, profile.CodeElement);
-			var outparameters = new List<Parameter>();
-			foreach(var p in outputs) CheckParameter(p.Name, parametersdeclared, outparameters, profile.CodeElement);
-			var ioparameters = new List<Parameter>();
-			foreach(var p in inouts) CheckParameter(p.Name, parametersdeclared, ioparameters, profile.CodeElement);
-			Parameter preturning = null;
-			if (returning != null) preturning = CheckParameter(returning.Name, parametersdeclared, profile.CodeElement);
-			foreach(var pd in parametersdeclared) {
-				var used = Validate(preturning, pd.Name);
-				if (used == null) used = GetParameter(inparameters,  pd.Name);
-				if (used == null) used = GetParameter(outparameters, pd.Name);
-				if (used == null) used = GetParameter(ioparameters,  pd.Name);
-				if (used == null) {
-					var data = GetParameter(linkage, pd.Name);
-					DiagnosticUtils.AddError(data, pd.Name+" is not a parameter.");
-				}
-			}
-			var function = new Function(header.Name, inparameters, outparameters, ioparameters, preturning, visibility);
+			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile);
+
+			foreach(var parameter in profile.InputParameters)  node.SymbolTable.Add(parameter);
+			foreach(var parameter in profile.OutputParameters) node.SymbolTable.Add(parameter);
+			foreach(var parameter in profile.InoutParameters)  node.SymbolTable.Add(parameter);
+			if (profile.ReturningParameter != null) node.SymbolTable.Add(profile.ReturningParameter);
+
+			var function = new Function(header.Name, profile.InputParameters, profile.OutputParameters, profile.InoutParameters, profile.ReturningParameter, header.Visibility);
 			if (!function.IsProcedure && !function.IsFunction)
-				DiagnosticUtils.AddError(profile.CodeElement, header.Name+" is neither procedure nor function.", context);
+				DiagnosticUtils.AddError(profile, header.Name+" is neither procedure nor function.", context);
 			node.SymbolTable.EnclosingScope.Register(function);
 		}
-		private Parameter CheckParameter(string pname, IList<Parameter> declared, CodeElement ce) {
-			var parameter = GetParameter(declared, pname);
-			if (parameter == null) DiagnosticUtils.AddError(ce, pname+" undeclared in LINKAGE SECTION.");
-			return parameter;
+
+		private void CheckEveryLinkageItemIsAParameter(Node node, FunctionDeclarationProfile profile) {
+			if (node == null) return; // no LINKAGE SECTION
+			var linkage = new List<DataDescriptionEntry>();
+			var entries = node.GetChildren(typeof(DataDescriptionEntry));
+			foreach(var n in entries) linkage.Add((DataDescriptionEntry)n.CodeElement);
+			foreach(var description in linkage) {
+				var used = Validate(profile.ReturningParameter, (DataName)description.Name);
+				if (used == null) used = GetParameter(profile.InputParameters,  (DataName)description.Name);
+				if (used == null) used = GetParameter(profile.OutputParameters, (DataName)description.Name);
+				if (used == null) used = GetParameter(profile.InoutParameters,  (DataName)description.Name);
+				if (used == null) {
+					var data = GetParameter(node, description.Name!=null?description.Name.Name:null);
+					DiagnosticUtils.AddError(data, description.Name+" is not a parameter.");
+				}
+			}
 		}
-		private void CheckParameter(string pname, IList<Parameter> declared, IList<Parameter> parameters, CodeElement ce) {
-			var parameter = GetParameter(declared, pname);
-			if (parameter != null) parameters.Add(parameter);
-			else DiagnosticUtils.AddError(ce, pname+" undeclared in LINKAGE SECTION.");
-		}
-		private Parameter GetParameter(IList<Parameter> parameters, string name) {
+		private ParameterDescription GetParameter(IList<ParameterDescription> parameters, DataName name) {
+			if (name == null) return null;
 			foreach(var p in parameters)
 				if (Validate(p, name) != null) return p;
 			return null;
 		}
-		private Parameter Validate(Parameter parameter, string name) {
+		private ParameterDescription Validate(ParameterDescription parameter, DataName name) {
 			if (parameter != null && parameter.Name.Equals(name)) return parameter;
 			return null;
 		}
+		/// <param name="node">LINKAGE SECTION, presumably</param>
+		/// <param name="name">Parameter we want</param>
+		/// <returns>Parameter as declared in DATA DIVISION</returns>
 		private DataDescriptionEntry GetParameter(Node node, string name) {
 			var data = node.CodeElement as DataDescriptionEntry;
 			if (data != null && data.QualifiedName.Matches(name)) return data;

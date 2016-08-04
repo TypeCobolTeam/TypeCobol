@@ -137,8 +137,8 @@
     <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
     <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationHeader.cs" />
     <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationProfile.cs" />
-    <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationEnd.cs" />
     <Compile Include="Compiler\CodeElements\CodeElementEnd.cs" />
+    <Compile Include="Compiler\CodeElements\Functions\Parameters.cs" />
     <Compile Include="Compiler\CodeElements\Symbols\SymbolInformation.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
     <Compile Include="Compiler\CodeModel\Node.cs" />

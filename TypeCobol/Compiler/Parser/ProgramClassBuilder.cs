@@ -6,6 +6,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
 using Antlr4.Runtime;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -357,7 +358,7 @@ System.Console.WriteLine("TODO: "+child.Name+'('+child.MemoryArea.Length+") REDE
 				data.MemoryArea = CreateMemoryArea(data, os, length);
 			}
 		}
-		private static int picture2Size(string picture) {
+		public static int picture2Size(string picture) {
 			if (picture == null) return 1;
 			var betweenparentheses = picture.Split("()".ToCharArray());
 			if (betweenparentheses.Length > 1)
@@ -520,12 +521,31 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		/// <summary>Parent node: DECLARE FUNCTION</summary>
 		/// <param name="context">PROCEDURE DIVISION</param>
 		public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
-			CodeElement profile = AsCodeElement(context.ProcedureDivisionHeader());
-			if (profile is ProcedureDivisionHeader) {
+			CodeElement header = AsCodeElement(context.ProcedureDivisionHeader());
+			if (header is ProcedureDivisionHeader) {
 				// there are neither INPUT nor OUTPUT defined,
 				// and CodeElementBuilder can't guess we were inside a function declaration,
 				// so it created a basic ProcedureDivisionHeader, but we need a FunctionDeclarationProfile
-				profile = new FunctionDeclarationProfile(profile as ProcedureDivisionHeader);
+				header = new FunctionDeclarationProfile(header as ProcedureDivisionHeader);
+			}
+			var profile = (FunctionDeclarationProfile)header;
+			char[] currencies = GetCurrencies();
+			int offset = 0;
+			foreach(var p in profile.InputParameters) {
+				ComputeType(p, currencies);
+				ComputeMemoryProfile(p, ref offset);
+			}
+			foreach(var p in profile.InoutParameters) {
+				ComputeType(p, currencies);
+				ComputeMemoryProfile(p, ref offset);
+			}
+			foreach(var p in profile.OutputParameters) {
+				ComputeType(p, currencies);
+				ComputeMemoryProfile(p, ref offset);
+			}
+			if (profile.ReturningParameter != null) {
+				ComputeType(profile.ReturningParameter, currencies);
+				ComputeMemoryProfile(profile.ReturningParameter, ref offset);
 			}
 			Enter(new Node(profile), context);
 		}

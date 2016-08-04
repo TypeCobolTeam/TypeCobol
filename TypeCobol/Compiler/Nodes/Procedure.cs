@@ -1,6 +1,7 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
 
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 public class ProcedureDivision: CodeElementNode<ProcedureDivisionHeader> {
 	public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }

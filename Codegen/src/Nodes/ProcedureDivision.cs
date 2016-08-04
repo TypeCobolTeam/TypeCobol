@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {
@@ -12,11 +13,11 @@ namespace TypeCobol.Codegen.Nodes {
 		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
 			UsingParameters = new List<InputParameter>();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
-			foreach(var parameter in profile.InputParameters)  UsingParameters.Add(parameter);
-			foreach(var parameter in profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter));
-			foreach(var parameter in profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter));
+			foreach(var parameter in profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(parameter.Name));
+			foreach(var parameter in profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter.Name));
+			foreach(var parameter in profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.Name));
 			// TCRFUN_CODEGEN_RETURNING_PARAMETER
-			ReturningParameter = profile.ReturningParameter;
+			ReturningParameter = profile.ReturningParameter != null ? profile.ReturningParameter.Name : null;
 		}
 
 		private IList<ITextLine> _cache = null;

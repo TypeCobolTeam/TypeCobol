@@ -127,12 +127,6 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         /// <summary>
-        /// Type declaration.
-        /// TODO: find a data representation, Object is bad!
-        /// </summary>
-        public Object Type { get; set; }
-
-        /// <summary>
         /// Name of the top-level symbol (for group elements).
         /// </summary>
         public DataDescriptionEntry TopLevel { get; set; }
