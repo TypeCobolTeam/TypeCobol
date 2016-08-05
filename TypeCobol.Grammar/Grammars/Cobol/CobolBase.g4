@@ -518,6 +518,7 @@ tokens
 	UNSAFE,
 	PUBLIC,
 	PRIVATE,
+	INOUT,
 // [/TYPECOBOL]
 }
 
