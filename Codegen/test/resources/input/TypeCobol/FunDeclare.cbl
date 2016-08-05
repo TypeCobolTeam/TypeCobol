@@ -46,9 +46,9 @@
            01 c PIC 9(04).
            01 result PIC 9(04).
          PROCEDURE DIVISION
-             INPUT x PIC 9(04)
+             INPUT x PIC 9(04).
                    y PIC 9(04)
-                   z PIC 9(04)
+                   z PIC 9(04).
              RETURNING result
          .
            MOVE 0 TO result.
@@ -76,11 +76,11 @@
        DECLARE function SwapParametersWrong PRIVATE.
          PROCEDURE DIVISION
              INPUT  x PIC 9(04)
-                    y PIC 9(04)
+                    y PIC 9(04).
                     a PIC 9(04)
-             OUTPUT x PIC 9(04)
-                    y PIC 9(08)
-                    b PIC 9(04)
+             OUTPUT x PIC 9(04).
+                    y PIC 9(08).
+                    b PIC 9(04).
          .
            CONTINUE.
        END-DECLARE.
