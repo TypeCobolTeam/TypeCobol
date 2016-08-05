@@ -153,7 +153,8 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="context">FILE SECTION</param>
 		public override void EnterFileSection(ProgramClassParser.FileSectionContext context) {
 			Enter(new Node(AsCodeElement(context.FileSectionHeader())), context);
-			//TODO: FILE & DATA DESCRIPTION ENTRIES
+			//TODO: ( 1 FILE DESCRIPTION ENTRY + N DATA DESCRIPTION ENTRY ) N TIMES
+			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitFileSection(ProgramClassParser.FileSectionContext context) {
 			Exit();

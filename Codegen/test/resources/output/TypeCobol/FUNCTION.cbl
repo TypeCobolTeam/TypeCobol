@@ -1,13 +1,13 @@
 ﻿      * 9 CodeElements errors
-      * "1"@(30:12>30:42): [27:1] Syntax error : Function POW is missing parameter 1 of type Numeric
-      * "1"@(30:12>30:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
-      * "1"@(31:12>31:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
-      * "1"@(32:12>32:42): [27:1] Syntax error : Function POW only takes 2 parameters
-      * "1"@(34:12>34:42): [27:1] Syntax error : Symbol i is not referenced
-      * "1"@(34:12>34:42): [27:1] Syntax error : Symbol j is not referenced
-      * "1"@(36:12>36:42): [27:1] Syntax error : Function POW expected parameter 2 of type Numeric (actual: BOOL)
-      * "1"@(38:12>38:42): [27:1] Syntax error : Function POW expected parameter 2 of max length 3 (actual: 5)
-      * "1"@(40:12>40:42): [27:1] Syntax error : Symbol POWAAA is not referenced
+      * "1"@(26:12>26:42): [27:1] Syntax error : Function POW is missing parameter 1 of type Numeric
+      * "1"@(26:12>26:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
+      * "1"@(27:12>27:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
+      * "1"@(28:12>28:42): [27:1] Syntax error : Function POW only takes 2 parameters
+      * "1"@(30:12>30:42): [27:1] Syntax error : Symbol i is not referenced
+      * "1"@(30:12>30:42): [27:1] Syntax error : Symbol j is not referenced
+      * "1"@(32:12>32:42): [27:1] Syntax error : Function POW expected parameter 2 of type Numeric (actual: BOOL)
+      * "1"@(34:12>34:42): [27:1] Syntax error : Function POW expected parameter 2 of max length 3 (actual: 5)
+      * "1"@(36:12>36:42): [27:1] Syntax error : Symbol POWAAA is not referenced
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Functions.
 
@@ -32,11 +32,10 @@
        
       *DECLARE function POW PRIVATE.                                          
        PROGRAM-ID. POW.                                                       
-         DATA DIVISION.
-         LINKAGE SECTION.
-           01 x PIC 9(05).
-           01 y PIC 9(03).
-           01 result PIC 9(08).
+         LINKAGE SECTION.                                                     
+           01 x PIC 9(05)                                                     
+           01 y PIC 9(03)                                                     
+           01 result PIC 9(08)                                                
          PROCEDURE DIVISION                                                   
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
@@ -105,9 +104,9 @@
                                                                               
       * KO: undefined parameters
       *    MOVE FUNCTION POW (i j)    TO x                                    
-       CALL POW USING                                                         
            BY REFERENCE i                                                     
            BY REFERENCE j                                                     
+       CALL POW USING                                                         
                                                                               
            BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            

@@ -18,6 +18,7 @@ namespace TypeCobol.Codegen.Nodes {
 				var ce = child.CodeElement;
 				if (child.CodeElement is FunctionDeclarationProfile) {
 					profile = (FunctionDeclarationProfile)child.CodeElement;
+					CreateOrUpdateLinkageSection(node, profile);
 					var pdiv = new ProcedureDivision(profile);
 					foreach(var sentence in child.Children)
 						pdiv.Children.Add(sentence);
@@ -31,6 +32,50 @@ namespace TypeCobol.Codegen.Nodes {
 					Children.Add(child);
 				}
 			}
+		}
+
+		private void CreateOrUpdateLinkageSection(Node node,FunctionDeclarationProfile profile) {
+			var linkage = node.Get("linkage");
+			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
+			IList<Node> data = new List<Node>();
+			if (linkage == null && parameters > 0) {
+				linkage = new LinkageSection();
+				Children.Add(linkage);
+			}
+			if (linkage != null) data = linkage.GetChildren(typeof(DataDescriptionEntry));
+			// TCRFUN_CODEGEN_PARAMETERS_ORDER
+			var generated = new List<string>();
+			foreach(var parameter in profile.InputParameters) {
+				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+					linkage.Add(new ParameterEntry(parameter));
+					generated.Add(parameter.DataName.Name);
+				}
+			}
+			foreach(var parameter in profile.InoutParameters) {
+				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+					linkage.Add(new ParameterEntry(parameter));
+					generated.Add(parameter.DataName.Name);
+				}
+			}
+			foreach(var parameter in profile.OutputParameters) {
+				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+					linkage.Add(new ParameterEntry(parameter));
+					generated.Add(parameter.DataName.Name);
+				}
+			}
+			if (profile.ReturningParameter != null) {
+				if (!generated.Contains(profile.ReturningParameter.DataName.Name) && !Contains(data, profile.ReturningParameter.DataName.Name)) {
+					linkage.Add(new ParameterEntry(profile.ReturningParameter));
+					generated.Add(profile.ReturningParameter.DataName.Name);
+				}
+			}
+		}
+
+		private bool Contains(IList<Node> data, string dataname) {
+			foreach(var node in data)
+				if (dataname.Equals(((DataDescriptionEntry)node.CodeElement).DataName.Name))
+					return true;
+			return false;
 		}
 
 		private IList<ITextLine> _cache = null;
