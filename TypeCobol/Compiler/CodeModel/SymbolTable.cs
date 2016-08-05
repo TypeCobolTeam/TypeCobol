@@ -268,13 +268,16 @@ namespace TypeCobol.Compiler.CodeModel
 			bool verbose = false;
 			if (verbose) str.AppendLine("--- "+scope2str());
 			foreach(var line in DataEntries) {
+				var key = line.Key;
 				foreach (var data in line.Value) {
+					str.Append(key+":");
 					Dump(str, data, 1);
 					str.Append('\n');
 				}
 			}
-			foreach(var fun in functions.Values) {
-				Dump(str, fun, 1);
+			foreach(var fun in functions) {
+				str.Append(fun.Key+":");
+				Dump(str, fun.Value, 1);
 				str.Append('\n');
 			}
 			if (verbose) {

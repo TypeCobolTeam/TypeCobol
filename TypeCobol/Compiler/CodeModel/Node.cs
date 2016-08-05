@@ -90,6 +90,8 @@ namespace TypeCobol.Compiler.CodeElements
 				if (CodeElement is EnvironmentDivisionHeader) return "environment-division";
 				if (CodeElement is ProcedureDivisionHeader) return "procedure-division";
 				if (CodeElement is ParagraphHeader) return ((ParagraphHeader)CodeElement).ParagraphName.Name;
+				if (CodeElement is FunctionDeclarationHeader) return ((FunctionDeclarationHeader)CodeElement).Name.ToString();
+				if (CodeElement is FunctionDeclarationProfile) return "profile";
 				return null;
 			}
 		}
@@ -109,7 +111,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 		public Node Get(string uri) {
-			if (URI != null && URI.EndsWith(uri)) return this;
+			if (URI != null && ( URI.Equals(uri) || URI.EndsWith("."+uri) )) return this;
 			foreach(var child in Children) {
 				var found = child.Get(uri);
 				if (found != null) return found;

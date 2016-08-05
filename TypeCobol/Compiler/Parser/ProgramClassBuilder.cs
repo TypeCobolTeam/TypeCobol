@@ -521,14 +521,14 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		/// <summary>Parent node: DECLARE FUNCTION</summary>
 		/// <param name="context">PROCEDURE DIVISION</param>
 		public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
-			CodeElement header = AsCodeElement(context.ProcedureDivisionHeader());
-			if (header is ProcedureDivisionHeader) {
-				// there are neither INPUT nor OUTPUT defined,
+			var ce = AsCodeElement(context.ProcedureDivisionHeader());
+			if (ce is ProcedureDivisionHeader) {
+				// there are neither INPUT nor OUTPUT nor INOUT defined,
 				// and CodeElementBuilder can't guess we were inside a function declaration,
 				// so it created a basic ProcedureDivisionHeader, but we need a FunctionDeclarationProfile
-				header = new FunctionDeclarationProfile(header as ProcedureDivisionHeader);
+				ce = new FunctionDeclarationProfile(ce as ProcedureDivisionHeader);
 			}
-			var profile = (FunctionDeclarationProfile)header;
+			var profile = (FunctionDeclarationProfile)ce;
 			char[] currencies = GetCurrencies();
 			int offset = 0;
 			foreach(var p in profile.InputParameters) {
@@ -547,7 +547,19 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				ComputeType(profile.ReturningParameter, currencies);
 				ComputeMemoryProfile(profile.ReturningParameter, ref offset);
 			}
-			Enter(new Node(profile), context);
+			var nodeProfile = new Node(profile);
+			Enter(nodeProfile, context);
+
+			var node = nodeProfile.Parent;
+			var header = (FunctionDeclarationHeader)node.CodeElement;
+			foreach(var parameter in profile.InputParameters)  node.SymbolTable.Add(parameter);
+			foreach(var parameter in profile.OutputParameters) node.SymbolTable.Add(parameter);
+			foreach(var parameter in profile.InoutParameters)  node.SymbolTable.Add(parameter);
+			if (profile.ReturningParameter != null) node.SymbolTable.Add(profile.ReturningParameter);
+
+			var function = new Function(header.Name, profile.InputParameters, profile.OutputParameters, profile.InoutParameters, profile.ReturningParameter, header.Visibility);
+			node.SymbolTable.EnclosingScope.Register(function);
+
 		}
 		public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			Exit();

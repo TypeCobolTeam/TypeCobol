@@ -245,7 +245,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
         {
 // [TYPECOBOL]
-			if (context.inputPhrase() != null || context.outputPhrase() != null) {
+			if (context.inputPhrase() != null || context.outputPhrase() != null || context.inoutPhrase() != null) {
 				Context = context;
 				CodeElement = new FunctionDeclarationProfile();
 				return;
@@ -2190,19 +2190,19 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new FunctionDeclarationHeader(name, visibility);
 		}
 		public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
-			var ce = CodeElement as FunctionDeclarationProfile;
+			var ce = GetFunctionProfile();
 			var input = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.INPUT()) };
 			ce.Input = new SyntaxProperty<Passing.Mode>(Passing.Mode.Input, input);
 			ce.InputParameters = CreateParameters(context.parameterDescription());
 		}
 		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
-			var ce = CodeElement as FunctionDeclarationProfile;
+			var ce = GetFunctionProfile();
 			var output = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.OUTPUT()) };
 			ce.Output = new SyntaxProperty<Passing.Mode>(Passing.Mode.Output, output);
 			ce.OutputParameters = CreateParameters(context.parameterDescription());
 		}
 		public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
-			var ce = CodeElement as FunctionDeclarationProfile;
+			var ce = GetFunctionProfile();
 			var inout = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()) };
 			ce.Inout = new SyntaxProperty<Passing.Mode>(Passing.Mode.Inout, inout);
 			ce.InoutParameters = CreateParameters(context.parameterDescription());
@@ -2266,12 +2266,15 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 		public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
-			if (CodeElement is ProcedureDivisionHeader)
-				CodeElement = new FunctionDeclarationProfile((ProcedureDivisionHeader)CodeElement);
-			var ce = CodeElement as FunctionDeclarationProfile;
+			var ce = GetFunctionProfile();
 			var returning = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()) };
 			ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, returning);
 			ce.ReturningParameter = CreateParameter(context.parameterDescription());
+		}
+		private FunctionDeclarationProfile GetFunctionProfile() {
+			if (CodeElement is ProcedureDivisionHeader)
+				CodeElement = new FunctionDeclarationProfile((ProcedureDivisionHeader)CodeElement);
+			return CodeElement as FunctionDeclarationProfile;
 		}
 		public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 			Context = context;

@@ -114,19 +114,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 			var filesection = node.Get("file");
 			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
-				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function declaration", context);
+				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
 			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile);
 
-			foreach(var parameter in profile.InputParameters)  node.SymbolTable.Add(parameter);
-			foreach(var parameter in profile.OutputParameters) node.SymbolTable.Add(parameter);
-			foreach(var parameter in profile.InoutParameters)  node.SymbolTable.Add(parameter);
-			if (profile.ReturningParameter != null) node.SymbolTable.Add(profile.ReturningParameter);
-
-			var function = new Function(header.Name, profile.InputParameters, profile.OutputParameters, profile.InoutParameters, profile.ReturningParameter, header.Visibility);
+			var function = node.SymbolTable.GetFunction(header.Name);
 			if (!function.IsProcedure && !function.IsFunction)
-				DiagnosticUtils.AddError(profile, header.Name+" is neither procedure nor function.", context);
-			node.SymbolTable.EnclosingScope.Register(function);
+				DiagnosticUtils.AddError(profile, "\""+header.Name+"\" is neither procedure nor function.", context);
 		}
 
 		private void CheckEveryLinkageItemIsAParameter(Node node, FunctionDeclarationProfile profile) {
