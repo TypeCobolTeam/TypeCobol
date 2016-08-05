@@ -104,9 +104,9 @@
                                                                               
       * KO: undefined parameters
       *    MOVE FUNCTION POW (i j)    TO x                                    
+       CALL POW USING                                                         
            BY REFERENCE i                                                     
            BY REFERENCE j                                                     
-       CALL POW USING                                                         
                                                                               
            BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            

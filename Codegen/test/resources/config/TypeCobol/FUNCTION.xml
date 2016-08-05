@@ -26,7 +26,7 @@ END-IF
 @{
   var funparams = "";
   foreach (var p in %function.InputParameters) {
-    funparams += "    BY REFERENCE " + p.Name + "\n";
+    funparams += "    BY " + p.SendingMode + " " + p.Value + "\n";
   }
 }CALL %function.Name USING
 @funparams

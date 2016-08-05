@@ -274,25 +274,26 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
-/*			var parameters = new List<ParameterDescription>();
-			for(int c = 0; c < declaration.InputParameters.Count; c++) {
-				var declared = declaration.InputParameters[c];
+			var parameters = new List<ParameterDescription>();
+			parameters.AddRange(declaration.InputParameters);
+			parameters.AddRange(declaration.InoutParameters);
+			parameters.AddRange(declaration.OutputParameters);
+			var usings = new List<ParameterDescription>();
+			for(int c = 0; c < parameters.Count; c++) {
+				var declared = parameters[c];
 				string value = "SPACE";
 				bool byReference = false;
-				Parameter merged;
 				try {
 					var referenced = reference.Parameters[c];
 					value = referenced.Value.ToString();
 					byReference = referenced.Value is Identifier;
 				} catch(System.ArgumentOutOfRangeException) { }
-				merged = new CallParameter(value, byReference);
-//				merged.Type = declared.Type;
-//				merged.Length = declared.Length;
-//				merged.IsCustom = declared.IsCustom;
-				parameters.Add(merged);
+				var called = new CallParameter();
+				called.ByReference = byReference;
+				called.Value = value;
+				usings.Add(called);
 			}
-*/
-			return new Function(declaration.QualifiedName, declaration.InoutParameters, declaration.OutputParameters);
+			return new Function(declaration.QualifiedName, usings, declaration.ReturningParameter);
 		}
 	}
 }

@@ -106,7 +106,7 @@ namespace TypeCobol.Codegen.Config {
 			expected =
 "CALL fun USING\n"+
 "    BY REFERENCE param1\n"+
-"    BY REFERENCE '42'\n"+// yeah, dumb example, but in the spec there are only named parameters
+"    BY CONTENT '42'\n"+
 "\n"+
 "    BY REFERENCE RETURN-CODE\n"+
 "    BY REFERENCE fun-RESULT\n"+
@@ -133,8 +133,14 @@ namespace TypeCobol.Codegen.Config {
 			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
 					new List<ParameterDescription>() {
-						new RazorParameter("param1"),
-						new RazorParameter("'42'", 1, false),
+						new CallParameter {
+								Value = "param1",
+								ByReference = true,
+							},
+						new CallParameter {
+								Value = "'42'",
+								ByReference = false,
+							},
 					},
 					new List<ParameterDescription>() {
 						new RazorParameter(null, 8),
@@ -142,35 +148,17 @@ namespace TypeCobol.Codegen.Config {
 			}
 		}
 		private class RazorParameter: ParameterDescription {
-			public RazorParameter(string name, int length=int.MaxValue, bool ByReference=true) {
+			public RazorParameter(string name, int length=int.MaxValue) {
 				DataName = new GeneratedDataName(name);
 				DataType = Compiler.CodeElements.DataType.Numeric;
 				MemoryArea = new Compiler.CodeModel.DataInMemory(length);
 				Picture = "PIC 9("+MemoryArea.Length+")";
-				this.ByReference = ByReference;
 			}
-//			public string Value { get; private set; }
-			public bool ByReference { get; private set; }
-			public string Mode { get { return ByReference?"REFERENCE":"CONTENT"; } }
 		}
 		private class GeneratedDataName: Compiler.CodeElements.DataName {
 			private string name;
 			public GeneratedDataName(string name): base(null) { this.name = name; }
 			public override string Name { get { return name; } }
 		}
-/*
-	public class CallParameter: Parameter {
-		public string Value { get; private set; }
-		public bool ByReference { get; private set; }
-		public CallParameter(string Value, bool ByReference = true)
-		  : base (null, false, null) {
-			this.Value = Value;
-			this.ByReference = ByReference;
-		}
-		public string Mode {
-			get { return ByReference?"REFERENCE":"CONTENT"; }
-		}
-	}
-*/
 	}
 }
