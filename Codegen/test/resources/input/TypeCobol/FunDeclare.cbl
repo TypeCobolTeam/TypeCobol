@@ -84,6 +84,15 @@
          .
            CONTINUE.
        END-DECLARE.
+      * ERROR because illegal GLOBAL or EXTERNAL
+       DECLARE function IllegalClauses PUBLIC.
+         DATA DIVISION.
+           WORKING-STORAGE SECTION.
+             01 x PIC X IS GLOBAL.
+             01 y PIC X IS EXTERNAL.
+         PROCEDURE DIVISION.
+           .
+       END-DECLARE.
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.

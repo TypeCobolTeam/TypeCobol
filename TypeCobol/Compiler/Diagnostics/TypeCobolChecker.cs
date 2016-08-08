@@ -117,6 +117,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
+			CheckNoGlobalOrExternal(node.Get("data-division"));
+
 			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile.Profile);
 
 			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
@@ -125,6 +127,19 @@ namespace TypeCobol.Compiler.Diagnostics {
 			foreach(var function in functions)
 				if (!function.IsProcedure && !function.IsFunction)
 					DiagnosticUtils.AddError(profile, "\""+header.Name+"\" is neither procedure nor function.", context);
+		}
+
+		private void CheckNoGlobalOrExternal(Node node) {
+			if (node == null) return; // no DATA DIVISION
+			foreach(var section in node.Children) { // "storage" sections
+				foreach(var child in section.GetChildren(typeof(DataDescriptionEntry))) {
+					var data = (DataDescriptionEntry)child.CodeElement;
+					if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
+						DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
+					if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
+						DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
+				}
+			}
 		}
 
 		private void CheckEveryLinkageItemIsAParameter(Node node, ParametersProfile profile) {

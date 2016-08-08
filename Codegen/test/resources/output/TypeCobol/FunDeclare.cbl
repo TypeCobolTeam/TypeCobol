@@ -1,11 +1,13 @@
-﻿      * 7 CodeElements errors
+﻿      * 9 CodeElements errors
       * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(24:8>24:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
       * "1"@(44:12>44:26): [27:1] Syntax error : a is not a parameter.
       * "1"@(45:12>45:26): [27:1] Syntax error : b is not a parameter.
       * "1"@(46:12>46:26): [27:1] Syntax error : c is not a parameter.
       * "1"@(54:12>54:27): [27:1] Syntax error : Ambiguous reference to symbol result
-      * "1"@(88:8>88:16): [27:1] Syntax error : Illegal non-function item in library
+      * "1"@(91:14>91:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
+      * "1"@(92:14>92:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
+      * "1"@(97:8>97:16): [27:1] Syntax error : Illegal non-function item in library
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -111,6 +113,17 @@
          .                                                                    
            CONTINUE.
        END PROGRAM SwapParametersWrong.                                       
+      * ERROR because illegal GLOBAL or EXTERNAL
+      *DECLARE function IllegalClauses PUBLIC.                                
+       PROGRAM-ID. IllegalClauses.                                            
+         DATA DIVISION.
+           WORKING-STORAGE SECTION.
+             01 x PIC X IS GLOBAL.
+             01 y PIC X IS EXTERNAL.
+         PROCEDURE DIVISION                                                   
+         .                                                                    
+           .
+       END PROGRAM IllegalClauses.                                            
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
