@@ -22,7 +22,7 @@
        DECLARE function StrangelyReturnsItsInput PRIVATE.
          DATA DIVISION.
          FILE SECTION.
-           01 toto PIC X.
+           FD myfile. 01 toto PIC X.
          LINKAGE SECTION.
          PROCEDURE DIVISION
              INPUT     x      PIC 9(04)
@@ -49,7 +49,7 @@
              INPUT x PIC 9(04).
                    y PIC 9(04)
                    z PIC 9(04).
-             RETURNING result
+             RETURNING result PIC 9(04)
          .
            MOVE 0 TO result.
            ADD x to result.

@@ -6,8 +6,6 @@
       * "1"@(46:12>46:26): [27:1] Syntax error : c is not a parameter.
       * "1"@(54:12>54:27): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(88:8>88:16): [27:1] Syntax error : Illegal non-function item in library
-      * 1 ProgramClass errors
-      * "1"@(1:12>1:25): [27:1] Syntax error : extraneous input '01totoPICX.' expecting {ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, FunctionDeclarationEnd}
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -39,7 +37,7 @@
        PROGRAM-ID. StrangelyReturnsItsInput.                                  
          DATA DIVISION.
          FILE SECTION.
-           01 toto PIC X.
+           FD myfile. 01 toto PIC X.
          LINKAGE SECTION.
            01 x PIC 9(04)                                                     
            01 result PIC 9(04)                                                

@@ -68,7 +68,8 @@ functionDeclarationHeader:
 // - TCRFUN_0_TO_1_RETURNING_PARAMETER
 //   - possibly 0 parameters because of "?" --> procedure or void-returning function
 //   - returningPhrase only allows 1 parameter --> function
-procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? inputPhrase? ((inoutPhrase? outputPhrase?) | (returningPhrase | functionReturningPhrase)?) PeriodSeparator;
+// - TCRFUN_DECLARATION_NO_USING
+procedureDivisionHeader: PROCEDURE DIVISION ((usingPhrase? returningPhrase?) | (inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase?)) PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;

@@ -2258,14 +2258,7 @@ namespace TypeCobol.Compiler.Parser
 			//TODO? dataname should be a QualifiedName,
 			//      because LINKAGE data items can be complex,
 			//      with group items and name collision and crap
-			if (CodeElement is ProcedureDivisionHeader) {
-				((ProcedureDivisionHeader)CodeElement).ReturningParameter = dataname;
-			} else {
-				var profile = (FunctionDeclarationProfile)CodeElement;
-				profile.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, null);
-				profile.Profile.ReturningParameter = new ParameterDescription();
-				profile.Profile.ReturningParameter.DataName = dataname;
-			}
+			((ProcedureDivisionHeader)CodeElement).ReturningParameter = dataname;
 		}
 		public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
 			var ce = GetFunctionProfile();

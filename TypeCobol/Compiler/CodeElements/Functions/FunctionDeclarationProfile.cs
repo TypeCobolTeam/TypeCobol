@@ -20,12 +20,17 @@ public class FunctionDeclarationProfile: CodeElement {
 		Profile = new ParametersProfile();
 	}
 
-	/// <summary>Only called if there are no input/using parameters.</summary>
+	/// <summary>Only called if there are no INPUT/OUTPUT/INOUT/USING parameters.</summary>
 	public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
+		if (other.UsingParameters != null && other.UsingParameters.Count > 0)
+			throw new System.InvalidOperationException("Implementation error #245");
 		if (other.ReturningParameter != null) {
+			// we might have a RETURNING parameter to convert, but only if there is neither
+			// PICTURE nor TYPE clause for the returning parameter in the function declaration.
+			// however, this is as syntax error.
 			Profile.ReturningParameter = new ParameterDescription();
 			Profile.ReturningParameter.DataName = other.ReturningParameter;
-			Profile.ReturningParameter.Picture = null;//TODO#245
+			Profile.ReturningParameter.Picture = null;// we can't do anything here
 		}
 		this.ConsumedTokens = other.ConsumedTokens;
 	}
