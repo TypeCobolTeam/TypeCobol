@@ -17,5 +17,6 @@ functionDeclaration:
 	FunctionDeclarationEnd
 	;
 
+// TCRFUN_DECLARATION_NO_DECLARATIVES
 functionProcedureDivision:
 	ProcedureDivisionHeader section*;
