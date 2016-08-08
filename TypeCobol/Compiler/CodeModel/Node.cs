@@ -257,9 +257,9 @@ namespace TypeCobol.Compiler.CodeElements
 			foreach(var id in s.Identifiers) {
 				var reference = id as FunctionReference;
 				if (reference == null) continue;
-                var declaration = table.GetFunction(reference.Name);
-				if (declaration == null) continue; // undefined symbol, not our job
-                functions.Add(CreateFrom(reference, declaration));
+                var declaration = table.GetFunction(reference.Name);//TODO#245 get using profile
+				if (declaration.Count != 1) continue; // ambiguity or undefined symbol, not our job
+                functions.Add(CreateFrom(reference, declaration[0]));
 			}
 			if (functions.Count < 1) return null;
 		    if (ReturnFirstFunctionOnly)
@@ -275,9 +275,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
 			var parameters = new List<ParameterDescription>();
-			parameters.AddRange(declaration.InputParameters);
-			parameters.AddRange(declaration.InoutParameters);
-			parameters.AddRange(declaration.OutputParameters);
+			parameters.AddRange(declaration.Profile.InputParameters);
+			parameters.AddRange(declaration.Profile.InoutParameters);
+			parameters.AddRange(declaration.Profile.OutputParameters);
 			var usings = new List<ParameterDescription>();
 			for(int c = 0; c < parameters.Count; c++) {
 				var declared = parameters[c];
@@ -293,7 +293,7 @@ namespace TypeCobol.Compiler.CodeElements
 				called.Value = value;
 				usings.Add(called);
 			}
-			return new Function(declaration.QualifiedName, usings, declaration.ReturningParameter);
+			return new Function(declaration.QualifiedName, usings, declaration.Profile.ReturningParameter);
 		}
 	}
 }

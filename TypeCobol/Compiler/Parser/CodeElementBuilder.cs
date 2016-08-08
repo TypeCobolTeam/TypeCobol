@@ -2193,24 +2193,26 @@ namespace TypeCobol.Compiler.Parser
 			var ce = GetFunctionProfile();
 			var input = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.INPUT()) };
 			ce.Input = new SyntaxProperty<Passing.Mode>(Passing.Mode.Input, input);
-			ce.InputParameters = CreateParameters(context.parameterDescription());
+			ce.Profile.InputParameters = CreateParameters(context.parameterDescription());
 		}
 		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
 			var ce = GetFunctionProfile();
 			var output = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.OUTPUT()) };
 			ce.Output = new SyntaxProperty<Passing.Mode>(Passing.Mode.Output, output);
-			ce.OutputParameters = CreateParameters(context.parameterDescription());
+			ce.Profile.OutputParameters = CreateParameters(context.parameterDescription());
 		}
 		public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
 			var ce = GetFunctionProfile();
 			var inout = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()) };
 			ce.Inout = new SyntaxProperty<Passing.Mode>(Passing.Mode.Inout, inout);
-			ce.InoutParameters = CreateParameters(context.parameterDescription());
+			ce.Profile.InoutParameters = CreateParameters(context.parameterDescription());
 		}
 		private IList<ParameterDescription> CreateParameters(CodeElementsParser.ParameterDescriptionContext[] contexts) {
 			var parameters = new List<ParameterDescription>();
-			foreach(var context in contexts)
-				parameters.Add(CreateParameter(context));
+			foreach(var context in contexts) {
+				var parameter = CreateParameter(context);
+				if (parameter != null) parameters.Add(parameter);
+			}
 			return parameters;
 		}
 		private ParameterDescription CreateParameter(CodeElementsParser.ParameterDescriptionContext context) {
@@ -2261,15 +2263,15 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				var profile = (FunctionDeclarationProfile)CodeElement;
 				profile.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, null);
-				profile.ReturningParameter = new ParameterDescription();
-				profile.ReturningParameter.DataName = dataname;
+				profile.Profile.ReturningParameter = new ParameterDescription();
+				profile.Profile.ReturningParameter.DataName = dataname;
 			}
 		}
 		public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
 			var ce = GetFunctionProfile();
 			var returning = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()) };
 			ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, returning);
-			ce.ReturningParameter = CreateParameter(context.parameterDescription());
+			ce.Profile.ReturningParameter = CreateParameter(context.parameterDescription());
 		}
 		private FunctionDeclarationProfile GetFunctionProfile() {
 			if (CodeElement is ProcedureDivisionHeader)

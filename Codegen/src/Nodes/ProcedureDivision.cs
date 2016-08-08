@@ -13,11 +13,11 @@ namespace TypeCobol.Codegen.Nodes {
 		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
 			UsingParameters = new List<InputParameter>();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
-			foreach(var parameter in profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(parameter.Name));
-			foreach(var parameter in profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter.Name));
-			foreach(var parameter in profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.Name));
+			foreach(var parameter in profile.Profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(parameter.Name));
+			foreach(var parameter in profile.Profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter.Name));
+			foreach(var parameter in profile.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.Name));
 			// TCRFUN_CODEGEN_RETURNING_PARAMETER
-			ReturningParameter = profile.ReturningParameter != null ? profile.ReturningParameter.Name : null;
+			ReturningParameter = profile.Profile.ReturningParameter != null ? profile.Profile.ReturningParameter.Name : null;
 		}
 
 		private IList<ITextLine> _cache = null;

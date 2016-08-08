@@ -1,21 +1,19 @@
 ﻿namespace TypeCobol.Compiler.CodeElements.Functions {
 
+using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
 	public class Function {
 		public AccessModifier Visibility { get; private set; }
 		public QualifiedName QualifiedName { get; private set; }
-		public IList<ParameterDescription> InputParameters { get; private set; }
-		public IList<ParameterDescription> OutputParameters { get; private set; }
-		public IList<ParameterDescription> InoutParameters { get; private set; }
-		public ParameterDescription ReturningParameter { get; private set; }
+		public ParametersProfile Profile { get; private set; }
 
 		public ParameterDescription Result {
 			get {
-				if (ReturningParameter != null) return ReturningParameter;
-				if (OutputParameters.Count == 1) return OutputParameters[0];
-				throw new System.InvalidOperationException(QualifiedName+" has "+OutputParameters.Count+" output parameters");
+				if (Profile.ReturningParameter != null) return Profile.ReturningParameter;
+				if (Profile.OutputParameters.Count == 1) return Profile.OutputParameters[0];
+				throw new System.InvalidOperationException(QualifiedName+" has "+Profile.OutputParameters.Count+" output parameters");
 			}
 		}
 
@@ -27,18 +25,19 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 			: this(name, inputs, outputs, inouts, null, visibility) { }
 		/// <summary>Creates functions or procedure</summary>
 		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private) {
-			this.QualifiedName = name;
-			this.InputParameters  = inputs  ?? new List<ParameterDescription>();
-			this.OutputParameters = outputs ?? new List<ParameterDescription>();
-			this.InoutParameters  = inouts  ?? new List<ParameterDescription>();
-			this.ReturningParameter = returning;
-			this.Visibility = visibility;
+			QualifiedName = name;
+			Profile = new ParametersProfile();
+			Profile.InputParameters  = inputs  ?? new List<ParameterDescription>();
+			Profile.OutputParameters = outputs ?? new List<ParameterDescription>();
+			Profile.InoutParameters  = inouts  ?? new List<ParameterDescription>();
+			Profile.ReturningParameter = returning;
+			Visibility = visibility;
 		}
 
 		/// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
-		public bool IsProcedure { get { return ReturningParameter == null; } }
+		public bool IsProcedure { get { return Profile.ReturningParameter == null; } }
 		/// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
-		public bool IsFunction  { get { return OutputParameters.Count == 0 && InoutParameters.Count == 0; } }
+		public bool IsFunction  { get { return Profile.OutputParameters.Count == 0 && Profile.InoutParameters.Count == 0; } }
 
 		public string Name { get { return QualifiedName.Head; } }
 		public string Program {
@@ -55,18 +54,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder(Name ?? "?");
-			str.Append('(');
-			foreach(var p in InputParameters) str.Append(p).Append(", ");
-			if (InputParameters.Count > 0) str.Length -= 2;
-			str.Append("):(");
-			foreach(var p in OutputParameters) str.Append(p).Append(", ");
-			if (OutputParameters.Count > 0) str.Length -= 2;
-			str.Append("):(");
-			foreach(var p in InoutParameters) str.Append(p).Append(", ");
-			if (InoutParameters.Count > 0) str.Length -= 2;
-			str.Append("):(");
-			if (ReturningParameter != null) str.Append(ReturningParameter);
-			str.Append(')');
+			str.Append(Profile.ToString());
 			return str.ToString();
 		}
 	}

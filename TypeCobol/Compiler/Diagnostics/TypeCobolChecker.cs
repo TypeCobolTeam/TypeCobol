@@ -58,14 +58,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
 			var fun = identifier as FunctionReference;
 			if (fun == null) return;// we only check functions
-			var def = table.GetFunction(fun.Name);
-			if (def == null) return;// ambiguity is not our job
-			if (fun.Parameters.Count > def.InputParameters.Count) {
-				var message = String.Format("Function {0} only takes {1} parameters", def.Name, def.InputParameters.Count);
+			var defs = table.GetFunction(fun.Name);
+			if (defs.Count != 1) return;// ambiguity is not our job
+			var def = defs[0];
+			if (fun.Parameters.Count > def.Profile.InputParameters.Count) {
+				var message = String.Format("Function {0} only takes {1} parameters", def.Name, def.Profile.InputParameters.Count);
 				DiagnosticUtils.AddError(e, message);
 			}
-			for (int c = 0; c < def.InputParameters.Count; c++) {
-				var expected = def.InputParameters[c];
+			for (int c = 0; c < def.Profile.InputParameters.Count; c++) {
+				var expected = def.Profile.InputParameters[c];
 				if (c < fun.Parameters.Count) {
 					var actual = fun.Parameters[c].Value;
 					if (actual is Identifier) {
@@ -116,14 +117,17 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
-			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile);
+			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile.Profile);
 
-			var function = node.SymbolTable.GetFunction(header.Name);
-			if (!function.IsProcedure && !function.IsFunction)
-				DiagnosticUtils.AddError(profile, "\""+header.Name+"\" is neither procedure nor function.", context);
+			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
+			if (functions.Count > 1)
+				DiagnosticUtils.AddError(profile, "A function with the same name and profile already exists.", context);
+			foreach(var function in functions)
+				if (!function.IsProcedure && !function.IsFunction)
+					DiagnosticUtils.AddError(profile, "\""+header.Name+"\" is neither procedure nor function.", context);
 		}
 
-		private void CheckEveryLinkageItemIsAParameter(Node node, FunctionDeclarationProfile profile) {
+		private void CheckEveryLinkageItemIsAParameter(Node node, ParametersProfile profile) {
 			if (node == null) return; // no LINKAGE SECTION
 			var linkage = new List<DataDescriptionEntry>();
 			var entries = node.GetChildren(typeof(DataDescriptionEntry));

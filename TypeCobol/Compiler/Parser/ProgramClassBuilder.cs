@@ -529,7 +529,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				// so it created a basic ProcedureDivisionHeader, but we need a FunctionDeclarationProfile
 				ce = new FunctionDeclarationProfile(ce as ProcedureDivisionHeader);
 			}
-			var profile = (FunctionDeclarationProfile)ce;
+			var profile = ((FunctionDeclarationProfile)ce).Profile;
 			char[] currencies = GetCurrencies();
 			int offset = 0;
 			foreach(var p in profile.InputParameters) {
@@ -548,7 +548,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 				ComputeType(profile.ReturningParameter, currencies);
 				ComputeMemoryProfile(profile.ReturningParameter, ref offset);
 			}
-			var nodeProfile = new Node(profile);
+			var nodeProfile = new Node(ce);
 			Enter(nodeProfile, context);
 
 			var node = nodeProfile.Parent;

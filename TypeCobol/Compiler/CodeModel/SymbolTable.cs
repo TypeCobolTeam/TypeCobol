@@ -204,23 +204,42 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		/// <summary>Functions repository</summary>
-		protected Dictionary<QualifiedName,Function> functions = new Dictionary<QualifiedName,Function>();
+		protected Dictionary<QualifiedName,IList<Function>> functions = new Dictionary<QualifiedName,IList<Function>>();
 
-		internal Function GetFunction(string name) {
-			return GetFunction(new URI(name));
+		public IList<Function> Functions {
+			get {
+				var copy = new List<Function>();
+				foreach(var funs in functions.Values)
+					foreach(var fun in funs)
+						copy.Add(fun);
+				return copy;
+			}
 		}
-		internal Function GetFunction(QualifiedName name, bool searchInDefaultLib = true) {
+
+		internal IList<Function> GetFunction(QualifiedName name, Profile profile = null, bool searchInDefaultLib = true) {
 			foreach(var function in functions)
-				if (function.Key.Matches(name)) return function.Value;
+				if (function.Key.Matches(name))
+					return Filter(function.Value, profile);
 			if (searchInDefaultLib && CurrentScope == Scope.Intrinsic)
-				return GetFunction(new URI("TC-DEFAULT."+name.ToString()), false);
-			if (EnclosingScope == null) return null;
-			return EnclosingScope.GetFunction(name);
+				return GetFunction(new URI("TC-DEFAULT."+name.ToString()), profile, false);
+			if (EnclosingScope == null) return new List<Function>();
+			return EnclosingScope.GetFunction(name, profile, searchInDefaultLib);
+		}
+		private IList<Function> Filter(IList<Function> functions, Profile profile) {
+			if (profile == null) return functions;
+			var filtered = new List<Function>();
+			foreach(var function in functions)
+				if (profile.Equals(function.Profile))
+					filtered.Add(function);
+			return filtered;
 		}
 		/// <summary>Make a function definied in the current scope.</summary>
 		/// <param name="function">Function definition</param>
 		internal void Register(Function function) {
-			functions[function.QualifiedName] = function;
+			IList<Function> functions = new List<Function>();
+			try { functions = this.functions[function.QualifiedName]; }
+			catch(KeyNotFoundException ex) { this.functions[function.QualifiedName] = functions; }
+			functions.Add(function);
 		}
 
 
@@ -265,7 +284,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public override string ToString() {
 			var str = new StringBuilder();
-			bool verbose = false;
+			bool verbose = true;
 			if (verbose) str.AppendLine("--- "+scope2str());
 			foreach(var line in DataEntries) {
 				var key = line.Key;
@@ -275,10 +294,14 @@ namespace TypeCobol.Compiler.CodeModel
 					str.Append('\n');
 				}
 			}
-			foreach(var fun in functions) {
-				str.Append(fun.Key+":");
-				Dump(str, fun.Value, 1);
-				str.Append('\n');
+			foreach(var funs in functions) {
+				str.Append(funs.Key+":");
+				foreach(var fun in funs.Value) {
+					Dump(str, fun, 1);
+					str.Append("; ");
+				}
+				if (funs.Value.Count > 0) str.Length -= 2;
+				str.AppendLine();
 			}
 			if (verbose) {
 				if (EnclosingScope != null)

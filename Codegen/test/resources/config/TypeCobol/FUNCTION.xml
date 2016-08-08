@@ -25,7 +25,7 @@ END-IF
       <pattern location="NODE" action="replace">
 @{
   var funparams = "";
-  foreach (var p in %function.InputParameters) {
+  foreach (var p in %function.Profile.InputParameters) {
     funparams += "    BY " + p.SendingMode + " " + p.Value + "\n";
   }
 }CALL %function.Name USING

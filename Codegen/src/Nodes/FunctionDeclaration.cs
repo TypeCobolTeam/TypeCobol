@@ -18,7 +18,7 @@ namespace TypeCobol.Codegen.Nodes {
 				var ce = child.CodeElement;
 				if (child.CodeElement is FunctionDeclarationProfile) {
 					profile = (FunctionDeclarationProfile)child.CodeElement;
-					CreateOrUpdateLinkageSection(node, profile);
+					CreateOrUpdateLinkageSection(node, profile.Profile);
 					var pdiv = new ProcedureDivision(profile);
 					foreach(var sentence in child.Children)
 						pdiv.Children.Add(sentence);
@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Nodes {
 			}
 		}
 
-		private void CreateOrUpdateLinkageSection(Node node,FunctionDeclarationProfile profile) {
+		private void CreateOrUpdateLinkageSection(Node node, ParametersProfile profile) {
 			var linkage = node.Get("linkage");
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
 			IList<Node> data = new List<Node>();

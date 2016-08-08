@@ -1,8 +1,8 @@
 ﻿ID DIVISION.
 PROGRAM-ID. DateFunctions.
 
-data division.
-working-storage section.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
     01 DateJulian    TYPEDEF STRONG.
          10 YYYY PIC 9(04).
          10 DDD  PIC 9(03).     
@@ -14,139 +14,130 @@ working-storage section.
          10  DD PIC 9(02).
 
 PROCEDURE DIVISION.
-declare function currentDate PRIVATE.
-data division.
-linkage section.
-01 result type Date.
-procedure division returning result.
-    accept result from DATE YYYYMMDD.
-end-declare.
 
-declare function currentDateFreeFormat PRIVATE.
-data division.
-linkage section.
-    01 dateType pic X.
-    01 direction pic X.
-    01 separator pic X.
-    01 LL pic X(02).
-    01 PP pic X(02).
-    01 result pic X(10).
-procedure division input dateType direction separator LL PP returning result.
-end-declare.
+DECLARE FUNCTION currentDate PRIVATE.
+PROCEDURE DIVISION RETURNING result TYPE Date.
+    ACCEPT result FROM DATE YYYYMMDD.
+END-DECLARE.
 
-declare function currentDateDB2 PRIVATE.
-data division.
-linkage section.
-    01 result type DateDB2.
-procedure division returning result.
-end-declare.
+DECLARE FUNCTION currentDateFreeFormat PRIVATE.
+PROCEDURE DIVISION
+    INPUT dateType  PIC X
+          direction PIC X
+          separator PIC X
+          LL        PIC X(02)
+          PP        PIC X(02)
+    RETURNING result PIC X(10).
+END-DECLARE.
 
-declare function currentDateJulian PRIVATE.
-data division.
-linkage section.
-    01 result type DateJulian.
-procedure division returning result.
-end-declare.
+DECLARE FUNCTION currentDateDB2 PRIVATE.
+PROCEDURE DIVISION RETURNING result TYPE DateDB2.
+END-DECLARE.
 
-declare function convertToDate PRIVATE.
-data division.
-linkage section.
-    01 inputDate type DateDB2.
-    01 result type Date.
-procedure division input inputDate returning result.
-end-declare.
+DECLARE FUNCTION currentDateJulian PRIVATE.
+PROCEDURE DIVISION RETURNING result TYPE DateJulian.
+END-DECLARE.
 
-declare function convertToDate PRIVATE.
-data division.
-linkage section.
-    01 inputDate type DateJulian.
-    01 result type Date.
-procedure division input inputDate returning result.
-end-declare.
+DECLARE FUNCTION convertToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateDB2
+    RETURNING result TYPE Date.
+END-DECLARE.
+DECLARE FUNCTION convertToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateJulian
+    RETURNING result TYPE Date.
+END-DECLARE.
 
-declare function convertToDateDB2 PRIVATE.
-data division.
-linkage section.
-    01 inputDate type Date.
-    01 result type DateDB2.
-procedure division input inputDate returning result.
-end-declare.
-declare function convertToDateDB2 PRIVATE.
-data division.
-linkage section.
-    01 inputDate type DateJulian.
-    01 result type DateDB2.
-procedure division input inputDate returning result.
-end-declare.
+DECLARE FUNCTION convertToDateDB2 PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE Date
+    RETURNING result TYPE DateDB2.
+END-DECLARE.
+DECLARE FUNCTION convertToDateDB2 PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateJulian
+    RETURNING result TYPE DateDB2.
+END-DECLARE.
 
-declare function convertToDateJulian PRIVATE.
-data division.
-linkage section.
-    01 inputDate type Date.
-    01 result type DateJulian.
-procedure division input inputDate returning result.
-end-declare.
+DECLARE FUNCTION convertToDateJulian PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE Date
+    RETURNING result TYPE DateJulian.
+END-DECLARE.
+DECLARE FUNCTION convertToDateJulian PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateDB2
+    RETURNING result TYPE DateJulian.
+END-DECLARE.
 
-declare function convertToDateJulian PRIVATE.
-data division.
-linkage section.
-    01 inputDate type DateDB2.
-    01 result type DateJulian.
-procedure division input inputDate returning result.
-end-declare.
+DECLARE FUNCTION isDateValid PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE Date
+    RETURNING result TYPE Bool.
+END-DECLARE.
+DECLARE FUNCTION isDateValid PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateDB2
+    RETURNING result TYPE Bool.
+END-DECLARE.
+DECLARE FUNCTION isDateValid PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateJulian
+    RETURNING result TYPE Bool.
+END-DECLARE.
 
+DECLARE FUNCTION addDaysToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT dateToAdd TYPE Date
+          nbOFDays  PIC 9(04)
+    RETURNING result TYPE Date.
+END-DECLARE.
+DECLARE FUNCTION addDaysToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT dateToAdd  TYPE Date
+          nbOFDays   PIC 9(04)
+          typeOfDays PIC X
+          calendar   PIC X
+    RETURNING result TYPE Date.
+END-DECLARE.
 
-declare function isDateValid PRIVATE.
-data division.
-linkage section.
-    01 inputDate type Date.
-    01 result type Bool.
-procedure division input inputDate returning result.
-end-declare.
-declare function isDateValid PRIVATE.
-data division.
-linkage section.
-    01 inputDate type DateDB2.
-    01 result type Bool.
-procedure division input inputDate returning result.
-end-declare.
-declare function isDateValid PRIVATE.
-data division.
-linkage section.
-    01 inputDate type DateJulian.
-    01 result type Bool.
-procedure division input inputDate returning result.
-end-declare.
+DECLARE FUNCTION daysBetween PRIVATE.
+PROCEDURE DIVISION
+    INPUT     date1    TYPE Date
+              date2    TYPE Date
+    RETURNING result   PIC 9(04).
+END-DECLARE.
 
-
-
-declare function addDaysToDate PRIVATE.
-data division.
-linkage section.
-    01 dateToAdd type Date.
-    01 nbOFDays pic 9(04).
-    01 result type Date.
-procedure division input dateToAdd nbOFDays returning result.
-end-declare.
-declare function addDaysToDate PRIVATE.
-data division.
-linkage section.
-    01 dateToAdd type Date.
-    01 nbOFDays     pic 9(04).
-    01 typeOfDays   pic X.
-    01 calendar     pic X.
-    01 result type Date.
-procedure division input dateToAdd nbOFDays typeOfDays calendar returning result.
-end-declare.
-
-
-declare function daysBetween PRIVATE.
-data division.
-linkage section.
-    01 date1       type Date.
-    01 date2       type Date.
-    01 result      pic 9(04).
-procedure division input date1 date2 returning result.
-end-declare.
+* 01: OK
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(04)
+    RETURNING y   PIC 9(04).
+END-DECLARE.
+* 02: OK because 01 and 02 have different inputs
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(08)
+    RETURNING y   PIC 9(04).
+END-DECLARE.
+* 03: OK because names differ
+DECLARE FUNCTION conflict2 PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(04)
+    RETURNING y   PIC 9(04).
+END-DECLARE.
+* 04: KO because same input as 01
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(04)
+    RETURNING y   PIC 9(08).
+END-DECLARE.
+* 05: KO because same input as 02
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(08)
+    RETURNING y   PIC 9(08).
+END-DECLARE.
 
 .
