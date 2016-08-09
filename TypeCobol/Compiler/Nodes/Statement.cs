@@ -227,8 +227,8 @@ public class NextSentence: CodeElementNode<NextSentenceStatement>, Statement {
 public class Evaluate: CodeElementNode<EvaluateStatement>, Statement {
 	public Evaluate(EvaluateStatement statement): base(statement) { }
 }
-public class When: CodeElementNode<WhenConditionalExpression>, StatementCondition {
-	public When(WhenConditionalExpression statement): base(statement) { }
+public class When: CodeElementNode<WhenCondition>, StatementCondition {
+	public When(WhenCondition statement): base(statement) { }
 }
 public class WhenOther: CodeElementNode<WhenOtherCondition>, StatementCondition {
 	public WhenOther(WhenOtherCondition statement): base(statement) { }

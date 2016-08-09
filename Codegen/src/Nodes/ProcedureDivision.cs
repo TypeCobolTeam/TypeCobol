@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {
@@ -11,13 +12,12 @@ namespace TypeCobol.Codegen.Nodes {
 
 		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
 			UsingParameters = new List<InputParameter>();
-			foreach(var parameter in profile.InputParameters)
-				UsingParameters.Add(parameter);
-			int outputs = profile.OutputParameters.Count;
-			if (outputs > 0)
-				ReturningParameter = profile.OutputParameters[0];
-			if (outputs > 1)
-				System.Console.WriteLine("Cannot properly convert "+outputs+" procedure outputs to standard PROCEDURE DIVISION");
+			// TCRFUN_CODEGEN_PARAMETERS_ORDER
+			foreach(var parameter in profile.Profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(parameter.DataName));
+			foreach(var parameter in profile.Profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter.DataName));
+			foreach(var parameter in profile.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.DataName));
+			// TCRFUN_CODEGEN_RETURNING_PARAMETER
+			ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(profile.Profile.ReturningParameter.DataName);
 		}
 
 		private IList<ITextLine> _cache = null;
@@ -27,12 +27,17 @@ namespace TypeCobol.Codegen.Nodes {
 					_cache = new List<ITextLine>();
 					_cache.Add(new TextLineSnapshot(-1, "  PROCEDURE DIVISION", null));
 					int c = 0;
+					var done = new List<string>();
 					foreach(var parameter in UsingParameters) {
+						var data = parameter.ReceivingStorageArea.StorageArea as Named;
+						string name = data != null? data.Name : null;
+						if (done.Contains(name)) continue;
+						else done.Add(name);
 						string strmode = "BY REFERENCE ";
 						if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
 						string strusing = c==0? "      USING ":"            ";
 						string strname = "?ANONYMOUS?";
-						if (parameter is Named) strname = ((Named)parameter).Name;
+						if (parameter is Named) strname = name;
 						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 						c++;
 					}
@@ -45,5 +50,24 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		public bool IsLeaf { get { return false; } }
+	}
+
+	public class GeneratedParameter: InputParameter {
+//		public GeneratedParameter(ReceivingStorageArea storage): base(storage, null) {
+//			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
+//			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
+//		}
+
+		public GeneratedParameter(SymbolDefinition symbol) {
+			this.ReceivingStorageArea = CreateReceivingStorageArea(symbol);
+			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
+			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
+		}
+
+		public static ReceivingStorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {
+			if (symbol == null) return null;
+			var storage = new DataOrConditionStorageArea(new SymbolReference(symbol));
+			return new ReceivingStorageArea(StorageDataType.Any, storage);
+		}
 	}
 }

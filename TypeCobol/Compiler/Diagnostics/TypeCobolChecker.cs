@@ -59,14 +59,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
 			var fun = identifier as FunctionReference;
 			if (fun == null) return;// we only check functions
-			var def = table.GetFunction(fun.Name);
-			if (def == null) return;// ambiguity is not our job
-			if (fun.Parameters.Count > def.InputParameters.Count) {
-				var message = String.Format("Function {0} only takes {1} parameters", def.Name, def.InputParameters.Count);
+			var defs = table.GetFunction(fun.Name);
+			if (defs.Count != 1) return;// ambiguity is not our job
+			var def = defs[0];
+			if (fun.Parameters.Count > def.Profile.InputParameters.Count) {
+				var message = String.Format("Function {0} only takes {1} parameters", def.Name, def.Profile.InputParameters.Count);
 				DiagnosticUtils.AddError(e, message);
 			}
-			for (int c = 0; c < def.InputParameters.Count; c++) {
-				var expected = def.InputParameters[c];
+			for (int c = 0; c < def.Profile.InputParameters.Count; c++) {
+				var expected = def.Profile.InputParameters[c];
 				if (c < fun.Parameters.Count) {
 					var actual = fun.Parameters[c].Value;
 					if (actual is Identifier) {
@@ -77,18 +78,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 						// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect of it
 						// 2- if both are null, wee WANT it to break: in TypeCobol EVERYTHING should be typed,
 						//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
-						if (type == null || type != expected.Type) {
-							var message = String.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", def.Name, c+1, expected.Type, type);
+						if (type == null || type != expected.DataType) {
+							var message = String.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", def.Name, c+1, expected.DataType, type);
 							DiagnosticUtils.AddError(e, message);
 						}
 						var length = found[0].MemoryArea.Length;
-						if (length > expected.Length) {
-							var message = String.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", def.Name, c+1, expected.Length, length);
+						if (length > expected.MemoryArea.Length) {
+							var message = String.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", def.Name, c+1, expected.MemoryArea.Length, length);
 							DiagnosticUtils.AddError(e, message);
 						}
 					}
 				} else {
-					var message = String.Format("Function {0} is missing parameter {1} of type {2}", def.Name, c+1, expected.Type);
+					var message = String.Format("Function {0} is missing parameter {1} of type {2}", def.Name, c+1, expected.DataType);
 					DiagnosticUtils.AddError(e, message);
 				}
 			}
@@ -105,68 +106,73 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		public void OnNode(Node node, ParserRuleContext context, Program program) {
 			var header = node.CodeElement as FunctionDeclarationHeader;
-			var visibility = header.Visibility;
-			IList<InputParameter> inputs = new List<InputParameter>();
-			IList<ReceivingStorageArea> outputs = new List<ReceivingStorageArea>();
-			Node profile = null;
+			FunctionDeclarationProfile profile = null;
 			var profiles = node.GetChildren(typeof(FunctionDeclarationProfile));
 			if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
 				DiagnosticUtils.AddError(header, "Function \""+header.Name+"\" has no parameters and does nothing.");
 			else if (profiles.Count > 1)
 				foreach(var p in profiles)
 					DiagnosticUtils.AddError(p.CodeElement, "Function \""+header.Name+"\" can have only one parameters profile.");
-			else profile = profiles[0];
-			if (profile != null) {
-				var p = ((FunctionDeclarationProfile)profile.CodeElement);
-				inputs  = p.InputParameters;
-				outputs = p.OutputParameters;
-			}
-			var parametersdeclared = new List<Parameter>();
-			var linkage = node.Get("linkage");
-			if (linkage == null) {
-				if (inputs.Count > 0 || outputs.Count > 0)
-					DiagnosticUtils.AddError(header, "Missing LINKAGE SECTION for parameters declaration.");
-			} else {
-			    var data = linkage.GetChildren(typeof(DataDescriptionEntry));
-				foreach(var n in data) {
-					var d = (DataDescriptionEntry)n.CodeElement;
-					bool custom = false;//TODO
-//TODO#249					parametersdeclared.Add(new Parameter(d.DataName.Name, custom, d.DataType, d.MemoryArea.Length));
-				}
-			}
-			var inparameters = new List<Parameter>();
-			foreach(var p in inputs) {
-//TODO#249				string pname = p.DataName.Name;
-//				Parameter param = GetParameter(parametersdeclared, pname);
-//				if (param != null) inparameters.Add(param);
-//				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
-			}
-			var outparameters = new List<Parameter>();
-			foreach(var p in outputs) {
-//TODO#249				string pname = p.Name;
-//				Parameter param = GetParameter(parametersdeclared, pname);
-//				if (param != null) outparameters.Add(param);
-//				else DiagnosticUtils.AddError(profile.CodeElement, pname+" undeclared in LINKAGE SECTION.");
-			}
-			if (outparameters.Count < 1) outparameters.Add(new Parameter("return-code", false, DataType.Numeric));
-			foreach(var pd in parametersdeclared) {
-				var used = GetParameter(inparameters, pd.Name);
-				if (used == null)
-					used = GetParameter(outparameters, pd.Name);
-				if (used == null) {
-					var data = GetParameter(linkage, pd.Name);
-					DiagnosticUtils.AddError(data, pd.Name+" is not a parameter.");
-				}
-			}
-			var function = new Function(header.Name, inparameters, outparameters, visibility);
-			node.SymbolTable.EnclosingScope.Register(function);
+			else profile = (FunctionDeclarationProfile)profiles[0].CodeElement;
+
+			var filesection = node.Get("file");
+			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
+				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
+
+			CheckNoGlobalOrExternal(node.Get("data-division"));
+
+			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile.Profile);
+
+			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
+			if (functions.Count > 1)
+				DiagnosticUtils.AddError(profile, "A function with the same name and profile already exists.", context);
+			foreach(var function in functions)
+				if (!function.IsProcedure && !function.IsFunction)
+					DiagnosticUtils.AddError(profile, "\""+header.Name+"\" is neither procedure nor function.", context);
 		}
 
-		private Parameter GetParameter(IList<Parameter> parameters, string name) {
+		private void CheckNoGlobalOrExternal(Node node) {
+			if (node == null) return; // no DATA DIVISION
+			foreach(var section in node.Children) { // "storage" sections
+				foreach(var child in section.GetChildren(typeof(DataDescriptionEntry))) {
+					var data = (DataDescriptionEntry)child.CodeElement;
+					if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
+						DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
+					if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
+						DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
+				}
+			}
+		}
+
+		private void CheckEveryLinkageItemIsAParameter(Node node, ParametersProfile profile) {
+			if (node == null) return; // no LINKAGE SECTION
+			var linkage = new List<DataDescriptionEntry>();
+			var entries = node.GetChildren(typeof(DataDescriptionEntry));
+			foreach(var n in entries) linkage.Add((DataDescriptionEntry)n.CodeElement);
+			foreach(var description in linkage) {
+				var used = Validate(profile.ReturningParameter, description.Name);
+				if (used == null) used = GetParameter(profile.InputParameters,  description.Name);
+				if (used == null) used = GetParameter(profile.OutputParameters, description.Name);
+				if (used == null) used = GetParameter(profile.InoutParameters,  description.Name);
+				if (used == null) {
+					var data = GetParameter(node, description.Name);
+					DiagnosticUtils.AddError(data, description.Name+" is not a parameter.");
+				}
+			}
+		}
+		private ParameterDescription GetParameter(IList<ParameterDescription> parameters, string name) {
+			if (name == null) return null;
 			foreach(var p in parameters)
-				if (p.Name.Equals(name)) return p;
+				if (Validate(p, name) != null) return p;
 			return null;
 		}
+		private ParameterDescription Validate(ParameterDescription parameter, string name) {
+			if (parameter != null && parameter.Name.Equals(name)) return parameter;
+			return null;
+		}
+		/// <param name="node">LINKAGE SECTION, presumably</param>
+		/// <param name="name">Parameter we want</param>
+		/// <returns>Parameter as declared in DATA DIVISION</returns>
 		private DataDescriptionEntry GetParameter(Node node, string name) {
 			var data = node.CodeElement as DataDescriptionEntry;
 //TODO#249			if (data != null && data.QualifiedName.Matches(name)) return data;
@@ -175,6 +181,40 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (found != null) return found;
 			}
 			return null;
+		}
+	}
+
+
+
+	/// <summary>Checks the TypeCobol custom functions rule: TCRFUN_NO_SECTION_OR_PARAGRAPH_IN_LIBRARY.</summary>
+	class LibraryChecker: NodeListener {
+		public IList<Type> GetCodeElements() {
+			return new List<Type> { typeof(ProcedureDivisionHeader), };
+		}
+		public void OnNode(Node node, ParserRuleContext context, Program program) {
+			var pdiv = node.CodeElement as ProcedureDivisionHeader;
+			bool isPublicLibrary = false;
+			var elementsInError = new List<CodeElement>();
+			var errorMessages = new List<string>();
+			foreach(var child in node.Children) {
+				var ce = child.CodeElement;
+				if (child.CodeElement == null) {
+					elementsInError.Add(node.CodeElement);
+					errorMessages.Add("Illegal default section in library.");
+				} else {
+					var function = child.CodeElement as FunctionDeclarationHeader;
+					if (function != null) {
+						isPublicLibrary = isPublicLibrary || function.Visibility == AccessModifier.Public;
+					} else {
+						elementsInError.Add(child.CodeElement);
+						errorMessages.Add("Illegal non-function item in library");
+					}
+				}
+			}
+			if (isPublicLibrary) {
+				for(int c = 0; c < errorMessages.Count; c++)
+					DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);
+			}
 		}
 	}
 

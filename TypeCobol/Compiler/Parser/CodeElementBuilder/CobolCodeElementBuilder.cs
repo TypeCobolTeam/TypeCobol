@@ -978,13 +978,8 @@ namespace TypeCobol.Compiler.Parser
 				entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
 			}
 // [COBOL 2002]
-			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
-				var typeClause = context.cobol2002TypeClause()[0];
-				if (typeClause.DATE() != null)
-					entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(typeClause.DATE());
-				if (typeClause.UserDefinedWord() != null)
-					entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(typeClause.UserDefinedWord());//TODO? use something other than UDW
-			}
+			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0)
+				entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause()[0]);
 // [/COBOL 2002]
 			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)
 			{
@@ -1239,7 +1234,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());
-			((ProcedureDivisionHeader)CodeElement).InputParameters = inputs;
+			((ProcedureDivisionHeader)CodeElement).UsingParameters = inputs;
 		}
 		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
 			var receiving = CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());

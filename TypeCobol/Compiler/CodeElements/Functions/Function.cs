@@ -1,28 +1,43 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿namespace TypeCobol.Compiler.CodeElements.Functions {
 
-namespace TypeCobol.Compiler.CodeElements.Functions {
+using System;
+using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 	public class Function {
 		public AccessModifier Visibility { get; private set; }
 		public QualifiedName QualifiedName { get; private set; }
-		public IList<Parameter> InputParameters { get; private set; }
-		public IList<Parameter> OutputParameters { get; private set; }
+		public ParametersProfile Profile { get; private set; }
 
-		public Parameter Result {
+		public ParameterDescription Result {
 			get {
-				if (OutputParameters.Count > 1)
-					throw new System.InvalidOperationException(QualifiedName+" has "+OutputParameters.Count+" returns");
-				return OutputParameters[0];
+				if (Profile.ReturningParameter != null) return Profile.ReturningParameter;
+				if (Profile.OutputParameters.Count == 1) return Profile.OutputParameters[0];
+				throw new System.InvalidOperationException(QualifiedName+" has "+Profile.OutputParameters.Count+" output parameters");
 			}
 		}
 
-		public Function(QualifiedName name, IList<Parameter> inputs, IList<Parameter> outputs, AccessModifier visibility = AccessModifier.Private) {
-			this.QualifiedName = name;
-			this.InputParameters  = inputs  ?? new List<Parameter>();
-			this.OutputParameters = outputs ?? new List<Parameter>();
-			this.Visibility = visibility;
+		/// <summary>Creates function.</summary>
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private)
+			: this(name, inputs, null, null, returning, visibility) { }
+		/// <summary>Creates procedure.</summary>
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts = null, AccessModifier visibility = AccessModifier.Private)
+			: this(name, inputs, outputs, inouts, null, visibility) { }
+		/// <summary>Creates functions or procedure</summary>
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private) {
+			QualifiedName = name;
+			Profile = new ParametersProfile();
+			Profile.InputParameters  = inputs  ?? new List<ParameterDescription>();
+			Profile.OutputParameters = outputs ?? new List<ParameterDescription>();
+			Profile.InoutParameters  = inouts  ?? new List<ParameterDescription>();
+			Profile.ReturningParameter = returning;
+			Visibility = visibility;
 		}
+
+		/// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
+		public bool IsProcedure { get { return Profile.ReturningParameter == null; } }
+		/// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
+		public bool IsFunction  { get { return Profile.OutputParameters.Count == 0 && Profile.InoutParameters.Count == 0; } }
 
 		public string Name { get { return QualifiedName.Head; } }
 		public string Program {
@@ -39,24 +54,19 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder(Name ?? "?");
-			str.Append('(');
-			foreach(var p in InputParameters) str.Append(p).Append(", ");
-			if (InputParameters.Count > 0) str.Length -= 2;
-			str.Append("):(");
-			foreach(var p in OutputParameters) str.Append(p).Append(", ");
-			if (OutputParameters.Count > 0) str.Length -= 2;
-			str.Append(')');
+			str.Append(Profile.ToString());
 			return str.ToString();
 		}
 	}
 
 	public class Parameter {
-		public string Name;
+		public DataName Name;
 		public DataType Type;
 		public int Length;
 		public bool IsCustom;
 
-		public Parameter(string name, bool isCustom, DataType type, int length=int.MaxValue) {
+		public Parameter(DataName name): this(name, false, null, int.MaxValue) { }
+		public Parameter(DataName name, bool isCustom, DataType type, int length=int.MaxValue) {
 			this.Name = name;
 			this.Type   = type;
 			this.Length = length;
@@ -76,19 +86,7 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		}
 
 		public override string ToString() {
-			return (Name ?? "?")+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
-		}
-	}
-	public class CallParameter: Parameter {
-		public string Value { get; private set; }
-		public bool ByReference { get; private set; }
-		public CallParameter(string Value, bool ByReference = true)
-		  : base (null, false, null) {
-			this.Value = Value;
-			this.ByReference = ByReference;
-		}
-		public string Mode {
-			get { return ByReference?"REFERENCE":"CONTENT"; }
+			return (Name==null? "?":Name.Name)+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
 		}
 	}
 

@@ -507,10 +507,17 @@ tokens
     XML_SCHEMA,
     YYYYDDD,
     YYYYMMDD,
-// [TYPECOBOL]
+// [COBOL2002]
 	TYPEDEF,
 	STRONG,
-	UNSAFE
+// [/COBOL2002]
+// [TYPECOBOL]
+	DECLARE,
+	END_DECLARE,
+	UNSAFE,
+	PUBLIC,
+	PRIVATE,
+	INOUT,
 // [/TYPECOBOL]
 }
 
@@ -1989,10 +1996,19 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     XML_DECLARATION |
     XML_SCHEMA |
     YYYYDDD |
-    YYYYMMDD |
+    YYYYMMDD
+
+// [COBOL2002]
+	| TYPEDEF
+	| STRONG
+// [/COBOL2002]
 // [TYPECOBOL]
-	TYPEDEF |
-	STRONG
+	| DECLARE
+	| END_DECLARE
+	| UNSAFE
+	| PUBLIC
+	| PRIVATE
+	| INOUT
 // [/TYPECOBOL]
 );
 
@@ -2010,7 +2026,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
 // -- 1.1 Character decoding  at compile time --
 
 // p5: Enterprise COBOL provides the CODEPAGE compiler option for specifying a
-// coded character set for use at compile time and run time for code-page-sensitive
+// coded character set for use at compile time and run time  for code-page-sensitive
 // elements, such as:
 // - The encoding of literals in the source program
 // - The default encoding for data items described with USAGE DISPLAY or

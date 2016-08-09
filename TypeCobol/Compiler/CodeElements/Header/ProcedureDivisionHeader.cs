@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -22,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// LINKAGE SECTION of the called subprogram or invoked method.
 		/// The argument receiving mode can be : BY REFERENCE or BY VALUE
 		/// </summary>
-		public IList<InputParameter> InputParameters { get; set; }
+		public IList<InputParameter> UsingParameters { get; set; }
 
 		/// <summary>
 		/// The RETURNING phrase specifies a data item that is to receive the program or
@@ -33,13 +34,13 @@ namespace TypeCobol.Compiler.CodeElements
 		public ReceivingStorageArea ReturningParameter { get; set; }
 
 		public override string ToString() {
-			if (InputParameters == null && ReturningParameter == null)
+			if (UsingParameters == null && ReturningParameter == null)
 				return base.ToString();
 
 			StringBuilder sb = new StringBuilder(base.ToString());
-			if (InputParameters != null) {
+			if (UsingParameters != null) {
 				sb.Append("- InputParameters =");
-				foreach (InputParameter inputParam in InputParameters) {
+				foreach (InputParameter inputParam in UsingParameters) {
 					sb.Append(' ');
 					if (inputParam.ReceivingMode != null) {
 						sb.Append(inputParam.ReceivingMode);

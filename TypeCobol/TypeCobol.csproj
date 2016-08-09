@@ -141,7 +141,7 @@
     <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
     <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationHeader.cs" />
     <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationProfile.cs" />
-    <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationEnd.cs" />
+    <Compile Include="Compiler\CodeElements\Functions\Parameters.cs" />
     <Compile Include="Compiler\CodeElements\Header\UseStatement.cs" />
     <Compile Include="Compiler\CodeElements\StatementElement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\AddStatement.cs" />

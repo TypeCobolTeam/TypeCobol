@@ -29,13 +29,7 @@ namespace TypeCobol.Compiler.Parser
 			if (contexts == null) return null;
 			IList<InputParameter> inputParameters = new List<InputParameter>();
 			foreach (var context in contexts) {
-				SyntaxProperty<ReceivingMode> receivingMode = null;
-				if (context.REFERENCE() != null) {
-					receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
-				} else
-				if (context.VALUE() != null) {
-					receivingMode = new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
-				}
+				SyntaxProperty<ReceivingMode> receivingMode = CreateReceivingMode(context);
 				foreach (var storageAreaContext in context.storageArea2()) {
 					var inputParameter = new InputParameter {
 						ReceivingMode = receivingMode,
@@ -46,6 +40,11 @@ namespace TypeCobol.Compiler.Parser
 				}
 			}
 			return inputParameters;
+		}
+		private SyntaxProperty<ReceivingMode> CreateReceivingMode(CodeElementsParser.ProgramInputParametersContext context) {
+			if (context.REFERENCE() != null) return new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
+			if (context.VALUE() != null) return new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
+			return null;
 		}
 
 		  //////////////////////

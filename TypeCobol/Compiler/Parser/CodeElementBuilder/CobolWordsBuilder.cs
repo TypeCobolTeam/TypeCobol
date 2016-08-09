@@ -95,6 +95,13 @@ namespace TypeCobol.Compiler.Parser
 			Token token = ParseTreeUtils.GetFirstToken(context);
 			return new AlphanumericValue(token);
 		}
+// [COBOL 2002]
+		internal AlphanumericValue CreateAlphanumericValue(CodeElementsParser.Cobol2002TypeClauseContext context) {
+			var result = CreateAlphanumericValue(context.DATE());
+			if (result != null) return result;
+			return CreateAlphanumericValue(context.UserDefinedWord());
+		}
+// [/COBOL 2002]
 		internal AlphanumericValue CreateAlphanumericValue(ParserRuleContext context) {
 			Token token = ParseTreeUtils.GetFirstToken(context);
 			if (token == null) return null;

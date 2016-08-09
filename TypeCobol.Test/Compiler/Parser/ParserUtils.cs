@@ -14,6 +14,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -153,6 +154,7 @@ namespace TypeCobol.Test.Compiler.Parser
             str.AppendLine();
 // [TYPECOBOL]
 			Dump(str, program.SymbolTable.CustomTypes);
+			Dump(str, program.SymbolTable.Functions);
 // [/TYPECOBOL]
             Dump(str, program.SymbolTable);
             return str;
@@ -220,12 +222,47 @@ namespace TypeCobol.Test.Compiler.Parser
 			}
 			if (c==0) str.Length -= header.Length;
 		}
-
 		private static void DumpInTypeDef(StringBuilder str, DataDescriptionEntry entry, int indent) {
 			for (int i=0; i<indent; i++) str.Append("  ");
 			str.Append(" - ").AppendLine(entry.ToString());
 //TODO#249			foreach(var sub in entry.Subordinates)
 //				DumpInTypeDef(str, sub, indent+1);
+		}
+
+		private static void Dump(StringBuilder str, IList<Function> functions) {
+			if (functions == null || functions.Count < 1) return;
+			str.AppendLine("FUNCTIONS:");
+			foreach(var function in functions) {
+				str.Append(" £ ").Append(function.Name).Append(':').Append(function.Visibility);
+				str.AppendLine();
+				foreach(var parameter in function.Profile.InputParameters) {
+					str.Append("        in: ");
+					Dump(str, parameter);
+					str.AppendLine();
+				}
+				foreach(var parameter in function.Profile.OutputParameters) {
+					str.Append("       out: ");
+					Dump(str, parameter);
+					str.AppendLine();
+				}
+				foreach(var parameter in function.Profile.InoutParameters) {
+					str.Append("        io: ");
+					Dump(str, parameter);
+					str.AppendLine();
+				}
+				if (function.Profile.ReturningParameter != null) {
+					str.Append("    return: ");
+					Dump(str, function.Profile.ReturningParameter);
+					str.AppendLine();
+				}
+			}
+		}
+		private static void Dump(StringBuilder str, ParameterDescription parameter) {
+			str.Append(parameter.Name).Append(':');
+			if (parameter.CustomType != null) str.Append(parameter.CustomType);
+			else
+			if (parameter.Picture != null) str.Append(parameter.Picture);
+			else str.Append("?");
 		}
 // [/TYPECOBOL]
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeCobol.Codegen.Skeletons.Templates;
 using TypeCobol.Compiler.CodeElements.Functions;
+using TypeCobol.Codegen;
 
 namespace TypeCobol.Codegen.Config {
 
@@ -83,23 +84,24 @@ namespace TypeCobol.Codegen.Config {
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
 			input = skeleton.Patterns[1].Template;
-			expected = 
+			expected =
 "01 RETURN-CODE PIC X(08).\n";
 			Assert.AreEqual(expected, solver.Replace(input, null, "%"));
 
 			input = skeleton.Patterns[2].Template;
-			expected = 
-"01 fun-RESULT PIC 9(8).\n";
-			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
-
-			input = skeleton.Patterns[3].Template;
-			expected = 
+//			expected =
+//"01 fun-RESULT PIC 9(8).\n";
+//			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
+//
+//			input = skeleton.Patterns[3].Template;
+			expected =
 "IF mylibcpy-POINTER-TABLE = LOW_VALUE\n"+
 "    CALL mylib USING mylibcpy\n"+
 "END-IF\n";
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
-			input = skeleton.Patterns[4].Template;
+			input = skeleton.Patterns[3].Template;
+//			input = skeleton.Patterns[4].Template;
 			variables = new Dictionary<string,object> { {"function", RazorFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
 			expected =
 "CALL fun USING\n"+
@@ -120,24 +122,41 @@ namespace TypeCobol.Codegen.Config {
 		private class RazorFactory {
 			public static Function Create(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
-					new List<Parameter>() {
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric),
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 3),
+					new List<ParameterDescription>() {
+						new RazorParameter(null),
+						new RazorParameter(null, 3),
 					},
-					new List<Parameter>() {
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 8),
+					new List<ParameterDescription>() {
+						new RazorParameter(null, 8),
 					});
 			}
 			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
-					new List<Parameter>() {
-						new CallParameter("param1"),
-						new CallParameter("'42'", false),
+					new List<ParameterDescription>() {
+						new CallParameter {
+								Value = "param1",
+								ByReference = true,
+							},
+						new CallParameter {
+								Value = "'42'",
+								ByReference = false,
+							},
 					},
-					new List<Parameter>() {
-						new Parameter(null, false, TypeCobol.Compiler.CodeElements.DataType.Numeric, 8),
+					new List<ParameterDescription>() {
+						new RazorParameter(null, 8),
 					});
 			}
+		}
+		private class RazorParameter: ParameterDescription {
+			public RazorParameter(string name, int length=int.MaxValue) {
+				DataName = new GeneratedSymbolDefinition(name);
+//				Picture = "PIC 9("+length+")";
+			}
+		}
+		private class GeneratedSymbolDefinition: Compiler.CodeElements.SymbolDefinition {
+			private string name;
+			public GeneratedSymbolDefinition(string name): base(null) { this.name = name; }
+			public override string Name { get { return name; } }
 		}
 
 	}

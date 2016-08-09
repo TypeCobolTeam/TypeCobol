@@ -82,6 +82,7 @@ namespace TypeCobol.Compiler.CodeElements
 			get {
 				if (CodeElement is ProgramIdentification) return ((ProgramIdentification)CodeElement).ProgramName.Name;
 				if (CodeElement is DataDivisionHeader) return "data-division";
+				if (CodeElement is FileSectionHeader) return "file";
 				if (CodeElement is LinkageSectionHeader) return "linkage";
 				if (CodeElement is LocalStorageSectionHeader) return "local-storage";
 				if (CodeElement is WorkingStorageSectionHeader) return "working-storage";
@@ -90,6 +91,8 @@ namespace TypeCobol.Compiler.CodeElements
 				if (CodeElement is EnvironmentDivisionHeader) return "environment-division";
 				if (CodeElement is ProcedureDivisionHeader) return "procedure-division";
 				if (CodeElement is ParagraphHeader) return ((ParagraphHeader)CodeElement).ParagraphName.Name;
+				if (CodeElement is FunctionDeclarationHeader) return ((FunctionDeclarationHeader)CodeElement).Name.ToString();
+				if (CodeElement is FunctionDeclarationProfile) return "profile";
 				return null;
 			}
 		}
@@ -109,7 +112,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 		public Node Get(string uri) {
-			if (URI != null && URI.EndsWith(uri)) return this;
+			if (URI != null && ( URI.Equals(uri) || URI.EndsWith("."+uri) )) return this;
 			foreach(var child in Children) {
 				var found = child.Get(uri);
 				if (found != null) return found;
@@ -263,9 +266,9 @@ namespace TypeCobol.Compiler.CodeElements
 /*			foreach(var id in s.Identifiers) {
 				var reference = id as FunctionReference;
 				if (reference == null) continue;
-                var declaration = table.GetFunction(reference.Name);
-				if (declaration == null) continue; // undefined symbol, not our job
-                functions.Add(CreateFrom(reference, declaration));
+                var declaration = table.GetFunction(reference.Name);//TODO#245 get using profile
+				if (declaration.Count != 1) continue; // ambiguity or undefined symbol, not our job
+                functions.Add(CreateFrom(reference, declaration[0]));
 			}
 			if (functions.Count < 1) return null;
 		    if (ReturnFirstFunctionOnly)
@@ -280,28 +283,28 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 /*
 		private Function CreateFrom(FunctionReference reference, Function declaration) {
-			var parameters = new List<Parameter>();
-			for(int c = 0; c < declaration.InputParameters.Count; c++) {
-				var declared = declaration.InputParameters[c];
+			var parameters = new List<ParameterDescription>();
+			parameters.AddRange(declaration.Profile.InputParameters);
+			parameters.AddRange(declaration.Profile.InoutParameters);
+			parameters.AddRange(declaration.Profile.OutputParameters);
+			var usings = new List<ParameterDescription>();
+			for(int c = 0; c < parameters.Count; c++) {
+				var declared = parameters[c];
 				string value = "SPACE";
 				bool byReference = false;
-				Parameter merged;
 				try {
 					var referenced = reference.Parameters[c];
 					value = referenced.Value.ToString();
 					byReference = referenced.Value is Identifier;
 				} catch(System.ArgumentOutOfRangeException) { }
-				merged = new CallParameter(value, byReference);
-				merged.Type = declared.Type;
-				merged.Length = declared.Length;
-				merged.IsCustom = declared.IsCustom;
-				parameters.Add(merged);
+				var called = new CallParameter();
+				called.ByReference = byReference;
+				called.Value = value;
+				usings.Add(called);
 			}
-			return new Function(declaration.QualifiedName, parameters, declaration.OutputParameters);
+// HEAD			return new Function(declaration.QualifiedName, parameters, declaration.OutputParameters);
+// master		return new Function(declaration.QualifiedName, usings, declaration.Profile.ReturningParameter);
 		}
 */
-		private Functions.CallParameter CreateFrom(Functions.Parameter parameter, string value, bool byReference) {
-			throw new System.NotImplementedException();
-		}
 	}
 }

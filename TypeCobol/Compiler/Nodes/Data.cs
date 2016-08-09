@@ -29,9 +29,9 @@ public class LinkageSection: CodeElementNode<LinkageSectionHeader>, DataSection 
 	public override string ID { get { return "linkage"; } }
 }
 
-public class DataDefinition: CodeElementNode<DataDescriptionEntry> {
-	public DataDefinition(DataDescriptionEntry data): base(data) { }
-	public override string ID { get { return CodeElement.QualifiedName.ToString(); } }
+public class DataDefinition: CodeElementNode<DataDefinitionEntry> {
+	public DataDefinition(DataDefinitionEntry data): base(data) { }
+	public override string ID { get { return CodeElement.DataName.Name; } }
 }
 
 

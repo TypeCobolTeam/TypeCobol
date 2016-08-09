@@ -234,7 +234,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
 			var found = table.Get(identifier.Name);
 			if (found.Count < 1) {
-				if (table.GetFunction(identifier.Name) == null)
+				if (table.GetFunction(identifier.Name).Count < 1)
 					DiagnosticUtils.AddError(e, "Symbol "+identifier.Name+" is not referenced");
 			}
 			if (found.Count > 1)

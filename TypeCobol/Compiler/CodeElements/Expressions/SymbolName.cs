@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Name of the symbol
         /// </summary>
-        public string Name { get { return NameLiteral.Value; } }
+        public virtual string Name { get { return NameLiteral.Value; } }
 
         /// <summary>
         /// Role of this symbol Token
@@ -96,6 +96,9 @@ namespace TypeCobol.Compiler.CodeElements
         public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolDefinition, type)
         { }
+
+		public SymbolDefinition(SymbolReference symbol)
+			: this(symbol.NameLiteral, symbol.Type) { }
     }
 
     /// <summary>
@@ -109,6 +112,9 @@ namespace TypeCobol.Compiler.CodeElements
             IsAmbiguous = false;
             IsQualifiedReference = false;
         }
+
+		public SymbolReference(SymbolDefinition symbol)
+			: this(symbol.NameLiteral, symbol.Type) { }
 
         /// <summary>
         /// True of the type of the symbol reference is ambiguous 

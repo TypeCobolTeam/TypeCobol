@@ -43,5 +43,8 @@ namespace TypeCobol.Tools
 			return instances;
 		}
 
+		public static IEnumerable<T> GetValues<T>() {
+			return (T[])Enum.GetValues(typeof(T));
+		}
 	}
 }

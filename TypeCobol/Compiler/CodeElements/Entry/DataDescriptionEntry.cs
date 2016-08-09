@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	/// - DataRenamesEntry
 	/// - DataConditionEntry
 	/// </summary>
-	public abstract class DataDefinitionEntry: CodeElement
+	public abstract class DataDefinitionEntry: CodeElement, Named
 	{
 		public DataDefinitionEntry(CodeElementType codeElementType): base(codeElementType) { }
 
@@ -59,6 +59,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// Unreferenced data-names need not be uniquely defined.
 		/// </summary>
 		public SymbolDefinition DataName { get; set; }
+
+		public string Name { get { return DataName != null? DataName.Name : null; } }
 	}
 
 	/// <summary>

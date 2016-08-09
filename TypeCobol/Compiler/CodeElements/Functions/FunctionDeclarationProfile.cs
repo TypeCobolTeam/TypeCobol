@@ -1,26 +1,46 @@
-﻿using System.Collections.Generic;
+﻿namespace TypeCobol.Compiler.CodeElements.Functions {
 
-namespace TypeCobol.Compiler.CodeElements {
+using System;
+using System.Collections.Generic;
 
-	public class FunctionDeclarationProfile: StatementElement, Returning {
-		public FunctionDeclarationProfile()
-			: base(CodeElementType.FunctionDeclarationHeader, StatementType.ProcedureDivisionHeader)
-		{
-			InputParameters = new List<InputParameter>();
-			OutputParameters = new List<ReceivingStorageArea>();
-		}
+public class FunctionDeclarationProfile: CodeElement/*, Returning*/ {
 
-		public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
-			this.InputParameters = other.InputParameters;
-			this.ReturningParameter = other.ReturningParameter;
-			this.ConsumedTokens = other.ConsumedTokens;
-		}
+	/// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
+	public SyntaxProperty<Passing.Mode> Input { get; internal set; }
+	/// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
+	public SyntaxProperty<Passing.Mode> Output { get; internal set; }
+	/// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
+	public SyntaxProperty<Passing.Mode> Inout { get; internal set; }
+	/// <summary>RETURNING dataname.</summary>
+	public SyntaxProperty<Passing.Mode> Returning { get; internal set; }
 
-		/// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
-		public IList<InputParameter> InputParameters  { get; internal set; }
-		/// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
-		public IList<ReceivingStorageArea> OutputParameters { get; internal set; }
-		/// <summary>RETURNING dataname</summary>
-		public ReceivingStorageArea ReturningParameter { get; set; }
+	public ParametersProfile Profile { get; private set; }
+
+	public FunctionDeclarationProfile(): base(CodeElementType.ProcedureDivisionHeader) {
+		Profile = new ParametersProfile();
 	}
+
+	/// <summary>Only called if there are no INPUT/OUTPUT/INOUT/USING parameters.</summary>
+	public FunctionDeclarationProfile(ProcedureDivisionHeader other): this() {
+		if (other.UsingParameters != null && other.UsingParameters.Count > 0)
+			throw new System.InvalidOperationException("Implementation error #245");
+		if (other.ReturningParameter != null) {
+			// we might have a RETURNING parameter to convert, but only if there is neither
+			// PICTURE nor TYPE clause for the returning parameter in the function declaration.
+			// however, this is as syntax error.
+			Profile.ReturningParameter = new ParameterDescription();
+			var data = other.ReturningParameter.StorageArea as DataOrConditionStorageArea;
+			if (data != null) {
+				Profile.ReturningParameter.DataName = CreateSymbolDefinition(data.SymbolReference);
+				// Picture will remain empty, we can't do anything about it
+			}
+		}
+		this.ConsumedTokens = other.ConsumedTokens;
+	}
+
+	private SymbolDefinition CreateSymbolDefinition(SymbolReference reference) {
+		return new SymbolDefinition(reference.NameLiteral, reference.Type);
+	}
+}
+
 }
