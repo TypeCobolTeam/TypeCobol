@@ -138,19 +138,17 @@ namespace TypeCobol.Test {
             TestParser.Check_BeforeAfterInsertion();
             TestParser.Check_BeforeAfterInsertionBatched();
 
-            int nbOfTests = 0;
-            foreach (string directory in Directory.GetDirectories(sampleRoot))
-            {
-                var dirname = Path.GetFileName(directory);
-                string[] extensions = {"*.cbl"};
-                if (dirname == "Programs") extensions = new[] {"*.pgm", "*.cpy"};
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) +
-                                         "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
-                folderTester.Test();
-                nbOfTests += folderTester.GetTestCount();
-                Console.Write("\n");
-            }
+			int nbOfTests = 0;
+			foreach (string directory in Directory.GetDirectories(sampleRoot)) {
+				var dirname = Path.GetFileName(directory);
+				string[] extensions = {"*.cbl"};
+				if (dirname.Equals("Programs")) extensions = new[] {"*.pgm", "*.cbl", "*.cpy" };
+				Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+				folderTester.Test();
+				nbOfTests += folderTester.GetTestCount();
+				Console.WriteLine();
+			}
 
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
