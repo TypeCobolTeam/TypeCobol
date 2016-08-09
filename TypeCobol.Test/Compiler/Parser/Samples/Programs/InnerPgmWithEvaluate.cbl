@@ -1,4 +1,4 @@
-﻿*Don't except any errors here.
+﻿* issue #263
  IDENTIFICATION DIVISION.
  PROGRAM-ID. MYPROGA.
  PROCEDURE DIVISION.
@@ -14,7 +14,7 @@
      END-EVALUATE
      EVALUATE BB
         WHEN 'C'
-		 continue
+         continue
      END-EVALUATE                                               
      .
  END PROGRAM.

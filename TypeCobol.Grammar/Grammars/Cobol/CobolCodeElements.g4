@@ -442,7 +442,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-              END PROGRAM programNameReference2 PeriodSeparator;
+              END PROGRAM programNameReference2? PeriodSeparator;
 
 // p85 : program-name can be specified either as a user-defined word or in an alphanumeric literal. 
 //       program-name cannot be a figurative constant. 
