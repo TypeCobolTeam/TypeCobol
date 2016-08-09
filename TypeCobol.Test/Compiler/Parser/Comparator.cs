@@ -89,15 +89,22 @@ namespace TypeCobol.Test.Compiler.Parser
         private string _sampleRoot;
         private string _resultsRoot;
 
-        internal FolderTester(string sampleRoot, string resultsRoot,string folder, string[] extensions, string[] ignored = null, bool deep = true)
-        {
-            _sampleRoot = sampleRoot;
-            _resultsRoot = resultsRoot;
+		internal FolderTester(string sampleRoot, string resultsRoot,string folder, string[] extensions, string[] ignored = null, bool deep = true) {
+			_sampleRoot = sampleRoot;
+			_resultsRoot = resultsRoot;
 
-            this.extensions = extensions;
-            string[] samplePaths = Directory.GetFiles(folder, extensions[0], (deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
-            samples = Filter(samplePaths, (ignored ?? new string[0]));
-        }
+			this.extensions = extensions;
+			var option = deep? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			string[] samples = new string[0];
+			foreach(var ext in this.extensions) {
+				string[] paths = Directory.GetFiles(folder, ext, option);
+				var tmp = new string[samples.Length+paths.Length];
+				samples.CopyTo(tmp, 0);
+				paths.CopyTo(tmp, samples.Length);
+				samples = tmp;
+			}
+			this.samples = Filter(samples, (ignored ?? new string[0]));
+		}
 
         private IList<string> Filter(string[] paths, string[] ignored)
         {
