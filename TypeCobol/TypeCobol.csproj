@@ -151,7 +151,6 @@
     <Compile Include="Compiler\CodeElements\Statement\SubstractStatement.cs" />
     <Compile Include="Compiler\CodeElements\CodeElementEnd.cs" />
     <Compile Include="Compiler\CodeModel\Memory.cs" />
-    <Compile Include="Compiler\CodeModel\Node.cs" />
     <Compile Include="Compiler\CodeModel\SyntaxTree.cs" />
     <Compile Include="Compiler\CodeModel\SymbolUser.cs" />
     <Compile Include="Compiler\Diagnostics\Cobol85Checkers.cs" />
@@ -228,7 +227,6 @@
     <Compile Include="Compiler\CodeElements\StatementEnd\DeleteStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\DivideStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\EvaluateStatementEnd.cs" />
-    <Compile Include="Compiler\CodeElements\StatementEnd\IfStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\InvokeStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\MultiplyStatementEnd.cs" />
     <Compile Include="Compiler\CodeElements\StatementEnd\PerformStatementEnd.cs" />
@@ -316,7 +314,6 @@
     <Compile Include="Compiler\File\LocalCobolFile.cs" />
     <Compile Include="Compiler\File\LocalDirectoryLibrary.cs" />
     <Compile Include="Compiler\File\SourceFileProvider.cs" />
-    <Compile Include="Compiler\Generator\TypeCobolGenerator.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolCodeElementBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementChangedEvent.cs" />
     <Compile Include="Compiler\Parser\CodeElementsLine.cs" />

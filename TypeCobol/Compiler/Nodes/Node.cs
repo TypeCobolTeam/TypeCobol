@@ -11,19 +11,17 @@ using TypeCobol.Compiler.CodeElements;
 /// - parent/children relations
 /// - unique identification accross the tree.
 /// </summary>
-public abstract class Node {
-	private readonly IList<Node> children_ = new List<Node>();
+public abstract class Node<T> where T:CodeElement {
+	protected readonly IList<Node<CodeElement>> children = new List<Node<CodeElement>>();
 	/// <summary>Children Nodes</summary>
-	public IList<Node> Children {
-		get { return children_; }
-		private set { throw new System.InvalidOperationException(); }
-	}
+	public virtual IList<Node<CodeElement>> GetChildren() { return children; }
+
 	/// <summary>Parent node.</summary>
-	public Node Parent { get; internal set; }
+	public Node<CodeElement> Parent { get; internal set; }
 	/// <summary>First Node with null Parent among the parents of this Node.</summary>
-	public Node Root {
+	public Node<CodeElement> Root {
 		get {
-			var current = this;
+			var current = (Node<CodeElement>)(object)this;
 			while (current.Parent != null) current = current.Parent;
 			return current;
 		}
@@ -31,40 +29,38 @@ public abstract class Node {
 	/// <summary>Add or Insert a Node as a child of this Node.</summary>
 	/// <param name="child">Node to be added to Children.</param>
 	/// <param name="index"></param>
-	public void Add(Node child, int index = -1) {
-		if (index < 0) children_.Add(child);
-		else children_.Insert(index, child);
-		child.Parent = this;
+	public void Add<T>(Node<T> child, int index = -1) where T:CodeElement {
+		var variant = (Node<CodeElement>)(object)child;
+		if (index < 0) children.Add(variant);
+		else children.Insert(index, variant);
+		child.Parent = (Node<CodeElement>)(object)this;
 	}
 	/// <summary>Delete this node from Parent.Children, and set Parent to null.</summary>
 	public void Remove() {
-		Parent.children_.Remove(this);
+		Parent.children.Remove((Node<CodeElement>)(object)this);
 		Parent = null;
 	}
 
-	/// <summary>Node unique identifier (scope: the tree this Node belongs to)</summary>
-	public abstract string URI { get; }
-	/// <summary>Get this node or one of its children that has a given URI.</summary>
-	/// <param name="uri">Node unique identifier to search for</param>
-	/// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
-	public abstract Node Get(string uri);
-}
+	public IList<Node<CodeElement>> GetChildren(System.Type type) {
+		var results = new List<Node<CodeElement>>();
+		foreach(var child in GetChildren())
+			if (child.CodeElement != null && Tools.Reflection.IsTypeOf(child.CodeElement.GetType(), type))
+				results.Add(child);
+		return results;
+	}
 
 
 
-/// <summary>A Node which holds a CodeElement as its data.</summary>
-/// <typeparam name="T">Type of CodeElement, so data can be accessed in a strongly-typed way.</typeparam>
-public abstract class CodeElementNode<T>: Node where T:CodeElement {
 	/// <summary>Node strongly typed data</summary>
 	public T CodeElement { get; internal set; }
-	public CodeElementNode(T CodeElement) { this.CodeElement = CodeElement; }
+	public Node(T CodeElement) { this.CodeElement = CodeElement; }
 
 	/// <summary>Non-unique identifier of this node, according CodeElement type and name if applicable.</summary>
 	public virtual string ID {
 		get { return null; }
 	}
-
-	public override string URI {
+	/// <summary>Node unique identifier (scope: the tree this Node belongs to)</summary>
+	public string URI {
 		get {
 			if (ID == null) return null;
 			string puri = Parent == null?null:Parent.URI;
@@ -72,50 +68,54 @@ public abstract class CodeElementNode<T>: Node where T:CodeElement {
 		return puri+'.'+ID;
 		}
 	}
-
-	public override Node Get(string uri) {
-		if (URI != null && URI.EndsWith(uri)) return this;
-		foreach(var child in Children) {
+	/// <summary>Get this node or one of its children that has a given URI.</summary>
+	/// <param name="uri">Node unique identifier to search for</param>
+	/// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
+	public Node<CodeElement> Get(string uri) {
+		if (URI != null && URI.EndsWith(uri)) return (Node<CodeElement>)(object)this;
+		foreach(var child in children) {
 			var found = child.Get(uri);
 			if (found != null) return found;
 		}
 		return null;
 	}
+
+	public CodeModel.SymbolTable SymbolTable { get; set; }
 }
 
 
 
 /// <summary>Root of any Node tree, with null CodeElement.</summary>
-public class Root: CodeElementNode<CodeElement> {
+public class Root: Node<CodeElement> {
 	public Root(): base(null) { }
 }
 
-public class Program: CodeElementNode<ProgramIdentification> {
+public class Program: Node<ProgramIdentification> {
 	public Program(ProgramIdentification identification): base(identification) { }
 	public override string ID { get { return CodeElement.ProgramName.Name; } }
 }
 
-public class Class: CodeElementNode<ClassIdentification> {
+public class Class: Node<ClassIdentification> {
 	public Class(ClassIdentification identification): base(identification) { }
 	public override string ID { get { return CodeElement.ClassName.Name; } }
 }
 
-public class Factory: CodeElementNode<FactoryIdentification> {
+public class Factory: Node<FactoryIdentification> {
 	public Factory(FactoryIdentification identification): base(identification) { }
 	public override string ID { get { return "TODO#248"; } }
 }
 
-public class Method: CodeElementNode<MethodIdentification> {
+public class Method: Node<MethodIdentification> {
 	public Method(MethodIdentification identification): base(identification) { }
 	public override string ID { get { return CodeElement.MethodName.Name; } }
 }
 
-public class Object: CodeElementNode<ObjectIdentification> {
+public class Object: Node<ObjectIdentification> {
 	public Object(ObjectIdentification identification): base(identification) { }
 	public override string ID { get { return "TODO#248"; } }
 }
 
-public class End: CodeElementNode<CodeElementEnd> {
+public class End: Node<CodeElementEnd> {
 	public End(CodeElementEnd end): base(end) { }
 	public override string ID { get { return "end"; } }
 }

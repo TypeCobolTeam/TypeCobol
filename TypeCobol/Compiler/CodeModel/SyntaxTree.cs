@@ -1,38 +1,35 @@
-﻿using Antlr4.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TypeCobol.Compiler.CodeElements;
+﻿namespace TypeCobol.Compiler.CodeModel {
 
-namespace TypeCobol.Compiler.CodeModel {
+	using Antlr4.Runtime;
+	using System;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.Nodes;
+	using TypeCobol.Compiler.CodeElements;
+
+
 
 	public class SyntaxTree {
 		/// <summary>Tree root</summary>
-		public Node Root { get; private set; }
+		public Root Root { get; private set; }
 		/// <summary>Branch currently in construction</summary>
-		private Stack<Tuple<Node,ParserRuleContext>> Branch = new Stack<Tuple<Node,ParserRuleContext>>();
+		private Stack<Tuple<Node<CodeElement>,ParserRuleContext>> Branch;
 
-		public SyntaxTree(): this(new Node(null), null) { }
-		public SyntaxTree(Node root, ParserRuleContext context) {
-			if (root == null) throw new ArgumentNullException();
-			this.Root = root;
-			Branch.Push(new Tuple<Node,ParserRuleContext>(root, context));
+		public SyntaxTree(): this(new Root(), null) { }
+		public SyntaxTree(Root root, ParserRuleContext context) {
+			this.Root = root ?? new Root();
+			Branch = new Stack<Tuple<Node<CodeElement>,ParserRuleContext>>();
+			Branch.Push(new Tuple<Node<CodeElement>,ParserRuleContext>(Root, context));
 		}
 		/// <returns>Tip of Branch.</returns>
-		public Node CurrentNode {
-			get { return Branch.Peek().Item1; }
-			private set { throw new InvalidOperationException(); }
-		}
-		public ParserRuleContext CurrentContext {
-			get { return Branch.Peek().Item2; }
-			private set { throw new InvalidOperationException(); }
-		}
+		public Node<CodeElement> CurrentNode { get { return Branch.Peek().Item1; } }
+		public ParserRuleContext CurrentContext { get { return Branch.Peek().Item2; } }
+
 		/// <summary>Add a node as the Head's first child.</summary>
 		/// <param name="child">Node to add</param>
 		/// <param name="context">Context child was created from</param>
-		public void Enter(Node child, ParserRuleContext context) {
+		public void Enter<T>(Node<T> child, ParserRuleContext context) where T:CodeElement {
 			CurrentNode.Add(child);
-			Branch.Push(new Tuple<Node,ParserRuleContext>(child, context));
+			Branch.Push(new Tuple<Node<CodeElement>,ParserRuleContext>((Node<CodeElement>)(object)child, context));
 		}
 		/// <summary>Head's parent becomes the new Head.</summary>
 		/// <returns>Exited node</returns>
@@ -48,20 +45,20 @@ namespace TypeCobol.Compiler.CodeModel {
 
 
 		public string ToString() {
-			var str = new StringBuilder();
+			var str = new System.Text.StringBuilder();
 			ToString(Root, str, 0);
 			return str.ToString();
 		}
-		private void ToString(Node node, StringBuilder str, int indent) {
+		private void ToString(Node<CodeElement> node, System.Text.StringBuilder str, int indent) {
 			for(int c=1; c<indent; c++) str.Append("  ");
 			str.Append("+ ").Append(node.ToString());
 			str.AppendLine();
-			foreach(var child in node.Children) ToString(child, str, indent+1);
+			foreach(var child in node.GetChildren()) ToString((Node<CodeElement>)child, str, indent+1);
 		}
 
 		internal string BranchToString() {
-			var str = new StringBuilder();
-			var reversed = new List<Node>();
+			var str = new System.Text.StringBuilder();
+			var reversed = new List<Node<CodeElement>>();
 			foreach(var node in Branch) reversed.Insert(0, node.Item1);
 			foreach(var node in reversed) str.Append(node.ToString()).Append(" > ");
 			str.Length -= 2;

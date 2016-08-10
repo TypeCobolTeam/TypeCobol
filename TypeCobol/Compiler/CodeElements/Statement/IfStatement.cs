@@ -69,4 +69,10 @@ namespace TypeCobol.Compiler.CodeElements
 	public class NextSentenceStatement : StatementElement {
 		public NextSentenceStatement() : base(CodeElementType.NextSentenceStatement, StatementType.NextSentenceStatement) { }
 	}
+
+
+
+	public class IfStatementEnd: CodeElementEnd {
+		public IfStatementEnd() : base(CodeElementType.IfStatementEnd) { }
+	}
 }

@@ -5,9 +5,9 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -51,13 +51,12 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public IList<Type> GetCodeElements()
         {
-            return new List<Type> { typeof(Receiving) };
+            return new List<Type> { typeof(CodeModel.Receiving) };
         }
 
-        public void OnNode(Node node, ParserRuleContext context, Program program)
-        {
+		public void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement {
             var ce = node.CodeElement;
-            if (ce is Receiving == false)
+            if (ce is CodeModel.Receiving == false)
                 return;
             if (ce is InitializeStatement || ce is MoveStatement || ce is ReadStatement || ce is ReleaseStatement
                                                                                             //SetStatement is not specified in our specs, but as
@@ -88,9 +87,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 */
-        }
+		}
 
-		private object GetFirstStrongDataDescriptionEntry(DataDescriptionEntry identifier,SymbolTable table) {
+		private object GetFirstStrongDataDescriptionEntry(DataDescriptionEntry identifier, CodeModel.SymbolTable table) {
 			//TODO#249 check each parent of identifier (including itself) to see if CustomType is not null and is strong
 			//         however, DataDescriptionEntry.TopLevel no longer exists ...
 			return null;
