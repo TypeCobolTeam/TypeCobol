@@ -81,6 +81,19 @@ public abstract class Node<T> where T:CodeElement {
 	}
 
 	public CodeModel.SymbolTable SymbolTable { get; set; }
+
+
+	/// <summary>Implementation of the GoF Visitor pattern.</summary>
+	public void Accept(NodeVisitor visitor) {
+		visitor.Visit(this);
+	}
+}
+
+
+
+/// <summary>Implementation of the GoF Visitor pattern.</summary>
+public interface NodeVisitor {
+	void Visit<T>(Node<T> node) where T:CodeElement;
 }
 
 

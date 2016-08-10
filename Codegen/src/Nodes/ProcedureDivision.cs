@@ -5,7 +5,7 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {
 
-	internal class ProcedureDivision: Node, Generated {
+	internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 
 		public IList<InputParameter> UsingParameters { get; private set; }
 		public ReceivingStorageArea ReturningParameter { get; private set; }

@@ -1,8 +1,9 @@
 ﻿namespace TypeCobol.Codegen.Nodes {
 
-using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Text;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.Nodes;
+	using TypeCobol.Compiler.Text;
 
 
 /// <summary>
@@ -10,7 +11,7 @@ using TypeCobol.Compiler.Text;
 /// Instead, grammar should be refactored so INPUT/OUTPUT/INOUT/RETURNING _AND_ USING parameters
 /// are created as CodeElements and put in procedure header OR function profile node only in semantic phase.
 /// </summary>
-internal class ParameterEntry: Node, Generated {
+internal class ParameterEntry: Node<CodeElement>, Generated {
 	public Compiler.CodeElements.Functions.ParameterDescription Description { get; private set; }
 	public ParameterEntry(Compiler.CodeElements.Functions.ParameterDescription description) {
 		this.Description = description;

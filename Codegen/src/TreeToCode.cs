@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using TypeCobol.Codegen.Nodes;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Text;
+﻿namespace TypeCobol.Codegen {
 
-namespace TypeCobol.Codegen {
+	using System.Collections.Generic;
+	using System.Text;
+	using TypeCobol.Codegen.Nodes;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.Nodes;
+	using TypeCobol.Compiler.Text;
+
+
 
 	public class TreeToCode: NodeVisitor {
 
@@ -26,12 +29,12 @@ namespace TypeCobol.Codegen {
 			this.Layout = layout;
 		}
 
-		public void Visit(Node node) {
+		public void Visit(Node<CodeElement> node) {
 			bool doVisitChildren = Process(node);
-			if (doVisitChildren) foreach(var child in node.Children) child.Accept(this);
+			if (doVisitChildren) foreach(var child in node.GetChildren()) child.Accept(this);
 		}
 
-		private bool Process(Node node) {
+		private bool Process(Node<CodeElement> node) {
 			string text = "";
 			var generated = node as Generated;
 			foreach(var line in node.Lines) {

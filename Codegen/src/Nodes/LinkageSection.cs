@@ -1,12 +1,14 @@
 ﻿namespace TypeCobol.Codegen.Nodes {
 
-using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Text;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.Text;
 
 
 
-internal class LinkageSection: Node, Generated {
+internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
+	public LinkageSection(): base(null) { }
+
 	private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {

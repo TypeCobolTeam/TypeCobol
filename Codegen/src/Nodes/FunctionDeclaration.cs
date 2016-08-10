@@ -6,13 +6,12 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {
 
-	internal class FunctionDeclaration: Node, Generated {
+	internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generated {
 
 		QualifiedName ProgramName = null;
 
-		public FunctionDeclaration(Node node) {
-			var header = (FunctionDeclarationHeader)node.CodeElement;
-			ProgramName = header.Name;
+		public FunctionDeclaration(Nodes.FunctionDeclaration node): base(node.CodeElement) {
+			ProgramName = node.CodeElement.Name;
 			FunctionDeclarationProfile profile = null;
 			foreach(var child in node.Children) {
 				var ce = child.CodeElement;
@@ -34,15 +33,15 @@ namespace TypeCobol.Codegen.Nodes {
 			}
 		}
 
-		private void CreateOrUpdateLinkageSection(Node node, ParametersProfile profile) {
-			var linkage = node.Get("linkage");
+		private void CreateOrUpdateLinkageSection(Nodes.FunctionDeclaration node, ParametersProfile profile) {
+			var linkage = (Compiler.Nodes.LinkageSection)node.Get("linkage");
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
-			IList<Node> data = new List<Node>();
+			IList<Compiler.Nodes.DataDescription> data = new List<Compiler.Nodes.DataDescription>();
 			if (linkage == null && parameters > 0) {
 				linkage = new LinkageSection();
 				Children.Add(linkage);
 			}
-			if (linkage != null) data = linkage.GetChildren(typeof(DataDescriptionEntry));
+			if (linkage != null) data = linkage.GetChildren();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
 			var generated = new List<string>();
 			foreach(var parameter in profile.InputParameters) {
@@ -71,9 +70,9 @@ namespace TypeCobol.Codegen.Nodes {
 			}
 		}
 
-		private bool Contains(IList<Node> data, string dataname) {
+		private bool Contains(IList<Compiler.Nodes.DataDescription> data, string dataname) {
 			foreach(var node in data)
-				if (dataname.Equals(((DataDescriptionEntry)node.CodeElement).DataName.Name))
+				if (dataname.Equals(node.CodeElement.DataName.Name))
 					return true;
 			return false;
 		}
