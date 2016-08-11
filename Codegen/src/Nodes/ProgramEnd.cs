@@ -10,12 +10,12 @@ using TypeCobol.Compiler.Text;
 internal class ProgramEnd: Compiler.Nodes.End, Generated {
 
 	private QualifiedName ProgramName;
-	public ProgramEnd(QualifiedName ProgramName): base(new ProgramEnd()) {
+	public ProgramEnd(QualifiedName ProgramName): base(new Compiler.CodeElements.ProgramEnd()) {
 		this.ProgramName = ProgramName;
 	}
 
 	private IList<ITextLine> _cache = null;
-	public override IEnumerable<ITextLine> Lines {
+	IEnumerable<ITextLine> Generated.Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();

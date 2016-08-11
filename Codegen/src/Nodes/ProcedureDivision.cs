@@ -21,7 +21,7 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private IList<ITextLine> _cache = null;
-		public override IEnumerable<ITextLine> Lines {
+		IEnumerable<ITextLine> Generated.Lines {
 			get {
 				if (_cache == null) {
 					_cache = new List<ITextLine>();

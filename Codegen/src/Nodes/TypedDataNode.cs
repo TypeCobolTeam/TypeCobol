@@ -15,7 +15,7 @@ internal class TypedDataNode: Compiler.Nodes.DataDescription, Generated {
 		: base(null) { this.Node = node; }
 
 	private IList<ITextLine> _cache = null;
-	public override IEnumerable<ITextLine> Lines {
+	IEnumerable<ITextLine> Generated.Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
@@ -41,9 +41,12 @@ internal class TypedDataNode: Compiler.Nodes.DataDescription, Generated {
 
 	private void InsertChildren(Compiler.Nodes.DataDescription type, int level, int generation) {
 		foreach(var child in type.GetChildren()) {
-			bool isCustomTypeToo = /*!(child.CodeElement is TypeDefinitionEntry) &&*/ Node.SymbolTable.IsCustomType(child.CodeElement.CustomType.Value);
-			_cache.Add(CreateDataDefinition(child, level, generation, isCustomTypeToo));
-			if (isCustomTypeToo) InsertChildren(Node.SymbolTable.GetCustomType(child.CodeElement.CustomType.Value), level+1, generation+1);
+			TypeDefinition customtype = null;
+			try { customtype = Node.SymbolTable.GetCustomType(child.CodeElement.CustomType.Value); }
+			catch(System.ArgumentException) { }//DO nothing
+			bool isCustomTypeToo = /*!(child.CodeElement is TypeDefinitionEntry) &&*/ customtype != null;
+			_cache.Add(CreateDataDefinition(child.CodeElement, level, generation, isCustomTypeToo));
+			if (isCustomTypeToo) InsertChildren(customtype, level+1, generation+1);
 		}
 	}
 

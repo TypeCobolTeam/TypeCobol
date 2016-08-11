@@ -269,18 +269,6 @@ namespace TypeCobol.Compiler.CodeModel
 			throw new System.ArgumentException(type+" is not a custom type for this scope");
 		}
 
-		public bool IsCustomType(DataType type) {
-			if (type == null) return false;
-			SymbolTable table = this;
-			while(table != null) {
-				foreach(var key in table.types.Keys)
-					if (key.Equals(type.Name))
-						return true;
-				table = table.EnclosingScope;
-			}
-			return false;
-		}
-
 
 
 		public override string ToString() {

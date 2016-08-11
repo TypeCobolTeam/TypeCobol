@@ -29,15 +29,15 @@
 			this.Layout = layout;
 		}
 
-		public void Visit(Node<CodeElement> node) {
+		public void Visit<T>(Node<T> node) where T:CodeElement {
 			bool doVisitChildren = Process(node);
 			if (doVisitChildren) foreach(var child in node.GetChildren()) child.Accept(this);
 		}
 
-		private bool Process(Node<CodeElement> node) {
+		private bool Process<T>(Node<T> node) where T:CodeElement {
 			string text = "";
 			var generated = node as Generated;
-			foreach(var line in node.Lines) {
+			foreach(var line in generated.Lines) {
 				if (generated != null)
 					// if we write generated code, we INSERT one line of code between Input lines;
 					// thus, we must decrease offset as it'll be re-increased by Write(line) and
@@ -49,7 +49,7 @@
 					WriteInputLinesUpTo(line);
 				Write(line, node.Comment);
 			}
-			return generated == null || !((Generated)node).IsLeaf;
+			return generated == null || !generated.IsLeaf;
 		}
 
 		/// <summary>

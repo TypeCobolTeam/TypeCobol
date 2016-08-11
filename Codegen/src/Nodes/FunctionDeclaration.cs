@@ -2,6 +2,7 @@
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {
@@ -10,36 +11,36 @@ namespace TypeCobol.Codegen.Nodes {
 
 		QualifiedName ProgramName = null;
 
-		public FunctionDeclaration(Nodes.FunctionDeclaration node): base(node.CodeElement) {
+		public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement) {
 			ProgramName = node.CodeElement.Name;
 			FunctionDeclarationProfile profile = null;
-			foreach(var child in node.Children) {
+			foreach(var child in node.GetChildren()) {
 				var ce = child.CodeElement;
 				if (child.CodeElement is FunctionDeclarationProfile) {
 					profile = (FunctionDeclarationProfile)child.CodeElement;
 					CreateOrUpdateLinkageSection(node, profile.Profile);
 					var pdiv = new ProcedureDivision(profile);
-					foreach(var sentence in child.Children)
-						pdiv.Children.Add(sentence);
-					Children.Add(pdiv);
+					foreach(var sentence in child.GetChildren())
+						pdiv.GetChildren().Add(sentence);
+					children.Add((Node<CodeElement>)(object)pdiv);
 				} else
 				if (child.CodeElement is FunctionDeclarationEnd) {
-					Children.Add(new TypeCobol.Codegen.Nodes.ProgramEnd(ProgramName));
+					children.Add((Node<CodeElement>)(object)new ProgramEnd(ProgramName));
 				} else {
 					// TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
 					// TCRFUN_CODEGEN_DATA_SECTION_AS_IS
-					Children.Add(child);
+					children.Add(child);
 				}
 			}
 		}
 
-		private void CreateOrUpdateLinkageSection(Nodes.FunctionDeclaration node, ParametersProfile profile) {
-			var linkage = (Compiler.Nodes.LinkageSection)node.Get("linkage");
+		private void CreateOrUpdateLinkageSection(Compiler.Nodes.FunctionDeclaration node, ParametersProfile profile) {
+			var linkage = (LinkageSection)(object)node.Get("linkage");
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
-			IList<Compiler.Nodes.DataDescription> data = new List<Compiler.Nodes.DataDescription>();
+			IList<DataDescription> data = new List<DataDescription>();
 			if (linkage == null && parameters > 0) {
 				linkage = new LinkageSection();
-				Children.Add(linkage);
+				children.Add((Node<CodeElement>)(object)linkage);
 			}
 			if (linkage != null) data = linkage.GetChildren();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
@@ -78,7 +79,7 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private IList<ITextLine> _cache = null;
-		public override IEnumerable<ITextLine> Lines {
+		IEnumerable<ITextLine> Generated.Lines {
 			get {
 				if (_cache == null) {
 					_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM

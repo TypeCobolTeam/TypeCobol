@@ -10,7 +10,7 @@ internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
 	public LinkageSection(): base(null) { }
 
 	private IList<ITextLine> _cache = null;
-	public override IEnumerable<ITextLine> Lines {
+	IEnumerable<ITextLine> Generated.Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
