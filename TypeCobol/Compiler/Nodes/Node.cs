@@ -98,6 +98,8 @@ public abstract class Node<T> where T:CodeElement {
 
 	public CodeModel.SymbolTable SymbolTable { get; set; }
 
+	public object this[string attribute] { get { return null; } }
+
 	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
 	public bool? Comment = null;
 

@@ -210,23 +210,23 @@ namespace TypeCobol.Test.Compiler.Parser
         }
 
 // [TYPECOBOL]
-		private static void Dump(StringBuilder str, IEnumerable<TypeDefinition> typedefs) {
+		private static void Dump(StringBuilder str, IEnumerable<TypeCobol.Compiler.Nodes.TypeDescription> typedefs) {
 			int c = 0;
 			string header = "CUSTOM TYPES:\n";
 			str.Append(header);
 			foreach(var typedef in typedefs) {
-				str.Append(" * ").AppendLine(typedef.DataType.Name.ToString());
-				foreach(var sub in typedef.Subordinates)
+				str.Append(" * ").AppendLine(typedef.CodeElement.DataType.Name.ToString());
+				foreach(var sub in typedef.GetChildren())
 					DumpInTypeDef(str, sub, 2);
 				c++;
 			}
 			if (c==0) str.Length -= header.Length;
 		}
-		private static void DumpInTypeDef(StringBuilder str, DataDescriptionEntry entry, int indent) {
+		private static void DumpInTypeDef(StringBuilder str, TypeCobol.Compiler.Nodes.DataDescription node, int indent) {
 			for (int i=0; i<indent; i++) str.Append("  ");
-			str.Append(" - ").AppendLine(entry.ToString());
-//TODO#249			foreach(var sub in entry.Subordinates)
-//				DumpInTypeDef(str, sub, indent+1);
+			str.Append(" - ").AppendLine(node.CodeElement.ToString());
+			foreach(var sub in node.GetChildren())
+				DumpInTypeDef(str, sub, indent+1);
 		}
 
 		private static void Dump(StringBuilder str, IList<Function> functions) {

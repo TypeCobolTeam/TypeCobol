@@ -22,13 +22,13 @@ public class FileSection: Node<FileSectionHeader>, DataSection {
 public class WorkingStorageSection: Node<WorkingStorageSectionHeader>, DataSection {
 	public WorkingStorageSection(WorkingStorageSectionHeader header): base(header) { }
 	public override string ID { get { return "working-storage"; } }
-	public virtual IList<DataDefinition> GetChildren() { return (IList<DataDefinition>)children; }
+	public virtual IList<DataDefinition<DataDefinitionEntry>> GetChildren() { return (IList<DataDefinition<DataDefinitionEntry>>)children; }
 }
 
 public class LocalStorageSection: Node<LocalStorageSectionHeader>, DataSection {
 	public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
 	public override string ID { get { return "local-storage"; } }
-	public virtual IList<DataDefinition> GetChildren() { return (IList<DataDefinition>)children; }
+	public virtual IList<DataDefinition<DataDefinitionEntry>> GetChildren() { return (IList<DataDefinition<DataDefinitionEntry>>)children; }
 }
 
 public class LinkageSection: Node<LinkageSectionHeader>, DataSection {
@@ -39,32 +39,31 @@ public class LinkageSection: Node<LinkageSectionHeader>, DataSection {
 
 
 
-public interface DataDefinition { }
-
-public class DataDescription: Node<DataDescriptionEntry>, DataDefinition {
-	public DataDescription(DataDescriptionEntry data): base(data) { }
+public abstract class DataDefinition<T>: Node<T> where T:DataDefinitionEntry {
+	public DataDefinition(T data): base(data) { }
 	public override string ID { get { return CodeElement.DataName.Name; } }
+}
+
+public class DataDescription: DataDefinition<DataDescriptionEntry> {
+	public DataDescription(DataDescriptionEntry data): base(data) { }
 	public virtual IList<DataDescription> GetChildren() { return (IList<DataDescription>)children; }
 }
 
-public class DataCondition: Node<DataConditionEntry>, DataDefinition {
+public class DataCondition: DataDefinition<DataConditionEntry> {
 	public DataCondition(DataConditionEntry data): base(data) { }
-	public override string ID { get { return CodeElement.DataName.Name; } }
 }
 
-public class DataRedefines: Node<DataRedefinesEntry>, DataDefinition {
+public class DataRedefines: DataDefinition<DataRedefinesEntry> {
 	public DataRedefines(DataRedefinesEntry data): base(data) { }
-	public override string ID { get { return CodeElement.DataName.Name; } }
 }
 
-public class DataRenames: Node<DataRenamesEntry>, DataDefinition {
+public class DataRenames: DataDefinition<DataRenamesEntry> {
 	public DataRenames(DataRenamesEntry data): base(data) { }
-	public override string ID { get { return CodeElement.DataName.Name; } }
 }
 // [COBOL 2002]
-public class TypeDescription: Node<TypeDefinitionEntry>, DataDefinition {
+public class TypeDescription: DataDefinition<TypeDefinitionEntry> {
 	public TypeDescription(TypeDefinitionEntry data): base(data) { }
-	public override string ID { get { return CodeElement.DataName.Name; } }
+	public virtual IList<DataDescription> GetChildren() { return (IList<DataDescription>)children; }
 }
 // [/COBOL 2002]
 
