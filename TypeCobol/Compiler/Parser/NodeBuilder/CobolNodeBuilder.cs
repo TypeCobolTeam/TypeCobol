@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler.Parser
 // [COBOL 2002]
 		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber.Value);
-			Enter(new Nodes.TypeDefinition(typedef));
+			Enter(new Nodes.TypeDescription(typedef));
 		}
 // [/COBOL 2002]
 

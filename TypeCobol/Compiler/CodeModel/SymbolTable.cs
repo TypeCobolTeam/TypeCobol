@@ -3,6 +3,7 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeElements.Functions;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -246,20 +247,20 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
-		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>(System.StringComparer.InvariantCultureIgnoreCase);
+		protected Dictionary<string,TypeDescription> types = new Dictionary<string,TypeDescription>(System.StringComparer.InvariantCultureIgnoreCase);
 
-		public IEnumerable<TypeDefinition> CustomTypes {
-			get { return new List<TypeDefinition>(types.Values); }
+		public IEnumerable<TypeDescription> CustomTypes {
+			get { return new List<TypeDescription>(types.Values); }
 		}
 
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
-		public void RegisterCustomType(TypeDefinition data) {
-			if (!data.IsTypeDefinition) throw new System.ArgumentException(data.DataType.Name+" is not a TYPEDEF data description");
-			types[data.DataType.Name] = data;
+		public void RegisterCustomType(TypeDescription data) {
+			var name = ((Named)data.CodeElement).Name;
+			types[name] = data;
 		}
 
-		public TypeDefinition GetCustomType(string type) {
+		public TypeDescription GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
 				try { return table.types[type]; }

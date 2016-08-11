@@ -140,10 +140,4 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 	}
-
-	public interface TypeDefinition { //TODO#249 delete this
-		bool IsTypeDefinition { get; }
-		DataType DataType { get; }
-		System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get; }
-	}
 }

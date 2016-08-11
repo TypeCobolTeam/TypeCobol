@@ -3,15 +3,16 @@
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.CodeElements.Expressions;
+	using TypeCobol.Compiler.Nodes;
 	using TypeCobol.Compiler.Text;
 
 
 
-internal class TypedDataNode: Compiler.Nodes.DataDescription, Generated {
+internal class TypedDataNode: DataDescription, Generated {
 
-	private Compiler.Nodes.DataDescription Node;
+	private DataDescription Node;
 
-	public TypedDataNode(Compiler.Nodes.DataDescription node)
+	public TypedDataNode(DataDescription node)
 		: base(null) { this.Node = node; }
 
 	private IList<ITextLine> _cache = null;
@@ -24,7 +25,7 @@ internal class TypedDataNode: Compiler.Nodes.DataDescription, Generated {
 				var type = this.Node.SymbolTable.GetCustomType(Node.CodeElement.CustomType.Value);
 				bool isCustomType = type != null;
 				_cache.Add(CreateDataDefinition(Node.CodeElement, level, generation, true));
-				InsertChildren(Node, level+1, generation+1);
+				InsertChildren((Node<CodeElement>)(object)Node, level+1, generation+1);
 			}
 			return _cache;
 		}
@@ -39,14 +40,15 @@ internal class TypedDataNode: Compiler.Nodes.DataDescription, Generated {
 		return new TextLineSnapshot(-1, line.ToString(), null);
 	}
 
-	private void InsertChildren(Compiler.Nodes.DataDescription type, int level, int generation) {
-		foreach(var child in type.GetChildren()) {
-			TypeDefinition customtype = null;
+	private void InsertChildren(Node<CodeElement> typed, int level, int generation) {
+		foreach(var c in typed.GetChildren()) {
+			var child = (DataDescription)(object)c;
+			TypeDescription customtype = null;
 			try { customtype = Node.SymbolTable.GetCustomType(child.CodeElement.CustomType.Value); }
 			catch(System.ArgumentException) { }//DO nothing
-			bool isCustomTypeToo = /*!(child.CodeElement is TypeDefinitionEntry) &&*/ customtype != null;
+			bool isCustomTypeToo = !(child.CodeElement is TypeDescription) && customtype != null;
 			_cache.Add(CreateDataDefinition(child.CodeElement, level, generation, isCustomTypeToo));
-			if (isCustomTypeToo) InsertChildren(customtype, level+1, generation+1);
+			if (isCustomTypeToo) InsertChildren((Node<CodeElement>)(object)customtype, level+1, generation+1);
 		}
 	}
 

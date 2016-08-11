@@ -62,8 +62,8 @@ public class DataRenames: Node<DataRenamesEntry>, DataDefinition {
 	public override string ID { get { return CodeElement.DataName.Name; } }
 }
 // [COBOL 2002]
-public class TypeDefinition: Node<TypeDefinitionEntry>, DataDefinition {
-	public TypeDefinition(TypeDefinitionEntry data): base(data) { }
+public class TypeDescription: Node<TypeDefinitionEntry>, DataDefinition {
+	public TypeDescription(TypeDefinitionEntry data): base(data) { }
 	public override string ID { get { return CodeElement.DataName.Name; } }
 }
 // [/COBOL 2002]
