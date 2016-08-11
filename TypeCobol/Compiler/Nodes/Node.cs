@@ -26,6 +26,22 @@ public abstract class Node<T> where T:CodeElement {
 			return current;
 		}
 	}
+	/// <summary>
+	/// How far removed from Root is this Node?
+	/// Values are 0 if Root is this, 1 of Root is this.Parent,
+	///	2 if Root is this.Parent.Parent, and so on.
+	/// </summary>
+	public int Generation {
+		get {
+			int generation = 0;
+			var parent = this.Parent;
+			while(parent != null) {
+				generation++;
+				parent = parent.Parent;
+			}
+			return generation;
+		}
+	}
 	/// <summary>Add or Insert a Node as a child of this Node.</summary>
 	/// <param name="child">Node to be added to Children.</param>
 	/// <param name="index"></param>
@@ -82,6 +98,8 @@ public abstract class Node<T> where T:CodeElement {
 
 	public CodeModel.SymbolTable SymbolTable { get; set; }
 
+	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
+	public bool? Comment = null;
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
 	public void Accept(NodeVisitor visitor) {
