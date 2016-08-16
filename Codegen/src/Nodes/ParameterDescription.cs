@@ -11,7 +11,7 @@
 /// Instead, grammar should be refactored so INPUT/OUTPUT/INOUT/RETURNING _AND_ USING parameters
 /// are created as CodeElements and put in procedure header OR function profile node only in semantic phase.
 /// </summary>
-internal class ParameterEntry: Node<Compiler.CodeElements.Functions.ParameterDescription>, Generated {
+internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Functions.ParameterDescription>, Generated {
 	public Compiler.CodeElements.Functions.ParameterDescription Description { get; private set; }
 	public ParameterEntry(Compiler.CodeElements.Functions.ParameterDescription description): base(description) { }
 
@@ -23,7 +23,7 @@ internal class ParameterEntry: Node<Compiler.CodeElements.Functions.ParameterDes
 				var str = new System.Text.StringBuilder();
 				str.Append("    ");// indent
 				// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
-				str.Append("01 ").Append(CodeElement.DataName.Name).Append(" PIC ").Append(CodeElement.Picture);
+				str.Append("01 ").Append(this.CodeElement().Name).Append(" PIC ").Append(this.CodeElement().Picture);
 				_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 			}
 			return _cache;

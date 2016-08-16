@@ -63,8 +63,8 @@ namespace TypeCobol.Compiler.Parser
 		public NodeDispatcher Dispatcher { get; internal set; }
 
 
-		public Node<CodeElement> CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
-		private void Enter<T>(Node<T> node, ParserRuleContext context = null, SymbolTable table = null) where T:CodeElement {
+		public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
+		private void Enter(Node node, ParserRuleContext context = null, SymbolTable table = null) {
 			node.SymbolTable = table ?? CurrentProgram.CurrentTable;
 			Program.SyntaxTree.Enter(node, context);
 		}
@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler.Parser
 // [COBOL 2002]
 		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber.Value);
-			Enter(new Nodes.TypeDescription(typedef));
+			Enter(new Nodes.TypeDefinition(typedef));
 		}
 // [/COBOL 2002]
 
@@ -248,7 +248,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>
 		/// <param name="level">Level number of the next data definition that will be Enter()ed.</param>
 		private void SetCurrentNodeToTopLevelItem(long level) {
-			Node<CodeElement> parent = GetTopLevelItem(level);
+			Node parent = GetTopLevelItem(level);
 			if (parent != null) {
 				// Exit() previous sibling and all of its last children
 				while (parent != CurrentNode) Exit();
@@ -257,7 +257,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		private Node<CodeElement> GetTopLevelItem(long level) {
+		private Node GetTopLevelItem(long level) {
 			var parent = CurrentNode;
 			while(parent != null) {
 				var data = parent.CodeElement as DataDefinitionEntry;

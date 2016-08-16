@@ -77,14 +77,14 @@ namespace TypeCobol.Compiler.Parser
 		/// <param name="ce">CodeElement created</param>
 		/// <param name="context">Context associated to ce's creation</param>
 		/// <param name="program">Current scope program</param>
-		void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement;
+		void OnNode(Node node, ParserRuleContext context, CodeModel.Program program);
 	}
 
 	public class NodeDispatcher: NodeListener {
 		public IList<System.Type> GetCodeElements() { return null; }
 
 		/// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
-		public void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement {
+		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			foreach(var listener in listeners) {
 				var types = listener.GetCodeElements();
 				foreach (var expected in types) {

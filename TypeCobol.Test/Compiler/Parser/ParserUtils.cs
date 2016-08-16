@@ -210,14 +210,15 @@ namespace TypeCobol.Test.Compiler.Parser
         }
 
 // [TYPECOBOL]
-		private static void Dump(StringBuilder str, IEnumerable<TypeCobol.Compiler.Nodes.TypeDescription> typedefs) {
+		private static void Dump(StringBuilder str, IEnumerable<TypeCobol.Compiler.Nodes.TypeDefinition> typedefs) {
 			int c = 0;
 			string header = "CUSTOM TYPES:\n";
 			str.Append(header);
 			foreach(var typedef in typedefs) {
-				str.Append(" * ").AppendLine(typedef.CodeElement.DataType.Name.ToString());
-				foreach(var sub in typedef.GetChildren())
-					DumpInTypeDef(str, sub, 2);
+				var data = (TypeDefinitionEntry)typedef.CodeElement;
+				str.Append(" * ").AppendLine(data.DataType.Name.ToString());
+				foreach(var sub in typedef.Children)
+					DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, 2);
 				c++;
 			}
 			if (c==0) str.Length -= header.Length;
@@ -225,8 +226,8 @@ namespace TypeCobol.Test.Compiler.Parser
 		private static void DumpInTypeDef(StringBuilder str, TypeCobol.Compiler.Nodes.DataDescription node, int indent) {
 			for (int i=0; i<indent; i++) str.Append("  ");
 			str.Append(" - ").AppendLine(node.CodeElement.ToString());
-			foreach(var sub in node.GetChildren())
-				DumpInTypeDef(str, sub, indent+1);
+			foreach(var sub in node.Children)
+				DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, indent+1);
 		}
 
 		private static void Dump(StringBuilder str, IList<Function> functions) {

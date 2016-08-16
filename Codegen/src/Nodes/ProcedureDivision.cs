@@ -10,7 +10,7 @@ namespace TypeCobol.Codegen.Nodes {
 		public IList<InputParameter> UsingParameters { get; private set; }
 		public ReceivingStorageArea ReturningParameter { get; private set; }
 
-		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
+		public ProcedureDivision(FunctionDeclarationProfile profile, List<Compiler.Nodes.Node> children): base(null) {
 			UsingParameters = new List<InputParameter>();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
 			foreach(var parameter in profile.Profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(parameter.DataName));
@@ -18,6 +18,7 @@ namespace TypeCobol.Codegen.Nodes {
 			foreach(var parameter in profile.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.DataName));
 			// TCRFUN_CODEGEN_RETURNING_PARAMETER
 			ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(profile.Profile.ReturningParameter.DataName);
+			this.children.AddRange(children);
 		}
 
 		private IList<ITextLine> _cache = null;

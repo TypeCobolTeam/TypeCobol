@@ -53,13 +53,13 @@ namespace TypeCobol.Codegen {
 //			Console.WriteLine(converter.Output.ToString());
 		}
 
-		public void Visit<T>(Node<T> node) where T:CodeElement {
+		public void Visit(Node node) {
 			var actions = GetActions(node);
 			Actions.AddRange(actions);
-			foreach(var child in node.GetChildren()) child.Accept(this);
+			foreach(var child in node.Children) child.Accept(this);
 		}
 
-		private ICollection<Action> GetActions<T>(Node<T> node) where T:CodeElement {
+		private ICollection<Action> GetActions(Node node) {
 			var actions = new List<Action>();
 			var skeleton = GetActiveSkeleton(node);
 			if (skeleton != null) {
@@ -72,18 +72,18 @@ namespace TypeCobol.Codegen {
 			return actions;
 		}
 
-		private Skeleton GetActiveSkeleton<T>(Node<T> node) where T:CodeElement {
+		private Skeleton GetActiveSkeleton(Node node) {
 			foreach(var skeleton in Skeletons) {
 				bool active = false;
 				foreach(var condition in skeleton.Conditions) {
-					active = active || condition.Verify((Node<CodeElement>)(object)node); // OR
+					active = active || condition.Verify(node); // OR
 				}
 				if (active) return skeleton;//TODO: what if more than 1 skel activates?
 			}
 			return null;
 		}
 
-		private Dictionary<string,object> GetProperties<T>(Node<T> node, IEnumerable<string> properties) where T:CodeElement {
+		private Dictionary<string,object> GetProperties(Node node, IEnumerable<string> properties) {
 			var result = new Dictionary<string,object>();
 			var errors = new System.Text.StringBuilder();
 			foreach(var pname in properties) {
@@ -102,7 +102,7 @@ namespace TypeCobol.Codegen {
 			return result;
 		}
 
-		private Action GetAction<T>(Node<T> source, Dictionary<string,object> properties, Pattern pattern) where T:CodeElement {
+		private Action GetAction(Node source, Dictionary<string,object> properties, Pattern pattern) {
 			int? index;
 			var destination = GetLocation(source, pattern.Location, out index);
 			if ("create".Equals(pattern.Action)) {
@@ -121,7 +121,7 @@ namespace TypeCobol.Codegen {
 			return null;
 		}
 
-		private Node<CodeElement> GetLocation<T>(Node<T> node, string location, out int? index) where T:CodeElement {
+		private Node GetLocation(Node node, string location, out int? index) {
 			index = null;
 			if (location.EndsWith(".begin")) {
 				location = location.Substring(0, location.Length - ".begin".Length);
@@ -131,9 +131,8 @@ namespace TypeCobol.Codegen {
 				location = location.Substring(0, location.Length - ".end".Length);
 			}
 
-			var variant = (Node<CodeElement>)(object)node;
-			if (location == null || location.ToLower().Equals("node")) return variant;
-			Node<CodeElement> root = variant;
+			if (location == null || location.ToLower().Equals("node")) return node;
+			var root = node;
 			while(root.Parent != null) root = root.Parent;
 
 			var result = root.Get(location);
@@ -187,11 +186,11 @@ namespace TypeCobol.Codegen {
 
 	public class Create: Action {
 		public string Group { get; private set; }
-		internal Node<CodeElement> Parent;
-		private Node<CodeElement> Child;
+		internal Node Parent;
+		private Node Child;
 	    private int? position;
 
-		public Create(Node<CodeElement> parent, string template, Dictionary<string,object> variables, string group, string delimiter, int? position) {
+		public Create(Node parent, string template, Dictionary<string,object> variables, string group, string delimiter, int? position) {
 			this.Parent = parent;
 			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
@@ -206,10 +205,10 @@ namespace TypeCobol.Codegen {
 
 	public class Replace: Action {
 		public string Group { get; private set; }
-		internal Node<CodeElement> Old;
-		private Node<CodeElement> New;
+		internal Node Old;
+		private Node New;
 
-		public Replace(Node<CodeElement> node, string template, Dictionary<string,object> variables, string group, string delimiter) {
+		public Replace(Node node, string template, Dictionary<string,object> variables, string group, string delimiter) {
 			this.Old = node;
 			if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
 			var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
@@ -218,7 +217,7 @@ namespace TypeCobol.Codegen {
 
 		public void Execute() {
 			var parent = Old.Parent;
-			int index = parent.GetChildren().IndexOf(Old);
+			int index = parent.IndexOf(Old);
 		    Old.Comment = true;
 			parent.Add(New, index+1);
             
@@ -227,40 +226,40 @@ namespace TypeCobol.Codegen {
 
 	public class Comment: Action {
 		public string Group { get; private set; }
-		internal Node<CodeElement> Node;
+		internal Node Node;
 
-		public Comment(Node<CodeElement> node) { this.Node = node; }
+		public Comment(Node node) { this.Node = node; }
 
 		public void Execute() { comment(this.Node); }
-		private void comment(Node<CodeElement> node) {
+		private void comment(Node node) {
 			node.Comment = true;
-			foreach(var child in node.GetChildren()) comment(child);
+			foreach(var child in node.Children) comment(child);
 		}
 	}
 
 	public class Expand: Action {
 		public string Group { get; private set; }
-		internal Node<CodeElement> Node;
+		internal Node Node;
 		private Dictionary<Type,Type> Generators = new Dictionary<Type,Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
 				{ typeof(FunctionDeclarationHeader), typeof(Compiler.Nodes.FunctionDeclaration) },
 			};
 
-		public Expand(Node<CodeElement> node) {
+		public Expand(Node node) {
 			this.Node = node;
 		}
 
 		public void Execute() {
 			// retrieve data
-			int index = this.Node.Parent.GetChildren().IndexOf(this.Node);
+			int index = this.Node.IndexOf(this.Node);
 			if (index > -1) {
 				var typegen = GetGeneratedNode(this.Node.CodeElement.GetType());
-				var nodegen = (Node<CodeElement>)Activator.CreateInstance(typegen, this.Node);
-				this.Node.Parent.GetChildren().Insert(index+1, nodegen);
+				var nodegen = (Node)Activator.CreateInstance(typegen, this.Node);
+				this.Node.Parent.Add(nodegen, index+1);
 			}
 			// comment out original "line" (=~ non expanded node)
 			this.Node.Comment = true;
-			this.Node.GetChildren().Clear();
+			this.Node.RemoveAllChildren();
 		}
 
 		private Type GetGeneratedNode(Type type) {

@@ -10,22 +10,23 @@
 
 internal class TypedDataNode: DataDescription, Generated {
 
-	private DataDescription Node;
+	private DataDescription node;
 
 	public TypedDataNode(DataDescription node)
-		: base(null) { this.Node = node; }
+		: base(null) { this.node = node; }
 
 	private IList<ITextLine> _cache = null;
 	IEnumerable<ITextLine> Generated.Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				int level = (int)Node.CodeElement.LevelNumber.Value;
-				int generation = this.Node.Generation;
-				var type = this.Node.SymbolTable.GetCustomType(Node.CodeElement.CustomType.Value);
+				var data = (DataDescriptionEntry)node.CodeElement;
+				int level = (int)data.LevelNumber.Value;
+				int generation = this.node.Generation;
+				var type = this.node.SymbolTable.GetCustomType(data.CustomType.Value);
 				bool isCustomType = type != null;
-				_cache.Add(CreateDataDefinition(Node.CodeElement, level, generation, true));
-				InsertChildren((Node<CodeElement>)(object)Node, level+1, generation+1);
+				_cache.Add(CreateDataDefinition(data, level, generation, true));
+				InsertChildren(this.node, level+1, generation+1);
 			}
 			return _cache;
 		}
@@ -40,15 +41,15 @@ internal class TypedDataNode: DataDescription, Generated {
 		return new TextLineSnapshot(-1, line.ToString(), null);
 	}
 
-	private void InsertChildren(Node<CodeElement> typed, int level, int generation) {
-		foreach(var c in typed.GetChildren()) {
-			var child = (DataDescription)(object)c;
-			TypeDescription customtype = null;
-			try { customtype = Node.SymbolTable.GetCustomType(child.CodeElement.CustomType.Value); }
+	private void InsertChildren(DataDefinition typed, int level, int generation) {
+		foreach(var child in typed.Children) {
+			var data = (DataDescriptionEntry)child.CodeElement;
+			TypeDefinition customtype = null;
+			try { customtype = node.SymbolTable.GetCustomType(data.CustomType.Value); }
 			catch(System.ArgumentException) { }//DO nothing
-			bool isCustomTypeToo = !(child.CodeElement is TypeDescription) && customtype != null;
-			_cache.Add(CreateDataDefinition(child.CodeElement, level, generation, isCustomTypeToo));
-			if (isCustomTypeToo) InsertChildren((Node<CodeElement>)(object)customtype, level+1, generation+1);
+			bool isCustomTypeToo = !(data is TypeDefinition) && customtype != null;
+			_cache.Add(CreateDataDefinition(data, level, generation, isCustomTypeToo));
+			if (isCustomTypeToo) InsertChildren(customtype, level+1, generation+1);
 		}
 	}
 

@@ -11,21 +11,21 @@ namespace TypeCobol.Codegen.Nodes {
 
 		QualifiedName ProgramName = null;
 
-		public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement) {
-			ProgramName = node.CodeElement.Name;
+		public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {
+			ProgramName = node.CodeElement().Name;
 			FunctionDeclarationProfile profile = null;
-			foreach(var child in node.GetChildren()) {
-				var ce = child.CodeElement;
+			foreach(var child in node.Children) {
 				if (child.CodeElement is FunctionDeclarationProfile) {
 					profile = (FunctionDeclarationProfile)child.CodeElement;
 					CreateOrUpdateLinkageSection(node, profile.Profile);
-					var pdiv = new ProcedureDivision(profile);
-					foreach(var sentence in child.GetChildren())
-						pdiv.GetChildren().Add(sentence);
-					children.Add((Node<CodeElement>)(object)pdiv);
+					var sentences = new List<Node>();
+					foreach(var sentence in child.Children)
+						sentences.Add(sentence);
+					var pdiv = new ProcedureDivision(profile, sentences);
+					children.Add(pdiv);
 				} else
 				if (child.CodeElement is FunctionDeclarationEnd) {
-					children.Add((Node<CodeElement>)(object)new ProgramEnd(ProgramName));
+					children.Add(new ProgramEnd(ProgramName));
 				} else {
 					// TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
 					// TCRFUN_CODEGEN_DATA_SECTION_AS_IS
@@ -37,12 +37,12 @@ namespace TypeCobol.Codegen.Nodes {
 		private void CreateOrUpdateLinkageSection(Compiler.Nodes.FunctionDeclaration node, ParametersProfile profile) {
 			var linkage = (LinkageSection)(object)node.Get("linkage");
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
-			IList<DataDescription> data = new List<DataDescription>();
+			IReadOnlyList<DataDefinition> data = new List<DataDefinition>().AsReadOnly();
 			if (linkage == null && parameters > 0) {
 				linkage = new LinkageSection();
-				children.Add((Node<CodeElement>)(object)linkage);
+				children.Add(linkage);
 			}
-			if (linkage != null) data = linkage.GetChildren();
+			if (linkage != null) data = linkage.Children();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
 			var generated = new List<string>();
 			foreach(var parameter in profile.InputParameters) {
@@ -71,9 +71,9 @@ namespace TypeCobol.Codegen.Nodes {
 			}
 		}
 
-		private bool Contains(IList<Compiler.Nodes.DataDescription> data, string dataname) {
+		private bool Contains(IReadOnlyList<DataDefinition> data, string dataname) {
 			foreach(var node in data)
-				if (dataname.Equals(node.CodeElement.DataName.Name))
+				if (dataname.Equals(node.Name))
 					return true;
 			return false;
 		}

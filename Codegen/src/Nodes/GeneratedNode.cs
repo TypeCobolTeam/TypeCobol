@@ -5,7 +5,7 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Nodes {
 
-	internal class GeneratedNode: Compiler.Nodes.Node<CodeElement>, Generated {
+	internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 		private Solver Solver;
 
 		public GeneratedNode(Solver solver): base(null) {

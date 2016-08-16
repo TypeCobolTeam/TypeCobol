@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
 		}
-		public void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement {
+		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
 			var table = program.SymbolTable;
 			foreach (var pair in element.Symbols) {
@@ -104,24 +104,24 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(FunctionDeclarationHeader), };
 		}
-		public void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement {
+		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			var header = node.CodeElement as FunctionDeclarationHeader;
 			FunctionDeclarationProfile profile = null;
-			var profiles = node.GetChildren(typeof(FunctionDeclarationProfile));
+			var profiles = node.GetChildren<FunctionDeclarationProfile>();
 			if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
 				DiagnosticUtils.AddError(header, "Function \""+header.Name+"\" has no parameters and does nothing.");
 			else if (profiles.Count > 1)
 				foreach(var p in profiles)
-					DiagnosticUtils.AddError(p.CodeElement, "Function \""+header.Name+"\" can have only one parameters profile.");
-			else profile = (FunctionDeclarationProfile)profiles[0].CodeElement;
+					DiagnosticUtils.AddError(p.CodeElement(), "Function \""+header.Name+"\" can have only one parameters profile.");
+			else profile = profiles[0].CodeElement();
 
-			var filesection = (Node<CodeElement>)node.Get("file");
+			var filesection = node.Get("file");
 			if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 				DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
-			CheckNoGlobalOrExternal((DataDivision)(object)node.Get("data-division"));
+			CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
 
-			CheckEveryLinkageItemIsAParameter((LinkageSection)(object)node.Get("linkage"), profile.Profile);
+			CheckEveryLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), profile.Profile);
 
 			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
 			if (functions.Count > 1)
@@ -133,9 +133,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		private void CheckNoGlobalOrExternal(DataDivision node) {
 			if (node == null) return; // no DATA DIVISION
-			foreach(var section in node.GetChildren()) { // "storage" sections
-				foreach(var child in section.GetChildren(typeof(DataDescriptionEntry))) {
-					var data = (DataDescriptionEntry)child.CodeElement;
+			foreach(var section in node.Children()) { // "storage" sections
+				foreach(var child in section.Children()) {
+					var data = (DataDescriptionEntry)child.CodeElement();
 					if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
 						DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
 					if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
@@ -147,8 +147,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private void CheckEveryLinkageItemIsAParameter(LinkageSection node, ParametersProfile profile) {
 			if (node == null) return; // no LINKAGE SECTION
 			var linkage = new List<DataDescriptionEntry>();
-			var entries = node.GetChildren(typeof(DataDescriptionEntry));
-			foreach(var n in entries) linkage.Add((DataDescriptionEntry)n.CodeElement);
+			var entries = node.GetChildren<DataDescriptionEntry>();
+			foreach(var n in entries) linkage.Add(n.CodeElement());
 			foreach(var description in linkage) {
 				var used = Validate(profile.ReturningParameter, description.Name);
 				if (used == null) used = GetParameter(profile.InputParameters,  description.Name);
@@ -174,15 +174,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 		/// <param name="name">Parameter we want</param>
 		/// <returns>Parameter as declared in DATA DIVISION</returns>
 		private DataDefinitionEntry GetParameter(LinkageSection node, string name) {
-			foreach(var child in node.GetChildren()) {
+			foreach(var child in node.Children()) {
 				var found = GetParameter(child, name);
 				if (found != null) return found;
 			}
 			return null;
 		}
-		private DataDefinitionEntry GetParameter(DataDescription node, string name) {
-			if (node.CodeElement.Name.Equals(name)) return node.CodeElement;
-			foreach(var child in node.GetChildren()) {
+		private DataDefinitionEntry GetParameter(DataDefinition node, string name) {
+			if (node.Name.Equals(name)) return node.CodeElement();
+			foreach(var child in node.Children()) {
 				var found = GetParameter(child, name);
 				if (found != null) return found;
 			}
@@ -197,12 +197,12 @@ namespace TypeCobol.Compiler.Diagnostics {
 		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(ProcedureDivisionHeader), };
 		}
-		public void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement {
+		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			var pdiv = node.CodeElement as ProcedureDivisionHeader;
 			bool isPublicLibrary = false;
 			var elementsInError = new List<CodeElement>();
 			var errorMessages = new List<string>();
-			foreach(var child in node.GetChildren()) {
+			foreach(var child in node.Children) {
 				var ce = child.CodeElement;
 				if (child.CodeElement == null) {
 					elementsInError.Add(node.CodeElement);

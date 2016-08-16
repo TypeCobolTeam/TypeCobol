@@ -7,83 +7,60 @@ using TypeCobol.Compiler.CodeElements;
 
 
 
-public interface Node {
-	/// <summary>Parent node (weakly-typed)</summary>
-	Node Parent { get; }
-	/// <summary>List of children nodes (weakly-typed, read-only)</summary>
-	IReadOnlyList<Node> Children { get; }
-
-	/// <summary>Adds a node as a children of this one.</summary>
-	/// <typeparam name="T">Class (derived from CodeElement) of the child to-be.</typeparam>
-	/// <param name="node">Child to-be.</param>
-	/// <param name="index">Index of the list of children at which node must be added.</param>
-	void Add<T>(Node<T> node, int index) where T:CodeElement;
-	/// <summary>Removes a child from this node.</summary>
-	/// <typeparam name="T">Class (derived from CodeElement) of the child node.</typeparam>
-	/// <param name="node">Child to remove. If this is not one of this Node's current children, nothing happens.</param>
-	void Remove<T>(Node<T> node) where T:CodeElement;
-	/// <summary>Removes this node from its Parent's children list and set this.Parent to null.</summary>
-	void Remove();
-
-	/// <summary>Unique identifier of this Node in its tree.</summary>
-	string URI { get; }
-	/// <summary>Retrieves this Node or one of its (in)direct children using a node URI.</summary>
-	/// <param name="uri">Node unique identifier.</param>
-	/// <returns>The Node n with n.URI.EndsWith(uri), or null if there is no such Node.</returns>
-	Node Get(string uri);
-
-	void Dump(System.Text.StringBuilder str, int i);
-}
-
 /// <summary>
 /// Tree node, including:
 /// - strongly-typed CodeElement data
 /// - parent/children relations
 /// - unique identification accross the tree
 /// </summary>
-public abstract class Node<T>: Node where T:CodeElement {
+public abstract class Node {
 
-	/// <summary>Node strongly typed data</summary>
-	public T CodeElement { get; internal set; }
-	public Node(T CodeElement) { this.CodeElement = CodeElement; }
+	/// <summary>CodeElement data (weakly-typed)</summary>
+	public CodeElement CodeElement { get; private set; }
+	public Node(CodeElement CodeElement) { this.CodeElement = CodeElement; }
 
-	/// <summary>Parent node</summary>
-	public Node Parent { get; internal set; }
-
-	protected readonly List<Node> children = new List<Node>();
-	/// <summary>List of children. If you want to modify it, use the Add and Remove methods.</summary>
+	/// <summary>Parent node (weakly-typed)</summary>
+	public Node Parent { get; private set; }
+	protected List<Node> children = new List<Node>();
+	/// <summary>List of children  (weakly-typed, read-only).</summary>
+	///	If you want to modify this list, use the <see cref="Add"/> and <see cref="Remove"/> methods.
 	public IReadOnlyList<Node> Children { get { return children.AsReadOnly(); } }
 
-/*
-	public IList<Node<CodeElement>> GetChildren(System.Type type) {
-		var results = new List<Node>();
-		foreach(var child in GetChildren())
-			if (child.CodeElement != null && Tools.Reflection.IsTypeOf(child.CodeElement.GetType(), type))
-				results.Add(child);
+	public IList<CodeElementHolder<T>> GetChildren<T>() where T:CodeElement {
+		var results = new List<CodeElementHolder<T>>();
+		foreach(var child in children) {
+			if (child.CodeElement == null) continue;
+			if (Tools.Reflection.IsTypeOf(child.CodeElement.GetType(), typeof(T)))
+				results.Add((CodeElementHolder<T>)child);
+		}
 		return results;
 	}
-*/
 
 
-	/// <summary>Add or Insert a Node as a child of this Node.</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="child">Non-null Node to be added to the children list</param>
-	/// <param name="index"></param>
-	public void Add<T>(Node<T> child, int index = -1) where T:CodeElement {
+	/// <summary>Adds a node as a children of this one.</summary>
+	/// <param name="child">Child to-be.</param>
+	/// <param name="index">Child position in children list.</param>
+	public void Add(Node child, int index = -1) {
 		if (index < 0) children.Add(child);
 		else children.Insert(index, child);
 		child.Parent = this;
 	}
-	/// <summary>Remove a child Node from this Node.</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="child">Node to remove ; if it's not a child, nothing happens</param>
-	public void Remove<T>(Node<T> child) where T:CodeElement {
+	/// <summary>Removes a child from this node.</summary>
+	/// <param name="node">Child to remove. If this is not one of this Node's current children, nothing happens.</param>
+	public void Remove(Node child) {
 		children.Remove(child);
 		child.Parent = null;
 	}
-	/// <summary>Delete this node from Parent's children, and set Parent to null.</summary>
+	/// <summary>Removes this node from its Parent's children list and set this.Parent to null.</summary>
 	public void Remove() {
 		if (Parent != null) Parent.Remove(this);
+	}
+	/// <summary>Position of a specific child among its siblings.</summary>
+	/// <param name="child">Child to be searched for.</param>
+	/// <returns>Position in the children list.</returns>
+	/// <exception cref="System.ArgumentOutOfRangeException">As List</exception>
+	public int IndexOf(Node child) {
+		return children.IndexOf(child);
 	}
 
 
@@ -127,9 +104,7 @@ public abstract class Node<T>: Node where T:CodeElement {
 		Dump(str, 0);
 		return str.ToString();
 	}
-	// TODO: what if I DON'T want to put Dump(..) inside the Node interface?
-	// Dump(..) should be private !!
-	public void Dump(System.Text.StringBuilder str, int i) {
+	private void Dump(System.Text.StringBuilder str, int i) {
 		for (int c=0; c<i; c++) str.Append("  ");
 		if (CodeElement == null) str.AppendLine("?");
 		else str.AppendLine(CodeElement.ToString());
@@ -173,6 +148,8 @@ public abstract class Node<T>: Node where T:CodeElement {
 
 	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
 	public bool? Comment = null;
+	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
+	public void RemoveAllChildren() { children.Clear(); }
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
 	public void Accept(NodeVisitor visitor) {
@@ -184,12 +161,25 @@ public abstract class Node<T>: Node where T:CodeElement {
 
 /// <summary>Implementation of the GoF Visitor pattern.</summary>
 public interface NodeVisitor {
-	void Visit<T>(Node<T> node) where T:CodeElement;
+	void Visit(Node node);
 }
 
 
 
 
+
+public interface CodeElementHolder<T> where T:CodeElement { }
+public static class CodeElementHolderExtension {
+	/// <summary>CodeElement data (strongly-typed)</summary>
+	/// <typeparam name="T">Class (derived from <see cref="CodeElement"/>) of the data.</typeparam>
+	/// <param name="holder">We want this <see cref="Node"/>'s data.</param>
+	/// <returns>This <see cref="Node"/>'s CodeElement data, but strongly-typed.</returns>
+	public static T CodeElement<T>(this CodeElementHolder<T> holder) where T:CodeElement {
+		var node = holder as Node;
+		if (node == null) throw new System.ArgumentException("CodeElementHolder must be a Node.");
+		return (T)node.CodeElement;
+    }
+}
 
 /// <summary>A <see cref="Node"/> who can type its parent more strongly should inherit from this.</summary>
 /// <typeparam name="C">Class (derived from <see cref="Node{T}"/>) of the parent node.</typeparam>
@@ -200,7 +190,7 @@ public static class ChildExtension {
 	/// <typeparam name="P">Class (derived from <see cref="Node{T}"/>) of the parent.</typeparam>
 	/// <param name="child">We want this <see cref="Node"/>'s parent.</param>
 	/// <returns>This <see cref="Node"/>'s parent, but strongly-typed.</returns>
-	public static P StrongParent<P>(this Child<P> child) where P:Node {
+	public static P Parent<P>(this Child<P> child) where P:Node {
 		var node = child as Node;
 		if (node == null) throw new System.ArgumentException("Child must be a Node.");
 		return (P)node.Parent;
@@ -223,7 +213,7 @@ public static class ParentExtension {
 	/// <typeparam name="C">Class (derived from <see cref="Node{T}"/>) of the children.</typeparam>
 	/// <param name="parent">We want this <see cref="Node"/>'s children.</param>
 	/// <returns>Strongly-typed list of a <see cref="Node"/>'s children.</returns>
-	public static IReadOnlyList<C> StrongChildren<C>(this Parent<C> parent) where C:Node {
+	public static IReadOnlyList<C> Children<C>(this Parent<C> parent) where C:Node {
 		var node = parent as Node;
 		if (node == null) throw new System.ArgumentException("Parent must be a Node.");
 		//TODO? maybe use ConvertAll or Cast from LINQ, but only
@@ -239,36 +229,36 @@ public static class ParentExtension {
 
 
 /// <summary>Root of any Node tree, with null CodeElement.</summary>
-public class Root: Node<CodeElement> {
+public class Root: Node, CodeElementHolder<CodeElement> {
 	public Root(): base(null) { }
 }
 
-public class Program: Node<ProgramIdentification> {
+public class Program: Node, CodeElementHolder<ProgramIdentification> {
 	public Program(ProgramIdentification identification): base(identification) { }
-	public override string ID { get { return CodeElement.ProgramName.Name; } }
+	public override string ID { get { return this.CodeElement().ProgramName.Name; } }
 }
 
-public class Class: Node<ClassIdentification> {
+public class Class: Node, CodeElementHolder<ClassIdentification> {
 	public Class(ClassIdentification identification): base(identification) { }
-	public override string ID { get { return CodeElement.ClassName.Name; } }
+	public override string ID { get { return this.CodeElement().ClassName.Name; } }
 }
 
-public class Factory: Node<FactoryIdentification> {
+public class Factory: Node, CodeElementHolder<FactoryIdentification> {
 	public Factory(FactoryIdentification identification): base(identification) { }
 	public override string ID { get { return "TODO#248"; } }
 }
 
-public class Method: Node<MethodIdentification> {
+public class Method: Node, CodeElementHolder<MethodIdentification> {
 	public Method(MethodIdentification identification): base(identification) { }
-	public override string ID { get { return CodeElement.MethodName.Name; } }
+	public override string ID { get { return this.CodeElement().MethodName.Name; } }
 }
 
-public class Object: Node<ObjectIdentification> {
+public class Object: Node, CodeElementHolder<ObjectIdentification> {
 	public Object(ObjectIdentification identification): base(identification) { }
 	public override string ID { get { return "TODO#248"; } }
 }
 
-public class End: Node<CodeElementEnd> {
+public class End: Node, CodeElementHolder<CodeElementEnd> {
 	public End(CodeElementEnd end): base(end) { }
 	public override string ID { get { return "end"; } }
 }

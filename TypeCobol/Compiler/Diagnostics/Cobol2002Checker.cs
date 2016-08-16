@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.Diagnostics
             return new List<Type> { typeof(CodeModel.Receiving) };
         }
 
-		public void OnNode<T>(Node<T> node, ParserRuleContext context, CodeModel.Program program) where T:CodeElement {
+		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
             var ce = node.CodeElement;
             if (ce is CodeModel.Receiving == false)
                 return;

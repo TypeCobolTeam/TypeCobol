@@ -29,12 +29,12 @@
 			this.Layout = layout;
 		}
 
-		public void Visit<T>(Node<T> node) where T:CodeElement {
+		public void Visit(Node node) {
 			bool doVisitChildren = Process(node);
-			if (doVisitChildren) foreach(var child in node.GetChildren()) child.Accept(this);
+			if (doVisitChildren) foreach(var child in node.Children) child.Accept(this);
 		}
 
-		private bool Process<T>(Node<T> node) where T:CodeElement {
+		private bool Process(Node node) {
 			string text = "";
 			var generated = node as Generated;
 			foreach(var line in generated.Lines) {
