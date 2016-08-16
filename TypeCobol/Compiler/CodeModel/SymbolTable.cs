@@ -247,20 +247,20 @@ namespace TypeCobol.Compiler.CodeModel
 
 
 		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
-		protected Dictionary<string,TypeDescription> types = new Dictionary<string,TypeDescription>(System.StringComparer.InvariantCultureIgnoreCase);
+		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>(System.StringComparer.InvariantCultureIgnoreCase);
 
-		public IEnumerable<TypeDescription> CustomTypes {
-			get { return new List<TypeDescription>(types.Values); }
+		public IEnumerable<TypeDefinition> CustomTypes {
+			get { return new List<TypeDefinition>(types.Values); }
 		}
 
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
-		public void RegisterCustomType(TypeDescription data) {
+		public void RegisterCustomType(TypeDefinition data) {
 			var name = ((Named)data.CodeElement).Name;
 			types[name] = data;
 		}
 
-		public TypeDescription GetCustomType(string type) {
+		public TypeDefinition GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
 				try { return table.types[type]; }

@@ -5,65 +5,62 @@
 
 
 
-public class DataDivision: Node<DataDivisionHeader>, DataSection {
+
+public class DataDivision: Node<DataDivisionHeader> {
 	public DataDivision(DataDivisionHeader header): base(header) { }
 	public override string ID { get { return "data-division"; } }
 }
 
-
-
-public interface DataSection { }
-
-public class FileSection: Node<FileSectionHeader>, DataSection {
+public abstract class DataSection: Node<DataSectionHeader>, Child<DataDivision>, Parent<DataDefinition> {
+	public DataSection(DataSectionHeader header): base(header) { }
+	public virtual bool IsShared { get { return false; } }
+}
+public abstract class GenericDataSection<T>: DataSection where T:DataSectionHeader {
+	public GenericDataSection(T header): base(header) { }
+}
+public class FileSection: GenericDataSection<FileSectionHeader> {
 	public FileSection(FileSectionHeader header): base(header) { }
 	public override string ID { get { return "file"; } }
+	public override bool IsShared { get { return true; } }
 }
-
-public class WorkingStorageSection: Node<WorkingStorageSectionHeader>, DataSection {
+public class WorkingStorageSection: GenericDataSection<WorkingStorageSectionHeader> {
 	public WorkingStorageSection(WorkingStorageSectionHeader header): base(header) { }
 	public override string ID { get { return "working-storage"; } }
-	public virtual IList<DataDefinition<DataDefinitionEntry>> GetChildren() { return (IList<DataDefinition<DataDefinitionEntry>>)children; }
 }
-
-public class LocalStorageSection: Node<LocalStorageSectionHeader>, DataSection {
+public class LocalStorageSection: GenericDataSection<LocalStorageSectionHeader> {
 	public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
 	public override string ID { get { return "local-storage"; } }
-	public virtual IList<DataDefinition<DataDefinitionEntry>> GetChildren() { return (IList<DataDefinition<DataDefinitionEntry>>)children; }
 }
-
-public class LinkageSection: Node<LinkageSectionHeader>, DataSection {
+public class LinkageSection: GenericDataSection<LinkageSectionHeader> {
 	public LinkageSection(LinkageSectionHeader header): base(header) { }
 	public override string ID { get { return "linkage"; } }
-	public virtual IList<DataDescription> GetChildren() { return (IList<DataDescription>)children; }
+	public override bool IsShared { get { return true; } }
 }
 
-
-
-public abstract class DataDefinition<T>: Node<T> where T:DataDefinitionEntry {
-	public DataDefinition(T data): base(data) { }
-	public override string ID { get { return CodeElement.DataName.Name; } }
+public abstract class DataDefinition: Node<DataDefinitionEntry>, Child<DataSection> {
+	public DataDefinition(DataDefinitionEntry entry): base(entry) { }
+	public override string ID { get { return this.CodeElement.Name; } }
+	public string Name { get { return CodeElement.Name; } }
 }
-
-public class DataDescription: DataDefinition<DataDescriptionEntry> {
-	public DataDescription(DataDescriptionEntry data): base(data) { }
-	public virtual IList<DataDescription> GetChildren() { return (IList<DataDescription>)children; }
+public abstract class GenericDataDefinition<T>: DataDefinition where T:DataDefinitionEntry {
+	public GenericDataDefinition(T entry): base(entry) { }
 }
-
-public class DataCondition: DataDefinition<DataConditionEntry> {
-	public DataCondition(DataConditionEntry data): base(data) { }
+public class DataDescription: GenericDataDefinition<DataDescriptionEntry>, Parent<DataDescription> {
+	public DataDescription(DataDescriptionEntry entry): base(entry) { }
 }
-
-public class DataRedefines: DataDefinition<DataRedefinesEntry> {
-	public DataRedefines(DataRedefinesEntry data): base(data) { }
+public class DataCondition: GenericDataDefinition<DataConditionEntry> {
+	public DataCondition(DataConditionEntry entry): base(entry) { }
 }
-
-public class DataRenames: DataDefinition<DataRenamesEntry> {
-	public DataRenames(DataRenamesEntry data): base(data) { }
+public class DataRedefines: GenericDataDefinition<DataRedefinesEntry> {
+	public DataRedefines(DataRedefinesEntry entry): base(entry) { }
+}
+public class DataRenames: GenericDataDefinition<DataRenamesEntry> {
+	public DataRenames(DataRenamesEntry entry): base(entry) { }
 }
 // [COBOL 2002]
-public class TypeDescription: DataDefinition<TypeDefinitionEntry> {
-	public TypeDescription(TypeDefinitionEntry data): base(data) { }
-	public virtual IList<DataDescription> GetChildren() { return (IList<DataDescription>)children; }
+public class TypeDefinition: GenericDataDefinition<TypeDefinitionEntry>, Parent<DataDescription> {
+	public TypeDefinition(TypeDefinitionEntry entry): base(entry) { }
+	public bool IsStrong { get; internal set; }
 }
 // [/COBOL 2002]
 

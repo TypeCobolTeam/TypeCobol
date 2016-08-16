@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Parser
 				Enter(CurrentProgram.SyntaxTree.Root, context);
 			}
 			var terminal = context.ProgramIdentification();
-			CurrentProgram.Identification = terminal != null? (ProgramIdentification)terminal : null;
+			CurrentProgram.Identification = terminal != null? (ProgramIdentification)terminal.Symbol : null;
 			Enter(new Nodes.Program(CurrentProgram.Identification), context, CurrentProgram.SymbolTable);
 		}
 
