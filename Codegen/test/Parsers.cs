@@ -85,6 +85,15 @@ namespace TypeCobol.Codegen {
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
+		public void ParseUnsafe() {
+			string file = Path.Combine("TypeCobol","unsafe");
+			var skeletons = ParseConfig("Types.xml");// ParseConfig(file+".xml");
+			ParseGenerateCompare(file+".cbl", skeletons);
+		}
+
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
 			string file = Path.Combine("TypeCobol","FUNCTION");
 			var skeletons = ParseConfig(file+".xml");

@@ -13,12 +13,20 @@ public class Position {
 		return Line+":"+Character;
 	}
 }
+public class UnknownPosition: Position {
+	public override string ToString() { return "?:?"; }
+}
 public class Range {
 	public Position Start = new Position();
 	public Position End = new Position();
 	public override string ToString() {
 		return Start+">"+End;
 	}
+
+	public static Range Unknown = new Range {
+			Start = new UnknownPosition(),
+			End = new UnknownPosition(),
+		};
 }
 public class Diagnostic {
 	public Range Range = new Range();
@@ -45,7 +53,8 @@ public class CodeElementDiagnostics {
 		var results = new List<Diagnostic>();
 		foreach(var d in e.Diagnostics) {
 			var diagnostic = AsDiagnostic(d);
-			diagnostic.Range = GetRange(e.ConsumedTokens, d.ColumnStart, d.ColumnEnd);
+			if (e.ConsumedTokens.Count < 1) diagnostic.Range = Range.Unknown;
+			else diagnostic.Range = GetRange(e.ConsumedTokens, d.ColumnStart, d.ColumnEnd);
 			results.Add(diagnostic);
 		}
 		return results;

@@ -1,5 +1,5 @@
 ﻿      * 3 CodeElements errors
-      * "4"@(33:12>33:33): [30:1] Semantic error: Can't write non typed Alphanumeric to strongly typed variable Identifier:BOOL (use unsafe keyword for that)
+      * "4"@(33:12>33:33): [30:1] Semantic error: Can't write non typed Alphanumeric to strongly typed variable Identifier:BOOL (use UNSAFE keyword for that)
       * "1"@(35:12>35:39): [27:1] Syntax error : Symbol Identifier-value is not referenced
       * "1"@(36:12>36:59): [27:1] Syntax error : Symbol Identifier-value.Identifier-false is not referenced
        IDENTIFICATION DIVISION.
