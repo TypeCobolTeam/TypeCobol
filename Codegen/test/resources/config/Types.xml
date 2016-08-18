@@ -21,4 +21,14 @@
     </patterns>
   </skeleton>
 
+  <!-- delete UNSAFE -->
+  <skeleton name="UNSAFE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.SymbolUser"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="erase">UNSAFE</pattern>
+    </patterns>
+  </skeleton>
+
 </skeletons>
