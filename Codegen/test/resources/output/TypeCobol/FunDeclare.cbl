@@ -1,15 +1,15 @@
 ﻿      * 11 CodeElements errors
       * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(24:8>24:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
-      * "1"@(44:12>44:26): [27:1] Syntax error : a is not a parameter.
-      * "1"@(45:12>45:26): [27:1] Syntax error : b is not a parameter.
-      * "1"@(46:12>46:26): [27:1] Syntax error : c is not a parameter.
-      * "1"@(54:12>54:27): [27:1] Syntax error : Ambiguous reference to symbol result
-      * "1"@(91:14>91:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
-      * "1"@(92:14>92:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
-      * "1"@(97:8>97:16): [27:1] Syntax error : Illegal non-function item in library
-      * "1"@(110:8>110:46): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-      * "1"@(110:8>110:46): [27:1] Syntax error : Condition parameter "male" must be level 88.
+      * "1"@(42:12>42:26): [27:1] Syntax error : x is already a parameter.
+      * "1"@(43:12>43:26): [27:1] Syntax error : y is already a parameter.
+      * "1"@(49:12>49:31): [27:1] Syntax error : result is already a parameter.
+      * "1"@(56:12>56:27): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(93:14>93:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
+      * "1"@(94:14>94:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
+      * "1"@(99:8>99:16): [27:1] Syntax error : Illegal non-function item in library
+      * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
+      * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -62,8 +62,10 @@
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
-           01 y PIC 9(04).
+           01 y PIC 9(02).
            01 a PIC 9(04).
+             05 x PIC 9(02).
+             05 z PIC 9(02).
            01 b PIC 9(04).
            01 c PIC 9(04).
            01 result PIC 9(04).

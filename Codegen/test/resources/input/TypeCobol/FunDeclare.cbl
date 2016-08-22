@@ -40,8 +40,10 @@
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
-           01 y PIC 9(04).
+           01 y PIC 9(02).
            01 a PIC 9(04).
+             05 x PIC 9(02).
+             05 z PIC 9(02).
            01 b PIC 9(04).
            01 c PIC 9(04).
            01 result PIC 9(04).

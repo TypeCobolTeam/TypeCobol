@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			CheckNoGlobalOrExternal(node.Get("data-division"));
 
 			CheckParameters(profile.Profile, header);
-			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile.Profile);
+			CheckNoLinkageItemIsAParameter(node.Get("linkage"), profile.Profile);
 
 			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
 			if (functions.Count > 1)
@@ -155,21 +155,23 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (parameter.LevelNumber != 88) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be level 88.");
 			}
 		}
-
-		private void CheckEveryLinkageItemIsAParameter(Node node, ParametersProfile profile) {
+		/// <summary>TCRFUN_DECLARATION_LEVEL_01</summary>
+		/// <param name="node">LINKAGE SECTION node</param>
+		/// <param name="profile">Parameters for original function</param>
+		private void CheckNoLinkageItemIsAParameter(Node node, ParametersProfile profile) {
 			if (node == null) return; // no LINKAGE SECTION
 			var linkage = new List<DataDescriptionEntry>();
 			var entries = node.GetChildren(typeof(DataDescriptionEntry));
 			foreach(var n in entries) linkage.Add((DataDescriptionEntry)n.CodeElement);
 			foreach(var description in linkage) {
 				var used = Validate(profile.ReturningParameter, (DataName)description.Name);
-				if (used == null) used = GetParameter(profile.InputParameters,  (DataName)description.Name);
-				if (used == null) used = GetParameter(profile.OutputParameters, (DataName)description.Name);
-				if (used == null) used = GetParameter(profile.InoutParameters,  (DataName)description.Name);
-				if (used == null) {
-					var data = GetParameter(node, description.Name!=null?description.Name.Name:null);
-					DiagnosticUtils.AddError(data, description.Name+" is not a parameter.");
-				}
+				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				used = GetParameter(profile.InputParameters,  (DataName)description.Name);
+				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				used = GetParameter(profile.OutputParameters, (DataName)description.Name);
+				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				used = GetParameter(profile.InoutParameters,  (DataName)description.Name);
+				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
 			}
 		}
 		private ParameterDescription GetParameter(IList<ParameterDescription> parameters, DataName name) {
@@ -181,6 +183,10 @@ namespace TypeCobol.Compiler.Diagnostics {
 		private ParameterDescription Validate(ParameterDescription parameter, DataName name) {
 			if (parameter != null && parameter.Name.Equals(name)) return parameter;
 			return null;
+		}
+		private void AddErrorAlreadyParameter(Node node, Symbol description) {
+			var data = GetParameter(node, description!=null?description.Name:null);
+			DiagnosticUtils.AddError(data, description+" is already a parameter.");
 		}
 		/// <param name="node">LINKAGE SECTION, presumably</param>
 		/// <param name="name">Parameter we want</param>
