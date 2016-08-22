@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements
                             sb.Append(inputParam.ReceivingMode);
                             sb.Append(':');
                         }
-                        sb.Append(inputParam.DataName);
+                        sb.Append(inputParam.Symbol);
                     }
                     sb.AppendLine();
                 }                
@@ -81,10 +81,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// Each USING identifier must be defined as a level-01 or level-77 item in the
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// </summary>
-        public DataName DataName { get; set; }
+        public Symbol Symbol { get; set; }
 
-		public InputParameter(DataName name, SyntaxProperty<ReceivingMode> mode) {
-			this.DataName = name;
+		public InputParameter(Symbol name, SyntaxProperty<ReceivingMode> mode) {
+			this.Symbol = name;
 			this.ReceivingMode = mode;
 		}
     }

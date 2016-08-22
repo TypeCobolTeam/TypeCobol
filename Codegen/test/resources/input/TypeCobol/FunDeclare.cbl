@@ -97,5 +97,13 @@
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
-       END PROGRAM FunDeclare.
+       DECLARE function FunConditions PRIVATE.
+         PROCEDURE DIVISION
+             INPUT  gender PIC X(01).
+                 88  valid-gender VALUE 'F' 'M'.
+                 88  female VALUE 'F'.
+                 88  male   VALUE 'M'.
+           CONTINUE.
+       END-DECLARE.
        
+       END PROGRAM FunDeclare.

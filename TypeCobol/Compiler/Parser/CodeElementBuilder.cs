@@ -2217,11 +2217,12 @@ namespace TypeCobol.Compiler.Parser
 		}
 		private ParameterDescription CreateParameter(CodeElementsParser.ParameterDescriptionContext context) {
 			if (context.functionDataParameter() != null)
-				return CreateFunctionDataParameter(context.functionDataParameter());
-			// if (context.dataConditionEntry() != null)
-				return null;
+				return CreateFunctionParameter(context.functionDataParameter());
+			if (context.functionConditionParameter() != null)
+				return CreateFunctionParameter(context.functionConditionParameter());
+			return null;
 		}
-		public ParameterDescription CreateFunctionDataParameter(CodeElementsParser.FunctionDataParameterContext context) {
+		public ParameterDescription CreateFunctionParameter(CodeElementsParser.FunctionDataParameterContext context) {
 			var parameter = new ParameterDescription();
 			parameter.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
 			if (context.pictureClause() != null) {
@@ -2243,6 +2244,16 @@ namespace TypeCobol.Compiler.Parser
 			UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
 			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
 */			return parameter;
+		}
+		private ParameterDescription CreateFunctionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
+			var parameter = new ParameterDescription();
+			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+				parameter.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			}
+			parameter.ConditionName = SyntaxElementBuilder.CreateConditionName(context.conditionNameDefinition());
+			parameter.IsConditionNameDescription = true;
+			UpdateDataDescriptionEntryWithValueClauseForCondition(parameter, context.valueClauseForCondition());
+			return parameter;
 		}
 
 		private string CreatePicture(CodeElementsParser.Cobol2002TypeClauseContext context) {

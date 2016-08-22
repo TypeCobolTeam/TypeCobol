@@ -14,8 +14,6 @@ public class Passing {
 }
 
 public class ParameterDescription: DataDescriptionEntry {
-	public DataName Name { get { return DataName; } }
-//	public string Picture { get; internal set; }
 	// TODO#245
 	// create an interface shared with DataDeclarationEntry
 	// that aggregates all the non-illegal stuff like justified, 

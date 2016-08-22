@@ -46,34 +46,34 @@ namespace TypeCobol.Codegen.Nodes {
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
 			var generated = new List<string>();
 			foreach(var parameter in profile.InputParameters) {
-				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+				if (!generated.Contains(parameter.Name.Name) && !Contains(data, parameter.Name.Name)) {
 					linkage.Add(new ParameterEntry(parameter));
-					generated.Add(parameter.DataName.Name);
+					generated.Add(parameter.Name.Name);
 				}
 			}
 			foreach(var parameter in profile.InoutParameters) {
-				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+				if (!generated.Contains(parameter.Name.Name) && !Contains(data, parameter.Name.Name)) {
 					linkage.Add(new ParameterEntry(parameter));
-					generated.Add(parameter.DataName.Name);
+					generated.Add(parameter.Name.Name);
 				}
 			}
 			foreach(var parameter in profile.OutputParameters) {
-				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+				if (!generated.Contains(parameter.Name.Name) && !Contains(data, parameter.Name.Name)) {
 					linkage.Add(new ParameterEntry(parameter));
-					generated.Add(parameter.DataName.Name);
+					generated.Add(parameter.Name.Name);
 				}
 			}
 			if (profile.ReturningParameter != null) {
-				if (!generated.Contains(profile.ReturningParameter.DataName.Name) && !Contains(data, profile.ReturningParameter.DataName.Name)) {
+				if (!generated.Contains(profile.ReturningParameter.Name.Name) && !Contains(data, profile.ReturningParameter.Name.Name)) {
 					linkage.Add(new ParameterEntry(profile.ReturningParameter));
-					generated.Add(profile.ReturningParameter.DataName.Name);
+					generated.Add(profile.ReturningParameter.Name.Name);
 				}
 			}
 		}
 
-		private bool Contains(IList<Node> data, string dataname) {
+		private bool Contains(IList<Node> data, string name) {
 			foreach(var node in data)
-				if (dataname.Equals(((DataDescriptionEntry)node.CodeElement).DataName.Name))
+				if (name.Equals(((DataDescriptionEntry)node.CodeElement).Name.Name))
 					return true;
 			return false;
 		}

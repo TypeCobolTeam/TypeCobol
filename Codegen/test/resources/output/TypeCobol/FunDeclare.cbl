@@ -26,7 +26,7 @@
        PROGRAM-ID. ReturnsZero.                                               
          DATA DIVISION.
          LINKAGE SECTION.                                                     
-           01 result PIC 9(04)                                                
+           01 result PIC 9(04).                                               
          PROCEDURE DIVISION                                                   
              RETURNING result                                                 
          .                                                                    
@@ -41,8 +41,8 @@
          FILE SECTION.
            FD myfile. 01 toto PIC X.
          LINKAGE SECTION.
-           01 x PIC 9(04)                                                     
-           01 result PIC 9(04)                                                
+           01 x PIC 9(04).                                                    
+           01 result PIC 9(04).                                               
          PROCEDURE DIVISION                                                   
              USING BY REFERENCE x                                             
              RETURNING result                                                 
@@ -65,7 +65,7 @@
            01 b PIC 9(04).
            01 c PIC 9(04).
            01 result PIC 9(04).
-           01 z PIC 9(04)                                                     
+           01 z PIC 9(04).                                                    
          PROCEDURE DIVISION                                                   
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
@@ -84,8 +84,8 @@
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
          LINKAGE SECTION.                                                     
-           01 x PIC 9(04)                                                     
-           01 y PIC 9(04)                                                     
+           01 x PIC 9(04).                                                    
+           01 y PIC 9(04).                                                    
          PROCEDURE DIVISION                                                   
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
@@ -101,10 +101,10 @@
       *DECLARE function SwapParametersWrong PRIVATE.                          
        PROGRAM-ID. SwapParametersWrong.                                       
          LINKAGE SECTION.                                                     
-           01 x PIC 9(04)                                                     
-           01 y PIC 9(04)                                                     
-           01 a PIC 9(04)                                                     
-           01 b PIC 9(04)                                                     
+           01 x PIC 9(04).                                                    
+           01 y PIC 9(04).                                                    
+           01 a PIC 9(04).                                                    
+           01 b PIC 9(04).                                                    
          PROCEDURE DIVISION                                                   
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
@@ -128,5 +128,20 @@
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
-       END PROGRAM FunDeclare.
+      *DECLARE function FunConditions PRIVATE.                                
+       PROGRAM-ID. FunConditions.                                             
+         LINKAGE SECTION.                                                     
+           01 gender PIC X(01).                                               
+           88 valid-gender VALUE 'F' 'M'.                                     
+           88 female VALUE 'F'.                                               
+           88 male VALUE 'M'.                                                 
+         PROCEDURE DIVISION                                                   
+             USING BY REFERENCE gender                                        
+                   BY REFERENCE valid-gender                                  
+                   BY REFERENCE female                                        
+                   BY REFERENCE male                                          
+         .                                                                    
+           CONTINUE.
+       END PROGRAM FunConditions.                                             
        
+       END PROGRAM FunDeclare.

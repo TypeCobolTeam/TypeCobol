@@ -78,8 +78,9 @@ outputPhrase: OUTPUT parameterDescription+;
 functionReturningPhrase: RETURNING parameterDescription;
 
 // parameterDescription is a rule created from dataDescriptionEntry
-// and enforcing rule TCRFUN_PARAMETER_DESCRIPTION
-parameterDescription: (dataConditionEntry | functionDataParameter) PeriodSeparator?;
+// and enforcing rules TCRFUN_PARAMETER_DESCRIPTION TCRFUN_LEVEL_88_PARAMETERS
+parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
+
 functionDataParameter:
 	dataNameDefinition (pictureClause|cobol2002TypeClause)
 		( blankWhenZeroClause
@@ -92,5 +93,7 @@ functionDataParameter:
 		| valueClause
 		)*;
 
+functionConditionParameter:
+	levelNumber conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;

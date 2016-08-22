@@ -8,7 +8,7 @@ namespace TypeCobol.Codegen.Nodes {
 	internal class ProcedureDivision: Node, Generated {
 
 		public IList<InputParameter> UsingParameters { get; private set; }
-		public DataName ReturningParameter { get; private set; }
+		public Symbol ReturningParameter { get; private set; }
 
 		public ProcedureDivision(FunctionDeclarationProfile profile): base(null) {
 			UsingParameters = new List<InputParameter>();
@@ -29,12 +29,12 @@ namespace TypeCobol.Codegen.Nodes {
 					int c = 0;
 					var done = new List<string>();
 					foreach(var parameter in UsingParameters) {
-						if (done.Contains(parameter.DataName.Name)) continue;
-						else done.Add(parameter.DataName.Name);
+						if (done.Contains(parameter.Symbol.Name)) continue;
+						else done.Add(parameter.Symbol.Name);
 						string strmode = "BY REFERENCE ";
 						if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
 						string strusing = c==0? "      USING ":"            ";
-						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+parameter.DataName, null));
+						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+parameter.Symbol, null));
 						c++;
 					}
 					if (ReturningParameter != null)
@@ -49,7 +49,7 @@ namespace TypeCobol.Codegen.Nodes {
 	}
 
 	public class GeneratedParameter: InputParameter {
-		public GeneratedParameter(DataName name): base(name, null) {
+		public GeneratedParameter(Symbol name): base(name, null) {
 			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
 			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
 		}

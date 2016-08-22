@@ -24,7 +24,14 @@ internal class ParameterEntry: Node, Generated {
 				var str = new System.Text.StringBuilder();
 				str.Append("    ");// indent
 				// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
-				str.Append("01 ").Append(Description.DataName.Name).Append(" PIC ").Append(Description.Picture);
+				if (Description.IsConditionNameDescription) {
+					str.Append("88 ").Append(Description.Name.Name); //TODO value
+					if (Description.InitialValue != null) str.Append(" VALUE ").Append(Description.InitialValue.ToString());
+					if (Description.ThroughValue != null) str.Append(' ').Append(Description.ThroughValue.ToString());
+				} else {
+					str.Append("01 ").Append(Description.Name.Name).Append(" PIC ").Append(Description.Picture);
+				}
+				str.Append('.');
 				_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 			}
 			return _cache;
