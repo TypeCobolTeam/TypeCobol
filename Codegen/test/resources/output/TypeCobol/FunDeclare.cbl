@@ -9,7 +9,7 @@
       * "1"@(92:14>92:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
       * "1"@(97:8>97:16): [27:1] Syntax error : Illegal non-function item in library
       * "1"@(110:8>110:46): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-      * "1"@(110:8>110:46): [27:1] Syntax error : Condition parameter "male" should be level 88.
+      * "1"@(110:8>110:46): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        

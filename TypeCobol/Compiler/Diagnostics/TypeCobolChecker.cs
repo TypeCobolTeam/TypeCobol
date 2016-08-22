@@ -150,9 +150,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce);
 		}
 		private void CheckParameter(ParameterDescription parameter, CodeElement ce) {
-			if (parameter.IsConditionNameDescription) {
+			if (parameter.IsConditionNameDescription) {// TCRFUN_LEVEL_88_PARAMETERS
 				if (parameter.TopLevel == null) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be subordinate to another parameter.");
-				if (parameter.LevelNumber != 88) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" should be level 88.");
+				if (parameter.LevelNumber != 88) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be level 88.");
 			}
 		}
 
