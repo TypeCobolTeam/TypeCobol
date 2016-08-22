@@ -119,6 +119,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 			CheckNoGlobalOrExternal(node.Get("data-division"));
 
+			CheckParameters(profile.Profile, header);
 			CheckEveryLinkageItemIsAParameter(node.Get("linkage"), profile.Profile);
 
 			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
@@ -139,6 +140,19 @@ namespace TypeCobol.Compiler.Diagnostics {
 					if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
 						DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
 				}
+			}
+		}
+
+		private void CheckParameters(ParametersProfile profile, CodeElement ce) {
+			foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce);
+			foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce);
+			foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce);
+			if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce);
+		}
+		private void CheckParameter(ParameterDescription parameter, CodeElement ce) {
+			if (parameter.IsConditionNameDescription) {
+				if (parameter.TopLevel == null) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be subordinate to another parameter.");
+				if (parameter.LevelNumber != 88) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" should be level 88.");
 			}
 		}
 

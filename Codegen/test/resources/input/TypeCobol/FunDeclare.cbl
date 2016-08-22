@@ -105,5 +105,15 @@
                  88  male   VALUE 'M'.
            CONTINUE.
        END-DECLARE.
+      * ERROR level-88 parameter items must be subordinate to another item
+      * ERROR only level-88 parameter items shall have an explicit level number
+       DECLARE function FunConditions PRIVATE.
+         PROCEDURE DIVISION
+             INPUT 88 valid-gender VALUE 'F' 'M'.
+                      gender PIC X(01).
+                   88  female VALUE 'F'.
+                   01  male   VALUE 'M'.
+           CONTINUE.
+       END-DECLARE.
        
        END PROGRAM FunDeclare.
