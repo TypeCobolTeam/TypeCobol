@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				var enclosing = CurrentProgram;
 				CurrentProgram = new NestedProgram(enclosing);
-				Enter(CurrentProgram.SyntaxTree.Root, context, TableOfGlobals);
+				Enter(CurrentProgram.SyntaxTree.Root, context, new SymbolTable(TableOfGlobals));
 			}
 			CurrentProgram.Identification = (ProgramIdentification)AsCodeElement(context.ProgramIdentification());
 			Enter(new Node(CurrentProgram.Identification), context, CurrentProgram.SymbolTable);
