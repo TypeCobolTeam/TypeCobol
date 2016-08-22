@@ -1,8 +1,10 @@
-﻿      * 11 CodeElements errors
+﻿      * 13 CodeElements errors
       * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(24:8>24:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
       * "1"@(42:12>42:26): [27:1] Syntax error : x is already a parameter.
       * "1"@(43:12>43:26): [27:1] Syntax error : y is already a parameter.
+      * "1"@(45:14>45:28): [27:1] Syntax error : x is already a parameter.
+      * "1"@(46:14>46:28): [27:1] Syntax error : z is already a parameter.
       * "1"@(49:12>49:31): [27:1] Syntax error : result is already a parameter.
       * "1"@(56:12>56:27): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(93:14>93:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
@@ -56,7 +58,7 @@
            END-IF.
        END PROGRAM StrangelyReturnsItsInput.                                  
 
-      * ERROR because x, y and result shouldn't be in LINKAGE
+      * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
       *DECLARE function SumThreeWithClutterInLinkage PRIVATE.                 
        PROGRAM-ID. SumThreeWithClutterInLinkage.                              
          DATA DIVISION.

@@ -35,7 +35,7 @@
            END-IF.
        END-DECLARE.
 
-      * ERROR because x, y and result shouldn't be in LINKAGE
+      * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
        DECLARE function SumThreeWithClutterInLinkage PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.

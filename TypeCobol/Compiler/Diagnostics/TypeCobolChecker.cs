@@ -155,24 +155,28 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (parameter.LevelNumber != 88) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be level 88.");
 			}
 		}
-		/// <summary>TCRFUN_DECLARATION_LEVEL_01</summary>
+		/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
 		/// <param name="node">LINKAGE SECTION node</param>
 		/// <param name="profile">Parameters for original function</param>
 		private void CheckNoLinkageItemIsAParameter(Node node, ParametersProfile profile) {
 			if (node == null) return; // no LINKAGE SECTION
 			var linkage = new List<DataDescriptionEntry>();
-			var entries = node.GetChildren(typeof(DataDescriptionEntry));
-			foreach(var n in entries) linkage.Add((DataDescriptionEntry)n.CodeElement);
+			AddEntries(linkage, node);
 			foreach(var description in linkage) {
 				var used = Validate(profile.ReturningParameter, (DataName)description.Name);
-				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				if (used != null) { AddErrorAlreadyParameter(node, description.QualifiedName); continue; }
 				used = GetParameter(profile.InputParameters,  (DataName)description.Name);
-				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				if (used != null) { AddErrorAlreadyParameter(node, description.QualifiedName); continue; }
 				used = GetParameter(profile.OutputParameters, (DataName)description.Name);
-				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				if (used != null) { AddErrorAlreadyParameter(node, description.QualifiedName); continue; }
 				used = GetParameter(profile.InoutParameters,  (DataName)description.Name);
-				if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+				if (used != null) { AddErrorAlreadyParameter(node, description.QualifiedName); continue; }
 			}
+		}
+		private void AddEntries(List<DataDescriptionEntry> linkage, Node node) {
+			var entries = node.GetChildren(typeof(DataDescriptionEntry));
+			foreach(var n in entries) linkage.Add((DataDescriptionEntry)n.CodeElement);
+			foreach(var child in node.Children) AddEntries(linkage, child);
 		}
 		private ParameterDescription GetParameter(IList<ParameterDescription> parameters, DataName name) {
 			if (name == null) return null;
@@ -184,14 +188,14 @@ namespace TypeCobol.Compiler.Diagnostics {
 			if (parameter != null && parameter.Name.Equals(name)) return parameter;
 			return null;
 		}
-		private void AddErrorAlreadyParameter(Node node, Symbol description) {
-			var data = GetParameter(node, description!=null?description.Name:null);
-			DiagnosticUtils.AddError(data, description+" is already a parameter.");
+		private void AddErrorAlreadyParameter(Node node, QualifiedName name) {
+			var data = GetParameter(node, name);
+			DiagnosticUtils.AddError(data, name.Head+" is already a parameter.");
 		}
 		/// <param name="node">LINKAGE SECTION, presumably</param>
 		/// <param name="name">Parameter we want</param>
 		/// <returns>Parameter as declared in DATA DIVISION</returns>
-		private DataDescriptionEntry GetParameter(Node node, string name) {
+		private DataDescriptionEntry GetParameter(Node node, QualifiedName name) {
 			var data = node.CodeElement as DataDescriptionEntry;
 			if (data != null && data.QualifiedName.Matches(name)) return data;
 			foreach(var child in node.Children) {
