@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				var enclosing = CurrentProgram;
 				CurrentProgram = new NestedProgram(enclosing);
-				Enter(CurrentProgram.SyntaxTree.Root, context);
+				Enter(CurrentProgram.SyntaxTree.Root, context, TableOfGlobals);
 			}
 			CurrentProgram.Identification = (ProgramIdentification)AsCodeElement(context.ProgramIdentification());
 			Enter(new Node(CurrentProgram.Identification), context, CurrentProgram.SymbolTable);
@@ -279,7 +279,6 @@ namespace TypeCobol.Compiler.Parser
 				{
 					CheckRenameClause(data, data.RenamesToDataName);
 				}
-
 				CurrentProgram.CurrentTable.Add(data);
 				if (customtype != null) {
 					foreach(var sub in customtype.Subordinates) {
