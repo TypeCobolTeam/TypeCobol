@@ -6,13 +6,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "TypeCobol.Server\TypeCobol.Server.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "CLI\src\CLI.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor.VisualStudio", "Editors\VisualStudio\Editor.VisualStudio.csproj", "{83E6C379-4617-490B-A5C6-225276EA7096}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobolStudio", "TypeCobolStudio\TypeCobolStudio.csproj", "{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.LanguageServer", "TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj", "{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.VsCodeClient", "TypeCobol.VsCodeClient\TypeCobol.VsCodeClient.csproj", "{16734607-4567-4566-BFFA-398CF3821448}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen", "Codegen\src\Codegen.csproj", "{4034CBC5-D3DC-45E5-81F2-605579E6B876}"
 EndProject
@@ -43,6 +43,10 @@ Global
 		{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83E6C379-4617-490B-A5C6-225276EA7096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E6C379-4617-490B-A5C6-225276EA7096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E6C379-4617-490B-A5C6-225276EA7096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E6C379-4617-490B-A5C6-225276EA7096}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2AAF341-E239-4C17-BC8B-4BBEBAB9FD5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,10 +55,6 @@ Global
 		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16734607-4567-4566-BFFA-398CF3821448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16734607-4567-4566-BFFA-398CF3821448}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16734607-4567-4566-BFFA-398CF3821448}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16734607-4567-4566-BFFA-398CF3821448}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4034CBC5-D3DC-45E5-81F2-605579E6B876}.Release|Any CPU.ActiveCfg = Release|Any CPU
