@@ -70,6 +70,37 @@ namespace TypeCobol.Compiler.CodeElements
 			return sb.ToString();
 		}
 
+		public string SourceText {
+			get {
+				var str = new StringBuilder();
+				ITokensLine previous = null;
+				int end = -1;
+				foreach(var token in ConsumedTokens) {
+					var line = token.TokensLine;
+					string whitespace = "";
+					if (previous == null) { // first line
+						whitespace = GetIndent(line, token.StartIndex);
+					} else
+					if (previous == line) { // same line
+						whitespace = line.Text.Substring(end, token.StartIndex-end);
+					} else { // new line
+						str.AppendLine();
+						whitespace = GetIndent(line, token.StartIndex);
+					}
+					previous = line;
+					string text = line.Text.Substring(token.StartIndex, token.Length);
+					str.Append(whitespace+text);
+					end = token.StartIndex + token.Length;
+				}
+				return str.ToString();
+			}
+		}
+
+		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
+			var lineStartIndex = line.SequenceNumberText.Length + (line.IndicatorChar != null? 1:0);
+			return line.SourceText.Substring(0, firstTokenStartIndex-lineStartIndex);
+		}
+
         // --- Antlr4.Runtime.IToken implementation ---
         // ... used by the ProgramClassParser  ...
 
@@ -157,5 +188,5 @@ namespace TypeCobol.Compiler.CodeElements
             get;
             internal set;
         }
-    }
+	}
 }

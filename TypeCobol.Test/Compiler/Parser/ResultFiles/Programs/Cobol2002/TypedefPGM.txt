@@ -62,6 +62,8 @@ CUSTOM TYPES:
      - varExternalType2 {2} Alphanumeric <of> ExternalType2
  * CannotBeStrong
  * TYPE_ELT
+     - TYPE-ELT-VALB {88} GROUP(0) [ ] <of> TYPE_ELT
+     - TYPE-ELT-VALC {88} GROUP(0) [ ] <of> TYPE_ELT
  * TYPE-GRP
      - TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP
      - TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP
@@ -186,8 +188,8 @@ SYMBOL TABLE:
   TYPEDEF CannotBeStrong {1} CannotBeStrong
   varCannotBeStrong {1} CannotBeStrong
   TYPEDEF TYPE_ELT {1} TYPE_ELT
-  TYPE-ELT-VALB {88} GROUP(0) [ ]
-  TYPE-ELT-VALC {88} GROUP(0) [ ]
+  TYPE-ELT-VALB {88} GROUP(0) [ ] <of> TYPE_ELT
+  TYPE-ELT-VALC {88} GROUP(0) [ ] <of> TYPE_ELT
   TYPEDEF TYPE-GRP {1} GROUP(2) [ TYPE-GRP-1 TYPE-GRP-2 ]TYPE-GRP
   TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP
   TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP

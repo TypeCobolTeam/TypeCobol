@@ -35,13 +35,15 @@
            END-IF.
        END-DECLARE.
 
-      * ERROR because x, y and result shouldn't be in LINKAGE
+      * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
        DECLARE function SumThreeWithClutterInLinkage PRIVATE.
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
-           01 y PIC 9(04).
+           01 y PIC 9(02).
            01 a PIC 9(04).
+             05 x PIC 9(02).
+             05 z PIC 9(02).
            01 b PIC 9(04).
            01 c PIC 9(04).
            01 result PIC 9(04).
@@ -97,5 +99,23 @@
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
-       END PROGRAM FunDeclare.
+       DECLARE function FunConditions PRIVATE.
+         PROCEDURE DIVISION
+             INPUT  gender PIC X(01).
+                 88  valid-gender VALUE 'F' 'M'.
+                 88  female VALUE 'F'.
+                 88  male   VALUE 'M'.
+           CONTINUE.
+       END-DECLARE.
+      * ERROR level-88 parameter items must be subordinate to another item
+      * ERROR only level-88 parameter items shall have an explicit level number
+       DECLARE function FunConditions PRIVATE.
+         PROCEDURE DIVISION
+             INPUT 88 valid-gender VALUE 'F' 'M'.
+                      gender PIC X(01).
+                   88  female VALUE 'F'.
+                   01  male   VALUE 'M'.
+           CONTINUE.
+       END-DECLARE.
        
+       END PROGRAM FunDeclare.

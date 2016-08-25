@@ -117,6 +117,9 @@ namespace TypeCobol.Codegen {
 			if ("expand".Equals(pattern.Action)) {
 				return new Expand(destination);
 			}
+			if ("erase".Equals(pattern.Action)) {
+				return new Erase(destination, pattern.Template);
+			}
 			System.Console.WriteLine("Unknown action: \""+pattern.Action+"\"");
 			return null;
 		}
@@ -265,6 +268,34 @@ namespace TypeCobol.Codegen {
 		private Type GetGeneratedNode(Type type) {
 			try { return Generators[type]; }
 			catch(KeyNotFoundException) { throw new ArgumentException("Unknown type "+type); }
+		}
+	}
+
+	public class Erase: Action {
+		public string Group { get; private set; }
+		internal Node Node;
+		private IEnumerable<string> Words;
+
+		public Erase(Node node, string word) {
+			this.Node = node;
+			this.Words = new List<string> { word };
+		}
+
+		public void Execute() {
+			var solver = new Skeletons.Templates.Eraser(Node.CodeElement.SourceText, this.Words);
+			bool somethingToDo = solver.Run();
+			if (!somethingToDo) return;
+
+			// retrieve data
+			int index = this.Node.Parent.IndexOf(this.Node);
+			if (index > -1) {
+				var nodegen = new GeneratedNode(solver);
+				this.Node.Parent.Add(nodegen, index+1);
+			}
+			// comment out original "line" (=~ non expanded node)
+			this.Node.Comment = true;
+			this.Node.Clear();
+
 		}
 	}
 }

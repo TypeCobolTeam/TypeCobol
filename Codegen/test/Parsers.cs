@@ -61,9 +61,10 @@ namespace TypeCobol.Codegen {
 		public void ParseTypes() {
 			string file = "Types";
 			var skeletons = ParseConfig(file+".xml");
-			Assert.AreEqual(skeletons.Count,2);
+			Assert.AreEqual(skeletons.Count,3);
 			Assert.AreEqual(skeletons[0].Patterns.Count, 1);
 			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
+			Assert.AreEqual(skeletons[2].Patterns.Count, 1);
 
 			ParseGenerateCompare(file+".cbl", skeletons);
 		}
@@ -79,6 +80,15 @@ namespace TypeCobol.Codegen {
 			Assert.AreEqual(skeletons[0].Patterns.Count, 1);
 			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
 
+			ParseGenerateCompare(file+".cbl", skeletons);
+		}
+
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+		public void ParseUnsafe() {
+			string file = Path.Combine("TypeCobol","unsafe");
+			var skeletons = ParseConfig("Types.xml");// ParseConfig(file+".xml");
 			ParseGenerateCompare(file+".cbl", skeletons);
 		}
 

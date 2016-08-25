@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.Parser
 			} else {
 				var enclosing = CurrentProgram;
 				CurrentProgram = new NestedProgram(enclosing);
-				Enter(CurrentProgram.SyntaxTree.Root, context);
+				Enter(CurrentProgram.SyntaxTree.Root, context, new SymbolTable(TableOfGlobals));
 			}
 			var terminal = context.ProgramIdentification();
 			CurrentProgram.Identification = terminal != null? (ProgramIdentification)terminal.Symbol : null;
@@ -368,7 +368,6 @@ namespace TypeCobol.Compiler.Parser
 				{
 					CheckRenameClause(data, data.RenamesToDataName);
 				}
-
 				CurrentProgram.CurrentTable.Add(data);
 				if (customtype != null) {
 					foreach(var sub in customtype.Subordinates) {
@@ -512,19 +511,20 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		/// <param name="groups">Current "branch" of parent data. If its size is greater than 0, data is a subordinate.</param>
 		/// <returns>True if the parental relation has been updated</returns>
 		private bool ComputeParent(DataDescriptionEntry data, Stack<DataDescriptionEntry> groups) {
-			bool updated = false;
-			while(!updated && groups.Count > 0) {
+			bool hasParent = false;
+			while(!hasParent && groups.Count > 0) {
 				var toplevel = groups.Peek();
-				if (data.LevelNumber <= toplevel.LevelNumber || data.LevelNumber == 66) groups.Pop();
+				if (data.LevelNumber <= toplevel.LevelNumber || data.LevelNumber == 66 || data.LevelNumber == 77) groups.Pop();
 				else {
 					toplevel.Subordinates.Add(data);
 					data.TopLevel = toplevel;
-					updated = true;
+					hasParent = true;
 				}
 			}
-			if (updated || data.IsGroup) groups.Push(data);
-			return updated;
+			groups.Push(data);
+			return hasParent;
 		}
+
 
 		/// <summary>Update the toplevel data of a given data description.</summary>
 		/// <param name="data">Data description to update</param>
@@ -622,21 +622,30 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			var p = new FunctionDeclarationProfile(pheader);
 /*			char[] currencies = GetCurrencies();
 			int offset = 0;
-			foreach(var p in p.Profile.InputParameters) {
+			Stack<DataDescriptionEntry> groups;
+			groups = new Stack<DataDescriptionEntry>();
+			foreach(var p in profile.InputParameters) {
+				ComputeParent(p, groups);
 				ComputeType(p, currencies);
 				ComputeMemoryProfile(p, ref offset);
 			}
-			foreach(var p in p.Profile.InoutParameters) {
+			groups = new Stack<DataDescriptionEntry>();
+			foreach(var p in profile.InoutParameters) {
+				ComputeParent(p, groups);
 				ComputeType(p, currencies);
 				ComputeMemoryProfile(p, ref offset);
 			}
-			foreach(var p in p.Profile.OutputParameters) {
+			groups = new Stack<DataDescriptionEntry>();
+			foreach(var p in profile.OutputParameters) {
+				ComputeParent(p, groups);
 				ComputeType(p, currencies);
 				ComputeMemoryProfile(p, ref offset);
 			}
-			if (p.Profile.ReturningParameter != null) {
-				ComputeType(p.Profile.ReturningParameter, currencies);
-				ComputeMemoryProfile(p.Profile.ReturningParameter, ref offset);
+			groups = new Stack<DataDescriptionEntry>();
+			if (profile.ReturningParameter != null) {
+				ComputeParent(profile.ReturningParameter, groups);
+				ComputeType(profile.ReturningParameter, currencies);
+				ComputeMemoryProfile(profile.ReturningParameter, ref offset);
 			}
 */
 			var profile = new FunctionProfile(p);

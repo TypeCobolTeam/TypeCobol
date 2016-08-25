@@ -295,7 +295,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		public void OnNode(Node node, ParserRuleContext c, Program program) {
 			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
-			if (element== null || element.IsUnsafe) return; // nothing to do
+			if (element== null) return; // nothing to do
 			var table = program.SymbolTable;
 			foreach(var pair in element.Symbols) {
 				if (pair.Item1 == null) continue; // no sending item
@@ -310,9 +310,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 				var lr = table.Get(pair.Item2);
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 				var receiving = lr[0];
-				if (receiving.DataType != sending && receiving.DataType.IsStrong) {
-					string message = "Can't write non typed "+sending+" to strongly typed variable "+receiving.Name+":"+receiving.DataType+" (use unsafe keyword for that)";
-					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+				if (receiving.DataType != sending) {
+					if (receiving.DataType.IsStrong) {
+						if (!element.IsUnsafe) {
+							string message = "Can't write non typed "+sending+" to strongly typed variable "+receiving.Name+":"+receiving.DataType+" (use UNSAFE keyword for that)";
+							DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+						}
+					} else {
+						if (element.IsUnsafe) {
+							string message = "Useless UNSAFE with non strongly typed receiver.";
+							DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SyntaxWarningInParser);
+						}
+					}
 				}
 				CheckNesting(node.CodeElement, receiving);
 			}

@@ -46,27 +46,27 @@ namespace TypeCobol.Codegen.Nodes {
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
 			var generated = new List<string>();
 			foreach(var parameter in profile.InputParameters) {
-				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+				if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
 					linkage.Add(new ParameterEntry(parameter));
-					generated.Add(parameter.DataName.Name);
+					generated.Add(parameter.Name);
 				}
 			}
 			foreach(var parameter in profile.InoutParameters) {
-				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+				if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
 					linkage.Add(new ParameterEntry(parameter));
-					generated.Add(parameter.DataName.Name);
+					generated.Add(parameter.Name);
 				}
 			}
 			foreach(var parameter in profile.OutputParameters) {
-				if (!generated.Contains(parameter.DataName.Name) && !Contains(data, parameter.DataName.Name)) {
+				if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
 					linkage.Add(new ParameterEntry(parameter));
-					generated.Add(parameter.DataName.Name);
+					generated.Add(parameter.Name);
 				}
 			}
 			if (profile.ReturningParameter != null) {
-				if (!generated.Contains(profile.ReturningParameter.DataName.Name) && !Contains(data, profile.ReturningParameter.DataName.Name)) {
+				if (!generated.Contains(profile.ReturningParameter.Name) && !Contains(data, profile.ReturningParameter.Name)) {
 					linkage.Add(new ParameterEntry(profile.ReturningParameter));
-					generated.Add(profile.ReturningParameter.DataName.Name);
+					generated.Add(profile.ReturningParameter.Name);
 				}
 			}
 		}

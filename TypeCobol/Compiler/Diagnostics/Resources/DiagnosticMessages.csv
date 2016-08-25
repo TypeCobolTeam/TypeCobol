@@ -27,5 +27,5 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 3;26;1;Invalid option specified for *CONTROL or *CBL compiler directive, expecting : SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP;1;528;With the *CONTROL (or *CBL) statement, you can selectively display or suppress the listing of source code, object code, and storage maps throughout the source text.
 4;27;1;Syntax error : {0};1;0;Find the syntax diagram describing the statement in error in the language reference
 3;28;1;Failed to load the text document referenced by a COPY directive : {0};1;531;text-name identifies the copy text. library-name identifies where the copy text exists
-5;29;2;Warning : {0};1;0;Find the corresponding rule in the good practice document
+5;29;2;Warning: {0};1;0;Find the corresponding rule in the good practice document
 5;30;1;Semantic error: {0};4;0;Page

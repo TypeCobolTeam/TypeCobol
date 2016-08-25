@@ -24,6 +24,14 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 				str.Append("    ");// indent
 				// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
 				str.Append("01 ").Append(this.CodeElement().Name).Append(" PIC ").Append(this.CodeElement().Picture);
+/*				if (Description.IsConditionNameDescription) {
+					str.Append("88 ").Append(Description.Name.Name); //TODO value
+					if (Description.InitialValue != null) str.Append(" VALUE ").Append(Description.InitialValue.ToString());
+					if (Description.ThroughValue != null) str.Append(' ').Append(Description.ThroughValue.ToString());
+				} else {
+*/					str.Append("01 ").Append(this.CodeElement().Name).Append(" PIC ").Append(this.CodeElement().Picture);
+//				}
+				str.Append('.');
 				_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 			}
 			return _cache;

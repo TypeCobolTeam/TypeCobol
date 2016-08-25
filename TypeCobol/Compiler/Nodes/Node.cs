@@ -62,6 +62,11 @@ public abstract class Node {
 	public int IndexOf(Node child) {
 		return children.IndexOf(child);
 	}
+	/// <summary>Delete all childrens of this node.</summary>
+	public void Clear() {
+		foreach(var child in children) child.Parent = null;
+		children.Clear();
+	}
 
 
 
