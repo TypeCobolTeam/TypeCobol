@@ -142,13 +142,12 @@ namespace TypeCobol.Compiler.Preprocessor
 			string result = null;
 			TryGetAlphanumericLiteralValue(context.alphanumericLiteralToken(), ref result);
 			TryGetUserDefinedWord(context.UserDefinedWord(), ref result);
+			if (result != null) result = result.Trim('\'').Trim('\"');
 			return result;
 		}
-		internal static void TryGetAlphanumericLiteralValue(Preprocessor.Generated.CobolCompilerDirectivesParser.AlphanumericLiteralTokenContext context, ref string property)
-		{
-		    if (context == null)
-		        return;
-            TryGetUserDefinedWord(context.AlphanumericLiteral(), ref property);
+		internal static void TryGetAlphanumericLiteralValue(Preprocessor.Generated.CobolCompilerDirectivesParser.AlphanumericLiteralTokenContext context, ref string property) {
+			if (context == null) return;
+			TryGetUserDefinedWord(context.AlphanumericLiteral(), ref property);
 			TryGetUserDefinedWord(context.HexadecimalAlphanumericLiteral(), ref property);
 			TryGetUserDefinedWord(context.NullTerminatedAlphanumericLiteral(), ref property);
 		}
