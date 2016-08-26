@@ -34,26 +34,31 @@ namespace TypeCobol.Compiler.CodeElements
 		public ReceivingStorageArea ReturningParameter { get; set; }
 
 		public override string ToString() {
-			if (UsingParameters == null && ReturningParameter == null)
-				return base.ToString();
+			if (UsingParameters == null && ReturningParameter == null) return base.ToString();
 
-			StringBuilder sb = new StringBuilder(base.ToString());
+			var str = new StringBuilder(base.ToString());
 			if (UsingParameters != null) {
-				sb.Append("- InputParameters =");
+				str.Append("- InputParameters =");
 				foreach (InputParameter inputParam in UsingParameters) {
-					sb.Append(' ');
+					str.Append(' ');
 					if (inputParam.ReceivingMode != null) {
-						sb.Append(inputParam.ReceivingMode);
-						sb.Append(':');
+						str.Append(inputParam.ReceivingMode);
+						str.Append(':');
 					}
-					sb.Append(inputParam.ReceivingStorageArea);
+					var named = inputParam.ReceivingStorageArea.StorageArea as Named;
+					if (named == null) str.Append('?');
+					else str.Append(named.Name);
 				}
-				sb.AppendLine();
+				str.AppendLine();
 			}
 			if (ReturningParameter != null) {
-				sb.AppendLine("- ReturningDataName = " + ReturningParameter);
+				str.Append("- ReturningDataName = ");
+				var named = ReturningParameter.StorageArea as Named;
+				if (named == null) str.Append('?');
+				else str.Append(named.Name);
+				str.AppendLine();
 			}
-			return sb.ToString();
+			return str.ToString();
 		}
 	}
 
