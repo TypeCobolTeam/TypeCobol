@@ -77,57 +77,9 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
         
-        public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) 
-        {
-            var copyDirective = new CopyDirective(CompilerDirectiveType.COPY);
-            CompilerDirective = copyDirective;
-            
-            if (context.copyCompilerStatementBody() != null)
-            {
-                var textNameContext = context.copyCompilerStatementBody().qualifiedTextName().textName();
-                if (textNameContext != null)
-                {
-                    string textName = GetTextName(textNameContext);
-                    copyDirective.TextName = textName;
-                    copyDirective.TextNameSymbol = ParseTreeUtils.GetFirstToken(textNameContext);
-
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-
-                    if (textName != null)
-                    {
-                        // Get token for the text name
-                        Token textNameToken = (Token)textNameContext.externalName5().alphanumericValue5().UserDefinedWord().Symbol;
-
-                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                        List<RemarksDirective.TextNameVariation> copyTextNamesVariations = ((TokensLine)textNameToken.TokensLine).InitialScanState.CopyTextNamesVariations;
-                        if (copyTextNamesVariations != null && copyTextNamesVariations.Count > 0)
-                        {
-                            // Check if the current text name was mentioned in a REMARKS compiler directive
-                            RemarksDirective.TextNameVariation textNameDeclaration = copyTextNamesVariations.Find(declaration => String.Equals(declaration.TextNameWithSuffix, textName, StringComparison.InvariantCultureIgnoreCase));
-                            if (textNameDeclaration != null)
-                            {
-                                // Declaration found => apply the legacy REPLACING semantics to the copy directive
-                                copyDirective.RemoveFirst01Level = true;
-                                if (textNameDeclaration.HasSuffix)
-                                {
-                                    copyDirective.TextName = textNameDeclaration.TextName;
-                                    copyDirective.InsertSuffixChar = true;
-                                    copyDirective.SuffixChar = textNameDeclaration.SuffixChar;
-                                }
-                            }
-                        }
-                    }
-#endif
-                }
-
-                var libraryNameContext = context.copyCompilerStatementBody().qualifiedTextName().libraryName();
-                if (libraryNameContext != null)
-                {
-                    copyDirective.LibraryName = GetLibraryName(libraryNameContext);
-                    copyDirective.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(libraryNameContext);
-                }
-            }
-        }
+		public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) {
+			CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY);
+		}
 
 		private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context) {
 			if (context == null) return null;
@@ -155,19 +107,35 @@ namespace TypeCobol.Compiler.Preprocessor
 			if (node != null && property == null) property = node.GetText();
 		}
 
-        public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) 
-        {
-            CopyDirective copyDirective = (CopyDirective)CompilerDirective;
-
-            // SUPPRESS
-            if(context.SUPPRESS() != null)
-            {
-                copyDirective.Suppress = true;
-            }
-            else
-            {
-                copyDirective.Suppress = false;
-            }
+		public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) {
+			var copy = (CopyDirective)CompilerDirective;
+			if (context.qualifiedTextName() != null) {
+				var ctxt = context.qualifiedTextName();
+				copy.TextName = GetTextName(ctxt.textName());
+				copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+				if (copy.TextName != null) {
+					// Find the list of copy text names variations declared by previous REMARKS compiler directives
+					var variations = ((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations;
+					if (variations != null && variations.Count > 0) {
+						// Check if the current text name was mentioned in a REMARKS compiler directive
+						var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase));
+						if (declaration != null) {
+							// Declaration found => apply the legacy REPLACING semantics to the copy directive
+							copy.RemoveFirst01Level = true;
+							if (declaration.HasSuffix) {
+								copy.TextName = declaration.TextName;
+								copy.InsertSuffixChar = true;
+								copy.SuffixChar = declaration.SuffixChar;
+							}
+						}
+					}
+				}
+#endif
+				copy.LibraryName = GetLibraryName(ctxt.libraryName());
+				copy.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.libraryName());
+			}
+			copy.Suppress = (context.SUPPRESS() != null);
 
             // REPLACING
             if(context.copyReplacingOperand() != null)
@@ -195,10 +163,10 @@ namespace TypeCobol.Compiler.Preprocessor
 							operandTokens.Add(terminalNode.Symbol);
 						}
 					}
-                    BuildReplaceOperation(copyDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens, ref replacementToken, ref replacementTokens, ref pseudoTextIndex, operandTokens);
+                    BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens, ref replacementToken, ref replacementTokens, ref pseudoTextIndex, operandTokens);
                 }
             }
-        }
+		}
 
         private static void BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, ref int pseudoTextIndex, IList<IToken> operandTokens)
         {
