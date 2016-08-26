@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Parser
 			var programIdentification = new ProgramIdentification();
 			programIdentification.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
 			if (context.COMMON() != null) {
-				programIdentification.IsCommon = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
+				programIdentification.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
 			}
 			if (context.INITIAL() != null) {
 				programIdentification.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));

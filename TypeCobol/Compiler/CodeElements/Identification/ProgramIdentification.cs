@@ -46,7 +46,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// option.
         /// </summary>
         public SyntaxProperty<bool> Initial { get; set; }
-
         public bool IsInitial { get { return Initial != null && Initial.Value; } }
 
         // -- ONLY IN OUTERMOST PROGRAM --
@@ -65,7 +64,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// THREAD option.
         /// </summary>
         public SyntaxProperty<bool> Recursive { get; set; }
-
         public bool IsRecursive { get { return Recursive != null && Recursive.Value; } }
 
         // -- ONLY IN NESTED PROGRAMS --
@@ -77,7 +75,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// common program and programs contained within them. The COMMON
         /// clause can be used only in nested programs.
         /// </summary>
-        public SyntaxProperty<bool> IsCommon { get; set; }
+        public SyntaxProperty<bool> Common { get; set; }
+        public bool IsCommon { get { return Common != null && Common.Value; } }
 
         /// <summary>
         /// Debug string
