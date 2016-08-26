@@ -646,7 +646,10 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public Token ComparisonToken { get; protected set; }
 
-		protected static string NoQuotes(Token t) { return t.SourceText.Trim('\"').Trim('\''); }
+		protected static string NoQuotes(Token token) {
+			if (token == null) return "?";
+			return token.SourceText.Trim('\"').Trim('\'');
+		}
 
 		public override string ToString() {
 			return "REPLACE["+Type+"] "+NoQuotes(ComparisonToken);
@@ -716,8 +719,10 @@ namespace TypeCobol.Compiler.Directives
 
 		public override string ToString() {
 			var str = new StringBuilder();
-			foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
-			if (ReplacementTokens.Length > 0) str.Length -= 1;
+			if (ReplacementTokens != null) {
+				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
+				if (ReplacementTokens.Length > 0) str.Length -= 1;
+			}
 			return base.ToString()+" BY "+str.ToString();
 		}
     }
@@ -749,8 +754,10 @@ namespace TypeCobol.Compiler.Directives
 			var str = new StringBuilder(base.ToString());
 			foreach(var token in FollowingComparisonTokens) str.Append(',').Append(NoQuotes(token));
 			str.Append(" BY ");
-			foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
-			if (ReplacementTokens.Length > 0) str.Length -= 1;
+			if (ReplacementTokens != null) {
+				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
+				if (ReplacementTokens.Length > 0) str.Length -= 1;
+			}
 			return str.ToString();
 		}
     }
@@ -946,9 +953,10 @@ namespace TypeCobol.Compiler.Directives
 
 		public override string ToString() {
             var str = new StringBuilder();
+			if (ReplaceOperations.Count > 0) str.Append(' ');
 			foreach (var replace in ReplaceOperations)
 				str.Append('<').Append(replace.ToString()).Append("> ");
-			return Type.ToString()+':'+str.ToString();
+			return Type.ToString()+str.ToString();
 		}
     }
 

@@ -390,14 +390,9 @@ controlCblCompilerStatement:
 copyCompilerStatement:
                          COPY copyCompilerStatementBody PeriodSeparator;
              
-copyCompilerStatementBody:
-                             qualifiedTextName
-                             SUPPRESS?
-                             (REPLACING (copyReplacingOperand BY copyReplacingOperand)+)?;
+copyCompilerStatementBody: qualifiedTextName SUPPRESS? (REPLACING (copyReplacingOperand BY copyReplacingOperand)+)?;
 
-copyReplacingOperand:
-                        pseudoText | 
-                        literalOrUserDefinedWordOReservedWordExceptCopy;
+copyReplacingOperand: pseudoText | literalOrUserDefinedWordOReservedWordExceptCopy;
 
 pseudoText:
               PseudoTextDelimiter /* any kind of token except PseudoTextDelimiter and the word COPY */ pseudoTextTokens+= ~(PseudoTextDelimiter | COPY)* PseudoTextDelimiter;
