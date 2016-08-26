@@ -2,13 +2,13 @@
 [[ClassIdentification]] [8,9:ID]<ID> --> [8,23:        Unknown1]<CommentEntry>
 - ClassName = MyClass
 - InheritsFromClassName = BaseClass
-- AUTHOR = Mister          Unknown1
+- AUTHOR = Mister         Unknown1
 
 [[FactoryIdentification]] [8,9:ID]<ID> --> [28,29:. ]<PeriodSeparator>
 
 [[MethodIdentification]] [8,9:ID]<ID> --> [8,23:        Unknown2]<CommentEntry>
 - MethodName = MyMethod
-- AUTHOR = Mister          Unknown2
+- AUTHOR = Mister         Unknown2
 
 [[ObjectIdentification]] [8,9:ID]<ID> --> [27,28:. ]<PeriodSeparator>
 
@@ -17,18 +17,18 @@
 - IsInitial = True
 - IsRecursive = False
 - IsCommon = True
-- AUTHOR = Mister          Unknown3
+- AUTHOR = Mister         Unknown3
 
 [[ClassIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,23:        Unknown4]<CommentEntry>
 - ClassName = MyClass
 - InheritsFromClassName = BaseClass
-- AUTHOR = Mister          Unknown4
+- AUTHOR = Mister         Unknown4
 
 [[FactoryIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [40,41:. ]<PeriodSeparator>
 
 [[MethodIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,23:        Unknown5]<CommentEntry>
 - MethodName = MyMethod
-- AUTHOR = Mister          Unknown5
+- AUTHOR = Mister         Unknown5
 
 [[ObjectIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [39,40:. ]<PeriodSeparator>
 
@@ -37,5 +37,5 @@
 - IsInitial = True
 - IsRecursive = False
 - IsCommon = True
-- AUTHOR = Mister          Unknown6
+- AUTHOR = Mister         Unknown6
 
