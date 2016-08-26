@@ -278,8 +278,8 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var statement = new DisplayStatement();
 
-			statement.Variables = BuildObjectArrrayFromParserRules(context.variable4(),
-				ctx => CobolExpressionsBuilder.CreateVariable(ctx));
+			statement.Variables = BuildObjectArrrayWithNoNullFromParserRules(context.variable4(),
+				ctx => CobolExpressionsBuilder.CreateVariable2(ctx));
 
 			if(context.uponOutputDevice() != null)
 			{
@@ -288,7 +288,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if (context.withNoAdvancing() != null)
 			{
-				statement.IsWithNoAdvancing = CreateSyntaxProperty(true, context.withNoAdvancing().ADVANCING());
+				statement.WithNoAdvancing = CreateSyntaxProperty(true, context.withNoAdvancing().ADVANCING());
 			}
 
 			return statement;
@@ -1516,11 +1516,27 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-		  /////////////////////
-		 // UTILITY METHODS //
-		/////////////////////
+        /////////////////////
+        // UTILITY METHODS //
+        /////////////////////
 
-		private O[] BuildObjectArrrayFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject) {
+        private O[] BuildObjectArrrayWithNoNullFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject)
+        {
+            var objectList = new List<O>();
+            
+            if (parserRules != null && parserRules.Length > 0)
+            {
+                for (int i = 0; i < parserRules.Length; i++)
+                {
+                    var obj = createObject(parserRules[i]);
+                    if (obj != null)
+                        objectList.Add(obj);
+                }
+            }
+            return objectList.ToArray();
+        }
+
+        private O[] BuildObjectArrrayFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject) {
 			O[] objectArray = null;
 			if (parserRules != null && parserRules.Length > 0) {
 				objectArray = new O[parserRules.Length];

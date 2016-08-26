@@ -67,14 +67,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// - If the total count exceeds the maximum, as many records are written as are needed to display all operands. Any operand being printed or displayed when the end of a record is reached is continued in the next record.
         /// ... more details on DBCS operands p324 ...
         /// </summary>
-		public SyntaxProperty<bool> IsWithNoAdvancing { get; set; }
+		public SyntaxProperty<bool> WithNoAdvancing { get; set; }
+
+        public bool IsWithNoAdvancing
+        {
+            get { return WithNoAdvancing != null && WithNoAdvancing.Value; }
+        }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (Variables == null && IsWithNoAdvancing == null && OutputDeviceName == null )
+            if (Variables == null && WithNoAdvancing == null && OutputDeviceName == null )
             {
                 return base.ToString();
             }
@@ -97,7 +102,7 @@ namespace TypeCobol.Compiler.CodeElements
                     sb.AppendLine("- OutputDeviceName = " + OutputDeviceName.Name);
                 }
 
-				if (IsWithNoAdvancing != null) sb.AppendLine("- WithNoAdvancing");
+				if (WithNoAdvancing != null) sb.AppendLine("- WithNoAdvancing");
                 return sb.ToString();
             }
         }
