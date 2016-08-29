@@ -21,7 +21,8 @@
 
 [[LinkageSectionHeader]] [10,16:LINKAGE]<LINKAGE> --> [25,26:. ]<PeriodSeparator>
 
-x {1} Alphanumeric
+[[DataDescriptionEntry]] [12,13:01]<IntegerLiteral>{1} --> [22,23:. ]<PeriodSeparator>
+
 [[ProcedureDivisionHeader]] [10,18:PROCEDURE]<PROCEDURE> --> [28,29:. ]<PeriodSeparator>
 
 [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
