@@ -701,6 +701,10 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 		public override void EnterStatement(ProgramClassParser.StatementContext context) {
 			if (context.ExecStatement() != null) Enter(new Exec((ExecStatement)context.ExecStatement().Symbol), context);
+			else if (context.evaluateStatementWithBody() != null) ;// Node will be created in EnterEvaluateStatementWithBody
+			else if (context.performStatementWithBody() != null) ;// Node will be created in EnterPerformStatementWithBody
+			else if (context.searchStatementWithBody() != null) ;// Node will be created in EnterSearchStatementWithBody
+			else if (context.ifStatementWithBody() != null) ;// Node will be created in EnterIfStatementWithBody
 			// -- arithmetic --
 			else if (context.AddStatement() != null) Enter(new Add((AddStatement)context.AddStatement().Symbol), context);
 			else if (context.ComputeStatement() != null) Enter(new Compute((ComputeStatement)context.ComputeStatement().Symbol), context);
@@ -743,7 +747,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			else if (context.UnstringStatement() != null) Enter(new Unstring((UnstringStatement)context.UnstringStatement().Symbol), context);
 			else if (context.XmlGenerateStatement() != null) Enter(new XmlGenerate((XmlGenerateStatement)context.XmlGenerateStatement().Symbol), context);
 			else if (context.XmlParseStatement() != null) Enter(new XmlParse((XmlParseStatement)context.XmlParseStatement().Symbol), context);
-			else throw new NotImplementedException("Implementation error!");
+			else throw new NotImplementedException("Implementation error: "+context.GetText());
 		}
 		public override void ExitStatement(ProgramClassParser.StatementContext context) {
 			Exit();
@@ -768,7 +772,6 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 
 		public override void EnterIfStatementWithBody(ProgramClassParser.IfStatementWithBodyContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.IfStatement();
 			var statement = terminal != null? (IfStatement)terminal.Symbol : null;
 			Enter(new If(statement), context);
@@ -792,7 +795,6 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 
 		public override void EnterEvaluateStatementWithBody(ProgramClassParser.EvaluateStatementWithBodyContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.EvaluateStatement();
 			var statement = terminal != null? (EvaluateStatement)terminal.Symbol : null;
 			Enter(new Evaluate(statement), context);// enter EVALUATE
@@ -824,7 +826,6 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 
 		public override void EnterPerformStatementWithBody(ProgramClassParser.PerformStatementWithBodyContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.PerformStatement();
 			var statement = terminal != null? (PerformStatement)terminal.Symbol : null;
 			Enter(new Perform(statement), context);
@@ -834,7 +835,6 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		}
 
 		public override void EnterSearchStatementWithBody(ProgramClassParser.SearchStatementWithBodyContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.SearchStatement();
 			var statement = terminal != null? (SearchStatement)terminal.Symbol : null;
 			Enter(new Search(statement), context);
