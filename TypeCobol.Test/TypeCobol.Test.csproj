@@ -78,32 +78,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Compiler\File\TestCobolFile.cs" />
-    <Compile Include="Compiler\File\TestIBMCodePages.cs" />
-    <Compile Include="Compiler\Parser\Comparator.cs" />
-    <Compile Include="Compiler\Parser\ParserUtils.cs" />
-    <Compile Include="Compiler\Parser\TestCodeElements.cs" />
-    <Compile Include="Compiler\Parser\TestJSONSerializer.cs" />
-    <Compile Include="Compiler\Parser\TestParser.cs" />
-    <Compile Include="Compiler\Parser\TestTokenSource.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalPipeline.cs" />
-    <Compile Include="Compiler\Preprocessor\PreprocessorUtils.cs" />
-    <Compile Include="Compiler\Preprocessor\TestCompilerDirectiveBuilder.cs" />
-    <Compile Include="Compiler\Preprocessor\TestCopyDirective.cs" />
-    <Compile Include="Compiler\Preprocessor\TestReplaceDirective.cs" />
-    <Compile Include="Compiler\Scanner\ScannerUtils.cs" />
-    <Compile Include="Compiler\Scanner\TestContinuations.cs" />
-    <Compile Include="Compiler\Scanner\TestRealPrograms.cs" />
-    <Compile Include="Compiler\Scanner\TestTokenTypes.cs" />
-    <Compile Include="Compiler\Text\TestPictureParsing.cs" />
-    <Compile Include="Compiler\Text\TestReadOnlyTextDocument.cs" />
+    <Content Include="Compiler\**" />
+    <Content Include="NewTestsToFix\**" />
     <Compile Include="*.cs" />
     <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Compiler\**" />
-    <Content Include="NewTestsToFix\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
