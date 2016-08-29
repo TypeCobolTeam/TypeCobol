@@ -166,36 +166,46 @@ namespace TypeCobol.Test.Compiler.Parser
             else {
                 str.Append(program.ProgramName);
                 str.Append(" common:").Append(program.IsCommon);
-                str.Append(" initial:").Append(program.Initial);
-                str.Append(" recursive:").Append(program.Recursive);
+                str.Append(" initial:").Append(program.IsInitial);
+                str.Append(" recursive:").Append(program.IsRecursive);
                 str.AppendLine();
                 Dump(str, program.AuthoringProperties);
             }
             return str;
         }
 
-        private static StringBuilder Dump(StringBuilder str, AuthoringProperties data)
-        {
-            if (data == null) str.Append("?");
-            else {
-                str.Append(" author: ");
+		private static StringBuilder Dump(StringBuilder str, AuthoringProperties data) {
+			if (data == null) {
+				str.Append("?");
+				return str;
+			}
+			str.Append(" author: ");
+			if (data.Author.Length > 0) {
 				foreach(var value in data.Author) str.Append(value.Value+",");
-				if (data.Author.Length > 0) str.Length -= 1;
-                str.Append(" written: ");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" written: ");
+			if (data.DateWritten.Length > 0) {
 				foreach(var value in data.DateWritten) str.Append(value.Value+",");
-				if (data.DateWritten.Length > 0) str.Length -= 1;
-                str.Append(" compiled: ");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" compiled: ");
+			if (data.DateCompiled.Length > 0) {
 				foreach(var value in data.DateCompiled) str.Append(value.Value+",");
-				if (data.DateCompiled.Length > 0) str.Length -= 1;
-                str.Append(" installation: ");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" installation: ");
+			if (data.Installation.Length > 0) {
 				foreach(var value in data.Installation) str.Append(value.Value+",");
-				if (data.Installation.Length > 0) str.Length -= 1;
-                str.Append(" security: ");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" security: ");
+			if (data.Security.Length > 0) {
 				foreach(var value in data.Security) str.Append(value.Value+",");
-				if (data.Security.Length > 0) str.Length -= 1;
-            }
-            return str;
-        }
+				str.Length -= 1;
+			} else str.Append('?');
+			return str;
+		}
 
         private static StringBuilder Dump<T>(StringBuilder str, SyntaxProperty<T> data)
         {
