@@ -33,12 +33,11 @@ cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
 // - MOVE UNSAFE <custom type> TO <custom type>
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
-moveStatement:
-    MOVE UNSAFE? (CORRESPONDING | CORR)? (booleanValue | variableOrFileName) TO identifier+;
-//         ^                      ^       ^
-//          \                      \       \
-//           \                      --------------  MOVE [TRUE|FALSE] TO <boolean>
-//            ------------------------------------  MOVE UNSAFE <custom type> TO <custom type>
+moveSimple: MOVE UNSAFE? (booleanValue | variable7) TO storageArea1+;
+//                 ^            ^
+//                  \            \
+//                   \            --------------  MOVE [TRUE|FALSE] TO <boolean>
+//                    --------------------------  MOVE UNSAFE <custom type> TO <custom type>
 
 
 // rule modified to support:

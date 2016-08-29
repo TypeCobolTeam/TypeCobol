@@ -1093,27 +1093,19 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		internal Variable CreateVariable(CodeElementsParser.Variable7Context context)
-		{
-			if (context.identifier() != null)
-			{
+		internal Variable CreateVariable(CodeElementsParser.Variable7Context context) {
+			if (context == null) return null;
+			if (context.identifier() != null) {
 				StorageArea storageArea = CreateIdentifier(context.identifier());
 				return new Variable(storageArea);
-			}
-			else if (context.numericValue() != null)
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-			}
-			else if (context.alphanumericValue2() != null)
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-			}
-			else
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
+			} else
+			if (context.numericValue() != null) {
+				return new Variable(CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+			} else
+			if (context.alphanumericValue2() != null) {
+				return new Variable(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+			} else {
+				return new Variable(CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
 			}
 		}
 

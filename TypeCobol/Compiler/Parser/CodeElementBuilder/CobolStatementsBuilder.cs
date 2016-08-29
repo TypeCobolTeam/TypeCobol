@@ -787,31 +787,25 @@ namespace TypeCobol.Compiler.Parser
 		// MOVE STATEMENT //
 		////////////////////
 
-		internal CodeElement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context)
-		{
+		internal CodeElement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
 			var statement = new MoveSimpleStatement();
-
-			statement.SendingVariable = CobolExpressionsBuilder.CreateVariable(context.variable7());
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.storageArea1(),
-				ctx => CobolExpressionsBuilder.CreateStorageArea(ctx));
-
-			// var rulestack = new TypeCobol.Compiler.AntlrUtils.RuleStackBuilder().GetRuleStack(context);
-			// DiagnosticUtils.AddError(statement, "MOVE: illegal <intrinsic function> after TO", function.Symbol.NameToken, rulestack);
-
-			// [TYPECOBOL]
-			//statement.IsUnsafe = context.UNSAFE() != null;
-			// [/TYPECOBOL]
-
+			if (context.booleanValue() != null) {
+				var value = CobolWordsBuilder.CreateBooleanValue(context.booleanValue());
+				throw new NotImplementedException("TODO#249");
+			} else {
+				statement.SendingVariable = CobolExpressionsBuilder.CreateVariable(context.variable7());
+			}
+			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx));
+// [TYPECOBOL]
+			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
+// [/TYPECOBOL]
 			return statement;
 		}
 
-		internal CodeElement CreateMoveCorrespondingStatement(CodeElementsParser.MoveCorrespondingContext context)
-		{
+		internal CodeElement CreateMoveCorrespondingStatement(CodeElementsParser.MoveCorrespondingContext context) {
 			var statement = new MoveCorrespondingStatement();
-
 			statement.FromGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
-
 			return statement;
 		}
 

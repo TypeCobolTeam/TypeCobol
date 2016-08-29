@@ -2,14 +2,13 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    /// <summary>
-    /// p369: The MOVE statement transfers data from one area of storage to one or more other areas.
-    /// </summary>
-    public abstract class MoveStatement : StatementElement //, SymbolUser, IdentifierUser, SymbolWriter, Sending,Receiving
-    {
-        public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType)
-        { }
-    }
+	/// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
+	public abstract class MoveStatement : StatementElement {
+		public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
+
+		public SyntaxProperty<bool> Unsafe { get; set; }
+		public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
+	}
 
     /// <summary>
     ///  p369: Format 1: MOVE statement
