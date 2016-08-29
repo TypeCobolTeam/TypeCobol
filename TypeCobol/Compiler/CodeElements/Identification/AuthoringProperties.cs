@@ -45,51 +45,30 @@ namespace TypeCobol.Compiler.CodeElements
 		/// </summary>
 		public AlphanumericValue[] Security { get; set; }
 
-
-		/// <summary>
-		/// Get the text corresponding to one of the authoring properties
-		/// </summary>
-		public string GetPropertyValue(AlphanumericValue[] commentEntries)
-		{
-			StringBuilder sb = new StringBuilder();
-			if(commentEntries != null)
-			{
-				for(int i = 0; i < commentEntries.Length; i++)
-				{
-					if (i > 0) sb.Append(' ');
-					sb.Append(commentEntries[i].Value);
-				}
-			}
-			return sb.ToString();
+		public AuthoringProperties() {
+			Author = new AlphanumericValue[0];
+			Installation = new AlphanumericValue[0];
+			DateWritten = new AlphanumericValue[0];
+			DateCompiled = new AlphanumericValue[0];
+			Security = new AlphanumericValue[0];
 		}
 
-		/// <summary>
-		/// Debug string
-		/// </summary>
-		public override string ToString()
-		{
-			StringBuilder sb = new StringBuilder();
-			if(Author != null)
-			{
-				sb.AppendLine("- AUTHOR = " + GetPropertyValue(Author));
-			}
-			if (DateCompiled != null)
-			{
-				sb.AppendLine("- DATE-COMPILED = " + GetPropertyValue(DateCompiled));
-			}
-			if (DateWritten != null)
-			{
-				sb.AppendLine("- DATE-WRITTEN = " + GetPropertyValue(DateWritten));
-			}
-			if (Installation != null)
-			{
-				sb.AppendLine("- INSTALLATION = " + GetPropertyValue(Installation));
-			}
-			if (Security != null)
-			{
-				sb.AppendLine("- SECURITY = " + GetPropertyValue(Security));
-			}
-			return sb.ToString();
+		/// <summary>Print the text corresponding to one of the authoring properties</summary>
+		private void DumpPropertyValue(StringBuilder str, string label, AlphanumericValue[] entries) {
+			if (entries == null || entries.Length < 1) return;
+			str.Append(label);
+			foreach(var entry in entries) str.Append(entry.Value).Append(' ');
+			if (entries.Length > 0) str.Length -= 1;
+			str.AppendLine();
+		}
+		public override string ToString() {
+			var str = new StringBuilder();
+			DumpPropertyValue(str, "- AUTHOR = ",        Author);
+			DumpPropertyValue(str, "- DATE-COMPILED = ", DateCompiled);
+			DumpPropertyValue(str, "- DATE-WRITTEN = ",  DateWritten);
+			DumpPropertyValue(str, "- INSTALLATION = ",  Installation);
+			DumpPropertyValue(str, "- SECURITY = ",      Security);
+			return str.ToString();
 		}
 	}
 }
