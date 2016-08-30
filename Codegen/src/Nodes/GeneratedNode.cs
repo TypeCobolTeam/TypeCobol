@@ -13,7 +13,7 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private IList<ITextLine> _cache = null;
-		IEnumerable<ITextLine> Generated.Lines {
+		public override IEnumerable<ITextLine> Lines {
 			get {
 				if (_cache == null) {
 					string text = Solver.Replace();

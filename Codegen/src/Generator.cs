@@ -87,11 +87,9 @@ namespace TypeCobol.Codegen {
 			var result = new Dictionary<string,object>();
 			var errors = new System.Text.StringBuilder();
 			foreach(var pname in properties) {
-				if (node[pname] != null) {
-					result[pname] = node[pname];
-				} else {
-					errors.Append(pname).Append(", ");
-				}
+				var property = node[pname];
+				if (property != null) result[pname] = property;
+				else errors.Append(pname).Append(", ");
 			}
 			if (errors.Length > 0) {
 				errors.Length -= 2;
@@ -184,6 +182,7 @@ namespace TypeCobol.Codegen {
 
 	public interface Action {
 		string Group { get; }
+		/// <summary>Modifies AST.</summary>
 		void Execute();
 	}
 
@@ -223,7 +222,6 @@ namespace TypeCobol.Codegen {
 			int index = parent.IndexOf(Old);
 		    Old.Comment = true;
 			parent.Add(New, index+1);
-            
 		}
 	}
 

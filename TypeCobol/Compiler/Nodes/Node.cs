@@ -1,8 +1,9 @@
 ﻿
 namespace TypeCobol.Compiler.Nodes {
 
-using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.Text;
 
 
 
@@ -149,12 +150,23 @@ public abstract class Node {
 
 	public CodeModel.SymbolTable SymbolTable { get; set; }
 
-	public object this[string attribute] { get { return null; } }
+	public object this[string attribute] { get { return Attributes.Get(this, attribute); } }
 
 	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
 	public bool? Comment = null;
 	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
 	public void RemoveAllChildren() { children.Clear(); }
+
+	public virtual IEnumerable<ITextLine> Lines {
+		get {
+			var lines = new List<ITextLine>();
+			if (CodeElement == null) return lines;
+			foreach(var token in CodeElement.ConsumedTokens)
+				if (!lines.Contains(token.TokensLine))
+					lines.Add(token.TokensLine);
+			return lines;
+		}
+	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
 	public void Accept(NodeVisitor visitor) {

@@ -37,7 +37,7 @@
 		private bool Process(Node node) {
 			string text = "";
 			var generated = node as Generated;
-			foreach(var line in generated.Lines) {
+			foreach(var line in node.Lines) {
 				if (generated != null)
 					// if we write generated code, we INSERT one line of code between Input lines;
 					// thus, we must decrease offset as it'll be re-increased by Write(line) and

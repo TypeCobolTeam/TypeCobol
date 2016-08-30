@@ -231,17 +231,17 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
-			throw new NotImplementedException();
+			//TODO#249
 			Enter(new DataCondition(data));
 		}
 
 		private void EnterDataRedefinesEntry(DataRedefinesEntry data) {
-			throw new NotImplementedException();
+			//TODO#249
 			Enter(new DataRedefines(data));
 		}
 
 		private void EnterDataRenamesEntry(DataRenamesEntry data) {
-			throw new NotImplementedException("TODO#249");
+			//TODO#249
 			Enter(new DataRenames(data));
 		}
 
@@ -747,7 +747,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			else if (context.UnstringStatement() != null) Enter(new Unstring((UnstringStatement)context.UnstringStatement().Symbol), context);
 			else if (context.XmlGenerateStatement() != null) Enter(new XmlGenerate((XmlGenerateStatement)context.XmlGenerateStatement().Symbol), context);
 			else if (context.XmlParseStatement() != null) Enter(new XmlParse((XmlParseStatement)context.XmlParseStatement().Symbol), context);
-			else throw new NotImplementedException("Implementation error: "+context.GetText());
+			else throw new NotImplementedException("Implementation error: \""+context.GetText()+"\"");
 		}
 		public override void ExitStatement(ProgramClassParser.StatementContext context) {
 			Exit();

@@ -5,9 +5,10 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
 	public abstract class MoveStatement : StatementElement {
 		public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
-
+// [TYPECOBOL]
 		public SyntaxProperty<bool> Unsafe { get; set; }
 		public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
+// [/TYPECOBOL]
 	}
 
     /// <summary>
@@ -24,27 +25,17 @@ namespace TypeCobol.Compiler.CodeElements
     /// identifier-2 in the order in which the identifier-2 data items are specified in the
     /// MOVE statement. See “Elementary moves” on page 370 and “Group moves” on page 374 below.
     /// </summary>
-    public class MoveSimpleStatement : MoveStatement
-    {
-        public MoveSimpleStatement() : base(StatementType.MoveSimpleStatement)
-        { }
+	public class MoveSimpleStatement : MoveStatement {
+		public MoveSimpleStatement() : base(StatementType.MoveSimpleStatement) { }
 
-        /// <summary>
-        /// identifier-1 , literal-1
-        /// The sending area.
-        /// </summary>
-        public Variable SendingVariable { get; set; }
-
-        /// <summary>
-        /// identifier-2
-        /// The receiving areas. identifier-2 must not reference an intrinsic function.
-        /// </summary>
-        public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
-
-        // [TYPECOBOL]       
-        //public bool IsUnsafe { get; set; }
-        // [/TYPECOBOL]
-    }
+		/// <summary>The sending area.</summary>
+		public Variable SendingVariable { get; set; }
+// [TYPECOBOL]
+		public BooleanValue SendingBoolean { get; set; }
+// [/TYPECOBOL]
+		/// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
+		public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
+	}
 
     /// <summary>
     /// p369: Format 2: MOVE statement with CORRESPONDING phrase

@@ -789,14 +789,10 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
 			var statement = new MoveSimpleStatement();
-			if (context.booleanValue() != null) {
-				var value = CobolWordsBuilder.CreateBooleanValue(context.booleanValue());
-				throw new NotImplementedException("TODO#249");
-			} else {
-				statement.SendingVariable = CobolExpressionsBuilder.CreateVariable(context.variable7());
-			}
+			statement.SendingVariable = CobolExpressionsBuilder.CreateVariable(context.variable7());
 			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx));
 // [TYPECOBOL]
+			statement.SendingBoolean = CobolWordsBuilder.CreateBooleanValue(context.booleanValue());
 			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 // [/TYPECOBOL]
 			return statement;

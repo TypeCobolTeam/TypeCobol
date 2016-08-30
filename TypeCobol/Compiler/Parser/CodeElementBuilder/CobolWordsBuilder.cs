@@ -21,17 +21,11 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Compile-time constant values used in the Cobol grammar ---
 
-        internal BooleanValue CreateBooleanValue(CodeElementsParser.BooleanValueContext context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new BooleanValue(valueToken);
-        }
-
-        internal BooleanValue CreateBooleanValue(ITerminalNode context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new BooleanValue(valueToken);
-        }
+		internal BooleanValue CreateBooleanValue(IParseTree context) {
+			if (context == null) return null;
+			Token valueToken = ParseTreeUtils.GetFirstToken(context);
+			return new BooleanValue(valueToken);
+		}
 
         internal IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context)
         {
