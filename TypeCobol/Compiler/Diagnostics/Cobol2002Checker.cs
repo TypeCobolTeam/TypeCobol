@@ -51,12 +51,12 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public IList<Type> GetCodeElements()
         {
-            return new List<Type> { typeof(CodeModel.Receiving) };
+            return new List<Type> { typeof(Receiving) };
         }
 
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
             var ce = node.CodeElement;
-            if (ce is CodeModel.Receiving == false)
+            if (ce is Receiving == false)
                 return;
             if (ce is InitializeStatement || ce is MoveStatement || ce is ReadStatement || ce is ReleaseStatement
                                                                                             //SetStatement is not specified in our specs, but as

@@ -69,6 +69,7 @@ namespace TypeCobol.Codegen {
 					if (action != null) actions.Add(action);
 				}
 			}
+if (actions.Count > 0) System.Console.WriteLine("GetActions("+node.GetType().Name+"["+(node.URI??"?")+"]): "+actions.Count);
 			return actions;
 		}
 
@@ -103,6 +104,7 @@ namespace TypeCobol.Codegen {
 		private Action GetAction(Node source, Dictionary<string,object> properties, Pattern pattern) {
 			int? index;
 			var destination = GetLocation(source, pattern.Location, out index);
+System.Console.WriteLine("GetLocation("+source.URI+",..,..)="+destination.URI+" --- "+(source == destination));
 			if ("create".Equals(pattern.Action)) {
 				return new Create(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, index);
 			}

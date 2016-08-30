@@ -166,7 +166,6 @@ namespace TypeCobol.Compiler.CodeElements
                         sb.Append(idOrLiteral);
                     }
                     sb.Append("   ");
-                    //sb.AppendLine();
                 }
 
                 if (DelimiterIdentifier != null)

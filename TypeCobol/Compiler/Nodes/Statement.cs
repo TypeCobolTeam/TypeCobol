@@ -1,6 +1,6 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
 
-using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements;
 
 public interface Statement { }
 
