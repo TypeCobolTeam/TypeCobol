@@ -117,52 +117,34 @@ namespace TypeCobol.Compiler.CodeElements
         public SymbolReference SymbolReference { get; private set; }
     }
 
-    public class Variable : VariableBase
-    {
-        public Variable(StorageArea storageArea) :
-            base(StorageDataType.Any, storageArea)
-        { }
 
-        public Variable(NumericValue value) :
-            base(StorageDataType.Any, null)
-        {
-           NumericValue = value;
-        }
 
-        public Variable(AlphanumericValue value) :
-            base(StorageDataType.Any, null)
-        {
-            AlphanumericValue = value;
-        }
+public class Variable: VariableBase, Named {
 
-        public Variable(RepeatedCharacterValue repeatedValue) :
-            base(StorageDataType.Any, null)
-        {
-            RepeatedCharacterValue = repeatedValue;
-        }
+	protected Variable(): base(StorageDataType.Any, null) { }
 
-        public Variable(SymbolReference symbolReference) :
-            base(StorageDataType.Any, null)
-        {
-            SymbolReference = symbolReference;
-        }
+	public Variable(StorageArea reference): base(StorageDataType.Any, reference) { }
 
-        protected Variable() :
-            base(StorageDataType.Any, null)
-        { }
+	public Variable(NumericValue value): base(StorageDataType.Any, null) { NumericValue = value; }
+	public Variable(AlphanumericValue value): base(StorageDataType.Any, null) { AlphanumericValue = value; }
+	public Variable(RepeatedCharacterValue value): base(StorageDataType.Any, null) { RepeatedCharacterValue = value; }
+	public Variable(SymbolReference reference): base(StorageDataType.Any, null) { SymbolReference = reference; }
 
-        public NumericValue NumericValue { get; private set; }
+	public NumericValue NumericValue { get; private set; }
+	public AlphanumericValue AlphanumericValue { get; private set; }
+	public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
+	public SymbolReference SymbolReference { get; private set; }
 
-        public AlphanumericValue AlphanumericValue { get; private set; }
+	public bool IsLiteral { get { return NumericValue != null || AlphanumericValue != null; } }
 
-        public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
+	public string Name {
+		get { return SymbolReference != null? SymbolReference.Name : null; }
+	}
 
-        public SymbolReference SymbolReference { get; private set; }
-
-		public bool IsLiteral {
-			get { return NumericValue != null || AlphanumericValue != null; }
-		}
-    }
+	public Expressions.QualifiedName QualifiedName {
+		get { return SymbolReference != null? SymbolReference.QualifiedName : null; }
+	}
+}
 
     public class VariableOrExpression : Variable
     {

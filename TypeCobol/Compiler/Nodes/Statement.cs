@@ -82,8 +82,9 @@ public class Merge: Node, CodeElementHolder<MergeStatement>, Statement {
 	public Merge(MergeStatement statement): base(statement) { }
 }
 
-public class Move: Node, CodeElementHolder<MoveStatement>, Statement {
+public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableUser {
 	public Move(MoveStatement statement): base(statement) { }
+	public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
 }
 
 public class Release: Node, CodeElementHolder<ReleaseStatement>, Statement {
