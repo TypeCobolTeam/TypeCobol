@@ -283,16 +283,15 @@ namespace TypeCobol.Test.Compiler.Parser
             if (header == null) header = "SYMBOL TABLE:\n";
             if (table.CurrentScope == SymbolTable.Scope.Intrinsic) header = "INTRISIC SCOPE:\n";
             if (table.CurrentScope == SymbolTable.Scope.Global) header = "GLOBAL SCOPE:\n";
-            Dictionary<string,List<DataDescriptionEntry>> map = table.DataEntries;
-            if(map.Count > 0) {
+            if(table.DataEntries.Count > 0) {
                 str.Append(header);
-                Dump(str, map);
+                Dump(str, table.DataEntries);
             }
             Dump(str, table.EnclosingScope, "ENCLOSING SCOPE:\n");
             return str;
         }
 
-        private static void Dump(StringBuilder str, Dictionary<string, List<DataDescriptionEntry>> map) {
+        private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
             foreach(string key in map.Keys) {
                 foreach (var data in map[key]) {
                     Dump(str, data, 1);
@@ -301,7 +300,7 @@ namespace TypeCobol.Test.Compiler.Parser
             }
         }
 
-        private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0)
+        private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
         {
             DumpIndent(str, indent);
             str.Append(data);

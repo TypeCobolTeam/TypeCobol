@@ -227,7 +227,9 @@ namespace TypeCobol.Compiler.Parser
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
 			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
-			Enter(new DataDescription(data));
+			var node = new DataDescription(data);
+			Enter(node);
+			node.SymbolTable.Add(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {

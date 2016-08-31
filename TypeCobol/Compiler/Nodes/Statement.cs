@@ -1,6 +1,10 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
 
+	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
+
+
 
 public interface Statement { }
 
@@ -90,8 +94,9 @@ public class Return: Node, CodeElementHolder<ReturnStatement>, Statement {
 	public Return(ReturnStatement statement): base(statement) { }
 }
 
-public class Set: Node, CodeElementHolder<SetStatement>, Statement {
+public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableUser {
 	public Set(SetStatement statement): base(statement) { }
+	public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
 }
 
 public class Sort: Node, CodeElementHolder<SortStatement>, Statement {

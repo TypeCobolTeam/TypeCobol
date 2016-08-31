@@ -18,8 +18,12 @@ namespace TypeCobol.Compiler.CodeElements
 	///
 	/// Format 1, 5, 6, 7 can be ambiguous
 	/// </summary>
-	public abstract class SetStatement : StatementElement {
+	public abstract class SetStatement : StatementElement, VariableUser,Sending,Receiving {
 		public SetStatement(StatementType statementType) : base(CodeElementType.SetStatement, statementType) { }
+
+		public virtual IList<QualifiedName> Variables { get { return new List<QualifiedName>(); } }
+		public virtual IList<QualifiedName> SendingItems { get { return new List<QualifiedName>(); } }
+		public virtual IList<QualifiedName> ReceivingItems { get { return new List<QualifiedName>(); } }
 	}
 
 	/// <summary>
@@ -35,7 +39,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Format 7: SET for USAGE OBJECT REFERENCE data items
 	/// set objectReference to objectReference | NULL | SELF
 	/// </summary>
-	public class SetStatementForAssignment : SetStatement, VariableUser,Sending,Receiving {
+	public class SetStatementForAssignment : SetStatement {
 		public SetStatementForAssignment() : base(StatementType.SetStatementForAssignment) { }
 
 		/// <summary>
@@ -66,7 +70,7 @@ namespace TypeCobol.Compiler.CodeElements
 		// [TypeCobol]
 		//public bool IsUnsafe { get { return true; } }
 
-		public IList<QualifiedName> Variables {
+		public override IList<QualifiedName> Variables {
 			get {
 				var items = new List<QualifiedName>();
 				items.AddRange(SendingItems);
@@ -75,7 +79,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		public IList<QualifiedName> SendingItems {
+		public override IList<QualifiedName> SendingItems {
 			get {
 				var items = new List<QualifiedName>();
 				items.Add(new URI(SendingVariable.ToString()));
@@ -83,10 +87,10 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		public IList<QualifiedName> ReceivingItems {
+		public override IList<QualifiedName> ReceivingItems {
 			get {
 				var items = new List<QualifiedName>();
-				foreach(var item in ReceivingStorageAreas) items.Add((item as Named).QualifiedName);
+				foreach(var item in ReceivingStorageAreas) items.Add((item.StorageArea as Named).QualifiedName);
 				return items;
 			}
 		}
@@ -222,7 +226,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// set condition-names to true
 	///          List<Identifier> ConditionIdentifiers //identifier
 	/// </summary>
-	internal class SetStatementForConditions : SetStatement, VariableUser,Sending,Receiving {
+	internal class SetStatementForConditions : SetStatement {
 		public SetStatementForConditions() : base(StatementType.SetStatementForConditions) { }
 
 		/// <summary>identifier (condition-name)</summary>
@@ -241,9 +245,9 @@ namespace TypeCobol.Compiler.CodeElements
 			return str.ToString();
 		}
 
-		public IList<QualifiedName> Variables { get { return this.ReceivingItems; } }
+		public override IList<QualifiedName> Variables { get { return this.ReceivingItems; } }
 
-		public IList<QualifiedName> SendingItems {
+		public override IList<QualifiedName> SendingItems {
 			get { 
 				var items = new List<QualifiedName>();
 				items.Add(new URI(SendingValue.Value.ToString()));
@@ -251,7 +255,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		public IList<QualifiedName> ReceivingItems {
+		public override IList<QualifiedName> ReceivingItems {
 			get {
 				var items = new List<QualifiedName>();
 				foreach(var item in Conditions) items.Add(item.QualifiedName);

@@ -224,8 +224,17 @@
 
 
 class DeclarationChecker: NodeListener {
-		public IList<Type> GetNodes() { return new List<Type>(); }
+		public IList<Type> GetNodes() {
+			return new List<Type>() { typeof(VariableUser), };
+		}
+
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+			foreach(var variable in ((VariableUser)node).Variables) CheckVariable(node, variable);
+		}
+		private void CheckVariable(Node node, QualifiedName name) {
+			var found = node.SymbolTable.Get(name);
+			if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
+			if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
 		}
 }
 /* TODO#249

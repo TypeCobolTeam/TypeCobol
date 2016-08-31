@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.CodeModel
 		/// - They are condition-names or index-names associated with data items that satisfy
 		///   any of the above conditions.
 		/// </summary>
-		public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>(System.StringComparer.InvariantCultureIgnoreCase);
+		public Dictionary<string,List<Named>> DataEntries = new Dictionary<string,List<Named>>(System.StringComparer.InvariantCultureIgnoreCase);
 
 		public Scope CurrentScope { get; internal set; }
 		public SymbolTable EnclosingScope { get; internal set; }
@@ -61,10 +61,20 @@ namespace TypeCobol.Compiler.CodeModel
 				throw new System.InvalidOperationException("Only Table of INTRISIC symbols don't have any enclosing scope.");
 		}
 
-		public void Add(DataDescriptionEntry symbol) {
-//			if (symbol.Name == null) return; // fillers and uncomplete ones don't have any name to be referenced by in the symbol table
-//			Get(symbol).Add(symbol);
-//			foreach(var sub in symbol.Subordinates) Add(sub);
+		internal void Add(Named symbol) {
+			 // TODO: generate a name for FILLERs and anonymous data to be referenced by in the symbol table
+			if (symbol.Name == null) return;
+			var found = Get(symbol.QualifiedName);
+			if (found.Count == 0) {
+				List<Named> samenamesymbols = null;
+				try { samenamesymbols = DataEntries[symbol.QualifiedName.Head]; }
+				catch (KeyNotFoundException ex) {
+					samenamesymbols = new List<Named>();
+					DataEntries.Add(symbol.QualifiedName.Head, samenamesymbols);
+				}
+				found = samenamesymbols;
+			}
+			found.Add(symbol);
 		}
 
 		private Scope GetScope(DataDescriptionEntry data) {
@@ -83,6 +93,7 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 		public List<DataDescriptionEntry> Get(DataDescriptionEntry data) {
+throw new System.NotImplementedException();//TODO#249
 //			string key = data.Name.Name;
 //			var table = GetTable(GetScope(data)).DataEntries;
 //			if (!table.ContainsKey(key))
@@ -91,16 +102,18 @@ namespace TypeCobol.Compiler.CodeModel
 			return null;
 		}
 
-		internal IList<DataDescriptionEntry> Get(QualifiedName name) {
+		internal List<Named> Get(QualifiedName name) {
 			var found = Get(name.Head);
+			if (found.Count < 1) return found;
 			int max = name.Count-1;
 			if (name.IsExplicit) {
 				for(int c=0; c<max; c++) {
 					string pname = name[max-c-1];
 					found = Filter(found, pname, c+1);
+					if (found.Count < 1) return found;
 				}
 			} else {
-				var matches = new List<DataDescriptionEntry>();
+				var matches = new List<Named>();
 				foreach(var entry in found) {
 					int c=0, generation=0;
 					bool okay = true;
@@ -130,13 +143,13 @@ namespace TypeCobol.Compiler.CodeModel
 		/// <param name="pname">Top level item name being searched for</param>
 		/// <param name="generation">"Generation" where to begin the search</param>
 		/// <returns><code>true</code> if an appropriately named top level item was found.</returns>
-		private bool Filter(DataDescriptionEntry entry, string pname, ref int generation) {
-//			var parent = entry.GetAncestor(generation);
-//			while(parent != null) {
-//				if (parent.Name.Name.Equals(pname)) return true;
-//				parent = parent.TopLevel;
-//				generation++;
-//			}
+		private bool Filter(Named symbol, string pname, ref int generation) {
+			var parent = GetAncestor(symbol, generation);
+			while(parent != null) {
+				if (parent.Name.Equals(pname)) return true;
+				parent = parent.Parent;
+				generation++;
+			}
 			return false;
 		}
 		/// <summary>
@@ -147,18 +160,31 @@ namespace TypeCobol.Compiler.CodeModel
 		/// <param name="pname">Expected parent name</param>
 		/// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
 		/// <returns>Filtered list</returns>
-		private IList<DataDescriptionEntry> Filter(IList<DataDescriptionEntry> values, string pname, int generation) {
-			var filtered = new List<DataDescriptionEntry>();
-			foreach(var entry in values) {
-//				var parent = entry.GetAncestor(generation);
-//				if (parent == null) continue;
-//				if (parent.Name.Name.Equals(pname)) filtered.Add(entry);
+		private List<Named> Filter(IList<Named> values, string pname, int generation) {
+			var filtered = new List<Named>();
+			foreach(var symbol in values) {
+				var parent = GetAncestor(symbol, generation);
+				if (parent == null) continue;
+				if (parent.Name.Equals(pname)) filtered.Add(symbol);
 			}
 			return filtered;
 		}
+		private Node GetAncestor(Named symbol, int generation) {
+			if (symbol is Node)
+				return GetAncestor((Node)symbol, generation);
+			return null;
+		}
+        /// <param name="generation">0 for node, 1 for node.Parent, 2 for node.Parent.Parent and so on.</param>
+        /// <returns>Appropriate Parent item, or null if generation <0 or generation too high.</returns>
+        private Node GetAncestor(Node node, int generation) {
+            if (generation < 0) return null;
+            if (generation == 0) return node;
+            if (node.Parent == null) return null;
+            return GetAncestor(node.Parent, generation-1);
+        }
 
-		public IList<DataDescriptionEntry> Get(string key) {
-			var values = new List<DataDescriptionEntry>();
+		public List<Named> Get(string key) {
+			var values = new List<Named>();
 			if (DataEntries.ContainsKey(key))
 				values.AddRange(DataEntries[key]);
 			if (EnclosingScope!= null)
@@ -299,7 +325,7 @@ namespace TypeCobol.Compiler.CodeModel
 			}// else no enclosing scope dump
 			return str.ToString();
 		}
-		private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0) {
+		private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0) {
 			for (int c=0; c<indent; c++) str.Append("  ");
 			str.Append(data);
 			return str;

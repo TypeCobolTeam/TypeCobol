@@ -385,15 +385,18 @@ namespace TypeCobol.Test.Compiler.Parser
 			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
 			foreach(var line in table.DataEntries) {
 				foreach(var data in line.Value) {
-					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
+//TODO#249 print memory representation
+//					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
+//					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
 				}
 			}
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent, string indexes = "", int baseaddress = 1) {
+		private void Dump(StringBuilder str, Named data, int indent, string indexes = "", int baseaddress = 1) {
+/*TODO#249
 			long level = data.LevelNumber.Value;
 			string name = (data.DataName != null?data.DataName.Name:"?");
-/*TODO#249			if (data.MemoryArea is TableInMemory) {
+			if (data.MemoryArea is TableInMemory) {
 				var table = data.MemoryArea as TableInMemory;
 				foreach(var e in table) {
 					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
