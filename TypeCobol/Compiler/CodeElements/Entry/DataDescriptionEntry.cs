@@ -1,9 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Scanner;
+﻿namespace TypeCobol.Compiler.CodeElements {
 
-namespace TypeCobol.Compiler.CodeElements {
+	using System;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements.Expressions;
+	using TypeCobol.Compiler.CodeModel;
+	using TypeCobol.Compiler.Scanner;
+
+
 
 	/// <summary>
 	/// Base class for all types of data definition entries :
@@ -12,8 +15,8 @@ namespace TypeCobol.Compiler.CodeElements {
 	/// - DataRenamesEntry
 	/// - DataConditionEntry
 	/// </summary>
-	public abstract class DataDefinitionEntry: CodeElement, Named
-	{
+	public abstract class DataDefinitionEntry: CodeElement, Named {
+
 		public DataDefinitionEntry(CodeElementType codeElementType): base(codeElementType) { }
 
 		/// <summary>
@@ -60,7 +63,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public SymbolDefinition DataName { get; set; }
 
-		public string Name { get { return DataName != null? DataName.Name : null; } }
+		public virtual string Name { get { return DataName != null? DataName.Name : null; } }
+		public virtual QualifiedName QualifiedName { get { return DataName != null? new URI(DataName.Name) : null; } }
 	}
 
 	/// <summary>

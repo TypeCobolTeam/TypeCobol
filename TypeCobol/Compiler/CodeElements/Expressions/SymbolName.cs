@@ -30,11 +30,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// Token defining the name of the symbol in source text
         /// </summary>
         public SyntaxValue<string> NameLiteral { get; private set; }
-        
-        /// <summary>
-        /// Name of the symbol
-        /// </summary>
-        public virtual string Name { get { return NameLiteral.Value; } }
+
+		/// <summary>Symbol name</summary>
+		public virtual string Name { get { return NameLiteral.Value; } }
+		public virtual Expressions.QualifiedName QualifiedName { get { return new Expressions.URI(Name); } }
 
         /// <summary>
         /// Role of this symbol Token
@@ -62,19 +61,10 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public override int GetHashCode()
-        {
-            return Type.GetHashCode() * 11 + Name.GetHashCode();
-        }
+		public override int GetHashCode() { return Type.GetHashCode() * 11 + Name.GetHashCode(); }
 
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            return Name;
-        }       
-    }
+		public override string ToString() {	return Name; }
+	}
 
     /// <summary>
     /// Role of a symbol Token in the Cobol grammar
@@ -163,45 +153,31 @@ namespace TypeCobol.Compiler.CodeElements
         public SymbolType[] CandidateTypes { get; set; }
     }
 
-    /// <summary>
-    /// A name that exists within a hierarchy of names can be made unique 
-    /// by specifying one or more higher-level names in the hierarchy. 
-    /// The higher-level names are called qualifiers, and the process by which 
-    /// such names are made unique is called qualification.
-    /// </summary>
-    public class QualifiedSymbolReference : SymbolReference
-    {
-        public QualifiedSymbolReference(SymbolReference qualifiedSymbol, SymbolReference qualifierSymbol) :
-            base(qualifiedSymbol.NameLiteral, qualifiedSymbol.Type)
-        {
-            IsAmbiguous = qualifiedSymbol.IsAmbiguous;
-            IsQualifiedReference = true;
-            QualifiedSymbol = qualifiedSymbol;
-            QualifierSymbol = qualifierSymbol;
-        }
+	/// <summary>
+	/// A name that exists within a hierarchy of names can be made unique
+	/// by specifying one or more higher-level names in the hierarchy.
+	/// The higher-level names are called qualifiers, and the process by which
+	/// such names are made unique is called qualification.
+	/// </summary>
+	public class QualifiedSymbolReference: SymbolReference {
+		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
+			IsAmbiguous = head.IsAmbiguous;
+			IsQualifiedReference = true;
+			Head = head;
+			Tail = tail;
+		}
 
-        public SymbolReference QualifiedSymbol { get; private set; }
+		public SymbolReference Head { get; private set; }
+		public SymbolReference Tail { get; private set; }
 
-        public SymbolReference QualifierSymbol { get; private set; }
+		/// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
+		public override string DefinitionPathPattern {
+			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
+		}
 
-        /// <summary>
-        /// Used to resolve the symbol reference in a hierarchy of names
-        /// </summary>
-        public override string DefinitionPathPattern
-        {
-            get
-            {
-                return "\\." + QualifiedSymbol.Name + "\\..*" + QualifiedSymbol.DefinitionPathPattern;
-            }
-        }
+		public override string ToString() { return Head.ToString() + " IN " + Tail.ToString(); }
 
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            return QualifiedSymbol.ToString() + " IN " + QualifierSymbol.ToString();
-        }
+		public override string Name { get { return Head.Name+'.'+Tail.Name; } }
     }
 
     /// <summary>

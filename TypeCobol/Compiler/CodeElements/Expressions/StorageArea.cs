@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -73,54 +74,43 @@ namespace TypeCobol.Compiler.CodeElements
 
 	public interface Named {
 		string Name { get; }
+		Expressions.QualifiedName QualifiedName { get; }
 	}
 
-    /// <summary>
-    /// Storage area for a data symbol or condition symbol defined in the program.
-    /// Also used for the storage area allocated by the compiler for the implicitely 
-    /// defined special registers (see list in a comment just below).
-    /// </summary>
-    public class DataOrConditionStorageArea: StorageArea, Named
-    {
-        public DataOrConditionStorageArea(SymbolReference symbolReference) :
-            base(StorageAreaKind.DataOrCondition)
-        {
-            SymbolReference = symbolReference;
-        }
+	/// <summary>
+	/// Storage area for a data symbol or condition symbol defined in the program.
+	/// Also used for the storage area allocated by the compiler for the implicitely 
+	/// defined special registers (see list in a comment just below).
+	/// </summary>
+	public class DataOrConditionStorageArea: StorageArea, Named {
+		public DataOrConditionStorageArea(SymbolReference symbolReference)
+				: base(StorageAreaKind.DataOrCondition) {
+			SymbolReference = symbolReference;
+		}
 
-        public DataOrConditionStorageArea(SymbolReference subscriptedSymbolReference, SubscriptExpression[] subscripts) :
-            base(StorageAreaKind.DataOrCondition)
-        {
-            SymbolReference = subscriptedSymbolReference;
-            Subscripts = subscripts;
-        }
+		public DataOrConditionStorageArea(SymbolReference subscriptedSymbolReference, SubscriptExpression[] subscripts)
+				: base(StorageAreaKind.DataOrCondition) {
+			SymbolReference = subscriptedSymbolReference;
+			Subscripts = subscripts;
+		}
 
-        public SymbolReference SymbolReference { get; private set; }
+		public SymbolReference SymbolReference { get; private set; }
 
-        public SubscriptExpression[] Subscripts { get; private set; }
+		public SubscriptExpression[] Subscripts { get; private set; }
 
-        /// <summary>
-        /// Ambiguities in the grammar in the first phase of parsing
-        /// </summary>
-        public SymbolType AlternativeSymbolType
-        {
-            set
-            {
-                if(value == SymbolType.IndexName)
-                {
-                    Kind = StorageAreaKind.DataOrConditionOrIndex;
-                }
-                else
-                {
-                    Kind = StorageAreaKind.DataOrConditionOrAlternativeSymbolReference;
-                }
-                alternativeSymbolType = value;
-            }
-            get { return alternativeSymbolType; }
-        }
-        private SymbolType alternativeSymbolType;
+        /// <summary>Ambiguities in the grammar in the first phase of parsing</summary>
+		public SymbolType AlternativeSymbolType {
+			set {
+				if (value == SymbolType.IndexName) Kind = StorageAreaKind.DataOrConditionOrIndex;
+                else Kind = StorageAreaKind.DataOrConditionOrAlternativeSymbolReference;
+				alternativeSymbolType = value;
+			}
+			get { return alternativeSymbolType; }
+		}
+		private SymbolType alternativeSymbolType;
 
 		public string Name { get { return SymbolReference.Name; } }
+		public QualifiedName QualifiedName { get { return SymbolReference.QualifiedName; } }
 	}
 
     /* Implicitely defined special registers :
@@ -167,21 +157,17 @@ namespace TypeCobol.Compiler.CodeElements
         public SyntaxProperty<bool> ALL { get; private set; }
     }
 
-    /// <summary>
-    /// Storage area for an index
-    /// </summary>
-    public class IndexStorageArea : StorageArea, Named
-    {
-        public IndexStorageArea(SymbolReference indexNameReference) :
-            base(StorageAreaKind.Index)
-        {
-            SymbolReference = indexNameReference;
-        }
+	/// <summary>Storage area for an index</summary>
+	public class IndexStorageArea : StorageArea, Named {
+		public IndexStorageArea(SymbolReference indexNameReference): base(StorageAreaKind.Index) {
+			SymbolReference = indexNameReference;
+		}
 
-        public SymbolReference SymbolReference { get; private set; }
+		public SymbolReference SymbolReference { get; private set; }
 
 		public string Name { get { return SymbolReference.Name; } }
-    }
+		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
+	}
     
     /* Special registers holding properties of other storage areas or symbols
 
@@ -197,60 +183,57 @@ namespace TypeCobol.Compiler.CodeElements
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-    public class StorageAreaPropertySpecialRegister : StorageArea, Named
-    {
-        public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference) :
-            base(StorageAreaKind.StorageAreaPropertySpecialRegister)
-        {
-            SpecialRegisterName = specialRegisterName;
-            StorageAreaReference = storageAreaReference;
-        }
+	public class StorageAreaPropertySpecialRegister: StorageArea, Named {
+		public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference)
+				: base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
+			SpecialRegisterName = specialRegisterName;
+			StorageAreaReference = storageAreaReference;
+		}
 
-        public Token SpecialRegisterName { get; private set; }
+		public Token SpecialRegisterName { get; private set; }
 
-        public StorageArea StorageAreaReference { get; private set; }
+		public StorageArea StorageAreaReference { get; private set; }
 
 		public string Name { get { return SpecialRegisterName.Text; } }
-    }
+		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
+	}
 
-    /// <summary>
-    /// Specific storage area allocated by the compiler to hold
-    /// a property describing another storage area
-    /// </summary>
-    public class FilePropertySpecialRegister : StorageArea, Named
-    {
-        public FilePropertySpecialRegister(Token specialRegisterName, SymbolReference fileNameReference) :
-            base(StorageAreaKind.FilePropertySpecialRegister)
-        {
-            SpecialRegisterName = specialRegisterName;
-            SymbolReference = fileNameReference;
-        }
+	/// <summary>
+	/// Specific storage area allocated by the compiler to hold
+	/// a property describing another storage area
+	/// </summary>
+	public class FilePropertySpecialRegister : StorageArea, Named {
+		public FilePropertySpecialRegister(Token specialRegisterName, SymbolReference fileNameReference)
+				: base(StorageAreaKind.FilePropertySpecialRegister) {
+			SpecialRegisterName = specialRegisterName;
+			SymbolReference = fileNameReference;
+		}
 
-        public Token SpecialRegisterName { get; private set; }
+		public Token SpecialRegisterName { get; private set; }
 
-        public SymbolReference SymbolReference { get; private set; }
+		public SymbolReference SymbolReference { get; private set; }
 
 		public string Name { get { return SpecialRegisterName.Text; } }
-    }
+		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
+	}
 
-    /// <summary>
-    /// Call to a Cobol intrinsic function.
-    ///  AND
-    /// Storage area allocated by the compiler to hold the result of the call.
-    /// </summary>
-    public class IntrinsicFunctionCallResult : StorageArea, Named
-    {
-        public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) :
-            base(StorageAreaKind.IntrinsicFunctionCallResult)
-        {
-            IntrinsicFunctionName = intrinsicFunctionName;
-            Arguments = arguments;
-        }
+	/// <summary>
+	/// Call to a Cobol intrinsic function.
+	///  AND
+	/// Storage area allocated by the compiler to hold the result of the call.
+	/// </summary>
+	public class IntrinsicFunctionCallResult : StorageArea, Named {
+		public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments)
+				: base(StorageAreaKind.IntrinsicFunctionCallResult) {
+			IntrinsicFunctionName = intrinsicFunctionName;
+			Arguments = arguments;
+		}
 
-        public ExternalName IntrinsicFunctionName { get; private set; }
+		public ExternalName IntrinsicFunctionName { get; private set; }
 
-        public VariableOrExpression[] Arguments { get; private set; }
+		public VariableOrExpression[] Arguments { get; private set; }
 
 		public string Name { get { return IntrinsicFunctionName.Name; } }
+		public QualifiedName QualifiedName { get { return IntrinsicFunctionName.QualifiedName; } }
     }
 }

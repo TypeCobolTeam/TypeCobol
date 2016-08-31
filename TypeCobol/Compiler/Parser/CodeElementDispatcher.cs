@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Parser
 		/// one of the Types returned by this method.
 		/// </summary>
 		/// <returns>IList of CodeElement Types</returns>
-		IList<System.Type> GetCodeElements();
+		IList<System.Type> GetNodes();
 
 		/// <summary>
 		/// Called when a CodeElement is created during ProgramClassParserStep,
@@ -81,14 +81,14 @@ namespace TypeCobol.Compiler.Parser
 	}
 
 	public class NodeDispatcher: NodeListener {
-		public IList<System.Type> GetCodeElements() { return null; }
+		public IList<System.Type> GetNodes() { return null; }
 
 		/// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			foreach(var listener in listeners) {
-				var types = listener.GetCodeElements();
+				var types = listener.GetNodes();
 				foreach (var expected in types) {
-					if (TypeCobol.Tools.Reflection.IsTypeOf(node.CodeElement!=null? node.CodeElement.GetType():null, expected)) {
+					if (TypeCobol.Tools.Reflection.IsTypeOf(node!=null? node.GetType():null, expected)) {
 						listener.OnNode(node, context, program);
 						break; // only notify each listener once for a given CodeElement
 					}

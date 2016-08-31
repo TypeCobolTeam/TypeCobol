@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -34,7 +35,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Format 7: SET for USAGE OBJECT REFERENCE data items
 	/// set objectReference to objectReference | NULL | SELF
 	/// </summary>
-	public class SetStatementForAssignment : SetStatement, Sending, Receiving {
+	public class SetStatementForAssignment : SetStatement, VariableUser,Sending,Receiving {
 		public SetStatementForAssignment() : base(StatementType.SetStatementForAssignment) { }
 
 		/// <summary>
@@ -65,18 +66,27 @@ namespace TypeCobol.Compiler.CodeElements
 		// [TypeCobol]
 		//public bool IsUnsafe { get { return true; } }
 
-		IList<string> Sending.SendingItems {
+		public IList<QualifiedName> Variables {
 			get {
-				var items = new List<string>();
-				items.Add(SendingVariable.ToString());
+				var items = new List<QualifiedName>();
+				items.AddRange(SendingItems);
+				items.AddRange(ReceivingItems);
 				return items;
 			}
 		}
 
-		IList<string> Receiving.ReceivingItems {
+		public IList<QualifiedName> SendingItems {
 			get {
-				var items = new List<string>();
-				foreach(var item in ReceivingStorageAreas) items.Add((item as Named).Name);
+				var items = new List<QualifiedName>();
+				items.Add(new URI(SendingVariable.ToString()));
+				return items;
+			}
+		}
+
+		public IList<QualifiedName> ReceivingItems {
+			get {
+				var items = new List<QualifiedName>();
+				foreach(var item in ReceivingStorageAreas) items.Add((item as Named).QualifiedName);
 				return items;
 			}
 		}
@@ -212,7 +222,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// set condition-names to true
 	///          List<Identifier> ConditionIdentifiers //identifier
 	/// </summary>
-	internal class SetStatementForConditions : SetStatement, Sending, Receiving {
+	internal class SetStatementForConditions : SetStatement, VariableUser,Sending,Receiving {
 		public SetStatementForConditions() : base(StatementType.SetStatementForConditions) { }
 
 		/// <summary>identifier (condition-name)</summary>
@@ -231,18 +241,20 @@ namespace TypeCobol.Compiler.CodeElements
 			return str.ToString();
 		}
 
-		IList<string> Sending.SendingItems {
+		public IList<QualifiedName> Variables { get { return this.ReceivingItems; } }
+
+		public IList<QualifiedName> SendingItems {
 			get { 
-				var items = new List<string>();
-				items.Add(SendingValue.Value.ToString());
+				var items = new List<QualifiedName>();
+				items.Add(new URI(SendingValue.Value.ToString()));
 				return items;
 			}
 		}
 
-		IList<string> Receiving.ReceivingItems {
+		public IList<QualifiedName> ReceivingItems {
 			get {
-				var items = new List<string>();
-				foreach(var item in Conditions) items.Add(item.Name);
+				var items = new List<QualifiedName>();
+				foreach(var item in Conditions) items.Add(item.QualifiedName);
 				return items;
 			}
 		}

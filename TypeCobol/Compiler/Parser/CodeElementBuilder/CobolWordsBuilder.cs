@@ -575,10 +575,11 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
         }
 
-        internal SymbolReference CreateDataNameReference(CodeElementsParser.DataNameReferenceContext context)
-        {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.DataName);
-        }
+		[CanBeNull]
+		internal SymbolReference CreateDataNameReference([CanBeNull] CodeElementsParser.DataNameReferenceContext context) {
+			if (context == null) return null;
+			return CreateSymbolReference(context.symbolReference4(), SymbolType.DataName);
+		}
 
         internal SymbolReference CreateInstrinsicDataNameReference(CodeElementsParser.IntrinsicDataNameReferenceContext context)
         {
@@ -682,31 +683,33 @@ namespace TypeCobol.Compiler.Parser
             return qualifiedSymbolReference;
         }
 
-        [CanBeNull]
-		internal SymbolReference CreateQualifiedDataName([CanBeNull]CodeElementsParser.QualifiedDataNameContext context) {
-            if(context == null) return null;
+		[CanBeNull]
+		internal SymbolReference CreateQualifiedDataName([CanBeNull] CodeElementsParser.QualifiedDataNameContext context) {
+			if (context == null) return null;
 			if (context.dataNameReference() != null) return CreateDataNameReference(context.dataNameReference());
 			return CreateQualifiedDataName(context.qualifiedDataName1());
 		}
-
 		internal SymbolReference CreateQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
 			if (context.dataNameReferenceOrIndexNameReference() != null) return CreateDataNameReferenceOrIndexNameReference(context.dataNameReferenceOrIndexNameReference());
 			return CreateQualifiedDataName(context.qualifiedDataName1());
 		}
-
 		private SymbolReference CreateQualifiedDataName(CodeElementsParser.QualifiedDataName1Context context) {
 			var c = context.cobolQualifiedDataName1();
 			if (c != null) return CreateQualifiedDataName(c.dataNameReference(), c.dataNameReferenceOrFileNameReference());
 			var tc = context.tcQualifiedDataName1();
 			return CreateQualifiedDataName(tc.dataNameReference(), tc.dataNameReferenceOrFileNameReference());
 		}
-		private SymbolReference CreateQualifiedDataName(CodeElementsParser.DataNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceContext[] tail) {
+		private SymbolReference CreateQualifiedDataName(CodeElementsParser.DataNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceContext[] tail) {
 			SymbolReference qname = CreateDataNameReference(head);
-			if (tail != null) {
-				foreach(var context in tail) {
-					var part = CreateDataNameReferenceOrFileNameReference(context);
-					qname = new QualifiedSymbolReference(qname, part);
+			if (tail != null && tail.Length > 0) {
+				SymbolReference current = CreateDataNameReferenceOrFileNameReference(tail[tail.Length-1]);
+				SymbolReference last = null;
+				for(int i=tail.Length-2; i>=0; i--) {
+					last = current;
+					current = CreateDataNameReferenceOrFileNameReference(tail[i]);
+					current = new QualifiedSymbolReference(current, last);
 				}
+				qname = new QualifiedSymbolReference(qname, current);
 			}
 			symbolInformationForTokens[qname.NameLiteral.Token] = qname;
 			return qname;

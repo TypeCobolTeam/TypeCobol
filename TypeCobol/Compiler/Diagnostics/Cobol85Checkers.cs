@@ -1,14 +1,17 @@
-﻿using Antlr4.Runtime;
-using System;
-using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Tools;
+﻿namespace TypeCobol.Compiler.Diagnostics {
 
-namespace TypeCobol.Compiler.Diagnostics {
+	using Antlr4.Runtime;
+	using System;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
+	using TypeCobol.Compiler.CodeModel;
+	using TypeCobol.Compiler.Nodes;
+	using TypeCobol.Compiler.Parser;
+	using TypeCobol.Compiler.Parser.Generated;
+	using TypeCobol.Tools;
+
+
 
 	class DataDescriptionChecker: CodeElementListener {
 		public IList<Type> GetCodeElements() {
@@ -220,71 +223,77 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
 
-/*TODO#249
-	class DeclarationChecker: NodeListener {
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
+class DeclarationChecker: NodeListener {
+		public IList<Type> GetNodes() { return new List<Type>(); }
+		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		}
-		public void OnNode(Node node, ParserRuleContext c, Program program) {
-			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.IdentifierUser;
-			foreach (var identifier in element.Identifiers) {
-				CheckIdentifier(node.CodeElement, program.CurrentTable, identifier);
-			}
-		}
-		private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
-			var found = table.Get(identifier.Name);
-			if (found.Count < 1) {
-				if (table.GetFunction(identifier.Name).Count < 1)
-					DiagnosticUtils.AddError(e, "Symbol "+identifier.Name+" is not referenced");
-			}
-			if (found.Count > 1)
-				DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+identifier.Name);
-
-			var fun = identifier as FunctionReference;
-			if (fun != null) foreach(var param in fun.Parameters) CheckExpression(e, table, param.Value as Expression);
-
-			foreach(var def in found)
-				foreach(var error in checkSubscripting(identifier.Name, def))
-					DiagnosticUtils.AddError(e, error);
-		}
-
-		private static void CheckExpression(CodeElement e, SymbolTable table, Expression expression) {
-			if (expression == null) return;
-			if (expression is Identifier) CheckIdentifier(e, table, expression as Identifier);
-			if (expression is ArithmeticOperation) {
-				var aerith = expression as ArithmeticOperation;
-				CheckExpression(e, table, aerith.LeftOperand);
-				CheckExpression(e, table, aerith.RightOperand);
-			}
-		}
-
-		private static IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
-			var errors = new List<string>();
-			if (qname is Subscripted) {
-				var sname = qname as Subscripted;
-				for(int i=qname.Count-1; i>=0; i--) {
-					string name = qname[i];
-					var subscript = sname[name];
-					if (subscript != null) {
-						if (!data.IsTableOccurence) {
-							errors.Add(name+" must not be subscripted.");
-						} else
-						if (subscript.IsJustAnOffset) {
-							int offset = int.Parse(subscript.offset.ToString());
-							if (offset > data.MaxOccurencesCount.Value)
-								errors.Add(name+" subscripting out of bounds: "+offset+" > max="+data.MaxOccurencesCount);
-						}//else TODO: check if subscript.dataname subscripting is okay too
-					} else {
-						if (data.IsTableOccurence) {
-							errors.Add(name+" must be subscripted.");
-						}
-					}
-					data = data.TopLevel;
-				}
-			}
-			return errors;
+}
+/* TODO#249
+class DeclarationChecker: NodeListener {
+	public IList<Type> GetCodeElements() {
+		return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.IdentifierUser), };
+	}
+	public void OnNode(Node node, ParserRuleContext c, CodeModel.Program program) {
+		var element = node.CodeElement as TypeCobol.Compiler.CodeModel.IdentifierUser;
+		foreach (var identifier in element.Identifiers) {
+			CheckIdentifier(node.CodeElement, program.CurrentTable, identifier);
 		}
 	}
+	private static void CheckIdentifier(CodeElement e, SymbolTable table, Identifier identifier) {
+		var found = table.Get(identifier.Name);
+		if (found.Count < 1) {
+			if (table.GetFunction(identifier.Name).Count < 1)
+				DiagnosticUtils.AddError(e, "Symbol "+identifier.Name+" is not referenced");
+		}
+		if (found.Count > 1)
+			DiagnosticUtils.AddError(e, "Ambiguous reference to symbol "+identifier.Name);
+
+		var fun = identifier as FunctionReference;
+		if (fun != null) foreach(var param in fun.Parameters) CheckExpression(e, table, param.Value as Expression);
+
+		foreach(var def in found)
+			foreach(var error in checkSubscripting(identifier.Name, def))
+				DiagnosticUtils.AddError(e, error);
+
+	}
+
+	private static void CheckExpression(CodeElement e, SymbolTable table, Expression expression) {
+		if (expression == null) return;
+		if (expression is Identifier) CheckIdentifier(e, table, expression as Identifier);
+		if (expression is ArithmeticOperation) {
+			var aerith = expression as ArithmeticOperation;
+			CheckExpression(e, table, aerith.LeftOperand);
+			CheckExpression(e, table, aerith.RightOperand);
+		}
+	}
+
+	private static IEnumerable<string> checkSubscripting(QualifiedName qname, DataDescriptionEntry data) {
+		var errors = new List<string>();
+		if (qname is Subscripted) {
+			var sname = qname as Subscripted;
+			for(int i=qname.Count-1; i>=0; i--) {
+				string name = qname[i];
+				var subscript = sname[name];
+				if (subscript != null) {
+					if (!data.IsTableOccurence) {
+						errors.Add(name+" must not be subscripted.");
+					} else
+					if (subscript.IsJustAnOffset) {
+						int offset = int.Parse(subscript.offset.ToString());
+						if (offset > data.MaxOccurencesCount.Value)
+							errors.Add(name+" subscripting out of bounds: "+offset+" > max="+data.MaxOccurencesCount);
+					}//else TODO: check if subscript.dataname subscripting is okay too
+				} else {
+					if (data.IsTableOccurence) {
+						errors.Add(name+" must be subscripted.");
+					}
+				}
+				data = data.TopLevel;
+			}
+		}
+		return errors;
+	}
+}
 */
 
 /*	TODO#249

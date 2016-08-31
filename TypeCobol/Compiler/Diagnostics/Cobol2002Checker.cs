@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class Cobol2002TypeDefChecker2 : NodeListener
     {
-        public IList<Type> GetCodeElements()
+        public IList<Type> GetNodes()
         {
             return new List<Type> { typeof(Receiving) };
         }

@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		private static string[] READONLY_DATATYPES = { "DATE", };
 
-		public IList<Type> GetCodeElements() {
+		public IList<Type> GetNodes() {
 			return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
 		}
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
@@ -101,8 +101,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 	class FunctionDeclarationChecker: NodeListener {
 
-		public IList<Type> GetCodeElements() {
-			return new List<Type> { typeof(FunctionDeclarationHeader), };
+		public IList<Type> GetNodes() {
+			return new List<Type> { typeof(FunctionDeclaration), };
 		}
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			var header = node.CodeElement as FunctionDeclarationHeader;
@@ -222,8 +222,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 	/// <summary>Checks the TypeCobol custom functions rule: TCRFUN_NO_SECTION_OR_PARAGRAPH_IN_LIBRARY.</summary>
 	class LibraryChecker: NodeListener {
-		public IList<Type> GetCodeElements() {
-			return new List<Type> { typeof(ProcedureDivisionHeader), };
+		public IList<Type> GetNodes() {
+			return new List<Type> { typeof(ProcedureDivision), };
 		}
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			var pdiv = node.CodeElement as ProcedureDivisionHeader;

@@ -3,6 +3,7 @@ namespace TypeCobol.Compiler.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
 	using TypeCobol.Compiler.Text;
 
 
@@ -14,7 +15,7 @@ namespace TypeCobol.Compiler.Nodes {
 /// - parent/children relations
 /// - unique identification accross the tree
 /// </summary>
-public abstract class Node {
+public abstract class Node: Named {
 
 	/// <summary>CodeElement data (weakly-typed)</summary>
 	public CodeElement CodeElement { get; private set; }
@@ -70,6 +71,9 @@ public abstract class Node {
 	}
 
 
+
+	public string Name { get { return this.ID; } }
+	public QualifiedName QualifiedName { get { return URI!=null? new URI(URI) : null; } }
 
 	/// <summary>Non-unique identifier of this node. Depends on CodeElement type and name (if applicable).</summary>
 	public virtual string ID { get { return null; } }

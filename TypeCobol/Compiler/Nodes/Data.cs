@@ -2,6 +2,7 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
 
 
 
@@ -34,10 +35,9 @@ public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader
 	public override bool IsShared { get { return true; } }
 }
 
-public abstract class DataDefinition: Node, CodeElementHolder<DataDefinitionEntry>, Parent<DataDefinition>, Child<DataSection>, Named {
+public abstract class DataDefinition: Node, CodeElementHolder<DataDefinitionEntry>, Parent<DataDefinition>, Child<DataSection> {
 	public DataDefinition(DataDefinitionEntry entry): base(entry) { }
 	public override string ID { get { return this.CodeElement().Name; } }
-	public string Name { get { return this.CodeElement().Name; } }
 }
 public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription> {
 	public DataDescription(DataDescriptionEntry entry): base(entry) { }
