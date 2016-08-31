@@ -618,8 +618,13 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		/// <param name="context">PROCEDURE DIVISION</param>
 		public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			var terminal = context.ProcedureDivisionHeader();
-			var pheader = terminal != null? (ProcedureDivisionHeader)terminal.Symbol : null;
-			var p = new FunctionDeclarationProfile(pheader);
+			FunctionDeclarationProfile p = null;
+			if (terminal.Symbol is FunctionDeclarationProfile)
+				p = (FunctionDeclarationProfile)terminal.Symbol;
+			else
+			if (terminal.Symbol is ProcedureDivisionHeader)
+				p = new FunctionDeclarationProfile((ProcedureDivisionHeader)terminal.Symbol);
+			else throw new NotImplementedException("Unknown type: "+terminal.Symbol.GetType().Name);
 /*			char[] currencies = GetCurrencies();
 			int offset = 0;
 			Stack<DataDescriptionEntry> groups;
