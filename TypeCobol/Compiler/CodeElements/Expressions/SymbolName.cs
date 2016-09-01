@@ -203,38 +203,24 @@ namespace TypeCobol.Compiler.CodeElements
         { }
     }
 
-    /// <summary>
-    /// Unique case of qualified external name : 
-    /// textName (IN | OF) libraryName
-    /// </summary>
-    public class QualifiedTextName : ExternalName
-    {
-        public QualifiedTextName(ExternalName textName, ExternalName libraryName) :
-            base(textName.NameLiteral, textName.Type)
-        {
-            TextName = textName;
-            LibraryName = libraryName;
-        }
+	/// <summary>Unique case of qualified external name: textName (IN | OF) libraryName</summary>
+	public class QualifiedTextName: ExternalName {
+		public QualifiedTextName(ExternalName textName, ExternalName libraryName)
+				: base(textName.NameLiteral, textName.Type) {
+			TextName = textName;
+			LibraryName = libraryName;
+		}
 
-        public ExternalName TextName { get; private set; }
+		public ExternalName TextName { get; private set; }
+		public ExternalName LibraryName { get; private set; }
 
-        public ExternalName LibraryName { get; private set; }
+		public override string ToString() {
+			if (LibraryName == null) return base.ToString();
+			return base.ToString() + " IN " + LibraryName.ToString();
+		}
 
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            if (LibraryName == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                return base.ToString() + " IN " + LibraryName.ToString();
-            }
-        }
-    }
+		public override string Name { get { return LibraryName.Name+'.'+TextName.Name; } }
+	}
 
     /// <summary>
     /// Role ambiguity between :
