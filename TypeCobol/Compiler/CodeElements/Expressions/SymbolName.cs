@@ -177,7 +177,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public override string ToString() { return Head.ToString() + " IN " + Tail.ToString(); }
 
-		public override string Name { get { return Head.Name+'.'+Tail.Name; } }
+		public override string Name { get { return Tail.Name+'.'+Head.Name; } }
     }
 
     /// <summary>
