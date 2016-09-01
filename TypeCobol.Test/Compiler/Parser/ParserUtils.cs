@@ -225,8 +225,7 @@ namespace TypeCobol.Test.Compiler.Parser
 			string header = "CUSTOM TYPES:\n";
 			str.Append(header);
 			foreach(var typedef in typedefs) {
-				var data = (TypeDefinitionEntry)typedef.CodeElement;
-				str.Append(" * ").AppendLine(data.DataType.Name.ToString());
+				str.Append(" * ").AppendLine(typedef.DataType.Name.ToString());
 				foreach(var sub in typedef.Children)
 					DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, 2);
 				c++;

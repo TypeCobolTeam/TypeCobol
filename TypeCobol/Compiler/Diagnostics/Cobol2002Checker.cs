@@ -51,12 +51,12 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public IList<Type> GetNodes()
         {
-            return new List<Type> { typeof(Receiving) };
+            return new List<Type> { typeof(VariableWriter) };
         }
 
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
             var ce = node.CodeElement;
-            if (ce is Receiving == false)
+            if (ce is VariableWriter == false)
                 return;
             if (ce is InitializeStatement || ce is MoveStatement || ce is ReadStatement || ce is ReleaseStatement
                                                                                             //SetStatement is not specified in our specs, but as

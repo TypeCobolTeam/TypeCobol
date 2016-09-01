@@ -76,6 +76,9 @@ namespace TypeCobol.Compiler.CodeElements
 		string Name { get; }
 		Expressions.QualifiedName QualifiedName { get; }
 	}
+	public interface Typed {
+		DataType DataType { get; }
+	}
 
 	/// <summary>
 	/// Storage area for a data symbol or condition symbol defined in the program.

@@ -82,9 +82,11 @@ public class Merge: Node, CodeElementHolder<MergeStatement>, Statement {
 	public Merge(MergeStatement statement): base(statement) { }
 }
 
-public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableUser {
+public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter {
 	public Move(MoveStatement statement): base(statement) { }
 	public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class Release: Node, CodeElementHolder<ReleaseStatement>, Statement {
@@ -95,9 +97,11 @@ public class Return: Node, CodeElementHolder<ReturnStatement>, Statement {
 	public Return(ReturnStatement statement): base(statement) { }
 }
 
-public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableUser {
+public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableWriter {
 	public Set(SetStatement statement): base(statement) { }
 	public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class Sort: Node, CodeElementHolder<SortStatement>, Statement {

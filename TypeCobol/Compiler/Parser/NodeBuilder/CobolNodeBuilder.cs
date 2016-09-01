@@ -44,20 +44,17 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var type in value.CustomTypes)
 						TableOfIntrisic.RegisterCustomType(type);
 				}
-//				RegisterCustomType(TableOfIntrisic, DataType.Date);
-//				RegisterCustomType(TableOfIntrisic, DataType.Boolean);
+				// TODO#249: use a COPY for these
+				foreach (var type in DataType.BuiltInCustomTypes) {
+					var typedef = new TypeDefinitionEntry();
+					typedef.LevelNumber = new GeneratedIntegerValue(1);
+					typedef.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
+					typedef.DataType = type;
+					TableOfIntrisic.Add(new TypeDefinition(typedef));
+				}
 			}
 		}
-/*
-		private void RegisterCustomType(SymbolTable table, DataType type) {
-			try { table.GetCustomType(type.Name); }
-			catch(ArgumentException ex) { table.RegisterCustomType(new CustomTypeDefinition(type)); }
-		}
-		private void RegisterCustomType(SymbolTable table, TypeDefinition type) {
-			try { table.GetCustomType(type.DataType.Name); }
-			catch(ArgumentException ex) { table.RegisterCustomType(type); }
-		}
-*/
+
 
 
 		public NodeDispatcher Dispatcher { get; internal set; }
@@ -174,7 +171,6 @@ namespace TypeCobol.Compiler.Parser
 			var terminal = context.WorkingStorageSectionHeader();
 			var header = terminal != null? (WorkingStorageSectionHeader)terminal.Symbol : null;
 			Enter(new WorkingStorageSection(header), context);
-//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context) {
 			ExitLastLevel1Definition();
@@ -186,7 +182,6 @@ namespace TypeCobol.Compiler.Parser
 			var terminal = context.LocalStorageSectionHeader();
 			var header = terminal != null? (LocalStorageSectionHeader)terminal.Symbol : null;
 			Enter(new LocalStorageSection(header), context);
-//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context) {
 			ExitLastLevel1Definition();
@@ -198,7 +193,6 @@ namespace TypeCobol.Compiler.Parser
 			var terminal = context.LinkageSectionHeader();
 			var header = terminal != null? (LinkageSectionHeader)terminal.Symbol : null;
 			Enter(new LinkageSection(header), context);
-//TODO#249			AddEntries(CreateDataDescriptionEntries(context.DataDescriptionEntry()));
 		}
 		public override void ExitLinkageSection(ProgramClassParser.LinkageSectionContext context) {
 			ExitLastLevel1Definition();

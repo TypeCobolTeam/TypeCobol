@@ -1077,8 +1077,7 @@ namespace TypeCobol.Compiler.Parser
 		internal Variable CreateVariable(CodeElementsParser.Variable7Context context) {
 			if (context == null) return null;
 			if (context.identifier() != null) {
-				StorageArea storageArea = CreateIdentifier(context.identifier());
-				return new Variable(storageArea);
+				return new Variable(CreateIdentifier(context.identifier()));
 			} else
 			if (context.numericValue() != null) {
 				return new Variable(CobolWordsBuilder.CreateNumericValue(context.numericValue()));

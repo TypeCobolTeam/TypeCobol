@@ -224,18 +224,18 @@
 
 
 class DeclarationChecker: NodeListener {
-		public IList<Type> GetNodes() {
-			return new List<Type>() { typeof(VariableUser), };
-		}
+	public IList<Type> GetNodes() {
+		return new List<Type>() { typeof(VariableUser), };
+	}
 
-		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-			foreach(var variable in ((VariableUser)node).Variables) CheckVariable(node, variable);
-		}
-		private void CheckVariable(Node node, QualifiedName name) {
-			var found = node.SymbolTable.Get(name);
-			if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
-			if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
-		}
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		foreach(var variable in ((VariableUser)node).Variables) CheckVariable(node, variable);
+	}
+	private void CheckVariable(Node node, QualifiedName name) {
+		var found = node.SymbolTable.Get(name);
+		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
+		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
+	}
 }
 /* TODO#249
 class DeclarationChecker: NodeListener {
@@ -305,54 +305,78 @@ class DeclarationChecker: NodeListener {
 }
 */
 
-/*	TODO#249
-	class WriteOperationsChecker: NodeListener {
+class WriteTypeConsistencyChecker: NodeListener {
+	public IList<Type> GetNodes() {
+		return new List<Type>() { typeof(VariableWriter), };
+	}
 
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		var variables = ((VariableWriter)node).VariablesWritten;
+		foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
+	}
+	/// <param name="wname">Receiving item; must be found and its type known</param>
+	/// <param name="sent">Sending item; must be found and its type known</param>
+	private void CheckVariable(Node node, QualifiedName wname, object sent) {
+		if (sent == null || wname == null) return;// I need both items
+		var receiving = GetTypeDefinition(node.SymbolTable, wname);
+		if (receiving == null) return;// cannot find receiving type
+
+		DataType sending = null;
+		var sname = sent as QualifiedName;
+		if (sname != null) {
+			sending = GetTypeDefinition(node.SymbolTable, sname);
+			if (sending == null) return;// cannot find sending type
+		} else {
+			bool? sbool= sent as bool?;
+			if (sbool != null) sending = DataType.Boolean;
 		}
-		public void OnNode(Node node, ParserRuleContext c, Program program) {
-			var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
-			if (element== null) return; // nothing to do
-			var table = program.SymbolTable;
-			foreach(var pair in element.Symbols) {
-				if (pair.Item1 == null) continue; // no sending item
-				if (pair.Item2 == null) continue; // no receiving item
-				DataType sending = pair.Item1.Item2;
-				if (sending == null) { // unknown sending item type
-					if (pair.Item1.Item1 == null) continue; // ?no sending item
-					var ls = table.Get(pair.Item1.Item1);
-					if (ls.Count != 1) continue; // ambiguity or not referenced; not my job
-					sending = ls[0].DataType;
+System.Console.WriteLine(">>> WRITE "+(sname==null?"":(sname.ToString()+':'))+sending+" TO "+wname+':'+receiving);
+		if (sending != receiving) {
+			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
+			if (receiving.IsStrong) {
+				if (!IsUnsafe) {
+					string message = "Can't write non typed "+sending+" to strongly typed variable "+wname.Head+":"+receiving+" (use UNSAFE keyword for that)";
+					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 				}
-				var lr = table.Get(pair.Item2);
-				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
-				var receiving = lr[0];
-				if (receiving.DataType != sending) {
-					if (receiving.DataType.IsStrong) {
-						if (!element.IsUnsafe) {
-							string message = "Can't write non typed "+sending+" to strongly typed variable "+receiving.Name+":"+receiving.DataType+" (use UNSAFE keyword for that)";
-							DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-						}
-					} else {
-						if (element.IsUnsafe) {
-							string message = "Useless UNSAFE with non strongly typed receiver.";
-							DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SyntaxWarningInParser);
-						}
-					}
+			} else {
+				if (IsUnsafe) {
+					string message = "Useless UNSAFE with non strongly typed receiver.";
+					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SyntaxWarningInParser);
 				}
-				CheckNesting(node.CodeElement, receiving);
 			}
 		}
-		private bool CheckNesting(CodeElement e, DataDescriptionEntry data) {
-			foreach(var sub in data.Subordinates) {
-				if (!sub.DataType.IsNestable) {
-					DiagnosticUtils.AddError(e, "Group contains type "+sub.DataType.Name+" variables");
-					return false;
-				} else if (!CheckNesting(e, sub)) return false;
-			}
-			return true;
+// TODO#249
+//		CheckNesting(node, receiving);
+	}
+	private DataType GetTypeDefinition(SymbolTable table, QualifiedName symbol) {
+		var found = table.Get(symbol);
+		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
+		var data = found[0] as DataDefinition;
+		if (data != null) {
+			var entry = (DataDescriptionEntry)data.CodeElement;
+			if (entry.CustomType == null) return entry.DataType;//not a custom type
 		}
+		Typed typed = found[0] as Typed;
+		if (typed == null) return null;// symbol untyped
+		var types = table.GetTypes(typed);
+		if (types.Count != 1) return null;// symbol type not found or ambiguous
+		return types[0].DataType;
+	}
+/*
+	private bool CheckNesting(Node node, DataDescriptionEntry receiving) {
+		foreach(var child in node.Children) {
+			var typed = child as Typed;
+			if (!typed.DataType.IsNestable) {
+				DiagnosticUtils.AddError(node.CodeElement, "Group contains type "+typed.DataType.Name+" variables");
+				return false;
+			} else if (!CheckNesting(e, sub)) return false;
+		}
+		return true;
 	}
 */
+
+}
+
+
+
 }

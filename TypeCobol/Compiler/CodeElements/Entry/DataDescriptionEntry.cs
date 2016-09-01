@@ -75,7 +75,7 @@
 	/// Data description entries have three general formats :
 	/// Format 1: data description entry
 	/// </summary>
-	public class DataDescriptionEntry: DataDefinitionEntry
+	public class DataDescriptionEntry: DataDefinitionEntry, Typed
 	{
 		public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) { }
 
@@ -125,6 +125,10 @@
 		/// COBOL 2002 TYPE clause.
 		/// </summary>
 		public AlphanumericValue CustomType { get; internal set; }
+
+
+
+		public DataType DataType { get; internal set; }
 
 		/// <summary>
 		/// p188:
@@ -856,11 +860,16 @@
 		public SymbolReference RenamesToDataName { get; set; }
 	}
 
-	public class TypeDefinitionEntry: DataDescriptionEntry {
+	public class TypeDefinitionEntry: DataDescriptionEntry, Typed {
 		public TypeDefinitionEntry(): base() { }
 
-		public DataType DataType { get; internal set; }
 		public SyntaxProperty<bool> IsStrong { get; internal set; }
+
+		private DataType datatype;
+		public DataType DataType {
+			         get { return datatype;  }
+			internal set { datatype = value; }
+		}
 	}
 
 	/// <summary>
@@ -870,7 +879,7 @@
 	/// Level-88 entries must immediately follow the data description entry for the
 	/// conditional variable with which the condition-names are associated.
 	/// </summary>
-	public class DataConditionEntry: DataDefinitionEntry
+	public class DataConditionEntry: DataDefinitionEntry, Typed
 	{
 		public DataConditionEntry(): base(CodeElementType.DataConditionEntry) { }
 
@@ -900,6 +909,8 @@
 		/// included in the format only for clarity.
 		/// </summary>
 		public ValuesRange[] ConditionValuesRanges { get; set; }
+
+		public DataType DataType { get { return DataType.Boolean; } }
 	}
 
 	/// <summary>

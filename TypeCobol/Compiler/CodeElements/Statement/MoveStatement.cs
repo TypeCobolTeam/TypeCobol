@@ -4,7 +4,7 @@
 	using TypeCobol.Compiler.CodeElements.Expressions;
 
 /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
-public abstract class MoveStatement : StatementElement, VariableUser,Sending,Receiving {
+public abstract class MoveStatement : StatementElement, Sending,VariableWriter {
 	public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
 // [TYPECOBOL]
 	public SyntaxProperty<bool> Unsafe { get; set; }
@@ -12,7 +12,7 @@ public abstract class MoveStatement : StatementElement, VariableUser,Sending,Rec
 // [/TYPECOBOL]
 	public virtual IList<QualifiedName> Variables { get { return new List<QualifiedName>(); } }
 	public virtual IList<QualifiedName> SendingItems { get { return new List<QualifiedName>(); } }
-	public virtual IList<QualifiedName> ReceivingItems { get { return new List<QualifiedName>(); } }
+	public virtual IDictionary<QualifiedName,object> VariablesWritten { get { return new Dictionary<QualifiedName,object>(); } }
 }
 
 /// <summary>
@@ -43,8 +43,9 @@ public class MoveSimpleStatement : MoveStatement {
 	public override IList<QualifiedName> Variables {
 		get {
 			var items = new List<QualifiedName>();
-			items.AddRange(SendingItems);
-			items.AddRange(ReceivingItems);
+			var sending = SendingItem as QualifiedName;
+			if (sending != null) items.Add(sending);
+			items.AddRange(VariablesWritten.Keys);
 			return items;
 		}
 	}
@@ -52,15 +53,24 @@ public class MoveSimpleStatement : MoveStatement {
 	public override IList<QualifiedName> SendingItems {
 		get {
 			var items = new List<QualifiedName>();
-			if (SendingVariable != null && SendingVariable.Name != null) items.Add(SendingVariable.QualifiedName);
+			if (SendingVariable != null) items.Add(SendingVariable.QualifiedName);
 			return items;
 		}
 	}
 
-	public override IList<QualifiedName> ReceivingItems {
+	private object SendingItem {
 		get {
-			var items = new List<QualifiedName>();
-			foreach(var item in ReceivingStorageAreas) items.Add((item.StorageArea as Named).QualifiedName);
+			if (SendingVariable != null) return SendingVariable.QualifiedName;
+			else if (SendingBoolean != null) return SendingBoolean.Value;
+			else return null;
+		}
+	}
+
+	public override IDictionary<QualifiedName,object> VariablesWritten {
+		get {
+			var items = new Dictionary<QualifiedName,object>();
+			foreach(var item in ReceivingStorageAreas)
+				items.Add(((Named)item.StorageArea).QualifiedName, SendingItem);
 			return items;
 		}
 	}

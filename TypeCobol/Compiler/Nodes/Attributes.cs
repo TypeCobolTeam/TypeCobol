@@ -8,7 +8,6 @@
 
 public static class Attributes {
 	internal static object Get(Node node, string attribute) {
-System.Console.WriteLine("Attributes.Get("+node.GetType().Name+"["+(node.URI??"?")+"], \""+attribute+"\")");
 		var table = node.SymbolTable;
 		object value = node;
 		try {
@@ -21,12 +20,12 @@ System.Console.WriteLine("Attributes.Get("+node.GetType().Name+"["+(node.URI??"?
 	private static Dictionary<string,Attribute> attributes;
 	static Attributes() {
 		attributes = new Dictionary<string,Attribute>();
-		attributes["name"]  = new Name();
-		attributes["level"] = new Level();
-		attributes["type"]  = new Typed();
+		attributes["name"]  = new NameAttribute();
+		attributes["level"] = new LevelAttribute();
+		attributes["type"]  = new TypeAttribute();
 //		Attributes["typedef"] = new TypeDefined();
-		attributes["sender"] = new Sender();
-		attributes["receiver"] = new Receiver();
+		attributes["sender"] = new SenderAttribute();
+		attributes["receiver"] = new ReceiverAttribute();
 //		Attributes["functions"] = new UsesFunctions();
 //		Attributes["function"] = new UsesFunctions(true);
 //		Attributes["function-name"] = new UsesFunctions(true, true);
@@ -39,7 +38,7 @@ public interface Attribute {
 	object GetValue(object o, SymbolTable table);
 }
 
-internal class Name: Attribute {
+internal class NameAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var named = o as Named;
 		if (named == null && o is Node)
@@ -49,7 +48,7 @@ internal class Name: Attribute {
 	}
 }
 
-internal class Typed: Attribute {
+internal class TypeAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		try { bool.Parse(o.ToString()); return "BOOL"; }
 		catch(System.FormatException) { } // not a boolean
@@ -60,15 +59,15 @@ internal class Typed: Attribute {
 	}
 }
 
-internal class Level: Attribute {
+internal class LevelAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var data = o as CodeElementHolder<DataDefinitionEntry>;
+		var data = o as DataDefinition;
 		if (data == null) return null;
-		return string.Format("{0:00}", data.CodeElement().LevelNumber.Value);
+		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement).LevelNumber.Value);
 	}
 }
 
-internal class Sender: Attribute {
+internal class SenderAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var statement = ((Node)o).CodeElement as Sending;
 		if (statement == null) return null;
@@ -77,13 +76,13 @@ internal class Sender: Attribute {
 		throw new System.ArgumentOutOfRangeException("Too many sending items ("+statement.SendingItems.Count+")");
 	}
 }
-internal class Receiver: Attribute {
+internal class ReceiverAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var statement = ((Node)o).CodeElement as Receiving;
+		var statement = ((Node)o).CodeElement as VariableWriter;
 		if (statement == null) return null;
-		if (statement.ReceivingItems.Count == 0) return null;
-		if (statement.ReceivingItems.Count == 1) return statement.ReceivingItems[0];
-		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.ReceivingItems.Count+")");
+		if (statement.VariablesWritten.Count == 0) return null;
+		if (statement.VariablesWritten.Count == 1) return new List<TypeCobol.Compiler.CodeElements.Expressions.QualifiedName>(statement.VariablesWritten.Keys)[0];
+		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.VariablesWritten.Count+")");
 	}
 }
 

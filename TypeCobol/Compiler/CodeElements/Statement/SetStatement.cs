@@ -18,12 +18,14 @@ namespace TypeCobol.Compiler.CodeElements
 	///
 	/// Format 1, 5, 6, 7 can be ambiguous
 	/// </summary>
-	public abstract class SetStatement : StatementElement, VariableUser,Sending,Receiving {
+	public abstract class SetStatement : StatementElement, Sending,VariableWriter {
 		public SetStatement(StatementType statementType) : base(CodeElementType.SetStatement, statementType) { }
 
 		public virtual IList<QualifiedName> Variables { get { return new List<QualifiedName>(); } }
 		public virtual IList<QualifiedName> SendingItems { get { return new List<QualifiedName>(); } }
-		public virtual IList<QualifiedName> ReceivingItems { get { return new List<QualifiedName>(); } }
+		public virtual IDictionary<QualifiedName,object> VariablesWritten { get { return new Dictionary<QualifiedName,object>(); } }
+
+		public bool IsUnsafe { get { return true; } }
 	}
 
 	/// <summary>
@@ -67,14 +69,11 @@ namespace TypeCobol.Compiler.CodeElements
 			return str.ToString();
 		}
 
-		// [TypeCobol]
-		//public bool IsUnsafe { get { return true; } }
-
 		public override IList<QualifiedName> Variables {
 			get {
 				var items = new List<QualifiedName>();
-				items.AddRange(SendingItems);
-				items.AddRange(ReceivingItems);
+				if (SendingItem != null) items.Add(SendingItem);
+				items.AddRange(VariablesWritten.Keys);
 				return items;
 			}
 		}
@@ -82,15 +81,22 @@ namespace TypeCobol.Compiler.CodeElements
 		public override IList<QualifiedName> SendingItems {
 			get {
 				var items = new List<QualifiedName>();
-				items.Add(new URI(SendingVariable.ToString()));
+				if (SendingItem != null) items.Add(SendingItem);
 				return items;
 			}
 		}
-
-		public override IList<QualifiedName> ReceivingItems {
+		private QualifiedName SendingItem {
 			get {
-				var items = new List<QualifiedName>();
-				foreach(var item in ReceivingStorageAreas) items.Add((item.StorageArea as Named).QualifiedName);
+				if (SendingVariable == null) return null;
+				return new URI(SendingVariable.ToString());
+			}
+		}
+
+		public override IDictionary<QualifiedName,object> VariablesWritten {
+			get {
+				var items = new Dictionary<QualifiedName,object>();
+				foreach(var item in ReceivingStorageAreas)
+					items.Add(((Named)item.StorageArea).QualifiedName, SendingItem);
 				return items;
 			}
 		}
@@ -245,7 +251,7 @@ namespace TypeCobol.Compiler.CodeElements
 			return str.ToString();
 		}
 
-		public override IList<QualifiedName> Variables { get { return this.ReceivingItems; } }
+		public override IList<QualifiedName> Variables { get { return new List<QualifiedName>(this.VariablesWritten.Keys); } }
 
 		public override IList<QualifiedName> SendingItems {
 			get { 
@@ -254,11 +260,18 @@ namespace TypeCobol.Compiler.CodeElements
 				return items;
 			}
 		}
-
-		public override IList<QualifiedName> ReceivingItems {
+		private bool? SendingItem {
 			get {
-				var items = new List<QualifiedName>();
-				foreach(var item in Conditions) items.Add(item.QualifiedName);
+				if (SendingValue == null) return null;
+				return SendingValue.Value;
+			}
+		}
+
+		public override IDictionary<QualifiedName,object> VariablesWritten {
+			get {
+				var items = new Dictionary<QualifiedName,object>();
+				foreach(var item in Conditions)
+					items.Add(item.QualifiedName, SendingItem);
 				return items;
 			}
 		}

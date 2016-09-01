@@ -35,6 +35,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
+		public static DataType CreateCustom(string name, bool IsStrong=true, bool IsNestable=true) {
+			foreach(var builtin in BuiltInCustomTypes)
+				if (builtin.Name.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
+					return builtin;
+			return new DataType(name, IsStrong, IsNestable);
+		}
+
 		public static DataType Create(string picture) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			return doCreate(picture, basic);
@@ -115,7 +122,8 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
 // [TYPECOBOL]
 		public static readonly DataType Boolean            = new DataType("BOOL", true, true);
-
+		public static readonly DataType Date               = new DataType("DATE", true, true);
+/*
 		public static readonly TypeDefinitionEntry Date = CreateDate();
 		private static TypeDefinitionEntry CreateDate() {
 			var type = new TypeDefinitionEntry();
@@ -136,6 +144,8 @@ namespace TypeCobol.Compiler.CodeElements
 //TODO#249			data.TopLevel = parent;
 //TODO#249			parent.Subordinates.Add(data);
 		}
+*/
+		public static readonly DataType[] BuiltInCustomTypes = new DataType[] { DataType.Boolean, DataType.Date, };
 // [/TYPECOBOL]
 
 

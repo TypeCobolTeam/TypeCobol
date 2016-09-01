@@ -35,12 +35,13 @@ public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader
 	public override bool IsShared { get { return true; } }
 }
 
-public abstract class DataDefinition: Node, CodeElementHolder<DataDefinitionEntry>, Parent<DataDefinition>, Child<DataSection> {
+public abstract class DataDefinition: Node, Parent<DataDefinition>, Child<DataSection> {
 	public DataDefinition(DataDefinitionEntry entry): base(entry) { }
-	public override string ID { get { return this.CodeElement().Name; } }
+	public override string ID { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 }
-public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription> {
+public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, Typed {
 	public DataDescription(DataDescriptionEntry entry): base(entry) { }
+	public DataType DataType { get { return this.CodeElement().DataType; } }
 }
 public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> {
 	public DataCondition(DataConditionEntry entry): base(entry) { }
@@ -52,9 +53,10 @@ public class DataRenames: DataDefinition, CodeElementHolder<DataRenamesEntry> {
 	public DataRenames(DataRenamesEntry entry): base(entry) { }
 }
 // [COBOL 2002]
-public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEntry>, Parent<DataDescription> {
+public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEntry>, Parent<DataDescription>, Typed {
 	public TypeDefinition(TypeDefinitionEntry entry): base(entry) { }
 	public bool IsStrong { get; internal set; }
+	public DataType DataType { get { return this.CodeElement().DataType; } }
 }
 // [/COBOL 2002]
 

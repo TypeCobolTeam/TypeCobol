@@ -16,8 +16,11 @@ public interface Sending {
 }
 
 /// <summary>For statements using items for receiving data.</summary>
-public interface Receiving {
-	IList<QualifiedName> ReceivingItems { get; }
+public interface VariableWriter: VariableUser {
+	/// <summary>Keys: WHERE it is written. Values: WHAT is written.</summary>
+	IDictionary<QualifiedName,object> VariablesWritten { get; }
+	/// <summary>Are unsafe writes allowed?</summary>
+	bool IsUnsafe { get; }
 }
 
 

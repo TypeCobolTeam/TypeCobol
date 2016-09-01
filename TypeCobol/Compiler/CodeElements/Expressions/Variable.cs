@@ -142,7 +142,11 @@ public class Variable: VariableBase, Named {
 	}
 
 	public Expressions.QualifiedName QualifiedName {
-		get { return SymbolReference != null? SymbolReference.QualifiedName : null; }
+		get {
+			if (SymbolReference != null) return SymbolReference.QualifiedName;
+			if (StorageArea is Named) return ((Named)StorageArea).QualifiedName;
+			return null;
+		}
 	}
 }
 

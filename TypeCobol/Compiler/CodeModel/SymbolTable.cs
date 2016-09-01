@@ -77,31 +77,6 @@ namespace TypeCobol.Compiler.CodeModel
 			found.Add(symbol);
 		}
 
-		private Scope GetScope(DataDescriptionEntry data) {
-//			if (data.IsGlobal) return Scope.Global;
-			//External is not a global or above global scope, so use current scope for this kind of data
-			return CurrentScope;
-		}
-		private SymbolTable GetTable(SymbolTable.Scope scope) {
-			if (CurrentScope == scope) return this;
-			SymbolTable table = this.EnclosingScope;
-			while(table != null) {
-				if (table.CurrentScope == scope) return table;
-				table = table.EnclosingScope;
-			}
-			return null;
-		}
-
-		public List<DataDescriptionEntry> Get(DataDescriptionEntry data) {
-throw new System.NotImplementedException();//TODO#249
-//			string key = data.Name.Name;
-//			var table = GetTable(GetScope(data)).DataEntries;
-//			if (!table.ContainsKey(key))
-//				table[key] = new List<DataDescriptionEntry>();
-//			return table[key];
-			return null;
-		}
-
 		internal List<Named> Get(QualifiedName name) {
 			var found = Get(name.Head);
 			if (found.Count < 1) return found;
@@ -192,6 +167,15 @@ throw new System.NotImplementedException();//TODO#249
 			return values;
 		}
 
+		public List<TypeDefinition> GetTypes(Typed symbol) {
+			var types = new List<TypeDefinition>();
+			var list = Get(symbol.DataType.Name);
+			foreach(var type in list) types.Add((TypeDefinition)type);
+			return types;
+		}
+
+
+
 		/// <summary>
 		/// Cobol has compile time binding for variables,
 		/// sometimes called static scope.
@@ -279,13 +263,14 @@ throw new System.NotImplementedException();//TODO#249
 			get { return new List<TypeDefinition>(types.Values); }
 		}
 
+//TODO#249? remove
 		/// <summary>Register a data description as a custom type.</summary>
 		/// <param name="data">A TYPEDEF data description</param>
 		public void RegisterCustomType(TypeDefinition data) {
 			var name = ((Named)data.CodeElement).Name;
 			types[name] = data;
 		}
-
+//TODO#249? remove
 		public TypeDefinition GetCustomType(string type) {
 			SymbolTable table = this;
 			while (table != null) {
@@ -298,18 +283,23 @@ throw new System.NotImplementedException();//TODO#249
 
 
 
-		public override string ToString() {
+		public override string ToString() { return this.ToString(false); }
+		public          string ToString(bool verbose, int indent = 1) {
 			var str = new StringBuilder();
-			bool verbose = true;
 			if (verbose) str.AppendLine("--- "+scope2str());
+			var types = new List<TypeDefinition>();
+			var data  = new List<Named>();
 			foreach(var line in DataEntries) {
-				var key = line.Key;
-				foreach (var data in line.Value) {
-					str.Append(key+":");
-					Dump(str, data, 1);
-					str.Append('\n');
+				foreach(var item in line.Value) {
+					if (item is TypeDefinition) types.Add((TypeDefinition)item);
+					else data.Add(item);
 				}
 			}
+			if (types.Count > 0) str.AppendLine("-- TYPES -------");
+			foreach(var type in types) Dump(str, type, indent);
+			if (data.Count  > 0) str.AppendLine("-- DATA --------");
+			foreach(var d in data) Dump(str, d, indent);
+/* TODO#249
 			foreach(var funs in functions) {
 				str.Append(funs.Key+":");
 				foreach(var fun in funs.Value) {
@@ -319,21 +309,16 @@ throw new System.NotImplementedException();//TODO#249
 				if (funs.Value.Count > 0) str.Length -= 2;
 				str.AppendLine();
 			}
-			if (verbose) {
-				if (EnclosingScope != null)
-					str.Append(EnclosingScope.ToString());
-			}// else no enclosing scope dump
-			return str.ToString();
+*/
+			if (verbose && EnclosingScope != null)
+				str.Append(EnclosingScope.ToString(verbose, indent+1));
+			return str.ToString().TrimEnd(System.Environment.NewLine.ToCharArray());;
 		}
-		private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0) {
+		private static StringBuilder Dump(StringBuilder str, Named symbol, int indent = 0) {
 			for (int c=0; c<indent; c++) str.Append("  ");
-			str.Append(data);
-			return str;
-		}
-		private static StringBuilder Dump(StringBuilder str, Function fun, int indent = 0) {
-			for (int c=0; c<indent; c++) str.Append("  ");
-			str.Append(fun);
-			return str;
+			str.Append(symbol.Name);
+			if (symbol is Typed) str.Append(':').Append(((Typed)symbol).DataType);
+			return str.AppendLine();
 		}
 		private string scope2str() {
 			var str = new StringBuilder();

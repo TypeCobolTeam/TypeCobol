@@ -972,14 +972,19 @@ namespace TypeCobol.Compiler.Parser
 			entry.DataName = dataname;
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
+			entry.DataType = DataType.Unknown;
 
 			if (context.pictureClause() != null && context.pictureClause().Length > 0) {
 				var pictureClauseContext = context.pictureClause()[0];
 				entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
+				entry.DataType = DataType.Create(entry.Picture.Value);
 			}
 // [COBOL 2002]
-			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0)
+			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
 				entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause()[0]);
+				entry.DataType = DataType.CreateCustom(entry.CustomType.Value);
+				// we must wait until semantic analysis to know whether or not entry.Type is Strong or Nestable
+			}
 // [/COBOL 2002]
 			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)
 			{
