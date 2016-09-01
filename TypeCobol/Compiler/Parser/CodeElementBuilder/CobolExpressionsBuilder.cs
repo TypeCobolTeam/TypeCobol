@@ -1007,7 +1007,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
         [CanBeNull]
-        internal Variable CreateVariable2([NotNull] CodeElementsParser.Variable4Context context)
+        internal Variable CreateVariable([NotNull] CodeElementsParser.Variable4Context context)
         {
             if (context.identifier() != null)
             {
@@ -1029,25 +1029,6 @@ namespace TypeCobol.Compiler.Parser
                 return null;
             }
         }
-
-        internal Variable CreateVariable(CodeElementsParser.Variable4Context context)
-		{
-			if (context.identifier() != null)
-			{
-				StorageArea storageArea = CreateIdentifier(context.identifier());
-				return new Variable(storageArea);
-			}
-			else if (context.numericValue() != null)
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-			}
-			else
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue3()));
-			}
-		}
 
 		internal Variable CreateVariable(CodeElementsParser.Variable5Context context)
 		{

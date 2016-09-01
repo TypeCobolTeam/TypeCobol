@@ -279,7 +279,7 @@ namespace TypeCobol.Compiler.Parser
 			var statement = new DisplayStatement();
 
 			statement.Variables = BuildObjectArrrayWithNoNullFromParserRules(context.variable4(),
-				ctx => CobolExpressionsBuilder.CreateVariable2(ctx));
+				ctx => CobolExpressionsBuilder.CreateVariable(ctx));
 
 			if(context.uponOutputDevice() != null)
 			{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -128,6 +129,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-2 or literal-2
 		/// </summary>
 		public Variable DelimiterIdentifier {
+            [CanBeNull]
 			get { return _delimiterIdentifier; }
 			set {
 				if (DelimitedBySize) throw new Exception("TODO");
