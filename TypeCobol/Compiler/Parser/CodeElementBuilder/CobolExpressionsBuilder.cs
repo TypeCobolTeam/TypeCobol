@@ -241,16 +241,18 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		internal StorageArea CreateStorageAreaReferenceOrConditionReference(CodeElementsParser.StorageAreaReferenceOrConditionReferenceContext context)
+        [CanBeNull]
+		internal StorageArea CreateStorageAreaReferenceOrConditionReference([NotNull] CodeElementsParser.StorageAreaReferenceOrConditionReferenceContext context)
 		{
 			if (context.dataItemReferenceOrConditionReference() != null)
 			{
 				return CreateDataItemReferenceOrConditionReference(context.dataItemReferenceOrConditionReference());
 			}
-			else
+			else if(context.otherStorageAreaReference() != null)
 			{
 				return CreateOtherStorageAreaReference(context.otherStorageAreaReference());
 			}
+            return null;
 		}
 
 		internal StorageArea CreateStorageAreaReferenceOrConditionReferenceOrIndexName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrIndexNameContext context)
@@ -289,13 +291,13 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
+        [CanBeNull]
 		internal StorageArea CreateIdentifier(CodeElementsParser.IdentifierContext context)
 		{
 			StorageArea storageArea = CreateStorageAreaReferenceOrConditionReference(context.storageAreaReferenceOrConditionReference());
-			if(context.referenceModifier() != null)
+			if(storageArea != null && context.referenceModifier() != null)
 			{
-				storageArea.ApplyReferenceModifier(
-					CreateReferenceModifier(context.referenceModifier()));
+				storageArea.ApplyReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
 			}
 			return storageArea;
 		}
