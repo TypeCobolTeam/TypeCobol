@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements.Expressions;
@@ -40,25 +42,42 @@ public class MoveSimpleStatement : MoveStatement {
 	/// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
 	public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
 
-	public override IList<QualifiedName> Variables {
-		get {
-			var items = new List<QualifiedName>();
-			var sending = SendingItem as QualifiedName;
-			if (sending != null) items.Add(sending);
-			items.AddRange(VariablesWritten.Keys);
-			return items;
+
+    private IDictionary<QualifiedName, object> _variablesWritten;
+    private IList<QualifiedName> _sendingItems = null;
+    private List<QualifiedName> _variables = null;
+
+    
+    public override IList<QualifiedName> Variables {
+        [NotNull]
+        get {
+		    if (_variables == null)
+		    {
+                _variables = new List<QualifiedName>();
+                var sending = SendingItem as QualifiedName;
+                if (sending != null) _variables.Add(sending);
+                _variables.AddRange(VariablesWritten.Keys);
+		    }
+		    return _variables;
+
 		}
 	}
 
+    
 	public override IList<QualifiedName> SendingItems {
+        [NotNull]
 		get {
-			var items = new List<QualifiedName>();
-			if (SendingVariable != null) items.Add(SendingVariable.QualifiedName);
-			return items;
+		    if (_sendingItems == null)
+		    {
+		        _sendingItems = new List<QualifiedName>();
+		        if (SendingVariable != null && SendingVariable.Name != null) _sendingItems.Add(SendingVariable.QualifiedName);
+		    }
+		    return _sendingItems;
 		}
 	}
 
 	private object SendingItem {
+            [CanBeNull]
 		get {
 			if (SendingVariable != null) return SendingVariable.QualifiedName;
 			else if (SendingBoolean != null) return SendingBoolean.Value;
@@ -66,12 +85,20 @@ public class MoveSimpleStatement : MoveStatement {
 		}
 	}
 
-	public override IDictionary<QualifiedName,object> VariablesWritten {
-		get {
-			var items = new Dictionary<QualifiedName,object>();
-			foreach(var item in ReceivingStorageAreas)
-				items.Add(((Named)item.StorageArea).QualifiedName, SendingItem);
-			return items;
+    
+    public override IDictionary<QualifiedName,object> VariablesWritten {
+        [NotNull]
+        get {
+		    if (_variablesWritten == null)
+		    {
+		        _variablesWritten = new Dictionary<QualifiedName, object>();
+		        if (ReceivingStorageAreas != null)
+		        {
+		            foreach (var item in ReceivingStorageAreas)
+		                _variablesWritten.Add(((Named) item.StorageArea).QualifiedName, SendingItem);
+		        }
+		    }
+		    return _variablesWritten;
 		}
 	}
 }
