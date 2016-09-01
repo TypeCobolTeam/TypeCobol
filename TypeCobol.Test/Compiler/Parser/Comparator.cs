@@ -140,25 +140,33 @@ namespace TypeCobol.Test.Compiler.Parser
 					var unit = new TestUnit(comparator, debug);
 					unit.Init(extensions);
 					unit.Parse();
-					if (unit.Observer.HasErrors) {
-						Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
-						errors.AppendLine(unit.Observer.DumpErrors());
-					}
+				    if (unit.Observer.HasErrors)
+				    {
+				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
+				        errors.AppendLine(unit.Observer.DumpErrors());
+				    }
+				    else
+				    {
+				        if (json)
+				        {
+				            string filename = comparator.paths.Result;
+				            //string name = Path.GetFileName(filename);
+				            string extension = Path.GetExtension(filename);
+				            filename = filename.Substring(0, filename.Length - extension.Length);
+				            string[] lines = {unit.ToJSON()};
+				            System.IO.File.WriteAllLines(filename + ".json", lines);
+				        }
 
-					if (json) {
-						string filename = comparator.paths.Result;
-						//string name = Path.GetFileName(filename);
-						string extension = Path.GetExtension(filename);
-						filename = filename.Substring(0, filename.Length - extension.Length);
-						string[] lines = { unit.ToJSON() };
-						System.IO.File.WriteAllLines(filename + ".json", lines);
-					}
-
-					try { unit.Compare(); }
-					catch (Exception ex) {
-						Console.WriteLine(" /!\\ MISMATCH\n" + ex);
-						errors.Append("E");
-					}
+				        try
+				        {
+				            unit.Compare();
+				        }
+				        catch (Exception ex)
+				        {
+				            Console.WriteLine(" /!\\ MISMATCH\n" + ex);
+				            errors.Append("E");
+				        }
+				    }
 				}
 			}
 			if (errors.Length > 0) throw new Exception(errors.ToString());
