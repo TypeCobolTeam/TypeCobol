@@ -318,13 +318,17 @@ class WriteTypeConsistencyChecker: NodeListener {
 	/// <param name="sent">Sending item; must be found and its type known</param>
 	private void CheckVariable(Node node, QualifiedName wname, object sent) {
 		if (sent == null || wname == null) return;// I need both items
-		var receiving = GetTypeDefinition(node.SymbolTable, wname);
+		var wsymbol = GetSymbol(node.SymbolTable, wname);
+		if (wsymbol == null) return;// receiving symbol name unresolved
+		var receiving = GetTypeDefinition(node.SymbolTable, wsymbol);
 		if (receiving == null) return;// cannot find receiving type
 
 		DataType sending = null;
 		var sname = sent as QualifiedName;
 		if (sname != null) {
-			sending = GetTypeDefinition(node.SymbolTable, sname);
+			var ssymbol = GetSymbol(node.SymbolTable, sname);
+			if (ssymbol == null) return;// sending symbol name unresolved
+			sending = GetTypeDefinition(node.SymbolTable, ssymbol);
 			if (sending == null) return;// cannot find sending type
 		} else {
 			bool? sbool= sent as bool?;
@@ -345,35 +349,24 @@ System.Console.WriteLine(">>> WRITE "+(sname==null?"":(sname.ToString()+':'))+se
 				}
 			}
 		}
-// TODO#249
-//		CheckNesting(node, receiving);
 	}
-	private DataType GetTypeDefinition(SymbolTable table, QualifiedName symbol) {
+	private Named GetSymbol(SymbolTable table, QualifiedName symbol) {
 		var found = table.Get(symbol);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
-		var data = found[0] as DataDefinition;
+		return found[0];
+	}
+	private DataType GetTypeDefinition(SymbolTable table, Named symbol) {
+		var data = symbol as DataDefinition;
 		if (data != null) {
 			var entry = (DataDescriptionEntry)data.CodeElement;
 			if (entry.CustomType == null) return entry.DataType;//not a custom type
 		}
-		Typed typed = found[0] as Typed;
+		Typed typed = symbol as Typed;
 		if (typed == null) return null;// symbol untyped
 		var types = table.GetTypes(typed);
 		if (types.Count != 1) return null;// symbol type not found or ambiguous
 		return types[0].DataType;
 	}
-/*
-	private bool CheckNesting(Node node, DataDescriptionEntry receiving) {
-		foreach(var child in node.Children) {
-			var typed = child as Typed;
-			if (!typed.DataType.IsNestable) {
-				DiagnosticUtils.AddError(node.CodeElement, "Group contains type "+typed.DataType.Name+" variables");
-				return false;
-			} else if (!CheckNesting(e, sub)) return false;
-		}
-		return true;
-	}
-*/
 
 }
 

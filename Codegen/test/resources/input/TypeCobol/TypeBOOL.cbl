@@ -9,13 +9,11 @@
       * Booleans declaration
        01  Identifier TYPE BOOL.
        01  AnotherOne TYPE BOOL.
-      * WARNING: initialization of a group containing booleans
        01  AGroup.
-         05  a PIC X.
+         05  a.
            10  c PIC X.
            10  b TYPE BOOL.
          05  d TYPE BOOL.
-
 
 
 
@@ -31,6 +29,8 @@
            MOVE Identifier   TO x
       * KO: a boolean can only receive booleans, TRUE or FALSE
            MOVE x   TO Identifier
+           MOVE x   TO b OF a IN AGroup
+           MOVE x   TO d      IN AGroup
       * KO: a boolean subordinates are read-only
            MOVE x   TO Identifier-value
            MOVE x   TO Identifier-false OF Identifier-value
@@ -39,7 +39,7 @@
            MOVE Identifier    TO d      IN AGroup
            MOVE Identifier    TO b OF a IN AGroup
            MOVE d IN AGroup   TO b OF a IN AGroup
-      * KO: moving to a group containing booleans
+      * OK: copying chunks of memories of different layouts is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
            .

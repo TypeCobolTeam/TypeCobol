@@ -5,13 +5,13 @@ namespace TypeCobol.Compiler.CodeElements
 	public class DataType {
 		public string Name { get; private set; }
 		public bool IsStrong { get; private set; }
-		public bool IsNestable { get; private set; }
+		public bool IsCOBOL  { get; private set; }
 
-		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
+		public DataType(string name, bool IsStrong=false, bool IsCOBOL=false) {
 			Name = name;
 			if (name == null) throw new ArgumentNullException();
 			this.IsStrong = IsStrong;
-			this.IsNestable = IsNestable;
+			this.IsCOBOL  = IsCOBOL;
 		}
 
 		public override string ToString() { return Name; }
@@ -112,17 +112,17 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static readonly DataType Unknown            = new DataType("?");
-		public static readonly DataType Alphabetic         = new DataType("Alphabetic");
-		public static readonly DataType Numeric            = new DataType("Numeric");
-		public static readonly DataType NumericEdited      = new DataType("NumericEdited");
-		public static readonly DataType Alphanumeric       = new DataType("Alphanumeric");
-		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
-		public static readonly DataType DBCS               = new DataType("DBCS");
-		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
+		public static readonly DataType Unknown            = new DataType("?", false, true);
+		public static readonly DataType Alphabetic         = new DataType("Alphabetic", false, true);
+		public static readonly DataType Numeric            = new DataType("Numeric", false, true);
+		public static readonly DataType NumericEdited      = new DataType("NumericEdited", false, true);
+		public static readonly DataType Alphanumeric       = new DataType("Alphanumeric", false, true);
+		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited", false, true);
+		public static readonly DataType DBCS               = new DataType("DBCS", false, true);
+		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint", false, true);
 // [TYPECOBOL]
-		public static readonly DataType Boolean            = new DataType("BOOL", true, true);
-		public static readonly DataType Date               = new DataType("DATE", true, true);
+		public static readonly DataType Boolean            = new DataType("BOOL", true);
+		public static readonly DataType Date               = new DataType("DATE", true);
 /*
 		public static readonly TypeDefinitionEntry Date = CreateDate();
 		private static TypeDefinitionEntry CreateDate() {
