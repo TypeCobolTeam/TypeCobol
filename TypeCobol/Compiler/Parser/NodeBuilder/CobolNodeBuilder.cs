@@ -40,9 +40,9 @@ namespace TypeCobol.Compiler.Parser
 				if (value != null) {
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
-							TableOfIntrisic.Add(data);
+							TableOfIntrisic.AddVariable(data);
 					foreach(var type in value.CustomTypes)
-						TableOfIntrisic.RegisterCustomType(type);
+						TableOfIntrisic.AddType(type);
 				}
 				// TODO#249: use a COPY for these
 				foreach (var type in DataType.BuiltInCustomTypes) {
@@ -50,7 +50,7 @@ namespace TypeCobol.Compiler.Parser
 					typedef.LevelNumber = new GeneratedIntegerValue(1);
 					typedef.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
 					typedef.DataType = type;
-					TableOfIntrisic.Add(new TypeDefinition(typedef));
+					TableOfIntrisic.AddType(new TypeDefinition(typedef));
 				}
 			}
 		}
@@ -223,7 +223,7 @@ namespace TypeCobol.Compiler.Parser
 			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
 			var node = new DataDescription(data);
 			Enter(node);
-			node.SymbolTable.Add(node);
+			node.SymbolTable.AddVariable(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
@@ -654,10 +654,10 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 			var node = profile.Parent;
 			var header = (FunctionDeclarationHeader)node.CodeElement;
-			foreach(var parameter in p.Profile.InputParameters)  node.SymbolTable.Add(parameter);
-			foreach(var parameter in p.Profile.OutputParameters) node.SymbolTable.Add(parameter);
-			foreach(var parameter in p.Profile.InoutParameters)  node.SymbolTable.Add(parameter);
-			if (p.Profile.ReturningParameter != null) node.SymbolTable.Add(p.Profile.ReturningParameter);
+			foreach(var parameter in p.Profile.InputParameters)  node.SymbolTable.AddVariable(parameter);
+			foreach(var parameter in p.Profile.OutputParameters) node.SymbolTable.AddVariable(parameter);
+			foreach(var parameter in p.Profile.InoutParameters)  node.SymbolTable.AddVariable(parameter);
+			if (p.Profile.ReturningParameter != null) node.SymbolTable.AddVariable(p.Profile.ReturningParameter);
 
 			var function = new Function(header.Name, p.Profile.InputParameters, p.Profile.OutputParameters, p.Profile.InoutParameters, p.Profile.ReturningParameter, header.Visibility);
 			node.SymbolTable.EnclosingScope.Register(function);

@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			var table = program.SymbolTable;
 			foreach (var pair in element.Symbols) {
 				if (pair.Item2 == null) continue; // no receiving item
-				var lr = table.Get(pair.Item2);
+				var lr = table.GetVariable(pair.Item2);
 				if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 				var receiving = lr[0];
 //TODO#249				checkReadOnly(node.CodeElement, receiving);

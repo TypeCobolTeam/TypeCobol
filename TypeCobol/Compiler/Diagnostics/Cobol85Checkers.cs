@@ -232,7 +232,7 @@ class DeclarationChecker: NodeListener {
 		foreach(var variable in ((VariableUser)node).Variables) CheckVariable(node, variable);
 	}
 	private void CheckVariable(Node node, QualifiedName name) {
-		var found = node.SymbolTable.Get(name);
+		var found = node.SymbolTable.GetVariable(name);
 		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
 		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
 	}
@@ -350,7 +350,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 		}
 	}
 	private Named GetSymbol(SymbolTable table, QualifiedName symbol) {
-		var found = table.Get(symbol);
+		var found = table.GetVariable(symbol);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}

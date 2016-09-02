@@ -152,11 +152,7 @@ namespace TypeCobol.Test.Compiler.Parser
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
-// [TYPECOBOL]
-			Dump(str, program.SymbolTable.CustomTypes);
-			Dump(str, program.SymbolTable.Functions);
-// [/TYPECOBOL]
-            Dump(str, program.SymbolTable);
+			str.AppendLine(program.SymbolTable.ToString(true));
             return str;
         }
 
@@ -276,20 +272,6 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 // [/TYPECOBOL]
 
-        private static StringBuilder Dump(StringBuilder str, SymbolTable table, string header=null)
-        {
-            if (table == null) return str;
-            if (header == null) header = "SYMBOL TABLE:\n";
-            if (table.CurrentScope == SymbolTable.Scope.Intrinsic) header = "INTRISIC SCOPE:\n";
-            if (table.CurrentScope == SymbolTable.Scope.Global) header = "GLOBAL SCOPE:\n";
-            if(table.DataEntries.Count > 0) {
-                str.Append(header);
-                Dump(str, table.DataEntries);
-            }
-            Dump(str, table.EnclosingScope, "ENCLOSING SCOPE:\n");
-            return str;
-        }
-
         private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
             foreach(string key in map.Keys) {
                 foreach (var data in map[key]) {
@@ -302,7 +284,7 @@ namespace TypeCobol.Test.Compiler.Parser
         private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
         {
             DumpIndent(str, indent);
-            str.Append(data);
+            str.Append(data.Name);
             return str;
         }
 

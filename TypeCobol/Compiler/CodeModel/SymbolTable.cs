@@ -61,24 +61,50 @@ namespace TypeCobol.Compiler.CodeModel
 				throw new System.InvalidOperationException("Only Table of INTRISIC symbols don't have any enclosing scope.");
 		}
 
-		internal void Add(Named symbol) {
+
+
+
+
+		  //////////////////
+		 // DATA SYMBOLS //
+		//////////////////
+
+		internal void AddVariable(Named symbol) { Add(DataEntries, symbol); }
+
+		private void Add(Dictionary<string,List<Named>> table, Named symbol) {
 			 // TODO: generate a name for FILLERs and anonymous data to be referenced by in the symbol table
 			if (symbol.Name == null) return;
-			var found = Get(symbol.QualifiedName);
+			List<Named> found;
+			if (table == DataEntries)
+				 found = GetVariable(symbol.QualifiedName);
+			else found = GetType(symbol.QualifiedName);
 			if (found.Count == 0) {
 				List<Named> samenamesymbols = null;
-				try { samenamesymbols = DataEntries[symbol.QualifiedName.Head]; }
+				try { samenamesymbols = table[symbol.QualifiedName.Head]; }
 				catch (KeyNotFoundException ex) {
 					samenamesymbols = new List<Named>();
-					DataEntries.Add(symbol.QualifiedName.Head, samenamesymbols);
+					table.Add(symbol.QualifiedName.Head, samenamesymbols);
 				}
 				found = samenamesymbols;
 			}
 			found.Add(symbol);
 		}
 
-		internal List<Named> Get(QualifiedName name) {
-			var found = Get(name.Head);
+		internal List<Named> GetVariable(QualifiedName name) {
+			var found = GetVariable(name.Head);
+			return Get(found, name);
+		}
+
+		private List<Named> GetVariable(string name) {
+			var values = new List<Named>();
+			if (DataEntries.ContainsKey(name))
+				values.AddRange(DataEntries[name]);
+			if (EnclosingScope!= null)
+				values.AddRange(EnclosingScope.GetVariable(name));
+			return values;
+		}
+
+		private List<Named> Get(List<Named> found, QualifiedName name) {
 			if (found.Count < 1) return found;
 			int max = name.Count-1;
 			if (name.IsExplicit) {
@@ -158,20 +184,37 @@ namespace TypeCobol.Compiler.CodeModel
             return GetAncestor(node.Parent, generation-1);
         }
 
-		public List<Named> Get(string key) {
-			var values = new List<Named>();
-			if (DataEntries.ContainsKey(key))
-				values.AddRange(DataEntries[key]);
-			if (EnclosingScope!= null)
-				values.AddRange(EnclosingScope.Get(key));
-			return values;
-		}
+
+
+
+
+		  ///////////
+		 // TYPES //
+		///////////
+
+		public Dictionary<string,List<Named>> Types = new Dictionary<string,List<Named>>(System.StringComparer.InvariantCultureIgnoreCase);
+
+		internal void AddType(TypeDefinition type) { Add(Types, type); }
 
 		public List<TypeDefinition> GetTypes(Typed symbol) {
 			var types = new List<TypeDefinition>();
-			var list = Get(symbol.DataType.Name);
+			var list = GetType(symbol.DataType.Name);
 			foreach(var type in list) types.Add((TypeDefinition)type);
 			return types;
+		}
+
+		internal List<Named> GetType(QualifiedName name) {
+			var found = GetType(name.Head);
+			return Get(found, name);
+		}
+
+		private List<Named> GetType(string name) {
+			var values = new List<Named>();
+			if (Types.ContainsKey(name))
+				values.AddRange(Types[name]);
+			if (EnclosingScope!= null)
+				values.AddRange(EnclosingScope.GetType(name));
+			return values;
 		}
 
 
@@ -286,19 +329,20 @@ namespace TypeCobol.Compiler.CodeModel
 		public override string ToString() { return this.ToString(false); }
 		public          string ToString(bool verbose, int indent = 1) {
 			var str = new StringBuilder();
-			if (verbose) str.AppendLine("--- "+scope2str());
-			var types = new List<TypeDefinition>();
-			var data  = new List<Named>();
-			foreach(var line in DataEntries) {
-				foreach(var item in line.Value) {
-					if (item is TypeDefinition) types.Add((TypeDefinition)item);
-					else data.Add(item);
-				}
+			if (verbose && (DataEntries.Count > 0 || Types.Count > 0))
+				str.AppendLine("--- "+scope2str());
+			if (DataEntries.Count > 0) {
+				str.AppendLine("-- DATA --------");
+				foreach(var line in DataEntries)
+					foreach(var item in line.Value)
+						Dump(str, item, indent);
 			}
-			if (types.Count > 0) str.AppendLine("-- TYPES -------");
-			foreach(var type in types) Dump(str, type, indent);
-			if (data.Count  > 0) str.AppendLine("-- DATA --------");
-			foreach(var d in data) Dump(str, d, indent);
+			if (Types.Count > 0) {
+				str.AppendLine("-- TYPES -------");
+				foreach(var line in Types)
+					foreach(var item in line.Value)
+						Dump(str, item, indent);
+			}
 /* TODO#249
 			foreach(var funs in functions) {
 				str.Append(funs.Key+":");
