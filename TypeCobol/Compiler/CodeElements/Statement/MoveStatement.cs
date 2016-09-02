@@ -32,15 +32,21 @@ public abstract class MoveStatement : StatementElement, Sending,VariableWriter {
 /// MOVE statement. See “Elementary moves” on page 370 and “Group moves” on page 374 below.
 /// </summary>
 public class MoveSimpleStatement : MoveStatement {
-	public MoveSimpleStatement() : base(StatementType.MoveSimpleStatement) { }
+    public MoveSimpleStatement(Variable sendingVariable, ReceivingStorageArea[] receivingStorageAreas, 
+        BooleanValue sendingBoolean) : base(StatementType.MoveSimpleStatement)
+    {
+        SendingVariable = sendingVariable;
+        SendingBoolean = sendingBoolean;
+        ReceivingStorageAreas = receivingStorageAreas;
+    }
 
-	/// <summary>The sending area.</summary>
-	public Variable SendingVariable { get; set; }
+    /// <summary>The sending area.</summary>
+	public Variable SendingVariable { get; private set; }
 // [TYPECOBOL]
-	public BooleanValue SendingBoolean { get; set; }
+	public BooleanValue SendingBoolean { get; private set; }
 // [/TYPECOBOL]
 	/// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
-	public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
+	public ReceivingStorageArea[] ReceivingStorageAreas { get; private set; }
 
 
     private IDictionary<QualifiedName, object> _variablesWritten;
@@ -59,10 +65,8 @@ public class MoveSimpleStatement : MoveStatement {
                 _variables.AddRange(VariablesWritten.Keys);
 		    }
 		    return _variables;
-
 		}
 	}
-
     
 	public override IList<QualifiedName> SendingItems {
         [NotNull]

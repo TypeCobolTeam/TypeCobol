@@ -787,12 +787,13 @@ namespace TypeCobol.Compiler.Parser
 		// MOVE STATEMENT //
 		////////////////////
 
-		internal CodeElement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
-			var statement = new MoveSimpleStatement();
-			statement.SendingVariable = CobolExpressionsBuilder.CreateVariable(context.variable7());
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx));
+		internal CodeElement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context)
+		{
+		    var statement = new MoveSimpleStatement(
+		        CobolExpressionsBuilder.CreateVariable(context.variable7()),
+		        BuildObjectArrrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
 // [TYPECOBOL]
-			statement.SendingBoolean = CobolWordsBuilder.CreateBooleanValue(context.booleanValue());
+		        CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
 			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 // [/TYPECOBOL]
 			return statement;
