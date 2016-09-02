@@ -334,7 +334,6 @@ class WriteTypeConsistencyChecker: NodeListener {
 			bool? sbool= sent as bool?;
 			if (sbool != null) sending = DataType.Boolean;
 		}
-System.Console.WriteLine(">>> WRITE "+(sname==null?"":(sname.ToString()+':'))+sending+" TO "+wname+':'+receiving);
 		if (sending != receiving) {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
 			if (receiving.IsStrong) {

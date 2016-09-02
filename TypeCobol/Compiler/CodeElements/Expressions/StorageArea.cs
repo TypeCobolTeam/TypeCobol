@@ -79,13 +79,14 @@ namespace TypeCobol.Compiler.CodeElements
 	public interface Typed {
 		DataType DataType { get; }
 	}
+	public interface Subscripted { }
 
 	/// <summary>
 	/// Storage area for a data symbol or condition symbol defined in the program.
 	/// Also used for the storage area allocated by the compiler for the implicitely 
 	/// defined special registers (see list in a comment just below).
 	/// </summary>
-	public class DataOrConditionStorageArea: StorageArea, Named {
+	public class DataOrConditionStorageArea: StorageArea, Named, Subscripted {
 		public DataOrConditionStorageArea(SymbolReference symbolReference)
 				: base(StorageAreaKind.DataOrCondition) {
 			SymbolReference = symbolReference;

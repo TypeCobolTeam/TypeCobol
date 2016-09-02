@@ -85,20 +85,22 @@ public class MoveSimpleStatement : MoveStatement {
 		}
 	}
 
-    
-    public override IDictionary<QualifiedName,object> VariablesWritten {
+	public override IDictionary<QualifiedName,object> VariablesWritten {
         [NotNull]
-        get {
-		    if (_variablesWritten == null)
-		    {
-		        _variablesWritten = new Dictionary<QualifiedName, object>();
-		        if (ReceivingStorageAreas != null)
-		        {
-		            foreach (var item in ReceivingStorageAreas)
-		                _variablesWritten.Add(((Named) item.StorageArea).QualifiedName, SendingItem);
-		        }
-		    }
-		    return _variablesWritten;
+		get {
+			if (_variablesWritten != null) return _variablesWritten;
+
+			_variablesWritten = new Dictionary<QualifiedName,object>();
+			if (ReceivingStorageAreas == null) return _variablesWritten;
+
+			foreach(var item in ReceivingStorageAreas) {
+				var name = ((Named)item.StorageArea).QualifiedName;
+				if (_variablesWritten.ContainsKey(name))
+					if (item.StorageArea is Subscripted) continue; // same variable with (presumably) different subscript
+					else throw new System.ArgumentException(name+" already written, but not subscripted?");
+				else _variablesWritten.Add(name, SendingItem);
+			}
+			return _variablesWritten;
 		}
 	}
 }
