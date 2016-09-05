@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[1,7]<27,Error,Syntax>Syntax error : A function with the same name and profile already exists. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 131)
-[1,7]<27,Error,Syntax>Syntax error : A function with the same name and profile already exists. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 137)
+[1,7]<27,Error,Syntax>Syntax error : A function with the same name and profile already exists. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 133)
+[1,7]<27,Error,Syntax>Syntax error : A function with the same name and profile already exists. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 139)
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False
