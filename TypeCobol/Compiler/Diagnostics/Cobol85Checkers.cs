@@ -233,7 +233,9 @@ class DeclarationChecker: NodeListener {
 	}
 	private void CheckVariable(Node node, QualifiedName name) {
 		var found = node.SymbolTable.GetVariable(name);
-		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
+		if (found.Count < 1)
+			if (node.SymbolTable.GetFunction(name).Count < 1)
+				DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
 		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
 	}
 }
