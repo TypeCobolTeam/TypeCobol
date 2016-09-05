@@ -703,9 +703,10 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 		public override void EnterStatement(ProgramClassParser.StatementContext context) {
 			if (context.ExecStatement() != null) Enter(new Exec((ExecStatement)context.ExecStatement().Symbol), context);
 			else if (context.evaluateStatementWithBody() != null) ;// Node will be created in EnterEvaluateStatementWithBody
-			else if (context.performStatementWithBody() != null) ;// Node will be created in EnterPerformStatementWithBody
-			else if (context.searchStatementWithBody() != null) ;// Node will be created in EnterSearchStatementWithBody
 			else if (context.ifStatementWithBody() != null) ;// Node will be created in EnterIfStatementWithBody
+			else if (context.performStatementWithBody() != null) ;// Node will be created in EnterPerformStatementWithBody
+			else if (context.PerformProcedureStatement() != null) Enter(new PerformProcedure((PerformProcedureStatement)context.PerformProcedureStatement().Symbol), context);
+			else if (context.searchStatementWithBody() != null) ;// Node will be created in EnterSearchStatementWithBody
 			// -- arithmetic --
 			else if (context.AddStatement() != null) Enter(new Add((AddStatement)context.AddStatement().Symbol), context);
 			else if (context.addStatementConditional() != null) ;// Node will be created in EnterAddStatementConditional
@@ -739,6 +740,7 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			else if (context.DeleteStatement() != null) Enter(new Delete((DeleteStatement)context.DeleteStatement().Symbol), context);
 			else if (context.deleteStatementConditional() != null) ;// Node will be created in EnterDeleteStatementConditional
 			else if (context.DisplayStatement() != null) Enter(new Display((DisplayStatement)context.DisplayStatement().Symbol), context);
+			else if (context.EntryStatement() != null) Enter(new Entry((EntryStatement)context.EntryStatement().Symbol), context);
 			else if (context.ExitStatement() != null) Enter(new Exit((ExitStatement)context.ExitStatement().Symbol), context);
 			else if (context.ExitMethodStatement() != null) Enter(new ExitMethod((ExitMethodStatement)context.ExitMethodStatement().Symbol), context);
 			else if (context.ExitProgramStatement() != null) Enter(new ExitProgram((ExitProgramStatement)context.ExitProgramStatement().Symbol), context);
@@ -765,10 +767,13 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			else if (context.xmlGenerateStatementConditional() != null) ;// Node will be created in EnterXmlGenerateStatementConditional
 			else if (context.XmlParseStatement() != null) Enter(new XmlParse((XmlParseStatement)context.XmlParseStatement().Symbol), context);
 			else if (context.xmlParseStatementConditional() != null) ;// Node will be created in EnterXmlParseStatementConditional
-			else throw new NotImplementedException("Implementation error: \""+context.GetText()+"\"");
+			else if (context.GetText().Length < 1) skipEmptyStatement = true;
+			else throw new NotImplementedException("Implementation error: \""+context.GetText()+"\"["+context.GetType().Name+']');
 		}
+		private bool skipEmptyStatement = false;
 		public override void ExitStatement(ProgramClassParser.StatementContext context) {
-			Exit();
+			if (skipEmptyStatement) skipEmptyStatement = false;
+			else Exit();
 		}
 /*TODO#249
 		private void FixSubscriptableQualifiedNames(CodeElement statement) {

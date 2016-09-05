@@ -956,7 +956,7 @@ divideStatementConditional:
 
 evaluateStatementWithBody:                             
 	EvaluateStatement
-		whenConditionClause+
+		whenConditionClause*
 		whenOtherClause?
 	EvaluateStatementEnd?;
 
