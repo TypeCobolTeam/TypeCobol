@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <skeletons>
 
-  <skeleton name="FUN.CALL" var=" functions,   function  ,receiver ">
+  <skeleton name="FUN.CALL" var=" function  ,receiver ">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeModel.IdentifierUser" functions="*"/>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" function="*"/>
     </conditions>
     <patterns>
-      <!--pattern location="data.working.start" group="$FUNCTION.lib" var="program=$FUNCTION.program,copy=$FUNCTION.copy"-->
-      <pattern location="data-division.working-storage" action="create" group="%function.Lib-VARS" var="function=$function">
+      <!--pattern location="data.working.start" group="$FUNCTION.library" var="program=$FUNCTION.program,copy=$FUNCTION.copy"-->
+      <pattern location="data-division.working-storage" action="create" group="%function.Library-VARS" var="function=$function">
 01 %function.Copy COPY %function.Copy.
-01 %function.Program PIC X(08) VALUE '%function.Program'.
+01 %function.Library PIC X(08) VALUE '%function.Library'.
       </pattern>
       <pattern location="data-division.working-storage" action="create" group="functions">
 01 RETURN-CODE PIC X(08).
@@ -17,15 +17,15 @@
       <!--pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
 01 %function.Name-RESULT %function.Result.Definition.
       </pattern-->
-      <pattern location="procedure-division.begin" action="create" group="%function.Lib-CALL">
+      <pattern location="procedure-division.begin" action="create" group="%function.Library-CALL">
 IF %function.Copy-POINTER-TABLE = LOW_VALUE
-    CALL %function.Program USING %function.Copy
+    CALL %function.Library USING %function.Copy
 END-IF
       </pattern>
       <pattern location="NODE" action="replace">
 @{
   var funparams = "";
-  foreach (var p in %function.Profile.InputParameters) {
+  foreach (var p in %function.InputParameters) {
     funparams += "    BY " + p.SendingMode + " " + p.Value + "\n";
   }
 }CALL %function.Name USING

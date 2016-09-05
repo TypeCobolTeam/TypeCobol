@@ -133,11 +133,11 @@ namespace TypeCobol.Codegen.Config {
 			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
 					new List<ParameterDescription>() {
-						new CallParameter {
+						new CallParameterDescription {
 								Value = "param1",
 								ByReference = true,
 							},
-						new CallParameter {
+						new CallParameterDescription {
 								Value = "'42'",
 								ByReference = false,
 							},

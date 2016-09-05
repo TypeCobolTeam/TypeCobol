@@ -72,8 +72,8 @@ public abstract class Node: Named {
 
 
 
-	public string Name { get { return this.ID; } }
-	public QualifiedName QualifiedName { get { return URI!=null? new URI(URI) : null; } }
+	public virtual string Name { get { return this.ID; } }
+	public virtual QualifiedName QualifiedName { get { return URI!=null? new URI(URI) : null; } }
 
 	/// <summary>Non-unique identifier of this node. Depends on CodeElement type and name (if applicable).</summary>
 	public virtual string ID { get { return null; } }
@@ -116,6 +116,8 @@ public abstract class Node: Named {
 	}
 	private void Dump(System.Text.StringBuilder str, int i) {
 		for (int c=0; c<i; c++) str.Append("  ");
+		if (Name != null) str.AppendLine(Name);
+		else 
 		if (CodeElement == null) str.AppendLine("?");
 		else str.AppendLine(CodeElement.ToString());
 		foreach(var child in Children) child.Dump(str, i+1);

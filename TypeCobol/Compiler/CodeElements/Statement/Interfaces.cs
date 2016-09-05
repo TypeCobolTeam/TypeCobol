@@ -2,6 +2,7 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements.Expressions;
+	using TypeCobol.Compiler.CodeElements.Functions;
 
 
 
@@ -21,6 +22,11 @@ public interface VariableWriter: VariableUser {
 	IDictionary<QualifiedName,object> VariablesWritten { get; }
 	/// <summary>Are unsafe writes allowed?</summary>
 	bool IsUnsafe { get; }
+}
+
+/// <summary>For statements calling functions.</summary>
+public interface FunctionCaller {
+	IList<FunctionCall> FunctionCalls { get; }
 }
 
 

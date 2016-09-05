@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	using TypeCobol.Compiler.CodeElements.Expressions;
 
 /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
-public abstract class MoveStatement : StatementElement, Sending,VariableWriter {
+public abstract class MoveStatement : StatementElement, Sending,VariableWriter,FunctionCaller {
 	public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
 // [TYPECOBOL]
 	public SyntaxProperty<bool> Unsafe { get; set; }
@@ -15,6 +15,7 @@ public abstract class MoveStatement : StatementElement, Sending,VariableWriter {
 	public virtual IList<QualifiedName> Variables { get { return new List<QualifiedName>(); } }
 	public virtual IList<QualifiedName> SendingItems { get { return new List<QualifiedName>(); } }
 	public virtual IDictionary<QualifiedName,object> VariablesWritten { get { return new Dictionary<QualifiedName,object>(); } }
+	public virtual IList<Functions.FunctionCall> FunctionCalls { get { return new List<Functions.FunctionCall>(); } }
 }
 
 /// <summary>
@@ -32,15 +33,14 @@ public abstract class MoveStatement : StatementElement, Sending,VariableWriter {
 /// MOVE statement. See “Elementary moves” on page 370 and “Group moves” on page 374 below.
 /// </summary>
 public class MoveSimpleStatement : MoveStatement {
-    public MoveSimpleStatement(Variable sendingVariable, ReceivingStorageArea[] receivingStorageAreas, 
-        BooleanValue sendingBoolean) : base(StatementType.MoveSimpleStatement)
-    {
-        SendingVariable = sendingVariable;
-        SendingBoolean = sendingBoolean;
-        ReceivingStorageAreas = receivingStorageAreas;
-    }
+	public MoveSimpleStatement(Variable sendingVariable, ReceivingStorageArea[] receivingStorageAreas, BooleanValue sendingBoolean)
+			: base(StatementType.MoveSimpleStatement) {
+		SendingVariable = sendingVariable;
+		SendingBoolean = sendingBoolean;
+		ReceivingStorageAreas = receivingStorageAreas;
+	}
 
-    /// <summary>The sending area.</summary>
+	/// <summary>The sending area.</summary>
 	public Variable SendingVariable { get; private set; }
 // [TYPECOBOL]
 	public BooleanValue SendingBoolean { get; private set; }
@@ -49,39 +49,38 @@ public class MoveSimpleStatement : MoveStatement {
 	public ReceivingStorageArea[] ReceivingStorageAreas { get; private set; }
 
 
-    private IDictionary<QualifiedName, object> _variablesWritten;
-    private IList<QualifiedName> _sendingItems = null;
-    private List<QualifiedName> _variables = null;
+	private IDictionary<QualifiedName, object> _variablesWritten;
+	private IList<QualifiedName> _sendingItems = null;
+	private List<QualifiedName> _variables = null;
+	private List<Functions.FunctionCall> _functions = null;
 
-    
-    public override IList<QualifiedName> Variables {
-        [NotNull]
-        get {
-		    if (_variables == null)
-		    {
-                _variables = new List<QualifiedName>();
-                var sending = SendingItem as QualifiedName;
-                if (sending != null) _variables.Add(sending);
-                _variables.AddRange(VariablesWritten.Keys);
-		    }
-		    return _variables;
+
+	public override IList<QualifiedName> Variables {
+		[NotNull]
+		get {
+			if (_variables == null) {
+				_variables = new List<QualifiedName>();
+				var sending = SendingItem as QualifiedName;
+				if (sending != null) _variables.Add(sending);
+				_variables.AddRange(VariablesWritten.Keys);
+			}
+			return _variables;
 		}
 	}
-    
+
 	public override IList<QualifiedName> SendingItems {
-        [NotNull]
+		[NotNull]
 		get {
-		    if (_sendingItems == null)
-		    {
-		        _sendingItems = new List<QualifiedName>();
-		        if (SendingVariable != null && SendingVariable.Name != null) _sendingItems.Add(SendingVariable.QualifiedName);
-		    }
-		    return _sendingItems;
+			if (_sendingItems == null) {
+				_sendingItems = new List<QualifiedName>();
+				if (SendingVariable != null && SendingVariable.Name != null) _sendingItems.Add(SendingVariable.QualifiedName);
+			}
+			return _sendingItems;
 		}
 	}
 
 	private object SendingItem {
-            [CanBeNull]
+		[CanBeNull]
 		get {
 			if (SendingVariable != null) return SendingVariable.QualifiedName;
 			else if (SendingBoolean != null) return SendingBoolean.Value;
@@ -90,7 +89,7 @@ public class MoveSimpleStatement : MoveStatement {
 	}
 
 	public override IDictionary<QualifiedName,object> VariablesWritten {
-        [NotNull]
+		[NotNull]
 		get {
 			if (_variablesWritten != null) return _variablesWritten;
 
@@ -107,6 +106,19 @@ public class MoveSimpleStatement : MoveStatement {
 			return _variablesWritten;
 		}
 	}
+
+	public override IList<Functions.FunctionCall> FunctionCalls {
+		[NotNull]
+		get {
+			if (_functions == null) {
+				_functions = new List<Functions.FunctionCall>();
+				var sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
+				if (sending != null) _functions.Add(new Functions.FunctionCall(sending));
+			}
+			return _functions;
+		}
+	}
+
 }
 
 /// <summary>

@@ -601,7 +601,10 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			var terminal = context.FunctionDeclarationHeader();
 			var header = terminal != null? (FunctionDeclarationHeader)terminal.Symbol : null;
 			if (header != null) header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
-			Enter(new FunctionDeclaration(header), context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));
+			var node = new FunctionDeclaration(header);
+			node.Library = CurrentProgram.Identification.ProgramName.Name;
+			CurrentProgram.CurrentTable.AddFunction(node);
+			Enter(node, context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));
 		}
 		public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
 			var terminal = context.FunctionDeclarationEnd();
@@ -659,9 +662,8 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 			foreach(var parameter in p.Profile.InoutParameters)  node.SymbolTable.AddVariable(parameter);
 			if (p.Profile.ReturningParameter != null) node.SymbolTable.AddVariable(p.Profile.ReturningParameter);
 
-			var function = new Function(header.Name, p.Profile.InputParameters, p.Profile.OutputParameters, p.Profile.InoutParameters, p.Profile.ReturningParameter, header.Visibility);
-			node.SymbolTable.EnclosingScope.Register(function);
-
+//			var function = new Function(header.Name, p.Profile.InputParameters, p.Profile.OutputParameters, p.Profile.InoutParameters, p.Profile.ReturningParameter, header.Visibility);
+//			node.SymbolTable.EnclosingScope.Register(function);
 		}
 		public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			Exit();

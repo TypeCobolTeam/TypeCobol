@@ -123,13 +123,14 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 			CheckParameters(profile.Profile, header);
 			CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), profile.Profile);
-
+/*
 			var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
 			if (functions.Count > 1)
 				DiagnosticUtils.AddError(profile, "A function with the same name and profile already exists.", context);
 			foreach(var function in functions)
 				if (!function.IsProcedure && !function.IsFunction)
 					DiagnosticUtils.AddError(profile, "\""+header.Name+"\" is neither procedure nor function.", context);
+*/
 		}
 
 		private void CheckNoGlobalOrExternal(DataDivision node) {

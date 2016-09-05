@@ -138,7 +138,7 @@ public class Variable: VariableBase, Named {
 	public bool IsLiteral { get { return NumericValue != null || AlphanumericValue != null; } }
 
 	public string Name {
-		get { return SymbolReference != null? SymbolReference.Name : null; }
+		get { return QualifiedName != null? QualifiedName.Head : null; }
 	}
 
 	public Expressions.QualifiedName QualifiedName {

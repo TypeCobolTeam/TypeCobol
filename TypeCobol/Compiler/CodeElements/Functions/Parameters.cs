@@ -20,12 +20,47 @@ public class ParameterDescription: DataDescriptionEntry {
 	// group usage national, blank when zero and so on
 }
 
-public class CallParameter: ParameterDescription {
+public class CallParameterDescription: ParameterDescription {
 	public bool ByReference { private get; set; }
 	public string SendingMode { get { return ByReference? "REFERENCE":"CONTENT"; } }
 	public string Value { get; set; }
 }
 
+public class FunctionCall: Named {
+	public FunctionCall(IntrinsicFunctionCallResult call) {
+		QualifiedName = new Expressions.URI(call.IntrinsicFunctionName.Name);
+		foreach(var variableOrExpression in call.Arguments)
+			InputParameters.Add(new CallParameter(variableOrExpression));
+	}
+	/// <summary>Used for codegen.</summary>
+	public FunctionCall(Expressions.QualifiedName name, string lib, string copy) {
+		QualifiedName = name;
+		Library = lib;
+		Copy = copy;
+	}
+
+	public string Name { get { return QualifiedName.Head; } }
+	public Expressions.QualifiedName QualifiedName { get; private set; }
+
+	public IList<CallParameter> InputParameters = new List<CallParameter>();
+
+	public string Library { get; set; }
+	public string Copy    { get; set; }
+}
+
+public class CallParameter {
+
+	private VariableOrExpression voe;
+	public CallParameter(VariableOrExpression voe) { this.voe = voe; }
+
+	public string SendingMode { get { return voe.IsLiteral? "CONTENT":"REFERENCE"; } }
+	public string Value { get { return voe.QualifiedName.ToString(); } }
+}
+public class EmptyCallParameter: CallParameter {
+	public EmptyCallParameter(): base(null) { }
+	public string SendingMode { get { return "CONTENT"; } }
+	public string Value       { get { return "SPACE"; } }
+}
 
 
 public interface Profile {

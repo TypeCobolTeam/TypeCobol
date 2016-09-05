@@ -2,6 +2,7 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Functions;
 	using TypeCobol.Compiler.CodeModel;
 
 
@@ -26,9 +27,7 @@ public static class Attributes {
 //		Attributes["typedef"] = new TypeDefined();
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
-//		Attributes["functions"] = new UsesFunctions();
-//		Attributes["function"] = new UsesFunctions(true);
-//		Attributes["function-name"] = new UsesFunctions(true, true);
+		attributes["function"] = new FunctionUserAttribute();
 	}
 }
 
@@ -85,6 +84,76 @@ internal class ReceiverAttribute: Attribute {
 		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.VariablesWritten.Count+")");
 	}
 }
+
+internal class FunctionUserAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var statement = ((Node)o).CodeElement as FunctionCaller;
+		if (statement == null) return null;
+		var functions = new List<FunctionCall>();
+		foreach(var fun in statement.FunctionCalls) {
+			var found = table.GetFunction(fun.QualifiedName);
+			if (found.Count < 1) continue;
+			if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
+			var declaration = (FunctionDeclaration)found[0];
+			functions.Add(Create(fun, declaration));
+		}
+		if (functions.Count == 0) return null;
+		if (functions.Count == 1) return functions[0];
+		return functions;
+	}
+
+	private static FunctionCall Create(FunctionCall call, FunctionDeclaration declaration) {
+		var result = new FunctionCall(call.QualifiedName, declaration.Library, declaration.Copy);
+		if (declaration.Profile == null) return result;
+		int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
+		if (declaration.Profile.ReturningParameter != null) count += 1;
+		for(int i=0; i < count; i++) {
+			var pAsDefined = GetParameter(i, declaration);
+			var pAsUsed    = GetParameter(i, call);
+			result.InputParameters.Add(Create(pAsDefined, pAsUsed));
+		}
+		return result;
+	}
+	private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
+		if (pAsUsed != null) return pAsUsed;
+		return new EmptyCallParameter();
+	}
+	private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
+		int offset = 0;
+		if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
+		offset += function.Profile.InputParameters.Count;
+		if (index - offset < function.Profile.InoutParameters.Count) return function.Profile.InoutParameters[index-offset];
+		offset += function.Profile.InoutParameters.Count;
+		if (index - offset < function.Profile.OutputParameters.Count) return function.Profile.OutputParameters[index-offset];
+		offset += function.Profile.OutputParameters.Count;
+		if (index - offset < 1) return function.Profile.ReturningParameter;
+		throw new System.ArgumentOutOfRangeException("Expected: "+index+" < "+function.Profile.InputParameters.Count
+		                                                                 +'+'+function.Profile.InoutParameters.Count
+		                                                                 +'+'+function.Profile.OutputParameters.Count
+		                                                                 +'+'+(function.Profile.ReturningParameter!=null?1:0));
+	}
+	private static CallParameter GetParameter(int index, FunctionCall function) {
+		if (index < function.InputParameters.Count) return function.InputParameters[index];
+		return null;
+	}
+}
+
+/*
+internal class FunctionUserAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var statement = ((Node)o).CodeElement as VariableUser;
+		if (statement == null) return null;
+		var functions = new List<FunctionDeclaration>();
+		foreach(var name in statement.Variables) {
+			foreach(var function in table.GetFunction(name))
+				functions.Add((FunctionDeclaration)function);
+		}
+		if (functions.Count == 0) return null;
+		if (functions.Count == 1) return functions[0];
+		return functions;
+	}
+}
+*/
 
 
 }

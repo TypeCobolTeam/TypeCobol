@@ -217,6 +217,28 @@ namespace TypeCobol.Compiler.CodeModel
 			return values;
 		}
 
+		  ///////////////
+		 // FUNCTIONS //
+		///////////////
+
+		public Dictionary<string,List<Named>> Functions = new Dictionary<string,List<Named>>(System.StringComparer.InvariantCultureIgnoreCase);
+
+		internal void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
+
+		internal List<Named> GetFunction(QualifiedName name) {
+			var found = GetFunction(name.Head);
+			return Get(found, name);
+		}
+
+		private List<Named> GetFunction(string name) {
+			var values = new List<Named>();
+			if (Functions.ContainsKey(name))
+				values.AddRange(Functions[name]);
+			if (EnclosingScope!= null)
+				values.AddRange(EnclosingScope.GetFunction(name));
+			return values;
+		}
+
 
 
 		/// <summary>
@@ -260,17 +282,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 		/// <summary>Functions repository</summary>
 		protected Dictionary<QualifiedName,IList<Function>> functions = new Dictionary<QualifiedName,IList<Function>>();
-
-		public IList<Function> Functions {
-			get {
-				var copy = new List<Function>();
-				foreach(var funs in functions.Values)
-					foreach(var fun in funs)
-						copy.Add(fun);
-				return copy;
-			}
-		}
-
+/*
 		internal IList<Function> GetFunction(QualifiedName name, Profile profile = null, bool searchInDefaultLib = true) {
 			foreach(var function in functions)
 				if (function.Key.Matches(name))
@@ -296,7 +308,7 @@ namespace TypeCobol.Compiler.CodeModel
 			catch(KeyNotFoundException ex) { this.functions[function.QualifiedName] = functions; }
 			functions.Add(function);
 		}
-
+*/
 
 
 		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
@@ -343,17 +355,12 @@ namespace TypeCobol.Compiler.CodeModel
 					foreach(var item in line.Value)
 						Dump(str, item, indent);
 			}
-/* TODO#249
-			foreach(var funs in functions) {
-				str.Append(funs.Key+":");
-				foreach(var fun in funs.Value) {
-					Dump(str, fun, 1);
-					str.Append("; ");
-				}
-				if (funs.Value.Count > 0) str.Length -= 2;
-				str.AppendLine();
+			if (Functions.Count > 0) {
+				str.AppendLine("-- FUNCTIONS ---");
+				foreach(var line in Functions)
+					foreach(var item in line.Value)
+						Dump(str, item, indent);
 			}
-*/
 			if (verbose && EnclosingScope != null)
 				str.Append(EnclosingScope.ToString(verbose, indent+1));
 			return str.ToString().TrimEnd(System.Environment.NewLine.ToCharArray());;
