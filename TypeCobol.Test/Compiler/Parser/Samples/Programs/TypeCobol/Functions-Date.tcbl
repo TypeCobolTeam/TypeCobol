@@ -13,7 +13,9 @@ WORKING-STORAGE SECTION.
          10  filler-X PIC X.
          10  DD PIC 9(02).
 
-PROCEDURE DIVISION.
+linkage section.
+  COPY MyCopyWithProcedurePointer.
+PROCEDURE DIVISION using MyCopyWithProcedurePointer.
 
 DECLARE FUNCTION currentDate PRIVATE.
 PROCEDURE DIVISION RETURNING result TYPE Date.
