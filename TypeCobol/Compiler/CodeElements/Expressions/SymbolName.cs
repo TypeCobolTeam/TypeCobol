@@ -78,18 +78,14 @@ namespace TypeCobol.Compiler.CodeElements
         ExternalNameOrSymbolReference // mnemonicForEnvironmentName or EnvironmentName, assignmentName or FileName
     }
     
-    /// <summary>
-    /// Declaration of a new symbol in the Cobol syntax
-    /// </summary>
-    public class SymbolDefinition : SymbolInformation
-    {
-        public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type) :
-            base(nameLiteral, SymbolRole.SymbolDefinition, type)
-        { }
+	/// <summary>Declaration of a new symbol in the Cobol syntax</summary>
+	public class SymbolDefinition: SymbolInformation {
+		public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type)
+			: base(nameLiteral, SymbolRole.SymbolDefinition, type) { }
 
 		public SymbolDefinition(SymbolReference symbol)
-			: this(symbol.NameLiteral, symbol.Type) { }
-    }
+			: this(symbol!=null? symbol.NameLiteral : null, symbol!=null? symbol.Type: SymbolType.TO_BE_RESOLVED) { }
+	}
 
     /// <summary>
     /// Reference to a previously defined symbol in the Cobol syntax

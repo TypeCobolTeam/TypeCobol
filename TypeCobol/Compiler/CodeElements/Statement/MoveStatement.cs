@@ -112,7 +112,8 @@ public class MoveSimpleStatement : MoveStatement {
 		get {
 			if (_functions == null) {
 				_functions = new List<Functions.FunctionCall>();
-				var sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
+				IntrinsicFunctionCallResult sending = null;
+				if (SendingVariable != null) sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
 				if (sending != null) _functions.Add(new Functions.FunctionCall(sending));
 			}
 			return _functions;

@@ -85,7 +85,7 @@ namespace TypeCobol.Codegen.Config {
 
 			input = skeleton.Patterns[1].Template;
 			expected =
-"01 RETURN-CODE PIC X(08).\n";
+"01 ERROR-CODE PIC X(08).\n";
 			Assert.AreEqual(expected, solver.Replace(input, null, "%"));
 
 			input = skeleton.Patterns[2].Template;
@@ -108,10 +108,10 @@ namespace TypeCobol.Codegen.Config {
 "    BY REFERENCE param1\n"+
 "    BY CONTENT '42'\n"+
 "\n"+
-"    BY REFERENCE RETURN-CODE\n"+
 "    BY REFERENCE fun-RESULT\n"+
+"    BY REFERENCE ERROR-CODE\n"+
 "\n"+
-"IF RETURN-CODE = ZERO\n"+
+"IF ERROR-CODE = ZERO\n"+
 "    MOVE fun-RESULT TO myresult\n"+
 "ELSE\n"+
 "*    TODO: error management\n"+
