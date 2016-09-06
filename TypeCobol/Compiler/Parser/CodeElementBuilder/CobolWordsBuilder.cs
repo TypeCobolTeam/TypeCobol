@@ -21,49 +21,32 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Compile-time constant values used in the Cobol grammar ---
 
-		internal BooleanValue CreateBooleanValue(IParseTree context) {
+		internal static BooleanValue CreateBooleanValue(IParseTree context) {
 			if (context == null) return null;
-			Token valueToken = ParseTreeUtils.GetFirstToken(context);
-			return new BooleanValue(valueToken);
+			return new BooleanValue(ParseTreeUtils.GetFirstToken(context));
 		}
 
-        internal IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new IntegerValue(valueToken);
-        }
+		internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context) {
+			return new IntegerValue(ParseTreeUtils.GetFirstToken(context));
+		}
 
-        internal NumericValue CreateNumericValue(CodeElementsParser.NumericValueContext context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new NumericValue(valueToken);
-        }
+		internal static NumericValue CreateNumericValue(CodeElementsParser.NumericValueContext context) {
+			return new NumericValue(ParseTreeUtils.GetFirstToken(context));
+		}
 
-        internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue1Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new CharacterValue(valueToken);
-        }
+		internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue1Context context) {
+			return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
+		}
 
-        internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue2Context context)
-        {
-            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-            {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
-                return new CharacterValue(symbolicCharacterReference);
-            }
-            else
-            {
-                Token valueToken = ParseTreeUtils.GetFirstToken(context);
-                return new CharacterValue(valueToken);
-            }
-        }
+		internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue2Context context)	{
+			if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
+				return new CharacterValue(CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter));
+			return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
+		}
 
-        internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue3Context context)
-        {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new CharacterValue(valueToken);
-        }
+		internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue3Context context) {
+			return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
+		}
 
         internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue4Context context)
         {
@@ -176,28 +159,15 @@ namespace TypeCobol.Compiler.Parser
             return new NullPointerValue(valueToken);
         }
 
-        internal Value CreateValue(CodeElementsParser.Value1Context context)
-        {            
-            if(context.numericValue() != null)
-            {
-                NumericValue numericValue = CreateNumericValue(context.numericValue());
-                return new Value(numericValue);
-            }
-            else if (context.alphanumericValue2() != null)
-            {
-                AlphanumericValue alphanumericValue = CreateAlphanumericValue(context.alphanumericValue2());
-                return new Value(alphanumericValue);
-            }
-            else if (context.repeatedCharacterValue2() != null)
-            {
-                RepeatedCharacterValue repeatedCharacterValue = CreateRepeatedCharacterValue(context.repeatedCharacterValue2());
-                return new Value(repeatedCharacterValue);
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
-        }
+		internal Value CreateValue(CodeElementsParser.Value1Context context) {
+			if (context.numericValue() != null)
+				return new Value(CreateNumericValue(context.numericValue()));
+			if (context.alphanumericValue2() != null)
+				return new Value(CreateAlphanumericValue(context.alphanumericValue2()));
+			if (context.repeatedCharacterValue2() != null)
+				return new Value(CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
+			throw new InvalidOperationException();
+		}
 
         internal Value CreateValue(CodeElementsParser.Value2Context context)
         {
