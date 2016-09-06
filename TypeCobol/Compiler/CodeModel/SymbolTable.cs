@@ -90,7 +90,7 @@ namespace TypeCobol.Compiler.CodeModel
 			found.Add(symbol);
 		}
 
-		internal List<Named> GetVariable(QualifiedName name) {
+		public List<Named> GetVariable(QualifiedName name) {
 			var found = GetVariable(name.Head);
 			return Get(found, name);
 		}

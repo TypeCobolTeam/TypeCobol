@@ -129,6 +129,13 @@
 
 
 		public DataType DataType { get; internal set; }
+		public int Length {
+			get {
+				if (Picture == null) return 1;
+				var parts = Picture.Value.Split('(',')');
+				return parts.Length == 3 ? int.Parse(parts[1]) : 1;
+			}
+		}
 
 		/// <summary>
 		/// p188:
@@ -870,6 +877,7 @@
 			         get { return datatype;  }
 			internal set { datatype = value; }
 		}
+		public int Length { get { return 1; } }
 	}
 
 	/// <summary>
@@ -911,6 +919,7 @@
 		public ValuesRange[] ConditionValuesRanges { get; set; }
 
 		public DataType DataType { get { return DataType.Boolean; } }
+		public int Length { get { return 1; } }
 	}
 
 	/// <summary>

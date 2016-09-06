@@ -78,6 +78,7 @@ namespace TypeCobol.Compiler.CodeElements
 	}
 	public interface Typed {
 		DataType DataType { get; }
+		int Length { get; }
 	}
 	public interface Subscripted { }
 

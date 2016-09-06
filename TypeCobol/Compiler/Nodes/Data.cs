@@ -42,6 +42,7 @@ public abstract class DataDefinition: Node, Parent<DataDefinition>, Child<DataSe
 public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, Typed {
 	public DataDescription(DataDescriptionEntry entry): base(entry) { }
 	public DataType DataType { get { return this.CodeElement().DataType; } }
+	public int Length { get { return this.CodeElement().Length; } }
 }
 public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> {
 	public DataCondition(DataConditionEntry entry): base(entry) { }
@@ -57,6 +58,7 @@ public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEnt
 	public TypeDefinition(TypeDefinitionEntry entry): base(entry) { }
 	public bool IsStrong { get; internal set; }
 	public DataType DataType { get { return this.CodeElement().DataType; } }
+	public int Length { get { return this.CodeElement().Length; } }
 }
 // [/COBOL 2002]
 
