@@ -15,7 +15,7 @@ internal class ProgramEnd: Compiler.Nodes.End, Generated {
 	}
 
 	private IList<ITextLine> _cache = null;
-	IEnumerable<ITextLine> Generated.Lines {
+	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();

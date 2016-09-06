@@ -16,7 +16,7 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 	public ParameterEntry(Compiler.CodeElements.Functions.ParameterDescription description): base(description) { }
 
 	private IList<ITextLine> _cache = null;
-	IEnumerable<ITextLine> Generated.Lines {
+	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();

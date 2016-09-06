@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private void CreateOrUpdateLinkageSection(Compiler.Nodes.FunctionDeclaration node, ParametersProfile profile) {
-			var linkage = (LinkageSection)(object)node.Get("linkage");
+			var linkage = node.Get<LinkageSection>("linkage");
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
 			IReadOnlyList<DataDefinition> data = new List<DataDefinition>().AsReadOnly();
 			if (linkage == null && parameters > 0) {
@@ -79,7 +79,7 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private IList<ITextLine> _cache = null;
-		IEnumerable<ITextLine> Generated.Lines {
+		public override IEnumerable<ITextLine> Lines {
 			get {
 				if (_cache == null) {
 					_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM

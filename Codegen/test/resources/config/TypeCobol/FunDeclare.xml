@@ -3,7 +3,7 @@
 
   <skeleton name="FUN.DECLARE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.Functions.FunctionDeclarationHeader" />
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
     </conditions>
     <patterns>
       <pattern location="NODE" action="expand"></pattern>

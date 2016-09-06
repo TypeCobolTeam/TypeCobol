@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Each USING identifier must be defined as a level-01 or level-77 item in the
 	/// LINKAGE SECTION of the called subprogram or invoked method.
 	/// </summary>
-	public class InputParameter {
+	public class InputParameter: Named {
 		/// <summary>
 		/// Argument receiving mode : BY REFERENCE or BY VALUE
 		/// </summary>
@@ -78,6 +78,22 @@ namespace TypeCobol.Compiler.CodeElements
 		/// LINKAGE SECTION of the called subprogram or invoked method.
 		/// </summary>
 		public ReceivingStorageArea ReceivingStorageArea { get; set; }
+
+		public string Name {
+			get {
+				var named = ReceivingStorageArea.StorageArea as Named;
+				if (named == null) return null;
+				return named.Name;
+			}
+		}
+
+		public Expressions.QualifiedName QualifiedName {
+			get {
+				var named = ReceivingStorageArea.StorageArea as Named;
+				if (named == null) return null;
+				return named.QualifiedName;
+			}
+		}
 	}
 
 	/// <summary>

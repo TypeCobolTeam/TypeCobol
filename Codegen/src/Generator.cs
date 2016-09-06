@@ -243,7 +243,7 @@ namespace TypeCobol.Codegen {
 		internal Node Node;
 		private Dictionary<Type,Type> Generators = new Dictionary<Type,Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
-				{ typeof(FunctionDeclarationHeader), typeof(Compiler.Nodes.FunctionDeclaration) },
+				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclaration) },
 			};
 
 		public Expand(Node node) {
@@ -252,7 +252,7 @@ namespace TypeCobol.Codegen {
 
 		public void Execute() {
 			// retrieve data
-			int index = this.Node.IndexOf(this.Node);
+			int index = this.Node.Parent.IndexOf(this.Node);
 			if (index > -1) {
 				var typegen = GetGeneratedNode(this.Node.CodeElement.GetType());
 				var nodegen = (Node)Activator.CreateInstance(typegen, this.Node);

@@ -17,12 +17,13 @@ namespace TypeCobol.Codegen.Nodes {
 			foreach(var parameter in profile.Profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter.DataName));
 			foreach(var parameter in profile.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.DataName));
 			// TCRFUN_CODEGEN_RETURNING_PARAMETER
-			ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(profile.Profile.ReturningParameter.DataName);
+			if (profile.Profile.ReturningParameter != null)
+				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(profile.Profile.ReturningParameter.DataName);
 			this.children.AddRange(children);
 		}
 
 		private IList<ITextLine> _cache = null;
-		IEnumerable<ITextLine> Generated.Lines {
+		public override IEnumerable<ITextLine> Lines {
 			get {
 				if (_cache == null) {
 					_cache = new List<ITextLine>();
