@@ -239,7 +239,7 @@ namespace TypeCobol.Compiler.Parser
 			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
 			var node = new DataDescription(data);
 			Enter(node);
-			node.SymbolTable.AddVariable(node);
+			if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {

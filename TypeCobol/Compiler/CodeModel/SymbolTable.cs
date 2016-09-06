@@ -8,7 +8,24 @@ using TypeCobol.Compiler.Nodes;
 namespace TypeCobol.Compiler.CodeModel
 {
 	public class SymbolTable {
-		// TODO: should have one map/list per data set.
+
+		public Scope CurrentScope { get; internal set; }
+		public SymbolTable EnclosingScope { get; internal set; }
+
+		public SymbolTable(SymbolTable enclosing = null, Scope current = Scope.Program) {
+			CurrentScope = current;
+			EnclosingScope = enclosing;
+			if (EnclosingScope == null && CurrentScope != Scope.Intrinsic)
+				throw new System.InvalidOperationException("Only Table of INTRISIC symbols don't have any enclosing scope.");
+		}
+
+
+
+
+
+		  //////////////////
+		 // DATA SYMBOLS //
+		//////////////////
 
 		/// <summary>
 		/// The WORKING-STORAGE SECTION describes data records that are not part
@@ -51,24 +68,6 @@ namespace TypeCobol.Compiler.CodeModel
 		/// </summary>
 		public Dictionary<string,List<Named>> DataEntries = new Dictionary<string,List<Named>>(System.StringComparer.InvariantCultureIgnoreCase);
 
-		public Scope CurrentScope { get; internal set; }
-		public SymbolTable EnclosingScope { get; internal set; }
-
-		public SymbolTable(SymbolTable enclosing = null, Scope current = Scope.Program) {
-			CurrentScope = current;
-			EnclosingScope = enclosing;
-			if (EnclosingScope == null && CurrentScope != Scope.Intrinsic)
-				throw new System.InvalidOperationException("Only Table of INTRISIC symbols don't have any enclosing scope.");
-		}
-
-
-
-
-
-		  //////////////////
-		 // DATA SYMBOLS //
-		//////////////////
-
 		internal void AddVariable(Named symbol) { Add(DataEntries, symbol); }
 
 		private void Add(Dictionary<string,List<Named>> table, Named symbol) {
@@ -92,7 +91,43 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public List<Named> GetVariable(QualifiedName name) {
 			var found = GetVariable(name.Head);
-			return Get(found, name);
+			if (found.Count > 0) return Get(found, name);
+			else return GetChildOfCustomTypedVariable(name);
+		}
+
+		private List<Named> GetChildOfCustomTypedVariable(QualifiedName name) {
+			var found = GetVariable(name[0]);
+			int begin = 0;
+			int end = begin;
+			while(end < name.Count) {
+				var max = QualifyMax(found, name, begin, out end);
+				found = ContinueWithTypes(found);
+				begin = end;
+			}
+			System.Console.WriteLine("## FOUND: "+found.Count);
+			return found;
+		}
+		private QualifiedName QualifyMax(List<Named> found, QualifiedName name, int begin, out int end) {
+			var max = new System.Text.StringBuilder();
+			for (int c=0; c<=begin; c++) max.Append(name[c]).Append('.');
+			max.Length -= 1;
+			for(end=begin+1; end<name.Count; end++) {
+				var filtered = Filter(found, name[end], end);
+				if (filtered.Count < 1) break;
+				found = filtered;
+				max.Append('.').Append(name[end]);
+			}
+			return new URI(max.ToString());
+		}
+		private List<Named> ContinueWithTypes(List<Named> found) {
+			var results = new List<Named>();
+			foreach(var variable in found) {
+				if (variable is Typed) {
+					var types = GetType(((Typed)variable).DataType.Name);
+					foreach(var type in types) results.AddRange(((TypeDefinition)type).Children);
+				}
+			}
+			return results;
 		}
 
 		private List<Named> GetVariable(string name) {

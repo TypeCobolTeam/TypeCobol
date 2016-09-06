@@ -18,7 +18,7 @@ internal class TypedDataNode: DataDescription, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				if (IsPartOfATypeDef) return _cache;
+				if (this.Node.IsPartOfATypeDef) return _cache;
 
 				var data = this.Node.CodeElement();
 				int level = (int)data.LevelNumber.Value;
@@ -59,17 +59,6 @@ internal class TypedDataNode: DataDescription, Generated {
 	}
 
 	public bool IsLeaf { get { return true; } }
-
-	public bool IsPartOfATypeDef {
-		get {
-			var parent = this.Node.Parent;
-			while (parent != null) {
-				if (parent is TypeDefinition) return true;
-				parent = parent.Parent;
-			}
-			return false;
-		}
-	}
 }
 
 }

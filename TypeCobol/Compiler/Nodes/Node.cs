@@ -151,6 +151,18 @@ public abstract class Node: Named {
 			return generation;
 		}
 	}
+	/// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
+	public bool IsPartOfATypeDef {
+		get {
+			var parent = this.Parent;
+			while (parent != null) {
+				if (!(parent is DataDefinition)) return false;
+				if (parent is TypeDefinition) return true;
+				parent = parent.Parent;
+			}
+			return false;
+		}
+	}
 
 
 
