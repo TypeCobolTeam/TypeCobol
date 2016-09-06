@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Nodes {
 		}
 
 		private void CreateOrUpdateLinkageSection(Compiler.Nodes.FunctionDeclaration node, ParametersProfile profile) {
-			var linkage = node.Get<LinkageSection>("linkage");
+			var linkage = node.Get<Compiler.Nodes.LinkageSection>("linkage");
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
 			IReadOnlyList<DataDefinition> data = new List<DataDefinition>().AsReadOnly();
 			if (linkage == null && parameters > 0) {

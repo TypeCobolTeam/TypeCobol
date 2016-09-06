@@ -37,6 +37,11 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		ce.Inout = new SyntaxProperty<Passing.Mode>(Passing.Mode.Inout, ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()));
 		ce.Profile.InoutParameters = CreateParameters(context.parameterDescription());
 	}
+	public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
+		var ce = GetFunctionProfile();
+		ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()));
+		ce.Profile.ReturningParameter = CreateParameter(context.parameterDescription());
+	}
 
 	private IList<ParameterDescription> CreateParameters(CodeElementsParser.ParameterDescriptionContext[] contexts) {
 		var parameters = new List<ParameterDescription>();
@@ -49,8 +54,10 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	private ParameterDescription CreateParameter(CodeElementsParser.ParameterDescriptionContext context) {
 		if (context.functionDataParameter() != null)
 			return CreateFunctionDataParameter(context.functionDataParameter());
-		// if (context.dataConditionEntry() != null)
-			return null;
+		if (context.functionConditionParameter() != null)
+//			throw new System.NotImplementedException("TODO#249: level-88 parameters");
+			System.Console.WriteLine("TODO#249: level-88 parameters");
+		return null;
 	}
 	public ParameterDescription CreateFunctionDataParameter(CodeElementsParser.FunctionDataParameterContext context) {
 		var parameter = new ParameterDescription();
@@ -73,28 +80,9 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		if (token == null) return null;
 		return "TYPE:"+token.Text.ToUpper();
 	}
-/*
 
-	public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
-		var receiving = CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
-		((Returning)CodeElement).ReturningParameter = receiving;
-	}
-*
-	public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
-		var dataname = SyntaxElementBuilder.CreateDataName(context.dataNameReference());
-		//TODO? dataname should be a QualifiedName,
-		//      because LINKAGE data items can be complex,
-		//      with group items and name collision and crap
-		((ProcedureDivisionHeader)CodeElement).ReturningParameter = dataname;
-	}
-	public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
-		var ce = GetFunctionProfile();
-		var returning = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()) };
-		ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, returning);
-		ce.Profile.ReturningParameter = CreateParameter(context.parameterDescription());
-	}
 
-*/
+
 	private FunctionDeclarationProfile GetFunctionProfile() {
 		if (CodeElement is ProcedureDivisionHeader)
 			CodeElement = new FunctionDeclarationProfile((ProcedureDivisionHeader)CodeElement);

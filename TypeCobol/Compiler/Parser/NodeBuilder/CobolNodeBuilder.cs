@@ -141,6 +141,18 @@ namespace TypeCobol.Compiler.Parser
 				}
 			}
 		}
+		/// <summary>Retrieve currency characters from SPECIAL NAMES paragraph.</summary>
+		/// <returns>Currency characters array</returns>
+		private char[] GetCurrencies() {
+			IDictionary<AlphanumericValue,CharacterValue> currencies = null;
+			var special = CurrentProgram.SyntaxTree.Root.Get<SpecialNames>("special-names");
+			if (special != null) currencies = special.CodeElement().CurrencySymbols;
+			if (currencies == null || currencies.Count < 1) return new char[] { '$' };
+			var chars = new List<char>();
+			foreach(var key in currencies.Keys)
+				if (key.Value.Length == 1) chars.Add(key.Value[0]);
+			return chars.ToArray();
+		}
 		public override void ExitConfigurationSection(ProgramClassParser.ConfigurationSectionContext context) {
 			Exit(); // exit ConfigurationSection node
 		}
