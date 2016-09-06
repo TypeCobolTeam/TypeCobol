@@ -32,7 +32,7 @@
          LINKAGE SECTION.                                                     
            01 result PIC 9(04).                                               
          PROCEDURE DIVISION                                                   
-             RETURNING BY REFERENCE result                                    
+             USING BY REFERENCE result                                        
          .                                                                    
            MOVE 0 TO result.
            .
@@ -48,8 +48,8 @@
            01 x PIC 9(04).                                                    
            01 result PIC 9(04).                                               
          PROCEDURE DIVISION                                                   
-             USING     BY REFERENCE x                                         
-             RETURNING BY REFERENCE result                                    
+             USING BY REFERENCE x                                             
+                   BY REFERENCE result                                        
          .                                                                    
            IF x = 0
              MOVE 0 TO result
@@ -73,10 +73,10 @@
            01 result PIC 9(04).
            01 z PIC 9(04).                                                    
          PROCEDURE DIVISION                                                   
-             USING     BY REFERENCE x                                         
-                       BY REFERENCE y                                         
-                       BY REFERENCE z                                         
-             RETURNING BY REFERENCE result                                    
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
+                   BY REFERENCE z                                             
+                   BY REFERENCE result                                        
          .                                                                    
            MOVE 0 TO result.
            ADD x to result.
@@ -93,8 +93,8 @@
            01 x PIC 9(04).                                                    
            01 y PIC 9(04).                                                    
          PROCEDURE DIVISION                                                   
-             USING     BY REFERENCE x                                         
-                       BY REFERENCE y                                         
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
          .                                                                    
            MOVE x TO tmp
            MOVE y TO x
@@ -112,10 +112,10 @@
            01 a PIC 9(04).                                                    
            01 b PIC 9(04).                                                    
          PROCEDURE DIVISION                                                   
-             USING     BY REFERENCE x                                         
-                       BY REFERENCE y                                         
-                       BY REFERENCE a                                         
-                       BY REFERENCE b                                         
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
+                   BY REFERENCE a                                             
+                   BY REFERENCE b                                             
          .                                                                    
            CONTINUE.
        END PROGRAM SwapParametersWrong.                                       

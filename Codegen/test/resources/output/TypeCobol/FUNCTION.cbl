@@ -37,9 +37,9 @@
            01 y PIC 9(03).                                                    
            01 result PIC 9(08).                                               
          PROCEDURE DIVISION                                                   
-             USING     BY REFERENCE x                                         
-                       BY REFERENCE y                                         
-             RETURNING BY REFERENCE result                                    
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
+                   BY REFERENCE result                                        
          .                                                                    
            CONTINUE.
        END PROGRAM POW.                                                       

@@ -37,17 +37,19 @@ namespace TypeCobol.Codegen.Nodes {
 						else done.Add(name);
 						string strmode = "BY REFERENCE ";
 						if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
-						string strusing = c==0? "      USING     ":"                ";
+						string strusing = c==0? "      USING ":"            ";
 						string strname = "?ANONYMOUS?";
 						if (parameter is Named) strname = name;
 						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 						c++;
 					}
 					if (ReturningParameter != null) {
+						string strmode = "BY REFERENCE ";
+						string strusing = c==0? "      USING ":"            ";
 						string strname = "?ANONYMOUS?";
 						var named = ReturningParameter.StorageArea as Named;
 						if (named != null) strname = named.Name;
-						_cache.Add(new TextLineSnapshot(-1, "      RETURNING BY REFERENCE "+strname, null));
+						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					}
 					_cache.Add(new TextLineSnapshot(-1, "  .", null));
 				}
