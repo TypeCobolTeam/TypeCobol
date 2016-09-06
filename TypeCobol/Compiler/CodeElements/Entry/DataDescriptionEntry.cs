@@ -203,7 +203,7 @@
 		/// any program that directly or indirectly contains the containing program.
 		/// </summary>
 		public SyntaxProperty<bool> Global { get; internal set; }
-		public bool IsGlobal { get { return External != null? Global.Value : false; } }
+		public bool IsGlobal { get { return Global != null? Global.Value : false; } }
 
 		/// <summary>
 		/// p189:

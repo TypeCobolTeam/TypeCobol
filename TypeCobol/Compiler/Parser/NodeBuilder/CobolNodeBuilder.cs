@@ -163,6 +163,7 @@ namespace TypeCobol.Compiler.Parser
 			//TODO: ( 1 FILE DESCRIPTION ENTRY + N DATA DESCRIPTION ENTRY ) N TIMES
 		}
 		public override void ExitFileSection(ProgramClassParser.FileSectionContext context) {
+			ExitLastLevel1Definition();
 			Exit();
 		}
 		/// <summary>parent: DATA DIVISION</summary>
@@ -266,7 +267,7 @@ namespace TypeCobol.Compiler.Parser
 
 		/// <summary>Exit last level-01 data definition entry, as long as all its subordinates.</summary>
 		private void ExitLastLevel1Definition() {
-			while (CurrentNode.CodeElement != null && TypeCobol.Tools.Reflection.IsTypeOf(CurrentNode.CodeElement.GetType(), typeof(DataDescriptionEntry))) Exit();
+			while (CurrentNode.CodeElement != null && TypeCobol.Tools.Reflection.IsTypeOf(CurrentNode.CodeElement.GetType(), typeof(DataDefinitionEntry))) Exit();
 		}
 
 
