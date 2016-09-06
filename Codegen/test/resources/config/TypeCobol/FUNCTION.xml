@@ -12,7 +12,7 @@
 01 %function.Library PIC X(08) VALUE '%function.Library'.
       </pattern>
       <pattern location="data-division.working-storage" action="create" group="functions">
-01 RETURN-CODE PIC X(08).
+01 ERROR-CODE PIC X(08).
       </pattern>
       <!--pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
 01 %function.Name-RESULT %function.Result.Definition.
@@ -30,10 +30,10 @@ END-IF
   }
 }CALL %function.Name USING
 @funparams
-    BY REFERENCE RETURN-CODE
     BY REFERENCE %function.Name-RESULT
+    BY REFERENCE ERROR-CODE
 
-IF RETURN-CODE = ZERO
+IF ERROR-CODE = ZERO
     MOVE %function.Name-RESULT TO %receiver
 ELSE
 *    TODO: error management

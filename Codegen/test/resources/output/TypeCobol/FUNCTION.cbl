@@ -21,7 +21,7 @@
        01 Functionscpy COPY Functionscpy.                                     
        01 Functions PIC X(08) VALUE 'Functions'.                              
                                                                               
-       01 RETURN-CODE PIC X(08).                                              
+       01 ERROR-CODE PIC X(08).                                               
                                                                               
 
        PROCEDURE DIVISION.
@@ -50,10 +50,10 @@
            BY REFERENCE x                                                     
            BY REFERENCE y                                                     
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
@@ -65,10 +65,10 @@
            BY CONTENT SPACE                                                   
            BY CONTENT SPACE                                                   
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
@@ -79,10 +79,10 @@
            BY REFERENCE y                                                     
            BY CONTENT SPACE                                                   
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
@@ -93,10 +93,10 @@
            BY REFERENCE x                                                     
            BY REFERENCE y                                                     
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
@@ -108,10 +108,10 @@
            BY REFERENCE i                                                     
            BY REFERENCE j                                                     
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
@@ -123,10 +123,10 @@
            BY REFERENCE x                                                     
            BY REFERENCE b                                                     
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
@@ -138,10 +138,10 @@
            BY REFERENCE z                                                     
            BY REFERENCE z                                                     
                                                                               
-           BY REFERENCE RETURN-CODE                                           
            BY REFERENCE POW-RESULT                                            
+           BY REFERENCE ERROR-CODE                                            
                                                                               
-       IF RETURN-CODE = ZERO                                                  
+       IF ERROR-CODE = ZERO                                                   
            MOVE POW-RESULT TO x                                               
        ELSE                                                                   
       *    TODO: error management                                             
