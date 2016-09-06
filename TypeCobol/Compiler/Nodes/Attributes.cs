@@ -106,7 +106,8 @@ internal class FunctionUserAttribute: Attribute {
 		var result = new FunctionCall(call.QualifiedName, declaration.Library, declaration.Copy);
 		if (declaration.Profile == null) return result;
 		int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
-		if (declaration.Profile.ReturningParameter != null) count += 1;
+		// declaration.Profile.ReturningParameter is not used because
+		// the same data is always used by (and hardcoded in) function call codegen: <function.Name>-RESULT
 		for(int i=0; i < count; i++) {
 			var pAsDefined = GetParameter(i, declaration);
 			var pAsUsed    = GetParameter(i, call);
@@ -137,23 +138,6 @@ internal class FunctionUserAttribute: Attribute {
 		return null;
 	}
 }
-
-/*
-internal class FunctionUserAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var statement = ((Node)o).CodeElement as VariableUser;
-		if (statement == null) return null;
-		var functions = new List<FunctionDeclaration>();
-		foreach(var name in statement.Variables) {
-			foreach(var function in table.GetFunction(name))
-				functions.Add((FunctionDeclaration)function);
-		}
-		if (functions.Count == 0) return null;
-		if (functions.Count == 1) return functions[0];
-		return functions;
-	}
-}
-*/
 
 
 }
