@@ -41,8 +41,9 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var values in value.DataEntries.Values)
 						foreach(var data in values)
 							TableOfIntrisic.AddVariable(data);
-					foreach(var type in value.CustomTypes)
-						TableOfIntrisic.AddType(type);
+					foreach(var types in value.Types)
+						foreach(var type in types.Value)
+							TableOfIntrisic.AddType((TypeDefinition)type);
 				}
 				// TODO#249: use a COPY for these
 				foreach (var type in DataType.BuiltInCustomTypes) {
@@ -228,7 +229,9 @@ namespace TypeCobol.Compiler.Parser
 // [COBOL 2002]
 		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber.Value);
-			Enter(new Nodes.TypeDefinition(typedef));
+			var node = new Nodes.TypeDefinition(typedef);
+			Enter(node);
+			node.SymbolTable.AddType(node);
 		}
 // [/COBOL 2002]
 

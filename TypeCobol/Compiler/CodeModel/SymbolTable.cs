@@ -194,7 +194,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public Dictionary<string,List<Named>> Types = new Dictionary<string,List<Named>>(System.StringComparer.InvariantCultureIgnoreCase);
 
-		internal void AddType(TypeDefinition type) { Add(Types, type); }
+		public void AddType(TypeDefinition type) { Add(Types, type); }
 
 		public List<TypeDefinition> GetTypes(Typed symbol) {
 			var types = new List<TypeDefinition>();
@@ -203,7 +203,7 @@ namespace TypeCobol.Compiler.CodeModel
 			return types;
 		}
 
-		internal List<Named> GetType(QualifiedName name) {
+		public List<Named> GetType(QualifiedName name) {
 			var found = GetType(name.Head);
 			return Get(found, name);
 		}
@@ -225,7 +225,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 		internal void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
 
-		internal List<Named> GetFunction(QualifiedName name) {
+		public List<Named> GetFunction(QualifiedName name) {
 			var found = GetFunction(name.Head);
 			return Get(found, name);
 		}
@@ -279,62 +279,6 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
 
-
-		/// <summary>Functions repository</summary>
-		protected Dictionary<QualifiedName,IList<Function>> functions = new Dictionary<QualifiedName,IList<Function>>();
-/*
-		internal IList<Function> GetFunction(QualifiedName name, Profile profile = null, bool searchInDefaultLib = true) {
-			foreach(var function in functions)
-				if (function.Key.Matches(name))
-					return Filter(function.Value, profile);
-			if (searchInDefaultLib && CurrentScope == Scope.Intrinsic)
-				return GetFunction(new URI("TC-DEFAULT."+name.ToString()), profile, false);
-			if (EnclosingScope == null) return new List<Function>();
-			return EnclosingScope.GetFunction(name, profile, searchInDefaultLib);
-		}
-		private IList<Function> Filter(IList<Function> functions, Profile profile) {
-			if (profile == null) return functions;
-			var filtered = new List<Function>();
-			foreach(var function in functions)
-				if (profile.Equals(function.Profile))
-					filtered.Add(function);
-			return filtered;
-		}
-		/// <summary>Make a function definied in the current scope.</summary>
-		/// <param name="function">Function definition</param>
-		internal void Register(Function function) {
-			IList<Function> functions = new List<Function>();
-			try { functions = this.functions[function.QualifiedName]; }
-			catch(KeyNotFoundException ex) { this.functions[function.QualifiedName] = functions; }
-			functions.Add(function);
-		}
-*/
-
-
-		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
-		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>(System.StringComparer.InvariantCultureIgnoreCase);
-
-		public IEnumerable<TypeDefinition> CustomTypes {
-			get { return new List<TypeDefinition>(types.Values); }
-		}
-
-//TODO#249? remove
-		/// <summary>Register a data description as a custom type.</summary>
-		/// <param name="data">A TYPEDEF data description</param>
-		public void RegisterCustomType(TypeDefinition data) {
-			var name = ((Named)data.CodeElement).Name;
-			types[name] = data;
-		}
-//TODO#249? remove
-		public TypeDefinition GetCustomType(string type) {
-			SymbolTable table = this;
-			while (table != null) {
-				try { return table.types[type]; }
-				catch(KeyNotFoundException ex) { } // should be in parent scope
-				table = table.EnclosingScope;
-			}
-			throw new System.ArgumentException(type+" is not a custom type for this scope");
-		}
 
 
 

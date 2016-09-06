@@ -165,11 +165,9 @@ namespace TypeCobol.Server
                     continue;
                 }
 
-                foreach (var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes)
-			    {
-			        table.RegisterCustomType(type); //TODO check if already there
-
-			    }
+				foreach (var types in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.Types)
+					foreach(var type in types.Value)
+						table.AddType((TypeCobol.Compiler.Nodes.TypeDefinition)type);//TODO check if already there
             }
 			return table;
 		}
