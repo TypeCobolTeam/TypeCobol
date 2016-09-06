@@ -3,8 +3,8 @@
       * "1"@(26:12>26:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
       * "1"@(27:12>27:42): [27:1] Syntax error : Function POW is missing parameter 2 of type Numeric
       * "1"@(28:12>28:42): [27:1] Syntax error : Function POW only takes 2 parameters
-      * "1"@(30:12>30:42): [27:1] Syntax error : Symbol i is not referenced
-      * "1"@(30:12>30:42): [27:1] Syntax error : Symbol j is not referenced
+      * "1"@(30:12>30:42): [27:1] Syntax error : Parameter i is not referenced
+      * "1"@(30:12>30:42): [27:1] Syntax error : Parameter j is not referenced
       * "1"@(32:12>32:42): [27:1] Syntax error : Function POW expected parameter 2 of type Numeric (actual: BOOL)
       * "1"@(34:12>34:42): [27:1] Syntax error : Function POW expected parameter 2 of max length 3 (actual: 5)
       * "1"@(36:12>36:42): [27:1] Syntax error : Symbol POWAAA is not referenced

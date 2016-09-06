@@ -114,7 +114,7 @@ class FunctionDeclarationChecker: NodeListener {
 				DiagnosticUtils.AddError(p.CodeElement(), "Function \""+header.Name+"\" can have only one parameters profile.");
 		else profile = profiles[0].CodeElement();
 
-		var filesection = node.Get("file");
+		var filesection = node.Get<FileSection>("file");
 		if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 			DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
