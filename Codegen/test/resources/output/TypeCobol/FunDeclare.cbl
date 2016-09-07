@@ -19,6 +19,7 @@
             .
        
       *DECLARE function DoesNothing PUBLIC.                                   
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. DoesNothing.                                               
          PROCEDURE DIVISION                                                   
          .                                                                    
@@ -27,6 +28,7 @@
        END PROGRAM DoesNothing.                                               
 
       *DECLARE function ReturnsZero PUBLIC.                                   
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. ReturnsZero.                                               
          DATA DIVISION.
          LINKAGE SECTION.                                                     
@@ -40,6 +42,7 @@
 
       * ERROR Illegal FILE SECTION
       *DECLARE function StrangelyReturnsItsInput PRIVATE.                     
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. StrangelyReturnsItsInput.                                  
          DATA DIVISION.
          FILE SECTION.
@@ -60,6 +63,7 @@
 
       * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
       *DECLARE function SumThreeWithClutterInLinkage PRIVATE.                 
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SumThreeWithClutterInLinkage.                              
          DATA DIVISION.
          LINKAGE SECTION.
@@ -85,6 +89,7 @@
        END PROGRAM SumThreeWithClutterInLinkage.                              
        
       *DECLARE function SwapParameters PRIVATE.                               
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SwapParameters.                                            
          DATA DIVISION.
          WORKING-STORAGE SECTION.
@@ -105,6 +110,7 @@
       * ERROR because x and y should be INOUT
       * ERROR because y INPUT vs OUTPUT types differ
       *DECLARE function SwapParametersWrong PRIVATE.                          
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SwapParametersWrong.                                       
          LINKAGE SECTION.                                                     
            01 x PIC 9(04).                                                    
@@ -121,6 +127,7 @@
        END PROGRAM SwapParametersWrong.                                       
       * ERROR because illegal GLOBAL or EXTERNAL
       *DECLARE function IllegalClauses PUBLIC.                                
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. IllegalClauses.                                            
          DATA DIVISION.
            WORKING-STORAGE SECTION.

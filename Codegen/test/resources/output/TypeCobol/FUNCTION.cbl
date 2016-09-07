@@ -31,6 +31,7 @@
                                                                               
        
       *DECLARE function POW PRIVATE.                                          
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. POW.                                                       
          LINKAGE SECTION.                                                     
            01 x PIC 9(05).                                                    

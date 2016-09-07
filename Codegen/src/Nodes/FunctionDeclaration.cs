@@ -83,6 +83,7 @@ namespace TypeCobol.Codegen.Nodes {
 			get {
 				if (_cache == null) {
 					_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
+					_cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
 					_cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. "+ProgramName.Head+'.', null));
 				}
 				return _cache;
