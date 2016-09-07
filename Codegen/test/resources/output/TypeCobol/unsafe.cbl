@@ -27,12 +27,12 @@
 
       *    01 identifier-1 TYPE ToughGroup.                                   
        01 identifier-1.                                                       
-             02 x PIC 9(04).                                                  
-             02 y PIC 9(04).                                                  
+           02 x PIC 9(04).                                                    
+           02 y PIC 9(04).                                                    
       *    01 identifier-2 TYPE SmallGroup.                                   
        01 identifier-2.                                                       
-             02 x PIC 9(04).                                                  
-             02 y PIC 9(04).                                                  
+           02 x PIC 9(04).                                                    
+           02 y PIC 9(04).                                                    
       *    01 identifier-3 TYPE Small.                                        
        01 identifier-3.                                                       
            01 identifier-4 PIC 9(04).

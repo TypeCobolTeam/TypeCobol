@@ -47,7 +47,7 @@ internal class TypedDataNode: DataDescription, Generated {
 		var str = new System.Text.StringBuilder();
 		if (level == 1 || level == 77) return str;
 		str.Append("    ");
-		for(int i=0; i<indent; i++) str.Append("  ");
+		for(int i=1; i<indent; i++) str.Append("  ");
 		return str;
 	}
 
