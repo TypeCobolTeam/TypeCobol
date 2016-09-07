@@ -34,10 +34,13 @@ cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
 moveSimple: MOVE UNSAFE? (booleanValue | variable7) TO storageArea1+;
-//                 ^            ^
-//                  \            \
-//                   \            --------------  MOVE [TRUE|FALSE] TO <boolean>
-//                    --------------------------  MOVE UNSAFE <custom type> TO <custom type>
+//                   ^          ^
+//                    \          \
+//                     \          --------------  MOVE [TRUE|FALSE] TO <boolean>
+//                      >-----------------------  MOVE UNSAFE <custom type> TO <custom type>
+//                      \
+//                       V
+moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemReference TO toGroupItem=dataItemReference;
 
 
 // rule modified to support:

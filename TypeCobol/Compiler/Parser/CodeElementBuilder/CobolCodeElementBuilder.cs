@@ -1783,7 +1783,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void EnterMoveCorresponding(CodeElementsParser.MoveCorrespondingContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateMoveCorrespondingStatement(context);
+			CodeElement = CobolStatementsBuilder.CreateMoveStatement(context);
 		}
 
 		// --- SET STATEMENT ---
