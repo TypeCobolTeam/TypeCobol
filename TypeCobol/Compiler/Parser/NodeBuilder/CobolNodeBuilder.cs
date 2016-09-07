@@ -46,13 +46,8 @@ namespace TypeCobol.Compiler.Parser
 							TableOfIntrisic.AddType((TypeDefinition)type);
 				}
 				// TODO#249: use a COPY for these
-				foreach (var type in DataType.BuiltInCustomTypes) {
-					var typedef = new TypeDefinitionEntry();
-					typedef.LevelNumber = new GeneratedIntegerValue(1);
-					typedef.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
-					typedef.DataType = type;
-					TableOfIntrisic.AddType(new TypeDefinition(typedef));
-				}
+				foreach (var type in DataType.BuiltInCustomTypes)
+					TableOfIntrisic.AddType(DataType.CreateBuiltIn(type));
 			}
 		}
 

@@ -123,28 +123,34 @@ namespace TypeCobol.Compiler.CodeElements
 // [TYPECOBOL]
 		public static readonly DataType Boolean            = new DataType("BOOL", true);
 		public static readonly DataType Date               = new DataType("DATE", true);
-/*
-		public static readonly TypeDefinitionEntry Date = CreateDate();
-		private static TypeDefinitionEntry CreateDate() {
-			var type = new TypeDefinitionEntry();
-			type.DataName = new SymbolDefinition(new GeneratedAlphanumericValue("DATE"), SymbolType.DataName);
-			type.DataType = new DataType("DATE", true, true);
-//TODO#249			type.IsStrong = true;
-			CreateMember(type, 5, "YYYY", 4);
-			CreateMember(type, 5, "MM",   2);
-			CreateMember(type, 5, "DD",   2);
-			return type;
+
+		public static Nodes.TypeDefinition CreateBuiltIn(DataType type) {
+			if (type == DataType.Date) return CreateDate();
+			return CreateBase(type);
 		}
-		private static void CreateMember(DataDescriptionEntry parent, int level, string name, int length) {
+		private static Nodes.TypeDefinition CreateBase(DataType type) {
+			var entry = new TypeDefinitionEntry();
+			entry.LevelNumber = new GeneratedIntegerValue(1);
+			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
+			entry.DataType = type;
+			return new Nodes.TypeDefinition(entry);
+		}
+		private static Nodes.TypeDefinition CreateDate() {
+			var node = CreateBase(DataType.Date);
+			node.Add(CreateData(5, "YYYY", '9',4));
+			node.Add(CreateData(5, "MM",   '9',2));
+			node.Add(CreateData(5, "DD",   '9',2));
+			return node;
+		}
+		private static Nodes.DataDescription CreateData(int level, string name, char type, int length) {
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
 			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-			string picture = String.Format("9 ({0})", length);
-			data.CustomType = new GeneratedAlphanumericValue(picture);
-//TODO#249			data.TopLevel = parent;
-//TODO#249			parent.Subordinates.Add(data);
+			data.Picture = new GeneratedAlphanumericValue(String.Format("{0}({1})", type, length));
+			data.DataType = DataType.Create(data.Picture.Value);
+			return new Nodes.DataDescription(data);
 		}
-*/
+
 		public static readonly DataType[] BuiltInCustomTypes = new DataType[] { DataType.Boolean, DataType.Date, };
 // [/TYPECOBOL]
 
