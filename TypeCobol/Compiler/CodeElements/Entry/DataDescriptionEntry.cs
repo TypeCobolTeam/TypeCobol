@@ -872,12 +872,6 @@
 
 		public SyntaxProperty<bool> IsStrong { get; internal set; }
 
-		private DataType datatype;
-		public DataType DataType {
-			         get { return datatype;  }
-			internal set { datatype = value; }
-		}
-		public int Length { get { return 1; } }
 	}
 
 	/// <summary>

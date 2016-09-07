@@ -957,12 +957,14 @@ namespace TypeCobol.Compiler.Parser
 				return;
 			}
 			var entry = new DataDescriptionEntry();
+			entry.DataType = DataType.Unknown;
 			var dataname = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 // [COBOL 2002]
 			if (context.cobol2002TypedefClause() != null) {
 				var typedef = new TypeDefinitionEntry();
 				var strong = context.cobol2002TypedefClause().STRONG();
 				typedef.IsStrong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
+				typedef.CustomType = new GeneratedAlphanumericValue(dataname.Name);
 				typedef.DataType = new DataType(dataname.Name, typedef.IsStrong.Value);
 				entry = typedef;
 			}
@@ -973,18 +975,17 @@ namespace TypeCobol.Compiler.Parser
 			entry.DataName = dataname;
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
-			entry.DataType = DataType.Unknown;
 
 			if (context.pictureClause() != null && context.pictureClause().Length > 0) {
 				var pictureClauseContext = context.pictureClause()[0];
 				entry.Picture = CobolWordsBuilder.CreateAlphanumericValue(pictureClauseContext.pictureCharacterString);
-				entry.DataType = DataType.Create(entry.Picture.Value);
+				if (entry.DataType == DataType.Unknown) // only for a basic TYPEDEF <typename> PIC <picture>
+					entry.DataType = DataType.Create(entry.Picture.Value);
 			}
 // [COBOL 2002]
 			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
 				entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause()[0]);
 				entry.DataType = DataType.CreateCustom(entry.CustomType.Value);
-				// we must wait until semantic analysis to know whether or not entry.Type is Strong or Nestable
 			}
 // [/COBOL 2002]
 			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)

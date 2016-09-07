@@ -34,12 +34,8 @@ internal class TypedDataNode: DataDescription, Generated {
 	internal ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType) {
 		var line = GetIndent(level, indent);
 		line.Append(level.ToString("00")).Append(' ').Append(data.DataName.Name);
-		if (isCustomType) {
-			line.Append('.');
-			foreach(var type in this.Node.SymbolTable.GetType(new URI(data.DataType.Name))) {
-				System.Console.WriteLine("%%% ctype: "+type.Name+" #"+((Node)type).Children.Count);
-			}
-		} else line.Append(" PIC ").Append(data.Picture).Append('.');
+		if (!isCustomType) line.Append(" PIC ").Append(data.Picture);
+		line.Append('.');
 		return new TextLineSnapshot(-1, line.ToString(), null);
 	}
 
