@@ -14,7 +14,7 @@ internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				_cache.Add(new TextLineSnapshot(-1, "  LINKAGE SECTION.", null));
+				_cache.Add(new TextLineSnapshot(-1, "LINKAGE SECTION.", null));
 			}
 			return _cache;
 		}

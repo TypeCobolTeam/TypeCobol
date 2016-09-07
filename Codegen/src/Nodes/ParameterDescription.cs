@@ -21,7 +21,6 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
 				var str = new System.Text.StringBuilder();
-				str.Append("    ");// indent
 				// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
 //TODO#249				if (Description.IsConditionNameDescription) {
 //					str.Append("88 ").Append(Description.Name.Name); //TODO value

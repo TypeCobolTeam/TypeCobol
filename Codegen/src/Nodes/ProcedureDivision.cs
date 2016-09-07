@@ -27,7 +27,7 @@ namespace TypeCobol.Codegen.Nodes {
 			get {
 				if (_cache == null) {
 					_cache = new List<ITextLine>();
-					_cache.Add(new TextLineSnapshot(-1, "  PROCEDURE DIVISION", null));
+					_cache.Add(new TextLineSnapshot(-1, "PROCEDURE DIVISION", null));
 					int c = 0;
 					var done = new List<string>();
 					foreach(var parameter in UsingParameters) {

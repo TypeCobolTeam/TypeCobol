@@ -21,7 +21,7 @@
       *DECLARE function DoesNothing PUBLIC.                                   
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. DoesNothing.                                               
-         PROCEDURE DIVISION                                                   
+       PROCEDURE DIVISION                                                     
          .                                                                    
            DISPLAY 'I DO NOTHING'
            .
@@ -31,9 +31,9 @@
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. ReturnsZero.                                               
          DATA DIVISION.
-         LINKAGE SECTION.                                                     
-           01 result PIC 9(04).                                               
-         PROCEDURE DIVISION                                                   
+       LINKAGE SECTION.                                                       
+       01 result PIC 9(04).                                                   
+       PROCEDURE DIVISION                                                     
              USING BY REFERENCE result                                        
          .                                                                    
            MOVE 0 TO result.
@@ -48,9 +48,9 @@
          FILE SECTION.
            FD myfile. 01 toto PIC X.
          LINKAGE SECTION.
-           01 x PIC 9(04).                                                    
-           01 result PIC 9(04).                                               
-         PROCEDURE DIVISION                                                   
+       01 x PIC 9(04).                                                        
+       01 result PIC 9(04).                                                   
+       PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE result                                        
          .                                                                    
@@ -75,8 +75,8 @@
            01 b PIC 9(04).
            01 c PIC 9(04).
            01 result PIC 9(04).
-           01 z PIC 9(04).                                                    
-         PROCEDURE DIVISION                                                   
+       01 z PIC 9(04).                                                        
+       PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
                    BY REFERENCE z                                             
@@ -94,10 +94,10 @@
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
-         LINKAGE SECTION.                                                     
-           01 x PIC 9(04).                                                    
-           01 y PIC 9(04).                                                    
-         PROCEDURE DIVISION                                                   
+       LINKAGE SECTION.                                                       
+       01 x PIC 9(04).                                                        
+       01 y PIC 9(04).                                                        
+       PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
          .                                                                    
@@ -112,12 +112,12 @@
       *DECLARE function SwapParametersWrong PRIVATE.                          
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SwapParametersWrong.                                       
-         LINKAGE SECTION.                                                     
-           01 x PIC 9(04).                                                    
-           01 y PIC 9(04).                                                    
-           01 a PIC 9(04).                                                    
-           01 b PIC 9(04).                                                    
-         PROCEDURE DIVISION                                                   
+       LINKAGE SECTION.                                                       
+       01 x PIC 9(04).                                                        
+       01 y PIC 9(04).                                                        
+       01 a PIC 9(04).                                                        
+       01 b PIC 9(04).                                                        
+       PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
                    BY REFERENCE a                                             
@@ -133,7 +133,7 @@
            WORKING-STORAGE SECTION.
              01 x PIC X IS GLOBAL.
              01 y PIC X IS EXTERNAL.
-         PROCEDURE DIVISION                                                   
+       PROCEDURE DIVISION                                                     
          .                                                                    
            .
        END PROGRAM IllegalClauses.                                            
