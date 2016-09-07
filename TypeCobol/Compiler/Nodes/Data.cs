@@ -35,7 +35,7 @@ public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader
 	public override bool IsShared { get { return true; } }
 }
 
-public abstract class DataDefinition: Node, Parent<DataDefinition>, Child<DataSection> {
+public abstract class DataDefinition: Node, Parent<DataDefinition> {
 	public DataDefinition(DataDefinitionEntry entry): base(entry) { }
 	public override string ID { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 }

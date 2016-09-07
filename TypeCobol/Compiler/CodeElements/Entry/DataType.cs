@@ -35,11 +35,11 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static DataType CreateCustom(string name, bool IsStrong=true, bool IsNestable=true) {
+		public static DataType CreateCustom(string name, bool IsStrong=true, bool IsCOBOL=false) {
 			foreach(var builtin in BuiltInCustomTypes)
 				if (builtin.Name.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
 					return builtin;
-			return new DataType(name, IsStrong, IsNestable);
+			return new DataType(name, IsStrong, IsCOBOL);
 		}
 
 		public static DataType Create(string picture) {

@@ -92,43 +92,48 @@ namespace TypeCobol.Compiler.CodeModel
 		public List<Named> GetVariable(QualifiedName name) {
 			var found = GetVariable(name.Head);
 			if (found.Count > 0) return Get(found, name);
-			else return GetChildOfCustomTypedVariable(name);
+			else return QualifyUsingType(name);
 		}
 
-		private List<Named> GetChildOfCustomTypedVariable(QualifiedName name) {
-			var found = GetVariable(name[0]);
-			int begin = 0;
-			int end = begin;
-			while(end < name.Count) {
-				var max = QualifyMax(found, name, begin, out end);
-				found = ContinueWithTypes(found);
-				begin = end;
-			}
-			System.Console.WriteLine("## FOUND: "+found.Count);
-			return found;
-		}
-		private QualifiedName QualifyMax(List<Named> found, QualifiedName name, int begin, out int end) {
-			var max = new System.Text.StringBuilder();
-			for (int c=0; c<=begin; c++) max.Append(name[c]).Append('.');
-			max.Length -= 1;
-			for(end=begin+1; end<name.Count; end++) {
-				var filtered = Filter(found, name[end], end);
-				if (filtered.Count < 1) break;
-				found = filtered;
-				max.Append('.').Append(name[end]);
-			}
-			return new URI(max.ToString());
-		}
-		private List<Named> ContinueWithTypes(List<Named> found) {
-			var results = new List<Named>();
+	private List<Named> QualifyUsingType(QualifiedName name) {
+		var found = GetVariable(name[0]);
+		for(int c=1; c<name.Count; c++) {
+			var filtered = new List<Named>();
 			foreach(var variable in found) {
-				if (variable is Typed) {
-					var types = GetType(((Typed)variable).DataType.Name);
-					foreach(var type in types) results.AddRange(((TypeDefinition)type).Children);
-				}
+				filtered.AddRange(GetDataChildren((DataDescription)variable, name[c]));
+				filtered.AddRange(GetChildrenFromType((DataDescription)variable, name[c]));
 			}
-			return results;
+			found = filtered;
 		}
+		return found;
+	}
+
+	/// <param name="data">Its children are compared agains name</param>
+	/// <param name="name">name part (not an URI)</param>
+	/// <returns>Direct data children of a given name</returns>
+	public IList<Named>  GetDataChildren(DataDescription data, string name) {
+		var results = new List<Named>();
+		foreach(var child in data.Children)
+			if (name.Equals(child.Name))
+				results.Add(child);
+		return results;
+	}
+	/// <param name="data">The direct children of its type are compared agains name</param>
+	/// <param name="name">name part (not an URI)</param>
+	/// <returns>Direct children of a given name inherited by data according to its type</returns>
+	public IList<Named> GetChildrenFromType(DataDescription data, string name) {
+		var results = new List<Named>();
+		if (data.DataType.IsCOBOL) return results;
+		foreach(var type in data.SymbolTable.GetType(data.DataType.Name)) {
+			System.Console.WriteLine("-- "+data.Name+':'+data.DataType.Name);
+			foreach(var child in ((TypeDefinition)type).Children)
+				if (name.Equals(child.Name))
+					results.Add(child);
+		}
+		return results;
+	}
+
+
 
 		private List<Named> GetVariable(string name) {
 			var values = new List<Named>();
