@@ -1,7 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿namespace TypeCobol.Compiler.CodeElements {
 
-namespace TypeCobol.Compiler.CodeElements {
-
+	using JetBrains.Annotations;
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements.Expressions;
 

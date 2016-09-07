@@ -12,8 +12,10 @@ public static class Attributes {
 		var table = node.SymbolTable;
 		object value = node;
 		try {
-			foreach(var attr in attribute.Split('.'))
+			foreach(var attr in attribute.Split('.')) {
+				if (value == null) break;
 				value = attributes[attr].GetValue(value, table);
+			}
 			return value;
 		} catch (KeyNotFoundException ex) { return null; }
 	}
@@ -24,7 +26,6 @@ public static class Attributes {
 		attributes["name"]  = new NameAttribute();
 		attributes["level"] = new LevelAttribute();
 		attributes["type"]  = new TypeAttribute();
-//		Attributes["typedef"] = new TypeDefined();
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
 		attributes["function"] = new FunctionUserAttribute();
@@ -51,7 +52,6 @@ internal class TypeAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		try { bool.Parse(o.ToString()); return "BOOL"; }
 		catch(System.FormatException) { } // not a boolean
-
 		var node = (DataDescription)o;
 		var data = (DataDescriptionEntry)node.CodeElement;
 		return /*data.Picture!=null? data.Picture.Value :*/ data.CustomType!=null? data.CustomType.Value : null;
@@ -70,9 +70,10 @@ internal class SenderAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var statement = ((Node)o).CodeElement as Sending;
 		if (statement == null) return null;
-		if (statement.SendingItems.Count == 0) return null;
-		if (statement.SendingItems.Count == 1) return statement.SendingItems[0];
-		throw new System.ArgumentOutOfRangeException("Too many sending items ("+statement.SendingItems.Count+")");
+		var items = statement.SendingItems;
+		if (items.Count == 0) return null;
+		if (items.Count == 1) return statement.SendingItems[0];
+		throw new System.ArgumentOutOfRangeException("Too many sending items ("+items.Count+")");
 	}
 }
 internal class ReceiverAttribute: Attribute {
