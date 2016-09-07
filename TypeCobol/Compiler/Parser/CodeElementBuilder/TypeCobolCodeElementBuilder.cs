@@ -67,7 +67,7 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 			parameter.DataType = DataType.Create(parameter.Picture.Value);
 		} else {
 			parameter.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause());
-			parameter.DataType = DataType.Create(parameter.CustomType.Value);
+			parameter.DataType = DataType.CreateCustom(parameter.CustomType.Value);
 		}
 		//TODO#245: subphrases
 		return parameter;

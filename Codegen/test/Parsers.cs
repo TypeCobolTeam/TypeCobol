@@ -110,6 +110,14 @@ namespace TypeCobol.Codegen {
 			ParseGenerateCompare(file+".cbl", skeletons);
 		}
 
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+		public void ParseLibrary() {
+			var skeletons = ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
+			ParseGenerateCompare(Path.Combine("TypeCobol","Library")+".cbl", skeletons);
+		}
+
 
 
 

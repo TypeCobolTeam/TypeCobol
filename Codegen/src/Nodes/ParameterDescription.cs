@@ -2,6 +2,8 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
+	using TypeCobol.Compiler.CodeModel;
 	using TypeCobol.Compiler.Nodes;
 	using TypeCobol.Compiler.Text;
 
@@ -13,9 +15,11 @@
 /// </summary>
 internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Functions.ParameterDescription>, Generated {
 	public Compiler.CodeElements.Functions.ParameterDescription Description { get; private set; }
-	public ParameterEntry(Compiler.CodeElements.Functions.ParameterDescription description): base(description) { }
+	public ParameterEntry(Compiler.CodeElements.Functions.ParameterDescription description, SymbolTable table): base(description) {
+		this.SymbolTable = table;
+	}
 
-	private IList<ITextLine> _cache = null;
+	private List<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
@@ -27,10 +31,16 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 //					if (Description.InitialValue != null) str.Append(" VALUE ").Append(Description.InitialValue.ToString());
 //					if (Description.ThroughValue != null) str.Append(' ').Append(Description.ThroughValue.ToString());
 //				} else {
-					str.Append("01 ").Append(this.CodeElement().Name).Append(" PIC ").Append(this.CodeElement().Picture);
+					str.Append("01 ").Append(this.CodeElement().Name);
+					if(this.CodeElement().Picture != null) str.Append(" PIC ").Append(this.CodeElement().Picture);
 //				}
 				str.Append('.');
 				_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
+
+				if (!this.CodeElement().DataType.IsCOBOL) {
+					var customtype = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
+					if (customtype.Count > 0) _cache.AddRange(TypedDataNode.InsertChildren(this.SymbolTable, (TypeDefinition)customtype[0], 2, 1));
+				}
 			}
 			return _cache;
 		}
