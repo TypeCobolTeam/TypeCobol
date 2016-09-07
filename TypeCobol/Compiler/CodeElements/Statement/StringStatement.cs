@@ -6,7 +6,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class StringStatement : StatementElement
+    public class StringStatement : StatementElement, VariableWriter
     {
         public StringStatement() : base(CodeElementType.StringStatement, StatementType.StringStatement) { }
 
@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///
         /// - identifier-3 must not described with the JUSTIFIED clause.
         /// </summary>
-        public ReceivingStorageArea IntoIdentifier { get; set; }
+        public ReceivingStorageArea IntoIdentifier { [CanBeNull] get; set; }
         
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// identifier-4 must not be described with the symbol P in its PICTURE
         /// character-string.
         /// </summary>
-        public ReceivingStorageArea PointerIdentifier { get; set; }
+        public ReceivingStorageArea PointerIdentifier {[CanBeNull] get; set; }
 
         /// <summary>
         /// Executed when the pointer value (explicit or implicit):
@@ -115,6 +115,42 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
+
+        private List<QualifiedName> _variables;
+        private IDictionary<QualifiedName, object> _variablesWritten;
+
+        public IList<QualifiedName> Variables
+        {
+            get {
+                if (_variables == null)
+                {
+                    _variables = new List<QualifiedName>();
+                    if (IntoIdentifier != null)
+                    {
+                        _variables.Add(((Named) IntoIdentifier.StorageArea).QualifiedName);
+                    }
+                }
+                return _variables;
+            }
+        }
+
+        public IDictionary<QualifiedName, object> VariablesWritten
+        {
+            get
+            {
+                if (_variablesWritten == null)
+                {
+                    _variablesWritten = new Dictionary<QualifiedName, object>();
+                    if (IntoIdentifier != null)
+                    {
+                        _variablesWritten.Add(((Named)IntoIdentifier.StorageArea).QualifiedName, StringStatementWhat);
+                    }
+                }
+                return _variablesWritten;
+            }
+        }
+
+        public bool IsUnsafe { get { return false; }  }
     }
 
 	public class StringStatementWhat

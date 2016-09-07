@@ -118,8 +118,12 @@ public class Stop: Node, CodeElementHolder<StopStatement>, Statement {
 	public Stop(StopStatement statement): base(statement) { }
 }
 
-public class String: Node, CodeElementHolder<StringStatement>, Statement {
+public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	public String(StringStatement statement): base(statement) { }
+
+    public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
+    public IDictionary<QualifiedName, object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement {
