@@ -87,6 +87,9 @@ namespace TypeCobol.Compiler.Parser
 		internal AlphanumericValue CreateAlphanumericValue(ITerminalNode node) {
 			var token = ParseTreeUtils.GetFirstToken(node);
 			if (token == null) return null;
+// [COBOL 2002]
+			if (token.TokenType == TokenType.DATE) token.TokenType = TokenType.UserDefinedWord;
+// [/COBOL 2002]
             return new AlphanumericValue(token);
         }
 

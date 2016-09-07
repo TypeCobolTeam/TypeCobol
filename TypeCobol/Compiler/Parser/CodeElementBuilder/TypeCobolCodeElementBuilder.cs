@@ -64,10 +64,11 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 		if (context.pictureClause() != null) {
 			parameter.Picture = CobolWordsBuilder.CreateAlphanumericValue(context.pictureClause().pictureCharacterString);
+			parameter.DataType = DataType.Create(parameter.Picture.Value);
 		} else {
-			parameter.Picture = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause());
+			parameter.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause());
+			parameter.DataType = DataType.Create(parameter.CustomType.Value);
 		}
-		parameter.DataType = DataType.Create(parameter.Picture.Value);
 		//TODO#245: subphrases
 		return parameter;
 	}

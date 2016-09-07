@@ -90,7 +90,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Type from the TokenType enumeration
         /// </summary>
-        public TokenType TokenType { get; private set; }
+        public TokenType TokenType { get; internal set; }
 
         /// <summary>
         /// Family from the TokenFamily Enumeration
