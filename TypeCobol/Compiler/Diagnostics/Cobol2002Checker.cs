@@ -5,6 +5,7 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
@@ -66,33 +67,55 @@ namespace TypeCobol.Compiler.Diagnostics
                                                                                             // SET myBool TO TRUE where myBool is of type BOOL need to works
                 || ce is ReturnStatement || ce is RewriteStatement || ce is WriteStatement || ce is SetStatement)
                 return;
-/* TODO#249
-            var receivedList = ((Receiving) ce).Expressions;
+
+            
+            var variablesWritten = ((VariableWriter)ce).VariablesWritten;
             SymbolTable symbolTable = program.SymbolTable;
-            foreach (var received in receivedList)
-            {
-                if (received is Identifier)
-                {
-                    IList<DataDescriptionEntry> identifiers = symbolTable.Get(((Identifier) received).Name);
-                    foreach (var identifier in identifiers)
-                    {
-                        var first = GetFirstStrongDataDescriptionEntry(identifier, symbolTable);
-                        if (first == null) continue;
-                        if (first.DataType.IsStrong)
-                        {
-                            //Rule#11 about TYPE
-                            DiagnosticUtils.AddError(ce, "Strongly typed variable can't be used as a receiving operand of " +ce.Type);
+		    foreach (var varWritten in variablesWritten)
+		    {
+                IList<Named> variablesNameds = symbolTable.GetVariable(varWritten.Key);
+		        foreach (var variableNamed in variablesNameds)
+		        {
+		            if (variableNamed is DataDefinition)
+		            {
+                        DataType dataType = GetFirstStrongDataType(symbolTable, (DataDefinition) variableNamed);
+		                if (dataType != null)
+		                {
+                            DiagnosticUtils.AddError(ce, "Strongly typed variable can't be used as a receiving operand of " + ce.Type);
                         }
                     }
-                }
-            }
-*/
-		}
+		        }
 
-		private object GetFirstStrongDataDescriptionEntry(DataDescriptionEntry identifier, CodeModel.SymbolTable table) {
-			//TODO#249 check each parent of identifier (including itself) to see if CustomType is not null and is strong
-			//         however, DataDescriptionEntry.TopLevel no longer exists ...
-			return null;
-		}
+		    }
+        }
+
+        //TODO need to move this method so we can reuse it
+        private DataType GetFirstStrongDataType(SymbolTable table, DataDefinition symbol)
+        {
+            var parent = symbol;
+            while (parent != null)
+            {
+                DataType dataType = GetTypeDefinition(table, parent);
+                if (dataType.IsStrong) return dataType;
+                parent = parent.Parent as DataDefinition;
+            }
+            return null;
+        }
+
+        //TODO need to move this method so we can reuse it
+        private DataType GetTypeDefinition(SymbolTable table, Named symbol)
+        {
+            var data = symbol as DataDefinition;
+            if (data != null)
+            {
+                var entry = (DataDescriptionEntry)data.CodeElement;
+                if (entry.CustomType == null) return entry.DataType;//not a custom type
+            }
+            Typed typed = symbol as Typed;
+            if (typed == null) return null;// symbol untyped
+            var types = table.GetTypes(typed);
+            if (types.Count != 1) return null;// symbol type not found or ambiguous
+            return types[0].DataType;
+        }
     }
 }
