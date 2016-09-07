@@ -961,7 +961,8 @@ namespace TypeCobol.Compiler.Parser
 // [COBOL 2002]
 			if (context.cobol2002TypedefClause() != null) {
 				var typedef = new TypeDefinitionEntry();
-				typedef.IsStrong = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()));
+				var strong = context.cobol2002TypedefClause().STRONG();
+				typedef.IsStrong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
 				typedef.DataType = new DataType(dataname.Name, typedef.IsStrong.Value);
 				entry = typedef;
 			}
