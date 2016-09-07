@@ -321,7 +321,7 @@
     <Compile Include="Compiler\Parser\ProgramClassParserStep.cs" />
     <Compile Include="Compiler\Parser\CodeElementsDocument.cs" />
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />
-    <Compile Include="Compiler\Parser\TypeCobolCodeElementBuilder.cs" />
+    <Compile Include="Compiler\Parser\CodeElementBuilder\TypeCobolCodeElementBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Preprocessor\CopyTokensLinesIterator.cs" />
     <Compile Include="Compiler\Preprocessor\ImportedTokensDocument.cs" />
