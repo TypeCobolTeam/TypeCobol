@@ -6,16 +6,22 @@ namespace TypeCobol.Compiler.CodeElements {
 	using TypeCobol.Compiler.CodeElements.Expressions;
 
 /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
-public abstract class MoveStatement : StatementElement, Sending,VariableWriter,FunctionCaller {
+public abstract class MoveStatement : StatementElement, VariableWriter,Sending,FunctionCaller {
 	public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
 // [TYPECOBOL]
 	public SyntaxProperty<bool> Unsafe { get; set; }
 	public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
 // [/TYPECOBOL]
-	public virtual IList<QualifiedName> Variables { get { return new List<QualifiedName>(); } }
-	public virtual IList<QualifiedName> SendingItems { get { return new List<QualifiedName>(); } }
-	public virtual IDictionary<QualifiedName,object> VariablesWritten { get { return new Dictionary<QualifiedName,object>(); } }
-	public virtual IList<Functions.FunctionCall> FunctionCalls { get { return new List<Functions.FunctionCall>(); } }
+
+	protected IDictionary<QualifiedName, object> _variablesWritten;
+	protected IList<QualifiedName> _sendingItems = null;
+	protected List<QualifiedName> _variables = null;
+	protected List<Functions.FunctionCall> _functions = null;
+
+	public abstract IList<QualifiedName> Variables { get; }
+	public abstract IDictionary<QualifiedName,object> VariablesWritten { get; }
+	public abstract IList<QualifiedName> SendingItems { get; }
+	public abstract IList<Functions.FunctionCall> FunctionCalls { get; }
 }
 
 /// <summary>
@@ -49,42 +55,17 @@ public class MoveSimpleStatement : MoveStatement {
 	public ReceivingStorageArea[] ReceivingStorageAreas { get; private set; }
 
 
-	private IDictionary<QualifiedName, object> _variablesWritten;
-	private IList<QualifiedName> _sendingItems = null;
-	private List<QualifiedName> _variables = null;
-	private List<Functions.FunctionCall> _functions = null;
-
 
 	public override IList<QualifiedName> Variables {
 		[NotNull]
 		get {
-			if (_variables == null) {
-				_variables = new List<QualifiedName>();
-				var sending = SendingItem as QualifiedName;
-				if (sending != null) _variables.Add(sending);
-				_variables.AddRange(VariablesWritten.Keys);
-			}
+			if (_variables != null) return _variables;
+
+			_variables = new List<QualifiedName>();
+			var sending = SendingItem as QualifiedName;
+			if (sending != null) _variables.Add(sending);
+			_variables.AddRange(VariablesWritten.Keys);
 			return _variables;
-		}
-	}
-
-	public override IList<QualifiedName> SendingItems {
-		[NotNull]
-		get {
-			if (_sendingItems == null) {
-				_sendingItems = new List<QualifiedName>();
-				if (SendingVariable != null && SendingVariable.Name != null) _sendingItems.Add(SendingVariable.QualifiedName);
-			}
-			return _sendingItems;
-		}
-	}
-
-	private object SendingItem {
-		[CanBeNull]
-		get {
-			if (SendingVariable != null) return SendingVariable.QualifiedName;
-			else if (SendingBoolean != null) return SendingBoolean.Value;
-			else return null;
 		}
 	}
 
@@ -107,19 +88,45 @@ public class MoveSimpleStatement : MoveStatement {
 		}
 	}
 
-	public override IList<Functions.FunctionCall> FunctionCalls {
-		[NotNull]
+	private object SendingItem {
+		[CanBeNull]
 		get {
-			if (_functions == null) {
-				_functions = new List<Functions.FunctionCall>();
-				IntrinsicFunctionCallResult sending = null;
-				if (SendingVariable != null) sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
-				if (sending != null) _functions.Add(new Functions.FunctionCall(sending));
+			if (SendingVariable != null) {
+				if (SendingVariable.IsLiteral) {
+					if (SendingVariable.NumericValue != null) return SendingVariable.NumericValue.Value;
+					if (SendingVariable.AlphanumericValue != null) return SendingVariable.AlphanumericValue.Value;
+					throw new System.NotSupportedException();
+				}
+				return SendingVariable.QualifiedName;
 			}
-			return _functions;
+			else if (SendingBoolean != null) return SendingBoolean.Value;
+			else return null;
 		}
 	}
 
+	public override IList<QualifiedName> SendingItems {
+		[NotNull]
+		get {
+			if (_sendingItems != null) return _sendingItems;
+
+			_sendingItems = new List<QualifiedName>();
+			if (SendingVariable != null && SendingVariable.Name != null) _sendingItems.Add(SendingVariable.QualifiedName);
+			return _sendingItems;
+		}
+	}
+
+	public override IList<Functions.FunctionCall> FunctionCalls {
+		[NotNull]
+		get {
+			if (_functions != null) return _functions;
+
+			_functions = new List<Functions.FunctionCall>();
+			IntrinsicFunctionCallResult sending = null;
+			if (SendingVariable != null) sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
+			if (sending != null) _functions.Add(new Functions.FunctionCall(sending));
+			return _functions;
+		}
+	}
 }
 
 /// <summary>
@@ -148,6 +155,53 @@ public class MoveCorrespondingStatement : MoveStatement {
 	/// The receiving group item.
 	/// </summary>
 	public DataOrConditionStorageArea ToGroupItem { get; set; }
+
+
+
+	public override IList<QualifiedName> Variables {
+		[NotNull]
+		get {
+			if (_variables != null) return _variables;
+
+			_variables = new List<QualifiedName>();
+			if (FromGroupItem != null && FromGroupItem.QualifiedName != null) _variables.Add(FromGroupItem.QualifiedName);
+			if (  ToGroupItem != null &&   ToGroupItem.QualifiedName != null) _variables.Add(  ToGroupItem.QualifiedName);
+			return _variables;
+		}
+	}
+
+	public override IDictionary<QualifiedName,object> VariablesWritten {
+		[NotNull]
+		get {
+			if (_variablesWritten != null) return _variablesWritten;
+
+			_variablesWritten = new Dictionary<QualifiedName,object>();
+			if (ToGroupItem != null && ToGroupItem.QualifiedName != null)
+				_variablesWritten.Add(ToGroupItem.QualifiedName, FromGroupItem!=null? FromGroupItem.QualifiedName:null);
+			return _variablesWritten;
+		}
+	}
+
+	public override IList<QualifiedName> SendingItems {
+		[NotNull]
+		get {
+			if (_sendingItems != null) return _sendingItems;
+
+			_sendingItems = new List<QualifiedName>();
+			if (FromGroupItem != null && FromGroupItem.QualifiedName != null) _variables.Add(FromGroupItem.QualifiedName);
+			return _sendingItems;
+		}
+	}
+
+	public override IList<Functions.FunctionCall> FunctionCalls {
+		[NotNull]
+		get {
+			if (_functions != null) return _functions;
+
+			_functions = new List<Functions.FunctionCall>();
+			return _functions;
+		}
+	}
 }
 
 

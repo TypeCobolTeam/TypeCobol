@@ -333,14 +333,18 @@ class WriteTypeConsistencyChecker: NodeListener {
 			sending = GetTypeDefinition(node.SymbolTable, ssymbol);
 			if (sending == null) return;// cannot find sending type
 		} else {
-			bool? sbool= sent as bool?;
+			bool? sbool = sent as bool?;
 			if (sbool != null) sending = DataType.Boolean;
+			double? sdouble = sent as double?;
+			if (sdouble != null) sending = DataType.Numeric;
+			string sstring = sent as string;
+			if (sstring != null) sending = DataType.Alphanumeric;
 		}
 		if (sending != receiving) {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
 			if (receiving.IsStrong) {
 				if (!IsUnsafe) {
-					string message = "Can't write non typed "+sending+" to strongly typed variable "+wname.Head+":"+receiving+" (use UNSAFE keyword for that)";
+					string message = "Can't write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+" (use UNSAFE keyword for that)";
 					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 				}
 			} else {

@@ -1,6 +1,6 @@
       * 2 CodeElements errors
-      * "4"@(60:12>60:67): [30:1] Semantic error: Can't write non typed Alphanumeric to strongly typed variable InternalRef:INTERNAL-REF (use UNSAFE keyword for that)
-      * "4"@(61:12>61:67): [30:1] Semantic error: Can't write non typed INTERNAL-REF to strongly typed variable ExternalRef:EXTERNAL-REF (use UNSAFE keyword for that)
+      * "4"@(60:12>60:67): [30:1] Semantic error: Can't write Alphanumeric to strongly typed variable InternalRef:INTERNAL-REF (use UNSAFE keyword for that)
+      * "4"@(61:12>61:67): [30:1] Semantic error: Can't write INTERNAL-REF to strongly typed variable ExternalRef:EXTERNAL-REF (use UNSAFE keyword for that)
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Types.
        
