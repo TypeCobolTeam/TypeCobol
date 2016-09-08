@@ -39,8 +39,13 @@ namespace TypeCobol.Codegen.Nodes {
 			var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count + (profile.ReturningParameter != null? 1:0);
 			IReadOnlyList<DataDefinition> data = new List<DataDefinition>().AsReadOnly();
 			if (linkage == null && parameters > 0) {
+				var datadiv = node.Get<Compiler.Nodes.DataDivision>("data-division");
+				if (datadiv == null) {
+					datadiv = new DataDivision();
+					children.Add(datadiv);
+				}
 				linkage = new LinkageSection();
-				children.Add(linkage);
+				datadiv.Add(linkage);
 			}
 			if (linkage != null) data = linkage.Children();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER

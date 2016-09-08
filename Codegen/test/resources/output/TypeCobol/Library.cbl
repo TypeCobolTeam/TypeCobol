@@ -81,6 +81,7 @@
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. currentDate.                                               
+       DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 Result.                                                             
            02 YYYY PIC 9(4).                                                  
