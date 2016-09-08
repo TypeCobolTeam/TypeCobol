@@ -11,17 +11,32 @@ tcCodeElement:
 	;
 
 
+
+qualifiedParagraphNameReference: cobolQualifiedParagraphNameReference | tcQualifiedParagraphNameReference;
+cobolQualifiedParagraphNameReference: // was qualifiedParagraphNameReference
+	paragraphNameReference (IN | OF) sectionNameReference;
+tcQualifiedParagraphNameReference: // new feature
+	sectionNameReference ColonSeparator ColonSeparator paragraphNameReference;
+
 qualifiedDataName1: cobolQualifiedDataName1 | tcQualifiedDataName1;
 cobolQualifiedDataName1: // was qualifiedDataName1
 	dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
 tcQualifiedDataName1: // new feature
-	(ColonSeparator ColonSeparator dataNameReferenceOrFileNameReference)+ dataNameReference;
+	(dataNameReferenceOrFileNameReference ColonSeparator ColonSeparator)+ dataNameReference;
 
 qualifiedConditionName: cobolQualifiedConditionName | tcQualifiedConditionName;
 cobolQualifiedConditionName: // was qualifiedConditionName
 	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 tcQualifiedConditionName: // new feature
 	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference;
+
+qualifiedDataNameOrQualifiedConditionName1: cobolQualifiedDataNameOrQualifiedConditionName1 | tcQualifiedDataNameOrQualifiedConditionName1;
+cobolQualifiedDataNameOrQualifiedConditionName1: // was qualifiedDataNameOrQualifiedConditionName1
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
+tcQualifiedDataNameOrQualifiedConditionName1: // new feature
+	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)+ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference;
+
+qualifiedTextName: (textName ((IN | OF) libraryName)?) | (libraryName ColonSeparator ColonSeparator textName);
 
 
 
