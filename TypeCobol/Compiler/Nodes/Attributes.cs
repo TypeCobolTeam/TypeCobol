@@ -154,18 +154,14 @@ internal class DefinitionsAttribute: Attribute {
 	private List<Named> GetTypes(SymbolTable table) {
 		var list = new List<Named>();
 		if (table == null) return list;
-		foreach(var items in table.Types)
-			foreach(var item in items.Value)
-				list.Add(new Definitions.LabelledName(item, "\'T"+(++ct).ToString("0000000")+'\''));
+		foreach(var items in table.Types) list.AddRange(items.Value);
 		list.AddRange(GetTypes(table.EnclosingScope));
 		return list;
 	}
 	private List<Named> GetFunctions(SymbolTable table) {
 		var list = new List<Named>();
 		if (table == null) return list;
-		foreach(var items in table.Functions)
-			foreach(var item in items.Value)
-				list.Add(new Definitions.LabelledName(item, "\'F"+(++cf).ToString("0000000")+'\''));
+		foreach(var items in table.Functions) list.AddRange(items.Value);
 		list.AddRange(GetFunctions(table.EnclosingScope));
 		return list;
 	}
@@ -184,14 +180,6 @@ public class Definitions {
 		if (functions.Count > 0) str.Length -= 1;
 		str.Append(']');
 		return str.ToString();
-	}
-
-	public class LabelledName: Named {
-		private Named item;
-		public string label;
-		public LabelledName(Named item, string label) { this.item = item; this.label = label; }
-		public string Name { get { return item.Name; } }
-		public CodeElements.Expressions.QualifiedName QualifiedName { get { return item.QualifiedName; } }
 	}
 }
 

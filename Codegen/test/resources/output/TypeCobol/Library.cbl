@@ -85,7 +85,7 @@
        END PROGRAM DVZZDAT.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. currentDate.                                               
+       PROGRAM-ID. F0000001.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 Result.                                                             
@@ -97,10 +97,10 @@
            .                                                                  
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM currentDate.                                               
+       END PROGRAM F0000001.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. currentDateDB2.                                            
+       PROGRAM-ID. F0000002.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -121,10 +121,10 @@
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
-       END PROGRAM currentDateDB2.                                            
+       END PROGRAM F0000002.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. currentDateJulian.                                         
+       PROGRAM-ID. F0000003.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -144,10 +144,10 @@
                          (FUNCTION INTEGER-OF-DATE(W-Dat))
                 TO Result
            .
-       END PROGRAM currentDateJulian.                                         
+       END PROGRAM F0000003.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. currentDateFreeFormat.                                     
+       PROGRAM-ID. F0000004.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  C-ZDAT2000               PIC X(08) VALUE 'ZDAT2000'.
@@ -194,4 +194,4 @@
                MOVE DATS20-O-DATE-LONG       TO Result
            END-IF
            .
-       END PROGRAM currentDateFreeFormat.                                     
+       END PROGRAM F0000004.                                                  

@@ -68,7 +68,7 @@
 @{
   var setentries = "";
   foreach (var f in %definitions.functions) {
-    setentries += "    SET " + f.Name + " TO ENTRY " + f.label + "\n";
+    setentries += "    SET " + f.Name + " TO ENTRY \'" + f.Label + "\'\n";
   }
   setentries += "    .";
 }

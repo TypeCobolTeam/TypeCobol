@@ -47,15 +47,15 @@
        END PROGRAM FunDeclare.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. DoesNothing.                                               
+       PROGRAM-ID. F0000001.                                               
        PROCEDURE DIVISION                                                     
          .                                                                    
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM DoesNothing.                                               
+       END PROGRAM F0000001.                                               
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. ReturnsZero.                                               
+       PROGRAM-ID. F0000002.                                               
          DATA DIVISION.
        LINKAGE SECTION.                                                       
        01 result PIC 9(04).                                                   
@@ -64,10 +64,10 @@
          .                                                                    
            MOVE 0 TO result.
            .
-       END PROGRAM ReturnsZero.                                               
+       END PROGRAM F0000002.                                               
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. StrangelyReturnsItsInput.                                  
+       PROGRAM-ID. F0000003.                                  
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -83,10 +83,10 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM StrangelyReturnsItsInput.                                  
+       END PROGRAM F0000003.                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. SumThreeWithClutterInLinkage.                              
+       PROGRAM-ID. F0000004.                              
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -108,10 +108,10 @@
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM SumThreeWithClutterInLinkage.                              
+       END PROGRAM F0000004.                              
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. SwapParameters.                                            
+       PROGRAM-ID. F0000005.                                            
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
@@ -126,10 +126,10 @@
            MOVE y TO x
            MOVE tmp TO y
            .
-       END PROGRAM SwapParameters.                                            
+       END PROGRAM F0000005.                                            
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. SwapParametersWrong.                                       
+       PROGRAM-ID. F0000006.                                       
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -143,10 +143,10 @@
                    BY REFERENCE b                                             
          .                                                                    
            CONTINUE.
-       END PROGRAM SwapParametersWrong.                                       
+       END PROGRAM F0000006.                                       
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. IllegalClauses.                                            
+       PROGRAM-ID. F0000007.                                            
          DATA DIVISION.
            WORKING-STORAGE SECTION.
              01 x PIC X IS GLOBAL.
@@ -154,10 +154,10 @@
        PROCEDURE DIVISION                                                     
          .                                                                    
            .
-       END PROGRAM IllegalClauses.                                            
+       END PROGRAM F0000007.                                            
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. FunConditions.                                             
+       PROGRAM-ID. F0000008.                                             
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
@@ -168,10 +168,10 @@
              USING BY REFERENCE gender                                        
          .                                                                    
            CONTINUE.
-       END PROGRAM FunConditions.                                             
+       END PROGRAM F0000008.                                             
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. FunConditions.                                             
+       PROGRAM-ID. F0000009.                                             
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                               
@@ -181,4 +181,4 @@
              USING BY REFERENCE gender                                        
          .                                                                    
            CONTINUE.
-       END PROGRAM FunConditions.                                             
+       END PROGRAM F0000009.                                             

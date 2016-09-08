@@ -12,7 +12,8 @@ public class ProcedureDivision: Node, CodeElementHolder<ProcedureDivisionHeader>
 
 public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader> {
 	public FunctionDeclaration(FunctionDeclarationHeader header): base(header) { }
-	public override string ID { get { return "function-declaration"; } }
+	public override string ID { get { return Name; } }
+	public string Label { get; internal set; }
 
 	public override string Name { get { return QualifiedName.Head; } }
 	public override CodeElements.Expressions.QualifiedName QualifiedName { get { return this.CodeElement().Name; } }

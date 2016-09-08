@@ -9,10 +9,10 @@ namespace TypeCobol.Codegen.Nodes {
 
 	internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generated {
 
-		QualifiedName ProgramName = null;
+		string ProgramName = null;
 
 		public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {
-			ProgramName = node.CodeElement().Name;
+			ProgramName = node.Label;
 			FunctionDeclarationProfile profile = null;
 			foreach(var child in node.Children) {
 				if (child.CodeElement is FunctionDeclarationProfile) {
@@ -25,7 +25,7 @@ namespace TypeCobol.Codegen.Nodes {
 					children.Add(pdiv);
 				} else
 				if (child.CodeElement is FunctionDeclarationEnd) {
-					children.Add(new ProgramEnd(ProgramName));
+					children.Add(new ProgramEnd(new URI(ProgramName)));
 				} else {
 					// TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
 					// TCRFUN_CODEGEN_DATA_SECTION_AS_IS
@@ -90,7 +90,7 @@ namespace TypeCobol.Codegen.Nodes {
 					_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
 					_cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________", null));
 					_cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
-					_cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. "+ProgramName.Head+'.', null));
+					_cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. "+ProgramName+'.', null));
 				}
 				return _cache;
 			}
