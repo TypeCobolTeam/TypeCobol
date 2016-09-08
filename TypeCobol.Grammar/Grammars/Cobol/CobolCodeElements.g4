@@ -3201,12 +3201,7 @@ valuesRange:
 // p248: Format: method procedure division header
 // -> BY REFERENCE not supported in using phrase
 
-procedureDivisionHeader:
-    PROCEDURE DIVISION
-    usingPhrase?
-    returningPhrase?
-    PeriodSeparator;
-
+procedureDivisionHeader: PROCEDURE DIVISION usingPhrase? returningPhrase? PeriodSeparator;
 usingPhrase: USING programInputParameters+;
 returningPhrase: RETURNING programOutputParameter;
 	

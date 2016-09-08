@@ -23,22 +23,22 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		CodeElement = new FunctionDeclarationHeader(name, visibility);
 	}
 	public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
-		var ce = GetFunctionProfile();
+		var ce = (FunctionDeclarationHeader)CodeElement;
 		ce.Input = new SyntaxProperty<Passing.Mode>(Passing.Mode.Input, ParseTreeUtils.GetTokenFromTerminalNode(context.INPUT()));
 		ce.Profile.InputParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
-		var ce = GetFunctionProfile();
+		var ce = (FunctionDeclarationHeader)CodeElement;
 		ce.Output = new SyntaxProperty<Passing.Mode>(Passing.Mode.Output, ParseTreeUtils.GetTokenFromTerminalNode(context.OUTPUT()));
 		ce.Profile.OutputParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
-		var ce = GetFunctionProfile();
+		var ce = (FunctionDeclarationHeader)CodeElement;
 		ce.Inout = new SyntaxProperty<Passing.Mode>(Passing.Mode.Inout, ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()));
 		ce.Profile.InoutParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
-		var ce = GetFunctionProfile();
+		var ce = (FunctionDeclarationHeader)CodeElement;
 		ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()));
 		ce.Profile.ReturningParameter = CreateParameter(context.parameterDescription());
 	}
@@ -83,12 +83,6 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	}
 
 
-
-	private FunctionDeclarationProfile GetFunctionProfile() {
-		if (CodeElement is ProcedureDivisionHeader)
-			CodeElement = new FunctionDeclarationProfile((ProcedureDivisionHeader)CodeElement);
-		return CodeElement as FunctionDeclarationProfile;
-	}
 
 	public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 		Context = context;

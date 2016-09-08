@@ -20,19 +20,7 @@ public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHea
 
 	public string Library { get; internal set; }
 	public string Copy { get { return Library+"cpy"; } }
-	public ParametersProfile Profile {
-		get {
-			var list = GetChildren<FunctionDeclarationProfile>();
-			if (list.Count < 1) return null;
-			var profile = list[list.Count-1].CodeElement().Profile;
-			return list[list.Count-1].CodeElement().Profile;
-		}
-	}
-}
-
-public class FunctionProfile: Node, CodeElementHolder<FunctionDeclarationProfile> {
-	public FunctionProfile(FunctionDeclarationProfile profile): base(profile) { }
-	public override string ID { get { return "function-profile"; } }
+	public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
 }
 
 public class FunctionEnd: Node, CodeElementHolder<FunctionDeclarationEnd> {

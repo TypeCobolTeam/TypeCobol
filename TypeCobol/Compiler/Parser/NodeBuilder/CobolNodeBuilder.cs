@@ -320,63 +320,37 @@ namespace TypeCobol.Compiler.Parser
 		/// <summary>Parent node: DECLARE FUNCTION</summary>
 		/// <param name="context">PROCEDURE DIVISION</param>
 		public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
-			var terminal = context.ProcedureDivisionHeader();
-			FunctionDeclarationProfile p = null;
-			if (terminal.Symbol is FunctionDeclarationProfile)
-				p = (FunctionDeclarationProfile)terminal.Symbol;
-			else
-			if (terminal.Symbol is ProcedureDivisionHeader)
-				p = new FunctionDeclarationProfile((ProcedureDivisionHeader)terminal.Symbol);
-			else throw new NotImplementedException("Unknown type: "+terminal.Symbol.GetType().Name);
-/*			char[] currencies = GetCurrencies();
-			int offset = 0;
-			Stack<DataDescriptionEntry> groups;
-			groups = new Stack<DataDescriptionEntry>();
-			foreach(var p in profile.InputParameters) {
-				ComputeParent(p, groups);
-				ComputeType(p, currencies);
-				ComputeMemoryProfile(p, ref offset);
+			var header = (ProcedureDivisionHeader)context.ProcedureDivisionHeader().Symbol;
+			if (header.UsingParameters != null && header.UsingParameters.Count > 0)
+				DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
+			var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
+			foreach(var parameter in declaration.Profile.InputParameters) {
+				parameter.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(parameter);
 			}
-			groups = new Stack<DataDescriptionEntry>();
-			foreach(var p in profile.InoutParameters) {
-				ComputeParent(p, groups);
-				ComputeType(p, currencies);
-				ComputeMemoryProfile(p, ref offset);
+			foreach(var parameter in declaration.Profile.OutputParameters) {
+				parameter.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(parameter);
 			}
-			groups = new Stack<DataDescriptionEntry>();
-			foreach(var p in profile.OutputParameters) {
-				ComputeParent(p, groups);
-				ComputeType(p, currencies);
-				ComputeMemoryProfile(p, ref offset);
+			foreach(var parameter in declaration.Profile.InoutParameters) {
+				parameter.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(parameter);
 			}
-			groups = new Stack<DataDescriptionEntry>();
-			if (profile.ReturningParameter != null) {
-				ComputeParent(profile.ReturningParameter, groups);
-				ComputeType(profile.ReturningParameter, currencies);
-				ComputeMemoryProfile(profile.ReturningParameter, ref offset);
+			if (declaration.Profile.ReturningParameter != null) {
+				declaration.Profile.ReturningParameter.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(declaration.Profile.ReturningParameter);
+			} else
+			if (header.ReturningParameter != null) {
+				// we might have a RETURNING parameter to convert, but only if there is neither
+				// PICTURE nor TYPE clause for the returning parameter in the function declaration.
+				// however, this is as syntax error.
+				var pentry = new ParameterDescriptionEntry();
+				declaration.Profile.ReturningParameter = new ParameterDescription(pentry);
+				var data = header.ReturningParameter.StorageArea as DataOrConditionStorageArea;
+				if (data != null) pentry.DataName = new SymbolDefinition(data.SymbolReference.NameLiteral, data.SymbolReference.Type);
+				// pentry.Picture will remain empty, we can't do anything about it
 			}
-*/
-			var profile = new FunctionProfile(p);
-			Enter(profile, context);
-
-			var node = profile.Parent;
-			var header = (FunctionDeclarationHeader)node.CodeElement;
-			foreach(var parameter in p.Profile.InputParameters) {
-				parameter.SymbolTable = node.SymbolTable;
-				node.SymbolTable.AddVariable(parameter);
-			}
-			foreach(var parameter in p.Profile.OutputParameters) {
-				parameter.SymbolTable = node.SymbolTable;
-				node.SymbolTable.AddVariable(parameter);
-			}
-			foreach(var parameter in p.Profile.InoutParameters) {
-				parameter.SymbolTable = node.SymbolTable;
-				node.SymbolTable.AddVariable(parameter);
-			}
-			if (p.Profile.ReturningParameter != null) {
-				p.Profile.ReturningParameter.SymbolTable = node.SymbolTable;
-				node.SymbolTable.AddVariable(p.Profile.ReturningParameter);
-			}
+			Enter(new ProcedureDivision(header), context);
 		}
 		public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			Exit();

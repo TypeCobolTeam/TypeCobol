@@ -66,19 +66,15 @@ setStatementForConditions:
 // rules modified to support custom-designed functions (of arity 0..n)
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
-// TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
-functionDeclarationHeader:
-	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) PeriodSeparator;
-
-
-// alternate PROCEDURE DIVISION to allow function declarations
+// - TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
 // - TCRFUN_PARAMETER_DECLARATION_ORDER
 // - TCRFUN_0_TO_N_PARAMETERS (possibly 0 parameters because of "?")
 // - TCRFUN_0_TO_1_RETURNING_PARAMETER
 //   - possibly 0 parameters because of "?" --> procedure or void-returning function
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
-procedureDivisionHeader: PROCEDURE DIVISION ((usingPhrase? returningPhrase?) | (inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase?)) PeriodSeparator;
+functionDeclarationHeader:
+	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 //inputPhrase:  INPUT  programInputParameters+;

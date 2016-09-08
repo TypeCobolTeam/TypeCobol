@@ -13,15 +13,13 @@ namespace TypeCobol.Codegen.Nodes {
 
 		public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {
 			ProgramName = node.Label;
-			FunctionDeclarationProfile profile = null;
 			foreach(var child in node.Children) {
-				if (child.CodeElement is FunctionDeclarationProfile) {
-					profile = (FunctionDeclarationProfile)child.CodeElement;
-					CreateOrUpdateLinkageSection(node, profile.Profile);
+				if (child is Compiler.Nodes.ProcedureDivision) {
+					CreateOrUpdateLinkageSection(node, node.CodeElement().Profile);
 					var sentences = new List<Node>();
 					foreach(var sentence in child.Children)
 						sentences.Add(sentence);
-					var pdiv = new ProcedureDivision(profile, sentences);
+					var pdiv = new ProcedureDivision(node, sentences);
 					children.Add(pdiv);
 				} else
 				if (child.CodeElement is FunctionDeclarationEnd) {

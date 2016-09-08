@@ -105,23 +105,14 @@ class FunctionDeclarationChecker: NodeListener {
 	}
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var header = node.CodeElement as FunctionDeclarationHeader;
-		FunctionDeclarationProfile profile = null;
-		var profiles = node.GetChildren<FunctionDeclarationProfile>();
-		if (profiles.Count < 1) // no PROCEDURE DIVISION internal to function
-			DiagnosticUtils.AddError(header, "Function \""+header.Name+"\" has no parameters and does nothing.");
-		else if (profiles.Count > 1)
-			foreach(var p in profiles)
-				DiagnosticUtils.AddError(p.CodeElement(), "Function \""+header.Name+"\" can have only one parameters profile.");
-		else profile = profiles[0].CodeElement();
-
 		var filesection = node.Get<FileSection>("file");
 		if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 			DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
 		CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
 
-		CheckParameters(profile.Profile, header);
-		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), profile.Profile);
+		CheckParameters(header.Profile, header);
+		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
 /*
 		var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
 		if (functions.Count > 1)

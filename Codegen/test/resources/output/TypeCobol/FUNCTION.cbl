@@ -34,7 +34,11 @@
            .                                                                  
                                                                               
        
-      *DECLARE function POW PRIVATE.                                          
+      *DECLARE function POW PRIVATE                                           
+      *      INPUT x PIC 9(05)                                                
+      *            y PIC 9(03)                                                
+      *      RETURNING result PIC 9(08)                                       
+      *  .                                                                    
 
        TRAITEMENT.
       *    MOVE FUNCTION POW (x y)    TO x                                    
