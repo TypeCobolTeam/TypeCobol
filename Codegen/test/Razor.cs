@@ -95,27 +95,27 @@ namespace TypeCobol.Codegen.Config {
 //
 //			input = skeleton.Patterns[3].Template;
 			expected =
-"IF mylibcpy-POINTER-TABLE = LOW_VALUE\n"+
-"    CALL mylib USING mylibcpy\n"+
-"END-IF\n";
+"    IF mylibcpy-POINTER-TABLE = LOW_VALUE\n"+
+"        CALL mylib USING mylibcpy\n"+
+"    END-IF\n";
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 
 			input = skeleton.Patterns[3].Template;
 //			input = skeleton.Patterns[4].Template;
 			variables = new Dictionary<string,object> { {"function", RazorFactory.CreateCall("fun", "mylib")}, {"receiver", "myresult"} };
 			expected =
-"CALL fun USING\n"+
-"    BY REFERENCE param1\n"+
-"    BY CONTENT '42'\n"+
+"    CALL fun USING\n"+
+"        BY REFERENCE param1\n"+
+"        BY CONTENT '42'\n"+
 "\n"+
-"    BY REFERENCE fun-RESULT\n"+
-"    BY REFERENCE ERROR-CODE\n"+
+"        BY REFERENCE fun-RESULT\n"+
+"        BY REFERENCE ERROR-CODE\n"+
 "\n"+
-"IF ERROR-CODE = ZERO\n"+
-"    MOVE fun-RESULT TO myresult\n"+
-"ELSE\n"+
-"*    TODO: error management\n"+
-"END-IF\n";
+"    IF ERROR-CODE = ZERO\n"+
+"        MOVE fun-RESULT TO myresult\n"+
+"    ELSE\n"+
+"*        TODO: error management\n"+
+"    END-IF\n";
 			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
 		}
 
