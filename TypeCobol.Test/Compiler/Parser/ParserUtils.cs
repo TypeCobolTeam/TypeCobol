@@ -265,9 +265,10 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 		private static void Dump(StringBuilder str, ParameterDescription parameter) {
 			str.Append(parameter.Name).Append(':');
-			if (parameter.CustomType != null) str.Append(parameter.CustomType);
+			var entry = (ParameterDescriptionEntry)parameter.CodeElement;
+			if (entry.CustomType != null) str.Append(entry.CustomType);
 			else
-			if (parameter.Picture != null) str.Append(parameter.Picture);
+			if (entry.Picture != null) str.Append(entry.Picture);
 			else str.Append("?");
 		}
 // [/TYPECOBOL]

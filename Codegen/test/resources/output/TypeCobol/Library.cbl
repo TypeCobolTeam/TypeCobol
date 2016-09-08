@@ -1,10 +1,12 @@
-﻿      * 10 CodeElements errors
+﻿      * 12 CodeElements errors
       * "1"@(70:12>72:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
       * "1"@(93:12>93:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
       * "1"@(94:12>94:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
       * "1"@(95:12>95:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
       * "1"@(96:12>96:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
       * "1"@(97:12>97:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
+      * "1"@(98:12>98:65): [27:1] Syntax error : Symbol DATS20-I-INT-LANG is not referenced
+      * "1"@(99:12>99:65): [27:1] Syntax error : Symbol DATS20-I-INT-PAYS is not referenced
       * "1"@(100:12>100:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
       * "1"@(101:12>101:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
       * "1"@(102:12>102:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced

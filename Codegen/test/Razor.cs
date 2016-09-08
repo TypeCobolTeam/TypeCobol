@@ -123,31 +123,31 @@ namespace TypeCobol.Codegen.Config {
 			public static Function Create(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
 					new List<ParameterDescription>() {
-						new RazorParameter(null),
-						new RazorParameter(null, 3),
+						new ParameterDescription(new RazorParameter(null)),
+						new ParameterDescription(new RazorParameter(null, 3)),
 					},
 					new List<ParameterDescription>() {
-						new RazorParameter(null, 8),
+						new ParameterDescription(new RazorParameter(null, 8)),
 					});
 			}
 			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
 					new List<ParameterDescription>() {
-						new CallParameterDescription {
+						new ParameterDescription(new CallParameterDescription {
 								Value = "param1",
 								ByReference = true,
-							},
-						new CallParameterDescription {
+							}),
+						new ParameterDescription(new CallParameterDescription {
 								Value = "'42'",
 								ByReference = false,
-							},
+							}),
 					},
 					new List<ParameterDescription>() {
-						new RazorParameter(null, 8),
+						new ParameterDescription(new RazorParameter(null, 8)),
 					});
 			}
 		}
-		private class RazorParameter: ParameterDescription {
+		private class RazorParameter: ParameterDescriptionEntry {
 			public RazorParameter(string name, int length=int.MaxValue) {
 				DataName = new GeneratedSymbolDefinition(name);
 //				Picture = "PIC 9("+length+")";

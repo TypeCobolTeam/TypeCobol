@@ -28,10 +28,11 @@ public class FunctionDeclarationProfile: CodeElement/*, Returning*/ {
 			// we might have a RETURNING parameter to convert, but only if there is neither
 			// PICTURE nor TYPE clause for the returning parameter in the function declaration.
 			// however, this is as syntax error.
-			Profile.ReturningParameter = new ParameterDescription();
+			var pentry = new ParameterDescriptionEntry();
+			Profile.ReturningParameter = new ParameterDescription(pentry);
 			var data = other.ReturningParameter.StorageArea as DataOrConditionStorageArea;
 			if (data != null) {
-				Profile.ReturningParameter.DataName = CreateSymbolDefinition(data.SymbolReference);
+				pentry.DataName = CreateSymbolDefinition(data.SymbolReference);
 				// Picture will remain empty, we can't do anything about it
 			}
 		}

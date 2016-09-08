@@ -52,25 +52,25 @@ namespace TypeCobol.Codegen.Nodes {
 			var generated = new List<string>();
 			foreach(var parameter in profile.InputParameters) {
 				if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-					linkage.Add(new ParameterEntry(parameter, node.SymbolTable));
+					linkage.Add(new ParameterEntry((ParameterDescriptionEntry)parameter.CodeElement, node.SymbolTable));
 					generated.Add(parameter.Name);
 				}
 			}
 			foreach(var parameter in profile.InoutParameters) {
 				if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-					linkage.Add(new ParameterEntry(parameter, node.SymbolTable));
+					linkage.Add(new ParameterEntry((ParameterDescriptionEntry)parameter.CodeElement, node.SymbolTable));
 					generated.Add(parameter.Name);
 				}
 			}
 			foreach(var parameter in profile.OutputParameters) {
 				if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-					linkage.Add(new ParameterEntry(parameter, node.SymbolTable));
+					linkage.Add(new ParameterEntry((ParameterDescriptionEntry)parameter.CodeElement, node.SymbolTable));
 					generated.Add(parameter.Name);
 				}
 			}
 			if (profile.ReturningParameter != null) {
 				if (!generated.Contains(profile.ReturningParameter.Name) && !Contains(data, profile.ReturningParameter.Name)) {
-					linkage.Add(new ParameterEntry(profile.ReturningParameter, node.SymbolTable));
+					linkage.Add(new ParameterEntry((ParameterDescriptionEntry)profile.ReturningParameter.CodeElement, node.SymbolTable));
 					generated.Add(profile.ReturningParameter.Name);
 				}
 			}

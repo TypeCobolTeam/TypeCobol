@@ -13,12 +13,12 @@ namespace TypeCobol.Codegen.Nodes {
 		public ProcedureDivision(FunctionDeclarationProfile profile, List<Compiler.Nodes.Node> children): base(null) {
 			UsingParameters = new List<InputParameter>();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
-			foreach(var parameter in profile.Profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(parameter.DataName));
-			foreach(var parameter in profile.Profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(parameter.DataName));
-			foreach(var parameter in profile.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(parameter.DataName));
+			foreach(var parameter in profile.Profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+			foreach(var parameter in profile.Profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+			foreach(var parameter in profile.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
 			// TCRFUN_CODEGEN_RETURNING_PARAMETER
 			if (profile.Profile.ReturningParameter != null)
-				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(profile.Profile.ReturningParameter.DataName);
+				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(((ParameterDescriptionEntry)profile.Profile.ReturningParameter.CodeElement).DataName);
 			this.children.AddRange(children);
 		}
 

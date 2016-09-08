@@ -668,13 +668,22 @@ System.Console.WriteLine("TODO: name resolution errors in REDEFINES clause");
 
 			var node = profile.Parent;
 			var header = (FunctionDeclarationHeader)node.CodeElement;
-			foreach(var parameter in p.Profile.InputParameters)  node.SymbolTable.AddVariable(parameter);
-			foreach(var parameter in p.Profile.OutputParameters) node.SymbolTable.AddVariable(parameter);
-			foreach(var parameter in p.Profile.InoutParameters)  node.SymbolTable.AddVariable(parameter);
-			if (p.Profile.ReturningParameter != null) node.SymbolTable.AddVariable(p.Profile.ReturningParameter);
-
-//			var function = new Function(header.Name, p.Profile.InputParameters, p.Profile.OutputParameters, p.Profile.InoutParameters, p.Profile.ReturningParameter, header.Visibility);
-//			node.SymbolTable.EnclosingScope.Register(function);
+			foreach(var parameter in p.Profile.InputParameters) {
+				parameter.SymbolTable = node.SymbolTable;
+				node.SymbolTable.AddVariable(parameter);
+			}
+			foreach(var parameter in p.Profile.OutputParameters) {
+				parameter.SymbolTable = node.SymbolTable;
+				node.SymbolTable.AddVariable(parameter);
+			}
+			foreach(var parameter in p.Profile.InoutParameters) {
+				parameter.SymbolTable = node.SymbolTable;
+				node.SymbolTable.AddVariable(parameter);
+			}
+			if (p.Profile.ReturningParameter != null) {
+				p.Profile.ReturningParameter.SymbolTable = node.SymbolTable;
+				node.SymbolTable.AddVariable(p.Profile.ReturningParameter);
+			}
 		}
 		public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context) {
 			Exit();

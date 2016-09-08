@@ -13,14 +13,17 @@ public class Passing {
 	}
 }
 
-public class ParameterDescription: DataDescriptionEntry {
+public class ParameterDescriptionEntry: DataDescriptionEntry {
 	// TODO#245
 	// create an interface shared with DataDeclarationEntry
 	// that aggregates all the non-illegal stuff like justified, 
 	// group usage national, blank when zero and so on
 }
+public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription {
+	public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { }
+}
 
-public class CallParameterDescription: ParameterDescription {
+public class CallParameterDescription: ParameterDescriptionEntry {
 	public bool ByReference { private get; set; }
 	public string SendingMode { get { return ByReference? "REFERENCE":"CONTENT"; } }
 	public string Value { get; set; }

@@ -60,7 +60,7 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		return null;
 	}
 	public ParameterDescription CreateFunctionDataParameter(CodeElementsParser.FunctionDataParameterContext context) {
-		var parameter = new ParameterDescription();
+		var parameter = new ParameterDescriptionEntry();
 		parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 		if (context.pictureClause() != null) {
 			parameter.Picture = CobolWordsBuilder.CreateAlphanumericValue(context.pictureClause().pictureCharacterString);
@@ -70,7 +70,7 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 			parameter.DataType = DataType.CreateCustom(parameter.CustomType.Value);
 		}
 		//TODO#245: subphrases
-		return parameter;
+		return new ParameterDescription(parameter);
 	}
 
 	private string CreatePicture(CodeElementsParser.Cobol2002TypeClauseContext context) {

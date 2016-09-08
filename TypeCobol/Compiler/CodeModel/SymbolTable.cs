@@ -125,7 +125,6 @@ namespace TypeCobol.Compiler.CodeModel
 		var results = new List<Named>();
 		if (data.DataType.IsCOBOL) return results;
 		foreach(var type in data.SymbolTable.GetType(data.DataType.Name)) {
-			System.Console.WriteLine("-- "+data.Name+':'+data.DataType.Name);
 			foreach(var child in ((TypeDefinition)type).Children)
 				if (name.Equals(child.Name))
 					results.Add(child);
