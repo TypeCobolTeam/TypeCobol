@@ -73,11 +73,21 @@ namespace TypeCobol.Compiler.CodeModel
 		private void Add(Dictionary<string,List<Named>> table, Named symbol) {
 			 // TODO: generate a name for FILLERs and anonymous data to be referenced by in the symbol table
 			if (symbol.Name == null) return;
-			List<Named> found;
-			if (table == DataEntries)
-				 found = GetVariable(symbol.QualifiedName);
-			else found = GetType(symbol.QualifiedName);
-			if (found.Count == 0) {
+			List<Named> found = null;
+		    if (table == DataEntries)
+		    {
+		        if (table.ContainsKey(symbol.QualifiedName.Head))
+		        {
+		            found = table[symbol.QualifiedName.Head];
+		        }
+		    }
+		    else
+		    {
+                if(Types.ContainsKey(symbol.QualifiedName.Head)) { 
+		            found = Types[symbol.QualifiedName.Head];
+		        }
+		    }
+		    if (found == null || found.Count == 0) {
 				List<Named> samenamesymbols = null;
 				try { samenamesymbols = table[symbol.QualifiedName.Head]; }
 				catch (KeyNotFoundException ex) {
@@ -86,7 +96,7 @@ namespace TypeCobol.Compiler.CodeModel
 				}
 				found = samenamesymbols;
 			}
-			found.Add(symbol);
+            found.Add(symbol);
 		}
 
 		public List<Named> GetVariable(QualifiedName name) {
@@ -186,7 +196,7 @@ namespace TypeCobol.Compiler.CodeModel
 		private bool Filter(Named symbol, string pname, ref int generation) {
 			var parent = GetAncestor(symbol, generation);
 			while(parent != null) {
-				if (parent.Name.Equals(pname)) return true;
+				if (parent.Name != null && parent.Name.Equals(pname)) return true;
 				parent = parent.Parent;
 				generation++;
 			}

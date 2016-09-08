@@ -243,14 +243,18 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		private void EnterDataRedefinesEntry(DataRedefinesEntry data) {
-			//TODO#249
-			Enter(new DataRedefines(data));
-		}
+            SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+            var node = new DataRedefines(data);
+            Enter(node);
+            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+        }
 
 		private void EnterDataRenamesEntry(DataRenamesEntry data) {
-			//TODO#249
-			Enter(new DataRenames(data));
-		}
+            SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+            var node = new DataRenames(data);
+            Enter(node);
+            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+        }
 
 		/// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>
 		/// <param name="level">Level number of the next data definition that will be Enter()ed.</param>
