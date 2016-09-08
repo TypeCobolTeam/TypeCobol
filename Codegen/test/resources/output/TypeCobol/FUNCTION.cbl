@@ -25,115 +25,126 @@
                                                                               
 
        PROCEDURE DIVISION.
-       IF Functionscpy-POINTER-TABLE = LOW_VALUE                              
-           CALL Functions USING Functionscpy                                  
-       END-IF                                                                 
+           IF Functionscpy-POINTER-TABLE = LOW_VALUE                          
+               CALL Functions USING Functionscpy                              
+           END-IF                                                             
+                                                                              
+                                                                              
+           SET POW TO ENTRY 'F0000001'                                        
+           .                                                                  
                                                                               
        
       *DECLARE function POW PRIVATE.                                          
 
        TRAITEMENT.
       *    MOVE FUNCTION POW (x y)    TO x                                    
-       CALL POW USING                                                         
-           BY REFERENCE x                                                     
-           BY REFERENCE y                                                     
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY REFERENCE x                                                 
+               BY REFERENCE y                                                 
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       * KO: wrong number of parameters
       *    MOVE FUNCTION POW ()       TO x                                    
-       CALL POW USING                                                         
-           BY CONTENT SPACE                                                   
-           BY CONTENT SPACE                                                   
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY CONTENT SPACE                                               
+               BY CONTENT SPACE                                               
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       *    MOVE FUNCTION POW (y)      TO x                                    
-       CALL POW USING                                                         
-           BY REFERENCE y                                                     
-           BY CONTENT SPACE                                                   
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY REFERENCE y                                                 
+               BY CONTENT SPACE                                               
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       *    MOVE FUNCTION POW (x y z)  TO x                                    
-       CALL POW USING                                                         
-           BY REFERENCE x                                                     
-           BY REFERENCE y                                                     
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY REFERENCE x                                                 
+               BY REFERENCE y                                                 
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       * KO: undefined parameters
       *    MOVE FUNCTION POW (i j)    TO x                                    
-       CALL POW USING                                                         
-           BY REFERENCE i                                                     
-           BY REFERENCE j                                                     
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY REFERENCE i                                                 
+               BY REFERENCE j                                                 
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       * KO: 2nd parameter of wrong type
       *    MOVE FUNCTION POW (x b)    TO x                                    
-       CALL POW USING                                                         
-           BY REFERENCE x                                                     
-           BY REFERENCE b                                                     
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY REFERENCE x                                                 
+               BY REFERENCE b                                                 
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       * KO: 2nd parameter too-large
       *    MOVE FUNCTION POW (z z)    TO x                                    
-       CALL POW USING                                                         
-           BY REFERENCE z                                                     
-           BY REFERENCE z                                                     
                                                                               
-           BY REFERENCE POW-RESULT                                            
-           BY REFERENCE ERROR-CODE                                            
+           CALL POW USING                                                     
+               BY REFERENCE z                                                 
+               BY REFERENCE z                                                 
                                                                               
-       IF ERROR-CODE = ZERO                                                   
-           MOVE POW-RESULT TO x                                               
-       ELSE                                                                   
+               BY REFERENCE POW-RESULT                                        
+               BY REFERENCE ERROR-CODE                                        
+                                                                              
+           IF ERROR-CODE = ZERO                                               
+               MOVE POW-RESULT TO x                                           
+           ELSE                                                               
       *    TODO: error management                                             
-       END-IF                                                                 
+           END-IF                                                             
                                                                               
       * KO: function undeclared
            MOVE FUNCTION POWAAA (x y) TO x

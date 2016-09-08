@@ -16,6 +16,18 @@
        PROGRAM-ID. FunDeclare.
        
        PROCEDURE DIVISION.
+                                                                              
+           SET DoesNothing TO ENTRY 'F0000001'                                
+           SET ReturnsZero TO ENTRY 'F0000002'                                
+           SET StrangelyReturnsItsInput TO ENTRY 'F0000003'                   
+           SET SumThreeWithClutterInLinkage TO ENTRY 'F0000004'               
+           SET SwapParameters TO ENTRY 'F0000005'                             
+           SET SwapParametersWrong TO ENTRY 'F0000006'                        
+           SET IllegalClauses TO ENTRY 'F0000007'                             
+           SET FunConditions TO ENTRY 'F0000008'                              
+           SET FunConditions TO ENTRY 'F0000009'                              
+           .                                                                  
+                                                                              
             .
        
       *DECLARE function DoesNothing PUBLIC.                                   
@@ -47,27 +59,27 @@
        END PROGRAM FunDeclare.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000001.                                               
+       PROGRAM-ID. F0000001.                                                  
        PROCEDURE DIVISION                                                     
-         .                                                                    
+           .                                                                  
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM F0000001.                                               
+       END PROGRAM F0000001.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000002.                                               
+       PROGRAM-ID. F0000002.                                                  
          DATA DIVISION.
        LINKAGE SECTION.                                                       
        01 result PIC 9(04).                                                   
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE result                                        
-         .                                                                    
+           .                                                                  
            MOVE 0 TO result.
            .
-       END PROGRAM F0000002.                                               
+       END PROGRAM F0000002.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000003.                                  
+       PROGRAM-ID. F0000003.                                                  
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -77,16 +89,16 @@
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE result                                        
-         .                                                                    
+           .                                                                  
            IF x = 0
              MOVE 0 TO result
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM F0000003.                                  
+       END PROGRAM F0000003.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000004.                              
+       PROGRAM-ID. F0000004.                                                  
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -103,15 +115,15 @@
                    BY REFERENCE y                                             
                    BY REFERENCE z                                             
                    BY REFERENCE result                                        
-         .                                                                    
+           .                                                                  
            MOVE 0 TO result.
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM F0000004.                              
+       END PROGRAM F0000004.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000005.                                            
+       PROGRAM-ID. F0000005.                                                  
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
@@ -121,15 +133,15 @@
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
-         .                                                                    
+           .                                                                  
            MOVE x TO tmp
            MOVE y TO x
            MOVE tmp TO y
            .
-       END PROGRAM F0000005.                                            
+       END PROGRAM F0000005.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000006.                                       
+       PROGRAM-ID. F0000006.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -141,20 +153,20 @@
                    BY REFERENCE y                                             
                    BY REFERENCE a                                             
                    BY REFERENCE b                                             
-         .                                                                    
+           .                                                                  
            CONTINUE.
-       END PROGRAM F0000006.                                       
+       END PROGRAM F0000006.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000007.                                            
+       PROGRAM-ID. F0000007.                                                  
          DATA DIVISION.
            WORKING-STORAGE SECTION.
              01 x PIC X IS GLOBAL.
              01 y PIC X IS EXTERNAL.
        PROCEDURE DIVISION                                                     
-         .                                                                    
+           .                                                                  
            .
-       END PROGRAM F0000007.                                            
+       END PROGRAM F0000007.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. F0000008.                                             

@@ -94,26 +94,27 @@
 01 %function.Name-RESULT %function.Result.Definition.
       </pattern-->
       <pattern location="procedure-division.begin" action="create" group="%function.Library-CALL">
-IF %function.Copy-POINTER-TABLE = LOW_VALUE
-    CALL %function.Library USING %function.Copy
-END-IF
+    IF %function.Copy-POINTER-TABLE = LOW_VALUE
+        CALL %function.Library USING %function.Copy
+    END-IF
       </pattern>
       <pattern location="NODE" action="replace">
 @{
   var funparams = "";
   foreach (var p in %function.InputParameters) {
-    funparams += "    BY " + p.SendingMode + " " + p.Value + "\n";
+    funparams += "        BY " + p.SendingMode + " " + p.Value + "\n";
   }
-}CALL %function.Name USING
+}
+    CALL %function.Name USING
 @funparams
-    BY REFERENCE %function.Name-RESULT
-    BY REFERENCE ERROR-CODE
+        BY REFERENCE %function.Name-RESULT
+        BY REFERENCE ERROR-CODE
 
-IF ERROR-CODE = ZERO
-    MOVE %function.Name-RESULT TO %receiver
-ELSE
+    IF ERROR-CODE = ZERO
+        MOVE %function.Name-RESULT TO %receiver
+    ELSE
 *    TODO: error management
-END-IF
+    END-IF
       </pattern>
     </patterns>
   </skeleton>
