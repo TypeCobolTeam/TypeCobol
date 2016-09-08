@@ -51,7 +51,7 @@ namespace TypeCobol.Codegen.Nodes {
 						if (named != null) strname = named.Name;
 						_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					}
-					_cache.Add(new TextLineSnapshot(-1, "  .", null));
+					_cache.Add(new TextLineSnapshot(-1, "    .", null));
 				}
 				return _cache;
 			}

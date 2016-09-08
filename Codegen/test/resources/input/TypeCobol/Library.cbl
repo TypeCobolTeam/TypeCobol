@@ -1,6 +1,9 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
+      *REMARKS. COPY=(
+      *    YDATS20   YUTCDAT
+      * ).
 
       *=================================================================
        ENVIRONMENT DIVISION.

@@ -152,6 +152,6 @@
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
                    BY REFERENCE result                                        
-         .                                                                    
+           .                                                                  
            CONTINUE.
        END PROGRAM POW.                                                       

@@ -1,19 +1,22 @@
 ﻿      * 12 CodeElements errors
-      * "1"@(70:12>72:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
-      * "1"@(93:12>93:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
-      * "1"@(94:12>94:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
-      * "1"@(95:12>95:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
-      * "1"@(96:12>96:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
-      * "1"@(97:12>97:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
-      * "1"@(98:12>98:65): [27:1] Syntax error : Symbol DATS20-I-INT-LANG is not referenced
-      * "1"@(99:12>99:65): [27:1] Syntax error : Symbol DATS20-I-INT-PAYS is not referenced
-      * "1"@(100:12>100:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
-      * "1"@(101:12>101:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
-      * "1"@(102:12>102:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced
-      * "1"@(111:16>111:54): [27:1] Syntax error : Symbol DATS20-O-DATE-LONG is not referenced
+      * "1"@(73:12>75:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
+      * "1"@(96:12>96:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
+      * "1"@(97:12>97:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
+      * "1"@(98:12>98:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
+      * "1"@(99:12>99:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
+      * "1"@(100:12>100:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
+      * "1"@(101:12>101:65): [27:1] Syntax error : Symbol DATS20-I-INT-LANG is not referenced
+      * "1"@(102:12>102:65): [27:1] Syntax error : Symbol DATS20-I-INT-PAYS is not referenced
+      * "1"@(103:12>103:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
+      * "1"@(104:12>104:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
+      * "1"@(105:12>105:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced
+      * "1"@(114:16>114:54): [27:1] Syntax error : Symbol DATS20-O-DATE-LONG is not referenced
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
+      *REMARKS. COPY=(
+      *    YDATS20   YUTCDAT
+      * ).
 
       *=================================================================
        ENVIRONMENT DIVISION.
@@ -91,7 +94,7 @@
            02 DD PIC 9(2).                                                    
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE Result                                        
-         .                                                                    
+           .                                                                  
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM currentDate.                                               
@@ -114,7 +117,7 @@
            02 DD PIC 9(02).                                                   
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE Result                                        
-         .                                                                    
+           .                                                                  
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
@@ -135,7 +138,7 @@
            02 DDD PIC 9(03).                                                  
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE Result                                        
-         .                                                                    
+           .                                                                  
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE FUNCTION DAY-OF-INTEGER
                          (FUNCTION INTEGER-OF-DATE(W-Dat))
@@ -170,7 +173,7 @@
                    BY REFERENCE culture                                       
                    BY REFERENCE returnCode                                    
                    BY REFERENCE Result                                        
-         .                                                                    
+           .                                                                  
            MOVE SPACES                       TO DATS20
            SET DATS20-I-FONCTION-FORMATAGE   TO TRUE
            MOVE 'JOUR'                       TO DATS20-I-DATE1
