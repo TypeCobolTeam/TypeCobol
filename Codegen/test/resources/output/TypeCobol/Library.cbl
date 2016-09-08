@@ -44,6 +44,7 @@
       *    10 cty                    PIC X(02).                               
       *_________________________________________________________________
        LINKAGE SECTION.
+           COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
        PROCEDURE DIVISION USING DVZDAT.
