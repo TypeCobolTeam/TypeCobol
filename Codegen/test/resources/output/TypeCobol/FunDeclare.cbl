@@ -32,29 +32,58 @@
        
       *DECLARE function DoesNothing PUBLIC.                                   
 
-      *DECLARE function ReturnsZero PUBLIC.                                   
+      *DECLARE function ReturnsZero PUBLIC                                    
+      *      RETURNING result PIC 9(04).                                      
 
       * ERROR Illegal FILE SECTION
-      *DECLARE function StrangelyReturnsItsInput PRIVATE.                     
+      *DECLARE function StrangelyReturnsItsInput PRIVATE                      
+      *      INPUT     x      PIC 9(04)                                       
+      *      RETURNING result PIC 9(04)                                       
+      *  .                                                                    
 
       * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
-      *DECLARE function SumThreeWithClutterInLinkage PRIVATE.                 
+      *DECLARE function SumThreeWithClutterInLinkage PRIVATE                  
+      *      INPUT x PIC 9(04)                                                
+      *            y PIC 9(04)                                                
+      *            z PIC 9(04)                                                
+      *      RETURNING result PIC 9(04)                                       
+      *  .                                                                    
        
-      *DECLARE function SwapParameters PRIVATE.                               
+      *DECLARE function SwapParameters PRIVATE                                
+      *      INOUT x PIC 9(04)                                                
+      *            y PIC 9(04)                                                
+      *  .                                                                    
 
       * ERROR because x and y should be INOUT
       * ERROR because y INPUT vs OUTPUT types differ
-      *DECLARE function SwapParametersWrong PRIVATE.                          
+      *DECLARE function SwapParametersWrong PRIVATE                           
+      *      INPUT  x PIC 9(04)                                               
+      *             y PIC 9(04)                                               
+      *             a PIC 9(04)                                               
+      *      OUTPUT x PIC 9(04)                                               
+      *             y PIC 9(08)                                               
+      *             b PIC 9(04)                                               
+      *  .                                                                    
       * ERROR because illegal GLOBAL or EXTERNAL
       *DECLARE function IllegalClauses PUBLIC.                                
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
-      *DECLARE function FunConditions PRIVATE.                                
+      *DECLARE function FunConditions PRIVATE                                 
+      *      INPUT  gender PIC X(01)                                          
+      *          88  valid-gender VALUE 'F' 'M'                               
+      *          88  female VALUE 'F'                                         
+      *          88  male   VALUE 'M'                                         
+      *  .                                                                    
       * ERROR level-88 parameter items must be subordinate to another item
       * ERROR only level-88 parameter items shall have an explicit level number
-      *DECLARE function FunConditions PRIVATE.                                
+      *DECLARE function FunConditions PRIVATE                                 
+      *      INPUT 88 valid-gender VALUE 'F' 'M'                              
+      *               gender PIC X(01)                                        
+      *            88  female VALUE 'F'                                       
+      *            01  male   VALUE 'M'                                       
+      *  .                                                                    
        
        END PROGRAM FunDeclare.
       *_________________________________________________________________      

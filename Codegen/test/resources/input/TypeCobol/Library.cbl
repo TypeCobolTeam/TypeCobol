@@ -41,33 +41,33 @@
       *=================================================================
        PROCEDURE DIVISION USING DVZDAT.
       *=================================================================
-       DECLARE FUNCTION currentDate PUBLIC.
-
-       PROCEDURE DIVISION RETURNING Result TYPE date.
+       DECLARE FUNCTION currentDate PUBLIC
+           RETURNING Result TYPE date.
+       PROCEDURE DIVISION.
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END-DECLARE.
       *_________________________________________________________________
-       DECLARE FUNCTION currentDateDB2 PUBLIC.
-
+       DECLARE FUNCTION currentDateDB2 PUBLIC
+           RETURNING Result Type dateDB2.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  W-Dat       TYPE date.
 
-       PROCEDURE DIVISION RETURNING Result Type dateDB2.
+       PROCEDURE DIVISION.
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
        END-DECLARE.
       *_________________________________________________________________
-       DECLARE FUNCTION currentDateJulian PUBLIC.
-
+       DECLARE FUNCTION currentDateJulian PUBLIC
+           RETURNING Result Type dateJulian.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  W-Dat       TYPE date.
 
-       PROCEDURE DIVISION RETURNING Result Type dateJulian.
+       PROCEDURE DIVISION.
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE FUNCTION DAY-OF-INTEGER
@@ -76,20 +76,20 @@
            .
        END-DECLARE.
       *_________________________________________________________________
-       DECLARE FUNCTION currentDateFreeFormat PUBLIC.
-
+       DECLARE FUNCTION currentDateFreeFormat PUBLIC
+                          INPUT dateType   PIC X(01)
+                                direction  PIC X(01)
+                                separator  PIC X(01)
+                                culture    TYPE culture
+                                returnCode PIC 9(04)
+                          RETURNING Result PIC X(40).
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  C-ZDAT2000               PIC X(08) VALUE 'ZDAT2000'.
        01  DATS20. COPY YDATS20.
        01  W-Dat       TYPE date.
 
-       PROCEDURE DIVISION INPUT dateType   PIC X(01)
-                                direction  PIC X(01)
-                                separator  PIC X(01)
-                                culture    TYPE culture
-                                returnCode PIC 9(04)
-                          RETURNING Result PIC X(40).
+       PROCEDURE DIVISION.
 
            MOVE SPACES                       TO DATS20
 

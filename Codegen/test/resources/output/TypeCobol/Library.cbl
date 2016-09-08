@@ -61,21 +61,26 @@
            .                                                                  
                                                                               
       *=================================================================
-      *DECLARE FUNCTION currentDate PUBLIC.                                   
-
+      *DECLARE FUNCTION currentDate PUBLIC                                    
+      *    RETURNING Result TYPE date.                                        
       *_________________________________________________________________
-      *DECLARE FUNCTION currentDateDB2 PUBLIC.                                
-
-
-
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateJulian PUBLIC.                             
-
+      *DECLARE FUNCTION currentDateDB2 PUBLIC                                 
+      *    RETURNING Result Type dateDB2.                                     
 
 
       *_________________________________________________________________
-      *DECLARE FUNCTION currentDateFreeFormat PUBLIC.                         
+      *DECLARE FUNCTION currentDateJulian PUBLIC                              
+      *    RETURNING Result Type dateJulian.                                  
 
+
+      *_________________________________________________________________
+      *DECLARE FUNCTION currentDateFreeFormat PUBLIC                          
+      *                   INPUT dateType   PIC X(01)                          
+      *                         direction  PIC X(01)                          
+      *                         separator  PIC X(01)                          
+      *                         culture    TYPE culture                       
+      *                         returnCode PIC 9(04)                          
+      *                   RETURNING Result PIC X(40).                         
 
 
 

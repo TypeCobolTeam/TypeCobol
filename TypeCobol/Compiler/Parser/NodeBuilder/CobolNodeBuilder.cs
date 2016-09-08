@@ -345,10 +345,11 @@ namespace TypeCobol.Compiler.Parser
 				// PICTURE nor TYPE clause for the returning parameter in the function declaration.
 				// however, this is as syntax error.
 				var pentry = new ParameterDescriptionEntry();
-				declaration.Profile.ReturningParameter = new ParameterDescription(pentry);
 				var data = header.ReturningParameter.StorageArea as DataOrConditionStorageArea;
 				if (data != null) pentry.DataName = new SymbolDefinition(data.SymbolReference.NameLiteral, data.SymbolReference.Type);
 				// pentry.Picture will remain empty, we can't do anything about it
+				pentry.DataType = DataType.Unknown;
+				declaration.Profile.ReturningParameter = new ParameterDescription(pentry);
 			}
 			Enter(new ProcedureDivision(header), context);
 		}
