@@ -19,6 +19,33 @@
             .
        
       *DECLARE function DoesNothing PUBLIC.                                   
+
+      *DECLARE function ReturnsZero PUBLIC.                                   
+
+      * ERROR Illegal FILE SECTION
+      *DECLARE function StrangelyReturnsItsInput PRIVATE.                     
+
+      * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
+      *DECLARE function SumThreeWithClutterInLinkage PRIVATE.                 
+       
+      *DECLARE function SwapParameters PRIVATE.                               
+
+      * ERROR because x and y should be INOUT
+      * ERROR because y INPUT vs OUTPUT types differ
+      *DECLARE function SwapParametersWrong PRIVATE.                          
+      * ERROR because illegal GLOBAL or EXTERNAL
+      *DECLARE function IllegalClauses PUBLIC.                                
+
+       ILLEGAL-NON-FUNCTION-PARAGRAPH.
+           CONTINUE.
+       
+      *DECLARE function FunConditions PRIVATE.                                
+      * ERROR level-88 parameter items must be subordinate to another item
+      * ERROR only level-88 parameter items shall have an explicit level number
+      *DECLARE function FunConditions PRIVATE.                                
+       
+       END PROGRAM FunDeclare.
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. DoesNothing.                                               
        PROCEDURE DIVISION                                                     
@@ -26,8 +53,7 @@
            DISPLAY 'I DO NOTHING'
            .
        END PROGRAM DoesNothing.                                               
-
-      *DECLARE function ReturnsZero PUBLIC.                                   
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. ReturnsZero.                                               
          DATA DIVISION.
@@ -39,9 +65,7 @@
            MOVE 0 TO result.
            .
        END PROGRAM ReturnsZero.                                               
-
-      * ERROR Illegal FILE SECTION
-      *DECLARE function StrangelyReturnsItsInput PRIVATE.                     
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. StrangelyReturnsItsInput.                                  
          DATA DIVISION.
@@ -60,9 +84,7 @@
              MOVE x TO result
            END-IF.
        END PROGRAM StrangelyReturnsItsInput.                                  
-
-      * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
-      *DECLARE function SumThreeWithClutterInLinkage PRIVATE.                 
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SumThreeWithClutterInLinkage.                              
          DATA DIVISION.
@@ -87,8 +109,7 @@
            ADD y to result.
            ADD z to result.
        END PROGRAM SumThreeWithClutterInLinkage.                              
-       
-      *DECLARE function SwapParameters PRIVATE.                               
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SwapParameters.                                            
          DATA DIVISION.
@@ -106,12 +127,10 @@
            MOVE tmp TO y
            .
        END PROGRAM SwapParameters.                                            
-
-      * ERROR because x and y should be INOUT
-      * ERROR because y INPUT vs OUTPUT types differ
-      *DECLARE function SwapParametersWrong PRIVATE.                          
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. SwapParametersWrong.                                       
+       DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
        01 y PIC 9(04).                                                        
@@ -125,8 +144,7 @@
          .                                                                    
            CONTINUE.
        END PROGRAM SwapParametersWrong.                                       
-      * ERROR because illegal GLOBAL or EXTERNAL
-      *DECLARE function IllegalClauses PUBLIC.                                
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. IllegalClauses.                                            
          DATA DIVISION.
@@ -137,41 +155,30 @@
          .                                                                    
            .
        END PROGRAM IllegalClauses.                                            
-
-       ILLEGAL-NON-FUNCTION-PARAGRAPH.
-           CONTINUE.
-       
-      *DECLARE function FunConditions PRIVATE.                                
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. FunConditions.                                             
-         LINKAGE SECTION.                                                     
-           01 gender PIC X(01).                                               
+       DATA DIVISION.                                                         
+       LINKAGE SECTION.                                                       
+       01 gender PIC X(01).                                                   
            88 valid-gender VALUE 'F' 'M'.                                     
            88 female VALUE 'F'.                                               
            88 male VALUE 'M'.                                                 
-         PROCEDURE DIVISION                                                   
+       PROCEDURE DIVISION                                                     
              USING BY REFERENCE gender                                        
-                   BY REFERENCE valid-gender                                  
-                   BY REFERENCE female                                        
-                   BY REFERENCE male                                          
          .                                                                    
            CONTINUE.
        END PROGRAM FunConditions.                                             
-      * ERROR level-88 parameter items must be subordinate to another item
-      * ERROR only level-88 parameter items shall have an explicit level number
-      *DECLARE function FunConditions PRIVATE.                                
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. FunConditions.                                             
-         LINKAGE SECTION.                                                     
-           88 valid-gender VALUE 'F' 'M'.                                     
-           01 gender PIC X(01).                                               
+       DATA DIVISION.                                                         
+       LINKAGE SECTION.                                                       
+       01 gender PIC X(01).                                               
            88 female VALUE 'F'.                                               
            88 male VALUE 'M'.                                                 
-         PROCEDURE DIVISION                                                   
-             USING BY REFERENCE valid-gender                                  
-                   BY REFERENCE gender                                        
-                   BY REFERENCE female                                        
-                   BY REFERENCE male                                          
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE gender                                        
          .                                                                    
            CONTINUE.
        END PROGRAM FunConditions.                                             
-       
-       END PROGRAM FunDeclare.
