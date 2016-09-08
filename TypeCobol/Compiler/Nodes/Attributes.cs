@@ -29,6 +29,7 @@ public static class Attributes {
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
 		attributes["function"] = new FunctionUserAttribute();
+		attributes["definitions"] = new DefinitionsAttribute();
 	}
 }
 
@@ -137,6 +138,60 @@ internal class FunctionUserAttribute: Attribute {
 	private static CallParameter GetParameter(int index, FunctionCall function) {
 		if (index < function.InputParameters.Count) return function.InputParameters[index];
 		return null;
+	}
+}
+
+internal class DefinitionsAttribute: Attribute {
+	private long ct;
+	private long cf;
+	public object GetValue(object o, SymbolTable table) {
+		ct = cf = 0;
+		var definitions = new Definitions();
+		definitions.types = GetTypes(table);
+		definitions.functions = GetFunctions(table);
+		return definitions;
+	}
+	private List<Named> GetTypes(SymbolTable table) {
+		var list = new List<Named>();
+		if (table == null) return list;
+		foreach(var items in table.Types)
+			foreach(var item in items.Value)
+				list.Add(new Definitions.LabelledName(item, "\'T"+(++ct).ToString("0000000")+'\''));
+		list.AddRange(GetTypes(table.EnclosingScope));
+		return list;
+	}
+	private List<Named> GetFunctions(SymbolTable table) {
+		var list = new List<Named>();
+		if (table == null) return list;
+		foreach(var items in table.Functions)
+			foreach(var item in items.Value)
+				list.Add(new Definitions.LabelledName(item, "\'F"+(++cf).ToString("0000000")+'\''));
+		list.AddRange(GetFunctions(table.EnclosingScope));
+		return list;
+	}
+}
+public class Definitions {
+	public List<Named> types;
+	public List<Named> functions;
+
+	public override string ToString() {
+		var str = new System.Text.StringBuilder();
+		str.Append("Types:[");
+		foreach(var item in types) str.Append(item.Name).Append(',');
+		if (types.Count > 0) str.Length -= 1;
+		str.Append("] Functions:[");
+		foreach(var item in functions) str.Append(item.Name).Append(',');
+		if (functions.Count > 0) str.Length -= 1;
+		str.Append(']');
+		return str.ToString();
+	}
+
+	public class LabelledName: Named {
+		private Named item;
+		public string label;
+		public LabelledName(Named item, string label) { this.item = item; this.label = label; }
+		public string Name { get { return item.Name; } }
+		public CodeElements.Expressions.QualifiedName QualifiedName { get { return item.QualifiedName; } }
 	}
 }
 

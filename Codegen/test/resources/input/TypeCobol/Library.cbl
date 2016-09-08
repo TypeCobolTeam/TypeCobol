@@ -38,12 +38,6 @@
       *=================================================================
        PROCEDURE DIVISION USING DVZDAT.
       *=================================================================
-           SET DVZDAT-currentDate               TO ENTRY 'CURRE001'
-           SET DVZDAT-currentDateDB2            TO ENTRY 'CURRE002'
-           SET DVZDAT-currentDateJulian         TO ENTRY 'CURRE003'
-           SET DVZDAT-currentDateFreeFormat     TO ENTRY 'CURRE004'
-           .
-      *_________________________________________________________________
        DECLARE FUNCTION currentDate PUBLIC.
 
        PROCEDURE DIVISION RETURNING Result TYPE date.

@@ -1,19 +1,14 @@
-﻿      * 15 CodeElements errors
-      * "1"@(39:8>39:16): [27:1] Syntax error : Illegal default section in library.
-      * "1"@(41:12>41:67): [27:1] Syntax error : Symbol DVZDAT-currentDate is not referenced
-      * "1"@(42:12>42:67): [27:1] Syntax error : Symbol DVZDAT-currentDateDB2 is not referenced
-      * "1"@(43:12>43:67): [27:1] Syntax error : Symbol DVZDAT-currentDateJulian is not referenced
-      * "1"@(44:12>44:67): [27:1] Syntax error : Symbol DVZDAT-currentDateFreeFormat is not referenced
-      * "1"@(76:12>78:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
-      * "1"@(99:12>99:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
-      * "1"@(100:12>100:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
-      * "1"@(101:12>101:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
-      * "1"@(102:12>102:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
-      * "1"@(103:12>103:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
-      * "1"@(106:12>106:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
-      * "1"@(107:12>107:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
-      * "1"@(108:12>108:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced
-      * "1"@(117:16>117:54): [27:1] Syntax error : Symbol DATS20-O-DATE-LONG is not referenced
+﻿      * 10 CodeElements errors
+      * "1"@(70:12>72:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
+      * "1"@(93:12>93:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
+      * "1"@(94:12>94:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
+      * "1"@(95:12>95:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
+      * "1"@(96:12>96:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
+      * "1"@(97:12>97:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
+      * "1"@(100:12>100:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
+      * "1"@(101:12>101:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
+      * "1"@(102:12>102:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced
+      * "1"@(111:16>111:54): [27:1] Syntax error : Symbol DATS20-O-DATE-LONG is not referenced
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
@@ -52,13 +47,14 @@
 
       *=================================================================
        PROCEDURE DIVISION USING DVZDAT.
+                                                                              
+           SET currentDate TO ENTRY 'F0000001'                                
+           SET currentDateDB2 TO ENTRY 'F0000002'                             
+           SET currentDateJulian TO ENTRY 'F0000003'                          
+           SET currentDateFreeFormat TO ENTRY 'F0000004'                      
+           .                                                                  
+                                                                              
       *=================================================================
-           SET DVZDAT-currentDate               TO ENTRY 'CURRE001'
-           SET DVZDAT-currentDateDB2            TO ENTRY 'CURRE002'
-           SET DVZDAT-currentDateJulian         TO ENTRY 'CURRE003'
-           SET DVZDAT-currentDateFreeFormat     TO ENTRY 'CURRE004'
-           .
-      *_________________________________________________________________
       *DECLARE FUNCTION currentDate PUBLIC.                                   
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. currentDate.                                               
@@ -169,7 +165,7 @@
            MOVE dateType                     TO DATS20-I-RETOUR-TYPE1
            MOVE direction                    TO DATS20-I-RETOUR-SENS1
            MOVE separator                    TO DATS20-I-RETOUR-SEPAR
-           MOVE culture :: lng                 TO DATS20-I-INT-LANG
+           MOVE culture :: lng               TO DATS20-I-INT-LANG
            MOVE culture :: cty               TO DATS20-I-INT-PAYS
            MOVE 'M'                          TO DATS20-I-POLICE
            MOVE 'P'                          TO DATS20-I-INJOUR
