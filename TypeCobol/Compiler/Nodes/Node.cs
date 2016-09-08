@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Nodes {
 public abstract class Node: Named {
 
 	/// <summary>CodeElement data (weakly-typed)</summary>
-	public CodeElement CodeElement { get; private set; }
+	public virtual CodeElement CodeElement { get; private set; }
 	public Node(CodeElement CodeElement) { this.CodeElement = CodeElement; }
 
 	/// <summary>Parent node (weakly-typed)</summary>
@@ -116,6 +116,7 @@ public abstract class Node: Named {
 	}
 	private void Dump(System.Text.StringBuilder str, int i) {
 		for (int c=0; c<i; c++) str.Append("  ");
+		if (Comment == true) str.Append('*');
 		if (Name != null) str.AppendLine(Name);
 		else 
 		if (CodeElement == null) str.AppendLine("?");
@@ -270,7 +271,12 @@ public class Root: Node, CodeElementHolder<CodeElement> {
 
 public class Program: Node, CodeElementHolder<ProgramIdentification> {
 	public Program(ProgramIdentification identification): base(identification) { }
-	public override string ID { get { return this.CodeElement().ProgramName.Name; } }
+	public override string ID {
+		get {
+			if (Parent is Root) return "program";
+			return this.CodeElement().ProgramName.Name;
+		}
+	}
 }
 
 public class Class: Node, CodeElementHolder<ClassIdentification> {

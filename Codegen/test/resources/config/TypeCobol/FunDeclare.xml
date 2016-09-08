@@ -6,7 +6,7 @@
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
     </conditions>
     <patterns>
-      <pattern location="NODE" action="expand"></pattern>
+      <pattern action="expand" location="program.end"></pattern>
     </patterns>
   </skeleton>
 

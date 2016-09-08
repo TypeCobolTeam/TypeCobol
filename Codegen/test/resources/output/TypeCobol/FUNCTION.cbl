@@ -31,19 +31,6 @@
                                                                               
        
       *DECLARE function POW PRIVATE.                                          
-       IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. POW.                                                       
-       LINKAGE SECTION.                                                       
-       01 x PIC 9(05).                                                        
-       01 y PIC 9(03).                                                        
-       01 result PIC 9(08).                                                   
-       PROCEDURE DIVISION                                                     
-             USING BY REFERENCE x                                             
-                   BY REFERENCE y                                             
-                   BY REFERENCE result                                        
-         .                                                                    
-           CONTINUE.
-       END PROGRAM POW.                                                       
 
        TRAITEMENT.
       *    MOVE FUNCTION POW (x y)    TO x                                    
@@ -153,3 +140,17 @@
            .
 
        END PROGRAM Functions.
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. POW.                                                       
+       LINKAGE SECTION.                                                       
+       01 x PIC 9(05).                                                        
+       01 y PIC 9(03).                                                        
+       01 result PIC 9(08).                                                   
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
+                   BY REFERENCE result                                        
+         .                                                                    
+           CONTINUE.
+       END PROGRAM POW.                                                       

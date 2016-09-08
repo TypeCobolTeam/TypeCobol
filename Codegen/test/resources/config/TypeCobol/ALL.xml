@@ -57,14 +57,14 @@
     </patterns>
   </skeleton>
 
-  <!-- replace DECLARE FUNCTION by a nested program -->
+  <!-- replace DECLARE FUNCTION by a stacked program -->
   <skeleton name="FUN.DECLARE" var="definitions">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
     </conditions>
     <patterns>
-      <pattern location="NODE" action="expand"></pattern>
-      <pattern location="procedure-division.begin" action="create" group="public-functions">
+      <pattern action="expand" location="program.end"></pattern>
+      <pattern action="create" location="procedure-division.begin" group="public-functions">
 @{
   var setentries = "";
   foreach (var f in %definitions.functions) {

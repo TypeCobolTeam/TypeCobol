@@ -14,6 +14,8 @@ internal class TypedDataNode: DataDescription, Generated {
 	private DataDescription Node;
 	public TypedDataNode(DataDescription node): base(null) { this.Node = node; }
 
+	public override CodeElement CodeElement { get { return this.Node.CodeElement; } }
+
 	private List<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {

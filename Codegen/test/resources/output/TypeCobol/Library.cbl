@@ -57,6 +57,28 @@
                                                                               
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC.                                   
+
+      *_________________________________________________________________
+      *DECLARE FUNCTION currentDateDB2 PUBLIC.                                
+
+
+
+      *_________________________________________________________________
+      *DECLARE FUNCTION currentDateJulian PUBLIC.                             
+
+
+
+      *_________________________________________________________________
+      *DECLARE FUNCTION currentDateFreeFormat PUBLIC.                         
+
+
+
+
+
+
+
+       END PROGRAM DVZZDAT.
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. currentDate.                                               
        LINKAGE SECTION.                                                       
@@ -67,15 +89,12 @@
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE Result                                        
          .                                                                    
-
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM currentDate.                                               
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateDB2 PUBLIC.                                
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. currentDateDB2.                                            
-
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -93,17 +112,13 @@
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE Result                                        
          .                                                                    
-
-
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
        END PROGRAM currentDateDB2.                                            
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateJulian PUBLIC.                             
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. currentDateJulian.                                         
-
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -118,19 +133,15 @@
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE Result                                        
          .                                                                    
-
-
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE FUNCTION DAY-OF-INTEGER
                          (FUNCTION INTEGER-OF-DATE(W-Dat))
                 TO Result
            .
        END PROGRAM currentDateJulian.                                         
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateFreeFormat PUBLIC.                         
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. currentDateFreeFormat.                                     
-
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  C-ZDAT2000               PIC X(08) VALUE 'ZDAT2000'.
@@ -157,10 +168,7 @@
                    BY REFERENCE returnCode                                    
                    BY REFERENCE Result                                        
          .                                                                    
-
-
            MOVE SPACES                       TO DATS20
-
            SET DATS20-I-FONCTION-FORMATAGE   TO TRUE
            MOVE 'JOUR'                       TO DATS20-I-DATE1
            MOVE dateType                     TO DATS20-I-RETOUR-TYPE1
@@ -171,10 +179,8 @@
            MOVE 'M'                          TO DATS20-I-POLICE
            MOVE 'P'                          TO DATS20-I-INJOUR
            SET DATS20-I-DATE1-SSAAMMJJ-OUI   TO TRUE
-
            CALL 'ZCALLPGM' USING C-ZDAT2000
                                  DATS20
-
            IF DATS20-O-ERREUR
                MOVE ALL '9'                  TO returnCode
                DISPLAY DATS20-O-LIBRET
@@ -183,5 +189,3 @@
            END-IF
            .
        END PROGRAM currentDateFreeFormat.                                     
-
-       END PROGRAM DVZZDAT.

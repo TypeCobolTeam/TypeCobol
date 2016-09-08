@@ -24,7 +24,7 @@ namespace TypeCobol.Codegen {
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			var root = program.SyntaxTree.Root;
-			root.Get("Functions.data-division.working-storage").Add(new Node("codegen", false), 1);
+			root.Get("program.data-division.working-storage").Add(new Node("codegen", false), 1);
 			var writer = new TreeToCode(document.Results.TokensLines);
 			root.Accept(writer);
 			System.Console.WriteLine(writer.Output);
