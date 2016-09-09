@@ -733,7 +733,9 @@ namespace TypeCobol.Compiler.Parser
 		var c = context.cobolQualifiedDataNameOrQualifiedConditionName1();
 		if (c != null) return CreateQualifiedDataNameOrQualifiedConditionName1(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 		var tc = context.tcQualifiedDataNameOrQualifiedConditionName1();
-		return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+		var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
+		Array.Reverse(tail);
+		return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tail);
 	}
 	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail) {
 		var reference = new QualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]));
