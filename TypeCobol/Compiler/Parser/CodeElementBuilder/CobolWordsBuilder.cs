@@ -392,10 +392,10 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolReference(context.symbolReference1(), SymbolType.ProgramName);
         }
 
-        internal SymbolReference CreateProgramNameReference(CodeElementsParser.ProgramNameReference2Context context)
-        {
-            return CreateSymbolReference(context.symbolReference5(), SymbolType.ProgramName);
-        }
+	internal SymbolReference CreateProgramNameReference(CodeElementsParser.ProgramNameReference2Context context) {
+		if (context == null) return null;
+		return CreateSymbolReference(context.symbolReference5(), SymbolType.ProgramName);
+	}
 
         internal SymbolDefinition CreateProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
         {
