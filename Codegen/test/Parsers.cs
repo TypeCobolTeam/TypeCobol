@@ -96,9 +96,8 @@ namespace TypeCobol.Codegen {
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
-			string file = Path.Combine("TypeCobol","FUNCTION");
-			var skeletons = ParseConfig(file+".xml");
-			ParseGenerateCompare(file+".cbl", skeletons);
+			var skeletons = ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
+			ParseGenerateCompare(Path.Combine("TypeCobol","FUNCTION")+".cbl", skeletons);
 		}
 
 		[TestMethod]

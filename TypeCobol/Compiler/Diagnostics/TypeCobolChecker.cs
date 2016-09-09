@@ -126,7 +126,8 @@ class FunctionDeclarationChecker: NodeListener {
 		if (node == null) return; // no DATA DIVISION
 		foreach(var section in node.Children()) { // "storage" sections
 			foreach(var child in section.Children()) {
-				var data = (DataDescriptionEntry)child.CodeElement;
+				var data = child.CodeElement as DataDescriptionEntry;
+				if (data == null) continue;
 				if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
 					DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
 				if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL

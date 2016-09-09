@@ -11,16 +11,6 @@
     </patterns>
   </skeleton>
 
-  <!-- delete and replace TYPE -->
-  <skeleton name="TYPE">
-    <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="*"/>
-    </conditions>
-    <patterns>
-      <pattern location="NODE" action="expand"></pattern>
-    </patterns>
-  </skeleton>
-
   <!-- replace TYPE BOOL declarations -->
   <skeleton name="BOOL.DECLARE" var="level,name">
     <conditions>
@@ -28,10 +18,20 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-        %level  %name-value PIC X VALUE LOW-VALUE.
-        88  %name       VALUE 'T'.
-        88  %name-false VALUE 'F'.
+%level  %name-value PIC X VALUE LOW-VALUE.
+    88  %name       VALUE 'T'.
+    88  %name-false VALUE 'F'.
       </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete and replace TYPE -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="*"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
     </patterns>
   </skeleton>
 
@@ -50,7 +50,7 @@
   <!-- delete UNSAFE -->
   <skeleton name="UNSAFE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.VariableUser"/>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableWriter" unsafe="true"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="erase">UNSAFE</pattern>

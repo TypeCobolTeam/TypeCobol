@@ -28,6 +28,7 @@ public static class Attributes {
 		attributes["type"]  = new TypeAttribute();
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
+		attributes["unsafe"] = new UnsafeAttribute();
 		attributes["function"] = new FunctionUserAttribute();
 		attributes["definitions"] = new DefinitionsAttribute();
 	}
@@ -84,6 +85,14 @@ internal class ReceiverAttribute: Attribute {
 		if (statement.VariablesWritten.Count == 0) return null;
 		if (statement.VariablesWritten.Count == 1) return new List<TypeCobol.Compiler.CodeElements.Expressions.QualifiedName>(statement.VariablesWritten.Keys)[0];
 		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.VariablesWritten.Count+")");
+	}
+}
+
+internal class UnsafeAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var statement = o as VariableWriter;
+		if (statement == null) return null;
+		return statement.IsUnsafe;
 	}
 }
 
