@@ -1,17 +1,18 @@
 ﻿      * 13 CodeElements errors
       * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
-      * "1"@(24:8>24:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
-      * "1"@(42:12>42:26): [27:1] Syntax error : x is already a parameter.
-      * "1"@(43:12>43:26): [27:1] Syntax error : y is already a parameter.
-      * "1"@(45:14>45:28): [27:1] Syntax error : x is already a parameter.
-      * "1"@(46:14>46:28): [27:1] Syntax error : z is already a parameter.
-      * "1"@(49:12>49:31): [27:1] Syntax error : result is already a parameter.
+      * "1"@(27:8>27:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
+      * "1"@(47:12>47:26): [27:1] Syntax error : x is already a parameter.
+      * "1"@(48:12>48:26): [27:1] Syntax error : y is already a parameter.
+      * "1"@(50:14>50:28): [27:1] Syntax error : x is already a parameter.
+      * "1"@(51:14>51:28): [27:1] Syntax error : z is already a parameter.
+      * "1"@(54:12>54:31): [27:1] Syntax error : result is already a parameter.
       * "1"@(56:12>56:27): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(93:14>93:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
       * "1"@(94:14>94:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
       * "1"@(99:8>99:16): [27:1] Syntax error : Illegal non-function item in library
       * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
       * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "male" must be level 88.
+
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -198,28 +199,29 @@
        END PROGRAM F0000007.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000008.                                             
+       PROGRAM-ID. F0000008.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
-           88 valid-gender VALUE 'F' 'M'.                                     
-           88 female VALUE 'F'.                                               
-           88 male VALUE 'M'.                                                 
+           88 valid-gender VALUE 'F' 'M'.
+           88 female VALUE 'F'.
+           88 male VALUE 'M'.
+
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE gender                                        
-         .                                                                    
+           .                                                                  
            CONTINUE.
-       END PROGRAM F0000008.                                             
+       END PROGRAM F0000008.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000009.                                             
+       PROGRAM-ID. F0000009.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
-       01 gender PIC X(01).                                               
-           88 female VALUE 'F'.                                               
-           88 male VALUE 'M'.                                                 
+       01 gender PIC X(01).                                                   
+           88 female VALUE 'F'.
+           88 male VALUE 'M'.
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE gender                                        
-         .                                                                    
+           .                                                                  
            CONTINUE.
-       END PROGRAM F0000009.                                             
+       END PROGRAM F0000009.                                                  
