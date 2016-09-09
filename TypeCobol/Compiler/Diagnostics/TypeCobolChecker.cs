@@ -156,13 +156,13 @@ class FunctionDeclarationChecker: NodeListener {
 		AddEntries(linkage, node);
 		foreach(var description in linkage) {
 			var used = Validate(profile.ReturningParameter, description.Name);
-			if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+			if (used != null) { AddErrorAlreadyParameter(description, description.QualifiedName); continue; }
 			used = GetParameter(profile.InputParameters,  description.Name);
-			if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+			if (used != null) { AddErrorAlreadyParameter(description, description.QualifiedName); continue; }
 			used = GetParameter(profile.OutputParameters, description.Name);
-			if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+			if (used != null) { AddErrorAlreadyParameter(description, description.QualifiedName); continue; }
 			used = GetParameter(profile.InoutParameters,  description.Name);
-			if (used != null) { AddErrorAlreadyParameter(node, description.Name); continue; }
+			if (used != null) { AddErrorAlreadyParameter(description, description.QualifiedName); continue; }
 		}
 	}
 	private void AddEntries(List<DataDefinition> linkage, LinkageSection node) {
@@ -184,27 +184,8 @@ class FunctionDeclarationChecker: NodeListener {
 		if (parameter != null && parameter.Name.Equals(name)) return parameter;
 		return null;
 	}
-	private void AddErrorAlreadyParameter(LinkageSection node, string name) {
-		DiagnosticUtils.AddError(GetParameter(node, name), name+" is already a parameter.");
-	}
-	/// <param name="linkage">LINKAGE SECTION, presumably</param>
-	/// <param name="name">Parameter we want</param>
-	/// <returns>Parameter as declared in DATA DIVISION</returns>
-	private DataDefinitionEntry GetParameter(LinkageSection linkage, string name) {
-		foreach(var data in linkage.Children()) {
-			var found = GetParameter(data, name);
-			if (found != null) return found;
-		}
-		return null;
-	}
-	private DataDefinitionEntry GetParameter(DataDefinition node,string name) {
-		var data = (DataDefinitionEntry)node.CodeElement;
-		if (data != null && name.Equals(data.Name)) return data;
-		foreach(var subordinate in node.Children()) {
-			var found = GetParameter(subordinate, name);
-			if (found != null) return found;
-		}
-		return null;
+	private void AddErrorAlreadyParameter(Node node, QualifiedName name) {
+		DiagnosticUtils.AddError(node.CodeElement, name.Head+" is already a parameter.");
 	}
 }
 
