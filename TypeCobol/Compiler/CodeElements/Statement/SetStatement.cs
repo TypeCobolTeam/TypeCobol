@@ -152,7 +152,9 @@ public class SetSendingVariable {
 
 	public object Value {
 		get {
-			if(IntegerVariableOrIndex != null) return IntegerVariableOrIndex.Value.Value;
+			if(IntegerVariableOrIndex != null)
+				if (IntegerVariableOrIndex.Value != null) return IntegerVariableOrIndex.Value.Value;
+				else return ((Named)IntegerVariableOrIndex.StorageArea).Name;
 			if(NullPointerValue != null) return NullPointerValue.ToString();
 			if(ProgramNameOrProgramEntryVariable != null) {
 				var program = ProgramNameOrProgramEntryVariable.StorageArea as Named;

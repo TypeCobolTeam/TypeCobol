@@ -363,7 +363,16 @@ class WriteTypeConsistencyChecker: NodeListener {
 	private DataType GetTypeDefinition(SymbolTable table, Named symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
-			var entry = (DataDescriptionEntry)data.CodeElement;
+			DataDescriptionEntry entry;
+			if (data.CodeElement is DataDescriptionEntry) {
+				entry = (DataDescriptionEntry)data.CodeElement;
+			} else
+			if (data.CodeElement is DataRedefinesEntry) {
+				var redefines = (DataRedefinesEntry)data.CodeElement;
+				var qname = redefines.RedefinesDataName.QualifiedName;
+				var node = (DataDescription)GetSymbol(table, qname);
+				entry = node.CodeElement();
+			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
 			if (entry.CustomType == null) return entry.DataType;//not a custom type
 		}
 		Typed typed = symbol as Typed;

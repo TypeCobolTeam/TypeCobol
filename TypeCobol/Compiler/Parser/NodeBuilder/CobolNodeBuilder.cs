@@ -387,7 +387,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void ExitSentence(ProgramClassParser.SentenceContext context) {
 			AttachEndIfExists(context.SentenceEnd());
-			Exit();
+			if (CurrentNode is Sentence) Exit();//TODO remove this and check what happens when exiting last CALL in FIN-STANDARD in BigBatch file (ie. CheckPerformance test)
 		}
 
 		public override void EnterStatement(ProgramClassParser.StatementContext context) {

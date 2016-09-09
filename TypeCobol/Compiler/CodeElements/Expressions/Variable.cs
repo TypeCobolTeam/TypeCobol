@@ -34,20 +34,12 @@ namespace TypeCobol.Compiler.CodeElements
         MethodName
     }
 
-    public class IntegerVariable : VariableBase
-    {
-        public IntegerVariable(StorageArea storageArea) : 
-            base(StorageDataType.Integer, storageArea)
-        { }
+	public class IntegerVariable : VariableBase {
+		public IntegerVariable(StorageArea storageArea): base(StorageDataType.Integer, storageArea) { }
+		public IntegerVariable(IntegerValue value): base(StorageDataType.Integer, null) { Value = value; }
 
-        public IntegerVariable(IntegerValue value) :
-            base(StorageDataType.Integer, null)
-        {
-            Value = value;
-        }
-
-        public IntegerValue Value { get; private set; }
-    }
+		public IntegerValue Value { get; private set; }
+	}
 
     public class NumericVariable : VariableBase
     {
