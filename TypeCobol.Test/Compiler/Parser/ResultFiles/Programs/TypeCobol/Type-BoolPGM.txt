@@ -4,7 +4,12 @@
 --- Program ---
 PROGRAM: TEST-BOOL common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
-SYMBOL TABLE:
-  zoneTxt {1} Alphanumeric
-  check {1} BOOL
-  managed {1} BOOL
+--- Intrinsic:Global:Program
+-- DATA --------
+  zoneTxt:Alphanumeric
+  check:BOOL
+  managed:BOOL
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE
