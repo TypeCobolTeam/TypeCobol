@@ -76,17 +76,11 @@ namespace TypeCobol.Test.Compiler.Preprocessor
             return tokensText.ToString() + diagnosticsText.ToString();
         }
         
-        public static void CheckWithDirectiveResultFile(string result, string testName)
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Preprocessor\DirectiveResultFiles\" + testName + ".txt")))
-            {
-                string expectedResult = reader.ReadToEnd();
-                if (result != expectedResult)
-                {
-                    throw new Exception("Tokens and diagnostics produced by preprocessor in test \"" + testName + "\" don't match the expected result:\n"+result);
-                }
-            }
-        }
+	public static void CheckWithDirectiveResultFile(string result, string testName) {
+		string path = Path.Combine("Compiler","Preprocessor","DirectiveResultFiles",testName+".txt");
+		string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+		TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+	}
 
         private static string ProcessTokensDocument(string testName, ProcessedTokensDocument processedDoc)
         {
