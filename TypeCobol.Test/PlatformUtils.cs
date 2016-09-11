@@ -17,7 +17,7 @@ namespace TypeCobol.Test
 		// => we can access all project files by extracting the start of
 		// the project path on the local disk from the working directory
 		PWD = Directory.GetCurrentDirectory();
-		ABSOLUTE_TEST_PROJECT_PATH = pwd.Substring(0, workingDirectory.IndexOf(RELATIVE_TEST_PROJECT_PATH) + RELATIVE_TEST_PROJECT_PATH.Length);
+		ABSOLUTE_TEST_PROJECT_PATH = PWD.Substring(0, PWD.IndexOf(RELATIVE_TEST_PROJECT_PATH) + RELATIVE_TEST_PROJECT_PATH.Length);
 		}
 
 		private static readonly string PWD;
