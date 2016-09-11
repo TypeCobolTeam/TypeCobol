@@ -27,14 +27,17 @@ namespace TypeCobol.Test
         /// </summary>
         private static readonly string ABSOLUTE_TEST_PROJECT_PATH;
 
-        /// <summary>
-        /// If file "foo.txt" is stored in project subdirectory "bar",
-        /// relativeFilePath input parameter should be "bar/foo.txt"
-        /// </summary>
-        public static string GetPathForProjectFile(string relativeFilePath)
-        {
-            return ABSOLUTE_TEST_PROJECT_PATH + Path.DirectorySeparatorChar + relativeFilePath;
-        }
+	/// <summary>
+	/// If file "foo.txt" is stored in project subdirectory "bar",
+	/// relativeFilePath input parameter should be "bar/foo.txt"
+	/// </summary>
+	public static string GetPathForProjectFile(string relativeFilePath) {
+System.Console.WriteLine("relativeFilePath: \""+relativeFilePath+"\"");
+System.Console.WriteLine("workingDirectory: \""+workingDirectory+"\"");
+System.Console.WriteLine("GetCurrentDirectory(): \""+Directory.GetCurrentDirectory()+"\"");
+System.Console.WriteLine("ABSOLUTE_TEST_PROJECT_PATH: \""+ABSOLUTE_TEST_PROJECT_PATH+"\"");
+		return ABSOLUTE_TEST_PROJECT_PATH + Path.DirectorySeparatorChar + relativeFilePath;
+	}
 
         /// <summary>
         /// If file "foo.txt" is stored in project subdirectory "bar",
