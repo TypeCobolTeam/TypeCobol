@@ -78,7 +78,7 @@ namespace TypeCobol.Test.Compiler.Preprocessor
         
 	public static void CheckWithDirectiveResultFile(string result, string testName) {
 		string path = Path.Combine("Compiler","Preprocessor","DirectiveResultFiles",testName+".txt");
-		string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+		string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
 		TypeCobol.Test.TestUtils.compareLines(path, result, expected);
 	}
 
