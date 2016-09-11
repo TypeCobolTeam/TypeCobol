@@ -34,7 +34,8 @@ namespace TypeCobol.Test
 	public static string GetPathForProjectFile(string relativeFilePath) {
 System.Console.WriteLine("relativeFilePath: \""+relativeFilePath+"\"");
 System.Console.WriteLine("workingDirectory: \""+workingDirectory+"\"");
-System.Console.WriteLine("GetCurrentDirectory(): \""+Directory.GetCurrentDirectory()+"\"");
+            string pwd = Directory.GetCurrentDirectory();
+System.Console.WriteLine("GetCurrentDirectory(): \""+pwd+"\"");
 System.Console.WriteLine("ABSOLUTE_TEST_PROJECT_PATH: \""+ABSOLUTE_TEST_PROJECT_PATH+"\"");
 		return ABSOLUTE_TEST_PROJECT_PATH + Path.DirectorySeparatorChar + relativeFilePath;
 	}
