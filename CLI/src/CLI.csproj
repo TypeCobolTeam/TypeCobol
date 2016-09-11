@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}</ProjectGuid>
-    <IntermediateOutputPath>..\..\bin\$(Configuration)</IntermediateOutputPath>
+    <IntermediateOutputPath>..\..\obj\$(Configuration)</IntermediateOutputPath>
     <OutputPath>..\..\bin\$(Configuration)</OutputPath>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>

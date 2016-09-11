@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6E707761-8F1D-409A-8E5B-03953282E435}</ProjectGuid>
-    <IntermediateOutputPath>..\bin\$(Configuration)</IntermediateOutputPath>
+    <IntermediateOutputPath>..\obj\$(Configuration)</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)</OutputPath>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
