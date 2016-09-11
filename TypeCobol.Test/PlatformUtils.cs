@@ -16,13 +16,14 @@ namespace TypeCobol.Test
 		// the working directory is ....\TEST_PROJECT_PATH\bin\Debug\...
 		// => we can access all project files by extracting the start of
 		// the project path on the local disk from the working directory
-		PWD = Directory.GetCurrentDirectory();
-		ABSOLUTE_TEST_PROJECT_PATH = PWD.Substring(0, PWD.IndexOf(RELATIVE_TEST_PROJECT_PATH) + RELATIVE_TEST_PROJECT_PATH.Length);
+		string pwd = Directory.GetCurrentDirectory();
+		SOLUTION_DIR = Directory.GetParent(pwd).Parent.FullName;
+		ABSOLUTE_TEST_PROJECT_PATH = pwd.Substring(0, pwd.IndexOf(RELATIVE_TEST_PROJECT_PATH) + RELATIVE_TEST_PROJECT_PATH.Length);
 		}
 
-		private static readonly string PWD;
         /// <summary>Absolute path of the test project on the local disk</summary>
         private static readonly string ABSOLUTE_TEST_PROJECT_PATH;
+        private static readonly string SOLUTION_DIR;
 
 	/// <summary>
 	/// If file "foo.txt" is stored in project subdirectory "bar",
@@ -32,8 +33,7 @@ namespace TypeCobol.Test
 System.Console.WriteLine("relativeFilePath: \""+relativeFilePath+"\"");
             string pwd = Directory.GetCurrentDirectory();
 System.Console.WriteLine("GetCurrentDirectory(): \""+pwd+"\"");
-System.Console.WriteLine("PWD: \""+PWD+"\"");
-System.Console.WriteLine("Environment.CurrentDirectory: \""+Environment.CurrentDirectory+"\"");
+System.Console.WriteLine("SOLUTION: \""+SOLUTION_DIR+"\"");
 System.Console.WriteLine("ABSOLUTE_TEST_PROJECT_PATH: \""+ABSOLUTE_TEST_PROJECT_PATH+"\"");
 		return ABSOLUTE_TEST_PROJECT_PATH + Path.DirectorySeparatorChar + relativeFilePath;
 	}
