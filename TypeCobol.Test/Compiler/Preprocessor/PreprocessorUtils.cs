@@ -152,4 +152,6 @@ namespace TypeCobol.Test.Compiler.Preprocessor
 		TypeCobol.Test.TestUtils.compareLines(path, result, expected);
 	}
 
+	}
+
 }
