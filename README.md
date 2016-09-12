@@ -1,6 +1,6 @@
 # TypeCobol
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ovik47gpbaf2ismf?svg=true)](https://ci.appveyor.com/project/wiztigers/typecobol)
+[![Build status](https://ci.appveyor.com/api/projects/status/ovik47gpbaf2ismf/branch/master?svg=true)](https://ci.appveyor.com/project/wiztigers/typecoboli/branch/master)
 
 Prototype of an incremental Cobol compiler front-end for IBM Enterprise Cobol 5.1 for zOS syntax.
 
