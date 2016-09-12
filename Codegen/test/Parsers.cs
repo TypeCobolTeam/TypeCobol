@@ -149,10 +149,7 @@ namespace TypeCobol.Codegen {
 
 			// compare with expected result
 			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
-
-            
             TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected);
-            //Assert.AreEqual(ReplaceLineBreaks(expected), result);
         }
 
 		private void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors, string type, Compiler.Text.ColumnsLayout columns) {
