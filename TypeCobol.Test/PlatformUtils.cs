@@ -26,7 +26,7 @@ public static class PlatformUtils {
 	/// If file "foo.txt" is stored in project subdirectory "bar",
 	/// relativeFilePath input parameter should be "bar/foo.txt"
 	/// </summary>
-	public static Stream GetStreamForProjectFile(string relativeFilePath) {           
+	public static Stream GetStreamForProjectFile(string relativeFilePath) {
 		return new FileStream(GetPathForProjectFile(relativeFilePath), FileMode.Open);
 	}
 
