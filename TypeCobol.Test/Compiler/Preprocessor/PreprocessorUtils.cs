@@ -75,18 +75,12 @@ namespace TypeCobol.Test.Compiler.Preprocessor
 
             return tokensText.ToString() + diagnosticsText.ToString();
         }
-        
-        public static void CheckWithDirectiveResultFile(string result, string testName)
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Preprocessor\DirectiveResultFiles\" + testName + ".txt")))
-            {
-                string expectedResult = reader.ReadToEnd();
-                if (result != expectedResult)
-                {
-                    throw new Exception("Tokens and diagnostics produced by preprocessor in test \"" + testName + "\" don't match the expected result:\n"+result);
-                }
-            }
-        }
+
+	public static void CheckWithDirectiveResultFile(string result, string testName) {
+		string path = Path.Combine("Compiler","Preprocessor","DirectiveResultFiles",testName+".txt");
+		string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+		TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+	}
 
         private static string ProcessTokensDocument(string testName, ProcessedTokensDocument processedDoc)
         {
@@ -138,40 +132,26 @@ namespace TypeCobol.Test.Compiler.Preprocessor
             return sbTokens.ToString() + (hasDiagnostic ? sbDiagnostics.ToString() : "");
         }
 
-        public static string ProcessCopyDirectives(string testName)
-        {
-            ProcessedTokensDocument processedDoc = CopyProject.GetProcessedTokensDocument(null, testName);
-            return ProcessTokensDocument(testName, processedDoc);
-        }
+	public static string ProcessCopyDirectives(string name) {
+		return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(null, name));
+	}
 
-        public static void CheckWithCopyResultFile(string result, string testName)
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Preprocessor\CopyResultFiles\" + testName + ".txt")))
-            {
-                string expectedResult = reader.ReadToEnd();
-                if (result != expectedResult)
-                {
-                    throw new Exception("Tokens and diagnostics produced by preprocessor in test \"" + testName + "\" don't match the expected result");
-                }
-            }
-        }
+	public static void CheckWithCopyResultFile(string result, string testName) {
+		string path = Path.Combine("Compiler","Preprocessor","CopyResultFiles",testName+".txt");
+		string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+		TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+	}
 
-        public static string ProcessReplaceDirectives(string testName)
-        {
-            ProcessedTokensDocument processedDoc = ReplaceProject.GetProcessedTokensDocument(null, testName);
-            return ProcessTokensDocument(testName, processedDoc);
-        }
+	public static string ProcessReplaceDirectives(string name) {
+		return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(null, name));
+	}
 
-        public static void CheckWithReplaceResultFile(string result, string testName)
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Preprocessor\ReplaceResultFiles\" + testName + ".txt")))
-            {
-                string expectedResult = reader.ReadToEnd();
-                if (result != expectedResult)
-                {
-                    throw new Exception("Tokens and diagnostics produced by preprocessor in test \"" + testName + "\" don't match the expected result");
-                }
-            }
-        }
-    }
+	public static void CheckWithReplaceResultFile(string result, string testName) {
+		string path = Path.Combine("Compiler","Preprocessor","ReplaceResultFiles",testName+".txt");
+		string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+		TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+	}
+
+	}
+
 }
