@@ -1,13 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\src\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol\test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7AC7A3E5-91F2-44BF-955D-86CC61375742} = {7AC7A3E5-91F2-44BF-955D-86CC61375742}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "CLI\src\CLI.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen", "Codegen\src\Codegen.csproj", "{4034CBC5-D3DC-45E5-81F2-605579E6B876}"
 EndProject
@@ -15,8 +14,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen.Test", "Codegen\tes
 	ProjectSection(ProjectDependencies) = postProject
 		{4034CBC5-D3DC-45E5-81F2-605579E6B876} = {4034CBC5-D3DC-45E5-81F2-605579E6B876}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Server", "CLI\src\CLI.csproj", "{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
