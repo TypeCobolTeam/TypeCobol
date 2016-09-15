@@ -55,64 +55,64 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\obj\$(Configuration)\CodeElementsBaseListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\CodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CodeElementsBaseVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseVisitor.cs">
       <Link>Compiler\Parser\Generated\CodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CodeElementsListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsListener.cs">
       <Link>Compiler\Parser\Generated\CodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CodeElementsParser.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsParser.cs">
       <Link>Compiler\Parser\Generated\CodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CodeElementsVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\CodeElementsVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CobolCompilerDirectivesBaseListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesBaseListener.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CobolCompilerDirectivesBaseVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesBaseVisitor.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CobolCompilerDirectivesListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesListener.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CobolCompilerDirectivesParser.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesParser.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesParser.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\CobolCompilerDirectivesVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesVisitor.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\ProgramClassBaseListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassBaseListener.cs">
       <Link>Compiler\Parser\Generated\ProgramClassBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\ProgramClassBaseVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassBaseVisitor.cs">
       <Link>Compiler\Parser\Generated\ProgramClassBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\ProgramClassListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassListener.cs">
       <Link>Compiler\Parser\Generated\ProgramClassListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\ProgramClassParser.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassParser.cs">
       <Link>Compiler\Parser\Generated\ProgramClassParser.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\ProgramClassVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassVisitor.cs">
       <Link>Compiler\Parser\Generated\ProgramClassVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\TypeCobolCodeElementsBaseListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\TypeCobolCodeElementsBaseVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseVisitor.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseVisitor.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\TypeCobolCodeElementsListener.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsListener.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\TypeCobolCodeElementsParser.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsParser.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsParser.cs</Link>
     </Compile>
-    <Compile Include="..\obj\$(Configuration)\TypeCobolCodeElementsVisitor.cs">
+    <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
     </Compile>
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
