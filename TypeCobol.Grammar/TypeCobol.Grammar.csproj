@@ -5,6 +5,8 @@
   <Import Project="..\Common.props" />
   <PropertyGroup>
     <ProjectGuid>{6E707761-8F1D-409A-8E5B-03953282E435}</ProjectGuid>
+    <IntermediateOutputPath>..\obj\$(Configuration)</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)</OutputPath>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TypeCobol.Grammar</RootNamespace>

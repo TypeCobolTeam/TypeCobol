@@ -4,6 +4,8 @@
   <Import Project="..\..\Common.props" />
   <PropertyGroup>
     <ProjectGuid>{5BEF9D4C-B1FB-455D-A2EA-B4DB5108ECFD}</ProjectGuid>
+    <IntermediateOutputPath>..\..\obj\$(Configuration)</IntermediateOutputPath>
+    <OutputPath>..\..\bin\$(Configuration)</OutputPath>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TypeCobol.CLI</RootNamespace>
