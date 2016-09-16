@@ -7,7 +7,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	
 	<!--For a unique "bin" folder -->
-    <OutputPath>$(SolutionDir)\bin\$(Configuration)\$(MSBuildProjectName)</OutputPath>
+    <OutputPath>$(SolutionDir)\bin\$(Configuration)</OutputPath>
 	<!--For a per project "bin" folder -->
 	<!--<OutputPath>bin\$(Configuration)\</OutputPath>-->
     <OutDir>$(OutputPath)</OutDir>
@@ -18,7 +18,7 @@
     <IntermediateOutputPath>$(TC_RootIntermediateOutputPath)\$(MSBuildProjectName)\</IntermediateOutputPath>
 	<!--For a per project "obj" folder -->
 	<!--<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>-->
-    <UseCommonOutputDirectory>False</UseCommonOutputDirectory>
+    <UseCommonOutputDirectory>True</UseCommonOutputDirectory>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 
 	<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
