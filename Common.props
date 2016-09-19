@@ -16,9 +16,9 @@
     <TC_RootIntermediateOutputPath>$(SolutionDir)\obj\$(Configuration)</TC_RootIntermediateOutputPath>
     <TC_AntlrGeneratedFiles>$(TC_RootIntermediateOutputPath)\TypeCobol.Grammar</TC_AntlrGeneratedFiles>
     <IntermediateOutputPath>$(TC_RootIntermediateOutputPath)\$(MSBuildProjectName)\</IntermediateOutputPath>
+	
 	<!--For a per project "obj" folder -->
 	<!--<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>-->
-    <UseCommonOutputDirectory>True</UseCommonOutputDirectory>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 
 	<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
