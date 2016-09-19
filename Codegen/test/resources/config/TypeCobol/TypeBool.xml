@@ -1,26 +1,26 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <skeletons>
 
-  <skeleton name="BOOL.DECLARE">
+  <skeleton name="BOOL.DECLARE" var="level,name">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" type="BOOL"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace" var="LEVEL=$level,NAME=$NAME">
-%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.
-  88  %NAME       VALUE 'T'.
-  88  %NAME-false VALUE 'F'.
+      <pattern location="NODE" action="replace">
+%level  %name-value PIC X VALUE LOW-VALUE.
+  88  %name       VALUE 'T'.
+  88  %name-false VALUE 'F'.
       </pattern>
     </patterns>
   </skeleton>
 
-  <skeleton name="BOOL.SET">
+  <skeleton name="BOOL.SET" var="receiver">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace" var="NAME=$receiver.name">
-SET %NAME-false TO TRUE.
+      <pattern location="NODE" action="replace">
+SET %receiver-false TO TRUE.
       </pattern>
     </patterns>
   </skeleton>

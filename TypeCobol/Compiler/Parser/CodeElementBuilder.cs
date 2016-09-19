@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.CodeElements.Symbols;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -32,14 +33,16 @@ namespace TypeCobol.Compiler.Parser
         }
         public CodeElementDispatcher Dispatcher { get; internal set; }
 
-        /// <summary>
-        ///     Initialization code run before parsing each new CodeElement
-        /// </summary>
-        public override void EnterCodeElement(CodeElementsParser.CodeElementContext context)
-        {
-            CodeElement = null;
-            Context = null;
-        }
+		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
+		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
+			CodeElement = null;
+			Context = null;
+		}
+		/// <summary>Initialization code run before parsing each new TypeCobol CodeElement</summary>
+		public override void EnterTcCodeElement(CodeElementsParser.TcCodeElementContext context) {
+			CodeElement = null;
+			Context = null;
+		}
 
         // Code structure
 
@@ -241,6 +244,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
         {
+// [TYPECOBOL]
+			if (context.inputPhrase() != null || context.outputPhrase() != null || context.inoutPhrase() != null) {
+				Context = context;
+				CodeElement = new FunctionDeclarationProfile();
+				return;
+			}
+// [/TYPECOBOL]
+
             var procedureDivisionHeader = new ProcedureDivisionHeader();
 
             if (context.usingPhrase() != null)
@@ -259,7 +270,7 @@ namespace TypeCobol.Compiler.Parser
                     foreach (CodeElementsParser.DataNameReferenceContext dataNameContext in inputParametersContext.dataNameReference())
                     {
                         Token dataName = ParseTreeUtils.GetFirstToken(dataNameContext);
-                        var inputParameter = new InputParameter {ReceivingMode = receivingMode, DataName = new DataName(dataName)};
+                        var inputParameter = new InputParameter(new DataName(dataName), receivingMode);
 
                         if (procedureDivisionHeader.UsingParameters == null)
                         {
@@ -267,15 +278,6 @@ namespace TypeCobol.Compiler.Parser
                         }
                         procedureDivisionHeader.UsingParameters.Add(inputParameter);
                     }
-                }
-            }
-
-            if (context.returningPhrase() != null)
-            {
-                Token dataName = ParseTreeUtils.GetFirstToken(context.returningPhrase().dataNameReference());
-                if (dataName != null)
-                {
-                    procedureDivisionHeader.ReturningDataName = new DataName(dataName);
                 }
             }
 
@@ -420,7 +422,8 @@ namespace TypeCobol.Compiler.Parser
 			//entry.IsFiller = (dataname == null || context.FILLER() != null);
 
 			var redefines = context.redefinesClause();
-			if (redefines != null) entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
+			if (redefines != null)
+                entry.RedefinesDataName = SyntaxElementBuilder.CreateDataName(redefines.dataNameReference());
 
 			var picture = DataDescriptionChecker.GetContext(entry, context.pictureClause(), false);
 			if (picture != null) entry.Picture = picture.PictureCharacterString().GetText();
@@ -441,26 +444,22 @@ namespace TypeCobol.Compiler.Parser
 			UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
 			UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
 			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
-// [TYPECOBOL]
-			entry.IsTypeDefinition = context.tcExtTypedefClause() != null;
+
+            // [Cobol 2002]
+			entry.IsTypeDefinition = context.cobol2002TypedefClause() != null;
 			if (entry.IsTypeDefinition && entry.Name != null) {
-				bool strong = context.tcExtTypedefClause().STRONG() != null;
+				bool strong = context.cobol2002TypedefClause().STRONG() != null;
 				entry.DataType = new DataType(entry.Name.Name, strong);
 			}
 
-			foreach(var typeclause in context.tcExtTypeClause())
-			{
-			    var token = ParseTreeUtils.GetTokenFromTerminalNode(typeclause.UserDefinedWord());
-			    if (token != null) entry.Picture = "TYPE:"+token.Text;
+		    var cobol2002TypeClause = DataDescriptionChecker.GetContext(entry, context.cobol2002TypeClause());
+			if (context.cobol2002TypeClause() != null) {
+				string typepic = CreatePicture(cobol2002TypeClause);
+				if (typepic != null) entry.Picture = typepic;
 			}
-            // [/TYPECOBOL]
+            // [/Cobol 2002]
 
-		    if (entry.IsExternal && entry.LevelNumber != 01)
-		    {
-                DiagnosticUtils.AddError(entry, "External is only allowed for level 01", external);
-            }
-
-		    Context = context;
+            Context = context;
 			CodeElement = entry;
 		}
 
@@ -472,7 +471,8 @@ namespace TypeCobol.Compiler.Parser
 			entry.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
             //entry.IsFiller = (dataname == null || context.FILLER() != null);
 
-			var names = SyntaxElementBuilder.CreateDataNames(context.renamesClause().dataNameReference());
+
+			var names = SyntaxElementBuilder.CreateQualifiedNames(context.renamesClause().qualifiedDataName());
 			if (names.Count > 0) entry.RenamesFromDataName = names[0];
 			if (names.Count > 1) entry.RenamesToDataName   = names[1];
 			//note: "RENAMES THRU dataname" will yield "from" initialized and "to" uninitialized
@@ -2165,8 +2165,6 @@ namespace TypeCobol.Compiler.Parser
 			ITerminalNode node = null;
 			if (context.UserDefinedWord() != null) node = context.UserDefinedWord();
 			else
-			if (context.FunctionName() != null) node = context.FunctionName();
-			else
 			if (context.LENGTH() != null) node = context.LENGTH();
 			else
 			if (context.RANDOM() != null) node = context.RANDOM();
@@ -2176,6 +2174,120 @@ namespace TypeCobol.Compiler.Parser
 			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
 			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
+
+
+// [TYPECOBOL]
+		public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
+			// TCRFUN_NO_DEFAULT_ACCESS_MODIFIER: our grammar guarantees that writting no access modifier is a syntax error.
+			//		In this case (or if PRIVATE was written), we set the modifier to Private so visibility is not left empty.
+			var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
+			QualifiedName name = null;
+			if (context.UserDefinedWord() != null) {
+				var token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
+				name = new URI(token.Text);
+			}
+			Context = context;
+			CodeElement = new FunctionDeclarationHeader(name, visibility);
+		}
+		public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
+			var ce = GetFunctionProfile();
+			var input = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.INPUT()) };
+			ce.Input = new SyntaxProperty<Passing.Mode>(Passing.Mode.Input, input);
+			ce.Profile.InputParameters = CreateParameters(context.parameterDescription());
+		}
+		public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
+			var ce = GetFunctionProfile();
+			var output = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.OUTPUT()) };
+			ce.Output = new SyntaxProperty<Passing.Mode>(Passing.Mode.Output, output);
+			ce.Profile.OutputParameters = CreateParameters(context.parameterDescription());
+		}
+		public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
+			var ce = GetFunctionProfile();
+			var inout = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()) };
+			ce.Inout = new SyntaxProperty<Passing.Mode>(Passing.Mode.Inout, inout);
+			ce.Profile.InoutParameters = CreateParameters(context.parameterDescription());
+		}
+		private IList<ParameterDescription> CreateParameters(CodeElementsParser.ParameterDescriptionContext[] contexts) {
+			var parameters = new List<ParameterDescription>();
+			foreach(var context in contexts) {
+				var parameter = CreateParameter(context);
+				if (parameter != null) parameters.Add(parameter);
+			}
+			return parameters;
+		}
+		private ParameterDescription CreateParameter(CodeElementsParser.ParameterDescriptionContext context) {
+			if (context.functionDataParameter() != null)
+				return CreateFunctionParameter(context.functionDataParameter());
+			if (context.functionConditionParameter() != null)
+				return CreateFunctionParameter(context.functionConditionParameter());
+			return null;
+		}
+		public ParameterDescription CreateFunctionParameter(CodeElementsParser.FunctionDataParameterContext context) {
+			var parameter = new ParameterDescription();
+			parameter.DataName = SyntaxElementBuilder.CreateDataName(context.dataNameDefinition());
+			if (context.pictureClause() != null) {
+				parameter.Picture = context.pictureClause().PictureCharacterString().GetText();
+			} else {
+				parameter.Picture = CreatePicture(context.cobol2002TypeClause());
+			}
+/*
+			var blank = DataDescriptionChecker.GetContext(entry, context.blankWhenZeroClause(), false);
+			entry.IsBlankWhenZero = blank != null && blank.BLANK() != null;
+			var justified = DataDescriptionChecker.GetContext(entry, context.justifiedClause(), false);
+			entry.IsJustified = justified != null && (justified.JUSTIFIED() != null || justified.JUST() != null);
+			var sync = DataDescriptionChecker.GetContext(entry, context.synchronizedClause(), false);
+			entry.IsSynchronized = (sync != null) && (sync.SYNC() != null || sync.SYNCHRONIZED() != null || sync.LEFT() != null || sync.RIGHT() != null);
+			var group = DataDescriptionChecker.GetContext(entry, context.groupUsageClause(), false);
+			entry.IsGroupUsageNational = group != null && (group.GROUP_USAGE() != null || group.NATIONAL() != null);
+			UpdateDataDescriptionEntryWithUsageClause(entry, DataDescriptionChecker.GetContext(entry, context.usageClause(), false));
+			UpdateDataDescriptionEntryWithOccursClause(entry, DataDescriptionChecker.GetContext(entry, context.occursClause(), false));
+			UpdateDataDescriptionEntryWithSignClause(entry, DataDescriptionChecker.GetContext(entry, context.signClause(), false));
+			UpdateDataDescriptionEntryWithValueClause(entry, DataDescriptionChecker.GetContext(entry, context.valueClause(), false));
+*/			return parameter;
+		}
+		private ParameterDescription CreateFunctionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
+			var parameter = new ParameterDescription();
+			if (context.levelNumber() != null && context.levelNumber().IntegerLiteral() != null) {
+				parameter.LevelNumber = SyntaxElementBuilder.CreateInteger(context.levelNumber().IntegerLiteral());
+			}
+			parameter.ConditionName = SyntaxElementBuilder.CreateConditionName(context.conditionNameDefinition());
+			parameter.IsConditionNameDescription = true;
+			UpdateDataDescriptionEntryWithValueClauseForCondition(parameter, context.valueClauseForCondition());
+			return parameter;
+		}
+
+		private string CreatePicture(CodeElementsParser.Cobol2002TypeClauseContext context) {
+			if (context == null) return null;
+			Token token = null;
+			if (context.DATE() != null) token = ParseTreeUtils.GetTokenFromTerminalNode(context.DATE());
+			if (context.UserDefinedWord() != null) token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
+			if (token == null) return null;
+			return "TYPE:"+token.Text.ToUpper();
+		}
+		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
+			var dataname = SyntaxElementBuilder.CreateDataName(context.dataNameReference());
+			//TODO? dataname should be a QualifiedName,
+			//      because LINKAGE data items can be complex,
+			//      with group items and name collision and crap
+			((ProcedureDivisionHeader)CodeElement).ReturningParameter = dataname;
+		}
+		public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
+			var ce = GetFunctionProfile();
+			var returning = new List<Token>() { ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()) };
+			ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, returning);
+			ce.Profile.ReturningParameter = CreateParameter(context.parameterDescription());
+		}
+		private FunctionDeclarationProfile GetFunctionProfile() {
+			if (CodeElement is ProcedureDivisionHeader)
+				CodeElement = new FunctionDeclarationProfile((ProcedureDivisionHeader)CodeElement);
+			return CodeElement as FunctionDeclarationProfile;
+		}
+		public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
+			Context = context;
+			CodeElement = new FunctionDeclarationEnd();
+		}
+// [/TYPECOBOL]
+
 
         public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
         {

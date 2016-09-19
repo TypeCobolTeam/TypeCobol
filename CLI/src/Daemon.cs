@@ -4,6 +4,7 @@ using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Server
 {
@@ -15,6 +16,7 @@ namespace TypeCobol.Server
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
+		    public string skeletonPath = "";
 			public bool IsErrorXML {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
 			}
@@ -28,7 +30,7 @@ namespace TypeCobol.Server
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
-			var p = new OptionSet () {
+            var p = new OptionSet () {
 				"USAGE",
 				"  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
 				"",
@@ -42,6 +44,7 @@ namespace TypeCobol.Server
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", (string v) => config.OutputFiles.Add(v) },
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
+                { "s|skeletons=", "{PATH} to the skeletons files (used to generate code).", (string v) => config.skeletonPath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -126,22 +129,17 @@ namespace TypeCobol.Server
 				}
 
 				if (config.Codegen) {
-					var codegen = new TypeCobol.Compiler.Generator.TypeCobolGenerator(parser.Source, config.Format, parser.Results.ProgramClassDocumentSnapshot);
-					if (codegen.IsValid) {
-						var stream = new StreamWriter(config.OutputFiles[c]);
-						codegen.WriteCobol(stream);
-						System.Console.WriteLine("Code generated to file \""+config.OutputFiles[c]+"\".");
-					} else {
-						// might be a problem regarding the input file format
-						AddError(writer, "Codegen failed for \""+path+"\" (no Program). Check file format/encoding?", path);
-					}
+					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
+					var codegen = new TypeCobol.Codegen.Generator(new StreamWriter(config.OutputFiles[c]), parser.Results.TokensLines, skeletons);
+					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
+					codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, ColumnsLayout.CobolReferenceFormat);
 				}
 			}
 			writer.Write();
 			writer.Flush();
 		}
 
-		private static void AddError(AbstractErrorWriter writer, string message, string path) {
+        private static void AddError(AbstractErrorWriter writer, string message, string path) {
 			var error = new TypeCobol.Tools.Diagnostic();
 			error.Message = message;
 			error.Code = "codegen";
@@ -166,10 +164,13 @@ namespace TypeCobol.Server
                     Console.WriteLine("Error: Your Intrisic types are not included into a program.");
                     continue;
                 }
-                
-                foreach(var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes)
-					table.RegisterCustomType(type);//TODO check if already there
-			}
+
+                foreach (var type in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes)
+			    {
+			        table.RegisterCustomType(type); //TODO check if already there
+
+			    }
+            }
 			return table;
 		}
 

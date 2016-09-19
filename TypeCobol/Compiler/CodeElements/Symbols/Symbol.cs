@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 		/// <summary>Name of the symbol</summary>
-		public string Name {
+		public virtual string Name {
 			get {
 				if (NameToken.TokenFamily == TokenFamily.Symbol
 				 || NameToken.TokenFamily == TokenFamily.SpecialRegisterKeyword )

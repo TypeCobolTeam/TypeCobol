@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -17,14 +20,32 @@ namespace TypeCobol.Compiler.CodeElements
 		public Node(): this(null) { }
 		public Node(CodeElement e) { CodeElement = e; }
 
-		internal void Add(Node child) {
-			children_.Add(child);
+		public void Add(Node child, int index = -1) {
+			if (index < 0) children_.Add(child);
+			else children_.Insert(index, child);
 			child.Parent = this;
 		}
-		internal void Remove() {
+		public void Remove() {
 			Parent.children_.Remove(this);
 			Parent = null;
 		}
+		public IList<Node> GetChildren(Type type) {
+			var results = new List<Node>();
+			foreach(var child in Children)
+				if (child.CodeElement != null && Reflection.IsTypeOf(child.CodeElement.GetType(), type))
+					results.Add(child);
+			return results;
+		}
+		public Node GetParent(Type type) {
+			var current = this;
+			while (current != null)
+				if (current.CodeElement != null && Reflection.IsTypeOf(current.CodeElement.GetType(), type))
+					return current;
+				else current = current.Parent;
+			return null;
+		}
+
+
 
 		/// <summary>Implementation of the GoF Visitor pattern.</summary>
 		public void Accept(NodeVisitor visitor) {
@@ -32,8 +53,15 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public override string ToString() {
-			if (CodeElement==null) return GetType().Name+"?";
-			else return CodeElement.GetType().Name;
+			var str = new System.Text.StringBuilder();
+			Dump(str, 0, this);
+			return str.ToString();
+		}
+
+		private void Dump(System.Text.StringBuilder str, int level, Node node) {
+			for(int c=0; c<level; c++) str.Append("  ");
+			str.AppendLine(node.CodeElement==null?"?":node.CodeElement.GetType().Name);
+			foreach(var child in node.Children) Dump(str, level+1, child);
 		}
 
 		public CodeModel.SymbolTable SymbolTable { get; set; }
@@ -54,6 +82,7 @@ namespace TypeCobol.Compiler.CodeElements
 			get {
 				if (CodeElement is ProgramIdentification) return ((ProgramIdentification)CodeElement).ProgramName.Name;
 				if (CodeElement is DataDivisionHeader) return "data-division";
+				if (CodeElement is FileSectionHeader) return "file";
 				if (CodeElement is LinkageSectionHeader) return "linkage";
 				if (CodeElement is LocalStorageSectionHeader) return "local-storage";
 				if (CodeElement is WorkingStorageSectionHeader) return "working-storage";
@@ -61,6 +90,8 @@ namespace TypeCobol.Compiler.CodeElements
 				if (CodeElement is EnvironmentDivisionHeader) return "environment-division";
 				if (CodeElement is ProcedureDivisionHeader) return "procedure-division";
 				if (CodeElement is ParagraphHeader) return ((ParagraphHeader)CodeElement).ParagraphName.Name;
+				if (CodeElement is FunctionDeclarationHeader) return ((FunctionDeclarationHeader)CodeElement).Name.ToString();
+				if (CodeElement is FunctionDeclarationProfile) return "profile";
 				return null;
 			}
 		}
@@ -72,8 +103,15 @@ namespace TypeCobol.Compiler.CodeElements
 				return puri+'.'+ID;
 			}
 		}
+		public Node Root {
+			get {
+				var current = this;
+				while (current.Parent != null) current = current.Parent;
+				return current;
+			}
+		}
 		public Node Get(string uri) {
-			if (uri.Equals(URI)) return this;
+			if (URI != null && ( URI.Equals(uri) || URI.EndsWith("."+uri) )) return this;
 			foreach(var child in Children) {
 				var found = child.Get(uri);
 				if (found != null) return found;
@@ -92,19 +130,34 @@ namespace TypeCobol.Compiler.CodeElements
 			Attributes["typedef"] = new TypeDefined("TYPEDEF");
 			Attributes["sender"] = new Sender("SENDER");
 			Attributes["receiver"] = new Receiver("RECEIVER");
+			Attributes["functions"] = new UsesFunctions("FUNCTIONS");
+			Attributes["function"] = new UsesFunctions("FUNCTION", true);
+			Attributes["function-name"] = new UsesFunctions("FUNCTION", true, true);
 		}
-		public string this[string attribute] {
+		public object this[string attribute] {
 			get {
 				try {
 					object value = CodeElement;
-					foreach(var attr in attribute.Split(new char[] {'.'})) {
+					foreach(var attr in attribute.Split('.')) {
 						value = Attributes[attr].GetValue(value, SymbolTable);
 					}
-					if (value == null) return null;
-					return value.ToString();
+					return value;
 				} catch(KeyNotFoundException ex) { return null; }
 			}
 		}
+
+
+
+
+
+		public static int CountAllChildren(Node node) {
+			int count = node.Children.Count;
+			foreach(var child in node.Children)
+				count += CountAllChildren(child);
+			return count;
+		}
+
+		public bool? Comment = null;
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>
@@ -182,9 +235,65 @@ namespace TypeCobol.Compiler.CodeElements
 		public override object GetValue(object o, SymbolTable table) {
 			var s = o as Receiving;
 			if (s == null) return null;
-			if (s.Expressions.Count < 1) return null;
+            if (s.Expressions.Count < 1) return null;
 			if (s.Expressions.Count == 1) return s.Expressions[0];
 			return s.Expressions;
+		}
+	}
+	internal class UsesFunctions: NodeAttribute
+	{
+	    private bool ReturnFirstFunctionOnly = false;
+        private bool ReturnFunctionName = false;
+
+        public UsesFunctions(string key, bool returnFirstFunctionOnly = false, bool returnFunctionName = false) : base(key)
+	    {
+	        this.ReturnFirstFunctionOnly = returnFirstFunctionOnly;
+            this.ReturnFunctionName = returnFunctionName;
+	    }
+		public override object GetValue(object o, SymbolTable table) {
+            var s = o as IdentifierUser;
+			if (s == null) return null;
+			var functions = new List<Function>();
+			foreach(var id in s.Identifiers) {
+				var reference = id as FunctionReference;
+				if (reference == null) continue;
+                var declaration = table.GetFunction(reference.Name);//TODO#245 get using profile
+				if (declaration.Count != 1) continue; // ambiguity or undefined symbol, not our job
+                functions.Add(CreateFrom(reference, declaration[0]));
+			}
+			if (functions.Count < 1) return null;
+		    if (ReturnFirstFunctionOnly)
+		    {
+		        if (ReturnFunctionName)
+		            return functions[0].Name;
+		        else
+		            return functions[0];
+		    }
+            //TODO support list of functions name
+            return functions;
+		}
+
+		private Function CreateFrom(FunctionReference reference, Function declaration) {
+			var parameters = new List<ParameterDescription>();
+			parameters.AddRange(declaration.Profile.InputParameters);
+			parameters.AddRange(declaration.Profile.InoutParameters);
+			parameters.AddRange(declaration.Profile.OutputParameters);
+			var usings = new List<ParameterDescription>();
+			for(int c = 0; c < parameters.Count; c++) {
+				var declared = parameters[c];
+				string value = "SPACE";
+				bool byReference = false;
+				try {
+					var referenced = reference.Parameters[c];
+					value = referenced.Value.ToString();
+					byReference = referenced.Value is Identifier;
+				} catch(System.ArgumentOutOfRangeException) { }
+				var called = new CallParameter();
+				called.ByReference = byReference;
+				called.Value = value;
+				usings.Add(called);
+			}
+			return new Function(declaration.QualifiedName, usings, declaration.Profile.ReturningParameter);
 		}
 	}
 }

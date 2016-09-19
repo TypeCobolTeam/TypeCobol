@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class IfStatementEnd : CodeElement
+    public class IfStatementEnd : CodeElementEnd
     {
         public IfStatementEnd() : base(CodeElementType.IfStatementEnd)
         { }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
@@ -25,21 +26,21 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public partial class DataDescriptionEntry : CodeElement, TypeDefinition, ICloneable
     {
-		public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) {
-			this.Subordinates = new List<DataDescriptionEntry>();
-		}
+        public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) {
+            this.Subordinates = new List<DataDescriptionEntry>();
+        }
 
-		public object Clone() {
-			var clone = this.MemberwiseClone() as DataDescriptionEntry;
-			var subs = new List<DataDescriptionEntry>();
-			foreach(var sub in Subordinates) {
-				var csub = sub.Clone() as DataDescriptionEntry;
-				csub.TopLevel = clone;
-				subs.Add(csub);
-			}
-			clone.Subordinates = subs;
-			return clone;
-		}
+        public object Clone() {
+            var clone = this.MemberwiseClone() as DataDescriptionEntry;
+            var subs = new List<DataDescriptionEntry>();
+            foreach(var sub in Subordinates) {
+                var csub = sub.Clone() as DataDescriptionEntry;
+                csub.TopLevel = clone;
+                subs.Add(csub);
+            }
+            clone.Subordinates = subs;
+            return clone;
+        }
 
         /// <summary>
         /// The level-number specifies the hierarchy of data within a record, and identifies
@@ -112,49 +113,43 @@ namespace TypeCobol.Compiler.CodeElements
             }
             private set { Name = value; }
         }
-		public QualifiedName QualifiedName {
-			get {
-				List<DataName> names = new List<DataName>();
-				var current = TopLevel;
-				while(current != null) {
-					names.Add(current.DataName);
-					current = current.TopLevel;
-				}
-				names.Reverse();
-				return new SyntacticQualifiedName(Name, names);
-			}
-		}
-
-        /// <summary>
-        /// Type declaration.
-        /// TODO: find a data representation, Object is bad!
-        /// </summary>
-        public Object Type { get; set; }
+        public QualifiedName QualifiedName {
+            get {
+                List<DataName> names = new List<DataName>();
+                var current = TopLevel;
+                while(current != null) {
+                    names.Add(current.DataName);
+                    current = current.TopLevel;
+                }
+                names.Reverse();
+                return new SyntacticQualifiedName(Name, names);
+            }
+        }
 
         /// <summary>
         /// Name of the top-level symbol (for group elements).
         /// </summary>
         public DataDescriptionEntry TopLevel { get; set; }
 
-		/// <param name="generation">0 for this, 1 for TopLevel, 2 for TopLevel.Toplevel, ...</param>
-		/// <returns>Appropriate TopLevel item, or null if generation <0 or generation too high.</returns>
-		public DataDescriptionEntry GetAncestor(int generation) {
-			if (generation < 0) return null;
-			if (generation==0) return this;
-			if (TopLevel == null) return null;
-			return TopLevel.GetAncestor(generation-1);
-		}
-		public int Generation {
-			get {
-				int generation = 0;
-				var parent = TopLevel;
-				while(parent != null) {
-					generation++;
-					parent = parent.TopLevel;
-				}
-				return generation;
-			}
-		}
+        /// <param name="generation">0 for this, 1 for TopLevel, 2 for TopLevel.Toplevel, ...</param>
+        /// <returns>Appropriate TopLevel item, or null if generation <0 or generation too high.</returns>
+        public DataDescriptionEntry GetAncestor(int generation) {
+            if (generation < 0) return null;
+            if (generation==0) return this;
+            if (TopLevel == null) return null;
+            return TopLevel.GetAncestor(generation-1);
+        }
+        public int Generation {
+            get {
+                int generation = 0;
+                var parent = TopLevel;
+                while(parent != null) {
+                    generation++;
+                    parent = parent.TopLevel;
+                }
+                return generation;
+            }
+        }
 
         /// <summary>
         /// Token (used for position tracking).
@@ -232,15 +227,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// data that possesses the global attribute either in the containing program or in
         /// any program that directly or indirectly contains the containing program.
         /// </summary>
-		public bool IsGlobal {
-			get {
-				if (_global) return true;
-				var typedef = GetTypeDefinition();
-				return typedef != null && typedef._global;
-			}
-			set { _global = value; }
-		}
-		private bool _global = false;
+        public bool IsGlobal {
+            get {
+                if (_global) return true;
+                var typedef = GetTypeDefinition();
+                return typedef != null && typedef._global;
+            }
+            set { _global = value; }
+        }
+        private bool _global = false;
 
         /// <summary>
         /// p189:
@@ -359,19 +354,20 @@ namespace TypeCobol.Compiler.CodeElements
         ///   character-string can contain a maximum of 50 characters.
         /// </summary>
         public string Picture { get; set; }
-		public DataType DataType { get; set; }
-		public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
+        [NotNull]
+        public DataType DataType { get; set; }
+        public bool IsBuiltInType { get { return DataType == DataType.Unknown && Picture.StartsWith("TYPE:"); } }
 
-		public COBOLMemoryArea MemoryArea { get; set; }
-		public Occurences Occurences {
-			get {
-				if (IsTableOccurence) {
-					if (NoMaxOccurencesCount) return new Unbounded();
-					else return new Bounded(MaxOccurencesCount);
-				}
-				else return new Unique();
-			}
-		}
+        public COBOLMemoryArea MemoryArea { get; set; }
+        public Occurences Occurences {
+            get {
+                if (IsTableOccurence) {
+                    if (NoMaxOccurencesCount) return new Unbounded();
+                    else return new Bounded(MaxOccurencesCount);
+                }
+                else return new Unique();
+            }
+        }
 
         public bool IsGroup {
             get { return Picture == null; }
@@ -706,15 +702,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// unbounded.
         /// </summary>
         public int MaxOccurencesCount { get; set; }
-		public bool NoMaxOccurencesCount {
-			get {
-				return MaxOccurencesCount == Int32.MaxValue;
-			}
-			set {
-				if (value) MaxOccurencesCount = Int32.MaxValue;
-				else throw new InvalidOperationException("Set me only to TRUE; or else set MaxOccurencesCount.");
-			}
-		}
+        public bool NoMaxOccurencesCount {
+            get {
+                return MaxOccurencesCount == Int32.MaxValue;
+            }
+            set {
+                if (value) MaxOccurencesCount = Int32.MaxValue;
+                else throw new InvalidOperationException("Set me only to TRUE; or else set MaxOccurencesCount.");
+            }
+        }
 
         /// <summary>
         /// p192:
@@ -875,8 +871,8 @@ namespace TypeCobol.Compiler.CodeElements
         ///     item.
         ///   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
         /// </summary>
-        public DataName RenamesFromDataName { get; set; }
-        public DataName RenamesToDataName { get; set; }
+        public QualifiedName RenamesFromDataName { get; set; }
+        public QualifiedName RenamesToDataName { get; set; }
 
 
 
@@ -1033,28 +1029,47 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsInitialValueNull { get; set; }
 
 // [TYPECOBOL]
-		public virtual bool IsTypeDefinition { get; set; }
-		public bool IsTypeDefinitionPart {
-			get { return GetTypeDefinition() != null; }
-		}
-		private DataDescriptionEntry GetTypeDefinition() {
-			var parent = this;
-			while(parent != null) {
-				if (parent.IsTypeDefinition) return parent;
-				parent = parent.TopLevel;
-			}
-			return null;
-		}
+        public virtual bool IsTypeDefinition { get; set; }
+
+        public bool IsTypeDefinitionPart {
+            get { return GetTypeDefinition() != null; }
+        }
+
+        /// <summary>
+        /// Return the current DataDescription or the first parent which is a Strong Type
+        /// If this method returns a DataDescriptionEntry, it means that the current DataDescriptionEntry is a strongly typed.
+        /// </summary>
+        /// <returns></returns>
+        public DataDescriptionEntry GetFirstStrongDataDescriptionEntry()
+        {
+            var parent = this;
+            while (parent != null)
+            {
+                if (parent.DataType.IsStrong) return parent;
+                parent = parent.TopLevel;
+            }
+            return null;
+        }
+
+        public DataDescriptionEntry GetTypeDefinition()
+        {
+            var parent = this;
+            while(parent != null) {
+                if (parent.IsTypeDefinition) return parent;
+                parent = parent.TopLevel;
+            }
+            return null;
+        }
 // [/TYPECOBOL]
 
 
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-// [TYPECOBOL]
+            // [Cobol2002]
 			if (IsTypeDefinition) str.Append("TYPEDEF ");
-// [/TYPECOBOL]
-			if (IsFiller) str.Append("<filler>");
+            // [/Cobol2002]
+            if (IsFiller) str.Append("<filler>");
 			else if (Name==null) str.Append("?");
 			str.Append(Name);
 			if (IsTableOccurence) {

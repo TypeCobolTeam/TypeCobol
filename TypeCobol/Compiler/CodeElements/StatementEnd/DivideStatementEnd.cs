@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class DivideStatementEnd : CodeElement
+    public class DivideStatementEnd : CodeElementEnd
     {
         public DivideStatementEnd() : base(CodeElementType.DivideStatementEnd)
         { }

@@ -19,12 +19,18 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-2
 		/// The receiving areas. identifier-2 must not reference an intrinsic function.
 		/// </summary>
-		public IList<Identifier> Receiving;
-		IList<Expression> Receiving.Expressions {
+		public IList<Identifier> Receiving { get; private set; }
+
+
+	    private List<Expression> _receivingExpressions;
+        IList<Expression> Receiving.Expressions {
 			get {
-				var list = new List<Expression>();
-				foreach(var item in Receiving) list.Add(item as Expression);
-				return list;
+			    if (_receivingExpressions == null)
+			    {
+			        _receivingExpressions = new List<Expression>();
+                    _receivingExpressions.AddRange(Receiving);
+			    }
+			    return _receivingExpressions;
 			}
 		}
 		/// <summary>
@@ -68,31 +74,44 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		ICollection<QualifiedName> SymbolUser.Symbols {
+	    private ICollection<QualifiedName> _symbols;
+        ICollection<QualifiedName> SymbolUser.Symbols {
 			get {
-				var symbols = new List<QualifiedName>();
-				var name = IdentifierUtils.GetQualifiedName(Sending);
-				if (name != null) symbols.Add(name);
-				foreach (var identifier in Receiving) {
-					name = IdentifierUtils.GetQualifiedName(identifier);
-					if (name != null) symbols.Add(name);
-				}
-				return symbols;
+			    if (_symbols == null)
+			    {
+			        _symbols = new List<QualifiedName>();
+			        var name = IdentifierUtils.GetQualifiedName(Sending);
+			        if (name != null) _symbols.Add(name);
+			        foreach (var identifier in Receiving)
+			        {
+			            name = IdentifierUtils.GetQualifiedName(identifier);
+			            if (name != null) _symbols.Add(name);
+			        }
+			    }
+			    return _symbols;
 			}
 		}
-		/// <summary>
-		/// Regarding the sending element, only one of the pair elements is not null:
-		/// either we know its qualified name, or its type.
-		/// </summary>
-		ICollection<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>> SymbolWriter.Symbols {
+
+
+	    private ICollection<System.Tuple<System.Tuple<QualifiedName, DataType>, QualifiedName>> _symbolsWritten;
+        /// <summary>
+        /// Regarding the sending element, only one of the pair elements is not null:
+        /// either we know its qualified name, or its type.
+        /// </summary>
+        ICollection<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>> SymbolWriter.Symbols {
 			get {
-				var list = new List<System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>>();
-				var sending = new System.Tuple<QualifiedName,DataType>(IdentifierUtils.GetQualifiedName(Sending), IdentifierUtils.GetDataType(Sending));
-				foreach(var r in Receiving) {
-					var receiving = IdentifierUtils.GetQualifiedName(r);
-					list.Add(new System.Tuple<System.Tuple<QualifiedName,DataType>,QualifiedName>(sending, receiving));
-				}
-				return list;
+			    if (_symbolsWritten == null)
+			    {
+			        _symbolsWritten = new List<System.Tuple<System.Tuple<QualifiedName, DataType>, QualifiedName>>();
+			        var sending = new System.Tuple<QualifiedName, DataType>(IdentifierUtils.GetQualifiedName(Sending),
+			            IdentifierUtils.GetDataType(Sending));
+			        foreach (var r in Receiving)
+			        {
+			            var receiving = IdentifierUtils.GetQualifiedName(r);
+                        _symbolsWritten.Add(new System.Tuple<System.Tuple<QualifiedName, DataType>, QualifiedName>(sending, receiving));
+			        }
+			    }
+			    return _symbolsWritten;
 			}
 		}
 

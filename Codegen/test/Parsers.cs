@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Codegen.Config;
 using TypeCobol.Codegen.Skeletons;
-
 using TypeCobol.Compiler; // DocumentFormat
-using TypeCobol.Compiler.Parser; // ProgramClassDocument
-using TypeCobol.Server; // Parser
 using TypeCobol.Tools; // CodeElementDiagnostics
+
 
 namespace TypeCobol.Codegen {
 
@@ -63,9 +61,10 @@ namespace TypeCobol.Codegen {
 		public void ParseTypes() {
 			string file = "Types";
 			var skeletons = ParseConfig(file+".xml");
-			Assert.AreEqual(skeletons.Count,2);
+			Assert.AreEqual(skeletons.Count,3);
 			Assert.AreEqual(skeletons[0].Patterns.Count, 1);
 			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
+			Assert.AreEqual(skeletons[2].Patterns.Count, 1);
 
 			ParseGenerateCompare(file+".cbl", skeletons);
 		}
@@ -87,8 +86,26 @@ namespace TypeCobol.Codegen {
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
+		public void ParseUnsafe() {
+			string file = Path.Combine("TypeCobol","unsafe");
+			var skeletons = ParseConfig("Types.xml");// ParseConfig(file+".xml");
+			ParseGenerateCompare(file+".cbl", skeletons);
+		}
+
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
 			string file = Path.Combine("TypeCobol","FUNCTION");
+			var skeletons = ParseConfig(file+".xml");
+			ParseGenerateCompare(file+".cbl", skeletons);
+		}
+
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+		public void ParseFunctionsDeclaration() {
+			string file = Path.Combine("TypeCobol","FunDeclare");
 			var skeletons = ParseConfig(file+".xml");
 			ParseGenerateCompare(file+".cbl", skeletons);
 		}
@@ -109,27 +126,25 @@ namespace TypeCobol.Codegen {
 		}
 
 		private void ParseGenerateCompare(string path, List<Skeleton> skeletons) {
-			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), DocumentFormat.RDZReferenceFormat);
+			var format = DocumentFormat.RDZReferenceFormat;
+			var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format);
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-			var writer = new System.IO.StringWriter();
+			var writer = new StringWriter();
 			// write parsing errors
 			WriteErrors(writer, document.Errors[0], "CodeElements", columns);
 			WriteErrors(writer, document.Errors[1], "ProgramClass", columns);
 			// write generated code
-			var codegen = new Generator(writer, document.Results.TokensLines, document.Converter, skeletons);
+			var codegen = new Generator(writer, document.Results.TokensLines, skeletons);
 			var program = document.Results.ProgramClassDocumentSnapshot.Program;
+
 			codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 			// flush
 			writer.Close();
 
 			// compare with expected result
-			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path));
-			Assert.AreEqual(ReplaceLineBreaks(expected), ReplaceLineBreaks(writer.ToString()));
-		}
-
-		private string ReplaceLineBreaks(string text) {
-			return text.Replace("\r\n","\n").Replace("\r","\n");
-		}
+			string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
+            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected);
+        }
 
 		private void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors, string type, Compiler.Text.ColumnsLayout columns) {
 			string comment = GetComment(columns);

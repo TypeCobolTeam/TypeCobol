@@ -1,0 +1,145 @@
+﻿ID DIVISION.
+PROGRAM-ID. DateFunctions.
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+    01 DateJulian    TYPEDEF STRONG.
+         10 YYYY PIC 9(04).
+         10 DDD  PIC 9(03).     
+       01 DateDB2 TYPEDEF STRONG.
+         10  YYYY PIC 9(04).
+         10  filler-X PIC X.
+         10  MM PIC 9(02).
+         10  filler-X PIC X.
+         10  DD PIC 9(02).
+
+LINKAGE SECTION.
+  COPY MyCopyWithProcedurePointer.
+PROCEDURE DIVISION USING MyCopyWithProcedurePointer.
+
+DECLARE FUNCTION currentDate PRIVATE.
+PROCEDURE DIVISION RETURNING result TYPE Date.
+    ACCEPT result FROM DATE YYYYMMDD.
+END-DECLARE.
+
+DECLARE FUNCTION currentDateFreeFormat PRIVATE.
+PROCEDURE DIVISION
+    INPUT dateType  PIC X
+          direction PIC X
+          separator PIC X
+          LL        PIC X(02)
+          PP        PIC X(02)
+    RETURNING result PIC X(10).
+END-DECLARE.
+
+DECLARE FUNCTION currentDateDB2 PRIVATE.
+PROCEDURE DIVISION RETURNING result TYPE DateDB2.
+END-DECLARE.
+
+DECLARE FUNCTION currentDateJulian PRIVATE.
+PROCEDURE DIVISION RETURNING result TYPE DateJulian.
+END-DECLARE.
+
+DECLARE FUNCTION convertToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateDB2
+    RETURNING result TYPE Date.
+END-DECLARE.
+DECLARE FUNCTION convertToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateJulian
+    RETURNING result TYPE Date.
+END-DECLARE.
+
+DECLARE FUNCTION convertToDateDB2 PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE Date
+    RETURNING result TYPE DateDB2.
+END-DECLARE.
+DECLARE FUNCTION convertToDateDB2 PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateJulian
+    RETURNING result TYPE DateDB2.
+END-DECLARE.
+
+DECLARE FUNCTION convertToDateJulian PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE Date
+    RETURNING result TYPE DateJulian.
+END-DECLARE.
+DECLARE FUNCTION convertToDateJulian PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateDB2
+    RETURNING result TYPE DateJulian.
+END-DECLARE.
+
+DECLARE FUNCTION isDateValid PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE Date
+    RETURNING result TYPE Bool.
+END-DECLARE.
+DECLARE FUNCTION isDateValid PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateDB2
+    RETURNING result TYPE Bool.
+END-DECLARE.
+DECLARE FUNCTION isDateValid PRIVATE.
+PROCEDURE DIVISION
+    INPUT inputDate  TYPE DateJulian
+    RETURNING result TYPE Bool.
+END-DECLARE.
+
+DECLARE FUNCTION addDaysToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT dateToAdd TYPE Date
+          nbOFDays  PIC 9(04)
+    RETURNING result TYPE Date.
+END-DECLARE.
+DECLARE FUNCTION addDaysToDate PRIVATE.
+PROCEDURE DIVISION
+    INPUT dateToAdd  TYPE Date
+          nbOFDays   PIC 9(04)
+          typeOfDays PIC X
+          calendar   PIC X
+    RETURNING result TYPE Date.
+END-DECLARE.
+
+DECLARE FUNCTION daysBetween PRIVATE.
+PROCEDURE DIVISION
+    INPUT     date1    TYPE Date
+              date2    TYPE Date
+    RETURNING result   PIC 9(04).
+END-DECLARE.
+
+* 01: OK
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(04)
+    RETURNING y   PIC 9(04).
+END-DECLARE.
+* 02: OK because 01 and 02 have different inputs
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(08)
+    RETURNING y   PIC 9(04).
+END-DECLARE.
+* 03: OK because names differ
+DECLARE FUNCTION conflict2 PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(04)
+    RETURNING y   PIC 9(04).
+END-DECLARE.
+* 04: KO because same input as 01
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(04)
+    RETURNING y   PIC 9(08).
+END-DECLARE.
+* 05: KO because same input as 02
+DECLARE FUNCTION conflict PRIVATE.
+PROCEDURE DIVISION
+    INPUT     x   PIC 9(08)
+    RETURNING y   PIC 9(08).
+END-DECLARE.
+
+.

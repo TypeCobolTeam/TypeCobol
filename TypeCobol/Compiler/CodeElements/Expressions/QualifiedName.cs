@@ -6,6 +6,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 	public interface QualifiedName: IList<string> {
 		string Head { get; }
 		bool IsExplicit { get; }
+		bool Matches(string uri);
+		bool Matches(QualifiedName name);
 	}
 
 	public interface Subscripted {
@@ -82,6 +84,13 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			foreach(string part in this)
 				hash = hash*7 + part.GetHashCode();
 			return hash;
+		}
+
+		public bool Matches(string uri) {
+			return this.ToString().EndsWith(uri);
+		}
+		public bool Matches(QualifiedName name) {
+			return this.Matches(name.ToString());
 		}
 	}
 
@@ -229,13 +238,14 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public class URI: AbstractQualifiedName {
 		public string Value { get; private set; }
-		public char Separator { get { return '.'; } }
+		public char Separator { get; private set; }
 		private string[] parts;
 
-		public URI(string uri) {
+		public URI(string uri, char separator = '.') {
 			if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
+			this.Separator = separator != null ? separator : '.';
 			this.Value = uri;
-			this.parts = Value.Split(Separator);
+			this.parts = Value.Split(this.Separator);
 		}
 
 		public override string ToString() { return Value; }

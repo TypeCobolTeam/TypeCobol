@@ -10,20 +10,30 @@
        01  b TYPE BOOL.
 
        PROCEDURE DIVISION.
+       
+       DECLARE function POW PRIVATE.
+         PROCEDURE DIVISION
+             INPUT x PIC 9(05)
+                   y PIC 9(03)
+             RETURNING result PIC 9(08)
+         .
+           CONTINUE.
+       END-DECLARE.
 
        TRAITEMENT.
-           SET x TO FUNCTION POW (x y)
+           MOVE FUNCTION POW (x y)    TO x
       * KO: wrong number of parameters
-           SET x TO FUNCTION POW (y)
-           SET x TO FUNCTION POW (x y z)
+           MOVE FUNCTION POW ()       TO x
+           MOVE FUNCTION POW (y)      TO x
+           MOVE FUNCTION POW (x y z)  TO x
       * KO: undefined parameters
-           SET x TO FUNCTION POW (i j)
+           MOVE FUNCTION POW (i j)    TO x
       * KO: 2nd parameter of wrong type
-           SET x TO FUNCTION POW (x b)
+           MOVE FUNCTION POW (x b)    TO x
       * KO: 2nd parameter too-large
-           SET x TO FUNCTION POW (z z)
+           MOVE FUNCTION POW (z z)    TO x
       * KO: function undeclared
-           SET x TO FUNCTION POWAAA (x y)
+           MOVE FUNCTION POWAAA (x y) TO x
            .
 
        END PROGRAM Functions.

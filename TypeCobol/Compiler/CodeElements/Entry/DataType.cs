@@ -9,6 +9,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
 			Name = name;
+			if (name == null) throw new ArgumentNullException();
 			this.IsStrong = IsStrong;
 			this.IsNestable = IsNestable;
 		}
@@ -26,7 +27,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public static bool operator ==(DataType x, DataType y) {
 			if (Object.ReferenceEquals(x, null) && Object.ReferenceEquals(y, null)) return true;
 			if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-			return x.Name == y.Name;
+			return x.Name.ToUpper() == y.Name.ToUpper();
 		}
 		public static bool operator !=(DataType x, DataType y) {
 			return !(x == y);
@@ -113,7 +114,26 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
 // [TYPECOBOL]
-		public static readonly DataType Boolean            = new DataType("BOOL", true, false);
+		public static readonly DataType Boolean            = new DataType("BOOL", true, true);
+
+		public static readonly TypeDefinition Date = CreateDate();
+		private static TypeDefinition CreateDate() {
+			var type = new CustomTypeDefinition(new DataType("DATE", true, true));
+			CreateMember(type, 5, "YYYY", Numeric,4);
+			CreateMember(type, 5, "MM",   Numeric,2);
+			CreateMember(type, 5, "DD",   Numeric,2);
+			return type;
+		}
+		private static void CreateMember(DataDescriptionEntry parent, int level, string name, DataType type, int length) {
+			var data = new DataDescriptionEntry();
+			data.LevelNumber = level;
+			data.DataName = new StringDataName(name);
+			data.DataType = type;
+			data.MemoryArea = new TypeCobol.Compiler.CodeModel.DataInMemory(length, 0);//TODO half-assed
+			data.Picture = String.Format("9 ({0})", data.MemoryArea.Length);
+			data.TopLevel = parent;
+			parent.Subordinates.Add(data);
+		}
 // [/TYPECOBOL]
 
 	}
@@ -128,5 +148,30 @@ namespace TypeCobol.Compiler.CodeElements
 			this.DataType = type;
 		}
 		public override bool IsTypeDefinition { get { return true; } }
+	}
+
+
+
+	public class StringDataName: DataName {
+		private string name_;
+		public override string Name { get { return name_; } }
+		/// <param name="name">Cannot be null</param>
+        public StringDataName(string name): base(null) { name_ = name; }
+
+		public override bool Equals(object obj) {
+			var other = obj as StringDataName;
+			if (other == null) return false;
+			return other == this;
+		}
+		public static bool operator ==(StringDataName x, StringDataName y) {
+			if (Object.ReferenceEquals(x, null) && Object.ReferenceEquals(y, null)) return true;
+			if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
+			return x.Name.ToUpper() == y.Name.ToUpper();
+		}
+		public static bool operator !=(StringDataName x, StringDataName y) {
+			return !(x == y);
+		}
+
+		public override string ToString() { return Name; }
 	}
 }

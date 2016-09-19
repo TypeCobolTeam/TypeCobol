@@ -1,0 +1,6 @@
+﻿--- Program ---
+PROGRAM: myPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+SYMBOL TABLE:
+  CR {1} Alphanumeric
+  LF {1} Alphanumeric

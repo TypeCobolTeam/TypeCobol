@@ -9,6 +9,8 @@ namespace TypeCobol.Codegen.Skeletons {
 		public List<Condition> Conditions { get; internal set; }
 		/// <summary>List of <see cref="Pattern"/> defining this skeleton.</summary>
 		public List<Pattern> Patterns { get; internal set; }
+		/// <summary>List of properties necessary for code generation of Patterns.</summary>
+		public ICollection<string> Properties { get; set; }
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
@@ -18,6 +20,10 @@ namespace TypeCobol.Codegen.Skeletons {
 				str.Append(" - condition: ").AppendLine(condition.ToString());
 			foreach(var pattern in this)
 				str.Append(" - pattern: ").AppendLine(pattern.ToString());
+			str.Append("Properties: [ ");
+			foreach(var pname in Properties) str.Append(pname).Append(", ");
+			if (Properties.Count > 0) str.Length -= 2;
+			str.AppendLine(" ]");
 			return str.ToString();
 		}
 

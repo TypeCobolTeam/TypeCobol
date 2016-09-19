@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class MultiplyStatementEnd : CodeElement
+    public class MultiplyStatementEnd : CodeElementEnd
     {
         public MultiplyStatementEnd() : base(CodeElementType.MultiplyStatementEnd)
         { }

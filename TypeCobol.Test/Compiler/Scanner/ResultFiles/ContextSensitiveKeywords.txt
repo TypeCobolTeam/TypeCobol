@@ -3,14 +3,14 @@
 [5,5: ]<SpaceSeparator>
 [6,13:FUNCTION]<FUNCTION>
 [14,14: ]<SpaceSeparator>
-[15,18:toto]<FunctionName>
+[15,18:toto]<UserDefinedWord>
 [19,19: ]<SpaceSeparator>
 [20,23:toto]<UserDefinedWord>
 [24,24: ]<SpaceSeparator>
 [25,32:FUNCTION]<FUNCTION>
 
 -- Line 2 --
-[1,4:toto]<FunctionName>
+[1,4:toto]<UserDefinedWord>
 [5,5: ]<SpaceSeparator>
 [6,11:DELETE]<DELETE>
 [12,12: ]<SpaceSeparator>

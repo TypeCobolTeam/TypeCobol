@@ -55,7 +55,7 @@ public class XMLWriter: AbstractErrorWriter {
 
 	public XMLWriter(System.IO.TextWriter writer) {
 		var settings = new XmlWriterSettings();
-		settings.NewLineOnAttributes = true;
+		settings.NewLineOnAttributes = false;
 		settings.Indent = true;
 		this.writer = XmlWriter.Create(writer, settings);
 	}
@@ -67,9 +67,9 @@ public class XMLWriter: AbstractErrorWriter {
 			foreach(var error in Errors[key])
 				writeMessage(Inputs[key], error);
 		}
-		writeOutputs();
-//		writeLinesLookup();
-		writeTail();
+            //writeOutputs();
+            //writeLinesLookup();
+            writeTail();
 	}
 
 	public override void Flush() {
@@ -77,52 +77,52 @@ public class XMLWriter: AbstractErrorWriter {
 	}
 
 	private void writeHead() {
-		writer.WriteStartElement("BUILD");
-		writer.WriteStartElement("PACKAGE");
+		    writer.WriteStartElement("BUILD");
+            writer.WriteStartElement("PACKAGE");
 	}
 
 	private void writeTail() {
-		writer.WriteEndElement();// PACKAGE
-		writer.WriteEndElement();// BUILD
+            writer.WriteEndElement();// PACKAGE
+            writer.WriteEndElement();// BUILD
 	}
 
 	private void writeLinesLookup() {
-		writer.WriteStartElement("STATEMENTTABLE");
-		// TODO
-		writer.WriteEndElement();// STATEMENTTABLE
-	}
+            writer.WriteStartElement("STATEMENTTABLE");
+            writer.WriteString("\n(2,1,2,1);\n");
+            writer.WriteEndElement();// STATEMENTTABLE
+        }
 
 	private void writeInputs() {
-		writer.WriteStartElement("FILEREFERENCETABLE");
-		writer.WriteElementString("FILECOUNT", Inputs.Count.ToString());
-		foreach(var path in Inputs.Keys)
-			writeFile(Inputs[path], new System.IO.FileInfo(path).FullName);
-		writer.WriteEndElement();// FILEREFERENCETABLE
-	}
+            writer.WriteStartElement("FILEREFERENCETABLE");
+            writer.WriteElementString("FILECOUNT", Inputs.Count.ToString());
+            foreach(var path in Inputs.Keys)
+			    writeFile(Inputs[path], new System.IO.FileInfo(path).FullName);
+            writer.WriteEndElement();// FILEREFERENCETABLE
+        }
 
 	private void writeOutputs() {
-		writer.WriteStartElement("OUTFILEREFERENCETABLE");
-		writer.WriteElementString("OUTFILECOUNT", Outputs.Count.ToString());
-		int c = 1;
-		foreach(var path in Outputs)
-			writeFile((c++).ToString(), new System.IO.FileInfo(path).FullName, "OUT");
-		writer.WriteEndElement();// FILEREFERENCETABLE
-	}
+            writer.WriteStartElement("OUTFILEREFERENCETABLE");
+            writer.WriteElementString("OUTFILECOUNT", Outputs.Count.ToString());
+		    int c = 1;
+		    foreach(var path in Outputs)
+			    writeFile((c++).ToString(), new System.IO.FileInfo(path).FullName, "OUT");
+            writer.WriteEndElement();// OUTFILEREFERENCETABLE
+        }
 
 	private void writeFile(string id, string name, string prefix = "") {
-		writer.WriteStartElement(prefix+"FILE");
-		writer.WriteElementString(prefix+"FILENUMBER", id);
-		writer.WriteElementString(prefix+"FILENAME", name);
-		writer.WriteEndElement();// FILE
+            writer.WriteStartElement(prefix+"FILE");
+            writer.WriteElementString(prefix+"FILENUMBER", id);
+            writer.WriteElementString(prefix+"FILENAME", name);
+            writer.WriteEndElement();// FILE
 	}
 
 	private void writeMessage(string id, Diagnostic error) {
-		writer.WriteStartElement("MESSAGE");
-		writer.WriteElementString("MSGNUMBER", "TC"+AsIBMSuffix(error.Severity));
-		writer.WriteElementString("MSGLINE", error.Range.End.Line.ToString());
-		writer.WriteElementString("MSGFILE", id);
-		writer.WriteElementString("MSGTEXT", error.Message);
-		writer.WriteEndElement();// MESSAGE
+            writer.WriteStartElement("MESSAGE");
+            writer.WriteElementString("MSGNUMBER", "TC-" + "00000".Substring(0, 5-error.Code.Length) + error.Code + AsIBMSuffix(error.Severity));
+            writer.WriteElementString("MSGLINE", error.Range.End.Line.ToString());
+            writer.WriteElementString("MSGFILE", id);
+            writer.WriteElementString("MSGTEXT", error.Message);
+            writer.WriteEndElement();// MESSAGE
 	}
 
 	private static string AsIBMSuffix(int severity) {

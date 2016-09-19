@@ -1,20 +1,43 @@
-﻿using System.Collections.Generic;
+﻿namespace TypeCobol.Compiler.CodeElements.Functions {
+
+using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
-namespace TypeCobol.Compiler.CodeElements.Functions {
 	public class Function {
-		public QualifiedName QualifiedName;
-		public IList<Parameter> Parameters;
-		public Parameter Result;
+		public AccessModifier Visibility { get; private set; }
+		public QualifiedName QualifiedName { get; private set; }
+		public ParametersProfile Profile { get; private set; }
 
-		public Function(string name, string program, Parameter result, IList<Parameter> parameters = null)
-		  : this(new URI(program+'.'+name), result, parameters) { }
-
-		public Function(QualifiedName name, Parameter result, IList<Parameter> parameters = null) {
-			this.QualifiedName = name;
-			this.Parameters = parameters ?? new List<Parameter>();
-			this.Result = result;
+		public ParameterDescription Result {
+			get {
+				if (Profile.ReturningParameter != null) return Profile.ReturningParameter;
+				if (Profile.OutputParameters.Count == 1) return Profile.OutputParameters[0];
+				throw new System.InvalidOperationException(QualifiedName+" has "+Profile.OutputParameters.Count+" output parameters");
+			}
 		}
+
+		/// <summary>Creates function.</summary>
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private)
+			: this(name, inputs, null, null, returning, visibility) { }
+		/// <summary>Creates procedure.</summary>
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts = null, AccessModifier visibility = AccessModifier.Private)
+			: this(name, inputs, outputs, inouts, null, visibility) { }
+		/// <summary>Creates functions or procedure</summary>
+		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private) {
+			QualifiedName = name;
+			Profile = new ParametersProfile();
+			Profile.InputParameters  = inputs  ?? new List<ParameterDescription>();
+			Profile.OutputParameters = outputs ?? new List<ParameterDescription>();
+			Profile.InoutParameters  = inouts  ?? new List<ParameterDescription>();
+			Profile.ReturningParameter = returning;
+			Visibility = visibility;
+		}
+
+		/// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
+		public bool IsProcedure { get { return Profile.ReturningParameter == null; } }
+		/// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
+		public bool IsFunction  { get { return Profile.OutputParameters.Count == 0 && Profile.InoutParameters.Count == 0; } }
 
 		public string Name { get { return QualifiedName.Head; } }
 		public string Program {
@@ -27,23 +50,24 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 			}
 		}
 		public string Copy { get { return Program+"cpy"; } }
+		public string Lib  { get { return Program; } }
 
 		public override string ToString() {
-			var str = new System.Text.StringBuilder(Name!=null? Name.ToString() : "?");
-			str.Append('(');
-			foreach(var p in Parameters) str.Append(p.ToString()).Append(", ");
-			if (Parameters.Count > 0) str.Length -= 2;
-			str.Append(')').Append(':').Append(Result.ToString());
+			var str = new System.Text.StringBuilder(Name ?? "?");
+			str.Append(Profile.ToString());
 			return str.ToString();
 		}
 	}
 
 	public class Parameter {
+		public DataName Name;
 		public DataType Type;
 		public int Length;
 		public bool IsCustom;
 
-		public Parameter(bool isCustom, DataType type, int length=int.MaxValue) {
+		public Parameter(DataName name): this(name, false, null, int.MaxValue) { }
+		public Parameter(DataName name, bool isCustom, DataType type, int length=int.MaxValue) {
+			this.Name = name;
 			this.Type   = type;
 			this.Length = length;
 			if (length < 1) throw new System.ArgumentOutOfRangeException("Length must be >0 (actual: "+length+')');
@@ -53,43 +77,22 @@ namespace TypeCobol.Compiler.CodeElements.Functions {
 		public string Definition {
 			get {
 				if (IsCustom) return "TYPE "+Type.Name;
+			    if (Type == DataType.Numeric)
+			    {
+                    return "PIC 9" + (Length > 0 ? "(" + Length + ")" : "");
+                }
 				return "PIC X"+(Length>0?"("+Length+")":"");
 			}
 		}
 
 		public override string ToString() {
-			return (Type != null? Type.ToString() : "?") + (Length < int.MaxValue? '('+Length.ToString()+')' : "");
-		}
-	}
-	public class CallParameter: Parameter {
-		public string Value { get; private set; }
-		public bool ByReference { get; private set; }
-		public CallParameter(string Value, bool ByReference = true)
-		  : base (false, null) {
-			this.Value = Value;
-			this.ByReference = ByReference;
-		}
-		public string Mode {
-			get { return ByReference?"REFERENCE":"CONTENT"; }
+			return (Name==null? "?":Name.Name)+ ' ' + (Type!=null? Type.ToString():"?") + (Length<int.MaxValue? '('+Length.ToString()+')':"");
 		}
 	}
 
-	public class SampleFactory {
-		public static Function Create(string name, string library = "TC-DEFAULT") {
-			return new Function(name, library,
-				new Parameter(false, DataType.Numeric, 8),
-				new List<Parameter>() {
-					new Parameter(false, DataType.Numeric),
-					new Parameter(false, DataType.Numeric, 3),
-				});
-		}
-		public static Function CreateCall(string name, string library = "TC-DEFAULT") {
-			return new Function(name, library,
-				new Parameter(false, DataType.Numeric, 8),
-				new List<Parameter>() {
-					new CallParameter("param1"),
-					new CallParameter("'42'", false),
-				});
-		}
+	public enum AccessModifier {
+		Public,
+		Private
 	}
+
 }

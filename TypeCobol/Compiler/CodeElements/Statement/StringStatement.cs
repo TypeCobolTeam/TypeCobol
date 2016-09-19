@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class StringStatement : CodeElement
+    public class StringStatement : CodeElement, Receiving
     {
 
         /// <summary>
@@ -112,6 +113,7 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
+        public IList<Expression> Expressions { get {return new List<Expression> {this.IntoIdentifier};} }
     }
 
 	public class StringStatementWhat

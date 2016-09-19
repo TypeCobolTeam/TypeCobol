@@ -6,9 +6,27 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
 
 	public class RazorEngine: Solver {
 
-		public string Replace(string template, Dictionary<string,object> variables = null, string delimiter = "%") {
-			if (delimiter != null && !"@".Equals(delimiter))
-				template = template.Replace(delimiter, "@Model.");
+		public static string DEFAULT_DELIMITER = "%";
+
+		private string Template;
+		private Dictionary<string,object> Variables;
+		private string Delimiter;
+
+		public RazorEngine(): this("", new Dictionary<string,object>(), DEFAULT_DELIMITER) { }
+
+		public RazorEngine(string template, Dictionary<string,object> variables, string delimiter = null) {
+			this.Template = template;
+			this.Variables = variables;
+			this.Delimiter = delimiter;
+		}
+		public string Replace() {
+			return Replace(Template, Variables, Delimiter);
+		}
+
+		public string Replace(string template, Dictionary<string,object> variables = null, string delimiter = null) {
+			if ("@".Equals(delimiter)) throw new System.ArgumentException("Illegal delimiter: @");
+			if (delimiter == null) delimiter = DEFAULT_DELIMITER;
+			template = template.Replace(delimiter, "@Model.");
 			object model = variables == null ? new { } : CreateAnonymousObjectFromDictionary(variables);
 			// TODO: make key unique
 			// key should be unique because razor caches the result
@@ -43,6 +61,12 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
 			foreach (byte t in hash) res.Append(t.ToString("X2"));
             return res.ToString();
         }
+
+
+
+		public static Solver Create(string template, Dictionary<string,object> variables, string delimiter) {
+			return new RazorEngine(template, variables ?? new Dictionary<string,object>(), delimiter ?? DEFAULT_DELIMITER);
+		}
 	}
 
 }

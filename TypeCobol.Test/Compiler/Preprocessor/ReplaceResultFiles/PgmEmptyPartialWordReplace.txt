@@ -1,0 +1,16 @@
+﻿** Document path PgmEmptyPartialWordReplace **
+-- Line 4 --
+[12,18:PERFORM]<PERFORM>
+[20,39:EACGAPEL-C0001]<UserDefinedWord>
+-- Line 6 --
+[8,27:EACGAPEL-C0001-TRACE]<UserDefinedWord>
+[28,29:. ]<PeriodSeparator>
+-- Line 7 --
+[12,19:continue]<CONTINUE>
+-- Line 8 --
+[12,13:. ]<PeriodSeparator>
+-- Line 11 --
+[8,21:EACGAPEL-C0001]<UserDefinedWord>
+[22,23:. ]<PeriodSeparator>
+-- Line 12 --
+[12,12+:.]<PeriodSeparator>

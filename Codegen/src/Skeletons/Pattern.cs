@@ -18,6 +18,8 @@ namespace TypeCobol.Codegen.Skeletons {
 		/// <summary>Variable Delimiter</summary>
 		internal string Delimiter = "%";
 
+        public int? Position { get; internal set; }
+
 		internal bool Trim = true;
 		internal bool Indent = true;
 
@@ -26,7 +28,8 @@ namespace TypeCobol.Codegen.Skeletons {
 			if (Name != null) str.Append(Name);
 			if (Group != null) str.Append(" group:").Append(Group);
 			if (Location != null) str.Append(" location:").Append(Location);
-			if (Action != null) str.Append(" action:").Append(Action);
+            if (Position != null) str.Append(" at position:").Append(Position);
+            if (Action != null) str.Append(" action:").Append(Action);
 			if (Variables.Count > 0) {
 				str.Append(" variables: {");
 				foreach(var kv in Variables)

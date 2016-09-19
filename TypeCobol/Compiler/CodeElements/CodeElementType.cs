@@ -152,6 +152,10 @@ namespace TypeCobol.Compiler.CodeElements
         SubtractStatementEnd,
         UnstringStatementEnd,
         WriteStatementEnd,
-        XmlStatementEnd
+        XmlStatementEnd,
+// [TYPECOBOL]
+		FunctionDeclarationHeader,
+		FunctionDeclarationEnd,
+// [/TYPECOBOL]
     }
 }

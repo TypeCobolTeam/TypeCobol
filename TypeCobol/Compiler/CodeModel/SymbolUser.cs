@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeModel
@@ -8,8 +9,9 @@ namespace TypeCobol.Compiler.CodeModel
 		Expression Expression { get; }
 	}
 	interface Receiving {
-		/// <summary>List of receiving areas</summary>
-		IList<Expression> Expressions { get; }
+        /// <summary>List of receiving areas</summary>
+        [NotNull]
+        IList<Expression> Expressions { get; }
 	}
 
 	interface SymbolUser

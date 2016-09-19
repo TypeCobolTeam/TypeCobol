@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.CodeModel
 		/// - They are condition-names or index-names associated with data items that satisfy
 		///   any of the above conditions.
 		/// </summary>
-		public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>();
+		public Dictionary<string,List<DataDescriptionEntry>> DataEntries = new Dictionary<string,List<DataDescriptionEntry>>(System.StringComparer.InvariantCultureIgnoreCase);
 
 		public Scope CurrentScope { get; internal set; }
 		public SymbolTable EnclosingScope { get; internal set; }
@@ -68,8 +68,8 @@ namespace TypeCobol.Compiler.CodeModel
 
 		private Scope GetScope(DataDescriptionEntry data) {
 			if (data.IsGlobal) return Scope.Global;
-            //External is not a global or above global scope, so use Scope.Program for this kind of data
-            return Scope.Program;
+			//External is not a global or above global scope, so use current scope for this kind of data
+			return CurrentScope;
 		}
 		private SymbolTable GetTable(SymbolTable.Scope scope) {
 			if (CurrentScope == scope) return this;
@@ -196,33 +196,56 @@ namespace TypeCobol.Compiler.CodeModel
 			/// Cobol does not distinguish between programs and functions/procedures.
 			/// </summary>
 			Program,
+// [TYPECOBOL]
+			Function,
+// [/TYPECOBOL]
 		}
 
 
 
 		/// <summary>Functions repository</summary>
-		protected Dictionary<QualifiedName,Function> functions = new Dictionary<QualifiedName,Function>();
+		protected Dictionary<QualifiedName,IList<Function>> functions = new Dictionary<QualifiedName,IList<Function>>();
 
-		internal Function GetFunction(string name) {
-			return GetFunction(new URI(name));
-		}
-		internal Function GetFunction(QualifiedName name) {
-			try { return functions[name]; }
-			catch(KeyNotFoundException ex) {
-				if (EnclosingScope == null) return null;
-				else return EnclosingScope.GetFunction(name);
+		public IList<Function> Functions {
+			get {
+				var copy = new List<Function>();
+				foreach(var funs in functions.Values)
+					foreach(var fun in funs)
+						copy.Add(fun);
+				return copy;
 			}
+		}
+
+		internal IList<Function> GetFunction(QualifiedName name, Profile profile = null, bool searchInDefaultLib = true) {
+			foreach(var function in functions)
+				if (function.Key.Matches(name))
+					return Filter(function.Value, profile);
+			if (searchInDefaultLib && CurrentScope == Scope.Intrinsic)
+				return GetFunction(new URI("TC-DEFAULT."+name.ToString()), profile, false);
+			if (EnclosingScope == null) return new List<Function>();
+			return EnclosingScope.GetFunction(name, profile, searchInDefaultLib);
+		}
+		private IList<Function> Filter(IList<Function> functions, Profile profile) {
+			if (profile == null) return functions;
+			var filtered = new List<Function>();
+			foreach(var function in functions)
+				if (profile.Equals(function.Profile))
+					filtered.Add(function);
+			return filtered;
 		}
 		/// <summary>Make a function definied in the current scope.</summary>
 		/// <param name="function">Function definition</param>
 		internal void Register(Function function) {
-			functions[function.QualifiedName] = function;
+			IList<Function> functions = new List<Function>();
+			try { functions = this.functions[function.QualifiedName]; }
+			catch(KeyNotFoundException ex) { this.functions[function.QualifiedName] = functions; }
+			functions.Add(function);
 		}
 
 
 
 		/// <summary>Custom types defined in the current scope and usable in this table of symbols.</summary>
-		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>();
+		protected Dictionary<string,TypeDefinition> types = new Dictionary<string,TypeDefinition>(System.StringComparer.InvariantCultureIgnoreCase);
 
 		public IEnumerable<TypeDefinition> CustomTypes {
 			get { return new List<TypeDefinition>(types.Values); }
@@ -261,19 +284,50 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public override string ToString() {
 			var str = new StringBuilder();
+			bool verbose = true;
+			if (verbose) str.AppendLine("--- "+scope2str());
 			foreach(var line in DataEntries) {
+				var key = line.Key;
 				foreach (var data in line.Value) {
+					str.Append(key+":");
 					Dump(str, data, 1);
 					str.Append('\n');
 				}
 			}
-			// no enclosing scope dump
+			foreach(var funs in functions) {
+				str.Append(funs.Key+":");
+				foreach(var fun in funs.Value) {
+					Dump(str, fun, 1);
+					str.Append("; ");
+				}
+				if (funs.Value.Count > 0) str.Length -= 2;
+				str.AppendLine();
+			}
+			if (verbose) {
+				if (EnclosingScope != null)
+					str.Append(EnclosingScope.ToString());
+			}// else no enclosing scope dump
 			return str.ToString();
 		}
 		private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0) {
 			for (int c=0; c<indent; c++) str.Append("  ");
 			str.Append(data);
 			return str;
+		}
+		private static StringBuilder Dump(StringBuilder str, Function fun, int indent = 0) {
+			for (int c=0; c<indent; c++) str.Append("  ");
+			str.Append(fun);
+			return str;
+		}
+		private string scope2str() {
+			var str = new StringBuilder();
+			var current = this;
+			while(current != null) {
+				str.Insert(0,current.CurrentScope+":");
+				current = current.EnclosingScope;
+			}
+			str.Length -= 1;
+			return str.ToString();
 		}
 	}
 }

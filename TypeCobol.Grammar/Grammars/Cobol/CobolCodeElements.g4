@@ -215,8 +215,15 @@ codeElement:
        // xmlStatementEnd |
        //xmlParseStatement
            // ... exceptionPhrases ...
-       xmlStatementEnd;
+       xmlStatementEnd
 
+// [TYPECOBOL]
+	   | tcCodeElement;
+
+// what is there is not important as long as its not epsilon
+tcCodeElement: PUBLIC | PRIVATE | UNSAFE
+// [/TYPECOBOL]
+		;
 
 statement:
 	  imperativeStatement
@@ -435,7 +442,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-              END PROGRAM programNameReference2 PeriodSeparator;
+              END PROGRAM programNameReference2? PeriodSeparator;
 
 // p85 : program-name can be specified either as a user-defined word or in an alphanumeric literal. 
 //       program-name cannot be a figurative constant. 
@@ -3579,7 +3586,7 @@ redefinesClause:
 //   – When data-name-2 is an elementary item, data-name-1 is an elementary item.
 
 renamesClause:
-                 /* 66 dataName */ RENAMES dataNameReference ((THROUGH | THRU) dataNameReference)?;
+                 /* 66 dataName */ RENAMES qualifiedDataName ((THROUGH | THRU) qualifiedDataName)?;
 
 // p221: The SIGN clause specifies the position and mode of representation of the
 // operational sign for the signed numeric item to which it applies.
@@ -9879,7 +9886,7 @@ length: arithmeticExpression;
 
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
-intrinsicFunctionName: FunctionName | LENGTH | RANDOM | WHEN_COMPILED | UserDefinedWord;
+intrinsicFunctionName: UserDefinedWord | LENGTH | RANDOM | WHEN_COMPILED;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the

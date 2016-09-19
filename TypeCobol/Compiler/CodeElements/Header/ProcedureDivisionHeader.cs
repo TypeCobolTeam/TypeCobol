@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,8 +11,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class ProcedureDivisionHeader : CodeElement
     {
-        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader)
-        { }
+        public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader) { }
 
         /// <summary>
         /// The USING phrase specifies the parameters that a program or method receives
@@ -28,14 +28,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RETURNING data item must be a level-01 or level-77 item in the LINKAGE SECTION.
         /// The RETURNING data item is an output-only parameter.
         /// </summary>
-        public DataName ReturningDataName { get; set; }
+        public DataName ReturningParameter { get; set; }
 
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (UsingParameters == null && ReturningDataName == null)
+            if (UsingParameters == null && ReturningParameter == null)
             {
                 return base.ToString();
             }
@@ -53,13 +53,13 @@ namespace TypeCobol.Compiler.CodeElements
                             sb.Append(inputParam.ReceivingMode);
                             sb.Append(':');
                         }
-                        sb.Append(inputParam.DataName);
+                        sb.Append(inputParam.Symbol);
                     }
                     sb.AppendLine();
                 }                
-                if (ReturningDataName != null)
+                if (ReturningParameter != null)
                 {
-                    sb.AppendLine("- ReturningDataName = " + ReturningDataName);
+                    sb.AppendLine("- ReturningDataName = " + ReturningParameter);
                 }                
                 return sb.ToString();
             }
@@ -81,7 +81,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// Each USING identifier must be defined as a level-01 or level-77 item in the
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// </summary>
-        public DataName DataName { get; set; }
+        public Symbol Symbol { get; set; }
+
+		public InputParameter(Symbol name, SyntaxProperty<ReceivingMode> mode) {
+			this.Symbol = name;
+			this.ReceivingMode = mode;
+		}
     }
 
     /// <summary>

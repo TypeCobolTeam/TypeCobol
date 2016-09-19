@@ -208,10 +208,6 @@ namespace TypeCobol.Compiler.Preprocessor
                         {
                             terminalNode = replacingOperandContext.UserDefinedWord();
                         }
-                        else if (replacingOperandContext.FunctionName() != null)
-                        {
-                            terminalNode = replacingOperandContext.FunctionName();
-                        }
                         else if (replacingOperandContext.reservedWord() != null)
                         {
                             terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.reservedWord());

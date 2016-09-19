@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TypeCobol.Test
 {
-    class TestUtils
+    public class TestUtils
     {
         /// <summary>
         /// Compare result and expectedResult line by line.

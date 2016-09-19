@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.Text
@@ -73,6 +74,58 @@ namespace TypeCobol.Compiler.Text
             ITextLine isolatedTextLine = new TextLineSnapshot(-1, text, null);
             return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
         }
+
+		public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, int index = -1) {
+			if (layout == ColumnsLayout.FreeTextFormat) {
+				var result = new List<ITextLine>();
+				result.Add(new TextLineSnapshot(index, text, null));
+				return result;
+			}
+			if (layout == ColumnsLayout.CobolReferenceFormat) {
+				char indicator = ' ';
+				string indent = "";
+				bool wasComment = text.Trim().StartsWith("*");
+				if (wasComment) {
+					indicator = '*';
+					int i = text.IndexOf('*');
+					indent = text.Substring(0, i);
+					text = text.Substring(i+1);
+				}
+				return CreateCobolLines(layout, index, indicator, indent, text);
+			}
+			throw new System.NotImplementedException("Unsuported ITextLine type: "+layout);
+		}
+		private static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text) {
+			var result = new List<ITextLine>();
+			var lines = Split(text, 65);
+			result.Add(new TextLineSnapshot(index, Convert(layout, lines[0], indicator, indent), null));
+			if (indicator == ' ') indicator = '-';
+			for(int i = 1; i < lines.Count; i++) {
+				if (index > -1) index++;
+				result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent), null));
+			}
+			return result;
+		}
+		private static string Convert(ColumnsLayout layout, string text, char indicator, string indent) {
+			string result = "";
+			if (layout == ColumnsLayout.FreeTextFormat) {
+				result = (indicator=='*'?"*":"")+indent+text;
+			} else {
+				string end = "";
+				for (int c = text.Length; c < 65; c++) end += " ";
+				result = "      "+indicator+indent+text+end+"      ";//+"000000";
+			}
+			return result;
+		}
+		private static IList<string> Split(string line, int max) {
+			var lines = new List<string>();
+			if (line.Length < 1) lines.Add(line);
+			else {
+				for (int i = 0; i < line.Length; i += max)
+					lines.Add(line.Substring(i, Math.Min(max, line.Length-i)));
+			}
+			return lines;
+		}
 
         // --- Cobol text line scanner
 

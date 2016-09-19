@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.CodeModel
     public abstract class Program
     {
         public Program() {
-            SyntaxTree = new SyntaxTree(new Node(null));
+            SyntaxTree = new SyntaxTree();
         }
 
         /// <summary>
@@ -67,6 +67,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// Includes WORKING-STORAGE, LOCAL-STORAGE and LINKAGE data.
         /// </summary>
         public SymbolTable SymbolTable;
+
+		public SymbolTable CurrentTable {
+			get { return SyntaxTree.CurrentNode.SymbolTable; }
+		}
 
         /// <summary>
         /// Abstract Syntax Tree of this program.

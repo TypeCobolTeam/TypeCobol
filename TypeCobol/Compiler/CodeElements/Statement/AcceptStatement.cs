@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -34,7 +36,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// CURRENT-DATE, which also supports four-digit year values and provides
     /// additional information (see “CURRENT-DATE” on page 490).
     /// </summary>
-    public class AcceptStatement : CodeElement
+    public class AcceptStatement : CodeElement, Receiving
     {
         /// <summary>
         /// p294:
@@ -92,6 +94,8 @@ namespace TypeCobol.Compiler.CodeElements
         public DateMode Mode;
 
         public AcceptStatement() : base(CodeElementType.AcceptStatement) { }
+
+        public IList<Expression> Expressions { get { return new List<Expression> {Receiving}; } }
     }
 
     public enum DateMode

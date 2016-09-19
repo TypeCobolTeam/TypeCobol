@@ -49,5 +49,12 @@ namespace TypeCobol.Test.Compiler.Preprocessor
             string result = PreprocessorUtils.ProcessReplaceDirectives(testName);
             PreprocessorUtils.CheckWithReplaceResultFile(result, testName);
         }
+
+        public static void CheckEmptyPartialWordReplace()
+        {
+            string testName = "PgmEmptyPartialWordReplace";
+            string result = PreprocessorUtils.ProcessReplaceDirectives(testName);
+            PreprocessorUtils.CheckWithReplaceResultFile(result, testName);
+        }
     }
 }

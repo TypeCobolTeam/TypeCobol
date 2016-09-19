@@ -1,0 +1,235 @@
+﻿--- Diagnostics ---
+[14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries (RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause, OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF> on line 45)
+[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator (RuleStack=codeElement>dataDescriptionEntry, OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF> on line 50)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 63)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 66)
+[17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>redefinesClause, OffendingSymbol=[17,25:REDEFINES]<REDEFINES> on line 72)
+[26,33]<27,Error,Syntax>Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL> on line 93)
+[33,40]<27,Error,Syntax>Syntax error : External is only allowed for level 01 (RuleStack=codeElement>dataDescriptionEntry>externalClause, OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL> on line 97)
+[27,32]<27,Error,Syntax>Syntax error : Elementary TYPEDEF cannot be STRONG (RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause, OffendingSymbol=[27,32:STRONG]<STRONG> on line 101)
+[29,33]<27,Error,Syntax>Syntax error : Strong Typedef can't contains value clause: (RuleStack=codeElement>dataDescriptionEntry>valueClause, OffendingSymbol=[29,33:value]<VALUE> on line 113)
+[10,20]<27,Error,Syntax>Syntax error : no viable alternative at input '"me@me.com"' (RuleStack=codeElement>unstringStatement>identifier, OffendingSymbol=[10,20:"me@me.com"]<AlphanumericLiteral>(",Y,Y){me@me.com} on line 199)
+[10,20]<27,Error,Syntax>Syntax error : no viable alternative at input '"me@me.com"' (RuleStack=codeElement>unstringStatement>identifier, OffendingSymbol=[10,20:"me@me.com"]<AlphanumericLiteral>(",Y,Y){me@me.com} on line 201)
+[1,31]<27,Error,Syntax>Syntax error : Type TYPENOTDEFINED is not referenced. ([1>31] on line 36)
+[1,33]<27,Error,Syntax>Syntax error : Type TYPEDEFINEDAFTER is not referenced. ([1>33] on line 39)
+[1,41]<27,Error,Syntax>Syntax error : Type CLAUSESORDERKO is not referenced. ([1>41] on line 51)
+[1,32]<27,Error,Syntax>Syntax error : NoDescription has no description. ([1>32] on line 57)
+[1,49]<27,Error,Syntax>Syntax error : TYPEDEF NoRedefines3 {1} GROUP(0) [ ]NoRedefines3 redefines a variable not referenced TypeNotDefined ([1>49] on line 72)
+[5,57]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines4B {5} Numeric <of> varNoRedefines4 ([5>57] on line 82)
+[5,57]<27,Error,Syntax>Syntax error : varNoRedefines4B {5} Numeric <of> varNoRedefines4 can't redefines a TYPEDEF varNoRedefines4A ([5>57] on line 82)
+[5,62]<27,Error,Syntax>Syntax error : Typedef can't contains redefined item: varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis ([5>62] on line 90)
+[5,62]<27,Error,Syntax>Syntax error : varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis can't redefines a TYPEDEF varNoRedefines5-a ([5>62] on line 90)
+[5,35]<27,Error,Syntax>Syntax error : Item under a Strong Typedef can't contains value clause: TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP ([5>35] on line 114)
+[5,34]<27,Error,Syntax>Syntax error : Item under a Strong Typedef can't contains value clause: TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP ([5>34] on line 115)
+[5,62]<27,Error,Syntax>Syntax error : USE-TYPE-GRP-STRONG-RED {10} GROUP(0) [ ] <of> USE-TYPE-GRP can't redefines a STRONG TYPE USE-TYPE-GRP-STRONG ([5>62] on line 132)
+[6,66]<27,Error,Syntax>Syntax error : USE-TYPE-GRP-STRONG-RED-2 {11} GROUP(0) [ ] <of> useTypeGrp2Strong <of> useTypeGrp2 redefines an ambiguous variable  TYPE-GRP-STRONG-PART3 ([6>66] on line 141)
+[1,68]<27,Error,Syntax>Syntax error : TYPE-GRP-STRONG-REN {66} GROUP(0) [ ] can't renames a strongly typed variableuseStrongType1.strongType1-PART1 ([1>68] on line 151)
+[1,68]<27,Error,Syntax>Syntax error : TYPE-GRP-STRONG-REN {66} GROUP(0) [ ] can't renames a strongly typed variableuseStrongType1.strongType1-PART2 ([1>68] on line 151)
+[1,63]<27,Error,Syntax>Syntax error : Strongly typed variable can't be used as a receiving operand of StringStatement ([1>63] on line 194)
+
+--- Program ---
+PROGRAM: TypeCobol common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+CUSTOM TYPES:
+ * Feature
+     - Feature-name[10] {2} Alphanumeric <of> Feature
+ * Vect2
+     - Coord2d {11} GROUP(2) [ X Y ] <of> Vect2
+       - X {15} Numeric <of> Coord2d <of> Vect2
+       - Y {12} Numeric <of> Coord2d <of> Vect2
+     - Coord3d {5} GROUP(1) [ Z ] <of> Vect2
+       - Z {10} Numeric <of> Coord3d <of> Vect2
+ * TypeDefinedAfter
+ * LevelKO
+     - LevelKOItem {10} Numeric <of> LevelKO <of> LevelKOGroup
+ * ClausesOrderOK
+ * NoDescription
+ * NoRedefines1
+ * NoRedefines2
+     - NoRedefines1Item {5} Alphanumeric <of> NoRedefines2
+ * NoRedefines3
+     - NoRedefines1Item {5} Alphanumeric <of> NoRedefines3
+ * varNoRedefines4
+     - varNoRedefines4A {5} Alphanumeric <of> varNoRedefines4
+     - varNoRedefines4B {5} Numeric <of> varNoRedefines4
+ * varNoRedefines5
+     - varNoRedefines5-a {5} Alphanumeric <of> varNoRedefines5
+ * varNoRedefines5bis
+     - varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis
+ * ExternalType1
+     - varExternalType1 {2} Alphanumeric <of> ExternalType1
+ * ExternalType2
+     - varExternalType2 {2} Alphanumeric <of> ExternalType2
+ * CannotBeStrong
+ * TYPE_ELT
+     - TYPE-ELT-VALB {88} GROUP(0) [ ] <of> TYPE_ELT
+     - TYPE-ELT-VALC {88} GROUP(0) [ ] <of> TYPE_ELT
+ * TYPE-GRP
+     - TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP
+     - TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP
+ * TYPE-GRP-STRONG
+     - TYPE-GRP-STRONG-PART1 {10} Alphanumeric <of> TYPE-GRP-STRONG
+     - TYPE-GRP-STRONG-PART2 {10} Alphanumeric <of> TYPE-GRP-STRONG
+     - TYPE-GRP-STRONG-PART3 {10} Alphanumeric <of> TYPE-GRP-STRONG
+ * strongType1
+     - strongType1-PART1 {10} Alphanumeric <of> strongType1
+     - strongType1-PART2 {10} Numeric <of> strongType1
+ * IntegerStrong
+     - Integer-Value {5} Numeric <of> IntegerStrong
+ * Integer
+ * CharsStrong
+     - Char-Value {5} Alphanumeric <of> CharsStrong
+ * Chars
+SYMBOL TABLE:
+  TYPEDEF Feature {1} GROUP(1) [ Feature-name ]Feature
+  Feature-name[10] {2} Alphanumeric <of> Feature
+  Feature-name[10] {4} Alphanumeric <of> Feature-list <of> Equipment-id <of> Equipment
+  Equipment {1} GROUP(1) [ Equipment-id ]
+  Equipment-id[100] {2} GROUP(1) [ Feature-list ] <of> Equipment
+  Feature-list {3} Feature <of> Equipment-id <of> Equipment
+  TYPEDEF Vect2 {1} GROUP(2) [ Coord2d Coord3d ]Vect2
+  Coord2d {11} GROUP(2) [ X Y ] <of> Vect2
+  Coord2d {6} GROUP(2) [ X Y ] <of> Position2d <of> Point
+  Coord2d {15} GROUP(2) [ X Y ] <of> Accel2d <of> Movment2d <of> Point
+  Coord2d {11} GROUP(2) [ X Y ] <of> Speed2d <of> Movment2d <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  Coord2d {2} GROUP(2) [ X Y ] <of> Point
+  X {15} Numeric <of> Coord2d <of> Vect2
+  X {7} Numeric <of> Coord2d <of> Position2d <of> Point
+  X {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
+  X {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  X {3} Numeric <of> Coord2d <of> Point
+  Y {12} Numeric <of> Coord2d <of> Vect2
+  Y {7} Numeric <of> Coord2d <of> Position2d <of> Point
+  Y {16} Numeric <of> Coord2d <of> Accel2d <of> Movment2d <of> Point
+  Y {12} Numeric <of> Coord2d <of> Speed2d <of> Movment2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Y {3} Numeric <of> Coord2d <of> Point
+  Coord3d {5} GROUP(1) [ Z ] <of> Vect2
+  Coord3d {6} GROUP(1) [ Z ] <of> Position2d <of> Point
+  Coord3d {15} GROUP(1) [ Z ] <of> Accel2d <of> Movment2d <of> Point
+  Coord3d {11} GROUP(1) [ Z ] <of> Speed2d <of> Movment2d <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Coord3d {2} GROUP(1) [ Z ] <of> Point
+  Z {10} Numeric <of> Coord3d <of> Vect2
+  Z {7} Numeric <of> Coord3d <of> Position2d <of> Point
+  Z {16} Numeric <of> Coord3d <of> Accel2d <of> Movment2d <of> Point
+  Z {12} Numeric <of> Coord3d <of> Speed2d <of> Movment2d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Z {3} Numeric <of> Coord3d <of> Point
+  Point {1} GROUP(2) [ Position2d Movment2d ]
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Point {1} Vect2
+  Position2d {5} Vect2 <of> Point
+  Movment2d {5} GROUP(2) [ Accel2d Speed2d ] <of> Point
+  Accel2d {14} Vect2 <of> Movment2d <of> Point
+  Speed2d {10} Vect2 <of> Movment2d <of> Point
+  unknown {1} 
+  unknown {1} 
+  TYPEDEF TypeDefinedAfter {1} TypeDefinedAfter
+  LevelKOGroup {1} GROUP(1) [ LevelKO ]
+  TYPEDEF LevelKO {5} GROUP(1) [ LevelKOItem ]LevelKO <of> LevelKOGroup
+  LevelKOItem {10} Numeric <of> LevelKO <of> LevelKOGroup
+  LevelKOItem {2} Numeric <of> varLevelKO
+  varLevelKO {1} LevelKO
+  ClausesOrderKO {1} Alphanumeric
+  varClausesOrderKO {1} 
+  TYPEDEF ClausesOrderOK {1} ClausesOrderOK
+  varClausesOrderOK {1} ClausesOrderOK
+  TYPEDEF NoDescription {1} GROUP(0) [ ]NoDescription
+  varNoDescription {1} NoDescription
+  BufferTobeRedefined {1} Alphanumeric
+  TYPEDEF NoRedefines1 {1} NoRedefines1
+  varNoRedefines1 {1} NoRedefines1
+  TYPEDEF NoRedefines2 {1} GROUP(1) [ NoRedefines1Item ]NoRedefines2
+  NoRedefines1Item {5} Alphanumeric <of> NoRedefines2
+  NoRedefines1Item {2} Alphanumeric <of> varNoRedefines2
+  NoRedefines1Item {5} Alphanumeric <of> NoRedefines3
+  NoRedefines1Item {2} Alphanumeric <of> varNoRedefines3
+  varNoRedefines2 {1} NoRedefines2
+  TYPEDEF NoRedefines3 {1} GROUP(1) [ NoRedefines1Item ]NoRedefines3
+  varNoRedefines3 {1} NoRedefines3
+  TYPEDEF varNoRedefines4 {1} GROUP(2) [ varNoRedefines4A varNoRedefines4B ]varNoRedefines4
+  varNoRedefines4A {5} Alphanumeric <of> varNoRedefines4
+  varNoRedefines4B {5} Numeric <of> varNoRedefines4
+  TYPEDEF varNoRedefines5 {1} GROUP(1) [ varNoRedefines5-a ]varNoRedefines5
+  varNoRedefines5-a {5} Alphanumeric <of> varNoRedefines5
+  TYPEDEF varNoRedefines5bis {1} GROUP(1) [ varNoRedefines5bis-a ]varNoRedefines5bis
+  varNoRedefines5bis-a {5} Numeric <of> varNoRedefines5bis
+  TYPEDEF ExternalType1 {1} GROUP(1) [ varExternalType1 ]ExternalType1
+  varExternalType1 {2} Alphanumeric <of> ExternalType1
+  TYPEDEF ExternalType2 {1} GROUP(1) [ varExternalType2 ]ExternalType2
+  varExternalType2 {2} Alphanumeric <of> ExternalType2
+  TYPEDEF CannotBeStrong {1} CannotBeStrong
+  varCannotBeStrong {1} CannotBeStrong
+  TYPEDEF TYPE_ELT {1} TYPE_ELT
+  TYPE-ELT-VALB {88} GROUP(0) [ ] <of> TYPE_ELT
+  TYPE-ELT-VALC {88} GROUP(0) [ ] <of> TYPE_ELT
+  TYPEDEF TYPE-GRP {1} GROUP(2) [ TYPE-GRP-1 TYPE-GRP-2 ]TYPE-GRP
+  TYPE-GRP-1 {5} Alphanumeric <of> TYPE-GRP
+  TYPE-GRP-2 {5} Alphanumeric <of> TYPE-GRP
+  TYPEDEF TYPE-GRP-STRONG {1} GROUP(3) [ TYPE-GRP-STRONG-PART1 TYPE-GRP-STRONG-PART2 TYPE-GRP-STRONG-PART3 ]TYPE-GRP-STRONG
+  TYPE-GRP-STRONG-PART1 {10} Alphanumeric <of> TYPE-GRP-STRONG
+  TYPE-GRP-STRONG-PART1 {11} Alphanumeric <of> USE-TYPE-GRP-STRONG <of> USE-TYPE-GRP
+  TYPE-GRP-STRONG-PART1 {11} Alphanumeric <of> useTypeGrp2Strong <of> useTypeGrp2
+  TYPE-GRP-STRONG-PART2 {10} Alphanumeric <of> TYPE-GRP-STRONG
+  TYPE-GRP-STRONG-PART2 {11} Alphanumeric <of> USE-TYPE-GRP-STRONG <of> USE-TYPE-GRP
+  TYPE-GRP-STRONG-PART2 {11} Alphanumeric <of> useTypeGrp2Strong <of> useTypeGrp2
+  TYPE-GRP-STRONG-PART3 {10} Alphanumeric <of> TYPE-GRP-STRONG
+  TYPE-GRP-STRONG-PART3 {11} Alphanumeric <of> USE-TYPE-GRP-STRONG <of> USE-TYPE-GRP
+  TYPE-GRP-STRONG-PART3 {11} Alphanumeric <of> useTypeGrp2Strong <of> useTypeGrp2
+  USE-TYPE-GRP {1} GROUP(2) [ USE-TYPE-GRP-STRONG USE-TYPE-GRP-STRONG-RED ]
+  USE-TYPE-GRP-STRONG {10} TYPE-GRP-STRONG <of> USE-TYPE-GRP
+  USE-TYPE-GRP-STRONG-RED {10} GROUP(1) [ USE-TYPE-GRP-STRONG-RED-PART1 ] <of> USE-TYPE-GRP
+  USE-TYPE-GRP-STRONG-RED-PART1 {15} Numeric <of> USE-TYPE-GRP-STRONG-RED <of> USE-TYPE-GRP
+  useTypeGrp2 {1} GROUP(1) [ useTypeGrp2Strong ]
+  useTypeGrp2Strong {10} TYPE-GRP-STRONG <of> useTypeGrp2
+  USE-TYPE-GRP-STRONG-RED-2 {11} GROUP(1) [ USE-TYPE-GRP-STRONG-RED-2-PART1 ] <of> useTypeGrp2Strong <of> useTypeGrp2
+  USE-TYPE-GRP-STRONG-RED-2-PART1 {15} Numeric <of> USE-TYPE-GRP-STRONG-RED-2 <of> useTypeGrp2Strong <of> useTypeGrp2
+  TYPEDEF strongType1 {1} GROUP(2) [ strongType1-PART1 strongType1-PART2 ]strongType1
+  strongType1-PART1 {10} Alphanumeric <of> strongType1
+  strongType1-PART1 {2} Alphanumeric <of> useStrongType1
+  strongType1-PART2 {10} Numeric <of> strongType1
+  strongType1-PART2 {2} Numeric <of> useStrongType1
+  useStrongType1 {1} strongType1
+  TYPE-GRP-STRONG-REN {66} GROUP(0) [ ]
+  TYPEDEF IntegerStrong {1} GROUP(1) [ Integer-Value ]IntegerStrong
+  Integer-Value {5} Numeric <of> IntegerStrong
+  Integer-Value {2} Numeric <of> myStrongInt
+  TYPEDEF Integer {1} Integer
+  myStrongInt {1} IntegerStrong
+  myInt {1} Integer
+  TYPEDEF CharsStrong {1} GROUP(1) [ Char-Value ]CharsStrong
+  Char-Value {5} Alphanumeric <of> CharsStrong
+  Char-Value {2} Alphanumeric <of> myStrongChars
+  Char-Value {2} Alphanumeric <of> myStrongChars2
+  TYPEDEF Chars {1} Chars
+  myStrongChars {1} CharsStrong
+  myStrongChars2 {1} CharsStrong
+  myChars {1} Chars
+  myChars2 {1} Chars

@@ -36,6 +36,7 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidControlCblCompilerStatementOption = 26,
         SyntaxErrorInParser = 27,
         FailedToLoadTextDocumentReferencedByCopyDirective = 28,
-        SyntaxWarningInParser = 29
+        SyntaxWarningInParser = 29,
+        SemanticTCErrorInParser = 30,
     }
 }

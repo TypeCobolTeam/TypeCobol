@@ -1,0 +1,97 @@
+﻿--- Diagnostics ---
+[1,7]<27,Error,Syntax>Syntax error : A function with the same name and profile already exists. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 133)
+[1,7]<27,Error,Syntax>Syntax error : A function with the same name and profile already exists. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 139)
+
+--- Program ---
+PROGRAM: DateFunctions common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+CUSTOM TYPES:
+ * DateJulian
+     - YYYY {10} Numeric <of> DateJulian
+     - DDD {10} Numeric <of> DateJulian
+ * DateDB2
+     - YYYY {10} Numeric <of> DateDB2
+     - filler-X {10} Alphanumeric <of> DateDB2
+     - MM {10} Numeric <of> DateDB2
+     - filler-X {10} Alphanumeric <of> DateDB2
+     - DD {10} Numeric <of> DateDB2
+FUNCTIONS:
+ £ currentDate:Private
+    return: result:DATE(1)
+ £ currentDateFreeFormat:Private
+        in: dateType:Alphanumeric(1)
+        in: direction:Alphanumeric(1)
+        in: separator:Alphanumeric(1)
+        in: LL:Alphanumeric(2)
+        in: PP:Alphanumeric(2)
+    return: result:Alphanumeric(10)
+ £ currentDateDB2:Private
+    return: result:DateDB2(1)
+ £ currentDateJulian:Private
+    return: result:DateJulian(1)
+ £ convertToDate:Private
+        in: inputDate:DateDB2(1)
+    return: result:DATE(1)
+ £ convertToDate:Private
+        in: inputDate:DateJulian(1)
+    return: result:DATE(1)
+ £ convertToDateDB2:Private
+        in: inputDate:DATE(1)
+    return: result:DateDB2(1)
+ £ convertToDateDB2:Private
+        in: inputDate:DateJulian(1)
+    return: result:DateDB2(1)
+ £ convertToDateJulian:Private
+        in: inputDate:DATE(1)
+    return: result:DateJulian(1)
+ £ convertToDateJulian:Private
+        in: inputDate:DateDB2(1)
+    return: result:DateJulian(1)
+ £ isDateValid:Private
+        in: inputDate:DATE(1)
+    return: result:BOOL(1)
+ £ isDateValid:Private
+        in: inputDate:DateDB2(1)
+    return: result:BOOL(1)
+ £ isDateValid:Private
+        in: inputDate:DateJulian(1)
+    return: result:BOOL(1)
+ £ addDaysToDate:Private
+        in: dateToAdd:DATE(1)
+        in: nbOFDays:Numeric(4)
+    return: result:DATE(1)
+ £ addDaysToDate:Private
+        in: dateToAdd:DATE(1)
+        in: nbOFDays:Numeric(4)
+        in: typeOfDays:Alphanumeric(1)
+        in: calendar:Alphanumeric(1)
+    return: result:DATE(1)
+ £ daysBetween:Private
+        in: date1:DATE(1)
+        in: date2:DATE(1)
+    return: result:Numeric(4)
+ £ conflict:Private
+        in: x:Numeric(4)
+    return: y:Numeric(4)
+ £ conflict:Private
+        in: x:Numeric(8)
+    return: y:Numeric(4)
+ £ conflict:Private
+        in: x:Numeric(4)
+    return: y:Numeric(8)
+ £ conflict:Private
+        in: x:Numeric(8)
+    return: y:Numeric(8)
+ £ conflict2:Private
+        in: x:Numeric(4)
+    return: y:Numeric(4)
+SYMBOL TABLE:
+  TYPEDEF DateJulian {1} GROUP(2) [ YYYY DDD ]DateJulian
+  YYYY {10} Numeric <of> DateJulian
+  YYYY {10} Numeric <of> DateDB2
+  DDD {10} Numeric <of> DateJulian
+  TYPEDEF DateDB2 {1} GROUP(5) [ YYYY filler-X MM filler-X DD ]DateDB2
+  filler-X {10} Alphanumeric <of> DateDB2
+  filler-X {10} Alphanumeric <of> DateDB2
+  MM {10} Numeric <of> DateDB2
+  DD {10} Numeric <of> DateDB2

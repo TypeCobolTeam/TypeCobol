@@ -13,10 +13,10 @@ SYMBOL TABLE:
   x {10} Numeric <of> subgroup2 <of> group
   x {1} Alphabetic
   y {10} Numeric <of> subgroup2 <of> group
-  E1 {5} GROUP(2) [ E2 E3 ]
-  E2 {10} Alphanumeric <of> E1
-  E3 {10} Alphanumeric <of> E1
-  A {88} GROUP(0) [ ] <of> E3 <of> E1
-  B {88} GROUP(0) [ ] <of> E3 <of> E1
+  E1 {5} GROUP(2) [ E2 E3 ] <of> x
+  E2 {10} Alphanumeric <of> E1 <of> x
+  E3 {10} Alphanumeric <of> E1 <of> x
+  A {88} GROUP(0) [ ] <of> E3 <of> E1 <of> x
+  B {88} GROUP(0) [ ] <of> E3 <of> E1 <of> x
   sqlcode {1} NumericEdited
   toto {1} Alphanumeric

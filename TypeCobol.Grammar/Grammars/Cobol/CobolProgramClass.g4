@@ -154,7 +154,11 @@ tokens
     SubtractStatementEnd,
     UnstringStatementEnd,
     WriteStatementEnd,
-    XmlStatementEnd
+    XmlStatementEnd,
+// [TYPECOBOL]
+	FunctionDeclarationHeader,
+	FunctionDeclarationEnd,
+// [/TYPECOBOL]
 }
 
 // --- Starting parser rule for PHASE 2 of parsing ---
@@ -403,18 +407,14 @@ methodDefinition :
 
 // p109 : CONFIGURATION SECTION Format:
 
-configurationSection:
-                     ConfigurationSectionHeader
-                   ( SourceComputerParagraph
-                   | ObjectComputerParagraph
-                   | SpecialNamesParagraph
-                   | RepositoryParagraph )*;
+configurationSection: ConfigurationSectionHeader configurationParagraph*;
+configurationParagraph: SourceComputerParagraph | ObjectComputerParagraph | SpecialNamesParagraph | RepositoryParagraph;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
 // The exact contents of the input-output section depend on the file organization and
-// access methods used. See ìORGANIZATION clauseî on page 135 and ìACCESS
-// MODE clauseî on page 138.
+// access methods used. See ‚ÄúORGANIZATION clause‚Äù on page 135 and ‚ÄúACCESS
+// MODE clause‚Äù on page 138.
 
 // p125: 
 // Program input-output section
@@ -493,9 +493,9 @@ ioControlParagraph :
 // The FILE SECTION must begin with the header FILE SECTION, followed by a separator period.
 // file-description-entry 
 // Represents the highest level of organization in the FILE SECTION. It provides information about the physical structure and identification of a file, and gives the record-names associated with that file. 
-// For the format and the clauses required in a file description entry, see Chapter 17, ìDATA DIVISION--file description entries,î on page 169. 
+// For the format and the clauses required in a file description entry, see Chapter 17, ‚ÄúDATA DIVISION--file description entries,‚Äù on page 169. 
 // record-description-entry 
-// A set of data description entries (described in Chapter 18, ìDATA DIVISION--data description entry,î on page 185) that describe the particular records contained within a particular file. 
+// A set of data description entries (described in Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185) that describe the particular records contained within a particular file. 
 // A record in the FILE SECTION must be described as an alphanumeric group item, a national group item, or an elementary data item of class alphabetic, alphanumeric, DBCS, national, or numeric.
 // More than one record description entry can be specified; each is an alternative description of the same record storage area.
 // Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
@@ -515,11 +515,11 @@ fileSection :
 // p156: The WORKING-STORAGE SECTION contains record description entries and data description entries for independent data items, called data item description entries. 
 // record-description-entry 
 // Data entries in the WORKING-STORAGE SECTION that bear a definite hierarchic relationship to one another must be grouped into records structured by level number. 
-// See Chapter 18, ìDATA DIVISION--data description entry,î on page 185 for more information. 
+// See Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185 for more information. 
 // data-item-description-entry 
 // Independent items in the WORKING-STORAGE SECTION that bear no hierarchic relationship to one another need not be grouped into records provided that they do not need to be further subdivided. Instead, they are classified and defined as independent elementary items. 
 // Each is defined in a separate data-item description entry that begins with either the level number 77 or 01. 
-// See Chapter 18, ìDATA DIVISION--data description entry,î on page 185 for more information.
+// See Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185 for more information.
 
 workingStorageSection :
                           WorkingStorageSectionHeader 
@@ -586,8 +586,8 @@ linkageSection:
 // be followed by a separator period, and must be followed by a USE statement
 // followed by a separator period. No other text can appear on the same line.
 // The USE statement has three formats, discussed in these sections:
-// - ìEXCEPTION/ERROR declarativeî on page 547
-// - ìDEBUGGING declarativeî on page 549
+// - ‚ÄúEXCEPTION/ERROR declarative‚Äù on page 547
+// - ‚ÄúDEBUGGING declarative‚Äù on page 549
 // The USE statement itself is never executed; instead, the USE statement defines the
 // conditions that execute the succeeding procedural paragraphs, which specify the
 // actions to be taken. After the procedure is executed, control is returned to the
@@ -673,8 +673,8 @@ sentence:
 // A series of imperative statements can be specified wherever an imperative
 // statement is allowed. A conditional statement that is terminated by its explicit
 // scope terminator is also classified as an imperative statement.
-// For more information about explicit scope terminator, see ìDelimited scope
-// statementsî on page 280).
+// For more information about explicit scope terminator, see ‚ÄúDelimited scope
+// statements‚Äù on page 280).
 // The following lists contain the COBOL imperative statements.
 // Arithmetic
 // - ADD 1
@@ -737,7 +737,7 @@ sentence:
 // A conditional statement specifies that the truth value of a condition is to be
 // determined and that the subsequent action of the object program is dependent on
 // this truth value.
-// For more information about conditional expressions, see ìConditional expressionsî
+// For more information about conditional expressions, see ‚ÄúConditional expressions‚Äù
 // on page 256.)
 // The following lists contain COBOL statements that become conditional when a
 // condition (for example, ON SIZE ERROR or ON OVERFLOW) is included and
@@ -1054,3 +1054,4 @@ noOverflow: NotOnOverflowCondition statement+;
 
 onSizeError: OnSizeErrorCondition statement+;
 noSizeError: NotOnSizeErrorCondition statement+;
+
