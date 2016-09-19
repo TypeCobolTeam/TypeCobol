@@ -6240,7 +6240,7 @@ setStatement:
 // Format 7: SET for USAGE OBJECT REFERENCE data items
 // => setReceivingField can be a index name, procedure pointer, function pointer or an object reference Id
 	
-setStatementForAssignation:
+setStatementForAssignment:
 	SET setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 	 
 setSendingField:
@@ -6609,7 +6609,7 @@ sortStatement:
 // the specified comparison.
 
 startStatement:
-	START fileNameReference (KEY IS? relationalOperator qualifiedDataName)?;
+	START fileNameReference (KEY IS? relationalOperator variable1)?;
 
 startStatementEnd: END_START;
 

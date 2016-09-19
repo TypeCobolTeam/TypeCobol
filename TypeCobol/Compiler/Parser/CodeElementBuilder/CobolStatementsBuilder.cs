@@ -1429,10 +1429,14 @@ namespace TypeCobol.Compiler.Parser
         internal CodeElement CreateStartStatement(CodeElementsParser.StartStatementContext context)
         {
             var statement = new StartStatement();
-            statement.FileName = CobolWordsBuilder.CreateFileName(context.fileNameReference());
-            statement.DataName = CobolWordsBuilder.CreateQualifiedName(context.qualifiedDataName());
+
+            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
             if (context.relationalOperator() != null)
-                statement.Operator = new LogicalExpressionBuilder().CreateOperator(context.relationalOperator());
+            {
+                statement.RelationalOperator = CobolExpressionsBuilder.CreateRelationalOperator(context.relationalOperator());
+                statement.KeyValue = CobolExpressionsBuilder.CreateVariable(context.variable1());
+            }
+
             return statement;
         }
 
@@ -1443,10 +1447,25 @@ namespace TypeCobol.Compiler.Parser
         internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
         {
             var statement = new StopStatement();
-            if (context.literal() != null)
-                statement.Literal = CobolWordsBuilder.CreateLiteral(context.literal());
-            statement.IsStopRun = context.RUN() != null;
-            return statement;
+
+            if(context.RUN() != null)
+            {
+                statement.StopRun = CreateSyntaxProperty(true,
+                    context.RUN());
+            }
+            if (context.messageToOperator() != null)
+            {
+                if(context.messageToOperator().numericValue() != null)
+                {
+                    statement.ReturnCode = CobolWordsBuilder.CreateNumericValue(context.messageToOperator().numericValue());
+                }
+                else if (context.messageToOperator().alphanumericValue3() != null)
+                {
+                    statement.ReturnMessage = CobolWordsBuilder.CreateAlphanumericValue(context.messageToOperator().alphanumericValue3());
+                }
+            }
+
+            return statement; 
         }
 
         //////////////////////
@@ -1465,7 +1484,7 @@ namespace TypeCobol.Compiler.Parser
                     var stringStatementWhat = new StringStatementWhat();
 
                     if (stringStatementWhatContext.identifierToConcat != null)
-                    {
+                    { 
                         var identifierToConcat = new List<Expression>();
                         foreach (
                             CodeElementsParser.IdentifierOrLiteralContext idOrLiteral in

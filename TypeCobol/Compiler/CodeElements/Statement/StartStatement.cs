@@ -22,8 +22,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// defined in an FD entry in the DATA DIVISION and must not name a sort
         /// file.
         /// </summary>
-        public FileName FileName = null;
-
+        public SymbolReference FileName { get; set; }
+        
+        public SyntaxProperty<RelationalOperator> RelationalOperator { get; set; }
+        
         /// <summary>
         /// p429:
         /// KEY phrase
@@ -41,9 +43,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// status key is updated when the START statement is executed (See “File status key”
         /// on page 287).
         /// </summary>
-        public QualifiedName DataName = null;
-
-        public char Operator = '?';
-
+        public Variable KeyValue { get; set; }
     }
 }

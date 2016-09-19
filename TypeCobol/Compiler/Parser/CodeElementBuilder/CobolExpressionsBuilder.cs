@@ -637,7 +637,7 @@ namespace TypeCobol.Compiler.Parser
             return conditionOperand;
         }
 
-        private SyntaxProperty<RelationalOperator> CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
+        internal SyntaxProperty<RelationalOperator> CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
         {
             if(context.strictRelation() != null)
             {

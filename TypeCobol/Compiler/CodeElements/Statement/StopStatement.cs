@@ -31,7 +31,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// Do not use the STOP literal statement in programs compiled with the THREAD
         /// compiler option.
         /// </summary>
-        public Literal Literal = null;
+        public NumericValue ReturnCode { get; set; }
+        public AlphanumericValue ReturnMessage { get; set; }
 
         /// <summary>
         /// p432:
@@ -49,7 +50,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// STOP RUN in Subprogram returns directly to the program that called the main program.
         /// (Can be the system, which causes the application to end.)
         /// </summary>
-        public bool IsStopRun = false;
+        public SyntaxProperty<bool> StopRun { get; set; }
 
     }
 }
