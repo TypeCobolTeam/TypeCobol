@@ -104,7 +104,7 @@ namespace TypeCobol.Codegen {
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseFunctionsDeclaration() {
-			var skeletons = ParseConfig(Path.Combine("TypeCobol","FUNCTION")+".xml");
+			var skeletons = ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
 			ParseGenerateCompare(Path.Combine("TypeCobol","FunDeclare")+".cbl", skeletons);
 		}
 
