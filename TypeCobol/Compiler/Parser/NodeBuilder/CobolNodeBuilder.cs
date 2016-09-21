@@ -514,8 +514,20 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void EnterWhenConditionClause(ProgramClassParser.WhenConditionClauseContext context) {
 			Enter(new WhenGroup(), context);// enter WHEN group
-			foreach(var terminal in context.WhenCondition()) {
-				var condition = terminal != null? (WhenCondition)terminal.Symbol : null;
+			foreach(var ctxt in context.whenEvaluateCondition()) {
+				WhenCondition condition;
+				if (ctxt == null) {
+					condition = null;
+				} else
+				if (ctxt.WhenSearchCondition() != null) {
+					var whensearch = (WhenSearchCondition)ctxt.WhenSearchCondition().Symbol;
+					condition = new WhenCondition();
+					condition.SelectionObjects = new EvaluateSelectionObject[1];
+					condition.SelectionObjects[0] = new EvaluateSelectionObject();
+					condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
+				} else {
+					condition = (WhenCondition)ctxt.WhenCondition().Symbol;
+				}
 				Enter(new When(condition), context);
 				Exit();
 			}

@@ -102,6 +102,7 @@ codeElement:
 
 	// --- Decision statements ---
 	evaluateStatement |
+		whenSearchCondition |
 		whenCondition |
 		whenOtherCondition |
 	evaluateStatementEnd |
@@ -164,7 +165,7 @@ codeElement:
 	// --- Table handling statements ---
 	searchStatement |
 		// atEndCondition ... imperative statements ...
-		whenSearchCondition |
+		// whenSearchCondition ...
 	searchStatementEnd |
 
 	// --- I/O statements ---
@@ -6011,17 +6012,17 @@ rewriteStatementEnd: END_REWRITE;
 // ... more details p412->414 Binary search ...
 // ... more details p414 Search statement considerations ...
 
-searchStatement: 
-	serialSearch | binarySearch;
+searchStatement: serialSearch | binarySearch;
 
-serialSearch:
-	SEARCH identifier (VARYING dataOrIndexStorageArea)?;
+serialSearch: SEARCH identifier (VARYING dataOrIndexStorageArea)?;
+binarySearch: SEARCH ALL identifier;
 
-binarySearch:
-	SEARCH ALL identifier;
+whenSearchCondition: WHEN conditionalExpression;
 
-whenSearchCondition:
-	WHEN conditionalExpression;
+// whenSearchCondition must be declared BEFORE whenCondition,
+// because the latter is a general case of the former, thus
+// if we leave it there whenSearchCondition will never be detected
+// and we'll get ambiguity at ProgramClass phase [issue #285]
 
 // IMPORTANT :
 // The more restrictive syntax for binary search can not be distinguished 

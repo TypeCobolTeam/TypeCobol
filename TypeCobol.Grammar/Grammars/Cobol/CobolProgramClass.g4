@@ -960,7 +960,13 @@ evaluateStatementWithBody:
 		whenOtherClause?
 	EvaluateStatementEnd?;
 
-whenConditionClause: WhenCondition+ statement+;
+whenConditionClause: whenEvaluateCondition+ statement+;
+// whenSearchCondition must be declared BEFORE whenCondition,
+// because the whenCondition is a general case of the whenSearchCondition
+// and is declared after it in CodeElements grammar to avoid ambiguity,
+// we'll sometimes get the former instead of the latter ;
+// so, we have to convert it in C#  [issue #285]
+whenEvaluateCondition: (WhenSearchCondition | WhenCondition);
 whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:
