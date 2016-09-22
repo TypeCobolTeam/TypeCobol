@@ -181,6 +181,11 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public string Name { get { return SymbolReference.Name; } }
 		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
+
+		public override string ToString() {
+			if (SymbolReference != null) return SymbolReference.ToString();
+			return base.ToString();
+		}
 	}
     
     /* Special registers holding properties of other storage areas or symbols
@@ -210,6 +215,15 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public string Name { get { return SpecialRegisterName.Text; } }
 		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
+
+		public override string ToString() {
+			var str = new System.Text.StringBuilder();
+			if (SpecialRegisterName != null) str.Append(SpecialRegisterName.TokenType).Append('(');
+			if (StorageAreaReference != null) str.Append(StorageAreaReference.ToString());
+			if (SpecialRegisterName != null) str.Append(')');
+			if (str.Length > 0) return str.ToString();
+			return base.ToString();
+		}
 	}
 
 	/// <summary>

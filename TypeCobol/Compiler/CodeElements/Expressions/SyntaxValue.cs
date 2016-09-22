@@ -14,7 +14,10 @@ namespace TypeCobol.Compiler.CodeElements
 		/// <summary>Strongly typed value defined by the token</summary>
 		public abstract T Value { get; }
 
-		public override string ToString() { return Value.ToString(); }
+		public override string ToString() {
+			if (Value != null) return Value.ToString();
+			return base.ToString();
+		}
 	}
 
     /// <summary>
@@ -572,29 +575,23 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>
-    /// Value for tokens : NULL
-    /// </summary>
-    public class NullPointerValue : SyntaxValue<bool>
-    {
-        public NullPointerValue(Token t) : base(t) { }
+	/// <summary>Value for tokens : NULL</summary>
+	public class NullPointerValue : SyntaxValue<bool> {
+		public NullPointerValue(Token t) : base(t) { }
 
-        /// <summary>
-        /// Returns true for token NULL
-        /// </summary>
-        public override bool Value
-        {
-            get
-            {
-                switch (Token.TokenType)
-                {
-                    case TokenType.NULL:
-                        return true;
-                    default:
-                        throw new InvalidOperationException("Unexpected literal token type");
-                }
-            }
-        }
+		/// <summary>Returns true for token NULL</summary>
+		public override bool Value {
+			get {
+				switch (Token.TokenType) {
+					case TokenType.NULL: return true;
+					default: throw new InvalidOperationException("Unexpected literal token type");
+				}
+			}
+		}
+
+		public override string ToString() {
+			return Token.SourceText;
+		}
     }
 
     /// <summary>
