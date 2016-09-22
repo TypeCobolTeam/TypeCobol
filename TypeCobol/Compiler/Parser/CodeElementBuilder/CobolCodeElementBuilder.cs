@@ -970,7 +970,8 @@ namespace TypeCobol.Compiler.Parser
 			}
 // [/COBOL 2002]
 
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			if (context.levelNumber() != null)
+				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
 
 			entry.DataName = dataname;
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));

@@ -487,7 +487,7 @@ namespace TypeCobol.Compiler.CodeElements
                 case TokenType.ZEROES:
                     break;
                 default:
-                    throw new InvalidOperationException("Unexpected literal token type");
+                    throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
             }
         }
 

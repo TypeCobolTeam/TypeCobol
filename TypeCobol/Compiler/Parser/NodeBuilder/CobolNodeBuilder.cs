@@ -76,8 +76,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <summary>
 		/// Initialization code run before parsing each new Program or Class
 		/// </summary>
-		public override void EnterCobolCompilationUnit(ProgramClassParser.CobolCompilationUnitContext context)
-		{
+		public override void EnterCobolCompilationUnit(ProgramClassParser.CobolCompilationUnitContext context) {
 			TableOfGlobals = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Global);
 			Program = null;
 			Class = null;
@@ -314,7 +313,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
 			var terminal = context.FunctionDeclarationEnd();
-			var end = terminal != null? (FunctionDeclarationEnd)terminal.Symbol : null;
+			var end = terminal != null? terminal.Symbol is FunctionDeclarationEnd? (FunctionDeclarationEnd)terminal.Symbol : null : null;
 			Enter(new FunctionEnd(end), context);
 			Exit();
 			Exit();// exit DECLARE FUNCTION

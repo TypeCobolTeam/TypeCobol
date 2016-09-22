@@ -111,18 +111,18 @@ namespace TypeCobol.Compiler.Parser
             return new EnumeratedValue(valueToken, enumType);
         }
 
-        internal RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue1Context context)
-        {
-            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-            {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
-                return new RepeatedCharacterValue(null, symbolicCharacterReference);
-            }
-            else
-            {
-                Token valueToken = ParseTreeUtils.GetFirstToken(context);
-                return new RepeatedCharacterValue(null, valueToken);
-            }
+		[CanBeNull]
+		internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull]CodeElementsParser.RepeatedCharacterValue1Context context) {
+			if (context == null) return null;
+			try {
+				if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null) {
+					SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+					return new RepeatedCharacterValue(null, symbolicCharacterReference);
+				} else {
+					Token valueToken = ParseTreeUtils.GetFirstToken(context);
+					return new RepeatedCharacterValue(null, valueToken);
+				}
+			} catch(InvalidOperationException) { return null; }
         }
 
         internal RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue2Context context)
@@ -670,6 +670,7 @@ namespace TypeCobol.Compiler.Parser
 			return CreateQualifiedDataName(context.qualifiedDataName1());
 		}
 		private SymbolReference CreateQualifiedDataName(CodeElementsParser.QualifiedDataName1Context context) {
+			if (context == null) return null;
 			var c = context.cobolQualifiedDataName1();
 			if (c != null) return CreateQualifiedDataName(c.dataNameReference(), c.dataNameReferenceOrFileNameReference());
 			var tc = context.tcQualifiedDataName1();
