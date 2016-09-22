@@ -23,19 +23,25 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
+				string name = this.CodeElement().Name;
 				_cache = new List<ITextLine>();
-				var str = new System.Text.StringBuilder();
-				// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
+				if (this.CodeElement().DataType == DataType.Boolean) {
+					_cache.Add(new TextLineSnapshot(-1, "01 "+name+" PIC X     VALUE LOW-VALUE.", null));
+					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
+					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
+				} else {
+					var str = new System.Text.StringBuilder();
+					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
 //TODO#249				if (Description.IsConditionNameDescription) {
-//					str.Append("88 ").Append(Description.Name.Name); //TODO value
-//					if (Description.InitialValue != null) str.Append(" VALUE ").Append(Description.InitialValue.ToString());
-//					if (Description.ThroughValue != null) str.Append(' ').Append(Description.ThroughValue.ToString());
-//				} else {
-					str.Append("01 ").Append(this.CodeElement().Name);
+//							str.Append("88 ").Append(Description.Name.Name); //TODO value
+//							if (Description.InitialValue != null) str.Append(" VALUE ").Append(Description.InitialValue.ToString());
+//							if (Description.ThroughValue != null) str.Append(' ').Append(Description.ThroughValue.ToString());
+//						} else {
+					str.Append("01 ").Append(name);
 					if(this.CodeElement().Picture != null) str.Append(" PIC ").Append(this.CodeElement().Picture);
-//				}
-				str.Append('.');
-				_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
+					str.Append('.');
+					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
+				}
 
 				if (!this.CodeElement().DataType.IsCOBOL) {
 					var customtype = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));

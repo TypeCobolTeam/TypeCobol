@@ -120,4 +120,16 @@
            CONTINUE.
        END-DECLARE.
        
+       DECLARE FUNCTION MyNOT PRIVATE
+             INPUT     x type BOOL
+             RETURNING y TYPE bool
+         .
+         PROCEDURE DIVISION.
+           IF NOT x
+             SET y TO TRUE
+           ELSE
+             SET y TO FALSE
+           END-IF.
+       END-DECLARE.
+       
        END PROGRAM FunDeclare.

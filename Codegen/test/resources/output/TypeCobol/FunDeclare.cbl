@@ -12,7 +12,6 @@
       * "1"@(99:8>99:16): [27:1] Syntax error : Illegal non-function item in library
       * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
       * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "male" must be level 88.
-
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        
@@ -27,6 +26,7 @@
            SET IllegalClauses TO ENTRY 'F0000007'                             
            SET FunConditions TO ENTRY 'F0000008'                              
            SET FunConditions TO ENTRY 'F0000009'                              
+           SET MyNOT TO ENTRY 'F0000010'                                      
            .                                                                  
                                                                               
             .
@@ -84,6 +84,11 @@
       *               gender PIC X(01)                                        
       *            88  female VALUE 'F'                                       
       *            01  male   VALUE 'M'                                       
+      *  .                                                                    
+       
+      *DECLARE FUNCTION MyNOT PRIVATE                                         
+      *      INPUT     x type BOOL                                            
+      *      RETURNING y TYPE bool                                            
       *  .                                                                    
        
        END PROGRAM FunDeclare.
@@ -225,3 +230,26 @@
            .                                                                  
            CONTINUE.
        END PROGRAM F0000009.                                                  
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. F0000010.                                                  
+       DATA DIVISION.                                                         
+       LINKAGE SECTION.                                                       
+       01 x PIC X     VALUE LOW-VALUE.                                        
+           88 x       VALUE 'T'.                                              
+           88 x-false VALUE 'F'.                                              
+       01 y PIC X     VALUE LOW-VALUE.                                        
+           88 y       VALUE 'T'.                                              
+           88 y-false VALUE 'F'.                                              
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE x                                             
+                   BY REFERENCE y                                             
+           .                                                                  
+           IF NOT x
+             SET y TO TRUE
+           ELSE
+      *      SET y TO FALSE                                                   
+               SET y-false TO TRUE.                                           
+                                                                              
+           END-IF.
+       END PROGRAM F0000010.                                                  
