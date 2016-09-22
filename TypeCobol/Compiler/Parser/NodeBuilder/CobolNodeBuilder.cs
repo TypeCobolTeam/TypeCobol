@@ -238,8 +238,10 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
-			//TODO#249
-			Enter(new DataCondition(data));
+			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+			var node = new DataCondition(data);
+			Enter(node);
+			if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
 		}
 
 		private void EnterDataRedefinesEntry(DataRedefinesEntry data) {
