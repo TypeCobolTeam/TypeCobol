@@ -166,7 +166,7 @@
 		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var set = e as SetStatementForAssignment;
-			var context = c as CodeElementsParser.SetStatementForAssignationContext;
+			var context = c as CodeElementsParser.SetStatementForAssignmentContext;
 			for (int i = 0; i < context.dataOrIndexStorageArea().Length; i++) {
 				if (i >= set.ReceivingStorageAreas.Length) {
 					var ctxt = context.dataOrIndexStorageArea()[i];
@@ -202,8 +202,8 @@
 			var statement = e as StartStatement;
 			var context = c as CodeElementsParser.StartStatementContext;
 			if (context.relationalOperator() != null)
-				if (statement.Operator != '=' && statement.Operator != '>' && statement.Operator != '≥')
-					DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.Operator, context.relationalOperator());
+				if (statement.RelationalOperator.Value != RelationalOperator.EqualTo && statement.RelationalOperator.Value != RelationalOperator.GreaterThan && statement.RelationalOperator.Value != RelationalOperator.GreaterThanOrEqualTo)
+					DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.RelationalOperator.Value, context.relationalOperator());
 		}
 	}
 

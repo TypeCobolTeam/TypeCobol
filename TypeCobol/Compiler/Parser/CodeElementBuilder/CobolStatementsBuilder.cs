@@ -1055,7 +1055,7 @@ namespace TypeCobol.Compiler.Parser
 		 // SET STATEMENT //
 		///////////////////
 
-		internal CodeElement CreateSetStatementForAssignation(CodeElementsParser.SetStatementForAssignationContext context) {
+		internal CodeElement CreateSetStatementForAssignation(CodeElementsParser.SetStatementForAssignmentContext context) {
 			var statement = new SetStatementForAssignment();
 			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			statement.SendingVariable = CreateSendingVariable(context.setSendingField());
@@ -1186,72 +1186,57 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		  /////////////////////
-		 // START STATEMENT //
-		/////////////////////
+        /////////////////////
+        // START STATEMENT //
+        /////////////////////
 
-		internal CodeElement CreateStartStatement(CodeElementsParser.StartStatementContext context) {
-			var statement = new StartStatement();
-			statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
-			statement.DataName = CobolWordsBuilder.CreateQualifiedDataName(context.qualifiedDataName());
-			statement.Operator = CreateOperator(context.relationalOperator());
-			return statement;
-		}
+        internal CodeElement CreateStartStatement(CodeElementsParser.StartStatementContext context)
+        {
+            var statement = new StartStatement();
 
-		private char CreateOperator(CodeElementsParser.RelationalOperatorContext context) {
-			if (context == null) return '?';
-			var simple = context.simpleRelation();
-			if (simple != null) {
-				if (simple.GreaterThanOrEqualOperator() != null) return '≥';
-				if (simple.LessThanOrEqualOperator() != null) return '≤';
-				if (simple.GREATER() != null) return '≥';
-				if (simple.LESS() != null) return '≤';
-			}
-			bool inverted = context.NOT() != null;
-			var strict = context.strictRelation();
-			if (strict != null) {
-				if (!inverted) {
-					if (strict.GreaterThanOperator() != null) return '>';
-					if (strict.LessThanOperator() != null) return '<';
-					if (strict.GREATER() != null) return '>';
-					if (strict.LESS() != null) return '<';
-					if (strict.EqualOperator() != null) return '=';
-					if (strict.EQUAL() != null) return '=';
-				} else {
-					if (strict.GreaterThanOperator() != null) return '≤';
-					if (strict.LessThanOperator() != null) return '≥';
-					if (strict.GREATER() != null) return '≤';
-					if (strict.LESS() != null) return '≥';
-					if (strict.EqualOperator() != null) return '!';
-					if (strict.EQUAL() != null) return '!';
-				}
-			}
-			return '?';
-		}
+            statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
+            if (context.relationalOperator() != null)
+            {
+                statement.RelationalOperator = CobolExpressionsBuilder.CreateRelationalOperator(context.relationalOperator());
+                statement.KeyValue = CobolExpressionsBuilder.CreateVariable(context.variable1());
+            }
 
-		  ////////////////////
-		 // STOP STATEMENT //
-		////////////////////
+            return statement;
+        }
 
-		internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
-		{
-			var statement = new StopStatement();
-			var msg = context.messageToOperator();
-			if (msg != null) {
-				if (msg.numericValue() != null)
-					statement.Literal = CobolWordsBuilder.CreateNumericValue(msg.numericValue());
-				if (msg.alphanumericValue3() != null)
-					statement.Literal = CobolWordsBuilder.CreateAlphanumericValue(msg.alphanumericValue3());
-			}
-			statement.IsStopRun = context.RUN() != null;
-			return statement;
-		}
+        ////////////////////
+        // STOP STATEMENT //
+        ////////////////////
 
-		  //////////////////////
-		 // STRING STATEMENT //
-		//////////////////////
+        internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
+        {
+            var statement = new StopStatement();
 
-		internal CodeElement CreateStringStatement(CodeElementsParser.StringStatementContext context) {
+            if (context.RUN() != null)
+            {
+                statement.StopRun = CreateSyntaxProperty(true,
+                    context.RUN());
+            }
+            if (context.messageToOperator() != null)
+            {
+                if (context.messageToOperator().numericValue() != null)
+                {
+                    statement.ReturnCode = CobolWordsBuilder.CreateNumericValue(context.messageToOperator().numericValue());
+                }
+                else if (context.messageToOperator().alphanumericValue3() != null)
+                {
+                    statement.ReturnMessage = CobolWordsBuilder.CreateAlphanumericValue(context.messageToOperator().alphanumericValue3());
+                }
+            }
+
+            return statement;
+        }
+
+        //////////////////////
+        // STRING STATEMENT //
+        //////////////////////
+
+        internal CodeElement CreateStringStatement(CodeElementsParser.StringStatementContext context) {
 			var statement = new StringStatement();
 			if (context.contentToConcatenate() != null) {
 				var list = new List<StringStatementWhat>();
