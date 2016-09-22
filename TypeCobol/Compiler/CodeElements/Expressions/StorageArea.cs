@@ -116,6 +116,15 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public string Name { get { return SymbolReference.Name; } }
 		public QualifiedName QualifiedName { get { return SymbolReference.QualifiedName; } }
+
+		public override string ToString() {
+			var str = new System.Text.StringBuilder();
+			str.Append(Name);
+			if (Subscripts != null)
+			foreach(var subscript in Subscripts)
+				str.Append('(').Append(subscript.ToString()).Append(')');
+			return str.ToString();
+		}
 	}
 
     /* Implicitely defined special registers :

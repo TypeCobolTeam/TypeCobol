@@ -13,6 +13,11 @@ public abstract class VariableBase {
 
 	public StorageDataType DataType { get; private set; }
 	public StorageArea StorageArea { get; private set; }
+
+	public override string ToString() {
+		if (StorageArea != null) return StorageArea.ToString();
+		return base.ToString();
+	}
 }
 
 public enum StorageDataType {
@@ -181,19 +186,15 @@ public class Variable: VariableBase, Named {
         public ConditionalExpression Expression { get; private set; }
     }    
 
-    public class ReceivingStorageArea : VariableBase
-    {
-        public ReceivingStorageArea(StorageDataType dataType, StorageArea storageArea) : 
-            base(dataType, storageArea)
-        {
-            storageArea.IsReadFrom = false;
-            storageArea.IsWrittenTo = true;
-        }
+public class ReceivingStorageArea: VariableBase {
+	public ReceivingStorageArea(StorageDataType dataType, StorageArea storageArea): base(dataType, storageArea) {
+		storageArea.IsReadFrom = false;
+		storageArea.IsWrittenTo = true;
+	}
 
-        public DataSourceType DataSourceType { get; set; }
-
-        public StorageArea[] SendingStorageAreas { get; set; }
-    }
+	public DataSourceType DataSourceType { get; set; }
+	public StorageArea[] SendingStorageAreas { get; set; }
+}
     
     public enum DataSourceType
     {
