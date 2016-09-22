@@ -617,6 +617,12 @@ figurativeConstant: (HIGH_VALUE | HIGH_VALUES |
                      ZERO  | ZEROS  | ZEROES) |
                      symbolicCharacterReference;
 
+figurativeConstantForXMLGenerate:
+	HIGH_VALUE | HIGH_VALUES |
+	LOW_VALUE  | LOW_VALUES |
+	SPACE | SPACES |
+	ZERO  | ZEROS  | ZEROES;
+
 // ** Syntax rules for ALL literal **
 // -- Definition
 // p15: ALL literal - literal can be an alphanumeric literal, a DBCS literal, a national literal, or a figurative constant other than the ALL literal.
@@ -777,6 +783,8 @@ enumeratedValue3: ExecTranslatorName;
 repeatedCharacterValue1: figurativeConstant;
 
 repeatedCharacterValue2: figurativeConstant | allFigurativeConstant;
+
+repeatedCharacterValue3: figurativeConstantForXMLGenerate;
 
 // Pointers or object references
 

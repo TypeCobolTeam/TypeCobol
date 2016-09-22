@@ -156,6 +156,15 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+		[CanBeNull]
+		internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull]CodeElementsParser.RepeatedCharacterValue3Context context) {
+			if (context == null) return null;
+			try {
+				Token token = ParseTreeUtils.GetFirstToken(context);
+				return new RepeatedCharacterValue(null, token);
+			} catch(InvalidOperationException) { return null; }
+		}
+
         internal NullPointerValue CreateNullPointerValue(CodeElementsParser.NullPointerValueContext context)
         {
             Token valueToken = ParseTreeUtils.GetFirstToken(context);
@@ -950,6 +959,6 @@ namespace TypeCobol.Compiler.Parser
         internal EnumeratedValue CreateRecordingMode(CodeElementsParser.RecordingModeContext context)
         {
             return CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum));
-        }        
+        }
 	}
 }

@@ -7592,7 +7592,7 @@ xmlSuppressGeneric:
 
 // Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 xmlSuppressWhen:
-	WHEN repeatedCharacterValue1 (OR? repeatedCharacterValue1)*;
+	WHEN repeatedCharacterValue3 (OR? repeatedCharacterValue3)*;
 
 xmlStatementEnd: END_XML;
 

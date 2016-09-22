@@ -1472,7 +1472,7 @@ namespace TypeCobol.Compiler.Parser
 		private IList<RepeatedCharacterValue> CreateRepeatedCharacterValues(CodeElementsParser.XmlSuppressWhenContext context) {
 			var values = new List<RepeatedCharacterValue>();
 			if (context == null) return values;
-			foreach(var repeat in context.repeatedCharacterValue1()) {
+			foreach(var repeat in context.repeatedCharacterValue3()) {
 				values.Add(CobolWordsBuilder.CreateRepeatedCharacterValue(repeat));
 			}
 			return values;
