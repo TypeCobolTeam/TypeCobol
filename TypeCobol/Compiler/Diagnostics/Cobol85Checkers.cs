@@ -363,6 +363,9 @@ class WriteTypeConsistencyChecker: NodeListener {
 	private DataType GetTypeDefinition(SymbolTable table, Named symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
+			if (data is DataCondition)
+				return ((DataCondition)data).CodeElement().DataType;
+
 			DataDescriptionEntry entry;
 			if (data.CodeElement is DataDescriptionEntry) {
 				entry = (DataDescriptionEntry)data.CodeElement;

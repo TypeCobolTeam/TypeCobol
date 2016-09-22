@@ -1,22 +1,27 @@
 ﻿--- Program ---
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
-SYMBOL TABLE:
-  str {1} Alphanumeric
-  str {5} Alphanumeric <of> group
-  group {1} GROUP(4) [ num subgroup subgroup2 str ]
-  num {5} Numeric <of> group
-  subgroup {5} GROUP(2) [ vrai faux ] <of> group
-  vrai {10} Numeric <of> subgroup <of> group
-  faux {10} Numeric <of> subgroup <of> group
-  subgroup2 {5} GROUP(2) [ x y ] <of> group
-  x {10} Numeric <of> subgroup2 <of> group
-  x {1} Alphabetic
-  y {10} Numeric <of> subgroup2 <of> group
-  E1 {5} GROUP(2) [ E2 E3 ] <of> x
-  E2 {10} Alphanumeric <of> E1 <of> x
-  E3 {10} Alphanumeric <of> E1 <of> x
-  A {88} GROUP(0) [ ] <of> E3 <of> E1 <of> x
-  B {88} GROUP(0) [ ] <of> E3 <of> E1 <of> x
-  sqlcode {1} NumericEdited
-  toto {1} Alphanumeric
+--- Intrinsic:Global:Program
+-- DATA --------
+  str:Alphanumeric
+  str:Alphanumeric
+  group:?
+  num:Numeric
+  subgroup:?
+  vrai:Numeric
+  faux:Numeric
+  subgroup2:?
+  x:Numeric
+  x:Alphabetic
+  y:Numeric
+  E1:?
+  E2:Alphanumeric
+  E3:Alphanumeric
+  A:BOOL
+  B:BOOL
+  sqlcode:NumericEdited
+  toto:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

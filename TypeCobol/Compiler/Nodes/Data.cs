@@ -44,8 +44,10 @@ public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionE
 	public DataType DataType { get { return this.CodeElement().DataType; } }
 	public int Length { get { return this.CodeElement().Length; } }
 }
-public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> {
+public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry>, Typed {
 	public DataCondition(DataConditionEntry entry): base(entry) { }
+	public DataType DataType { get { return this.CodeElement().DataType; } }
+	public int Length { get { return this.CodeElement().Length; } }
 }
 public class DataRedefines: DataDefinition, CodeElementHolder<DataRedefinesEntry> {
 	public DataRedefines(DataRedefinesEntry entry): base(entry) { }
