@@ -217,10 +217,9 @@ internal class SetStatementForSwitches: SetStatement {
 		var map = new Dictionary<UPSISwitchPosition,List<SymbolReference>>();
 		map[UPSISwitchPosition.On]  = new List<SymbolReference>();
 		map[UPSISwitchPosition.Off] = new List<SymbolReference>();
-		map[UPSISwitchPosition.Unknown] = new List<SymbolReference>();
 		foreach (var instruction in SetUPSISwitchInstructions) {
-			var position = instruction.SwitchPosition != null ? instruction.SwitchPosition.Value : UPSISwitchPosition.Unknown;
-			map[position].Add(instruction.MnemonicForUPSISwitchName);
+			if (instruction.SwitchPosition != null)
+				map[instruction.SwitchPosition.Value].Add(instruction.MnemonicForUPSISwitchName);
 		}
 		bool enough = false;
 		var names = map[UPSISwitchPosition.On];
@@ -230,24 +229,7 @@ internal class SetStatementForSwitches: SetStatement {
 		if (names.Count > 0 && map[UPSISwitchPosition.On].Count > 0) str.AppendLine().Append("    ");
 		foreach(var name in names) str.Append(' ').Append(name);
 		if (names.Count > 0) str.Append(" TO OFF");
-		names = map[UPSISwitchPosition.Unknown];
-		if (names.Count > 0 && map[UPSISwitchPosition.Off].Count > 0) str.AppendLine().Append("    ");
-		foreach(var name in names) str.Append(' ').Append(name);
-		if (names.Count > 0) str.Append(" TO ?");
-		if ((map[UPSISwitchPosition.On].Count == 0) && (map[UPSISwitchPosition.Off].Count == 0) && (map[UPSISwitchPosition.Unknown].Count == 0)) str.Append("?");
-/*
-		foreach (var setSwitchPositionInstruction in SetUPSISwitchInstructions) {
-			if (setSwitchPositionInstruction.MnemonicForUPSISwitchName != null) {
-				str.Append(' ');
-				str.Append(setSwitchPositionInstruction.MnemonicForUPSISwitchName);
-			}
-			if (setSwitchPositionInstruction.SwitchPosition != null) {
-				if (setSwitchPositionInstruction.SwitchPosition.Value == UPSISwitchPosition.On) str.AppendLine(" TO ON");
-				else if (setSwitchPositionInstruction.SwitchPosition.Value == UPSISwitchPosition.Off) str.AppendLine(" TO OFF");
-			}
-			else str.AppendLine("");
-		}
-*/
+		if ((map[UPSISwitchPosition.On].Count == 0) && (map[UPSISwitchPosition.Off].Count == 0)) str.Append("?");
 		return str.ToString();
 	}
 }
@@ -259,8 +241,7 @@ public class SetUPSISwitchInstruction {
 
 public enum UPSISwitchPosition {
 	On,
-	Off,
-	Unknown
+	Off
 }
 
 /// <summary>
