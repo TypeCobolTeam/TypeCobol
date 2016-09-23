@@ -15,7 +15,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public abstract T Value { get; }
 
 		public override string ToString() {
-			if (Value != null) return Value.ToString();
+			try { if (Value != null) return Value.ToString(); }
+			catch(InvalidOperationException) { }
+			if (Token != null) return "<illegal \""+Token.SourceText+"\">";
 			return base.ToString();
 		}
 	}
@@ -41,7 +43,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.FALSE:
                         return false;
                     default:
-                        throw new InvalidOperationException("Unexpected literal token type");
+                        throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
                 }
             }
         }
@@ -95,7 +97,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ZEROES:
                         return 0;
                     default:
-                        throw new InvalidOperationException("Unexpected literal token type");
+                        throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
                 }
             }
         }
@@ -136,7 +138,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ZEROES:
                         return 0;
                     default:
-                        throw new InvalidOperationException("Unexpected literal token type");
+                        throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
                 }
             }
         }
@@ -232,7 +234,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.EBCDIC:
                         return false;
                     default:
-                        throw new InvalidOperationException("Unexpected literal value");
+                        throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
                 }
             }
         }
@@ -316,7 +318,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.EBCDIC:
                         return CharacterEncodingType.Alphanumeric;
                     default:
-                        throw new InvalidOperationException("Unexpected literal value");
+                        throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
                 }
             }
         }
@@ -365,7 +367,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.EBCDIC:
                         return Token.Text;
                     default:
-                        throw new InvalidOperationException("Unexpected literal token type");
+                        throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
                 }
             }
         }
@@ -440,7 +442,7 @@ namespace TypeCobol.Compiler.CodeElements
                 case TokenType.ExecTranslatorName:
                     break;
                 default:
-                    throw new InvalidOperationException("Unexpected literal token type");
+                    throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
             }
         }
 
@@ -584,7 +586,7 @@ namespace TypeCobol.Compiler.CodeElements
 			get {
 				switch (Token.TokenType) {
 					case TokenType.NULL: return true;
-					default: throw new InvalidOperationException("Unexpected literal token type");
+					default: throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
 				}
 			}
 		}

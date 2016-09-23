@@ -156,53 +156,31 @@ namespace TypeCobol.Compiler.Parser
 		// CALL STATEMENT //
 		////////////////////
 
-		internal CallStatement CreateCallStatement(CodeElementsParser.CallStatementContext context)
-		{
+		internal CallStatement CreateCallStatement(CodeElementsParser.CallStatementContext context) {
 			var statement = new CallStatement();
-
 			statement.ProgramOrProgramEntryOrProcedureOrFunction = 
 				CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(
 					context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable());
-
-			if (context.callProgramInputParameters() != null)
-			{
-				foreach (var inputParametersContext in context.callProgramInputParameters())
-				{
-					SyntaxProperty<SendingMode> sendingMode = null;
-					if (inputParametersContext.REFERENCE() != null)
-					{
-						sendingMode = CreateSyntaxProperty(SendingMode.ByReference,
-							inputParametersContext.REFERENCE());
+			statement.InputParameters = new List<CallInputParameter>();
+			if (context.callProgramInputParameters() != null) {
+				SyntaxProperty<SendingMode> sendingMode = new SyntaxProperty<SendingMode>(SendingMode.ByReference, null);
+				foreach (var inputs in context.callProgramInputParameters()) {
+					if (inputs.REFERENCE() != null) {
+						sendingMode = CreateSyntaxProperty(SendingMode.ByReference, inputs.REFERENCE());
+					} else
+					if (inputs.CONTENT() != null) {
+						sendingMode = CreateSyntaxProperty(SendingMode.ByContent, inputs.CONTENT());
+					} else
+					if (inputs.VALUE() != null) {
+						sendingMode = CreateSyntaxProperty(SendingMode.ByValue, inputs.VALUE());
 					}
-					else if (inputParametersContext.CONTENT() != null)
-					{
-						sendingMode = CreateSyntaxProperty(SendingMode.ByContent,
-							inputParametersContext.CONTENT());
-					}
-					else if (inputParametersContext.VALUE() != null)
-					{
-						sendingMode = CreateSyntaxProperty(SendingMode.ByValue,
-							inputParametersContext.VALUE());
-					}
-					foreach (var variableOrFileNameOrOmittedContext in inputParametersContext.variableOrFileNameOrOmitted())
-					{
-						if (statement.InputParameters == null)
-						{
-							statement.InputParameters = new List<CallInputParameter>(1);
-						}
-						var inputParameter = new CallInputParameter
-						{
-							SendingMode = sendingMode
-						};
-						if (variableOrFileNameOrOmittedContext.variableOrFileName() != null)
-						{
-							inputParameter.SendingVariable = CobolExpressionsBuilder.CreateVariableOrFileName(
-								variableOrFileNameOrOmittedContext.variableOrFileName());
-						}
-						else if (variableOrFileNameOrOmittedContext.OMITTED() != null)
-						{
-							inputParameter.Omitted = CreateSyntaxProperty(true,
-								variableOrFileNameOrOmittedContext.OMITTED());
+					foreach (var variable in inputs.variableOrFileNameOrOmitted()) {
+						var inputParameter = new CallInputParameter { SendingMode = sendingMode };
+						if (variable.variableOrFileName() != null) {
+							inputParameter.SendingVariable = CobolExpressionsBuilder.CreateVariableOrFileName(variable.variableOrFileName());
+						} else
+						if (variable.OMITTED() != null) {
+							inputParameter.Omitted = CreateSyntaxProperty(true, variable.OMITTED());
 						}
 						statement.InputParameters.Add(inputParameter);
 					}
@@ -212,7 +190,6 @@ namespace TypeCobol.Compiler.Parser
 				statement.OutputParameter = CobolExpressionsBuilder.CreateStorageArea(context.callProgramOutputParameter().storageArea1());
 				if (statement.OutputParameter != null) statement.OutputParameter.DataSourceType = DataSourceType.ReceiveFromCalledProgram;
 			}
-
 			return statement;
 		}
 		

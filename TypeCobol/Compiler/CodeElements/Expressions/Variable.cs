@@ -128,9 +128,9 @@ public class Variable: VariableBase, Named {
 	}
 
 	public override string ToString() {
-		if (QualifiedName != null) return QualifiedName.ToString();
 		if (NumericValue != null) return NumericValue.Value.ToString();
 		try {
+			if (QualifiedName != null) return QualifiedName.ToString();
 			//these should be: return XXXValue.GetValueInContext(???);
 			if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;
 			if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Token.SourceText;

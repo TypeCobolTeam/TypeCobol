@@ -99,43 +99,48 @@
 		}
 	}
 
-	class CallStatementChecker: CodeElementListener
-	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(CallStatement), };
-		}
-		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var statement = e as CallStatement;
-			var context = c as CodeElementsParser.CallStatementContext;
+class CallStatementChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() {
+		return new List<Type>() { typeof(CallStatement), };
+	}
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var statement = e as CallStatement;
+		var context = c as CodeElementsParser.CallStatementContext;
 
-			foreach (var call in context.callProgramInputParameters()) CheckCallUsings(statement, call);
+		foreach (var call in context.callProgramInputParameters()) CheckCallUsings(statement, call);
 
-			if (context.callProgramOutputParameter() != null && statement.OutputParameter == null)
-				DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context.callProgramOutputParameter());
-		}
+		if (context.callProgramOutputParameter() != null && statement.OutputParameter == null)
+			DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
+	}
 
-		private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallProgramInputParametersContext context) {
-			foreach(var input in statement.InputParameters) {
-				// TODO#249 these checks should be done during semantic phase, after symbol type resolution
-				// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
-				//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-				// TODO#249 if input is a function reference:
-				//	DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
-				// TODO#249 if input is LINAGE COUNTER:
-				//	DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE COUNTER", context);
-				// TODO#249 if input is LENGTH or identifier AND input.SendingMode.Value == SendingMode.ByReference:
-				// DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
-				//TODO what about special registers ?
-			    if (input.SendingMode != null)
-			    {
-			        if (input.SendingVariable != null && input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
-			            DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-			        if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
-			            DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
-			    }
+	private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallProgramInputParametersContext context) {
+		foreach(var input in statement.InputParameters) {
+			// TODO#249 these checks should be done during semantic phase, after symbol type resolution
+			// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
+			//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
+			//TODO what about special registers ?
+			string sender = input.SendingVariable!=null?input.SendingVariable.ToString():null;
+			if (Is(sender, "FunctionCallResult"))
+				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
+			if (Is(sender, "LINAGE-COUNTER"))
+				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
+
+		    if (input.SendingMode != null) {
+				if (Is(sender, "LENGTH") && (input.SendingMode.Value == SendingMode.ByReference))
+					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+
+				if (input.SendingVariable != null && input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
+					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+				if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
+					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
 			}
 		}
 	}
+	private bool Is(string sender, string something) {
+		if (sender == null) return false;
+		return sender.ToLower().EndsWith(something.ToLower());
+	}
+}
 
 	class CancelStatementChecker: CodeElementListener
 	{

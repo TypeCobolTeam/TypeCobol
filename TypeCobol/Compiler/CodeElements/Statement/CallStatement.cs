@@ -133,35 +133,39 @@ namespace TypeCobol.Compiler.CodeElements
         public ReceivingStorageArea OutputParameter { get; set; }
     }
     
-    /// <summary>
-    /// The USING phrase specifies arguments that are passed to the target program.
-    /// </summary>
-    public class CallInputParameter
-    {
-        /// <summary>
-        /// Argument sending mode : BY REFERENCE, BY CONTENT or BY VALUE
-        /// </summary>
-        [CanBeNull]
-        public SyntaxProperty<SendingMode> SendingMode { get; set; }
+/// <summary>The USING phrase specifies arguments that are passed to the target program.</summary>
+public class CallInputParameter {
+	/// <summary>Argument sending mode : BY REFERENCE, BY CONTENT or BY VALUE</summary>
+	[CanBeNull]
+	public SyntaxProperty<SendingMode> SendingMode { get; set; }
 
-        /// <summary>
-        /// Each USING identifier must be defined as a level-01 or level-77 item in the
-        /// LINKAGE SECTION of the called subprogram or invoked method.
-        /// </summary>
-        [CanBeNull]
-        public Variable SendingVariable { get; set; }
+	/// <summary>
+	/// Each USING identifier must be defined as a level-01 or level-77 item in the
+	/// LINKAGE SECTION of the called subprogram or invoked method.
+	/// </summary>
+	[CanBeNull]
+	public Variable SendingVariable { get; set; }
 
-        /// <summary>
-        /// Indicates that no argument is passed.
-        /// </summary>
-        [CanBeNull]
-        public SyntaxProperty<bool> Omitted { get; set; }
+	/// <summary>Indicates that no argument is passed.</summary>
+	[CanBeNull]
+	public SyntaxProperty<bool> Omitted { get; set; }
+	public bool IsOmitted {
+		get { return Omitted != null && Omitted.Value; }
+	}
 
-        public bool IsOmitted
-        {
-            get { return Omitted != null && Omitted.Value; }
-        }
-    }
+	public override string ToString() {
+		if (IsOmitted) return "OMITTED";
+		var str = new System.Text.StringBuilder("BY ");
+		if (SendingMode != null) {
+			if (SendingMode.Value == CodeElements.SendingMode.ByReference) str.Append("REFERENCE ");
+			if (SendingMode.Value == CodeElements.SendingMode.ByContent)   str.Append("CONTENT ");
+			if (SendingMode.Value == CodeElements.SendingMode.ByValue)     str.Append("VALUE ");
+		} else str.Append('?').Append(' ');
+		if (SendingVariable != null) str.Append(SendingVariable);
+		else str.Append('?');
+		return str.ToString();
+	}
+}
 
     /// <summary>
     /// Argument sending mode for CallInputParameter

@@ -2,14 +2,14 @@
 [6,10]<27,Error,Syntax>Syntax error : no viable alternative at input 'USING' (RuleStack=codeElement>callStatement>programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable, OffendingSymbol=[6,10:USING]<USING> on line 2)
 [1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'CALL' (RuleStack=codeElement>callStatement>callProgramInputParameters>variableOrFileNameOrOmitted, OffendingSymbol=[1,4:CALL]<CALL> on line 4)
 [17,17]<27,Error,Syntax>Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'a' (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[17,17:a]<UserDefinedWord> on line 4)
-[16,24]<27,Error,Syntax>Syntax error : CALL .. RETURNING: Missing identifier (RuleStack=codeElement>callStatement>callReturning, OffendingSymbol=[16,24:RETURNING]<RETURNING> on line 5)
+[1,4]<27,Error,Syntax>Syntax error : CALL .. RETURNING: Missing identifier (RuleStack=codeElement>callStatement, OffendingSymbol=[1,4:CALL]<CALL> on line 5)
 [1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'CALL' (RuleStack=codeElement>callStatement>callProgramOutputParameter>storageArea1>identifier>storageAreaReferenceOrConditionReference, OffendingSymbol=[1,4:CALL]<CALL> on line 7)
 [1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'g ... CALL' (RuleStack=codeElement, OffendingSymbol=[1,4:CALL]<CALL> on line 8)
 [1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'y ... CALL' (RuleStack=codeElement, OffendingSymbol=[1,4:CALL]<CALL> on line 10)
 [17,21]<27,Error,Syntax>Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'MALUS' (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[17,21:MALUS]<UserDefinedWord> on line 11)
-[14,21]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal function identifier (RuleStack=codeElement>callStatement>callBy>identifierOrFileName, OffendingSymbol=[14,21:FUNCTION]<FUNCTION> on line 13)
-[14,19]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase (RuleStack=codeElement>callStatement>callBy>identifierOrFileName, OffendingSymbol=[14,19:LENGTH]<LENGTH> on line 14)
-[14,27]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LINAGE COUNTER (RuleStack=codeElement>callStatement>callBy>identifierOrFileName, OffendingSymbol=[14,27:LINAGE-COUNTER]<LINAGE_COUNTER> on line 15)
+[14,21]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal function identifier (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[14,21:FUNCTION]<FUNCTION> on line 13)
+[14,19]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[14,19:LENGTH]<LENGTH> on line 14)
+[14,27]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LINAGE-COUNTER (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[14,27:LINAGE-COUNTER]<LINAGE_COUNTER> on line 15)
 --- Code Elements ---
 [[CallStatement]] [1,4:CALL]<CALL> --> [12,12:x]<UserDefinedWord>
 
