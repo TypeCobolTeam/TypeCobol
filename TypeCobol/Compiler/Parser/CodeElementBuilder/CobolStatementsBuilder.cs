@@ -1066,8 +1066,8 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 		
-		////////////////////
-		// SORT STATEMENT //
+		  ////////////////////
+		 // SORT STATEMENT //
 		////////////////////
 
 		internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)

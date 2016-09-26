@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-[37,41]<27,Error,Syntax>Syntax error : no viable alternative at input 'QUOTE' (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantNoQuotes, OffendingSymbol=[37,41:QUOTE]<QUOTE> on line 1)
-[37,42]<27,Error,Syntax>Syntax error : no viable alternative at input 'QUOTES' (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantNoQuotes, OffendingSymbol=[37,42:QUOTES]<QUOTES> on line 2)
-[37,40]<27,Error,Syntax>Syntax error : no viable alternative at input 'NULL' (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantNoQuotes, OffendingSymbol=[37,40:NULL]<NULL> on line 3)
-[37,41]<27,Error,Syntax>Syntax error : no viable alternative at input 'NULLS' (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantNoQuotes, OffendingSymbol=[37,41:NULLS]<NULLS> on line 4)
+[37,41]<27,Error,Syntax>Syntax error : mismatched input 'QUOTE' expecting {HIGH_VALUE, HIGH_VALUES, LOW_VALUE, LOW_VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantForXMLGenerate, OffendingSymbol=[37,41:QUOTE]<QUOTE> on line 1)
+[37,42]<27,Error,Syntax>Syntax error : mismatched input 'QUOTES' expecting {HIGH_VALUE, HIGH_VALUES, LOW_VALUE, LOW_VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantForXMLGenerate, OffendingSymbol=[37,42:QUOTES]<QUOTES> on line 2)
+[37,40]<27,Error,Syntax>Syntax error : mismatched input 'NULL' expecting {HIGH_VALUE, HIGH_VALUES, LOW_VALUE, LOW_VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantForXMLGenerate, OffendingSymbol=[37,40:NULL]<NULL> on line 3)
+[37,41]<27,Error,Syntax>Syntax error : mismatched input 'NULLS' expecting {HIGH_VALUE, HIGH_VALUES, LOW_VALUE, LOW_VALUES, SPACE, SPACES, ZERO, ZEROES, ZEROS} (RuleStack=codeElement>xmlGenerateStatement>xmlSuppressGeneric>xmlSuppressWhen>repeatedCharacterValue3>figurativeConstantForXMLGenerate, OffendingSymbol=[37,41:NULLS]<NULLS> on line 4)
 --- Code Elements ---
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [37,41:QUOTE]<QUOTE>
 
