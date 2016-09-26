@@ -1390,15 +1390,32 @@ namespace TypeCobol.Compiler.Parser
 		/////////////////////
 
 		internal CodeElement CreateWriteStatement(CodeElementsParser.WriteStatementContext context) {
-			if (context == null) return null;
 			var statement = new WriteStatement();
 			statement.RecordName = CobolWordsBuilder.CreateRecordName(context.recordName());
-			statement.Identifier = CobolExpressionsBuilder.CreateVariable(context.sendingField);
-			statement.IsBeforeAdvancing = CreateSyntaxProperty(true, context.BEFORE());
-			statement.IsAfterAdvancing  = CreateSyntaxProperty(true, context.AFTER());
-            statement.Lines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
-            statement.Mnemonic = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
-            statement.Page = CreateSyntaxProperty(true, context.PAGE());
+            if (context.sendingField != null)
+            {
+                statement.FromSendingField = CobolExpressionsBuilder.CreateVariable(context.sendingField);
+            }
+            if (context.BEFORE() != null)
+            {
+                statement.WriteBeforeAdvancing = CreateSyntaxProperty(true, context.BEFORE());
+            }
+            if (context.AFTER() != null)
+            {
+                statement.WriteAfterAdvancing = CreateSyntaxProperty(true, context.AFTER());
+            }
+            if (context.numberOfLines != null)
+            {
+                statement.ByNumberOfLines = CobolExpressionsBuilder.CreateIntegerVariable(context.numberOfLines);
+            }
+            if (context.mnemonicForEnvironmentNameReference() != null)
+            {
+                statement.ByMnemonicForEnvironmentName = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReference(context.mnemonicForEnvironmentNameReference());
+            }
+            if (context.PAGE() != null)
+            {
+                statement.ByLogicalPage = CreateSyntaxProperty(true, context.PAGE());
+            }
 			return statement;
 		}
 

@@ -23,6 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
 		///record being replaced.
 		/// </summary>
 		public SymbolReference RecordName { get; set; }
+
 		/// <summary>
 		/// p450:
 		/// FROM phrase
@@ -48,17 +49,20 @@ namespace TypeCobol.Compiler.CodeElements
 		/// processing facilities".)
 		/// identifier-2 Must be an integer data item.
 		/// </summary>
-		public Variable Identifier;
+		public Variable FromSendingField { get; set; }
+
 		/// <summary>
 		/// p451:
 		/// When BEFORE ADVANCING is specified, the line is printed before the page is advanced.
 		/// </summary>
-		public SyntaxProperty<bool> IsBeforeAdvancing { get; set; }
+		public SyntaxProperty<bool> WriteBeforeAdvancing { get; set; }
+
 		/// <summary>
 		/// p451:
 		/// When AFTER ADVANCING is specified, the line is advanced before the page is printed.
 		/// </summary>
-		public SyntaxProperty<bool> IsAfterAdvancing { get; set; }
+		public SyntaxProperty<bool> WriteAfterAdvancing { get; set; }
+
 		/// <summary>
 		/// p451:
 		/// When the ADVANCING phrase is specified, the following rules apply:
@@ -82,7 +86,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// 4. When the device is repositioned to the first available line of a new page,
 		/// LINAGE-COUNTER is reset to 1.
 		/// </summary>
-		public IntegerVariable Lines { get; set; }
+		public IntegerVariable ByNumberOfLines { get; set; }
+
 		/// <summary>
 		/// p451:
 		/// When the ADVANCING phrase is specified, the following rules apply:
@@ -94,7 +99,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// card punch file. When using stacker selection, WRITE AFTER ADVANCING
 		/// must be used.
 		/// </summary>
-		public SymbolReference Mnemonic { get; set; }
+		public SymbolReference ByMnemonicForEnvironmentName { get; set; }
+
 		/// <summary>
 		/// p451:
 		/// When the ADVANCING phrase is specified, the following rules apply:
@@ -107,6 +113,6 @@ namespace TypeCobol.Compiler.CodeElements
 		/// printable line of the next page, as specified in that clause. If the LINAGE clause
 		/// is omitted, the repositioning is to line 1 of the next succeeding page.
 		/// </summary>
-		public SyntaxProperty<bool> Page { get; set; }
+		public SyntaxProperty<bool> ByLogicalPage { get; set; }
 	}
 }
