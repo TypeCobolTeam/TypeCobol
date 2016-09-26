@@ -138,6 +138,7 @@ namespace TypeCobol.Test {
             TestParser.Check_BeforeAfterInsertion();
             TestParser.Check_BeforeAfterInsertionBatched();
 
+			var errors = new System.Collections.Generic.List<Exception>();
 			int nbOfTests = 0;
 			foreach (string directory in Directory.GetDirectories(sampleRoot)) {
 				var dirname = Path.GetFileName(directory);
@@ -145,13 +146,20 @@ namespace TypeCobol.Test {
 				if (dirname.Equals("Programs")) extensions = new[] {"*.pgm", "*.cbl", "*.cpy" };
 				Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
 				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
-				folderTester.Test();
+				try { folderTester.Test(); }
+				catch (Exception ex) { errors.Add(ex); }
 				nbOfTests += folderTester.GetTestCount();
 				Console.WriteLine();
 			}
 
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
+
+			if (errors.Count > 0) {
+				var str = new System.Text.StringBuilder();
+				foreach(var ex in errors) str.Append(ex.Message);
+				throw new Exception(str.ToString());
+			}
 
             //This test use TypeChecker which is specific to TypeCobol
             //As specifications of TypeCobol are not final yet this test can't be used
