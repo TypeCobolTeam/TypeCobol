@@ -33,6 +33,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public NumericValue ReturnCode { get; set; }
         public AlphanumericValue ReturnMessage { get; set; }
+        public SyntaxProperty<bool> ReturnNull { get; set; }
 
         /// <summary>
         /// p432:

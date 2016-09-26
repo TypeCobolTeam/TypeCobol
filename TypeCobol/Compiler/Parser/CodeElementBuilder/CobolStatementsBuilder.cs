@@ -1224,6 +1224,17 @@ namespace TypeCobol.Compiler.Parser
                 {
                     statement.ReturnMessage = CobolWordsBuilder.CreateAlphanumericValue(context.messageToOperator().alphanumericValue3());
                 }
+                else if(context.messageToOperator().nullFigurativeConstant() != null)
+                {
+                    if (context.messageToOperator().nullFigurativeConstant().NULL() != null)
+                    {
+                        statement.ReturnNull = CreateSyntaxProperty(true, context.messageToOperator().nullFigurativeConstant().NULL());
+                    }
+                    if (context.messageToOperator().nullFigurativeConstant().NULLS() != null)
+                    {
+                        statement.ReturnNull = CreateSyntaxProperty(true, context.messageToOperator().nullFigurativeConstant().NULLS());
+                    }
+                }
             }
 
             return statement;

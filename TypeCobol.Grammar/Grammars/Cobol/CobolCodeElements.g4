@@ -6652,7 +6652,7 @@ stopStatement:
 	STOP (RUN | messageToOperator);
 
 messageToOperator: 
-	numericValue | alphanumericValue3;
+	numericValue | alphanumericValue3 | nullFigurativeConstant;
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
