@@ -6,18 +6,22 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    /// <summary>
+    /// p433: STRING statement
+    /// The STRING statement strings together the partial or complete contents of two or
+    /// more data items or literals into one single data item.
+    /// One STRING statement can be written instead of a series of MOVE statements.
+    /// </summary>
     public class StringStatement : StatementElement, VariableWriter
     {
         public StringStatement() : base(CodeElementType.StringStatement, StatementType.StringStatement) { }
 
-
-// TODO        public IList<Expression> Expressions { get {return new List<Expression> {this.IntoIdentifier};} }
-
         /// <summary>
+        /// identifier-1, literal-1
         /// 
+        /// Represents the sending fields.
         /// </summary>
-        public List<StringStatementWhat> StringStatementWhat { get; set; }
-
+        public StringContentToConcatenate[] StringContentsToConcatenate { get; set; }
 
         /// <summary>
         /// identifier-3
@@ -34,9 +38,8 @@ namespace TypeCobol.Compiler.CodeElements
         ///
         /// - identifier-3 must not described with the JUSTIFIED clause.
         /// </summary>
-        public ReceivingStorageArea IntoIdentifier { [CanBeNull] get; set; }
+        public ReceivingStorageArea ReceivingField { [CanBeNull] get; set; }
         
-
         /// <summary>
         /// identifier-4
         /// 
@@ -45,76 +48,51 @@ namespace TypeCobol.Compiler.CodeElements
         /// indicates a relative alphanumeric character position, DBCS character
         /// position, or national character position when the receiving field is of usage
         /// DISPLAY, DISPLAY-1, or NATIONAL, respectively.
+        /// 
         /// identifier-4
         /// Represents the pointer field. identifier-4 must be large enough to
         /// contain a value equal to the length of the receiving field plus 1.
         /// You must initialize identifier-4 to a nonzero value before execution
         /// of the STRING statement begins.
-        /// 
-        /// 
+        ///  
         /// identifier-4 must not be described with the symbol P in its PICTURE
         /// character-string.
         /// </summary>
-        public ReceivingStorageArea PointerIdentifier {[CanBeNull] get; set; }
-
-        /// <summary>
-        /// Executed when the pointer value (explicit or implicit):
-        ///  - Is less than 1
-        ///  - Exceeds a value equal to the length of the receiving field
-        /// When either of the above conditions occurs, an overflow condition exists,
-        /// and no more data is transferred. Then the STRING operation is terminated,
-        /// the NOT ON OVERFLOW phrase, if specified, is ignored, and control is
-        /// transferred to the end of the STRING statement or, if the ON OVERFLOW
-        /// phrase is specified, to imperative-statement-1.
-        /// </summary>
-        public List<OnOverflowCondition> OnOverflowStatement { get; set; }
-
-        /// <summary>
-        /// If at the time of execution of a STRING statement, conditions that would
-        /// cause an overflow condition are not encountered, then after completion of
-        /// the transfer of data, the ON OVERFLOW phrase, if specified, is ignored.
-        /// Control is then transferred to the end of the STRING statement, or if the
-        /// NOT ON OVERFLOW phrase is specified, to imperative-statement-2.
-        /// </summary>
-        public List<NotOnOverflowCondition> NotOnOverflowStatement { get; set; }
-
-
-        
-
+        public ReceivingStorageArea CharacterPositionInReceivingField {[CanBeNull] get; set; }
+                
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (StringStatementWhat == null && IntoIdentifier == null && PointerIdentifier == null)
+            if (StringContentsToConcatenate == null && ReceivingField == null && CharacterPositionInReceivingField == null)
             {
                 return base.ToString();
             }
             else
             {
                 var sb = new StringBuilder(base.ToString());
-                if (StringStatementWhat != null)
+                if (StringContentsToConcatenate != null)
                 {
                     sb.Append("- variables to concat =");
-                    foreach (var statementWhat in StringStatementWhat)
+                    foreach (var statementWhat in StringContentsToConcatenate)
                     {
                         sb.Append(" ").Append(statementWhat);
                     }
                 }
 
-                if (IntoIdentifier != null)
+                if (ReceivingField != null)
                 {
-                    sb.AppendLine(" into = " + IntoIdentifier);
+                    sb.AppendLine(" into = " + ReceivingField);
                 }
 
-                if (PointerIdentifier != null)
+                if (CharacterPositionInReceivingField != null)
                 {
-                    sb.AppendLine(" pointer = " + PointerIdentifier);
+                    sb.AppendLine(" pointer = " + CharacterPositionInReceivingField);
                 }
                 return sb.ToString();
             }
         }
-
 
         private List<QualifiedName> _variables;
         private IDictionary<QualifiedName, object> _variablesWritten;
@@ -125,9 +103,9 @@ namespace TypeCobol.Compiler.CodeElements
                 if (_variables == null)
                 {
                     _variables = new List<QualifiedName>();
-                    if (IntoIdentifier != null)
+                    if (ReceivingField != null)
                     {
-                        _variables.Add(((Named) IntoIdentifier.StorageArea).QualifiedName);
+                        _variables.Add(((Named) ReceivingField.StorageArea).QualifiedName);
                     }
                 }
                 return _variables;
@@ -141,9 +119,9 @@ namespace TypeCobol.Compiler.CodeElements
                 if (_variablesWritten == null)
                 {
                     _variablesWritten = new Dictionary<QualifiedName, object>();
-                    if (IntoIdentifier != null)
+                    if (ReceivingField != null)
                     {
-                        _variablesWritten.Add(((Named)IntoIdentifier.StorageArea).QualifiedName, StringStatementWhat);
+                        _variablesWritten.Add(((Named)ReceivingField.StorageArea).QualifiedName, StringContentsToConcatenate);
                     }
                 }
                 return _variablesWritten;
@@ -153,65 +131,56 @@ namespace TypeCobol.Compiler.CodeElements
         public bool IsUnsafe { get { return false; }  }
     }
 
-	public class StringStatementWhat
+	public class StringContentToConcatenate
 	{
-		/// <summary>
-		/// identifier-1 or literal-1
-		/// </summary>
-		public List<Variable> IdentifierToConcat { get; set; }
+        /// <summary>
+        /// identifier-1, literal-1
+        /// Represents the sending fields.
+        /// </summary>
+		public Variable[] SendingFields { get; set; }
 
-		private Variable _delimiterIdentifier;
-		/// <summary>
-		/// identifier-2 or literal-2
-		/// </summary>
-		public Variable DelimiterIdentifier {
-            [CanBeNull]
-			get { return _delimiterIdentifier; }
-			set {
-				if (DelimitedBySize) throw new Exception("TODO");
-				_delimiterIdentifier = value;
-			}
-		}
+        /// <summary>
+        /// DELIMITED BY phrase
+        /// Sets the limits of the string.
+        /// SIZE Transfers the complete sending area.
+        /// </summary>
+        public SyntaxProperty<bool> IsDelimitedbySize { get; set; }
 
-		private bool _size;
-		public bool DelimitedBySize {
-			get { return _size; }
-			set {
-				if (DelimiterIdentifier != null) throw new Exception("TODO");
-				_size = value;
-			}
-		}
-
-
-
+        /// <summary>
+        /// identifier-2, literal-2
+        /// Are delimiters; that is, characters that delimit the data to be
+        /// transferred.
+        /// </summary>
+        public Variable DelimiterCharacters { get; set; }
+		
         /// <summary>
         /// Debug string
         /// </summary>
         public override string ToString()
         {
-            if (IdentifierToConcat == null && DelimiterIdentifier == null && !DelimitedBySize)
+            if (SendingFields == null && IsDelimitedbySize == null && DelimiterCharacters == null)
             {
                 return base.ToString();
             }
             else
             {
                 var sb = new StringBuilder("");
-                if (IdentifierToConcat != null)
+                if (SendingFields != null)
                 {
-                    foreach (var idOrLiteral in IdentifierToConcat)
+                    foreach (var sendingField in SendingFields)
                     {
                         sb.Append(' ');
-                        sb.Append(idOrLiteral);
+                        sb.Append(sendingField);
                     }
                     sb.Append("   ");
                 }
 
-                if (DelimiterIdentifier != null)
+                if (DelimiterCharacters != null)
                 {
-                    sb.AppendLine(" delimited by " + DelimiterIdentifier);
+                    sb.AppendLine(" delimited by " + DelimiterCharacters);
                 }
 
-				if (DelimitedBySize) sb.AppendLine(" delimited by Size");
+				if (IsDelimitedbySize != null) sb.AppendLine(" delimited by Size");
 
                 return sb.ToString();
             }

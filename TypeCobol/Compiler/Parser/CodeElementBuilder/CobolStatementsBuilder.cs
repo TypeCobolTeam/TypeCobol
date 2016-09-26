@@ -1055,7 +1055,7 @@ namespace TypeCobol.Compiler.Parser
 		 // SET STATEMENT //
 		///////////////////
 
-		internal CodeElement CreateSetStatementForAssignation(CodeElementsParser.SetStatementForAssignmentContext context) {
+		internal CodeElement CreateSetStatementForAssignment(CodeElementsParser.SetStatementForAssignmentContext context) {
 			var statement = new SetStatementForAssignment();
 			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			statement.SendingVariable = CreateSendingVariable(context.setSendingField());
@@ -1238,40 +1238,39 @@ namespace TypeCobol.Compiler.Parser
 
         internal CodeElement CreateStringStatement(CodeElementsParser.StringStatementContext context) {
 			var statement = new StringStatement();
-			if (context.contentToConcatenate() != null) {
-				var list = new List<StringStatementWhat>();
-				foreach (var c in context.contentToConcatenate()) {
-					var what = new StringStatementWhat();
-					if (c.sendingField != null) {
-						var variables = new List<Variable>();
-						foreach (var variable in c.variable6()) {
-							variables.Add(CobolExpressionsBuilder.CreateVariable(variable));
-						}
-						what.IdentifierToConcat = variables;
-					}
-					if (c.delimiterCharacters != null) {
-						what.DelimiterIdentifier = CobolExpressionsBuilder.CreateVariable(c.variable4());
-					} else {
-						what.DelimitedBySize = (c.SIZE() != null);
-					}
-					list.Add(what);
-				}
-				statement.StringStatementWhat = list;
+
+            statement.StringContentsToConcatenate = BuildObjectArrrayFromParserRules(context.contentToConcatenate(),
+                ctx => CreateStringContentToConcatenate(ctx));
+            statement.ReceivingField = CobolExpressionsBuilder.CreateStorageArea(context.receivingField);
+			if (context.characterPositionInReceivingField != null)
+            {
+				statement.CharacterPositionInReceivingField = CobolExpressionsBuilder.CreateStorageArea(context.characterPositionInReceivingField);
 			}
-			if (context.receivingField != null) {
-				statement.IntoIdentifier = CobolExpressionsBuilder.CreateStorageArea(context.receivingField);
-			}
-			if (context.characterPositionInReceivingField != null) {
-				statement.PointerIdentifier = CobolExpressionsBuilder.CreateStorageArea(context.characterPositionInReceivingField);
-			}
+
 			return statement;
 		}
 
-		  ////////////////////////
-		 // SUBTRACT STATEMENT //
-		////////////////////////
+        private StringContentToConcatenate CreateStringContentToConcatenate(CodeElementsParser.ContentToConcatenateContext context)
+        {
+            var stringContent = new StringContentToConcatenate();
+            stringContent.SendingFields = BuildObjectArrrayFromParserRules(context.variable6(),
+                ctx => CobolExpressionsBuilder.CreateVariable(ctx));
+            if(context.SIZE() != null)
+            {
+                stringContent.IsDelimitedbySize = CreateSyntaxProperty(true, context.SIZE());
+            }
+            else
+            {
+                stringContent.DelimiterCharacters = CobolExpressionsBuilder.CreateVariable(context.delimiterCharacters);
+            }
+            return stringContent;
+        }
 
-		internal CodeElement CreateSubtractStatement(CodeElementsParser.SubtractSimpleContext context) {
+        ////////////////////////
+        // SUBTRACT STATEMENT //
+        ////////////////////////
+
+        internal CodeElement CreateSubtractStatement(CodeElementsParser.SubtractSimpleContext context) {
 			var statement = new SubtractSimpleStatement();
 			statement.VariablesTogether = BuildObjectArrrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
 			statement.SendingAndReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
@@ -1298,37 +1297,59 @@ namespace TypeCobol.Compiler.Parser
 		 // UNSTRING STATEMENT //
 		////////////////////////
 
-		internal CodeElement CreateUnstringStatement(CodeElementsParser.UnstringStatementContext context) {
+		internal CodeElement CreateUnstringStatement(CodeElementsParser.UnstringStatementContext context)
+        {
 			var statement = new UnstringStatement();
-			if (context.sendingField != null) {
-				statement.UnstringIdentifier = CobolExpressionsBuilder.CreateVariable(context.variable1());
-			}
-			statement.Delimiters = new List<UnstringStatement.Delimiter>();
-			foreach(var c in context.unstringDelimiter()) {
-				var delimiter = new UnstringStatement.Delimiter();
-				if (c.delimiterCharacters != null)
-					delimiter.Variable = CobolExpressionsBuilder.CreateVariable(c.variable4());
-				delimiter.All = CreateSyntaxProperty(true, c.ALL());
-				statement.Delimiters.Add(delimiter);
-			}
-			statement.Receivers = new List<UnstringStatement.Receiver>();
-			foreach(var c in context.unstringReceivingFields()) {
-				var receiver = new UnstringStatement.Receiver();
-				receiver.StorageArea = CobolExpressionsBuilder.CreateStorageArea(c.receivingField);
-				receiver.Delimiter = CobolExpressionsBuilder.CreateStorageArea(c.associatedDelimiter);
-				receiver.Count = CobolExpressionsBuilder.CreateStorageArea(c.charsTransferredCount);
-				statement.Receivers.Add(receiver);
-			}
-			statement.WithPointer = CobolExpressionsBuilder.CreateStorageArea(context.relativeCharacterPositionDuringProcessing);
-			statement.Tallying = CobolExpressionsBuilder.CreateStorageArea(context.incrementByNumberOfDelimitedFields);
+			statement.SendingField = CobolExpressionsBuilder.CreateVariable(context.variable1());
+            if (context.unstringDelimiter() != null)
+            {
+                statement.Delimiters = BuildObjectArrrayFromParserRules(context.unstringDelimiter(),
+                    ctx => CreateUnstringDelimiter(ctx));
+            }
+            statement.ReceivingFields = BuildObjectArrrayFromParserRules(context.unstringReceivingFields(),
+                ctx => CreateUnstringReceivingFields(ctx));
+            if (context.relativeCharacterPositionDuringProcessing != null)
+            {
+                statement.CharacterPositionsExaminedInSendingField = CobolExpressionsBuilder.CreateStorageArea(context.relativeCharacterPositionDuringProcessing);
+            }
+            if (context.incrementByNumberOfDelimitedFields != null)
+            {
+                statement.NumberOfDelimitedFieldsProcessed = CobolExpressionsBuilder.CreateStorageArea(context.incrementByNumberOfDelimitedFields);
+            }
 			return statement;
 		}
+               
+        private UnstringDelimiter CreateUnstringDelimiter(CodeElementsParser.UnstringDelimiterContext context)
+        {
+            var delimiter = new UnstringDelimiter();
+            if (context.ALL() != null)
+            {
+                delimiter.All = CreateSyntaxProperty(true, context.ALL());
+            }
+            delimiter.DelimiterCharacters = CobolExpressionsBuilder.CreateVariable(context.delimiterCharacters);
+            return delimiter;
+        }
 
-		  /////////////////////////////
-		 // WHEN EVALUATE CONDITION //
-		/////////////////////////////
+        private UnstringReceivingField CreateUnstringReceivingFields(CodeElementsParser.UnstringReceivingFieldsContext context)
+        {
+            var receivingField = new UnstringReceivingField();
+            receivingField.ReceivingField = CobolExpressionsBuilder.CreateStorageArea(context.receivingField);
+            if (context.associatedDelimiter != null)
+            {
+                receivingField.DelimiterReceivingField = CobolExpressionsBuilder.CreateStorageArea(context.associatedDelimiter);
+            }
+            if (context.charsTransferredCount != null)
+            {
+                receivingField.CharTransferredCount = CobolExpressionsBuilder.CreateStorageArea(context.charsTransferredCount);
+            }
+            return receivingField;
+        }
 
-		internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
+        /////////////////////////////
+        // WHEN EVALUATE CONDITION //
+        /////////////////////////////
+
+        internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
 			statement.SelectionObjects = BuildObjectArrrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
 			return statement;
