@@ -5,7 +5,6 @@
 /// <summary>p298: The ADD statement sums two or more numeric operands and stores the result.</summary>
 public abstract class AddStatement: StatementElement, ArithmeticStatement {
 	public AddStatement(StatementType statementType) : base(CodeElementType.AddStatement, statementType) { }
-
 	public abstract Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 }
 

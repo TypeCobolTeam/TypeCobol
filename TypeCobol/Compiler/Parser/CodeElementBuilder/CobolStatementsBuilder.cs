@@ -1246,7 +1246,7 @@ namespace TypeCobol.Compiler.Parser
 			var statement = new SubtractCorrespondingStatement();
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
-			statement.IsRounded = CreateSyntaxProperty(true, context.ROUNDED());
+			statement.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
 			return statement;
 		}
 
