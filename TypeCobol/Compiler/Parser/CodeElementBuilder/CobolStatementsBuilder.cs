@@ -115,7 +115,7 @@ namespace TypeCobol.Compiler.Parser
 		private RoundedResult CreateRoundedResult(CodeElementsParser.NumericStorageAreaRoundedContext context) {
 			var roundedResult = new RoundedResult();
 			roundedResult.ReceivingStorageArea = CobolExpressionsBuilder.CreateNumericStorageArea(context.numericStorageArea());
-			roundedResult.IsRounded = CreateSyntaxProperty(true, context.ROUNDED());
+			roundedResult.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
 			return roundedResult;
 		}
 
@@ -131,7 +131,7 @@ namespace TypeCobol.Compiler.Parser
 			var statement = new AddCorrespondingStatement();
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
-			statement.IsRounded = CreateSyntaxProperty(true, context.ROUNDED());
+			statement.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
 			return statement;
 		}
 

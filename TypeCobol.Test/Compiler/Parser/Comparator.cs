@@ -233,52 +233,38 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 	}
 
-    internal class ArithmeticComparator : FilesComparator
-    {
-        public ArithmeticComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-			throw new Exception("TODO#249");
-/*
-            int c = 0;
-            StringBuilder errors = new StringBuilder();
-            bool elementsFound = false;
-            foreach (var e in elements)
-            {
-                elementsFound = true;
-                var statement = e as ArithmeticOperationStatement;
-                if (statement == null) continue;
-                string rpn = expected.ReadLine();
-                if (rpn == null) errors.AppendFormat("RPN number {0} not provided.", c);
-                string dump = ToString(statement);
-                if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn);
-                c++;
-            }
-            if(!elementsFound) throw new Exception("No CodeElements found!");
-            if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
-            if (errors.Length > 0)
-            {
-                errors.Insert(0, paths.SamplePath + ":\n");
-                throw new Exception(errors.ToString());
-            }
-        }
-
-        private string ToString(ArithmeticOperationStatement statement)
-        {
-            StringBuilder builder = new StringBuilder();
-            foreach (var pair in statement.Affectations)
-            {
-                builder.AppendFormat("{0} = {1}, ", pair.Key, pair.Value);
-            }
-            if (statement.Affectations.Count > 0) builder.Length -= 2;
-            return builder.ToString();
-*/
-        }
-    }
+internal class ArithmeticComparator : FilesComparator {
+	public ArithmeticComparator(Paths path, bool debug = false) : base(path, debug) { }
+	internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected) {
+		var errors = new System.Text.StringBuilder();
+		int c = 0, line = 1;
+		foreach(var e in elements) {
+			c++;
+			var operation = e as ArithmeticStatement;
+			if (operation == null) continue;
+			string rpn = expected.ReadLine();
+			if (rpn == null) errors.AppendFormat("RPN number {0} not provided.", line);
+			string dump = ToString(operation);
+			if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", line, dump, rpn);
+			line++;
+		}
+		if(c < 1) throw new Exception("No CodeElements found!");
+		if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements ("+(line-1)+") lesser than expected.");
+		if (errors.Length > 0) {
+			errors.Insert(0, paths.SamplePath + ":\n");
+			throw new Exception(errors.ToString());
+		}
+	}
+	private string ToString(ArithmeticStatement statement) {
+		if (statement == null) return null;
+		var str = new System.Text.StringBuilder();
+		foreach(var operations in statement.Affectations)
+			foreach(var operation in operations.Value)
+				str.Append(operations.Key).Append(" = ").Append(operation).Append(", ");
+		if (statement.Affectations.Count > 0) str.Length -= 2;
+		return str.ToString();
+	}
+}
 
     internal class NYComparator : FilesComparator
     {

@@ -279,32 +279,8 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>
 	/// Base class for all arithmetic expression nodes
 	/// </summary>
-	public abstract class ArithmeticExpression : Expression {
-		public ArithmeticExpression(ExpressionNodeType nodeType) : base(nodeType) { }
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ArithmeticOperation : ArithmeticExpression
-	{
-		public ArithmeticOperation(ArithmeticExpression leftOperand, SyntaxProperty<ArithmeticOperator> arithmeticOperator, ArithmeticExpression rightOperand) :
-			base(ExpressionNodeType.ArithmeticOperation) {
-			LeftOperand = leftOperand;
-			Operator = arithmeticOperator;
-			RightOperand = rightOperand;
-		}
-
-		public ArithmeticExpression LeftOperand { get; private set; }
-
-		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
-
-		public ArithmeticExpression RightOperand { get; private set; }
-
-		public override string ToString() {
-			// reverse polish notation
-			return new StringBuilder(LeftOperand != null ? LeftOperand.ToString() : "<?>").Append(" ").Append(RightOperand != null ? RightOperand.ToString() : "<?>").Append(" ").Append(Operator).ToString();
-		}
+	public abstract class ArithmeticExpression: Expression {
+		public ArithmeticExpression(ExpressionNodeType nodeType): base(nodeType) { }
 	}
 
 	/// <summary>
@@ -317,40 +293,65 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public enum ArithmeticOperator
 	{
-		UnaryPlus,
-		UnaryMinus,
-		Round,
-		Power,
-		Multiply,
-		Divide,
-		Remainder,
-		Plus,
-		Minus
+		UnaryPlus = '+',
+		UnaryMinus= '-',
+		Round   = '°',
+		Power   = '^',
+		Multiply= '×',
+		Divide  = '÷',
+		Remainder='/',
+		Plus    = '+',
+		Minus   = '-',
+	}
+	static class ArithmeticOperatorExtension {
+		public static ArithmeticOperation CreateOperation(this ArithmeticOperator op, ArithmeticExpression left, ArithmeticExpression right = null) {
+			return new ArithmeticOperation(left, new SyntaxProperty<ArithmeticOperator>(op, null), right);
+		}
+	}
+
+	public class ArithmeticOperation: ArithmeticExpression {
+		public ArithmeticOperation(ArithmeticExpression left, SyntaxProperty<ArithmeticOperator> op, ArithmeticExpression right = null)
+			: base(ExpressionNodeType.ArithmeticOperation) {
+			LeftOperand = left;
+			Operator = op;
+			RightOperand = right;
+		}
+
+		public ArithmeticExpression LeftOperand { get; private set; }
+		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
+		public ArithmeticExpression RightOperand { get; private set; }
+
+		/// <summary>reverse polish notation</summary>
+		public override string ToString() {
+			var str = new StringBuilder();
+			if (LeftOperand == null) str.Append('0');
+			else str.Append(LeftOperand);
+			bool maybeunary =  Operator == null
+							|| Operator.Value == ArithmeticOperator.UnaryPlus
+							|| Operator.Value == ArithmeticOperator.UnaryMinus
+							|| Operator.Value == ArithmeticOperator.Round;
+			if (RightOperand == null)
+				if (maybeunary) ;
+				else str.Append(' ').Append('0');
+			else str.Append(' ').Append(RightOperand);
+			str.Append(' ').Append((char)Operator.Value);
+			return str.ToString();
+		}
 	}
 
 	/// <summary>
 	/// Wrapper to use an integer or numeric variable in an arithmetic expression tree
 	/// </summary>
-	public class NumericVariableOperand : ArithmeticExpression
-	{
-		public NumericVariableOperand(IntegerVariable variable) :
-			base(ExpressionNodeType.NumericVariable) {
-			IntegerVariable = variable;
-		}
-
-		public NumericVariableOperand(NumericVariable variable) :
-			base(ExpressionNodeType.NumericVariable) {
-			NumericVariable = variable;
-		}
+	public class NumericVariableOperand: ArithmeticExpression {
+		public NumericVariableOperand(IntegerVariable variable): base(ExpressionNodeType.NumericVariable) { IntegerVariable = variable; }
+		public NumericVariableOperand(NumericVariable variable): base(ExpressionNodeType.NumericVariable) { NumericVariable = variable; }
 
 		public IntegerVariable IntegerVariable { get; private set; }
-
 		public NumericVariable NumericVariable { get; private set; }
 
 		public override string ToString() {
-			if (IntegerVariable != null)
-				 return IntegerVariable.ToString();
-			else return NumericVariable.ToString();
+			if (IntegerVariable != null) return IntegerVariable.ToString();
+			return NumericVariable.ToString();
 		}
 	}
 
