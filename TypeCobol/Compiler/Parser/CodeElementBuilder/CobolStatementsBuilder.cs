@@ -107,8 +107,8 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateAddStatement(CodeElementsParser.AddSimpleContext context) {
 			var statement = new AddSimpleStatement();
-			statement.VariablesTogether = BuildObjectArrrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
-			statement.SendingAndReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.VariablesTogether = BuildObjectArrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
+			statement.SendingAndReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -121,9 +121,9 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateAddGivingStatement(CodeElementsParser.AddGivingContext context) {
 			var statement = new AddGivingStatement();
-			statement.VariablesTogether = BuildObjectArrrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
+			statement.VariablesTogether = BuildObjectArrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
 			statement.Operand = CobolExpressionsBuilder.CreateNumericVariable(context.toOperand);
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -199,7 +199,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateCancelStatement(CodeElementsParser.CancelStatementContext context) {
 			var statement = new CancelStatement();
-			statement.Programs = BuildObjectArrrayFromParserRules(context.programNameVariable(), ctx => CobolExpressionsBuilder.CreateProgramNameVariable(ctx));
+			statement.Programs = BuildObjectArrayFromParserRules(context.programNameVariable(), ctx => CobolExpressionsBuilder.CreateProgramNameVariable(ctx));
 			return statement;
 		}
 
@@ -209,7 +209,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateCloseStatement(CodeElementsParser.CloseStatementContext context) {
 			var statement = new CloseStatement();
-			statement.CloseFileInstructions = BuildObjectArrrayFromParserRules(context.closeFileDirective(), ctx => CreateCloseFileInstruction(ctx));
+			statement.CloseFileInstructions = BuildObjectArrayFromParserRules(context.closeFileDirective(), ctx => CreateCloseFileInstruction(ctx));
 			return statement;
 		}       
 
@@ -232,7 +232,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateComputeStatement(CodeElementsParser.ComputeStatementContext context) {
 			var statement = new ComputeStatement();
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			statement.ArithmeticExpression = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression());
 			return statement;
 		}
@@ -278,7 +278,7 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateDivideStatement(CodeElementsParser.DivideSimpleContext context) {
 			var statement = new DivideSimpleStatement();
 			statement.Divisor = CobolExpressionsBuilder.CreateNumericVariable(context.divisor);
-			statement.SendingAndReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.SendingAndReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -296,7 +296,7 @@ namespace TypeCobol.Compiler.Parser
 			else if (context.dividend2 != null) {
 				statement.Dividend = CobolExpressionsBuilder.CreateNumericVariable(context.dividend2);
 			}
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -336,7 +336,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateEvaluateStatement(CodeElementsParser.EvaluateStatementContext context) {
 			var statement = new EvaluateStatement();
-			statement.SelectionSubjects = BuildObjectArrrayFromParserRules(context.comparisonLHSExpression(), ctx => CreateEvaluateSelectionSubject(ctx));
+			statement.SelectionSubjects = BuildObjectArrayFromParserRules(context.comparisonLHSExpression(), ctx => CreateEvaluateSelectionSubject(ctx));
 			return statement;
 		}
 
@@ -358,7 +358,7 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateExecStatement(CodeElementsParser.ExecStatementContext context) {
 			var statement = new ExecStatement();
 			statement.ExecTranslatorName = CobolWordsBuilder.CreateExecTranslatorName(context.execTranslatorName());
-			statement.CodeLines = BuildObjectArrrayFromParserRules(context.alphanumericValue8(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
+			statement.CodeLines = BuildObjectArrayFromParserRules(context.alphanumericValue8(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 			return statement;
 		}
 
@@ -374,7 +374,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
 			var statement = new GotoConditionalStatement();
-			statement.ProcedureNames = BuildObjectArrrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
+			statement.ProcedureNames = BuildObjectArrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
 			statement.DependingOn = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
 			if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
 				DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
@@ -403,10 +403,10 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var statement = new InitializeStatement();
 
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.storageArea1(),
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.storageArea1(),
 				ctx => CobolExpressionsBuilder.CreateStorageArea(ctx));
 
-			statement.ReplacingInstructions = BuildObjectArrrayFromParserRules(context.initializeReplacingDirective(),
+			statement.ReplacingInstructions = BuildObjectArrayFromParserRules(context.initializeReplacingDirective(),
 				ctx => CreateInitializeReplacingInstruction(ctx));
 
 			return statement;
@@ -476,20 +476,14 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateInspectStatement(CodeElementsParser.InspectStatementContext context)
 		{
-			if (context.convertingPhrase() != null)
-			{
+			if (context.convertingPhrase() != null) {
 				var statement = new InspectConvertingStatement();
-
 				statement.InspectedItem = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
 				statement.SearchedCharacterString = CobolExpressionsBuilder.CreateAlphanumericVariable(context.convertingPhrase().searchedCharacterString);
 				statement.ReplacingCharacterString = CobolExpressionsBuilder.CreateAlphanumericVariable(context.convertingPhrase().replacingCharacterString);
-				statement.ReplacingConditions = BuildObjectArrrayFromParserRules(context.convertingPhrase().countingOrReplacingCondition(),
-					ctx => CreateCountingOrReplacingCondition(ctx));
-
+				statement.ReplacingConditions = BuildObjectArrayFromParserRules(context.convertingPhrase().countingOrReplacingCondition(), ctx => CreateCountingOrReplacingCondition(ctx));
 				return statement;
-			}
-			else
-			{
+			} else {
 				InspectTallyingStatement statement = null;
 				if(context.replacingPhrase() != null)
 				{
@@ -504,17 +498,17 @@ namespace TypeCobol.Compiler.Parser
 
 				if(context.tallyingPhrase() != null)
 				{
-					statement.TallyingInstructions = BuildObjectArrrayFromParserRules(context.tallyingPhrase().inspectTallyingOperation(),
+					statement.TallyingInstructions = BuildObjectArrayFromParserRules(context.tallyingPhrase().inspectTallyingOperation(),
 						ctx => CreateInspectTallyingInstruction(ctx));
 				}
 				if(context.replacingPhrase() != null)
 				{
 					InspectReplacingStatement replacingStatement = statement as InspectReplacingStatement;
 
-					replacingStatement.ReplaceAllCharactersOperations = BuildObjectArrrayFromParserRules(context.replacingPhrase().replaceAllCharacters(),
+					replacingStatement.ReplaceAllCharactersOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceAllCharacters(),
 						ctx => CreateReplaceAllCharactersOperation(ctx));
 
-					replacingStatement.ReplaceCharacterStringsOperations = BuildObjectArrrayFromParserRules(context.replacingPhrase().replaceCharacterStrings(),
+					replacingStatement.ReplaceCharacterStringsOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceCharacterStrings(),
 						ctx => CreateReplaceCharacterStringsOperation(ctx));
 				}
 
@@ -527,10 +521,10 @@ namespace TypeCobol.Compiler.Parser
 			var instruction = new InspectTallyingInstruction();
 			instruction.CountField = CobolExpressionsBuilder.CreateNumericStorageArea(context.numericStorageArea());
 
-			instruction.CountAllCharactersOperations = BuildObjectArrrayFromParserRules(context.countAllCharacters(),
+			instruction.CountAllCharactersOperations = BuildObjectArrayFromParserRules(context.countAllCharacters(),
 				ctx => CreateCountAllCharactersOperation(ctx));
 
-			instruction.CountCharacterStringsOperations = BuildObjectArrrayFromParserRules(context.countCharacterStrings(),
+			instruction.CountCharacterStringsOperations = BuildObjectArrayFromParserRules(context.countCharacterStrings(),
 				ctx => CreateCountCharacterStringsOperation(ctx));
 
 			return instruction;
@@ -539,28 +533,21 @@ namespace TypeCobol.Compiler.Parser
 		private CountAllCharactersOperation CreateCountAllCharactersOperation(CodeElementsParser.CountAllCharactersContext context)
 		{
 			var operation = new CountAllCharactersOperation();
-			operation.CountingConditions = BuildObjectArrrayFromParserRules(context.countingOrReplacingCondition(),
+			operation.CountingConditions = BuildObjectArrayFromParserRules(context.countingOrReplacingCondition(),
 				ctx => CreateCountingOrReplacingCondition(ctx));
 			return operation;
 		}
 		
-		private CountingOrReplacingCondition CreateCountingOrReplacingCondition(CodeElementsParser.CountingOrReplacingConditionContext context)
-		{
+		private CountingOrReplacingCondition CreateCountingOrReplacingCondition(CodeElementsParser.CountingOrReplacingConditionContext context) {
 			var condition = new CountingOrReplacingCondition();
-			if(context.BEFORE() != null)
-			{
-				condition.StartCharacterPosition = CreateSyntaxProperty(StartCharacterPosition.Before,
-					context.BEFORE());
+			if(context.BEFORE() != null) {
+				condition.StartCharacterPosition = CreateSyntaxProperty(StartCharacterPosition.Before, context.BEFORE());
+			} else
+			if(context.AFTER() != null) {
+				condition.StartCharacterPosition = CreateSyntaxProperty(StartCharacterPosition.After, context.AFTER());
 			}
-			else if(context.AFTER() != null)
-			{
-				condition.StartCharacterPosition = CreateSyntaxProperty(StartCharacterPosition.After,
-					context.AFTER());
-			}
-			if(context.INITIAL() != null)
-			{
-				condition.InitialOccurence = CreateSyntaxProperty(true,
-					context.INITIAL());
+			if(context.INITIAL() != null) {
+				condition.InitialOccurence = CreateSyntaxProperty(true, context.INITIAL());
 			}
 			condition.Delimiter = CobolExpressionsBuilder.CreateAlphanumericVariable(context.alphanumericVariable1());
 			return condition;
@@ -579,7 +566,7 @@ namespace TypeCobol.Compiler.Parser
 				operation.CharacterStringsSelection = CreateSyntaxProperty(CharacterStringsSelection.Leading,
 				   context.LEADING());
 			}
-			operation.CharacterStringPatterns = BuildObjectArrrayFromParserRules(context.countCharacterStringPattern(),
+			operation.CharacterStringPatterns = BuildObjectArrayFromParserRules(context.countCharacterStringPattern(),
 				ctx => CreateCountCharacterStringPattern(ctx));
 			return operation;
 		}
@@ -588,7 +575,7 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var pattern = new CountCharacterStringPattern();
 			pattern.SearchedCharacterString = CobolExpressionsBuilder.CreateAlphanumericVariable(context.alphanumericVariable1());
-			pattern.CountingConditions = BuildObjectArrrayFromParserRules(context.countingOrReplacingCondition(),
+			pattern.CountingConditions = BuildObjectArrayFromParserRules(context.countingOrReplacingCondition(),
 				ctx => CreateCountingOrReplacingCondition(ctx));
 			return pattern;
 		}
@@ -597,7 +584,7 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var operation = new ReplaceAllCharactersOperation();
 			operation.ReplacingCharacterString = CobolExpressionsBuilder.CreateAlphanumericVariable(context.alphanumericVariable2());
-			operation.ReplacingConditions = BuildObjectArrrayFromParserRules(context.countingOrReplacingCondition(),
+			operation.ReplacingConditions = BuildObjectArrayFromParserRules(context.countingOrReplacingCondition(),
 				ctx => CreateCountingOrReplacingCondition(ctx));
 			return operation;
 		}
@@ -700,14 +687,14 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if (context.usingFilenames() != null)
 			{
-				statement.InputFiles = BuildObjectArrrayFromParserRules(context.usingFilenames().fileNameReference(),
+				statement.InputFiles = BuildObjectArrayFromParserRules(context.usingFilenames().fileNameReference(),
 					ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
 				//if (statement.Using.Count == 1)
 				//    DiagnosticUtils.AddError(statement, "MERGE: USING <filename> <filename>+", context.usingFilenames());
 			}
 			if (context.givingFilenames() != null)
 			{
-				statement.OutputFiles = BuildObjectArrrayFromParserRules(context.givingFilenames().fileNameReference(),
+				statement.OutputFiles = BuildObjectArrayFromParserRules(context.givingFilenames().fileNameReference(),
 					ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
 			}
 			else if (context.outputProcedure() != null)
@@ -766,7 +753,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
 		    var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
-						BuildObjectArrrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
+						BuildObjectArrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
 // [TYPECOBOL]
 						CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
 			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
@@ -791,7 +778,7 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateMultiplyStatement(CodeElementsParser.MultiplySimpleContext context) {
 			var statement = new MultiplySimpleStatement();
 			statement.Operand = CobolExpressionsBuilder.CreateNumericVariable(context.numericVariable3());
-			statement.SendingAndReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.SendingAndReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -799,7 +786,7 @@ namespace TypeCobol.Compiler.Parser
 			var statement = new MultiplyGivingStatement();
 			statement.Operand = CobolExpressionsBuilder.CreateNumericVariable(context.numericVariable3()[0]);
 			statement.ByOperand = CobolExpressionsBuilder.CreateNumericVariable(context.byOperand);
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -921,7 +908,7 @@ namespace TypeCobol.Compiler.Parser
 				{
 					CreateConditionTestTime(statement, varyingCtx.conditionTestTime());
 				}
-				statement.VaryingLoopDescriptions = BuildObjectArrrayFromParserRules(
+				statement.VaryingLoopDescriptions = BuildObjectArrayFromParserRules(
 					varyingCtx.loopVariableDescription(),
 					ctx => CreatePerformLoopDescription(ctx));
 			}
@@ -1034,7 +1021,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSetStatementForAssignation(CodeElementsParser.SetStatementForAssignationContext context) {
 			var statement = new SetStatementForAssignment();
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			statement.SendingVariable = CreateSendingVariable(context.setSendingField());
 			return statement;
 		}
@@ -1059,7 +1046,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context) {
 			var statement = new SetStatementForIndexes();
-			statement.ReceivingIndexes = BuildObjectArrrayFromParserRules(context.indexStorageArea(), ctx => CobolExpressionsBuilder.CreateIndexStorageArea(ctx));
+			statement.ReceivingIndexes = BuildObjectArrayFromParserRules(context.indexStorageArea(), ctx => CobolExpressionsBuilder.CreateIndexStorageArea(ctx));
 			if(context.UP() != null) {
 				statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Up, context.UP());
 			} else
@@ -1096,7 +1083,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext context) {
 			var statement = new SetStatementForConditions();
-			statement.Conditions = BuildObjectArrrayFromParserRules(context.conditionReference(), ctx => CobolExpressionsBuilder.CreateConditionReference(ctx));
+			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionReference(), ctx => CobolExpressionsBuilder.CreateConditionReference(ctx));
 			if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
 			return statement;
@@ -1124,7 +1111,7 @@ namespace TypeCobol.Compiler.Parser
 
 			if (context.usingFilenames() != null)
 			{
-				statement.InputFiles = BuildObjectArrrayFromParserRules(context.usingFilenames().fileNameReference(),
+				statement.InputFiles = BuildObjectArrayFromParserRules(context.usingFilenames().fileNameReference(),
 					ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
 				//if (statement.Using.Count == 1)
 				//    DiagnosticUtils.AddError(statement, "MERGE: USING <filename> <filename>+", context.usingFilenames());
@@ -1144,7 +1131,7 @@ namespace TypeCobol.Compiler.Parser
 
 			if (context.givingFilenames() != null)
 			{
-				statement.OutputFiles = BuildObjectArrrayFromParserRules(context.givingFilenames().fileNameReference(),
+				statement.OutputFiles = BuildObjectArrayFromParserRules(context.givingFilenames().fileNameReference(),
 					ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
 			}
 			else if (context.outputProcedure() != null)
@@ -1265,16 +1252,16 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSubtractStatement(CodeElementsParser.SubtractSimpleContext context) {
 			var statement = new SubtractSimpleStatement();
-			statement.VariablesTogether = BuildObjectArrrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
-			statement.SendingAndReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.VariablesTogether = BuildObjectArrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
+			statement.SendingAndReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
 		internal CodeElement CreateSubtractGivingStatement(CodeElementsParser.SubtractGivingContext context) {
 			var statement = new SubtractGivingStatement();
-			statement.VariablesTogether = BuildObjectArrrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
+			statement.VariablesTogether = BuildObjectArrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
 			statement.Operand = CobolExpressionsBuilder.CreateNumericVariable(context.fromOperand);
-			statement.ReceivingStorageAreas = BuildObjectArrrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
+			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
 			return statement;
 		}
 
@@ -1322,7 +1309,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
-			statement.SelectionObjects = BuildObjectArrrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
+			statement.SelectionObjects = BuildObjectArrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));
 			return statement;
 		}
 
@@ -1505,10 +1492,9 @@ namespace TypeCobol.Compiler.Parser
             return objectList.ToArray();
         }
 
-        private O[] BuildObjectArrrayFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject) {
-			O[] objectArray = null;
+        private O[] BuildObjectArrayFromParserRules<R, O>(R[] parserRules, Func<R, O> createObject) {
+			O[] objectArray = new O[parserRules.Length];
 			if (parserRules != null && parserRules.Length > 0) {
-				objectArray = new O[parserRules.Length];
 				for (int i = 0; i < parserRules.Length; i++) {
 					objectArray[i] = createObject(parserRules[i]);
 				}

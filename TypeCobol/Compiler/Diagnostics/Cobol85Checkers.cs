@@ -164,6 +164,25 @@ class CallStatementChecker: CodeElementListener {
 
 	}
 
+class InspectConvertingChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(InspectConvertingStatement), }; }
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var statement = e as InspectConvertingStatement;
+		var context = c as CodeElementsParser.InspectStatementContext;
+		var seen = new Dictionary<StartCharacterPosition,bool>();
+		foreach(var value in Enum.GetValues(typeof(StartCharacterPosition))) seen[(StartCharacterPosition)value] = false;
+		for(int i=0; i < statement.ReplacingConditions.Length; i++) {
+			var position = statement.ReplacingConditions[i].StartCharacterPosition;
+			if (seen[position.Value]) {
+				string error = "INSPECT: Maximum one "+position.Token.SourceText+" phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase";
+				DiagnosticUtils.AddError(statement, error, context.convertingPhrase().countingOrReplacingCondition()[i]);
+			}
+			seen[position.Value] = true;
+		}
+		//	DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
+	}
+}
+
 	class SetStatementForAssignmentChecker: CodeElementListener
 	{
 		public IList<Type> GetCodeElements() {
