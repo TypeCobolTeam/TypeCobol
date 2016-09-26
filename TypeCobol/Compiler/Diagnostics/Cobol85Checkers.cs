@@ -205,39 +205,50 @@ class MoveSimpleChecker: CodeElementListener {
 	}
 }
 
-	class SetStatementForAssignmentChecker: CodeElementListener
-	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(SetStatementForAssignment), };
-		}
-		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var set = e as SetStatementForAssignment;
-			var context = c as CodeElementsParser.SetStatementForAssignationContext;
-			for (int i = 0; i < context.dataOrIndexStorageArea().Length; i++) {
-				if (i >= set.ReceivingStorageAreas.Length) {
-					var ctxt = context.dataOrIndexStorageArea()[i];
-					DiagnosticUtils.AddError(set, "Set: Receiving fields missing or type unknown before TO", ctxt);
-				}
-			}
-			if (set.SendingVariable == null) {
-				DiagnosticUtils.AddError(set, "Set: Sending field missing or type unknown after TO", context.setSendingField());
-			}
-		}
+class SearchStatementChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SearchStatement), }; }
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var statement = e as SearchStatement;
+		if (statement.TableToSearch == null) return; // syntax error
+		if (statement.TableToSearch is Subscripted && ((Subscripted)statement.TableToSearch).Subscripts.Count > 0)
+			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
+		if (statement.TableToSearch.ReferenceModifier != null)
+			DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", GetIdentifierContext(c));
 	}
+	private static RuleContext GetIdentifierContext(ParserRuleContext context) {
+		var c = (CodeElementsParser.SearchStatementContext)context;
+		if (c.serialSearch() != null) return c.serialSearch().identifier();
+		if (c.binarySearch() != null) return c.binarySearch().identifier();
+		return null;
+	}
+}
 
-	class SetStatementForIndexesChecker: CodeElementListener
-	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(SetStatementForIndexes), };
-		}
-		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var set = e as SetStatementForIndexes;
-			if (set.SendingVariable == null) {
-				var context = c as CodeElementsParser.SetStatementForIndexesContext;
-				DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context.integerVariable1());
+class SetStatementForAssignmentChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SetStatementForAssignment), }; }
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var set = e as SetStatementForAssignment;
+		var context = c as CodeElementsParser.SetStatementForAssignationContext;
+		for (int i = 0; i < context.dataOrIndexStorageArea().Length; i++) {
+			if (i >= set.ReceivingStorageAreas.Length) {
+				var ctxt = context.dataOrIndexStorageArea()[i];
+				DiagnosticUtils.AddError(set, "Set: Receiving fields missing or type unknown before TO", ctxt);
 			}
 		}
+		if (set.SendingVariable == null)
+			DiagnosticUtils.AddError(set, "Set: Sending field missing or type unknown after TO", context.setSendingField());
 	}
+}
+
+class SetStatementForIndexesChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SetStatementForIndexes), }; }
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var set = e as SetStatementForIndexes;
+		if (set.SendingVariable == null) {
+			var context = c as CodeElementsParser.SetStatementForIndexesContext;
+			DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context.integerVariable1());
+		}
+	}
+}
 
 	class StartStatementChecker: CodeElementListener
 	{

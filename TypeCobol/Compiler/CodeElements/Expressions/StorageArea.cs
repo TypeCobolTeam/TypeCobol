@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
@@ -80,7 +81,9 @@ namespace TypeCobol.Compiler.CodeElements
 		DataType DataType { get; }
 		int Length { get; }
 	}
-	public interface Subscripted { }
+	public interface Subscripted {
+		List<SubscriptExpression> Subscripts { get; }
+	}
 
 	/// <summary>
 	/// Storage area for a data symbol or condition symbol defined in the program.
@@ -91,17 +94,18 @@ namespace TypeCobol.Compiler.CodeElements
 		public DataOrConditionStorageArea(SymbolReference symbolReference)
 				: base(StorageAreaKind.DataOrCondition) {
 			SymbolReference = symbolReference;
+			Subscripts = new List<SubscriptExpression>();
 		}
 
 		public DataOrConditionStorageArea(SymbolReference subscriptedSymbolReference, SubscriptExpression[] subscripts)
 				: base(StorageAreaKind.DataOrCondition) {
 			SymbolReference = subscriptedSymbolReference;
-			Subscripts = subscripts;
+			Subscripts = new List<SubscriptExpression>(subscripts);
 		}
 
 		public SymbolReference SymbolReference { get; private set; }
 
-		public SubscriptExpression[] Subscripts { get; private set; }
+		public List<SubscriptExpression> Subscripts { get; private set; }
 
         /// <summary>Ambiguities in the grammar in the first phase of parsing</summary>
 		public SymbolType AlternativeSymbolType {
