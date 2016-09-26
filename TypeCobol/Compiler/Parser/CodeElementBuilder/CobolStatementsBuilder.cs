@@ -674,65 +674,45 @@ namespace TypeCobol.Compiler.Parser
 		// MERGE STATEMENT //
 		/////////////////////
 
-		internal MergeStatement CreateMergeStatement(CodeElementsParser.MergeStatementContext context)
-		{
+		internal MergeStatement CreateMergeStatement(CodeElementsParser.MergeStatementContext context) {
 			var statement = new MergeStatement();
-
 			statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
 			statement.SortingKeys = CreateSortingKeys(context.onAscendingDescendingKey());
-			if (context.collatingSequence() != null)
-			{
+			if (context.collatingSequence() != null) {
 				statement.CollatingSequence = CobolWordsBuilder.CreateAlphabetNameReference(
 					context.collatingSequence().alphabetNameReference());
 			}
-			if (context.usingFilenames() != null)
-			{
-				statement.InputFiles = BuildObjectArrayFromParserRules(context.usingFilenames().fileNameReference(),
-					ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
-				//if (statement.Using.Count == 1)
-				//    DiagnosticUtils.AddError(statement, "MERGE: USING <filename> <filename>+", context.usingFilenames());
+			if (context.usingFilenames() != null) {
+				statement.InputFiles = BuildObjectArrayFromParserRules(context.usingFilenames().fileNameReference(), ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
 			}
-			if (context.givingFilenames() != null)
-			{
+			if (context.givingFilenames() != null) {
 				statement.OutputFiles = BuildObjectArrayFromParserRules(context.givingFilenames().fileNameReference(),
 					ctx => CobolWordsBuilder.CreateFileNameReference(ctx));
-			}
-			else if (context.outputProcedure() != null)
-			{
-				if (context.outputProcedure().procedureName() != null)
-				{
+			} else
+			if (context.outputProcedure() != null) {
+				if (context.outputProcedure().procedureName() != null) {
 					statement.OutputProcedure = CobolWordsBuilder.CreateProcedureName(context.outputProcedure().procedureName());
-				}
-				else if(context.outputProcedure().proceduresRange() != null)
-				{
+				} else
+				if(context.outputProcedure().proceduresRange() != null) {
 					statement.OutputProcedure = CobolWordsBuilder.CreateProcedureName(context.outputProcedure().proceduresRange().startProcedure);
 					statement.ThroughOutputProcedure = CobolWordsBuilder.CreateProcedureName(context.outputProcedure().proceduresRange().endProcedure);
 				}
 			}
-
 			return statement;
 		}
 
-		private IList<SortingKey> CreateSortingKeys(CodeElementsParser.OnAscendingDescendingKeyContext[] contexts)
-		{
-			if (contexts != null && contexts.Length > 0)
-			{
+		private IList<SortingKey> CreateSortingKeys(CodeElementsParser.OnAscendingDescendingKeyContext[] contexts) {
+			if (contexts != null && contexts.Length > 0) {
 				var sortingKeys = new List<SortingKey>(1);
-				foreach(var context in contexts)
-				{
+				foreach(var context in contexts) {
 					SyntaxProperty<SortingDirection> sortingDirection = null;
-					if (context.ASCENDING() != null)
-					{
-						sortingDirection = CreateSyntaxProperty(SortingDirection.Ascending,
-							context.ASCENDING());
+					if (context.ASCENDING() != null) {
+						sortingDirection = CreateSyntaxProperty(SortingDirection.Ascending, context.ASCENDING());
+					} else
+					if (context.DESCENDING() != null) {
+						sortingDirection = CreateSyntaxProperty(SortingDirection.Descending, context.DESCENDING());
 					}
-					else if (context.DESCENDING() != null)
-					{
-						sortingDirection = CreateSyntaxProperty(SortingDirection.Descending,
-							context.DESCENDING());
-					}
-					foreach(var dataContext in context.qualifiedDataName())
-					{
+					foreach(var dataContext in context.qualifiedDataName()) {
 						var sortingKey = new SortingKey();
 						sortingKey.Direction = sortingDirection;
 						sortingKey.DataItem = CobolWordsBuilder.CreateQualifiedDataName(dataContext);
@@ -741,10 +721,7 @@ namespace TypeCobol.Compiler.Parser
 				}
 				return sortingKeys;
 			}
-			else
-			{
-				return null;
-			}
+			return null;
 		}
 
 		  ////////////////////

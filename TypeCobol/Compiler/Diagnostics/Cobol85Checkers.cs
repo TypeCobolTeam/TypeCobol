@@ -179,7 +179,16 @@ class InspectConvertingChecker: CodeElementListener {
 			}
 			seen[position.Value] = true;
 		}
-		//	DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
+	}
+}
+
+class MergeUsingChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(MergeStatement), }; }
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var statement = e as MergeStatement;
+		var context = c as CodeElementsParser.MergeStatementContext;
+		if (statement.InputFiles.Length == 1)
+			DiagnosticUtils.AddError(statement, "MERGE: USING needs 2 filenames or more", context.usingFilenames());
 	}
 }
 
