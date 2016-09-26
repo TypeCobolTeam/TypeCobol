@@ -192,6 +192,19 @@ class MergeUsingChecker: CodeElementListener {
 	}
 }
 
+class MoveSimpleChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(MoveSimpleStatement), }; }
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var statement = e as MoveSimpleStatement;
+		var context = c as CodeElementsParser.MoveSimpleContext;
+		for(int i=0; i<statement.ReceivingStorageAreas.Length; i++) {
+			var receiver = statement.ReceivingStorageAreas[i].StorageArea;
+			if (receiver is IntrinsicFunctionCallResult)
+				DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", context.storageArea1()[i]);
+		}
+	}
+}
+
 	class SetStatementForAssignmentChecker: CodeElementListener
 	{
 		public IList<Type> GetCodeElements() {
