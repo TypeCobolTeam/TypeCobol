@@ -183,7 +183,7 @@ public class SetStatementForIndexes: SetStatement {
 	public IntegerVariable SendingVariable{ get; set; }
 
 	public override string ToString() {
-		var str = new StringBuilder("Set ");
+		var str = new StringBuilder("SET ");
 		if (ReceivingIndexes != null) {
 			foreach (var receivingIndex in ReceivingIndexes) {
 				str.Append(' ');
@@ -195,7 +195,6 @@ public class SetStatementForIndexes: SetStatement {
 			else if (IncrementDirection.Value == IndexIncrementDirection.Down) str.Append(" DOWN BY ");
 		} else str.Append(" ");
 		if (SendingVariable != null) str.Append(SendingVariable);
-		str.AppendLine(" ");
 		return str.ToString();
 	}
 }
@@ -259,11 +258,8 @@ internal class SetStatementForConditions: SetStatement {
 	public BooleanValue SendingValue { get; set; }
 
 	public override string ToString() {
-		var str = new StringBuilder(base.ToString());
-		foreach (var condition in Conditions) {
-			str.Append(' ');
-			str.Append(condition);
-		}
+		var str = new StringBuilder("SET");
+		foreach (var condition in Conditions) str.Append(' ').Append(condition);
 		str.Append(" TO ").Append(SendingValue.Value.ToString()).AppendLine();
 		return str.ToString();
 	}
