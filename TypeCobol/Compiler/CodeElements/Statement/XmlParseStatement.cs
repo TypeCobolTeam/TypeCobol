@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -40,7 +39,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// encoding declaration, the XML document is parsed with the code page
 		/// specified by the CODEPAGE compiler option.
 		/// </summary>
-		public Variable Identifier { get; set; }
+		public Variable XmlTextToParse { get; set; }
 
 		/// <summary>
 		/// pp470-471:
@@ -60,7 +59,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// or ASCII codepage. See Coded character sets for XML documents in the
 		/// Enterprise COBOL Programming Guide for details.
 		/// </summary>
-		public IntegerVariable Encoding { get; set; }
+		public IntegerVariable CodePage { get; set; }
 
 		/// <summary>
 		/// p470:
@@ -99,7 +98,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// that contains the optimized XML schema. identifier-2 must be of category
 		/// alphanumeric and cannot be a function-identifier.
 		/// </summary>
-		public Variable ValidatingIdentifier { get; set; }
+		public Variable OptimizedXmlSchema { get; set; }
 
 		/// <summary>
 		/// p470:
@@ -118,7 +117,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// schema by using the XML-SCHEMA clause. For more information about
 		/// the XML-SCHEMA clause, see “SPECIAL-NAMES paragraph” on page 112.
 		/// </summary>
-		public SymbolReference ValidatingFile { get; set; }
+		public SymbolReference OptimizedXmlSchemaFile { get; set; }
 
 		/// <summary>
 		/// p471:
@@ -128,17 +127,21 @@ namespace TypeCobol.Compiler.CodeElements
 		///
 		/// procedure-name-1, procedure-name-2
 		/// Must name a section or paragraph in the PROCEDURE DIVISION.
-		/// When both procedure-name-1 and procedure-name-2 are specified, if
-		/// either is a procedure name in a declarative procedure, both must
-		/// be procedure names in the same declarative procedure.
-		///
+		/// 
 		/// procedure-name-1
 		/// Specifies the first (or only) section or paragraph in the processing
 		/// procedure.
-		///
-		/// procedure-name-2
-		/// Specifies the last section or paragraph in the processing procedure.
 		/// </summary>
-		public IList<SymbolReference> Procedures { get; set; }
-	}
+		public SymbolReference ProcessingProcedure { get; set; }
+
+        /// <summary>
+        /// procedure-name-2
+		/// Specifies the last section or paragraph in the processing procedure.
+        /// 
+        /// When both procedure-name-1 and procedure-name-2 are specified, if
+		/// either is a procedure name in a declarative procedure, both must
+		/// be procedure names in the same declarative procedure.
+        /// </summary>
+        public SymbolReference ThroughProcessingProcedure { get; set; }
+    }
 }

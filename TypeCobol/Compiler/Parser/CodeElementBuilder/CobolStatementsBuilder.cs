@@ -1,12 +1,9 @@
 ﻿using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -1423,82 +1420,118 @@ namespace TypeCobol.Compiler.Parser
 		 // XML GENERATE STATEMENT //
 		//////////////////////////// 
 
-		internal XmlGenerateStatement CreateXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context) {
+		internal XmlGenerateStatement CreateXmlGenerateStatement(CodeElementsParser.XmlGenerateStatementContext context)
+        {
 			var statement = new XmlGenerateStatement();
-			statement.Receiving = CobolExpressionsBuilder.CreateStorageArea(context.receivingField);
-			statement.Data = CobolExpressionsBuilder.CreateVariable(context.dataItemToConvertToXml);
-			statement.Count = CobolExpressionsBuilder.CreateStorageArea(context.generatedXmlCharsCount);
-			if (context.codepage() != null)
-				statement.Encoding = CobolExpressionsBuilder.CreateIntegerVariable(context.codepage().integerVariable1());
-			statement.XMLDeclaration = CreateSyntaxProperty(true, context.XML_DECLARATION());
-			statement.Attributes = CreateSyntaxProperty(true, context.ATTRIBUTES());
-			statement.Namespace = CobolExpressionsBuilder.CreateAlphanumericVariable(context.namespaaaaace);
-			statement.NamespacePrefix = CobolExpressionsBuilder.CreateAlphanumericVariable(context.namespacePrefix);
-			foreach (var namecontext in context.xmlNameMapping()) {
-				statement.Names.Add(CreateXmlName(namecontext));
-			}
-			foreach (var typecontext in context.xmlTypeMapping()) {
-				statement.Types.Add(CreateXmlType(typecontext));
-			}
-			foreach (var suppresscontext in context.xmlSuppressDataItem()) {
-				statement.Suppressions.Add(CreateXmlSuppression(suppresscontext));
-			}
-			foreach (var suppresscontext in context.xmlSuppressGeneric()) {
-				statement.Suppressions.Add(CreateXmlSuppression(suppresscontext));
-			}
-			return statement;
+			statement.ReceivingField = CobolExpressionsBuilder.CreateStorageArea(context.receivingField);
+			statement.DataItemToConvertToXml = CobolExpressionsBuilder.CreateVariable(context.dataItemToConvertToXml);
+            if (context.generatedXmlCharsCount != null)
+            {
+                statement.GeneratedXmlCharsCount = CobolExpressionsBuilder.CreateStorageArea(context.generatedXmlCharsCount);
+            }
+            if (context.codepage() != null)
+            {
+                statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.codepage().integerVariable1());
+            }
+            if (context.XML_DECLARATION() != null)
+            {
+                statement.StartWithXMLDeclaration = CreateSyntaxProperty(true, context.XML_DECLARATION());
+            }
+            if (context.ATTRIBUTES() != null)
+            {
+                statement.GenerateElementaryItemsAsAttributes = CreateSyntaxProperty(true, context.ATTRIBUTES());
+            }
+            if (context.@namespace != null)
+            {
+                statement.Namespace = CobolExpressionsBuilder.CreateAlphanumericVariable(context.@namespace);
+            }
+            if (context.namespacePrefix != null)
+            {
+                statement.NamespacePrefix = CobolExpressionsBuilder.CreateAlphanumericVariable(context.namespacePrefix);
+            }
+            if(context.xmlNameMapping() != null)
+            {
+                statement.XmlNameMappings = BuildObjectArrrayFromParserRules(context.xmlNameMapping(),
+                    ctx => CreateXmlNameMapping(ctx));
+            }
+            if (context.xmlTypeMapping() != null)
+            {
+                statement.XmlTypeMappings = BuildObjectArrrayFromParserRules(context.xmlTypeMapping(),
+                    ctx => CreateXmlTypeMapping(ctx));
+            }
+            if (context.xmlSuppressDirective() != null)
+            {
+                statement.XmlSuppressDirectives = BuildObjectArrrayFromParserRules(context.xmlSuppressDirective(),
+                    ctx => CreateXmlSuppressDirective(ctx));
+            }
+            return statement;
 		}
 
-		private XmlGenerateStatement.Name CreateXmlName(CodeElementsParser.XmlNameMappingContext context) {
-			var mapping = new XmlGenerateStatement.Name();
-			mapping.Old = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
-			mapping.New = CobolWordsBuilder.CreateAlphanumericValue(context.xmlNameToGenerate);
-			return mapping;
+		private XmlNameMapping CreateXmlNameMapping(CodeElementsParser.XmlNameMappingContext context)
+        {
+			var nameMapping = new XmlNameMapping();
+			nameMapping.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+			nameMapping.XmlNameToGenerate = CobolWordsBuilder.CreateAlphanumericValue(context.xmlNameToGenerate);
+			return nameMapping;
 		}
 
-		private XmlGenerateStatement.Type CreateXmlType(CodeElementsParser.XmlTypeMappingContext context) {
-			var result = new XmlGenerateStatement.Type();
-			result.Data = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
-			if (context.ATTRIBUTE() != null) result.DataType = XmlGenerateStatement.Type.Mode.ATTRIBUTE;
-			if (context.ELEMENT()   != null) result.DataType = XmlGenerateStatement.Type.Mode.ELEMENT;
-			if (context.CONTENT()   != null) result.DataType = XmlGenerateStatement.Type.Mode.CONTENT;
-			return result;
+		private XmlTypeMapping CreateXmlTypeMapping(CodeElementsParser.XmlTypeMappingContext context) {
+			var typeMapping = new XmlTypeMapping();
+			typeMapping.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+            if (context.ATTRIBUTE() != null)
+            {
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ATTRIBUTE,
+                    context.ATTRIBUTE());
+            }
+            if (context.ELEMENT() != null)
+            {
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ELEMENT,
+                    context.ELEMENT());
+            }
+            if (context.CONTENT() != null)
+            {
+                typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.CONTENT,
+                    context.CONTENT());
+            }
+            return typeMapping;
 		}
 
-		private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElementsParser.XmlSuppressGenericContext context) {
-			XmlGenerateStatement.Suppression result = new XmlGenerateStatement.Suppression();
-			result.Generic = XmlGenerateStatement.Suppression.Mode.UNKNOWN;
-			if (context.ATTRIBUTE() != null) {
-				if (context.NUMERIC() != null)
-					 result.Generic = XmlGenerateStatement.Suppression.Mode.NUMERIC_ATTRIBUTE;
-				else if (context.NONNUMERIC() != null)
-					 result.Generic = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ATTRIBUTE;
-				else result.Generic = XmlGenerateStatement.Suppression.Mode.ATTRIBUTE;
-			}
-			else if (context.ELEMENT() != null) {
-				if (context.NUMERIC() != null)
-					 result.Generic = XmlGenerateStatement.Suppression.Mode.NUMERIC_ELEMENT;
-				else if (context.NONNUMERIC() != null)
-					 result.Generic = XmlGenerateStatement.Suppression.Mode.NONNUMERIC_ELEMENT;
-				else result.Generic = XmlGenerateStatement.Suppression.Mode.ELEMENT;
-			}
-			result.When = CreateRepeatedCharacterValues(context.xmlSuppressWhen());
-			return result;
-		}
-		private XmlGenerateStatement.Suppression CreateXmlSuppression(CodeElementsParser.XmlSuppressDataItemContext context) {
-			XmlGenerateStatement.Suppression result = new XmlGenerateStatement.Suppression();
-			result.Specific = CobolExpressionsBuilder.CreateVariable(context.variable1());
-			result.When = CreateRepeatedCharacterValues(context.xmlSuppressWhen());
-			return result;
-		}
-
-		private IList<RepeatedCharacterValue> CreateRepeatedCharacterValues(CodeElementsParser.XmlSuppressWhenContext context) {
-			var values = new List<RepeatedCharacterValue>();
-			if (context == null) return values;
-			foreach(var repeat in context.repeatedCharacterValue3()) {
-				values.Add(CobolWordsBuilder.CreateRepeatedCharacterValue(repeat));
-			}
-			return values;
+		private XmlSuppressDirective CreateXmlSuppressDirective(CodeElementsParser.XmlSuppressDirectiveContext context) {
+			var suppressDirective = new XmlSuppressDirective();
+            if (context.subordinateDataItem != null)
+            {
+                suppressDirective.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
+            }
+            else
+            {
+                if (context.ATTRIBUTE() != null)
+                {
+                    if (context.NUMERIC() != null)
+                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ATTRIBUTE,
+                            context.NUMERIC());
+                    else if (context.NONNUMERIC() != null)
+                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ATTRIBUTE,
+                            context.NONNUMERIC());
+                    else
+                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
+                            context.ATTRIBUTE());
+                }
+                else if (context.ELEMENT() != null)
+                {
+                    if (context.NUMERIC() != null)
+                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ELEMENT,
+                            context.NUMERIC());
+                    else if (context.NONNUMERIC() != null)
+                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ELEMENT,
+                            context.NONNUMERIC());
+                    else
+                        suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ELEMENT,
+                            context.ELEMENT());
+                }
+            }
+			suppressDirective.ItemValuesToSuppress = BuildObjectArrrayFromParserRules(context.repeatedCharacterValue3(),
+                ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));
+			return suppressDirective;
 		}
 
 		  /////////////////////////
@@ -1507,28 +1540,35 @@ namespace TypeCobol.Compiler.Parser
 
 		internal XmlParseStatement CreateXmlParseStatement(CodeElementsParser.XmlParseStatementContext context) {
 			var statement = new XmlParseStatement();
-			statement.Identifier = CobolExpressionsBuilder.CreateVariable(context.xmlTextToParse);
-			if (context.codepage() != null)
-				statement.Encoding = CobolExpressionsBuilder.CreateIntegerVariable(context.codepage().integerVariable1());
-			if (context.RETURNING() != null)
-				 statement.ReturningNational = CreateSyntaxProperty(true, context.RETURNING());
-			else statement.ReturningNational = CreateSyntaxProperty(true, context.NATIONAL());
-			statement.ValidatingIdentifier = CobolExpressionsBuilder.CreateVariable(context.optimizedXmlSchemaData);
-			statement.ValidatingFile = CobolWordsBuilder.CreateXmlSchemaNameReference(context.optimizedXmlSchemaFile);
-			statement.Procedures = new List<SymbolReference>();
-			if (context.procedureName() != null) {
-				statement.Procedures.Add(CobolWordsBuilder.CreateProcedureName(context.procedureName()));
-			}
-			if (context.proceduresRange() != null) {
-				// warning: these can add null to statement.Procedures
-				statement.Procedures.Add(CobolWordsBuilder.CreateProcedureName(context.proceduresRange().startProcedure));
-				statement.Procedures.Add(CobolWordsBuilder.CreateProcedureName(context.proceduresRange().endProcedure));
-			}
-			return statement;
+			statement.XmlTextToParse = CobolExpressionsBuilder.CreateVariable(context.xmlTextToParse);
+            if (context.codepage() != null)
+            {
+                statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.codepage().integerVariable1());
+            }
+            if (context.NATIONAL() != null)
+            {
+                statement.ReturningNational = CreateSyntaxProperty(true, context.NATIONAL());
+            }
+            if (context.optimizedXmlSchemaData != null)
+            {
+                statement.OptimizedXmlSchema = CobolExpressionsBuilder.CreateVariable(context.optimizedXmlSchemaData);
+            }
+            if (context.optimizedXmlSchemaFile != null)
+            {
+                statement.OptimizedXmlSchemaFile = CobolWordsBuilder.CreateXmlSchemaNameReference(context.optimizedXmlSchemaFile);
+            }
+            if (context.procedureName() != null)
+            {
+                statement.ProcessingProcedure = CobolWordsBuilder.CreateProcedureName(context.procedureName());
+            }
+            else if (context.proceduresRange() != null)
+            {
+                statement.ProcessingProcedure = CobolWordsBuilder.CreateProcedureName(context.proceduresRange().startProcedure);
+                statement.ThroughProcessingProcedure = CobolWordsBuilder.CreateProcedureName(context.proceduresRange().endProcedure);
+            }
+            return statement;
 		}
-
-
-
+        
 
 
         /////////////////////

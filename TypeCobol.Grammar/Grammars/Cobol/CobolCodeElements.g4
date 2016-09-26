@@ -7570,11 +7570,11 @@ xmlGenerateStatement:
 	(WITH? ENCODING codepage)?
 	(WITH? XML_DECLARATION)?
 	(WITH? ATTRIBUTES)?
-	(NAMESPACE IS? namespaaaaace=alphanumericVariable2 
+	(NAMESPACE IS? namespace=alphanumericVariable2 
 		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
 	(NAME OF? xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
-	(SUPPRESS (xmlSuppressDataItem | xmlSuppressGeneric)+)?;
+	(SUPPRESS xmlSuppressDirective+)?;
 		
 xmlNameMapping:
 	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;
@@ -7582,18 +7582,12 @@ xmlNameMapping:
 xmlTypeMapping:
 	subordinateDataItem=variable1 IS? (ATTRIBUTE | ELEMENT | CONTENT);
 
-xmlSuppressDataItem:	
-	subordinateDataItem=variable1 
-	xmlSuppressWhen;
-
-xmlSuppressGeneric:
-	(EVERY (ATTRIBUTE | ELEMENT | ((NUMERIC | NONNUMERIC) (ATTRIBUTE | ELEMENT)?)))?
-	xmlSuppressWhen;
-
-// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
-xmlSuppressWhen:
+xmlSuppressDirective:	
+	( subordinateDataItem=variable1 |
+	(EVERY (ATTRIBUTE | ELEMENT | ((NUMERIC | NONNUMERIC) (ATTRIBUTE | ELEMENT)?)))?)
+	// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 	WHEN repeatedCharacterValue3 (OR? repeatedCharacterValue3)*;
-
+	
 xmlStatementEnd: END_XML;
 
 // codepage
