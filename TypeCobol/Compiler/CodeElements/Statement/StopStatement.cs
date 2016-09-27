@@ -31,22 +31,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// Do not use the STOP literal statement in programs compiled with the THREAD
         /// compiler option.
         /// </summary>
-		public object Literal {
-			get {
-				if (numeric != null) return numeric;
-				if (alphanum != null) return alphanum;
-				return null;
-			}
-			internal set {
-				if (value is NumericValue) numeric = (NumericValue)value;
-				else
-				if (value is AlphanumericValue) alphanum = (AlphanumericValue)value;
-				else throw new ArgumentException();
-			}
-		}
-
-		private NumericValue numeric { get; set; }
-		private AlphanumericValue alphanum { get; set; }
+        public NumericValue ReturnCode { get; set; }
+        public AlphanumericValue ReturnMessage { get; set; }
+        public SyntaxProperty<bool> ReturnNull { get; set; }
 
         /// <summary>
         /// p432:
@@ -64,6 +51,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// STOP RUN in Subprogram returns directly to the program that called the main program.
         /// (Can be the system, which causes the application to end.)
         /// </summary>
-        public bool IsStopRun = false;
-	}
+        public SyntaxProperty<bool> StopRun { get; set; }
+
+    }
 }

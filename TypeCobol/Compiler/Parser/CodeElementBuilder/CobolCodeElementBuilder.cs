@@ -1792,9 +1792,9 @@ namespace TypeCobol.Compiler.Parser
 		// --- SET STATEMENT ---
 
 		public override void EnterSetStatement(CodeElementsParser.SetStatementContext context) {
-			if (context.setStatementForAssignation() != null) {
-				Context = context.setStatementForAssignation();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignation(context.setStatementForAssignation());
+			if (context.setStatementForAssignment() != null) {
+				Context = context.setStatementForAssignment();
+				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignment(context.setStatementForAssignment());
 			} else
 			if (context.setStatementForIndexes() != null) {
 				Context = context.setStatementForIndexes();

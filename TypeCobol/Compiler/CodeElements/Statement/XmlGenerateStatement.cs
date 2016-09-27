@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -52,7 +51,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-1 is not large enough, an error condition exists at the end of the
 		/// XML GENERATE statement.
 		/// </summary>
-		public ReceivingStorageArea Receiving { get; set; }
+		public ReceivingStorageArea ReceivingField { get; set; }
 
 		/// <summary>
 		/// p459:
@@ -94,7 +93,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// names in the XML specification, version 1.0. For details about the XML
 		/// specification, see XML specification.
 		/// </summary>
-		public Variable Data { get; set; }
+		public Variable DataItemToConvertToXml { get; set; }
 
 		/// <summary>
 		/// p460:
@@ -110,7 +109,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-3 must not overlap identifier-1, identifier-2, codepage (if an
 		/// identifier), identifier-4, or identifier-5.
 		/// </summary>
-		public ReceivingStorageArea Count { get; set; }
+		public ReceivingStorageArea GeneratedXmlCharsCount { get; set; }
 
 		/// <summary>
 		/// pp460-461:
@@ -144,7 +143,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// specified by the CODEPAGE compiler option in effect when the source
 		/// code was compiled.
 		/// </summary>
-		public IntegerVariable Encoding { get; set; }
+		public IntegerVariable CodePage { get; set; }
 
 		/// <summary>
 		/// p461:
@@ -165,8 +164,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// If the XML-DECLARATION phrase is omitted, the generated XML
 		/// document does not include an XML declaration.
 		/// </summary>
-		public SyntaxProperty<bool> XMLDeclaration { get; set; }
-		public bool IsXMLDeclaration { get { return XMLDeclaration != null && XMLDeclaration.Value; } }
+		public SyntaxProperty<bool> StartWithXMLDeclaration { get; set; }
 
 		/// <summary>
 		/// p461:
@@ -184,8 +182,7 @@ namespace TypeCobol.Compiler.CodeElements
 		/// For an example of the effect of the ATTRIBUTES phrase, see Generating
 		/// XML output in the Enterprise COBOL Programming Guide.
 		/// </summary>
-		public SyntaxProperty<bool> Attributes { get; set; }
-		public bool IsAttributes { get { return Attributes != null && Attributes.Value; } }
+		public SyntaxProperty<bool> GenerateElementaryItemsAsAttributes { get; set; }
 
 		/// <summary>
 		/// pp461-462:
@@ -240,107 +237,20 @@ namespace TypeCobol.Compiler.CodeElements
 		/// </summary>
 		public AlphanumericVariable NamespacePrefix { get; set; }
 
-		/// <summary>
-		/// p462:
-		/// NAME phrase
-		/// Allows you to supply element and attribute names.
-		/// </summary>
-		public IList<Name> Names = new List<Name>();
-
-		/// <summary>
-		/// p462:
-		/// NAME phrase
-		/// Allows you to supply element and attribute names.
-		/// </summary>
-		public class Name
-		{
-			/// <summary>
-			/// p462:
-			/// identifier-6 must reference identifier-2 or one of its subordinate data items.
-			/// It cannot be a function identifier and cannot be reference modified or
-			/// subscripted. It must not specify any data item which is ignored by the
-			/// XML GENERATE statement. For more information about identifier-2, see
-			/// the description of identifier-2. If identifier-6 is specified more than once in
-			/// the NAME phrase, the last specification is used.
-			/// </summary>
-			public Variable Old;
-
-			/// <summary>
-			/// p462:
-			/// literal-6 must be an alphanumeric or national literal containing the
-			/// attribute or element name to be generated in the XML document
-			/// corresponding to identifier-6. It must be a valid XML local name. If literal-6
-			/// is a national literal, identifier-1 must reference a data item of category
-			/// national or the encoding phrase must specify 1208.
-			/// </summary>
-			public AlphanumericValue New;
-		}
+        /// <summary>
+        /// p462:
+        /// NAME phrase
+        /// Allows you to supply element and attribute names.
+        /// </summary>
+        public XmlNameMapping[] XmlNameMappings { get; set; }		
 
 		/// <summary>
 		/// p462:
 		/// TYPE phrase
 		/// Allows you to control attribute and element generation.
 		/// </summary>
-		public IList<Type> Types = new List<Type>();
-
-		/// <summary>
-		/// p462:
-		/// TYPE phrase
-		/// Allows you to control attribute and element generation.
-		/// </summary>
-		public class Type
-		{
-			public enum Mode
-			{
-				UNKNOWN,
-				/// <summary>
-				/// p463:
-				/// When ATTRIBUTE is specified, identifier-7 must be eligible to be an XML
-				/// attribute. identifier-7 is expressed in the generated XML as an attribute of
-				/// the XML element immediately superordinate to identifier-7 rather than as
-				/// a child element.
-				/// </summary>
-				ATTRIBUTE,
-				/// <summary>
-				/// p463:
-				/// When ELEMENT is specified, identifier-7 is expressed in the generated
-				/// XML as an element. The XML element name is derived from identifier-7
-				/// and the element character content is derived from the converted content
-				/// of identifier-7 as described in “Operation of XML GENERATE” on page 465.
-				/// </summary>
-				ELEMENT,
-				/// <summary>
-				/// p463:
-				/// When CONTENT is specified, identifier-7 is expressed in the generated
-				/// XML as element character content of the XML element that corresponds
-				/// to the data item immediately superordinate to identifier-7. The value of
-				/// the element character content is derived from the converted content of
-				/// identifier-7 as described in “Operation of XML GENERATE” on page 465.
-				///
-				/// When CONTENT is specified for multiple identifiers all corresponding
-				/// to the same superordinate identifier, the multiple contributions to the
-				/// element character content are concatenated.
-				/// </summary>
-				CONTENT,
-			}
-
-			/// <summary>
-			/// p463:
-			/// identifier-7 must reference an elementary data item that is subordinate to
-			/// identifier-2. It cannot be a function identifier and cannot be reference
-			/// modified or subscripted. It must not specify any data item which is
-			/// ignored by the XML GENERATE statement. For more information about
-			/// identifier-2, see the description of identifier-2. If identifier-7 is specified more
-			/// than once in the TYPE phrase, the last specification is used.
-			///
-			/// If the XML GENERATE statement also includes a WITH ATTRIBUTES
-			/// phrase, the TYPE phrase has precedence for identifier-7.
-			/// </summary>
-			public Variable Data;
-
-			public Mode DataType = Mode.UNKNOWN;
-		}
-
+		public XmlTypeMapping[] XmlTypeMappings { get; set; }
+        
 		/// <summary>
 		/// p463:
 		/// SUPPRESS phrase
@@ -350,87 +260,175 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-1 must be large enough to contain the generated XML document
 		/// before any suppression.
 		/// </summary>
-		public IList<Suppression> Suppressions = new List<Suppression>();
-
-		/// <summary>
-		/// p463:
-		/// SUPPRESS phrase
-		/// Allows you to identify items that are subordinate to identifier-2 and must
-		/// be suppressed when generating the XML if they contain values that are
-		/// specified in the WHEN clause. If the SUPPRESS phrase is specified,
-		/// identifier-1 must be large enough to contain the generated XML document
-		/// before any suppression.
-		/// </summary>
-		public class Suppression
-		{
-			/// <summary>
-			/// p463:
-			/// With the generic-suppression-phrase, elementary items subordinate to
-			/// identifier-2 that are not otherwise ignored by XML GENERATE operations
-			/// are identified generically for potential suppression. Either items of class
-			/// numeric, if the NUMERIC keyword is specified, or items that are not of
-			/// class numeric, if the NONNUMERIC keyword is specified, or both, may be
-			/// suppressed. If the ATTRIBUTE keyword is specified, only items that would
-			/// be expressed in the generated XML document as an XML attribute are
-			/// identified for potential suppression. If the ELEMENT keyword is specified,
-			/// only items that would be expressed in the generated XML document as an
-			/// XML element are identified.
-			///
-			/// If multiple generic-suppression-phrase are specified, the effect is cumulative.
-			/// </summary>
-			public enum Mode
-			{
-				UNKNOWN,
-				NUMERIC_ATTRIBUTE,
-				NUMERIC_ELEMENT,
-				NONNUMERIC_ATTRIBUTE,
-				NONNUMERIC_ELEMENT,
-				ATTRIBUTE,
-				ELEMENT,
-			}
-			public Mode Generic = Mode.UNKNOWN;
-
-			/// <summary>
-			/// pp463-464:
-			/// identifier-8 explicitly identifies items for potential suppression. It must
-			/// reference an elementary data item that is subordinate to identifier-2 and that
-			/// is not otherwise ignored by the XML GENERATE operations. For more
-			/// information about that element, see the description of identifier-2. It cannot
-			/// be a function identifier and cannot be reference modified or subscripted. If
-			/// identifier-8 is specified more than once in the SUPPRESS phrase, the last
-			/// specification is used. The explicit suppression specification for identifier-8
-			/// overrides the suppression specification that is implied by any
-			/// generic-suppression-phrase, if identifier-8 is also one of the identifiers
-			/// generically identified.
-			/// * If ZERO, ZEROES, or ZEROS is specified in the WHEN phrase,
-			/// identifier-8 or all the data items that are identified by the
-			/// generic-suppression-phrase must not be of USAGE DISPLAY-1.
-			/// * If SPACE or SPACES is specified in the WHEN phrase, identifier-8 or all
-			/// the data items that are identified by the generic-suppression-phrase must
-			/// be of USAGE DISPLAY, DISPLAY-1 or NATIONAL.
-			/// * If LOW-VALUE, LOW-VALUES, HIGH-VALUE, or HIGH-VALUES is
-			/// specified in the WHEN phrase, identifier-8 or all the data items that are
-			/// identified by the generic-suppression-phrase must be of class alphanumeric
-			/// or national.
-			/// </summary>
-			public Variable Specific;
-
-			/// <summary>
-			/// p464:
-			/// The comparison operation that determines if an item will be suppressed is
-			/// a numeric comparison if the value specified is ZERO, ZEROS, or ZEROES,
-			/// and the item is of category numeric or internal floating-point. For all other
-			/// cases, the comparison operation is an alphanumeric, DBCS, or national
-			/// comparison depending on whether the item is of usage DISPLAY,
-			/// DISPLAY-1 or NATIONAL respectively.
-			///
-			/// When the SUPPRESS phrase is specified, a group item subordinate to
-			/// identifier-2 is suppressed in the generated XML document if all the eligible
-			/// items subordinate to the group item are suppressed or if the group item
-			/// has zero length. The root element is always generated, even if all the items
-			/// subordinate to identifier-2 are suppressed.
-			/// </summary>
-			public IList<RepeatedCharacterValue> When;
-		}
+		public XmlSuppressDirective[] XmlSuppressDirectives { get; set; }		
 	}
+
+    /// <summary>
+    /// p462:
+    /// NAME phrase
+    /// Allows you to supply element and attribute names.
+    /// </summary>
+    public class XmlNameMapping
+    {
+        /// <summary>
+        /// p462:
+        /// identifier-6 must reference identifier-2 or one of its subordinate data items.
+        /// It cannot be a function identifier and cannot be reference modified or
+        /// subscripted. It must not specify any data item which is ignored by the
+        /// XML GENERATE statement. For more information about identifier-2, see
+        /// the description of identifier-2. If identifier-6 is specified more than once in
+        /// the NAME phrase, the last specification is used.
+        /// </summary>
+        public Variable DataItemName { get; set; }
+
+        /// <summary>
+        /// p462:
+        /// literal-6 must be an alphanumeric or national literal containing the
+        /// attribute or element name to be generated in the XML document
+        /// corresponding to identifier-6. It must be a valid XML local name. If literal-6
+        /// is a national literal, identifier-1 must reference a data item of category
+        /// national or the encoding phrase must specify 1208.
+        /// </summary>
+        public AlphanumericValue XmlNameToGenerate;
+    }
+
+    /// <summary>
+    /// p462:
+    /// TYPE phrase
+    /// Allows you to control attribute and element generation.
+    /// </summary>
+    public class XmlTypeMapping
+    {
+        /// <summary>
+        /// p463:
+        /// identifier-7 must reference an elementary data item that is subordinate to
+        /// identifier-2. It cannot be a function identifier and cannot be reference
+        /// modified or subscripted. It must not specify any data item which is
+        /// ignored by the XML GENERATE statement. For more information about
+        /// identifier-2, see the description of identifier-2. If identifier-7 is specified more
+        /// than once in the TYPE phrase, the last specification is used.
+        ///
+        /// If the XML GENERATE statement also includes a WITH ATTRIBUTES
+        /// phrase, the TYPE phrase has precedence for identifier-7.
+        /// </summary>
+        public Variable DataItemName { get; set; }
+
+        public SyntaxProperty<XmlSyntaxType> XmlSyntaxTypeToGenerate { get; set; }
+
+        public enum XmlSyntaxType
+        {
+            UNKNOWN,
+            /// <summary>
+            /// p463:
+            /// When ATTRIBUTE is specified, identifier-7 must be eligible to be an XML
+            /// attribute. identifier-7 is expressed in the generated XML as an attribute of
+            /// the XML element immediately superordinate to identifier-7 rather than as
+            /// a child element.
+            /// </summary>
+            ATTRIBUTE,
+            /// <summary>
+            /// p463:
+            /// When ELEMENT is specified, identifier-7 is expressed in the generated
+            /// XML as an element. The XML element name is derived from identifier-7
+            /// and the element character content is derived from the converted content
+            /// of identifier-7 as described in “Operation of XML GENERATE” on page 465.
+            /// </summary>
+            ELEMENT,
+            /// <summary>
+            /// p463:
+            /// When CONTENT is specified, identifier-7 is expressed in the generated
+            /// XML as element character content of the XML element that corresponds
+            /// to the data item immediately superordinate to identifier-7. The value of
+            /// the element character content is derived from the converted content of
+            /// identifier-7 as described in “Operation of XML GENERATE” on page 465.
+            ///
+            /// When CONTENT is specified for multiple identifiers all corresponding
+            /// to the same superordinate identifier, the multiple contributions to the
+            /// element character content are concatenated.
+            /// </summary>
+            CONTENT
+        }
+    }
+
+    /// <summary>
+    /// p463:
+    /// SUPPRESS phrase
+    /// Allows you to identify items that are subordinate to identifier-2 and must
+    /// be suppressed when generating the XML if they contain values that are
+    /// specified in the WHEN clause. If the SUPPRESS phrase is specified,
+    /// identifier-1 must be large enough to contain the generated XML document
+    /// before any suppression.
+    /// </summary>
+    public class XmlSuppressDirective
+    {
+        /// <summary>
+        /// p463:
+        /// With the generic-suppression-phrase, elementary items subordinate to
+        /// identifier-2 that are not otherwise ignored by XML GENERATE operations
+        /// are identified generically for potential suppression. Either items of class
+        /// numeric, if the NUMERIC keyword is specified, or items that are not of
+        /// class numeric, if the NONNUMERIC keyword is specified, or both, may be
+        /// suppressed. If the ATTRIBUTE keyword is specified, only items that would
+        /// be expressed in the generated XML document as an XML attribute are
+        /// identified for potential suppression. If the ELEMENT keyword is specified,
+        /// only items that would be expressed in the generated XML document as an
+        /// XML element are identified.
+        ///
+        /// If multiple generic-suppression-phrase are specified, the effect is cumulative.
+        /// </summary>        
+        public SyntaxProperty<XmlSyntaxType> XmlSyntaxTypeToSuppress { get; set; }
+
+        /// <summary>
+        /// pp463-464:
+        /// identifier-8 explicitly identifies items for potential suppression. It must
+        /// reference an elementary data item that is subordinate to identifier-2 and that
+        /// is not otherwise ignored by the XML GENERATE operations. For more
+        /// information about that element, see the description of identifier-2. It cannot
+        /// be a function identifier and cannot be reference modified or subscripted. If
+        /// identifier-8 is specified more than once in the SUPPRESS phrase, the last
+        /// specification is used. The explicit suppression specification for identifier-8
+        /// overrides the suppression specification that is implied by any
+        /// generic-suppression-phrase, if identifier-8 is also one of the identifiers
+        /// generically identified.
+        /// * If ZERO, ZEROES, or ZEROS is specified in the WHEN phrase,
+        /// identifier-8 or all the data items that are identified by the
+        /// generic-suppression-phrase must not be of USAGE DISPLAY-1.
+        /// * If SPACE or SPACES is specified in the WHEN phrase, identifier-8 or all
+        /// the data items that are identified by the generic-suppression-phrase must
+        /// be of USAGE DISPLAY, DISPLAY-1 or NATIONAL.
+        /// * If LOW-VALUE, LOW-VALUES, HIGH-VALUE, or HIGH-VALUES is
+        /// specified in the WHEN phrase, identifier-8 or all the data items that are
+        /// identified by the generic-suppression-phrase must be of class alphanumeric
+        /// or national.
+        /// </summary>
+        public Variable DataItemName { get; set; }
+
+        /// <summary>
+        /// p464:
+        /// The comparison operation that determines if an item will be suppressed is
+        /// a numeric comparison if the value specified is ZERO, ZEROS, or ZEROES,
+        /// and the item is of category numeric or internal floating-point. For all other
+        /// cases, the comparison operation is an alphanumeric, DBCS, or national
+        /// comparison depending on whether the item is of usage DISPLAY,
+        /// DISPLAY-1 or NATIONAL respectively.
+        ///
+        /// When the SUPPRESS phrase is specified, a group item subordinate to
+        /// identifier-2 is suppressed in the generated XML document if all the eligible
+        /// items subordinate to the group item are suppressed or if the group item
+        /// has zero length. The root element is always generated, even if all the items
+        /// subordinate to identifier-2 are suppressed.
+        /// </summary>
+        public RepeatedCharacterValue[] ItemValuesToSuppress;
+
+        public enum XmlSyntaxType
+        {
+            UNKNOWN,
+            NUMERIC_ATTRIBUTE,
+            NUMERIC_ELEMENT,
+            NONNUMERIC_ATTRIBUTE,
+            NONNUMERIC_ELEMENT,
+            ATTRIBUTE,
+            ELEMENT,
+        }
+    }
 }

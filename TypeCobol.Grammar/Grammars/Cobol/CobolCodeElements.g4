@@ -6233,7 +6233,7 @@ searchStatementEnd: END_SEARCH;
 // currently executing method was invoked.
 
 setStatement:
-	setStatementForAssignation	       // SET format 1 for basic table handling
+	setStatementForAssignment	       // SET format 1 for basic table handling
 								       // SET format 5 for USAGE IS POINTER
 								       // SET format 6 for procedure-pointer and function-pointer data items
 								       // SET format 7 for USAGE OBJECT REFERENCE data items
@@ -6247,7 +6247,7 @@ setStatement:
 // Format 7: SET for USAGE OBJECT REFERENCE data items
 // => setReceivingField can be a index name, procedure pointer, function pointer or an object reference Id
 	
-setStatementForAssignation:
+setStatementForAssignment:
 	SET setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
 	 
 setSendingField:
@@ -6616,7 +6616,7 @@ sortStatement:
 // the specified comparison.
 
 startStatement:
-	START fileNameReference (KEY IS? relationalOperator qualifiedDataName)?;
+	START fileNameReference (KEY IS? relationalOperator variable1)?;
 
 startStatementEnd: END_START;
 
@@ -6652,7 +6652,7 @@ stopStatement:
 	STOP (RUN | messageToOperator);
 
 messageToOperator: 
-	numericValue | alphanumericValue3;
+	numericValue | alphanumericValue3 | nullFigurativeConstant;
 
 // p433: STRING statement
 // The STRING statement strings together the partial or complete contents of two or
@@ -7570,11 +7570,11 @@ xmlGenerateStatement:
 	(WITH? ENCODING codepage)?
 	(WITH? XML_DECLARATION)?
 	(WITH? ATTRIBUTES)?
-	(NAMESPACE IS? namespaaaaace=alphanumericVariable2 
+	(NAMESPACE IS? namespace=alphanumericVariable2 
 		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
 	(NAME OF? xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
-	(SUPPRESS (xmlSuppressDataItem | xmlSuppressGeneric)+)?;
+	(SUPPRESS xmlSuppressDirective+)?;
 		
 xmlNameMapping:
 	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;
@@ -7582,18 +7582,12 @@ xmlNameMapping:
 xmlTypeMapping:
 	subordinateDataItem=variable1 IS? (ATTRIBUTE | ELEMENT | CONTENT);
 
-xmlSuppressDataItem:	
-	subordinateDataItem=variable1 
-	xmlSuppressWhen;
-
-xmlSuppressGeneric:
-	(EVERY (ATTRIBUTE | ELEMENT | ((NUMERIC | NONNUMERIC) (ATTRIBUTE | ELEMENT)?)))?
-	xmlSuppressWhen;
-
-// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
-xmlSuppressWhen:
+xmlSuppressDirective:	
+	( subordinateDataItem=variable1 |
+	(EVERY (ATTRIBUTE | ELEMENT | ((NUMERIC | NONNUMERIC) (ATTRIBUTE | ELEMENT)?)))?)
+	// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 	WHEN repeatedCharacterValue3 (OR? repeatedCharacterValue3)*;
-
+	
 xmlStatementEnd: END_XML;
 
 // codepage
