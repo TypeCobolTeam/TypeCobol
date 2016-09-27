@@ -10,8 +10,8 @@
       * "1"@(93:14>93:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
       * "1"@(94:14>94:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
       * "1"@(99:8>99:16): [27:1] Syntax error : Illegal non-function item in library
-      * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-      * "1"@(112:8>112:46): [27:1] Syntax error : Condition parameter "male" must be level 88.
+      * "1"@(113:8>118:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
+      * "1"@(113:8>118:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        

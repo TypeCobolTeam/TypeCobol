@@ -111,7 +111,7 @@ class FunctionDeclarationChecker: NodeListener {
 
 		CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
 
-		CheckParameters(header.Profile, header);
+		CheckParameters(header.Profile, header, context);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
 /*
 		var functions = node.SymbolTable.GetFunction(header.Name, profile.Profile);
@@ -136,17 +136,21 @@ class FunctionDeclarationChecker: NodeListener {
 		}
 	}
 
-	private void CheckParameters(ParametersProfile profile, CodeElement ce) {
-		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce);
-		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce);
-		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce);
-		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce);
+	private void CheckParameters(ParametersProfile profile, CodeElement ce, ParserRuleContext context) {
+		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce, context);
+		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce, context);
+		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context);
+		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context);
 	}
-	private void CheckParameter(ParameterDescription parameter, CodeElement ce) {
-//		if (parameter.IsConditionNameDescription) {// TCRFUN_LEVEL_88_PARAMETERS
-//			if (parameter.TopLevel == null) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be subordinate to another parameter.");
-//			if (parameter.LevelNumber != 88) DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name.Name+"\" must be level 88.");
-//		}
+	private void CheckParameter(ParameterDescription parameter, CodeElement ce, ParserRuleContext context) {
+		// TCRFUN_LEVEL_88_PARAMETERS
+		if (parameter.CodeElement().LevelNumber.Value != 1)
+			DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
+		foreach(var child in parameter.Children) {
+			var condition = (DataConditionEntry)child.CodeElement;
+			if (condition.LevelNumber.Value != 88)
+				DiagnosticUtils.AddError(ce, "Condition parameter \""+condition.Name+"\" must be level 88.");
+		}
 	}
 	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
 	/// <param name="node">LINKAGE SECTION node</param>
