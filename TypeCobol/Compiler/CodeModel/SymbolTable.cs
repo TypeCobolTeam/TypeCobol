@@ -164,43 +164,25 @@ namespace TypeCobol.Compiler.CodeModel
 				}
 			} else {
 				var matches = new List<Named>();
-				foreach(var entry in found) {
-					int c=0, generation=0;
-					bool okay = true;
-					while (okay && c<max) {
-						string pname = name[max-c-1];
-						c++;
-						generation++;
-						okay = Filter(entry, pname, ref generation);
-					}
-					if (okay) matches.Add(entry);
+				foreach(var candidate in found) {
+					var node = candidate as Node;
+					if (node == null) continue;
+					if (Match(node.QualifiedName, name)) matches.Add(candidate);
 				}
 				found = matches;
 			}
 			return found;
 		}
-		/// <summary>
-		/// Attempts to find in a data description entry top level items a parent with a specific name.
-		/// The <see cref="generation"/> parameter indicates a "generation" where to begin the search:
-		/// <code>1</code> for <code>entry.TopLevel</code>, <code>2</code> for <code>entry.TopLevel.TopLevel</code> and so on.
-		/// If the appropriate item name is not found at the given <see cref="generation"/>, the method will run
-		/// up the tree until it finds:
-		///  - either a <code>null</code> top level item: in that case, the method returns <code>false</code>
-		///  - either an appropriately named top level item: in that case, the method returns <code>true</code>
-		///    and increases <see cref="generation"/> to the "generation" of the approprietaly named top level item.
-		/// </summary>
-		/// <param name="entry">Data description entry being searched</param>
-		/// <param name="pname">Top level item name being searched for</param>
-		/// <param name="generation">"Generation" where to begin the search</param>
-		/// <returns><code>true</code> if an appropriately named top level item was found.</returns>
-		private bool Filter(Named symbol, string pname, ref int generation) {
-			var parent = GetAncestor(symbol, generation);
-			while(parent != null) {
-				if (parent.Name != null && parent.Name.Equals(pname)) return true;
-				parent = parent.Parent;
-				generation++;
+		private bool Match(QualifiedName name1, QualifiedName name2) {
+			int offset = 0;
+			for (int c=0; c<name1.Count; c++) {
+				string part1 = name1[c];
+				string part2 = name2[offset];
+				if (part1.Equals(part2)) offset++;
+				else if (name1.IsExplicit) return false;
+				if (offset == name2.Count) return true;
 			}
-			return false;
+			return offset == name2.Count;
 		}
 		/// <summary>
 		/// Filters out of a list of data descriptions entries all elements
@@ -274,9 +256,32 @@ namespace TypeCobol.Compiler.CodeModel
 
 		internal void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
 
-		public List<Named> GetFunction(QualifiedName name) {
+		public List<Named> GetFunction(QualifiedName name, ParametersProfile profile = null) {
 			var found = GetFunction(name.Head);
-			return Get(found, name);
+			found = Get(found, name);
+			if (profile != null) {
+				var filtered = new List<Named>();
+				foreach(var function in found)
+					if (Matches(((FunctionDeclaration)function).Profile, profile))
+						filtered.Add(function);
+				found = filtered;
+			}
+			return found;
+		}
+		private bool Matches(ParametersProfile p1, ParametersProfile p2) {
+//			if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
+//			if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
+//			if (p1.ReturningParameter.DataType != p2.ReturningParameter.DataType) return false;
+			if (p1.InputParameters.Count  != p2.InputParameters.Count)  return false;
+			if (p1.InoutParameters.Count  != p2.InoutParameters.Count)  return false;
+			if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
+			for(int c=0; c<p1.InputParameters.Count; c++)
+				if (p1.InputParameters[c].DataType != p2.InputParameters[c].DataType) return false;
+			for(int c=0; c<p1.InoutParameters.Count; c++)
+				if (p1.InoutParameters[c].DataType != p2.InoutParameters[c].DataType) return false;
+			for(int c=0; c<p1.OutputParameters.Count; c++)
+				if (p1.OutputParameters[c].DataType != p2.OutputParameters[c].DataType) return false;
+			return true;
 		}
 
 		private List<Named> GetFunction(string name) {
@@ -362,7 +367,28 @@ namespace TypeCobol.Compiler.CodeModel
 			for (int c=0; c<indent; c++) str.Append("  ");
 			str.Append(symbol.Name);
 			if (symbol is Typed) str.Append(':').Append(((Typed)symbol).DataType);
-			return str.AppendLine();
+			var fun = symbol as FunctionDeclaration;
+			if (fun != null) {
+				if (fun.Profile.ReturningParameter != null || fun.Profile.Parameters.Count > 0) str.AppendLine();
+				foreach(var p in fun.CodeElement().Profile.InputParameters) {
+					str.Append("        in: ");
+					Dump(str, p, 0);
+				}
+				foreach(var p in fun.CodeElement().Profile.OutputParameters) {
+					str.Append("       out: ");
+					Dump(str, p, 0);
+				}
+				foreach(var p in fun.CodeElement().Profile.InoutParameters) {
+					str.Append("     inout: ");
+					Dump(str, p, 0);
+				}
+				if (fun.Profile.ReturningParameter != null) {
+					str.Append("    return: ");
+					Dump(str, fun.Profile.ReturningParameter, 0);
+				}
+				if (fun.Profile.ReturningParameter == null && fun.Profile.Parameters.Count == 0) str.AppendLine();
+			} else str.AppendLine();
+			return str;
 		}
 		private string scope2str() {
 			var str = new StringBuilder();

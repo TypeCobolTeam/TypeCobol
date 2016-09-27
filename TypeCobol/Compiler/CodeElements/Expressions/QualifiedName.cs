@@ -5,6 +5,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public interface QualifiedName: IList<string> {
 		string Head { get; }
+		string Tail { get; }
 		bool IsExplicit { get; }
 		bool Matches(string uri);
 		bool Matches(QualifiedName name);
@@ -16,6 +17,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public virtual bool IsExplicit { get { return true; } }
 
 		public abstract string Head { get; }
+		public string Tail {
+			get {
+				var uri = this.ToString();
+				return uri.Remove(uri.Length-2-Head.Length);
+			}
+		}
 		public abstract int Count { get; }
 		public abstract IEnumerator<string> GetEnumerator();
 
