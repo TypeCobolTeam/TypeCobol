@@ -273,9 +273,6 @@ class SetStatementForIndexesChecker: CodeElementListener {
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var statement = e as StopStatement;
 			var context = c as CodeElementsParser.StopStatementContext;
-// TODO#249
-//			if (statement.Literal != null && statement.Literal.All)
-//				DiagnosticUtils.AddError(statement, "STOP: Illegal ALL", context.literal());
 		}
 	}
 
