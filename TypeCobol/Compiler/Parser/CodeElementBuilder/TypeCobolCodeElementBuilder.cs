@@ -54,13 +54,14 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	private ParameterDescription CreateParameter(CodeElementsParser.ParameterDescriptionContext context) {
 		if (context.functionDataParameter() != null)
 			return CreateFunctionDataParameter(context.functionDataParameter());
-		if (context.functionConditionParameter() != null)
-//			throw new System.NotImplementedException("TODO#249: level-88 parameters");
-			System.Console.WriteLine("TODO#249: level-88 parameters");
+		if (context.functionConditionParameter() != null) {
+			CreateFunctionConditionParameter(context.functionConditionParameter());
+		}
 		return null;
 	}
 	public ParameterDescription CreateFunctionDataParameter(CodeElementsParser.FunctionDataParameterContext context) {
 		var parameter = new ParameterDescriptionEntry();
+		parameter.LevelNumber = new GeneratedIntegerValue(1);
 		parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 		if (context.pictureClause() != null) {
 			parameter.Picture = CobolWordsBuilder.CreateAlphanumericValue(context.pictureClause().pictureCharacterString);
@@ -72,14 +73,11 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		//TODO#245: subphrases
 		return new ParameterDescription(parameter);
 	}
-
-	private string CreatePicture(CodeElementsParser.Cobol2002TypeClauseContext context) {
-		if (context == null) return null;
-		Token token = null;
-		if (context.DATE() != null) token = ParseTreeUtils.GetTokenFromTerminalNode(context.DATE());
-		if (context.UserDefinedWord() != null) token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
-		if (token == null) return null;
-		return "TYPE:"+token.Text.ToUpper();
+	private void CreateFunctionConditionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
+		var parameter = new DataConditionEntry();
+		parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+		parameter.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
+		SetConditionValues(parameter, context.valueClauseForCondition());
 	}
 
 

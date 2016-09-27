@@ -1212,24 +1212,28 @@ namespace TypeCobol.Compiler.Parser
 			var entry = new DataConditionEntry();
 			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
 			entry.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
-			if (context.valueClauseForCondition() != null && context.valueClauseForCondition().value1() != null && context.valueClauseForCondition().value1().Length > 0) {
-				entry.ConditionValues = new Value[context.valueClauseForCondition().value1().Length];
-				for (int i = 0; i < context.valueClauseForCondition().value1().Length; i++)
-					entry.ConditionValues[i] = CobolWordsBuilder.CreateValue(context.valueClauseForCondition().value1()[i]);
-			}
-			if (context.valueClauseForCondition() != null && context.valueClauseForCondition().valuesRange() != null && context.valueClauseForCondition().valuesRange().Length > 0) {
-				entry.ConditionValuesRanges = new ValuesRange[context.valueClauseForCondition().valuesRange().Length];
-				for (int i = 0; i < context.valueClauseForCondition().valuesRange().Length; i++) {
-					var valuesRangeContext = context.valueClauseForCondition().valuesRange()[i];
-					var valuesRange = new ValuesRange(
-						CobolWordsBuilder.CreateValue(valuesRangeContext.startValue),
-						CobolWordsBuilder.CreateValue(valuesRangeContext.endValue));
-					entry.ConditionValuesRanges[i] = valuesRange;
-				}
-			}
+			SetConditionValues(entry, context.valueClauseForCondition());
 
 			Context = context;
 			CodeElement = entry;
+		}
+
+		private void SetConditionValues(DataConditionEntry entry,CodeElementsParser.ValueClauseForConditionContext context) {
+			if (context == null) return;
+			if (context.value1() != null && context.value1().Length > 0) {
+				entry.ConditionValues = new Value[context.value1().Length];
+				for (int i = 0; i < context.value1().Length; i++)
+					entry.ConditionValues[i] = CobolWordsBuilder.CreateValue(context.value1()[i]);
+			}
+			if (context.valuesRange() != null && context.valuesRange().Length > 0) {
+				entry.ConditionValuesRanges = new ValuesRange[context.valuesRange().Length];
+				for (int i = 0; i < context.valuesRange().Length; i++) {
+					var valuesRangeContext = context.valuesRange()[i];
+					entry.ConditionValuesRanges[i] = new ValuesRange(
+						CobolWordsBuilder.CreateValue(valuesRangeContext.startValue),
+						CobolWordsBuilder.CreateValue(valuesRangeContext.endValue));
+				}
+			}
 		}
 
 		  ////////////////////////
