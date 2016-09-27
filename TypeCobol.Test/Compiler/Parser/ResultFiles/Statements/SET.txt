@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[24,27]<27,Error,Syntax>Syntax error : no viable alternative at input 'null' (RuleStack=codeElement>setStatement>setStatementForAssignation>setSendingField>integerVariableOrIndex1>identifierOrIndexName>storageAreaReferenceOrConditionReferenceOrIndexName>otherStorageAreaReference>autoAllocatedDataItemReference>addressOfSpecialRegister>storageAreaReference, OffendingSymbol=[24,27:null]<NULL> on line 7)
+[24,27]<27,Error,Syntax>Syntax error : no viable alternative at input 'null' (RuleStack=codeElement>setStatement>setStatementForAssignment>setSendingField>integerVariableOrIndex1>identifierOrIndexName>storageAreaReferenceOrConditionReferenceOrIndexName>otherStorageAreaReference>autoAllocatedDataItemReference>addressOfSpecialRegister>storageAreaReference, OffendingSymbol=[24,27:null]<NULL> on line 7)
 [1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'set ... ' (RuleStack=codeElement>setStatement, OffendingSymbol=[1,0:]<EndOfFile> on line 0)
 --- Code Elements ---
 SET  var1 TO var2
