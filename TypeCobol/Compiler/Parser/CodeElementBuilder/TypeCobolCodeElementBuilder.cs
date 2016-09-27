@@ -40,26 +40,39 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
 		ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()));
-		ce.Profile.ReturningParameter = CreateParameter(context.parameterDescription());
+		if (context.parameterDescription().functionDataParameter() != null) {
+			var entry = CreateFunctionDataParameter(context.parameterDescription().functionDataParameter());
+			ce.Profile.ReturningParameter = new ParameterDescription(entry);
+		}
 	}
 
 	private IList<ParameterDescription> CreateParameters(CodeElementsParser.ParameterDescriptionContext[] contexts) {
 		var parameters = new List<ParameterDescription>();
 		foreach(var context in contexts) {
-			var parameter = CreateParameter(context);
-			if (parameter != null) parameters.Add(parameter);
+			if (context.functionDataParameter() != null) {
+				var data = CreateFunctionDataParameter(context.functionDataParameter());
+				parameters.Add(new ParameterDescription(data));
+			} else
+			if (context.functionConditionParameter() != null) {
+				var condition = CreateFunctionConditionParameter(context.functionConditionParameter());
+				if (parameters.Count < 1) {
+					var data = CreateFunctionDataParameter(condition);
+					parameters.Add(new ParameterDescription(data));
+				} else {
+					parameters[parameters.Count-1].Add(new TypeCobol.Compiler.Nodes.DataCondition(condition));
+				}
+			}
 		}
 		return parameters;
 	}
-	private ParameterDescription CreateParameter(CodeElementsParser.ParameterDescriptionContext context) {
-		if (context.functionDataParameter() != null)
-			return CreateFunctionDataParameter(context.functionDataParameter());
-		if (context.functionConditionParameter() != null) {
-			CreateFunctionConditionParameter(context.functionConditionParameter());
-		}
-		return null;
+	private ParameterDescriptionEntry CreateFunctionDataParameter(DataConditionEntry condition) {
+		var data = new ParameterDescriptionEntry();
+		data.LevelNumber = condition.LevelNumber;
+		data.DataName    = condition.DataName;
+		data.DataType    = DataType.Unknown;
+		return data;
 	}
-	public ParameterDescription CreateFunctionDataParameter(CodeElementsParser.FunctionDataParameterContext context) {
+	public ParameterDescriptionEntry CreateFunctionDataParameter(CodeElementsParser.FunctionDataParameterContext context) {
 		var parameter = new ParameterDescriptionEntry();
 		parameter.LevelNumber = new GeneratedIntegerValue(1);
 		parameter.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
@@ -71,13 +84,14 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 			parameter.DataType = DataType.CreateCustom(parameter.CustomType.Value);
 		}
 		//TODO#245: subphrases
-		return new ParameterDescription(parameter);
+		return parameter;
 	}
-	private void CreateFunctionConditionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
+	private DataConditionEntry CreateFunctionConditionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
 		var parameter = new DataConditionEntry();
 		parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
 		parameter.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
 		SetConditionValues(parameter, context.valueClauseForCondition());
+		return parameter;
 	}
 
 

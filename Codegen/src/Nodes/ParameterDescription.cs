@@ -31,16 +31,29 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
 				} else {
 					var str = new System.Text.StringBuilder();
-					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
-//TODO#249				if (Description.IsConditionNameDescription) {
-//							str.Append("88 ").Append(Description.Name.Name); //TODO value
-//							if (Description.InitialValue != null) str.Append(" VALUE ").Append(Description.InitialValue.ToString());
-//							if (Description.ThroughValue != null) str.Append(' ').Append(Description.ThroughValue.ToString());
-//						} else {
 					str.Append("01 ").Append(name);
 					if(this.CodeElement().Picture != null) str.Append(" PIC ").Append(this.CodeElement().Picture);
 					str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
+
+					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
+					foreach(var child in GetChildren<DataConditionEntry>()) {
+						str.Clear();
+						var entry = child.CodeElement();
+						str.Append("    ").Append("88 ").Append(entry.Name);
+						if (entry.ConditionValues != null && entry.ConditionValues.Length > 0) {
+							str.Append(" VALUE");
+							foreach(var value in entry.ConditionValues)
+								str.Append(" \'").Append(value.ToString()).Append('\'');
+						} else
+						if (entry.ConditionValuesRanges != null && entry.ConditionValuesRanges.Length > 0) {
+							str.Append(" VALUES");
+							foreach(var range in entry.ConditionValuesRanges)
+								str.Append(" \'").Append(range.MinValue.ToString()).Append("\' THRU \'").Append(range.MaxValue.ToString()).Append('\'');
+						}
+						str.Append('.');
+						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
+					}
 				}
 
 				if (!this.CodeElement().DataType.IsCOBOL) {
@@ -51,7 +64,7 @@ internal class ParameterEntry: Node, CodeElementHolder<Compiler.CodeElements.Fun
 			return _cache;
 		}
 	}
-	public bool IsLeaf { get { return false; } }
+	public bool IsLeaf { get { return true; } }
 }
 
 }

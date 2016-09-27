@@ -596,53 +596,49 @@ namespace TypeCobol.Compiler.CodeElements
 		}
     }
 
-    /// <summary>
-    /// Union class used to store any type of LiteralValue
-    /// </summary>
-    public class Value
-    {
-        public Value(NumericValue numericValue)
-        {
-            LiteralType = ValueLiteralType.Numeric;
-            NumericValue = numericValue;
-        }
+/// <summary>Union class used to store any type of LiteralValue</summary>
+public class Value {
+	public Value(NumericValue value) {
+		LiteralType = ValueLiteralType.Numeric;
+		NumericValue = value;
+	}
+	public Value(AlphanumericValue value) {
+		LiteralType = ValueLiteralType.Alphanumeric;
+		AlphanumericValue = value;
+	}
+	public Value(RepeatedCharacterValue value) {
+		LiteralType = ValueLiteralType.RepeatedAlphanumeric;
+		RepeatedAlphanumericValue = value;
+	}
+	public Value(NullPointerValue value) {
+		LiteralType = ValueLiteralType.NullPointer;
+		NullPointerValue = value;
+	}
 
-        public Value(AlphanumericValue alphanumericValue)
-        {
-            LiteralType = ValueLiteralType.Alphanumeric;
-            AlphanumericValue = alphanumericValue;
-        }
+	public enum ValueLiteralType {
+		Numeric,
+		Alphanumeric,
+		RepeatedAlphanumeric,
+		NullPointer
+	}
 
-        public Value(RepeatedCharacterValue repeatedAlphanumericValue)
-        {
-            LiteralType = ValueLiteralType.RepeatedAlphanumeric;
-            RepeatedAlphanumericValue = repeatedAlphanumericValue;
-        }
+	public ValueLiteralType LiteralType { get; private set; }
 
-        public Value(NullPointerValue nullPointerValue)
-        {
-            LiteralType = ValueLiteralType.NullPointer;
-            NullPointerValue = nullPointerValue;
-        }
+	public NumericValue NumericValue { get; private set; }
+	public AlphanumericValue AlphanumericValue { get; private set; }
+	public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
+	public NullPointerValue NullPointerValue { get; private set; }
 
-        public enum ValueLiteralType
-        {
-            Numeric,
-            Alphanumeric,
-            RepeatedAlphanumeric,
-            NullPointer
-        }
-
-        public ValueLiteralType LiteralType { get; private set; }
-
-        public NumericValue NumericValue { get; private set; }
-
-        public AlphanumericValue AlphanumericValue { get; private set; }
-
-        public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
-
-        public NullPointerValue NullPointerValue { get; private set; }        
-    }
+	public override string ToString() {
+		switch(LiteralType) {
+			case ValueLiteralType.Numeric: return NumericValue.Value.ToString();
+			case ValueLiteralType.Alphanumeric: return AlphanumericValue.Value;
+			case ValueLiteralType.RepeatedAlphanumeric: return RepeatedAlphanumericValue.Value;
+			case ValueLiteralType.NullPointer: return NullPointerValue.Token.SourceText;
+			default: return base.ToString();
+		}
+	}
+}
 
 
 

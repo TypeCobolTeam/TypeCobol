@@ -208,10 +208,9 @@
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
-           88 valid-gender VALUE 'F' 'M'.
-           88 female VALUE 'F'.
-           88 male VALUE 'M'.
-
+           88 valid-gender VALUE 'F' 'M'.                                     
+           88 female VALUE 'F'.                                               
+           88 male VALUE 'M'.                                                 
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE gender                                        
            .                                                                  
@@ -222,9 +221,10 @@
        PROGRAM-ID. F0000009.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
+       01 valid-gender.                                                       
        01 gender PIC X(01).                                                   
-           88 female VALUE 'F'.
-           88 male VALUE 'M'.
+           88 female VALUE 'F'.                                               
+           88 male VALUE 'M'.                                                 
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE gender                                        
            .                                                                  

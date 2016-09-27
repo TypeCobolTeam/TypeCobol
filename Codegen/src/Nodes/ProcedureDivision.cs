@@ -14,12 +14,19 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, List<Compiler.Nodes.Node> sentences): base(null) {
 		UsingParameters = new List<InputParameter>();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER
-		foreach(var parameter in declaration.Profile.InputParameters)  UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
-		foreach(var parameter in declaration.Profile.InoutParameters)  UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
-		foreach(var parameter in declaration.Profile.OutputParameters) UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+		foreach(var parameter in declaration.Profile.InputParameters)
+			if (((DataDescriptionEntry)parameter.CodeElement).LevelNumber.Value == 1)
+				UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+		foreach(var parameter in declaration.Profile.InoutParameters)
+			if (((DataDescriptionEntry)parameter.CodeElement).LevelNumber.Value == 1)
+				UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+		foreach(var parameter in declaration.Profile.OutputParameters)
+			if (((DataDescriptionEntry)parameter.CodeElement).LevelNumber.Value == 1)
+				UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
 		// TCRFUN_CODEGEN_RETURNING_PARAMETER
 		if (declaration.Profile.ReturningParameter != null)
-			ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(((ParameterDescriptionEntry)declaration.Profile.ReturningParameter.CodeElement).DataName);
+			if (((DataDescriptionEntry)declaration.Profile.ReturningParameter.CodeElement).LevelNumber.Value == 1)
+				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(((ParameterDescriptionEntry)declaration.Profile.ReturningParameter.CodeElement).DataName);
 
 		this.children.AddRange(sentences);
 	}
