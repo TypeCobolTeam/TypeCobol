@@ -17,30 +17,26 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
 	private static string[] READONLY_DATATYPES = { "DATE", };
 
-	public IList<Type> GetNodes() {
-		return new List<Type> { typeof(TypeCobol.Compiler.CodeModel.SymbolWriter), };
-	}
+	public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter), }; }
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var element = node.CodeElement as TypeCobol.Compiler.CodeModel.SymbolWriter;
+		var element = node.CodeElement as VariableWriter;
 		var table = program.SymbolTable;
-		foreach (var pair in element.Symbols) {
-			if (pair.Item2 == null) continue; // no receiving item
-			var lr = table.GetVariable(pair.Item2);
+		foreach (var pair in element.VariablesWritten) {
+			if (pair.Key == null) continue; // no receiving item
+			var lr = table.GetVariable(pair.Key);
 			if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 			var receiving = lr[0];
-//TODO#249			checkReadOnly(node.CodeElement, receiving);
+			checkReadOnly(node.CodeElement, receiving as Node);
 		}
 	}
-/*
-	private static void checkReadOnly(CodeElement e, DataDescriptionEntry receiving) {
-		if (receiving.TopLevel == null) return;
-	    foreach (var type in READONLY_DATATYPES) {
-			if (type.Equals(receiving.TopLevel.DataType.Name.ToUpper())) {
-				DiagnosticUtils.AddError(e, type + " properties are read-only");
-			}
+	private void checkReadOnly(CodeElement ce, Node receiving) {
+		var rtype = receiving.Parent as Typed;
+		if (rtype == null) return;
+		foreach(var type in READONLY_DATATYPES) {
+			if (type.Equals(rtype.DataType.Name.ToUpper()))
+				DiagnosticUtils.AddError(ce, type+" properties are read-only");
 		}
 	}
-*/
 }
 
 
