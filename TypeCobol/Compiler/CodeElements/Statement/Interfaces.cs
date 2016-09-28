@@ -8,12 +8,8 @@
 
 /// <summary>For statements using items for sending data.</summary>
 public interface VariableUser {
-	IList<QualifiedName> Variables { get; }
-}
-
-/// <summary>For statements using items for sending data.</summary>
-public interface Sending {
-	IList<QualifiedName> SendingItems { get; }
+	/// <summary>Keys: WHERE it is written. Values: WHAT is written (null for sending items).</summary>
+	IDictionary<QualifiedName, object> Variables { get; }
 }
 
 /// <summary>For statements using items for receiving data.</summary>

@@ -5,21 +5,25 @@
 	using TypeCobol.Compiler.CodeElements.Expressions;
 
 /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
-public abstract class MoveStatement : StatementElement, VariableWriter,Sending,FunctionCaller {
+public abstract class MoveStatement : StatementElement, VariableWriter,FunctionCaller {
 	public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
 // [TYPECOBOL]
 	public SyntaxProperty<bool> Unsafe { get; set; }
 	public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
 // [/TYPECOBOL]
 
-	protected IDictionary<QualifiedName, object> _variablesWritten;
-	protected IList<QualifiedName> _sendingItems = null;
-	protected List<QualifiedName> _variables = null;
+	protected IDictionary<QualifiedName,object> variables;
 	protected List<Functions.FunctionCall> _functions = null;
 
-	public abstract IList<QualifiedName> Variables { get; }
-	public abstract IDictionary<QualifiedName,object> VariablesWritten { get; }
-	public abstract IList<QualifiedName> SendingItems { get; }
+	public abstract IDictionary<QualifiedName,object> Variables { get; }
+	public virtual  IDictionary<QualifiedName,object> VariablesWritten {
+		[NotNull]
+		get {
+			var written = new Dictionary<QualifiedName,object>();
+			foreach(var v in Variables) if (v.Value != null) written.Add(v.Key, v.Value);
+			return written;
+		}
+	}
 	public abstract IList<Functions.FunctionCall> FunctionCalls { get; }
 }
 
@@ -55,35 +59,24 @@ public class MoveSimpleStatement : MoveStatement {
 
 
 
-	public override IList<QualifiedName> Variables {
+	public override IDictionary<QualifiedName,object> Variables {
 		[NotNull]
 		get {
-			if (_variables != null) return _variables;
+			if (variables != null) return variables;
+			variables = new Dictionary<QualifiedName,object>();
 
-			_variables = new List<QualifiedName>();
 			var sending = SendingItem as QualifiedName;
-			if (sending != null) _variables.Add(sending);
-			_variables.AddRange(VariablesWritten.Keys);
-			return _variables;
-		}
-	}
-
-	public override IDictionary<QualifiedName,object> VariablesWritten {
-		[NotNull]
-		get {
-			if (_variablesWritten != null) return _variablesWritten;
-
-			_variablesWritten = new Dictionary<QualifiedName,object>();
-			if (ReceivingStorageAreas == null) return _variablesWritten;
+			if (sending != null) variables.Add(sending, null);
 
 			foreach(var item in ReceivingStorageAreas) {
 				var name = ((Named)item.StorageArea).QualifiedName;
-				if (_variablesWritten.ContainsKey(name))
+				if (variables.ContainsKey(name))
 					if (item.StorageArea is Subscripted) continue; // same variable with (presumably) different subscript
 					else throw new System.ArgumentException(name+" already written, but not subscripted?");
-				else _variablesWritten.Add(name, SendingItem);
+				else variables.Add(name, SendingItem);
 			}
-			return _variablesWritten;
+
+			return variables;
 		}
 	}
 
@@ -100,17 +93,6 @@ public class MoveSimpleStatement : MoveStatement {
 			}
 			else if (SendingBoolean != null) return SendingBoolean.Value;
 			else return null;
-		}
-	}
-
-	public override IList<QualifiedName> SendingItems {
-		[NotNull]
-		get {
-			if (_sendingItems != null) return _sendingItems;
-
-			_sendingItems = new List<QualifiedName>();
-			if (SendingVariable != null && SendingVariable.Name != null) _sendingItems.Add(SendingVariable.QualifiedName);
-			return _sendingItems;
 		}
 	}
 
@@ -157,38 +139,17 @@ public class MoveCorrespondingStatement : MoveStatement {
 
 
 
-	public override IList<QualifiedName> Variables {
+	public override IDictionary<QualifiedName,object> Variables {
 		[NotNull]
 		get {
-			if (_variables != null) return _variables;
+			if (variables != null) return variables;
 
-			_variables = new List<QualifiedName>();
-			if (FromGroupItem != null && FromGroupItem.QualifiedName != null) _variables.Add(FromGroupItem.QualifiedName);
-			if (  ToGroupItem != null &&   ToGroupItem.QualifiedName != null) _variables.Add(  ToGroupItem.QualifiedName);
-			return _variables;
-		}
-	}
-
-	public override IDictionary<QualifiedName,object> VariablesWritten {
-		[NotNull]
-		get {
-			if (_variablesWritten != null) return _variablesWritten;
-
-			_variablesWritten = new Dictionary<QualifiedName,object>();
-			if (ToGroupItem != null && ToGroupItem.QualifiedName != null)
-				_variablesWritten.Add(ToGroupItem.QualifiedName, FromGroupItem!=null? FromGroupItem.QualifiedName:null);
-			return _variablesWritten;
-		}
-	}
-
-	public override IList<QualifiedName> SendingItems {
-		[NotNull]
-		get {
-			if (_sendingItems != null) return _sendingItems;
-
-			_sendingItems = new List<QualifiedName>();
-			if (FromGroupItem != null && FromGroupItem.QualifiedName != null) _variables.Add(FromGroupItem.QualifiedName);
-			return _sendingItems;
+			variables = new Dictionary<QualifiedName,object>();
+			if (FromGroupItem != null && FromGroupItem.QualifiedName != null)
+				variables.Add(FromGroupItem.QualifiedName, null);
+			if (  ToGroupItem != null &&   ToGroupItem.QualifiedName != null)
+				variables.Add(  ToGroupItem.QualifiedName, FromGroupItem!=null? FromGroupItem.QualifiedName:null);
+			return variables;
 		}
 	}
 

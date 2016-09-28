@@ -94,41 +94,18 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        private List<QualifiedName> _variables;
-        private IDictionary<QualifiedName, object> _variablesWritten;
+        private IDictionary<QualifiedName,object> variables;
+		public  IDictionary<QualifiedName,object> Variables {
+			get {
+				if (variables != null) return variables;
+				variables = new Dictionary<QualifiedName, object>();
+				if (ReceivingField != null) variables.Add(((Named)ReceivingField.StorageArea).QualifiedName, StringContentsToConcatenate);
+				return variables;
+			}
+		}
+		public  IDictionary<QualifiedName,object> VariablesWritten { get { return Variables; } }
 
-        public IList<QualifiedName> Variables
-        {
-            get {
-                if (_variables == null)
-                {
-                    _variables = new List<QualifiedName>();
-                    if (ReceivingField != null)
-                    {
-                        _variables.Add(((Named) ReceivingField.StorageArea).QualifiedName);
-                    }
-                }
-                return _variables;
-            }
-        }
-
-        public IDictionary<QualifiedName, object> VariablesWritten
-        {
-            get
-            {
-                if (_variablesWritten == null)
-                {
-                    _variablesWritten = new Dictionary<QualifiedName, object>();
-                    if (ReceivingField != null)
-                    {
-                        _variablesWritten.Add(((Named)ReceivingField.StorageArea).QualifiedName, StringContentsToConcatenate);
-                    }
-                }
-                return _variablesWritten;
-            }
-        }
-
-        public bool IsUnsafe { get { return false; }  }
+		public bool IsUnsafe { get { return false; }  }
     }
 
 	public class StringContentToConcatenate
