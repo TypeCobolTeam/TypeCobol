@@ -62,12 +62,12 @@ WORKING-STORAGE SECTION.
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines1 REDEFINES BufferTobeRedefined TYPEDEF PIC X.
 01 varNoRedefines1 TYPE NoRedefines1.
+
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines2 REDEFINES BufferTobeRedefined TYPEDEF STRONG.
    05 NoRedefines1Item PIC X.
-
-
 01 varNoRedefines2 TYPE NoRedefines2.
+
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines3 REDEFINES TypeNotDefined TYPEDEF.
    05 NoRedefines1Item PIC X.

@@ -49,6 +49,18 @@ class TypeDefinitionChecker: CodeElementListener {
 		}
 	}
 }
+class TypedDeclarationChecker: NodeListener {
+	public IList<Type> GetNodes() { return new List<Type>() { typeof(Typed), }; }
+
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		if (node is TypeDefinition) return; //not our job
+		var type = ((Typed)node).DataType;
+		if (type.IsCOBOL) return; //nothing to do
+		var found = node.SymbolTable.GetType(new URI(type.Name));
+		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Type "+type.Name+" is not referenced");
+		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to type "+type.Name);
+	}
+}
 
     class Cobol2002TypeDefChecker2 : NodeListener
     {
