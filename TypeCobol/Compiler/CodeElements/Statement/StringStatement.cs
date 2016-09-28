@@ -130,38 +130,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public Variable DelimiterCharacters { get; set; }
 		
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            if (SendingFields == null && IsDelimitedbySize == null && DelimiterCharacters == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                var sb = new StringBuilder("");
-                if (SendingFields != null)
-                {
-                    foreach (var sendingField in SendingFields)
-                    {
-                        sb.Append(' ');
-                        sb.Append(sendingField);
-                    }
-                    sb.Append("   ");
-                }
-
-                if (DelimiterCharacters != null)
-                {
-                    sb.AppendLine(" delimited by " + DelimiterCharacters);
-                }
-
-				if (IsDelimitedbySize != null) sb.AppendLine(" delimited by Size");
-
-                return sb.ToString();
-            }
-        }
+		public override string ToString() {
+			if (SendingFields == null && IsDelimitedbySize == null && DelimiterCharacters == null) {
+				return base.ToString();
+			}
+			var str = new StringBuilder();
+			if (SendingFields != null) {
+				foreach (var item in SendingFields) str.Append(' ').Append(item);
+				str.Append(' ');
+			}
+			if (DelimiterCharacters != null) str.Append(" DELIMITED BY ").Append(DelimiterCharacters);
+			if (IsDelimitedbySize   != null) str.Append(" DELIMITED BY SIZE");
+			return str.ToString();
+		}
 
     }
 }
