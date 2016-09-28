@@ -56,6 +56,13 @@ class TypeDefinitionChecker: NodeListener {
 		var typedef = (TypeDefinition)node;
 		if (typedef.CodeElement().Picture == null && typedef.Children.Count < 1)
 			DiagnosticUtils.AddError(typedef.CodeElement, typedef.Name+" has no description.");
+		if (typedef.IsStrong) foreach(var sub in typedef.Children) CheckForValueClause(sub, typedef.QualifiedName);
+	}
+	private void CheckForValueClause(Node node, QualifiedName typedef) {
+		var data = node as DataDescription;
+		if (data != null && data.CodeElement().InitialValue != null)
+			DiagnosticUtils.AddError(data.CodeElement, "Illegal VALUE clause for subordinate \""+data.Name+"\" of STRONG TYPEDEF \""+typedef.Head+"\"");
+		foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
 	}
 }
 
