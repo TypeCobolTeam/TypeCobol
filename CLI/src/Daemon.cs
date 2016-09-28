@@ -13,6 +13,7 @@ namespace TypeCobol.Server
 		class Config {
 			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
+			public bool Safe = true;
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
@@ -43,6 +44,7 @@ namespace TypeCobol.Server
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", (string v) => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", (string v) => config.OutputFiles.Add(v) },
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
+				{ "c|codegen-on-error",  "If present, this generates code even if there are parsing errors.", v => config.Safe = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
                 { "s|skeletons=", "{PATH} to the skeletons files (used to generate code).", (string v) => config.skeletonPath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
@@ -122,13 +124,17 @@ namespace TypeCobol.Server
 					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
 					continue;
 				}
+				int errors = 0;
+				errors += new List<Compiler.Diagnostics.Diagnostic>(parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics).Count;
+				errors += parser.Results.ProgramClassDocumentSnapshot.Diagnostics.Count;
 				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.ProgramClassDocumentSnapshot.Diagnostics));
 				foreach(var e in parser.Results.CodeElementsDocumentSnapshot.CodeElements) {
 					if (e.Diagnostics.Count < 1) continue;
+					errors += e.Diagnostics.Count;
 					writer.AddErrors(path, parser.Converter.GetDiagnostics(e));
 				}
 
-				if (config.Codegen) {
+				if (config.Codegen && (errors == 0 || !config.Safe)) {
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
 					var codegen = new TypeCobol.Codegen.Generator(new StreamWriter(config.OutputFiles[c]), parser.Results.TokensLines, skeletons);
 					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
