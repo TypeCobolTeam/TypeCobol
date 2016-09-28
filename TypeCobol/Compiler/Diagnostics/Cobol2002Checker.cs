@@ -1,52 +1,54 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Antlr4.Runtime;
-using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Nodes;
+﻿namespace TypeCobol.Compiler.Diagnostics {
 
-namespace TypeCobol.Compiler.Diagnostics
-{
+	using System;
+	using System.Collections.Generic;
+	using Antlr4.Runtime;
+	using TypeCobol.Compiler.AntlrUtils;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
+	using TypeCobol.Compiler.CodeModel;
+	using TypeCobol.Compiler.Parser;
+	using TypeCobol.Compiler.Parser.Generated;
+	using TypeCobol.Compiler.Nodes;
 
-	class Cobol2002TypeDefChecker: CodeElementListener {
-		public IList<Type> GetCodeElements() {
-			return new List<Type> {typeof(TypeDefinitionEntry)};
-		}
+class TypeDefinitionChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() { return new List<Type> { typeof(TypeDefinitionEntry), typeof(DataRedefinesEntry), }; }
 
-		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var typedef = e as TypeDefinitionEntry;
-			var context = c as CodeElementsParser.DataDescriptionEntryContext;
-
-			if (typedef.LevelNumber.Value != 1) {
-				string message = "TYPEDEF clause can only be specified for level 01 entries";
-				DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
-			}
-			if (typedef.Picture != null && typedef.DataType.IsStrong) {
-				string message = "Elementary TYPEDEF cannot be STRONG";
-				string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
-				DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
-			}
-			if (context.redefinesClause() != null) {
-				string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
-				DiagnosticUtils.AddError(typedef, message, context.redefinesClause());
-			}
-			if (typedef.IsExternal) {
-				string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
-				foreach (var external in context.externalClause())
-					DiagnosticUtils.AddError(typedef, message, external);
-			}
-			if (typedef.DataType.IsStrong && typedef.InitialValue != null) {
-				string message = "Strong Typedef can't contains value clause:";
-				foreach (var valeuClause in context.valueClause())
-					DiagnosticUtils.AddError(typedef, message, valeuClause);
-			}
+	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+		var context = c as CodeElementsParser.DataDescriptionEntryContext;
+		CheckRedefines(e as DataRedefinesEntry, context);
+		CheckTypedef(e as TypeDefinitionEntry, context);
+	}
+	private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context) {
+		if (redefines == null) return;
+		if (context.cobol2002TypedefClause() != null) {
+			string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
+			DiagnosticUtils.AddError(redefines, message, context.redefinesClause());
 		}
 	}
+	private void CheckTypedef(TypeDefinitionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
+		if (typedef == null) return;
+		if (typedef.LevelNumber.Value != 1) {
+			string message = "TYPEDEF clause can only be specified for level 01 entries";
+			DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
+		}
+		if (typedef.Picture != null && typedef.DataType.IsStrong) {
+			string message = "Elementary TYPEDEF cannot be STRONG";
+			string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
+			DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
+		}
+		if (typedef.IsExternal) {
+			string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
+			foreach (var external in context.externalClause())
+				DiagnosticUtils.AddError(typedef, message, external);
+		}
+		if (typedef.DataType.IsStrong && typedef.InitialValue != null) {
+			string message = "STRONG TYPEDEF cannot contain VALUE clause:";
+			foreach (var valeuClause in context.valueClause())
+				DiagnosticUtils.AddError(typedef, message, valeuClause);
+		}
+	}
+}
 
     class Cobol2002TypeDefChecker2 : NodeListener
     {
