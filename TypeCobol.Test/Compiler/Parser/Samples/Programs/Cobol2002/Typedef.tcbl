@@ -86,7 +86,7 @@ WORKING-STORAGE SECTION.
 *KO:  (Rule #10) -  Cobol 2014 specifications are not clear, but TypeCobol forbid it for now. Better be more restrictive.
 *(source page 807 of ISO Cobol 2014) 
 * varNoRedefines5bis can't rededines data from another TYPEDEF
-01 varNoRedefines5bis TYPEDEF.
+01 varNoRedefines5bis.
     05 varNoRedefines5bis-a redefines varNoRedefines5-a pic 9.
 
 * KO: (Rule #4) - TYPEDEF  clause cannot be specified with the EXTERNAL clause (source page 289-290 of ISO Cobol 2014) 
