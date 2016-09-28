@@ -55,13 +55,13 @@ class TypeDefinitionChecker: NodeListener {
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var typedef = (TypeDefinition)node;
 		if (typedef.CodeElement().Picture == null && typedef.Children.Count < 1)
-			DiagnosticUtils.AddError(typedef.CodeElement, typedef.Name+" has no description.");
+			DiagnosticUtils.AddError(typedef.CodeElement, "TYPEDEF \'"+typedef.Name+"\' has no description.");
 		if (typedef.IsStrong) foreach(var sub in typedef.Children) CheckForValueClause(sub, typedef.QualifiedName);
 	}
 	private void CheckForValueClause(Node node, QualifiedName typedef) {
 		var data = node as DataDescription;
 		if (data != null && data.CodeElement().InitialValue != null)
-			DiagnosticUtils.AddError(data.CodeElement, "Illegal VALUE clause for subordinate \""+data.Name+"\" of STRONG TYPEDEF \""+typedef.Head+"\"");
+			DiagnosticUtils.AddError(data.CodeElement, "Illegal VALUE clause for subordinate \'"+data.Name+"\' of STRONG TYPEDEF \'"+typedef.Head+"\'");
 		foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
 	}
 }
@@ -119,27 +119,43 @@ class RedefinesChecker: NodeListener {
 		if (ValidTypeRedefinitions == 1) return; // at least one _weak_ TYPEDEF redefinition OK
 
 		if (ValidDataRedefinitions > 1)
-			DiagnosticUtils.AddError(node.CodeElement, node.Name+" ambiguous REDEFINES \""+redefines.Head+"\"");
+			DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: Ambiguous reference to symbol \'"+redefines.Head+"\'");
 		if (ValidTypeRedefinitions > 1)
-			DiagnosticUtils.AddError(node.CodeElement, node.Name+" ambiguous TYPEDEF REDEFINES \""+redefines.Head+"\"");
+			DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: Ambiguous reference to TYPEDEF \'"+redefines.Head+"\'");
 
 		if (errors.Errors > 0) {
 			if (errors[Error.Status.TYPEStrong] > 0)
-				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: "+redefines.Head+" is strongly-typed");
+				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: \'"+redefines.Head+"\' is strongly-typed");
 			if (errors[Error.Status.TYPEDEFPart] > 0)
-				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: "+redefines.Head+" is part of a TYPEDEF");
+				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: \'"+redefines.Head+"\' is part of a TYPEDEF");
 			if (errors[Error.Status.TYPEDEFStrong] > 0)
-				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: "+redefines.Head+" is a STRONG TYPEDEF");
+				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: \'"+redefines.Head+"\' is a STRONG TYPEDEF");
 		} else {
 			if (ValidDataRedefinitions+ValidTypeRedefinitions < 1)
-				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: Symbol \""+redefines.Head+"\" is not referenced");
+				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: Symbol \'"+redefines.Head+"\' is not referenced");
 		}
 	}
-	private bool IsStronglyTyped(Node node) {
+	internal static bool IsStronglyTyped(Node node) {
 		if (node == null || node is DataSection) return false;
 		var typed = node as Typed;
 		if (!typed.DataType.IsCOBOL) return true;
 		return IsStronglyTyped(node.Parent);
+	}
+}
+class RenamesChecker: NodeListener {
+	public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRenames), }; }
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		var renames = (DataRenames)node;
+		Check(renames.CodeElement().RenamesFromDataName.QualifiedName, node);
+		Check(renames.CodeElement().RenamesToDataName.QualifiedName, node);
+	}
+	private void Check(QualifiedName renames, Node node) {
+		var found = node.SymbolTable.GetVariable(renames);
+		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Illegal RENAMES: Ambiguous reference to symbol \'"+renames.Head+"\'");
+		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Illegal RENAMES: Symbol \'"+renames.Head+"\' is not referenced");
+		foreach(var v in found)
+			if (RedefinesChecker.IsStronglyTyped((Node)v))
+				DiagnosticUtils.AddError(node.CodeElement, "Illegal RENAMES: \'"+renames.Head+"\' is strongly-typed");
 	}
 }
 
@@ -151,79 +167,41 @@ class TypedDeclarationChecker: NodeListener {
 		var type = ((Typed)node).DataType;
 		if (type.IsCOBOL) return; //nothing to do
 		var found = node.SymbolTable.GetType(new URI(type.Name));
-		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "Type "+type.Name+" is not referenced");
-		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to type "+type.Name);
+		if (found.Count < 1) DiagnosticUtils.AddError(node.CodeElement, "TYPE \'"+type.Name+"\' is not referenced");
+		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to TYPE \'"+type.Name+"\'");
 	}
 }
+/*
+class StronglyTypedReceiverChecker: NodeListener {
+	public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter) }; }
 
-    class Cobol2002TypeDefChecker2 : NodeListener
-    {
-        public IList<Type> GetNodes()
-        {
-            return new List<Type> { typeof(VariableWriter) };
-        }
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		if (node is Initialize || node is Move || node is Release || node is Return
+			|| node is Read || node is Write || node is Rewrite
+			// SET is unspecified, but as a level 88 variable cannot be strongly typed we don't need to check this case
+			// + SET myBool TO TRUE (where myBool is of type BOOL) need to works
+			|| node is Set)
+			return;
 
-		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-            var ce = node.CodeElement;
-            if (ce is VariableWriter == false)
-                return;
-            if (ce is InitializeStatement || ce is MoveStatement || ce is ReadStatement || ce is ReleaseStatement
-                                                                                            //SetStatement is not specified in our specs, but as
-                                                                                            // a level 88 variable can't be strongly typed
-                                                                                            //we don't need to check this case
-                                                                                            //   +
-                                                                                            // SET myBool TO TRUE where myBool is of type BOOL need to works
-                || ce is ReturnStatement || ce is RewriteStatement || ce is WriteStatement || ce is SetStatement)
-                return;
-
-            
-            var variablesWritten = ((VariableWriter)ce).VariablesWritten;
-            SymbolTable symbolTable = program.SymbolTable;
-		    foreach (var varWritten in variablesWritten)
-		    {
-                IList<Named> variablesNameds = symbolTable.GetVariable(varWritten.Key);
-		        foreach (var variableNamed in variablesNameds)
-		        {
-		            if (variableNamed is DataDefinition)
-		            {
-                        DataType dataType = GetFirstStrongDataType(symbolTable, (DataDefinition) variableNamed);
-		                if (dataType != null)
-		                {
-                            DiagnosticUtils.AddError(ce, "Strongly typed variable can't be used as a receiving operand of " + ce.Type);
-                        }
-                    }
-		        }
-
-		    }
-        }
-
-        //TODO need to move this method so we can reuse it
-        private DataType GetFirstStrongDataType(SymbolTable table, DataDefinition symbol)
-        {
-            var parent = symbol;
-            while (parent != null)
-            {
-                DataType dataType = GetTypeDefinition(table, parent);
-                if (dataType.IsStrong) return dataType;
-                parent = parent.Parent as DataDefinition;
-            }
-            return null;
-        }
-
-        //TODO need to move this method so we can reuse it
-        private DataType GetTypeDefinition(SymbolTable table, Named symbol)
-        {
-            var data = symbol as DataDefinition;
-            if (data != null)
-            {
-                var entry = (DataDescriptionEntry)data.CodeElement;
-                if (entry.CustomType == null) return entry.DataType;//not a custom type
-            }
-            Typed typed = symbol as Typed;
-            if (typed == null) return null;// symbol untyped
-            var types = table.GetTypes(typed);
-            if (types.Count != 1) return null;// symbol type not found or ambiguous
-            return types[0].DataType;
-        }
-    }
+		var variables = ((VariableWriter)node).VariablesWritten;
+		foreach (var v in variables) {
+			var names = node.SymbolTable.GetVariable(v.Key);
+			foreach (var name in names) {
+				if (RedefinesChecker.IsStronglyTyped(name as Node)) {
+					string sending = v.Value.ToString();
+					var enumerable = v.Value as System.Collections.IEnumerable;
+					if (enumerable != null) {
+						var str = new System.Text.StringBuilder();
+						int c = 0;
+						foreach(var item in enumerable) { str.Append(item).Append(','); c++; }
+						if (c > 0) str.Length -= 1;
+						sending = str.ToString();
+					}
+					DiagnosticUtils.AddError(node.CodeElement, "Cannot write "+sending+" to strongly typed variable "+name.Name+":"+((Typed)name).DataType.Name);
+				}
+			}
+		}
+	}
+}
+*/
 }
