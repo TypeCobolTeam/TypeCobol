@@ -69,7 +69,7 @@ class RedefinesChecker: NodeListener {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRedefines), }; }
 
 	private class Error: Dictionary<Error.Status,int> {
-		public enum Status { TYPE, TYPESubordinate, TYPEDEFPart, TYPEDEFStrong, }
+		public enum Status { TYPEStrong, TYPEDEFPart, TYPEDEFStrong, }
 		public Error() { foreach(var value in Enum.GetValues(typeof(Status))) this.Add((Status)value,0); }
 		public override string ToString() {
 			var str = new System.Text.StringBuilder("{");
@@ -102,17 +102,8 @@ class RedefinesChecker: NodeListener {
 			if (nv.IsPartOfATypeDef) {
 				errors[Error.Status.TYPEDEFPart]++;
 			} else
-			if (!((Typed)v).DataType.IsCOBOL) {
-				errors[Error.Status.TYPE]++;
-			} else {
-				var parent = nv.Parent;
-				while(parent != null && !(parent is DataSection)) {
-					if (!((Typed)parent).DataType.IsCOBOL) {
-						errors[Error.Status.TYPESubordinate]++;
-						break;
-					}
-					parent = parent.Parent;
-				}
+			if (IsStronglyTyped(nv)) {
+				errors[Error.Status.TYPEStrong]++;
 			}
 		}
 		int ValidDataRedefinitions = errors.Validate(data);
@@ -133,10 +124,8 @@ class RedefinesChecker: NodeListener {
 			DiagnosticUtils.AddError(node.CodeElement, node.Name+" ambiguous TYPEDEF REDEFINES \""+redefines.Head+"\"");
 
 		if (errors.Errors > 0) {
-			if (errors[Error.Status.TYPE] > 0)
+			if (errors[Error.Status.TYPEStrong] > 0)
 				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: "+redefines.Head+" is strongly-typed");
-			if (errors[Error.Status.TYPESubordinate] > 0)
-				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: "+redefines.Head+" is subordinate to a strongly-typed item");
 			if (errors[Error.Status.TYPEDEFPart] > 0)
 				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: "+redefines.Head+" is part of a TYPEDEF");
 			if (errors[Error.Status.TYPEDEFStrong] > 0)
@@ -145,6 +134,12 @@ class RedefinesChecker: NodeListener {
 			if (ValidDataRedefinitions+ValidTypeRedefinitions < 1)
 				DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES: Symbol \""+redefines.Head+"\" is not referenced");
 		}
+	}
+	private bool IsStronglyTyped(Node node) {
+		if (node == null || node is DataSection) return false;
+		var typed = node as Typed;
+		if (!typed.DataType.IsCOBOL) return true;
+		return IsStronglyTyped(node.Parent);
 	}
 }
 
