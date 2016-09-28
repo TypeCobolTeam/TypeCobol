@@ -11,7 +11,7 @@
 	using TypeCobol.Compiler.Parser.Generated;
 	using TypeCobol.Compiler.Nodes;
 
-class TypeDefinitionChecker: CodeElementListener {
+class TypeDefinitionEntryChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type> { typeof(TypeDefinitionEntry), typeof(DataRedefinesEntry), }; }
 
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
@@ -49,6 +49,16 @@ class TypeDefinitionChecker: CodeElementListener {
 		}
 	}
 }
+class TypeDefinitionChecker: NodeListener {
+	public IList<Type> GetNodes() { return new List<Type>() { typeof(TypeDefinition), }; }
+
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		var typedef = (TypeDefinition)node;
+		if (typedef.CodeElement().Picture == null && typedef.Children.Count < 1)
+			DiagnosticUtils.AddError(typedef.CodeElement, typedef.Name+" has no description.");
+	}
+}
+
 class TypedDeclarationChecker: NodeListener {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(Typed), }; }
 
