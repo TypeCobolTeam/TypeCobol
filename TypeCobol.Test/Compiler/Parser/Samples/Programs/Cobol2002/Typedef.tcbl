@@ -182,8 +182,8 @@ WORKING-STORAGE SECTION.
 PROCEDURE DIVISION.
 
 MOVE X OF Coord2d OF Accel2d OF Movment2d OF Point TO X OF Coord2d OF Speed2d OF Movment2d OF Point
-MOVE Y OF Coord2d OF Position2d                    TO Z OF Coord3d OF Position2d
-MOVE Z OF Coord3d In Position2d                    TO Y of Speed2d In Point
+MOVE Y OF Position2d OF Point                      TO Z OF Position2d OF Point
+MOVE Z In Accel2d OF Point                         TO Y of Speed2d In Point
 
 *KO (Rule #11), but myStrongInt is not numeric anyway
 compute myStrongInt of myIntStrong = 1 + 1 

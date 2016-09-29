@@ -100,42 +100,96 @@ public class SymbolTable {
 		if (found.Count > 0) return Get(found, name);
 		else return QualifyUsingType(name);
 	}
-
 	private List<Named> QualifyUsingType(QualifiedName name) {
-		var found = GetVariable(name[0]);
-		for(int c=1; c<name.Count; c++) {
-			var filtered = new List<Named>();
-			foreach(var variable in found) {
-				filtered.AddRange(GetDataChildren((DataDescription)variable, name[c]));
-				filtered.AddRange(GetChildrenFromType((DataDescription)variable, name[c]));
-			}
-			found = filtered;
-		}
-		return found;
-	}
+		var candidates = new List<Named>();
+		if (name.Count > 1) candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
+		candidates.AddRange(GetVariable(name.Head));
+		//TODO candidates.AddRange(GetFunction(name.Head));
 
-	/// <param name="data">Its children are compared agains name</param>
-	/// <param name="name">name part (not an URI)</param>
-	/// <returns>Direct data children of a given name</returns>
-	public IList<Named>  GetDataChildren(DataDescription data, string name) {
-		var results = new List<Named>();
-		foreach(var child in data.Children)
-			if (name.Equals(child.Name))
-				results.Add(child);
-		return results;
+		for(int i=name.Count-2; i>=0; --i) {
+			var filtered = new List<Named>();
+			foreach(var candidate in candidates) {
+				filtered.AddRange(GetTopLevel((Node)candidate, name[i]));
+			}
+			candidates = new List<Named>(new HashSet<Named>(filtered)); // remove duplicates
+			if (candidates.Count < 1) break;
+		}
+		return candidates;
 	}
-	/// <param name="data">The direct children of its type are compared agains name</param>
-	/// <param name="name">name part (not an URI)</param>
-	/// <returns>Direct children of a given name inherited by data according to its type</returns>
-	public IList<Named> GetChildrenFromType(DataDescription data, string name) {
-		var results = new List<Named>();
-		if (data.DataType.IsCOBOL) return results;
-		foreach(var type in data.SymbolTable.GetType(data.DataType.Name)) {
-			foreach(var child in ((TypeDefinition)type).Children)
-				if (name.Equals(child.Name))
-					results.Add(child);
+	/// <summary>Gets direct or indirect toplevel item for a node.</summary>
+	/// <param name="node">We want the toplevel item for this node</param>
+	/// <param name="name">We want a toplevel item named like that</param>
+	/// <returns></returns>
+	private List<Named> GetTopLevel(Node node, string name) {
+		var toplevel = new List<Named>();
+		if (node.Parent == null) return toplevel;
+		var typedef = node.Parent as TypeDefinition;
+		if (typedef != null) {
+			var vars = GetVariablesTyped(typedef.QualifiedName);
+			var typs = GetCustomTypesSubordinatesTyped(typedef.QualifiedName);
+			foreach(var item in vars)
+				if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
+					toplevel.Add(item);
+			foreach(var item in typs)
+				if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
+					toplevel.Add(item);
+			return toplevel;
+		}
+		if (name.Equals(node.Parent.Name)) toplevel.Add(node.Parent);
+		// as name can be implicit, don't stop at first properly named parent encountered
+		toplevel.AddRange(GetTopLevel(node.Parent, name));
+		return toplevel;
+	}
+	/// <summary>Get all items whith a specific name that are subordinates of a custom type</summary>
+	/// <param name="name">Name of items we search for</param>
+	/// <returns>Direct or indirect subordinates of a custom type</returns>
+	private List<Named> GetCustomTypesSubordinatesNamed(string name) {
+		var types = new List<Named>();
+		var scope = this;
+		while (scope != null) {
+			foreach(var type in scope.Types) types.AddRange(type.Value);
+			scope = scope.EnclosingScope;
+		}
+		var subs = new List<Named>();
+		foreach(var type in types) subs.AddRange(((Node)type).GetChildren(name, true));
+		return subs;
+	}
+	private List<Named> GetCustomTypesSubordinatesTyped(QualifiedName typename) {
+		var types = new List<Named>();
+		var scope = this;
+		while (scope != null) {
+			foreach(var type in scope.Types) types.AddRange(type.Value);
+			scope = scope.EnclosingScope;
+		}
+		var subs = new List<Named>();
+		foreach(var type in types) {
+			subs.AddRange(GetChildrenOfDataType((Node)type, typename, true));
+		}
+		return subs;
+	}
+	private List<Node> GetChildrenOfDataType(Node node, QualifiedName typename, bool deep) {
+		var results = new List<Node>();
+		foreach(var child in node.Children) {
+			var typed = child as Typed;
+			if (typed != null) {
+				if (typename.Head.Equals(typed.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase)) results.Add(child);
+			}
+			if (deep) results.AddRange(GetChildrenOfDataType(child, typename, true));
 		}
 		return results;
+	}
+	private List<Named> GetVariablesTyped(QualifiedName typename) {
+		var variables = new List<Named>();
+		foreach(var items in DataEntries.Values) {
+			foreach(var item in items) {
+				var typed = item as Typed;
+				if (typed == null) continue;
+				if (typename.Head.Equals(typed.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase)) variables.Add(item);
+			}
+		}
+		if (EnclosingScope!= null)
+			variables.AddRange(EnclosingScope.GetVariablesTyped(typename));
+		return variables;
 	}
 
 

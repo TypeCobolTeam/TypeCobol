@@ -4,8 +4,10 @@ using System.Collections.Specialized;
 namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public interface QualifiedName: IList<string> {
+		char Separator { get; }
 		string Head { get; }
 		string Tail { get; }
+		QualifiedName Parent { get; }
 		bool IsExplicit { get; }
 		bool Matches(string uri);
 		bool Matches(QualifiedName name);
@@ -14,15 +16,20 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 	public abstract class AbstractQualifiedName: QualifiedName {
-		public virtual bool IsExplicit { get { return true; } }
+		public virtual bool IsExplicit { get { return false; } }
+		public virtual char Separator {
+			get { return '.'; }
+			set { throw new System.NotSupportedException(); }
+		}
 
 		public abstract string Head { get; }
-		public string Tail {
+		public virtual string Tail {
 			get {
 				var uri = this.ToString();
 				return uri.Remove(uri.Length-2-Head.Length);
 			}
 		}
+		public abstract QualifiedName Parent { get; }
 		public abstract int Count { get; }
 		public abstract IEnumerator<string> GetEnumerator();
 
@@ -115,7 +122,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			foreach (string name in this) str.Append(name).Append('.');
+			foreach (string name in this) str.Append(name).Append(Separator);
 			str.Length -= 1;
 			return str.ToString();
 		}
@@ -124,6 +131,19 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			get {
 				if (Symbol == null) return null;
 				return Symbol.Name;
+			}
+		}
+		public override QualifiedName Parent {
+			get {
+				var datanames = new List<DataName>();
+				for (int c=0; c<DataNames.Count-1; c++) datanames.Add(DataNames[c]);
+				if (FileName == null) {
+					if (DataNames.Count < 1) return null;
+				} else {
+					if (DataNames.Count < 1) return new SyntacticQualifiedName(FileName, null, null, IsExplicit);
+				}
+				var symbol = DataNames[DataNames.Count-1];
+				return new SyntacticQualifiedName(symbol, datanames, FileName, IsExplicit);
 			}
 		}
 
@@ -143,19 +163,25 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public class URI: AbstractQualifiedName {
 		public string Value { get; private set; }
-		public char Separator { get; private set; }
 		private string[] parts;
 
 		public URI(string uri, char separator = '.') {
 			if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
-			this.Separator = separator != null ? separator : '.';
+			this.separator = separator != null ? separator : '.';
 			this.Value = uri;
 			this.parts = Value.Split(this.Separator);
+		}
+
+		private char separator;
+		public override char Separator {
+			get { return separator; }
+			set { separator = value; }
 		}
 
 		public override string ToString() { return Value; }
 
 		public override string Head { get { return parts[parts.Length-1]; } }
+		public override QualifiedName Parent { get { return new URI(Value.Remove(Value.Length-1-Head.Length), Separator); } }
 
 		public override IEnumerator<string> GetEnumerator() {
 			foreach(string part in parts) yield return part;
