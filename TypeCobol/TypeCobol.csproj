@@ -164,7 +164,6 @@
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\Identifier.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxNumber.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxProperty.cs" />
     <Compile Include="Compiler\CodeElements\Header\ConfigurationSectionHeader.cs" />
