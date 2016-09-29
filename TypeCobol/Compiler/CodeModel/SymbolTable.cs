@@ -106,13 +106,26 @@ public class SymbolTable {
 		candidates.AddRange(GetVariable(name.Head));
 		//TODO candidates.AddRange(GetFunction(name.Head));
 
+		var map = new Dictionary<Named,List<Named>>();
+		foreach(var candidate in candidates) map.Add(candidate,new List<Named> { candidate });
+		var currents = candidates;
 		for(int i=name.Count-2; i>=0; --i) {
-			var filtered = new List<Named>();
-			foreach(var candidate in candidates) {
-				filtered.AddRange(GetTopLevel((Node)candidate, name[i]));
+			var winners = new Dictionary<Named,List<Named>>();
+			foreach(var original in map.Keys) { // for each original node
+				var toplevels = new List<Named>();
+				foreach(var candidate in map[original]) // for each candidate of an original node
+					toplevels.AddRange(GetTopLevel((Node)candidate, name[i]));
+				toplevels = new List<Named>(new HashSet<Named>(toplevels)); // remove duplicates
+				if (toplevels.Count > 0) winners.Add(original,toplevels);
 			}
-			candidates = new List<Named>(new HashSet<Named>(filtered)); // remove duplicates
-			if (candidates.Count < 1) break;
+			map.Clear();
+			if (winners.Count < 1) break; // early exit
+			foreach(var winner in winners) map.Add(winner.Key, winner.Value);
+		}
+		var found = new List<Named>();
+		foreach(var parent in candidates) {
+			var child = ((Node)parent).Get(name.ToString());
+			if (child != null) found.Add(child);
 		}
 		return candidates;
 	}
@@ -140,7 +153,7 @@ public class SymbolTable {
 		toplevel.AddRange(GetTopLevel(node.Parent, name));
 		return toplevel;
 	}
-	/// <summary>Get all items whith a specific name that are subordinates of a custom type</summary>
+	/// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
 	/// <param name="name">Name of items we search for</param>
 	/// <returns>Direct or indirect subordinates of a custom type</returns>
 	private List<Named> GetCustomTypesSubordinatesNamed(string name) {
@@ -154,6 +167,9 @@ public class SymbolTable {
 		foreach(var type in types) subs.AddRange(((Node)type).GetChildren(name, true));
 		return subs;
 	}
+	/// <summary>Get all items of a specific type that are subordinates of a custom type</summary>
+	/// <param name="name">Type name we search for</param>
+	/// <returns>Direct or indirect subordinates of a custom type</returns>
 	private List<Named> GetCustomTypesSubordinatesTyped(QualifiedName typename) {
 		var types = new List<Named>();
 		var scope = this;
@@ -167,6 +183,11 @@ public class SymbolTable {
 		}
 		return subs;
 	}
+	/// <summary>Searches all children of a given node that are of a given type</summary>
+	/// <param name="node">We search among this Node's children</param>
+	/// <param name="typename">Name of the type we want</param>
+	/// <param name="deep">True for deep search, false for shallow search</param>
+	/// <returns>All children of a given type</returns>
 	private List<Node> GetChildrenOfDataType(Node node, QualifiedName typename, bool deep) {
 		var results = new List<Node>();
 		foreach(var child in node.Children) {
@@ -178,6 +199,9 @@ public class SymbolTable {
 		}
 		return results;
 	}
+	/// <summary>Gets all data items of a specific type, accross all scopes.</summary>
+	/// <param name="typename">Name of type we search for</param>
+	/// <returns>All data items of type typename</returns>
 	private List<Named> GetVariablesTyped(QualifiedName typename) {
 		var variables = new List<Named>();
 		foreach(var items in DataEntries.Values) {
