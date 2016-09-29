@@ -331,7 +331,7 @@ namespace TypeCobol.Compiler.CodeElements
 							|| Operator.Value == ArithmeticOperator.UnaryMinus
 							|| Operator.Value == ArithmeticOperator.Round;
 			if (RightOperand == null)
-				if (maybeunary) ;
+				if (maybeunary) { }
 				else str.Append(' ').Append('0');
 			else str.Append(' ').Append(RightOperand);
 			str.Append(' ').Append((char)Operator.Value);

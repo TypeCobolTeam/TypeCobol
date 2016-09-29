@@ -56,15 +56,15 @@ public class CallParameter {
 	private VariableOrExpression voe;
 	public CallParameter(VariableOrExpression voe) { this.voe = voe; }
 
-	public bool   IsLiteral   { get { return voe.IsLiteral; } }
-	public string SendingMode { get { return IsLiteral? "CONTENT":"REFERENCE"; } }
-	public string Value       { get { return voe.QualifiedName.ToString(); } }
+	public virtual bool   IsLiteral   { get { return voe.IsLiteral; } }
+	public virtual string SendingMode { get { return IsLiteral? "CONTENT":"REFERENCE"; } }
+	public virtual string Value       { get { return voe.QualifiedName.ToString(); } }
 }
 public class EmptyCallParameter: CallParameter {
 	public EmptyCallParameter(): base(null) { }
-	public bool   IsLiteral   { get { return true; } }
-	public string SendingMode { get { return "CONTENT"; } }
-	public string Value       { get { return "SPACE"; } }
+	public override bool   IsLiteral   { get { return true; } }
+	public override string SendingMode { get { return "CONTENT"; } }
+	public override string Value       { get { return "SPACE"; } }
 }
 
 

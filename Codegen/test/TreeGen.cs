@@ -96,7 +96,7 @@ namespace TypeCobol.Codegen {
 			this.IsLeaf = GenerateChildren;
 		}
 		private IList<ITextLine> _lines = new List<ITextLine>();
-		public IEnumerable<ITextLine> Lines {
+		public override IEnumerable<ITextLine> Lines {
 			get { return new System.Collections.ObjectModel.ReadOnlyCollection<ITextLine>(_lines); }
 		}
 		public bool IsLeaf { get; private set; }

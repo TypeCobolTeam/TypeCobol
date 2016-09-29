@@ -44,7 +44,7 @@
 
 
 
-		public string ToString() {
+		public override string ToString() {
 			var str = new System.Text.StringBuilder();
 			ToString(Root, str, 0);
 			return str.ToString();

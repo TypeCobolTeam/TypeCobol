@@ -393,31 +393,31 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterStatement(ProgramClassParser.StatementContext context) {
 			if (context.ExecStatement() != null) Enter(new Exec((ExecStatement)context.ExecStatement().Symbol), context);
-			else if (context.evaluateStatementWithBody() != null) ;// Node will be created in EnterEvaluateStatementWithBody
-			else if (context.ifStatementWithBody() != null) ;// Node will be created in EnterIfStatementWithBody
-			else if (context.performStatementWithBody() != null) ;// Node will be created in EnterPerformStatementWithBody
+			else if (context.evaluateStatementWithBody() != null) { }// Node will be created in EnterEvaluateStatementWithBody
+			else if (context.ifStatementWithBody() != null) { }// Node will be created in EnterIfStatementWithBody
+			else if (context.performStatementWithBody() != null) { }// Node will be created in EnterPerformStatementWithBody
 			else if (context.PerformProcedureStatement() != null) Enter(new PerformProcedure((PerformProcedureStatement)context.PerformProcedureStatement().Symbol), context);
-			else if (context.searchStatementWithBody() != null) ;// Node will be created in EnterSearchStatementWithBody
+			else if (context.searchStatementWithBody() != null) { }// Node will be created in EnterSearchStatementWithBody
 			// -- arithmetic --
 			else if (context.AddStatement() != null) Enter(new Add((AddStatement)context.AddStatement().Symbol), context);
-			else if (context.addStatementConditional() != null) ;// Node will be created in EnterAddStatementConditional
+			else if (context.addStatementConditional() != null) { }// Node will be created in EnterAddStatementConditional
 			else if (context.ComputeStatement() != null) Enter(new Compute((ComputeStatement)context.ComputeStatement().Symbol), context);
-			else if (context.computeStatementConditional() != null) ;// Node will be created in EnterComputeStatementConditional
+			else if (context.computeStatementConditional() != null) { }// Node will be created in EnterComputeStatementConditional
 			else if (context.DivideStatement() != null) Enter(new Divide((DivideStatement)context.DivideStatement().Symbol), context);
-			else if (context.divideStatementConditional() != null) ;// Node will be created in EnterDivideStatementConditional
+			else if (context.divideStatementConditional() != null) { }// Node will be created in EnterDivideStatementConditional
 			else if (context.MultiplyStatement() != null) Enter(new Multiply((MultiplyStatement)context.MultiplyStatement().Symbol), context);
-			else if (context.multiplyStatementConditional() != null) ;// Node will be created in EnterMultiplyStatementConditional
+			else if (context.multiplyStatementConditional() != null) { }// Node will be created in EnterMultiplyStatementConditional
 			else if (context.SubtractStatement() != null) Enter(new Subtract((SubtractStatement)context.SubtractStatement().Symbol), context);
-			else if (context.subtractStatementConditional() != null) ;// Node will be created in EnterSubtractStatementConditional
+			else if (context.subtractStatementConditional() != null) { }// Node will be created in EnterSubtractStatementConditional
 			// -- file --
 			else if (context.OpenStatement() != null) Enter(new Open((OpenStatement)context.OpenStatement().Symbol), context);
 			else if (context.CloseStatement() != null) Enter(new Close((CloseStatement)context.CloseStatement().Symbol), context);
 			else if (context.ReadStatement() != null) Enter(new Read((ReadStatement)context.ReadStatement().Symbol), context);
-			else if (context.readStatementConditional() != null) ;// Node will be created in EnterReadStatementConditional
+			else if (context.readStatementConditional() != null) { }// Node will be created in EnterReadStatementConditional
 			else if (context.RewriteStatement() != null) Enter(new Rewrite((RewriteStatement)context.RewriteStatement().Symbol), context);
-			else if (context.rewriteStatementConditional() != null) ;// Node will be created in EnterRewriteStatementConditional
+			else if (context.rewriteStatementConditional() != null) { }// Node will be created in EnterRewriteStatementConditional
 			else if (context.WriteStatement() != null) Enter(new Write((WriteStatement)context.WriteStatement().Symbol), context);
-			else if (context.writeStatementConditional() != null) ;// Node will be created in EnterWriteStatementConditional
+			else if (context.writeStatementConditional() != null) { }// Node will be created in EnterWriteStatementConditional
 			// -- data movement --
 			else if (context.MoveStatement() != null) Enter(new Move((MoveStatement)context.MoveStatement().Symbol), context);
 			else if (context.SetStatement() != null) Enter(new Set((SetStatement)context.SetStatement().Symbol), context);
@@ -425,11 +425,11 @@ namespace TypeCobol.Compiler.Parser
 			else if (context.AcceptStatement() != null) Enter(new Accept((AcceptStatement)context.AcceptStatement().Symbol), context);
 			else if (context.AlterStatement() != null) Enter(new Alter((AlterStatement)context.AlterStatement().Symbol), context);
 			else if (context.CallStatement() != null) Enter(new Call((CallStatement)context.CallStatement().Symbol), context);
-			else if (context.callStatementConditional() != null) ;// Node will be created in EnterCallStatementConditional
+			else if (context.callStatementConditional() != null) { }// Node will be created in EnterCallStatementConditional
 			else if (context.CancelStatement() != null) Enter(new Cancel((CancelStatement)context.CancelStatement().Symbol), context);
 			else if (context.ContinueStatement() != null) Enter(new Continue((ContinueStatement)context.ContinueStatement().Symbol), context);
 			else if (context.DeleteStatement() != null) Enter(new Delete((DeleteStatement)context.DeleteStatement().Symbol), context);
-			else if (context.deleteStatementConditional() != null) ;// Node will be created in EnterDeleteStatementConditional
+			else if (context.deleteStatementConditional() != null) { }// Node will be created in EnterDeleteStatementConditional
 			else if (context.DisplayStatement() != null) Enter(new Display((DisplayStatement)context.DisplayStatement().Symbol), context);
 			else if (context.EntryStatement() != null) Enter(new Entry((EntryStatement)context.EntryStatement().Symbol), context);
 			else if (context.ExitStatement() != null) Enter(new Exit((ExitStatement)context.ExitStatement().Symbol), context);
@@ -440,24 +440,24 @@ namespace TypeCobol.Compiler.Parser
 			else if (context.InitializeStatement() != null) Enter(new Initialize((InitializeStatement)context.InitializeStatement().Symbol), context);
 			else if (context.InspectStatement() != null) Enter(new Inspect((InspectStatement)context.InspectStatement().Symbol), context);
 			else if (context.InvokeStatement() != null) Enter(new Invoke((InvokeStatement)context.InvokeStatement().Symbol), context);
-			else if (context.invokeStatementConditional() != null) ;// Node will be created in EnterInvokeStatementConditional
+			else if (context.invokeStatementConditional() != null) { }// Node will be created in EnterInvokeStatementConditional
 			else if (context.MergeStatement() != null) Enter(new Merge((MergeStatement)context.MergeStatement().Symbol), context);
 			else if (context.PerformProcedureStatement() != null) Enter(new PerformProcedure((PerformProcedureStatement)context.PerformProcedureStatement().Symbol), context);
 			else if (context.ReleaseStatement() != null) Enter(new Release((ReleaseStatement)context.ReleaseStatement().Symbol), context);
 			else if (context.ReturnStatement() != null) Enter(new Return((ReturnStatement)context.ReturnStatement().Symbol), context);
-			else if (context.returnStatementConditional() != null) ;// Node will be created in EnterReturnStatementConditional
+			else if (context.returnStatementConditional() != null) { }// Node will be created in EnterReturnStatementConditional
 			else if (context.SortStatement() != null) Enter(new Sort((SortStatement)context.SortStatement().Symbol), context);
 			else if (context.StartStatement() != null) Enter(new Start((StartStatement)context.StartStatement().Symbol), context);
-			else if (context.startStatementConditional() != null) ;// Node will be created in EnterStartStatementConditional
+			else if (context.startStatementConditional() != null) { }// Node will be created in EnterStartStatementConditional
 			else if (context.StopStatement() != null) Enter(new Stop((StopStatement)context.StopStatement().Symbol), context);
 			else if (context.StringStatement() != null) Enter(new Nodes.String((StringStatement)context.StringStatement().Symbol), context);
-			else if (context.stringStatementConditional() != null) ;// Node will be created in EnterStringStatementConditional
+			else if (context.stringStatementConditional() != null) { }// Node will be created in EnterStringStatementConditional
 			else if (context.UnstringStatement() != null) Enter(new Unstring((UnstringStatement)context.UnstringStatement().Symbol), context);
-			else if (context.unstringStatementConditional() != null) ;// Node will be created in EnterUnstringStatementConditional
+			else if (context.unstringStatementConditional() != null) { }// Node will be created in EnterUnstringStatementConditional
 			else if (context.XmlGenerateStatement() != null) Enter(new XmlGenerate((XmlGenerateStatement)context.XmlGenerateStatement().Symbol), context);
-			else if (context.xmlGenerateStatementConditional() != null) ;// Node will be created in EnterXmlGenerateStatementConditional
+			else if (context.xmlGenerateStatementConditional() != null) { }// Node will be created in EnterXmlGenerateStatementConditional
 			else if (context.XmlParseStatement() != null) Enter(new XmlParse((XmlParseStatement)context.XmlParseStatement().Symbol), context);
-			else if (context.xmlParseStatementConditional() != null) ;// Node will be created in EnterXmlParseStatementConditional
+			else if (context.xmlParseStatementConditional() != null) { }// Node will be created in EnterXmlParseStatementConditional
 			else if (context.GetText().Length < 1) skipEmptyStatement = true;
 			else throw new NotImplementedException("Implementation error: \""+context.GetText()+"\"["+context.GetType().Name+']');
 		}

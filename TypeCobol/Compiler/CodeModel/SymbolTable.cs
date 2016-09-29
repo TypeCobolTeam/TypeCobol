@@ -86,7 +86,7 @@ public class SymbolTable {
 		if (found == null || found.Count == 0) {
 			List<Named> samenamesymbols = null;
 			try { samenamesymbols = table[symbol.QualifiedName.Head]; }
-			catch (KeyNotFoundException ex) {
+			catch (KeyNotFoundException) {
 				samenamesymbols = new List<Named>();
 				table.Add(symbol.QualifiedName.Head, samenamesymbols);
 			}

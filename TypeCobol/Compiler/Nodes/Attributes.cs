@@ -18,7 +18,7 @@ public static class Attributes {
 				value = attributes[attr].GetValue(value, table);
 			}
 			return value;
-		} catch (KeyNotFoundException ex) { return null; }
+		} catch (KeyNotFoundException) { return null; }
 	}
 
 	private static Dictionary<string,Attribute> attributes;
@@ -158,10 +158,7 @@ internal class FunctionUserAttribute: Attribute {
 }
 
 internal class DefinitionsAttribute: Attribute {
-	private long ct;
-	private long cf;
 	public object GetValue(object o, SymbolTable table) {
-		ct = cf = 0;
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);

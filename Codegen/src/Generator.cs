@@ -15,7 +15,6 @@ namespace TypeCobol.Codegen {
 	public class Generator: NodeVisitor {
 
 		private readonly IReadOnlyList<ICobolTextLine> Input;
-		private readonly List<ICobolTextLine> Output;
 		private readonly TextWriter Writer;
 		private readonly List<Skeleton> Skeletons;
 
@@ -47,7 +46,7 @@ namespace TypeCobol.Codegen {
 			// STEP 2: convert tree to destination language code
 			var converter = new TreeToCode(Input, columns);
 			tree.Accept(converter);
-			converter.Finalize();
+			converter.WriteInputLinesUntilEnd();
 			Writer.Write(converter.Output.ToString());
 			Writer.Flush();
 //			Console.WriteLine(converter.Output.ToString());

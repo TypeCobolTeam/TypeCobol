@@ -161,11 +161,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			foreach(string part in parts) yield return part;
 		}
 
-	    public override bool IsExplicit
-	    {
-	        get { return false; }
-	    }
+		public override bool IsExplicit { get { return false; } }
 
-	    public override int Count { get { return parts.Length; } }
+		public override int Count { get { return parts.Length; } }
 	}
 }

@@ -199,7 +199,6 @@ internal class SetStatementForSwitches: SetStatement {
 			if (instruction.SwitchPosition != null)
 				map[instruction.SwitchPosition.Value].Add(instruction.MnemonicForUPSISwitchName);
 		}
-		bool enough = false;
 		var names = map[UPSISwitchPosition.On];
 		foreach(var name in names) str.Append(' ').Append(name);
 		if (names.Count > 0) str.Append(" TO ON");

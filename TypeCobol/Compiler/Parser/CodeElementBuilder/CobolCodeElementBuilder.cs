@@ -846,10 +846,10 @@ namespace TypeCobol.Compiler.Parser
 			var entry = new FileDescriptionEntry();
 
 			if (context.FD() != null)
-				entry.Type = new SyntaxProperty<FileDescriptionType>(FileDescriptionType.File, ParseTreeUtils.GetFirstToken(context.FD()));
+				entry.LevelIndicator = new SyntaxProperty<FileDescriptionType>(FileDescriptionType.File, ParseTreeUtils.GetFirstToken(context.FD()));
 			else
 			if (context.SD() != null)
-				entry.Type = new SyntaxProperty<FileDescriptionType>(FileDescriptionType.SortMergeFile, ParseTreeUtils.GetFirstToken(context.SD()));
+				entry.LevelIndicator = new SyntaxProperty<FileDescriptionType>(FileDescriptionType.SortMergeFile, ParseTreeUtils.GetFirstToken(context.SD()));
 
 			entry.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
 

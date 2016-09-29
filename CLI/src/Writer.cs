@@ -28,7 +28,7 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 	protected List<Diagnostic> GetErrors(string key) {
 		List<Diagnostic> list;
 		try { list = Errors[key]; }
-		catch(KeyNotFoundException ex) {
+		catch(KeyNotFoundException) {
 			list = new List<Diagnostic>();
 			Errors[key] = list;
 			Inputs[key] = GenerateNumber().ToString();

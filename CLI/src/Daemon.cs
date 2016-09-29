@@ -150,7 +150,7 @@ namespace TypeCobol.Server
 			error.Message = message;
 			error.Code = "codegen";
 			try { error.Source = writer.Inputs[path]; }
-			catch(KeyNotFoundException ex) { error.Source = writer.Count.ToString(); }
+			catch(KeyNotFoundException) { error.Source = writer.Count.ToString(); }
 			var list = new List<TypeCobol.Tools.Diagnostic>();
 			list.Add(error);
 			writer.AddErrors(path, list);

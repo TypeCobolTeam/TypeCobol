@@ -35,7 +35,6 @@
 		}
 
 		private bool Process(Node node) {
-			string text = "";
 			var generated = node as Generated;
 			foreach(var line in node.Lines) {
 				if (generated != null)
@@ -89,7 +88,7 @@
 			   || (line.Type == CobolTextLineType.Source && line.SourceText.Trim().StartsWith("COPY"));
 		}
 		/// <summary>Write input lines up to the end.</summary>
-		public void Finalize() {
+		public void WriteInputLinesUntilEnd() {
 			while (offset < Input.Count)
 				Write(Input[offset], null);
 		}
