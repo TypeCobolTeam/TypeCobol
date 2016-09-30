@@ -1311,16 +1311,10 @@ namespace TypeCobol.Compiler.Parser
         {
             var sectionHeader = new SectionHeader();
 
-            Token sectionName = ParseTreeUtils.GetFirstToken(context.sectionNameDefinition());
-            if (sectionName != null)
+            sectionHeader.SectionName = CobolWordsBuilder.CreateSectionNameDefinition(context.sectionNameDefinition());
+            if (context.priorityNumber() != null)
             {
-                sectionHeader.SectionName = new SectionName(sectionName);
-            }
-
-            Token priorityNumber = ParseTreeUtils.GetFirstToken(context.priorityNumber());
-            if (priorityNumber != null)
-            {
-                sectionHeader.PriorityNumber = new SyntaxNumber(priorityNumber);
+                sectionHeader.PriorityNumber = CobolWordsBuilder.CreateIntegerValue(context.priorityNumber().integerValue());
             }
 
             Context = context;
@@ -1333,11 +1327,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var paragraphHeader = new ParagraphHeader();
 
-            Token paragraphName = ParseTreeUtils.GetFirstToken(context.paragraphNameDefinition());
-            if (paragraphName != null)
-            {
-                paragraphHeader.ParagraphName = new ParagraphName(paragraphName);
-            }
+            paragraphHeader.ParagraphName = CobolWordsBuilder.CreateParagraphNameDefinition(context.paragraphNameDefinition());
 
             Context = context;
             CodeElement = paragraphHeader;

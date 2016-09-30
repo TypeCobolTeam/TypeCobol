@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// an external data set, and specifies file organization, access mode, and other
         /// information.
         /// </summary>
-        public IDictionary<FileName, FileControlEntry> FileConnectors { get; set; }
+        public IDictionary<SymbolDefinition, FileControlEntry> FileConnectors { get; set; }
 
         /// <summary>
         /// The I-O-CONTROL paragraph specifies when checkpoints are to be taken 
@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// More than one record description entry can be specified; each is an alternative description of the same record storage area.
         /// Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
         /// </summary>
-        public IDictionary<FileName, FileDescription> FileDescriptions { get; set; }
+        public IDictionary<SymbolDefinition, FileDescription> FileDescriptions { get; set; }
 
         /// <summary>
         /// Table of symbols defined in this program.
