@@ -96,11 +96,6 @@ public class SymbolTable {
 	}
 
 	public List<Named> GetVariable(QualifiedName name) {
-		var found = GetVariable(name.Head);
-		if (found.Count > 0) return Get(found, name);
-		else return QualifyUsingType(name);
-	}
-	private List<Named> QualifyUsingType(QualifiedName name) {
 		var candidates = new List<Named>();
 		if (name.Count > 1) candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
 		candidates.AddRange(GetVariable(name.Head));
@@ -123,11 +118,16 @@ public class SymbolTable {
 			foreach(var winner in winners) map.Add(winner.Key, winner.Value);
 		}
 		var found = new List<Named>();
-		foreach(var parent in candidates) {
-			var child = ((Node)parent).Get(name.ToString());
-			if (child != null) found.Add(child);
+		foreach(var winner in map) {
+			found.Add(winner.Key);
+			if (winner.Value.Count != 1) {
+				var str = new StringBuilder().Append(winner.Key.QualifiedName).Append(" expected:1-sized list, got: [");
+				foreach(var v in winner.Value) str.Append(' ').Append(v.QualifiedName).Append(',');
+				if (winner.Value.Count > 0) str.Length -=1;
+				throw new NotImplementedException(str.Append(" ]").ToString());
+			}
 		}
-		return candidates;
+		return found;
 	}
 	/// <summary>Gets direct or indirect toplevel item for a node.</summary>
 	/// <param name="node">We want the toplevel item for this node</param>
