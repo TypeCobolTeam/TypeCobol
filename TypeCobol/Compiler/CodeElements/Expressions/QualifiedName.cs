@@ -105,62 +105,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-	public class SyntacticQualifiedName: AbstractQualifiedName {
-		public Symbol Symbol { get; private set; }
-		public IList<DataName> DataNames { get; private set; }
-		public FileName FileName { get; private set; }
-
-		public override bool IsExplicit { get { return _explicit; } }
-		private bool _explicit;
-
-		public SyntacticQualifiedName(Symbol symbol, IList<DataName> datanames = null, FileName filename = null, bool isExplicit = false) {
-			this.Symbol = symbol;
-			this.DataNames = datanames != null ? datanames : new List<DataName>();
-			this.FileName = filename;
-			_explicit = isExplicit;
-		}
-
-		public override string ToString() {
-			var str = new System.Text.StringBuilder();
-			foreach (string name in this) str.Append(name).Append(Separator);
-			str.Length -= 1;
-			return str.ToString();
-		}
-
-		public override string Head {
-			get {
-				if (Symbol == null) return null;
-				return Symbol.Name;
-			}
-		}
-		public override QualifiedName Parent {
-			get {
-				var datanames = new List<DataName>();
-				for (int c=0; c<DataNames.Count-1; c++) datanames.Add(DataNames[c]);
-				if (FileName == null) {
-					if (DataNames.Count < 1) return null;
-				} else {
-					if (DataNames.Count < 1) return new SyntacticQualifiedName(FileName, null, null, IsExplicit);
-				}
-				var symbol = DataNames[DataNames.Count-1];
-				return new SyntacticQualifiedName(symbol, datanames, FileName, IsExplicit);
-			}
-		}
-
-		public override IEnumerator<string> GetEnumerator() {
-			if (FileName != null) yield return FileName.Name;
-			foreach (var dataname in DataNames) yield return dataname.Name;
-			if (Symbol != null) yield return Symbol.Name;
-		}
-
-		public override int Count { get { return DataNames.Count+(FileName!=null?2:1); } }
-	}
-
-
-
-
-
-
 	public class URI: AbstractQualifiedName {
 		public string Value { get; private set; }
 		private string[] parts;

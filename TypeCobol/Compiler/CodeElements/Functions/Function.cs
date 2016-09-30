@@ -69,13 +69,13 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 	}
 
 	public class Parameter {
-		public DataName Name;
+		public SymbolReference Name;
 		public DataType Type;
 		public int Length;
 		public bool IsCustom;
 
-		public Parameter(DataName name): this(name, false, null, int.MaxValue) { }
-		public Parameter(DataName name, bool isCustom, DataType type, int length=int.MaxValue) {
+		public Parameter(SymbolReference name): this(name, false, null, int.MaxValue) { }
+		public Parameter(SymbolReference name, bool isCustom, DataType type, int length=int.MaxValue) {
 			this.Name = name;
 			this.Type   = type;
 			this.Length = length;
