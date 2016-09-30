@@ -35,7 +35,6 @@
 		}
 
 		private bool Process(Node node) {
-			string text = "";
 			var generated = node as Generated;
 			foreach(var line in node.Lines) {
 				if (generated != null)
@@ -85,10 +84,11 @@
 		/// <returns></returns>
 		private bool ShouldCopy(ICobolTextLine line) {
 			return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank
+			   || line.Type == CobolTextLineType.Debug // #267: Debug lines are copied "AS IS", even if they are invalid in COBOL85!
 			   || (line.Type == CobolTextLineType.Source && line.SourceText.Trim().StartsWith("COPY"));
 		}
 		/// <summary>Write input lines up to the end.</summary>
-		public void Finalize() {
+		public void WriteInputLinesUntilEnd() {
 			while (offset < Input.Count)
 				Write(Input[offset], null);
 		}

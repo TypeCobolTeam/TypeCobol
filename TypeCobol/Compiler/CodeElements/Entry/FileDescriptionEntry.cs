@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Level indicators represent the highest level of any data hierarchy with which they are associated. 
         /// FD is the file description level indicator and SD is the sort-merge file description level indicator.
         /// </summary>
-        public SyntaxProperty<FileDescriptionType> Type { get; set; }
+        public SyntaxProperty<FileDescriptionType> LevelIndicator { get; set; }
 
         /// <summary>
         /// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, 

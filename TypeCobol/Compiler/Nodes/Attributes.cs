@@ -2,6 +2,7 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
 	using TypeCobol.Compiler.CodeElements.Functions;
 	using TypeCobol.Compiler.CodeModel;
 
@@ -17,7 +18,7 @@ public static class Attributes {
 				value = attributes[attr].GetValue(value, table);
 			}
 			return value;
-		} catch (KeyNotFoundException ex) { return null; }
+		} catch (KeyNotFoundException) { return null; }
 	}
 
 	private static Dictionary<string,Attribute> attributes;
@@ -70,11 +71,17 @@ internal class LevelAttribute: Attribute {
 
 internal class SenderAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var statement = ((Node)o).CodeElement as Sending;
+		var ce = ((Node)o).CodeElement;
+
+		var set = ce as SetStatementForConditions;
+		if (set != null) return new URI(set.SendingValue.Value.ToString());
+
+		var statement = ce as VariableUser;
 		if (statement == null) return null;
-		var items = statement.SendingItems;
+		var items = new List<QualifiedName>();
+		foreach(var v in statement.Variables) if (v.Value == null) items.Add(v.Key);
 		if (items.Count == 0) return null;
-		if (items.Count == 1) return statement.SendingItems[0];
+		if (items.Count == 1) return items[0];
 		throw new System.ArgumentOutOfRangeException("Too many sending items ("+items.Count+")");
 	}
 }
@@ -83,7 +90,7 @@ internal class ReceiverAttribute: Attribute {
 		var statement = ((Node)o).CodeElement as VariableWriter;
 		if (statement == null) return null;
 		if (statement.VariablesWritten.Count == 0) return null;
-		if (statement.VariablesWritten.Count == 1) return new List<TypeCobol.Compiler.CodeElements.Expressions.QualifiedName>(statement.VariablesWritten.Keys)[0];
+		if (statement.VariablesWritten.Count == 1) return new List<QualifiedName>(statement.VariablesWritten.Keys)[0];
 		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.VariablesWritten.Count+")");
 	}
 }
@@ -151,10 +158,7 @@ internal class FunctionUserAttribute: Attribute {
 }
 
 internal class DefinitionsAttribute: Attribute {
-	private long ct;
-	private long cf;
 	public object GetValue(object o, SymbolTable table) {
-		ct = cf = 0;
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);

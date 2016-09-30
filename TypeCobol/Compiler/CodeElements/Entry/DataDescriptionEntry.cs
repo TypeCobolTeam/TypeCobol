@@ -870,7 +870,8 @@
 	public class TypeDefinitionEntry: DataDescriptionEntry, Typed {
 		public TypeDefinitionEntry(): base() { }
 
-		public SyntaxProperty<bool> IsStrong { get; internal set; }
+		public SyntaxProperty<bool> Strong { get; internal set; }
+		public bool IsStrong { get { return Strong != null && Strong.Value; } }
 
 	}
 

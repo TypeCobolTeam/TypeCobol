@@ -37,6 +37,18 @@ public abstract class Node: Named {
 		}
 		return results;
 	}
+	/// <summary>Search for all children of a specific Name</summary>
+	/// <param name="name">Name we search for</param>
+	/// <param name="deep">true for deep search, false for shallow search</param>
+	/// <returns>List of all children with the proper name ; empty list if there is none</returns>
+	public IList<Node> GetChildren(string name, bool deep) {
+		var results = new List<Node>();
+		foreach(var child in children) {
+			if (name.Equals(child.Name, System.StringComparison.InvariantCultureIgnoreCase)) results.Add(child);
+			if (deep) results.AddRange(child.GetChildren(name, true));
+		}
+		return results;
+	}
 
 
 	/// <summary>Adds a node as a children of this one.</summary>

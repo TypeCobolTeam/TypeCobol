@@ -19,19 +19,23 @@
 ///
 /// Format 1, 5, 6, 7 can be ambiguous
 /// </summary>
-public abstract class SetStatement: StatementElement, Sending,VariableWriter {
+public abstract class SetStatement: StatementElement, VariableWriter {
 	public SetStatement(StatementType statementType): base(CodeElementType.SetStatement, statementType) { }
 
 	public bool IsUnsafe { get { return true; } }
 
-	protected IDictionary<QualifiedName, object> _variablesWritten;
-	protected IList<QualifiedName> _sendingItems = null;
-	protected List<QualifiedName> _variables = null;
-
-
-	public virtual IList<QualifiedName> Variables { get { return new List<QualifiedName>(); } }
-	public virtual IList<QualifiedName> SendingItems { get { return new List<QualifiedName>(); } }
-	public virtual IDictionary<QualifiedName,object> VariablesWritten { get { return new Dictionary<QualifiedName,object>(); } }
+	protected IDictionary<QualifiedName,object> variables;
+	public virtual IDictionary<QualifiedName,object> Variables{
+		get { return new Dictionary<QualifiedName,object>(); }
+	}
+	public virtual IDictionary<QualifiedName,object> VariablesWritten {
+		[NotNull]
+		get {
+			var written = new Dictionary<QualifiedName,object>();
+			foreach(var v in Variables) if (v.Value != null) written.Add(v.Key, v.Value);
+			return written;
+		}
+	}
 }
 
 /// <summary>
@@ -75,35 +79,24 @@ public class SetStatementForAssignment: SetStatement {
 
 
 
-	public override IList<QualifiedName> Variables {
+	public override IDictionary<QualifiedName,object> Variables {
 		[NotNull]
 		get {
-			if (_variables != null) return _variables;
+			if (variables != null) return variables;
+			variables = new Dictionary<QualifiedName,object>();
 
-			_variables = new List<QualifiedName>();
 			var sending = SendingItem as QualifiedName;
-			if (sending != null) _variables.Add(sending);
-			_variables.AddRange(VariablesWritten.Keys);
-			return _variables;
-		}
-	}
-
-	public override IDictionary<QualifiedName,object> VariablesWritten {
-		[NotNull]
-		get {
-			if (_variablesWritten != null) return _variablesWritten;
-
-			_variablesWritten = new Dictionary<QualifiedName,object>();
-			if (ReceivingStorageAreas == null) return _variablesWritten;
+			if (sending != null) variables.Add(sending, null);
 
 			foreach(var item in ReceivingStorageAreas) {
 				var name = ((Named)item.StorageArea).QualifiedName;
-				if (_variablesWritten.ContainsKey(name))
+				if (variables.ContainsKey(name))
 					if (item.StorageArea is Subscripted) continue; // same variable with (presumably) different subscript
 					else throw new System.ArgumentException(name+" already written, but not subscripted?");
-				else _variablesWritten.Add(name, SendingItem);
+				else variables.Add(name, SendingItem);
 			}
-			return _variablesWritten;
+
+			return variables;
 		}
 	}
 
@@ -112,20 +105,6 @@ public class SetStatementForAssignment: SetStatement {
 		get {
 			if (SendingVariable == null) return null;
 			return SendingVariable.Value;
-		}
-	}
-
-	public override IList<QualifiedName> SendingItems {
-		[NotNull]
-		get {
-			if (_sendingItems != null) return _sendingItems;
-
-			_sendingItems = new List<QualifiedName>();
-			if (SendingVariable != null) {
-				var name = SendingVariable.Value as QualifiedName;
-				if (name != null) _sendingItems.Add(name);
-			}
-			return _sendingItems;
 		}
 	}
 }
@@ -220,7 +199,6 @@ internal class SetStatementForSwitches: SetStatement {
 			if (instruction.SwitchPosition != null)
 				map[instruction.SwitchPosition.Value].Add(instruction.MnemonicForUPSISwitchName);
 		}
-		bool enough = false;
 		var names = map[UPSISwitchPosition.On];
 		foreach(var name in names) str.Append(' ').Append(name);
 		if (names.Count > 0) str.Append(" TO ON");
@@ -264,28 +242,19 @@ internal class SetStatementForConditions: SetStatement {
 		return str.ToString();
 	}
 
-	public override IList<QualifiedName> Variables { get { return new List<QualifiedName>(this.VariablesWritten.Keys); } }
-
-	public override IList<QualifiedName> SendingItems {
-		get { 
-			var items = new List<QualifiedName>();
-			items.Add(new URI(SendingValue.Value.ToString()));
-			return items;
-		}
-	}
 	private bool? SendingItem {
 		get {
 			if (SendingValue == null) return null;
 			return SendingValue.Value;
 		}
 	}
-
-	public override IDictionary<QualifiedName,object> VariablesWritten {
+	public override IDictionary<QualifiedName,object> Variables {
 		get {
-			var items = new Dictionary<QualifiedName,object>();
-			foreach(var item in Conditions)
-				items.Add(item.QualifiedName, SendingItem);
-			return items;
+			if (variables != null) return variables;
+			variables = new Dictionary<QualifiedName,object>();
+//			variables.Add(new URI(SendingValue.Value.ToString()), null);
+			foreach(var item in Conditions) variables.Add(item.QualifiedName, SendingItem);
+			return variables;
 		}
 	}
 }

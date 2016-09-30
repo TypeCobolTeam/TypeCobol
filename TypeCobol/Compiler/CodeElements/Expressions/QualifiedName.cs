@@ -4,8 +4,10 @@ using System.Collections.Specialized;
 namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public interface QualifiedName: IList<string> {
+		char Separator { get; }
 		string Head { get; }
 		string Tail { get; }
+		QualifiedName Parent { get; }
 		bool IsExplicit { get; }
 		bool Matches(string uri);
 		bool Matches(QualifiedName name);
@@ -14,15 +16,20 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 	public abstract class AbstractQualifiedName: QualifiedName {
-		public virtual bool IsExplicit { get { return true; } }
+		public virtual bool IsExplicit { get { return false; } }
+		public virtual char Separator {
+			get { return '.'; }
+			set { throw new System.NotSupportedException(); }
+		}
 
 		public abstract string Head { get; }
-		public string Tail {
+		public virtual string Tail {
 			get {
 				var uri = this.ToString();
 				return uri.Remove(uri.Length-2-Head.Length);
 			}
 		}
+		public abstract QualifiedName Parent { get; }
 		public abstract int Count { get; }
 		public abstract IEnumerator<string> GetEnumerator();
 
@@ -98,32 +105,34 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-	
 	public class URI: AbstractQualifiedName {
 		public string Value { get; private set; }
-		public char Separator { get; private set; }
 		private string[] parts;
 
 		public URI(string uri, char separator = '.') {
 			if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
-			this.Separator = separator != null ? separator : '.';
+			this.separator = separator != null ? separator : '.';
 			this.Value = uri;
 			this.parts = Value.Split(this.Separator);
+		}
+
+		private char separator;
+		public override char Separator {
+			get { return separator; }
+			set { separator = value; }
 		}
 
 		public override string ToString() { return Value; }
 
 		public override string Head { get { return parts[parts.Length-1]; } }
+		public override QualifiedName Parent { get { return new URI(Value.Remove(Value.Length-1-Head.Length), Separator); } }
 
 		public override IEnumerator<string> GetEnumerator() {
 			foreach(string part in parts) yield return part;
 		}
 
-	    public override bool IsExplicit
-	    {
-	        get { return false; }
-	    }
+		public override bool IsExplicit { get { return false; } }
 
-	    public override int Count { get { return parts.Length; } }
+		public override int Count { get { return parts.Length; } }
 	}
 }

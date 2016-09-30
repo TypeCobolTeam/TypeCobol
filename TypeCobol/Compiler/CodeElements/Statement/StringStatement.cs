@@ -94,41 +94,18 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        private List<QualifiedName> _variables;
-        private IDictionary<QualifiedName, object> _variablesWritten;
+        private IDictionary<QualifiedName,object> variables;
+		public  IDictionary<QualifiedName,object> Variables {
+			get {
+				if (variables != null) return variables;
+				variables = new Dictionary<QualifiedName, object>();
+				if (ReceivingField != null) variables.Add(((Named)ReceivingField.StorageArea).QualifiedName, StringContentsToConcatenate);
+				return variables;
+			}
+		}
+		public  IDictionary<QualifiedName,object> VariablesWritten { get { return Variables; } }
 
-        public IList<QualifiedName> Variables
-        {
-            get {
-                if (_variables == null)
-                {
-                    _variables = new List<QualifiedName>();
-                    if (ReceivingField != null)
-                    {
-                        _variables.Add(((Named) ReceivingField.StorageArea).QualifiedName);
-                    }
-                }
-                return _variables;
-            }
-        }
-
-        public IDictionary<QualifiedName, object> VariablesWritten
-        {
-            get
-            {
-                if (_variablesWritten == null)
-                {
-                    _variablesWritten = new Dictionary<QualifiedName, object>();
-                    if (ReceivingField != null)
-                    {
-                        _variablesWritten.Add(((Named)ReceivingField.StorageArea).QualifiedName, StringContentsToConcatenate);
-                    }
-                }
-                return _variablesWritten;
-            }
-        }
-
-        public bool IsUnsafe { get { return false; }  }
+		public bool IsUnsafe { get { return false; }  }
     }
 
 	public class StringContentToConcatenate
@@ -153,38 +130,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public Variable DelimiterCharacters { get; set; }
 		
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            if (SendingFields == null && IsDelimitedbySize == null && DelimiterCharacters == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                var sb = new StringBuilder("");
-                if (SendingFields != null)
-                {
-                    foreach (var sendingField in SendingFields)
-                    {
-                        sb.Append(' ');
-                        sb.Append(sendingField);
-                    }
-                    sb.Append("   ");
-                }
-
-                if (DelimiterCharacters != null)
-                {
-                    sb.AppendLine(" delimited by " + DelimiterCharacters);
-                }
-
-				if (IsDelimitedbySize != null) sb.AppendLine(" delimited by Size");
-
-                return sb.ToString();
-            }
-        }
+		public override string ToString() {
+			if (SendingFields == null && IsDelimitedbySize == null && DelimiterCharacters == null) {
+				return base.ToString();
+			}
+			var str = new StringBuilder();
+			if (SendingFields != null) {
+				foreach (var item in SendingFields) str.Append(' ').Append(item);
+				str.Append(' ');
+			}
+			if (DelimiterCharacters != null) str.Append(" DELIMITED BY ").Append(DelimiterCharacters);
+			if (IsDelimitedbySize   != null) str.Append(" DELIMITED BY SIZE");
+			return str.ToString();
+		}
 
     }
 }

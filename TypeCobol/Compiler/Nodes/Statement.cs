@@ -85,8 +85,8 @@ public class Merge: Node, CodeElementHolder<MergeStatement>, Statement {
 
 public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
 	public Move(MoveStatement statement): base(statement) { }
-	public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
 	public IList<FunctionCall> FunctionCalls { get { return this.CodeElement().FunctionCalls; } }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
@@ -101,7 +101,7 @@ public class Return: Node, CodeElementHolder<ReturnStatement>, Statement {
 
 public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableWriter {
 	public Set(SetStatement statement): base(statement) { }
-	public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
@@ -121,8 +121,8 @@ public class Stop: Node, CodeElementHolder<StopStatement>, Statement {
 public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	public String(StringStatement statement): base(statement) { }
 
-    public IList<QualifiedName> Variables { get { return this.CodeElement().Variables; } }
-    public IDictionary<QualifiedName, object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
     public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 

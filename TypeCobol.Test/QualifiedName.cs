@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id.Count, 1);
 			Assert.AreEqual(id[0], "x");
 			try{ var x = id[1]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("x"),    0);
 			Assert.AreEqual(id.IndexOf("xin"), -1);
 			Assert.IsTrue(id.Contains("x"));
@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id[0], "group");
 			Assert.AreEqual(id[1], "name");
 			try{ var x = id[2]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("group"), 0);
 			Assert.AreEqual(id.IndexOf("name"),  1);
 			Assert.AreEqual(id.IndexOf("x"),    -1);
@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id[0], "file");
 			Assert.AreEqual(id[1], "name");
 			try{ var x = id[2]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("file"), 0);
 			Assert.AreEqual(id.IndexOf("name"), 1);
 			Assert.AreEqual(id.IndexOf("x"),   -1);
@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id[3], "c");
 			Assert.AreEqual(id[4], "name");
 			try{ var x = id[5]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("group"), 0);
 			Assert.AreEqual(id.IndexOf("aaa"),   1);
 			Assert.AreEqual(id.IndexOf("bb"),    2);
@@ -105,7 +105,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id[3], "c");
 			Assert.AreEqual(id[4], "name");
 			try{ var x = id[5]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("file"), 0);
 			Assert.AreEqual(id.IndexOf("aaa"),  1);
 			Assert.AreEqual(id.IndexOf("bb"),   2);

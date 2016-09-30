@@ -155,25 +155,25 @@ namespace TypeCobol.Compiler.CodeElements
             SHIFT-IN             
         */
 
-    /// <summary>
-    /// Subscript used to reference a specific table element
-    /// </summary>
-    public class SubscriptExpression
-    {
-        public SubscriptExpression(ArithmeticExpression numericExpression)
-        {
-            NumericExpression = numericExpression;
-        }
+/// <summary>Subscript used to reference a specific table element</summary>
+public class SubscriptExpression {
+	public SubscriptExpression(ArithmeticExpression numericExpression) {
+		NumericExpression = numericExpression;
+	}
 
-        public SubscriptExpression(Token allToken)
-        {
-            ALL = new SyntaxProperty<bool>(true, allToken);
-        }
+	public SubscriptExpression(Token allToken) {
+		ALL = new SyntaxProperty<bool>(true, allToken);
+	}
 
-        public ArithmeticExpression NumericExpression { get; private set; }
+	public ArithmeticExpression NumericExpression { get; private set; }
+	public SyntaxProperty<bool> ALL { get; private set; }
 
-        public SyntaxProperty<bool> ALL { get; private set; }
-    }
+	public override string ToString() {
+		if (NumericExpression != null) return NumericExpression.ToString();
+		if (ALL != null) return "ALL";
+		return base.ToString();
+	}
+}
 
 	/// <summary>Storage area for an index</summary>
 	public class IndexStorageArea : StorageArea, Named {
