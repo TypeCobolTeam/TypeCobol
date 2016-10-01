@@ -43,11 +43,14 @@ public interface Attribute {
 
 internal class NameAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var named = o as Named;
-		if (named == null && o is Node)
-			named = ((Node)o).CodeElement as Named;
-		if (named == null) return null;
-		return named.Name;
+		var node = o as Node;
+        if (node != null)
+        {
+            var named = ((Node)o).CodeElement as NamedCodeElement;
+            return named.Name;
+        }
+        else
+            return null;
 	}
 }
 
@@ -164,15 +167,15 @@ internal class DefinitionsAttribute: Attribute {
 		definitions.functions = GetFunctions(table);
 		return definitions;
 	}
-	private List<Named> GetTypes(SymbolTable table) {
-		var list = new List<Named>();
+	private List<Node> GetTypes(SymbolTable table) {
+		var list = new List<Node>();
 		if (table == null) return list;
 		foreach(var items in table.Types) list.AddRange(items.Value);
 		list.AddRange(GetTypes(table.EnclosingScope));
 		return list;
 	}
-	private List<Named> GetFunctions(SymbolTable table) {
-		var list = new List<Named>();
+	private List<Node> GetFunctions(SymbolTable table) {
+		var list = new List<Node>();
 		if (table == null) return list;
 		foreach(var items in table.Functions) list.AddRange(items.Value);
 		list.AddRange(GetFunctions(table.EnclosingScope));
@@ -180,8 +183,8 @@ internal class DefinitionsAttribute: Attribute {
 	}
 }
 public class Definitions {
-	public List<Named> types;
-	public List<Named> functions;
+	public List<Node> types;
+	public List<Node> functions;
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder();

@@ -29,7 +29,7 @@ public class CallParameterDescription: ParameterDescriptionEntry {
 	public string Value { get; set; }
 }
 
-public class FunctionCall: Named {
+public class FunctionCall {
 	public FunctionCall(IntrinsicFunctionCallResult call) {
 		QualifiedName = new Expressions.URI(call.IntrinsicFunctionName.Name);
 		foreach(var variableOrExpression in call.Arguments)
@@ -58,7 +58,7 @@ public class CallParameter {
 
 	public virtual bool   IsLiteral   { get { return voe.IsLiteral; } }
 	public virtual string SendingMode { get { return IsLiteral? "CONTENT":"REFERENCE"; } }
-	public virtual string Value       { get { return voe.QualifiedName.ToString(); } }
+	public virtual string Value       { get { return voe.MainSymbolReference != null ? voe.MainSymbolReference.Name : null; } }
 }
 public class EmptyCallParameter: CallParameter {
 	public EmptyCallParameter(): base(null) { }

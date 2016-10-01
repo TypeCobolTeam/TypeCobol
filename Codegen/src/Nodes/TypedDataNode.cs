@@ -55,7 +55,7 @@ internal class TypedDataNode: DataDescription, Generated {
 		var lines = new List<ITextLine>();
 		foreach(var child in type.Children) {
 			if (child is TypedDataNode) continue;
-			var typed = (Typed)child;
+			var typed = (ITypedNode)child;
 			var types = table.GetType(new URI(typed.DataType.Name));
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
 			lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo));

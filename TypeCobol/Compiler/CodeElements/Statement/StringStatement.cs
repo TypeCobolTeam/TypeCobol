@@ -99,7 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
 			get {
 				if (variables != null) return variables;
 				variables = new Dictionary<QualifiedName, object>();
-				if (ReceivingField != null) variables.Add(((Named)ReceivingField.StorageArea).QualifiedName, StringContentsToConcatenate);
+				if (ReceivingField != null) variables.Add(new URI(ReceivingField.StorageArea.SymbolReference.Name), StringContentsToConcatenate);
 				return variables;
 			}
 		}

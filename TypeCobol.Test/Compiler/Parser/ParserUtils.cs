@@ -273,73 +273,74 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 // [/TYPECOBOL]
 
-        private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
-            foreach(string key in map.Keys) {
-                foreach (var data in map[key]) {
-                    Dump(str, data, 1);
-                    str.Append("\n");
-                }
-            }
-        }
-
-        private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
-        {
-            DumpIndent(str, indent);
-            str.Append(data.Name);
-            return str;
-        }
-
-        private static StringBuilder DumpIndent(StringBuilder str, int indent)
-        {
-            for (int c=0; c<indent; c++) str.Append("  ");
-            return str;
-        }
-
-
-        public static void CheckWithResultFile(string result, string testName)
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
-            {
-                CheckWithResultReader(testName, result, reader);
-            }
-        }
-
-        public static void CheckWithResultReader(string testName, string result, StreamReader reader)
-        {
-            string expectedResult = reader.ReadToEnd();
-            TestUtils.compareLines(testName, result, expectedResult);
-        }
+/*TODO#249
+private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
+foreach(string key in map.Keys) {
+    foreach (var data in map[key]) {
+        Dump(str, data, 1);
+        str.Append("\n");
     }
+}
+}
 
-    public class TestErrorListener : BaseErrorListener 
-    {
-        private StringBuilder errorLog;
+private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
+{
+DumpIndent(str, indent);
+str.Append(data.Name);
+return str;
+}
 
-        public TestErrorListener()
-        {
-            errorLog = new StringBuilder();
-            ErrorCount = 0;
-        }
+private static StringBuilder DumpIndent(StringBuilder str, int indent)
+{
+for (int c=0; c<indent; c++) str.Append("  ");
+return str;
+}
+*/
 
-        public int ErrorCount { get; private set; }
+public static void CheckWithResultFile(string result, string testName)
+{
+using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
+{
+    CheckWithResultReader(testName, result, reader);
+}
+}
 
-        public string ErrorLog
-        {
-            get { return errorLog.ToString(); }
-        }
+public static void CheckWithResultReader(string testName, string result, StreamReader reader)
+{
+string expectedResult = reader.ReadToEnd();
+TestUtils.compareLines(testName, result, expectedResult);
+}
+}
 
-        public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
-        {
-            ErrorCount++;
+public class TestErrorListener : BaseErrorListener
+{
+private StringBuilder errorLog;
 
-            IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
-            foreach (string ruleInvocation in stack.Reverse())
-            {
-                errorLog.AppendLine(ruleInvocation);
-            } 
-            errorLog.AppendLine("line " + line + ":" + charPositionInLine + " at " + offendingSymbol);
-            errorLog.AppendLine("=> " + msg);
-            errorLog.AppendLine();
-        }
-    }
+public TestErrorListener()
+{
+errorLog = new StringBuilder();
+ErrorCount = 0;
+}
+
+public int ErrorCount { get; private set; }
+
+public string ErrorLog
+{
+get { return errorLog.ToString(); }
+}
+
+public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+{
+ErrorCount++;
+
+IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
+foreach (string ruleInvocation in stack.Reverse())
+{
+    errorLog.AppendLine(ruleInvocation);
+}
+errorLog.AppendLine("line " + line + ":" + charPositionInLine + " at " + offendingSymbol);
+errorLog.AppendLine("=> " + msg);
+errorLog.AppendLine();
+}
+}
 }

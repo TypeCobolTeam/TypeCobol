@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
@@ -19,6 +20,8 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public StorageAreaKind Kind { get; protected set;  }
+
+        public SymbolReference SymbolReference { get; protected set; }
 
         /// <summary>
         /// True if this storage area is read from by the program
@@ -43,6 +46,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// optional length for the data item.
         /// </summary>
         public ReferenceModifier ReferenceModifier { get; private set; }
+
+        public override string ToString()
+        {
+            if (SymbolReference != null) return SymbolReference.ToString();
+            return base.ToString();
+        }
     }
 
     /// <summary>
@@ -73,24 +82,12 @@ namespace TypeCobol.Compiler.CodeElements
         IntrinsicFunctionCallResult // allocated on reference
     }
 
-	public interface Named {
-		string Name { get; }
-		Expressions.QualifiedName QualifiedName { get; }
-	}
-	public interface Typed {
-		DataType DataType { get; }
-		int Length { get; }
-	}
-	public interface Subscripted {
-		List<SubscriptExpression> Subscripts { get; }
-	}
-
 	/// <summary>
 	/// Storage area for a data symbol or condition symbol defined in the program.
 	/// Also used for the storage area allocated by the compiler for the implicitely 
 	/// defined special registers (see list in a comment just below).
 	/// </summary>
-	public class DataOrConditionStorageArea: StorageArea, Named, Subscripted {
+	public class DataOrConditionStorageArea: StorageArea {
 		public DataOrConditionStorageArea(SymbolReference symbolReference)
 				: base(StorageAreaKind.DataOrCondition) {
 			SymbolReference = symbolReference;
@@ -102,8 +99,6 @@ namespace TypeCobol.Compiler.CodeElements
 			SymbolReference = subscriptedSymbolReference;
 			Subscripts = new List<SubscriptExpression>(subscripts);
 		}
-
-		public SymbolReference SymbolReference { get; private set; }
 
 		public List<SubscriptExpression> Subscripts { get; private set; }
 
@@ -118,12 +113,9 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 		private SymbolType alternativeSymbolType;
 
-		public string Name { get { return SymbolReference.Name; } }
-		public QualifiedName QualifiedName { get { return SymbolReference.QualifiedName; } }
-
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			str.Append(Name);
+			str.Append(SymbolReference.Name);
 			if (Subscripts != null)
 			foreach(var subscript in Subscripts)
 				str.Append('(').Append(subscript.ToString()).Append(')');
@@ -176,19 +168,9 @@ public class SubscriptExpression {
 }
 
 	/// <summary>Storage area for an index</summary>
-	public class IndexStorageArea : StorageArea, Named {
+	public class IndexStorageArea : StorageArea {
 		public IndexStorageArea(SymbolReference indexNameReference): base(StorageAreaKind.Index) {
 			SymbolReference = indexNameReference;
-		}
-
-		public SymbolReference SymbolReference { get; private set; }
-
-		public string Name { get { return SymbolReference.Name; } }
-		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
-
-		public override string ToString() {
-			if (SymbolReference != null) return SymbolReference.ToString();
-			return base.ToString();
 		}
 	}
     
@@ -206,21 +188,29 @@ public class SubscriptExpression {
     /// Specific storage area allocated by the compiler to hold
     /// a property describing another storage area
     /// </summary>
-	public class StorageAreaPropertySpecialRegister: StorageArea, Named {
+	public class StorageAreaPropertySpecialRegister: StorageArea {
 		public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference)
 				: base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			StorageAreaReference = storageAreaReference;
+
+            // Generate a unique symbol name for this special register
+            var storageAreaName = storageAreaReference != null ? storageAreaReference.ToString() : "null";
+            var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + storageAreaName);
+            SymbolDefinition = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+            SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
 		}
 
 		public Token SpecialRegisterName { get; private set; }
 
 		public StorageArea StorageAreaReference { get; private set; }
 
-		public string Name { get { return SpecialRegisterName.Text; } }
-		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
+        /// <summary>
+        /// A mention to this kind of special register in the code is both a definition and a reference to a symbol
+        /// </summary>
+        public SymbolDefinition SymbolDefinition { get; private set; }
 
-		public override string ToString() {
+        public override string ToString() {
 			var str = new System.Text.StringBuilder();
 			if (SpecialRegisterName != null) str.Append(SpecialRegisterName.TokenType).Append('(');
 			if (StorageAreaReference != null) str.Append(StorageAreaReference.ToString());
@@ -234,38 +224,57 @@ public class SubscriptExpression {
 	/// Specific storage area allocated by the compiler to hold
 	/// a property describing another storage area
 	/// </summary>
-	public class FilePropertySpecialRegister : StorageArea, Named {
+	public class FilePropertySpecialRegister : StorageArea {
 		public FilePropertySpecialRegister(Token specialRegisterName, SymbolReference fileNameReference)
 				: base(StorageAreaKind.FilePropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
-			SymbolReference = fileNameReference;
-		}
+			FileNameReference = fileNameReference;
+
+            // Generate a unique symbol name for this special register
+            var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + fileNameReference.ToString());
+            SymbolDefinition = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+            SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
+        }
 
 		public Token SpecialRegisterName { get; private set; }
 
-		public SymbolReference SymbolReference { get; private set; }
+		public SymbolReference FileNameReference { get; private set; }
 
-		public string Name { get { return SpecialRegisterName.Text; } }
-		public QualifiedName QualifiedName { get { return Name!=null? new URI(Name):null; } }
-	}
+        /// <summary>
+        /// A mention to this kind of special register in the code is both a definition and a reference to a symbol
+        /// </summary>
+        public SymbolDefinition SymbolDefinition { get; private set; }
+    }
 
 	/// <summary>
 	/// Call to a Cobol intrinsic function.
 	///  AND
 	/// Storage area allocated by the compiler to hold the result of the call.
 	/// </summary>
-	public class IntrinsicFunctionCallResult : StorageArea, Named {
-		public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments)
+	public class IntrinsicFunctionCallResult : StorageArea {
+
+        // Static counter which will only increase during a compilation session
+        private static int callSiteCounter;
+
+        public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments)
 				: base(StorageAreaKind.IntrinsicFunctionCallResult) {
 			IntrinsicFunctionName = intrinsicFunctionName;
 			Arguments = arguments;
-		}
+
+            // Generate a unique symbol name for the function call at this specific call site
+            int uniqueCounter = Interlocked.Increment(ref callSiteCounter);
+            var generatedSymbolName = new GeneratedSymbolName(IntrinsicFunctionName.NameLiteral.Token, IntrinsicFunctionName.Name + "-" + uniqueCounter);
+            SymbolDefinition = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+            SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
+        }
 
 		public ExternalName IntrinsicFunctionName { get; private set; }
 
 		public VariableOrExpression[] Arguments { get; private set; }
 
-		public string Name { get { return IntrinsicFunctionName.Name; } }
-		public QualifiedName QualifiedName { get { return IntrinsicFunctionName.QualifiedName; } }
+        /// <summary>
+        /// Each individual function call in the code is both a definition and a reference to a symbol
+        /// </summary>
+        public SymbolDefinition SymbolDefinition { get; private set; }
     }
 }
