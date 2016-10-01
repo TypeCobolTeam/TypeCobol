@@ -89,9 +89,9 @@ public class SetStatementForAssignment: SetStatement {
 			if (sending != null) variables.Add(sending, null);
 
 			foreach(var item in ReceivingStorageAreas) {
-				var name = ((Named)item.StorageArea).QualifiedName;
+				var name = new URI(item.StorageArea.SymbolReference.Name);
 				if (variables.ContainsKey(name))
-					if (item.StorageArea is Subscripted) continue; // same variable with (presumably) different subscript
+					if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
 					else throw new System.ArgumentException(name+" already written, but not subscripted?");
 				else variables.Add(name, SendingItem);
 			}
@@ -133,11 +133,11 @@ public class SetSendingVariable {
 		get {
 			if(IntegerVariableOrIndex != null)
 				if (IntegerVariableOrIndex.Value != null) return IntegerVariableOrIndex.Value.Value;
-				else return ((Named)IntegerVariableOrIndex.StorageArea).Name;
+				else return IntegerVariableOrIndex.StorageArea.SymbolReference.Name;
 			if(NullPointerValue != null) return NullPointerValue.ToString();
 			if(ProgramNameOrProgramEntryVariable != null) {
-				var program = ProgramNameOrProgramEntryVariable.StorageArea as Named;
-				if (program != null) return program.QualifiedName;
+				var program = ProgramNameOrProgramEntryVariable.StorageArea.SymbolReference;
+				if (program != null) return new URI(program.Name);
 			}
 			if(SelfObjectIdentifier != null) return SelfObjectIdentifier.ToString();
 			return null;
@@ -253,7 +253,7 @@ internal class SetStatementForConditions: SetStatement {
 			if (variables != null) return variables;
 			variables = new Dictionary<QualifiedName,object>();
 //			variables.Add(new URI(SendingValue.Value.ToString()), null);
-			foreach(var item in Conditions) variables.Add(item.QualifiedName, SendingItem);
+			foreach(var item in Conditions) variables.Add(new URI(item.SymbolReference.Name), SendingItem);
 			return variables;
 		}
 	}

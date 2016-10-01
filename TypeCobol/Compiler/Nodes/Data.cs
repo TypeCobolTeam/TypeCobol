@@ -39,12 +39,13 @@ public abstract class DataDefinition: Node, Parent<DataDefinition> {
 	public DataDefinition(DataDefinitionEntry entry): base(entry) { }
 	public override string ID { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 }
-public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, Typed {
+public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, ITypedNode {
 	public DataDescription(DataDescriptionEntry entry): base(entry) { }
 	public DataType DataType { get { return this.CodeElement().DataType; } }
 	public int Length { get { return this.CodeElement().Length; } }
 }
-public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry>, Typed {
+public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry>, ITypedNode
+    {
 	public DataCondition(DataConditionEntry entry): base(entry) { }
 	public DataType DataType { get { return this.CodeElement().DataType; } }
 	public int Length { get { return this.CodeElement().Length; } }
@@ -56,7 +57,8 @@ public class DataRenames: DataDefinition, CodeElementHolder<DataRenamesEntry> {
 	public DataRenames(DataRenamesEntry entry): base(entry) { }
 }
 // [COBOL 2002]
-public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEntry>, Parent<DataDescription>, Typed {
+public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEntry>, Parent<DataDescription>, ITypedNode
+    {
 	public TypeDefinition(TypeDefinitionEntry entry): base(entry) { }
 	public bool IsStrong { get { return this.CodeElement().IsStrong; } }
 	public DataType DataType { get { return this.CodeElement().DataType; } }

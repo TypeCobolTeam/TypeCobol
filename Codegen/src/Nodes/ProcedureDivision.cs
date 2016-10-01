@@ -40,15 +40,15 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				int c = 0;
 				var done = new List<string>();
 				foreach(var parameter in UsingParameters) {
-					var data = parameter.ReceivingStorageArea.StorageArea as Named;
-					string name = data != null? data.Name : null;
+					var data = parameter.ReceivingStorageArea.StorageArea;
+					string name = data != null? data.SymbolReference.Name : null;
 					if (done.Contains(name)) continue;
 					else done.Add(name);
 					string strmode = "BY REFERENCE ";
 					if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
-					if (parameter is Named) strname = name;
+					if (parameter.ReceivingStorageArea.StorageArea != null) strname = name;
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					c++;
 				}
@@ -56,8 +56,8 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 					string strmode = "BY REFERENCE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
-					var named = ReturningParameter.StorageArea as Named;
-					if (named != null) strname = named.Name;
+					var named = ReturningParameter.StorageArea;
+					if (named != null) strname = named.SymbolReference.Name;
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 				}
 				_cache.Add(new TextLineSnapshot(-1, "    .", null));

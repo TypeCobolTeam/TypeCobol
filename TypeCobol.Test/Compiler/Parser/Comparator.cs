@@ -386,7 +386,7 @@ internal class ArithmeticComparator : FilesComparator {
 			}
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, Named data, int indent, string indexes = "", int baseaddress = 1) {
+		private void Dump(StringBuilder str, object data, int indent, string indexes = "", int baseaddress = 1) {
 /*TODO#249
 			long level = data.LevelNumber.Value;
 			string name = (data.DataName != null?data.DataName.Name:"?");

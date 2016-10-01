@@ -68,14 +68,14 @@ public class SymbolTable {
 	/// - They are condition-names or index-names associated with data items that satisfy
 	///   any of the above conditions.
 	/// </summary>
-	public Dictionary<string,List<Named>> DataEntries = new Dictionary<string,List<Named>>(StringComparer.InvariantCultureIgnoreCase);
+	public Dictionary<string,List<Node>> DataEntries = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
 
-	internal void AddVariable(Named symbol) { Add(DataEntries, symbol); }
+	internal void AddVariable(Node symbol) { Add(DataEntries, symbol); }
 
-	private void Add(Dictionary<string,List<Named>> table, Named symbol) {
+	private void Add(Dictionary<string,List<Node>> table, Node symbol) {
 		 // TODO: generate a name for FILLERs and anonymous data to be referenced by in the symbol table
 		if (symbol.Name == null) return;
-		List<Named> found = null;
+		List<Node> found = null;
 		if (table == DataEntries) {
 			if (table.ContainsKey(symbol.QualifiedName.Head))
 				found = table[symbol.QualifiedName.Head];
@@ -84,10 +84,10 @@ public class SymbolTable {
 				found = Types[symbol.QualifiedName.Head];
 		}
 		if (found == null || found.Count == 0) {
-			List<Named> samenamesymbols = null;
+			List<Node> samenamesymbols = null;
 			try { samenamesymbols = table[symbol.QualifiedName.Head]; }
 			catch (KeyNotFoundException) {
-				samenamesymbols = new List<Named>();
+				samenamesymbols = new List<Node>();
 				table.Add(symbol.QualifiedName.Head, samenamesymbols);
 			}
 			found = samenamesymbols;
@@ -95,29 +95,29 @@ public class SymbolTable {
 		found.Add(symbol);
 	}
 
-	public List<Named> GetVariable(QualifiedName name) {
-		var candidates = new List<Named>();
+	public List<Node> GetVariable(QualifiedName name) {
+		var candidates = new List<Node>();
 		if (name.Count > 1) candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
 		candidates.AddRange(GetVariable(name.Head));
 		//TODO candidates.AddRange(GetFunction(name.Head));
 
-		var map = new Dictionary<Named,List<Named>>();
-		foreach(var candidate in candidates) map.Add(candidate,new List<Named> { candidate });
+		var map = new Dictionary<Node,List<Node>>();
+		foreach(var candidate in candidates) map.Add(candidate,new List<Node> { candidate });
 		var currents = candidates;
 		for(int i=name.Count-2; i>=0; --i) {
-			var winners = new Dictionary<Named,List<Named>>();
+			var winners = new Dictionary<Node,List<Node>>();
 			foreach(var original in map.Keys) { // for each original node
-				var toplevels = new List<Named>();
+				var toplevels = new List<Node>();
 				foreach(var candidate in map[original]) // for each candidate of an original node
 					toplevels.AddRange(GetTopLevel((Node)candidate, name[i]));
-				toplevels = new List<Named>(new HashSet<Named>(toplevels)); // remove duplicates
+				toplevels = new List<Node>(new HashSet<Node>(toplevels)); // remove duplicates
 				if (toplevels.Count > 0) winners.Add(original,toplevels);
 			}
 			map.Clear();
 			if (winners.Count < 1) break; // early exit
 			foreach(var winner in winners) map.Add(winner.Key, winner.Value);
 		}
-		var found = new List<Named>();
+		var found = new List<Node>();
 		foreach(var winner in map) {
 			found.Add(winner.Key);
 			if (winner.Value.Count != 1) {
@@ -133,8 +133,8 @@ public class SymbolTable {
 	/// <param name="node">We want the toplevel item for this node</param>
 	/// <param name="name">We want a toplevel item named like that</param>
 	/// <returns></returns>
-	private List<Named> GetTopLevel(Node node, string name) {
-		var toplevel = new List<Named>();
+	private List<Node> GetTopLevel(Node node, string name) {
+		var toplevel = new List<Node>();
 		if (node.Parent == null) return toplevel;
 		var typedef = node.Parent as TypeDefinition;
 		if (typedef != null) {
@@ -156,28 +156,28 @@ public class SymbolTable {
 	/// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
 	/// <param name="name">Name of items we search for</param>
 	/// <returns>Direct or indirect subordinates of a custom type</returns>
-	private List<Named> GetCustomTypesSubordinatesNamed(string name) {
-		var types = new List<Named>();
+	private List<Node> GetCustomTypesSubordinatesNamed(string name) {
+		var types = new List<Node>();
 		var scope = this;
 		while (scope != null) {
 			foreach(var type in scope.Types) types.AddRange(type.Value);
 			scope = scope.EnclosingScope;
 		}
-		var subs = new List<Named>();
+		var subs = new List<Node>();
 		foreach(var type in types) subs.AddRange(((Node)type).GetChildren(name, true));
 		return subs;
 	}
 	/// <summary>Get all items of a specific type that are subordinates of a custom type</summary>
 	/// <param name="name">Type name we search for</param>
 	/// <returns>Direct or indirect subordinates of a custom type</returns>
-	private List<Named> GetCustomTypesSubordinatesTyped(QualifiedName typename) {
-		var types = new List<Named>();
+	private List<Node> GetCustomTypesSubordinatesTyped(QualifiedName typename) {
+		var types = new List<Node>();
 		var scope = this;
 		while (scope != null) {
 			foreach(var type in scope.Types) types.AddRange(type.Value);
 			scope = scope.EnclosingScope;
 		}
-		var subs = new List<Named>();
+		var subs = new List<Node>();
 		foreach(var type in types) {
 			subs.AddRange(GetChildrenOfDataType((Node)type, typename, true));
 		}
@@ -191,7 +191,7 @@ public class SymbolTable {
 	private List<Node> GetChildrenOfDataType(Node node, QualifiedName typename, bool deep) {
 		var results = new List<Node>();
 		foreach(var child in node.Children) {
-			var typed = child as Typed;
+			var typed = child as ITypedNode;
 			if (typed != null) {
 				if (typename.Head.Equals(typed.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase)) results.Add(child);
 			}
@@ -202,11 +202,11 @@ public class SymbolTable {
 	/// <summary>Gets all data items of a specific type, accross all scopes.</summary>
 	/// <param name="typename">Name of type we search for</param>
 	/// <returns>All data items of type typename</returns>
-	private List<Named> GetVariablesTyped(QualifiedName typename) {
-		var variables = new List<Named>();
+	private List<Node> GetVariablesTyped(QualifiedName typename) {
+		var variables = new List<Node>();
 		foreach(var items in DataEntries.Values) {
 			foreach(var item in items) {
-				var typed = item as Typed;
+				var typed = item as ITypedNode;
 				if (typed == null) continue;
 				if (typename.Head.Equals(typed.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase)) variables.Add(item);
 			}
@@ -218,8 +218,8 @@ public class SymbolTable {
 
 
 
-	private List<Named> GetVariable(string name) {
-		var values = new List<Named>();
+	private List<Node> GetVariable(string name) {
+		var values = new List<Node>();
 		if (DataEntries.ContainsKey(name))
 			values.AddRange(DataEntries[name]);
 		if (EnclosingScope!= null)
@@ -227,7 +227,7 @@ public class SymbolTable {
 		return values;
 	}
 
-	private List<Named> Get(List<Named> found, QualifiedName name) {
+	private List<Node> Get(List<Node> found, QualifiedName name) {
 		if (found.Count < 1) return found;
 		int max = name.Count-1;
 		if (name.IsExplicit) {
@@ -237,7 +237,7 @@ public class SymbolTable {
 				if (found.Count < 1) return found;
 			}
 		} else {
-			var matches = new List<Named>();
+			var matches = new List<Node>();
 			foreach(var candidate in found) {
 				var node = candidate as Node;
 				if (node == null) continue;
@@ -266,8 +266,8 @@ public class SymbolTable {
 	/// <param name="pname">Expected parent name</param>
 	/// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
 	/// <returns>Filtered list</returns>
-	private List<Named> Filter(IList<Named> values, string pname, int generation) {
-		var filtered = new List<Named>();
+	private List<Node> Filter(IList<Node> values, string pname, int generation) {
+		var filtered = new List<Node>();
 		foreach(var symbol in values) {
 			var parent = GetAncestor(symbol, generation);
 			if (parent == null) continue;
@@ -275,11 +275,7 @@ public class SymbolTable {
 		}
 		return filtered;
 	}
-	private Node GetAncestor(Named symbol, int generation) {
-		if (symbol is Node)
-			return GetAncestor((Node)symbol, generation);
-		return null;
-	}
+
 	/// <param name="generation">0 for node, 1 for node.Parent, 2 for node.Parent.Parent and so on.</param>
 	/// <returns>Appropriate Parent item, or null if generation <0 or generation too high.</returns>
 	private Node GetAncestor(Node node, int generation) {
@@ -297,24 +293,24 @@ public class SymbolTable {
 	 // TYPES //
 	///////////
 
-	public Dictionary<string,List<Named>> Types = new Dictionary<string,List<Named>>(StringComparer.InvariantCultureIgnoreCase);
+	public Dictionary<string,List<Node>> Types = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
 
 	public void AddType(TypeDefinition type) { Add(Types, type); }
 
-	public List<TypeDefinition> GetTypes(Typed symbol) {
+	public List<TypeDefinition> GetTypes(ITypedNode symbol) {
 		var types = new List<TypeDefinition>();
 		var list = GetType(symbol.DataType.Name);
 		foreach(var type in list) types.Add((TypeDefinition)type);
 		return types;
 	}
 
-	public List<Named> GetType(QualifiedName name) {
+	public List<Node> GetType(QualifiedName name) {
 		var found = GetType(name.Head);
 		return Get(found, name);
 	}
 
-	private List<Named> GetType(string name) {
-		var values = new List<Named>();
+	private List<Node> GetType(string name) {
+		var values = new List<Node>();
 		if (Types.ContainsKey(name))
 			values.AddRange(Types[name]);
 		if (EnclosingScope!= null)
@@ -326,15 +322,15 @@ public class SymbolTable {
 	 // FUNCTIONS //
 	///////////////
 
-	public Dictionary<string,List<Named>> Functions = new Dictionary<string,List<Named>>(StringComparer.InvariantCultureIgnoreCase);
+	public Dictionary<string,List<Node>> Functions = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
 
 	internal void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
 
-	public List<Named> GetFunction(QualifiedName name, ParametersProfile profile = null) {
+	public List<Node> GetFunction(QualifiedName name, ParametersProfile profile = null) {
 		var found = GetFunction(name.Head);
 		found = Get(found, name);
 		if (profile != null) {
-			var filtered = new List<Named>();
+			var filtered = new List<Node>();
 			foreach(var function in found)
 				if (Matches(((FunctionDeclaration)function).Profile, profile))
 					filtered.Add(function);
@@ -358,8 +354,8 @@ public class SymbolTable {
 		return true;
 	}
 
-	private List<Named> GetFunction(string name) {
-		var values = new List<Named>();
+	private List<Node> GetFunction(string name) {
+		var values = new List<Node>();
 		if (Functions.ContainsKey(name))
 			values.AddRange(Functions[name]);
 		if (EnclosingScope!= null)
@@ -435,10 +431,10 @@ public class SymbolTable {
 			str.Append(EnclosingScope.ToString(verbose, indent+1));
 		return str.ToString().TrimEnd(Environment.NewLine.ToCharArray());;
 	}
-	private static StringBuilder Dump(StringBuilder str, Named symbol, int indent = 0) {
+	private static StringBuilder Dump(StringBuilder str, Node symbol, int indent = 0) {
 		for (int c=0; c<indent; c++) str.Append("  ");
 		str.Append(symbol.Name);
-		if (symbol is Typed) str.Append(':').Append(((Typed)symbol).DataType);
+		if (symbol is ITypedNode) str.Append(':').Append(((ITypedNode)symbol).DataType);
 		var fun = symbol as FunctionDeclaration;
 		if (fun != null) {
 			if (fun.Profile.ReturningParameter != null || fun.Profile.Parameters.Count > 0) str.AppendLine();

@@ -120,7 +120,12 @@ class CallStatementChecker: CodeElementListener {
 			//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
 			//TODO what about special registers ?
 			string sender = input.SendingVariable!=null?input.SendingVariable.ToString():null;
-			if (Is(sender, "FunctionCallResult"))
+            bool isFunctionCallResult = false;
+            if(input.SendingVariable != null && input.SendingVariable.StorageArea != null)
+            {
+                isFunctionCallResult = input.SendingVariable.StorageArea is IntrinsicFunctionCallResult;
+            }
+            if (isFunctionCallResult)
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
 			if (Is(sender, "LINAGE-COUNTER"))
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
@@ -211,7 +216,7 @@ class SearchStatementChecker: CodeElementListener {
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as SearchStatement;
 		if (statement.TableToSearch == null) return; // syntax error
-		if (statement.TableToSearch is Subscripted && ((Subscripted)statement.TableToSearch).Subscripts.Count > 0)
+		if (statement.TableToSearch is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch).Subscripts.Count > 0)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
 		if (statement.TableToSearch.ReferenceModifier != null)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", GetIdentifierContext(c));
@@ -343,12 +348,12 @@ class WriteTypeConsistencyChecker: NodeListener {
 			}
 		}
 	}
-	private Named GetSymbol(SymbolTable table, QualifiedName symbol) {
+	private Node GetSymbol(SymbolTable table, QualifiedName symbol) {
 		var found = table.GetVariable(symbol);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
-	private DataType GetTypeDefinition(SymbolTable table, Named symbol) {
+	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
 			if (data is DataCondition)
@@ -360,13 +365,13 @@ class WriteTypeConsistencyChecker: NodeListener {
 			} else
 			if (data.CodeElement is DataRedefinesEntry) {
 				var redefines = (DataRedefinesEntry)data.CodeElement;
-				var qname = redefines.RedefinesDataName.QualifiedName;
+				var qname = new URI(redefines.RedefinesDataName.Name);
 				var node = (DataDescription)GetSymbol(table, qname);
 				entry = node.CodeElement();
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
 			if (entry.CustomType == null) return entry.DataType;//not a custom type
 		}
-		Typed typed = symbol as Typed;
+        ITypedNode typed = symbol as ITypedNode;
 		if (typed == null) return null;// symbol untyped
 		var types = table.GetTypes(typed);
 		if (types.Count != 1) return null;// symbol type not found or ambiguous

@@ -183,10 +183,20 @@ namespace TypeCobol.Compiler.CodeElements
 				return ConsumedTokens[0].InputStream;
 			}
 		}
-
-        public CodeElement Parent {
-            get;
-            internal set;
-        }
 	}
+
+    // --- Temporary base classes for data definition code elements ---
+
+    public abstract class NamedCodeElement : CodeElement
+    {
+        public NamedCodeElement(CodeElementType type) : base(type) { }
+
+        public abstract string Name { get; }
+    }
+
+    public interface ITypedCodeElement
+    {
+        DataType DataType { get; }
+        int Length { get; }
+    }
 }
