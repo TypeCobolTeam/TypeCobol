@@ -14,6 +14,14 @@ public abstract class VariableBase {
 	public StorageDataType DataType { get; private set; }
 	public StorageArea StorageArea { get; private set; }
 
+    /// <summary>
+    /// Checks which kind of data is stored in the variable :
+    /// - if it is a literal value : returns null
+    /// - if it is a complex expression : returns null
+    /// - if it is a simple symbol reference or storage area : returns the main symbol reference
+    /// </summary>
+    public virtual SymbolReference MainSymbolReference { get { return StorageArea != null ? StorageArea.SymbolReference : null; } }
+
 	public override string ToString() {
 		if (StorageArea != null) return StorageArea.ToString();
 		return base.ToString();
@@ -38,6 +46,7 @@ public class IntegerVariable: VariableBase {
 	public IntegerVariable(IntegerValue value): base(StorageDataType.Integer, null) { Value = value; }
 
 	public IntegerValue Value { get; private set; }
+
 	public override string ToString() {
 		if (Value != null) return Value.ToString();
 		return base.ToString();
@@ -49,7 +58,8 @@ public class NumericVariable: VariableBase {
 	public NumericVariable(NumericValue value): base(StorageDataType.Numeric, null) { Value = value; }
 
 	public NumericValue Value { get; private set; }
-	public override string ToString() {
+
+    public override string ToString() {
 		if (Value != null) return Value.ToString();
 		return base.ToString();
 	}
@@ -60,7 +70,8 @@ public class CharacterVariable: VariableBase {
 	public CharacterVariable(CharacterValue value): base(StorageDataType.Character, null) { Value = value; }
 
 	public CharacterValue Value { get; private set; }
-	public override string ToString() {
+        
+    public override string ToString() {
 		if (Value != null) return Value.ToString();
 		return base.ToString();
 	}
@@ -76,7 +87,7 @@ public class AlphanumericVariable: VariableBase {
 	public AlphanumericValue Value { get; private set; }
 	public RepeatedCharacterValue RepeatedCharacterValue { get; private set; }
 
-	public override string ToString() {
+    public override string ToString() {
 		if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Value;
 		//the previous line will always return an exception. should be:
 		//return RepeatedCharacterValue.GetValueInContext(???);
@@ -92,12 +103,15 @@ public class SymbolReferenceVariable : VariableBase {
 	}
 
 	public SymbolReference SymbolReference { get; private set; }
-	public override string ToString() { return SymbolReference.ToString(); }
+
+    public override SymbolReference MainSymbolReference { get { return SymbolReference != null ? SymbolReference : base.MainSymbolReference; } }
+
+    public override string ToString() { return MainSymbolReference.ToString(); }
 }
 
 
 
-public class Variable: VariableBase, Named {
+public class Variable: VariableBase {
 
 	protected Variable(): base(StorageDataType.Any, null) { }
 
@@ -115,22 +129,13 @@ public class Variable: VariableBase, Named {
 
 	public bool IsLiteral { get { return NumericValue != null || AlphanumericValue != null; } }
 
-	public string Name {
-		get { return QualifiedName != null? QualifiedName.Head : null; }
-	}
+    public override SymbolReference MainSymbolReference { get { return SymbolReference != null ? SymbolReference : base.MainSymbolReference; } }
 
-	public Expressions.QualifiedName QualifiedName {
-		get {
-			if (SymbolReference != null) return SymbolReference.QualifiedName;
-			if (StorageArea is Named) return ((Named)StorageArea).QualifiedName;
-			return null;
-		}
-	}
-
-	public override string ToString() {
+    public override string ToString() {
 		if (NumericValue != null) return NumericValue.Value.ToString();
 		try {
-			if (QualifiedName != null) return QualifiedName.ToString();
+			if (SymbolReference != null) return SymbolReference.Name;
+            if (StorageArea != null) return StorageArea.SymbolReference.Name;
 			//these should be: return XXXValue.GetValueInContext(???);
 			if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;
 			if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Token.SourceText;

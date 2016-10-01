@@ -15,7 +15,7 @@
 	/// - DataRenamesEntry
 	/// - DataConditionEntry
 	/// </summary>
-	public abstract class DataDefinitionEntry: CodeElement, Named {
+	public abstract class DataDefinitionEntry: NamedCodeElement {
 
 		public DataDefinitionEntry(CodeElementType codeElementType): base(codeElementType) { }
 
@@ -63,8 +63,7 @@
 		/// </summary>
 		public SymbolDefinition DataName { get; set; }
 
-		public virtual string Name { get { return DataName != null? DataName.Name : null; } }
-		public virtual QualifiedName QualifiedName { get { return DataName != null? new URI(DataName.Name) : null; } }
+		public override string Name { get { return DataName != null? DataName.Name : null; } }
 	}
 
 	/// <summary>
@@ -75,7 +74,7 @@
 	/// Data description entries have three general formats :
 	/// Format 1: data description entry
 	/// </summary>
-	public class DataDescriptionEntry: DataDefinitionEntry, Typed
+	public class DataDescriptionEntry: DataDefinitionEntry, ITypedCodeElement
 	{
 		public DataDescriptionEntry(): base(CodeElementType.DataDescriptionEntry) { }
 
@@ -867,7 +866,7 @@
 		public SymbolReference RenamesToDataName { get; set; }
 	}
 
-	public class TypeDefinitionEntry: DataDescriptionEntry, Typed {
+	public class TypeDefinitionEntry: DataDescriptionEntry, ITypedCodeElement {
 		public TypeDefinitionEntry(): base() { }
 
 		public SyntaxProperty<bool> Strong { get; internal set; }
@@ -882,7 +881,7 @@
 	/// Level-88 entries must immediately follow the data description entry for the
 	/// conditional variable with which the condition-names are associated.
 	/// </summary>
-	public class DataConditionEntry: DataDefinitionEntry, Typed
+	public class DataConditionEntry: DataDefinitionEntry, ITypedCodeElement
 	{
 		public DataConditionEntry(): base(CodeElementType.DataConditionEntry) { }
 

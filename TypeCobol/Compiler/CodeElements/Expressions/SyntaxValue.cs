@@ -224,6 +224,9 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
                     case TokenType.FunctionName:
+                    case TokenType.LENGTH:        // special case of FunctionName
+                    case TokenType.RANDOM:        // special case of FunctionName
+                    case TokenType.WHEN_COMPILED: // special case of FunctionName
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
@@ -308,6 +311,9 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
                     case TokenType.FunctionName:
+                    case TokenType.LENGTH:        // special case of FunctionName
+                    case TokenType.RANDOM:        // special case of FunctionName
+                    case TokenType.WHEN_COMPILED: // special case of FunctionName
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
@@ -357,6 +363,9 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
                     case TokenType.FunctionName:
+                    case TokenType.LENGTH:        // special case of FunctionName
+                    case TokenType.RANDOM:        // special case of FunctionName
+                    case TokenType.WHEN_COMPILED: // special case of FunctionName
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
@@ -418,7 +427,25 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }        
     }
-    
+
+    /// <summary>
+    /// Used to represent symbol names which are not directly found in the syntax tokens, 
+    /// but which are dreived from the text of the syntax tokens.
+    /// </summary>
+    public class GeneratedSymbolName : SyntaxValue<string>
+    {
+        public GeneratedSymbolName(Token baseToken, string generatedName) : base(baseToken)
+        {
+            // Temporary fix during #249 : use the token name and not the generated name
+            this.generatedSymbolName = baseToken.Text;// "$" + generatedName;
+        }
+
+        private string generatedSymbolName;
+        
+        /// <summary>Generated symbol name</summary>
+		public override string Value { get { return generatedSymbolName; } }
+    } 
+
     /// <summary>
     /// Value for tokens :
     /// UserDefinedWord
