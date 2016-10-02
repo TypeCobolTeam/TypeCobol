@@ -2,7 +2,6 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Functions;
 	using TypeCobol.Compiler.Text;
 
 internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
@@ -15,18 +14,18 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 		UsingParameters = new List<InputParameter>();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER
 		foreach(var parameter in declaration.Profile.InputParameters)
-			if (((DataDescriptionEntry)parameter.CodeElement).LevelNumber.Value == 1)
-				UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+			if (parameter.LevelNumber.Value == 1)
+				UsingParameters.Add(new GeneratedParameter(parameter.DataName));
 		foreach(var parameter in declaration.Profile.InoutParameters)
-			if (((DataDescriptionEntry)parameter.CodeElement).LevelNumber.Value == 1)
-				UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+			if (parameter.LevelNumber.Value == 1)
+				UsingParameters.Add(new GeneratedParameter(parameter.DataName));
 		foreach(var parameter in declaration.Profile.OutputParameters)
-			if (((DataDescriptionEntry)parameter.CodeElement).LevelNumber.Value == 1)
-				UsingParameters.Add(new GeneratedParameter(((ParameterDescriptionEntry)parameter.CodeElement).DataName));
+			if (parameter.LevelNumber.Value == 1)
+				UsingParameters.Add(new GeneratedParameter(parameter.DataName));
 		// TCRFUN_CODEGEN_RETURNING_PARAMETER
 		if (declaration.Profile.ReturningParameter != null)
-			if (((DataDescriptionEntry)declaration.Profile.ReturningParameter.CodeElement).LevelNumber.Value == 1)
-				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(((ParameterDescriptionEntry)declaration.Profile.ReturningParameter.CodeElement).DataName);
+			if (declaration.Profile.ReturningParameter.LevelNumber.Value == 1)
+				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(declaration.Profile.ReturningParameter.DataName);
 
 		this.children.AddRange(sentences);
 	}

@@ -4,7 +4,6 @@
 	using TypeCobol.Compiler.AntlrUtils;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeElements.Functions;
 	using TypeCobol.Compiler.Parser.Generated;
 	using TypeCobol.Compiler.Scanner;
 
@@ -14,11 +13,10 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
 	public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
 		var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
-		QualifiedName name = null;
-		if (context.UserDefinedWord() != null) {
-			var token = ParseTreeUtils.GetTokenFromTerminalNode(context.UserDefinedWord());
-			name = new URI(token.Text);
-		}
+		SymbolDefinition name = null;
+		if (context.functionNameDefinition() != null) {
+			name = CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
+        }
 		Context = context;
 		CodeElement = new FunctionDeclarationHeader(name, visibility);
 	}
@@ -42,24 +40,26 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()));
 		if (context.parameterDescription().functionDataParameter() != null) {
 			var entry = CreateFunctionDataParameter(context.parameterDescription().functionDataParameter());
-			ce.Profile.ReturningParameter = new ParameterDescription(entry);
+			ce.Profile.ReturningParameter = entry;
 		}
 	}
 
-	private IList<ParameterDescription> CreateParameters(CodeElementsParser.ParameterDescriptionContext[] contexts) {
-		var parameters = new List<ParameterDescription>();
+	private IList<ParameterDescriptionEntry> CreateParameters(CodeElementsParser.ParameterDescriptionContext[] contexts) {
+		var parameters = new List<ParameterDescriptionEntry>();
 		foreach(var context in contexts) {
 			if (context.functionDataParameter() != null) {
 				var data = CreateFunctionDataParameter(context.functionDataParameter());
-				parameters.Add(new ParameterDescription(data));
+				parameters.Add(data);
 			} else
 			if (context.functionConditionParameter() != null) {
 				var condition = CreateFunctionConditionParameter(context.functionConditionParameter());
 				if (parameters.Count < 1) {
 					var data = CreateFunctionDataParameter(condition);
-					parameters.Add(new ParameterDescription(data));
+					parameters.Add(data);
 				} else {
-					parameters[parameters.Count-1].Add(new TypeCobol.Compiler.Nodes.DataCondition(condition));
+                     var parameter = parameters[parameters.Count - 1];
+                        if (parameter.DataConditions == null) parameter.DataConditions = new List<DataConditionEntry>();
+                        parameter.DataConditions.Add(condition);
 				}
 			}
 		}

@@ -5,7 +5,6 @@
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeElements.Functions;
 	using TypeCobol.Compiler.Nodes;
 
 
@@ -484,19 +483,19 @@ public class SymbolTable {
 			if (fun.Profile.ReturningParameter != null || fun.Profile.Parameters.Count > 0) str.AppendLine();
 			foreach(var p in fun.CodeElement().Profile.InputParameters) {
 				str.Append("        in: ");
-				Dump(str, p, 0);
+				Dump(str, new ParameterDescription(p), 0);
 			}
 			foreach(var p in fun.CodeElement().Profile.OutputParameters) {
 				str.Append("       out: ");
-				Dump(str, p, 0);
+				Dump(str, new ParameterDescription(p), 0);
 			}
 			foreach(var p in fun.CodeElement().Profile.InoutParameters) {
 				str.Append("     inout: ");
-				Dump(str, p, 0);
+				Dump(str, new ParameterDescription(p), 0);
 			}
 			if (fun.Profile.ReturningParameter != null) {
 				str.Append("    return: ");
-				Dump(str, fun.Profile.ReturningParameter, 0);
+				Dump(str, new ParameterDescription(fun.Profile.ReturningParameter), 0);
 			}
 			if (fun.Profile.ReturningParameter == null && fun.Profile.Parameters.Count == 0) str.AppendLine();
 		} else str.AppendLine();
@@ -513,5 +512,4 @@ public class SymbolTable {
 		return str.ToString();
 	}
 }
-
 }

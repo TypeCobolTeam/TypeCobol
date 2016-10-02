@@ -2,7 +2,6 @@
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeElements.Functions;
 
 
 

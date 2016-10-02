@@ -123,7 +123,7 @@ class CallStatementChecker: CodeElementListener {
             bool isFunctionCallResult = false;
             if(input.SendingVariable != null && input.SendingVariable.StorageArea != null)
             {
-                isFunctionCallResult = input.SendingVariable.StorageArea is IntrinsicFunctionCallResult;
+                isFunctionCallResult = input.SendingVariable.StorageArea is FunctionCallResult;
             }
             if (isFunctionCallResult)
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
@@ -205,7 +205,7 @@ class MoveSimpleChecker: CodeElementListener {
 		var context = c as CodeElementsParser.MoveSimpleContext;
 		for(int i=0; i<statement.ReceivingStorageAreas.Length; i++) {
 			var receiver = statement.ReceivingStorageAreas[i].StorageArea;
-			if (receiver is IntrinsicFunctionCallResult)
+			if (receiver is FunctionCallResult)
 				DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", context.storageArea1()[i]);
 		}
 	}

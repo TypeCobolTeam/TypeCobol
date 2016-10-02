@@ -3,7 +3,6 @@
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeElements.Functions;
 	using TypeCobol.Compiler.CodeModel;
 
 
@@ -110,9 +109,9 @@ internal class FunctionUserAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var statement = ((Node)o).CodeElement as FunctionCaller;
 		if (statement == null) return null;
-		var functions = new List<FunctionCall>();
+		var functions = new List<FunctionCallInfo>();
 		foreach(var fun in statement.FunctionCalls) {
-			var found = table.GetFunction(fun.QualifiedName);
+			var found = table.GetFunction(new URI(fun.FunctionName));
 			if (found.Count < 1) continue;
 			if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
 			var declaration = (FunctionDeclaration)found[0];
@@ -123,8 +122,8 @@ internal class FunctionUserAttribute: Attribute {
 		return functions;
 	}
 
-	private static FunctionCall Create(FunctionCall call, FunctionDeclaration declaration) {
-		var result = new FunctionCall(call.QualifiedName, declaration.Library, declaration.Copy);
+	private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
+		var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
 		if (declaration.Profile == null) return result;
 		int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
 		// declaration.Profile.ReturningParameter is not used because
@@ -136,11 +135,11 @@ internal class FunctionUserAttribute: Attribute {
 		}
 		return result;
 	}
-	private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
+	private static CallParameter Create(ParameterDescriptionEntry pAsDefined, CallParameter pAsUsed) {
 		if (pAsUsed != null) return pAsUsed;
 		return new EmptyCallParameter();
 	}
-	private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
+	private static ParameterDescriptionEntry GetParameter(int index, FunctionDeclaration function) {
 		int offset = 0;
 		if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
 		offset += function.Profile.InputParameters.Count;
@@ -155,12 +154,55 @@ internal class FunctionUserAttribute: Attribute {
 		                                                                 +'+'+(function.Profile.ReturningParameter!=null?1:0));
 	}
 	private static CallParameter GetParameter(int index, FunctionCall function) {
-		if (index < function.InputParameters.Count) return function.InputParameters[index];
+		if (function.Arguments != null && index < function.Arguments.Length) return new CallParameter(function.Arguments[index]);
 		return null;
 	}
 }
 
-internal class DefinitionsAttribute: Attribute {
+    public class FunctionCallInfo
+    {
+        public FunctionCallInfo(FunctionCallResult call)
+        {
+            QualifiedName = new URI(call.FunctionCall.FunctionName);
+            foreach (var variableOrExpression in call.FunctionCall.Arguments)
+                InputParameters.Add(new CallParameter(variableOrExpression));
+        }
+        /// <summary>Used for codegen.</summary>
+        public FunctionCallInfo(QualifiedName name, string lib, string copy)
+        {
+            QualifiedName = name;
+            Library = lib;
+            Copy = copy;
+        }
+
+        public string Name { get { return QualifiedName.Head; } }
+        public QualifiedName QualifiedName { get; private set; }
+
+        public IList<CallParameter> InputParameters = new List<CallParameter>();
+
+        public string Library { get; set; }
+        public string Copy { get; set; }
+    }
+
+    public class CallParameter
+    {
+
+        private VariableOrExpression voe;
+        public CallParameter(VariableOrExpression voe) { this.voe = voe; }
+
+        public virtual bool IsLiteral { get { return voe.IsLiteral; } }
+        public virtual string SendingMode { get { return IsLiteral ? "CONTENT" : "REFERENCE"; } }
+        public virtual string Value { get { return voe.MainSymbolReference != null ? voe.MainSymbolReference.Name : null; } }
+    }
+    public class EmptyCallParameter : CallParameter
+    {
+        public EmptyCallParameter() : base(null) { }
+        public override bool IsLiteral { get { return true; } }
+        public override string SendingMode { get { return "CONTENT"; } }
+        public override string Value { get { return "SPACE"; } }
+    }
+
+    internal class DefinitionsAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);

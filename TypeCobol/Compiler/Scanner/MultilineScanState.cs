@@ -203,9 +203,9 @@ namespace TypeCobol.Compiler.Scanner
                         case TokenType.SECURITY:
                             KeywordsState = KeywordsSequenceState.After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY;
                             break;
-//                        case TokenType.FUNCTION:
-//                            KeywordsState = KeywordsSequenceState.After_FUNCTION;
-//                            break;
+                        case TokenType.FUNCTION:
+                            KeywordsState = KeywordsSequenceState.After_FUNCTION;
+                            break;
                         case TokenType.EXEC:
                         case TokenType.EXECUTE:
                             KeywordsState = KeywordsSequenceState.After_EXEC_orEXECUTE;
@@ -290,9 +290,9 @@ namespace TypeCobol.Compiler.Scanner
                     }
                     break;
                 // 6 -> FunctionName -> 0. 
-//                case KeywordsSequenceState.After_FUNCTION:
-//                    KeywordsState = KeywordsSequenceState.Default;
-//                    break;
+                case KeywordsSequenceState.After_FUNCTION:
+                    KeywordsState = KeywordsSequenceState.Default;
+                    break;
                 // 7 -> execTranslatorName -> 8. 
                 case KeywordsSequenceState.After_EXEC_orEXECUTE:
                     KeywordsState = KeywordsSequenceState.After_EXEC_orEXECUTE_ExecTranslatorName;
@@ -341,7 +341,14 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 // 13 -> ENTRY -> 0. =rw=> ENTRY_ARG
                 case KeywordsSequenceState.After_TO:
-                    KeywordsState = KeywordsSequenceState.Default;
+                    if (newToken.TokenType == TokenType.FUNCTION)
+                    {
+                        KeywordsState = KeywordsSequenceState.After_FUNCTION;
+                    }
+                    else
+                    {
+                        KeywordsState = KeywordsSequenceState.Default;
+                    }
                     break;
                 // 14 -> SORT -> 0. =rw=> SORT_ARG
                 case KeywordsSequenceState.After_SAME:
@@ -466,7 +473,7 @@ namespace TypeCobol.Compiler.Scanner
         After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY = 3,
         After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY_PeriodSeparator = 4,
         After_CommentEntry = 5,
-//        After_FUNCTION = 6, 
+        After_FUNCTION = 6,
         After_EXEC_orEXECUTE = 7, 
         After_EXEC_orEXECUTE_ExecTranslatorName = 8, 
         After_ExecStatementText = 9,
