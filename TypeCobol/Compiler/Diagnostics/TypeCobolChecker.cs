@@ -6,7 +6,6 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 
@@ -48,28 +47,29 @@ class FunctionCallChecker: NodeListener {
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var statement = node as FunctionCaller;
 
-		var functions = new List<FunctionCall>();
 		foreach(var fun in statement.FunctionCalls) {
-			var found = node.SymbolTable.GetFunction(fun.QualifiedName);
+			var found = node.SymbolTable.GetFunction(new URI(fun.FunctionName));
 			if (found.Count != 1) continue; // ambiguity is not our job
 			var declaration = (FunctionDeclaration)found[0];
 			Check(node.CodeElement, node.SymbolTable, fun, declaration);
 		}
 	}
-	private void Check(CodeElement e, SymbolTable table, FunctionCall call, FunctionDeclaration definition) {
+	private void Check(CodeElement e, SymbolTable table, CodeElements.FunctionCall call, FunctionDeclaration definition) {
 		var parameters = definition.Profile.Parameters;
-		if (call.InputParameters.Count > parameters.Count) {
+        var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
+        if (callArgsCount > parameters.Count) {
 			var m = System.String.Format("Function {0} only takes {1} parameters", definition.Name, parameters.Count);
 			DiagnosticUtils.AddError(e, m);
 		}
 		for (int c = 0; c < parameters.Count; c++) {
 			var expected = parameters[c];
-			if (c < call.InputParameters.Count) {
-				var actual = call.InputParameters[c];
+			if (c < callArgsCount) {
+				var actual = call.Arguments[c];
 				if (actual.IsLiteral) continue;
-				var found = table.GetVariable(new URI(actual.Value));
-				if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter "+actual.Value+" is not referenced");
-				if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter "+actual.Value);
+                var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
+                var found = table.GetVariable(new URI(callArgName));
+				if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter "+callArgName+" is not referenced");
+				if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter "+callArgName);
 				if (found.Count!= 1) continue;
 				var type = found[0] as ITypedNode;
 				// type check. please note:
@@ -110,9 +110,9 @@ class FunctionDeclarationChecker: NodeListener {
 		CheckParameters(header.Profile, header, context);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
 
-		var functions = node.SymbolTable.GetFunction(header.Name, header.Profile);
+		var functions = node.SymbolTable.GetFunction(new URI(header.Name), header.Profile);
 		if (functions.Count > 1)
-			DiagnosticUtils.AddError(header, "A function \""+header.Name.Head+"\" with the same profile already exists in namespace \""+header.Name.Tail+"\".", context);
+			DiagnosticUtils.AddError(header, "A function \""+new URI(header.Name).Head+"\" with the same profile already exists in namespace \""+new URI(header.Name).Tail+"\".", context);
 //		foreach(var function in functions) {
 //			if (!function.IsProcedure && !function.IsFunction)
 //				DiagnosticUtils.AddError(header, "\""+header.Name.Head+"\" is neither procedure nor function.", context);
@@ -139,15 +139,18 @@ class FunctionDeclarationChecker: NodeListener {
 		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context);
 		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context);
 	}
-	private void CheckParameter(ParameterDescription parameter, CodeElement ce, ParserRuleContext context) {
+	private void CheckParameter(ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context) {
 		// TCRFUN_LEVEL_88_PARAMETERS
-		if (parameter.CodeElement().LevelNumber.Value != 1)
-			DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
-		foreach(var child in parameter.Children) {
-			var condition = (DataConditionEntry)child.CodeElement;
-			if (condition.LevelNumber.Value != 88)
-				DiagnosticUtils.AddError(ce, "Condition parameter \""+condition.Name+"\" must be level 88.");
-		}
+		if (parameter.LevelNumber.Value != 1)
+		DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
+        if (parameter.DataConditions != null)
+        {
+            foreach (var condition in parameter.DataConditions)
+            {
+                if (condition.LevelNumber.Value != 88)
+                    DiagnosticUtils.AddError(ce, "Condition parameter \"" + condition.Name + "\" must be level 88.");
+            }
+        }
 	}
 	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
 	/// <param name="node">LINKAGE SECTION node</param>
@@ -176,13 +179,13 @@ class FunctionDeclarationChecker: NodeListener {
 		foreach(var child in node.Children())
 			AddEntries(linkage, child);
 	}
-	private ParameterDescription GetParameter(IList<ParameterDescription> parameters, string name) {
+	private ParameterDescriptionEntry GetParameter(IList<ParameterDescriptionEntry> parameters, string name) {
 		if (name == null) return null;
 		foreach(var p in parameters)
 			if (Validate(p, name) != null) return p;
 		return null;
 	}
-	private ParameterDescription Validate(ParameterDescription parameter, string name) {
+	private ParameterDescriptionEntry Validate(ParameterDescriptionEntry parameter, string name) {
 		if (parameter != null && parameter.Name.Equals(name)) return parameter;
 		return null;
 	}

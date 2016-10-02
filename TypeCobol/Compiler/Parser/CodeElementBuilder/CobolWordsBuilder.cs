@@ -471,6 +471,16 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolReference(context.symbolReference2(), SymbolType.MethodName);
         }
 
+        internal SymbolDefinition CreateFunctionNameDefinition(CodeElementsParser.FunctionNameDefinitionContext context)
+        {
+            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MethodName);
+        }
+
+        internal SymbolReference CreateFunctionNameReference(CodeElementsParser.FunctionNameReferenceContext context)
+        {
+            return CreateSymbolReference(context.symbolReference4(), SymbolType.MethodName);
+        }
+
         internal SymbolDefinition CreateMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
         {
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MnemonicForEnvironmentName);
@@ -896,7 +906,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal ExternalName CreateIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context)
         {
-            return CreateExternalName(context.externalName2(), SymbolType.FunctionName, typeof(FunctionNameEnum));
+            return CreateExternalName(context.externalName2(), SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
         }
 
         /// <summary>

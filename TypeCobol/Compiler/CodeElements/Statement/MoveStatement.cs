@@ -13,7 +13,7 @@ public abstract class MoveStatement : StatementElement, VariableWriter,FunctionC
 // [/TYPECOBOL]
 
 	protected IDictionary<QualifiedName,object> variables;
-	protected List<Functions.FunctionCall> _functions = null;
+	protected List<FunctionCall> _functions = null;
 
 	public abstract IDictionary<QualifiedName,object> Variables { get; }
 	public virtual  IDictionary<QualifiedName,object> VariablesWritten {
@@ -24,7 +24,7 @@ public abstract class MoveStatement : StatementElement, VariableWriter,FunctionC
 			return written;
 		}
 	}
-	public abstract IList<Functions.FunctionCall> FunctionCalls { get; }
+	public abstract IList<FunctionCall> FunctionCalls { get; }
 }
 
 /// <summary>
@@ -131,15 +131,15 @@ public class MoveSimpleStatement : MoveStatement {
 		}
 	}
 
-	public override IList<Functions.FunctionCall> FunctionCalls {
+	public override IList<FunctionCall> FunctionCalls {
 		[NotNull]
 		get {
 			if (_functions != null) return _functions;
 
-			_functions = new List<Functions.FunctionCall>();
-			IntrinsicFunctionCallResult sending = null;
-			if (SendingVariable != null) sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
-			if (sending != null) _functions.Add(new Functions.FunctionCall(sending));
+			_functions = new List<FunctionCall>();
+			FunctionCallResult sending = null;
+			if (SendingVariable != null) sending = SendingVariable.StorageArea as FunctionCallResult;
+			if (sending != null) _functions.Add(sending.FunctionCall);
 			return _functions;
 		}
 	}
@@ -188,12 +188,12 @@ public class MoveCorrespondingStatement : MoveStatement {
 		}
 	}
 
-	public override IList<Functions.FunctionCall> FunctionCalls {
+	public override IList<FunctionCall> FunctionCalls {
 		[NotNull]
 		get {
 			if (_functions != null) return _functions;
 
-			_functions = new List<Functions.FunctionCall>();
+			_functions = new List<FunctionCall>();
 			return _functions;
 		}
 	}

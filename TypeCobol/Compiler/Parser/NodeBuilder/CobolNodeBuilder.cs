@@ -5,7 +5,6 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
 using Antlr4.Runtime;
-using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 
@@ -329,20 +328,24 @@ namespace TypeCobol.Compiler.Parser
 				DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
 			var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
 			foreach(var parameter in declaration.Profile.InputParameters) {
-				parameter.SymbolTable = CurrentNode.SymbolTable;
-				CurrentNode.SymbolTable.AddVariable(parameter);
+                var paramNode = new ParameterDescription(parameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(paramNode);
 			}
 			foreach(var parameter in declaration.Profile.OutputParameters) {
-				parameter.SymbolTable = CurrentNode.SymbolTable;
-				CurrentNode.SymbolTable.AddVariable(parameter);
+                var paramNode = new ParameterDescription(parameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(paramNode);
 			}
 			foreach(var parameter in declaration.Profile.InoutParameters) {
-				parameter.SymbolTable = CurrentNode.SymbolTable;
-				CurrentNode.SymbolTable.AddVariable(parameter);
+                var paramNode = new ParameterDescription(parameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(paramNode);
 			}
 			if (declaration.Profile.ReturningParameter != null) {
-				declaration.Profile.ReturningParameter.SymbolTable = CurrentNode.SymbolTable;
-				CurrentNode.SymbolTable.AddVariable(declaration.Profile.ReturningParameter);
+                var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+				CurrentNode.SymbolTable.AddVariable(paramNode);
 			} else
 			if (header.ReturningParameter != null) {
 				// we might have a RETURNING parameter to convert, but only if there is neither
@@ -353,7 +356,7 @@ namespace TypeCobol.Compiler.Parser
 				if (data != null) pentry.DataName = new SymbolDefinition(data.SymbolReference.NameLiteral, data.SymbolReference.Type);
 				// pentry.Picture will remain empty, we can't do anything about it
 				pentry.DataType = DataType.Unknown;
-				declaration.Profile.ReturningParameter = new ParameterDescription(pentry);
+				declaration.Profile.ReturningParameter = pentry;
 			}
 			Enter(new ProcedureDivision(header), context);
 		}

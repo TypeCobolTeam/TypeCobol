@@ -182,12 +182,32 @@ namespace TypeCobol.Compiler.Parser
 
 		internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
 		{
-			return new IntrinsicFunctionCallResult(
-				CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName()),
-				CreateArguments(context.argument()));
-		}
+            if (context.intrinsicFunctionCall() != null)
+            {
+                return new FunctionCallResult(CreateIntrinsicFunctionCall(context.intrinsicFunctionCall()));
+            }
+            else
+            {
+                // [TYPECOBOL] user defined function calls
+                return new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
+            }
+        }
 
-		private VariableOrExpression[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
+        internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context)
+        {
+            return new IntrinsicFunctionCall(
+                CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName()),
+                CreateArguments(context.argument()));
+        }
+
+        internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context)
+        {
+            return new UserDefinedFunctionCall(
+                CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference()),
+                CreateArguments(context.argument()));
+        }
+
+        private VariableOrExpression[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
 		{
 			VariableOrExpression[] arguments = new VariableOrExpression[argumentContext.Length];
 			for(int i = 0; i < argumentContext.Length; i++)

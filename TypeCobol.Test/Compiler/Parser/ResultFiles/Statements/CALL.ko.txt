@@ -27,7 +27,7 @@
 
 [[CallStatement]] [1,4:CALL]<CALL> --> [23,23:z]<UserDefinedWord>
 
-[[CallStatement]] [1,4:CALL]<CALL> --> [23,28:RANDOM]<RANDOM>
+[[CallStatement]] [1,4:CALL]<CALL> --> [23,28:RANDOM]<IntrinsicFunctionName>
 
 [[CallStatement]] [1,4:CALL]<CALL> --> [24,24:x]<UserDefinedWord>
 

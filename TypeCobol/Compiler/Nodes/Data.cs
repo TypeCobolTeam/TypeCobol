@@ -66,6 +66,10 @@ public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEnt
 }
 // [/COBOL 2002]
 
-
+// [TYPECOBOL]
+public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription {
+	public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { }
+}
+// [/TYPECOBOL]
 
 } // end of namespace TypeCobol.Compiler.Nodes
