@@ -82,7 +82,7 @@ tokens
     CommentEntry,
     ExecStatementText,
     // Symbols    
-    FunctionName,
+    IntrinsicFunctionName,
     ExecTranslatorName,
     PartialCobolWord ,
     UserDefinedWord,
@@ -772,7 +772,7 @@ alphanumericValue11: SymbolicCharacter;
 
 enumeratedValue1: UserDefinedWord;
 
-enumeratedValue2: UserDefinedWord | LENGTH | RANDOM | WHEN_COMPILED;
+enumeratedValue2: IntrinsicFunctionName;
 
 enumeratedValue3: ExecTranslatorName;
 
@@ -997,6 +997,12 @@ externalClassNameDefOrRef: symbolDefinitionOrReference1;
 methodNameDefinition: symbolDefinition2;
 
 methodNameReference: symbolReference2;
+
+// [TYPECOBOL] extension : user defined functions
+
+functionNameDefinition: symbolDefinition4;
+
+functionNameReference: symbolReference4;
 
 // ** Environment vars **
 
@@ -1580,7 +1586,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     // Literals - Syntax tokens
     // => excluded
     // Symbols    
-    //FunctionName FunctioName are now treated as UserDefinedWord as you can declare your own function with TC
+    IntrinsicFunctionName |
     ExecTranslatorName |
     PartialCobolWord  |
     UserDefinedWord |

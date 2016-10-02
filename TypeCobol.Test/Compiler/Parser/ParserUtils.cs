@@ -14,7 +14,6 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -235,6 +234,7 @@ namespace TypeCobol.Test.Compiler.Parser
 				DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, indent+1);
 		}
 
+/*TODO#249
 		private static void Dump(StringBuilder str, IList<Function> functions) {
 			if (functions == null || functions.Count < 1) return;
 			str.AppendLine("FUNCTIONS:");
@@ -273,7 +273,6 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 // [/TYPECOBOL]
 
-/*TODO#249
 private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
 foreach(string key in map.Keys) {
     foreach (var data in map[key]) {

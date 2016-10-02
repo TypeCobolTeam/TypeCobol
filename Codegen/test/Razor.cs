@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using TypeCobol.Codegen.Skeletons.Templates;
-using TypeCobol.Compiler.CodeElements.Functions;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Codegen;
 
 namespace TypeCobol.Codegen.Config {
@@ -122,14 +122,15 @@ namespace TypeCobol.Codegen.Config {
 		private class RazorFactory {
 			public static Function Create(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
-					new List<ParameterDescription>() {
-						new ParameterDescription(new RazorParameter(null)),
-						new ParameterDescription(new RazorParameter(null, 3)),
+					new List<ParameterDescriptionEntry>() {
+						new RazorParameter(null),
+						new RazorParameter(null, 3),
 					},
-					new List<ParameterDescription>() {
-						new ParameterDescription(new RazorParameter(null, 8)),
+					new List<ParameterDescriptionEntry>() {
+						new RazorParameter(null, 8),
 					});
 			}
+/*TODO#249
 			public static Function CreateCall(string name, string library = "TC-DEFAULT") {
 				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
 					new List<ParameterDescription>() {
@@ -146,7 +147,9 @@ namespace TypeCobol.Codegen.Config {
 						new ParameterDescription(new RazorParameter(null, 8)),
 					});
 			}
+ */
 		}
+
 		private class RazorParameter: ParameterDescriptionEntry {
 			public RazorParameter(string name, int length=int.MaxValue) {
 				DataName = new GeneratedSymbolDefinition(name);

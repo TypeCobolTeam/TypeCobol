@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.CodeElements
         Index,
         StorageAreaPropertySpecialRegister, // allocated on reference
         FilePropertySpecialRegister, // one per file description with LINAGE clause
-        IntrinsicFunctionCallResult // allocated on reference
+        FunctionCallResult // allocated on reference
     }
 
 	/// <summary>
@@ -192,28 +192,28 @@ public class SubscriptExpression {
 		public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference)
 				: base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
-			StorageAreaReference = storageAreaReference;
+			OtherStorageAreaReference = storageAreaReference;
 
             // Generate a unique symbol name for this special register
             var storageAreaName = storageAreaReference != null ? storageAreaReference.ToString() : "null";
             var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + storageAreaName);
-            SymbolDefinition = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+            StorageAreaName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
             SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
 		}
 
 		public Token SpecialRegisterName { get; private set; }
 
-		public StorageArea StorageAreaReference { get; private set; }
+		public StorageArea OtherStorageAreaReference { get; private set; }
 
         /// <summary>
-        /// A mention to this kind of special register in the code is both a definition and a reference to a symbol 
+        /// A mention to this kind of special register in the code is both a storage area definition and a reference to the same storage area 
         /// </summary>
-        public SymbolDefinition SymbolDefinition { get; private set; }
+        public SymbolDefinition StorageAreaName { get; private set; }
 
         public override string ToString() {
 			var str = new System.Text.StringBuilder();
 			if (SpecialRegisterName != null) str.Append(SpecialRegisterName.TokenType).Append('(');
-			if (StorageAreaReference != null) str.Append(StorageAreaReference.ToString());
+			if (OtherStorageAreaReference != null) str.Append(OtherStorageAreaReference.ToString());
 			if (SpecialRegisterName != null) str.Append(')');
 			if (str.Length > 0) return str.ToString();
 			return base.ToString();
@@ -232,7 +232,7 @@ public class SubscriptExpression {
 
             // Generate a unique symbol name for this special register
             var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + fileNameReference.ToString());
-            SymbolDefinition = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+            StorageAreaName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
             SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
         }
 
@@ -241,40 +241,99 @@ public class SubscriptExpression {
 		public SymbolReference FileNameReference { get; private set; }
 
         /// <summary>
-        /// A mention to this kind of special register in the code is both a definition and a reference to a symbol 
+        /// A mention to this kind of special register in the code is both a storage area definition and a reference to the same storage area 
         /// </summary>
-        public SymbolDefinition SymbolDefinition { get; private set; }
+        public SymbolDefinition StorageAreaName { get; private set; }
     }
 
 	/// <summary>
-	/// Call to a Cobol intrinsic function.
+	/// Call to a Cobol intrinsic function OR a TypeCobol user defined function.
 	///  AND
 	/// Storage area allocated by the compiler to hold the result of the call.
 	/// </summary>
-	public class IntrinsicFunctionCallResult : StorageArea {
+	public class FunctionCallResult : StorageArea {
 
         // Static counter which will only increase during a compilation session
         private static int callSiteCounter;
 
-        public IntrinsicFunctionCallResult(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments)
-				: base(StorageAreaKind.IntrinsicFunctionCallResult) {
-			IntrinsicFunctionName = intrinsicFunctionName;
-			Arguments = arguments;
+        public FunctionCallResult(FunctionCall functionCall)
+				: base(StorageAreaKind.FunctionCallResult) {
+			FunctionCall = functionCall;
 
             // Generate a unique symbol name for the function call at this specific call site
             int uniqueCounter = Interlocked.Increment(ref callSiteCounter);
-            var generatedSymbolName = new GeneratedSymbolName(IntrinsicFunctionName.NameLiteral.Token, IntrinsicFunctionName.Name + "-" + uniqueCounter);
-            SymbolDefinition = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+            var generatedSymbolName = new GeneratedSymbolName(FunctionCall.FunctionNameToken, FunctionCall.FunctionName + "-" + uniqueCounter);
+            StorageAreaName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
             SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
         }
 
-		public ExternalName IntrinsicFunctionName { get; private set; }
-
-		public VariableOrExpression[] Arguments { get; private set; }
+        /// <summary>
+        /// Each individual function call site in the code is both a storage area definition and a reference to the same storage area 
+        /// </summary>
+        public SymbolDefinition StorageAreaName { get; private set; }
 
         /// <summary>
-        /// Each individual function call in the code is both a definition and a reference to a symbol 
+        /// Cobol intrinsic function call OR TypeCobol user defined function call
         /// </summary>
-        public SymbolDefinition SymbolDefinition { get; private set; }
+        public FunctionCall FunctionCall { get; private set; }
+    }
+
+    /// <summary>
+    /// Common properties for noth types of function calls : list of expressions as arguments
+    /// </summary>
+    public abstract class FunctionCall
+    {
+        public FunctionCall(FunctionCallType type, VariableOrExpression[] arguments)
+        {
+            Type = type;
+            Arguments = arguments;
+        }
+
+        public FunctionCallType Type { get; private set; }
+
+        public abstract string FunctionName { get; }
+        public abstract Token FunctionNameToken { get; }
+
+        public VariableOrExpression[] Arguments { get; private set; }
+    } 
+
+    /// <summary>
+    /// Call to an intrinsic function
+    /// </summary>
+    public class IntrinsicFunctionCall : FunctionCall
+    {
+        public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
+        {
+            IntrinsicFunctionName = intrinsicFunctionName;
+        }
+
+        public ExternalName IntrinsicFunctionName { get; private set; }
+
+        public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
+
+        public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
+    }
+
+    /// <summary>
+    /// Call to a TypeCobol user defined function
+    /// </summary>
+    public class UserDefinedFunctionCall : FunctionCall
+    {
+        public UserDefinedFunctionCall(SymbolReference functionName, VariableOrExpression[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
+        {
+            UserDefinedFunctionName = functionName;
+        }
+
+        public SymbolReference UserDefinedFunctionName { get; private set;  }
+                
+        public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
+
+        public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
+    }
+
+    public enum FunctionCallType
+    {
+        IntrinsicFunctionCall,
+        UserDefinedFunctionCall
     }
 }

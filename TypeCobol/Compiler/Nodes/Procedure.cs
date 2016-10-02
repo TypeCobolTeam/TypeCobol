@@ -1,7 +1,6 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
 
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Functions;
 
 public class ProcedureDivision: Node, CodeElementHolder<ProcedureDivisionHeader> {
 	public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
@@ -16,7 +15,7 @@ public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHea
 	public string Label { get; internal set; }
 
 	public override string Name { get { return QualifiedName.Head; } }
-	public override CodeElements.Expressions.QualifiedName QualifiedName { get { return this.CodeElement().Name; } }
+	public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement().Name); } }
 
 	public string Library { get; internal set; }
 	public string Copy { get { return Library+"cpy"; } }

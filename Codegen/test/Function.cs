@@ -1,7 +1,9 @@
-﻿namespace TypeCobol.Compiler.CodeElements.Functions {
+﻿namespace TypeCobol.Codegen.Config  
+{
 
 using System;
 using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
 	public class Function {
@@ -11,25 +13,25 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 
 		public ParameterDescription Result {
 			get {
-				if (Profile.ReturningParameter != null) return Profile.ReturningParameter;
-				if (Profile.OutputParameters.Count == 1) return Profile.OutputParameters[0];
+				if (Profile.ReturningParameter != null) return new ParameterDescription(Profile.ReturningParameter);
+				if (Profile.OutputParameters.Count == 1) return new ParameterDescription(Profile.OutputParameters[0]);
 				throw new System.InvalidOperationException(QualifiedName+" has "+Profile.OutputParameters.Count+" output parameters");
 			}
 		}
 
 		/// <summary>Creates function.</summary>
-		public Function(QualifiedName name, IList<ParameterDescription> inputs, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private)
+		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, ParameterDescriptionEntry returning, AccessModifier visibility = AccessModifier.Private)
 			: this(name, inputs, null, null, returning, visibility) { }
 		/// <summary>Creates procedure.</summary>
-		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts = null, AccessModifier visibility = AccessModifier.Private)
+		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, IList<ParameterDescriptionEntry> outputs, IList<ParameterDescriptionEntry> inouts = null, AccessModifier visibility = AccessModifier.Private)
 			: this(name, inputs, outputs, inouts, null, visibility) { }
 		/// <summary>Creates functions or procedure</summary>
-		public Function(QualifiedName name, IList<ParameterDescription> inputs, IList<ParameterDescription> outputs, IList<ParameterDescription> inouts, ParameterDescription returning, AccessModifier visibility = AccessModifier.Private) {
+		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, IList<ParameterDescriptionEntry> outputs, IList<ParameterDescriptionEntry> inouts, ParameterDescriptionEntry returning, AccessModifier visibility = AccessModifier.Private) {
 			QualifiedName = name;
 			Profile = new ParametersProfile();
-			Profile.InputParameters  = inputs  ?? new List<ParameterDescription>();
-			Profile.OutputParameters = outputs ?? new List<ParameterDescription>();
-			Profile.InoutParameters  = inouts  ?? new List<ParameterDescription>();
+			Profile.InputParameters  = inputs  ?? new List<ParameterDescriptionEntry>();
+			Profile.OutputParameters = outputs ?? new List<ParameterDescriptionEntry>();
+			Profile.InoutParameters  = inouts  ?? new List<ParameterDescriptionEntry>();
 			Profile.ReturningParameter = returning;
 			Visibility = visibility;
 		}
@@ -51,9 +53,9 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 		}
 		public string Copy    { get { return Program+"cpy"; } }
 		public string Library { get { return Program; } }
-		public IList<ParameterDescription> InputParameters {
+		public IList<ParameterDescriptionEntry> InputParameters {
 			get {
-				var parameters = new List<ParameterDescription>();
+				var parameters = new List<ParameterDescriptionEntry>();
 				parameters.AddRange(Profile.InputParameters);
 				parameters.AddRange(Profile.InoutParameters);
 				parameters.AddRange(Profile.OutputParameters);
@@ -68,7 +70,13 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 		}
 	}
 
-	public class Parameter {
+    public class ParameterDescription : TypeCobol.Compiler.Nodes.DataDescription
+    {
+        public ParameterDescription(ParameterDescriptionEntry entry) : base(entry) { }
+    }
+
+
+    public class Parameter {
 		public SymbolReference Name;
 		public DataType Type;
 		public int Length;
@@ -99,9 +107,6 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 		}
 	}
 
-	public enum AccessModifier {
-		Public,
-		Private
-	}
+	
 
 }

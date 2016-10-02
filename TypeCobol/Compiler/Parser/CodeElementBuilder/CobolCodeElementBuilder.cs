@@ -10,7 +10,6 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.Parser
 {

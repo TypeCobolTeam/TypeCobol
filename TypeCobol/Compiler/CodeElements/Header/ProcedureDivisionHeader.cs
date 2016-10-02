@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
