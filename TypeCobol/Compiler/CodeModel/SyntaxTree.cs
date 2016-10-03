@@ -36,11 +36,6 @@
 		public void Exit() {
 			Branch.Pop();// will throw InvalidOperationException if Branch is empty
 		}
-		/// <summary>Delete Head.</summary>
-		public void Delete() {
-			CurrentNode.Remove();
-			Branch.Pop();
-		}
 
 
 

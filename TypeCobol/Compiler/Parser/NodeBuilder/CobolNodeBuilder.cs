@@ -67,9 +67,6 @@ namespace TypeCobol.Compiler.Parser
 			Dispatcher.OnNode(node, context, CurrentProgram);
 			Program.SyntaxTree.Exit();
 		}
-		private void Delete() {
-			Program.SyntaxTree.Delete();
-		}
 
 
 
@@ -374,13 +371,13 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		public override void EnterParagraph(ProgramClassParser.ParagraphContext context) {
-			if (!(Program.SyntaxTree.CurrentNode.CodeElement is ParagraphHeader)) {
+			if (!(Program.SyntaxTree.CurrentNode is Paragraph)) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
 				Enter(new Paragraph(header), context);
 			}
 		}
 		public override void ExitParagraph(ProgramClassParser.ParagraphContext context) {
-			Exit();
+			if (Program.SyntaxTree.CurrentNode is Paragraph) Exit();
 		}
 
 		public override void EnterSentence(ProgramClassParser.SentenceContext context) {
@@ -583,7 +580,6 @@ namespace TypeCobol.Compiler.Parser
 
 
 		public override void EnterAddStatementConditional(ProgramClassParser.AddStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.AddStatement();
 			var statement = terminal != null? (AddStatement)terminal.Symbol : null;
 			Enter(new Add(statement), context);
@@ -592,7 +588,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.AddStatementEnd());
 		}
 		public override void EnterComputeStatementConditional(ProgramClassParser.ComputeStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.ComputeStatement();
 			var statement = terminal != null? (ComputeStatement)terminal.Symbol : null;
 			Enter(new Compute(statement), context);
@@ -601,7 +596,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.ComputeStatementEnd());
 		}
 		public override void EnterDivideStatementConditional(ProgramClassParser.DivideStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.DivideStatement();
 			var statement = terminal != null? (DivideStatement)terminal.Symbol : null;
 			Enter(new Divide(statement), context);
@@ -610,7 +604,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.DivideStatementEnd());
 		}
 		public override void EnterMultiplyStatementConditional(ProgramClassParser.MultiplyStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.MultiplyStatement();
 			var statement = terminal != null? (MultiplyStatement)terminal.Symbol : null;
 			Enter(new Multiply(statement), context);
@@ -619,7 +612,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.MultiplyStatementEnd());
 		}
 		public override void EnterSubtractStatementConditional(ProgramClassParser.SubtractStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.SubtractStatement();
 			var statement = terminal != null? (SubtractStatement)terminal.Symbol : null;
 			Enter(new Subtract(statement), context);
@@ -628,7 +620,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.SubtractStatementEnd());
 		}
 		public override void EnterDeleteStatementConditional(ProgramClassParser.DeleteStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.DeleteStatement();
 			var statement = terminal != null? (DeleteStatement)terminal.Symbol : null;
 			Enter(new Delete(statement), context);
@@ -637,7 +628,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.DeleteStatementEnd());
 		}
 		public override void EnterReadStatementConditional(ProgramClassParser.ReadStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.ReadStatement();
 			var statement = terminal != null? (ReadStatement)terminal.Symbol : null;
 			Enter(new Read(statement), context);
@@ -646,7 +636,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.ReadStatementEnd());
 		}
 		public override void EnterWriteStatementConditional(ProgramClassParser.WriteStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.WriteStatement();
 			var statement = terminal != null? (WriteStatement)terminal.Symbol : null;
 			Enter(new Write(statement), context);
@@ -655,7 +644,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.WriteStatementEnd());
 		}
 		public override void EnterRewriteStatementConditional(ProgramClassParser.RewriteStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.RewriteStatement();
 			var statement = terminal != null? (RewriteStatement)terminal.Symbol : null;
 			Enter(new Rewrite(statement), context);
@@ -664,7 +652,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.RewriteStatementEnd());
 		}
 		public override void EnterStartStatementConditional(ProgramClassParser.StartStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.StartStatement();
 			var statement = terminal != null? (StartStatement)terminal.Symbol : null;
 			Enter(new Start(statement), context);
@@ -673,7 +660,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.StartStatementEnd());
 		}
 		public override void EnterReturnStatementConditional(ProgramClassParser.ReturnStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.ReturnStatement();
 			var statement = terminal != null? (ReturnStatement)terminal.Symbol : null;
 			Enter(new Return(statement), context);
@@ -682,7 +668,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.ReturnStatementEnd());
 		}
 		public override void EnterStringStatementConditional(ProgramClassParser.StringStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.StringStatement();
 			var statement = terminal != null? (StringStatement)terminal.Symbol : null;
 			Enter(new Nodes.String(statement), context);
@@ -691,7 +676,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.StringStatementEnd());
 		}
 		public override void EnterUnstringStatementConditional(ProgramClassParser.UnstringStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.UnstringStatement();
 			var statement = terminal != null? (UnstringStatement)terminal.Symbol : null;
 			Enter(new Unstring(statement), context);
@@ -700,7 +684,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.UnstringStatementEnd());
 		}
 		public override void EnterCallStatementConditional(ProgramClassParser.CallStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.CallStatement();
 			var statement = terminal != null? (CallStatement)terminal.Symbol : null;
 			Enter(new Call(statement), context);
@@ -709,7 +692,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.CallStatementEnd());
 		}
 		public override void EnterInvokeStatementConditional(ProgramClassParser.InvokeStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.InvokeStatement();
 			var statement = terminal != null? (InvokeStatement)terminal.Symbol : null;
 			Enter(new Invoke(statement), context);
@@ -718,7 +700,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.InvokeStatementEnd());
 		}
 		public override void EnterXmlGenerateStatementConditional(ProgramClassParser.XmlGenerateStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.XmlGenerateStatement();
 			var statement = terminal != null? (XmlGenerateStatement)terminal.Symbol : null;
 			Enter(new XmlGenerate(statement), context);
@@ -727,7 +708,6 @@ namespace TypeCobol.Compiler.Parser
 			AttachEndIfExists(context.XmlStatementEnd());
 		}
 		public override void EnterXmlParseStatementConditional(ProgramClassParser.XmlParseStatementConditionalContext context) {
-			Delete();// delete the node we attached in EnterStatement
 			var terminal = context.XmlParseStatement();
 			var statement = terminal != null? (XmlParseStatement)terminal.Symbol : null;
 			Enter(new XmlParse(statement), context);
