@@ -154,6 +154,7 @@ class RedefinesChecker: NodeListener {
 	internal static bool IsStronglyTyped(Node node) {
 		if (node == null || node is DataSection) return false;
 		var typed = node as Typed;
+		if (typed == null) return false;
 		if (!typed.DataType.IsCOBOL) return true;
 		return IsStronglyTyped(node.Parent);
 	}
