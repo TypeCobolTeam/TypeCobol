@@ -191,7 +191,7 @@ public abstract class Node: Named {
 	public virtual IEnumerable<ITextLine> Lines {
 		get {
 			var lines = new List<ITextLine>();
-			if (CodeElement == null) return lines;
+			if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
 			foreach(var token in CodeElement.ConsumedTokens)
 				if (!lines.Contains(token.TokensLine))
 					lines.Add(token.TokensLine);
