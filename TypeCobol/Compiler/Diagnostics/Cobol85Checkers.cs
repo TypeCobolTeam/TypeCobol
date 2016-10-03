@@ -284,7 +284,7 @@ class DeclarationChecker: NodeListener {
 	}
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		foreach(var variable in ((VariableUser)node).Variables) CheckVariable(node, variable);
+		foreach(var variable in ((VariableUser)node).Variables.Keys) CheckVariable(node, variable);
 	}
 	private void CheckVariable(Node node, QualifiedName name) {
 		var found = node.SymbolTable.GetVariable(name);
