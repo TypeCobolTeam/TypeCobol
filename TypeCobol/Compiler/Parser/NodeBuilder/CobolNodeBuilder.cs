@@ -58,12 +58,18 @@ namespace TypeCobol.Compiler.Parser
 
 		public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
 		private void Enter(Node node, ParserRuleContext context = null, SymbolTable table = null) {
+//string source = "?";
+//try { source = node.CodeElement.SourceText.Substring(0,Math.Min(55,node.CodeElement.SourceText.Length))+" ..."; } catch (Exception) { }
+//System.Console.WriteLine(">>> Enter("+(node==null?"?":node.GetType().Name)+','+(context==null?"?":context.GetType().Name)+"): \""+source+'\"');
 			node.SymbolTable = table ?? CurrentProgram.CurrentTable;
 			Program.SyntaxTree.Enter(node, context);
 		}
 		private void Exit() {
 			var node = Program.SyntaxTree.CurrentNode;
 			var context = Program.SyntaxTree.CurrentContext;
+//string source = "?";
+//try { source = node.CodeElement.SourceText.Substring(0,Math.Min(55,node.CodeElement.SourceText.Length))+" ..."; } catch (Exception) { }
+//System.Console.WriteLine("<<< Exit("+(node==null?"?":node.GetType().Name)+','+(context==null?"?":context.GetType().Name)+"): \""+source+'\"');
 			Dispatcher.OnNode(node, context, CurrentProgram);
 			Program.SyntaxTree.Exit();
 		}
@@ -371,7 +377,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		public override void EnterParagraph(ProgramClassParser.ParagraphContext context) {
-			if (!(Program.SyntaxTree.CurrentNode is Paragraph)) {
+			if (!(Program.SyntaxTree.CurrentNode is Paragraph) && context.ParagraphHeader() != null) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
 				Enter(new Paragraph(header), context);
 			}
