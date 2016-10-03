@@ -101,16 +101,24 @@ public class SymbolTable {
 		candidates.AddRange(GetVariable(name.Head));
 		//TODO candidates.AddRange(GetFunction(name.Head));
 
-		var map = new Dictionary<Named,List<Named>>();
-		foreach(var candidate in candidates) map.Add(candidate,new List<Named> { candidate });
-		var currents = candidates;
+		var map = new Dictionary<Named,List<LinkedList<Named>>>();
+		foreach(var candidate in candidates) {
+			var link = new LinkedList<Named>();
+			link.AddFirst(new LinkedListNode<Named>(candidate));
+			map.Add(candidate, new List<LinkedList<Named>> { link });
+		}
+
 		for(int i=name.Count-2; i>=0; --i) {
-			var winners = new Dictionary<Named,List<Named>>();
+			var winners = new Dictionary<Named,List<LinkedList<Named>>>();
 			foreach(var original in map.Keys) { // for each original node
-				var toplevels = new List<Named>();
-				foreach(var candidate in map[original]) // for each candidate of an original node
-					toplevels.AddRange(GetTopLevel((Node)candidate, name[i]));
-				toplevels = new List<Named>(new HashSet<Named>(toplevels)); // remove duplicates
+				var toplevels = new List<LinkedList<Named>>();
+				foreach(var link in map[original]){
+					var node = (Node)link.First.Value;
+					var ancestors = GetTopLevel(node, name[i]);
+					foreach(var ancestor in ancestors) MergeLink(ancestor, link);
+					toplevels.AddRange(ancestors);
+				}
+				toplevels = new List<LinkedList<Named>>(new HashSet<LinkedList<Named>>(toplevels)); // remove duplicates
 				if (toplevels.Count > 0) winners.Add(original,toplevels);
 			}
 			map.Clear();
@@ -122,36 +130,69 @@ public class SymbolTable {
 			found.Add(winner.Key);
 			if (winner.Value.Count != 1) {
 				var str = new StringBuilder().Append(winner.Key.QualifiedName).Append(" expected:1-sized list, got: [");
-				foreach(var v in winner.Value) str.Append(' ').Append(v.QualifiedName).Append(',');
+				foreach(var v in winner.Value) str.Append(' ').Append(ToString(v)).Append(',');
 				if (winner.Value.Count > 0) str.Length -=1;
 				throw new NotImplementedException(str.Append(" ]").ToString());
 			}
 		}
 		return found;
 	}
+	/// <summary>Merges second LinkedList with first LinkedList.
+	/// If last items in first LinkedList are equal to first items in second LinkedList, these common items are not duplicated.
+	/// </summary>
+	/// <param name="begin"></param>
+	/// <param name="end"></param>
+	private void MergeLink(LinkedList<Named> first, LinkedList<Named> second) {
+		foreach(var item in second) if (item != first.Last.Value) first.AddLast(item);
+	}
+	public string ToString(IEnumerable<Named> names) {
+		var str = new System.Text.StringBuilder().Append('[');
+		foreach(var name in names) str.Append(' ').Append(name.Name).Append(',');
+		if (str.Length > 1) str.Length -= 1;
+		return str.Append(' ').Append(']').ToString();
+	}
 	/// <summary>Gets direct or indirect toplevel item for a node.</summary>
 	/// <param name="node">We want the toplevel item for this node</param>
 	/// <param name="name">We want a toplevel item named like that</param>
-	/// <returns></returns>
-	private List<Named> GetTopLevel(Node node, string name) {
-		var toplevel = new List<Named>();
+	/// <returns>List of LinkedLists of items ; last item of each LinkedList is always node</returns>
+	private List<LinkedList<Named>> GetTopLevel(Node node, string name) {
+		var toplevel = new List<LinkedList<Named>>();
 		if (node.Parent == null) return toplevel;
 		var typedef = node.Parent as TypeDefinition;
 		if (typedef != null) {
 			var vars = GetVariablesTyped(typedef.QualifiedName);
 			var typs = GetCustomTypesSubordinatesTyped(typedef.QualifiedName);
-			foreach(var item in vars)
-				if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
-					toplevel.Add(item);
-			foreach(var item in typs)
-				if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
-					toplevel.Add(item);
+			foreach(var item in vars) {
+				if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase)) {
+					var link = CreateLinkedList<Named>(node);
+					link.AddFirst(item);
+					toplevel.Add(link);
+				}
+			}
+			foreach(var item in typs) {
+				if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase)) {
+					var link = CreateLinkedList<Named>(node);
+					link.AddFirst(item);
+					toplevel.Add(link);
+				}
+			}
 			return toplevel;
 		}
-		if (name.Equals(node.Parent.Name)) toplevel.Add(node.Parent);
+		if (name.Equals(node.Parent.Name)) {
+			var link = CreateLinkedList<Named>(node);
+			link.AddFirst(node.Parent);
+			toplevel.Add(link);
+		}
 		// as name can be implicit, don't stop at first properly named parent encountered
-		toplevel.AddRange(GetTopLevel(node.Parent, name));
+		var other = GetTopLevel(node.Parent, name);
+		foreach(var o in other) o.AddLast(node);
+		toplevel.AddRange(other);
 		return toplevel;
+	}
+	private LinkedList<N> CreateLinkedList<N>(N item) {
+		var link = new LinkedList<N>();
+		link.AddFirst(new LinkedListNode<N>(item));
+		return link;
 	}
 	/// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
 	/// <param name="name">Name of items we search for</param>
