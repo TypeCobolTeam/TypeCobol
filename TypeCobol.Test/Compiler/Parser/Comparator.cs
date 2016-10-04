@@ -140,25 +140,33 @@ namespace TypeCobol.Test.Compiler.Parser
 					var unit = new TestUnit(comparator, debug);
 					unit.Init(extensions);
 					unit.Parse();
-					if (unit.Observer.HasErrors) {
-						Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
-						errors.AppendLine(unit.Observer.DumpErrors());
-					}
+				    if (unit.Observer.HasErrors)
+				    {
+				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
+				        errors.AppendLine(unit.Observer.DumpErrors());
+				    }
+				    else
+				    {
+				        if (json)
+				        {
+				            string filename = comparator.paths.Result;
+				            //string name = Path.GetFileName(filename);
+				            string extension = Path.GetExtension(filename);
+				            filename = filename.Substring(0, filename.Length - extension.Length);
+				            string[] lines = {unit.ToJSON()};
+				            System.IO.File.WriteAllLines(filename + ".json", lines);
+				        }
 
-					if (json) {
-						string filename = comparator.paths.Result;
-						//string name = Path.GetFileName(filename);
-						string extension = Path.GetExtension(filename);
-						filename = filename.Substring(0, filename.Length - extension.Length);
-						string[] lines = { unit.ToJSON() };
-						System.IO.File.WriteAllLines(filename + ".json", lines);
-					}
-
-					try { unit.Compare(); }
-					catch (Exception ex) {
-						Console.WriteLine(" /!\\ MISMATCH\n" + ex);
-						errors.Append("E");
-					}
+				        try
+				        {
+				            unit.Compare();
+				        }
+				        catch (Exception ex)
+				        {
+				            Console.WriteLine(" /!\\ MISMATCH\n" + ex);
+				            errors.Append("E");
+				        }
+				    }
 				}
 			}
 			if (errors.Length > 0) throw new Exception(errors.ToString());
@@ -225,49 +233,38 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 	}
 
-    internal class ArithmeticComparator : FilesComparator
-    {
-        public ArithmeticComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-            int c = 0;
-            StringBuilder errors = new StringBuilder();
-            bool elementsFound = false;
-            foreach (var e in elements)
-            {
-                elementsFound = true;
-                var statement = e as ArithmeticOperationStatement;
-                if (statement == null) continue;
-                string rpn = expected.ReadLine();
-                if (rpn == null) errors.AppendFormat("RPN number {0} not provided.", c);
-                string dump = ToString(statement);
-                if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", c, dump, rpn);
-                c++;
-            }
-            if(!elementsFound) throw new Exception("No CodeElements found!");
-            if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
-            if (errors.Length > 0)
-            {
-                errors.Insert(0, paths.SamplePath + ":\n");
-                throw new Exception(errors.ToString());
-            }
-        }
-
-        private string ToString(ArithmeticOperationStatement statement)
-        {
-            StringBuilder builder = new StringBuilder();
-            foreach (var pair in statement.Affectations)
-            {
-                builder.AppendFormat("{0} = {1}, ", pair.Key, pair.Value);
-            }
-            if (statement.Affectations.Count > 0) builder.Length -= 2;
-            return builder.ToString();
-        }
-    }
+internal class ArithmeticComparator : FilesComparator {
+	public ArithmeticComparator(Paths path, bool debug = false) : base(path, debug) { }
+	internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected) {
+		var errors = new System.Text.StringBuilder();
+		int c = 0, line = 1;
+		foreach(var e in elements) {
+			c++;
+			var operation = e as ArithmeticStatement;
+			if (operation == null) continue;
+			string rpn = expected.ReadLine();
+			if (rpn == null) errors.AppendFormat("RPN number {0} not provided.", line);
+			string dump = ToString(operation);
+			if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", line, dump, rpn);
+			line++;
+		}
+		if(c < 1) throw new Exception("No CodeElements found!");
+		if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements ("+(line-1)+") lesser than expected.");
+		if (errors.Length > 0) {
+			errors.Insert(0, paths.SamplePath + ":\n");
+			throw new Exception(errors.ToString());
+		}
+	}
+	private string ToString(ArithmeticStatement statement) {
+		if (statement == null) return null;
+		var str = new System.Text.StringBuilder();
+		foreach(var operations in statement.Affectations)
+			foreach(var operation in operations.Value)
+				str.Append(operations.Key).Append(" = ").Append(operation).Append(", ");
+		if (statement.Affectations.Count > 0) str.Length -= 2;
+		return str.ToString();
+	}
+}
 
     internal class NYComparator : FilesComparator
     {
@@ -382,14 +379,17 @@ namespace TypeCobol.Test.Compiler.Parser
 			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
 			foreach(var line in table.DataEntries) {
 				foreach(var data in line.Value) {
-					if (data.LevelNumber == 1) Dump(str, data, 0);
+//TODO#249 print memory representation
+//					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
+//					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
 				}
 			}
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, DataDescriptionEntry data, int indent, string indexes = "", int baseaddress = 1) {
-			int level = data.LevelNumber;
-			string name = (data.Name != null?data.Name.ToString():"?");
+		private void Dump(StringBuilder str, Named data, int indent, string indexes = "", int baseaddress = 1) {
+/*TODO#249
+			long level = data.LevelNumber.Value;
+			string name = (data.DataName != null?data.DataName.Name:"?");
 			if (data.MemoryArea is TableInMemory) {
 				var table = data.MemoryArea as TableInMemory;
 				foreach(var e in table) {
@@ -401,15 +401,16 @@ namespace TypeCobol.Test.Compiler.Parser
 				str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
 				foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
 			}
+*/
 		}
-		private string CreateLine(int level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
+		private string CreateLine(long level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
 			var res = new StringBuilder();
 			BeginFirstColumn(res, indent, level, name);
 			EndFirstColumn(res, strindexes, index, max);
 			EndLine(res, offset, length);
 			return res.ToString();
 		}
-		private void BeginFirstColumn(StringBuilder str, int indent, int level, string name) {
+		private void BeginFirstColumn(StringBuilder str, int indent, long level, string name) {
 			for(int i=0; i<indent; i++) str.Append("  ");
 			if (level > 1) str.Append(String.Format("{0,2} ", level));
 			str.Append(name);

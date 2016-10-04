@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.CodeElements
 				 || NameToken.TokenFamily == TokenFamily.SpecialRegisterKeyword )
 					return NameToken.Text;
 				if (NameToken.TokenFamily == TokenFamily.AlphanumericLiteral)
-					return ((AlphanumericLiteralValue)NameToken.LiteralValue).Text;
+					return ((AlphanumericLiteralTokenValue)NameToken.LiteralValue).Text;
 				if (NameToken.TokenType == TokenType.SymbolicCharacter
 				 || NameToken.TokenType == TokenType.ALL)
 					return NameToken.Text;

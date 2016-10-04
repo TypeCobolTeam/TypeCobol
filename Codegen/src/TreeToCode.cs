@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using TypeCobol.Codegen.Nodes;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Text;
+﻿namespace TypeCobol.Codegen {
 
-namespace TypeCobol.Codegen {
+	using System.Collections.Generic;
+	using System.Text;
+	using TypeCobol.Codegen.Nodes;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.Nodes;
+	using TypeCobol.Compiler.Text;
+
+
 
 	public class TreeToCode: NodeVisitor {
 
@@ -32,7 +35,6 @@ namespace TypeCobol.Codegen {
 		}
 
 		private bool Process(Node node) {
-			string text = "";
 			var generated = node as Generated;
 			foreach(var line in node.Lines) {
 				if (generated != null)
@@ -46,7 +48,7 @@ namespace TypeCobol.Codegen {
 					WriteInputLinesUpTo(line);
 				Write(line, node.Comment);
 			}
-			return generated == null || !((Generated)node).IsLeaf;
+			return generated == null || !generated.IsLeaf;
 		}
 
 		/// <summary>
@@ -81,10 +83,12 @@ namespace TypeCobol.Codegen {
 		/// <param name="line"></param>
 		/// <returns></returns>
 		private bool ShouldCopy(ICobolTextLine line) {
-			return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank;
+			return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank
+			   || line.Type == CobolTextLineType.Debug // #267: Debug lines are copied "AS IS", even if they are invalid in COBOL85!
+			   || (line.Type == CobolTextLineType.Source && line.SourceText.Trim().StartsWith("COPY"));
 		}
 		/// <summary>Write input lines up to the end.</summary>
-		public void Finalize() {
+		public void WriteInputLinesUntilEnd() {
 			while (offset < Input.Count)
 				Write(Input[offset], null);
 		}

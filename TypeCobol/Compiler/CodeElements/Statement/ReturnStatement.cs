@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -14,8 +14,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// When the RETURN statement is executed, the next record from file-name-1 is made
     /// available for processing by the OUTPUT PROCEDURE.
     /// </summary>
-    public class ReturnStatement : CodeElement
+    public class ReturnStatement : StatementElement
     {
+        public ReturnStatement() : base(CodeElementType.ReturnStatement, StatementType.ReturnStatement)
+        { }
+
         /// <summary>
         /// p403:
         /// Must be described in a DATA DIVISION SD entry.
@@ -25,7 +28,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// current record are available. If any data items lie beyond the length of the
         /// current record, their contents are undefined.
         /// </summary>
-        FileName FileName;
+        public SymbolReference FileName { get; set; }
 
         /// <summary>
         /// When there is only one record description associated with file-name-1 or all
@@ -62,12 +65,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// The record areas associated with file-name-1 and identifier-1 must not be the same
         /// storage area.
         /// </summary>
-        Identifier Into;
-
-        public ReturnStatement(FileName filename, Identifier into)
-            : base(CodeElementType.ReturnStatement) {
-            this.FileName = filename;
-            this.Into = into;
-        }
+        public ReceivingStorageArea IntoStorageArea { get; set; }
     }
 }

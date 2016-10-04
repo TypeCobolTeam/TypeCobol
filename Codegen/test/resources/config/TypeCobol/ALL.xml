@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<skeletons>
+
+  <!-- comment TYPEDEF -->
+  <skeleton name="TYPEDEF">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.TypeDefinition"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="comment"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace TYPE BOOL declarations -->
+  <skeleton name="BOOL.DECLARE" var="level,name">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+%level  %name-value PIC X VALUE LOW-VALUE.
+    88  %name       VALUE 'T'.
+    88  %name-false VALUE 'F'.
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete and replace TYPE -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="*"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace SET <boolean> TO FALSE -->
+  <skeleton name="BOOL.SET" var="receiver">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+        SET %receiver-false TO TRUE.
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete UNSAFE -->
+  <skeleton name="UNSAFE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableWriter" unsafe="true"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="erase">UNSAFE</pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace DECLARE FUNCTION by a stacked program -->
+  <skeleton name="FUN.DECLARE" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="program.end"></pattern>
+      <pattern action="create" location="procedure-division.begin" group="public-functions">
+@{
+  var setentries = "";
+  foreach (var f in %definitions.functions) {
+    setentries += "    SET " + f.Name + " TO ENTRY \'" + f.Label + "\'\n";
+  }
+  setentries += "    .";
+}
+@setentries
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace function invocation by a CALL and create utility variables -->
+  <skeleton name="FUN.CALL" var=" function  ,receiver ">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" function="*"/>
+    </conditions>
+    <patterns>
+      <pattern location="data-division.working-storage" action="create" group="%function.Library-VARS" var="function=$function">
+01 %function.Copy COPY %function.Copy.
+01 %function.Library PIC X(08) VALUE '%function.Library'.
+      </pattern>
+      <pattern location="data-division.working-storage" action="create" group="functions">
+01 ERROR-CODE PIC X(08).
+      </pattern>
+      <!--pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
+01 %function.Name-RESULT %function.Result.Definition.
+      </pattern-->
+      <pattern location="procedure-division.begin" action="create" group="%function.Library-CALL">
+    IF %function.Copy-POINTER-TABLE = LOW_VALUE
+        CALL %function.Library USING %function.Copy
+    END-IF
+      </pattern>
+      <pattern location="NODE" action="replace">
+@{
+  var funparams = "";
+  foreach (var p in %function.InputParameters) {
+    funparams += "        BY " + p.SendingMode + " " + p.Value + "\n";
+  }
+}
+    CALL %function.Name USING
+@funparams
+        BY REFERENCE %function.Name-RESULT
+        BY REFERENCE ERROR-CODE
+
+    IF ERROR-CODE = ZERO
+        MOVE %function.Name-RESULT TO %receiver
+    ELSE
+*    TODO: error management
+    END-IF
+      </pattern>
+    </patterns>
+  </skeleton>
+
+</skeletons>

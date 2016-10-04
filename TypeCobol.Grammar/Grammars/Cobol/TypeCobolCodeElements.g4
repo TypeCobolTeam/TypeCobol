@@ -10,24 +10,35 @@ tcCodeElement:
 	| functionDeclarationEnd
 	;
 
-qualifiedDataName:                                    (qDataOrFile*       dataNameReference                                                                                  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataName;
-qualifiedDataNameOrIndexName:                         (qDataOrFile*       dataNameReferenceOrIndexNameReference                                                              (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrIndexName;
-qualifiedConditionName:                               (qDataOrFileOrUPSI* conditionNameReferenceOrConditionForUPSISwitchNameReference                                        (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedConditionName;
-qualifiedDataNameOrQualifiedConditionName:            (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference                     (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrConditionName;
-qualifiedDataNameOrQualifiedConditionNameOrIndexName: (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName;
-qualifiedDataNameOrQualifiedConditionNameOrFileName:  (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference  (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrQualifiedConditionNameOrFileName;
-qualifiedDataNameOrQualifiedConditionNameOrClassName: (qDataOrFileOrUPSI* dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)?)   | legacyQualifiedDataNameOrQualifiedConditionNameOrClassName;
 
-qDataOrFile:       dataNameReferenceOrFileNameReference                                     (LeftParenthesisSeparator subscript RightParenthesisSeparator)? ColonSeparator ColonSeparator;
-qDataOrFileOrUPSI: dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference (LeftParenthesisSeparator subscript RightParenthesisSeparator)? ColonSeparator ColonSeparator;
 
-legacyQualifiedDataName:                                    dataNameReference                                                                                  ((IN | OF) dataNameReferenceOrFileNameReference)*;
-legacyQualifiedDataNameOrIndexName:                         dataNameReferenceOrIndexNameReference                                                              ((IN | OF) dataNameReferenceOrFileNameReference)*;
-legacyQualifiedConditionName:                               conditionNameReferenceOrConditionForUPSISwitchNameReference                                        ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrConditionName:                     dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference                     ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrQualifiedConditionNameOrFileName:  dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference  ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
-legacyQualifiedDataNameOrQualifiedConditionNameOrClassName: dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+qualifiedParagraphNameReference: cobolQualifiedParagraphNameReference | tcQualifiedParagraphNameReference;
+cobolQualifiedParagraphNameReference: // was qualifiedParagraphNameReference
+	paragraphNameReference (IN | OF) sectionNameReference;
+tcQualifiedParagraphNameReference: // new feature
+	sectionNameReference ColonSeparator ColonSeparator paragraphNameReference;
+
+qualifiedDataName1: cobolQualifiedDataName1 | tcQualifiedDataName1;
+cobolQualifiedDataName1: // was qualifiedDataName1
+	dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
+tcQualifiedDataName1: // new feature
+	(dataNameReferenceOrFileNameReference ColonSeparator ColonSeparator)+ dataNameReference;
+
+qualifiedConditionName: cobolQualifiedConditionName | tcQualifiedConditionName;
+cobolQualifiedConditionName: // was qualifiedConditionName
+	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
+tcQualifiedConditionName: // new feature
+	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference;
+
+qualifiedDataNameOrQualifiedConditionName1: cobolQualifiedDataNameOrQualifiedConditionName1 | tcQualifiedDataNameOrQualifiedConditionName1;
+cobolQualifiedDataNameOrQualifiedConditionName1: // was qualifiedDataNameOrQualifiedConditionName1
+	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
+tcQualifiedDataNameOrQualifiedConditionName1: // new feature
+	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)+ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference;
+
+qualifiedTextName: (textName ((IN | OF) libraryName)?) | (libraryName ColonSeparator ColonSeparator textName);
+
+
 
 // rule modified to support:
 // - TYPE DATE (instead of TC-DATE or something)
@@ -37,41 +48,37 @@ cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
 // - MOVE UNSAFE <custom type> TO <custom type>
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
-moveStatement:
-    MOVE UNSAFE? corresponding? (TRUE | FALSE | identifierOrLiteral) TO identifier+;
-//         ^                      ^       ^
-//          \                      \       \
-//           \                      --------------  MOVE [TRUE|FALSE] TO <boolean>
-//            ------------------------------------  MOVE UNSAFE <custom type> TO <custom type>
+moveSimple: MOVE UNSAFE? (booleanValue | variable7) TO storageArea1+;
+//                   ^          ^
+//                    \          \
+//                     \          --------------  MOVE [TRUE|FALSE] TO <boolean>
+//                      >-----------------------  MOVE UNSAFE <custom type> TO <custom type>
+//                      \
+//                       V
+moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemReference TO toGroupItem=dataItemReference;
 
 
 // rule modified to support:
 // - SET <boolean> TO FALSE
-setStatementForAssignationSending:
-    identifier | IntegerLiteral
-    | FALSE                         // <----- SET <boolean> TO FALSE
-    | TRUE | (NULL | NULLS) | SELF
-    | (ENTRY_ARG (programNameReferenceOrProgramEntryReference | programNameFromDataOrProgramEntryFromData))
-    ;
+setStatementForConditions:
+	SET conditionReference+ TO (TRUE | FALSE);
 
 // rules modified to support custom-designed functions (of arity 0..n)
 functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
-// TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
-functionDeclarationHeader:
-	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) PeriodSeparator;
-
-
-// alternate PROCEDURE DIVISION to allow function declarations
+// - TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
 // - TCRFUN_PARAMETER_DECLARATION_ORDER
 // - TCRFUN_0_TO_N_PARAMETERS (possibly 0 parameters because of "?")
 // - TCRFUN_0_TO_1_RETURNING_PARAMETER
 //   - possibly 0 parameters because of "?" --> procedure or void-returning function
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
-procedureDivisionHeader: PROCEDURE DIVISION ((usingPhrase? returningPhrase?) | (inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase?)) PeriodSeparator;
+functionDeclarationHeader:
+	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
+//inputPhrase:  INPUT  programInputParameters+;
+//outputPhrase: OUTPUT storageArea2+;
 inputPhrase:  INPUT  parameterDescription+;
 inoutPhrase:  INOUT  parameterDescription+;
 outputPhrase: OUTPUT parameterDescription+;

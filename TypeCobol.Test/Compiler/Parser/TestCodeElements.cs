@@ -29,30 +29,31 @@ namespace TypeCobol.Test.Compiler.Parser
         /// </summary>
         public static void Check_DISPLAYCodeElements()
         {
+			
             Tuple<CodeElementsDocument, DisplayStatement> tuple;
 
             //Test using the generic method which parse a single CodeElement
             tuple = ParseOneCodeElement<DisplayStatement>("display 'toto'");
-            Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
-            Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
+            Assert.IsTrue(tuple.Item2.Variables.Length == 1);
+            Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
             Assert.IsFalse(tuple.Item2.IsWithNoAdvancing);
 
             tuple = ParseOneCodeElement<DisplayStatement>("display toto no advancing no advancing", false);
-            Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == 1);
-            Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
+            Assert.IsTrue(tuple.Item2.Variables.Length == 1);
+            Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);
 
 
             ParseDisplayStatement("display toto", 1);
             ParseDisplayStatement("display toto  'titi' tata", 3);
-            ParseDisplayStatement("display toto 'titi' tata upon mnemo", 3, SymbolType.Unknown);
-            ParseDisplayStatement("display toto 'titi' tata upon zeiruzrzioeruzoieruziosdfsdfsdfe ", 3, SymbolType.Unknown);
-            ParseDisplayStatement("display toto 'titi' tata upon SYSIN", 3, SymbolType.Unknown);
-            ParseDisplayStatement("display toto 'titi' tata upon C06", 3, SymbolType.Unknown);
-            ParseDisplayStatement("display toto 'titi' tata upon SYSIN with no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement("display toto 'titi' tata upon C06  no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement("display toto 'titi' tata upon mnemo no advancing", 3, SymbolType.Unknown, true);
-            ParseDisplayStatement("display toto 'titi' tata upon toto with no advancing", 3, SymbolType.Unknown, true);
+            ParseDisplayStatement("display toto 'titi' tata upon mnemo", 3, SymbolType.TO_BE_RESOLVED);
+            ParseDisplayStatement("display toto 'titi' tata upon zeiruzrzioeruzoieruziosdfsdfsdfe ", 3, SymbolType.TO_BE_RESOLVED);
+            ParseDisplayStatement("display toto 'titi' tata upon SYSIN", 3, SymbolType.TO_BE_RESOLVED);
+            ParseDisplayStatement("display toto 'titi' tata upon C06", 3, SymbolType.TO_BE_RESOLVED);
+            ParseDisplayStatement("display toto 'titi' tata upon SYSIN with no advancing", 3, SymbolType.TO_BE_RESOLVED, true);
+            ParseDisplayStatement("display toto 'titi' tata upon C06  no advancing", 3, SymbolType.TO_BE_RESOLVED, true);
+            ParseDisplayStatement("display toto 'titi' tata upon mnemo no advancing", 3, SymbolType.TO_BE_RESOLVED, true);
+            ParseDisplayStatement("display toto 'titi' tata upon toto with no advancing", 3, SymbolType.TO_BE_RESOLVED, true);
             ParseDisplayStatement("display toto 'titi' tata no advancing", 3, null, true);
             ParseDisplayStatement("display toto 'titi' tata with no advancing", 3, null, true);
 
@@ -95,17 +96,24 @@ namespace TypeCobol.Test.Compiler.Parser
         public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
         {
             Tuple<CodeElementsDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(textToParse, correctSyntax);
-            Assert.IsTrue(tuple.Item2.IdentifierOrLiteral.Count == nbrOfVarToDisplay);
-            if (uponMnemonicOrEnvName == null)
+            if (nbrOfVarToDisplay > 0)
             {
-                Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName == null);
+                Assert.IsTrue(tuple.Item2.Variables != null && tuple.Item2.Variables.Length == nbrOfVarToDisplay);
             }
             else
             {
-                Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName != null);
-                if (tuple.Item2.UponMnemonicOrEnvironmentName != null)
+                Assert.IsTrue(tuple.Item2.Variables == null || tuple.Item2.Variables.Length == 0);
+            }
+            if (uponMnemonicOrEnvName == null)
+            {
+                Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
+            }
+            else
+            {
+                Assert.IsTrue(tuple.Item2.OutputDeviceName != null);
+                if (tuple.Item2.OutputDeviceName != null)
                 {
-                    Assert.IsTrue(tuple.Item2.UponMnemonicOrEnvironmentName.Type == uponMnemonicOrEnvName);
+                    Assert.IsTrue(tuple.Item2.OutputDeviceName.Type == uponMnemonicOrEnvName);
                 }
             }
             Assert.IsTrue(!tuple.Item2.IsWithNoAdvancing | isWithNoAdvancing);
@@ -113,7 +121,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
             foreach (var varToDisp in varsToDisplay)
             {
-                
+             //TODO   
             }
 
             return tuple;

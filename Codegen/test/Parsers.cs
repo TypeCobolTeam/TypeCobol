@@ -96,18 +96,24 @@ namespace TypeCobol.Codegen {
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
-			string file = Path.Combine("TypeCobol","FUNCTION");
-			var skeletons = ParseConfig(file+".xml");
-			ParseGenerateCompare(file+".cbl", skeletons);
+			var skeletons = ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
+			ParseGenerateCompare(Path.Combine("TypeCobol","FUNCTION")+".cbl", skeletons);
 		}
 
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseFunctionsDeclaration() {
-			string file = Path.Combine("TypeCobol","FunDeclare");
-			var skeletons = ParseConfig(file+".xml");
-			ParseGenerateCompare(file+".cbl", skeletons);
+			var skeletons = ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
+			ParseGenerateCompare(Path.Combine("TypeCobol","FunDeclare")+".cbl", skeletons);
+		}
+
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+		public void ParseLibrary() {
+			var skeletons = ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
+			ParseGenerateCompare(Path.Combine("TypeCobol","Library")+".cbl", skeletons);
 		}
 
 

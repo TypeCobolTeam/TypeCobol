@@ -9,8 +9,8 @@
 [[ClassIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,31:              31/12/2030]<CommentEntry>
 - ClassName = MyClass2
 - InheritsFromClassName = MyFatherClass
-- AUTHOR = Mister X          Mister Y
-- DATE-WRITTEN = 01/01/1900                31/12/2030
+- AUTHOR = Mister X         Mister Y
+- DATE-WRITTEN = 01/01/1900               31/12/2030
 
 [[FactoryEnd]] [8,10:END]<END> --> [19,19+:.]<PeriodSeparator>
 
@@ -53,7 +53,7 @@
 - AUTHOR = Toto
 - DATE-COMPILED = Date 1
 - DATE-WRITTEN = Date 2
-- INSTALLATION = Environment 1      Environment 2
+- INSTALLATION = Environment 1     Environment 2
 - SECURITY = Hidden
 
 [[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,14:INITIAL]<INITIAL>

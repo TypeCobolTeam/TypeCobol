@@ -4,23 +4,32 @@ using System.Collections.Specialized;
 namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 	public interface QualifiedName: IList<string> {
+		char Separator { get; }
 		string Head { get; }
+		string Tail { get; }
+		QualifiedName Parent { get; }
 		bool IsExplicit { get; }
 		bool Matches(string uri);
 		bool Matches(QualifiedName name);
 	}
 
-	public interface Subscripted {
-		Subscript this[string name] { get; }
-		IEnumerable<Subscript> Subscripts { get; }
-	}
-
 
 
 	public abstract class AbstractQualifiedName: QualifiedName {
-		public virtual bool IsExplicit { get { return true; } }
+		public virtual bool IsExplicit { get { return false; } }
+		public virtual char Separator {
+			get { return '.'; }
+			set { throw new System.NotSupportedException(); }
+		}
 
 		public abstract string Head { get; }
+		public virtual string Tail {
+			get {
+				var uri = this.ToString();
+				return uri.Remove(uri.Length-2-Head.Length);
+			}
+		}
+		public abstract QualifiedName Parent { get; }
 		public abstract int Count { get; }
 		public abstract IEnumerator<string> GetEnumerator();
 
@@ -113,7 +122,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			foreach (string name in this) str.Append(name).Append('.');
+			foreach (string name in this) str.Append(name).Append(Separator);
 			str.Length -= 1;
 			return str.ToString();
 		}
@@ -122,6 +131,19 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			get {
 				if (Symbol == null) return null;
 				return Symbol.Name;
+			}
+		}
+		public override QualifiedName Parent {
+			get {
+				var datanames = new List<DataName>();
+				for (int c=0; c<DataNames.Count-1; c++) datanames.Add(DataNames[c]);
+				if (FileName == null) {
+					if (DataNames.Count < 1) return null;
+				} else {
+					if (DataNames.Count < 1) return new SyntacticQualifiedName(FileName, null, null, IsExplicit);
+				}
+				var symbol = DataNames[DataNames.Count-1];
+				return new SyntacticQualifiedName(symbol, datanames, FileName, IsExplicit);
 			}
 		}
 
@@ -136,125 +158,36 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-	public class SubscriptedQualifiedName: AbstractQualifiedName, Subscripted {
-		protected List<KeyValuePair<string,Subscript>> names = new List<KeyValuePair<string,Subscript>>();
-
-		public override bool IsExplicit { get { return _explicit; } }
-		private bool _explicit;
-
-		public SubscriptedQualifiedName(bool isExplicit = true) {
-			_explicit = isExplicit;
-		}
-
-		internal void Add(string name,Subscript subscript) {
-			names.Add(new KeyValuePair<string,Subscript>(name, subscript));
-		}
-
-		public override string ToString() {
-			var str = new System.Text.StringBuilder();
-			foreach(var item in names) {
-				str.Append(item.Key);
-				if (item.Value != null) str.Append('[').Append(item.Value.ToString()).Append(']');
-				str.Append('.');
-			}
-			if (names.Count > 0) str.Length -= 1;
-			return str.ToString();
-		}
-
-
-		public override string Head {
-			get {
-				if (names.Count < 1) return null;
-				return names[names.Count-1].Key;
-			}
-		}
-
-		public override IEnumerator<string> GetEnumerator() {
-			foreach (var item in names)
-				yield return (string)item.Key;
-		}
-
-		public override int Count { get { return names.Count; } }
-
-		public Subscript this[string name] {
-			get {
-				foreach(var item in names)
-					if (item.Key.Equals(name)) return item.Value;
-					//TODO what if same name more than once?
-				return null;
-			}
-		}
-		public IEnumerable<Subscript> Subscripts {
-			get {
-				foreach(var item in names)
-					if (item.Value != null)
-						yield return item.Value;
-			}
-		}
-
-
-
-
-
-		/// <summary>Factory method.</summary>
-		/// <param name="identifier">Parsed identifier for this name qualification</param>
-		/// <param name="data">Data declaration the created name will fully-qualify</param>
-		/// <param name="messages">Error messages. If there are some, there is something wrong with <paramref name="identifier"/>'s name qualification</param>
-		/// <returns></returns>
-		public static SubscriptedQualifiedName Create(Identifier identifier, DataDescriptionEntry data, out List<string> messages) {
-			var names = CreatePairs(identifier, data, out messages);
-			var qelement = new TypeCobol.Compiler.CodeElements.Expressions.SubscriptedQualifiedName();
-			foreach(var pair in names) qelement.Add(pair.Item1,pair.Item2);
-			return qelement;
-		}
-
-		private static List<System.Tuple<string,Subscript>> CreatePairs(Identifier identifier, DataDescriptionEntry data, out List<string> errors) {
-			var names = new List<System.Tuple<string,Subscript>>();
-			errors = new List<string>();
-			var subscripts = new List<Subscript>();
-			subscripts.AddRange((identifier as Subscriptable).Subscripts);
-			subscripts.Reverse();
-			int c = 0;
-			var current = data;
-			while (current != null) {
-				string name = current.QualifiedName[current.QualifiedName.Count-1];
-				TypeCobol.Compiler.CodeElements.Expressions.Subscript subscript = null;
-				if (current.IsTableOccurence) {
-					if (c < subscripts.Count) subscript = subscripts[c];
-					c++;
-				}
-				names.Add(new System.Tuple<string,TypeCobol.Compiler.CodeElements.Expressions.Subscript>(name, subscript));
-				current = current.TopLevel;
-			}
-			if (c < subscripts.Count) errors.Add(identifier.Name+": too many subscripts ("+subscripts.Count+" vs expected="+c+')');
-			names.Reverse();
-			return names;
-		}
-	}
-
-
 
 
 
 	public class URI: AbstractQualifiedName {
 		public string Value { get; private set; }
-		public char Separator { get; private set; }
 		private string[] parts;
 
 		public URI(string uri, char separator = '.') {
 			if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
-			this.Separator = separator != null ? separator : '.';
+			this.separator = separator != null ? separator : '.';
 			this.Value = uri;
 			this.parts = Value.Split(this.Separator);
+		}
+
+		private char separator;
+		public override char Separator {
+			get { return separator; }
+			set { separator = value; }
 		}
 
 		public override string ToString() { return Value; }
 
 		public override string Head { get { return parts[parts.Length-1]; } }
+		public override QualifiedName Parent { get { return new URI(Value.Remove(Value.Length-1-Head.Length), Separator); } }
 
 		public override IEnumerator<string> GetEnumerator() {
 			foreach(string part in parts) yield return part;
 		}
+
+		public override bool IsExplicit { get { return false; } }
 
 		public override int Count { get { return parts.Length; } }
 	}

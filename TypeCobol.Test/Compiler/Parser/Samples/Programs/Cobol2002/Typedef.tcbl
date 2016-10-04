@@ -62,12 +62,12 @@ WORKING-STORAGE SECTION.
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines1 REDEFINES BufferTobeRedefined TYPEDEF PIC X.
 01 varNoRedefines1 TYPE NoRedefines1.
+
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines2 REDEFINES BufferTobeRedefined TYPEDEF STRONG.
    05 NoRedefines1Item PIC X.
-
-
 01 varNoRedefines2 TYPE NoRedefines2.
+
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines3 REDEFINES TypeNotDefined TYPEDEF.
    05 NoRedefines1Item PIC X.
@@ -86,7 +86,7 @@ WORKING-STORAGE SECTION.
 *KO:  (Rule #10) -  Cobol 2014 specifications are not clear, but TypeCobol forbid it for now. Better be more restrictive.
 *(source page 807 of ISO Cobol 2014) 
 * varNoRedefines5bis can't rededines data from another TYPEDEF
-01 varNoRedefines5bis TYPEDEF.
+01 varNoRedefines5bis.
     05 varNoRedefines5bis-a redefines varNoRedefines5-a pic 9.
 
 * KO: (Rule #4) - TYPEDEF  clause cannot be specified with the EXTERNAL clause (source page 289-290 of ISO Cobol 2014) 
@@ -182,8 +182,8 @@ WORKING-STORAGE SECTION.
 PROCEDURE DIVISION.
 
 MOVE X OF Coord2d OF Accel2d OF Movment2d OF Point TO X OF Coord2d OF Speed2d OF Movment2d OF Point
-MOVE Y OF Coord2d OF Position2d                    TO Z OF Coord3d OF Position2d
-MOVE Z OF Coord3d In Position2d                    TO Y of Speed2d In Point
+MOVE Y OF Position2d OF Point                      TO Z OF Position2d OF Point
+MOVE Z In Accel2d OF Point                         TO Y of Speed2d In Point
 
 *KO (Rule #11), but myStrongInt is not numeric anyway
 compute myStrongInt of myIntStrong = 1 + 1 

@@ -4,38 +4,38 @@ using TypeCobol.Compiler.CodeElements;
 
 public interface ExceptionCondition { }
 
-public class OnSizeError: CodeElementNode<OnSizeErrorCondition>, ExceptionCondition {
+public class OnSizeError: Node, CodeElementHolder<OnSizeErrorCondition>, ExceptionCondition {
 	public OnSizeError(OnSizeErrorCondition condition): base(condition) { }
 }
-public class NoSizeError: CodeElementNode<NotOnSizeErrorCondition>, ExceptionCondition {
+public class NoSizeError: Node, CodeElementHolder<NotOnSizeErrorCondition>, ExceptionCondition {
 	public NoSizeError(NotOnSizeErrorCondition condition): base(condition) { }
 }
 
-public class OnAtEnd: CodeElementNode<AtEndCondition>, ExceptionCondition {
+public class OnAtEnd: Node, CodeElementHolder<AtEndCondition>, ExceptionCondition {
 	public OnAtEnd(AtEndCondition condition): base(condition) { }
 }
-public class NoAtEnd: CodeElementNode<NotAtEndCondition>, ExceptionCondition {
+public class NoAtEnd: Node, CodeElementHolder<NotAtEndCondition>, ExceptionCondition {
 	public NoAtEnd(NotAtEndCondition condition): base(condition) { }
 }
 
-public class OnException: CodeElementNode<OnExceptionCondition>, ExceptionCondition {
+public class OnException: Node, CodeElementHolder<OnExceptionCondition>, ExceptionCondition {
 	public OnException(OnExceptionCondition condition): base(condition) { }
 }
-public class NoException: CodeElementNode<NotOnExceptionCondition>, ExceptionCondition {
+public class NoException: Node, CodeElementHolder<NotOnExceptionCondition>, ExceptionCondition {
 	public NoException(NotOnExceptionCondition condition): base(condition) { }
 }
 
-public class OnInvalidKey: CodeElementNode<InvalidKeyCondition>, ExceptionCondition {
+public class OnInvalidKey: Node, CodeElementHolder<InvalidKeyCondition>, ExceptionCondition {
 	public OnInvalidKey(InvalidKeyCondition condition): base(condition) { }
 }
-public class NoInvalidKey: CodeElementNode<NotInvalidKeyCondition>, ExceptionCondition {
+public class NoInvalidKey: Node, CodeElementHolder<NotInvalidKeyCondition>, ExceptionCondition {
 	public NoInvalidKey(NotInvalidKeyCondition condition): base(condition) { }
 }
 
-public class OnOverflow: CodeElementNode<OnOverflowCondition>, ExceptionCondition {
+public class OnOverflow: Node, CodeElementHolder<OnOverflowCondition>, ExceptionCondition {
 	public OnOverflow(OnOverflowCondition condition): base(condition) { }
 }
-public class NoOverflow: CodeElementNode<NotOnOverflowCondition>, ExceptionCondition {
+public class NoOverflow: Node, CodeElementHolder<NotOnOverflowCondition>, ExceptionCondition {
 	public NoOverflow(NotOnOverflowCondition condition): base(condition) { }
 }
 

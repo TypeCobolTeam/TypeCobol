@@ -49,8 +49,17 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 				return tail.ToString();
 			}
 		}
-		public string Copy { get { return Program+"cpy"; } }
-		public string Lib  { get { return Program; } }
+		public string Copy    { get { return Program+"cpy"; } }
+		public string Library { get { return Program; } }
+		public IList<ParameterDescription> InputParameters {
+			get {
+				var parameters = new List<ParameterDescription>();
+				parameters.AddRange(Profile.InputParameters);
+				parameters.AddRange(Profile.InoutParameters);
+				parameters.AddRange(Profile.OutputParameters);
+				return parameters;
+			}
+		}
 
 		public override string ToString() {
 			var str = new System.Text.StringBuilder(Name ?? "?");

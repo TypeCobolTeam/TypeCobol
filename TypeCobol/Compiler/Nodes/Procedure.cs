@@ -3,41 +3,44 @@
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Functions;
 
-public class ProcedureDivision: CodeElementNode<ProcedureDivisionHeader> {
+public class ProcedureDivision: Node, CodeElementHolder<ProcedureDivisionHeader> {
 	public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
 	public override string ID { get { return "procedure-division"; } }
 }
 
 // [TYPECOBOL]
 
-public class FunctionDeclaration: CodeElementNode<FunctionDeclarationHeader> {
+public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader> {
 	public FunctionDeclaration(FunctionDeclarationHeader header): base(header) { }
-	public override string ID { get { return "function-declaration"; } }
+	public override string ID { get { return Name; } }
+	public string Label { get; internal set; }
+
+	public override string Name { get { return QualifiedName.Head; } }
+	public override CodeElements.Expressions.QualifiedName QualifiedName { get { return this.CodeElement().Name; } }
+
+	public string Library { get; internal set; }
+	public string Copy { get { return Library+"cpy"; } }
+	public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
 }
 
-public class FunctionProfile: CodeElementNode<FunctionDeclarationProfile> {
-	public FunctionProfile(FunctionDeclarationProfile profile): base(profile) { }
-	public override string ID { get { return "function-profile"; } }
-}
-
-public class FunctionEnd: CodeElementNode<FunctionDeclarationEnd> {
+public class FunctionEnd: Node, CodeElementHolder<FunctionDeclarationEnd> {
 	public FunctionEnd(FunctionDeclarationEnd end): base(end) { }
 	public override string ID { get { return "function-end"; } }
 }
 
 // [/TYPECOBOL]
 
-public class Section: CodeElementNode<SectionHeader> {
+public class Section: Node, CodeElementHolder<SectionHeader> {
 	public Section(SectionHeader header): base(header) { }
-	public override string ID { get { return CodeElement.SectionName.Name; } }
+	public override string ID { get { return this.CodeElement().SectionName.Name; } }
 }
 
-public class Paragraph: CodeElementNode<ParagraphHeader> {
+public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
 	public Paragraph(ParagraphHeader header): base(header) { }
-	public override string ID { get { return CodeElement.ParagraphName.Name; } }
+	public override string ID { get { return this.CodeElement().ParagraphName.Name; } }
 }
 
-public class Sentence: CodeElementNode<CodeElement> {
+public class Sentence: Node, CodeElementHolder<CodeElement> {
 	public Sentence(): base(null) { }
 }
 

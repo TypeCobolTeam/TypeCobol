@@ -1,31 +1,31 @@
 ﻿--- Code Elements ---
-unstring toto
-INTO  result
+UNSTRING toto
+ INTO result
 
-unstring toto2
- delimited by "toto2"
-INTO  result
+UNSTRING toto2
+ DELIMITED BY "toto2"
+ INTO result
 
-unstring toto3
- delimited by "," or ";"
-INTO  result
+UNSTRING toto3
+ DELIMITED BY "," OR ";"
+ INTO result
 
-unstring toto4
-INTO  result
+UNSTRING toto4
+ INTO result
  TALLYING IN toto4
 
-unstring toto4
- delimited by high-value
-INTO  result
+UNSTRING toto4
+ DELIMITED BY high-value
+ INTO result
  TALLYING IN toto4
 
-unstring toto
- delimited by var1 or var2 or var3
-INTO  result result2
+UNSTRING toto
+ DELIMITED BY var1 OR var2 OR var3
+ INTO resultresult2
  WITH POINTER ptr1
  TALLYING IN tallyingVar
 
-unstring WS-CONTRAT
- delimited by SPACES
-INTO  WS-CODE-PRODUIT WS-NUM-POL
+UNSTRING WS-CONTRAT
+ DELIMITED BY ALL SPACES
+ INTO WS-CODE-PRODUITWS-NUM-POL
 

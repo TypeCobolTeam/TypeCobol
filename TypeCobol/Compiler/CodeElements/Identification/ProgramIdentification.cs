@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// A separately compiled program and all of its directly and indirectly contained programs 
         /// must have unique program-names within that separately compiled program.
         /// </summary>
-        public ProgramName ProgramName { get; set; }
+        public SymbolDefinition ProgramName { get; set; }
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
@@ -45,7 +45,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// attribute is not supported for programs compiled with the THREAD
         /// option.
         /// </summary>
-        public bool IsInitial { get; set; }
+        public SyntaxProperty<bool> Initial { get; set; }
+        public bool IsInitial { get { return Initial != null && Initial.Value; } }
 
         // -- ONLY IN OUTERMOST PROGRAM --
 
@@ -62,7 +63,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RECURSIVE clause is required for programs compiled with the
         /// THREAD option.
         /// </summary>
-        public bool IsRecursive { get; set; }
+        public SyntaxProperty<bool> Recursive { get; set; }
+        public bool IsRecursive { get { return Recursive != null && Recursive.Value; } }
 
         // -- ONLY IN NESTED PROGRAMS --
 
@@ -73,7 +75,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// common program and programs contained within them. The COMMON
         /// clause can be used only in nested programs.
         /// </summary>
-        public bool IsCommon { get; set; }
+        public SyntaxProperty<bool> Common { get; set; }
+        public bool IsCommon { get { return Common != null && Common.Value; } }
 
         /// <summary>
         /// Debug string

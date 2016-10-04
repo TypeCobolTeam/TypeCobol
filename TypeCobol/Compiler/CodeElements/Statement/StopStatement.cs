@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -7,8 +7,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// The STOP statement halts execution of the object program either permanently or
     /// temporarily.
     /// </summary>
-    public class StopStatement : CodeElement
+    public class StopStatement : StatementElement
     {
+        public StopStatement() : base(CodeElementType.StopStatement, StatementType.StopStatement)
+        { }
+
         /// <summary>
         /// p432:
         /// literal
@@ -28,7 +31,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// Do not use the STOP literal statement in programs compiled with the THREAD
         /// compiler option.
         /// </summary>
-        public Literal Literal = null;
+        public NumericValue ReturnCode { get; set; }
+        public AlphanumericValue ReturnMessage { get; set; }
+        public SyntaxProperty<bool> ReturnNull { get; set; }
 
         /// <summary>
         /// p432:
@@ -46,8 +51,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// STOP RUN in Subprogram returns directly to the program that called the main program.
         /// (Can be the system, which causes the application to end.)
         /// </summary>
-        public bool IsStopRun = false;
+        public SyntaxProperty<bool> StopRun { get; set; }
 
-        public StopStatement() : base(CodeElementType.StopStatement) { }
     }
 }

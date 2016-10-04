@@ -1,169 +1,154 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class UnstringStatement : CodeElement, Receiving
+    /// <summary>
+    /// p441: UNSTRING statement
+    /// The UNSTRING statement causes contiguous data in a sending field to be
+    /// separated and placed into multiple receiving fields.
+    /// </summary>
+    public class UnstringStatement : StatementElement
     {
+        public UnstringStatement() : base(CodeElementType.UnstringStatement, StatementType.UnstringStatement) { }
+
         /// <summary>
         /// identifier-1
+        /// Represents the sending field. Data is transferred from this field to the data
+        /// receiving fields (identifier-4).
+        /// identifier-1 must reference a data item of category alphabetic, alphanumeric,
+        /// alphanumeric-edited, DBCS, national, or national-edited.
         /// </summary>
-        public Identifier UnstringIdentifier { get; set; }
+        public Variable SendingField { get; set; }
 
         /// <summary>
-        /// Identifier-2 or  literal-1
+        /// This phrase specifies delimiters within the data that control the data transfer.
+        /// Each identifier-2, identifier-3, literal-1, or literal-2 represents one delimiter.
+        /// Two or more delimiters
+        /// When two or more delimiters are specified, an OR condition exists, and each
+        /// nonoverlapping occurrence of any one of the delimiters is recognized in the
+        /// sending field in the sequence specified.
         /// </summary>
-        public Expression DelimitedBy { get; set; }
+        public UnstringDelimiter[] Delimiters { get; set; }
 
         /// <summary>
-        /// identifier-3 or literal-2
+        /// This phrase specifies the fields where the data is to be moved.
+        /// identifier-4 represents the data receiving fields.
         /// </summary>
-        public List<Expression> OtherDelimiters { get; set; } 
+        public UnstringReceivingField[] ReceivingFields { get; set; }
 
         /// <summary>
-        /// identifier-4 or identifier-5 or identifier-6
+        /// When the POINTER phrase is specified, the value of the pointer field, identifier-7,
+        /// behaves as if it were increased by 1 for each examined character position in the
+        /// sending field. When execution of the UNSTRING statement is completed, the
+        /// pointer field contains a value equal to its initial value plus the number of character
+        /// positions examined in the sending field.
+        /// When this phrase is specified, the user must initialize the pointer field before
+        /// execution of the UNSTRING statement begins.
         /// </summary>
-        public List<UnstringReceiver> UnstringReceivers { get; set; }
-
-        /// <summary>
-        /// identifier-7
-        /// </summary>
-        public Identifier WithPointer { get; set; }
+        public ReceivingStorageArea CharacterPositionsExaminedInSendingField { get; set; }
 
         /// <summary>
         /// identifier-8
+        /// Specifies a field that is incremented by the number of delimited fields
+        /// processed.
         /// </summary>
-        public Identifier Tallying { get; set; }
+        public ReceivingStorageArea NumberOfDelimitedFieldsProcessed { get; set; }
+      
+
+		public override string ToString() {
+			if (SendingField == null && Delimiters == null && ReceivingFields == null && CharacterPositionsExaminedInSendingField == null && NumberOfDelimitedFieldsProcessed == null)
+				return base.ToString();
+			var str = new StringBuilder("");
+			if (SendingField != null) str.AppendLine("UNSTRING " + SendingField);
+			if (Delimiters.Length > 0) {
+				str.Append(" DELIMITED BY ");
+				foreach (var delimiter in Delimiters) str.Append(delimiter).Append(" OR ");
+				str.Length -= 4;
+				str.AppendLine();
+			}
+			if (ReceivingFields.Length > 0) {
+				str.Append(" INTO ");
+				foreach (var receiver in ReceivingFields) str.Append(receiver);
+				str.AppendLine();
+			}
+			if (CharacterPositionsExaminedInSendingField != null) str.Append(" WITH POINTER ").AppendLine(CharacterPositionsExaminedInSendingField.ToString());
+			if (NumberOfDelimitedFieldsProcessed != null) str.Append(" TALLYING IN ").AppendLine(NumberOfDelimitedFieldsProcessed.ToString());
+			return str.ToString();
+		}
+    }
+
+    public class UnstringDelimiter
+    {
+        /// <summary>
+        /// ALL 
+        /// Multiple contiguous occurrences of any delimiters are treated as if there
+        /// were only one occurrence; this one occurrence is moved to the delimiter
+        /// receiving field (identifier-5), if specified. The delimiting characters in the
+        /// sending field are treated as an elementary item of the same usage and
+        /// category as identifier-1 and are moved into the current delimiter receiving
+        /// field according to the rules of the MOVE statement.
+        /// When DELIMITED BY ALL is not specified, and two or more contiguous
+        /// occurrences of any delimiter are encountered, the current data receiving
+        /// field (identifier-4) is filled with spaces or zeros, according to the description
+        /// of the data receiving field.
+        /// </summary>
+        public SyntaxProperty<bool> All { get; set; }
 
         /// <summary>
-        /// Executed when the pointer value (explicit or implicit):
-        ///  - Is less than 1
-        ///  - Exceeds a value equal to the length of the receiving field
-        /// When either of the above conditions occurs, an overflow condition exists,
-        /// and no more data is transferred. Then the STRING operation is terminated,
-        /// the NOT ON OVERFLOW phrase, if specified, is ignored, and control is
-        /// transferred to the end of the STRING statement or, if the ON OVERFLOW
-        /// phrase is specified, to imperative-statement-1.
+        /// This phrase specifies delimiters within the data that control the data transfer.
+        /// Each identifier-2, identifier-3, literal-1, or literal-2 represents one delimiter.
+        /// Delimiter with two or more characters
+        /// A delimiter that contains two or more characters is recognized as a delimiter only
+        /// if the delimiting characters are in both of the following cases:
+        /// - Contiguous
+        /// - In the sequence specified in the sending field
         /// </summary>
-        public List<OnOverflowCondition> OnOverflowStatement { get; set; }
+        public Variable DelimiterCharacters { get; set; }
 
-        /// <summary>
-        /// If at the time of execution of a STRING statement, conditions that would
-        /// cause an overflow condition are not encountered, then after completion of
-        /// the transfer of data, the ON OVERFLOW phrase, if specified, is ignored.
-        /// Control is then transferred to the end of the STRING statement, or if the
-        /// NOT ON OVERFLOW phrase is specified, to imperative-statement-2.
-        /// </summary>
-        public List<NotOnOverflowCondition> NotOnOverflowStatement { get; set; }
-
-        public UnstringStatement() : base(CodeElementType.UnstringStatement)
-        { }
-
-        /// <summary>
-        /// Debug string
-        /// </summary>
         public override string ToString()
         {
-            if (UnstringIdentifier == null && DelimitedBy == null && OtherDelimiters == null && UnstringReceivers == null && WithPointer == null && Tallying == null && OnOverflowStatement == null && NotOnOverflowStatement == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                var sb = new StringBuilder("");
-                if (UnstringIdentifier != null)
-                {
-                    sb.AppendLine("unstring " + UnstringIdentifier);
-                }
-                if (DelimitedBy != null || OtherDelimiters != null)
-                {
-                    sb.Append(" delimited by ");
-
-                    if (DelimitedBy != null)
-                    {
-                        sb.Append(DelimitedBy);
-                    }
-                    if (OtherDelimiters != null)
-                    {
-                        foreach (var otherDelimiter in OtherDelimiters)
-                        {
-                            sb.Append(" or ");
-                            sb.Append(otherDelimiter);
-                        }
-                    }
-                    sb.AppendLine("");
-                }
-
-                if (UnstringReceivers != null)
-                {
-                    sb.Append("INTO ");
-                    foreach (var unstringReceiver in UnstringReceivers)
-                    {
-                        if (unstringReceiver.IntoIdentifier != null)
-                        {
-                            sb.Append(' ');
-                            sb.Append(unstringReceiver.IntoIdentifier);
-                        }                       
-                        if (unstringReceiver.DelimiterIdentifier != null)
-                        {
-                            sb.Append(" DELIMITER IN ");
-                            sb.Append(unstringReceiver.DelimiterIdentifier);
-                        }
-                        if (unstringReceiver.CountIdentifier != null)
-                        {
-                            sb.Append(" COUNT IN ");
-                            sb.Append(unstringReceiver.CountIdentifier);
-                        }
-                    }
-                    sb.AppendLine("");
-                }
-
-                if (WithPointer != null)
-                {
-                    sb.Append(" WITH POINTER ");
-                    sb.AppendLine(WithPointer.ToString());
-                }
-                if (Tallying != null)
-                {
-                    sb.Append(" TALLYING IN ");
-                    sb.AppendLine(Tallying.ToString());
-                }
-                return sb.ToString();
-            }
-        }
-
-        public IList<Expression> Expressions
-        {
-            get
-            {
-                var result = new List<Expression>();
-                foreach (var unstringReceiver in this.UnstringReceivers)
-                {
-                    result.Add(unstringReceiver.IntoIdentifier);
-                }
-                return result;
-            }
+            return (All != null && All.Value ? "ALL " : "") + (DelimiterCharacters != null ? DelimiterCharacters.ToString() : "?");
         }
     }
 
-    public class UnstringReceiver
+    public class UnstringReceivingField
     {
         /// <summary>
-        /// identifier-4
+        /// This phrase specifies the fields where the data is to be moved.
+        /// identifier-4 represents the data receiving fields.
         /// </summary>
-        public Identifier IntoIdentifier { get; set; }
+        public ReceivingStorageArea ReceivingField { get; set; }
 
         /// <summary>
-        /// identifier-5
+        /// This phrase specifies the fields where the delimiters are to be moved.
+        /// identifier-5 represents the delimiter receiving fields.
+        /// The DELIMITER IN phrase must not be specified if the DELIMITED BY
+        /// phrase is not specified.
         /// </summary>
-        public Identifier DelimiterIdentifier { get; set; }
+        public ReceivingStorageArea DelimiterReceivingField { get; set; }
 
         /// <summary>
-        /// identifier-6
+        /// This phrase specifies the field where the count of examined character
+        /// positions is held.
+        /// identifier-6 is the data count field for each data transfer. Each field holds the
+        /// count of examined character positions in the sending field, terminated by
+        /// the delimiters or the end of the sending field, for the move to this
+        /// receiving field. The delimiters are not included in this count.
+        /// The COUNT IN phrase must not be specified if the DELIMITED BY phrase
+        /// is not specified.
         /// </summary>
-        public Identifier CountIdentifier { get; set; }
+        public ReceivingStorageArea CharTransferredCount { get; set; }
+
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            if (ReceivingField != null) str.Append(ReceivingField);
+            else str.Append("?");
+            if (DelimiterReceivingField != null) str.Append(" DELIMITER IN ").Append(DelimiterReceivingField);
+            if (CharTransferredCount != null) str.Append(" COUNT IN ").Append(CharTransferredCount);
+            return str.ToString();
+        }
     }
 }

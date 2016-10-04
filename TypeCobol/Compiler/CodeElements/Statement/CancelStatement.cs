@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -23,8 +22,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// connector in the program named in an explicit CANCEL statement. USE
     /// procedures associated with those files are not executed.
     /// </summary>
-    public class CancelStatement : CodeElement
+    public class CancelStatement : StatementElement
     {
+        public CancelStatement() : base(CodeElementType.CancelStatement, StatementType.CancelStatement)
+        { }
+
         /// <summary>
         /// p311:
         /// identifier-1, literal-1
@@ -40,8 +42,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// contents of an identifier specified in an associated CALL statement.
         /// Do not specify the name of a class or a method in the CANCEL statement.
         /// </summary>
-        public IList<Expression> Items = new List<Expression>();
+        public SymbolReferenceVariable[] Programs { get; set; }
 
-        public CancelStatement() : base(CodeElementType.CancelStatement) { }
     }
 }

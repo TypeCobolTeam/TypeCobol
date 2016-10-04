@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         protected internal int p = 0;
 
         /// <summary>What is name or source of this char stream?</summary>
-        public string name;
+        public string name = null;
 
         /// <summary>Reference immutable text line char array</summary>
         public TextLineCharStream(ITextLine line)

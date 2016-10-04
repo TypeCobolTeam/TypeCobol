@@ -1,30 +1,30 @@
 ﻿--- Diagnostics ---
-[24,27]<27,Error,Syntax>Syntax error : no viable alternative at input 'null' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement>setStatementForAssignation>setStatementForAssignationSending>identifier>addressOfSpecialRegisterDecl>dataReference>qualifiedDataName, OffendingSymbol=[24,27:null]<NULL> on line 7)
-[1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'set ... ' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>setStatement, OffendingSymbol=[1,0:]<EndOfFile> on line 0)
+[24,27]<27,Error,Syntax>Syntax error : no viable alternative at input 'null' (RuleStack=codeElement>setStatement>setStatementForAssignment>setSendingField>integerVariableOrIndex1>identifierOrIndexName>storageAreaReferenceOrConditionReferenceOrIndexName>otherStorageAreaReference>autoAllocatedDataItemReference>addressOfSpecialRegister>storageAreaReference, OffendingSymbol=[24,27:null]<NULL> on line 7)
+[1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'set ... ' (RuleStack=codeElement>setStatement, OffendingSymbol=[1,0:]<EndOfFile> on line 0)
 --- Code Elements ---
-Set  var1 TO var2
+SET  var1 TO var2
 
-Set  var1 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+SET  var1 TO ADDRESS(var2)
 
-Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO var2
+SET  ADDRESS(var1) TO var2
 
-Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO TypeCobol.Compiler.CodeElements.Expressions.Address
+SET  ADDRESS(var1) TO ADDRESS(var2)
 
-Set  var1 TO null
+SET  var1 TO null
 
-Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO null
+SET  ADDRESS(var1) TO null
 
-Set  var1 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+SET  var1 TO ADDRESS()
 
-Set  var1 TO nulls
+SET  var1 TO nulls
 
-Set  TypeCobol.Compiler.CodeElements.Expressions.Address TO nulls
+SET  ADDRESS(var1) TO nulls
 
-Set  var1 var2 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+SET  var1 var2 TO ADDRESS(var3)
 
-Set  var1 var2 TO var3
+SET  var1 var2 TO var3
 
-Set  var1 TypeCobol.Compiler.CodeElements.Expressions.Address var3 TO var4
+SET  var1 ADDRESS(var2) var3 TO var4
 
-Set  var1 TypeCobol.Compiler.CodeElements.Expressions.Address var3 TO TypeCobol.Compiler.CodeElements.Expressions.Address
+SET  var1 ADDRESS(var2) var3 TO ADDRESS(var4)
 

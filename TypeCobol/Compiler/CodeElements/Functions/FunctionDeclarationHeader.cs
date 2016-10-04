@@ -14,10 +14,23 @@ public class FunctionDeclarationHeader: CodeElement {
 		: base(CodeElementType.FunctionDeclarationHeader) {
 		this.Name = Name;
 		this.Visibility = Visibility;
+		this.Profile = new ParametersProfile();
 	}
 	public void SetLibrary(string libname) {
 		Name = new URI(libname + "." + Name);
 	}
+
+	 // PROFILE
+	/////////////
+	public ParametersProfile Profile { get; private set; }
+	/// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
+	public SyntaxProperty<Passing.Mode> Input { get; internal set; }
+	/// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
+	public SyntaxProperty<Passing.Mode> Output { get; internal set; }
+	/// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
+	public SyntaxProperty<Passing.Mode> Inout { get; internal set; }
+	/// <summary>RETURNING dataname.</summary>
+	public SyntaxProperty<Passing.Mode> Returning { get; internal set; }
 }
 
 

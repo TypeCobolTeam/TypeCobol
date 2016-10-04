@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Symbols;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
@@ -137,11 +136,11 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                                 {
                                     if (copyDirective.TextNameSymbol != null)
                                     {
-                                        symbolInformationForTokens.Add(copyDirective.TextNameSymbol, new SymbolInformation(copyDirective.TextNameSymbol, SymbolRole.ExternalName, SymbolType.TextName));
+                                        symbolInformationForTokens.Add(copyDirective.TextNameSymbol, new ExternalName(new AlphanumericValue(copyDirective.TextNameSymbol), SymbolType.TextName));
                                     }
                                     if (copyDirective.LibraryNameSymbol != null)
                                     {
-                                        symbolInformationForTokens.Add(copyDirective.TextNameSymbol, new SymbolInformation(copyDirective.LibraryNameSymbol, SymbolRole.ExternalName, SymbolType.LibraryName));
+                                        symbolInformationForTokens.Add(copyDirective.TextNameSymbol, new ExternalName(new AlphanumericValue(copyDirective.LibraryNameSymbol), SymbolType.LibraryName));
                                     }
                                 }
                                 languageModelForProgram.AddSymbolInformationForTokens(symbolInformationForTokens);
@@ -238,11 +237,11 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                                                     {
                                                         if (copyDirective2.TextNameSymbol != null)
                                                         {
-                                                            symbolInformationForTokens.Add(copyDirective2.TextNameSymbol, new SymbolInformation(copyDirective2.TextNameSymbol, SymbolRole.ExternalName, SymbolType.TextName));
+                                                            symbolInformationForTokens.Add(copyDirective2.TextNameSymbol, new ExternalName(new AlphanumericValue(copyDirective2.TextNameSymbol), SymbolType.TextName));
                                                         }
                                                         if (copyDirective2.LibraryNameSymbol != null)
                                                         {
-                                                            symbolInformationForTokens.Add(copyDirective2.TextNameSymbol, new SymbolInformation(copyDirective2.LibraryNameSymbol, SymbolRole.ExternalName, SymbolType.LibraryName));
+                                                            symbolInformationForTokens.Add(copyDirective2.TextNameSymbol, new ExternalName(new AlphanumericValue(copyDirective2.LibraryNameSymbol), SymbolType.LibraryName));
                                                         }
                                                     }
                                                     languageModelForCopy.AddSymbolInformationForTokens(symbolInformationForTokens);

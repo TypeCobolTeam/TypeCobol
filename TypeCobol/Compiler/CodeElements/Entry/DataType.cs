@@ -5,13 +5,13 @@ namespace TypeCobol.Compiler.CodeElements
 	public class DataType {
 		public string Name { get; private set; }
 		public bool IsStrong { get; private set; }
-		public bool IsNestable { get; private set; }
+		public bool IsCOBOL  { get; private set; }
 
-		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
+		public DataType(string name, bool IsStrong=false, bool IsCOBOL=false) {
 			Name = name;
 			if (name == null) throw new ArgumentNullException();
 			this.IsStrong = IsStrong;
-			this.IsNestable = IsNestable;
+			this.IsCOBOL  = IsCOBOL;
 		}
 
 		public override string ToString() { return Name; }
@@ -34,6 +34,13 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 
+
+		public static DataType CreateCustom(string name, bool IsStrong=true, bool IsCOBOL=false) {
+			foreach(var builtin in BuiltInCustomTypes)
+				if (builtin.Name.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
+					return builtin;
+			return new DataType(name, IsStrong, IsCOBOL);
+		}
 
 		public static DataType Create(string picture) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
@@ -105,73 +112,48 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static readonly DataType Unknown            = new DataType("?");
-		public static readonly DataType Alphabetic         = new DataType("Alphabetic");
-		public static readonly DataType Numeric            = new DataType("Numeric");
-		public static readonly DataType NumericEdited      = new DataType("NumericEdited");
-		public static readonly DataType Alphanumeric       = new DataType("Alphanumeric");
-		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
-		public static readonly DataType DBCS               = new DataType("DBCS");
-		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
+		public static readonly DataType Unknown            = new DataType("?", false, true);
+		public static readonly DataType Alphabetic         = new DataType("Alphabetic", false, true);
+		public static readonly DataType Numeric            = new DataType("Numeric", false, true);
+		public static readonly DataType NumericEdited      = new DataType("NumericEdited", false, true);
+		public static readonly DataType Alphanumeric       = new DataType("Alphanumeric", false, true);
+		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited", false, true);
+		public static readonly DataType DBCS               = new DataType("DBCS", false, true);
+		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint", false, true);
 // [TYPECOBOL]
-		public static readonly DataType Boolean            = new DataType("BOOL", true, true);
+		public static readonly DataType Boolean            = new DataType("BOOL", true);
+		public static readonly DataType Date               = new DataType("DATE", true);
 
-		public static readonly TypeDefinition Date = CreateDate();
-		private static TypeDefinition CreateDate() {
-			var type = new CustomTypeDefinition(new DataType("DATE", true, true));
-			CreateMember(type, 5, "YYYY", Numeric,4);
-			CreateMember(type, 5, "MM",   Numeric,2);
-			CreateMember(type, 5, "DD",   Numeric,2);
-			return type;
+		public static Nodes.TypeDefinition CreateBuiltIn(DataType type) {
+			if (type == DataType.Date) return CreateDate();
+			return CreateBase(type);
 		}
-		private static void CreateMember(DataDescriptionEntry parent, int level, string name, DataType type, int length) {
+		private static Nodes.TypeDefinition CreateBase(DataType type) {
+			var entry = new TypeDefinitionEntry();
+			entry.LevelNumber = new GeneratedIntegerValue(1);
+			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
+			entry.DataType = type;
+			return new Nodes.TypeDefinition(entry);
+		}
+		private static Nodes.TypeDefinition CreateDate() {
+			var node = CreateBase(DataType.Date);
+			node.Add(CreateData(5, "YYYY", '9',4));
+			node.Add(CreateData(5, "MM",   '9',2));
+			node.Add(CreateData(5, "DD",   '9',2));
+			return node;
+		}
+		private static Nodes.DataDescription CreateData(int level, string name, char type, int length) {
 			var data = new DataDescriptionEntry();
-			data.LevelNumber = level;
-			data.DataName = new StringDataName(name);
-			data.DataType = type;
-			data.MemoryArea = new TypeCobol.Compiler.CodeModel.DataInMemory(length, 0);//TODO half-assed
-			data.Picture = String.Format("9 ({0})", data.MemoryArea.Length);
-			data.TopLevel = parent;
-			parent.Subordinates.Add(data);
+			data.LevelNumber = new GeneratedIntegerValue(level);
+			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
+			data.Picture = new GeneratedAlphanumericValue(String.Format("{0}({1})", type, length));
+			data.DataType = DataType.Create(data.Picture.Value);
+			return new Nodes.DataDescription(data);
 		}
+
+		public static readonly DataType[] BuiltInCustomTypes = new DataType[] { DataType.Boolean, DataType.Date, };
 // [/TYPECOBOL]
 
-	}
 
-	public interface TypeDefinition {
-		bool IsTypeDefinition { get; }
-		DataType DataType { get; }
-		System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get; }
-	}
-	public class CustomTypeDefinition: DataDescriptionEntry, TypeDefinition {
-		public CustomTypeDefinition(DataType type) {
-			this.DataType = type;
-		}
-		public override bool IsTypeDefinition { get { return true; } }
-	}
-
-
-
-	public class StringDataName: DataName {
-		private string name_;
-		public override string Name { get { return name_; } }
-		/// <param name="name">Cannot be null</param>
-        public StringDataName(string name): base(null) { name_ = name; }
-
-		public override bool Equals(object obj) {
-			var other = obj as StringDataName;
-			if (other == null) return false;
-			return other == this;
-		}
-		public static bool operator ==(StringDataName x, StringDataName y) {
-			if (Object.ReferenceEquals(x, null) && Object.ReferenceEquals(y, null)) return true;
-			if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-			return x.Name.ToUpper() == y.Name.ToUpper();
-		}
-		public static bool operator !=(StringDataName x, StringDataName y) {
-			return !(x == y);
-		}
-
-		public override string ToString() { return Name; }
 	}
 }

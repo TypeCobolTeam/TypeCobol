@@ -13,29 +13,63 @@ public class Passing {
 	}
 }
 
-public class ParameterDescription: DataDescriptionEntry {
+public class ParameterDescriptionEntry: DataDescriptionEntry {
 	// TODO#245
 	// create an interface shared with DataDeclarationEntry
 	// that aggregates all the non-illegal stuff like justified, 
 	// group usage national, blank when zero and so on
 }
+public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription {
+	public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { }
+}
 
-public class CallParameter: ParameterDescription {
+public class CallParameterDescription: ParameterDescriptionEntry {
 	public bool ByReference { private get; set; }
 	public string SendingMode { get { return ByReference? "REFERENCE":"CONTENT"; } }
 	public string Value { get; set; }
 }
 
+public class FunctionCall: Named {
+	public FunctionCall(IntrinsicFunctionCallResult call) {
+		QualifiedName = new Expressions.URI(call.IntrinsicFunctionName.Name);
+		foreach(var variableOrExpression in call.Arguments)
+			InputParameters.Add(new CallParameter(variableOrExpression));
+	}
+	/// <summary>Used for codegen.</summary>
+	public FunctionCall(Expressions.QualifiedName name, string lib, string copy) {
+		QualifiedName = name;
+		Library = lib;
+		Copy = copy;
+	}
 
+	public string Name { get { return QualifiedName.Head; } }
+	public Expressions.QualifiedName QualifiedName { get; private set; }
 
-public interface Profile {
-	Dictionary<Passing.Mode, IList<System.Tuple<DataType,int>>> Parameters { get; }
-	System.Tuple<DataType,int> Return { get; }
+	public IList<CallParameter> InputParameters = new List<CallParameter>();
+
+	public string Library { get; set; }
+	public string Copy    { get; set; }
+}
+
+public class CallParameter {
+
+	private VariableOrExpression voe;
+	public CallParameter(VariableOrExpression voe) { this.voe = voe; }
+
+	public virtual bool   IsLiteral   { get { return voe.IsLiteral; } }
+	public virtual string SendingMode { get { return IsLiteral? "CONTENT":"REFERENCE"; } }
+	public virtual string Value       { get { return voe.QualifiedName.ToString(); } }
+}
+public class EmptyCallParameter: CallParameter {
+	public EmptyCallParameter(): base(null) { }
+	public override bool   IsLiteral   { get { return true; } }
+	public override string SendingMode { get { return "CONTENT"; } }
+	public override string Value       { get { return "SPACE"; } }
 }
 
 
 
-public class ParametersProfile: Profile {
+public class ParametersProfile {
 	public IList<ParameterDescription> InputParameters { get; set; }
 	public IList<ParameterDescription> OutputParameters { get; set; }
 	public IList<ParameterDescription> InoutParameters { get; set; }
@@ -48,50 +82,44 @@ public class ParametersProfile: Profile {
 		ReturningParameter = null;
 	}
 
-	public Dictionary<Passing.Mode,IList<Tuple<DataType,int>>> Parameters {
+	public IList<ParameterDescription> Parameters {
 		get {
-			var parameters = new Dictionary<Passing.Mode,IList<Tuple<DataType,int>>>();
-			parameters[Passing.Mode.Input] = new List<Tuple<DataType,int>>();
-			foreach(var p in InputParameters) parameters[Passing.Mode.Input].Add(new Tuple<DataType,int>(p.DataType, p.MemoryArea.Length));
-			parameters[Passing.Mode.Inout] = new List<Tuple<DataType,int>>();
-			foreach(var p in InoutParameters) parameters[Passing.Mode.Inout].Add(new Tuple<DataType,int>(p.DataType, p.MemoryArea.Length));
-			parameters[Passing.Mode.Output] = new List<Tuple<DataType,int>>();
-			foreach(var p in OutputParameters) parameters[Passing.Mode.Output].Add(new Tuple<DataType,int>(p.DataType, p.MemoryArea.Length));
+			var parameters = new List<ParameterDescription>();
+			parameters.AddRange(InputParameters);
+			parameters.AddRange(InoutParameters);
+			parameters.AddRange(OutputParameters);
 			return parameters;
-		}
-	}
-	public Tuple<DataType,int> Return {
-		get {
-			if (ReturningParameter == null) return null;
-			return new Tuple<DataType,int>(ReturningParameter.DataType, ReturningParameter.MemoryArea.Length);
 		}
 	}
 
 	public override bool Equals(object other) {
 		if (other == null || GetType() != other.GetType()) return false;
-		var o = other as Profile;
+		var o = other as ParametersProfile;
 		if (o == null) return false;
 		// instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
 		// only iterate over input+output+inout parameters: returning parameter does not have
 		// any impact in conflict between function profiles resolution
-		foreach(var mode in new List<Passing.Mode> { Passing.Mode.Input, Passing.Mode.Output, Passing.Mode.Inout }) {
-			var mine =   Parameters.ContainsKey(mode) ?   Parameters[mode] : new List<Tuple<DataType,int>>();
-			var hers = o.Parameters.ContainsKey(mode) ? o.Parameters[mode] : new List<Tuple<DataType,int>>();
-			if (mine.Count != hers.Count) return false;
-			for (int c=0; c<mine.Count; c++) {
-				if (!mine[c].Item1.Equals(hers[c].Item1)) return false;
-				if (!mine[c].Item2.Equals(hers[c].Item2)) return false;
-			}
+		bool okay = true;
+		okay = AreEqual(InputParameters, o.InputParameters);
+		if (!okay) return false;
+		okay = AreEqual(InoutParameters, o.InoutParameters);
+		if (!okay) return false;
+		okay = AreEqual(OutputParameters,o.OutputParameters);
+		return okay;
+    }
+
+	private static bool AreEqual(IList<ParameterDescription> mine, IList<ParameterDescription> hers) {
+		if (mine.Count != hers.Count) return false;
+		for (int c=0; c<mine.Count; c++) {
+			if (!mine[c].Equals(hers[c])) return false;
+			if (!mine[c].Equals(hers[c])) return false;
 		}
 		return true;
-    }
+	}
     
 	public override int GetHashCode() {
-		int hash = 0;
-		foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) {
-			hash = hash*17 + mode.GetHashCode();
-			foreach(var p in Parameters[mode]) hash = hash*23 + p.GetHashCode();
-		}
+		int hash = 17;
+		foreach(var p in Parameters) hash = hash*23 + p.GetHashCode();
 		return hash;
 	}
 

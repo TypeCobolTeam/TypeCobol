@@ -3,7 +3,7 @@
 
   <skeleton name="BOOL.DECLARE" var="level,name">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.DataDescriptionEntry" type="BOOL"/>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
@@ -16,7 +16,7 @@
 
   <skeleton name="BOOL.SET" var="receiver">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.SetStatement" sender.type="BOOL" sender="FALSE"/>
+      <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">

@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -13,8 +13,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// Within an INPUT PROCEDURE, at least one RELEASE statement must be
     /// specified.
     /// </summary>
-    public class ReleaseStatement : CodeElement
+    public class ReleaseStatement : StatementElement
     {
+        public ReleaseStatement() : base(CodeElementType.ReleaseStatement, StatementType.ReleaseStatement)
+        { }
+
         /// <summary>
         /// p401:
         /// When the RELEASE statement is executed, the current contents of record-name-1 are
@@ -25,8 +28,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must specify the name of a logical record in a sort-merge file description
         /// entry (SD). record-name-1 can be qualified.
         /// </summary>
-        public QualifiedName RecordName;
-
+        public SymbolReference RecordName { get; set; }
+        
         /// <summary>
         /// p401:
         /// FROM phrase
@@ -54,8 +57,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// in identifier-1. (See “INTO and FROM phrases” on page 291 under
         /// "Common processing facilities".)
         /// </summary>
-        public Identifier From;
+        public Variable FromVariable { get; set; }
 
-        public ReleaseStatement() : base(CodeElementType.ReleaseStatement) { }
     }
 }

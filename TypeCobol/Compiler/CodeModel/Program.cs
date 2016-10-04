@@ -92,16 +92,12 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// Outermost program of a compilation unit.
     /// </summary>
-    public class SourceProgram : Program
-    {
-        public SourceProgram()
-        {
-            IsNested = false;
-        }
+    public class SourceProgram: Program {
 
-        public SourceProgram(SymbolTable EnclosingScope) {
-            IsNested = false;
-            SymbolTable = new SymbolTable(EnclosingScope);
+		public SourceProgram(SymbolTable EnclosingScope) {
+			IsNested = false;
+			SymbolTable = new SymbolTable(EnclosingScope);
+			SyntaxTree.Root.SymbolTable = SymbolTable;
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -148,18 +144,15 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs can be directly or indirectly contained in the containing program.     
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
-    public class NestedProgram : Program 
-    {
-        public NestedProgram(Program containingProgram)
-        {
-            IsNested = true;
-            ContainingProgram = containingProgram;
-            SymbolTable = new SymbolTable(containingProgram.SymbolTable);
-        }
+	public class NestedProgram: Program {
+		public NestedProgram(Program containingProgram) {
+			IsNested = true;
+			ContainingProgram = containingProgram;
+			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
+			SyntaxTree.Root.SymbolTable = SymbolTable;
+		}
 
-        /// <summary>
-        /// A nested program is a program that is contained in another program.
-        /// </summary>
-        public Program ContainingProgram { get; private set; }
-    }
+        /// <summary>A nested program is a program that is contained in another program.</summary>
+		public Program ContainingProgram { get; private set; }
+	}
 }

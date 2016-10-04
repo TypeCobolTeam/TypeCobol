@@ -30,4 +30,6 @@ dataDescriptionEntry:
 
 cobol2002TypedefClause: TYPEDEF STRONG?;
 
-cobol2002TypeClause:    TYPE UserDefinedWord;
+cobol2002TypeClause:    TYPE typeNameDefinition;
+
+typeNameDefinition: symbolDefinition4;

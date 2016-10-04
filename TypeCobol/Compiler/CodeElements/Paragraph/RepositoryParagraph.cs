@@ -16,6 +16,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Optionally, the REPOSITORY paragraph defines associations between class-names and external class-names.
         /// </summary>
-        public IDictionary<ClassName, string> ClassNames { get; set; }
+        public IDictionary<SymbolDefinitionOrReference, SymbolDefinitionOrReference> ClassNames { get; set; }
     }
 }

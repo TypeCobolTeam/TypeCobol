@@ -2,7 +2,7 @@
 *** DIRECTIVE EXEC_SQL_INCLUDE.SUPPRESS TEXTNAME1 ([8,11:EXEC]<EXEC>[12,12: ]<SpaceSeparator>[13,15:SQL]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:INCLUDE]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,33:TEXTNAME1]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:SUPPRESS]<SUPPRESS>[43,43: ]<SpaceSeparator>[44,51:END-EXEC]<END_EXEC>[52,52+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
-*** DIRECTIVE EXEC_SQL_INCLUDE textname2.OF(library2) <REPLACE-SingleToken:[17,20:toto]<UserDefinedWord>><BY:[31,34:titi]<UserDefinedWord>> <REPLACE-SingleToken:[17,20:exec]<EXEC>><BY:[31,37:execute]<EXECUTE>> ([8,14:execute]<EXECUTE>[15,15: ]<SpaceSeparator>) ***
+*** DIRECTIVE EXEC_SQL_INCLUDE textname2.OF(library2) <REPLACE[SingleToken] toto BY titi> <REPLACE[SingleToken] exec BY execute> ([8,14:execute]<EXECUTE>[15,15: ]<SpaceSeparator>) ***
 
 -- Line 3 --
 +++ CONTINUATION OF CopyImportDirective ([8,9:  ]<SpaceSeparator>[10,12:sql]<ExecTranslatorName>[13,13: ]<SpaceSeparator>) +++
@@ -46,7 +46,7 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,32:end-exec]<END_EXEC>[33,33+:.]<PeriodSeparator>) ***
-[25,32]<27,Error,Syntax>Syntax error : missing {AlphanumericLiteral, UserDefinedWord} at 'end-exec'
+[25,32]<27,Error,Syntax>Syntax error : no viable alternative at input 'end-exec'
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname4 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL_INCLUDE>[24,24: ]<SpaceSeparator>[25,33:textname4]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:end-exec]<END_EXEC>) ***

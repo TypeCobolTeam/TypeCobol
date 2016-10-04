@@ -1,9 +1,9 @@
 ﻿      * 11 CodeElements errors
-      * "4"@(24:12>24:65): [30:1] Semantic error: Can't write non typed SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(25:12>25:51): [30:1] Semantic error: Can't write non typed SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(26:12>26:51): [30:1] Semantic error: Can't write non typed Small to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(28:12>28:51): [30:1] Semantic error: Can't write non typed Numeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(29:12>29:51): [30:1] Semantic error: Can't write non typed Alphanumeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(24:12>24:65): [30:1] Semantic error: Can't write SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(25:12>25:51): [30:1] Semantic error: Can't write SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(26:12>26:51): [30:1] Semantic error: Can't write Small to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(28:12>28:51): [30:1] Semantic error: Can't write Numeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(29:12>29:51): [30:1] Semantic error: Can't write Alphanumeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
       * "1"@(38:12>38:65): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
       * "1"@(39:12>39:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
       * "1"@(40:12>40:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
@@ -27,14 +27,14 @@
 
       *    01 identifier-1 TYPE ToughGroup.                                   
        01 identifier-1.                                                       
-         02 x PIC 9(04).                                                      
-         02 y PIC 9(04).                                                      
+           02 x PIC 9(04).                                                    
+           02 y PIC 9(04).                                                    
       *    01 identifier-2 TYPE SmallGroup.                                   
        01 identifier-2.                                                       
-         02 x PIC 9(04).                                                      
-         02 y PIC 9(04).                                                      
+           02 x PIC 9(04).                                                    
+           02 y PIC 9(04).                                                    
       *    01 identifier-3 TYPE Small.                                        
-       01 identifier-3 PIC 9(04).                                             
+       01 identifier-3.                                                       
            01 identifier-4 PIC 9(04).
 
        PROCEDURE DIVISION.

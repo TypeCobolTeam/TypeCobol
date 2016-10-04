@@ -15,6 +15,7 @@ ADD
 ADD 1 TO x.
 ADD 1 2 TO toto.
 ADD 1 2 3 TO x toto.
+ADD 1 2 3 TO x ROUNDED y z ROUNDED.
 ADD 1 0 1 0 1 0 to x.
 * IDENTIFIERS
 ADD 42 TO mydata OF myfile.
@@ -42,6 +43,7 @@ ADD a m GIVING x.
 * LITERALS
 ADD 1 TO m GIVING x.
 ADD 1 TO m GIVING x y.
+ADD 1 TO m GIVING x ROUNDED y z ROUNDED.
 ADD a 1 TO 2 GIVING x.
 ADD a b ab TO 1 GIVING x toto.
 ADD 0 TO 0 GIVING x.
@@ -56,7 +58,7 @@ ADD 1 0 1 0 1 TO 0 GIVING x.
 * FORMAT 3
 * IDENTIFIERS
 ADD CORRESPONDING a TO x.
-ADD CORR a TO x.
+ADD CORR a TO x ROUNDED.
 * SYNTAX ERRORS
 * only 1 identifier as operand
 *ADD CORRESPONDING a TO x y.

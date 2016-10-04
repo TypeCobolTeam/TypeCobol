@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using TypeCobol.Codegen.Nodes;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen {
@@ -13,8 +14,8 @@ namespace TypeCobol.Codegen {
 		[TestProperty("Time","fast")]
 		public void TreeToCode() {
 			var root1 = CreateSampleTree();
-			root1.Children[0].Children.Insert(2, new Node("X"));
-			root1.Children[2].Children.Insert(0, new Node("Y"));
+			root1.Children[0].Add(new Node("X"), 2);
+			root1.Children[2].Add(new Node("Y"), 0);
 			var writer1 = new TreeToCode();
 			root1.Accept(writer1);
 			System.Console.WriteLine(writer1.Output);
@@ -23,7 +24,7 @@ namespace TypeCobol.Codegen {
 			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			var root = program.SyntaxTree.Root;
-			root.Get("Functions.data-division.working-storage").Children.Insert(1, new Node("codegen", false));
+			root.Get("program.data-division.working-storage").Add(new Node("codegen", false), 1);
 			var writer = new TreeToCode(document.Results.TokensLines);
 			root.Accept(writer);
 			System.Console.WriteLine(writer.Output);
@@ -31,7 +32,7 @@ namespace TypeCobol.Codegen {
 
 
 
-		public Compiler.CodeElements.Node CreateSampleTree() {
+		public Node CreateSampleTree() {
 			//		0
 			//     /|\
 			//    1 7 8
@@ -40,15 +41,15 @@ namespace TypeCobol.Codegen {
 			//     / \
 			//    5   6
 			var root = new Node("0");
-			root.Children.Add(new Node("1"));
-			root.Children.Add(new Node("7"));
-			root.Children.Add(new Node("8"));
-			root.Children[0].Children.Add(new Node("2"));
-			root.Children[0].Children.Add(new Node("3"));
-			root.Children[0].Children.Add(new Node("4"));
-			root.Children[2].Children.Add(new Node("9"));
-			root.Children[0].Children[2].Children.Add(new Node("5"));
-			root.Children[0].Children[2].Children.Add(new Node("6"));
+			root.Add(new Node("1"));
+			root.Add(new Node("7"));
+			root.Add(new Node("8"));
+			root.Children[0].Add(new Node("2"));
+			root.Children[0].Add(new Node("3"));
+			root.Children[0].Add(new Node("4"));
+			root.Children[2].Add(new Node("9"));
+			root.Children[0].Children[2].Add(new Node("5"));
+			root.Children[0].Children[2].Add(new Node("6"));
 			return root;
 		}
 		[TestMethod]
@@ -67,23 +68,30 @@ namespace TypeCobol.Codegen {
 			Assert.AreEqual(1, root.Children[2].Children.Count);//8
 			Assert.AreEqual(0, root.Children[2].Children[0].Children.Count);//9
 			// direct & indirect children
-			Assert.AreEqual(9, Node.CountAllChildren(root));//0
-			Assert.AreEqual(5, Node.CountAllChildren(root.Children[0]));//1
-			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[0]));//2
-			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[1]));//3
-			Assert.AreEqual(2, Node.CountAllChildren(root.Children[0].Children[2]));//4
-			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[2].Children[0]));//5
-			Assert.AreEqual(0, Node.CountAllChildren(root.Children[0].Children[2].Children[1]));//6
-			Assert.AreEqual(0, Node.CountAllChildren(root.Children[1]));//7
-			Assert.AreEqual(1, Node.CountAllChildren(root.Children[2]));//8
-			Assert.AreEqual(0, Node.CountAllChildren(root.Children[2].Children[0]));//9
+			Assert.AreEqual(9, CountAllChildren(root));//0
+			Assert.AreEqual(5, CountAllChildren(root.Children[0]));//1
+			Assert.AreEqual(0, CountAllChildren(root.Children[0].Children[0]));//2
+			Assert.AreEqual(0, CountAllChildren(root.Children[0].Children[1]));//3
+			Assert.AreEqual(2, CountAllChildren(root.Children[0].Children[2]));//4
+			Assert.AreEqual(0, CountAllChildren(root.Children[0].Children[2].Children[0]));//5
+			Assert.AreEqual(0, CountAllChildren(root.Children[0].Children[2].Children[1]));//6
+			Assert.AreEqual(0, CountAllChildren(root.Children[1]));//7
+			Assert.AreEqual(1, CountAllChildren(root.Children[2]));//8
+			Assert.AreEqual(0, CountAllChildren(root.Children[2].Children[0]));//9
+		}
+
+		private static int CountAllChildren(Compiler.Nodes.Node node) {
+			int count = node.Children.Count;
+			foreach(var child in node.Children)
+				count += CountAllChildren(child);
+			return count;
 		}
 	}
 
 
 
-	public class Node: Compiler.CodeElements.Node, Generated {
-		public Node(string Text = ".", bool GenerateChildren = true) {
+	public class Node: TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.Nodes.Generated {
+		public Node(string Text = ".", bool GenerateChildren = true): base(null) {
 			this._lines.Add(new TextLineSnapshot(-1, Text, null));
 			this.IsLeaf = GenerateChildren;
 		}

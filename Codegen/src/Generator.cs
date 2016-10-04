@@ -6,6 +6,7 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
@@ -14,7 +15,6 @@ namespace TypeCobol.Codegen {
 	public class Generator: NodeVisitor {
 
 		private readonly IReadOnlyList<ICobolTextLine> Input;
-		private readonly List<ICobolTextLine> Output;
 		private readonly TextWriter Writer;
 		private readonly List<Skeleton> Skeletons;
 
@@ -31,7 +31,7 @@ namespace TypeCobol.Codegen {
 		/// <param name="tree">Root of a syntax tree</param>
 		/// <param name="table">Table of symbols</param>
 		/// <param name="columns">Columns layout</param>
-		public void Generate(Node tree, SymbolTable table, ColumnsLayout columns = ColumnsLayout.FreeTextFormat) {
+		public void Generate(Root tree, SymbolTable table, ColumnsLayout columns = ColumnsLayout.FreeTextFormat) {
 			Actions = new List<Action>();
 			// STEP 1: modify tree to adapt it to destination language
 			tree.Accept(this);
@@ -41,14 +41,14 @@ namespace TypeCobol.Codegen {
 				action.Execute();
 				if (action.Group != null) groups.Add(action.Group);
 			}
+//			Console.WriteLine(tree.Root.ToString());
 
 			// STEP 2: convert tree to destination language code
 			var converter = new TreeToCode(Input, columns);
 			tree.Accept(converter);
-			converter.Finalize();
+			converter.WriteInputLinesUntilEnd();
 			Writer.Write(converter.Output.ToString());
 			Writer.Flush();
-
 //			Console.WriteLine(converter.Output.ToString());
 		}
 
@@ -86,11 +86,9 @@ namespace TypeCobol.Codegen {
 			var result = new Dictionary<string,object>();
 			var errors = new System.Text.StringBuilder();
 			foreach(var pname in properties) {
-				if (node[pname] != null) {
-					result[pname] = node[pname];
-				} else {
-					errors.Append(pname).Append(", ");
-				}
+				var property = node[pname];
+				if (property != null) result[pname] = property;
+				else errors.Append(pname).Append(", ");
 			}
 			if (errors.Length > 0) {
 				errors.Length -= 2;
@@ -114,7 +112,7 @@ namespace TypeCobol.Codegen {
 				return new Comment(destination);
 			}
 			if ("expand".Equals(pattern.Action)) {
-				return new Expand(destination);
+				return new Expand(source, destination, pattern.Location);
 			}
 			if ("erase".Equals(pattern.Action)) {
 				return new Erase(destination, pattern.Template);
@@ -134,53 +132,18 @@ namespace TypeCobol.Codegen {
 			}
 
 			if (location == null || location.ToLower().Equals("node")) return node;
-			Node root = node;
+			var root = node;
 			while(root.Parent != null) root = root.Parent;
 
 			var result = root.Get(location);
 			if (result != null) return result;
 			throw new System.ArgumentException("Undefined URI: "+location);
 		}
-
-
-
-		private string CreateGeneratedText(Node node, Pattern pattern) {
-			var variables = CreateVariables(pattern.Variables, node);
-			string generated = Config.Cheetah.Replace(pattern.Template, variables, pattern.Delimiter);
-			if (pattern.Trim) generated = generated.Trim();
-			if (pattern.Indent) {
-				string indent = CreateIndent(node.CodeElement as DataDescriptionEntry);
-				var lines = generated.Split('\n');
-				var str = new System.Text.StringBuilder();
-				foreach(string line in lines) str.Append(indent+line);
-				generated = str.ToString();
-			}
-			return generated;
-		}
-
-		private Dictionary<string,string> CreateVariables(Dictionary<string,string> variables, Node node) {
-			string delimiter = "$";
-			var results = new Dictionary<string,string>();
-			foreach(var key in variables.Keys) {
-				string value = variables[key];
-				if (value.StartsWith(delimiter)) //remove starting delimiter
-					value = node[value.Trim().Substring(delimiter.Length)].ToString();
-				results[key] = value;
-			}
-			return results;
-		}
-
-		private string CreateIndent(DataDescriptionEntry data) {
-			var indent = "       ";
-			if (data != null) {
-				for(int c=0; c<data.Generation; c++) indent += "  ";
-			}
-			return indent;
-		}
 	}
 
 	public interface Action {
 		string Group { get; }
+		/// <summary>Modifies AST.</summary>
 		void Execute();
 	}
 
@@ -217,10 +180,9 @@ namespace TypeCobol.Codegen {
 
 		public void Execute() {
 			var parent = Old.Parent;
-			int index = parent.Children.IndexOf(Old);
+			int index = parent.IndexOf(Old);
 		    Old.Comment = true;
 			parent.Add(New, index+1);
-            
 		}
 	}
 
@@ -228,14 +190,10 @@ namespace TypeCobol.Codegen {
 		public string Group { get; private set; }
 		internal Node Node;
 
-		public Comment(Node node) {
-			this.Node = node;
-		}
+		public Comment(Node node) { this.Node = node; }
 
-		public void Execute() {
-			comment(this.Node);
-		}
-		private static void comment(Node node) {
+		public void Execute() { comment(this.Node); }
+		private void comment(Node node) {
 			node.Comment = true;
 			foreach(var child in node.Children) comment(child);
 		}
@@ -243,27 +201,34 @@ namespace TypeCobol.Codegen {
 
 	public class Expand: Action {
 		public string Group { get; private set; }
-		internal Node Node;
+		internal Node Source;
+		internal Node Destination;
+		internal string DestinationURI;
 		private Dictionary<Type,Type> Generators = new Dictionary<Type,Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
-				{ typeof(FunctionDeclarationHeader), typeof(FunctionDeclaration) },
+				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclaration) },
 			};
 
-		public Expand(Node node) {
-			this.Node = node;
+		public Expand(Node source, Node destination, string destinationURI) {
+			this.Source = source;
+			this.Destination = destination;
+			this.DestinationURI = destinationURI;
 		}
 
 		public void Execute() {
 			// retrieve data
-			int index = this.Node.Parent.Children.IndexOf(this.Node);
+			int index;
+			if (DestinationURI.EndsWith(".end")) index = this.Destination.Parent.Children.Count-1;
+			else index = this.Destination.Parent.IndexOf(this.Destination);
+
 			if (index > -1) {
-				var typegen = GetGeneratedNode(this.Node.CodeElement.GetType());
-				var nodegen = (Node)Activator.CreateInstance(typegen, this.Node);
-				this.Node.Parent.Children.Insert(index+1, nodegen);
+				var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
+				var nodegen = (Node)Activator.CreateInstance(typegen, this.Source);
+				this.Destination.Parent.Add(nodegen, index+1);
 			}
 			// comment out original "line" (=~ non expanded node)
-			this.Node.Comment = true;
-			this.Node.Children.Clear();
+			this.Source.Comment = true;
+			this.Source.RemoveAllChildren();
 		}
 
 		private Type GetGeneratedNode(Type type) {
@@ -288,14 +253,14 @@ namespace TypeCobol.Codegen {
 			if (!somethingToDo) return;
 
 			// retrieve data
-			int index = this.Node.Parent.Children.IndexOf(this.Node);
+			int index = this.Node.Parent.IndexOf(this.Node);
 			if (index > -1) {
 				var nodegen = new GeneratedNode(solver);
-				this.Node.Parent.Children.Insert(index+1, nodegen);
+				this.Node.Parent.Add(nodegen, index+1);
 			}
 			// comment out original "line" (=~ non expanded node)
 			this.Node.Comment = true;
-			this.Node.Children.Clear();
+			this.Node.Clear();
 
 		}
 	}
