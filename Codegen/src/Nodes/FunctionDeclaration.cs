@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeElements.Functions;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
@@ -73,9 +72,12 @@ namespace TypeCobol.Codegen.Nodes {
 				}
 			}
 		}
-		private ParameterEntry CreateParameterEntry(ParameterDescription parameter, Compiler.CodeModel.SymbolTable table) {
-			var generated = new ParameterEntry((ParameterDescriptionEntry)parameter.CodeElement, table);
-			foreach(var child in parameter.Children) generated.Add(child);
+		private ParameterEntry CreateParameterEntry(ParameterDescriptionEntry parameter, Compiler.CodeModel.SymbolTable table) {
+			var generated = new ParameterEntry(parameter, table);
+            if (parameter.DataConditions != null)
+            {
+                foreach (var child in parameter.DataConditions) generated.Add(new DataCondition(child));
+            }
 			return generated;
 		}
 

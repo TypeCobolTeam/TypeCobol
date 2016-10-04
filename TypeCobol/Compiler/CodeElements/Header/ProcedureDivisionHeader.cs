@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -45,17 +44,17 @@ namespace TypeCobol.Compiler.CodeElements
 						str.Append(inputParam.ReceivingMode);
 						str.Append(':');
 					}
-					var named = inputParam.ReceivingStorageArea.StorageArea as Named;
+					var named = inputParam.ReceivingStorageArea.StorageArea;
 					if (named == null) str.Append('?');
-					else str.Append(named.Name);
+					else str.Append(named.SymbolReference.Name);
 				}
 				str.AppendLine();
 			}
 			if (ReturningParameter != null) {
 				str.Append("- ReturningDataName = ");
-				var named = ReturningParameter.StorageArea as Named;
+				var named = ReturningParameter.StorageArea;
 				if (named == null) str.Append('?');
-				else str.Append(named.Name);
+				else str.Append(named.SymbolReference.Name);
 				str.AppendLine();
 			}
 			return str.ToString();
@@ -68,7 +67,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Each USING identifier must be defined as a level-01 or level-77 item in the
 	/// LINKAGE SECTION of the called subprogram or invoked method.
 	/// </summary>
-	public class InputParameter: Named {
+	public class InputParameter {
 		/// <summary>
 		/// Argument receiving mode : BY REFERENCE or BY VALUE
 		/// </summary>
@@ -78,22 +77,6 @@ namespace TypeCobol.Compiler.CodeElements
 		/// LINKAGE SECTION of the called subprogram or invoked method.
 		/// </summary>
 		public ReceivingStorageArea ReceivingStorageArea { get; set; }
-
-		public string Name {
-			get {
-				var named = ReceivingStorageArea.StorageArea as Named;
-				if (named == null) return null;
-				return named.Name;
-			}
-		}
-
-		public Expressions.QualifiedName QualifiedName {
-			get {
-				var named = ReceivingStorageArea.StorageArea as Named;
-				if (named == null) return null;
-				return named.QualifiedName;
-			}
-		}
 	}
 
 	/// <summary>

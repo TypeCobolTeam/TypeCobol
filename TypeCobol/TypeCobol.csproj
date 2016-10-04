@@ -128,9 +128,7 @@
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxValue.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Variable.cs" />
-    <Compile Include="Compiler\CodeElements\Functions\Function.cs" />
-    <Compile Include="Compiler\CodeElements\Functions\FunctionDeclarationHeader.cs" />
-    <Compile Include="Compiler\CodeElements\Functions\Parameters.cs" />
+    <Compile Include="Compiler\CodeElements\Header\FunctionDeclarationHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\UseStatement.cs" />
     <Compile Include="Compiler\CodeElements\StatementElement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\AddStatement.cs" />
@@ -164,7 +162,6 @@
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\SyntaxNumber.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SyntaxProperty.cs" />
     <Compile Include="Compiler\CodeElements\Header\ConfigurationSectionHeader.cs" />
     <Compile Include="Compiler\CodeElements\Header\DataDivision.cs" />
@@ -189,7 +186,6 @@
     <Compile Include="Compiler\CodeElements\Identification\ObjectIdentification.cs" />
     <Compile Include="Compiler\CodeElements\Identification\ProgramEnd.cs" />
     <Compile Include="Compiler\CodeElements\Identification\ProgramIdentification.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\LiteralExpressionValue.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\ObjectComputerParagraph.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\RepositoryParagraph.cs" />
     <Compile Include="Compiler\CodeElements\Paragraph\SourceComputerParagraph.cs" />
@@ -264,13 +260,6 @@
     <Compile Include="Compiler\CodeElements\Statement\WriteStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\XmlGenerateStatement.cs" />
     <Compile Include="Compiler\CodeElements\Statement\XmlParseStatement.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\FunctionName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\Symbol.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\SectionName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\ParagraphName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\DataName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\FileName.cs" />
-    <Compile Include="Compiler\CodeElements\Symbols\SymbolicCharacter.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolType.cs" />
     <Compile Include="Compiler\CodeModel\Class.cs" />
     <Compile Include="Compiler\CodeModel\FileDescription.cs" />

@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// an external data set, and specifies file organization, access mode, and other
         /// information.
         /// </summary>
-        public IDictionary<FileName, FileControlEntry> FileConnectors { get; set; }
+        public IDictionary<SymbolDefinition, FileControlEntry> FileConnectors { get; set; }
 
         /// <summary>
         /// The I-O-CONTROL paragraph of the input-output section specifies when checkpoints 
@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// More than one record description entry can be specified; each is an alternative description of the same record storage area.
         /// Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
         /// </summary>
-        public IDictionary<FileName, FileDescription> FileDescriptions { get; set; }
+        public IDictionary<SymbolDefinition, FileDescription> FileDescriptions { get; set; }
 
         /// <summary>
         /// A single copy of the WORKING-STORAGE for a method is statically allocated on the first invocation of the method and persists in a last-used state for the duration of the run unit. 

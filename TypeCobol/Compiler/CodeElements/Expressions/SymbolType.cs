@@ -17,6 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         ExternalClassName,
         IndexName,
         FileName,
+        FunctionName, // <= TYPECOBOL specific : user defined functions
         MethodName,
         MnemonicForEnvironmentName,
         MnemonicForUPSISwitchName,
@@ -31,7 +32,7 @@ namespace TypeCobol.Compiler.CodeElements
         AssignmentName,
         EnvironmentName,
         ExecTranslatorName,
-        FunctionName,
+        IntrinsicFunctionName,
         LibraryName,
         TextName,
         UPSISwitchName,

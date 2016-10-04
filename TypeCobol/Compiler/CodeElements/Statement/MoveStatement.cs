@@ -13,7 +13,7 @@ public abstract class MoveStatement : StatementElement, VariableWriter,FunctionC
 // [/TYPECOBOL]
 
 	protected IDictionary<QualifiedName,object> variables;
-	protected List<Functions.FunctionCall> _functions = null;
+	protected List<FunctionCall> _functions = null;
 
 	public abstract IDictionary<QualifiedName,object> Variables { get; }
 	public virtual  IDictionary<QualifiedName,object> VariablesWritten {
@@ -24,7 +24,7 @@ public abstract class MoveStatement : StatementElement, VariableWriter,FunctionC
 			return written;
 		}
 	}
-	public abstract IList<Functions.FunctionCall> FunctionCalls { get; }
+	public abstract IList<FunctionCall> FunctionCalls { get; }
 }
 
 /// <summary>
@@ -69,9 +69,9 @@ public class MoveSimpleStatement : MoveStatement {
 			if (sending != null) variables.Add(sending, null);
 
 			foreach(var item in ReceivingStorageAreas) {
-				var name = ((Named)item.StorageArea).QualifiedName;
+				var name = new URI(item.StorageArea.SymbolReference.Name);
 				if (variables.ContainsKey(name))
-					if (item.StorageArea is Subscripted) continue; // same variable with (presumably) different subscript
+					if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
 					else throw new System.ArgumentException(name+" already written, but not subscripted?");
 				else variables.Add(name, SendingItem);
 			}
@@ -99,9 +99,9 @@ public class MoveSimpleStatement : MoveStatement {
 		}
 	}
 	private KeyValuePair<QualifiedName,List<SubscriptExpression>> GetSubscriptedVariable(StorageArea variable) {
-		var subscripted = variable as Subscripted;
+		var subscripted = variable as DataOrConditionStorageArea;
 		if (subscripted == null || subscripted.Subscripts.Count < 1) return default(KeyValuePair<QualifiedName,List<SubscriptExpression>>);
-		var name = ((Named)variable).QualifiedName;
+		var name = new URI(variable.SymbolReference.Name);
 		return new KeyValuePair<QualifiedName,List<SubscriptExpression>>(name, subscripted.Subscripts);
 	}
 	private void AddKeyValue<K,V>(Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
@@ -121,22 +121,25 @@ public class MoveSimpleStatement : MoveStatement {
 					if (SendingVariable.AlphanumericValue != null) return SendingVariable.AlphanumericValue.Value;
 					throw new System.NotSupportedException();
 				}
-				return SendingVariable.QualifiedName;
+                if(SendingVariable.MainSymbolReference != null)
+				    return new URI(SendingVariable.MainSymbolReference.Name);
+                else
+                    return null;
 			}
 			else if (SendingBoolean != null) return SendingBoolean.Value;
 			else return null;
 		}
 	}
 
-	public override IList<Functions.FunctionCall> FunctionCalls {
+	public override IList<FunctionCall> FunctionCalls {
 		[NotNull]
 		get {
 			if (_functions != null) return _functions;
 
-			_functions = new List<Functions.FunctionCall>();
-			IntrinsicFunctionCallResult sending = null;
-			if (SendingVariable != null) sending = SendingVariable.StorageArea as IntrinsicFunctionCallResult;
-			if (sending != null) _functions.Add(new Functions.FunctionCall(sending));
+			_functions = new List<FunctionCall>();
+			FunctionCallResult sending = null;
+			if (SendingVariable != null) sending = SendingVariable.StorageArea as FunctionCallResult;
+			if (sending != null) _functions.Add(sending.FunctionCall);
 			return _functions;
 		}
 	}
@@ -177,20 +180,20 @@ public class MoveCorrespondingStatement : MoveStatement {
 			if (variables != null) return variables;
 
 			variables = new Dictionary<QualifiedName,object>();
-			if (FromGroupItem != null && FromGroupItem.QualifiedName != null)
-				variables.Add(FromGroupItem.QualifiedName, null);
-			if (  ToGroupItem != null &&   ToGroupItem.QualifiedName != null)
-				variables.Add(  ToGroupItem.QualifiedName, FromGroupItem!=null? FromGroupItem.QualifiedName:null);
+			if (FromGroupItem != null && FromGroupItem.SymbolReference != null)
+				variables.Add(new URI(FromGroupItem.SymbolReference.Name), null);
+			if (  ToGroupItem != null &&   ToGroupItem.SymbolReference != null)
+				variables.Add(  new URI(ToGroupItem.SymbolReference.Name), FromGroupItem!=null? new URI(FromGroupItem.SymbolReference.Name):null);
 			return variables;
 		}
 	}
 
-	public override IList<Functions.FunctionCall> FunctionCalls {
+	public override IList<FunctionCall> FunctionCalls {
 		[NotNull]
 		get {
 			if (_functions != null) return _functions;
 
-			_functions = new List<Functions.FunctionCall>();
+			_functions = new List<FunctionCall>();
 			return _functions;
 		}
 	}

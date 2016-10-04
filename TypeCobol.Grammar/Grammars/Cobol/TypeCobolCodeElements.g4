@@ -63,8 +63,10 @@ moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemRef
 setStatementForConditions:
 	SET conditionReference+ TO (TRUE | FALSE);
 
-// rules modified to support custom-designed functions (of arity 0..n)
-functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
+// rules modified to support user defined functions (of arity 0..n)
+functionIdentifier: intrinsicFunctionCall | userDefinedFunctionCall;
+intrinsicFunctionCall: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?; // argument* instead of argument+ to enable good error messages
+userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
 // - TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
 // - TCRFUN_PARAMETER_DECLARATION_ORDER
@@ -74,11 +76,9 @@ functionIdentifier: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator arg
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE FUNCTION UserDefinedWord (PRIVATE | PUBLIC) inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	DECLARE FUNCTION functionNameDefinition (PRIVATE | PUBLIC) inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
-//inputPhrase:  INPUT  programInputParameters+;
-//outputPhrase: OUTPUT storageArea2+;
 inputPhrase:  INPUT  parameterDescription+;
 inoutPhrase:  INOUT  parameterDescription+;
 outputPhrase: OUTPUT parameterDescription+;

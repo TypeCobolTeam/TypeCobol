@@ -102,7 +102,7 @@ namespace TypeCobol.Compiler.Scanner
         CommentEntry = 32,
         ExecStatementText = 33,
         // Symbols
-        FunctionName = 34,
+        IntrinsicFunctionName = 34,
         ExecTranslatorName = 35,
         PartialCobolWord = 36,
         UserDefinedWord = 37,

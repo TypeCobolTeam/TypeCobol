@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Nodes {
 /// - parent/children relations
 /// - unique identification accross the tree
 /// </summary>
-public abstract class Node: Named {
+public abstract class Node {
 
 	/// <summary>CodeElement data (weakly-typed)</summary>
 	public virtual CodeElement CodeElement { get; private set; }
@@ -205,7 +205,13 @@ public abstract class Node: Named {
 	}
 }
 
+// --- Temporary base classes for data definition noes ---
 
+public interface ITypedNode
+{
+    DataType DataType { get; }
+    int Length { get; }
+}
 
 /// <summary>Implementation of the GoF Visitor pattern.</summary>
 public interface NodeVisitor {

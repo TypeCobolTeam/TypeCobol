@@ -8,7 +8,7 @@
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [25,25:x]<UserDefinedWord>
 
-[[MoveStatement]] [1,4:MOVE]<MOVE> --> [20,25:RANDOM]<RANDOM>
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [20,25:RANDOM]<IntrinsicFunctionName>
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [29,29:)]<RightParenthesisSeparator>
 

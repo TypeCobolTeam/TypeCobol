@@ -120,7 +120,12 @@ class CallStatementChecker: CodeElementListener {
 			//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
 			//TODO what about special registers ?
 			string sender = input.SendingVariable!=null?input.SendingVariable.ToString():null;
-			if (Is(sender, "FunctionCallResult"))
+            bool isFunctionCallResult = false;
+            if(input.SendingVariable != null && input.SendingVariable.StorageArea != null)
+            {
+                isFunctionCallResult = input.SendingVariable.StorageArea is FunctionCallResult;
+            }
+            if (isFunctionCallResult)
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
 			if (Is(sender, "LINAGE-COUNTER"))
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
@@ -200,7 +205,7 @@ class MoveSimpleChecker: CodeElementListener {
 		var context = c as CodeElementsParser.MoveSimpleContext;
 		for(int i=0; i<statement.ReceivingStorageAreas.Length; i++) {
 			var receiver = statement.ReceivingStorageAreas[i].StorageArea;
-			if (receiver is IntrinsicFunctionCallResult)
+			if (receiver is FunctionCallResult)
 				DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", context.storageArea1()[i]);
 		}
 	}
@@ -211,7 +216,7 @@ class SearchStatementChecker: CodeElementListener {
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as SearchStatement;
 		if (statement.TableToSearch == null) return; // syntax error
-		if (statement.TableToSearch is Subscripted && ((Subscripted)statement.TableToSearch).Subscripts.Count > 0)
+		if (statement.TableToSearch is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch).Subscripts.Count > 0)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
 		if (statement.TableToSearch.ReferenceModifier != null)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", GetIdentifierContext(c));
@@ -318,7 +323,7 @@ class DeclarationChecker: NodeListener {
 	/// <param name="link">Explicit nodes used in item qualification</param>
 	/// <param name="subscripts">Parsed number of subscripts</param>
 	/// <returns>Expected number of subscripts</returns>
-	private int CheckSubscripting(CodeElement e, LinkedList<Named> link, List<SubscriptExpression> subscripts) {
+	private int CheckSubscripting(CodeElement e, LinkedList<Node> link, List<SubscriptExpression> subscripts) {
 		int index = 0;
 		foreach(var item in link) {
 			var datanode = item as DataDescription;
@@ -347,8 +352,8 @@ class DeclarationChecker: NodeListener {
 				DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
 		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
 	}
-	private void CheckSubscripting(Named symbol) {
-		DataDescription x; Subscripted s;
+	private void CheckSubscripting(Node symbol) {
+		DataDescription x; DataOrConditionStorageArea s;
 		throw new NotImplementedException();
 	}
 }
@@ -401,12 +406,12 @@ class WriteTypeConsistencyChecker: NodeListener {
 			}
 		}
 	}
-	private Named GetSymbol(SymbolTable table, QualifiedName symbol) {
+	private Node GetSymbol(SymbolTable table, QualifiedName symbol) {
 		var found = table.GetVariable(symbol);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
-	private DataType GetTypeDefinition(SymbolTable table, Named symbol) {
+	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
 			if (data is DataCondition)
@@ -418,13 +423,13 @@ class WriteTypeConsistencyChecker: NodeListener {
 			} else
 			if (data.CodeElement is DataRedefinesEntry) {
 				var redefines = (DataRedefinesEntry)data.CodeElement;
-				var qname = redefines.RedefinesDataName.QualifiedName;
+				var qname = new URI(redefines.RedefinesDataName.Name);
 				var node = (DataDescription)GetSymbol(table, qname);
 				entry = node.CodeElement();
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
 			if (entry.CustomType == null) return entry.DataType;//not a custom type
 		}
-		Typed typed = symbol as Typed;
+        ITypedNode typed = symbol as ITypedNode;
 		if (typed == null) return null;// symbol untyped
 		var types = table.GetTypes(typed);
 		if (types.Count != 1) return null;// symbol type not found or ambiguous
