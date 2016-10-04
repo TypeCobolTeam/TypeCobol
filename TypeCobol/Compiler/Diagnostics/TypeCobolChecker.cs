@@ -30,7 +30,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 		}
 	}
 	private void checkReadOnly(CodeElement ce, Node receiving) {
-		var rtype = receiving.Parent as Typed;
+		var rtype = receiving.Parent as ITypedNode;
 		if (rtype == null) return;
 		foreach(var type in READONLY_DATATYPES) {
 			if (type.Equals(rtype.DataType.Name.ToUpper()))
@@ -71,7 +71,7 @@ class FunctionCallChecker: NodeListener {
 				if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter "+actual.Value+" is not referenced");
 				if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter "+actual.Value);
 				if (found.Count!= 1) continue;
-				var type = found[0] as Typed;
+				var type = found[0] as ITypedNode;
 				// type check. please note:
 				// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
 				// 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,

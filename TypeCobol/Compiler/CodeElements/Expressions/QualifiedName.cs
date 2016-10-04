@@ -103,7 +103,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		}
 	}
 
-
+    /* THIS CLASS IS NOT USED
 
 	public class SyntacticQualifiedName: AbstractQualifiedName {
 		public Symbol Symbol { get; private set; }
@@ -156,7 +156,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public override int Count { get { return DataNames.Count+(FileName!=null?2:1); } }
 	}
 
-
+    */
 
 
 

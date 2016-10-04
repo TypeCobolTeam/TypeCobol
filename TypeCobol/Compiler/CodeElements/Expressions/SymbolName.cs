@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Properties of a symbol Token in the Cobol grammar
     /// </summary>
-    public abstract class SymbolInformation: Named
+    public abstract class SymbolInformation
     {
         public SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
         {
@@ -33,7 +33,6 @@ namespace TypeCobol.Compiler.CodeElements
 
 		/// <summary>Symbol name</summary>
 		public virtual string Name { get { return NameLiteral.Value; } }
-		public virtual Expressions.QualifiedName QualifiedName { get { return new Expressions.URI(Name); } }
 
         /// <summary>
         /// Role of this symbol Token

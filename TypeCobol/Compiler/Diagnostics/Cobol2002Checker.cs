@@ -89,7 +89,7 @@ class RedefinesChecker: NodeListener {
 				return count;
 			}
 		}
-		internal int Validate(List<Named> candidates) { return candidates.Count-Errors; }
+		internal int Validate(List<Node> candidates) { return candidates.Count-Errors; }
 	}
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
@@ -98,7 +98,7 @@ class RedefinesChecker: NodeListener {
 			return;
 		}
 
-		var redefines = ((DataRedefines)node).CodeElement().RedefinesDataName.QualifiedName;
+		var redefines = new URI(((DataRedefines)node).CodeElement().RedefinesDataName.Name);
 		var errors = new Error();
 		var data  = node.SymbolTable.GetVariable(redefines);
 		foreach(var v in data) {
@@ -153,9 +153,9 @@ class RedefinesChecker: NodeListener {
 	}
 	internal static bool IsStronglyTyped(Node node) {
 		if (node == null || node is DataSection) return false;
-		var typed = node as Typed;
-		if (typed == null) return false;
-		if (!typed.DataType.IsCOBOL) return true;
+		var typed = node as ITypedNode;
+        if (typed == null) return false;
+        if (!typed.DataType.IsCOBOL) return true;
 		return IsStronglyTyped(node.Parent);
 	}
 }
@@ -163,8 +163,8 @@ class RenamesChecker: NodeListener {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRenames), }; }
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var renames = (DataRenames)node;
-		Check(renames.CodeElement().RenamesFromDataName.QualifiedName, node);
-		Check(renames.CodeElement().RenamesToDataName.QualifiedName, node);
+		Check(new URI(renames.CodeElement().RenamesFromDataName.Name), node);
+		Check(new URI(renames.CodeElement().RenamesToDataName.Name), node);
 	}
 	private void Check(QualifiedName renames, Node node) {
 		var found = node.SymbolTable.GetVariable(renames);
@@ -186,11 +186,11 @@ class RenamesChecker: NodeListener {
 }
 
 class TypedDeclarationChecker: NodeListener {
-	public IList<Type> GetNodes() { return new List<Type>() { typeof(Typed), }; }
+	public IList<Type> GetNodes() { return new List<Type>() { typeof(ITypedNode), }; }
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		if (node is TypeDefinition) return; //not our job
-		var type = ((Typed)node).DataType;
+		var type = ((ITypedNode)node).DataType;
 		if (type.IsCOBOL) return; //nothing to do
 		var found = node.SymbolTable.GetType(new URI(type.Name));
 		if (found.Count < 1) {
