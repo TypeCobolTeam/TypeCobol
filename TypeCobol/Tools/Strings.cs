@@ -16,5 +16,12 @@
 //TODO#249			return (s.ToCharArray().All(c => Char.IsLetter(c) || Char.IsNumber(c)));
 			return false;
 		}
+
+		public static string ToString<T>(System.Collections.Generic.IEnumerable<T> items) {
+			var str = new System.Text.StringBuilder().Append('[');
+			foreach(var item in items) str.Append(' ').Append(item).Append(',');
+			if (str.Length > 1) str.Length -= 1;
+			return str.Append(' ').Append(']').ToString();
+		}
 	}
 }
