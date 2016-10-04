@@ -1,25 +1,30 @@
 ﻿--- Diagnostics ---
-[1,41]<27,Error,Syntax>Syntax error : T-fixed-2 must be subscripted. ([1>41] on line 23)
-[1,41]<27,Error,Syntax>Syntax error : T-fixed-1 must be subscripted. ([1>41] on line 23)
-[1,41]<27,Error,Syntax>Syntax error : T-fixed-2 must be subscripted. ([1>41] on line 24)
-[1,41]<27,Error,Syntax>Syntax error : T-fixed-1 must be subscripted. ([1>41] on line 24)
-[1,45]<27,Error,Syntax>Syntax error : T-fixed-1 must be subscripted. ([1>45] on line 26)
-[1,49]<27,Error,Syntax>Syntax error : T-fixed-1.T-fixed-2.E: too many subscripts (3 vs expected=2) ([1>49] on line 30)
-[1,47]<27,Error,Syntax>Syntax error : X must not be subscripted. ([1>47] on line 33)
-[1,27]<27,Error,Syntax>Syntax error : T-nobounds must be subscripted. ([1>27] on line 38)
-[1,27]<27,Error,Syntax>Syntax error : T-nobounds must be subscripted. ([1>27] on line 39)
+[1,41]<27,Error,Syntax>Syntax error : T-fixed-1 must be subscripted ([1>41] on line 23)
+[1,41]<27,Error,Syntax>Syntax error : T-fixed-2 must be subscripted ([1>41] on line 23)
+[1,41]<27,Error,Syntax>Syntax error : T-fixed-1 must be subscripted ([1>41] on line 24)
+[1,41]<27,Error,Syntax>Syntax error : T-fixed-2 must be subscripted ([1>41] on line 24)
+[1,45]<27,Error,Syntax>Syntax error : T-fixed-2 must be subscripted ([1>45] on line 26)
+[1,49]<27,Error,Syntax>Syntax error : Too many subscripts (3 vs expected=2) ([1>49] on line 30)
+[1,47]<27,Error,Syntax>Syntax error : X must not be subscripted ([1>47] on line 33)
+[1,27]<27,Error,Syntax>Syntax error : T-nobounds must be subscripted ([1>27] on line 38)
+[1,27]<27,Error,Syntax>Syntax error : T-nobounds must be subscripted ([1>27] on line 39)
 [1,33]<27,Error,Syntax>Syntax error : T-variable subscripting out of bounds: 101 > max=100 ([1>33] on line 49)
 
 --- Program ---
 PROGRAM: Tables common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
-SYMBOL TABLE:
-  mysize {1} Numeric
-  X {1} Alphanumeric
-  T-fixed-1[100] {1} GROUP(1) [ T-fixed-2 ]
-  T-fixed-2[100] {5} GROUP(1) [ E ] <of> T-fixed-1
-  E {10} Alphanumeric <of> T-fixed-2 <of> T-fixed-1
-  E {5} Alphanumeric <of> T-variable
-  E {5} Alphanumeric <of> T-nobounds
-  T-variable[mysize∈[1;100]] {1} GROUP(1) [ E ]
-  T-nobounds[mysize∈[1;∞]] {1} GROUP(1) [ E ]
+--- Intrinsic:Global:Program
+-- DATA --------
+  mysize:Numeric
+  X:Alphanumeric
+  T-fixed-1:?
+  T-fixed-2:?
+  E:Alphanumeric
+  E:Alphanumeric
+  E:Alphanumeric
+  T-variable:?
+  T-nobounds:?
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

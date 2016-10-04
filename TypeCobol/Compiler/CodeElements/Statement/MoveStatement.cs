@@ -80,6 +80,38 @@ public class MoveSimpleStatement : MoveStatement {
 		}
 	}
 
+	public IDictionary<QualifiedName,ICollection<List<SubscriptExpression>>> Subscripts {
+		get {
+			var subscripts = new Dictionary<QualifiedName,ICollection<List<SubscriptExpression>>>();
+			if (SendingVariable != null) {
+				var kv = GetSubscriptedVariable(SendingVariable.StorageArea);
+				if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
+					AddKeyValue<QualifiedName,SubscriptExpression>(subscripts, kv);
+				}
+			}
+			foreach(var v in ReceivingStorageAreas) {
+				var kv = GetSubscriptedVariable(v.StorageArea);
+				if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
+					AddKeyValue<QualifiedName,SubscriptExpression>(subscripts, kv);
+				}
+			}
+			return subscripts;
+		}
+	}
+	private KeyValuePair<QualifiedName,List<SubscriptExpression>> GetSubscriptedVariable(StorageArea variable) {
+		var subscripted = variable as Subscripted;
+		if (subscripted == null || subscripted.Subscripts.Count < 1) return default(KeyValuePair<QualifiedName,List<SubscriptExpression>>);
+		var name = ((Named)variable).QualifiedName;
+		return new KeyValuePair<QualifiedName,List<SubscriptExpression>>(name, subscripted.Subscripts);
+	}
+	private void AddKeyValue<K,V>(Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
+		ICollection<List<V>> values = new List<List<V>>();
+		try { values = map[kv.Key]; }
+		catch(KeyNotFoundException) { }// values is already initialized as an empty list
+		values.Add(kv.Value);
+		map[kv.Key] = values;
+	}
+
 	private object SendingItem {
 		[CanBeNull]
 		get {

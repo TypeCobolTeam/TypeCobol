@@ -96,6 +96,9 @@ public class SymbolTable {
 	}
 
 	public List<Named> GetVariable(QualifiedName name) {
+		return new List<Named>(GetVariableExplicit(name).Keys);
+	}
+	public Dictionary<Named,List<LinkedList<Named>>> GetVariableExplicit(QualifiedName name) {
 		var candidates = new List<Named>();
 		if (name.Count > 1) candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
 		candidates.AddRange(GetVariable(name.Head));
@@ -125,9 +128,8 @@ public class SymbolTable {
 			if (winners.Count < 1) break; // early exit
 			foreach(var winner in winners) map.Add(winner.Key, winner.Value);
 		}
-		var found = new List<Named>();
+
 		foreach(var winner in map) {
-			found.Add(winner.Key);
 			if (winner.Value.Count != 1) {
 				var str = new StringBuilder().Append(winner.Key.QualifiedName).Append(" expected:1-sized list, got: [");
 				foreach(var v in winner.Value) str.Append(' ').Append(ToString(v)).Append(',');
@@ -135,7 +137,8 @@ public class SymbolTable {
 				throw new NotImplementedException(str.Append(" ]").ToString());
 			}
 		}
-		return found;
+
+		return map;
 	}
 	/// <summary>Merges second LinkedList with first LinkedList.
 	/// If last items in first LinkedList are equal to first items in second LinkedList, these common items are not duplicated.
@@ -145,7 +148,7 @@ public class SymbolTable {
 	private void MergeLink(LinkedList<Named> first, LinkedList<Named> second) {
 		foreach(var item in second) if (item != first.Last.Value) first.AddLast(item);
 	}
-	public string ToString(IEnumerable<Named> names) {
+	public static string ToString(IEnumerable<Named> names) {
 		var str = new System.Text.StringBuilder().Append('[');
 		foreach(var name in names) str.Append(' ').Append(name.Name).Append(',');
 		if (str.Length > 1) str.Length -= 1;
