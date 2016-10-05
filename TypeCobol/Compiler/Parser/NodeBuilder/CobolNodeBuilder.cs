@@ -224,7 +224,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 // [COBOL 2002]
 		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
-			SetCurrentNodeToTopLevelItem(typedef.LevelNumber.Value);
+			SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
 			var node = new Nodes.TypeDefinition(typedef);
 			Enter(node);
 			node.SymbolTable.AddType(node);
@@ -232,36 +232,40 @@ namespace TypeCobol.Compiler.Parser
 // [/COBOL 2002]
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
-			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+			SetCurrentNodeToTopLevelItem(data.LevelNumber);
 			var node = new DataDescription(data);
 			Enter(node);
 			if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
-			SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+			SetCurrentNodeToTopLevelItem(data.LevelNumber);
 			var node = new DataCondition(data);
 			Enter(node);
 			if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
 		}
 
 		private void EnterDataRedefinesEntry(DataRedefinesEntry data) {
-            SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+            SetCurrentNodeToTopLevelItem(data.LevelNumber);
             var node = new DataRedefines(data);
             Enter(node);
             if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
         }
 
 		private void EnterDataRenamesEntry(DataRenamesEntry data) {
-            SetCurrentNodeToTopLevelItem(data.LevelNumber.Value);
+            SetCurrentNodeToTopLevelItem(data.LevelNumber);
             var node = new DataRenames(data);
             Enter(node);
             if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
         }
 
 		/// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>
-		/// <param name="level">Level number of the next data definition that will be Enter()ed.</param>
-		private void SetCurrentNodeToTopLevelItem(long level) {
+		/// <param name="levelnumber">
+		/// Level number of the next data definition that will be Enter()ed.
+		/// If null, a value of 1 is assumed.
+		/// </param>
+		private void SetCurrentNodeToTopLevelItem(IntegerValue levelnumber) {
+			long level = levelnumber != null? levelnumber.Value : 1;
 			Node parent = GetTopLevelItem(level);
 			if (parent != null) {
 				// Exit() previous sibling and all of its last children
