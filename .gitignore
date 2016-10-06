@@ -15,6 +15,9 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+target/
+*.jar
+.settings
 
 # Roslyn cache directories
 *.ide/
@@ -154,6 +157,7 @@ ClientBin/
 [Ss]tyle[Cc]op.*
 ~$*
 *~
+*.swp
 *.dbmdl
 *.dbproj.schemaview
 *.pfx

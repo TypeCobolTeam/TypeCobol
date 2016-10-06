@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Test.Compiler.Scanner
 {
@@ -39,8 +35,8 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckComments()
         {
             string testName = "Comments1";
-            TextLine testTextLine =  new TestTextLine('*',"This is a comment line ! ***");
-            string result = ScannerUtils.ScanTextLine(testTextLine);
+            TokensLine testTokensLine =  new TestTokensLine('*',"This is a comment line ! ***");
+            string result = ScannerUtils.ScanTextLine(testTokensLine);
             ScannerUtils.CheckWithResultFile(result, testName);
 
             testName = "Comments2";

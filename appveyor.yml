@@ -1,0 +1,16 @@
+version: 1.0.{build}
+configuration: Debug 
+
+
+#AppVeyor only use this file if you use GitHub repo.
+#If you use Git public repo, you must copy this lines to your build settings
+
+# scripts to run before build
+before_build:
+    - del TypeCobol.sln  #use TypeCobolAppveyor.sln instead
+    - nuget restore      #install missing nuget packages
+    - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" PreBuild\TweakAntlr.fsscript packages\Antlr4.4.5-alpha003\build\Antlr4.targets'    #fsharp script fixing Antlr4.targets file
+    
+build:
+  project: TypeCobol.core.sln
+  verbosity: minimal

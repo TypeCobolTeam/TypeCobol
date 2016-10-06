@@ -6,7 +6,9 @@
 
 grammar CobolCompilerDirectives;
 
-import CobolBase;
+options { superClass=TypeCobol.Compiler.AntlrUtils.LineAwareParser; }
+
+import CobolWords;
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
 // statements are processed to generate a source text suitable for subsequent parsing. 
@@ -78,9 +80,10 @@ compilerDirectingStatement:
 // source text must contain numeric sequence numbers in ascending order.
 
 basisCompilerStatement: 
-                  /* sequenceNumber? */ BASIS basisName;
+                  /* sequenceNumber? */ BASIS textName;
 
-basisName : UserDefinedWord | AlphanumericLiteral;
+// Same as textName ... "For rules of formation and processing rules, see the description under literal-1 and text-name of the “COPY statement”")
+//basisName : UserDefinedWord | AlphanumericLiteral;
 
 // p528: CBL (PROCESS) statement                            
 // With the CBL (PROCESS) statement, you can specify compiler options to be used
@@ -210,10 +213,6 @@ controlCblCompilerStatement:
                        //(SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP)+ 
                        controlCblOption+
                        PeriodSeparator?;
-
-// These are not reserved words, but the only possible values are the following
-// SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
-controlCblOption: UserDefinedWord;
 
 // p530: COPY statement                              
 // The COPY statement is a library statement that places prewritten text in a COBOL
@@ -391,16 +390,9 @@ controlCblOption: UserDefinedWord;
 copyCompilerStatement:
                          COPY copyCompilerStatementBody PeriodSeparator;
              
-copyCompilerStatementBody:
-                             textName ((OF | IN) libraryName)?
-                             SUPPRESS?
-                             (REPLACING (copyReplacingOperand BY copyReplacingOperand)+)?;
+copyCompilerStatementBody: qualifiedTextName SUPPRESS? (REPLACING (copyReplacingOperand BY copyReplacingOperand)+)?;
 
-copyReplacingOperand:
-                        pseudoText | 
-                        UserDefinedWord | FunctionName |
-                        literal | 
-                        reservedWord ; // <- should be any CobolWord except COPY
+copyReplacingOperand: pseudoText | literalOrUserDefinedWordOReservedWordExceptCopy;
 
 pseudoText:
               PseudoTextDelimiter /* any kind of token except PseudoTextDelimiter and the word COPY */ pseudoTextTokens+= ~(PseudoTextDelimiter | COPY)* PseudoTextDelimiter;
@@ -449,20 +441,14 @@ deleteCompilerStatement:
                    /* sequenceNumber? */ DELETE_CD sequenceNumberField;
 
 // Implementation detail 1 : CommaSeparator is considered as whitespace by the parser
-// that's why we make it optional here, even if it is required in the spec
-sequenceNumberField:
-                       sequenceNumberElement (CommaSeparator? sequenceNumberElement)*;
-
-// Implementation detail 2 : 0000001-0000099 is recognized as two tokens
-// IntegerLiteral DecimalLiteral by the scanner, that's why we use
-// DecimalLiteral here, instead if MinusOperator IntegerLiteral
+// so, even if it is required in the spec, we won't be able to use it here
+// Implementation detail 2 : 0000001-0000099 is recognized as IntegerLiteral IntegerLiteral
+// by the scanner (two tokens, first one >0, second one <0), that's why we don't use MinusOperator
 // Implementation detail 3 : the spec constraint below
 // Each entry in the sequence-number-field must be separated from the preceding entry 
 // by a comma >>> followed by a space <<<.
-// => this ensures that the separating comma is not included in the DecimalLiteral
-sequenceNumberElement:
-                         IntegerLiteral |   // single number
-                         (IntegerLiteral DecimalLiteral);  // range of numbers
+sequenceNumberField:
+	IntegerLiteral IntegerLiteral*;
 
 // p539: EJECT statement 
 // The EJECT statement specifies that the next source statement is to be printed at the
@@ -476,7 +462,8 @@ sequenceNumberElement:
 // The EJECT statement has no effect on the compilation of the source unit itself.
 
 ejectCompilerStatement:
-                          EJECT PeriodSeparator?;
+                          ({IsNextTokenOnTheSameLine()}? EJECT PeriodSeparator?) |
+						  (EJECT);
 
 // p539: ENTER statement
 // The ENTER statement is designed to facilitate the use of more than one source
@@ -653,7 +640,8 @@ serviceReloadCompilerStatement:
 // For example, in the case of batch applications, a SKIP1, SKIP2, or SKIP3 statement must be placed between the CBL (PROCESS) statement and the end of the program or class (or the END CLASS marker or END PROGRAM marker, if specified).
 
 skipCompilerStatement:
-                         (SKIP1 | SKIP2 | SKIP3) PeriodSeparator?;
+                         ({IsNextTokenOnTheSameLine()}? (SKIP1 | SKIP2 | SKIP3) PeriodSeparator?) |
+						 (SKIP1 | SKIP2 | SKIP3);				
 
 // p545: TITLE statement
 // The TITLE statement specifies a title to be printed at the top of each page of the source listing produced during compilation.
@@ -679,8 +667,9 @@ skipCompilerStatement:
 // No other statement can appear on the same line as the TITLE statement.
 
 titleCompilerStatement:
-                          TITLE (AlphanumericLiteral | NationalLiteral | DBCSLiteral) PeriodSeparator?;
-
+                          ({IsNextTokenOnTheSameLine()}? TITLE alphanumericValue2 PeriodSeparator?) |
+						  (TITLE alphanumericValue2);
+						 
 // p546: USE statement
 // -> see the DECLARATIVES section in CobolCodeElements.g4
 

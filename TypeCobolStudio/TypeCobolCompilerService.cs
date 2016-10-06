@@ -1,19 +1,15 @@
-﻿using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Document;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobolStudio.Editor;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.TypeChecker;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobolStudio
 {
@@ -31,28 +27,35 @@ namespace TypeCobolStudio
 
             // DEMO : TaskPoolScheduler can not be used yet because of Length property access on ITextDocument by CobolCharStream
             BackgroundCompilationScheduler = DispatcherScheduler.Current ;
-           
-            // Create a new compilation unit for this document
+
+            // Create a new file compiler for this document
+            FileCompiler compiler = null;
             if (textName != null)
             {
-                CompilationUnit = new CompilationUnit(null, textName, project.SourceFileProvider, project, TextDocument, compilerOptions);                    
+                compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, TextDocument, compilerOptions, false);                    
             }
             else
             {
-                CompilationUnit = new CompilationUnit(TextDocument, DocumentFormat.RDZReferenceFormat.Encoding, project.SourceFileProvider, project, compilerOptions);
+                compiler = new FileCompiler(TextDocument, project.SourceFileProvider, project, compilerOptions, false);
             }
+            CompilationUnit = compiler.CompilationResultsForProgram;
 
-            // Compile in the background every 500 ms
-            CompilationUnit.SetupCodeAnalysisPipeline(BackgroundCompilationScheduler, 500);
+            // Compile in the background
+            compiler.StartContinuousBackgroundCompilation(400, 400, 900, 2000);
 
             // Refresh the syntax coloring for rescanned lines
-            CompilationUnit.TokensDocument.TokensChangedEventsSource.Subscribe(textEditor);
+            IObservable<DocumentChangedEvent<ITokensLine>> tokensLinesObservable = 
+                Observable.FromEvent<EventHandler<DocumentChangedEvent<ITokensLine>>,DocumentChangedEvent<ITokensLine>>(
+                    evtHandler => CompilationUnit.TokensLinesChanged += evtHandler,
+                    evtHandler => CompilationUnit.TokensLinesChanged -= evtHandler);
+            tokensLinesObservable.Subscribe(textEditor);
 
             // Listen to all compilation errors found by the incremental compiler => on the dispatcher thread to udpate the UI
-            CompilationUnit.SemanticsDocument.CompilationErrorsEventsSource.ObserveOn(DispatcherScheduler.Current).Subscribe(errorObserver);
+            // --> TO DO : there is no way yet to observe compilation errors               
+            //compilationErrorsObservable.ObserveOn(DispatcherScheduler.Current).Subscribe(errorObserver);
 
             // Trigger initial notification after document load
-            CompilationUnit.StartDocumentProcessing();
+            compiler.StartDocumentProcessing();
 		}
     
         public void Dispose()

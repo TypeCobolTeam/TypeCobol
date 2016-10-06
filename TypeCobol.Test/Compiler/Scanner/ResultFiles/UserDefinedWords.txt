@@ -3,7 +3,7 @@
 
 -- Line 2 --
 [1,17:!super-_@#1254540]<UserDefinedWord>
-[18,20:.10]<DecimalLiteral>{10|2>0,1}
+[18,20:.10]<DecimalLiteral>{10|2>0.1}
 [21,30:azfdaedf99]<UserDefinedWord>
 [31,31:*]<MultiplyOperator>
 [32,32:8]<IntegerLiteral>{8}
@@ -26,7 +26,7 @@
 
 -- Line 4 --
 [1,1: ]<SpaceSeparator>
-[2,5:-123]<DecimalLiteral>{-123|0>-123}
+[2,5:-123]<IntegerLiteral>{-123}
 [6,11:ABC-01]<UserDefinedWord>
 [12,12: ]<SpaceSeparator>
 [13,23:_123ABC-01_]<UserDefinedWord>
@@ -36,12 +36,12 @@
 [33,35:123]<IntegerLiteral>{123}
 [36,37:- ]<MinusOperator>
 [38,40:123]<IntegerLiteral>{123}
-[41,44:-456]<DecimalLiteral>{-456|0>-456}
+[41,44:-456]<IntegerLiteral>{-456}
 [45,45: ]<SpaceSeparator>
-[46,52:123E-06]<FloatingPointLiteral>{123|0>123E-6>0,000123}
+[46,52:123E-06]<FloatingPointLiteral>{123|0>123E-6>0.000123}
 [53,53: ]<SpaceSeparator>
 [54,56:123]<IntegerLiteral>{123}
-[57,58:-4]<DecimalLiteral>{-4|0>-4}
+[57,58:-4]<IntegerLiteral>{-4}
 [59,59:X]<UserDefinedWord>
 [46,52]<17,Error,Tokens>Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
 

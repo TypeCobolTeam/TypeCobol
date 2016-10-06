@@ -1,0 +1,9 @@
+﻿--- Code Elements ---
+[[ReleaseStatement]] [1,7:RELEASE]<RELEASE> --> [9,9:r]<UserDefinedWord>
+
+[[ReleaseStatement]] [1,7:RELEASE]<RELEASE> --> [19,19:f]<UserDefinedWord>
+
+[[ReleaseStatement]] [1,7:RELEASE]<RELEASE> --> [16,16:x]<UserDefinedWord>
+
+[[ReleaseStatement]] [1,7:RELEASE]<RELEASE> --> [31,31:)]<RightParenthesisSeparator>
+

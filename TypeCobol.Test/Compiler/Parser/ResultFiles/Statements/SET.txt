@@ -1,0 +1,30 @@
+﻿--- Diagnostics ---
+[24,27]<27,Error,Syntax>Syntax error : no viable alternative at input 'null' (RuleStack=codeElement>setStatement>setStatementForAssignment>setSendingField>integerVariableOrIndex1>identifierOrIndexName>storageAreaReferenceOrConditionReferenceOrIndexName>otherStorageAreaReference>autoAllocatedDataItemReference>addressOfSpecialRegister>storageAreaReference, OffendingSymbol=[24,27:null]<NULL> on line 7)
+[1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'set ... ' (RuleStack=codeElement>setStatement, OffendingSymbol=[1,0:]<EndOfFile> on line 0)
+--- Code Elements ---
+SET  var1 TO var2
+
+SET  var1 TO ADDRESS(var2)
+
+SET  ADDRESS(var1) TO var2
+
+SET  ADDRESS(var1) TO ADDRESS(var2)
+
+SET  var1 TO null
+
+SET  ADDRESS(var1) TO null
+
+SET  var1 TO ADDRESS()
+
+SET  var1 TO nulls
+
+SET  ADDRESS(var1) TO nulls
+
+SET  var1 var2 TO ADDRESS(var3)
+
+SET  var1 var2 TO var3
+
+SET  var1 ADDRESS(var2) var3 TO var4
+
+SET  var1 ADDRESS(var2) var3 TO ADDRESS(var4)
+

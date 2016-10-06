@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
@@ -13,44 +10,12 @@ namespace TypeCobol.Compiler.Preprocessor
     /// <summary>
     /// Line of tokens after preprocessor execution
     /// </summary>
-    public class ProcessedTokensLine
+    public class ProcessedTokensLine : TokensLine, IProcessedTokensLine
     {
-        public ProcessedTokensLine(TokensLine tokensLine)
+        internal ProcessedTokensLine(ITextLine textLine, ColumnsLayout columnsLayout) : base(textLine, columnsLayout)
         {
-            TextLineMap = tokensLine.TextLineMap;
-            SourceTokens = tokensLine.SourceTokens;
-            ScannerDiagnostics = tokensLine.ScannerDiagnostics;
-
-            ProcessingState = PreprocessorState.NeedsCompilerDirectiveParsing;
+            PreprocessingState = PreprocessorState.NeedsCompilerDirectiveParsing;
         }
-
-        internal ProcessedTokensLine(ProcessedTokensLine processedTokensLine)
-        {
-            TextLineMap = processedTokensLine.TextLineMap;
-            SourceTokens = processedTokensLine.SourceTokens;
-            ScannerDiagnostics = processedTokensLine.ScannerDiagnostics;
-
-            ProcessingState = PreprocessorState.NeedsCompilerDirectiveParsing;
-        }
-
-        // --- Reference to source line properties ---
-
-        /// <summary>
-        /// Source text line
-        /// </summary>
-        public TextLineMap TextLineMap { get; private set; }
-
-        /// <summary>
-        /// Tokens found while scanning the raw source text line
-        /// (before text manipulation phase)
-        /// </summary>
-        public IList<Token> SourceTokens { get; private set; }
-
-        /// <summary>
-        /// Error and warning messages produced while scanning the raw source text line
-        /// (before text manipulation phase)
-        /// </summary>
-        public IList<Diagnostic> ScannerDiagnostics { get; private set; }
 
         // --- Computed line properties after preprocessor execution ---
 
@@ -58,7 +23,6 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             NeedsCompilerDirectiveParsing,
             NeedsCopyDirectiveProcessing,
-            NeedsReplaceDirectiveProcessing,
             Ready
         }
 
@@ -66,7 +30,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// True if the preprocessor has not treated this line yet
         /// and all the following properties have not been set
         /// </summary>
-        internal PreprocessorState ProcessingState { get; set; }
+        internal PreprocessorState PreprocessingState { get; set; }
 
         /// <summary>
         /// Tokens produced after parsing the compiler directives.
@@ -76,7 +40,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public IList<Token> TokensWithCompilerDirectives { 
             get 
             {
-                if (ProcessingState <= PreprocessorState.NeedsCompilerDirectiveParsing)
+                if (PreprocessingState <= PreprocessorState.NeedsCompilerDirectiveParsing)
                 {
                     throw new InvalidOperationException("Compiler directives on this line have not been parsed yet");
                 }
@@ -117,7 +81,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public ReplaceDirective ReplaceDirective { get; private set; }
 
-        internal TokensGroup InsertCompilerDirectiveTokenOnFirstLine(IList<Token> tokensOnFirstLineBeforeCompilerDirective, CompilerDirective compilerDirective, bool hasError, IList<Token> compilerDirectiveTokensOnFirstLine, IList<Token> tokensOnFirstLineAfterCompilerDirective)
+        internal TokensGroup InsertCompilerDirectiveTokenOnFirstLine(IList<Token> tokensOnFirstLineBeforeCompilerDirective, CompilerDirective compilerDirective, bool hasError, IList<Token> compilerDirectiveTokensOnFirstLine, IList<Token> tokensOnFirstLineAfterCompilerDirective, bool hasDirectiveTokenContinuedOnNextLine)
         {
             // Register compiler listing control directive
             if( compilerDirective.Type == CompilerDirectiveType.ASTERISK_CBL ||
@@ -201,7 +165,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 {
                     tokensWithCompilerDirectives.Add(token);
                 }
-            }     
+            }
+
+            // Register line continuation properties
+            HasDirectiveTokenContinuedOnNextLine = HasDirectiveTokenContinuedOnNextLine || hasDirectiveTokenContinuedOnNextLine;
 
             // Return potentially continued compiler directive token
             if (tokensOnFirstLineAfterCompilerDirective == null)
@@ -214,10 +181,9 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        internal TokensGroup InsertCompilerDirectiveTokenOnNextLine(TokensGroup continuedTokensGroupOnPreviousLine, IList<Token> compilerDirectiveTokensOnNextLine, IList<Token> tokensOnFirstLineAfterCompilerDirective)
+        internal TokensGroup InsertCompilerDirectiveTokenOnNextLine(TokensGroup continuedTokensGroupOnPreviousLine, IList<Token> compilerDirectiveTokensOnNextLine, IList<Token> tokensOnFirstLineAfterCompilerDirective, bool hasDirectiveTokenContinuedOnNextLine)
         {
             // Initialize tokens list
-            IsContinuedFromPreviousLine = true;
             tokensWithCompilerDirectives = new List<Token>();
 
             // Build a ContinuationTokensGroup wrapping all matched tokens on the next line
@@ -245,6 +211,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
             }
 
+            // Register line continuation properties
+            HasDirectiveTokenContinuationFromPreviousLine = true;
+            HasDirectiveTokenContinuedOnNextLine = HasDirectiveTokenContinuedOnNextLine || hasDirectiveTokenContinuedOnNextLine;
+
             // Return potentially continued compiler directive token
             if (tokensOnFirstLineAfterCompilerDirective == null)
             {
@@ -255,11 +225,16 @@ namespace TypeCobol.Compiler.Preprocessor
                 return null;
             }
         }
-               
+
         /// <summary>
-        /// True if this line contains one processed token continued from the previous line
+        /// True if the first compiler directive token on the next line continues the last compiler directive token of this line
         /// </summary>
-        public bool IsContinuedFromPreviousLine { get; private set; }
+        public bool HasDirectiveTokenContinuedOnNextLine { get; private set; }
+
+        /// <summary>
+        /// True if the first compiler directive token on this line continues the last compiler directive token of the previous line
+        /// </summary>
+        public bool HasDirectiveTokenContinuationFromPreviousLine { get; private set; }
 
         /// <summary>
         /// Error and warning messages produced while scanning the raw source text line
@@ -277,6 +252,22 @@ namespace TypeCobol.Compiler.Preprocessor
                 PreprocessorDiagnostics = new List<Diagnostic>();
             }
             PreprocessorDiagnostics.Add(diag);
+        }
+
+        // --- Incremental compilation process ---
+
+        protected void CopyProcessedTokensLineProperties(ProcessedTokensLine previousLineVersion)
+        {
+            this.CompilerListingControlDirective = previousLineVersion.CompilerListingControlDirective;
+            this.ImportedDocuments = previousLineVersion.ImportedDocuments;
+            this.HasDirectiveTokenContinuationFromPreviousLine = previousLineVersion.HasDirectiveTokenContinuationFromPreviousLine;
+            this.HasDirectiveTokenContinuedOnNextLine = previousLineVersion.HasDirectiveTokenContinuedOnNextLine;
+            this.PreprocessorDiagnostics = previousLineVersion.PreprocessorDiagnostics;
+            this.PreprocessingState = previousLineVersion.PreprocessingState;
+            this.ReplaceDirective = previousLineVersion.ReplaceDirective;
+            this.tokensWithCompilerDirectives = previousLineVersion.tokensWithCompilerDirectives;
+
+            CompilationStep = Concurrency.CompilationStep.Preprocessor;
         }
     }
 }

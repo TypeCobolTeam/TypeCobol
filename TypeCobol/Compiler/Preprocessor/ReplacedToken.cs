@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Create a token placeholder
         /// </summary>
         public ReplacedToken(Token replacementToken, Token originalToken)
-            : base(replacementToken.TokenType, originalToken.StartIndex, originalToken.StopIndex, originalToken.UsesVirtualSpaceAtEndOfLine, originalToken.TextLine)
+            : base(replacementToken.TokenType, originalToken.StartIndex, originalToken.StopIndex, originalToken.UsesVirtualSpaceAtEndOfLine, originalToken.TokensLine)
         {
             ReplacementToken = replacementToken;
             OriginalToken = originalToken;
@@ -94,7 +94,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Create a token placeholder
         /// </summary>
         public ReplacedTokenGroup(Token replacementToken, IList<Token> originalTokens) :
-            base(replacementToken.TokenType, originalTokens[0].StartIndex, originalTokens[originalTokens.Count - 1].StopIndex, originalTokens[originalTokens.Count - 1].UsesVirtualSpaceAtEndOfLine, originalTokens[0].TextLine)
+            base(replacementToken.TokenType, originalTokens[0].StartIndex, originalTokens[originalTokens.Count - 1].StopIndex, originalTokens[originalTokens.Count - 1].UsesVirtualSpaceAtEndOfLine, originalTokens[0].TokensLine)
         {
             ReplacementToken = replacementToken;
             OriginalTokens = originalTokens;

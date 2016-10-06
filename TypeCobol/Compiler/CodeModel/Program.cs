@@ -12,8 +12,9 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public abstract class Program
     {
-        public Program()
-        { }
+        public Program() {
+            SyntaxTree = new SyntaxTree();
+        }
 
         /// <summary>
         /// True if the current program is contained in another program.
@@ -34,7 +35,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// an external data set, and specifies file organization, access mode, and other
         /// information.
         /// </summary>
-        public IDictionary<FileName, FileControlEntry> FileConnectors { get; set; }
+        public IDictionary<SymbolDefinition, FileControlEntry> FileConnectors { get; set; }
 
         /// <summary>
         /// The I-O-CONTROL paragraph specifies when checkpoints are to be taken 
@@ -59,43 +60,23 @@ namespace TypeCobol.Compiler.CodeModel
         /// More than one record description entry can be specified; each is an alternative description of the same record storage area.
         /// Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
         /// </summary>
-        public IDictionary<FileName, FileDescription> FileDescriptions { get; set; }
+        public IDictionary<SymbolDefinition, FileDescription> FileDescriptions { get; set; }
 
         /// <summary>
-        /// The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
-        /// The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
-        /// The WORKING-STORAGE SECTION for programs (and methods) can also describe external data records, which are shared by programs and methods throughout the run unit.
+        /// Table of symbols defined in this program.
+        /// Includes WORKING-STORAGE, LOCAL-STORAGE and LINKAGE data.
         /// </summary>
-        public IList<DataDescriptionEntry> WorkingStorageData { get; set; }
+        public SymbolTable SymbolTable;
+
+		public SymbolTable CurrentTable {
+			get { return SyntaxTree.CurrentNode.SymbolTable; }
+		}
 
         /// <summary>
-        /// The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.
-        /// On each invocation, data items defined in the LOCAL-STORAGE SECTION are reallocated. 
-        /// Each data item that has a VALUE clause is initialized to the value specified in that clause.
-        /// For nested programs, data items defined in the LOCAL-STORAGE SECTION are allocated upon each invocation of the containing outermost program. 
-        /// However, each data item is reinitialized to the value specified in its VALUE clause each time the nested program is invoked.
+        /// Abstract Syntax Tree of this program.
+        /// Syntax trees of nested programs (if any) are nodes/subtrees of this one.
         /// </summary>
-        public IList<DataDescriptionEntry> LocalStorageData { get; set; }
-
-        /// <summary>
-        /// The LINKAGE SECTION describes data made available from another program or method. 
-        /// Record description entries and data item description entries in the LINKAGE SECTION provide names and descriptions, 
-        /// but storage within the program or method is not reserved because the data area exists elsewhere.
-        /// Data items defined in the LINKAGE SECTION of the called program or invoked
-        /// method can be referenced within the PROCEDURE DIVISION of that program if
-        /// and only if they satisfy one of the conditions as listed in the topic.
-        /// - They are operands of the USING phrase of the PROCEDURE DIVISION header
-        ///   or the ENTRY statement.
-        /// - They are operands of SET ADDRESS OF, CALL ... BY REFERENCE ADDRESS
-        ///   OF, or INVOKE ... BY REFERENCE ADDRESS OF.
-        /// - They are defined with a REDEFINES or RENAMES clause, the object of which
-        ///   satisfies the above conditions.
-        /// - They are items subordinate to any item that satisfies the condition in the rules
-        ///   above.
-        /// - They are condition-names or index-names associated with data items that satisfy
-        ///   any of the above conditions.
-        /// </summary>
-        public IList<DataDescriptionEntry> LinkageData { get; set; }
+        public SyntaxTree SyntaxTree;
 
         // -- PROCEDURE DIVISION --
 
@@ -111,11 +92,12 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// Outermost program of a compilation unit.
     /// </summary>
-    public class SourceProgram : Program
-    {
-        public SourceProgram()
-        {
-            IsNested = false;
+    public class SourceProgram: Program {
+
+		public SourceProgram(SymbolTable EnclosingScope) {
+			IsNested = false;
+			SymbolTable = new SymbolTable(EnclosingScope);
+			SyntaxTree.Root.SymbolTable = SymbolTable;
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -162,17 +144,15 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs can be directly or indirectly contained in the containing program.     
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
-    public class NestedProgram : Program 
-    {
-        public NestedProgram(Program containingProgram)
-        {
-            IsNested = true;
-            ContainingProgram = containingProgram;
-        }
+	public class NestedProgram: Program {
+		public NestedProgram(Program containingProgram) {
+			IsNested = true;
+			ContainingProgram = containingProgram;
+			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
+			SyntaxTree.Root.SymbolTable = SymbolTable;
+		}
 
-        /// <summary>
-        /// A nested program is a program that is contained in another program.
-        /// </summary>
-        public Program ContainingProgram { get; private set; }
-    }
+        /// <summary>A nested program is a program that is contained in another program.</summary>
+		public Program ContainingProgram { get; private set; }
+	}
 }

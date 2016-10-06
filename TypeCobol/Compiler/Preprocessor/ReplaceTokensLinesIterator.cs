@@ -21,13 +21,21 @@ namespace TypeCobol.Compiler.Preprocessor
 
         // Current COPY REPLACING directive in effect for a file import
         // (optional : null if the iterator was NOT created in the context of an imported document)
-        public CopyDirective copyReplacingDirective;
+        public CopyDirective CopyReplacingDirective { get; private set; }
 
         // Iterator position
         private struct ReplaceTokensLinesIteratorPosition
         {
             // Underlying tokens iterator position
             public object SourceIteratorPosition;
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+            // Support for legacy replacing syntax semantics : 
+            // Remove the first 01 level data item found in the COPY text
+            // before copying it into the main program
+            public bool SawTheFirst01IntegerLiteral;
+#endif
 
             // Current REPLACE directive in effect in the file
             // (optional : null if the iterator WAS created in the context of an imported document)
@@ -67,7 +75,7 @@ namespace TypeCobol.Compiler.Preprocessor
         public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective)
         {
             this.sourceIterator = sourceIterator;
-            this.copyReplacingDirective = copyReplacingDirective;
+            this.CopyReplacingDirective = copyReplacingDirective;
 
             if(copyReplacingDirective.ReplaceOperations.Count > 0)
             {
@@ -125,15 +133,6 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
-        /// Current character offset 
-        /// (in the text document identified by DocumentPath)
-        /// </summary>
-        public int Offset
-        {
-            get { return sourceIterator.Offset; }
-        }
-
-        /// <summary>
         /// Get next token after REPLACE processing or EndOfFile
         /// </summary>
         public Token NextToken()
@@ -157,6 +156,31 @@ namespace TypeCobol.Compiler.Preprocessor
             else
             {
                 Token nextToken = sourceIterator.NextToken();
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+                // Support for legacy replacing syntax semantics : 
+                // Remove the first 01 level data item found in the COPY text
+                // before copying it into the main program
+                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawTheFirst01IntegerLiteral)
+                {
+                    if(nextToken.TokenType == TokenType.IntegerLiteral && nextToken.Text == "01")
+                    {
+                        // Register that we saw the first "01" integer literal in the underlying file
+                        currentPosition.SawTheFirst01IntegerLiteral = true;
+
+                        // Skip all tokens after 01 until the next period separator 
+                        while(nextToken.TokenType != TokenType.PeriodSeparator && nextToken.TokenType != TokenType.EndOfFile)
+                        {
+                            nextToken = sourceIterator.NextToken();
+                        }
+                        if(nextToken.TokenType == TokenType.PeriodSeparator)
+                        {
+                            nextToken = sourceIterator.NextToken();
+                        }
+                    }
+                }
+#endif
 
                 // If the next token is a REPLACE directive, update the current replace directive in effect
                 while (nextToken.TokenType == TokenType.ReplaceDirective)
@@ -194,59 +218,87 @@ namespace TypeCobol.Compiler.Preprocessor
                     nextToken = sourceIterator.NextToken();
                 }
 
-            tryReplaceToken:
-
-                // If a replace directive is in effect, check if the next token can match the replace pattern              
-                // Optimization : only one replace operation in effect
-                if (currentPosition.ReplaceOperation != null)
+                // Apply the current REPLACE operations in effect
+                ReplaceStatus status;
+                do
                 {
-                    IList<Token> originalMatchingTokens;
-                    if (TryMatchReplaceOperation(nextToken, currentPosition.ReplaceOperation, out originalMatchingTokens))
+                    status = TryAndReplace(nextToken, currentPosition.ReplaceOperation);
+                    if (status.replacedToken != null) return status.replacedToken;
+                    if (status.tryAgain)
                     {
-                        // REPLACE pattern matched => return the first replaced token
-                        Token replacedToken = CreateReplacedTokens(nextToken, currentPosition.ReplaceOperation, originalMatchingTokens);
-                        if (replacedToken != null)
-                        {
-                            currentPosition.CurrentToken = replacedToken;
-                            return replacedToken;
-                        }
-                        // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
-                        else
-                        {
-                            nextToken = sourceIterator.NextToken();
-                            goto tryReplaceToken;
-                        }
+                        nextToken = sourceIterator.NextToken();
                     }
-                }
-                // More general case : several replace operations in effect
-                else if (currentPosition.ReplaceOperations != null)
-                {
-                    foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
+                    else
                     {
-                        IList<Token> originalMatchingTokens;
-                        if (TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
+                        if (currentPosition.ReplaceOperations != null)
                         {
-                            // REPLACE pattern matched => return the first replaced token
-                            Token replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
-                            if (replacedToken != null)
+                            foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
                             {
-                                currentPosition.CurrentToken = replacedToken;
-                                return replacedToken;
-                            }
-                            // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
-                            else
-                            {
-                                nextToken = sourceIterator.NextToken();
-                                goto tryReplaceToken;
+                                status = TryAndReplace(nextToken, replaceOperation);
+                                if (status.replacedToken != null) return status.replacedToken;
+                                if (status.tryAgain)
+                                {
+                                    nextToken = sourceIterator.NextToken();
+                                    break;
+                                }
                             }
                         }
                     }
-                }
+                } while (status.tryAgain);
 
                 // If no replacement took place, simply return the next token of the underlying iterator
                 currentPosition.CurrentToken = nextToken;
                 return nextToken;
             }
+        }
+
+        private class ReplaceStatus
+        {
+            public bool tryAgain = false;
+            public Token replacedToken = null;
+        }
+
+        private ReplaceStatus TryAndReplace(Token nextToken, ReplaceOperation replaceOperation)
+        {
+            ReplaceStatus status = new ReplaceStatus();
+            IList<Token> originalMatchingTokens;
+
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+            // Support for legacy replacing syntax semantics : 
+            // Insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+            // before copying it into the main program
+            if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
+            {
+                string originalText = nextToken.Text;
+                int indexOFirstDash = originalText.IndexOf('-');
+                if (indexOFirstDash > 0)
+                {
+                    string replacedText = originalText.Substring(0, indexOFirstDash) + CopyReplacingDirective.SuffixChar + originalText.Substring(indexOFirstDash);
+                    TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
+                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
+
+                    status.replacedToken = new ReplacedToken(replacementToken, nextToken);
+                    currentPosition.CurrentToken = status.replacedToken;
+                }
+            }
+#endif      
+
+            if (replaceOperation != null && TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
+            {
+                status.replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
+                if (status.replacedToken != null)
+                {
+                    // REPLACE pattern matched => return the first replaced token
+                    currentPosition.CurrentToken = status.replacedToken;
+                }
+                else
+                {
+                    // If the replacement token set is empty (REPLACE == ... = BY == ==), get next token and try again
+                    status.tryAgain = true;
+                }
+            }
+            return status;
         }
 
         /// <summary>
@@ -342,7 +394,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     PartialWordReplaceOperation partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
                     string originalTokenText = originalToken.Text;
                     string partToReplace = partialWordReplaceOperation.ComparisonToken.Text;
-                    string replacementPart = partialWordReplaceOperation.PartialReplacementToken.Text;
+                    //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
+                    var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
                     // The index below is always >= 0 because CompareForReplace() above was true
                     int indexOfPartToReplace = originalTokenText.IndexOf(partToReplace, StringComparison.OrdinalIgnoreCase);
                     string replacedTokenText =

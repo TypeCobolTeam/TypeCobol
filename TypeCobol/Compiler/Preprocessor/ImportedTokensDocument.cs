@@ -40,10 +40,14 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Iterator over the tokens contained in this imported document after
         /// - REPLACING directive processing if necessary
         /// </summary>
-        public ITokensLinesIterator GetTokensIterator()
+        public ITokensLinesIterator GetProcessedTokensIterator()
         {
-            ITokensLinesIterator sourceIterator = SourceDocument.GetTokensIterator();
-            if (HasReplacingDirective)
+            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines);
+            if (HasReplacingDirective
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                || CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar       
+#endif               
+                )
             {
                 ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective);
                 return replaceIterator;

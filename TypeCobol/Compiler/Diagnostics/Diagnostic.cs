@@ -15,8 +15,8 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             Info = DiagnosticMessage.GetFromCode[(int)messageCode];
 
-            ColumnStart = columnStart;
-            ColumnEnd = columnEnd;
+            ColumnStart = Math.Max(columnStart, 0);
+            ColumnEnd   = Math.Max(columnEnd,   0);
 
             Message = String.Format(Info.MessageTemplate, messageArgs);
             MessageArgs = messageArgs;

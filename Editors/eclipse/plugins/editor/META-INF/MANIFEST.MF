@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TypeCobol.Eclipse
+Bundle-SymbolicName: typecobol.editors.eclipse;singleton:=true
+Bundle-Version: 0.1.0
+Bundle-Activator: typecobol.editors.eclipse.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ msgpack-0.6.12.jar,
+ javassist-3.18.1-GA.jar

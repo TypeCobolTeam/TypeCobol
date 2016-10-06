@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.File
 {    
@@ -13,6 +10,20 @@ namespace TypeCobol.Compiler.File
     /// </summary>
     public abstract class CobolFile : IDisposable
     {
+        internal CobolFile(string name, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength)
+        {
+            Name = name;
+            Encoding = encoding;
+            EndOfLineDelimiter = endOfLineDelimiter;
+            if (endOfLineDelimiter == EndOfLineDelimiter.FixedLengthLines)
+            {
+                FixedLineLength = fixedLineLength;
+            }
+
+            // Some characters from the source encoding may not support roundtrip Unicode decoding & encoding
+            InitUnsupportedSourceCharCodes();
+        }
+
         // -- File properties --
 
         /// <summary>
@@ -62,6 +73,61 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         public int FixedLineLength { get; protected set; }
 
+        /// <summary>
+        /// This class will convert the text from the source file to Unicode with explicit CR LF line endings.
+        /// The user may want to edit it in Unicode from and then save it back in its original encoding.
+        /// For this scenario to work reliably, me must ensure two things at load time :
+        /// - all chars read in the source file encoding must be convertible back and forth to and from Unicode
+        /// - if the source file does not use line delimiter chars (fixed length lines), none of its chars should 
+        ///   convert to CR or LF Unicode chars
+        /// If any one of two conditions above is not true, the file can not be safely handled, and the compiler
+        /// should refuse to load it by throwing a fatal exception.
+        /// The solution is to replace the faulty characters in the source file with hexadecimal alphanumeric 
+        /// literals and then try to reload the file.
+        /// </summary>
+        protected void InitUnsupportedSourceCharCodes()
+        {
+            // If the source file already encodes each char with several bytes, we should have no problem
+            if (Encoding.IsSingleByte)
+            {
+                // Generate all possible source char codes
+                byte[] sourceCharCodes = new byte[256];
+                for (int charCode = 0; charCode <= 255; charCode++)
+                {
+                    sourceCharCodes[charCode] = (byte)charCode;
+                }
+
+                // Decode each one of them to a Unicode char, using the current Encoding
+                char[] unicodeChars = Encoding.GetChars(sourceCharCodes);
+
+                // Encode then back to the source Encoding
+                byte[] roundtripCharCodes = Encoding.GetBytes(unicodeChars);
+
+                // Check if the roundtrip conversion was successful
+                unsupportedSourceCharCodes = new bool[256];
+                bool encodingHasAtLeastOneUnsupportedChar = false;
+                for(int charCode = 0; charCode <= 255; charCode++)
+                {
+                    if (sourceCharCodes[charCode] == roundtripCharCodes[charCode] &&
+                       (EndOfLineDelimiter == EndOfLineDelimiter.CrLfCharacters || (unicodeChars[charCode] != '\r' && unicodeChars[charCode] != '\n')))
+                    {
+                        unsupportedSourceCharCodes[charCode] = false;
+                    }
+                    else
+                    {
+                        encodingHasAtLeastOneUnsupportedChar = true;
+                        unsupportedSourceCharCodes[charCode] = true;
+                    }
+                }
+                if(!encodingHasAtLeastOneUnsupportedChar)
+                {
+                    unsupportedSourceCharCodes = null;
+                }
+            }
+        }
+        private bool[] unsupportedSourceCharCodes;
+
+
         // -- File operations --
 
         /// <summary>
@@ -81,9 +147,11 @@ namespace TypeCobol.Compiler.File
         /// </summary>    
         public IEnumerable<char> ReadChars()
         {
+            IList<char> chars = new List<char>();
             using (Stream inputStream = OpenInputStream())
             {
-                using (StreamReader inputStreamReader = new StreamReader(inputStream, Encoding))
+                Stream safeInputStream = (unsupportedSourceCharCodes == null) ? inputStream : new FilteringStream(inputStream, Encoding, unsupportedSourceCharCodes);
+                using (StreamReader inputStreamReader = new StreamReader(safeInputStream, Encoding))
                 {
                     if (EndOfLineDelimiter == EndOfLineDelimiter.FixedLengthLines)
                     {
@@ -94,12 +162,12 @@ namespace TypeCobol.Compiler.File
                         {
                             for (int i = 0; i < charsCount; i++)
                             {
-                                yield return lineBuffer[i];
+                                chars.Add(lineBuffer[i]);
                             }
                             if (charsCount == lineLength)
                             {
-                                yield return '\r';
-                                yield return '\n';
+                                chars.Add('\r');
+                                chars.Add('\n');
                             }
                         }
                     }
@@ -108,11 +176,12 @@ namespace TypeCobol.Compiler.File
                         int chr = -1;
                         while ((chr = inputStreamReader.Read()) >= 0)
                         {
-                            yield return (char)chr;
+                            chars.Add((char)chr);
                         }
                     }
                 }
             }
+            return chars;
         }
 
         /// <summary>
@@ -123,7 +192,8 @@ namespace TypeCobol.Compiler.File
         {
             using (Stream outputStream = OpenOutputStream())
             {
-                using (StreamWriter outputStreamWriter = new StreamWriter(outputStream, Encoding))
+                Stream safeOutputStream = (unsupportedSourceCharCodes == null) ? outputStream : new FilteringStream(outputStream, Encoding, unsupportedSourceCharCodes);
+                using (StreamWriter outputStreamWriter = new StreamWriter(safeOutputStream, Encoding))
                 {
                     if (EndOfLineDelimiter == EndOfLineDelimiter.FixedLengthLines)
                     { 
@@ -163,9 +233,18 @@ namespace TypeCobol.Compiler.File
         }
 
         /// <summary>
-        /// Observers can subscribe to be notified of any external change applied to the Cobol file 
+        /// Observers can subscribe to this event to be notified of any external change applied to the Cobol file 
         /// </summary>
-        public abstract IObservable<CobolFileChangedEvent> CobolFileChangedEventsSource { get; }
+        public event EventHandler<CobolFileChangedEvent> CobolFileChanged;
+
+        internal void RaiseCobolFileChanged(CobolFileChangedEvent fileEvent)
+        {
+            EventHandler<CobolFileChangedEvent> cobolFileChanged = CobolFileChanged;
+            if(cobolFileChanged != null)
+            {
+                cobolFileChanged(this, fileEvent);
+            }
+        }
 
         /// <summary>
         /// Starts monitoring the external changes applied to the Cobol file (service stopped by default)
@@ -181,10 +260,110 @@ namespace TypeCobol.Compiler.File
         /// Release all resources acquired to implement and monitor this Cobol file
         /// </summary>
         public abstract void Dispose();
+
+        /// <summary>
+        /// Utility class used to filter source char codes if necessary 
+        /// </summary>
+        class FilteringStream : Stream
+        {
+            private Stream baseStream;
+            private Encoding sourceEncoding;
+            private bool[] unsupportedSourceCharCodes;
+            
+            public FilteringStream(Stream baseStream, Encoding sourceEncoding, bool[] unsupportedSourceCharCodes)
+            {
+                this.baseStream = baseStream;
+                this.sourceEncoding = sourceEncoding;
+                this.unsupportedSourceCharCodes = unsupportedSourceCharCodes;
+            }
+            
+            private void CheckUnsupportedCharCodes(byte[] buffer, int offset, int count)
+            {
+                for(int index = offset; index < offset + count; index++)
+                {
+                    if(unsupportedSourceCharCodes[buffer[index]])
+                    {
+                        throw new NotSupportedException(String.Format("The character code {0} in source encoding {1} found at position {2} can not be safely converted to the internal Unicode representation : please replace it with the alphanumeric hexadecimal literal X'{0:X2}' in the source text", buffer[index], sourceEncoding.EncodingName, Position));
+                    }
+                }
+            }
+
+            public override bool CanRead
+            {
+                get
+                {
+                    return baseStream.CanRead;
+                }
+            }
+
+            public override bool CanSeek
+            {
+                get
+                {
+                    return baseStream.CanSeek;
+                }
+            }
+
+            public override bool CanWrite
+            {
+                get
+                {
+                    return baseStream.CanWrite;
+                }
+            }
+
+            public override long Length
+            {
+                get
+                {
+                    return baseStream.Length;
+                }
+            }
+
+            public override long Position
+            {
+                get
+                {
+                    return baseStream.Position;
+                }
+
+                set
+                {
+                    baseStream.Position = value;
+                }
+            }
+
+            public override void Flush()
+            {
+                baseStream.Flush();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                CheckUnsupportedCharCodes(buffer, offset, count);
+                return baseStream.Read(buffer, offset, count);
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                return baseStream.Seek(offset, origin);
+            }
+
+            public override void SetLength(long value)
+            {
+                baseStream.SetLength(value);
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                CheckUnsupportedCharCodes(buffer, offset, count);
+                baseStream.Write(buffer, offset, count);
+            }
+        }
     }
 
     /// <summary>
-    /// 
+    /// Indicates how a Cobol file reader can detect the end of a line
     /// </summary>
     public enum EndOfLineDelimiter
     {

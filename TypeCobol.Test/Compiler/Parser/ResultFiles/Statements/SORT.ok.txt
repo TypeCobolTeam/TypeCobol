@@ -1,0 +1,97 @@
+﻿--- Code Elements ---
+[[SortStatement]] [1,4:SORT]<SORT> --> [55,63:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [64,64+:.]<PeriodSeparator> --> [64,64+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [55,63:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [64,64+:.]<PeriodSeparator> --> [64,64+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [57,65:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [66,66+:.]<PeriodSeparator> --> [66,66+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [57,65:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [66,66+:.]<PeriodSeparator> --> [66,66+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [110,118:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [119,119+:.]<PeriodSeparator> --> [119,119+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [69,77:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [78,78+:.]<PeriodSeparator> --> [78,78+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [69,77:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [78,78+:.]<PeriodSeparator> --> [78,78+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [69,77:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [78,78+:.]<PeriodSeparator> --> [78,78+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [69,77:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [78,78+:.]<PeriodSeparator> --> [78,78+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [79,87:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [88,88+:.]<PeriodSeparator> --> [88,88+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [79,87:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [88,88+:.]<PeriodSeparator> --> [88,88+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [79,87:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [88,88+:.]<PeriodSeparator> --> [88,88+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [79,87:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [88,88+:.]<PeriodSeparator> --> [88,88+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [104,112:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [104,112:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [74,86:procedurename]<UserDefinedWord>
+
+[[SentenceEnd]] [87,87+:.]<PeriodSeparator> --> [87,87+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [97,110:procedurename2]<UserDefinedWord>
+
+[[SentenceEnd]] [111,111+:.]<PeriodSeparator> --> [111,111+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [109,117:filename3]<UserDefinedWord>
+
+[[SentenceEnd]] [118,118+:.]<PeriodSeparator> --> [118,118+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [89,97:filename1]<UserDefinedWord>
+
+[[SentenceEnd]] [98,98+:.]<PeriodSeparator> --> [98,98+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [122,135:procedurename3]<UserDefinedWord>
+
+[[SentenceEnd]] [136,136+:.]<PeriodSeparator> --> [136,136+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [102,115:procedurename3]<UserDefinedWord>
+
+[[SentenceEnd]] [116,116+:.]<PeriodSeparator> --> [116,116+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [122,135:procedurename4]<UserDefinedWord>
+
+[[SentenceEnd]] [136,136+:.]<PeriodSeparator> --> [136,136+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [182,195:procedurename3]<UserDefinedWord>
+
+[[SentenceEnd]] [196,196+:.]<PeriodSeparator> --> [196,196+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [182,195:procedurename4]<UserDefinedWord>
+
+[[SentenceEnd]] [196,196+:.]<PeriodSeparator> --> [196,196+:.]<PeriodSeparator>
+

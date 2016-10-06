@@ -1,11 +1,80 @@
 ﻿--- Code Elements ---
-[[IfStatement]] [1,2:IF]<IF> --> [8,16:condition]<UserDefinedWord>
+[[StringStatement]] [1,6:string]<STRING> --> [45,48:toto]<UserDefinedWord>
+- variables to concat =  "toto" "titi"  DELIMITED BY SIZE into = toto
 
-[[StringStatement]] [3,8:STRING]<STRING> --> [13,13:)]<RightParenthesisSeparator>
+[[StringStatement]] [1,6:string]<STRING> --> [47,50:toto]<UserDefinedWord>
+- variables to concat =  "toto2" "titi2"  DELIMITED BY SIZE into = toto
 
-[[StringStatementEnd]] [3,12:END-STRING]<END_STRING> --> [3,12:END-STRING]<END_STRING>
+[[StringStatementEnd]] [52,61:end-string]<END_STRING> --> [52,61:end-string]<END_STRING>
 
-[[IfStatementEnd]] [1,6:END-IF]<END_IF> --> [1,6:END-IF]<END_IF>
+[[StringStatement]] [1,6:string]<STRING> --> [49,52:toto]<UserDefinedWord>
+- variables to concat =  "toto3" "titi3"  DELIMITED BY "bob3" into = toto
 
-[[SentenceEnd]] [7,7+:.]<PeriodSeparator> --> [7,7+:.]<PeriodSeparator>
+[[StringStatement]] [1,6:string]<STRING> --> [49,52:toto]<UserDefinedWord>
+- variables to concat =  "toto4" "titi4"  DELIMITED BY "bob4" into = toto
+
+[[StringStatementEnd]] [54,63:end-string]<END_STRING> --> [54,63:end-string]<END_STRING>
+
+[[StringStatement]] [1,6:string]<STRING> --> [73,76:toto]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+
+[[StringStatement]] [1,6:string]<STRING> --> [73,76:toto]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+
+[[StringStatementEnd]] [78,87:end-string]<END_STRING> --> [78,87:end-string]<END_STRING>
+
+[[StringStatement]] [1,6:string]<STRING> --> [76,79:toto]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+
+[[StringStatement]] [1,6:string]<STRING> --> [76,79:toto]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+
+[[StringStatementEnd]] [81,90:end-string]<END_STRING> --> [81,90:end-string]<END_STRING>
+
+[[StringStatement]] [1,6:string]<STRING> --> [89,97:myPointer]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+ pointer = myPointer
+
+[[StringStatement]] [1,6:string]<STRING> --> [89,97:myPointer]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+ pointer = myPointer
+
+[[StringStatementEnd]] [99,108:end-string]<END_STRING> --> [99,108:end-string]<END_STRING>
+
+[[StringStatement]] [1,6:string]<STRING> --> [94,102:myPointer]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+ pointer = myPointer
+
+[[StringStatement]] [1,6:string]<STRING> --> [94,102:myPointer]<UserDefinedWord>
+- variables to concat =  "a" 'b'  DELIMITED BY SIZE  "C" "D" 'e'  DELIMITED BY "delimiter" into = toto
+ pointer = myPointer
+
+[[StringStatementEnd]] [104,113:end-string]<END_STRING> --> [104,113:end-string]<END_STRING>
+
+[[StringStatement]] [1,6:string]<STRING> --> [65,70:result]<UserDefinedWord>
+- variables to concat =  "date compilation=" when-compiled  DELIMITED BY SIZE into = result
+
+[[StringStatement]] [1,6:string]<STRING> --> [48,53:result]<UserDefinedWord>
+- variables to concat =  var1 var1  DELIMITED BY "term" into = result
+
+[[StringStatement]] [1,6:string]<STRING> --> [46,51:result]<UserDefinedWord>
+- variables to concat =  "testOverFlow"  DELIMITED BY SIZE into = result
+
+[[OnOverflowCondition]] [53,54:on]<ON> --> [56,63:overflow]<OVERFLOW>
+
+[[DisplayStatement]] [65,71:display]<DISPLAY> --> [73,84+:"marche pas"]<AlphanumericLiteral>(",Y,Y){marche pas}
+- variables = "marche pas"
+
+[[StringStatement]] [1,6:string]<STRING> --> [46,51:result]<UserDefinedWord>
+- variables to concat =  "testOverFlow"  DELIMITED BY SIZE into = result
+
+[[OnOverflowCondition]] [53,54:on]<ON> --> [56,63:overflow]<OVERFLOW>
+
+[[DisplayStatement]] [65,71:display]<DISPLAY> --> [73,84:"marche pas"]<AlphanumericLiteral>(",Y,Y){marche pas}
+- variables = "marche pas"
+
+[[NotOnOverflowCondition]] [86,88:not]<NOT> --> [93,100:overflow]<OVERFLOW>
+
+[[DisplayStatement]] [102,108:display]<DISPLAY> --> [110,120+:"ça marche"]<AlphanumericLiteral>(",Y,Y){ça marche}
+- variables = "ça marche"
 

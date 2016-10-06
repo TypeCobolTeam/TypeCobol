@@ -1,0 +1,22 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. perform-program.
+  
+PROCEDURE DIVISION.
+
+*  // Basic PERFORM with scope
+* //////////////////////////////
+PERFORM
+  DISPLAY 'test'
+END-PERFORM
+.
+*  // Basic PERFORM procedure
+* /////////////////////////////
+PERFORM procedurename
+.
+
+PERFORM UNTIL condition1
+  IF condition2
+    DISPLAY 'test'
+  END-IF
+END-PERFORM
+.

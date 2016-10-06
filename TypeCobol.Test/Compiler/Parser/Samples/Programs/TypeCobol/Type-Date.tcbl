@@ -1,0 +1,45 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID.   TEST-DATE.
+  AUTHOR.       WIZTIGERS.
+  DATE-WRITTEN. APRIL 2016
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+
+01  olddate        PIC X(08).
+01  today          TYPE Date.
+01  tomorrow       TYPE Date.
+01 groupe.
+   05 date1        type Date.
+PROCEDURE DIVISION.
+*******************
+TEST-DATE.
+*** legal: from typed to typed
+  MOVE        today     TO   tomorrow
+*** legal: from typed to untyped
+  MOVE        today     TO   olddate
+*** illegal: from untyped to typed
+  MOVE        olddate   TO   today
+*** legal: from trusted untyped to typed
+  MOVE UNSAFE olddate   TO   today
+*** legal: properties are read-only
+  DISPLAY     today :: YYYY
+*** illegal: properties are read-only
+  MOVE        2015      TO   today :: YYYY
+  MOVE UNSAFE 2015      TO   today :: YYYY
+*** illegal: from untyped to typed
+  move 'error'          to today(1:5)
+*  legal from typed to untyped
+  move today(1:)        to olddate
+*  legal from a non typed var (under a type) to untyped
+  move today :: YYYY    to olddate(1:4)
+
+
+*** legal:
+  initialize today
+  initialize groupe
+  move spaces   to groupe
+  move olddate  to groupe
+  .

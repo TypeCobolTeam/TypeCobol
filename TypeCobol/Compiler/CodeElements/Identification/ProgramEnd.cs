@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// program-name must be identical to a program-name declared in a preceding program-ID paragraph.
     /// An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
     /// </summary>
-    public class ProgramEnd : CodeElement
+    public class ProgramEnd : CodeElementEnd
     {
         public ProgramEnd() : base(CodeElementType.ProgramEnd)
         { }
@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// A user-defined word or alphanumeric literal, but not a figurative constant,
         /// that identifies your program.
         /// </summary>
-        public ProgramName ProgramName { get; set; }
+        public SymbolReference ProgramName { get; set; }
 
         /// <summary>
         /// Debug string

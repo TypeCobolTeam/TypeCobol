@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>typecobol.editors</groupId>
+  <artifactId>TypeCobol.Eclipse</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>TypeCobol.Eclipse</name>
+  <url>http://maven.apache.org</url>
+
+  <dependencies>
+  <!-- These dependent jars have to be copied into the project root directory
+       using maven-dependency-plugin before running Eclipse.
+	   > mvn process-sources
+  -->
+    <dependency>
+      <groupId>org.msgpack</groupId>
+      <artifactId>msgpack</artifactId>
+      <version>0.6.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jface</groupId>
+      <artifactId>text</artifactId>
+      <version>3.3.0-v20070606-0010</version>
+      <!--version>3.10.0-v20150603-1752</version-->
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <!-- > mvn exec:java -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <configuration>
+          <mainClass>Client</mainClass>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <!-- For the Eclipse PDE system to build or deploy an Eclipse PDE project,
+             dependent jars must exist somewhere within the project itself.
+             Linked resources (ie. symbolic links) in the PDE project root directory
+             can be used too. These are correctly referenced from the Eclipse IDE,
+             but NOT from the Eclipse headless PDE build. As a result, the export wizard
+			 and the pde-maven-plugin will fail to export, despite the same build
+			 working in the IDE.
+             Thus, we copy the dependent jars into the project root before running Eclipse.
+		-->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <!-- Remove the dependent jars files 
+             > mvn clean.
+		-->
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>*.jar</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

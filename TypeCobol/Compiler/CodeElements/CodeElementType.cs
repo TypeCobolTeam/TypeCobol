@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.CodeElements
         // Code structure
 
         // -- Program --
-        ProgramIdentification,
+        ProgramIdentification = 1, // <- value 1 is mandatory to synchronize this list with the Antlr parser
         ProgramEnd,
         // -- Class --
         ClassIdentification,
@@ -51,6 +51,9 @@ namespace TypeCobol.Compiler.CodeElements
         // -- Data Division --
         FileDescriptionEntry,
         DataDescriptionEntry,
+        DataRedefinesEntry,
+        DataRenamesEntry,
+        DataConditionEntry,
         // -- InputOutput Section --
         FileControlEntry,
         IOControlEntry,
@@ -127,9 +130,9 @@ namespace TypeCobol.Compiler.CodeElements
         OnSizeErrorCondition,
         NotOnSizeErrorCondition,
         ElseCondition,
-        WhenEvaluateCondition,
+        WhenCondition,
         WhenOtherCondition,
-        WhenConditionalExpression,
+        WhenSearchCondition,
 
         // Statement ends
 
@@ -152,6 +155,10 @@ namespace TypeCobol.Compiler.CodeElements
         SubtractStatementEnd,
         UnstringStatementEnd,
         WriteStatementEnd,
-        XmlStatementEnd
+        XmlStatementEnd,
+// [TYPECOBOL]
+		FunctionDeclarationHeader,
+		FunctionDeclarationEnd,
+// [/TYPECOBOL]
     }
 }

@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class UnstringStatementEnd : CodeElement
+    public class UnstringStatementEnd : CodeElementEnd
     {
         public UnstringStatementEnd() : base(CodeElementType.UnstringStatementEnd)
         { }

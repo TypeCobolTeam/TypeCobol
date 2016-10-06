@@ -19,31 +19,30 @@ namespace TypeCobolStudio.Editor
             if (compilerService != null)
             {
                 int lineIndex = line.LineNumber - 1;
-                if (compilerService.CompilationUnit.TokensDocument.TokensLines.Count > lineIndex)
+                if (compilerService.CompilationUnit.TokensDocumentSnapshot.Lines.Count > lineIndex)
                 {
-                    TokensLine tokensLine = compilerService.CompilationUnit.TokensDocument.TokensLines[lineIndex];
-                    TextLineMap lineMap = tokensLine.TextLineMap;
+                    ITokensLine tokensLine = compilerService.CompilationUnit.TokensDocumentSnapshot.Lines[lineIndex];
                     int lineStartOffset = line.Offset;
 
                     // Areas
-                    if (!lineMap.SequenceNumber.IsEmpty)
+                    if (!tokensLine.SequenceNumber.IsEmpty)
                     {
-                        ApplyTextAreaStyle(lineStartOffset, lineMap.SequenceNumber, TokenStyles.GetAreaStyle(TextAreaType.SequenceNumber));
+                        ApplyTextAreaStyle(lineStartOffset, tokensLine.SequenceNumber, TokenStyles.GetAreaStyle(TextAreaType.SequenceNumber));
                     }
-                    if (!lineMap.Indicator.IsEmpty)
+                    if (!tokensLine.Indicator.IsEmpty)
                     {
-                        if (lineMap.Type == TextLineType.Comment)
+                        if (tokensLine.Type == CobolTextLineType.Comment)
                         {
-                            ApplyTextAreaStyle(lineStartOffset, lineMap.Indicator, TokenStyles.GetAreaStyle(TextAreaType.Comment));
+                            ApplyTextAreaStyle(lineStartOffset, tokensLine.Indicator, TokenStyles.GetAreaStyle(TextAreaType.Comment));
                         }
-                        else if (lineMap.Type == TextLineType.Debug || lineMap.Type == TextLineType.Continuation)
+                        else if (tokensLine.Type == CobolTextLineType.Debug || tokensLine.Type == CobolTextLineType.Continuation)
                         {
-                            ApplyTextAreaStyle(lineStartOffset, lineMap.Indicator, TokenStyles.GetAreaStyle(TextAreaType.Indicator));
+                            ApplyTextAreaStyle(lineStartOffset, tokensLine.Indicator, TokenStyles.GetAreaStyle(TextAreaType.Indicator));
                         }
                     }
-                    if (!lineMap.Comment.IsEmpty)
+                    if (!tokensLine.Comment.IsEmpty)
                     {
-                        ApplyTextAreaStyle(lineStartOffset, lineMap.Comment, TokenStyles.GetAreaStyle(TextAreaType.Comment));
+                        ApplyTextAreaStyle(lineStartOffset, tokensLine.Comment, TokenStyles.GetAreaStyle(TextAreaType.Comment));
                     }
 
                     // Tokens

@@ -11,11 +11,12 @@ namespace TypeCobol.Compiler.CodeElements
     /// Common properties shared between all code elements.
     /// A CodeElement produced during the first parsing phase is also a token consumed by the second parsing phase. 
     /// </summary>
-    public abstract class CodeElement : IToken
+    public abstract partial class CodeElement: IToken
     {
         public CodeElement(CodeElementType type)
         {
             Type = type;
+            SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
             Diagnostics = new List<Diagnostic>();
         }
 
@@ -30,45 +31,78 @@ namespace TypeCobol.Compiler.CodeElements
         public IList<Token> ConsumedTokens { get; set; }
 
         /// <summary>
-        /// Line index in the main document where the first consumed token is starting
+        /// Is the token is a UserDefinedWord or a literal, it could be a symbol definition or a symbol reference.
+        /// Keywords can also be symbol references (special registers).
+        /// This property enables to retrieve symbol information attached to this token at a later stage.
         /// </summary>
-        public int FirstTokenLineIndexInMainDocument { get; set; }
-
-        /// <summary>
-        /// Line index in the main document where the last consumed token is starting
-        /// </summary>
-        public int LastTokenLineIndexInMainDocument { get; set; }
-
+        public IDictionary<Token,SymbolInformation> SymbolInformationForTokens { get; set; }
+        
         /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
         
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder("[[");
-            sb.Append(Type);
-            sb.Append("]] ");
-            sb.Append(ConsumedTokens[0]).ToString();
-            sb.Append(" --> ");
-            sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
-            bool displayLineNumbers = false;
-            if (displayLineNumbers)
-            {
-                sb.Append(" on lines ");
-                sb.Append(FirstTokenLineIndexInMainDocument);
-                sb.Append(">");
-                sb.Append(LastTokenLineIndexInMainDocument);
-            }
-            sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
-            return sb.ToString();
-        }
+		/// <summary>
+		/// Debug string
+		/// </summary>
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder("[[");
+			sb.Append(Type);
+			sb.Append("]] ");
+			if (ConsumedTokens == null || ConsumedTokens.Count < 1) {
+				sb.Append("No Consumed Tokens").AppendLine();
+			} else {
+				sb.Append(ConsumedTokens[0]).ToString();
+				sb.Append(" --> ");
+				sb.Append(ConsumedTokens[ConsumedTokens.Count - 1].ToString());
+				bool displayLineNumbers = false;
+				if (displayLineNumbers) {
+					int first = ConsumedTokens[0].Line;
+					int last  = ConsumedTokens[ConsumedTokens.Count-1].Line;
+					sb.Append(" on lines ");
+					sb.Append(first);
+					sb.Append(">");
+					sb.Append(last);
+				}
+			}
+			sb.AppendLine(); //TODO: is the newline really necessary here ? ToString returns shouldn't end with a newline, should they ?
+			return sb.ToString();
+		}
+
+		public string SourceText {
+			get {
+				var str = new StringBuilder();
+				ITokensLine previous = null;
+				int end = -1;
+				foreach(var token in ConsumedTokens) {
+					var line = token.TokensLine;
+					string whitespace = "";
+					if (previous == null) { // first line
+						whitespace = GetIndent(line, token.StartIndex);
+					} else
+					if (previous == line) { // same line
+						whitespace = line.Text.Substring(end, token.StartIndex-end);
+					} else { // new line
+						str.AppendLine();
+						whitespace = GetIndent(line, token.StartIndex);
+					}
+					previous = line;
+					string text = line.Text.Substring(token.StartIndex, token.Length);
+					str.Append(whitespace+text);
+					end = token.StartIndex + token.Length;
+				}
+				return str.ToString();
+			}
+		}
+
+		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
+			var lineStartIndex = line.SequenceNumberText.Length + (line.IndicatorChar != null? 1:0);
+			return line.SourceText.Substring(0, firstTokenStartIndex-lineStartIndex);
+		}
 
         // --- Antlr4.Runtime.IToken implementation ---
-        // ... used by the CobolProgramClassParser  ...
+        // ... used by the ProgramClassParser  ...
 
         public string Text
         {
@@ -95,15 +129,8 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                return ConsumedTokens[0].Line;
-            }
-        }
-
-        public int Column
-        {
-            get
-            {
-                return ConsumedTokens[0].Column;
+                return -1;
+                //return ConsumedTokens[0].Line;
             }
         }
 
@@ -111,48 +138,65 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                return 1;
+                return Token.CHANNEL_SourceTokens;
             }
         }
 
-        public int TokenIndex
-        {
-            get
-            {
-                return ConsumedTokens[0].TokenIndex;
-            }
-        }
+		public int Column {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
+				return ConsumedTokens[0].Column;
+			}
+		}
 
-        public int StartIndex
-        {
-            get
-            {
-                return ConsumedTokens[0].StartIndex;
-            }
-        }
+		public int TokenIndex {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;
+				return ConsumedTokens[0].TokenIndex;
+			}
+		}
 
-        public int StopIndex
-        {
-            get
-            {
-                return ConsumedTokens[ConsumedTokens.Count-1].StopIndex; ;
-            }
-        }
+		public int StartIndex {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;
+				return ConsumedTokens[0].StartIndex;
+			}
+		}
 
-        public ITokenSource TokenSource
-        {
-            get
-            {
-                return ConsumedTokens[0].TokenSource;
-            }
-        }
+		public int StopIndex {
+			get {
+				if (ConsumedTokens.Count < 1) return -1;// ISSUE #204
+				return ConsumedTokens[ConsumedTokens.Count-1].StopIndex;
+			}
+		}
 
-        public ICharStream InputStream
-        {
-            get
-            {
-                return ConsumedTokens[0].InputStream;
-            }
-        }
+		public ITokenSource TokenSource {
+			get {
+				if (ConsumedTokens.Count < 1) return null;
+				return ConsumedTokens[0].TokenSource;
+			}
+		}
+
+		public ICharStream InputStream {
+			get {
+				if (ConsumedTokens.Count < 1) return null;
+				return ConsumedTokens[0].InputStream;
+			}
+		}
+	}
+
+    // --- Temporary base classes for data definition code elements ---
+
+    public abstract class NamedCodeElement : CodeElement
+    {
+        public NamedCodeElement(CodeElementType type) : base(type) { }
+
+        public abstract string Name { get; }
+    }
+
+    public interface ITypedCodeElement
+    {
+        DataType DataType { get; }
+        int Length { get; }
     }
 }

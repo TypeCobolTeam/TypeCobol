@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Text
         int Length { get; }
 
         // -- Document lines --
-                
+
         /// <summary>
         /// Iterator over the document lines
         /// </summary>
@@ -74,17 +74,27 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         int LineCount { get; }
 
+        /// <summary>
+        /// The first line has the index 0
+        /// </summary>
+        int FindIndexOfLine(ITextLine line);
+
+        /// <summary>
+        /// Offset of the first char of this line in the document 
+        /// </summary>
+        int FindStartOffsetOfLine(ITextLine line);
+
         // -- Document changes --
 
         /// <summary>
         /// A TextChangedEvent is sent to all observers each time a line 
         /// is inserted, updated, or removed in the document
         /// </summary>
-        IObservable<TextChangedEvent> TextChangedEventsSource { get; }
+        event EventHandler<TextChangedEvent> TextChanged;
 
         /// <summary>
         /// Call this method only after all observers have been chained to form the compilation pipeline
         /// </summary>
-        void StartSendingChangeEvents();       
+        void StartSendingChangeEvents();
     }
 }

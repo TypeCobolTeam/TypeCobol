@@ -1,0 +1,21 @@
+﻿IDENTIFICATION DIVISION.
+PROGRAM-ID.   TEST-BOOL.
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+01 zoneTxt       pic X.
+01  check        TYPE BOOL.
+01  managed      TYPE BOOL.
+PROCEDURE DIVISION.
+TEST-BOOL.
+*** legal: from typed to typed
+move zoneTxt to zoneTxt
+MOVE check TO managed
+*** KO, check-value doesn't exist in TypeCobol (only in generated Code)
+MOVE check-value TO zoneTxt
+
+*** KO, check-false doesn't exist in TypeCobol (only in generated Code)
+if check-false
+    continue
+end-if
+.

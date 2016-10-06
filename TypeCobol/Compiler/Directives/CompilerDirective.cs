@@ -49,6 +49,10 @@ namespace TypeCobol.Compiler.Directives
         // readyOrResetTraceCompilerStatement
         READY_TRACE,
         RESET_TRACE,
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+        // NON-STANDARD EI Compiler Directive, roughly equivalent to COPY REPLACING
+        REMARKS,
+#endif
         // replaceCompilerStatement
         REPLACE,
         REPLACE_OFF,
@@ -103,6 +107,11 @@ namespace TypeCobol.Compiler.Directives
         /// The source file remains unchanged after execution of the BASIS statement.
         /// </summary>
         public string BasisName { get; set; }
+
+        /// <summary>
+        /// Symbol token for BasisName
+        /// </summary>
+        public Token TextNameSymbol { get; set; }
 
         public override string ToString()
         {
@@ -337,10 +346,20 @@ namespace TypeCobol.Compiler.Directives
         public string TextName { get; set; }
 
         /// <summary>
+        /// Symbol token for TextName
+        /// </summary>
+        public Token TextNameSymbol { get; set; }
+
+        /// <summary>
         /// Library-name identifies where the copy text exists.
         /// (see TextName for constraints on the format)
         /// </summary>
         public string LibraryName { get; set; }
+
+        /// <summary>
+        /// Symbol token for LibraryName
+        /// </summary>
+        public Token LibraryNameSymbol { get; set; }
 
         /// <summary>
         /// The SUPPRESS phrase specifies that the library text is not to be printed on the
@@ -386,26 +405,38 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            if (Suppress)
-            {
-                sb.Append(".SUPPRESS");
-            }
-            if (!String.IsNullOrEmpty(TextName))
-            {
-                sb.Append(" " + TextName);
-            } 
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+        /// <summary>
+        /// If true, remove the first 01 level data item found in the COPY text 
+        /// before copying it into the main program (legacy REPLACING syntax).
+        /// </summary>
+        public bool RemoveFirst01Level { get; set; }
+
+        /// <summary>
+        /// If true, insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+        /// before copying it into the main program (legacy REPLACING syntax).
+        /// </summary>
+        public bool InsertSuffixChar { get; set; }
+
+        /// <summary>
+        /// Character which should be inserted before the first '-' in all user defined words found in the COPY text 
+        /// before copying it into the main program (legacy REPLACING syntax).
+        /// </summary>
+        public char SuffixChar { get; set; }
+
+#endif
+
+		public override string ToString() {
+			var str = new StringBuilder(Type.ToString());
+			if (Suppress) str.Append(".SUPPRESS");
+			if (!String.IsNullOrEmpty(TextName))
+				str.Append(" " + TextName);
             if(!String.IsNullOrEmpty(LibraryName))
-            {
-                sb.Append(".OF(" + LibraryName + ")");
-            }
-            foreach (ReplaceOperation replaceOperation in ReplaceOperations)
-            {
-                ReplaceOperationUtils.ToStringBuilder(replaceOperation, sb);
-            }
-            return Type.ToString() + sb.ToString();
+				str.Append(".OF(" + LibraryName + ")");
+			foreach (var replace in ReplaceOperations)
+				str.Append(" <").Append(replace.ToString()).Append('>');
+            return str.ToString();
         }
     }
 
@@ -614,6 +645,15 @@ namespace TypeCobol.Compiler.Directives
         /// First token to compare with source text in the replace operation
         /// </summary>
         public Token ComparisonToken { get; protected set; }
+
+		protected static string NoQuotes(Token token) {
+			if (token == null) return "?";
+			return token.SourceText.Trim('\"').Trim('\'');
+		}
+
+		public override string ToString() {
+			return "REPLACE["+Type+"] "+NoQuotes(ComparisonToken);
+		}
     }
 
     /// <summary>
@@ -632,6 +672,10 @@ namespace TypeCobol.Compiler.Directives
         /// Imported token injected in source text to replace matched token
         /// </summary>
         public Token ReplacementToken { get; private set; }
+
+		public override string ToString() {
+			return base.ToString()+" BY "+NoQuotes(ReplacementToken);
+		}
     }
 
     /// <summary>
@@ -650,6 +694,10 @@ namespace TypeCobol.Compiler.Directives
         /// Imported token combined with partial word in source text to replace matched token
         /// </summary>
         public Token PartialReplacementToken { get; private set; }
+
+		public override string ToString() {
+			return base.ToString()+" BY "+NoQuotes(PartialReplacementToken);
+		}
     }
 
     /// <summary>
@@ -668,6 +716,15 @@ namespace TypeCobol.Compiler.Directives
         /// Array of tokens injected in source text to replace matched token
         /// </summary>
         public Token[] ReplacementTokens { get; private set; }
+
+		public override string ToString() {
+			var str = new StringBuilder();
+			if (ReplacementTokens != null) {
+				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
+				if (ReplacementTokens.Length > 0) str.Length -= 1;
+			}
+			return base.ToString()+" BY "+str.ToString();
+		}
     }
 
     /// <summary>
@@ -692,68 +749,115 @@ namespace TypeCobol.Compiler.Directives
         /// Array of tokens injected in source text to replace matched tokens
         /// </summary>
         public Token[] ReplacementTokens { get; private set; }
+
+		public override string ToString() {
+			var str = new StringBuilder(base.ToString());
+			foreach(var token in FollowingComparisonTokens) str.Append(',').Append(NoQuotes(token));
+			str.Append(" BY ");
+			if (ReplacementTokens != null) {
+				foreach(var token in ReplacementTokens) str.Append(NoQuotes(token)).Append(',');
+				if (ReplacementTokens.Length > 0) str.Length -= 1;
+			}
+			return str.ToString();
+		}
     }
 
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
     /// <summary>
-    /// Utility methods associated with replace operations
-    /// (common code between CopyDirective and ReplaceDirective)
+    /// Legacy syntax used instead of COPY REPLACING :
+    /// *REMARKS. COPY=(YI03PCBA YI03PCBB).
+    /// 01 I03PCBA. COPY YI03PCBA.
+    /// 01 I03PCBB. COPY YI03PCBB.
+    /// 
+    /// Operations exécuted by the preprocessor :
+    /// - import COPY YI03PCB (text name without one char suffix)
+    /// - remove level 01 code element in the imported COPY
+    /// - insert one char suffix A or B before the first '-' in each data name inside the COPY
+    /// 
+    /// This enables to import two times the same COPY but with different names for its fields.
+    /// It is a legacy equivalent of COPY REPLACING + usage of partial names in the copy text.
     /// </summary>
-    public static class ReplaceOperationUtils
+    public class RemarksDirective : CompilerDirective
     {
-        public static void ToStringBuilder(ReplaceOperation replaceOperation, StringBuilder sb)
+        public RemarksDirective() : base(CompilerDirectiveType.REMARKS)
         {
-            sb.Append(" <REPLACE-");
-            sb.Append(replaceOperation.Type.ToString());
-            sb.Append(":");
-            Token token = replaceOperation.ComparisonToken;
-            if (token != null) sb.Append(token.ToString());
-            if (replaceOperation.Type == ReplaceOperationType.MultipleTokens)
+            CopyTextNamesVariations = new List<TextNameVariation>();
+        }
+
+        /// <summary>
+        /// List of variations for COPY text names included in the program
+        /// </summary>
+        public IList<TextNameVariation> CopyTextNamesVariations { get; set; }        
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            bool isFirst = true;
+            foreach (var textNameViariation in CopyTextNamesVariations)
             {
-                Token[] tokens = ((MultipleTokensReplaceOperation)replaceOperation).FollowingComparisonTokens;
-                if (tokens != null)
+                if (isFirst)
                 {
-                    foreach (Token t in tokens)
-                    {
-                        sb.Append(t.ToString());
-                    }
+                    isFirst = false;
+                }
+                else
+                {
+                    sb.Append(" ,");
+                }
+                sb.Append(textNameViariation.ToString());
+            }
+            return Type.ToString() + " " + sb.ToString();
+        }
+
+        /// <summary>
+        /// Stores a text name : if the text name is of length 8, then the last character must be interpreted like a suffix
+        /// </summary>
+        public class TextNameVariation
+        {
+            public TextNameVariation(string textNameWithSuffix)
+            {
+                if (textNameWithSuffix.Length > 8)
+                {
+                    throw new ArgumentException("Text name should be at most 8 chars long");
+                }
+                TextNameWithSuffix = textNameWithSuffix;
+            }
+
+            /// <summary>
+            /// Text name with potential appended suffix
+            /// </summary>
+            public string TextNameWithSuffix { get; private set; }
+
+            /// <summary>
+            /// True if a suffix was appended to text name
+            /// </summary>
+            public bool HasSuffix { get { return TextNameWithSuffix.Length == 8; } }
+
+            /// <summary>
+            /// Text name without suffix
+            /// </summary>
+            public string TextName { get { return HasSuffix ? TextNameWithSuffix.Substring(0, 7) : TextNameWithSuffix; } }
+
+            /// <summary>
+            /// Suffix appended to text name
+            /// </summary>
+            public char SuffixChar { get { return HasSuffix ? TextNameWithSuffix[7] : (char)0; } }
+
+            public override string ToString()
+            {
+                if (HasSuffix)
+                {
+                    return TextName.Substring(0, 7) + "(" + SuffixChar + ")";
+                }
+                else
+                {
+                    return TextName;
                 }
             }
-            sb.Append('>');
-            sb.Append("<BY:");
-            switch (replaceOperation.Type)
-            {
-                case ReplaceOperationType.SingleToken:
-                    token = ((SingleTokenReplaceOperation)replaceOperation).ReplacementToken;
-                    if (token != null) sb.Append(token.ToString());
-                    break;
-                case ReplaceOperationType.PartialWord:
-                    token = ((PartialWordReplaceOperation)replaceOperation).PartialReplacementToken;
-                    if (token != null) sb.Append(token.ToString());
-                    break;
-                case ReplaceOperationType.SingleToMultipleTokens:
-                    Token[] tokens = ((SingleToMultipleTokensReplaceOperation)replaceOperation).ReplacementTokens;
-                    if (tokens != null)
-                    {
-                        foreach (Token t in tokens)
-                        {
-                            sb.Append(t.ToString());
-                        }
-                    }
-                    break;
-                case ReplaceOperationType.MultipleTokens:
-                    tokens = ((MultipleTokensReplaceOperation)replaceOperation).ReplacementTokens;
-                    if (tokens != null)
-                    {
-                        foreach (Token t in tokens)
-                        {
-                            sb.Append(t.ToString());
-                        }
-                    }
-                    break;
-            }
-            sb.Append('>');
         }
     }
+
+#endif
 
     /// <summary>
     /// p541: REPLACE statement
@@ -847,15 +951,13 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; private set; }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (ReplaceOperation replaceOperation in ReplaceOperations)
-            {
-                ReplaceOperationUtils.ToStringBuilder(replaceOperation, sb);
-            }
-            return Type.ToString() + sb.ToString();
-        }        
+		public override string ToString() {
+            var str = new StringBuilder();
+			if (ReplaceOperations.Count > 0) str.Append(' ');
+			foreach (var replace in ReplaceOperations)
+				str.Append('<').Append(replace.ToString()).Append("> ");
+			return Type.ToString()+str.ToString();
+		}
     }
 
     /// <summary>

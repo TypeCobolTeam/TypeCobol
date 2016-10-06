@@ -1,24 +1,24 @@
 ﻿-- Line 1 --
-=>continued:[1,1:1.2345678]<DecimalLiteral>{12345678|7>1,2345678}
+[1,1:1]<IntegerLiteral>{1}
 
 -- Line 2 --
 [2,29:This is a comment line ! ***]<CommentLine>
 
 -- Line 3 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:=>continued:[6,9:1.2345678]<DecimalLiteral>{12345678|7>1,2345678}
-[10,34:*> and a floating comment]<FloatingComment>( ,Y,Y)
+[10,34:*> and a floating comment]<FloatingComment>
+=>continued:[6,9:.23456]<DecimalLiteral>{23456|5>0.23456}
 
 -- Line 4 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:=>continued:[6,7:1.2345678]<DecimalLiteral>{12345678|7>1,2345678}
+=>continuation:[6,7:.23456]<DecimalLiteral>{23456|5>0.23456}
 
 -- Line 5 --
 [2,7:      ]<SpaceSeparator>
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
-=>continuation:[6,7:1.2345678]<DecimalLiteral>{12345678|7>1,2345678}
+[6,7:78]<IntegerLiteral>{78}
 [8,38:*> and another floating comment]<FloatingComment>( ,Y,Y)
 
 -- Line 7 --

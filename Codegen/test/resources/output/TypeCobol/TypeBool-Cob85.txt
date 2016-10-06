@@ -1,0 +1,58 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID.   TEST-Bool.
+  AUTHOR.       SMEDILOL.
+  DATE-WRITTEN. APRIL 2016
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+
+*01  check          TYPE bool.
+01  check-value PIC X VALUE LOW-VALUE.
+    88  check       VALUE 'T'.
+    88  check-false VALUE 'F'.
+*01  trtOk          TYPE Bool.
+01  trtOk-value PIC X VALUE LOW-VALUE.
+    88  trtOk       VALUE 'T'.
+    88  trtOk-false VALUE 'F'.
+
+
+PROCEDURE DIVISION.
+*******************
+TEST-Bool.
+  MOVE        check     TO   trtOk
+
+* MOVE        true     TO   check
+  set check to true
+* MOVE        false     TO   check
+  set check-false to true
+
+  SET check to TRUE
+* Set check to false
+  Set check-false to false
+  
+  if check
+    continue
+  end-if
+*  if check = true
+  if check
+      continue
+  end-if
+  if not check
+      continue
+  end-if
+*  if check = false
+  if check-false
+      continue
+  end-if
+	evaluate true
+		when check
+		 continue
+		when trtOk
+		 continue
+*		when check = false
+        when check-false
+		 continue
+    end-evaluate
+  .

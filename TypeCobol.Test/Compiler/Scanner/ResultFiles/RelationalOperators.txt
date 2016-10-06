@@ -7,10 +7,10 @@
 [7,8:> ]<GreaterThanOperator>
 [9,9:3]<IntegerLiteral>{3}
 [10,10: ]<SpaceSeparator>
-[11,12:<=]<LessThanOrEqualOperator>
+[11,13:<= ]<LessThanOrEqualOperator>
 [14,14:4]<IntegerLiteral>{4}
 [15,15: ]<SpaceSeparator>
-[16,17:>=]<GreaterThanOrEqualOperator>
+[16,18:>= ]<GreaterThanOrEqualOperator>
 [19,19:5]<IntegerLiteral>{5}
 [20,20: ]<SpaceSeparator>
 [21,22:= ]<EqualOperator>
@@ -73,7 +73,7 @@
 [10,11:<=]<LessThanOrEqualOperator>
 [12,12:=]<EqualOperator>
 [13,13:<]<LessThanOperator>
-[14,14+:<]<LessThanOrEqualOperator>
+[14,15+:<=]<LessThanOrEqualOperator>
 [2,3]<7,Error,Tokens>Less than or equal operator <= should be followed by a space
 [6,7]<7,Error,Tokens>Less than or equal operator <= should be followed by a space
 [10,11]<7,Error,Tokens>Less than or equal operator <= should be followed by a space
@@ -91,7 +91,7 @@
 [10,11:>=]<GreaterThanOrEqualOperator>
 [12,12:=]<EqualOperator>
 [13,13:>]<GreaterThanOperator>
-[14,14+:>]<GreaterThanOrEqualOperator>
+[14,15+:>=]<GreaterThanOrEqualOperator>
 [2,3]<9,Error,Tokens>Greater than or equal operator >= should be followed by a space
 [6,7]<9,Error,Tokens>Greater than or equal operator >= should be followed by a space
 [10,11]<9,Error,Tokens>Greater than or equal operator >= should be followed by a space

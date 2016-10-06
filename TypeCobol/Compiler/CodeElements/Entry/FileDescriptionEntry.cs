@@ -16,13 +16,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// Level indicators represent the highest level of any data hierarchy with which they are associated. 
         /// FD is the file description level indicator and SD is the sort-merge file description level indicator.
         /// </summary>
-        public FileDescriptionType Type { get; set; }
+        public SyntaxProperty<FileDescriptionType> LevelIndicator { get; set; }
 
         /// <summary>
         /// A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, 
         /// and must be unique within this program.
         /// </summary>
-        public FileName FileName { get; set; }
+        public SymbolReference FileName { get; set; }
 
         /// <summary>
         /// The EXTERNAL clause specifies that a file connector is external, and permits
@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// descriptions of the file are always to the same file. In a run unit, there is only one
         /// representative of an external file.
         /// </summary>
-        public bool IsExternal { get; set; }
+        public SyntaxProperty<bool> IsExternal { get; set; }
 
         /// <summary>
         /// The GLOBAL clause specifies that the file connector named by a file-name is a
@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.CodeElements
         ///   containing program or in any program that directly or indirectly contains the
         ///   containing program.
         /// </summary>
-        public bool IsGlobal { get; set; }
+        public SyntaxProperty<bool> IsGlobal { get; set; }
 
         /// <summary>
         /// The BLOCK CONTAINS clause specifies the size of the physical records.
@@ -59,14 +59,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// specified, they represent the minimum and maximum number of
         /// bytes in the physical record, respectively.
         /// </summary>
-        public int MinBlockSize { get; set; }
+        public IntegerValue MinBlockSize { get; set; }
 
         /// <summary>
         /// When integer-1 and integer-2 are both
         /// specified, they represent the minimum and maximum number of
         /// bytes in the physical record, respectively.
         /// </summary>
-        public int MaxBlockSize { get; set; }
+        public IntegerValue MaxBlockSize { get; set; }
 
         /// <summary>
         /// CHARACTERS
@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Specifies the number of logical records contained in each physical
         /// record.
         /// </summary>
-        public BlockSizeUnit BlockSizeUnit { get; set; }
+        public SyntaxProperty<BlockSizeUnit> BlockSizeUnit { get; set; }
 
         /// <summary>
         /// When the RECORD clause is used, the record size must be specified as the number
@@ -91,7 +91,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// the same.
         /// integer-4 specifies the size of the smallest data record.
         /// </summary>
-        public int MinRecordSize { get; set; }
+        public IntegerValue MinRecordSize { get; set; }
 
         /// <summary>
         /// When the RECORD clause is used, the record size must be specified as the number
@@ -99,7 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// items contained within the record.
         /// integer-5 specifies the size of the largest data record.
         /// </summary>
-        public int MaxRecordSize { get; set; }
+        public IntegerValue MaxRecordSize { get; set; }
 
         /// <summary>
         /// If data-name-1 is specified:
@@ -130,7 +130,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// - If data-name-1 is not specified, by the value that would have been moved into
         // /  the data item referenced by data-name-1 had data-name-1 been specified
         /// </summary>
-        public SymbolReference<DataName> RecordSizeDependingOn { get; set; }
+        public SymbolReference RecordSizeDependingOn { get; set; }
 
         /// <summary>
         /// The LABEL RECORDS clause documents the presence or absence of labels.
@@ -146,18 +146,20 @@ namespace TypeCobol.Compiler.CodeElements
         /// data-name-2
         /// User labels are present in addition to standard labels. 
         /// </summary>
-        public LabelRecordType LabelRecordType { get; set; }
+        public SyntaxProperty<LabelRecordType> LabelRecordType { get; set; }
 
         /// <summary>
         ///  User labels are present in addition to standard labels. 
         ///  data-name-2 specifies the name of a user label record.
         ///  data-name-2 must appear as the subject of a record description entry associated with the file.
         /// </summary>
-        public SymbolReference<DataName> LabelRecord { get; set; }
+        public SymbolReference[] LabelRecords { get; set; }
 
-        // The VALUE OF clause describes an item in the label records associated with the file.
-        // The VALUE OF clause is syntax checked, but has no effect on the execution of the program.
-        // ===> because the the LABEL RECORDS clause is obsolete, we ignore the VALUE OF clause in this code model
+        /// <summary>
+        /// The VALUE OF clause describes an item in the label records associated with the file.
+        /// The VALUE OF clause is syntax checked, but has no effect on the execution of the program.
+        /// </summary>
+        public IDictionary<SymbolReference, Variable> ValueOfLabelRecords { get; set; }
 
         /// <summary>
         /// The DATA RECORDS clause is syntax checked but serves only as documentation
@@ -167,7 +169,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The data-name need not have an associated 01 level number record description
         /// with the same name.
         /// </summary>
-        public IList<SymbolReference<DataName>> DataRecords { get; set; }
+        public SymbolReference[] DataRecords { get; set; }
 
         /// <summary>
         /// The LINAGE clause specifies the number of lines that can be written or spaced on this logical page.
@@ -178,7 +180,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The logical page size specified in the LINAGE clause is the sum of all values
         /// specified in each phrase except the FOOTING phrase.
         /// </summary>
-        public LiteralOrSymbolReference<int, DataName> LogicalPageBodyLineCount { get; set; }
+        public IntegerVariable LogicalPageBodyLineCount { get; set; }
 
         /// <summary>
         /// WITH FOOTING AT
@@ -187,32 +189,27 @@ namespace TypeCobol.Compiler.CodeElements
         /// must be greater than zero, and not greater than the last line of the page
         /// body. The footing area extends between those two lines.
         /// </summary>
-        public LiteralOrSymbolReference<int, DataName> LogicalPageFootingLineNumber { get; set; }
+        public IntegerVariable LogicalPageFootingLineNumber { get; set; }
 
         /// <summary>
         /// LINES AT TOP
         /// integer-10 or the value of the data item in data-name-7 specifies the number
         /// of lines in the top margin of the logical page. The value can be zero.
         /// </summary>
-        public LiteralOrSymbolReference<int, DataName> LogicalPageTopMarginLineCount { get; set; }
+        public IntegerVariable LogicalPageTopMarginLineCount { get; set; }
 
         /// <summary>
         /// LINES AT BOTTOM
         /// integer-11 or the value of the data item in data-name-8 specifies the number
         /// of lines in the bottom margin of the logical page. The value can be zero.
         /// </summary>
-        public LiteralOrSymbolReference<int, DataName> LogicalPageBottomMarginLineCount { get; set; }
+        public IntegerVariable LogicalPageBottomMarginLineCount { get; set; }
 
         /// <summary>
         /// The RECORDING MODE clause specifies the format of the physical records in a QSAM file. 
-        /// Permitted values for RECORDING MODE are:
-        /// * Recording mode F (fixed)
-        /// * Recording mode V (variable)
-        /// * Recording mode U (fixed or variable)
-        /// * Recording mode S (spanned)
         /// The clause is ignored for a VSAM file.
         /// </summary>
-        public QSAMRecordingMode QSAMRecordingMode { get; set; }
+        public EnumeratedValue RecordingMode { get; set; }
 
         /// <summary>
         /// The CODE-SET clause specifies the character code used to represent data on a
@@ -235,7 +232,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The CODE-SET clause is syntax checked but has no effect on the execution of the
         /// program when specified under an SD.
         /// </summary>
-        public SymbolReference<AlphabetName> CodeSet { get; set; }
+        public SymbolReference CodeSet { get; set; }
     }
 
     /// <summary>
@@ -284,78 +281,5 @@ namespace TypeCobol.Compiler.CodeElements
         StandardLabels,
         UserLabels,
         Omitted
-    }
-
-    /// <summary>
-    /// Permitted values for RECORDING MODE are:
-    /// * Recording mode F (fixed)
-    /// All the records in a file are the same length and each is wholly contained
-    /// within one block. Blocks can contain more than one record, and there is
-    /// usually a fixed number of records for each block. In this mode, there are
-    /// no record-length or block-descriptor fields.
-    ///* Recording mode V (variable)
-    /// The records can be either fixed-length or variable-length, and each must be
-    /// wholly contained within one block. Blocks can contain more than one
-    /// record. Each data record includes a record-length field and each block
-    /// includes a block-descriptor field. These fields are not described in the
-    /// DATA DIVISION. They are each 4 bytes long and provision is
-    /// automatically made for them. These fields are not available to you.
-    /// * Recording mode U (fixed or variable)
-    /// The records can be either fixed-length or variable-length. However, there is
-    /// only one record for each block. There are no record-length or
-    /// block-descriptor fields.
-    /// You cannot use RECORDING MODE U if you are using the BLOCK
-    /// CONTAINS clause.
-    /// * Recording mode S (spanned)
-    /// The records can be either fixed-length or variable-length, and can be larger
-    /// than a block. If a record is larger than the remaining space in a block, a
-    /// segment of the record is written to fill the block. The remainder of the
-    /// record is stored in the next block (or blocks, if required). Only complete
-    /// records are made available to you. Each segment of a record in a block,
-    /// even if it is the entire record, includes a segment-descriptor field, and each
-    /// block includes a block-descriptor field. These fields are not described in the
-    /// DATA DIVISION; provision is automatically made for them. These fields
-    /// are not available to you.
-    /// When recording mode S is used, the BLOCK CONTAINS CHARACTERS clause
-    /// must be used. Recording mode S is not allowed for ASCII files.
-    /// </summary>
-    public enum QSAMRecordingMode
-    {
-        /// <summary>
-        /// The compiler determines the recording mode to be F if the largest level-01
-        /// record associated with the file is not greater than the block size specified in
-        /// the BLOCK CONTAINS clause, and you do one of the following things:
-        /// - Use the RECORD CONTAINS integer clause. (For more information, see
-        /// the Enterprise COBOL Migration Guide.)
-        /// - Omit the RECORD clause and make sure that all level-01 records
-        /// associated with the file are the same size and none contains an OCCURS
-        /// DEPENDING ON clause.
-        /// </summary>
-        F,
-        /// <summary>
-        /// The compiler determines the recording mode to be V if the largest level-01
-        /// record associated with the file is not greater than the block size specified in
-        /// the BLOCK CONTAINS clause, and you do one of the following things:
-        /// - Use the RECORD IS VARYING clause.
-        /// - Omit the RECORD clause and make sure that all level-01 records
-        ///   associated with the file are not the same size or some contain an
-        ///   OCCURS DEPENDING ON clause.
-        /// - Use the RECORD CONTAINS integer-1 TO integer-2 clause, with integer-1
-        ///   the minimum length and integer-2 the maximum length of the level-01
-        ///   records associated with the file. The two integers must be different, with
-        ///   values matching minimum and maximum length of either different
-        ///   length records or records with an OCCURS DEPENDING ON clause. 
-        /// </summary>
-        V,
-        /// <summary>
-        /// The compiler determines the recording mode to be S if the maximum block
-        /// size is smaller than the largest record size.
-        /// </summary>
-        S,
-        /// <summary>
-        /// Recording mode U is never obtained by default. The RECORDING MODE
-        /// U clause must be explicitly specified to get recording mode U.
-        /// </summary>
-        U
-    }
+    }    
 }

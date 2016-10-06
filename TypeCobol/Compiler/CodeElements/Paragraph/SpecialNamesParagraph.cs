@@ -18,24 +18,23 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SpecialNamesParagraph : CodeElement
     {
-        public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
-        {
-        }
+		public SpecialNamesParagraph() : base(CodeElementType.SpecialNamesParagraph)
+        { }
 
         /// <summary>
         /// Relates IBM-specified environment-names to user-defined mnemonic-names
         /// </summary>
-        public IDictionary<MnemonicForEnvironmentName, EnvironmentName> MnemonicsForEnvironmentNames { get; set; }
+        public IDictionary<SymbolDefinition, ExternalName> MnemonicsForEnvironmentNames { get; set; }
 
         /// <summary>
         /// Relates IBM-specified user-programmable status indicator switches to user-defined mnemonic-names
         /// </summary>
-        public IDictionary<MnemonicForUPSISwitchName, UPSISwitchName> MnemonicsForUPSISwitchNames { get; set; }
+        public IDictionary<SymbolDefinition, ExternalName> MnemonicsForUPSISwitchNames { get; set; }
 
         /// <summary>
         /// A condition-name can be associated with the on status or off status of each UPSI switch specified.
         /// </summary>
-        public IDictionary<ConditionName, Tuple<UPSISwitchName, UPSISwitchStatus>> ConditionNamesForUPSISwitchStatus { get; set; }
+        public IDictionary<SymbolDefinition, Tuple<ExternalName, UPSISwitchStatus>> ConditionNamesForUPSISwitchStatus { get; set; }
 
         /// <summary>
         /// The ALPHABET clause provides a means of relating an alphabet-name to a
@@ -43,18 +42,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// The related character code set or collating sequence can be used for alphanumeric
         /// data, but not for DBCS or national data.
         /// </summary>
-        public IDictionary<AlphabetName, CollatingSequence> AlphabetNames { get; set; }
+        public IDictionary<SymbolDefinition, CollatingSequence> AlphabetNames { get; set; }
 
         /// <summary>
         /// The SYMBOLIC CHARACTERS clause provides a means of specifying one or more symbolic characters.
         /// Each character represented is an alphanumeric character (applicable only to single-byte character).
         /// </summary>
-        public IDictionary<SymbolicCharacter, Tuple<int, AlphabetName>> SymbolicCharacters { get; set; }
+        public IDictionary<SymbolDefinition, Tuple<IntegerValue, SymbolReference>> SymbolicCharacters { get; set; }
 
         /// <summary>
         /// The CLASS clause provides a means for relating a name to the specified set of characters listed in that clause.
         /// </summary>
-        public IDictionary<CharsetClassName, IList<char>> CharsetClassNames { get; set; }
+        public IDictionary<SymbolDefinition, UserDefinedCollatingSequence> CharsetClassNames { get; set; }
 
         /// <summary>
         /// The CURRENCY SIGN clause affects numeric-edited data items whose PICTURE
@@ -69,59 +68,40 @@ namespace TypeCobol.Compiler.CodeElements
         /// The CURRENCY SIGN clause specifies a currency sign value and the currency
         /// symbol used to represent that currency sign value in a PICTURE clause.
         /// </summary>
-        public IDictionary<char, string> CurrencySymbols { get; set; }
+        public IDictionary<AlphanumericValue, CharacterValue> CurrencySymbols { get; set; }
 
         /// <summary>
         /// The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
         /// and the comma in PICTURE character-strings and in numeric literals.
         /// </summary>
-        public bool DecimalPointIsComma { get; set; }
+        public SyntaxProperty<bool> DecimalPointIsComma { get; set; }
 
         /// <summary>
         /// The XML-SCHEMA clause provides the means of relating xml-schema-name-1 to an
         /// external file identifier: a ddname or environment variable that identifies the actual
         /// external file that contains the optimized XML schema.
         /// </summary>
-        public IDictionary<XmlSchemaName, string> XmlSchemaNames { get; set; }
+        public IDictionary<SymbolDefinition, ExternalName> XmlSchemaNames { get; set; }
     }
-
-    /// <summary>
-    /// System devices or standard system actions taken by the compiler.
-    /// </summary>
-    public enum EnvironmentNameEnum
-    {
-        // System logical input unit : ACCEPT
-        SYSIN, SYSIPT,
-        // System logical output unit : DISPLAY
-        SYSOUT, SYSLIST, SYSLST,
-        // System punch device : DISPLAY
-        SYSPUNCH, SYSPCH,
-        // Console : ACCEPT and DISPLAY
-        CONSOLE,
-        // Skip to channel 1 through channel 12, respectively : WRITE ADVANCING
-        C01, C02, C03, C04, C05, C06, C07, C08, C09, C10, C11, C12,
-        // Suppress spacing : WRITE ADVANCING
-        CSP,
-        // Pocket select 1 through 5 on punch devices : WRITE ADVANCING
-        S01, S02, S03, S04, S05,
-        // Advanced Function Printing : WRITE ADVANCING
-        AFP_5A
-    }
-
-    /// <summary>
-    /// A 1-byte user-programmable status indicator (UPSI) switch.
-    /// </summary>
-    public enum UPSISwitchName
-    {
-        UPSI_0, UPSI_1, UPSI_2, UPSI_3, UPSI_4, UPSI_5, UPSI_6, UPSI_7
-    }
-
+    
     /// <summary>
     /// User-programmable status indicator
     /// </summary>
     public enum UPSISwitchStatus
     {
         On, Off
+    }
+
+    public abstract class CollatingSequence
+    {
+        public char GetLowValueChar() { return Char.MinValue; }
+
+        public char GetHighValueChar() { return Char.MaxValue; }
+    }
+
+    public class InstrinsicCollatingSequence : CollatingSequence
+    {
+        public SymbolReference IntrinsicAlphabetName { get; set; }
     }
 
     /// <summary>
@@ -187,8 +167,47 @@ namespace TypeCobol.Compiler.CodeElements
     /// of the collating sequence, the LOW-VALUE character would be
     /// D.)
     /// </summary>
-    public class CollatingSequence
+    public class UserDefinedCollatingSequence : CollatingSequence
     {
-        // to do ...
+        public CharacterSetInCollatingSequence[] CharacterSets { get; set; }
+    }
+
+    public abstract  class CharacterSetInCollatingSequence { }
+
+    // In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
+    // it may contain SEVERAL characters
+
+    public class SingleCharacterInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public CharacterInCollatingSequence Character { get; set; }
+    }
+
+    public class CharactersInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public AlphanumericValue CharactersInAlphanmericValue { get; set; }
+        
+        public IntegerValue OrdinalPositionInCollatingSequence { get; set; }
+    }
+
+    // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
+    // it can contain ONLY ONE characters
+
+    public class CharactersRangeInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public CharacterInCollatingSequence StartCharacter { get; set; }
+
+        public CharacterInCollatingSequence EndCharacter { get; set; }
+    }
+
+    public class CharactersEqualSetInCollatingSequence : CharacterSetInCollatingSequence
+    {
+        public CharacterInCollatingSequence[] EqualCharacters { get; set; }
+    }
+    
+    public class CharacterInCollatingSequence
+    {
+        public CharacterValue CharacterValue { get; set; }
+
+        public IntegerValue OrdinalPositionInCollatingSequence { get; set; }
     }
 }

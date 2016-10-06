@@ -1,5 +1,11 @@
 ﻿--- Code Elements ---
 [[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
 
-[[SentenceEnd]] [9,9+:.]<PeriodSeparator> --> [9,9+:.]<PeriodSeparator>
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [12,19:END-EXEC]<END_EXEC>
 

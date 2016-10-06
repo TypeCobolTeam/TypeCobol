@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\Common.props" />
+  <PropertyGroup>
+    <ProjectGuid>{B610D7FB-1C46-43BF-8DF3-3A59A52673C0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TypeCobol.LanguageServer</RootNamespace>
+    <AssemblyName>TypeCobol.LanguageServer</AssemblyName>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\TypeCobol.VsCodeClient\server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\TypeCobol.VsCodeClient\server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="JsonRPC\ErrorCodes.cs" />
+    <Compile Include="JsonRPC\IRPCHandler.cs" />
+    <Compile Include="JsonRPC\IRPCServer.cs" />
+    <Compile Include="JsonRPC\JsonRPCServer.cs" />
+    <Compile Include="JsonRPC\NotificationType.cs" />
+    <Compile Include="JsonRPC\RequestType.cs" />
+    <Compile Include="JsonRPC\ResponseError.cs" />
+    <Compile Include="JsonRPC\ResponseWaitState.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StdioHttp\IMessageHandler.cs" />
+    <Compile Include="StdioHttp\IMessageServer.cs" />
+    <Compile Include="StdioHttp\ServerLogLevel.cs" />
+    <Compile Include="StdioHttp\StdioHttpServer.cs" />
+    <Compile Include="TypeCobolServer.cs" />
+    <Compile Include="TypeCobolServerHost.cs" />
+    <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionContext.cs" />
+    <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionParams.cs" />
+    <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionRequest.cs" />
+    <Compile Include="VsCodeProtocol\Code Lens Provider\CodeLens.cs" />
+    <Compile Include="VsCodeProtocol\Code Lens Provider\CodeLensRequest.cs" />
+    <Compile Include="VsCodeProtocol\Code Lens Provider\CodeLensResolveRequest.cs" />
+    <Compile Include="VsCodeProtocol\Command.cs" />
+    <Compile Include="VsCodeProtocol\Completion Support\CompletionItem.cs" />
+    <Compile Include="VsCodeProtocol\Completion Support\CompletionItemKind.cs" />
+    <Compile Include="VsCodeProtocol\Completion Support\CompletionRequest.cs" />
+    <Compile Include="VsCodeProtocol\Completion Support\CompletionResolveRequest.cs" />
+    <Compile Include="VsCodeProtocol\Configuration Notification\DidChangeConfigurationNotification.cs" />
+    <Compile Include="VsCodeProtocol\Configuration Notification\DidChangeConfigurationParams.cs" />
+    <Compile Include="VsCodeProtocol\Diagnostic Notification\PublishDiagnosticsNotification.cs" />
+    <Compile Include="VsCodeProtocol\Diagnostic Notification\PublishDiagnosticsParams.cs" />
+    <Compile Include="VsCodeProtocol\Document Highlight\DocumentHighlight.cs" />
+    <Compile Include="VsCodeProtocol\Document Highlight\DocumentHighlightKind.cs" />
+    <Compile Include="VsCodeProtocol\Document Highlight\DocumentHighlightRequest.cs" />
+    <Compile Include="VsCodeProtocol\Document Symbol Provider\DocumentSymbolRequest.cs" />
+    <Compile Include="VsCodeProtocol\Document Symbol Provider\SymbolInformation.cs" />
+    <Compile Include="VsCodeProtocol\Document Symbol Provider\SymbolKind.cs" />
+    <Compile Include="VsCodeProtocol\Exit Notification\ExitNotification.cs" />
+    <Compile Include="VsCodeProtocol\File Eventing\DidChangeWatchedFilesNotification.cs" />
+    <Compile Include="VsCodeProtocol\File Eventing\DidChangeWatchedFilesParams.cs" />
+    <Compile Include="VsCodeProtocol\File Eventing\FileChangeType.cs" />
+    <Compile Include="VsCodeProtocol\File Eventing\FileEvent.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\DocumentFormattingParams.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\DocumentFormattingRequest.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\DocumentOnTypeFormattingParams.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\DocumentOnTypeFormattingRequest.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\DocumentRangeFormattingParams.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\DocumentRangeFormattingRequest.cs" />
+    <Compile Include="VsCodeProtocol\Formatting\FormattingOptions.cs" />
+    <Compile Include="VsCodeProtocol\Goto Definition\Definition.cs" />
+    <Compile Include="VsCodeProtocol\Goto Definition\DefinitionRequest.cs" />
+    <Compile Include="VsCodeProtocol\Hover Support\Hover.cs" />
+    <Compile Include="VsCodeProtocol\Hover Support\HoverRequest.cs" />
+    <Compile Include="VsCodeProtocol\Hover Support\MarkedString.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\ClientCapabilities.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\CodeLensOptions.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\CompletionOptions.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\DocumentOnTypeFormattingOptions.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\InitializeError.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\InitializeParams.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\InitializeRequest.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\InitializeResult.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\ServerCapabilities.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\SignatureHelpOptions.cs" />
+    <Compile Include="VsCodeProtocol\Initialize Method\TextDocumentSyncKind.cs" />
+    <Compile Include="VsCodeProtocol\LanguageServer.cs" />
+    <Compile Include="VsCodeProtocol\Log Notification\LogMessageNotification.cs" />
+    <Compile Include="VsCodeProtocol\Log Notification\LogMessageParams.cs" />
+    <Compile Include="VsCodeProtocol\Message Show\MessageType.cs" />
+    <Compile Include="VsCodeProtocol\Message Show\ShowMessageNotification.cs" />
+    <Compile Include="VsCodeProtocol\Message Show\ShowMessageParams.cs" />
+    <Compile Include="VsCodeProtocol\Reference Provider\ReferenceContext.cs" />
+    <Compile Include="VsCodeProtocol\Reference Provider\ReferenceParams.cs" />
+    <Compile Include="VsCodeProtocol\Reference Provider\ReferencesRequest.cs" />
+    <Compile Include="VsCodeProtocol\RemoteConsole.cs" />
+    <Compile Include="VsCodeProtocol\RemoteWindow.cs" />
+    <Compile Include="VsCodeProtocol\Rename\RenameParams.cs" />
+    <Compile Include="VsCodeProtocol\Rename\RenameRequest.cs" />
+    <Compile Include="VsCodeProtocol\Shutdow Method\ShutdownRequest.cs" />
+    <Compile Include="VsCodeProtocol\Signature Help\ParameterInformation.cs" />
+    <Compile Include="VsCodeProtocol\Signature Help\SignatureHelp.cs" />
+    <Compile Include="VsCodeProtocol\Signature Help\SignatureHelpRequest.cs" />
+    <Compile Include="VsCodeProtocol\Signature Help\SignatureInformation.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidChangeTextDocumentNotification.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidChangeTextDocumentParams.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidCloseTextDocumentNotification.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidOpenTextDocumentNotification.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidOpenTextDocumentParams.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\TextDocumentContentChangeEvent.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\Diagnostic.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\Location.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\Position.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\Range.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\TextDocumentIdentifier.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\TextDocumentPosition.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\TextEdit.cs" />
+    <Compile Include="VsCodeProtocol\Workspace Changes\TextEditChange.cs" />
+    <Compile Include="VsCodeProtocol\Workspace Changes\WorkspaceChange.cs" />
+    <Compile Include="VsCodeProtocol\Workspace Changes\WorkspaceEdit.cs" />
+    <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolParams.cs" />
+    <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolRequest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Github reference.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
+      <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
+      <Name>TypeCobol</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

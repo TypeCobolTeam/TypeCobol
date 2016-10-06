@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// have an entry in the REPOSITORY paragraph of the configuration section
         /// of the class definition.
         /// </summary>
-        public ClassName ClassName { get; set; }
+        public SymbolDefinition ClassName { get; set; }
 
         /// <summary>
         /// INHERITS
@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// than one parent. Only one class-name can be specified in the INHERITS phrase of
         /// a class definition.
         /// </summary>
-        public SymbolReference<ClassName> InheritsFromClassName { get; set; }
+        public SymbolReference InheritsFrom { get; set; }
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             StringBuilder sb = new StringBuilder(base.ToString());
             sb.AppendLine("- ClassName = " + ClassName);
-            sb.AppendLine("- InheritsFromClassName = " + InheritsFromClassName);
+            sb.AppendLine("- InheritsFromClassName = " + InheritsFrom);
             if(AuthoringProperties != null)
             {
                 sb.Append(AuthoringProperties);

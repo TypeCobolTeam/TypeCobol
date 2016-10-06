@@ -1,0 +1,11 @@
+﻿--- Code Elements ---
+[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
+- ProgramName = TypeCobol
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
+
+[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
+

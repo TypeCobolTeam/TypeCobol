@@ -2,7 +2,7 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class RewriteStatementEnd : CodeElement
+    public class RewriteStatementEnd : CodeElementEnd
     {
         public RewriteStatementEnd() : base(CodeElementType.RewriteStatementEnd)
         { }

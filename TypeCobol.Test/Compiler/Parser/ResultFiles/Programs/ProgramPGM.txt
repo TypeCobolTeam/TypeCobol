@@ -1,0 +1,27 @@
+﻿--- Program ---
+PROGRAM: Simple common:False initial:True recursive:False
+ author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- DATA --------
+  str:Alphanumeric
+  str:Alphanumeric
+  group:?
+  num:Numeric
+  subgroup:?
+  vrai:Numeric
+  faux:Numeric
+  subgroup2:?
+  x:Numeric
+  x:Alphabetic
+  y:Numeric
+  E1:?
+  E2:Alphanumeric
+  E3:Alphanumeric
+  A:BOOL
+  B:BOOL
+  sqlcode:NumericEdited
+  toto:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

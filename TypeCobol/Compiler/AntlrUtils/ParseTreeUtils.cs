@@ -31,7 +31,12 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         public static Token GetTokenFromTerminalNode(ITerminalNode terminalNode)
         {
-            return (Token)terminalNode.Symbol;
+			var ce = terminalNode.Symbol as CodeElements.CodeElement;
+			if (ce != null) {
+				if (ce.ConsumedTokens.Count < 1) return null;
+				return ce.ConsumedTokens[0];
+			}
+			return (Token)terminalNode.Symbol;
         }
 
         public static Token GetFirstToken(IParseTree node)
@@ -104,7 +109,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                     Token integerLiteralToken = GetTokenFromTerminalNode(terminalNode);
                     if (integerLiteralToken.TokenType == TokenType.IntegerLiteral)
                     {
-                        return ((IntegerLiteralValue)integerLiteralToken.LiteralValue).Number;
+                        return ((IntegerLiteralTokenValue)integerLiteralToken.LiteralValue).Number;
                     }
                 }
             }
@@ -121,15 +126,15 @@ namespace TypeCobol.Compiler.AntlrUtils
                     Token numericLiteralToken = GetTokenFromTerminalNode(terminalNode);
                     if (numericLiteralToken.TokenType == TokenType.IntegerLiteral)
                     {
-                        return ((IntegerLiteralValue)numericLiteralToken.LiteralValue).Number;
+                        return ((IntegerLiteralTokenValue)numericLiteralToken.LiteralValue).Number;
                     }
                     else if (numericLiteralToken.TokenType == TokenType.DecimalLiteral)
                     {
-                        return ((DecimalLiteralValue)numericLiteralToken.LiteralValue).Number;
+                        return ((DecimalLiteralTokenValue)numericLiteralToken.LiteralValue).Number;
                     }
                     else if (numericLiteralToken.TokenType == TokenType.FloatingPointLiteral)
                     {
-                        return ((FloatingPointLiteralValue)numericLiteralToken.LiteralValue).Number;
+                        return ((FloatingPointLiteralTokenValue)numericLiteralToken.LiteralValue).Number;
                     }
                 }
             }
@@ -146,29 +151,12 @@ namespace TypeCobol.Compiler.AntlrUtils
                     Token alphaNumericLiteralToken = GetTokenFromTerminalNode(terminalNode);
                     if (alphaNumericLiteralToken.TokenFamily == TokenFamily.AlphanumericLiteral)
                     {
-                        return ((AlphanumericLiteralValue)alphaNumericLiteralToken.LiteralValue).Text;
+                        return ((AlphanumericLiteralTokenValue)alphaNumericLiteralToken.LiteralValue).Text;
                     }
                 }
             }
             return null;
         }
 
-        // --- Specific utility methods for the Compiler Directives parser --
-
-        public static void TryGetUserDefinedWord(ITerminalNode terminalNode, ref string targetProperty)
-        {
-            if (terminalNode != null && targetProperty == null)
-            {
-                targetProperty = terminalNode.GetText();
-            }
-        }
-
-        public static void TryGetAlphanumericLiteralValue(ITerminalNode terminalNode, ref string targetProperty)
-        {
-            if (terminalNode != null && targetProperty == null)
-            {
-                targetProperty = ((AlphanumericLiteralValue)((Token)terminalNode.Symbol).LiteralValue).Text;
-            }
-        }
-    }
+	}
 }

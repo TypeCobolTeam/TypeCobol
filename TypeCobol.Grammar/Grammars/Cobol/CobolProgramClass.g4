@@ -53,6 +53,9 @@ tokens
     // -- Data Division --
     FileDescriptionEntry,
     DataDescriptionEntry,
+    DataRedefinesEntry,
+    DataRenamesEntry,
+    DataConditionEntry,
     // -- InputOutput Section --
     FileControlEntry,
     IOControlEntry,
@@ -129,9 +132,9 @@ tokens
     OnSizeErrorCondition,
     NotOnSizeErrorCondition,
     ElseCondition,
-    WhenEvaluateCondition,
+    WhenCondition,
     WhenOtherCondition,
-    WhenConditionalExpression,
+    WhenSearchCondition,
 
     // Statement ends
 
@@ -154,7 +157,11 @@ tokens
     SubtractStatementEnd,
     UnstringStatementEnd,
     WriteStatementEnd,
-    XmlStatementEnd
+    XmlStatementEnd,
+//	[TYPECOBOL]
+	FunctionDeclarationHeader,
+	FunctionDeclarationEnd,
+//	[/TYPECOBOL]
 }
 
 // --- Starting parser rule for PHASE 2 of parsing ---
@@ -165,7 +172,7 @@ tokens
 // compile.
 
 cobolCompilationUnit : 
-                         (cobolProgram | cobolClass) EOF;
+	(cobolProgram | cobolClass) EOF;
 
 // --- COBOL PROGRAM ---
 
@@ -192,24 +199,29 @@ cobolCompilationUnit :
 // p84 : Format: COBOL source program
 
 cobolProgram:
-                ProgramIdentification
-               (EnvironmentDivisionHeader 
-                    configurationSection?
-                    inputOutputSection?
-               )?
-               (DataDivisionHeader 
-                    fileSection?
-                    workingStorageSection?
-                    localStorageSection?
-                    linkageSection?
-               )?
-               (ProcedureDivisionHeader 
-                    declaratives?
-                    section*
-               )?
-                cobolProgram* 
-                ProgramEnd?
-                ;
+	ProgramIdentification
+	environmentDivision?
+	dataDivision?
+	procedureDivision?
+		nestedProgram=cobolProgram*
+	ProgramEnd?;
+
+environmentDivision:
+	EnvironmentDivisionHeader  
+	configurationSection? 
+	inputOutputSection?;
+
+dataDivision:
+	DataDivisionHeader 
+	fileSection? 
+	workingStorageSection? 
+	localStorageSection? 
+	linkageSection?;
+
+procedureDivision:
+	ProcedureDivisionHeader 
+	declaratives? 
+	section*;
 
 // p85 : An end program marker separates each program in the sequence of programs. 
 //       program-name must be identical to a program-name declared in a preceding program-ID paragraph.
@@ -228,17 +240,6 @@ cobolProgram:
 // nested) within another program and can be called from siblings of the
 // common program and programs contained within them. The COMMON
 // clause can be used only in nested programs.
-
-// p102 : 
-
-//nestedSourceProgram :
-//                       programIdentification
-//                       (environmentDivisionHeader environmentDivisionContent)?
-//                       (dataDivisionHeader dataDivisionContent)?
-//                       (procedureDivisionHeader procedureDivisionContent?)?
-//                       (nestedSourceProgram)*  
-//                       programEnd
-//                   ;
 
 // --- COBOL CLASS ---
 
@@ -277,26 +278,26 @@ cobolProgram:
 // must be the first paragraph in a class IDENTIFICATION DIVISION.
 
 cobolClass:
-              ClassIdentification
-              EnvironmentDivisionHeader
-                  configurationSection?
-             (FactoryIdentification
-                 (DataDivisionHeader 
-                      workingStorageSection?
-                 )?
-                 (ProcedureDivisionHeader 
-                      methodDefinition*
-                 )?
-              FactoryEnd)?
-             (ObjectIdentification
-                 (DataDivisionHeader 
-                      workingStorageSection?
-                 )?
-                 (ProcedureDivisionHeader 
-                      methodDefinition*
-                 )?             
-              ObjectEnd)?
-              ClassEnd?;
+	ClassIdentification
+	EnvironmentDivisionHeader
+		configurationSection?
+	(FactoryIdentification
+		(DataDivisionHeader 
+		 workingStorageSection?
+		)?
+		(ProcedureDivisionHeader 
+		 methodDefinition*
+		)?
+	FactoryEnd)?
+	(ObjectIdentification
+		(DataDivisionHeader 
+		 workingStorageSection?
+		)?
+		(ProcedureDivisionHeader 
+		 methodDefinition*
+		)?             
+	ObjectEnd)?
+	ClassEnd?;
 
 // p93 : A COBOL method definition describes a method. 
 //       You can specify method definitions only within the factory paragraph and the object paragraph of a class definition.
@@ -346,22 +347,22 @@ cobolClass:
 
 // p93 : Format: method definition 
 
-methodDefinition : 
-                     MethodIdentification
-                    (EnvironmentDivisionHeader
-                         inputOutputSection?
-                    )?
-                    (DataDivisionHeader 
-                         fileSection?
-                         workingStorageSection?
-                         localStorageSection?
-                         linkageSection?
-                    )?
-                    (ProcedureDivisionHeader 
-                         declaratives?
-                         section*
-                    )?
-                     MethodEnd;
+methodDefinition: 
+	MethodIdentification
+	(EnvironmentDivisionHeader
+		inputOutputSection?
+	)?
+	(DataDivisionHeader 
+		fileSection?
+		workingStorageSection?
+		localStorageSection?
+		linkageSection?
+	)?
+	(ProcedureDivisionHeader 
+		declaratives?
+		section*
+	)?
+	MethodEnd;
 
 // --- ENVIRONMENT DIVISION ---
 
@@ -405,18 +406,14 @@ methodDefinition :
 
 // p109 : CONFIGURATION SECTION Format:
 
-configurationSection : 
-                     ConfigurationSectionHeader
-                     SourceComputerParagraph?
-                     ObjectComputerParagraph?
-                     SpecialNamesParagraph?
-                     RepositoryParagraph?;
+configurationSection: ConfigurationSectionHeader configurationParagraph*;
+configurationParagraph: SourceComputerParagraph | ObjectComputerParagraph | SpecialNamesParagraph | RepositoryParagraph;
 
 // p125: The input-output section of the ENVIRONMENT DIVISION contains
 // FILE-CONTROL paragraph and I-O-CONTROL paragraph.
 // The exact contents of the input-output section depend on the file organization and
-// access methods used. See ìORGANIZATION clauseî on page 135 and ìACCESS
-// MODE clauseî on page 138.
+// access methods used. See ‚ÄúORGANIZATION clause‚Äù on page 135 and ‚ÄúACCESS
+// MODE clause‚Äù on page 138.
 
 // p125: 
 // Program input-output section
@@ -429,9 +426,9 @@ configurationSection :
 // p125: Format: input-output section
 
 inputOutputSection: 
-                  InputOutputSectionHeader
-                  fileControlParagraph
-                  ioControlParagraph?;
+	InputOutputSectionHeader
+	fileControlParagraph?
+	ioControlParagraph?;
 
 // p125: FILE-CONTROL
 // The keyword FILE-CONTROL identifies the file-control paragraph. This
@@ -452,9 +449,9 @@ inputOutputSection:
 // by a separator period. It must contain one and only one entry for each file
 // described in an FD or SD entry in the DATA DIVISION.
 
-fileControlParagraph :
-                         FileControlParagraphHeader 
-                         FileControlEntry*;
+fileControlParagraph:
+	FileControlParagraphHeader 
+	FileControlEntry*;
 
 // p125 : I-O-CONTROL
 // The keyword I-O-CONTROL identifies the I-O-CONTROL paragraph.
@@ -470,9 +467,9 @@ fileControlParagraph :
 // The order in which I-O-CONTROL paragraph clauses are written is not significant. 
 // !! The I-O-CONTROL paragraph ends with a separator period.
 
-ioControlParagraph : 
-                       IOControlParagraphHeader
-                       (IOControlEntry+ SentenceEnd)?;
+ioControlParagraph: 
+	IOControlParagraphHeader
+	(IOControlEntry+ SentenceEnd)?;
 
 // --- DATA DIVISION ---
 
@@ -495,18 +492,17 @@ ioControlParagraph :
 // The FILE SECTION must begin with the header FILE SECTION, followed by a separator period.
 // file-description-entry 
 // Represents the highest level of organization in the FILE SECTION. It provides information about the physical structure and identification of a file, and gives the record-names associated with that file. 
-// For the format and the clauses required in a file description entry, see Chapter 17, ìDATA DIVISION--file description entries,î on page 169. 
+// For the format and the clauses required in a file description entry, see Chapter 17, ‚ÄúDATA DIVISION--file description entries,‚Äù on page 169. 
 // record-description-entry 
-// A set of data description entries (described in Chapter 18, ìDATA DIVISION--data description entry,î on page 185) that describe the particular records contained within a particular file. 
+// A set of data description entries (described in Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185) that describe the particular records contained within a particular file. 
 // A record in the FILE SECTION must be described as an alphanumeric group item, a national group item, or an elementary data item of class alphabetic, alphanumeric, DBCS, national, or numeric.
 // More than one record description entry can be specified; each is an alternative description of the same record storage area.
 // Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
 // A method FILE SECTION can define external files only. A single run-unit-level file connector is shared by all programs and methods that contain a declaration of a given external file.
 
-fileSection :
-                FileSectionHeader 
-                (FileDescriptionEntry 
-                 DataDescriptionEntry+)*;
+fileSection:
+	FileSectionHeader 
+	(FileDescriptionEntry dataDefinitionEntry+)*;
 
 // p155: The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
 // The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
@@ -517,15 +513,15 @@ fileSection :
 // p156: The WORKING-STORAGE SECTION contains record description entries and data description entries for independent data items, called data item description entries. 
 // record-description-entry 
 // Data entries in the WORKING-STORAGE SECTION that bear a definite hierarchic relationship to one another must be grouped into records structured by level number. 
-// See Chapter 18, ìDATA DIVISION--data description entry,î on page 185 for more information. 
+// See Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185 for more information. 
 // data-item-description-entry 
 // Independent items in the WORKING-STORAGE SECTION that bear no hierarchic relationship to one another need not be grouped into records provided that they do not need to be further subdivided. Instead, they are classified and defined as independent elementary items. 
 // Each is defined in a separate data-item description entry that begins with either the level number 77 or 01. 
-// See Chapter 18, ìDATA DIVISION--data description entry,î on page 185 for more information.
+// See Chapter 18, ‚ÄúDATA DIVISION--data description entry,‚Äù on page 185 for more information.
 
-workingStorageSection :
-                          WorkingStorageSectionHeader 
-                          DataDescriptionEntry*;
+workingStorageSection:
+	WorkingStorageSectionHeader 
+	(dataDefinitionEntry | ExecStatement SentenceEnd?)*;
 
 // p156: The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.
 // On each invocation, data items defined in the LOCAL-STORAGE SECTION are reallocated. Each data item that has a VALUE clause is initialized to the value specified in that clause.
@@ -538,8 +534,8 @@ workingStorageSection :
 // Method LOCAL-STORAGE content is the same as program LOCAL-STORAGE content except that the GLOBAL clause has no effect (because methods cannot be nested).
 
 localStorageSection:
-                        LocalStorageSectionHeader 
-                        DataDescriptionEntry*;
+	LocalStorageSectionHeader 
+	(dataDefinitionEntry | ExecStatement SentenceEnd?)*;
 
 // p157: The LINKAGE SECTION describes data made available from another program or method. 
 // Record description entries and data item description entries in the LINKAGE SECTION provide names and descriptions, but storage within the program or method is not reserved because the data area exists elsewhere.
@@ -564,8 +560,16 @@ localStorageSection:
 //   any of the above conditions.
 
 linkageSection:
-                   LinkageSectionHeader 
-                   DataDescriptionEntry*;
+	LinkageSectionHeader 
+	dataDefinitionEntry*;
+
+// Four distinct types of data definition entries :
+
+dataDefinitionEntry:
+	  DataDescriptionEntry
+	| DataRedefinesEntry
+	| DataRenamesEntry
+	| DataConditionEntry;
 
 // --- PROCEDURE DIVISION ---
 
@@ -588,8 +592,8 @@ linkageSection:
 // be followed by a separator period, and must be followed by a USE statement
 // followed by a separator period. No other text can appear on the same line.
 // The USE statement has three formats, discussed in these sections:
-// - ìEXCEPTION/ERROR declarativeî on page 547
-// - ìDEBUGGING declarativeî on page 549
+// - ‚ÄúEXCEPTION/ERROR declarative‚Äù on page 547
+// - ‚ÄúDEBUGGING declarative‚Äù on page 549
 // The USE statement itself is never executed; instead, the USE statement defines the
 // conditions that execute the succeeding procedural paragraphs, which specify the
 // actions to be taken. After the procedure is executed, control is returned to the
@@ -607,11 +611,11 @@ linkageSection:
 // executed.
 
 declaratives:
-                DeclarativesHeader
-                   (SectionHeader UseStatement
-                        paragraph* 
-                   )+
-                DeclarativesEnd;
+	DeclarativesHeader
+	(SectionHeader UseStatement
+		paragraph* 
+	)+
+	DeclarativesEnd;
 
 // p252: Section
 // A section-header optionally followed by one or more paragraphs.
@@ -625,8 +629,8 @@ declaratives:
 // keywords END DECLARATIVES.
 
 section:
-           SectionHeader?
-           paragraph+;
+	((SectionHeader | ParagraphHeader) paragraph*)
+	| sentence+;
 
 // p253: Paragraph
 // A paragraph-name followed by a separator period, optionally followed by
@@ -641,17 +645,14 @@ section:
 // paragraphs are so contained.
 
 paragraph:
-            (ParagraphHeader
-                sentence*
-            ) |
-                sentence+;
+	(ParagraphHeader | sentence)
+	sentence*;
 
 // Sentence
 // One or more statements terminated by a separator period.
 
-sentence : 
-             statement+ 
-             SentenceEnd;
+sentence:
+	(statement* SentenceEnd) | ExecStatement;
 
 // p253: Statement
 // A syntactically valid combination of identifiers and symbols (literals,
@@ -678,8 +679,8 @@ sentence :
 // A series of imperative statements can be specified wherever an imperative
 // statement is allowed. A conditional statement that is terminated by its explicit
 // scope terminator is also classified as an imperative statement.
-// For more information about explicit scope terminator, see ìDelimited scope
-// statementsî on page 280).
+// For more information about explicit scope terminator, see ‚ÄúDelimited scope
+// statements‚Äù on page 280).
 // The following lists contain the COBOL imperative statements.
 // Arithmetic
 // - ADD 1
@@ -738,52 +739,11 @@ sentence :
 // Table-handling
 // - SET
 
-imperativeStatement:
-        (AcceptStatement      |
-         AddStatement         |
-         AlterStatement       |
-         CallStatement        |
-         CancelStatement      |
-         CloseStatement       |
-         ComputeStatement     |
-         DeleteStatement      |
-         DisplayStatement     |
-         DivideStatement      |
-         ExecStatement        |
-         ExitStatement        |
-         ExitMethodStatement  |
-         ExitProgramStatement |
-         GobackStatement      |
-         GotoStatement        |
-         InitializeStatement  |
-         InspectStatement     |
-         InvokeStatement      |
-         MergeStatement       |
-         MoveStatement        |
-         MultiplyStatement    |
-         OpenStatement        |
-         PerformProcedureStatement) |
-         performStatementWithBody |
-        (ReadStatement        |
-         ReleaseStatement     |
-         ReturnStatement      |
-         RewriteStatement     |
-         SetStatement         |
-         SortStatement        |
-         StartStatement       |
-         StopStatement        |
-         StringStatement      |
-         SubtractStatement    |
-         UnstringStatement    |
-         WriteStatement       |
-         XmlGenerateStatement |
-         XmlParseStatement);
-   
 // p278: Conditional statements
 // A conditional statement specifies that the truth value of a condition is to be
 // determined and that the subsequent action of the object program is dependent on
 // this truth value.
-// For more information about conditional expressions, see ìConditional expressionsî
+// For more information about conditional expressions, see ‚ÄúConditional expressions‚Äù
 // on page 256.)
 // The following lists contain COBOL statements that become conditional when a
 // condition (for example, ON SIZE ERROR or ON OVERFLOW) is included and
@@ -883,183 +843,226 @@ imperativeStatement:
 // statements. You should not nest conditional statements.
 
 statement:
-         AcceptStatement      |
-         addStatementConditional |
-         AlterStatement       |
-         callStatementConditional |
-         CancelStatement      |
-         CloseStatement       |
-         computeStatementConditional |
-         ContinueStatement    |
-         deleteStatementConditional |
-         DisplayStatement     |
-         divideStatementConditional |
-         EntryStatement       |
-         evaluateStatementWithBody |
-         ExecStatement        |
-         ExitStatement        |
-         ExitMethodStatement  |
-         ExitProgramStatement |
-         GobackStatement      |
-         GotoStatement        |
-         ifStatementWithBody  |
-         InitializeStatement  |
-         InspectStatement     |
-         invokeStatementConditional |
-         MergeStatement       |
-         MoveStatement        |
-         multiplyStatementConditional |
-         OpenStatement        |
-         performStatementWithBody |
-         PerformProcedureStatement |
-         readStatementConditional |
-         ReleaseStatement     |
-         returnStatementConditional |
-         rewriteStatementConditional |
-         searchStatementWithBody |
-         SetStatement         |
-         SortStatement        |
-         startStatementConditional |
-         StopStatement        |
-         stringStatementConditional |
-         subtractStatementConditional |
-         unstringStatementConditional |
-         writeStatementConditional |
-         xmlGenerateStatementConditional |
-         xmlParseStatementConditional;
-
-
-// -- Conditional statements --
 // (see the documentation for these statements in CobolCodeElements.g4)
+             
+// Statements without optional body
+	( ContinueStatement
+	| EntryStatement
+// -- arithmetic --
+	| AddStatement
+	| ComputeStatement
+	| DivideStatement
+	| MultiplyStatement
+	| SubtractStatement
+// -- data movement --
+	| AcceptStatement // (DATE, DAY, DAY-OF-WEEK, TIME)
+	| InitializeStatement
+	| InspectStatement
+	| MoveStatement
+	| SetStatement // "table-handling" too
+	| StringStatement
+	| UnstringStatement
+	| XmlGenerateStatement
+	| XmlParseStatement
+// -- ending --
+	| StopStatement // RUN
+	| ExitMethodStatement
+	| ExitProgramStatement
+	| GobackStatement
+// -- input-output --
+//	| AcceptStatement // identifier
+	| CloseStatement
+	| DeleteStatement
+	| DisplayStatement
+	| OpenStatement
+	| ReadStatement
+	| RewriteStatement
+	| StartStatement
+//	StopStatement // literal
+	| WriteStatement
+// -- ordering --
+	| MergeStatement
+	| ReleaseStatement
+	| ReturnStatement
+	| SortStatement
+// -- procedure-branching --
+	| AlterStatement
+	| ExitStatement
+	| GotoStatement
+	| PerformProcedureStatement
+// -- program or method linkage --
+	| CallStatement
+	| CancelStatement
+	| InvokeStatement
+// -- DB2 & CICS integration --
+	| ExecStatement)
+      
+// Statements with optional body      
+	| evaluateStatementWithBody
+	| ifStatementWithBody
+	| searchStatementWithBody
+// -- arithmetic --
+	| addStatementConditional
+	| computeStatementConditional
+	| divideStatementConditional
+	| multiplyStatementConditional
+	| subtractStatementConditional
+// -- data movement --
+	| stringStatementConditional
+	| unstringStatementConditional
+	| xmlGenerateStatementConditional
+	| xmlParseStatementConditional
+// -- input-output --
+	| deleteStatementConditional
+	| readStatementConditional
+	| rewriteStatementConditional
+	| startStatementConditional
+	| writeStatementConditional
+// -- ordering --
+	| returnStatementConditional
+// -- procedure-branching --
+	| performStatementWithBody
+// -- program or method linkage --
+	| callStatementConditional
+	| invokeStatementConditional
+	;
+
+// Statements with optional body  
 
 addStatementConditional:
-                           AddStatement
-                           (OnSizeErrorCondition imperativeStatement+)?
-                           (NotOnSizeErrorCondition imperativeStatement+)?
-                           AddStatementEnd?;
+	AddStatement
+		(onSizeError | noSizeError)*
+	AddStatementEnd?;
 
 callStatementConditional:
-                            CallStatement
-                            (((OnExceptionCondition imperativeStatement+)?
-                            (NotOnExceptionCondition imperativeStatement+)?) |
-                            (OnOverflowCondition imperativeStatement+)?)
-                            CallStatementEnd;
+	CallStatement
+		(onException | noException | onOverflow)*
+	CallStatementEnd?;
 
 computeStatementConditional:
-                               ComputeStatement
-                               (OnSizeErrorCondition imperativeStatement+)?
-                               (NotOnSizeErrorCondition imperativeStatement+)?
-                               ComputeStatementEnd?;
+	ComputeStatement
+		(onSizeError | noSizeError)*
+	ComputeStatementEnd?;
 
 deleteStatementConditional:
-                              DeleteStatement
-                              (InvalidKeyCondition imperativeStatement+)?
-                              (NotInvalidKeyCondition imperativeStatement+)?
-                              DeleteStatementEnd?;
+	DeleteStatement
+		(onInvalidKey | noInvalidKey)*
+	DeleteStatementEnd?;
 
 divideStatementConditional:
-                              DivideStatement
-                              (OnSizeErrorCondition imperativeStatement+)?
-                              (NotOnSizeErrorCondition imperativeStatement+)?
-                              DivideStatementEnd?;
+	DivideStatement
+		(onSizeError | noSizeError)*
+	DivideStatementEnd?;
 
-evaluateStatementWithBody:
-                     EvaluateStatement
-                     ((WhenConditionalExpression | WhenEvaluateCondition)+ imperativeStatement+)+
-                     (WhenOtherCondition imperativeStatement+)?
-                     EvaluateStatementEnd?;
+evaluateStatementWithBody:                             
+	EvaluateStatement
+		whenConditionClause*
+		whenOtherClause?
+	EvaluateStatementEnd?;
+
+whenConditionClause: whenEvaluateCondition+ statement+;
+// whenSearchCondition must be declared BEFORE whenCondition,
+// because the whenCondition is a general case of the whenSearchCondition
+// and is declared after it in CodeElements grammar to avoid ambiguity,
+// we'll sometimes get the former instead of the latter ;
+// so, we have to convert it in C#  [issue #285]
+whenEvaluateCondition: (WhenSearchCondition | WhenCondition);
+whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:
-                IfStatement
-                    (statement+ | NextSentenceStatement)
-               (ElseCondition 
-                    (statement+ | NextSentenceStatement)
-               )?
-               IfStatementEnd?;
+	IfStatement
+		(statement+ | NextSentenceStatement)
+	elseClause?
+	IfStatementEnd?;
+
+elseClause: ElseCondition (statement+ | NextSentenceStatement);
 
 invokeStatementConditional:
-                              InvokeStatement
-                              (OnExceptionCondition imperativeStatement+)?
-                              (NotOnExceptionCondition imperativeStatement+)?
-                              InvokeStatementEnd?;
+	InvokeStatement
+		(onException | noException)*
+	InvokeStatementEnd?;
 
 multiplyStatementConditional:
-                                MultiplyStatement
-                                (OnSizeErrorCondition imperativeStatement+)?
-                                (NotOnSizeErrorCondition imperativeStatement+)?
-                                MultiplyStatementEnd?;
+	MultiplyStatement
+		(onSizeError | noSizeError)*
+	MultiplyStatementEnd?;
 
-performStatementWithBody:
-                            PerformStatement
-                            imperativeStatement* 
-                            PerformStatementEnd;
+performStatementWithBody:			
+	PerformStatement
+		statement*
+	PerformStatementEnd?;
 
 readStatementConditional:
-                            ReadStatement
-                            (AtEndCondition imperativeStatement+)?
-                            (NotAtEndCondition imperativeStatement+)?                 
-                            (InvalidKeyCondition imperativeStatement+)?
-                            (NotInvalidKeyCondition imperativeStatement+)?
-                            ReadStatementEnd?;
+	ReadStatement
+		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
+	ReadStatementEnd?;
 
 returnStatementConditional:
-                              ReturnStatement
-                              (AtEndCondition imperativeStatement+)?
-                              (NotAtEndCondition imperativeStatement+)?
-                              ReturnStatementEnd?;
+	ReturnStatement
+		(onAtEnd | noAtEnd)*
+	ReturnStatementEnd?;
 
 rewriteStatementConditional:
-                             RewriteStatement
-                             (InvalidKeyCondition imperativeStatement+)?
-                             (NotInvalidKeyCondition imperativeStatement+)?
-                             RewriteStatementEnd?;
+	RewriteStatement
+		(onInvalidKey | noInvalidKey)*
+	RewriteStatementEnd?;
 
 searchStatementWithBody:
-                   SearchStatement
-                   (AtEndCondition imperativeStatement+)?
-                   (WhenConditionalExpression (imperativeStatement+ | NextSentenceStatement))+
-                   SearchStatementEnd?;
+	SearchStatement
+		onAtEnd?
+		whenSearchConditionClause+
+	SearchStatementEnd?;
+
+whenSearchConditionClause: WhenSearchCondition (statement+ | NextSentenceStatement);
 
 startStatementConditional:
-                             StartStatement
-                             (InvalidKeyCondition imperativeStatement+)?
-                             (NotInvalidKeyCondition imperativeStatement+)?
-                             StartStatementEnd?;
+	StartStatement
+		(onInvalidKey | noInvalidKey)*
+	StartStatementEnd?;
 
 stringStatementConditional:
-                              StringStatement
-                              (OnOverflowCondition imperativeStatement+)?
-                              (NotOnOverflowCondition imperativeStatement+)?
-                              StringStatementEnd?;
+	StringStatement
+		(onOverflow | noOverflow)*
+	StringStatementEnd?;
 
 subtractStatementConditional:
-                                SubtractStatement
-                                (OnSizeErrorCondition imperativeStatement+)?
-                                (NotOnSizeErrorCondition imperativeStatement+)?
-                                SubtractStatementEnd?;
+	SubtractStatement
+		(onSizeError | noSizeError)*
+	SubtractStatementEnd?;
 
 unstringStatementConditional:
-                                UnstringStatement
-                                (OnOverflowCondition imperativeStatement+)?
-                                (NotOnOverflowCondition imperativeStatement+)?
-                                UnstringStatementEnd?;
+	UnstringStatement
+		(onOverflow | noOverflow)*
+	UnstringStatementEnd?;
 
 writeStatementConditional:
-                             WriteStatement
-                             (AtEndOfPageCondition imperativeStatement+)? 
-                             (NotAtEndOfPageCondition imperativeStatement+)? 
-                             (InvalidKeyCondition imperativeStatement+)?
-                             (NotInvalidKeyCondition imperativeStatement+)? 
-                             WriteStatementEnd?;
+	WriteStatement
+		(onAtEnd | noAtEnd | onInvalidKey | noInvalidKey)*
+	WriteStatementEnd?;
 
 xmlGenerateStatementConditional:
-                                   XmlGenerateStatement
-                                   (OnExceptionCondition imperativeStatement+)?
-                                   (NotOnExceptionCondition imperativeStatement+)?
-                                   XmlStatementEnd?;
+	XmlGenerateStatement
+		(onException | noException)*
+	XmlStatementEnd?;
 
 xmlParseStatementConditional:
-                                XmlParseStatement
-                                (OnExceptionCondition imperativeStatement+)?
-                                (NotOnExceptionCondition imperativeStatement+)?
-                                XmlStatementEnd?;
+	XmlParseStatement
+		(onException | noException)*
+	XmlStatementEnd?;
+
+// Conditional execution of statements
+
+onAtEnd: AtEndCondition statement+;
+noAtEnd: NotAtEndCondition statement+;
+
+onException: OnExceptionCondition statement+;
+noException: NotOnExceptionCondition statement+;
+
+onInvalidKey: InvalidKeyCondition statement+;
+noInvalidKey: NotInvalidKeyCondition statement+;
+
+onOverflow: OnOverflowCondition statement+;
+noOverflow: NotOnOverflowCondition statement+;
+
+onSizeError: OnSizeErrorCondition statement+;
+noSizeError: NotOnSizeErrorCondition statement+;

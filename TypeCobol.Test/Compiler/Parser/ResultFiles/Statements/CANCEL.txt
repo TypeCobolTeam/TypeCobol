@@ -1,0 +1,11 @@
+﻿--- Diagnostics ---
+[8,9]<27,Error,Syntax>Syntax error : no viable alternative at input '42' (RuleStack=codeElement>cancelStatement>programNameVariable, OffendingSymbol=[8,9:42]<IntegerLiteral>{42} on line 4)
+--- Code Elements ---
+[[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [8,8:x]<UserDefinedWord>
+
+[[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [8,13+:"DONE"]<AlphanumericLiteral>(",Y,Y){DONE}
+
+[[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [16,21+:"DONE"]<AlphanumericLiteral>(",Y,Y){DONE}
+
+[[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [14,19:101010]<IntegerLiteral>{101010}
+

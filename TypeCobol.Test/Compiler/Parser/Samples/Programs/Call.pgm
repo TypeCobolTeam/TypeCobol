@@ -1,0 +1,10 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. call-program.
+  
+PROCEDURE DIVISION.
+
+*  // Non-mandatory END-CALL
+* ////////////////////////////
+CALL 'something' USING x y z
+CONTINUE
+.

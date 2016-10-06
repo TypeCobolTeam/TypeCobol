@@ -3,14 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Scanner
 {
     /// <summary>
     /// Internal Scanner state propagated from one line to the other when compiling a complete source file
     /// </summary>
-    internal class MultilineScanState
+    public class MultilineScanState
     {
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
+        /// <summary>
+        /// True if we detect in the comments lines stream that we are inside a REMARKS compiler directive.
+        /// </summary>
+        public bool InsideRemarksDirective { get; set; }
+        /// <summary>True if we are inside a COPY=(..) of a REMARKS compiler directive.</summary>
+        public bool InsideRemarksParentheses { get; set; }
+
+        /// <summary>
+        /// Text names variations declared in REMARS compiler directives.
+        /// </summary>
+        public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; private set; }
+
+        /// <summary>
+        /// Register a new symbolic character name found in the source file
+        /// </summary>
+        public void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
+        {
+            if (CopyTextNamesVariations == null)
+            {
+                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
+            }
+            else
+            {
+                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
+            }
+            CopyTextNamesVariations.AddRange(textNamesVariations);
+        }
+
+#endif
+
         /// <summary>
         /// True if we know from the keyword stream that we are inside a DATA DIVISION.
         /// Used by the Scanner to disambiguate similar keywords based on their context of appearance. 
@@ -30,7 +63,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
         /// </summary>
-        public Encoding EncodingForHexadecimalAlphanumericLiterals { get; private set; }
+        public Encoding EncodingForAlphanumericLiterals { get; private set; }
 
         /// <summary>
         /// Symbolic character names previously defined in the source file
@@ -55,27 +88,27 @@ namespace TypeCobol.Compiler.Scanner
         /// Interesting positions in the sequence of keywords recognized by the scanner,
         /// used to disambiguate context-sensitive keywords
         /// </summary>
-        public KeywordsSequenceState KeywordsState { get; private set; }
+        internal KeywordsSequenceState KeywordsState { get; private set; }
 
         /// <summary>
         /// Last token encountered in the text file, including whitespace but excluding comments
         /// </summary>
-        public Token LastToken { get; private set; }
+        internal Token LastToken { get; private set; }
 
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        public Token LastKeywordOrSymbolToken { get; private set; }
+        internal Token LastKeywordOrSymbolToken { get; private set; }
 
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForHexadecimalAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
-            EncodingForHexadecimalAlphanumericLiterals = encodingForHexadecimalAlphanumericLiterals;
+            EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             KeywordsState = KeywordsSequenceState.Default;
         }
 
@@ -84,8 +117,16 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForHexadecimalAlphanumericLiterals);
-            if(SymbolicCharacters != null)
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+            clone.InsideRemarksDirective = InsideRemarksDirective;
+            clone.InsideRemarksParentheses = InsideRemarksParentheses;
+            if(CopyTextNamesVariations != null)
+            {
+                clone.CopyTextNamesVariations = CopyTextNamesVariations;
+            }
+#endif
+            if (SymbolicCharacters != null)
             {
                 clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
             }
@@ -300,7 +341,14 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 // 13 -> ENTRY -> 0. =rw=> ENTRY_ARG
                 case KeywordsSequenceState.After_TO:
-                    KeywordsState = KeywordsSequenceState.Default;
+                    if (newToken.TokenType == TokenType.FUNCTION)
+                    {
+                        KeywordsState = KeywordsSequenceState.After_FUNCTION;
+                    }
+                    else
+                    {
+                        KeywordsState = KeywordsSequenceState.Default;
+                    }
                     break;
                 // 14 -> SORT -> 0. =rw=> SORT_ARG
                 case KeywordsSequenceState.After_SAME:
@@ -369,9 +417,14 @@ namespace TypeCobol.Compiler.Scanner
             else
             {
                 return InsideDataDivision == otherScanState.InsideDataDivision &&
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                    InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
+                    ((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
+                     (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
+#endif
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
-                    EncodingForHexadecimalAlphanumericLiterals == otherScanState.EncodingForHexadecimalAlphanumericLiterals &&
+                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
                     ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) || 
                      (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count)) &&
                     KeywordsState == otherScanState.KeywordsState;
@@ -388,9 +441,16 @@ namespace TypeCobol.Compiler.Scanner
                 int hash = 17;
                 // Suitable nullity checks etc, of course :)
                 hash = hash * 23 + InsideDataDivision.GetHashCode();
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                hash = hash * 23 + InsideRemarksDirective.GetHashCode();
+                if (CopyTextNamesVariations != null)
+                {
+                    hash = hash * 23 + CopyTextNamesVariations.Count;
+                }
+#endif
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();
-                hash = hash * 23 + EncodingForHexadecimalAlphanumericLiterals.GetHashCode();
+                hash = hash * 23 + EncodingForAlphanumericLiterals.GetHashCode();
                 if (SymbolicCharacters != null)
                 {
                     hash = hash * 23 + SymbolicCharacters.Count;
@@ -413,7 +473,7 @@ namespace TypeCobol.Compiler.Scanner
         After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY = 3,
         After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY_PeriodSeparator = 4,
         After_CommentEntry = 5,
-        After_FUNCTION = 6, 
+        After_FUNCTION = 6,
         After_EXEC_orEXECUTE = 7, 
         After_EXEC_orEXECUTE_ExecTranslatorName = 8, 
         After_ExecStatementText = 9,

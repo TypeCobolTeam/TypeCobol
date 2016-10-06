@@ -1,0 +1,23 @@
+﻿--- Code Elements ---
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [26,35:CHARACTERS]<CHARACTERS>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [60,69:CHARACTERS]<CHARACTERS>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [30,30:x]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [34,34:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [46,46:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [80,80:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [35,35:i]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [67,67:k]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [101,101:b]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [30,30:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [61,61:i]<UserDefinedWord>
+

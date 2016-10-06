@@ -27,7 +27,7 @@
 +++ CONTINUATION OF CompilerDirective ([8,22+:"Another title"]<AlphanumericLiteral>(",Y,Y){Another title}) +++
 
 -- Line 10 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,8+:.]<PeriodSeparator>) +++
+[8,8+:.]<PeriodSeparator>
 
 -- Line 11 --
 
@@ -35,13 +35,14 @@
 [8,20:LE "A title" ]<InvalidToken>
 
 -- Line 13 --
-*** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>[13,13+:.]<PeriodSeparator>) ***
-[13,13]<28,Error,Syntax>Syntax error : missing {AlphanumericLiteral, NationalLiteral, DBCSLiteral} at '.'
+*** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>) ***
+[13,13+:.]<PeriodSeparator>
+[13,13]<27,Error,Syntax>Syntax error : no viable alternative at input 'TITLE ... .'
 
 -- Line 14 --
 *** DIRECTIVE TITLE "Unfinished title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,30:"Unfinished title]<AlphanumericLiteral>(",Y,N){Unfinished title}) ***
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>) ***
-[1,0]<28,Error,Syntax>Syntax error : missing {AlphanumericLiteral, NationalLiteral, DBCSLiteral} at ''
+[1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'TITLE ... '
 

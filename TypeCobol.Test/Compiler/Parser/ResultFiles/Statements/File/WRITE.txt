@@ -1,0 +1,33 @@
+﻿--- Code Elements ---
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [7,7:x]<UserDefinedWord>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [14,23:identifier]<UserDefinedWord>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [36,45:identifier]<UserDefinedWord>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [25,30:BEFORE]<BEFORE>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [32,40:ADVANCING]<ADVANCING>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [25,29:AFTER]<AFTER>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [31,39:ADVANCING]<ADVANCING>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [32,32:1]<IntegerLiteral>{1}
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [34,37:LINE]<LINE>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [33,37:LINES]<LINES>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [33,36:LINE]<LINE>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [34,38:LINES]<LINES>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [32,32:a]<UserDefinedWord>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [34,38:LINES]<LINES>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [32,35:PAGE]<PAGE>
+
+[[WriteStatement]] [1,5:WRITE]<WRITE> --> [31,34:PAGE]<PAGE>
+

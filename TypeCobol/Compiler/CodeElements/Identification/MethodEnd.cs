@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// The METHOD-ID paragraph specifies the name by which a method is known and
     /// assigns selected attributes to that method.
     /// </summary>
-    public class MethodEnd : CodeElement
+    public class MethodEnd : CodeElementEnd
     {
         public MethodEnd() : base(CodeElementType.MethodEnd)
         { }
@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// An alphanumeric literal or national literal that contains the name of the
         /// method.
         /// </summary>
-        public MethodName MethodName { get; set; }
+        public SymbolReference MethodName { get; set; }
 
         /// <summary>
         /// Debug string

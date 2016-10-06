@@ -1,41 +1,40 @@
 ﻿--- Code Elements ---
-[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [9,21:procedurename]<UserDefinedWord>
+[[PerformProcedureStatement]] [1,7:PERFORM]<PERFORM> --> [9,21:procedurename]<UserDefinedWord>
 
 [[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
 
-[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [26,30:TIMES]<TIMES>
+[[PerformProcedureStatement]] [1,7:PERFORM]<PERFORM> --> [26,30:TIMES]<TIMES>
 
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [12,16:TIMES]<TIMES>
 
 [[DisplayStatement]] [3,9:DISPLAY]<DISPLAY> --> [11,17+:"HELLO"]<AlphanumericLiteral>(",Y,Y){HELLO}
 - variables = "HELLO"
-- WithNoAdvancing = False
 
 [[PerformStatementEnd]] [1,11:END-PERFORM]<END_PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
 
 [[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
 
-[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [29,41:conditionname]<UserDefinedWord>
+[[PerformProcedureStatement]] [1,7:PERFORM]<PERFORM> --> [29,41:conditionname]<UserDefinedWord>
 
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [15,27:conditionname]<UserDefinedWord>
 
-[[PerformStatement]] [3,9:PERFORM]<PERFORM> --> [11,23:procedurename]<UserDefinedWord>
+[[PerformProcedureStatement]] [3,9:PERFORM]<PERFORM> --> [11,23:procedurename]<UserDefinedWord>
 
 [[IfStatement]] [3,4:IF]<IF> --> [6,14:condition]<UserDefinedWord>
 
-[[PerformStatement]] [5,11:PERFORM]<PERFORM> --> [13,25:procedurename]<UserDefinedWord>
+[[PerformProcedureStatement]] [5,11:PERFORM]<PERFORM> --> [13,25:procedurename]<UserDefinedWord>
 
 [[IfStatementEnd]] [3,8:END-IF]<END_IF> --> [3,8:END-IF]<END_IF>
 
-[[PerformStatement]] [3,9:PERFORM]<PERFORM> --> [11,23:procedurename]<UserDefinedWord>
+[[PerformProcedureStatement]] [3,9:PERFORM]<PERFORM> --> [11,23:procedurename]<UserDefinedWord>
 
 [[PerformStatementEnd]] [1,11:END-PERFORM]<END_PERFORM> --> [1,11:END-PERFORM]<END_PERFORM>
 
 [[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
 
-[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [59,62:ZERO]<ZERO>
+[[PerformProcedureStatement]] [1,7:PERFORM]<PERFORM> --> [59,62:ZERO]<ZERO>
 
-[[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [29,40:pointername2]<UserDefinedWord>
+[[PerformProcedureStatement]] [1,7:PERFORM]<PERFORM> --> [29,40:pointername2]<UserDefinedWord>
 
 [[PerformStatement]] [1,7:PERFORM]<PERFORM> --> [37,45:condition]<UserDefinedWord>
 

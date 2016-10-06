@@ -1,0 +1,7 @@
+﻿--- Code Elements ---
+[[RewriteStatement]] [1,7:REWRITE]<REWRITE> --> [9,9:x]<UserDefinedWord>
+
+[[RewriteStatement]] [1,7:REWRITE]<REWRITE> --> [16,25:identifier]<UserDefinedWord>
+
+[[RewriteStatement]] [1,7:REWRITE]<REWRITE> --> [38,47:identifier]<UserDefinedWord>
+

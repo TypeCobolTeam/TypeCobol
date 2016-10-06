@@ -1,0 +1,72 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID. Simple IS INITIAL PROGRAM.
+  AUTHOR.       WIZTIGERS.
+  DATE-WRITTEN. NOVEMBER 2015
+
+ENVIRONMENT DIVISION.
+*********************
+CONFIGURATION SECTION.
+  SPECIAL-NAMES.
+    CURRENCY SIGN IS "DH"
+    CURRENCY SIGN IS "EUR" PICTURE SYMBOL '€'
+    DECIMAL-POINT IS COMMA.
+  SOURCE-COMPUTER. IBM-3033.
+INPUT-OUTPUT SECTION.
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+01  str    PIC X(08) VALUE 'THIS'.
+01  group.
+ 05  num   PIC 9.
+ 05 subgroup.
+  10  vrai  PIC 9 VALUE 1.
+  10  faux  PIC 9 VALUE 0.
+ 05 subgroup2.
+  10  x  PIC 9(2).
+  10  y  PIC 9(2).
+ 05  str   PIC X(15) VALUE 'THAT'.
+01 x PIC A(3).
+
+05  E1.
+  10  E2   PIC X(08).
+  10  E3   PIC X(04).
+    88  A   VALUE 'TITI'.
+    88  B   VALUE 'TOTO'.
+
+01  sqlcode  PIC ZZ9+ BLANK WHEN ZERO.
+  EXEC SQL DECLARE tablename TABLE
+  (
+    num  DECIMAL(45) NOT NULL,
+    str  VARCHAR(256) NOT NULL
+  ) END-EXEC
+
+01  toto  PIC X(08).
+  EXEC SQL DECLARE curses CURSOR FOR
+    SELECT * FROM anything
+  END-EXEC.
+
+
+LINKAGE SECTION.
+
+PROCEDURE DIVISION.
+*******************
+DISPLAY 'TEST'
+MOVE faux TO num
+.
+
+PARAGRAPH1.
+  EXEC SQL OPEN something END-EXEC.
+  EXEC SQL OPEN something END-EXEC
+
+PARAGRAPH2.
+  SEARCH num VARYING y
+    WHEN num = y
+      MOVE faux to y
+      MOVE vrai to num
+  END-SEARCH
+  .
+
+EMPTY-PARAGRAPH.
+  .

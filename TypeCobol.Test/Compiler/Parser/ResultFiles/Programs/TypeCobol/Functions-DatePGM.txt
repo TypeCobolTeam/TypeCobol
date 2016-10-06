@@ -1,0 +1,86 @@
+﻿--- Diagnostics ---
+[1,7]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 119)
+[1,7]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 131)
+[1,7]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 137)
+
+--- Program ---
+PROGRAM: DateFunctions common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- TYPES -------
+  DateJulian:DateJulian
+  DateDB2:DateDB2
+-- FUNCTIONS ---
+  currentDate
+    return: result:DATE
+  currentDateFreeFormat
+        in: dateType:Alphanumeric
+        in: direction:Alphanumeric
+        in: separator:Alphanumeric
+        in: LL:Alphanumeric
+        in: PP:Alphanumeric
+    return: result:Alphanumeric
+  currentDateDB2
+    return: result:DateDB2
+  currentDateJulian
+    return: result:DateJulian
+  convertToDate
+        in: inputDate:DateDB2
+    return: result:DATE
+  convertToDate
+        in: inputDate:DateJulian
+    return: result:DATE
+  convertToDateDB2
+        in: inputDate:DATE
+    return: result:DateDB2
+  convertToDateDB2
+        in: inputDate:DateJulian
+    return: result:DateDB2
+  convertToDateJulian
+        in: inputDate:DATE
+    return: result:DateJulian
+  convertToDateJulian
+        in: inputDate:DateDB2
+    return: result:DateJulian
+  isDateValid
+        in: inputDate:DATE
+    return: result:BOOL
+  isDateValid
+        in: inputDate:DateDB2
+    return: result:BOOL
+  isDateValid
+        in: inputDate:DateJulian
+    return: result:BOOL
+  addDaysToDate
+        in: dateToAdd:DATE
+        in: nbOFDays:Numeric
+    return: result:DATE
+  addDaysToDate
+        in: dateToAdd:DATE
+        in: nbOFDays:Numeric
+        in: typeOfDays:Alphanumeric
+        in: calendar:Alphanumeric
+    return: result:DATE
+  daysBetween
+        in: date1:DATE
+        in: date2:DATE
+    return: result:Numeric
+  conflict
+        in: x:Numeric
+    return: y:Numeric
+  conflict
+        in: x:Numeric
+    return: y:Numeric
+  conflict
+        in: x:Numeric
+    return: y:Numeric
+  conflict
+        in: x:Numeric
+    return: y:Numeric
+  conflict2
+        in: x:Numeric
+    return: y:Numeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

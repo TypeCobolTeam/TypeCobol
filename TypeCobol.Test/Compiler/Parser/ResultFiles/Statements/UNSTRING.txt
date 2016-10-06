@@ -1,5 +1,31 @@
 ﻿--- Code Elements ---
-[[UnstringStatement]] [1,8:UNSTRING]<UNSTRING> --> [66,75:WS-NUM-POL]<UserDefinedWord>
+UNSTRING toto
+ INTO result
 
-[[SentenceEnd]] [76,76+:.]<PeriodSeparator> --> [76,76+:.]<PeriodSeparator>
+UNSTRING toto2
+ DELIMITED BY "toto2"
+ INTO result
+
+UNSTRING toto3
+ DELIMITED BY "," OR ";"
+ INTO result
+
+UNSTRING toto4
+ INTO result
+ TALLYING IN toto4
+
+UNSTRING toto4
+ DELIMITED BY high-value
+ INTO result
+ TALLYING IN toto4
+
+UNSTRING toto
+ DELIMITED BY var1 OR var2 OR var3
+ INTO resultresult2
+ WITH POINTER ptr1
+ TALLYING IN tallyingVar
+
+UNSTRING WS-CONTRAT
+ DELIMITED BY ALL SPACES
+ INTO WS-CODE-PRODUITWS-NUM-POL
 

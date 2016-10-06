@@ -4,14 +4,14 @@ using System.Text;
 namespace TypeCobol.Compiler.Text
 {
     /// <summary>
-    /// Informations on the source file on disk (or the buffer in memory) from which a text document was loaded
+    /// Informations on the source file on disk, or the buffer in memory, from which a text document was loaded
     /// </summary>
     public class TextSourceInfo
     {
-        public TextSourceInfo(string name, Encoding encodingForHexadecimalAlphanumericLiterals, ColumnsLayout columnsLayout)
+        public TextSourceInfo(string name, Encoding encodingForAlphanumericLiterals, ColumnsLayout columnsLayout)
         {
             Name = name;
-            EncodingForHexadecimalAlphanumericLiterals = encodingForHexadecimalAlphanumericLiterals;
+            EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
             ColumnsLayout = columnsLayout;
         }
 
@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Character set used to encode the hexadecimal alphanumeric literals in the text document
         /// </summary>
-        public Encoding EncodingForHexadecimalAlphanumericLiterals { get; private set; }
+        public Encoding EncodingForAlphanumericLiterals { get; private set; }
 
         /// <summary>
         /// Format of the text document lines : Cobol reference format on 72 columns, or free text format

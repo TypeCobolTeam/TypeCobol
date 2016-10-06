@@ -1,15 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\Common.props" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{323CC743-ED21-4A15-AD3F-3B7C937F6332}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TypeCobol.Test</RootNamespace>
     <AssemblyName>TypeCobol.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -17,29 +14,30 @@
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
     <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>false</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr4.Runtime, Version=4.4.0.0, Culture=neutral, PublicKeyToken=edc21c04cf562012, processorArchitecture=MSIL">
-      <HintPath>..\packages\Antlr4.Runtime.4.4.1-alpha001\lib\net45\Antlr4.Runtime.dll</HintPath>
+    <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -73,206 +71,34 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Compiler\File\TestCobolFile.cs" />
-    <Compile Include="Compiler\File\TestIBMCodePages.cs" />
-    <Compile Include="Compiler\Parser\Comparator.cs" />
-    <Compile Include="Compiler\Parser\ParserUtils.cs" />
-    <Compile Include="Compiler\Parser\TestCodeElements.cs" />
-    <Compile Include="Compiler\Parser\TestParser.cs" />
-    <Compile Include="Compiler\Parser\TestTokenSource.cs" />
-    <Compile Include="Compiler\Pipeline\TestFileWatcher.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalParser.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalPipeline.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalPreprocessor.cs" />
-    <Compile Include="Compiler\Pipeline\TestIncrementalScanner.cs" />
-    <Compile Include="Compiler\Preprocessor\PreprocessorUtils.cs" />
-    <Compile Include="Compiler\Preprocessor\TestCompilerDirectiveBuilder.cs" />
-    <Compile Include="Compiler\Preprocessor\TestCopyDirective.cs" />
-    <Compile Include="Compiler\Preprocessor\TestReplaceDirective.cs" />
-    <Compile Include="Compiler\Scanner\ScannerUtils.cs" />
-    <Compile Include="Compiler\Scanner\TestContinuations.cs" />
-    <Compile Include="Compiler\Scanner\TestRealPrograms.cs" />
-    <Compile Include="Compiler\Scanner\TestTokenTypes.cs" />
-    <Compile Include="Compiler\Text\TestTextDocument.cs" />
-    <Compile Include="GrammarTest.cs" />
-    <Compile Include="PlatformUtils.cs" />
     <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCollection.cs" />
-    <Compile Include="TestLauncher.cs" />
-    <Compile Include="TestUtils.cs" />
+    <Compile Include="*.cs" />
+    <Compile Include="Compiler\File\*.cs" />
+    <Compile Include="Compiler\Parser\*.cs" />
+    <Compile Include="Compiler\Pipeline\*.cs" />
+    <Compile Include="Compiler\Preprocessor\*.cs" />
+    <Compile Include="Compiler\Scanner\*.cs" />
+    <Compile Include="Compiler\Text\*.cs" />
+    <Content Include="**\Samples\**" />
+    <Content Include="**\ResultFiles\**" />
+    <Content Include="NewTestsToFix\**" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
-    <Content Include="Compiler\Parser\ResultFiles\Expressions\Abbreviated.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\FD.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\COMPUTE.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\SEARCH.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\EVALUATE.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\EXEC.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\MOVE.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\PERFORM.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\IF.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\DISPLAYCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\ADD.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\ParagraphCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\EntryCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\IdentificationCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\IDCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\ON.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\PERFORMCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\ADDRPN.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\READ.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\STRING.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACT.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\SUBTRACTRPN.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\Statements\UNSTRING.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\WHENCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\HeaderCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\XMLCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\UDWCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\NOT.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\EXITCodeElements.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\END.txt" />
-    <Content Include="Compiler\Parser\ResultFiles\AT.txt" />
-    <None Include="Compiler\Parser\Samples\Statements\SEARCH.cbl" />
-    <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
-    <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\CblProcess.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ControlCbl.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Copy.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Delete.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Eject.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Enter.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ExecSqlInclude.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Insert.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ReadyOrResetTrace.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Replace.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ServiceLabel.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ServiceReload.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Skip.txt" />
-    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Title.txt" />
-    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceFunction.txt" />
-    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceMultiple.txt" />
-    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceNested.txt" />
-    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplacePartial.txt" />
-    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceSingle.txt" />
-    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceSingleToMultiple.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\AlphanumericLiterals-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\AlphanumericLiterals1.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\AlphanumericLiterals2.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\AlphanumericLiterals3.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\ArithmeticOperators.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\CblProcessCompilerDirective.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\CommentEntry-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\CommentEntry.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Comments-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Comments1.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\CommentsDebugging.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Comments2.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\ContextSensitiveKeywords.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\ExecStatement.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Keywords-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Keywords.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\NumericLiterals-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\NumericLiterals.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\NumericLiteralsComma-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\NumericLiteralsComma.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Operators-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\PartialCobolWords.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\PictureCharacterString-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\PictureCharacterString.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\PseudoText.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\RelationalOperators.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Separators-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Separators1.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Separators2.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\Separators3.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\SymbolicCharacters.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\UserDefinedWords-continuations.txt" />
-    <Content Include="Compiler\Scanner\ResultFiles\UserDefinedWords.txt" />
-    <Content Include="Compiler\Scanner\Samples\RealPGM1.TXT" />
-    <Content Include="Compiler\Scanner\Samples\RealPGM2.TXT" />
-    <Content Include="Compiler\Scanner\Samples\RealPGM3.TXT" />
-    <Content Include="Compiler\Scanner\Samples\RealPGM4.TXT" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
-    <None Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
-    <None Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
-    <None Include="Compiler\Parser\Samples\Expressions\Abbreviated.cbl" />
-    <None Include="Compiler\Parser\Samples\FD.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\COMPUTE.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\EXEC.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\EVALUATE.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\MOVE.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\PERFORM.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\IF.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\DISPLAYCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\ADD.cbl" />
-    <None Include="Compiler\Parser\Samples\ParagraphCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\EntryCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\IdentificationCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\HeaderCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\IDCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\ON.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\READ.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\STRING.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\SUBTRACT.cbl" />
-    <None Include="Compiler\Parser\Samples\Statements\UNSTRING.cbl" />
-    <None Include="Compiler\Parser\Samples\WHENCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\XMLCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\UDWCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\PERFORMCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\NOT.cbl" />
-    <None Include="Compiler\Parser\Samples\EXITCodeElements.cbl" />
-    <None Include="Compiler\Parser\Samples\END.cbl" />
-    <None Include="Compiler\Parser\Samples\MSVCOUT.cpy" />
-    <None Include="Compiler\Parser\Samples\AT.cbl" />
-    <None Include="Compiler\Parser\Samples\TESTPGM1.cbl" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY1.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY2.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY3.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY4.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY5.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY6.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY7.cpy" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\PgmCopy.cbl" />
-    <None Include="Compiler\Preprocessor\CopyTestFiles\PgmCopyReplacing.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Basis.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\CblProcess.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ControlCbl.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Copy.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Delete.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Eject.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Enter.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ExecSqlInclude.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Insert.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ReadyOrResetTrace.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Replace.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ServiceLabel.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ServiceReload.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Skip.cbl" />
-    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Title.cbl" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\CpyNested.cpy" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceFunction.cbl" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceMultiple.cbl" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceNested.cbl" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplacePartial.cbl" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceSingle.cbl" />
-    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceSingleToMultiple.cbl" />
-    <None Include="Compiler\Text\Samples\MSVCINP free format.cpy" />
-    <None Include="Compiler\Text\Samples\MSVCOUT.cpy" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\Codegen\src\Codegen.csproj">
+      <Project>{4034CBC5-D3DC-45E5-81F2-605579E6B876}</Project>
+      <Name>Codegen</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
       <Name>TypeCobol</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

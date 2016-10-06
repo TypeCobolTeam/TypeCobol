@@ -1,0 +1,127 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. compiler-directing.
+  
+PROCEDURE DIVISION.
+
+SKIP-01.
+  CONTINUE
+  SKIP3
+  .
+SKIP-02.
+  SKIP3.
+SKIP-03.
+  SKIP3.
+  SKIP3.
+SKIP-04.
+  SKIP3
+  SKIP3.
+SKIP-05.
+  CONTINUE.
+  SKIP3.
+SKIP-06.
+  CONTINUE
+  SKIP3
+  CONTINUE.
+SKIP-06.
+  PERFORM procedurename
+  SKIP3
+  .
+SKIP-07.
+  PERFORM procedurename.
+  SKIP3.
+SKIP-08.
+  PERFORM procedurename
+  SKIP3
+  PERFORM procedurename.
+
+EJECT01.
+  CONTINUE
+  EJECT
+  .
+EJECT02.
+  EJECT.
+EJECT03.
+  EJECT.
+  EJECT.
+EJECT04.
+  EJECT
+  EJECT.
+EJECT05.
+  CONTINUE.
+  EJECT.
+EJECT06.
+  CONTINUE
+  EJECT
+  CONTINUE.
+EJECT06.
+  PERFORM procedurename
+  EJECT
+  .
+EJECT07.
+  PERFORM procedurename.
+  EJECT.
+EJECT08.
+  PERFORM procedurename
+  EJECT
+  PERFORM procedurename.
+
+COPY01.
+  CONTINUE
+  COPY 'x'.
+  .
+COPY02.
+  COPY 'x'.
+COPY03.
+  COPY 'x'.
+  COPY 'x'.
+COPY04.
+  COPY 'x'.
+  COPY 'x'.
+COPY05.
+  CONTINUE.
+  COPY 'x'.
+COPY06.
+  CONTINUE
+  COPY 'x'.
+  CONTINUE.
+COPY06.
+  PERFORM procedurename
+  COPY 'x'.
+  .
+COPY07.
+  PERFORM procedurename.
+  COPY 'x'.
+COPY08.
+  PERFORM procedurename
+  COPY 'x'
+  PERFORM procedurename.
+  
+
+BASIS01.
+  CONTINUE
+  BASIS 'x'.
+BASIS02.
+  BASIS 'x'.
+BASIS03.
+  BASIS 'x'
+  BASIS 'x'.
+BASIS04.
+  BASIS 'x'
+  BASIS 'x'.
+BASIS05.
+  CONTINUE.
+  BASIS 'x'.
+BASIS06.
+  CONTINUE
+  BASIS 'x'
+  CONTINUE.
+BASIS06.
+  PERFORM procedurename
+  BASIS 'x'.
+BASIS07.
+  PERFORM procedurename.
+  BASIS 'x'.
+BASIS08.
+  PERFORM procedurename
+  BASIS 'x'
+  PERFORM procedurename.

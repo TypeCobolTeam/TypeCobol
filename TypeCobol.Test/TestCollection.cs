@@ -1,21 +1,31 @@
-﻿using TypeCobol.Test.Compiler.File;
+﻿using System;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
-using TypeCobol.Test.Compiler.Pipeline;
 using TypeCobol.Test.Compiler.Preprocessor;
 using TypeCobol.Test.Compiler.Scanner;
 using TypeCobol.Test.Compiler.Text;
 
-namespace TypeCobol.Test
-{
-    static class TestCollection
+namespace TypeCobol.Test {
+
+    [TestClass]
+    public class TestCollection
     {
-        public static void CheckFile()
+        static readonly string root = PlatformUtils.GetPathForProjectFile("Compiler" + Path.DirectorySeparatorChar + "Parser");
+        static readonly string sampleRoot = root + Path.DirectorySeparatorChar + "Samples";
+        static readonly string resultRoot = root + Path.DirectorySeparatorChar + "ResultFiles";
+
+        [TestMethod]
+        [TestProperty("Time", "fast")]
+        public void CheckFile()
         {
             TestIBMCodePages.Check_GetDotNetEncoding();
             TestIBMCodePages.Check_IsEBCDICCodePage();
             TestIBMCodePages.Check_DBCSCodePageNotSupported();
 
             TestCobolFile.Check_EBCDICCobolFile();
+            TestCobolFile.Check_EBCDICCobolFileWithUnsupportedChar();
             TestCobolFile.Check_ASCIICobolFile_ReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_LinuxReferenceFormat();
             TestCobolFile.Check_ASCIICobolFile_FreeTextFormat();
@@ -23,17 +33,23 @@ namespace TypeCobol.Test
             TestCobolFile.Check_UTF8File();
         }
 
-        public static void CheckText()
+        [TestMethod]
+        [TestProperty("Time", "fast")]
+        public void CheckText()
         {
-            TestTextDocument.Check_DocumentFormatExceptions();
+            TestReadOnlyTextDocument.Check_DocumentFormatExceptions();
 
-            TestTextDocument.Check_EmptyDocument();
-            TestTextDocument.Check_ReferenceFormatDocument();
-            TestTextDocument.Check_FreeFormatDocument();
+            TestReadOnlyTextDocument.Check_EmptyDocument();
+            TestReadOnlyTextDocument.Check_ReferenceFormatDocument();
+            TestReadOnlyTextDocument.Check_FreeFormatDocument();
         }
-        
-        public static void CheckScanner()
+
+        [TestMethod]
+        [TestProperty("Time", "fast")]
+        public void CheckScanner()
         {
+            //System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
             TestTokenTypes.CheckSeparators();
             TestTokenTypes.CheckComments();
             TestTokenTypes.CheckOperators();
@@ -61,7 +77,9 @@ namespace TypeCobol.Test
             TestRealPrograms.CheckAllFilesForExceptions();
         }
 
-        public static void CheckPreprocessor()
+        [TestMethod]
+        [TestProperty("Time", "fast")]
+        public void CheckPreprocessor()
         {
             TestCompilerDirectiveBuilder.CheckBASIS();
             TestCompilerDirectiveBuilder.CheckCBL_PROCESS();
@@ -89,9 +107,13 @@ namespace TypeCobol.Test
             TestReplaceDirective.CheckReplaceMultiple();
             TestReplaceDirective.CheckReplaceNested();
             TestReplaceDirective.CheckReplaceFunction();
+            TestReplaceDirective.CheckEmptyPartialWordReplace();
         }
 
-        public static void CheckParser()
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckParserCobol85()
         {
             TestTokenSource.Check_CobolCharStream();
             TestTokenSource.Check_CobolTokenSource();
@@ -102,45 +124,71 @@ namespace TypeCobol.Test
             TestCodeElements.Check("END");
             TestCodeElements.Check("NOT");
             TestCodeElements.Check("ON");
+            // TO DO -> fix new identifier parsing :
             TestCodeElements.Check_DISPLAYCodeElements();
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_UDWCodeElements();
 //            TestCodeElements.Check_WHENCodeElements(); //TODO: these cannot be parsed alone anymore since today
-            TestCodeElements.Check_XMLCodeElements();
 
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-//            TestCodeElements.Check_Expressions();
-            TestCodeElements.Check_Statements();
-//TODO            TestCodeElements.Check_EntryCodeElements();
+            //TODO  TestCodeElements.Check_EntryCodeElements();// RefreshProgramClassDocumentSnapshot
+            TestParser.Check_BeforeAfterInsertion();
+            TestParser.Check_BeforeAfterInsertionBatched();
+
+			var errors = new System.Collections.Generic.List<Exception>();
+			int nbOfTests = 0;
+			foreach (string directory in Directory.GetDirectories(sampleRoot)) {
+				var dirname = Path.GetFileName(directory);
+				string[] extensions = {"*.cbl"};
+				if (dirname.Equals("Programs")) extensions = new[] {"*.pgm", "*.cbl", "*.cpy" };
+				Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+				try { folderTester.Test(); }
+				catch (Exception ex) { errors.Add(ex); }
+				nbOfTests += folderTester.GetTestCount();
+				Console.WriteLine();
+			}
+
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+
+			if (errors.Count > 0) {
+				var str = new System.Text.StringBuilder();
+				foreach(var ex in errors) str.Append(ex.Message);
+				throw new Exception(str.ToString());
+			}
 
             //This test use TypeChecker which is specific to TypeCobol
             //As specifications of TypeCobol are not final yet this test can't be used
-//            TestParser.Check_ParserIntegration();
+            //            TestParser.Check_ParserIntegration();
         }
 
-        public static void CheckPipeline()
+        /// <summary>
+        /// Check only files with *.tcbl extensions
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckParserTcblPrograms()
         {
-            TestFileWatcher.CheckAddProgramFile();
-            TestFileWatcher.CheckRenameProgramFile();
-            TestFileWatcher.CheckUpdateProgramFile();
-            TestFileWatcher.CheckRemoveProgramFile();
+            int nbOfTests = 0;
 
-            TestIncrementalScanner.CheckAddToken();
-            TestIncrementalScanner.CheckUpdateToken();
-            TestIncrementalScanner.CheckRemoveToken();
-
-            TestIncrementalPreprocessor.CheckAddCompilerDirective();
-            TestIncrementalPreprocessor.CheckUpdateCompilerDirective();
-            TestIncrementalPreprocessor.CheckRemoveCompilerDirective();
-
-            TestIncrementalParser.CheckAddCodeElement();
-            TestIncrementalParser.CheckUpdateCodeElement();
-            TestIncrementalParser.CheckRemoveCodeElement();
-
-            TestIncrementalPipeline.CheckUpdateFromFile();
+            foreach (string directory in Directory.GetDirectories(sampleRoot))
+            {
+                var dirname = Path.GetFileName(directory);
+                string[] extensions = { "*.tcbl" };
+                if (dirname == "Programs") extensions = new[] { "*.tcbl", "*.cpy" };
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+                folderTester.Test();
+                nbOfTests += folderTester.GetTestCount();
+                Console.Write("\n");
+            }
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
     }
 }
