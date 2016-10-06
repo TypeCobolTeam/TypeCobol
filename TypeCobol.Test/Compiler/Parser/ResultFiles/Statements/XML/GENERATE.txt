@@ -7,7 +7,6 @@
 [23,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'NAMESPACE-PREFIX' (RuleStack=codeElement, OffendingSymbol=[23,38:NAMESPACE-PREFIX]<NAMESPACE_PREFIX> on line 30)
 [40,43]<27,Error,Syntax>Syntax error : no viable alternative at input 'NAME' (RuleStack=codeElement, OffendingSymbol=[40,43:NAME]<NAME> on line 35)
 [33,34]<27,Error,Syntax>Syntax error : missing {AlphanumericLiteral, HexadecimalAlphanumericLiteral, NullTerminatedAlphanumericLiteral, NationalLiteral, HexadecimalNationalLiteral, DBCSLiteral} at '47' (RuleStack=codeElement>xmlGenerateStatement>xmlNameMapping>alphanumericValue2>alphanumericOrNationalLiteralToken, OffendingSymbol=[33,34:47]<IntegerLiteral>{47} on line 37)
-[33,34]<27,Error,Syntax>Syntax error : Missing mandatory level-number. A value of 01 was assumed. (RuleStack=codeElement>dataDescriptionEntry, OffendingSymbol=[33,34:47]<IntegerLiteral>{47} on line 37)
 [46,49]<27,Error,Syntax>Syntax error : no viable alternative at input 'TYPE' (RuleStack=codeElement, OffendingSymbol=[46,49:TYPE]<TYPE> on line 44)
 --- Code Elements ---
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [21,21:y]<UserDefinedWord>

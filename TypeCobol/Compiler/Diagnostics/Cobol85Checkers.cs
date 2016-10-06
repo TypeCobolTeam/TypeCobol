@@ -20,8 +20,6 @@
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var data = e as DataDescriptionEntry;
 			var context = c as CodeElementsParser.DataDescriptionEntryContext;
-			if (data.LevelNumber == null)// @see CobolNodeBuilder.SetCurrentNodeToTopLevelItem
-				DiagnosticUtils.AddError(data, "Missing mandatory level-number. A value of 01 was assumed.", context);
 			var external  = GetContext(data, context.externalClause());
 			var global    = GetContext(data, context.globalClause());
 			if (data.DataName == null) {
