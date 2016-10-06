@@ -174,6 +174,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public override string Name { get { return Tail.Name+'.'+Head.Name; } }
     }
+	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
+		public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head, tail) { }
+	}
 
     /// <summary>
     /// Role ambiguity between :

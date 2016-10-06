@@ -670,10 +670,10 @@ namespace TypeCobol.Compiler.Parser
 		var c = context.cobolQualifiedParagraphNameReference();
 		if (c != null) return CreateQualifiedParagraphNameReference(c.paragraphNameReference(), c.sectionNameReference());
 		var tc = context.tcQualifiedParagraphNameReference();
-		return CreateQualifiedParagraphNameReference(tc.paragraphNameReference(), tc.sectionNameReference());
+		return CreateQualifiedParagraphNameReference(tc.paragraphNameReference(), tc.sectionNameReference(), false);
 	}
-	private SymbolReference CreateQualifiedParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext head,CodeElementsParser.SectionNameReferenceContext tail) {
-		var reference = new QualifiedSymbolReference(CreateParagraphNameReference(head), CreateSectionNameReference(tail));
+	private SymbolReference CreateQualifiedParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext head,CodeElementsParser.SectionNameReferenceContext tail, bool isCOBOL = true) {
+		var reference = CreateQualifiedSymbolReference(CreateParagraphNameReference(head), CreateSectionNameReference(tail), isCOBOL);
 		symbolInformationForTokens[reference.NameLiteral.Token] = reference;
 		return reference;
 	}
@@ -693,9 +693,9 @@ namespace TypeCobol.Compiler.Parser
 			var c = context.cobolQualifiedDataName1();
 			if (c != null) return CreateQualifiedDataName(c.dataNameReference(), c.dataNameReferenceOrFileNameReference());
 			var tc = context.tcQualifiedDataName1();
-			return CreateQualifiedDataName(tc.dataNameReference(), tc.dataNameReferenceOrFileNameReference());
+			return CreateQualifiedDataName(tc.dataNameReference(), tc.dataNameReferenceOrFileNameReference(), false);
 		}
-		private SymbolReference CreateQualifiedDataName(CodeElementsParser.DataNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceContext[] tail) {
+		private SymbolReference CreateQualifiedDataName(CodeElementsParser.DataNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceContext[] tail, bool isCOBOL = true) {
 			SymbolReference qname = CreateDataNameReference(head);
 			if (tail != null && tail.Length > 0) {
 				SymbolReference current = CreateDataNameReferenceOrFileNameReference(tail[tail.Length-1]);
@@ -703,12 +703,16 @@ namespace TypeCobol.Compiler.Parser
 				for(int i=tail.Length-2; i>=0; i--) {
 					last = current;
 					current = CreateDataNameReferenceOrFileNameReference(tail[i]);
-					current = new QualifiedSymbolReference(current, last);
+					current = CreateQualifiedSymbolReference(current, last, isCOBOL);
 				}
-				qname = new QualifiedSymbolReference(qname, current);
+				qname = CreateQualifiedSymbolReference(qname, current, isCOBOL);
 			}
 			symbolInformationForTokens[qname.NameLiteral.Token] = qname;
 			return qname;
+		}
+		private SymbolReference CreateQualifiedSymbolReference(SymbolReference head, SymbolReference tail, bool isCOBOL = true) {
+			if (isCOBOL) return new QualifiedSymbolReference(head, tail);
+			else return new TypeCobolQualifiedSymbolReference(head, tail);
 		}
 
         internal SymbolReference CreateRecordName(CodeElementsParser.RecordNameContext context)
@@ -721,15 +725,15 @@ namespace TypeCobol.Compiler.Parser
 			var c = context.cobolQualifiedConditionName();
 			if (c != null) return CreateQualifiedConditionName(c.conditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			var tc = context.tcQualifiedConditionName();
-			return CreateQualifiedConditionName(tc.conditionNameReferenceOrConditionForUPSISwitchNameReference(), tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+			return CreateQualifiedConditionName(tc.conditionNameReferenceOrConditionForUPSISwitchNameReference(), tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(), false);
 		}
 
-		private SymbolReference CreateQualifiedConditionName(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail) {
+		private SymbolReference CreateQualifiedConditionName(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail, bool isCOBOL = true) {
 			SymbolReference qname = CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(head);
 			if (tail != null) {
 				foreach(var context in tail) {
 					var part = CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(context);
-					qname = new QualifiedSymbolReference(qname, part);
+					qname = CreateQualifiedSymbolReference(qname, part, isCOBOL);
 				}
 			}
 			symbolInformationForTokens[qname.NameLiteral.Token] = qname;
@@ -755,11 +759,11 @@ namespace TypeCobol.Compiler.Parser
 		var tc = context.tcQualifiedDataNameOrQualifiedConditionName1();
 		var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
 		Array.Reverse(tail);
-		return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tail);
+		return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tail, false);
 	}
-	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail) {
-		var reference = new QualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]));
-		for(int c=1; c<tail.Length; c++) reference = new QualifiedSymbolReference(reference, CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[c]));
+	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail, bool isCOBOL = true) {
+		var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
+		for(int c=1; c<tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[c]), isCOBOL);
 		symbolInformationForTokens[reference.NameLiteral.Token] = reference;
 		return reference;
 	}
