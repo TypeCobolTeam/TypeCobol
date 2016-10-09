@@ -84,19 +84,21 @@ namespace TypeCobol.Test.Compiler.Parser
             };
 
         private IList<string> samples;
-        private string[] extensions;
+        private string[] compilerExtensions;
+        private string[] fileToTestsExtensions;
 
         private string _sampleRoot;
         private string _resultsRoot;
 
-		internal FolderTester(string sampleRoot, string resultsRoot,string folder, string[] extensions, string[] ignored = null, bool deep = true) {
+		internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] compilerExtensions, string[] ignored = null, bool deep = true) {
 			_sampleRoot = sampleRoot;
 			_resultsRoot = resultsRoot;
 
-			this.extensions = extensions;
+			this.compilerExtensions = compilerExtensions;
+            this.fileToTestsExtensions = fileToTestsExtensions;
 			var option = deep? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 			string[] samples = new string[0];
-			foreach(var ext in this.extensions) {
+			foreach(var ext in this.fileToTestsExtensions) {
 				string[] paths = Directory.GetFiles(folder, ext, option);
 				var tmp = new string[samples.Length+paths.Length];
 				samples.CopyTo(tmp, 0);
@@ -138,7 +140,7 @@ namespace TypeCobol.Test.Compiler.Parser
 				foreach (var comparator in comparators) {
 					Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
-					unit.Init(extensions);
+					unit.Init(compilerExtensions);
 					unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
@@ -172,18 +174,18 @@ namespace TypeCobol.Test.Compiler.Parser
 			if (errors.Length > 0) throw new Exception(errors.ToString());
 		}
 
-		private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug)	{
-			IList<FilesComparator> comparators = new List<FilesComparator>();
-			foreach (var names in Names) {
-				Paths path = new Paths(sampleRoot, resultsRoot, samplePath, names);
-				if (!System.IO.File.Exists(path.Result)) continue;
-
-				Type type = names.GetComparatorType();
-				System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool) });
-				comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug }));
-			}
-			return comparators;
-		}
+        private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug) {
+            IList<FilesComparator> comparators = new List<FilesComparator>();
+            foreach (var names in Names) {
+                Paths path = new Paths(sampleRoot, resultsRoot, samplePath, names);
+                if (System.IO.File.Exists(path.Result)) {
+                    Type type = names.GetComparatorType();
+                    System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool) });
+                    comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug }));
+                }
+            }
+            return comparators;
+        }
     }
 
 
