@@ -28,8 +28,7 @@ dataDescriptionEntry:
 	| dataRenamesEntry
 	| dataConditionEntry;
 
+// When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
 cobol2002TypedefClause: TYPEDEF STRONG?;
 
-cobol2002TypeClause:    TYPE typeNameDefinition;
-
-typeNameDefinition: symbolDefinition4;
+cobol2002TypeClause:    TYPE dataTypeNameReference;

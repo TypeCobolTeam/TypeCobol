@@ -120,14 +120,22 @@
 		/// </summary>
 		public AlphanumericValue Picture { get; set; }
 
-		/// <summary>
-		/// COBOL 2002 TYPE clause.
-		/// </summary>
-		public AlphanumericValue CustomType { get; internal set; }
+// [COBOL 2002]
+        /// <summary>
+        /// COBOL 2002 TYPE clause.
+        /// The TYPE clause allows a user-defined data type (or type name) to be used to define a data item. 
+        /// This is done by specifying the type name (which is declared using the TYPEDEF clause) in a TYPE clause. 
+        /// If the type name is a group item, then the defined data item will also be a group item: 
+        /// its subordinate entries will correspond in name, hierarchy, and characteristics to those subordinate to the type name. 
+        /// 
+        /// type-name-1 
+        /// The name of the type name that is to be used to define the subject data name.
+        /// </summary>
+        public SymbolReference UserDefinedDataType { get; internal set; }
+// [/COBOL 2002]
 
 
-
-		public DataType DataType { get; internal set; }
+        public DataType DataType { get; internal set; }
 		public int Length {
 			get {
 				if (Picture == null) return 1;
@@ -866,22 +874,40 @@
 		public SymbolReference RenamesToDataName { get; set; }
 	}
 
-	public class TypeDefinitionEntry: DataDescriptionEntry, ITypedCodeElement {
-		public TypeDefinitionEntry(): base() { }
+    // [COBOL 2002]
+    /// <summary>
+    /// Cobol 2002 user-defined data type description.
+    /// TYPEDEF Clause
+    /// The TYPEDEF clause is used to create a new user-defined data type, type-name.    
+    /// After defining a new data type using the TYPEDEF clause, data items can be declared as this new data type using the TYPE clause.
+    /// The TYPEDEF clause can only be specified for level 01 entries, which can also be group items. 
+    /// If a group item is specified, all subordinate items of the group become part of the type declaration. 
+    /// No storage is allocated for a type declaration.
+    /// The TYPEDEF clause cannot be specified in the same data description entry as the following clauses: 
+    /// EXTERNAL, REDEFINES.
+    /// </summary>
+    public class DataTypeDescriptionEntry: DataDescriptionEntry, ITypedCodeElement {
+		public DataTypeDescriptionEntry(): base() { }
 
-		public SyntaxProperty<bool> Strong { get; internal set; }
+        /// <summary>
+        /// The name of the new user-defined data type is the subject of the TYPEDEF clause.
+        /// Data-name-1 must be specified with the TYPEDEF clause: FILLER cannot be used. 
+        /// </summary>
+        public SymbolDefinition DataTypeName { get; set; }
+
+        public SyntaxProperty<bool> Strong { get; internal set; }
 		public bool IsStrong { get { return Strong != null && Strong.Value; } }
-
 	}
+// [/COBOL 2002]
 
-	/// <summary>
-	/// Format 3: condition-name
-	/// A user-specified name that associates a value, a set of values, or a range of
-	/// values with a conditional variable.
-	/// Level-88 entries must immediately follow the data description entry for the
-	/// conditional variable with which the condition-names are associated.
-	/// </summary>
-	public class DataConditionEntry: DataDefinitionEntry, ITypedCodeElement
+    /// <summary>
+    /// Format 3: condition-name
+    /// A user-specified name that associates a value, a set of values, or a range of
+    /// values with a conditional variable.
+    /// Level-88 entries must immediately follow the data description entry for the
+    /// conditional variable with which the condition-names are associated.
+    /// </summary>
+    public class DataConditionEntry: DataDefinitionEntry, ITypedCodeElement
 	{
 		public DataConditionEntry(): base(CodeElementType.DataConditionEntry) { }
 

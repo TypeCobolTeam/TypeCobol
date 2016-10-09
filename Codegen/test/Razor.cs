@@ -158,7 +158,7 @@ namespace TypeCobol.Codegen.Config {
 		}
 		private class GeneratedSymbolDefinition: Compiler.CodeElements.SymbolDefinition {
 			private string name;
-			public GeneratedSymbolDefinition(string name): base(null) { this.name = name; }
+			public GeneratedSymbolDefinition(string name): base(null, SymbolType.TO_BE_RESOLVED) { this.name = name; }
 			public override string Name { get { return name; } }
 		}
 

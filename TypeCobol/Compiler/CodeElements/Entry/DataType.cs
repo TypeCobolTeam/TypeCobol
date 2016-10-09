@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.CodeElements
 			return CreateBase(type);
 		}
 		private static Nodes.TypeDefinition CreateBase(DataType type) {
-			var entry = new TypeDefinitionEntry();
+			var entry = new DataTypeDescriptionEntry();
 			entry.LevelNumber = new GeneratedIntegerValue(1);
 			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
 			entry.DataType = type;

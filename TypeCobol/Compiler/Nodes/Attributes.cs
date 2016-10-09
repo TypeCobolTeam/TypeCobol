@@ -59,7 +59,7 @@ internal class TypeAttribute: Attribute {
 		catch(System.FormatException) { } // not a boolean
 		var node = (DataDescription)o;
 		var data = (DataDescriptionEntry)node.CodeElement;
-		return /*data.Picture!=null? data.Picture.Value :*/ data.CustomType!=null? data.CustomType.Value : null;
+		return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType!=null? data.UserDefinedDataType.Name : null;
 	}
 }
 

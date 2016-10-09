@@ -12,12 +12,12 @@
 	using TypeCobol.Compiler.Nodes;
 
 class TypeDefinitionEntryChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type> { typeof(TypeDefinitionEntry), typeof(DataRedefinesEntry), }; }
+	public IList<Type> GetCodeElements() { return new List<Type> { typeof(DataTypeDescriptionEntry), typeof(DataRedefinesEntry), }; }
 
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var context = c as CodeElementsParser.DataDescriptionEntryContext;
 		CheckRedefines(e as DataRedefinesEntry, context);
-		CheckTypedef(e as TypeDefinitionEntry, context);
+		CheckTypedef(e as DataTypeDescriptionEntry, context);
 	}
 	private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context) {
 		if (redefines == null) return;
@@ -26,7 +26,7 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 			DiagnosticUtils.AddError(redefines, message, context.redefinesClause());
 		}
 	}
-	private void CheckTypedef(TypeDefinitionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
+	private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
 		if (typedef == null) return;
 		if (typedef.LevelNumber.Value != 1) {
 			string message = "TYPEDEF clause can only be specified for level 01 entries";

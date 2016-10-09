@@ -955,24 +955,27 @@ namespace TypeCobol.Compiler.Parser
 				EnterDataRedefinesEntry(context);
 				return;
 			}
-			var entry = new DataDescriptionEntry();
-			entry.DataType = DataType.Unknown;
-			var dataname = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+
+            DataDescriptionEntry entry; 
 // [COBOL 2002]
-			if (context.cobol2002TypedefClause() != null) {
-				var typedef = new TypeDefinitionEntry();
-				var strong = context.cobol2002TypedefClause().STRONG();
+            if (context.cobol2002TypedefClause() != null) {
+				var typedef = new DataTypeDescriptionEntry();
+                typedef.DataTypeName = CobolWordsBuilder.CreateDataTypeNameDefinition(context.dataNameDefinition());
+                var strong = context.cobol2002TypedefClause().STRONG();
 				typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
-				typedef.CustomType = new GeneratedAlphanumericValue(dataname.Name);
-				typedef.DataType = new DataType(dataname.Name, typedef.IsStrong);
-				entry = typedef;
-			}
+				typedef.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong);
+                entry = typedef;
+            }
 // [/COBOL 2002]
+            else {               
+                entry = new DataDescriptionEntry();
+                entry.DataType = DataType.Unknown;
+            }
+            entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 
-			if (context.levelNumber() != null)
+            if (context.levelNumber() != null)
 				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
-
-			entry.DataName = dataname;
+            
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
 
@@ -984,8 +987,8 @@ namespace TypeCobol.Compiler.Parser
 			}
 // [COBOL 2002]
 			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
-				entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause()[0]);
-				entry.DataType = DataType.CreateCustom(entry.CustomType.Value);
+				entry.UserDefinedDataType = CobolWordsBuilder.CreateDataTypeNameReference(context.cobol2002TypeClause()[0].dataTypeNameReference());
+				entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name);
 			}
 // [/COBOL 2002]
 			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)

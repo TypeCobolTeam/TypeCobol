@@ -79,9 +79,9 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		if (context.pictureClause() != null) {
 			parameter.Picture = CobolWordsBuilder.CreateAlphanumericValue(context.pictureClause().pictureCharacterString);
 			parameter.DataType = DataType.Create(parameter.Picture.Value);
-		} else {
-			parameter.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause());
-			parameter.DataType = DataType.CreateCustom(parameter.CustomType.Value);
+		} else if(context.cobol2002TypeClause() != null) {
+			parameter.UserDefinedDataType = CobolWordsBuilder.CreateDataTypeNameReference(context.cobol2002TypeClause().dataTypeNameReference());
+			parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
 		}
 		//TODO#245: subphrases
 		return parameter;

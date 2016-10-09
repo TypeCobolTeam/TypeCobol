@@ -232,6 +232,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
                     case TokenType.EBCDIC:
+                    case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
                         return false;
                     default:
                         throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
@@ -316,6 +317,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
                     case TokenType.EBCDIC:
+                    case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
                         return CharacterEncodingType.Alphanumeric;
                     default:
                         throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
@@ -365,6 +367,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
                     case TokenType.EBCDIC:
+                    case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
                         return Token.Text;
                     default:
                         throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);
@@ -428,7 +431,14 @@ namespace TypeCobol.Compiler.CodeElements
         public GeneratedSymbolName(Token baseToken, string generatedName) : base(baseToken)
         {
             // Temporary fix during #249 : use the token name and not the generated name
-            this.generatedSymbolName = baseToken.Text;// "$" + generatedName;
+            if (baseToken != null)
+            {
+                this.generatedSymbolName = baseToken.Text;// "$" + generatedName;
+            }
+            else
+            {
+                this.generatedSymbolName = generatedName;
+            }
         }
 
         private string generatedSymbolName;

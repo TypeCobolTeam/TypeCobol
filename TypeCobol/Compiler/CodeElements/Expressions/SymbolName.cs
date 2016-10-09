@@ -81,9 +81,6 @@ namespace TypeCobol.Compiler.CodeElements
 	public class SymbolDefinition: SymbolInformation {
 		public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type)
 			: base(nameLiteral, SymbolRole.SymbolDefinition, type) { }
-
-		public SymbolDefinition(SymbolReference symbol)
-			: this(symbol!=null? symbol.NameLiteral : null, symbol!=null? symbol.Type: SymbolType.TO_BE_RESOLVED) { }
 	}
 
     /// <summary>
