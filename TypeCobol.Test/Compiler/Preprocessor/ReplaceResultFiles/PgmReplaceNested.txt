@@ -9,3 +9,6 @@
 [16,27:20]<IntegerLiteral>{20}
 [16,27:)]<RightParenthesisSeparator>
 [28,28+:.]<PeriodSeparator>
+** Document path PgmReplaceNested **
+-- Line 3 --
+[59,59+:.]<PeriodSeparator>
