@@ -11,6 +11,8 @@
 
 [[DataDescriptionEntry]] [1,2:01]<IntegerLiteral>{1} --> [15,15+:.]<PeriodSeparator>
 
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
 [[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
 
 [[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
