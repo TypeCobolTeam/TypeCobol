@@ -5,6 +5,12 @@
 - IsRecursive = False
 - IsCommon = False
 
+[[DataDivisionHeader]] [1,4:DATA]<DATA> --> [14,14+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [1,15:WORKING-storage]<WORKING_STORAGE> --> [24,24+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [1,2:01]<IntegerLiteral>{1} --> [15,15+:.]<PeriodSeparator>
+
 [[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
 
 [[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
