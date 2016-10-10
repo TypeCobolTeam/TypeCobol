@@ -963,15 +963,17 @@ namespace TypeCobol.Compiler.Parser
                 typedef.DataTypeName = CobolWordsBuilder.CreateDataTypeNameDefinition(context.dataNameDefinition());
                 var strong = context.cobol2002TypedefClause().STRONG();
 				typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
-				typedef.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong);
+
                 entry = typedef;
+                entry.DataName = typedef.DataTypeName;
+                entry.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong);               
             }
 // [/COBOL 2002]
             else {               
                 entry = new DataDescriptionEntry();
+                entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
                 entry.DataType = DataType.Unknown;
             }
-            entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 
             if (context.levelNumber() != null)
 				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());

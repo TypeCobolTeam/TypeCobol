@@ -159,38 +159,73 @@ namespace TypeCobol.Compiler.Parser
 
 		internal StorageArea CreateLinageCounterSpecialRegister(CodeElementsParser.LinageCounterSpecialRegisterContext context)
 		{
-			return new FilePropertySpecialRegister(
+			var specialRegister = new FilePropertySpecialRegister(
 				ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
 				CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
+            if(specialRegister.StorageAreaName != null) {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.StorageAreaName.NameLiteral.Token] = specialRegister.StorageAreaName;
+            }
+            if (specialRegister.SymbolReference != null) {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
+            }
+            return specialRegister;
 		}
 
 		internal StorageArea CreateAddressOfSpecialRegister(CodeElementsParser.AddressOfSpecialRegisterContext context)
 		{
-			return new StorageAreaPropertySpecialRegister(
+			var specialRegister = new StorageAreaPropertySpecialRegister(
 				ParseTreeUtils.GetFirstToken(context.ADDRESS()),
 				CreateStorageAreaReference(context.storageAreaReference()));
-		}
+            if (specialRegister.StorageAreaName != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.StorageAreaName.NameLiteral.Token] = specialRegister.StorageAreaName;
+            }
+            if (specialRegister.SymbolReference != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
+            }
+            return specialRegister;
+        }
 
 		internal StorageArea CreateLengthOfSpecialRegister(CodeElementsParser.LengthOfSpecialRegisterContext context)
 		{
-			return new StorageAreaPropertySpecialRegister(
+			var specialRegister = new StorageAreaPropertySpecialRegister(
 				ParseTreeUtils.GetFirstToken(context.LENGTH()),
 				CreateStorageAreaReference(context.storageAreaReference()));
-		}
+            if (specialRegister.StorageAreaName != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.StorageAreaName.NameLiteral.Token] = specialRegister.StorageAreaName;
+            }
+            if (specialRegister.SymbolReference != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
+            }
+            return specialRegister;
+        }
 
 		// - 3. Intrinsic function calls (allocate a storage area for the result) -
 
 		internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
 		{
+            FunctionCallResult result = null;
             if (context.intrinsicFunctionCall() != null)
             {
-                return new FunctionCallResult(CreateIntrinsicFunctionCall(context.intrinsicFunctionCall()));
+                result = new FunctionCallResult(CreateIntrinsicFunctionCall(context.intrinsicFunctionCall()));
             }
             else
             {
                 // [TYPECOBOL] user defined function calls
-                return new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
+                result = new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
             }
+            if (result.StorageAreaName != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[result.StorageAreaName.NameLiteral.Token] = result.StorageAreaName;
+            }
+            if (result.SymbolReference != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[result.SymbolReference.NameLiteral.Token] = result.SymbolReference;
+            }
+            return result;
         }
 
         internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context)
