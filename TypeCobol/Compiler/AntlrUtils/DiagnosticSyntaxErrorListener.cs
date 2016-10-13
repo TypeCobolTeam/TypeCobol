@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.AntlrUtils
@@ -96,6 +97,10 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (ruleStack!=null) str.Append("RuleStack="+ruleStack+", ");
             if (OffendingSymbol!=null) {
                 str.Append("OffendingSymbol=").Append(OffendingSymbol);
+                var  importedToken = OffendingSymbol as ImportedToken;
+                if (importedToken != null) {
+                    str.Append(" in ").Append(importedToken.CopyDirective);
+                }
             } else {
                 str.Append("[").Append(ColumnStart).Append(">").Append(ColumnEnd).Append("]");
             }
