@@ -337,7 +337,8 @@ namespace TypeCobol.Compiler.Parser
 			while(parent != null) {
 				var data = parent.CodeElement as DataDefinitionEntry;
 				if (data == null) return null;
-				if (data.LevelNumber.Value < level) return parent;
+                //TODO SMEDILOL: this seems wrong: how a parent DataDefinitionEntry can have a greater or equal levelNumber ?
+				if (data.LevelNumber == null || data.LevelNumber.Value < level) return parent;
 				parent = parent.Parent;
 			}
 			return null;
