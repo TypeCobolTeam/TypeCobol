@@ -296,12 +296,13 @@ class DeclarationChecker: NodeListener {
 		var subscripts = move.Subscripts;
 		foreach(var variable in move.Variables.Keys) {
 			ICollection<List<SubscriptExpression>> links;
-			try { links = subscripts[variable]; }
-			catch (KeyNotFoundException) {
-				links = new List<List<SubscriptExpression>>();
-				links.Add(new List<SubscriptExpression>());
-			}
-			foreach(var link in links)
+		    if (subscripts.ContainsKey(variable)) {
+		        links = subscripts[variable];
+		    } else {
+		        links = new List<List<SubscriptExpression>>();
+		        links.Add(new List<SubscriptExpression>());
+		    }
+		    foreach(var link in links)
 				CheckSubscripting(move, node.SymbolTable, variable, link);
 		}
 	}
