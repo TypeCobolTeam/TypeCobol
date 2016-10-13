@@ -16,7 +16,11 @@
 [43,46:9(4)]<PictureCharacterString>
 [48,51:COMP]<COMP>
 [52,53:. ]<PeriodSeparator>
+-- Line 3 --
+[20,20+:.]<PeriodSeparator>
 ** Document path PgmCopy **
+-- Line 2 --
+[47,48:. ]<PeriodSeparator>
 -- Line 4 --
 [8,9:01]<IntegerLiteral>{1}
 [11,16:FILLER]<FILLER>
@@ -51,14 +55,22 @@
 [51,53:PIC]<PIC>
 [55,58:X(5)]<PictureCharacterString>
 [59,60:. ]<PeriodSeparator>
+-- Line 3 --
+[17,17+:.]<PeriodSeparator>
 ** Document path PgmCopy/CPY2 **
+[21,21+:.]<PeriodSeparator>
 -- Line 4 --
 [17,18:15]<IntegerLiteral>{15}
 [20,41:PAC421-EPL-REF-CPT-RAC]<UserDefinedWord>
 [51,53:PIC]<PIC>
 [55,58:X(9)]<PictureCharacterString>
 [59,60:. ]<PeriodSeparator>
+** Document path PgmCopy **
+-- Line 5 --
+[37,38:. ]<PeriodSeparator>
+-- Line 6 --
+[20,21:. ]<PeriodSeparator>
 
 ++ Preprocessor diagnostics ++
 -- Line 6 --
-[8,21]<28,Error,Directives>Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named UNKNOWN
+[8,19]<28,Error,Directives>Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named UNKNOWN

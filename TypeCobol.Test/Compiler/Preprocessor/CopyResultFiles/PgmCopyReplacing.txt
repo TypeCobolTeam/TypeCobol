@@ -32,6 +32,9 @@
 [28,29:OF]<OF>
 [31,31:PAYROLL]<UserDefinedWord>
 [32,32+:.]<PeriodSeparator>
+** Document path PgmCopyReplacing **
+-- Line 4 --
+[38,38+:.]<PeriodSeparator>
 ** Document path PgmCopyReplacing/CPY6 **
 -- Line 1 --
 [8,9:01]<IntegerLiteral>{1}
@@ -66,6 +69,9 @@
 [41,42:OF]<OF>
 [44,48:Payroll]<UserDefinedWord>
 [49,49+:.]<PeriodSeparator>
+** Document path PgmCopyReplacing **
+-- Line 6 --
+[52,52+:.]<PeriodSeparator>
 ** Document path PgmCopyReplacing/CPY7 **
 -- Line 1 --
 [8,9:05]<IntegerLiteral>{5}
@@ -73,3 +79,6 @@
 [16,18:PIC]<PIC>
 [20,24:X(01)]<PictureCharacterString>
 [25,26:. ]<PeriodSeparator>
+** Document path PgmCopyReplacing **
+-- Line 9 --
+[48,48+:.]<PeriodSeparator>

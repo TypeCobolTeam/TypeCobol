@@ -521,7 +521,7 @@ fileSection:
 
 workingStorageSection:
 	WorkingStorageSectionHeader 
-	(dataDefinitionEntry | ExecStatement SentenceEnd?)*;
+	(dataDefinitionEntry SentenceEnd?| ExecStatement SentenceEnd?)*;
 
 // p156: The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.
 // On each invocation, data items defined in the LOCAL-STORAGE SECTION are reallocated. Each data item that has a VALUE clause is initialized to the value specified in that clause.
@@ -535,7 +535,7 @@ workingStorageSection:
 
 localStorageSection:
 	LocalStorageSectionHeader 
-	(dataDefinitionEntry | ExecStatement SentenceEnd?)*;
+	(dataDefinitionEntry SentenceEnd?| ExecStatement SentenceEnd?)*;
 
 // p157: The LINKAGE SECTION describes data made available from another program or method. 
 // Record description entries and data item description entries in the LINKAGE SECTION provide names and descriptions, but storage within the program or method is not reserved because the data area exists elsewhere.
@@ -561,7 +561,8 @@ localStorageSection:
 
 linkageSection:
 	LinkageSectionHeader 
-	dataDefinitionEntry*;
+	dataDefinitionEntry*
+	SentenceEnd?;
 
 // Four distinct types of data definition entries :
 
