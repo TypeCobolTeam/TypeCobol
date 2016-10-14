@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
@@ -165,20 +167,35 @@ namespace TypeCobol.Compiler
         // Cache for all the compilation documents imported by COPY directives in this project
         IDictionary<string, CompilationDocument> importedCompilationDocumentsCache = new Dictionary<string, CompilationDocument>();
 
+
+        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName) {
+            return GetProcessedTokensDocument(libraryName, textName, null);
+        }
+
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName)
+        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, [NotNull] string textName,
+            [CanBeNull] MultilineScanState scanState)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
-            CompilationDocument resultDocument = null;
+            if (scanState != null) {
+                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.InsideDataDivision ? "D2" : "__")
+                            + (scanState.WithDebuggingMode ? "D3" : "__");
+                //TODO check if another parameter must be included in cacheKey
+                //+ (scanState.InsideRemarksDirective ? "xx" : "__") + (scanState.InsideRemarksParentheses ? "xx" : "__")
+                //+ scanState.EncodingForAlphanumericLiterals + scanState.SymbolicCharacters;
+            }
+            CompilationDocument resultDocument;
             if(importedCompilationDocumentsCache.ContainsKey(cacheKey))
             {
                 resultDocument = importedCompilationDocumentsCache[cacheKey];
             }
             else
             {
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true);
+                
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState);
+                //FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true);
                 fileCompiler.CompileOnce();
                 resultDocument = fileCompiler.CompilationResultsForCopy;
 
