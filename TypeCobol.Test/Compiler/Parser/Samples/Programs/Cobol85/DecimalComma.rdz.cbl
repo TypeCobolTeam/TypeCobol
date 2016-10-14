@@ -6,7 +6,7 @@
        special-names. decimal-point is comma.
 000000 DATA DIVISION.
 000000 working-storage section.
-000000 COPY Decimal2.
+000000 COPY DecimalCommaCPY.
 000000
 000000 PROCEDURE DIVISION.
 000000     GOBACK
