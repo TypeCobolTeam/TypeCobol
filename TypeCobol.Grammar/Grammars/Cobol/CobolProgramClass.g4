@@ -561,7 +561,7 @@ localStorageSection:
 
 linkageSection:
 	LinkageSectionHeader 
-	dataDefinitionEntry*
+	(dataDefinitionEntry  SentenceEnd?)*
 	SentenceEnd?;
 
 // Four distinct types of data definition entries :
