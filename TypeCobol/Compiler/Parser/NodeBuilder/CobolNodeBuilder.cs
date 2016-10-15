@@ -531,9 +531,11 @@ namespace TypeCobol.Compiler.Parser
 					condition = null;
 				} else
 				if (ctxt.WhenSearchCondition() != null) {
-					var whensearch = (WhenSearchCondition)ctxt.WhenSearchCondition().Symbol;
+                    var whensearch = (WhenSearchCondition)ctxt.WhenSearchCondition().Symbol;
 					condition = new WhenCondition();
-					condition.SelectionObjects = new EvaluateSelectionObject[1];
+				    whensearch.ApplyPropertiesToCE(condition);
+
+                    condition.SelectionObjects = new EvaluateSelectionObject[1];
 					condition.SelectionObjects[0] = new EvaluateSelectionObject();
 					condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
 				} else {
