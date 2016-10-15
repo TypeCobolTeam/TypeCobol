@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeModel {
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.CodeModel {
 
 	using System;
 	using System.Text;
@@ -71,25 +73,18 @@ public class SymbolTable {
 
 	internal void AddVariable(Node symbol) { Add(DataEntries, symbol); }
 
-	private void Add(Dictionary<string,List<Node>> table, Node symbol) {
+	private void Add([NotNull] IDictionary<string, List<Node>> table, [NotNull] Node symbol) {
 		 // TODO: generate a name for FILLERs and anonymous data to be referenced by in the symbol table
-		if (symbol.Name == null) return;
-		List<Node> found = null;
-		if (table == DataEntries) {
-			if (table.ContainsKey(symbol.QualifiedName.Head))
-				found = table[symbol.QualifiedName.Head];
-		} else {
-			if(Types.ContainsKey(symbol.QualifiedName.Head))
-				found = Types[symbol.QualifiedName.Head];
+		if (symbol.Name == null) {
+		    return;
 		}
-		if (found == null || found.Count == 0) {
-			List<Node> samenamesymbols = null;
-			try { samenamesymbols = table[symbol.QualifiedName.Head]; }
-			catch (KeyNotFoundException) {
-				samenamesymbols = new List<Node>();
-				table.Add(symbol.QualifiedName.Head, samenamesymbols);
-			}
-			found = samenamesymbols;
+
+	    List<Node> found;
+		if (table.ContainsKey(symbol.QualifiedName.Head)) {
+			found = table[symbol.QualifiedName.Head];
+		} else { 
+            found = new List<Node>();
+		    table.Add(symbol.QualifiedName.Head, found);
 		}
 		found.Add(symbol);
 	}

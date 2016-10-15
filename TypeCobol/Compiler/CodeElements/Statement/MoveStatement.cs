@@ -86,13 +86,13 @@ public class MoveSimpleStatement : MoveStatement {
 			if (SendingVariable != null) {
 				var kv = GetSubscriptedVariable(SendingVariable.StorageArea);
 				if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
-					AddKeyValue<QualifiedName,SubscriptExpression>(subscripts, kv);
+					AddKeyValue(subscripts, kv);
 				}
 			}
 			foreach(var v in ReceivingStorageAreas) {
 				var kv = GetSubscriptedVariable(v.StorageArea);
 				if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
-					AddKeyValue<QualifiedName,SubscriptExpression>(subscripts, kv);
+					AddKeyValue(subscripts, kv);
 				}
 			}
 			return subscripts;
@@ -104,10 +104,11 @@ public class MoveSimpleStatement : MoveStatement {
 		var name = new URI(variable.SymbolReference.Name);
 		return new KeyValuePair<QualifiedName,List<SubscriptExpression>>(name, subscripted.Subscripts);
 	}
-	private void AddKeyValue<K,V>(Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
+	private void AddKeyValue<K,V>([NotNull] Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
 		ICollection<List<V>> values = new List<List<V>>();
-		try { values = map[kv.Key]; }
-		catch(KeyNotFoundException) { }// values is already initialized as an empty list
+	    if (map.ContainsKey(kv.Key)) {
+            values = map[kv.Key];
+        } // else values is already initialized as an empty list
 		values.Add(kv.Value);
 		map[kv.Key] = values;
 	}
