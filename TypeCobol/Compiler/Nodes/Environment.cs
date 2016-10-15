@@ -39,4 +39,17 @@ public class InputOutputSection: Node, CodeElementHolder<InputOutputSectionHeade
 	public override string ID { get { return "input-output"; } }
 }
 
+
+    public class FileControlParagraphHeaderNode: Node, CodeElementHolder<FileControlParagraphHeader>, EnvironmentSection {
+	    public FileControlParagraphHeaderNode(FileControlParagraphHeader header): base(header) { }
+	    public override string ID { get { return "file-control"; } }
+    }
+
+    public class FileControlEntryNode: Node, CodeElementHolder<FileControlEntry>, EnvironmentSection {
+	    public FileControlEntryNode(FileControlEntry entry): base(entry) { }
+	    public override string ID { get { return "file-control"; } }
+    }
+
+
+
 } // end of namespace TypeCobol.Compiler.Nodes
