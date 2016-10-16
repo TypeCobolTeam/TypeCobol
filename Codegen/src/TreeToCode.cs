@@ -35,6 +35,10 @@
 		}
 
 		private bool Process(Node node) {
+            //TODO If Node inside a copy are not useful for step 1 of Generator, we can move this to step1.
+		    if (node.IsInsideCopy()) {
+		        return false;
+		    }
 			var generated = node as Generated;
 			foreach(var line in node.Lines) {
 				if (generated != null)
