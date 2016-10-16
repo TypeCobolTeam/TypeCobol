@@ -116,6 +116,14 @@ namespace TypeCobol.Codegen {
 			ParseGenerateCompare(Path.Combine("TypeCobol","Library")+".cbl", skeletons);
 		}
 
+        //TODO move this test to a class named Cobol85. Wait for the branch Issue#300-MissingLinesInCodegen to be merged
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseCopyNotExpanded() {
+			ParseGenerateCompare(Path.Combine("Cobol85","CopyNotExpanded")+".cbl", null);
+		}
+
 
 
 
