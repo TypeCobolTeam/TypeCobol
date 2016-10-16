@@ -124,6 +124,7 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Library")+".cbl", skeletons);
 		}
 
+        
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
@@ -132,6 +133,14 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","ProcedureCall")+".cbl", skeletons);
 		}
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        [TestProperty("Cobol", "85")]
+        public void ParseCopyNotExpanded()
+        {
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("Cobol85", "CopyNotExpanded") + ".cbl");
+        }
 
-	}
+    }
 }

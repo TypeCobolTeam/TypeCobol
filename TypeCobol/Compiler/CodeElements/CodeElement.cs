@@ -1,8 +1,10 @@
 ﻿using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -25,10 +27,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public CodeElementType Type { get; private set; }
 
+
+        private IList<Token> _consumedTokens;
         /// <summary>
         /// All significant tokens consumed in the source document to build this code element
         /// </summary>
-        public IList<Token> ConsumedTokens { get; set; }
+        public IList<Token> ConsumedTokens {
+            get { return this._consumedTokens; } 
+            set {
+                this._consumedTokens = value;
+                resetLazyProperties();
+            } 
+        }
 
         /// <summary>
         /// Is the token is a UserDefinedWord or a literal, it could be a symbol definition or a symbol reference.
@@ -113,7 +123,26 @@ namespace TypeCobol.Compiler.CodeElements
 			return sb.ToString();
 		}
 
-		public string SourceText {
+        private bool? _isInsideCopy = null;
+
+        /// <summary>
+        /// Return true if this CodeElement is inside a COPY
+        /// 
+        /// TODO To discuss: make a rule: a CodeElement CAN'T have token in two different source file
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInsideCopy() {
+            if (_isInsideCopy == null) {
+                _isInsideCopy = ConsumedTokens != null && ConsumedTokens.OfType<ImportedToken>().Any();
+            }
+            return _isInsideCopy.Value;
+        }
+
+        protected void resetLazyProperties() {
+            _isInsideCopy = null;
+        }
+
+        public string SourceText {
 			get {
 				var str = new StringBuilder();
 				ITokensLine previous = null;
