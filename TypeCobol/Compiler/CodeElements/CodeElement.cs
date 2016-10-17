@@ -41,6 +41,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// List of errors found on this CodeElement
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
+
+
+        /// <summary>
+        /// Apply propperties of the current CodeElement to the specified one.
+        /// </summary>
+        /// <param name="ce"></param>
+        public void ApplyPropertiesToCE(CodeElement ce)
+        {
+            ce.ConsumedTokens = this.ConsumedTokens;
+            ce.Diagnostics = this.Diagnostics;
+            ce.SymbolInformationForTokens = this.SymbolInformationForTokens;
+        }
         
 		/// <summary>
 		/// Debug string
