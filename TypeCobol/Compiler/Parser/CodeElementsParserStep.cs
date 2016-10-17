@@ -153,7 +153,18 @@ namespace TypeCobol.Compiler.Parser
                 if (codeElementParseTree.Start.Type > 0)
                 {
                     // Get the first line that was parsed                
-                    CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
+                    var tokenStart = (Token)codeElementParseTree.Start;
+                    CodeElementsLine codeElementsLine;
+
+                    var importedToken = tokenStart as ImportedToken;
+                    if (importedToken != null)
+                    {
+                        codeElementsLine = (CodeElementsLine) importedToken.CopyDirective.TextNameSymbol.TokensLine;
+                    }
+                    else
+                    {
+                        codeElementsLine = ((CodeElementsLine) tokenStart.TokensLine);
+                    }
 
                     // Register that this line was updated
                     // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
