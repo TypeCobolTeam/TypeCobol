@@ -134,7 +134,7 @@ namespace TypeCobol.Test {
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-            //TODO  TestCodeElements.Check_EntryCodeElements();// RefreshProgramClassDocumentSnapshot
+            TestCodeElements.Check_EntryCodeElements();
             TestParser.Check_BeforeAfterInsertion();
             TestParser.Check_BeforeAfterInsertionBatched();
 
