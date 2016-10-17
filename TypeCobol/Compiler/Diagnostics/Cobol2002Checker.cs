@@ -190,6 +190,11 @@ class TypedDeclarationChecker: NodeListener {
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		if (node is TypeDefinition) return; //not our job
+		var data = node.CodeElement as DataDescriptionEntry;
+		if (data != null && data.CustomType != null && data.Picture != null) {
+			string message = "PICTURE clause incompatible with TYPE clause";
+			DiagnosticUtils.AddError(node.CodeElement, message, data.Picture.Token);
+		}
 		var type = ((ITypedNode)node).DataType;
 		if (type.IsCOBOL) return; //nothing to do
 		var found = node.SymbolTable.GetType(new URI(type.Name));
