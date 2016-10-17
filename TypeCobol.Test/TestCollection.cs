@@ -160,10 +160,6 @@ namespace TypeCobol.Test {
 				foreach(var ex in errors) str.Append(ex.Message);
 				throw new Exception(str.ToString());
 			}
-
-            //This test use TypeChecker which is specific to TypeCobol
-            //As specifications of TypeCobol are not final yet this test can't be used
-            //            TestParser.Check_ParserIntegration();
         }
 
         /// <summary>

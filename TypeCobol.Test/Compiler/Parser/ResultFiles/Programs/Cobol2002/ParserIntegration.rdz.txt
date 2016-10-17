@@ -1,0 +1,48 @@
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [28,29:. ]<PeriodSeparator>
+- ProgramName = TESTPGM1
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[EnvironmentDivisionHeader]] [8,18:environment]<ENVIRONMENT> --> [28,29:. ]<PeriodSeparator>
+
+[[ConfigurationSectionHeader]] [8,20:configuration]<CONFIGURATION> --> [29,30:. ]<PeriodSeparator>
+
+[[SourceComputerParagraph]] [8,22:source-computer]<SOURCE_COMPUTER> --> [33,34:. ]<PeriodSeparator>
+
+[[SpecialNamesParagraph]] [8,20:special-names]<SPECIAL_NAMES> --> [45,46:. ]<PeriodSeparator>
+
+[[DataDivisionHeader]] [8,11:data]<DATA> --> [21,22:. ]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:working-storage]<WORKING_STORAGE> --> [31,32:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<IntegerLiteral>{1} --> [31,32:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [12,13:05]<IntegerLiteral>{5} --> [51,52:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [15,16:10]<IntegerLiteral>{10} --> [31,32:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [18,19:15]<IntegerLiteral>{15} --> [58,59:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [18,19:15]<IntegerLiteral>{15} --> [49,50:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [18,19:15]<IntegerLiteral>{15} --> [49,50:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [18,19:15]<IntegerLiteral>{15} --> [49,50:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [18,19:15]<IntegerLiteral>{15} --> [59,60:. ]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:procedure]<PROCEDURE> --> [33,34:. ]<PeriodSeparator>
+- InputParameters = PCBIMS PARM
+
+[[ParagraphHeader]] [8,17:PRINCIPALE]<UserDefinedWord> --> [18,19:. ]<PeriodSeparator>
+- ParagraphName = PRINCIPALE
+
+[[GobackStatement]] [12,17:goback]<GOBACK> --> [12,17:goback]<GOBACK>
+
+[[SentenceEnd]] [12,13:. ]<PeriodSeparator> --> [12,13:. ]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:end]<END> --> [28,29:. ]<PeriodSeparator>
+- ProgramName = CCC1B032
+
