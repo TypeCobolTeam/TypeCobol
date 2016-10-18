@@ -38,6 +38,32 @@ namespace TypeCobol.Compiler.CodeElements
         public IDictionary<Token,SymbolInformation> SymbolInformationForTokens { get; set; }
         
         /// <summary>
+        /// Storage area definitions (explicit data definitions AND compiler generated storage area allocations)
+        /// </summary>
+        public IDictionary<SymbolDefinition,DataDescriptionEntry> StorageAreaDefinitions { get; set; }
+
+        /// <summary>
+        /// List of storage areas read from by this CodeElement
+        /// </summary>
+        public IList<StorageArea> StorageAreaReads { get; set; }
+
+        /// <summary>
+        /// List of storage areas written to by this CodeElement
+        /// </summary>
+        public IList<ReceivingStorageArea> StorageAreaWrites { get; set; }
+
+        /// <summary>
+        /// List of impacts which we will need to resolve at the next stage between two group items
+        /// because of MOVE CORRESPONDING, ADD CORRESPONDING, and SUBTRACT CORRESPONDING statements
+        /// </summary>
+        public IList<GroupCorrespondingImpact> StorageAreaGroupsCorrespondingImpacts { get; set; }
+
+        /// <summary>
+        /// List of storage areas shared by the current program with a caller program (procedure, function & methods calls )
+        /// </summary>
+        public IList<StorageArea> StorageAreasSharedWithCaller { get; set; }
+
+        /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }

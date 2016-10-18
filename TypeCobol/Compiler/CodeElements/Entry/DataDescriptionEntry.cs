@@ -730,13 +730,83 @@
 		/// </summary>
 		public bool IsInitialValueNull { get { return InitialValue.NullPointerValue != null; } }
 	}
+        
+    /// <summary>
+    /// Description of the data stored in a special register
+    /// </summary>
+    public class SpecialRegisterDescriptionEntry : DataDescriptionEntry
+    {
+        public SpecialRegisterDescriptionEntry(Token specialRegisterName, string storageAreaNameOrFileName) : base() {
+            // Generate a unique symbol name for this special register
+            var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + storageAreaNameOrFileName);
+            DataName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
 
-	/// <summary>
-	/// p216:
-	/// The REDEFINES clause allows you to use different data description entries to
-	/// describe the same computer storage area
-	/// </summary>
-	public class DataRedefinesEntry: DataDefinitionEntry
+            SpecialRegisterName = specialRegisterName;
+        }
+
+        public Token SpecialRegisterName { get; private set; }
+    }
+
+    /// <summary>
+    /// Description of the data returned by a function call
+    /// </summary>
+    public class FunctionCallResultDescriptionEntry : DataDescriptionEntry
+    {
+        public FunctionCallResultDescriptionEntry(FunctionCall functionCall, int callSiteId) : base() {
+            // Generate a unique symbol name for the function call at this specific call site
+            var generatedSymbolName = new GeneratedSymbolName(functionCall.FunctionNameToken, functionCall.FunctionName + "-" + callSiteId);
+            DataName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
+
+            FunctionCall = functionCall;    
+        }
+
+        public FunctionCall FunctionCall { get; private set; }
+    }
+
+    /// <summary>
+    /// TYPECOBOL : data conditions can be declared inline when a user defined function parameter is described
+    /// </summary>
+    public class ParameterDescriptionEntry : DataDescriptionEntry
+    {
+        // TODO#245
+        // create an interface shared with DataDeclarationEntry
+        // that aggregates all the non-illegal stuff like justified,
+        // group usage national, blank when zero and so on
+
+        public IList<DataConditionEntry> DataConditions { get; internal set; }
+    }
+
+    /// <summary>
+    /// COBOL 2002 : user-defined data type description.
+    /// TYPEDEF Clause
+    /// The TYPEDEF clause is used to create a new user-defined data type, type-name.    
+    /// After defining a new data type using the TYPEDEF clause, data items can be declared as this new data type using the TYPE clause.
+    /// The TYPEDEF clause can only be specified for level 01 entries, which can also be group items. 
+    /// If a group item is specified, all subordinate items of the group become part of the type declaration. 
+    /// No storage is allocated for a type declaration.
+    /// The TYPEDEF clause cannot be specified in the same data description entry as the following clauses: 
+    /// EXTERNAL, REDEFINES.
+    /// </summary>
+    public class DataTypeDescriptionEntry : DataDescriptionEntry, ITypedCodeElement
+    {
+        public DataTypeDescriptionEntry() : base() { }
+
+        /// <summary>
+        /// The name of the new user-defined data type is the subject of the TYPEDEF clause.
+        /// Data-name-1 must be specified with the TYPEDEF clause: FILLER cannot be used. 
+        /// </summary>
+        public SymbolDefinition DataTypeName { get; set; }
+
+        public SyntaxProperty<bool> Strong { get; internal set; }
+        public bool IsStrong { get { return Strong != null && Strong.Value; } }
+    }
+
+    /// <summary>
+    /// p216:
+    /// The REDEFINES clause allows you to use different data description entries to
+    /// describe the same computer storage area
+    /// </summary>
+    public class DataRedefinesEntry: DataDefinitionEntry
 	{
 		public DataRedefinesEntry(): base(CodeElementType.DataRedefinesEntry) { }
 
@@ -873,33 +943,7 @@
 		public SymbolReference RenamesFromDataName { get; set; }
 		public SymbolReference RenamesToDataName { get; set; }
 	}
-
-    // [COBOL 2002]
-    /// <summary>
-    /// Cobol 2002 user-defined data type description.
-    /// TYPEDEF Clause
-    /// The TYPEDEF clause is used to create a new user-defined data type, type-name.    
-    /// After defining a new data type using the TYPEDEF clause, data items can be declared as this new data type using the TYPE clause.
-    /// The TYPEDEF clause can only be specified for level 01 entries, which can also be group items. 
-    /// If a group item is specified, all subordinate items of the group become part of the type declaration. 
-    /// No storage is allocated for a type declaration.
-    /// The TYPEDEF clause cannot be specified in the same data description entry as the following clauses: 
-    /// EXTERNAL, REDEFINES.
-    /// </summary>
-    public class DataTypeDescriptionEntry: DataDescriptionEntry, ITypedCodeElement {
-		public DataTypeDescriptionEntry(): base() { }
-
-        /// <summary>
-        /// The name of the new user-defined data type is the subject of the TYPEDEF clause.
-        /// Data-name-1 must be specified with the TYPEDEF clause: FILLER cannot be used. 
-        /// </summary>
-        public SymbolDefinition DataTypeName { get; set; }
-
-        public SyntaxProperty<bool> Strong { get; internal set; }
-		public bool IsStrong { get { return Strong != null && Strong.Value; } }
-	}
-// [/COBOL 2002]
-
+    
     /// <summary>
     /// Format 3: condition-name
     /// A user-specified name that associates a value, a set of values, or a range of

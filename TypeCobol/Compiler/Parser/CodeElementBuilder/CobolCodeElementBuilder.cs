@@ -45,9 +45,27 @@ namespace TypeCobol.Compiler.Parser
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
-			if(CodeElement != null && CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
-				CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
-			}
+			if(CodeElement != null)
+            {
+                if (CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
+                    CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
+                }
+                if (CobolExpressionsBuilder.storageAreaDefinitions.Count > 0) {
+                    CodeElement.StorageAreaDefinitions = CobolExpressionsBuilder.storageAreaDefinitions;
+                }
+                if (CobolExpressionsBuilder.storageAreaReads.Count > 0) {
+                    CodeElement.StorageAreaReads = CobolExpressionsBuilder.storageAreaReads;
+                }
+                if (CobolExpressionsBuilder.storageAreaWrites.Count > 0) {
+                    CodeElement.StorageAreaWrites = CobolExpressionsBuilder.storageAreaWrites;
+                }
+                if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpacts.Count > 0) {
+                    CodeElement.StorageAreaGroupsCorrespondingImpacts = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpacts;
+                }                
+                if (CobolExpressionsBuilder.storageAreasSharedWithCaller.Count > 0) {
+                    CodeElement.StorageAreasSharedWithCaller = CobolExpressionsBuilder.storageAreasSharedWithCaller;
+                }
+            }
 		}
 
 		// Code structure

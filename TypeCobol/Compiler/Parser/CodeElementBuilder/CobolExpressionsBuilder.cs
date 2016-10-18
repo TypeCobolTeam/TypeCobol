@@ -3,15 +3,37 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolExpressionsBuilder
-	{        
-		public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder)
+	{
+        // Storage area definitions (explicit data definitions AND compiler generated storage area allocations)
+       internal IDictionary<SymbolDefinition, DataDescriptionEntry> storageAreaDefinitions { get; set; }
+        
+        // List of storage areas read from by this CodeElement
+        internal IList<StorageArea> storageAreaReads { get; set; }
+
+        // List of storage areas written to by this CodeElement
+        internal IList<ReceivingStorageArea> storageAreaWrites { get; set; }
+
+        // List of impacts which we will need to resolve at the next stage between two group items
+        // because of MOVE CORRESPONDING, ADD CORRESPONDING, and SUBTRACT CORRESPONDING statements
+        internal IList<GroupCorrespondingImpact> storageAreaGroupsCorrespondingImpacts { get; set; }
+        
+        // List of storage areas shared by the current program with a caller program (procedure, function & methods calls )
+        internal IList<StorageArea> storageAreasSharedWithCaller { get; set; }
+
+        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder)
 		{
 			CobolWordsBuilder = cobolWordsBuilder;
-		}
+            storageAreaDefinitions = new Dictionary<SymbolDefinition, DataDescriptionEntry>();
+            storageAreaReads = new List<StorageArea>();
+            storageAreaWrites = new List<ReceivingStorageArea>();
+            storageAreaGroupsCorrespondingImpacts = new List<GroupCorrespondingImpact>();
+            storageAreasSharedWithCaller = new List<StorageArea>();
+        }
 
 		private CobolWordsBuilder CobolWordsBuilder { get; set; }
 
@@ -162,8 +184,9 @@ namespace TypeCobol.Compiler.Parser
 			var specialRegister = new FilePropertySpecialRegister(
 				ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
 				CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
-            if(specialRegister.StorageAreaName != null) {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.StorageAreaName.NameLiteral.Token] = specialRegister.StorageAreaName;
+            if(specialRegister.DataDescriptionEntry != null) {
+                var dataDescription = specialRegister.DataDescriptionEntry;
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
             }
             if (specialRegister.SymbolReference != null) {
                 CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
@@ -176,9 +199,10 @@ namespace TypeCobol.Compiler.Parser
 			var specialRegister = new StorageAreaPropertySpecialRegister(
 				ParseTreeUtils.GetFirstToken(context.ADDRESS()),
 				CreateStorageAreaReference(context.storageAreaReference()));
-            if (specialRegister.StorageAreaName != null)
+            if (specialRegister.DataDescriptionEntry != null)
             {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.StorageAreaName.NameLiteral.Token] = specialRegister.StorageAreaName;
+                var dataDescription = specialRegister.DataDescriptionEntry;
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
             }
             if (specialRegister.SymbolReference != null)
             {
@@ -192,9 +216,10 @@ namespace TypeCobol.Compiler.Parser
 			var specialRegister = new StorageAreaPropertySpecialRegister(
 				ParseTreeUtils.GetFirstToken(context.LENGTH()),
 				CreateStorageAreaReference(context.storageAreaReference()));
-            if (specialRegister.StorageAreaName != null)
+            if (specialRegister.DataDescriptionEntry != null)
             {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.StorageAreaName.NameLiteral.Token] = specialRegister.StorageAreaName;
+                var dataDescription = specialRegister.DataDescriptionEntry;
+                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
             }
             if (specialRegister.SymbolReference != null)
             {
@@ -217,9 +242,10 @@ namespace TypeCobol.Compiler.Parser
                 // [TYPECOBOL] user defined function calls
                 result = new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
             }
-            if (result.StorageAreaName != null)
+            if (result.DataDescriptionEntry != null)
             {
-                CobolWordsBuilder.symbolInformationForTokens[result.StorageAreaName.NameLiteral.Token] = result.StorageAreaName;
+                var dataDescription = result.DataDescriptionEntry;
+                CobolWordsBuilder.symbolInformationForTokens[result.DataDescriptionEntry.DataName.NameLiteral.Token] = result.DataDescriptionEntry.DataName;
             }
             if (result.SymbolReference != null)
             {

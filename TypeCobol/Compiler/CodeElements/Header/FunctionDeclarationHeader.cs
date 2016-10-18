@@ -127,19 +127,6 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>
-    /// TYPECOBOL : data conditions can be decalred inline when a user defined function parameter is described
-    /// </summary>
-    public class ParameterDescriptionEntry : DataDescriptionEntry
-    {
-        // TODO#245
-        // create an interface shared with DataDeclarationEntry
-        // that aggregates all the non-illegal stuff like justified,
-        // group usage national, blank when zero and so on
-
-        public IList<DataConditionEntry> DataConditions { get; internal set; }
-    }
-
     public class Passing
     {
         public SyntaxProperty<Mode> PassingMode { get; set; }
