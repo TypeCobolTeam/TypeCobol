@@ -95,6 +95,14 @@ namespace TypeCobol.Codegen {
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
+		public void ParseQualifiedNames() {
+			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","QualifiedNames")+".cbl", skeletons);
+		}
+
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","ALL")+".xml");
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","FUNCTION")+".cbl", skeletons);
