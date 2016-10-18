@@ -30,6 +30,7 @@ public abstract class VariableBase {
 
 public enum StorageDataType {
 	Any,
+    Condition,
 	Integer,
 	Numeric,
 	Character,

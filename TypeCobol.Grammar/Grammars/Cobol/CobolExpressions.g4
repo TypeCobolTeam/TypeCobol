@@ -1035,6 +1035,8 @@ variableOrExpression2: identifier | numericValue | alphanumericValue2 | repeated
 
 // --- Receiving data items : storage areas where statements results are saved ---
 
+conditionStorageArea: conditionReference;
+
 numericStorageArea: identifier;
 
 alphanumericStorageArea: identifier;

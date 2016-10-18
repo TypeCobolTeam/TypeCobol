@@ -57,7 +57,7 @@ moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemRef
 // rule modified to support:
 // - SET <boolean> TO FALSE
 setStatementForConditions:
-	SET conditionReference+ TO (TRUE | FALSE);
+	SET conditionStorageArea+ TO (TRUE | FALSE);
 
 // rules modified to support user defined functions (of arity 0..n)
 functionIdentifier: intrinsicFunctionCall | userDefinedFunctionCall;

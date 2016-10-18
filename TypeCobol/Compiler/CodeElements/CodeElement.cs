@@ -53,10 +53,10 @@ namespace TypeCobol.Compiler.CodeElements
         public IList<ReceivingStorageArea> StorageAreaWrites { get; set; }
 
         /// <summary>
-        /// List of impacts which we will need to resolve at the next stage between two group items
+        /// Impacts which we will need to resolve at the next stage between two group items
         /// because of MOVE CORRESPONDING, ADD CORRESPONDING, and SUBTRACT CORRESPONDING statements
         /// </summary>
-        public IList<GroupCorrespondingImpact> StorageAreaGroupsCorrespondingImpacts { get; set; }
+        public GroupCorrespondingImpact StorageAreaGroupsCorrespondingImpact { get; set; }
 
         /// <summary>
         /// List of storage areas shared by the current program with a caller program (procedure, function & methods calls )

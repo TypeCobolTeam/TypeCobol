@@ -129,6 +129,17 @@ namespace TypeCobol.Compiler.Parser
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
 			statement.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
+
+            // Collect storage area read/writes at the code element level
+            if (statement.GroupItem != null && statement.SendingAndReceivingGroupItem != null)
+            {
+                CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
+                {
+                    SendingGroupItem = statement.GroupItem,
+                    ReceivingGroupItem = statement.SendingAndReceivingGroupItem,
+                    ReceivingGroupIsAlsoSending = true
+                };
+            }
 			return statement;
 		}
 
@@ -372,7 +383,7 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
 			var statement = new GotoConditionalStatement();
 			statement.ProcedureNames = BuildObjectArrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
-			statement.DependingOn = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+			statement.DependingOn = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
 				DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
 			if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
@@ -720,8 +731,19 @@ namespace TypeCobol.Compiler.Parser
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
 // [TYPECOBOL]
 			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
-// [/TYPECOBOL]
-			return statement;
+            // [/TYPECOBOL]
+
+            // Collect storage area read/writes at the code element level
+            if (statement.FromGroupItem != null && statement.ToGroupItem != null)
+            {
+                CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
+                {
+                    SendingGroupItem = statement.FromGroupItem,
+                    ReceivingGroupItem = statement.ToGroupItem,
+                    ReceivingGroupIsAlsoSending = false
+                };
+            }
+            return statement;
 		}
 
 		  ////////////////////////
@@ -953,7 +975,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSerialSearchStatement(CodeElementsParser.SerialSearchContext context) {
 			var statement = new SearchSerialStatement();
-			statement.TableToSearch = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+			statement.TableToSearch = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			if(context.dataOrIndexStorageArea() != null) {
 				statement.VaryingSearchIndex = CobolExpressionsBuilder.CreateDataOrIndexStorageArea(context.dataOrIndexStorageArea());
 			}
@@ -962,7 +984,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateBinarySearchStatement(CodeElementsParser.BinarySearchContext context) {
 			var statement = new SearchBinaryStatement();
-			statement.TableToSearch = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+			statement.TableToSearch = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			return statement;
 		}
 
@@ -1034,10 +1056,10 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext context) {
 			var statement = new SetStatementForConditions();
-			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionReference(), ctx => CobolExpressionsBuilder.CreateConditionReference(ctx));
-			if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
+			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionStorageArea(), ctx => CobolExpressionsBuilder.CreateConditionStorageArea(ctx));
+            if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
-			return statement;
+            return statement;
 		}
 		
 		  ////////////////////
@@ -1212,7 +1234,18 @@ namespace TypeCobol.Compiler.Parser
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
 			statement.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
-			return statement;
+
+            // Collect storage area read/writes at the code element level
+            if (statement.GroupItem != null && statement.SendingAndReceivingGroupItem != null)
+            {
+                CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
+                {
+                    SendingGroupItem = statement.GroupItem,
+                    ReceivingGroupItem = statement.SendingAndReceivingGroupItem,
+                    ReceivingGroupIsAlsoSending = true
+                };
+            }
+            return statement;
 		}
 
 		  ////////////////////////

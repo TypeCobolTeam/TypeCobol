@@ -1,9 +1,9 @@
 ﻿--- Diagnostics ---
 [14,20]<27,Error,Syntax>Syntax error : no viable alternative at input 'VARYING' (RuleStack=codeElement, OffendingSymbol=[14,20:VARYING]<VARYING> on line 5)
-[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement>serialSearch>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 7)
-[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement>serialSearch>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 8)
-[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement>serialSearch>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 9)
-[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement>serialSearch>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 9)
+[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 7)
+[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 8)
+[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 9)
+[8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 9)
 --- Code Elements ---
 [[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [8,8:x]<UserDefinedWord>
 

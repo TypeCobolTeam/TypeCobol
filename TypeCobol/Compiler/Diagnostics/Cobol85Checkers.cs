@@ -216,15 +216,15 @@ class SearchStatementChecker: CodeElementListener {
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as SearchStatement;
 		if (statement.TableToSearch == null) return; // syntax error
-		if (statement.TableToSearch is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch).Subscripts.Count > 0)
+		if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch.StorageArea).Subscripts.Count > 0)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
-		if (statement.TableToSearch.ReferenceModifier != null)
+		if (statement.TableToSearch.StorageArea.ReferenceModifier != null)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", GetIdentifierContext(c));
 	}
 	private static RuleContext GetIdentifierContext(ParserRuleContext context) {
 		var c = (CodeElementsParser.SearchStatementContext)context;
-		if (c.serialSearch() != null) return c.serialSearch().identifier();
-		if (c.binarySearch() != null) return c.binarySearch().identifier();
+		if (c.serialSearch() != null) return c.serialSearch().variable1().identifier();
+		if (c.binarySearch() != null) return c.binarySearch().variable1().identifier();
 		return null;
 	}
 }

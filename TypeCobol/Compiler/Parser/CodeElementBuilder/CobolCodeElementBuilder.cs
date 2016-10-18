@@ -59,8 +59,8 @@ namespace TypeCobol.Compiler.Parser
                 if (CobolExpressionsBuilder.storageAreaWrites.Count > 0) {
                     CodeElement.StorageAreaWrites = CobolExpressionsBuilder.storageAreaWrites;
                 }
-                if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpacts.Count > 0) {
-                    CodeElement.StorageAreaGroupsCorrespondingImpacts = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpacts;
+                if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact != null) {
+                    CodeElement.StorageAreaGroupsCorrespondingImpact = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact;
                 }                
                 if (CobolExpressionsBuilder.storageAreasSharedWithCaller.Count > 0) {
                     CodeElement.StorageAreasSharedWithCaller = CobolExpressionsBuilder.storageAreasSharedWithCaller;

@@ -4445,7 +4445,7 @@ gotoSimple:
 	GO TO? procedureName;
 
 gotoConditional:
-	GO TO? procedureName+ DEPENDING ON? identifier;
+	GO TO? procedureName+ DEPENDING ON? variable1;
 
 // p341: IF statement
 // The IF statement evaluates a condition and provides for alternative actions in the
@@ -6014,8 +6014,8 @@ rewriteStatementEnd: END_REWRITE;
 
 searchStatement: serialSearch | binarySearch;
 
-serialSearch: SEARCH identifier (VARYING dataOrIndexStorageArea)?;
-binarySearch: SEARCH ALL identifier;
+serialSearch: SEARCH variable1 (VARYING dataOrIndexStorageArea)?;
+binarySearch: SEARCH ALL variable1;
 
 whenSearchCondition: WHEN conditionalExpression;
 
@@ -6272,7 +6272,7 @@ setSwitchPosition:
 // Format 4: SET for condition names
 
 setStatementForConditions:
-	SET conditionReference+ TO TRUE;
+	SET conditionStorageArea+ TO TRUE;
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according
