@@ -17,7 +17,10 @@ public static class Attributes {
 				value = attributes[attr].GetValue(value, table);
 			}
 			return value;
-		} catch (KeyNotFoundException) { return null; }
+		} catch (KeyNotFoundException) {
+			DEFAULT.Key = attribute;
+			return DEFAULT.GetValue(value, table);
+		}
 	}
 
 	private static Dictionary<string,Attribute> attributes;
@@ -31,6 +34,16 @@ public static class Attributes {
 		attributes["unsafe"] = new UnsafeAttribute();
 		attributes["function"] = new FunctionUserAttribute();
 		attributes["definitions"] = new DefinitionsAttribute();
+		attributes["variables"] = new VariablesAttribute();
+		attributes["typecobol"] = new TypeCobolAttribute();
+	}
+	private static ContainerAttribute DEFAULT = new ContainerAttribute();
+}
+
+internal class ContainerAttribute: Attribute {
+	internal string Key { get; set; }
+	public object GetValue(object o, SymbolTable table) {
+		return null;
 	}
 }
 

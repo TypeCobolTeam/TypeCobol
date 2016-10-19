@@ -63,8 +63,9 @@ public class MoveSimpleStatement : MoveStatement {
 		[NotNull]
 		get {
 			//if (variables != null) return variables;
-			var sending = Sending;
 			var variables = new Dictionary<StorageArea,object>();
+			var sending = Sending;
+			if (sending is SymbolReference) variables.Add(new DataOrConditionStorageArea((SymbolReference)sending), null);
 			foreach(var receiving in ReceivingStorageAreas) variables.Add(receiving.StorageArea, sending);
 			return variables;
 		}

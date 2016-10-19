@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -154,7 +156,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// The higher-level names are called qualifiers, and the process by which
 	/// such names are made unique is called qualification.
 	/// </summary>
-	public class QualifiedSymbolReference: SymbolReference {
+	public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
 		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
 			IsAmbiguous = head.IsAmbiguous;
 			IsQualifiedReference = true;
@@ -164,6 +166,15 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SymbolReference Head { get; private set; }
 		public SymbolReference Tail { get; private set; }
+		public SymbolReference First {
+			get {
+				var head = Head;
+				while (head.IsQualifiedReference) {
+					head = ((QualifiedSymbolReference)head).Head;
+				}
+				return head;
+			}
+		}
 
 		/// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
 		public override string DefinitionPathPattern {
@@ -173,7 +184,70 @@ namespace TypeCobol.Compiler.CodeElements
 		public override string ToString() { return Head.ToString() + " IN " + Tail.ToString(); }
 
 		public override string Name { get { return Tail.Name+'.'+Head.Name; } }
-    }
+
+
+
+
+		public bool IsReadOnly { get { return true; } }
+
+		public int Count { get { return AsList().Count; } }
+
+		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IEnumerator<SymbolReference> GetEnumerator() { return AsList().GetEnumerator(); }
+		public IList<SymbolReference> AsList() {
+			var refs = new List<SymbolReference>();
+			if (Head is QualifiedSymbolReference)
+				 refs.AddRange(((QualifiedSymbolReference)Head).AsList());
+			else refs.Add(Head);
+			if (Tail is QualifiedSymbolReference)
+				 refs.AddRange(((QualifiedSymbolReference)Tail).AsList());
+			else refs.Add(Tail);
+			return refs;
+		}
+
+		// UNIMPLEMENTED BECAUSE OF LAZYNESS
+
+		public int IndexOf(SymbolReference item) {
+			throw new NotImplementedException("TODO");
+		}
+
+		public void Insert(int index,SymbolReference item) {
+			throw new NotImplementedException();
+		}
+
+		public void RemoveAt(int index) {
+			throw new NotImplementedException();
+		}
+
+		public SymbolReference this[int index] {
+			get {
+				throw new NotImplementedException("TODO");
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		public void Add(SymbolReference item) {
+			throw new NotImplementedException();
+		}
+
+		public void Clear() {
+			throw new NotImplementedException();
+		}
+
+		public bool Contains(SymbolReference item) {
+			throw new NotImplementedException("TODO");
+		}
+
+		public void CopyTo(SymbolReference[] array, int index) {
+			throw new NotImplementedException();
+		}
+
+		public bool Remove(SymbolReference item) {
+			throw new NotImplementedException();
+		}
+	}
 	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
 		public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head, tail) { }
 	}

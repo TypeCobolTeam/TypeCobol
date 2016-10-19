@@ -26,8 +26,11 @@
 
            MOVE a TO b
 		   
-           MOVE a TO x OF Location OF p
-           MOVE a TO p::Location ::x
+           MOVE a TO    x OF Location OF p
+           MOVE a TO      p::Location   ::x
+           MOVE   p :: Location :: y     TO   z OF   Location   IN p
+           MOVE   1   TO x OF Location OF p
+           MOVE 1 TO p :: Location ::    y z OF Location IN p
            .
 
        END PROGRAM Test-Name-Qualification.
