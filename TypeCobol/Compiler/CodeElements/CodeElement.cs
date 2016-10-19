@@ -109,7 +109,7 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
-			var lineStartIndex = line.SequenceNumberText.Length + (line.IndicatorChar != null? 1:0);
+			var lineStartIndex = line.SequenceNumberText.Length + 1;// +1 for line.IndicatorChar
 			return line.SourceText.Substring(0, firstTokenStartIndex-lineStartIndex);
 		}
 
