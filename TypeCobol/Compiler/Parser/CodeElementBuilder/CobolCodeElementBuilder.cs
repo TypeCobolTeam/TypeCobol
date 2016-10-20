@@ -1275,8 +1275,8 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
 			var receiving = CobolExpressionsBuilder.CreateSharedStorageArea(context.programOutputParameter().sharedStorageArea2());
-			((Returning)CodeElement).ReturningParameter = receiving;
-		}
+			((Returning)CodeElement).ReturningParameter = new CallTargetParameter() { StorageArea = receiving };
+        }
 
         public override void EnterDeclarativesHeader(CodeElementsParser.DeclarativesHeaderContext context)
         {

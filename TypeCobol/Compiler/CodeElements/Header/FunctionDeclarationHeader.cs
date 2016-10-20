@@ -31,13 +31,13 @@ namespace TypeCobol.Compiler.CodeElements
         /////////////
         public ParametersProfile Profile { get; private set; }
         /// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
-        public SyntaxProperty<Passing.Mode> Input { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Input { get; internal set; }
         /// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
-        public SyntaxProperty<Passing.Mode> Output { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Output { get; internal set; }
         /// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
-        public SyntaxProperty<Passing.Mode> Inout { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Inout { get; internal set; }
         /// <summary>RETURNING dataname.</summary>
-        public SyntaxProperty<Passing.Mode> Returning { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Returning { get; internal set; }
     }
 
     public enum AccessModifier
@@ -129,14 +129,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class Passing
     {
-        public SyntaxProperty<Mode> PassingMode { get; set; }
-        public enum Mode
-        {
-            Input,
-            Output,
-            Inout,
-            Returning,
-        }
+        public SyntaxProperty<ParameterPassingDirection> PassingMode { get; set; }
     }
 
 

@@ -283,7 +283,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract class FunctionCall
     {
-        public FunctionCall(FunctionCallType type, VariableOrExpression[] arguments)
+        public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments)
         {
             Type = type;
             Arguments = arguments;
@@ -294,7 +294,7 @@ namespace TypeCobol.Compiler.CodeElements
         public abstract string FunctionName { get; }
         public abstract Token FunctionNameToken { get; }
 
-        public VariableOrExpression[] Arguments { get; private set; }
+        public CallSiteParameter[] Arguments { get; private set; }
     }
 
     /// <summary>
@@ -302,7 +302,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class IntrinsicFunctionCall : FunctionCall
     {
-        public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
+        public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
         {
             IntrinsicFunctionName = intrinsicFunctionName;
         }
@@ -319,7 +319,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class UserDefinedFunctionCall : FunctionCall
     {
-        public UserDefinedFunctionCall(SymbolReference functionName, VariableOrExpression[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
+        public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
         {
             UserDefinedFunctionName = functionName;
         }

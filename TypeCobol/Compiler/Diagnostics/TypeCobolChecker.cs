@@ -64,7 +64,7 @@ class FunctionCallChecker: NodeListener {
 		for (int c = 0; c < parameters.Count; c++) {
 			var expected = parameters[c];
 			if (c < callArgsCount) {
-				var actual = call.Arguments[c];
+				var actual = call.Arguments[c].StorageAreaOrValue;
 				if (actual.IsLiteral) continue;
                 var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
                 var found = table.GetVariable(new URI(callArgName));

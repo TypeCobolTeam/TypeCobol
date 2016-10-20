@@ -271,12 +271,16 @@ namespace TypeCobol.Compiler.Parser
                 CreateArguments(context.argument()));
         }
 
-        private VariableOrExpression[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
+        private CallSiteParameter[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
 		{
-			VariableOrExpression[] arguments = new VariableOrExpression[argumentContext.Length];
+            CallSiteParameter[] arguments = new CallSiteParameter[argumentContext.Length];
 			for(int i = 0; i < argumentContext.Length; i++)
 			{
-				arguments[i] = CreateSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
+                var variableOrExpression = CreateSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
+                if (variableOrExpression != null)
+                {
+                    arguments[i] = new CallSiteParameter() { StorageAreaOrValue = variableOrExpression };
+                }
 			}
 			return arguments;
 		}
@@ -1554,19 +1558,17 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal ReceivingStorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea1Context context)
+        internal StorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea1Context context)
         {
             if (context == null || context.identifier() == null) return null;
             var identifier = CreateIdentifier(context.identifier());
-            if (identifier == null) return null;
-            return new ReceivingStorageArea(StorageDataType.Any, identifier);
+            return identifier;
         }
 
-        internal ReceivingStorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea2Context context)
+        internal StorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea2Context context)
         {
-            return new ReceivingStorageArea(StorageDataType.Any,
-                new DataOrConditionStorageArea(
-                    CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
+            return new DataOrConditionStorageArea(
+                    CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()));
         }
     }
 }

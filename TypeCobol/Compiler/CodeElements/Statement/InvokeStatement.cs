@@ -178,7 +178,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// responsibility of the programmer. Conformance requirements are not verified by
         /// the compiler.
         /// </summary>
-        public IList<Variable> InputParameters { get; set; }
+        public IList<CallSiteParameter> InputParameters { get; set; }
 
         /// <summary>
         /// p459:
@@ -252,6 +252,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// responsibility of the programmer. Conformance requirements are not verified by
         /// the compiler.
         /// </summary>
-        public ReceivingStorageArea OutputParameter { get; set; }
+        public CallSiteParameter OutputParameter { get; set; }
     }
 }

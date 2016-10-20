@@ -42,6 +42,22 @@ namespace TypeCobol.Compiler.CodeElements
         /// (type can be : Variable, VariableOrFileName, VariableOrExpression)
         /// </summary>
         public Variable StorageAreaOrValue { get; set; }
+
+        public override string ToString()
+        {
+            if (IsOmitted) return "OMITTED";
+            var str = new System.Text.StringBuilder("BY ");
+            if (SharingMode != null)
+            {
+                if (SharingMode.Value == CodeElements.ParameterSharingMode.ByReference) str.Append("REFERENCE ");
+                if (SharingMode.Value == CodeElements.ParameterSharingMode.ByContent) str.Append("CONTENT ");
+                if (SharingMode.Value == CodeElements.ParameterSharingMode.ByValue) str.Append("VALUE ");
+            }
+            else str.Append('?').Append(' ');
+            if (StorageAreaOrValue != null) str.Append(StorageAreaOrValue);
+            else str.Append('?');
+            return str.ToString();
+        }
     }
     
     /// <summary>
@@ -119,8 +135,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public enum ParameterPassingDirection
     {
-        In,
+        Input,
         InOut,
-        Out
+        Output,
+        Returning
     }
 }

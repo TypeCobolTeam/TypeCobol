@@ -22,22 +22,22 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	}
 	public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
-		ce.Input = new SyntaxProperty<Passing.Mode>(Passing.Mode.Input, ParseTreeUtils.GetTokenFromTerminalNode(context.INPUT()));
+		ce.Input = new SyntaxProperty<ParameterPassingDirection>(ParameterPassingDirection.Input, ParseTreeUtils.GetTokenFromTerminalNode(context.INPUT()));
 		ce.Profile.InputParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterOutputPhrase(CodeElementsParser.OutputPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
-		ce.Output = new SyntaxProperty<Passing.Mode>(Passing.Mode.Output, ParseTreeUtils.GetTokenFromTerminalNode(context.OUTPUT()));
+		ce.Output = new SyntaxProperty<ParameterPassingDirection>(ParameterPassingDirection.Output, ParseTreeUtils.GetTokenFromTerminalNode(context.OUTPUT()));
 		ce.Profile.OutputParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
-		ce.Inout = new SyntaxProperty<Passing.Mode>(Passing.Mode.Inout, ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()));
+		ce.Inout = new SyntaxProperty<ParameterPassingDirection>(ParameterPassingDirection.InOut, ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()));
 		ce.Profile.InoutParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
-		ce.Returning = new SyntaxProperty<Passing.Mode>(Passing.Mode.Returning, ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()));
+		ce.Returning = new SyntaxProperty<ParameterPassingDirection>(ParameterPassingDirection.Returning, ParseTreeUtils.GetTokenFromTerminalNode(context.RETURNING()));
 		if (context.parameterDescription().functionDataParameter() != null) {
 			var entry = CreateFunctionDataParameter(context.parameterDescription().functionDataParameter());
 			ce.Profile.ReturningParameter = entry;
