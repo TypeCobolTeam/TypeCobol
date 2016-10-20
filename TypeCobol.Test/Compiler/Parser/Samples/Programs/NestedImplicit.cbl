@@ -17,5 +17,5 @@
          continue
      END-EVALUATE                                               
      .
- END PROGRAM.
- END PROGRAM.
+ END PROGRAM MYPROGB.
+ END PROGRAM MYPROGA.
