@@ -26,12 +26,22 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Technique used for sharing the parameter between the caller and the callee
         /// </summary>
-        public ParameterSharingMode SharingMode { get; set; }
+        public SyntaxProperty<ParameterSharingMode> SharingMode { get; set; }
+
+        /// <summary>
+        /// Indicates that no argument is passed.
+        /// </summary>
+        public SyntaxProperty<bool> Omitted { get; set; }
+        public bool IsOmitted
+        {
+            get { return Omitted != null && Omitted.Value; }
+        }
 
         /// <summary>
         /// Reference to a storage area, literal value or expression
+        /// (type can be : Variable, VariableOrFileName, VariableOrExpression)
         /// </summary>
-        public VariableOrExpression StorageAreaOrValue { get; set; }
+        public Variable StorageAreaOrValue { get; set; }
     }
     
     /// <summary>
@@ -90,12 +100,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Technique used for sharing the parameter between the caller and the callee
         /// </summary>
-        public ParameterSharingMode SharingMode { get; set; }
+        public SyntaxProperty<ParameterSharingMode> SharingMode { get; set; }
 
         /// <summary>
         /// Direction in which the data flows to or from a program, method, or function entry point
         /// </summary>
-        public ParameterPassingDirection PassingDirection { get; set; }
+        public SyntaxProperty<ParameterPassingDirection> PassingDirection { get; set; }
 
         /// <summary>
         /// Reference to a storage area shared with the caller

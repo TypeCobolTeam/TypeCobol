@@ -27,10 +27,10 @@ namespace TypeCobol.Compiler.Parser
 			IList<InputParameter> inputParameters = new List<InputParameter>();
 			foreach (var context in contexts) {
 				SyntaxProperty<ParameterSharingMode> receivingMode = CreateReceivingMode(context);
-				foreach (var storageAreaContext in context.storageArea2()) {
+				foreach (var storageAreaContext in context.sharedStorageArea2()) {
 					var inputParameter = new InputParameter {
 						ReceivingMode = receivingMode,
-						ReceivingStorageArea = CobolExpressionsBuilder.CreateStorageArea(storageAreaContext)
+						ReceivingStorageArea = CobolExpressionsBuilder.CreateSharedStorageArea(storageAreaContext)
 					};
 					inputParameter.ReceivingStorageArea.DataSourceType = DataSourceType.ReceiveFromCallingProgram;
 					inputParameters.Add(inputParameter);
@@ -184,8 +184,8 @@ namespace TypeCobol.Compiler.Parser
 					}
 					foreach (var variable in inputs.variableOrFileNameOrOmitted()) {
 						var inputParameter = new CallInputParameter { SendingMode = sendingMode };
-						if (variable.variableOrFileName() != null) {
-							inputParameter.SendingVariable = CobolExpressionsBuilder.CreateVariableOrFileName(variable.variableOrFileName());
+						if (variable.sharedVariableOrFileName() != null) {
+							inputParameter.SendingVariable = CobolExpressionsBuilder.CreateSharedVariableOrFileName(variable.sharedVariableOrFileName());
 						} else
 						if (variable.OMITTED() != null) {
 							inputParameter.Omitted = CreateSyntaxProperty(true, variable.OMITTED());
@@ -195,7 +195,7 @@ namespace TypeCobol.Compiler.Parser
 				}
 			}
 			if (context.callProgramOutputParameter() != null) {
-				statement.OutputParameter = CobolExpressionsBuilder.CreateStorageArea(context.callProgramOutputParameter().storageArea1());
+				statement.OutputParameter = CobolExpressionsBuilder.CreateSharedStorageArea(context.callProgramOutputParameter().sharedStorageArea1());
 				if (statement.OutputParameter != null) statement.OutputParameter.DataSourceType = DataSourceType.ReceiveFromCalledProgram;
 			}
 			return statement;
@@ -638,10 +638,10 @@ namespace TypeCobol.Compiler.Parser
 				statement.InputParameters = new List<Variable>();
 				foreach(var parameterContext in context.invokeInputParameter())
 				{
-					foreach(var variableContext in parameterContext.variable3())
+					foreach(var variableContext in parameterContext.sharedVariable3())
 					{
 						statement.InputParameters.Add(
-							CobolExpressionsBuilder.CreateVariable(variableContext));
+							CobolExpressionsBuilder.CreateSharedVariable(variableContext));
 					}
 				}
 			}
@@ -649,7 +649,7 @@ namespace TypeCobol.Compiler.Parser
 			if(context.invokeOutputParameter() != null)
 			{
 				statement.OutputParameter = 
-					CobolExpressionsBuilder.CreateStorageArea(context.invokeOutputParameter().storageArea1());
+					CobolExpressionsBuilder.CreateSharedStorageArea(context.invokeOutputParameter().sharedStorageArea1());
 			}
 
 			//if (IdentifierUtils.IsReferenceModified(statement.Returning))

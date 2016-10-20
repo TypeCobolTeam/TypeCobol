@@ -276,7 +276,7 @@ namespace TypeCobol.Compiler.Parser
 			VariableOrExpression[] arguments = new VariableOrExpression[argumentContext.Length];
 			for(int i = 0; i < argumentContext.Length; i++)
 			{
-				arguments[i] = CreateVariableOrExpression(argumentContext[i].variableOrExpression1());
+				arguments[i] = CreateSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
 			}
 			return arguments;
 		}
@@ -1219,34 +1219,6 @@ namespace TypeCobol.Compiler.Parser
             return new Variable(storageArea);
 		}
 
-		internal Variable CreateVariable(CodeElementsParser.Variable3Context context)
-		{
-            Variable variable = null;
-			if (context.identifier() != null)
-			{
-				StorageArea storageArea = CreateIdentifier(context.identifier());
-				variable = new Variable(storageArea);
-			}
-			else if(context.numericValue() != null)
-			{
-				variable = new Variable(
-					CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-			}
-			else
-			{
-				variable = new Variable(
-					CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-			}
-
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
-
-            return variable;
-        }
-
         [CanBeNull]
         internal Variable CreateVariable([NotNull] CodeElementsParser.Variable4Context context)
         {
@@ -1390,55 +1362,7 @@ namespace TypeCobol.Compiler.Parser
             }
 
             return variable;
-		}
-
-		internal Variable CreateVariableOrFileName(CodeElementsParser.VariableOrFileNameContext context)
-		{
-			if (context.identifierOrFileName() != null)
-			{
-				return new Variable(
-					CreateIdentifierOrFileName(context.identifierOrFileName()));
-			}
-			else if (context.numericValue() != null)
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-			}
-			else if (context.alphanumericValue2() != null)
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-			}
-			else
-			{
-				return new Variable(
-					CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue1()));
-			}
-		}
-
-		internal VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression1Context context)
-		{
-			if (context.identifier() != null)
-			{
-				return new VariableOrExpression(
-					CreateIdentifier(context.identifier()));
-			}
-			else if (context.numericValue() != null)
-			{
-				return new VariableOrExpression(
-					CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-			}
-			else if (context.alphanumericValue2() != null)
-			{
-				return new VariableOrExpression(
-					CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-			}
-			else
-			{
-				return new VariableOrExpression(
-					CreateArithmeticExpression(context.arithmeticExpression()));
-			}
-		}
+		}        
 
 		internal VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression2Context context)
 		{
@@ -1554,6 +1478,95 @@ namespace TypeCobol.Compiler.Parser
 
         // --- Storage areas shared with calling or called program ---
 
+        internal Variable CreateSharedVariable(CodeElementsParser.SharedVariable3Context context)
+        {
+            Variable variable = null;
+            if (context.identifier() != null)
+            {
+                StorageArea storageArea = CreateIdentifier(context.identifier());
+                variable = new Variable(storageArea);
+            }
+            else if (context.numericValue() != null)
+            {
+                variable = new Variable(
+                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+            }
+            else
+            {
+                variable = new Variable(
+                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+            }
 
+            // Collect storage area read/writes at the code element level
+            if (variable.StorageArea != null)
+            {
+                this.storageAreaReads.Add(variable.StorageArea);
+            }
+
+            return variable;
+        }
+
+        internal Variable CreateSharedVariableOrFileName(CodeElementsParser.SharedVariableOrFileNameContext context)
+        {
+            if (context.identifierOrFileName() != null)
+            {
+                return new Variable(
+                    CreateIdentifierOrFileName(context.identifierOrFileName()));
+            }
+            else if (context.numericValue() != null)
+            {
+                return new Variable(
+                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+            }
+            else if (context.alphanumericValue2() != null)
+            {
+                return new Variable(
+                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+            }
+            else
+            {
+                return new Variable(
+                    CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue1()));
+            }
+        }
+
+        internal VariableOrExpression CreateSharedVariableOrExpression(CodeElementsParser.SharedVariableOrExpression1Context context)
+        {
+            if (context.identifier() != null)
+            {
+                return new VariableOrExpression(
+                    CreateIdentifier(context.identifier()));
+            }
+            else if (context.numericValue() != null)
+            {
+                return new VariableOrExpression(
+                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+            }
+            else if (context.alphanumericValue2() != null)
+            {
+                return new VariableOrExpression(
+                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+            }
+            else
+            {
+                return new VariableOrExpression(
+                    CreateArithmeticExpression(context.arithmeticExpression()));
+            }
+        }
+
+        internal ReceivingStorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea1Context context)
+        {
+            if (context == null || context.identifier() == null) return null;
+            var identifier = CreateIdentifier(context.identifier());
+            if (identifier == null) return null;
+            return new ReceivingStorageArea(StorageDataType.Any, identifier);
+        }
+
+        internal ReceivingStorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea2Context context)
+        {
+            return new ReceivingStorageArea(StorageDataType.Any,
+                new DataOrConditionStorageArea(
+                    CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
+        }
     }
 }

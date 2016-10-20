@@ -1274,7 +1274,7 @@ namespace TypeCobol.Compiler.Parser
 			((ProcedureDivisionHeader)CodeElement).UsingParameters = inputs;
 		}
 		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
-			var receiving = CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
+			var receiving = CobolExpressionsBuilder.CreateSharedStorageArea(context.programOutputParameter().sharedStorageArea2());
 			((Returning)CodeElement).ReturningParameter = receiving;
 		}
 

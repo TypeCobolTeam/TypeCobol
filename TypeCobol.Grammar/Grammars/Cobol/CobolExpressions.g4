@@ -263,7 +263,7 @@ functionIdentifier:
 // - A special-register
 
 argument: 
-	variableOrExpression1;
+	sharedVariableOrExpression1;
 
 // - 4. Storage areas -
 
@@ -1014,7 +1014,7 @@ variable1: identifier;
 
 variable2: qualifiedDataName;
 
-variable3: identifier | numericValue | alphanumericValue2;
+// variable3: identifier | numericValue | alphanumericValue2; << only shared version
 
 variable4: identifier | numericValue | alphanumericValue3;
 
@@ -1026,9 +1026,9 @@ variable7: identifier | numericValue | alphanumericValue2 | repeatedCharacterVal
 
 variableOrIndex: identifierOrIndexName | numericValue | alphanumericValue2 | repeatedCharacterValue2;
 
-variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1;
+// variableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1; << only shared version
 
-variableOrExpression1: identifier | numericValue | alphanumericValue2 | arithmeticExpression;
+// variableOrExpression1: identifier | numericValue | alphanumericValue2 | arithmeticExpression; << only shared version
 
 variableOrExpression2: identifier | numericValue | alphanumericValue2 | repeatedCharacterValue1 | arithmeticExpression;
 
@@ -1048,3 +1048,16 @@ dataOrIndexStorageArea: identifierOrIndexName;
 storageArea1: identifier;
 
 storageArea2: dataNameReference;
+
+
+// --- Variables or storage areas shared between a caller and callee during a program, method, or function call ---
+
+sharedVariable3: identifier | numericValue | alphanumericValue2;
+
+sharedVariableOrFileName: identifierOrFileName | numericValue | alphanumericValue2 | repeatedCharacterValue1;
+
+sharedVariableOrExpression1: identifier | numericValue | alphanumericValue2 | arithmeticExpression;
+
+sharedStorageArea1: identifier;
+
+sharedStorageArea2: dataNameReference;

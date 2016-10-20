@@ -3284,7 +3284,7 @@ returningPhrase: RETURNING programOutputParameter;
 // data types for COBOL and Java” on page 361.
 
 programInputParameters:
-    (BY? (REFERENCE | VALUE))? storageArea2+;
+    (BY? (REFERENCE | VALUE))? sharedStorageArea2+;
 
 // p250: The RETURNING phrase specifies a data item that is to receive the program or
 // method result.
@@ -3313,7 +3313,7 @@ programInputParameters:
 // register to return a value to the operating environment.
 
 programOutputParameter:
-	storageArea2;
+	sharedStorageArea2;
 
 // p246: Format: procedure division
 // 1 The USE statement is described under “USE statement” on page 546.
@@ -4044,10 +4044,10 @@ callProgramInputParameters:
 	(BY? (REFERENCE | CONTENT | VALUE))? variableOrFileNameOrOmitted+;
 
 variableOrFileNameOrOmitted: 
-	variableOrFileName | OMITTED;
+	sharedVariableOrFileName | OMITTED;
 
 callProgramOutputParameter:
-	storageArea1;
+	sharedStorageArea1;
 
 callStatementEnd: END_CALL;
 
@@ -5061,10 +5061,10 @@ invokeStatement:
 	(RETURNING invokeOutputParameter)?;
 
 invokeInputParameter:
-	BY? VALUE variable3+;
+	BY? VALUE sharedVariable3+;
 
 invokeOutputParameter:
-	storageArea1;
+	sharedStorageArea1;
 
 invokeStatementEnd: END_INVOKE;
 
