@@ -44,7 +44,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 					if (done.Contains(name)) continue;
 					else done.Add(name);
 					string strmode = "BY REFERENCE ";
-					if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
+					if (parameter.ReceivingMode.Value == ParameterSharingMode.ByValue) strmode = "BY VALUE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
 					if (parameter.ReceivingStorageArea.StorageArea != null) strname = name;
@@ -78,8 +78,8 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 
 		public GeneratedParameter(SymbolDefinition symbol) {
 			this.ReceivingStorageArea = CreateReceivingStorageArea(symbol);
-			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
-			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
+			var mode = TypeCobol.Compiler.CodeElements.ParameterSharingMode.ByReference;
+			this.ReceivingMode = new SyntaxProperty<ParameterSharingMode>(mode, null);
 		}
 
 		public static ReceivingStorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {

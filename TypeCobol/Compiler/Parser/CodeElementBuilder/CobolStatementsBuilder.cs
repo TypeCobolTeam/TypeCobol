@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Parser
 			if (contexts == null) return null;
 			IList<InputParameter> inputParameters = new List<InputParameter>();
 			foreach (var context in contexts) {
-				SyntaxProperty<ReceivingMode> receivingMode = CreateReceivingMode(context);
+				SyntaxProperty<ParameterSharingMode> receivingMode = CreateReceivingMode(context);
 				foreach (var storageAreaContext in context.storageArea2()) {
 					var inputParameter = new InputParameter {
 						ReceivingMode = receivingMode,
@@ -38,9 +38,9 @@ namespace TypeCobol.Compiler.Parser
 			}
 			return inputParameters;
 		}
-		private SyntaxProperty<ReceivingMode> CreateReceivingMode(CodeElementsParser.ProgramInputParametersContext context) {
-			if (context.REFERENCE() != null) return new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
-			if (context.VALUE() != null) return new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
+		private SyntaxProperty<ParameterSharingMode> CreateReceivingMode(CodeElementsParser.ProgramInputParametersContext context) {
+			if (context.REFERENCE() != null) return new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
+			if (context.VALUE() != null) return new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
 			return null;
 		}
 
@@ -171,16 +171,16 @@ namespace TypeCobol.Compiler.Parser
 					context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable());
 			statement.InputParameters = new List<CallInputParameter>();
 			if (context.callProgramInputParameters() != null) {
-				SyntaxProperty<SendingMode> sendingMode = new SyntaxProperty<SendingMode>(SendingMode.ByReference, null);
+				SyntaxProperty<ParameterSharingMode> sendingMode = new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null);
 				foreach (var inputs in context.callProgramInputParameters()) {
 					if (inputs.REFERENCE() != null) {
-						sendingMode = CreateSyntaxProperty(SendingMode.ByReference, inputs.REFERENCE());
+						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByReference, inputs.REFERENCE());
 					} else
 					if (inputs.CONTENT() != null) {
-						sendingMode = CreateSyntaxProperty(SendingMode.ByContent, inputs.CONTENT());
+						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByContent, inputs.CONTENT());
 					} else
 					if (inputs.VALUE() != null) {
-						sendingMode = CreateSyntaxProperty(SendingMode.ByValue, inputs.VALUE());
+						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByValue, inputs.VALUE());
 					}
 					foreach (var variable in inputs.variableOrFileNameOrOmitted()) {
 						var inputParameter = new CallInputParameter { SendingMode = sendingMode };

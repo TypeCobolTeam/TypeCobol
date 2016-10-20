@@ -61,9 +61,12 @@ namespace TypeCobol.Compiler.Parser
                 }
                 if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact != null) {
                     CodeElement.StorageAreaGroupsCorrespondingImpact = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact;
-                }                
-                if (CobolExpressionsBuilder.storageAreasSharedWithCaller.Count > 0) {
-                    CodeElement.StorageAreasSharedWithCaller = CobolExpressionsBuilder.storageAreasSharedWithCaller;
+                }
+                if (CobolExpressionsBuilder.callTargets.Count > 0) {
+                    CodeElement.CallTargets = CobolExpressionsBuilder.callTargets;
+                }
+                if (CobolExpressionsBuilder.callSites.Count > 0) {
+                    CodeElement.CallSites = CobolExpressionsBuilder.callSites;
                 }
             }
 		}

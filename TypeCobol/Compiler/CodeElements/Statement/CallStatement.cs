@@ -137,7 +137,7 @@ namespace TypeCobol.Compiler.CodeElements
 public class CallInputParameter {
 	/// <summary>Argument sending mode : BY REFERENCE, BY CONTENT or BY VALUE</summary>
 	[CanBeNull]
-	public SyntaxProperty<SendingMode> SendingMode { get; set; }
+	public SyntaxProperty<ParameterSharingMode> SendingMode { get; set; }
 
 	/// <summary>
 	/// Each USING identifier must be defined as a level-01 or level-77 item in the
@@ -157,48 +157,14 @@ public class CallInputParameter {
 		if (IsOmitted) return "OMITTED";
 		var str = new System.Text.StringBuilder("BY ");
 		if (SendingMode != null) {
-			if (SendingMode.Value == CodeElements.SendingMode.ByReference) str.Append("REFERENCE ");
-			if (SendingMode.Value == CodeElements.SendingMode.ByContent)   str.Append("CONTENT ");
-			if (SendingMode.Value == CodeElements.SendingMode.ByValue)     str.Append("VALUE ");
+			if (SendingMode.Value == CodeElements.ParameterSharingMode.ByReference) str.Append("REFERENCE ");
+			if (SendingMode.Value == CodeElements.ParameterSharingMode.ByContent)   str.Append("CONTENT ");
+			if (SendingMode.Value == CodeElements.ParameterSharingMode.ByValue)     str.Append("VALUE ");
 		} else str.Append('?').Append(' ');
 		if (SendingVariable != null) str.Append(SendingVariable);
 		else str.Append('?');
 		return str.ToString();
 	}
 }
-
-    /// <summary>
-    /// Argument sending mode for CallInputParameter
-    /// </summary>
-    public enum SendingMode
-    {
-        /// <summary>
-        /// If the BY REFERENCE phrase is either specified or implied for a parameter, 
-        /// the corresponding data item in the calling program occupies the same storage area 
-        /// as the data item in the called program. 
-        /// </summary>
-        ByReference,
-        /// <summary>
-        /// If the BY CONTENT phrase is specified or implied for a parameter, the called program 
-        /// cannot change the value of this parameter as referenced in the CALL statement's USING 
-        /// phrase, though the called program can change the value of the data item referenced 
-        /// by the corresponding data-name in the called program's PROCEDURE DIVISION header. 
-        /// Changes to the parameter in the called program do not affect the corresponding argument
-        /// in the calling program. 
-        /// </summary>
-        ByContent,
-        /// <summary>
-        /// If the BY VALUE phrase is specified or implied for an argument, the value of the argument
-        /// is passed, not a reference to the sending data item. The called program can modify 
-        /// the formal parameter that corresponds to the BY VALUE argument, but any such changes do
-        /// not affect the argument because the called program has access to a temporary copy of 
-        /// the sending data item.
-        /// Although BY VALUE arguments are primarily intended for communication with non-COBOL programs 
-        /// (such as C), they can also be used for COBOL-to-COBOL invocations. In this case, BY VALUE
-        /// must be specified or implied for both the argument in the CALL USING phrase and the 
-        /// corresponding formal parameter in the PROCEDURE DIVISION USING phrase. 
-        /// </summary>
-        ByValue
-    }
-
+   
 }

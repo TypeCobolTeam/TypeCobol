@@ -21,9 +21,12 @@ namespace TypeCobol.Compiler.Parser
         // Impacts which we will need to resolve at the next stage between two group items
         // because of MOVE CORRESPONDING, ADD CORRESPONDING, and SUBTRACT CORRESPONDING statements
         internal GroupCorrespondingImpact storageAreaGroupsCorrespondingImpact { get; set; }
-        
-        // List of storage areas shared by the current program with a caller program (procedure, function & methods calls)
-        internal IList<StorageArea> storageAreasSharedWithCaller { get; set; }
+
+        // List of program, method, or function entry points which can be target by call instructions (with shared storage areas)
+        internal IList<CallTarget> callTargets { get; set; }
+
+        // List of program, method, or function call instructions (with shared sotrage areas)
+        internal IList<CallSite> callSites { get; set; }
 
         public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder)
 		{
@@ -31,7 +34,8 @@ namespace TypeCobol.Compiler.Parser
             storageAreaDefinitions = new Dictionary<SymbolDefinition, DataDescriptionEntry>();
             storageAreaReads = new List<StorageArea>();
             storageAreaWrites = new List<ReceivingStorageArea>();
-            storageAreasSharedWithCaller = new List<StorageArea>();
+            callTargets = new List<CallTarget>();
+            callSites = new List<CallSite>();
         }
 
 		private CobolWordsBuilder CobolWordsBuilder { get; set; }

@@ -131,12 +131,12 @@ class CallStatementChecker: CodeElementListener {
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
 
 		    if (input.SendingMode != null) {
-				if (Is(sender, "LENGTH") && (input.SendingMode.Value == SendingMode.ByReference))
+				if (Is(sender, "LENGTH") && (input.SendingMode.Value == ParameterSharingMode.ByReference))
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
 
-				if (input.SendingVariable != null && input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
+				if (input.SendingVariable != null && input.SendingVariable.IsLiteral && input.SendingMode.Value == ParameterSharingMode.ByReference)
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-				if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
+				if (input.IsOmitted && input.SendingMode.Value == ParameterSharingMode.ByValue)
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
 			}
 		}

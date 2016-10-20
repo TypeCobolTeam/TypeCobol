@@ -123,6 +123,7 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\CallParameter.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
