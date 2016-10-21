@@ -308,7 +308,6 @@ class DeclarationChecker: NodeListener {
 	}
 	private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
 		var map = table.GetVariableExplicit(name);
-		bool okay = false;
 		foreach(var kv in map) {
 			if (!kv.Key.QualifiedName.Matches(name)) continue;
 			int expected = CheckSubscripting(e, kv.Value[0], subscripts);
@@ -318,7 +317,6 @@ class DeclarationChecker: NodeListener {
 			if (expected < subscripts.Count)
 				DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
 		}
-		if (!okay) ;// undefined symbol, not our job
 	}
 	/// <param name="e">Statement to check</param>
 	/// <param name="link">Explicit nodes used in item qualification</param>

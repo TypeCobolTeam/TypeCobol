@@ -79,12 +79,14 @@ public class SymbolTable {
 		    return;
 		}
 
-	    List<Node> found;
-		if (table.ContainsKey(symbol.QualifiedName.Head)) {
-			found = table[symbol.QualifiedName.Head];
-		} else { 
-            found = new List<Node>();
-		    table.Add(symbol.QualifiedName.Head, found);
+		string key = symbol.QualifiedName.Head;
+		List<Node> found;
+		// using table.ContainsKey(key) followed by table[key] duplicates the lookup functionality
+		// so, use table.TryGetValue(key, ...) to do the "get" work once, effectively, instead of twice
+		bool present = table.TryGetValue(key, out found);
+		if (!present) {
+			found = new List<Node>();
+			table.Add(key, found);
 		}
 		found.Add(symbol);
 	}

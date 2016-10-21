@@ -17,7 +17,10 @@ public static class Attributes {
 				value = attributes[attr].GetValue(value, table);
 			}
 			return value;
-		} catch (KeyNotFoundException) { return null; }
+		} catch (KeyNotFoundException) {
+			DEFAULT.Key = attribute;
+			return DEFAULT.GetValue(value, table);
+		}
 	}
 
 	private static Dictionary<string,Attribute> attributes;
@@ -31,6 +34,16 @@ public static class Attributes {
 		attributes["unsafe"] = new UnsafeAttribute();
 		attributes["function"] = new FunctionUserAttribute();
 		attributes["definitions"] = new DefinitionsAttribute();
+		attributes["variables"] = new VariablesAttribute();
+		attributes["typecobol"] = new TypeCobolAttribute();
+	}
+	private static ContainerAttribute DEFAULT = new ContainerAttribute();
+}
+
+internal class ContainerAttribute: Attribute {
+	internal string Key { get; set; }
+	public object GetValue(object o, SymbolTable table) {
+		return null;
 	}
 }
 
@@ -68,6 +81,28 @@ internal class LevelAttribute: Attribute {
 		var data = o as DataDefinition;
 		if (data == null) return null;
 		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement).LevelNumber.Value);
+	}
+}
+
+internal class VariablesAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var node = o as Node;
+		var statement = node.CodeElement as MoveSimpleStatement;
+		if (statement == null) return null;
+		var map = statement.Vars;
+		return map;
+	}
+}
+
+internal class TypeCobolAttribute: Attribute {
+	internal string Key { get; set; }
+	public object GetValue(object o, SymbolTable table) {
+		var map = o as IDictionary<StorageArea,object>;
+		var results = new Dictionary<StorageArea,object>();
+		foreach (var kv in map)
+			if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
+				results.Add(kv.Key,kv.Value);
+		return results;
 	}
 }
 

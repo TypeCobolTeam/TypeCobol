@@ -129,12 +129,12 @@ namespace TypeCobol.Test {
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_UDWCodeElements();
-//            TestCodeElements.Check_WHENCodeElements(); //TODO: these cannot be parsed alone anymore since today
+            TestCodeElements.Check_WHENCodeElements();
 
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-            //TODO  TestCodeElements.Check_EntryCodeElements();// RefreshProgramClassDocumentSnapshot
+            TestCodeElements.Check_EntryCodeElements();
             TestParser.Check_BeforeAfterInsertion();
             TestParser.Check_BeforeAfterInsertionBatched();
 
@@ -160,10 +160,6 @@ namespace TypeCobol.Test {
 				foreach(var ex in errors) str.Append(ex.Message);
 				throw new Exception(str.ToString());
 			}
-
-            //This test use TypeChecker which is specific to TypeCobol
-            //As specifications of TypeCobol are not final yet this test can't be used
-            //            TestParser.Check_ParserIntegration();
         }
 
         /// <summary>

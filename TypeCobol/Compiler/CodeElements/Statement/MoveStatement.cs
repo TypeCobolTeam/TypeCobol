@@ -59,6 +59,33 @@ public class MoveSimpleStatement : MoveStatement {
 
 
 
+	public IDictionary<StorageArea,object> Vars {
+		[NotNull]
+		get {
+			//if (variables != null) return variables;
+			var variables = new Dictionary<StorageArea,object>();
+			var sending = Sending;
+			if (sending is SymbolReference) variables.Add(new DataOrConditionStorageArea((SymbolReference)sending), null);
+			foreach(var receiving in ReceivingStorageAreas) variables.Add(receiving.StorageArea, sending);
+			return variables;
+		}
+	}
+	private object Sending {
+		[CanBeNull]
+		get {
+			if (SendingVariable != null) {
+				if (SendingVariable.IsLiteral) {
+					if (SendingVariable.NumericValue != null) return SendingVariable.NumericValue.Value;
+					if (SendingVariable.AlphanumericValue != null) return SendingVariable.AlphanumericValue.Value;
+					throw new System.NotSupportedException();
+				}
+				return SendingVariable.MainSymbolReference;
+			}
+			if (SendingBoolean != null) return SendingBoolean.Value;
+			return null;
+		}
+	}
+
 	public override IDictionary<QualifiedName,object> Variables {
 		[NotNull]
 		get {

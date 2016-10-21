@@ -185,8 +185,10 @@
            MOVE dateType                     TO DATS20-I-RETOUR-TYPE1
            MOVE direction                    TO DATS20-I-RETOUR-SENS1
            MOVE separator                    TO DATS20-I-RETOUR-SEPAR
-           MOVE culture :: lng               TO DATS20-I-INT-LANG
-           MOVE culture :: cty               TO DATS20-I-INT-PAYS
+      *    MOVE culture :: lng               TO DATS20-I-INT-LANG             
+           MOVE lng OF culture               TO DATS20-I-INT-LANG             
+      *    MOVE culture :: cty               TO DATS20-I-INT-PAYS             
+           MOVE cty OF culture               TO DATS20-I-INT-PAYS             
            MOVE 'M'                          TO DATS20-I-POLICE
            MOVE 'P'                          TO DATS20-I-INJOUR
            SET DATS20-I-DATE1-SSAAMMJJ-OUI   TO TRUE

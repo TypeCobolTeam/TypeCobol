@@ -1,4 +1,5 @@
-﻿namespace TypeCobol.Compiler.Nodes {
+﻿
+namespace TypeCobol.Compiler.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -12,24 +13,33 @@ public class DataDivision: Node, CodeElementHolder<DataDivisionHeader>, Parent<D
 	public override string ID { get { return "data-division"; } }
 }
 
-public abstract class DataSection: Node, CodeElementHolder<DataSectionHeader>, Child<DataDivision>, Parent<DataDefinition> {
-	public DataSection(DataSectionHeader header): base(header) { }
+public abstract class DataSection: Node, CodeElementHolder<DataSectionHeader>, Child<DataDivision>{
+	protected DataSection(DataSectionHeader header): base(header) { }
 	public virtual bool IsShared { get { return false; } }
 }
-public class FileSection: DataSection, CodeElementHolder<FileSectionHeader> {
+public class FileSection: DataSection, CodeElementHolder<FileSectionHeader>{
 	public FileSection(FileSectionHeader header): base(header) { }
 	public override string ID { get { return "file"; } }
 	public override bool IsShared { get { return true; } }
 }
-public class WorkingStorageSection: DataSection, CodeElementHolder<WorkingStorageSectionHeader> {
+
+    public class FileDescriptionEntryNode : Node, CodeElementHolder<FileDescriptionEntry> {
+	    public FileDescriptionEntryNode(FileDescriptionEntry entry): base(entry) { }
+    }
+
+
+public class WorkingStorageSection: DataSection, CodeElementHolder<WorkingStorageSectionHeader>, Parent<DataDefinition>
+    {
 	public WorkingStorageSection(WorkingStorageSectionHeader header): base(header) { }
 	public override string ID { get { return "working-storage"; } }
 }
-public class LocalStorageSection: DataSection, CodeElementHolder<LocalStorageSectionHeader> {
+public class LocalStorageSection: DataSection, CodeElementHolder<LocalStorageSectionHeader>, Parent<DataDefinition>
+    {
 	public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
 	public override string ID { get { return "local-storage"; } }
 }
-public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader> {
+public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader>, Parent<DataDefinition>
+    {
 	public LinkageSection(LinkageSectionHeader header): base(header) { }
 	public override string ID { get { return "linkage"; } }
 	public override bool IsShared { get { return true; } }

@@ -72,6 +72,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// List of errors found on this CodeElement
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
+
+
+        /// <summary>
+        /// Apply propperties of the current CodeElement to the specified one.
+        /// </summary>
+        /// <param name="ce"></param>
+        public void ApplyPropertiesToCE(CodeElement ce)
+        {
+            ce.ConsumedTokens = this.ConsumedTokens;
+            ce.Diagnostics = this.Diagnostics;
+            ce.SymbolInformationForTokens = this.SymbolInformationForTokens;
+        }
         
 		/// <summary>
 		/// Debug string
@@ -128,7 +140,7 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
-			var lineStartIndex = line.SequenceNumberText.Length + (line.IndicatorChar != null? 1:0);
+			var lineStartIndex = line.SequenceNumberText.Length + 1;// +1 for line.IndicatorChar
 			return line.SourceText.Substring(0, firstTokenStartIndex-lineStartIndex);
 		}
 

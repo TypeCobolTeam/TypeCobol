@@ -206,6 +206,7 @@ namespace TypeCobol.Codegen {
 		private Dictionary<Type,Type> Generators = new Dictionary<Type,Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
 				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclaration) },
+				{ typeof(MoveSimpleStatement), typeof(Codegen.Nodes.TypeCobolQualifier) },
 			};
 
 		public Expand(Node source, Node destination, string destinationURI) {
