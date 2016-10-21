@@ -10,6 +10,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
+using Antlr4.Runtime.Misc;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -62,8 +63,8 @@ namespace TypeCobol.Compiler.Parser
                 if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact != null) {
                     CodeElement.StorageAreaGroupsCorrespondingImpact = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact;
                 }
-                if (CobolExpressionsBuilder.callTargets.Count > 0) {
-                    CodeElement.CallTargets = CobolExpressionsBuilder.callTargets;
+                if (CobolExpressionsBuilder.callTarget != null) {
+                    CodeElement.CallTarget = CobolExpressionsBuilder.callTarget;
                 }
                 if (CobolExpressionsBuilder.callSites.Count > 0) {
                     CodeElement.CallSites = CobolExpressionsBuilder.callSites;
@@ -1278,6 +1279,29 @@ namespace TypeCobol.Compiler.Parser
 			((Returning)CodeElement).ReturningParameter = new CallTargetParameter() { StorageArea = receiving };
         }
 
+        public override void ExitProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
+        {
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var procedureDivisionHeader = (ProcedureDivisionHeader)CodeElement;
+            var callTarget = new CallTarget();
+            int parametersCount =
+                (procedureDivisionHeader.UsingParameters != null ? procedureDivisionHeader.UsingParameters.Count : 0)
+                + (procedureDivisionHeader.ReturningParameter != null ? 1 : 0);
+            callTarget.Parameters = new CallTargetParameter[parametersCount];
+            int i = 0;
+            if(procedureDivisionHeader.UsingParameters != null && procedureDivisionHeader.UsingParameters.Count > 0)
+            {
+                foreach(var param in procedureDivisionHeader.UsingParameters) {
+                    callTarget.Parameters[i] = param;
+                    i++;
+                }
+            }
+            if (procedureDivisionHeader.ReturningParameter != null) {
+                callTarget.Parameters[i] = procedureDivisionHeader.ReturningParameter;
+            }
+            procedureDivisionHeader.CallTarget = callTarget;
+        }
+
         public override void EnterDeclarativesHeader(CodeElementsParser.DeclarativesHeaderContext context)
         {
             Context = context;
@@ -1572,9 +1596,28 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = CobolStatementsBuilder.CreateEntryStatement(context);
 		}
 
-		// --- EVALUATE ---
+        public override void ExitEntryStatement(CodeElementsParser.EntryStatementContext context)
+        {
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var entryStatement = (EntryStatement)CodeElement;
+            var callTarget = new CallTarget() { Name = entryStatement.ProgramEntry };
+            int parametersCount = entryStatement.InputParameters != null ? entryStatement.InputParameters.Count : 0;
+            callTarget.Parameters = new CallTargetParameter[parametersCount];
+            int i = 0;
+            if (entryStatement.InputParameters != null && entryStatement.InputParameters.Count > 0)
+            {
+                foreach (var param in entryStatement.InputParameters)
+                {
+                    callTarget.Parameters[i] = param;
+                    i++;
+                }
+            }
+            entryStatement.CallTarget = callTarget;
+        }
 
-		public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context) {
+        // --- EVALUATE ---
+
+        public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context) {
 			Context = context;
 			CodeElement = CobolStatementsBuilder.CreateEvaluateStatement(context); ;
 		}

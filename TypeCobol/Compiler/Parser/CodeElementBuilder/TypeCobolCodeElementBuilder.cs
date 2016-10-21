@@ -93,10 +93,58 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		SetConditionValues(parameter, context.valueClauseForCondition());
 		return parameter;
 	}
+        
+    public override void ExitFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context)
+    {
+        // Register call parameters (shared storage areas) information at the CodeElement level
+        var functionDeclarationHeader = (FunctionDeclarationHeader)CodeElement;
+        var callTarget = new CallTarget() { Name = functionDeclarationHeader.FunctionName };
+        int parametersCount =
+            (functionDeclarationHeader.Profile.InputParameters != null ? functionDeclarationHeader.Profile.InputParameters.Count : 0)
+            + (functionDeclarationHeader.Profile.OutputParameters != null ? functionDeclarationHeader.Profile.OutputParameters.Count : 0)
+            + (functionDeclarationHeader.Profile.InoutParameters != null ? functionDeclarationHeader.Profile.InoutParameters.Count : 0)
+            + (functionDeclarationHeader.Profile.ReturningParameter != null ? 1 : 0);
+        callTarget.Parameters = new CallTargetParameter[parametersCount];
+        int i = 0;
+        if (functionDeclarationHeader.Profile.InputParameters != null && functionDeclarationHeader.Profile.InputParameters.Count > 0)
+        {
+            foreach (var param in functionDeclarationHeader.Profile.InputParameters)
+            {
+                callTarget.Parameters[i] = CreateCallTargetParameter(param);
+                i++;
+            }
+        }
+        if (functionDeclarationHeader.Profile.OutputParameters != null && functionDeclarationHeader.Profile.OutputParameters.Count > 0)
+        {
+            foreach (var param in functionDeclarationHeader.Profile.OutputParameters)
+            {
+                callTarget.Parameters[i] = CreateCallTargetParameter(param);
+                i++;
+            }
+        }
+        if (functionDeclarationHeader.Profile.InoutParameters != null && functionDeclarationHeader.Profile.InoutParameters.Count > 0)
+        {
+            foreach (var param in functionDeclarationHeader.Profile.InoutParameters)
+            {
+                callTarget.Parameters[i] = CreateCallTargetParameter(param);
+                i++;
+            }
+        }
+        if (functionDeclarationHeader.Profile.ReturningParameter != null)
+        {
+            callTarget.Parameters[i] = CreateCallTargetParameter(functionDeclarationHeader.Profile.ReturningParameter);
+        }
+        functionDeclarationHeader.CallTarget = callTarget;
+    }
+    private static CallTargetParameter CreateCallTargetParameter(ParameterDescriptionEntry param)
+    {
+        var symbolReference = new SymbolReference(param.DataName);
+        var storageArea = new DataOrConditionStorageArea(symbolReference);
+        var callParameter = new CallTargetParameter { StorageArea = storageArea };
+        return callParameter;
+    }
 
-
-
-	public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
+    public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 		Context = context;
 		CodeElement = new FunctionDeclarationEnd();
 	}

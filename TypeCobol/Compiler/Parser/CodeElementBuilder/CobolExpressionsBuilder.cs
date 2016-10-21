@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.Parser
         internal GroupCorrespondingImpact storageAreaGroupsCorrespondingImpact { get; set; }
 
         // List of program, method, or function entry points which can be target by call instructions (with shared storage areas)
-        internal IList<CallTarget> callTargets { get; set; }
+        internal CallTarget callTarget { get; set; }
 
         // List of program, method, or function call instructions (with shared sotrage areas)
         internal IList<CallSite> callSites { get; set; }
@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Parser
             storageAreaDefinitions = new Dictionary<SymbolDefinition, DataDescriptionEntry>();
             storageAreaReads = new List<StorageArea>();
             storageAreaWrites = new List<ReceivingStorageArea>();
-            callTargets = new List<CallTarget>();
+            callTarget = null;
             callSites = new List<CallSite>();
         }
 
@@ -254,6 +254,15 @@ namespace TypeCobol.Compiler.Parser
             {
                 CobolWordsBuilder.symbolInformationForTokens[result.SymbolReference.NameLiteral.Token] = result.SymbolReference;
             }
+
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var functionCall = result.FunctionCall;
+            var callSite = new CallSite() {
+                CallTarget = functionCall is UserDefinedFunctionCall ? ((UserDefinedFunctionCall)functionCall).UserDefinedFunctionName : null, // TO DO : IntrinsicFunctionName
+                Parameters = functionCall.Arguments
+            };
+            this.callSites.Add(callSite);
+
             return result;
         }
 

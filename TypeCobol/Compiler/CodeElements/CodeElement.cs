@@ -59,9 +59,9 @@ namespace TypeCobol.Compiler.CodeElements
         public GroupCorrespondingImpact StorageAreaGroupsCorrespondingImpact { get; set; }
 
         /// <summary>
-        /// List of program, method, or function entry points which can be target by call instructions (with shared storage areas)
+        /// Program, method, or function entry point which can be targeted by call instructions (with shared storage areas)
         /// </summary>
-        public IList<CallTarget> CallTargets { get; set; }
+        public CallTarget CallTarget { get; set; }
 
         /// <summary>
         /// List of program, method, or function call instructions (with shared sotrage areas)

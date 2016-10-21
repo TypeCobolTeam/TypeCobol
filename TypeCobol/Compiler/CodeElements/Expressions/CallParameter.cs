@@ -98,7 +98,9 @@ namespace TypeCobol.Compiler.CodeElements
     public class CallTarget
     {
         /// <summary>
-        /// Name of the entry point
+        /// Name of the entry point.
+        /// If null, the call target is a PROCEDURE DIVISION header.
+        /// Else the type of the entry point is given by the symbol type.
         /// </summary>
         public SymbolDefinition Name { get; set; }
 

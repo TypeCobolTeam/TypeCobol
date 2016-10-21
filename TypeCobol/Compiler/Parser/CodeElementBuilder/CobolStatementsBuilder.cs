@@ -200,7 +200,30 @@ namespace TypeCobol.Compiler.Parser
                     statement.OutputParameter = new CallSiteParameter() { StorageAreaOrValue = new Variable(storageArea) };
                 }
 			}
-			return statement;
+
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference != null ? statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference : null };
+            int parametersCount =
+                (statement.InputParameters != null ? statement.InputParameters.Count : 0)
+                + (statement.OutputParameter != null ? 1 : 0);
+            callSite.Parameters = new CallSiteParameter[parametersCount];
+            int i = 0;
+            if (statement.InputParameters != null && statement.InputParameters.Count > 0)
+            {
+                foreach (var param in statement.InputParameters)
+                {
+                    callSite.Parameters[i] = param;
+                    i++;
+                }
+            }
+            if (statement.OutputParameter != null)
+            {
+                callSite.Parameters[i] = statement.OutputParameter;
+            }
+            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+            statement.CallSites.Add(callSite);
+
+            return statement;
 		}
 		
 		  //////////////////////
@@ -657,8 +680,30 @@ namespace TypeCobol.Compiler.Parser
                 }
 			}
 
-			//if (IdentifierUtils.IsReferenceModified(statement.Returning))
-			//    DiagnosticUtils.AddError(statement, "INVOKE: Illegal <identifier> reference modification", context.invokeReturning().identifier());
+            //if (IdentifierUtils.IsReferenceModified(statement.Returning))
+            //    DiagnosticUtils.AddError(statement, "INVOKE: Illegal <identifier> reference modification", context.invokeReturning().identifier());
+
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var callSite = new CallSite() { CallTarget = statement.MethodName != null ? statement.MethodName.SymbolReference : null }; // TO DO : ConstructorMethod
+            int parametersCount =
+                (statement.InputParameters != null ? statement.InputParameters.Count : 0)
+                + (statement.OutputParameter != null ? 1 : 0);
+            callSite.Parameters = new CallSiteParameter[parametersCount];
+            int i = 0;
+            if (statement.InputParameters != null && statement.InputParameters.Count > 0)
+            {
+                foreach (var param in statement.InputParameters)
+                {
+                    callSite.Parameters[i] = param;
+                    i++;
+                }
+            }
+            if (statement.OutputParameter != null)
+            {
+                callSite.Parameters[i] = statement.OutputParameter;
+            }
+            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+            statement.CallSites.Add(callSite);        
 
 			return statement;
 		}
