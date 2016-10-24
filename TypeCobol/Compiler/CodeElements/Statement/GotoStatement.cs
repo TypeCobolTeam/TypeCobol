@@ -75,7 +75,7 @@ public class GotoConditionalStatement: GotoStatement {
 	/// GO TO statement), no control transfer occurs. Instead, control passes to the
 	/// next statement in the normal sequence of execution.
 	/// </summary>
-	public StorageArea DependingOn { get; set; }
+	public Variable DependingOn { get; set; }
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder("GOTO");

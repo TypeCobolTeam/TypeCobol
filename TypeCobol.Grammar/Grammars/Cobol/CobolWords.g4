@@ -826,6 +826,9 @@ symbolReference10: alphanumericValue10; // standardCollatingSequence
 
 symbolReference11: alphanumericValue11;
 
+// [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
+symbolReference12: alphanumericValue4 | DATE;
+
 ambiguousSymbolReference1: alphanumericValue1;
 
 ambiguousSymbolReference4: alphanumericValue4;
@@ -1098,6 +1101,12 @@ characterClassNameDefinition: symbolDefinition4;
 characterClassNameReference: symbolReference4;
 
 // ** Data **
+
+// [TYPECOBOL] extension : user defined data types
+
+dataTypeNameDefinition: symbolDefinition4; // Not used in the grammar - merged with dataNameDefinition
+
+dataTypeNameReference: symbolReference12;
 
 // p187: data-name-1
 // Explicitly identifies the data being described.

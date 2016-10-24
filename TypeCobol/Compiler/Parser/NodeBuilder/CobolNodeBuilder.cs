@@ -260,7 +260,7 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context) {
 			if (context.DataDescriptionEntry() != null) {
 				var data = (DataDescriptionEntry)context.DataDescriptionEntry().Symbol;
-				if (data is TypeDefinitionEntry) EnterTypeDefinitionEntry((TypeDefinitionEntry)data);
+				if (data is DataTypeDescriptionEntry) EnterTypeDefinitionEntry((DataTypeDescriptionEntry)data);
 				else EnterDataDescriptionEntry(data);
 			}
 			if (context.DataConditionEntry() != null)
@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler.Parser
 				EnterDataRenamesEntry((DataRenamesEntry)context.DataRenamesEntry().Symbol);
 		}
 // [COBOL 2002]
-		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
+		private void EnterTypeDefinitionEntry(DataTypeDescriptionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
 			var node = new Nodes.TypeDefinition(typedef);
 			Enter(node);

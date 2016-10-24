@@ -35,7 +35,7 @@ public abstract class SearchStatement: StatementElement {
 	/// an INDEXED BY phrase for each dimension of the table. identifier-1 must not be
 	/// subscripted or reference-modified.
 	/// </summary>
-	public StorageArea TableToSearch { get; set; }
+	public Variable TableToSearch { get; set; }
 }
 
 /// <summary>

@@ -67,9 +67,9 @@ public class DataRenames: DataDefinition, CodeElementHolder<DataRenamesEntry> {
 	public DataRenames(DataRenamesEntry entry): base(entry) { }
 }
 // [COBOL 2002]
-public class TypeDefinition: DataDefinition, CodeElementHolder<TypeDefinitionEntry>, Parent<DataDescription>, ITypedNode
+public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>, ITypedNode
     {
-	public TypeDefinition(TypeDefinitionEntry entry): base(entry) { }
+	public TypeDefinition(DataTypeDescriptionEntry entry): base(entry) { }
 	public bool IsStrong { get { return this.CodeElement().IsStrong; } }
 	public DataType DataType { get { return this.CodeElement().DataType; } }
 	public int Length { get { return this.CodeElement().Length; } }
