@@ -34,6 +34,15 @@
            05   LibFctItem    OCCURS 3 INDEXED BY LibFctIndex.                
              10 LibFctCode    PIC X(08).                                      
              10 LibFctPointer PROCEDURE-POINTER.                              
+       01  FctList.                                                           
+           05 NumberOfFunctions   PIC 9(04).                                  
+           05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions              
+                                  INDEXED BY FctIndex.                        
+             10 FctCode    PIC X(08).                                         
+             10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
+       01  CallData.                                                          
+           05  DescriptionId PIC X(08).                                       
+             88 CallIsCopy VALUE 'TODO'.                                      
        
        PROCEDURE DIVISION.
             .
