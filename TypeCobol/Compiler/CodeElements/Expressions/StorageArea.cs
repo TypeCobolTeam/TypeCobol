@@ -147,25 +147,25 @@ namespace TypeCobol.Compiler.CodeElements
             SHIFT-IN             
         */
 
-/// <summary>Subscript used to reference a specific table element</summary>
-public class SubscriptExpression {
-	public SubscriptExpression(ArithmeticExpression numericExpression) {
-		NumericExpression = numericExpression;
-	}
+    /// <summary>Subscript used to reference a specific table element</summary>
+    public class SubscriptExpression {
+	    public SubscriptExpression(ArithmeticExpression numericExpression) {
+		    NumericExpression = numericExpression;
+	    }
 
-	public SubscriptExpression(Token allToken) {
-		ALL = new SyntaxProperty<bool>(true, allToken);
-	}
+	    public SubscriptExpression(Token allToken) {
+		    ALL = new SyntaxProperty<bool>(true, allToken);
+	    }
 
-	public ArithmeticExpression NumericExpression { get; private set; }
-	public SyntaxProperty<bool> ALL { get; private set; }
+	    public ArithmeticExpression NumericExpression { get; private set; }
+	    public SyntaxProperty<bool> ALL { get; private set; }
 
-	public override string ToString() {
-		if (NumericExpression != null) return NumericExpression.ToString();
-		if (ALL != null) return "ALL";
-		return base.ToString();
-	}
-}
+	    public override string ToString() {
+		    if (NumericExpression != null) return NumericExpression.ToString();
+		    if (ALL != null) return "ALL";
+		    return base.ToString();
+	    }
+    }
 
 	/// <summary>Storage area for an index</summary>
 	public class IndexStorageArea : StorageArea {
@@ -193,13 +193,12 @@ public class SubscriptExpression {
 				: base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			OtherStorageAreaReference = storageAreaReference;
-
-            // Generate a unique symbol name for this special register
+            
+            // This is both a storage area definition and a reference to the same storage area
             var storageAreaName = storageAreaReference != null ? storageAreaReference.ToString() : "null";
-            var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + storageAreaName);
-            StorageAreaName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
-            SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
-		}
+            DataDescriptionEntry = new SpecialRegisterDescriptionEntry(specialRegisterName, storageAreaName);
+            SymbolReference = new SymbolReference(DataDescriptionEntry.DataName);
+        }
 
 		public Token SpecialRegisterName { get; private set; }
 
@@ -209,7 +208,7 @@ public class SubscriptExpression {
         /// A mention to this kind of special register in the code is both a storage area definition
 		/// and a reference to the same storage area
         /// </summary>
-        public SymbolDefinition StorageAreaName { get; private set; }
+        public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
 
         public override string ToString() {
 			var str = new System.Text.StringBuilder();
@@ -231,10 +230,9 @@ public class SubscriptExpression {
 			SpecialRegisterName = specialRegisterName;
 			FileNameReference = fileNameReference;
 
-            // Generate a unique symbol name for this special register
-            var generatedSymbolName = new GeneratedSymbolName(specialRegisterName, specialRegisterName.Text + "-" + fileNameReference.ToString());
-            StorageAreaName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
-            SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
+            // This is both a storage area definition and a reference to the same storage area
+            DataDescriptionEntry = new SpecialRegisterDescriptionEntry(specialRegisterName, fileNameReference.ToString());
+            SymbolReference = new SymbolReference(DataDescriptionEntry.DataName);
         }
 
 		public Token SpecialRegisterName { get; private set; }
@@ -245,7 +243,7 @@ public class SubscriptExpression {
         /// A mention to this kind of special register in the code is both a storage area definition
 		/// and a reference to the same storage area
         /// </summary>
-        public SymbolDefinition StorageAreaName { get; private set; }
+        public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
     }
 
 	/// <summary>
@@ -262,20 +260,18 @@ public class SubscriptExpression {
 				: base(StorageAreaKind.FunctionCallResult) {
 			FunctionCall = functionCall;
 
-            // Generate a unique symbol name for the function call at this specific call site
+            // This is both a storage area definition and a reference to the same storage area
             int uniqueCounter = Interlocked.Increment(ref callSiteCounter);
-            var generatedSymbolName = new GeneratedSymbolName(FunctionCall.FunctionNameToken, FunctionCall.FunctionName + "-" + uniqueCounter);
-            StorageAreaName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
-            SymbolReference = new SymbolReference(generatedSymbolName, SymbolType.DataName);
+            DataDescriptionEntry = new FunctionCallResultDescriptionEntry(functionCall, uniqueCounter);
+            SymbolReference = new SymbolReference(DataDescriptionEntry.DataName);
         }
 
         /// <summary>
         /// Each individual function call site in the code is both a storage area definition
 		/// and a reference to the same storage area
         /// </summary>
-        public SymbolDefinition StorageAreaName { get; private set; }
+        public FunctionCallResultDescriptionEntry DataDescriptionEntry { get; private set; }
  
-
         /// <summary>
         /// Cobol intrinsic function call OR TypeCobol user defined function call
         /// </summary>
@@ -287,7 +283,7 @@ public class SubscriptExpression {
     /// </summary>
     public abstract class FunctionCall
     {
-        public FunctionCall(FunctionCallType type, VariableOrExpression[] arguments)
+        public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments)
         {
             Type = type;
             Arguments = arguments;
@@ -298,7 +294,7 @@ public class SubscriptExpression {
         public abstract string FunctionName { get; }
         public abstract Token FunctionNameToken { get; }
 
-        public VariableOrExpression[] Arguments { get; private set; }
+        public CallSiteParameter[] Arguments { get; private set; }
     }
 
     /// <summary>
@@ -306,7 +302,7 @@ public class SubscriptExpression {
     /// </summary>
     public class IntrinsicFunctionCall : FunctionCall
     {
-        public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, VariableOrExpression[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
+        public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
         {
             IntrinsicFunctionName = intrinsicFunctionName;
         }
@@ -323,7 +319,7 @@ public class SubscriptExpression {
     /// </summary>
     public class UserDefinedFunctionCall : FunctionCall
     {
-        public UserDefinedFunctionCall(SymbolReference functionName, VariableOrExpression[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
+        public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
         {
             UserDefinedFunctionName = functionName;
         }
@@ -339,5 +335,12 @@ public class SubscriptExpression {
     {
         IntrinsicFunctionCall,
         UserDefinedFunctionCall
+    }
+
+    public class GroupCorrespondingImpact
+    {
+        public StorageArea SendingGroupItem { get; set; }
+        public StorageArea ReceivingGroupItem { get; set; }
+        public bool ReceivingGroupIsAlsoSending { get; set; }
     }
 }

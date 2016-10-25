@@ -230,7 +230,7 @@ internal class SetStatementForConditions: SetStatement {
 	public SetStatementForConditions(): base(StatementType.SetStatementForConditions) { }
 
 	/// <summary>identifier (condition-name)</summary>
-	public DataOrConditionStorageArea[] Conditions { get; set; }
+	public ReceivingStorageArea[] Conditions { get; set; }
 
 	/// <summary>Always TRUE in COBOL, can be either TRUE or FALSE in TypeCobol.</summary>
 	public BooleanValue SendingValue { get; set; }
@@ -253,7 +253,7 @@ internal class SetStatementForConditions: SetStatement {
 			if (variables != null) return variables;
 			variables = new Dictionary<QualifiedName,object>();
 //			variables.Add(new URI(SendingValue.Value.ToString()), null);
-			foreach(var item in Conditions) variables.Add(new URI(item.SymbolReference.Name), SendingItem);
+			foreach(var item in Conditions) variables.Add(new URI(item.MainSymbolReference.Name), SendingItem);
 			return variables;
 		}
 	}

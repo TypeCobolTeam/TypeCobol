@@ -311,7 +311,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-	END PROGRAM programNameReference2? PeriodSeparator;
+	END PROGRAM programNameReference2 PeriodSeparator;
 			  
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
@@ -3284,7 +3284,7 @@ returningPhrase: RETURNING programOutputParameter;
 // data types for COBOL and Java” on page 361.
 
 programInputParameters:
-    (BY? (REFERENCE | VALUE))? storageArea2+;
+    (BY? (REFERENCE | VALUE))? sharedStorageArea2+;
 
 // p250: The RETURNING phrase specifies a data item that is to receive the program or
 // method result.
@@ -3313,7 +3313,7 @@ programInputParameters:
 // register to return a value to the operating environment.
 
 programOutputParameter:
-	storageArea2;
+	sharedStorageArea2;
 
 // p246: Format: procedure division
 // 1 The USE statement is described under “USE statement” on page 546.
@@ -4044,10 +4044,10 @@ callProgramInputParameters:
 	(BY? (REFERENCE | CONTENT | VALUE))? variableOrFileNameOrOmitted+;
 
 variableOrFileNameOrOmitted: 
-	variableOrFileName | OMITTED;
+	sharedVariableOrFileName | OMITTED;
 
 callProgramOutputParameter:
-	storageArea1;
+	sharedStorageArea1;
 
 callStatementEnd: END_CALL;
 
@@ -4445,7 +4445,7 @@ gotoSimple:
 	GO TO? procedureName;
 
 gotoConditional:
-	GO TO? procedureName+ DEPENDING ON? identifier;
+	GO TO? procedureName+ DEPENDING ON? variable1;
 
 // p341: IF statement
 // The IF statement evaluates a condition and provides for alternative actions in the
@@ -5061,10 +5061,10 @@ invokeStatement:
 	(RETURNING invokeOutputParameter)?;
 
 invokeInputParameter:
-	BY? VALUE variable3+;
+	BY? VALUE sharedVariable3+;
 
 invokeOutputParameter:
-	storageArea1;
+	sharedStorageArea1;
 
 invokeStatementEnd: END_INVOKE;
 
@@ -6014,8 +6014,8 @@ rewriteStatementEnd: END_REWRITE;
 
 searchStatement: serialSearch | binarySearch;
 
-serialSearch: SEARCH identifier (VARYING dataOrIndexStorageArea)?;
-binarySearch: SEARCH ALL identifier;
+serialSearch: SEARCH variable1 (VARYING dataOrIndexStorageArea)?;
+binarySearch: SEARCH ALL variable1;
 
 whenSearchCondition: WHEN conditionalExpression;
 
@@ -6272,7 +6272,7 @@ setSwitchPosition:
 // Format 4: SET for condition names
 
 setStatementForConditions:
-	SET conditionReference+ TO TRUE;
+	SET conditionStorageArea+ TO TRUE;
 
 // p422: SORT statement
 // The SORT statement accepts records from one or more files, sorts them according

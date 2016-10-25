@@ -172,24 +172,18 @@ namespace TypeCobol.Test.Compiler.Parser
 			if (errors.Length > 0) throw new Exception(errors.ToString());
 		}
 
-        private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug)
-        {
-            IList<FilesComparator> comparators = new List<FilesComparator>();
-            foreach (var names in Names)
-            {
-               
-                //var paths = new Paths(sample, names);
-                //paths.sextension = extensions[0];
-                Paths path =new Paths(sampleRoot, resultsRoot, samplePath, names);
-                if (System.IO.File.Exists(path.Result))
-                {
-                    Type type = names.GetComparatorType();
-                    System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool) });
-                    comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug }));
-                }
-            }
-            return comparators;
-        }
+		private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug)	{
+			IList<FilesComparator> comparators = new List<FilesComparator>();
+			foreach (var names in Names) {
+				Paths path = new Paths(sampleRoot, resultsRoot, samplePath, names);
+				if (!System.IO.File.Exists(path.Result)) continue;
+
+				Type type = names.GetComparatorType();
+				System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool) });
+				comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug }));
+			}
+			return comparators;
+		}
     }
 
 

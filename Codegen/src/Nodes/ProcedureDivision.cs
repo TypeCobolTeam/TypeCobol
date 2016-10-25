@@ -6,12 +6,12 @@
 
 internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 
-	public IList<InputParameter> UsingParameters { get; private set; }
-	public ReceivingStorageArea ReturningParameter { get; private set; }
+	public IList<CallTargetParameter> UsingParameters { get; private set; }
+	public CallTargetParameter ReturningParameter { get; private set; }
 
 
 	public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, List<Compiler.Nodes.Node> sentences): base(null) {
-		UsingParameters = new List<InputParameter>();
+		UsingParameters = new List<CallTargetParameter>();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER
 		foreach(var parameter in declaration.Profile.InputParameters)
 			if (parameter.LevelNumber.Value == 1)
@@ -25,7 +25,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 		// TCRFUN_CODEGEN_RETURNING_PARAMETER
 		if (declaration.Profile.ReturningParameter != null)
 			if (declaration.Profile.ReturningParameter.LevelNumber.Value == 1)
-				ReturningParameter = GeneratedParameter.CreateReceivingStorageArea(declaration.Profile.ReturningParameter.DataName);
+				ReturningParameter = new CallTargetParameter() { StorageArea = GeneratedParameter.CreateReceivingStorageArea(declaration.Profile.ReturningParameter.DataName) };
 
 		this.children.AddRange(sentences);
 	}
@@ -39,15 +39,15 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				int c = 0;
 				var done = new List<string>();
 				foreach(var parameter in UsingParameters) {
-					var data = parameter.ReceivingStorageArea.StorageArea;
+					var data = parameter.StorageArea;
 					string name = data != null? data.SymbolReference.Name : null;
 					if (done.Contains(name)) continue;
 					else done.Add(name);
 					string strmode = "BY REFERENCE ";
-					if (parameter.ReceivingMode.Value == ReceivingMode.ByValue) strmode = "BY VALUE ";
+					if (parameter.SharingMode.Value == ParameterSharingMode.ByValue) strmode = "BY VALUE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
-					if (parameter.ReceivingStorageArea.StorageArea != null) strname = name;
+					if (parameter.StorageArea != null) strname = name;
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					c++;
 				}
@@ -70,22 +70,22 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 
 
 
-	public class GeneratedParameter: InputParameter {
+	public class GeneratedParameter: CallTargetParameter {
 //		public GeneratedParameter(ReceivingStorageArea storage): base(storage, null) {
 //			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
 //			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
 //		}
 
 		public GeneratedParameter(SymbolDefinition symbol) {
-			this.ReceivingStorageArea = CreateReceivingStorageArea(symbol);
-			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
-			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
+			this.StorageArea = CreateReceivingStorageArea(symbol);
+			var mode = TypeCobol.Compiler.CodeElements.ParameterSharingMode.ByReference;
+			this.SharingMode = new SyntaxProperty<ParameterSharingMode>(mode, null);
 		}
 
-		public static ReceivingStorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {
+		public static StorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {
 			if (symbol == null) return null;
 			var storage = new DataOrConditionStorageArea(new SymbolReference(symbol));
-			return new ReceivingStorageArea(StorageDataType.Any, storage);
+			return storage;
 		}
 	}
 }

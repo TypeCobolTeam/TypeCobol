@@ -41,10 +41,6 @@ qualifiedTextName: (textName ((IN | OF) libraryName)?) | (libraryName ColonSepar
 
 
 // rule modified to support:
-// - TYPE DATE (instead of TC-DATE or something)
-cobol2002TypeClause:    TYPE (UserDefinedWord | DATE);
-
-// rule modified to support:
 // - MOVE UNSAFE <custom type> TO <custom type>
 // - MOVE TRUE  TO <boolean>
 // - MOVE FALSE TO <boolean>
@@ -61,7 +57,7 @@ moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemRef
 // rule modified to support:
 // - SET <boolean> TO FALSE
 setStatementForConditions:
-	SET conditionReference+ TO (TRUE | FALSE);
+	SET conditionStorageArea+ TO (TRUE | FALSE);
 
 // rules modified to support user defined functions (of arity 0..n)
 functionIdentifier: intrinsicFunctionCall | userDefinedFunctionCall;

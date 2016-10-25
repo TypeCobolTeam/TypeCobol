@@ -53,6 +53,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// LINKAGE SECTION of the called subprogram or invoked method.
         /// The argument receiving mode can be : BY REFERENCE or BY VALUE
         /// </summary>
-        public IList<InputParameter> InputParameters { get; set; }
+        public IList<CallTargetParameter> InputParameters { get; set; }
     }
 }

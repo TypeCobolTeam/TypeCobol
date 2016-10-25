@@ -123,6 +123,7 @@
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />
     <Compile Include="Compiler\CodeElements\Entry\DataType.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\CallParameter.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\SymbolName.cs" />
@@ -383,6 +384,7 @@
     <None Include="Documentation\Studies\Literals and Identifiers in parser rules.xlsx" />
     <None Include="Documentation\Studies\Move code element study.docx" />
     <None Include="Documentation\Studies\Pipeline - compilation steps.docx" />
+    <None Include="Documentation\Studies\SymbolInformationsAndStorageAreas.xlsx" />
     <None Include="Documentation\Studies\Text editors functions study.xlsx" />
     <None Include="Documentation\Studies\Symbols and User defined words.xlsx" />
     <None Include="packages.config">

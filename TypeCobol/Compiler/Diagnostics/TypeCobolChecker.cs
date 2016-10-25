@@ -64,7 +64,7 @@ class FunctionCallChecker: NodeListener {
 		for (int c = 0; c < parameters.Count; c++) {
 			var expected = parameters[c];
 			if (c < callArgsCount) {
-				var actual = call.Arguments[c];
+				var actual = call.Arguments[c].StorageAreaOrValue;
 				if (actual.IsLiteral) continue;
                 var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
                 var found = table.GetVariable(new URI(callArgName));
@@ -122,13 +122,13 @@ class FunctionDeclarationChecker: NodeListener {
 	private void CheckNoGlobalOrExternal(DataDivision node) {
 		if (node == null) return; // no DATA DIVISION
 		foreach(var section in node.Children()) { // "storage" sections
-			foreach(var child in section.Children()) {
-				var data = child.CodeElement as DataDescriptionEntry;
-				if (data == null) continue;
-				if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
-					DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
-				if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
-					DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
+			foreach(var child in section.Children) {
+			        var data = child.CodeElement as DataDescriptionEntry;
+			        if (data == null) continue;
+			        if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
+			            DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
+			        if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
+			            DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
 			}
 		}
 	}

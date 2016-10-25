@@ -1,0 +1,201 @@
+Syntax tree
+-----------
+
+https://github.com/dotnet/roslyn/wiki/Roslyn%20Overview
+
+https://joshvarty.wordpress.com/2014/07/11/learn-roslyn-now-part-3-syntax-nodes-and-syntax-tokens/
+
+https://robinsedlaczek.com/2015/09/03/slides-from-my-talk-about-the-microsoft-net-compiler-platform/
+
+Syntax trees have three key attributes. 
+- The first attribute is that syntax trees hold all the source information in full fidelity. The syntax trees also represent errors in source code when the program is incomplete or malformed, by representing skipped or missing tokens in the syntax tree. 
+- A syntax tree obtained from the parser is completely round-trippable back to the text it was parsed from. From any syntax node, it is possible to get the text representation of the sub-tree rooted at that node. 
+- The third attribute of syntax trees is that they are immutable and thread-safe. This means that after a tree is obtained, it is a snapshot of the current state of the code, and never changes. T
+
+Each syntax tree is made up of nodes, tokens, and trivia. 
+
+Syntax Nodes
+
+These nodes represent syntactic constructs such as declarations, statements, clauses, and expressions. Each category of syntax nodes is represented by a separate class derived from SyntaxNode. The set of node classes is not extensible. 
+
+All syntax nodes are non-terminal nodes in the syntax tree, which means they always have other nodes and tokens as children. As a child of another node, each node has a parent node that can be accessed through the Parent property.
+
+In addition, each syntax node subclass exposes all the same children through strongly typed properties. For example, a BinaryExpressionSyntax node class has three additional properties specific to binary operators: Left, OperatorToken, and Right. The type of Left and Right is ExpressionSyntax, and the type of OperatorToken is SyntaxToken.
+
+Syntax Tokens
+
+Syntax tokens are the terminals of the language grammar, representing the smallest syntactic fragments of the code.Syntax tokens consist of keywords, identifiers, literals, and punctuation. 
+
+The ValueText property tells you the same information as the Value property; however this property is always typed as String. An identifier in C# source text may include Unicode escape characters, yet the syntax of the escape sequence itself is not considered part of the identifier name. So although the raw text spanned by the token does include the escape sequence, the ValueText property does not. Instead, it includes the Unicode characters identified by the escape.
+
+Syntax Trivia
+
+Syntax trivia represent the parts of the source text that are largely insignificant for normal understanding of the code, such as whitespace, comments, and preprocessor directives. 
+
+Because trivia are not part of the normal language syntax and can appear anywhere between any two tokens, they are not included in the syntax tree as a child of a node. Yet, because they are important when implementing a feature like refactoring and to maintain full fidelity with the source text, they do exist as part of the syntax tree.
+
+You can access trivia by inspecting a token’s LeadingTrivia or TrailingTrivia collections. When source text is parsed, sequences of trivia are associated with tokens. 
+
+Unlike syntax nodes and tokens, syntax trivia do not have parents. Yet, because they are part of the tree and each is associated with a single token, you may access the token it is associated with using the Token property.
+
+Trivia
+------
+
+In general, a token owns any trivia after it on the same line up to the next token. Any trivia after that line is associated with the following token. The first token in the source file gets all the initial trivia, and the last sequence of trivia in the file is tacked onto the end-of-file token, which otherwise has zero width.
+
+Elastic trivia is usually in a manually constructed syntax tree to represent flexible whitespace elements. The trees returned by the parsers represent any whitespace literally as it was in the source code. Elastic whitespace lets generated trees suggest whitespace elements and ensure tokens are not immediately adjacent to each other. Formatters and other tree processing tools can freely substitute, lengthen, or change the elastic whitespace in any way without breaking fidelity with an original code source.
+
+The parser may skip tokens until it finds one where it can continue parsing. In this case, the skipped tokens that were skipped are attached as a trivia node with the kind SkippedTokens.
+
+Source text
+-----------
+
+Each node, token, or trivia knows its position within the source text and the number of characters it consists of. A text position is represented as a 32-bit integer, which is a zero-based Unicode character index. A TextSpan object is the beginning position and a count of characters, both represented as integers. If TextSpan has a zero length, it refers to a location between two characters.
+
+Each node has two TextSpan properties: Span and FullSpan. 
+
+The Span property is the text span from the start of the first token in the node’s sub-tree to the end of the last token. This span does not include any leading or trailing trivia.
+
+The FullSpan property is the text span that includes the node’s normal span, plus the span of any leading or trailing trivia.
+
+Errors
+------
+
+Even when the source text contains syntax errors, a full syntax tree that is round-trippable to the source is exposed. When the parser encounters code that does not conform to the defined syntax of the language, it uses one of two techniques to create a syntax tree.
+
+First, if the parser expects a particular kind of token, but does not find it, it may insert a missing token into the syntax tree in the location that the token was expected. A missing token represents the actual token that was expected, but it has an empty span, and its IsMissing property returns true.
+
+Second, the parser may skip tokens until it finds one where it can continue parsing. In this case, the skipped tokens that were skipped are attached as a trivia node with the kind SkippedTokens.
+
+Semantics
+---------
+
+In addition to a syntactic model of the source code, a semantic model encapsulates the language rules, giving you an easy way to make these distinctions.
+
+A symbol represents a distinct element declared by the source code or imported from an assembly as metadata. Every namespace, type, method, property, field, event, parameter, or local variable is represented by a symbol. 
+
+A variety of methods and properties on the Compilation type help you find symbols. For example, you can find a symbol for a declared type by its common metadata name. You can also access the entire symbol table as a tree of symbols rooted by the global namespace.
+
+Symbols also contain additional information that the compiler determined from the source or metadata, such as other referenced symbols. Each kind of symbol is represented by a separate interface derived from ISymbol, each with its own methods and properties detailing the information the compiler has gathered. Many of these properties directly reference other symbols. For example, the ReturnType property of the IMethodSymbol class tells you the actual type symbol that the method declaration referenced.
+
+Metadata import
+---------------
+
+There are program elements represented in source code, and programs can also refer to previously compiled libraries, packaged in assembly files. Although no source code is available for assemblies and therefore no syntax nodes or trees, programs can still refer to elements inside them.
+
+Workspace
+---------
+
+A workspace is an active representation of your solution as a collection of projects, each with a collection of documents. A workspace is typically tied to a host environment that is constantly changing as a user types or manipulates properties. 
+
+The workspace provides access to the current model of the solution. When a change in the host environment occurs, the workspace fires corresponding events, and the CurrentSolution property is updated. For example, when the user types in a text editor corresponding to one of the source documents, the workspace uses an event to signal that the overall model of the solution has changed and which document was modified. 
+
+Although a workspace may change every time a key is pressed, you can work with the model of the solution in isolation. 
+
+A solution is an immutable model of the projects and documents. This means that the model can be shared without locking or duplication. After you obtain a solution instance from the Workspace’s CurrentSolution property, that instance will never change. However, like with syntax trees and compilations, you can modify solutions by constructing new instances based on existing solutions and specific changes. To get the workspace to reflect your changes, you must explicitly apply the changed solution back to the workspace.
+A project is a part of the overall immutable solution model. It represents all the source code documents, parse and compilation options, and both assembly and project-to-project references. From a project, you can access the corresponding compilation without needing to determine project dependencies or parse any source files.
+A document is also a part of the overall immutable solution model. A document represents a single source file from which you can access the text of the file, the syntax tree, and the semantic model.
+
+
+Immutability / perf
+-------------------
+
+https://blogs.msdn.microsoft.com/ericlippert/2012/06/08/persistence-facades-and-roslyns-red-green-trees/
+
+https://channel9.msdn.com/posts/Erik-Meijer-Immo-Landwerth-and-Andrew-Arnott-Immutable-Collections-for-NET
+
+https://roslyn.codeplex.com/discussions/541953
+
+https://robinsedlaczek.com/2015/04/29/inside-the-net-compiler-platform-performance-considerations-during-syntax-analysis-speakroslyn/
+
+We would like to have a data structure that has the following characteristics: 
+- Immutable. 
+- The form of a tree. 
+- Cheap access to parent nodes from child nodes. 
+- Possible to map from a node in the tree to a character offset in the text. 
+- Persistent.
+
+We actually do the impossible by keeping two parse trees. The “green” tree is immutable, persistent, has no parent references, is built “bottom-up”, and every node tracks its width but not its absolute position. When an edit happens we rebuild only the portions of the green tree that were affected by the edit, which is typically about O(log n) of the total parse nodes in the tree. 
+
+The “red” tree is an immutable facade that is built around the green tree; it is built “top-down” on demand and thrown away on every edit. It computes parent references by manufacturing them on demand as you descend through the tree from the top. It manufactures absolute positions by computing them from the widths, again, as you descend. 
+
+You, the consumer of the Roslyn API, only ever see the red tree; the green tree is an implementation detail.
+
+There is a fantastic look at Roslyn's performance and implementation of immutable trees by VSadov on discussion forums here: https://roslyn.codeplex.com/discussions/541953
+
+De-duplication of green nodes
+
+As you may notice from descriptions and from the actual implementation, green nodes are immutable and self-contained. In particular, green node does not know its position in text and does not know its parent. As a result the same green node for "2 - 2 " can represent any occurrence of "2 - 2 ", - as long as it is parses into identically shaped green sub-tree, why not just use the same sub-tree?
+
+That is achieved in green node factories - before creating a green node for "2 - 2 " the factory will check if it has already seen a binary expression with same children "2 ", "- ", "2 " and if answer is yes, the it will just return a cached node. One can see it as a kind of memorization. 
+
+Deduplication is not a guaranteed feature. To guarantee deduplication we would need to cache all already seen nodes. That would make deduplicating caches unnecessarily big. Instead, the caches have fixed size with new entries preempting older ones. As a result deduplication is not perfect, but because of locality of syntax patterns in the code it still works pretty well. 
+
+Another trade-off here is that we do not deduplicate nonterminals with more than 3 children. The more children you need to consider, the more expensive it gets to compare nodes and the more likely that something will not match. All that leads to diminishing returns in term of cache hits when larger nodes are considered.
+Since most common syntax nodes (simple names, binary expressions, member accesses, typical argument lists...) have 3 children or less, handling just nodes with 3 or less children seems to provide the best benefit/cost ratio.
+
+De-duplication of terminals
+
+Typical, human readable, syntax trees are very shallow. Even in enormously large code files there seem to be some natural limits on how deep syntax could be nested. Perhaps because of that a very large fraction of nodes in the green tree are tokens - terminal nodes like punctuation, keywords, identifiers, literals. They are also ones with the most repetitions - once you use variable "x" in code you are likely to use it more than once.
+
+That makes it even more important to dedupe tokens. The principle is the same though as with nonterminals. There are fixed sized caches of tokens that are used by token factories or by the scanner directly to avoid creating a new token when one can be used from the cache. The difference is that most tokens do not have any children structure and are basically direct representations of text so matching of tokens typically means matching their textual values.
+
+Another interesting difference in deduping strategy here is that there are two levels of caching for nonterminals. 
+L1 is a fast, relatively small, not thread-safe, local cache used exclusively by a single parsing session.
+L2 is a slower, larger, thread-safe cache that is shared between L1 caches. When L1 cache experiences a miss, it looks in L2.
+So, if a token for "System" is created while parsing aaa.cs, that same token may be reused when parsing bbb.cs
+
+De-duplication of strings 
+
+There is clearly a trend here. - Immutable, self-contained objects are reusable and when repetitions are common, it is hard to resist deduping them. 
+
+Strings used in code could be massively redundant. How many times would you find a string "int" or "System" in a typical C# solution?
+The caching strategy here is similar to the caching of tokens - two layered L1 / L2 cache.
+The interesting difference is that L2 is shared across languages and is also used by metadata reader.
+
+A string instance for "System" allocated when parsing VB code my end up used by C# or when a namespace name "String" is read from metadata.
+
+Laziness of red trees
+
+Instead of computing the red tree after every text change, the red tree is computed only when someone requests it. 
+
+Red nodes are the public façade to the syntax model. Unlike a green node, red node: 
+- knows its location span in the tree 
+- knows not only children, but the parent too 
+- knows the syntax tree to which the node belongs. 
+This all makes red nodes very convenient, but it also ensures that red nodes cannot be reused within a tree (all nodes have different spans) or between trees (different parents). The problem arises – if there is a red tree for every version of the text, how can we afford a new tree every time when user types a character? The solution is to build the red tree lazily. 
+
+The key observation here is that there is no way to get a random red node directly. To access a node you must get its parent first and then ask for the child. That is when red nodes are constructed. Note that when we descend from a parent into a child we know all the information that we need to construct the child. We know the parent – it is the current node. We also know the green node that contains internal data for the child (kind, width and such) - if this is the left red node for a binary expression, the green node for it will be the left green child of the current node, and so on. And we can compute the position of the new node since we know parent’s position and width of all children that precede the given one (if it is the first child, its position is the same as parent’s). 
+
+Since we can build red nodes on demand we do not need to create an entire new tree for every character typed. We only need to create a new green tree which is a relatively cheap incremental operation - (parser uses most of the original tree, generally only nodes that intersect with edited span need replacing) and create a trivial new root red node which has 0 for position, null for the parent and the root green node for the green node. After that the red tree can build itself if/when user descends into its children nodes. The whole building red tree becomes a pay-for-play scenario. 
+
+Laziness helps tremendously in scenarios like typing. - When user is furiously typing, no one has the time or need to examine the entire red tree. Once user types another character the current tree becomes irrelevant and any analysis, if started, tend to be cancelled and restarted with the new tree (often with a small delay – in case user will continue typing, no need to start anything too eagerly). As a result intermediate red trees, while fully "available", will generally see only a tiny fraction of nodes realized.
+
+Red nodes are remembered by their parent red nodes in most circumstances and the root is held by the syntax tree, so they are shared by all users of the same tree instance, but are not otherwise cached. In a few places, like method body blocks, red nodes may be cached weakly so they will be garbage collected if not continually referenced. This is a performance optimization and it cannot be observed through normal means. Each time you type a keystroke in the VS editor, most of the green nodes in that documents tree are reused, but the red nodes are new. This does cause GC pressure, using access patterns to the tree that focus in on tokens and surrounding nodes can minimize most of these allocations.
+
+Weak red subtrees
+
+Basically, the garbage collector is allowed to clean up portions of the red tree and they can be recreated later if needed. 
+
+An interesting thing to note about red nodes is that they have reference identity. Same piece of syntax in a given tree is observably represented by the same unique red node object. Example: If one gets from a leftmost child of some node to the node via parent reference and then descends from the parent into its leftmost child he will get exactly the same node from which he started. This is a very important quality of the red nodes. Equality of nodes is a very cheap reference comparison. 
+The implementation is obvious - parents store references to children that are already created and just return already created ones if these children are need again. A side-effect of such implementation is that it makes the red tree a fully connected graph (can get from any node to any another). From the prospective of GC as long as any node in the tree is reachable, the whole red tree would be retained. Once nodes are created, they would live as long as the whole tree. That is a bit inconvenient. Imagine user scrolling through a code file – colorizer will materialize the nodes for the visible syntax, but after the view moves the nodes become invisible and no longer interesting for most kinds of analysis. 
+
+Note that all the information that we put in the red tree comes from the green nodes. Even node positions, are actually inferred from the green node widths and the tree topology. The process of red tree creation can be seen as a form of decompression. That allows to make some of the parent->child links weak (as in WeakReference<T>). A weakly referenced red subtrees can be reclaimed by GC if noone uses them and if needed “decompressed” again. Note that this does not violate the principle of reference identity. Newly constructed red nodes are indeed new objects, but since the old nodes representing same syntax are no longer reachable, no one would be able to notice the difference.
+
+Obviously, we do not want to make all the children references in the tree weak. Weak references take space themselves, not as fast as regular references and require extra GC housekeeping. It has been observed that many kinds of analysis, including binding, are much more likely to require syntax within same method where analysis is performed while reaching for other method bodies is rare. Based on this, Roslyn red trees refer to method body syntax weakly. - If a particular method body is no longer used, GC can put its red nodes to a better use. Typically at any given time only some methods in a large file would have materialized red trees thus significantly reducing average heap size.
+
+SyntaxToken is a struct
+
+The main change we made was to reduce heap allocations and GC costs by making SyntaxToken into a struct in the red model. This is a significant savings, since in average source files, roughly half of the nodes in the syntax tree are terminals (SyntaxTokens).
+For efficiency purposes, the SyntaxToken type is a CLR value type. Therefore, unlike syntax nodes, there is only one structure for all kinds of tokens with a mix of properties that have meaning depending on the kind of token that is being represented.
+Like syntax tokens, trivia are value types. The single SyntaxTrivia type is used to describe all kinds of trivia.
+
+The green nodes are not structs, but on the other hand, since they do not contain parent pointers or positions, they are interned - we share the same instance of the green node for all identical nodes (same trivia and text).
+
+Incremental analysis
+
+In general we have an incremental lexer which rescans the area affected by the edit. Then we have an incremental parser, which in the best case reparses the statement which intersect with the newly lexed tokens and then re-builds the "spine" of the green tree back up to the root, while re-using the rest of the green nodes in the tree. None of the red nodes are reusable by definition. There is a new root node for the new tree, and it is reachable from any other node.
+
+There could be a distinct red node in each version of the tree, but red nodes are created lazily, and most of the time the IDE doesn't actually cause many of the red nodes to be realized, because it works after a slight delay in case of rapid successive  edits.
+ 
+I understand that SyntaxNode == red node, GreenNode == green node. SyntaxToken is effectively the "red" version for terminals in the language/leaves in the tree. Making it a struct saves a bunch of allocations and reduces GC pressure.

@@ -22,25 +22,24 @@ namespace TypeCobol.Compiler.Parser
 		 // PROCEDURE DIVISION HEADER //
 		///////////////////////////////
 
-		internal IList<InputParameter> CreateInputParameters(CodeElementsParser.ProgramInputParametersContext[] contexts) {
+		internal IList<CallTargetParameter> CreateInputParameters(CodeElementsParser.ProgramInputParametersContext[] contexts) {
 			if (contexts == null) return null;
-			IList<InputParameter> inputParameters = new List<InputParameter>();
+			IList<CallTargetParameter> inputParameters = new List<CallTargetParameter>();
 			foreach (var context in contexts) {
-				SyntaxProperty<ReceivingMode> receivingMode = CreateReceivingMode(context);
-				foreach (var storageAreaContext in context.storageArea2()) {
-					var inputParameter = new InputParameter {
-						ReceivingMode = receivingMode,
-						ReceivingStorageArea = CobolExpressionsBuilder.CreateStorageArea(storageAreaContext)
+				SyntaxProperty<ParameterSharingMode> receivingMode = CreateReceivingMode(context);
+				foreach (var storageAreaContext in context.sharedStorageArea2()) {
+					var inputParameter = new CallTargetParameter {
+						SharingMode = receivingMode,
+						StorageArea = CobolExpressionsBuilder.CreateSharedStorageArea(storageAreaContext)
 					};
-					inputParameter.ReceivingStorageArea.DataSourceType = DataSourceType.ReceiveFromCallingProgram;
 					inputParameters.Add(inputParameter);
 				}
 			}
 			return inputParameters;
 		}
-		private SyntaxProperty<ReceivingMode> CreateReceivingMode(CodeElementsParser.ProgramInputParametersContext context) {
-			if (context.REFERENCE() != null) return new SyntaxProperty<ReceivingMode>(ReceivingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
-			if (context.VALUE() != null) return new SyntaxProperty<ReceivingMode>(ReceivingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
+		private SyntaxProperty<ParameterSharingMode> CreateReceivingMode(CodeElementsParser.ProgramInputParametersContext context) {
+			if (context.REFERENCE() != null) return new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, ParseTreeUtils.GetFirstToken(context.REFERENCE()));
+			if (context.VALUE() != null) return new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByValue, ParseTreeUtils.GetFirstToken(context.VALUE()));
 			return null;
 		}
 
@@ -129,6 +128,17 @@ namespace TypeCobol.Compiler.Parser
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
 			statement.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
+
+            // Collect storage area read/writes at the code element level
+            if (statement.GroupItem != null && statement.SendingAndReceivingGroupItem != null)
+            {
+                CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
+                {
+                    SendingGroupItem = statement.GroupItem,
+                    ReceivingGroupItem = statement.SendingAndReceivingGroupItem,
+                    ReceivingGroupIsAlsoSending = true
+                };
+            }
 			return statement;
 		}
 
@@ -158,23 +168,23 @@ namespace TypeCobol.Compiler.Parser
 			statement.ProgramOrProgramEntryOrProcedureOrFunction = 
 				CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(
 					context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable());
-			statement.InputParameters = new List<CallInputParameter>();
+			statement.InputParameters = new List<CallSiteParameter>();
 			if (context.callProgramInputParameters() != null) {
-				SyntaxProperty<SendingMode> sendingMode = new SyntaxProperty<SendingMode>(SendingMode.ByReference, null);
+				SyntaxProperty<ParameterSharingMode> sendingMode = new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null);
 				foreach (var inputs in context.callProgramInputParameters()) {
 					if (inputs.REFERENCE() != null) {
-						sendingMode = CreateSyntaxProperty(SendingMode.ByReference, inputs.REFERENCE());
+						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByReference, inputs.REFERENCE());
 					} else
 					if (inputs.CONTENT() != null) {
-						sendingMode = CreateSyntaxProperty(SendingMode.ByContent, inputs.CONTENT());
+						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByContent, inputs.CONTENT());
 					} else
 					if (inputs.VALUE() != null) {
-						sendingMode = CreateSyntaxProperty(SendingMode.ByValue, inputs.VALUE());
+						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByValue, inputs.VALUE());
 					}
 					foreach (var variable in inputs.variableOrFileNameOrOmitted()) {
-						var inputParameter = new CallInputParameter { SendingMode = sendingMode };
-						if (variable.variableOrFileName() != null) {
-							inputParameter.SendingVariable = CobolExpressionsBuilder.CreateVariableOrFileName(variable.variableOrFileName());
+						var inputParameter = new CallSiteParameter { SharingMode = sendingMode };
+						if (variable.sharedVariableOrFileName() != null) {
+							inputParameter.StorageAreaOrValue = CobolExpressionsBuilder.CreateSharedVariableOrFileName(variable.sharedVariableOrFileName());
 						} else
 						if (variable.OMITTED() != null) {
 							inputParameter.Omitted = CreateSyntaxProperty(true, variable.OMITTED());
@@ -184,10 +194,36 @@ namespace TypeCobol.Compiler.Parser
 				}
 			}
 			if (context.callProgramOutputParameter() != null) {
-				statement.OutputParameter = CobolExpressionsBuilder.CreateStorageArea(context.callProgramOutputParameter().storageArea1());
-				if (statement.OutputParameter != null) statement.OutputParameter.DataSourceType = DataSourceType.ReceiveFromCalledProgram;
+                var storageArea = CobolExpressionsBuilder.CreateSharedStorageArea(context.callProgramOutputParameter().sharedStorageArea1());
+                if (storageArea != null)
+                {
+                    statement.OutputParameter = new CallSiteParameter() { StorageAreaOrValue = new Variable(storageArea) };
+                }
 			}
-			return statement;
+
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference != null ? statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference : null };
+            int parametersCount =
+                (statement.InputParameters != null ? statement.InputParameters.Count : 0)
+                + (statement.OutputParameter != null ? 1 : 0);
+            callSite.Parameters = new CallSiteParameter[parametersCount];
+            int i = 0;
+            if (statement.InputParameters != null && statement.InputParameters.Count > 0)
+            {
+                foreach (var param in statement.InputParameters)
+                {
+                    callSite.Parameters[i] = param;
+                    i++;
+                }
+            }
+            if (statement.OutputParameter != null)
+            {
+                callSite.Parameters[i] = statement.OutputParameter;
+            }
+            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+            statement.CallSites.Add(callSite);
+
+            return statement;
 		}
 		
 		  //////////////////////
@@ -372,7 +408,7 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateGotoConditionalStatement(CodeElementsParser.GotoConditionalContext context) {
 			var statement = new GotoConditionalStatement();
 			statement.ProcedureNames = BuildObjectArrayFromParserRules(context.procedureName(), ctx => CobolWordsBuilder.CreateProcedureName(ctx));
-			statement.DependingOn = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+			statement.DependingOn = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			if (statement.ProcedureNames.Length > 1 && statement.DependingOn == null)
 				DiagnosticUtils.AddError(statement, "GO TO: Required only one <procedure name> or DEPENDING phrase", context);
 			if (statement.ProcedureNames.Length < 1 && statement.DependingOn != null)
@@ -624,25 +660,50 @@ namespace TypeCobol.Compiler.Parser
 
 			if(context.invokeInputParameter() != null && context.invokeInputParameter().Length > 0)
 			{
-				statement.InputParameters = new List<Variable>();
+				statement.InputParameters = new List<CallSiteParameter>();
 				foreach(var parameterContext in context.invokeInputParameter())
 				{
-					foreach(var variableContext in parameterContext.variable3())
+					foreach(var variableContext in parameterContext.sharedVariable3())
 					{
-						statement.InputParameters.Add(
-							CobolExpressionsBuilder.CreateVariable(variableContext));
+						statement.InputParameters.Add(new CallSiteParameter() { StorageAreaOrValue =
+                            CobolExpressionsBuilder.CreateSharedVariable(variableContext) });
 					}
 				}
 			}
 
 			if(context.invokeOutputParameter() != null)
 			{
-				statement.OutputParameter = 
-					CobolExpressionsBuilder.CreateStorageArea(context.invokeOutputParameter().storageArea1());
+                var storageArea = CobolExpressionsBuilder.CreateSharedStorageArea(context.invokeOutputParameter().sharedStorageArea1());
+                if (storageArea != null)
+                {
+                    statement.OutputParameter = new CallSiteParameter() { StorageAreaOrValue = new Variable(storageArea) };
+                }
 			}
 
-			//if (IdentifierUtils.IsReferenceModified(statement.Returning))
-			//    DiagnosticUtils.AddError(statement, "INVOKE: Illegal <identifier> reference modification", context.invokeReturning().identifier());
+            //if (IdentifierUtils.IsReferenceModified(statement.Returning))
+            //    DiagnosticUtils.AddError(statement, "INVOKE: Illegal <identifier> reference modification", context.invokeReturning().identifier());
+
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var callSite = new CallSite() { CallTarget = statement.MethodName != null ? statement.MethodName.SymbolReference : null }; // TO DO : ConstructorMethod
+            int parametersCount =
+                (statement.InputParameters != null ? statement.InputParameters.Count : 0)
+                + (statement.OutputParameter != null ? 1 : 0);
+            callSite.Parameters = new CallSiteParameter[parametersCount];
+            int i = 0;
+            if (statement.InputParameters != null && statement.InputParameters.Count > 0)
+            {
+                foreach (var param in statement.InputParameters)
+                {
+                    callSite.Parameters[i] = param;
+                    i++;
+                }
+            }
+            if (statement.OutputParameter != null)
+            {
+                callSite.Parameters[i] = statement.OutputParameter;
+            }
+            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+            statement.CallSites.Add(callSite);        
 
 			return statement;
 		}
@@ -720,8 +781,19 @@ namespace TypeCobol.Compiler.Parser
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
 // [TYPECOBOL]
 			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
-// [/TYPECOBOL]
-			return statement;
+            // [/TYPECOBOL]
+
+            // Collect storage area read/writes at the code element level
+            if (statement.FromGroupItem != null && statement.ToGroupItem != null)
+            {
+                CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
+                {
+                    SendingGroupItem = statement.FromGroupItem,
+                    ReceivingGroupItem = statement.ToGroupItem,
+                    ReceivingGroupIsAlsoSending = false
+                };
+            }
+            return statement;
 		}
 
 		  ////////////////////////
@@ -953,7 +1025,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSerialSearchStatement(CodeElementsParser.SerialSearchContext context) {
 			var statement = new SearchSerialStatement();
-			statement.TableToSearch = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+			statement.TableToSearch = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			if(context.dataOrIndexStorageArea() != null) {
 				statement.VaryingSearchIndex = CobolExpressionsBuilder.CreateDataOrIndexStorageArea(context.dataOrIndexStorageArea());
 			}
@@ -962,7 +1034,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateBinarySearchStatement(CodeElementsParser.BinarySearchContext context) {
 			var statement = new SearchBinaryStatement();
-			statement.TableToSearch = CobolExpressionsBuilder.CreateIdentifier(context.identifier());
+			statement.TableToSearch = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			return statement;
 		}
 
@@ -1034,10 +1106,10 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSetStatementForConditions(CodeElementsParser.SetStatementForConditionsContext context) {
 			var statement = new SetStatementForConditions();
-			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionReference(), ctx => CobolExpressionsBuilder.CreateConditionReference(ctx));
-			if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
+			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionStorageArea(), ctx => CobolExpressionsBuilder.CreateConditionStorageArea(ctx));
+            if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
-			return statement;
+            return statement;
 		}
 		
 		  ////////////////////
@@ -1212,7 +1284,18 @@ namespace TypeCobol.Compiler.Parser
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
 			statement.Rounded = CreateSyntaxProperty(true, context.ROUNDED());
-			return statement;
+
+            // Collect storage area read/writes at the code element level
+            if (statement.GroupItem != null && statement.SendingAndReceivingGroupItem != null)
+            {
+                CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
+                {
+                    SendingGroupItem = statement.GroupItem,
+                    ReceivingGroupItem = statement.SendingAndReceivingGroupItem,
+                    ReceivingGroupIsAlsoSending = true
+                };
+            }
+            return statement;
 		}
 
 		  ////////////////////////

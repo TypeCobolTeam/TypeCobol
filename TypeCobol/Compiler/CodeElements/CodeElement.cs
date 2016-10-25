@@ -38,9 +38,52 @@ namespace TypeCobol.Compiler.CodeElements
         public IDictionary<Token,SymbolInformation> SymbolInformationForTokens { get; set; }
         
         /// <summary>
+        /// Storage area definitions (explicit data definitions AND compiler generated storage area allocations)
+        /// </summary>
+        public IDictionary<SymbolDefinition,DataDescriptionEntry> StorageAreaDefinitions { get; set; }
+
+        /// <summary>
+        /// List of storage areas read from by this CodeElement
+        /// </summary>
+        public IList<StorageArea> StorageAreaReads { get; set; }
+
+        /// <summary>
+        /// List of storage areas written to by this CodeElement
+        /// </summary>
+        public IList<ReceivingStorageArea> StorageAreaWrites { get; set; }
+
+        /// <summary>
+        /// Impacts which we will need to resolve at the next stage between two group items
+        /// because of MOVE CORRESPONDING, ADD CORRESPONDING, and SUBTRACT CORRESPONDING statements
+        /// </summary>
+        public GroupCorrespondingImpact StorageAreaGroupsCorrespondingImpact { get; set; }
+
+        /// <summary>
+        /// Program, method, or function entry point which can be targeted by call instructions (with shared storage areas)
+        /// </summary>
+        public CallTarget CallTarget { get; set; }
+
+        /// <summary>
+        /// List of program, method, or function call instructions (with shared sotrage areas)
+        /// </summary>
+        public IList<CallSite> CallSites { get; set; }
+
+        /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
+
+
+        /// <summary>
+        /// Apply propperties of the current CodeElement to the specified one.
+        /// </summary>
+        /// <param name="ce"></param>
+        public void ApplyPropertiesToCE(CodeElement ce)
+        {
+            ce.ConsumedTokens = this.ConsumedTokens;
+            ce.Diagnostics = this.Diagnostics;
+            ce.SymbolInformationForTokens = this.SymbolInformationForTokens;
+        }
         
 		/// <summary>
 		/// Debug string
@@ -97,7 +140,7 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
-			var lineStartIndex = line.SequenceNumberText.Length + (line.IndicatorChar != null? 1:0);
+			var lineStartIndex = line.SequenceNumberText.Length + 1;// +1 for line.IndicatorChar
 			return line.SourceText.Substring(0, firstTokenStartIndex-lineStartIndex);
 		}
 

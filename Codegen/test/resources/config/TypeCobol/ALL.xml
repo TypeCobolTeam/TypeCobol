@@ -119,4 +119,14 @@
     </patterns>
   </skeleton>
 
+  <!-- replace "::" qualification by "OF" inverse qualification -->
+  <skeleton name="QUALIFICATION">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" variables.typecobol="+"/>
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="NODE"></pattern>
+    </patterns>
+  </skeleton>
+
 </skeletons>

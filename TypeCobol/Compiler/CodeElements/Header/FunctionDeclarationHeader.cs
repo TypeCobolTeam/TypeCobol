@@ -31,13 +31,13 @@ namespace TypeCobol.Compiler.CodeElements
         /////////////
         public ParametersProfile Profile { get; private set; }
         /// <summary>INPUT datanames, as long as wether they are passed BY REFERENCE or BY VALUE.</summary>
-        public SyntaxProperty<Passing.Mode> Input { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Input { get; internal set; }
         /// <summary>OUTPUT datanames, always passed BY REFERENCE.</summary>
-        public SyntaxProperty<Passing.Mode> Output { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Output { get; internal set; }
         /// <summary>INOUT datanames, always passed BY REFERENCE.</summary>
-        public SyntaxProperty<Passing.Mode> Inout { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Inout { get; internal set; }
         /// <summary>RETURNING dataname.</summary>
-        public SyntaxProperty<Passing.Mode> Returning { get; internal set; }
+        public SyntaxProperty<ParameterPassingDirection> Returning { get; internal set; }
     }
 
     public enum AccessModifier
@@ -127,29 +127,9 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-    /// <summary>
-    /// TYPECOBOL : data conditions can be decalred inline when a user defined function parameter is described
-    /// </summary>
-    public class ParameterDescriptionEntry : DataDescriptionEntry
-    {
-        // TODO#245
-        // create an interface shared with DataDeclarationEntry
-        // that aggregates all the non-illegal stuff like justified,
-        // group usage national, blank when zero and so on
-
-        public IList<DataConditionEntry> DataConditions { get; internal set; }
-    }
-
     public class Passing
     {
-        public SyntaxProperty<Mode> PassingMode { get; set; }
-        public enum Mode
-        {
-            Input,
-            Output,
-            Inout,
-            Returning,
-        }
+        public SyntaxProperty<ParameterPassingDirection> PassingMode { get; set; }
     }
 
 

@@ -111,7 +111,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 		public URI(string uri, char separator = '.') {
 			if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
-			this.separator = separator != null ? separator : '.';
+			this.separator = separator;
 			this.Value = uri;
 			this.parts = Value.Split(this.Separator);
 		}

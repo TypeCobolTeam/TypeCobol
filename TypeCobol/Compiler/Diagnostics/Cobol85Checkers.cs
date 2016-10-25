@@ -119,24 +119,24 @@ class CallStatementChecker: CodeElementListener {
 			// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
 			//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
 			//TODO what about special registers ?
-			string sender = input.SendingVariable!=null?input.SendingVariable.ToString():null;
+			string sender = input.StorageAreaOrValue!=null?input.StorageAreaOrValue.ToString():null;
             bool isFunctionCallResult = false;
-            if(input.SendingVariable != null && input.SendingVariable.StorageArea != null)
+            if(input.StorageAreaOrValue != null && input.StorageAreaOrValue.StorageArea != null)
             {
-                isFunctionCallResult = input.SendingVariable.StorageArea is FunctionCallResult;
+                isFunctionCallResult = input.StorageAreaOrValue.StorageArea is FunctionCallResult;
             }
             if (isFunctionCallResult)
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
 			if (Is(sender, "LINAGE-COUNTER"))
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
 
-		    if (input.SendingMode != null) {
-				if (Is(sender, "LENGTH") && (input.SendingMode.Value == SendingMode.ByReference))
+		    if (input.SharingMode != null) {
+				if (Is(sender, "LENGTH") && (input.SharingMode.Value == ParameterSharingMode.ByReference))
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
 
-				if (input.SendingVariable != null && input.SendingVariable.IsLiteral && input.SendingMode.Value == SendingMode.ByReference)
+				if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral && input.SharingMode.Value == ParameterSharingMode.ByReference)
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-				if (input.IsOmitted && input.SendingMode.Value == SendingMode.ByValue)
+				if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
 			}
 		}
@@ -216,15 +216,15 @@ class SearchStatementChecker: CodeElementListener {
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as SearchStatement;
 		if (statement.TableToSearch == null) return; // syntax error
-		if (statement.TableToSearch is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch).Subscripts.Count > 0)
+		if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch.StorageArea).Subscripts.Count > 0)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
-		if (statement.TableToSearch.ReferenceModifier != null)
+		if (statement.TableToSearch.StorageArea.ReferenceModifier != null)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", GetIdentifierContext(c));
 	}
 	private static RuleContext GetIdentifierContext(ParserRuleContext context) {
 		var c = (CodeElementsParser.SearchStatementContext)context;
-		if (c.serialSearch() != null) return c.serialSearch().identifier();
-		if (c.binarySearch() != null) return c.binarySearch().identifier();
+		if (c.serialSearch() != null) return c.serialSearch().variable1().identifier();
+		if (c.binarySearch() != null) return c.binarySearch().variable1().identifier();
 		return null;
 	}
 }
@@ -296,18 +296,18 @@ class DeclarationChecker: NodeListener {
 		var subscripts = move.Subscripts;
 		foreach(var variable in move.Variables.Keys) {
 			ICollection<List<SubscriptExpression>> links;
-			try { links = subscripts[variable]; }
-			catch (KeyNotFoundException) {
-				links = new List<List<SubscriptExpression>>();
-				links.Add(new List<SubscriptExpression>());
-			}
-			foreach(var link in links)
+		    if (subscripts.ContainsKey(variable)) {
+		        links = subscripts[variable];
+		    } else {
+		        links = new List<List<SubscriptExpression>>();
+		        links.Add(new List<SubscriptExpression>());
+		    }
+		    foreach(var link in links)
 				CheckSubscripting(move, node.SymbolTable, variable, link);
 		}
 	}
 	private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
 		var map = table.GetVariableExplicit(name);
-		bool okay = false;
 		foreach(var kv in map) {
 			if (!kv.Key.QualifiedName.Matches(name)) continue;
 			int expected = CheckSubscripting(e, kv.Value[0], subscripts);
@@ -317,7 +317,6 @@ class DeclarationChecker: NodeListener {
 			if (expected < subscripts.Count)
 				DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
 		}
-		if (!okay) ;// undefined symbol, not our job
 	}
 	/// <param name="e">Statement to check</param>
 	/// <param name="link">Explicit nodes used in item qualification</param>
@@ -423,7 +422,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 				var node = (DataDescription)GetSymbol(table, qname);
 				entry = node.CodeElement();
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
-			if (entry.CustomType == null) return entry.DataType;//not a custom type
+			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
 		}
         ITypedNode typed = symbol as ITypedNode;
 		if (typed == null) return null;// symbol untyped

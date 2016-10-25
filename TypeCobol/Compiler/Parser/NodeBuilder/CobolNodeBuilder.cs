@@ -5,6 +5,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 
@@ -163,15 +164,62 @@ namespace TypeCobol.Compiler.Parser
 			Exit();
 		}
 
-		/// <summary>parent: DATA DIVISION</summary>
-		/// <param name="context">FILE SECTION</param>
-		public override void EnterFileSection(ProgramClassParser.FileSectionContext context) {
+
+	    public override void EnterInputOutputSection([NotNull] ProgramClassParser.InputOutputSectionContext context) {
+	        var terminal = context.InputOutputSectionHeader();
+	        var header = terminal != null ? (InputOutputSectionHeader) terminal.Symbol : null;
+            Enter(new InputOutputSection(header), context);
+	    }
+
+	    public override void ExitInputOutputSection([NotNull] ProgramClassParser.InputOutputSectionContext context) {
+            Exit();
+        }
+
+	    public override void EnterFileControlParagraph([NotNull] ProgramClassParser.FileControlParagraphContext context) {
+            var terminal = context.FileControlParagraphHeader();
+            var header = terminal != null ? (FileControlParagraphHeader)terminal.Symbol : null;
+            Enter(new FileControlParagraphHeaderNode(header), context);
+
+
+	        var entries = context.FileControlEntry();
+	        if (entries != null) {
+	            foreach (ITerminalNode entry in entries) {
+	                var fileControlEntry = new FileControlEntryNode(((FileControlEntry) entry.Symbol));
+	                Enter(fileControlEntry, context);
+	                Exit(); //Exit here, so next FileControlEtry will be child of FileControlParagraph
+                }
+	        }
+            
+	    }
+
+	    public override void ExitFileControlParagraph([NotNull] ProgramClassParser.FileControlParagraphContext context) {
+            Exit();
+        }
+
+
+        /// <summary>parent: DATA DIVISION</summary>
+        /// <param name="context">FILE SECTION</param>
+        public override void EnterFileSection(ProgramClassParser.FileSectionContext context) {
 			var terminal = context.FileSectionHeader();
 			var header = terminal != null? (FileSectionHeader)terminal.Symbol : null;
 			Enter(new FileSection(header), context);
-			//TODO: ( 1 FILE DESCRIPTION ENTRY + N DATA DESCRIPTION ENTRY ) N TIMES
-		}
-		public override void ExitFileSection(ProgramClassParser.FileSectionContext context) {
+
+            //FileDescriptionEntry and DataDescriptionEntry are set with their own methods:
+            //EnterFileDescriptionEntry and EnterDataDescriptionEntry
+        }
+
+        public override void EnterFileDescriptionNode([NotNull] ProgramClassParser.FileDescriptionNodeContext context) {
+	        var terminal = context.FileDescriptionEntry();
+            var entry = terminal != null ? (FileDescriptionEntry)terminal.Symbol : null;
+            Enter(new FileDescriptionEntryNode(entry), context);
+        }
+
+	    public override void ExitFileDescriptionNode([NotNull] ProgramClassParser.FileDescriptionNodeContext context) {
+	        Exit();
+	    }
+
+
+        public override void ExitFileSection(ProgramClassParser.FileSectionContext context) {
 			ExitLastLevel1Definition();
 			Exit();
 		}
@@ -212,7 +260,7 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context) {
 			if (context.DataDescriptionEntry() != null) {
 				var data = (DataDescriptionEntry)context.DataDescriptionEntry().Symbol;
-				if (data is TypeDefinitionEntry) EnterTypeDefinitionEntry((TypeDefinitionEntry)data);
+				if (data is DataTypeDescriptionEntry) EnterTypeDefinitionEntry((DataTypeDescriptionEntry)data);
 				else EnterDataDescriptionEntry(data);
 			}
 			if (context.DataConditionEntry() != null)
@@ -223,7 +271,7 @@ namespace TypeCobol.Compiler.Parser
 				EnterDataRenamesEntry((DataRenamesEntry)context.DataRenamesEntry().Symbol);
 		}
 // [COBOL 2002]
-		private void EnterTypeDefinitionEntry(TypeDefinitionEntry typedef) {
+		private void EnterTypeDefinitionEntry(DataTypeDescriptionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
 			var node = new Nodes.TypeDefinition(typedef);
 			Enter(node);
@@ -401,7 +449,19 @@ namespace TypeCobol.Compiler.Parser
 			if (CurrentNode is Sentence) Exit();//TODO remove this and check what happens when exiting last CALL in FIN-STANDARD in BigBatch file (ie. CheckPerformance test)
 		}
 
-		public override void EnterStatement(ProgramClassParser.StatementContext context) {
+	    public override void EnterExecStatementNode([NotNull] ProgramClassParser.ExecStatementNodeContext context) {
+	        if (context.ExecStatement() != null) {
+	            ExecStatement terminal = (ExecStatement) context.ExecStatement().Symbol;
+	            Enter(new Exec(terminal), context);
+	        }
+	    }
+
+	    public override void ExitExecStatementNode([NotNull] ProgramClassParser.ExecStatementNodeContext context) {
+	        Exit();
+	    }
+
+
+        public override void EnterStatement(ProgramClassParser.StatementContext context) {
 			if (context.ExecStatement() != null) Enter(new Exec((ExecStatement)context.ExecStatement().Symbol), context);
 			else if (context.evaluateStatementWithBody() != null) { }// Node will be created in EnterEvaluateStatementWithBody
 			else if (context.ifStatementWithBody() != null) { }// Node will be created in EnterIfStatementWithBody
@@ -531,9 +591,11 @@ namespace TypeCobol.Compiler.Parser
 					condition = null;
 				} else
 				if (ctxt.WhenSearchCondition() != null) {
-					var whensearch = (WhenSearchCondition)ctxt.WhenSearchCondition().Symbol;
+                    var whensearch = (WhenSearchCondition)ctxt.WhenSearchCondition().Symbol;
 					condition = new WhenCondition();
-					condition.SelectionObjects = new EvaluateSelectionObject[1];
+				    whensearch.ApplyPropertiesToCE(condition);
+
+                    condition.SelectionObjects = new EvaluateSelectionObject[1];
 					condition.SelectionObjects[0] = new EvaluateSelectionObject();
 					condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
 				} else {

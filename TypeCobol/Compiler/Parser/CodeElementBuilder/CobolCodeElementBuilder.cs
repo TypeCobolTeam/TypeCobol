@@ -10,6 +10,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
+using Antlr4.Runtime.Misc;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -45,9 +46,30 @@ namespace TypeCobol.Compiler.Parser
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
-			if(CodeElement != null && CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
-				CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
-			}
+			if(CodeElement != null)
+            {
+                if (CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
+                    CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
+                }
+                if (CobolExpressionsBuilder.storageAreaDefinitions.Count > 0) {
+                    CodeElement.StorageAreaDefinitions = CobolExpressionsBuilder.storageAreaDefinitions;
+                }
+                if (CobolExpressionsBuilder.storageAreaReads.Count > 0) {
+                    CodeElement.StorageAreaReads = CobolExpressionsBuilder.storageAreaReads;
+                }
+                if (CobolExpressionsBuilder.storageAreaWrites.Count > 0) {
+                    CodeElement.StorageAreaWrites = CobolExpressionsBuilder.storageAreaWrites;
+                }
+                if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact != null) {
+                    CodeElement.StorageAreaGroupsCorrespondingImpact = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact;
+                }
+                if (CobolExpressionsBuilder.callTarget != null) {
+                    CodeElement.CallTarget = CobolExpressionsBuilder.callTarget;
+                }
+                if (CobolExpressionsBuilder.callSites.Count > 0) {
+                    CodeElement.CallSites = CobolExpressionsBuilder.callSites;
+                }
+            }
 		}
 
 		// Code structure
@@ -955,24 +977,29 @@ namespace TypeCobol.Compiler.Parser
 				EnterDataRedefinesEntry(context);
 				return;
 			}
-			var entry = new DataDescriptionEntry();
-			entry.DataType = DataType.Unknown;
-			var dataname = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+
+            DataDescriptionEntry entry; 
 // [COBOL 2002]
-			if (context.cobol2002TypedefClause() != null) {
-				var typedef = new TypeDefinitionEntry();
-				var strong = context.cobol2002TypedefClause().STRONG();
+            if (context.cobol2002TypedefClause() != null) {
+				var typedef = new DataTypeDescriptionEntry();
+                typedef.DataTypeName = CobolWordsBuilder.CreateDataTypeNameDefinition(context.dataNameDefinition());
+                var strong = context.cobol2002TypedefClause().STRONG();
 				typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
-				typedef.CustomType = new GeneratedAlphanumericValue(dataname.Name);
-				typedef.DataType = new DataType(dataname.Name, typedef.IsStrong);
-				entry = typedef;
-			}
+
+                entry = typedef;
+                entry.DataName = typedef.DataTypeName;
+                entry.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong);               
+            }
 // [/COBOL 2002]
+            else {               
+                entry = new DataDescriptionEntry();
+                entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
+                entry.DataType = DataType.Unknown;
+            }
 
-			if (context.levelNumber() != null)
+            if (context.levelNumber() != null)
 				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
-
-			entry.DataName = dataname;
+            
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
 
@@ -984,8 +1011,8 @@ namespace TypeCobol.Compiler.Parser
 			}
 // [COBOL 2002]
 			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
-				entry.CustomType = CobolWordsBuilder.CreateAlphanumericValue(context.cobol2002TypeClause()[0]);
-				entry.DataType = DataType.CreateCustom(entry.CustomType.Value);
+				entry.UserDefinedDataType = CobolWordsBuilder.CreateDataTypeNameReference(context.cobol2002TypeClause()[0].dataTypeNameReference());
+				entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name);
 			}
 // [/COBOL 2002]
 			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)
@@ -1248,9 +1275,32 @@ namespace TypeCobol.Compiler.Parser
 			((ProcedureDivisionHeader)CodeElement).UsingParameters = inputs;
 		}
 		public override void EnterReturningPhrase(CodeElementsParser.ReturningPhraseContext context) {
-			var receiving = CobolExpressionsBuilder.CreateStorageArea(context.programOutputParameter().storageArea2());
-			((Returning)CodeElement).ReturningParameter = receiving;
-		}
+			var receiving = CobolExpressionsBuilder.CreateSharedStorageArea(context.programOutputParameter().sharedStorageArea2());
+			((Returning)CodeElement).ReturningParameter = new CallTargetParameter() { StorageArea = receiving };
+        }
+
+        public override void ExitProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context)
+        {
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var procedureDivisionHeader = (ProcedureDivisionHeader)CodeElement;
+            var callTarget = new CallTarget();
+            int parametersCount =
+                (procedureDivisionHeader.UsingParameters != null ? procedureDivisionHeader.UsingParameters.Count : 0)
+                + (procedureDivisionHeader.ReturningParameter != null ? 1 : 0);
+            callTarget.Parameters = new CallTargetParameter[parametersCount];
+            int i = 0;
+            if(procedureDivisionHeader.UsingParameters != null && procedureDivisionHeader.UsingParameters.Count > 0)
+            {
+                foreach(var param in procedureDivisionHeader.UsingParameters) {
+                    callTarget.Parameters[i] = param;
+                    i++;
+                }
+            }
+            if (procedureDivisionHeader.ReturningParameter != null) {
+                callTarget.Parameters[i] = procedureDivisionHeader.ReturningParameter;
+            }
+            procedureDivisionHeader.CallTarget = callTarget;
+        }
 
         public override void EnterDeclarativesHeader(CodeElementsParser.DeclarativesHeaderContext context)
         {
@@ -1546,9 +1596,28 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = CobolStatementsBuilder.CreateEntryStatement(context);
 		}
 
-		// --- EVALUATE ---
+        public override void ExitEntryStatement(CodeElementsParser.EntryStatementContext context)
+        {
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var entryStatement = (EntryStatement)CodeElement;
+            var callTarget = new CallTarget() { Name = entryStatement.ProgramEntry };
+            int parametersCount = entryStatement.InputParameters != null ? entryStatement.InputParameters.Count : 0;
+            callTarget.Parameters = new CallTargetParameter[parametersCount];
+            int i = 0;
+            if (entryStatement.InputParameters != null && entryStatement.InputParameters.Count > 0)
+            {
+                foreach (var param in entryStatement.InputParameters)
+                {
+                    callTarget.Parameters[i] = param;
+                    i++;
+                }
+            }
+            entryStatement.CallTarget = callTarget;
+        }
 
-		public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context) {
+        // --- EVALUATE ---
+
+        public override void EnterEvaluateStatement(CodeElementsParser.EvaluateStatementContext context) {
 			Context = context;
 			CodeElement = CobolStatementsBuilder.CreateEvaluateStatement(context); ;
 		}
