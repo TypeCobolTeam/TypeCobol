@@ -30,20 +30,12 @@
            05 PIC X(08) VALUE 'F0000007'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
                                                                               
+       01  LibFctList REDEFINES LibFctList-Values.                            
+           05   LibFctItem    OCCURS 3 INDEXED BY LibFctIndex.                
+             10 LibFctCode    PIC X(08).                                      
+             10 LibFctPointer PROCEDURE-POINTER.                              
        
        PROCEDURE DIVISION.
-                                                                              
-           SET DoesNothing TO ENTRY 'F0000001'                                
-           SET ReturnsZero TO ENTRY 'F0000002'                                
-           SET StrangelyReturnsItsInput TO ENTRY 'F0000003'                   
-           SET SumThreeWithClutterInLinkage TO ENTRY 'F0000004'               
-           SET SwapParameters TO ENTRY 'F0000005'                             
-           SET SwapParametersWrong TO ENTRY 'F0000006'                        
-           SET IllegalClauses TO ENTRY 'F0000007'                             
-           SET FunConditions TO ENTRY 'F0000008'                              
-           SET FunConditions TO ENTRY 'F0000009'                              
-           SET MyNOT TO ENTRY 'F0000010'                                      
-           .                                                                  
             .
        
       *DECLARE function DoesNothing PUBLIC.                                   

@@ -64,6 +64,10 @@
            05 PIC X(08) VALUE 'F0000004'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
                                                                               
+       01  LibFctList REDEFINES LibFctList-Values.                            
+           05   LibFctItem    OCCURS 4 INDEXED BY LibFctIndex.                
+             10 LibFctCode    PIC X(08).                                      
+             10 LibFctPointer PROCEDURE-POINTER.                              
       *_________________________________________________________________
        LINKAGE SECTION.
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.

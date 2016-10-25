@@ -237,7 +237,7 @@ internal class FunctionUserAttribute: Attribute {
         public override string Value { get { return "SPACE"; } }
     }
 
-    internal class DefinitionsAttribute: Attribute {
+internal class DefinitionsAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);

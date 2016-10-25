@@ -79,6 +79,12 @@
 01  LibFctList-VALUES.
 @items
       </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_REDEFINED_ARRAY">
+01  LibFctList REDEFINES LibFctList-Values.
+    05   LibFctItem    OCCURS %definitions.functions.Public.Count INDEXED BY LibFctIndex.
+      10 LibFctCode    PIC X(08).
+      10 LibFctPointer PROCEDURE-POINTER.
+      </pattern>
       <pattern action="expand" location="program.end"></pattern>
     </patterns>
   </skeleton>
