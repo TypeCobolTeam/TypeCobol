@@ -63,6 +63,19 @@
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
     </conditions>
     <patterns>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALLS_ARRAY">
+01  FctList.
+    05 NumberOfFunctions   PIC 9(04).
+    05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions
+                           INDEXED BY FctIndex.
+      10 FctCode    PIC X(08).
+      10 FctPointer PROCEDURE-POINTER VALUE NULL.
+      </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
+01  CallData.
+    05  DescriptionId PIC X(08).
+      88 CallIsCopy VALUE 'TODO'.
+      </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
 01  LibFctList-Loaded PIC X(01) VALUE SPACE.
     88 LibFctList-IsLoaded      VALUE '1'.
@@ -84,19 +97,6 @@
     05   LibFctItem    OCCURS %definitions.functions.Public.Count INDEXED BY LibFctIndex.
       10 LibFctCode    PIC X(08).
       10 LibFctPointer PROCEDURE-POINTER.
-      </pattern>
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_CALLS_ARRAY">
-01  FctList.
-    05 NumberOfFunctions   PIC 9(04).
-    05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions
-                           INDEXED BY FctIndex.
-      10 FctCode    PIC X(08).
-      10 FctPointer PROCEDURE-POINTER VALUE NULL.
-      </pattern>
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
-01  CallData.
-    05  DescriptionId PIC X(08).
-      88 CallIsCopy VALUE 'TODO'.
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
       <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">

@@ -68,6 +68,8 @@
            05   LibFctItem    OCCURS 4 INDEXED BY LibFctIndex.                
              10 LibFctCode    PIC X(08).                                      
              10 LibFctPointer PROCEDURE-POINTER.                              
+      *_________________________________________________________________
+       LINKAGE SECTION.
        01  FctList.                                                           
            05 NumberOfFunctions   PIC 9(04).                                  
            05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions              
@@ -77,13 +79,11 @@
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
              88 CallIsCopy VALUE 'TODO'.                                      
-      *_________________________________________________________________
-       LINKAGE SECTION.
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
       *PROCEDURE DIVISION USING DVZDAT.                                       
-       PROCEDURE DIVISION USING DVZDAT CallData.                                     
+       PROCEDURE DIVISION USING DVZDAT CallData.                              
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        

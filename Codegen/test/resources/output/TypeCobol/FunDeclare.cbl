@@ -34,6 +34,7 @@
            05   LibFctItem    OCCURS 3 INDEXED BY LibFctIndex.                
              10 LibFctCode    PIC X(08).                                      
              10 LibFctPointer PROCEDURE-POINTER.                              
+       LINKAGE SECTION.                                                       
        01  FctList.                                                           
            05 NumberOfFunctions   PIC 9(04).                                  
            05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions              
