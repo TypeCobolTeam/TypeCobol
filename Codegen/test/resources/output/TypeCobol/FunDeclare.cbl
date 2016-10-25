@@ -19,6 +19,19 @@
        01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
            88 LibFctList-IsLoaded      VALUE '1'.                             
                                                                               
+                                                                              
+       01  LibFctList-VALUES.                                                 
+      *    F0000001 -> DoesNothing                                            
+           05 PIC X(08) VALUE 'F0000001'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000002 -> ReturnsZero                                            
+           05 PIC X(08) VALUE 'F0000002'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000007 -> IllegalClauses                                         
+           05 PIC X(08) VALUE 'F0000007'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+                                                                              
+                                                                              
        
        PROCEDURE DIVISION.
                                                                               

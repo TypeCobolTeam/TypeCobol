@@ -63,9 +63,21 @@
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
     </conditions>
     <patterns>
-      <pattern location="program.data-division.working-storage" action="create" group="library">
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
 01  LibFctList-Loaded PIC X(01) VALUE SPACE.
     88 LibFctList-IsLoaded      VALUE '1'.
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
+@{
+  var items = "";
+  foreach (var f in %definitions.functions.Public) {
+    items += "*    "+f.Label+" -> "+f.Name+'\n';
+    items += "    05 PIC X(08) VALUE \'"+f.Label+"\'.\n";
+    items += "    05 PIC X(08) VALUE LOW-VALUES.\n";
+  }
+}
+01  LibFctList-VALUES.
+@items
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
       <pattern action="create" location="procedure-division.begin" group="public-functions">
