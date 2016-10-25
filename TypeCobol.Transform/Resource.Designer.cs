@@ -61,6 +61,15 @@ namespace TypeCobol.Transform {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error : {0}.
+        /// </summary>
+        internal static string Exception_error {
+            get {
+                return ResourceManager.GetString("Exception_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid number of arguments.
         /// </summary>
         internal static string Invalid_count_args {

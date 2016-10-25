@@ -6,6 +6,7 @@ namespace TypeCobol.Transform
 {
     public class Decoder
     {
+        private static string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;
         const string Part3MagicLine = "000000*£TC-PART3££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         const string Part4MagicLine = "000000*£TC-PART4££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         const int LineLength = 66;
@@ -27,8 +28,8 @@ namespace TypeCobol.Transform
             try
             {
                 int part2Start = 2;
-                int part3Start = part2Start + cobol85Lines.Length;
-                int part4Start = part3Start + typeCobolLines.Length;
+                int part3Start = part2Start + cobol85Lines.Length + 1;
+                int part4Start = part3Start + typeCobolLines.Length + 1;
                 //string firstLine = string.Format("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££", 
                 //                part2Start, part3Start, part4Start);
                 //outputWriter.WriteLine(firstLine);
@@ -49,19 +50,11 @@ namespace TypeCobol.Transform
                     if (typeCobolLine.Length >= CommentPos)
                     {
                         //TODO Check the length >= 8
-                        try
-                        {
-                            if (typeCobolLine.Length > 7)                            
-                                outputWriter.WriteLine("000000*" + typeCobolLine.Substring(7));
-                            else
-                                outputWriter.WriteLine("000000*");
-                            columns7.Append(typeCobolLine[CommentPos]);
-                        }
-                        catch(Exception e)
-                        {
-                            System.Console.WriteLine(e.Message);
-                            return false;
-                        }
+                        if (typeCobolLine.Length > 7)                            
+                            outputWriter.WriteLine("000000*" + typeCobolLine.Substring(7));
+                        else
+                            outputWriter.WriteLine("000000*");
+                        columns7.Append(typeCobolLine[CommentPos]);
                     }
                     else
                     {
@@ -80,6 +73,11 @@ namespace TypeCobol.Transform
                     outputWriter.Write("000000*");
                     outputWriter.WriteLine(s_columns7.Substring(sPos, Math.Min(c7Length, s_columns7.Length - sPos)));
                 }
+            }
+            catch (Exception e)
+            {//Any exception lead to an error --> This may not be a Generated Cobol file from a TypeCobol File.                
+                Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
+                return false;
             }
             finally
             {
@@ -108,11 +106,13 @@ namespace TypeCobol.Transform
                 string firstFline = inputReader.ReadLine();
                 if (firstFline != null)
                 {
-                    String s_part3Len = firstFline.Substring(36, 6);
-                    int part3Start = Convert.ToInt32(s_part3Len);
-                    String s_part4Len = firstFline.Substring(49, 6);
-                    int part4Start = Convert.ToInt32(s_part4Len);
-                    for (int i = 0; i < (part3Start - 1); i++)
+                    String s_part2Line = firstFline.Substring(23, 6);
+                    int part2Start = Convert.ToInt32(s_part2Line);
+                    String s_part3Line = firstFline.Substring(36, 6);
+                    int part3Start = Convert.ToInt32(s_part3Line);
+                    String s_part4Line = firstFline.Substring(49, 6);
+                    int part4Start = Convert.ToInt32(s_part4Line);
+                    for (int i = 0; i < (part3Start - part2Start); i++)
                     {
                         inputReader.ReadLine();
                     }
@@ -124,11 +124,12 @@ namespace TypeCobol.Transform
                     {
                         Console.WriteLine("Magic line of part 3 not present: " + part3MagicLineRead);
                         //TODO
+                        //--> This may not be a Generated Cobol file from a TypeCobol File.
                         return false;
                     }
                     else
                     {
-                        int part3Length = part4Start - part3Start;
+                        int part3Length = part4Start - part3Start - 1;
                         IList<string> tcLines = new List<string>(part3Length);
                         System.Text.StringBuilder tcLinesCol7 = new System.Text.StringBuilder(part3Length + LineLength);
                         for (int i = 0; i < part3Length; i++)
@@ -172,6 +173,11 @@ namespace TypeCobol.Transform
                     }
                 }
                 return true;
+            }
+            catch(Exception e)
+            {//Any exception lead to an error --> This may not be a Generated Cobol file from a TypeCobol File.                
+                Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
+                return false;
             }
             finally
             {
