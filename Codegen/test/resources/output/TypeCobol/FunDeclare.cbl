@@ -44,7 +44,8 @@
            05  DescriptionId PIC X(08).                                       
              88 CallIsCopy VALUE 'TODO'.                                      
        
-       PROCEDURE DIVISION.
+      *PROCEDURE DIVISION.                                                    
+       PROCEDURE DIVISION USING CallData.                                     
             .
        
       *DECLARE function DoesNothing PUBLIC.                                   

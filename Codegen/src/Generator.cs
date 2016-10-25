@@ -198,9 +198,15 @@ namespace TypeCobol.Codegen {
 		}
 
 		public void Execute() {
+			// transfer Old's children to New
+			for (int i=Old.Children.Count-1; i>=0; --i) {
+				var child = Old.Children[i];
+				Old.Remove(child);
+				New.Add(child,0);
+			}
+			Old.Comment = true;
 			var parent = Old.Parent;
 			int index = parent.IndexOf(Old);
-		    Old.Comment = true;
 			parent.Add(New, index+1);
 		}
 	}

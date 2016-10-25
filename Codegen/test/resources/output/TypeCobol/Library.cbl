@@ -82,7 +82,8 @@
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
-       PROCEDURE DIVISION USING DVZDAT.
+      *PROCEDURE DIVISION USING DVZDAT.                                       
+       PROCEDURE DIVISION USING DVZDAT CallData.                                     
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        
