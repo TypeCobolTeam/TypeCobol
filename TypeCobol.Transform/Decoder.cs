@@ -75,7 +75,7 @@ namespace TypeCobol.Transform
                 String s_columns7 = columns7.ToString();                
                 int c7Length = (LineLength - 1);
                 int nSplit = (s_columns7.Length / c7Length) + ((s_columns7.Length % c7Length) == 0 ? 0 : 1);
-                for (int i = 0, sPos = 0; i < nSplit; i++, sPos += (LineLength-1))
+                for (int i = 0, sPos = 0; i < nSplit; i++, sPos += c7Length)
                 {
                     outputWriter.Write("000000*");
                     outputWriter.WriteLine(s_columns7.Substring(sPos, Math.Min(c7Length, s_columns7.Length - sPos)));
