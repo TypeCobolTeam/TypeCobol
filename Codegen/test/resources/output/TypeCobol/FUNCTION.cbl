@@ -24,19 +24,15 @@
                                                                               
        01 Functionscpy COPY Functionscpy.                                     
        01 Functions PIC X(08) VALUE 'Functions'.                              
-                                                                              
        01 ERROR-CODE PIC X(08).                                               
-                                                                              
 
        PROCEDURE DIVISION.
            IF Functionscpy-POINTER-TABLE = LOW_VALUE                          
                CALL Functions USING Functionscpy                              
            END-IF                                                             
                                                                               
-                                                                              
            SET POW TO ENTRY 'F0000001'                                        
            .                                                                  
-                                                                              
        
       *DECLARE function POW PRIVATE                                           
       *      INPUT x PIC 9(05)                                                
@@ -59,7 +55,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       * KO: wrong number of parameters
       *    MOVE FUNCTION POW ()       TO x                                    
                                                                               
@@ -75,7 +70,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       *    MOVE FUNCTION POW (y)      TO x                                    
                                                                               
            CALL POW USING                                                     
@@ -90,7 +84,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       *    MOVE FUNCTION POW (x y z)  TO x                                    
                                                                               
            CALL POW USING                                                     
@@ -105,7 +98,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       * KO: undefined parameters
       *    MOVE FUNCTION POW (i j)    TO x                                    
                                                                               
@@ -121,7 +113,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       * KO: 2nd parameter of wrong type
       *    MOVE FUNCTION POW (x b)    TO x                                    
                                                                               
@@ -137,7 +128,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       * KO: 2nd parameter too-large
       *    MOVE FUNCTION POW (z z)    TO x                                    
                                                                               
@@ -153,7 +143,6 @@
            ELSE                                                               
       *    TODO: error management                                             
            END-IF                                                             
-                                                                              
       * KO: function undeclared
            MOVE FUNCTION POWAAA (x y) TO x
            .

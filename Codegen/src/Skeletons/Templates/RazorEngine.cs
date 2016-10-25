@@ -32,7 +32,7 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
 			// key should be unique because razor caches the result
 			// so it can then be retrieved with only this key
 			string key = md5(template);
-			template = template.Trim(' ').TrimStart('\r','\n').Replace("\r\n","\n");
+			template = template.TrimStart('\r','\n').Replace("\r\n","\n").TrimEnd();
 			string html = "";
 			try { html = Engine.Razor.RunCompile(template, key, null, model); }
 			catch(System.Exception ex) { 

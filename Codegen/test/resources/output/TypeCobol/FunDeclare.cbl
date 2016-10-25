@@ -19,7 +19,6 @@
        01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
            88 LibFctList-IsLoaded      VALUE '1'.                             
                                                                               
-                                                                              
        01  LibFctList-VALUES.                                                 
       *    F0000001 -> DoesNothing                                            
            05 PIC X(08) VALUE 'F0000001'.                                     
@@ -30,7 +29,6 @@
       *    F0000007 -> IllegalClauses                                         
            05 PIC X(08) VALUE 'F0000007'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-                                                                              
                                                                               
        
        PROCEDURE DIVISION.
@@ -46,7 +44,6 @@
            SET FunConditions TO ENTRY 'F0000009'                              
            SET MyNOT TO ENTRY 'F0000010'                                      
            .                                                                  
-                                                                              
             .
        
       *DECLARE function DoesNothing PUBLIC.                                   
@@ -268,6 +265,5 @@
            ELSE
       *      SET y TO FALSE                                                   
                SET y-false TO TRUE.                                           
-                                                                              
            END-IF.
        END PROGRAM F0000010.                                                  

@@ -59,7 +59,6 @@
            SET currentDateJulian TO ENTRY 'F0000003'                          
            SET currentDateFreeFormat TO ENTRY 'F0000004'                      
            .                                                                  
-                                                                              
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        

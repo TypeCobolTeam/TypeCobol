@@ -17,12 +17,10 @@
        01  Identifier-value PIC X VALUE LOW-VALUE.                            
          88  Identifier       VALUE 'T'.                                      
          88  Identifier-false VALUE 'F'.                                      
-                                                                              
       *01  AnotherOne TYPE BOOL.                                              
        01  AnotherOne-value PIC X VALUE LOW-VALUE.                            
          88  AnotherOne       VALUE 'T'.                                      
          88  AnotherOne-false VALUE 'F'.                                      
-                                                                              
        01  AGroup.
          05  a.
            10  c PIC X.
@@ -30,12 +28,10 @@
        10  b-value PIC X VALUE LOW-VALUE.                                     
          88  b       VALUE 'T'.                                               
          88  b-false VALUE 'F'.                                               
-                                                                              
       *  05  d TYPE BOOL.                                                     
        05  d-value PIC X VALUE LOW-VALUE.                                     
          88  d       VALUE 'T'.                                               
          88  d-false VALUE 'F'.                                               
-                                                                              
 
 
 
@@ -45,7 +41,6 @@
            SET Identifier  TO TRUE
       *    SET Identifier  TO FALSE                                           
        SET Identifier-false TO TRUE.                                          
-                                                                              
       * OK
            MOVE TRUE         TO Identifier
            MOVE FALSE        TO Identifier
