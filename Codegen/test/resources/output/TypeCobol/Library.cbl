@@ -47,18 +47,29 @@
       *01 culture        TYPEDEF.                                             
       *    10 lng                    PIC X(02).                               
       *    10 cty                    PIC X(02).                               
+       01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
+           88 LibFctList-IsLoaded      VALUE '1'.                             
+                                                                              
+       01  LibFctList-VALUES.                                                 
+      *    F0000001 -> currentDate                                            
+           05 PIC X(08) VALUE 'F0000001'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000002 -> currentDateDB2                                         
+           05 PIC X(08) VALUE 'F0000002'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000003 -> currentDateJulian                                      
+           05 PIC X(08) VALUE 'F0000003'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000004 -> currentDateFreeFormat                                  
+           05 PIC X(08) VALUE 'F0000004'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+                                                                              
       *_________________________________________________________________
        LINKAGE SECTION.
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
        PROCEDURE DIVISION USING DVZDAT.
-                                                                              
-           SET currentDate TO ENTRY 'F0000001'                                
-           SET currentDateDB2 TO ENTRY 'F0000002'                             
-           SET currentDateJulian TO ENTRY 'F0000003'                          
-           SET currentDateFreeFormat TO ENTRY 'F0000004'                      
-           .                                                                  
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        

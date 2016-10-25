@@ -80,16 +80,6 @@
 @items
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
-      <pattern action="create" location="procedure-division.begin" group="public-functions">
-@{
-  var setentries = "";
-  foreach (var f in %definitions.functions) {
-    setentries += "    SET " + f.Name + " TO ENTRY \'" + f.Label + "\'\n";
-  }
-  setentries += "    .";
-}
-@setentries
-      </pattern>
     </patterns>
   </skeleton>
 

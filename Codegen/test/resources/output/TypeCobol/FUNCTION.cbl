@@ -30,9 +30,6 @@
            IF Functionscpy-POINTER-TABLE = LOW_VALUE                          
                CALL Functions USING Functionscpy                              
            END-IF                                                             
-                                                                              
-           SET POW TO ENTRY 'F0000001'                                        
-           .                                                                  
        
       *DECLARE function POW PRIVATE                                           
       *      INPUT x PIC 9(05)                                                
