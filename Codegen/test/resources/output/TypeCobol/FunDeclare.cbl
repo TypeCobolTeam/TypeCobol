@@ -14,6 +14,11 @@
       * "1"@(113:8>118:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
+       DATA DIVISION.                                                         
+       WORKING-STORAGE SECTION.                                               
+       01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
+           88 LibFctList-IsLoaded      VALUE '1'.                             
+                                                                              
        
        PROCEDURE DIVISION.
                                                                               

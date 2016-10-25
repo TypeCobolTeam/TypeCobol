@@ -63,6 +63,10 @@
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
     </conditions>
     <patterns>
+      <pattern location="program.data-division.working-storage" action="create" group="library">
+01  LibFctList-Loaded PIC X(01) VALUE SPACE.
+    88 LibFctList-IsLoaded      VALUE '1'.
+      </pattern>
       <pattern action="expand" location="program.end"></pattern>
       <pattern action="create" location="procedure-division.begin" group="public-functions">
 @{
