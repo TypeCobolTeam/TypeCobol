@@ -36,6 +36,7 @@ public static class Attributes {
 		attributes["definitions"] = new DefinitionsAttribute();
 		attributes["variables"] = new VariablesAttribute();
 		attributes["typecobol"] = new TypeCobolAttribute();
+		attributes["visibility"] = new VisibilityAttribute();
 	}
 	private static ContainerAttribute DEFAULT = new ContainerAttribute();
 }
@@ -288,6 +289,14 @@ public class Definitions {
 			}
 			return results;
 		}
+	}
+}
+
+internal class VisibilityAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var fun = o as FunctionDeclaration;
+		if (fun != null) return fun.CodeElement().Visibility.ToString();
+		return null;
 	}
 }
 

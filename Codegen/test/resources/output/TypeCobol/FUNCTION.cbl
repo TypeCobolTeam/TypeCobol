@@ -21,7 +21,6 @@
        01  b-value PIC X VALUE LOW-VALUE.                                     
            88  b       VALUE 'T'.                                             
            88  b-false VALUE 'F'.                                             
-                                                                              
        01 Functionscpy COPY Functionscpy.                                     
        01 Functions PIC X(08) VALUE 'Functions'.                              
        01 ERROR-CODE PIC X(08).                                               

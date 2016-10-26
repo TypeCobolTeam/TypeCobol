@@ -57,10 +57,10 @@
     </patterns>
   </skeleton>
 
-  <!-- replace DECLARE FUNCTION by a stacked program -->
-  <skeleton name="FUN.DECLARE" var="definitions">
+  <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
+  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions">
     <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
     </conditions>
     <patterns>
       <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALLS_ARRAY">
@@ -102,6 +102,15 @@
       <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">
 PROCEDURE DIVISION USING CallData.
       </pattern>
+    </patterns>
+  </skeleton>
+  <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
+  <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="private" />
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="program.end"></pattern>
     </patterns>
   </skeleton>
 
