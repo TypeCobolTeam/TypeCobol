@@ -11,7 +11,7 @@ namespace TypeCobol.Codegen.Nodes {
 		string ProgramName = null;
 
 		public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {
-			ProgramName = node.Label;
+			ProgramName = node.CodeElement().Visibility == AccessModifier.Public ? node.Hash : node.Label;
 			foreach(var child in node.Children) {
 				if (child is Compiler.Nodes.ProcedureDivision) {
 					CreateOrUpdateLinkageSection(node, node.CodeElement().Profile);

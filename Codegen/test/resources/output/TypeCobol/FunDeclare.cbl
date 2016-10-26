@@ -20,14 +20,14 @@
            88 LibFctList-IsLoaded      VALUE '1'.                             
                                                                               
        01  LibFctList-VALUES.                                                 
-      *    F0000001 -> DoesNothing                                            
-           05 PIC X(08) VALUE 'F0000001'.                                     
+      *    05a59b2c -> DoesNothing                                            
+           05 PIC X(08) VALUE '05a59b2c'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    F0000002 -> ReturnsZero                                            
-           05 PIC X(08) VALUE 'F0000002'.                                     
+      *    9072a866 -> ReturnsZero                                            
+           05 PIC X(08) VALUE '9072a866'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    F0000007 -> IllegalClauses                                         
-           05 PIC X(08) VALUE 'F0000007'.                                     
+      *    e6215ae7 -> IllegalClauses                                         
+           05 PIC X(08) VALUE 'e6215ae7'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
                                                                               
        01  LibFctList REDEFINES LibFctList-Values.                            
@@ -119,18 +119,18 @@
        Copy-Process-Mode.                                                     
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
-           SET FCT-DoesNothing   TO ENTRY 'F0000001'                          
-           SET FCT-ReturnsZero   TO ENTRY 'F0000002'                          
-           SET FCT-IllegalClauses   TO ENTRY 'F0000007'                       
+           SET FCT-DoesNothing   TO ENTRY '05a59b2c'                          
+           SET FCT-ReturnsZero   TO ENTRY '9072a866'                          
+           SET FCT-IllegalClauses   TO ENTRY 'e6215ae7'                       
            .                                                                  
                                                                               
        FctList-Process-Mode.                                                  
            SET ADDRESS OF FctList TO ADDRESS OF CallData                      
                                                                               
            IF NOT LibFctList-IsLoaded                                         
-             SET LibFctPointer(1)   TO ENTRY 'F0000001'                       
-             SET LibFctPointer(2)   TO ENTRY 'F0000002'                       
-             SET LibFctPointer(3)   TO ENTRY 'F0000007'                       
+             SET LibFctPointer(1)   TO ENTRY '05a59b2c'                       
+             SET LibFctPointer(2)   TO ENTRY '9072a866'                       
+             SET LibFctPointer(3)   TO ENTRY 'e6215ae7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
            END-IF                                                             
@@ -149,15 +149,15 @@
        END PROGRAM FunDeclare.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000001.                                                  
+       PROGRAM-ID. 05a59b2c.                                                  
        PROCEDURE DIVISION                                                     
            .                                                                  
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM F0000001.                                                  
+       END PROGRAM 05a59b2c.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000002.                                                  
+       PROGRAM-ID. 9072a866.                                                  
          DATA DIVISION.
        LINKAGE SECTION.                                                       
        01 result PIC 9(04).                                                   
@@ -166,7 +166,7 @@
            .                                                                  
            MOVE 0 TO result.
            .
-       END PROGRAM F0000002.                                                  
+       END PROGRAM 9072a866.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. F0000003.                                                  
@@ -248,7 +248,7 @@
        END PROGRAM F0000006.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000007.                                                  
+       PROGRAM-ID. e6215ae7.                                                  
          DATA DIVISION.
            WORKING-STORAGE SECTION.
              01 x PIC X IS GLOBAL.
@@ -256,7 +256,7 @@
        PROCEDURE DIVISION                                                     
            .                                                                  
            .
-       END PROGRAM F0000007.                                                  
+       END PROGRAM e6215ae7.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. F0000008.                                                  
