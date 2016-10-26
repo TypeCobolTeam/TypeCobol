@@ -112,6 +112,38 @@
       *                         culture    TYPE culture                       
       *                         returnCode PIC 9(04)                          
       *                   RETURNING Result PIC X(40).                         
+                                                                              
+       Copy-Process-Mode.                                                     
+           SET ADDRESS OF FCT TO ADDRESS OF CallData                          
+                                                                              
+           SET FCT-currentDate   TO ENTRY 'F0000001'                          
+           SET FCT-currentDateDB2   TO ENTRY 'F0000002'                       
+           SET FCT-currentDateJulian   TO ENTRY 'F0000003'                    
+           SET FCT-currentDateFreeFormat   TO ENTRY 'F0000004'                
+           .                                                                  
+                                                                              
+       FctList-Process-Mode.                                                  
+           SET ADDRESS OF FctList TO ADDRESS OF CallData                      
+                                                                              
+           IF NOT LibFctList-IsLoaded                                         
+             SET LibFctPointer(1)   TO ENTRY 'F0000001'                       
+             SET LibFctPointer(2)   TO ENTRY 'F0000002'                       
+             SET LibFctPointer(3)   TO ENTRY 'F0000003'                       
+             SET LibFctPointer(4)   TO ENTRY 'F0000004'                       
+                                                                              
+             SET LibFctList-IsLoaded TO TRUE                                  
+           END-IF                                                             
+                                                                              
+           PERFORM VARYING FctIndex FROM 1 BY 1                               
+                   UNTIL FctIndex > NumberOfFunctions                         
+                                                                              
+             SEARCH LibFctItem VARYING LibFctIndex                            
+               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)               
+                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)       
+             END-SEARCH                                                       
+                                                                              
+           END-PERFORM                                                        
+           .                                                                  
 
 
 

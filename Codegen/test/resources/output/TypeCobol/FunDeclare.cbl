@@ -115,6 +115,36 @@
       *      INPUT     x type BOOL                                            
       *      RETURNING y TYPE bool                                            
       *  .                                                                    
+                                                                              
+       Copy-Process-Mode.                                                     
+           SET ADDRESS OF FCT TO ADDRESS OF CallData                          
+                                                                              
+           SET FCT-DoesNothing   TO ENTRY 'F0000001'                          
+           SET FCT-ReturnsZero   TO ENTRY 'F0000002'                          
+           SET FCT-IllegalClauses   TO ENTRY 'F0000007'                       
+           .                                                                  
+                                                                              
+       FctList-Process-Mode.                                                  
+           SET ADDRESS OF FctList TO ADDRESS OF CallData                      
+                                                                              
+           IF NOT LibFctList-IsLoaded                                         
+             SET LibFctPointer(1)   TO ENTRY 'F0000001'                       
+             SET LibFctPointer(2)   TO ENTRY 'F0000002'                       
+             SET LibFctPointer(3)   TO ENTRY 'F0000007'                       
+                                                                              
+             SET LibFctList-IsLoaded TO TRUE                                  
+           END-IF                                                             
+                                                                              
+           PERFORM VARYING FctIndex FROM 1 BY 1                               
+                   UNTIL FctIndex > NumberOfFunctions                         
+                                                                              
+             SEARCH LibFctItem VARYING LibFctIndex                            
+               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)               
+                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)       
+             END-SEARCH                                                       
+                                                                              
+           END-PERFORM                                                        
+           .                                                                  
        
        END PROGRAM FunDeclare.
       *_________________________________________________________________      
