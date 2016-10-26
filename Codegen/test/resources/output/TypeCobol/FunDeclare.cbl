@@ -47,7 +47,14 @@
        
       *PROCEDURE DIVISION.                                                    
        PROCEDURE DIVISION USING CallData.                                     
-            .
+           IF CallIsCopy                                                      
+             PERFORM Copy-Process-Mode                                        
+           ELSE                                                               
+             PEFORM FctList-Process-Mode                                      
+           END-IF                                                             
+                                                                              
+           GOBACK                                                             
+           .
        
       *DECLARE function DoesNothing PUBLIC.                                   
 

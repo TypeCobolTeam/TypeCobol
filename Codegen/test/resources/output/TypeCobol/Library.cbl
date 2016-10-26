@@ -84,6 +84,13 @@
       *=================================================================
       *PROCEDURE DIVISION USING DVZDAT.                                       
        PROCEDURE DIVISION USING DVZDAT CallData.                              
+           IF CallIsCopy                                                      
+             PERFORM Copy-Process-Mode                                        
+           ELSE                                                               
+             PEFORM FctList-Process-Mode                                      
+           END-IF                                                             
+                                                                              
+           GOBACK                                                             
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        

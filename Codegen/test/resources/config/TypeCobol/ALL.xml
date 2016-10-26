@@ -99,6 +99,15 @@
       10 LibFctPointer PROCEDURE-POINTER.
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
+      <pattern location="program.procedure-division.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
+    IF CallIsCopy
+      PERFORM Copy-Process-Mode
+    ELSE
+      PEFORM FctList-Process-Mode
+    END-IF
+
+    GOBACK
+      </pattern>
       <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">
 PROCEDURE DIVISION USING CallData.
       </pattern>
