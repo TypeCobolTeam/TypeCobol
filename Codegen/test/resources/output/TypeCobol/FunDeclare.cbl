@@ -1,17 +1,17 @@
 ﻿      * 13 CodeElements errors
       * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
-      * "1"@(27:8>27:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
-      * "1"@(47:12>47:26): [27:1] Syntax error : x is already a parameter.
-      * "1"@(48:12>48:26): [27:1] Syntax error : y is already a parameter.
-      * "1"@(50:14>50:28): [27:1] Syntax error : x is already a parameter.
-      * "1"@(51:14>51:28): [27:1] Syntax error : z is already a parameter.
-      * "1"@(54:12>54:31): [27:1] Syntax error : result is already a parameter.
-      * "1"@(56:12>56:27): [27:1] Syntax error : Ambiguous reference to symbol result
-      * "1"@(93:14>93:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
-      * "1"@(94:14>94:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
-      * "1"@(99:8>99:16): [27:1] Syntax error : Illegal non-function item in library
-      * "1"@(113:8>118:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-      * "1"@(113:8>118:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
+      * "1"@(35:8>35:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
+      * "1"@(55:12>55:26): [27:1] Syntax error : x is already a parameter.
+      * "1"@(56:12>56:26): [27:1] Syntax error : y is already a parameter.
+      * "1"@(58:14>58:28): [27:1] Syntax error : x is already a parameter.
+      * "1"@(59:14>59:28): [27:1] Syntax error : z is already a parameter.
+      * "1"@(62:12>62:31): [27:1] Syntax error : result is already a parameter.
+      * "1"@(64:12>64:27): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(101:14>101:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
+      * "1"@(102:14>102:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
+      * "1"@(107:8>107:16): [27:1] Syntax error : Illegal non-function item in library
+      * "1"@(121:8>126:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
+      * "1"@(121:8>126:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        DATA DIVISION.                                                         
@@ -23,6 +23,9 @@
       *    05a59b2c -> DoesNothing                                            
            05 PIC X(08) VALUE '05a59b2c'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    8fe03398 -> DoesNothing                                            
+           05 PIC X(08) VALUE '8fe03398'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
       *    9072a866 -> ReturnsZero                                            
            05 PIC X(08) VALUE '9072a866'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
@@ -31,7 +34,7 @@
            05 PIC X(08) VALUE LOW-VALUES.                                     
                                                                               
        01  LibFctList REDEFINES LibFctList-Values.                            
-           05   LibFctItem    OCCURS 3 INDEXED BY LibFctIndex.                
+           05   LibFctItem    OCCURS 4 INDEXED BY LibFctIndex.                
              10 LibFctCode    PIC X(08).                                      
              10 LibFctPointer PROCEDURE-POINTER.                              
        LINKAGE SECTION.                                                       
@@ -60,6 +63,10 @@
 
       *DECLARE function ReturnsZero PUBLIC                                    
       *      RETURNING result PIC 9(04).                                      
+
+      *OK: second function with same name, but profile is different
+      *DECLARE function DoesNothing PUBLIC                                    
+      *      INPUT x PIC 9(04).                                               
 
       * ERROR Illegal FILE SECTION
       *DECLARE function StrangelyReturnsItsInput PRIVATE                      
@@ -120,6 +127,7 @@
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
            SET FCT-DoesNothing   TO ENTRY '05a59b2c'                          
+           SET FCT-DoesNothing   TO ENTRY '8fe03398'                          
            SET FCT-ReturnsZero   TO ENTRY '9072a866'                          
            SET FCT-IllegalClauses   TO ENTRY 'e6215ae7'                       
            .                                                                  
@@ -129,8 +137,9 @@
                                                                               
            IF NOT LibFctList-IsLoaded                                         
              SET LibFctPointer(1)   TO ENTRY '05a59b2c'                       
-             SET LibFctPointer(2)   TO ENTRY '9072a866'                       
-             SET LibFctPointer(3)   TO ENTRY 'e6215ae7'                       
+             SET LibFctPointer(2)   TO ENTRY '8fe03398'                       
+             SET LibFctPointer(3)   TO ENTRY '9072a866'                       
+             SET LibFctPointer(4)   TO ENTRY 'e6215ae7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
            END-IF                                                             
@@ -169,7 +178,19 @@
        END PROGRAM 9072a866.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000003.                                                  
+       PROGRAM-ID. 8fe03398.                                                  
+       DATA DIVISION.                                                         
+       LINKAGE SECTION.                                                       
+       01 x PIC 9(04).                                                        
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE x                                             
+           .                                                                  
+           DISPLAY 'I DO NOTHING WITH ' x
+           .
+       END PROGRAM 8fe03398.                                                  
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. F0000004.                                                  
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -185,10 +206,10 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM F0000003.                                                  
+       END PROGRAM F0000004.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000004.                                                  
+       PROGRAM-ID. F0000005.                                                  
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -210,10 +231,10 @@
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM F0000004.                                                  
+       END PROGRAM F0000005.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000005.                                                  
+       PROGRAM-ID. F0000006.                                                  
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
@@ -228,10 +249,10 @@
            MOVE y TO x
            MOVE tmp TO y
            .
-       END PROGRAM F0000005.                                                  
+       END PROGRAM F0000006.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000006.                                                  
+       PROGRAM-ID. F0000007.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -245,7 +266,7 @@
                    BY REFERENCE b                                             
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000006.                                                  
+       END PROGRAM F0000007.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e6215ae7.                                                  
@@ -259,7 +280,7 @@
        END PROGRAM e6215ae7.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000008.                                                  
+       PROGRAM-ID. F0000009.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
@@ -270,10 +291,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000008.                                                  
+       END PROGRAM F0000009.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000009.                                                  
+       PROGRAM-ID. F0000010.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 valid-gender.                                                       
@@ -284,10 +305,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000009.                                                  
+       END PROGRAM F0000010.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000010.                                                  
+       PROGRAM-ID. F0000011.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC X     VALUE LOW-VALUE.                                        
@@ -306,4 +327,4 @@
       *      SET y TO FALSE                                                   
                SET y-false TO TRUE.                                           
            END-IF.
-       END PROGRAM F0000010.                                                  
+       END PROGRAM F0000011.                                                  

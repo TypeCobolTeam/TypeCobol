@@ -18,6 +18,14 @@
            .
        END-DECLARE.
 
+      *OK: second function with same name, but profile is different
+       DECLARE function DoesNothing PUBLIC
+             INPUT x PIC 9(04).
+         PROCEDURE DIVISION.
+           DISPLAY 'I DO NOTHING WITH ' x
+           .
+       END-DECLARE.
+
       * ERROR Illegal FILE SECTION
        DECLARE function StrangelyReturnsItsInput PRIVATE
              INPUT     x      PIC 9(04)
