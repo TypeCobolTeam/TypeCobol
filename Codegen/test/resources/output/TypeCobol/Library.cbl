@@ -51,17 +51,17 @@
            88 LibFctList-IsLoaded      VALUE '1'.                             
                                                                               
        01  LibFctList-VALUES.                                                 
-      *    F0000001 -> currentDate                                            
-           05 PIC X(08) VALUE 'F0000001'.                                     
+      *    42e5f209 -> currentDate                                            
+           05 PIC X(08) VALUE '42e5f209'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    F0000002 -> currentDateDB2                                         
-           05 PIC X(08) VALUE 'F0000002'.                                     
+      *    27128b8a -> currentDateDB2                                         
+           05 PIC X(08) VALUE '27128b8a'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    F0000003 -> currentDateJulian                                      
-           05 PIC X(08) VALUE 'F0000003'.                                     
+      *    6c4e76b4 -> currentDateJulian                                      
+           05 PIC X(08) VALUE '6c4e76b4'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    F0000004 -> currentDateFreeFormat                                  
-           05 PIC X(08) VALUE 'F0000004'.                                     
+      *    d55b3ea7 -> currentDateFreeFormat                                  
+           05 PIC X(08) VALUE 'd55b3ea7'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
                                                                               
        01  LibFctList REDEFINES LibFctList-Values.                            
@@ -117,20 +117,20 @@
        Copy-Process-Mode.                                                     
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
-           SET FCT-currentDate   TO ENTRY 'F0000001'                          
-           SET FCT-currentDateDB2   TO ENTRY 'F0000002'                       
-           SET FCT-currentDateJulian   TO ENTRY 'F0000003'                    
-           SET FCT-currentDateFreeFormat   TO ENTRY 'F0000004'                
+           SET FCT-currentDate   TO ENTRY '42e5f209'                          
+           SET FCT-currentDateDB2   TO ENTRY '27128b8a'                       
+           SET FCT-currentDateJulian   TO ENTRY '6c4e76b4'                    
+           SET FCT-currentDateFreeFormat   TO ENTRY 'd55b3ea7'                
            .                                                                  
                                                                               
        FctList-Process-Mode.                                                  
            SET ADDRESS OF FctList TO ADDRESS OF CallData                      
                                                                               
            IF NOT LibFctList-IsLoaded                                         
-             SET LibFctPointer(1)   TO ENTRY 'F0000001'                       
-             SET LibFctPointer(2)   TO ENTRY 'F0000002'                       
-             SET LibFctPointer(3)   TO ENTRY 'F0000003'                       
-             SET LibFctPointer(4)   TO ENTRY 'F0000004'                       
+             SET LibFctPointer(1)   TO ENTRY '42e5f209'                       
+             SET LibFctPointer(2)   TO ENTRY '27128b8a'                       
+             SET LibFctPointer(3)   TO ENTRY '6c4e76b4'                       
+             SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
            END-IF                                                             
@@ -154,7 +154,7 @@
        END PROGRAM DVZZDAT.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000001.                                                  
+       PROGRAM-ID. 42e5f209.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 Result.                                                             
@@ -166,10 +166,10 @@
            .                                                                  
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM F0000001.                                                  
+       END PROGRAM 42e5f209.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000002.                                                  
+       PROGRAM-ID. 27128b8a.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -190,10 +190,10 @@
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
-       END PROGRAM F0000002.                                                  
+       END PROGRAM 27128b8a.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000003.                                                  
+       PROGRAM-ID. 6c4e76b4.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -213,10 +213,10 @@
                          (FUNCTION INTEGER-OF-DATE(W-Dat))
                 TO Result
            .
-       END PROGRAM F0000003.                                                  
+       END PROGRAM 6c4e76b4.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000004.                                                  
+       PROGRAM-ID. d55b3ea7.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  C-ZDAT2000               PIC X(08) VALUE 'ZDAT2000'.
@@ -265,4 +265,4 @@
                MOVE DATS20-O-DATE-LONG       TO Result
            END-IF
            .
-       END PROGRAM F0000004.                                                  
+       END PROGRAM d55b3ea7.                                                  
