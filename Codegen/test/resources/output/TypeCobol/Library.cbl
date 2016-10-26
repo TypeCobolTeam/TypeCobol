@@ -91,6 +91,7 @@
            END-IF                                                             
                                                                               
            GOBACK                                                             
+           .                                                                  
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        

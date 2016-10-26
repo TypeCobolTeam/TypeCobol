@@ -3,6 +3,8 @@
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.Text;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.Text;
 
 internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 
@@ -68,24 +70,51 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	public bool IsLeaf { get { return false; } }
 }
 
+public class GeneratedParameter: CallTargetParameter {
+	public GeneratedParameter(SymbolDefinition symbol) {
+		this.StorageArea = CreateReceivingStorageArea(symbol);
+		var mode = TypeCobol.Compiler.CodeElements.ParameterSharingMode.ByReference;
+		this.SharingMode = new SyntaxProperty<ParameterSharingMode>(mode, null);
+	}
+
+	public static StorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {
+		if (symbol == null) return null;
+		var storage = new DataOrConditionStorageArea(new SymbolReference(symbol));
+		return storage;
+	}
+}
 
 
-	public class GeneratedParameter: CallTargetParameter {
-//		public GeneratedParameter(ReceivingStorageArea storage): base(storage, null) {
-//			var mode = TypeCobol.Compiler.CodeElements.ReceivingMode.ByReference;
-//			this.ReceivingMode = new SyntaxProperty<ReceivingMode>(mode, null);
-//		}
 
-		public GeneratedParameter(SymbolDefinition symbol) {
-			this.StorageArea = CreateReceivingStorageArea(symbol);
-			var mode = TypeCobol.Compiler.CodeElements.ParameterSharingMode.ByReference;
-			this.SharingMode = new SyntaxProperty<ParameterSharingMode>(mode, null);
-		}
+internal class Sentence: Compiler.Nodes.Sentence, Generated {
+	public Sentence(): base() { }
 
-		public static StorageArea CreateReceivingStorageArea(SymbolDefinition symbol) {
-			if (symbol == null) return null;
-			var storage = new DataOrConditionStorageArea(new SymbolReference(symbol));
-			return storage;
+	private IList<ITextLine> _cache = null;
+	public override IEnumerable<ITextLine> Lines {
+		get {
+			if (_cache == null) {
+				_cache = new List<ITextLine>();
+				_cache.Add(new TextLineSnapshot(-1, "DATA DIVISION.", null));
+			}
+			return _cache;
 		}
 	}
+	public bool IsLeaf { get { return false; } }
+}
+internal class SentenceEnd: Compiler.Nodes.End, Generated {
+	public SentenceEnd(): base(null) { }
+
+	private IList<ITextLine> _cache = null;
+	public override IEnumerable<ITextLine> Lines {
+		get {
+			if (_cache == null) {
+				_cache = new List<ITextLine>();
+				_cache.Add(new TextLineSnapshot(-1, "    .", null));
+			}
+			return _cache;
+		}
+	}
+	public bool IsLeaf { get { return true; } }
+}
+
 }

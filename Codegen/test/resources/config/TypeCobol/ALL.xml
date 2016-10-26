@@ -99,7 +99,7 @@
       10 LibFctPointer PROCEDURE-POINTER.
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
-      <pattern location="program.procedure-division.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
+      <pattern location="program.procedure-division.sentence-0.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
     IF CallIsCopy
       PERFORM Copy-Process-Mode
     ELSE
