@@ -3,6 +3,10 @@
 	using System.Security.Cryptography;
 	using System.Text;
 
+public interface Hashable {
+	string Hash { get; }
+}
+
 public class Hash {
 
 	public static string CreateSHA256(string text) {
