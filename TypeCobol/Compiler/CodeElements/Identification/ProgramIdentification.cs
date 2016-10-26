@@ -31,6 +31,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolDefinition ProgramName { get; set; }
 
+        public SymbolDefinition CopyName { get; set; }
+
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
         /// The optional paragraphs are: 

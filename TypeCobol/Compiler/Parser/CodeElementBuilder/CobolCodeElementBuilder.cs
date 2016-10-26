@@ -84,21 +84,25 @@ namespace TypeCobol.Compiler.Parser
 		////////////////////////////
 
 		public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
-			var programIdentification = new ProgramIdentification();
-			programIdentification.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
+			var program = new ProgramIdentification();
+			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
+			if (context.UserDefinedWord() != null) {
+				var value = CobolWordsBuilder.CreateAlphanumericValue(context.UserDefinedWord());
+				program.CopyName = new SymbolDefinition(value, SymbolType.FileName);//TODO#278 eww!
+			}
 			if (context.COMMON() != null) {
-				programIdentification.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
+				program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
 			}
 			if (context.INITIAL() != null) {
-				programIdentification.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
+				program.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
 			}
 			if (context.RECURSIVE() != null) {
-				programIdentification.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
+				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
-			programIdentification.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
+			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
 
 			Context = context;
-			CodeElement = programIdentification;
+			CodeElement = program;
 		}
 
 		public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {

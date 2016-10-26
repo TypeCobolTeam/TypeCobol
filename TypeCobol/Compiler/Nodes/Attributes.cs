@@ -37,6 +37,7 @@ public static class Attributes {
 		attributes["variables"] = new VariablesAttribute();
 		attributes["typecobol"] = new TypeCobolAttribute();
 		attributes["visibility"] = new VisibilityAttribute();
+		attributes["copyname"] = new LibraryCopyAttribute();
 	}
 	private static ContainerAttribute DEFAULT = new ContainerAttribute();
 }
@@ -297,6 +298,15 @@ internal class VisibilityAttribute: Attribute {
 		var fun = o as FunctionDeclaration;
 		if (fun != null) return fun.CodeElement().Visibility.ToString();
 		return null;
+	}
+}
+
+internal class LibraryCopyAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var root = ((Node)o).Root;
+		var program = root.GetChildren<ProgramIdentification>()[0];
+		var copy = program.CodeElement().CopyName;
+		return copy == null? null : copy.Name;
 	}
 }
 

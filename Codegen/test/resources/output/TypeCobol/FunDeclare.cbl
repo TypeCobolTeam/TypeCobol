@@ -1,19 +1,20 @@
 ﻿      * 13 CodeElements errors
-      * "1"@(4:8>4:16): [27:1] Syntax error : Illegal default section in library.
-      * "1"@(35:8>35:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
-      * "1"@(55:12>55:26): [27:1] Syntax error : x is already a parameter.
-      * "1"@(56:12>56:26): [27:1] Syntax error : y is already a parameter.
-      * "1"@(58:14>58:28): [27:1] Syntax error : x is already a parameter.
-      * "1"@(59:14>59:28): [27:1] Syntax error : z is already a parameter.
-      * "1"@(62:12>62:31): [27:1] Syntax error : result is already a parameter.
-      * "1"@(64:12>64:27): [27:1] Syntax error : Ambiguous reference to symbol result
-      * "1"@(101:14>101:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
-      * "1"@(102:14>102:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
-      * "1"@(107:8>107:16): [27:1] Syntax error : Illegal non-function item in library
-      * "1"@(121:8>126:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-      * "1"@(121:8>126:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
+      * "1"@(5:8>5:16): [27:1] Syntax error : Illegal default section in library.
+      * "1"@(36:8>36:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
+      * "1"@(56:12>56:26): [27:1] Syntax error : x is already a parameter.
+      * "1"@(57:12>57:26): [27:1] Syntax error : y is already a parameter.
+      * "1"@(59:14>59:28): [27:1] Syntax error : x is already a parameter.
+      * "1"@(60:14>60:28): [27:1] Syntax error : z is already a parameter.
+      * "1"@(63:12>63:31): [27:1] Syntax error : result is already a parameter.
+      * "1"@(65:12>65:27): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(102:14>102:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
+      * "1"@(103:14>103:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
+      * "1"@(108:8>108:16): [27:1] Syntax error : Illegal non-function item in library
+      * "1"@(122:8>127:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
+      * "1"@(122:8>127:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
+       SERVICE IS YFUNCOPY.
        DATA DIVISION.                                                         
        WORKING-STORAGE SECTION.                                               
        01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
@@ -46,7 +47,7 @@
              10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
-             88 CallIsCopy VALUE 'TODO'.                                      
+             88 CallIsCopy VALUE 'YFUNCOPY'.                                  
        
       *PROCEDURE DIVISION.                                                    
        PROCEDURE DIVISION USING CallData.                                     

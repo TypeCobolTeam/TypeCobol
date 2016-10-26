@@ -1,5 +1,6 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
+       SERVICE IS YFUNCOPY.
        
        PROCEDURE DIVISION.
            .
