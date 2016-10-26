@@ -196,7 +196,10 @@ class FunctionDeclarationChecker: NodeListener {
 
 
 
-/// <summary>Checks the TypeCobol custom functions rule: TCRFUN_NO_SECTION_OR_PARAGRAPH_IN_LIBRARY.</summary>
+/// <summary>Checks the TypeCobol custom functions rules:
+/// * TCRFUN_NO_SECTION_OR_PARAGRAPH_IN_LIBRARY
+/// * TCRFUN_LIBRARY_COPY
+/// </summary>
 class LibraryChecker: NodeListener {
 	public IList<Type> GetNodes() {
 		return new List<Type> { typeof(ProcedureDivision), };
@@ -222,6 +225,11 @@ class LibraryChecker: NodeListener {
 			}
 		}
 		if (isPublicLibrary) {
+			if (program.Identification.CopyName == null) {
+				var pnode = node.Root.GetChildren<ProgramIdentification>()[0];
+				DiagnosticUtils.AddError(pnode.CodeElement(), "Missing library copy in IDENTIFICATION DIVISION.", context);
+			}
+
 			for(int c = 0; c < errorMessages.Count; c++)
 				DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);
 		}

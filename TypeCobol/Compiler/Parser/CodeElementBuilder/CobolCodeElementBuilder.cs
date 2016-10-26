@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
 			var program = new ProgramIdentification();
 			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
-			if (context.UserDefinedWord() != null) {
+			if (context.UserDefinedWord() != null) { // TCRFUN_LIBRARY_COPY
 				var value = CobolWordsBuilder.CreateAlphanumericValue(context.UserDefinedWord());
 				program.CopyName = new SymbolDefinition(value, SymbolType.FileName);//TODO#278 eww!
 			}

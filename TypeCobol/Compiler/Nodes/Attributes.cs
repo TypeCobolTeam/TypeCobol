@@ -306,7 +306,7 @@ internal class LibraryCopyAttribute: Attribute {
 		var root = ((Node)o).Root;
 		var program = root.GetChildren<ProgramIdentification>()[0];
 		var copy = program.CodeElement().CopyName;
-		return copy == null? null : copy.Name;
+		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.Name;
 	}
 }
 

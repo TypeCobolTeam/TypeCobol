@@ -1,4 +1,5 @@
-﻿      * 12 CodeElements errors
+﻿      * 13 CodeElements errors
+      * "1"@(1:8>3:16): [27:1] Syntax error : Missing library copy in IDENTIFICATION DIVISION.
       * "1"@(73:12>75:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
       * "1"@(96:12>96:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
       * "1"@(97:12>97:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
@@ -76,9 +77,11 @@
                                   INDEXED BY FctIndex.                        
              10 FctCode    PIC X(08).                                         
              10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
+           COPY ?TCRFUN_LIBRARY_COPY? REPLACING ==:?TCRFUN_LIBRARY_COPY?      
+      -:== BY ==FCT==.                                                        
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
-             88 CallIsCopy VALUE 'TODO'.                                      
+             88 CallIsCopy VALUE '?TCRFUN_LIBRARY_COPY?'.                     
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
