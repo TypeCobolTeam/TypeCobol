@@ -71,6 +71,9 @@
       10 FctCode    PIC X(08).
       10 FctPointer PROCEDURE-POINTER VALUE NULL.
       </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_LIBRARY_COPY">
+    COPY %copyname REPLACING ==:%copyname:== BY ==FCT==.
+      </pattern>
       <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
 01  CallData.
     05  DescriptionId PIC X(08).

@@ -45,6 +45,7 @@
                                   INDEXED BY FctIndex.                        
              10 FctCode    PIC X(08).                                         
              10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
+           COPY YFUNCOPY REPLACING ==:YFUNCOPY:== BY ==FCT==.                 
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
              88 CallIsCopy VALUE 'YFUNCOPY'.                                  
