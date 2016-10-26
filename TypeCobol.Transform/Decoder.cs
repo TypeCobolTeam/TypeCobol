@@ -4,6 +4,10 @@ using System.IO;
 
 namespace TypeCobol.Transform
 {
+    /// <summary>
+    /// This class implements the encoder from a TypeCobol Source code to Mixed Cobol generated source and a commented original
+    /// TypeCobol sourcde code and provides de decoder method for the mixed source to the original TypeCobol source code.
+    /// </summary>
     public class Decoder
     {
         private static string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;
@@ -13,11 +17,11 @@ namespace TypeCobol.Transform
         const int CommentPos = 6;
 
         /// <summary>
-        /// 
+        /// Encoder method that concatenates the TypeCobol Source code with the generated Cobol source code.
         /// </summary>
-        /// <param name="typeCobolFilePath"></param>
-        /// <param name="cobol85FilePath"></param>
-        /// <param name="outputFilePath"></param>
+        /// <param name="typeCobolFilePath">The path to the original TypeCobol source file</param>
+        /// <param name="cobol85FilePath">The path to the generated Cobol 85 source file</param>
+        /// <param name="outputFilePath">The path to the output file which will contains the conactenation.</param>
         /// <returns>true if the conactenation was successful, false otherwise</returns>
 	    public static bool concatenateFiles(string typeCobolFilePath, string cobol85FilePath, string outputFilePath)
         {
@@ -89,12 +93,11 @@ namespace TypeCobol.Transform
 
 
         /// <summary>
-        /// 
+        /// he decoder method which extract the original TypeCobol source code froma mixed source code.
         /// </summary>
-        /// <param name="typeCobolFilePath"></param>
-        /// <param name="cobol85FilePath"></param>
-        /// <param name="outputFilePath"></param>
-        /// <returns>true if the decoding was successful, false otherwise</returns>
+        /// <param name="concatenatedFilePath">The path to the concatened source file</param>
+        /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source codde</param>
+        /// <returns>True if the decoding is successfull, false otherwise</returns>
 	    public static bool decode(string concatenatedFilePath, string typeCobolOutputFilePath)
         {
             Stream inputStream = File.OpenRead(concatenatedFilePath);
@@ -165,10 +168,15 @@ namespace TypeCobol.Transform
 
                         for (var i = 0; i < part3Length; i++)
                         {
-                            if (i != (part3Length-1))
-                                outputWriter.WriteLine(tcLinesCol7[i] + tcLines[i]);
+                            String line = (tcLinesCol7[i] + tcLines[i]);
+                            if (line.Trim().Length != 0)
+                                outputWriter.Write("      ");//Write spaces for line number
                             else
-                                outputWriter.Write(tcLinesCol7[i] + tcLines[i]);
+                                line = "";
+                            if (i != (part3Length-1))
+                                outputWriter.WriteLine(line);
+                            else
+                                outputWriter.Write(line);
                         }
                     }
                 }
