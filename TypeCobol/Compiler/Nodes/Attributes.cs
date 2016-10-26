@@ -36,6 +36,7 @@ public static class Attributes {
 		attributes["definitions"] = new DefinitionsAttribute();
 		attributes["variables"] = new VariablesAttribute();
 		attributes["typecobol"] = new TypeCobolAttribute();
+		attributes["visibility"] = new VisibilityAttribute();
 	}
 	private static ContainerAttribute DEFAULT = new ContainerAttribute();
 }
@@ -237,22 +238,22 @@ internal class FunctionUserAttribute: Attribute {
         public override string Value { get { return "SPACE"; } }
     }
 
-    internal class DefinitionsAttribute: Attribute {
+internal class DefinitionsAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);
 		return definitions;
 	}
-	private List<Node> GetTypes(SymbolTable table) {
-		var list = new List<Node>();
+	private Definitions.NList GetTypes(SymbolTable table) {
+		var list = new Definitions.NList();
 		if (table == null) return list;
 		foreach(var items in table.Types) list.AddRange(items.Value);
 		list.AddRange(GetTypes(table.EnclosingScope));
 		return list;
 	}
-	private List<Node> GetFunctions(SymbolTable table) {
-		var list = new List<Node>();
+	private Definitions.NList GetFunctions(SymbolTable table) {
+		var list = new Definitions.NList();
 		if (table == null) return list;
 		foreach(var items in table.Functions) list.AddRange(items.Value);
 		list.AddRange(GetFunctions(table.EnclosingScope));
@@ -260,8 +261,8 @@ internal class FunctionUserAttribute: Attribute {
 	}
 }
 public class Definitions {
-	public List<Node> types;
-	public List<Node> functions;
+	public NList types;
+	public NList functions;
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder();
@@ -273,6 +274,29 @@ public class Definitions {
 		if (functions.Count > 0) str.Length -= 1;
 		str.Append(']');
 		return str.ToString();
+	}
+
+	public class NList: List<Node> {
+		internal NList(): base() { }
+		public IList<Node> Public  { get { return retrieve(AccessModifier.Public); } }
+		public IList<Node> Private { get { return retrieve(AccessModifier.Private); } }
+		private IList<Node> retrieve(AccessModifier visibility) {
+			var results = new List<Node>();
+			foreach(var node in this) {
+				var fun = node as FunctionDeclaration;
+				if (fun == null) continue;
+				if (fun.CodeElement().Visibility == visibility) results.Add(node);
+			}
+			return results;
+		}
+	}
+}
+
+internal class VisibilityAttribute: Attribute {
+	public object GetValue(object o, SymbolTable table) {
+		var fun = o as FunctionDeclaration;
+		if (fun != null) return fun.CodeElement().Visibility.ToString();
+		return null;
 	}
 }
 

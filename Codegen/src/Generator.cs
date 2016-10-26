@@ -54,7 +54,7 @@ namespace TypeCobol.Codegen {
 		public void Visit(Node node) {
 			var actions = GetActions(node);
 			Actions.AddRange(actions);
-			foreach(var child in node.Children) child.Accept(this);
+			foreach(var child in new List<Node>(node.Children)) child.Accept(this);
 		}
 
 		private ICollection<Action> GetActions(Node node) {
@@ -136,7 +136,27 @@ namespace TypeCobol.Codegen {
 
 			var result = root.Get(location);
 			if (result != null) return result;
+			result = Create(root, location);
+			if (result != null) return result;
 			throw new System.ArgumentException("Undefined URI: "+location);
+		}
+		private Node Create(Node node, string location) {
+			var factory = new Codegen.Nodes.Factory();
+			var parts = location.Split(new char[] { '.' });
+			var path = new System.Text.StringBuilder();
+			Node result = null;
+			foreach(var part in parts) {
+				path.Append(part);
+				var current = node.Get(path.ToString());
+				if (current == null) {
+					current = factory.Create(part);
+					if (current == null) return null;
+					result.Add(current, 0);
+				}
+				result = current;
+				path.Append('.');
+			}
+			return result;
 		}
 	}
 
@@ -178,9 +198,15 @@ namespace TypeCobol.Codegen {
 		}
 
 		public void Execute() {
+			// transfer Old's children to New
+			for (int i=Old.Children.Count-1; i>=0; --i) {
+				var child = Old.Children[i];
+				Old.Remove(child);
+				New.Add(child,0);
+			}
+			Old.Comment = true;
 			var parent = Old.Parent;
 			int index = parent.IndexOf(Old);
-		    Old.Comment = true;
 			parent.Add(New, index+1);
 		}
 	}

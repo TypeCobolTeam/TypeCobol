@@ -41,6 +41,14 @@ public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
 
 public class Sentence: Node, CodeElementHolder<CodeElement> {
 	public Sentence(): base(null) { }
+	public override string ID {
+		get {
+			string id = "sentence-";
+			if (Parent == null) id += '0';
+			else id += new System.Collections.Generic.List<Node>(Parent.Children).IndexOf(this);
+			return id;
+		}
+	}
 }
 
 } // end of namespace TypeCobol.Compiler.Nodes

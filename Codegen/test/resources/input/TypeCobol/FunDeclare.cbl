@@ -2,7 +2,7 @@
        PROGRAM-ID. FunDeclare.
        
        PROCEDURE DIVISION.
-            .
+           .
        
        DECLARE function DoesNothing PUBLIC.
          PROCEDURE DIVISION.

@@ -183,9 +183,9 @@ public abstract class Node {
 
 	public object this[string attribute] { get { return Attributes.Get(this, attribute); } }
 
-	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
+	/// <summary>TODO: Codegen should do its stuff without polluting this class.</summary>
 	public bool? Comment = null;
-	/// <summary>TODO: Codegen should do its stuff without pollutiong this class.</summary>
+	/// <summary>TODO: Codegen should do its stuff without polluting this class.</summary>
 	public void RemoveAllChildren() { children.Clear(); }
 
 	public virtual IEnumerable<ITextLine> Lines {

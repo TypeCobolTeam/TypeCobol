@@ -30,7 +30,7 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 		}
 	}
 
-	public bool IsLeaf { get { return true; } }
+	public bool IsLeaf { get { return false; } }
 }
 
 }

@@ -57,23 +57,110 @@
     </patterns>
   </skeleton>
 
-  <!-- replace DECLARE FUNCTION by a stacked program -->
-  <skeleton name="FUN.DECLARE" var="definitions">
+  <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
+  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions">
     <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" />
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALLS_ARRAY">
+01  FctList.
+    05 NumberOfFunctions   PIC 9(04).
+    05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions
+                           INDEXED BY FctIndex.
+      10 FctCode    PIC X(08).
+      10 FctPointer PROCEDURE-POINTER VALUE NULL.
+      </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
+01  CallData.
+    05  DescriptionId PIC X(08).
+      88 CallIsCopy VALUE 'TODO'.
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
+01  LibFctList-Loaded PIC X(01) VALUE SPACE.
+    88 LibFctList-IsLoaded      VALUE '1'.
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
+@{
+  var items = "";
+  foreach (var f in %definitions.functions.Public) {
+    items += "*    "+f.Label+" -> "+f.Name+'\n';
+    items += "    05 PIC X(08) VALUE \'"+f.Label+"\'.\n";
+    items += "    05 PIC X(08) VALUE LOW-VALUES.\n";
+  }
+}
+01  LibFctList-VALUES.
+@items
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_REDEFINED_ARRAY">
+01  LibFctList REDEFINES LibFctList-Values.
+    05   LibFctItem    OCCURS %definitions.functions.Public.Count INDEXED BY LibFctIndex.
+      10 LibFctCode    PIC X(08).
+      10 LibFctPointer PROCEDURE-POINTER.
+      </pattern>
+      <pattern action="expand" location="program.end"></pattern>
+      <pattern location="program.procedure-division.sentence-0.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
+    IF CallIsCopy
+      PERFORM Copy-Process-Mode
+    ELSE
+      PEFORM FctList-Process-Mode
+    END-IF
+
+    GOBACK
+      </pattern>
+      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_COBOL_BEHAVIOUR">
+@{
+  var entries = "";
+  foreach (var f in %definitions.functions.Public) {
+    entries += "\n    SET FCT-"+f.Name+"   TO ENTRY \'"+f.Label+'\'';
+  }
+}
+Copy-Process-Mode.
+    SET ADDRESS OF FCT TO ADDRESS OF CallData
+@entries
+    .
+
+      </pattern>
+      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_TYPECOBOL_BEHAVIOUR">
+@{
+  var entries = "";
+  int c = 0;
+  foreach (var f in %definitions.functions.Public) {
+    entries += "      SET LibFctPointer("+(++c)+")   TO ENTRY \'"+f.Label+"\'\n";
+  }
+}
+FctList-Process-Mode.
+    SET ADDRESS OF FctList TO ADDRESS OF CallData
+
+    IF NOT LibFctList-IsLoaded
+@entries
+      SET LibFctList-IsLoaded TO TRUE
+    END-IF
+
+    PERFORM VARYING FctIndex FROM 1 BY 1
+            UNTIL FctIndex > NumberOfFunctions
+
+      SEARCH LibFctItem VARYING LibFctIndex
+        WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
+          SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
+      END-SEARCH
+
+    END-PERFORM
+    .
+
+      </pattern>
+      <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">
+PROCEDURE DIVISION USING CallData.
+      </pattern>
+    </patterns>
+  </skeleton>
+  <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
+  <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="private" />
     </conditions>
     <patterns>
       <pattern action="expand" location="program.end"></pattern>
-      <pattern action="create" location="procedure-division.begin" group="public-functions">
-@{
-  var setentries = "";
-  foreach (var f in %definitions.functions) {
-    setentries += "    SET " + f.Name + " TO ENTRY \'" + f.Label + "\'\n";
-  }
-  setentries += "    .";
-}
-@setentries
-      </pattern>
     </patterns>
   </skeleton>
 

@@ -47,19 +47,51 @@
       *01 culture        TYPEDEF.                                             
       *    10 lng                    PIC X(02).                               
       *    10 cty                    PIC X(02).                               
+       01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
+           88 LibFctList-IsLoaded      VALUE '1'.                             
+                                                                              
+       01  LibFctList-VALUES.                                                 
+      *    F0000001 -> currentDate                                            
+           05 PIC X(08) VALUE 'F0000001'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000002 -> currentDateDB2                                         
+           05 PIC X(08) VALUE 'F0000002'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000003 -> currentDateJulian                                      
+           05 PIC X(08) VALUE 'F0000003'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000004 -> currentDateFreeFormat                                  
+           05 PIC X(08) VALUE 'F0000004'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+                                                                              
+       01  LibFctList REDEFINES LibFctList-Values.                            
+           05   LibFctItem    OCCURS 4 INDEXED BY LibFctIndex.                
+             10 LibFctCode    PIC X(08).                                      
+             10 LibFctPointer PROCEDURE-POINTER.                              
       *_________________________________________________________________
        LINKAGE SECTION.
+       01  FctList.                                                           
+           05 NumberOfFunctions   PIC 9(04).                                  
+           05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions              
+                                  INDEXED BY FctIndex.                        
+             10 FctCode    PIC X(08).                                         
+             10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
+       01  CallData.                                                          
+           05  DescriptionId PIC X(08).                                       
+             88 CallIsCopy VALUE 'TODO'.                                      
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
-       PROCEDURE DIVISION USING DVZDAT.
+      *PROCEDURE DIVISION USING DVZDAT.                                       
+       PROCEDURE DIVISION USING DVZDAT CallData.                              
+           IF CallIsCopy                                                      
+             PERFORM Copy-Process-Mode                                        
+           ELSE                                                               
+             PEFORM FctList-Process-Mode                                      
+           END-IF                                                             
                                                                               
-           SET currentDate TO ENTRY 'F0000001'                                
-           SET currentDateDB2 TO ENTRY 'F0000002'                             
-           SET currentDateJulian TO ENTRY 'F0000003'                          
-           SET currentDateFreeFormat TO ENTRY 'F0000004'                      
+           GOBACK                                                             
            .                                                                  
-                                                                              
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC                                    
       *    RETURNING Result TYPE date.                                        
@@ -81,6 +113,38 @@
       *                         culture    TYPE culture                       
       *                         returnCode PIC 9(04)                          
       *                   RETURNING Result PIC X(40).                         
+                                                                              
+       Copy-Process-Mode.                                                     
+           SET ADDRESS OF FCT TO ADDRESS OF CallData                          
+                                                                              
+           SET FCT-currentDate   TO ENTRY 'F0000001'                          
+           SET FCT-currentDateDB2   TO ENTRY 'F0000002'                       
+           SET FCT-currentDateJulian   TO ENTRY 'F0000003'                    
+           SET FCT-currentDateFreeFormat   TO ENTRY 'F0000004'                
+           .                                                                  
+                                                                              
+       FctList-Process-Mode.                                                  
+           SET ADDRESS OF FctList TO ADDRESS OF CallData                      
+                                                                              
+           IF NOT LibFctList-IsLoaded                                         
+             SET LibFctPointer(1)   TO ENTRY 'F0000001'                       
+             SET LibFctPointer(2)   TO ENTRY 'F0000002'                       
+             SET LibFctPointer(3)   TO ENTRY 'F0000003'                       
+             SET LibFctPointer(4)   TO ENTRY 'F0000004'                       
+                                                                              
+             SET LibFctList-IsLoaded TO TRUE                                  
+           END-IF                                                             
+                                                                              
+           PERFORM VARYING FctIndex FROM 1 BY 1                               
+                   UNTIL FctIndex > NumberOfFunctions                         
+                                                                              
+             SEARCH LibFctItem VARYING LibFctIndex                            
+               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)               
+                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)       
+             END-SEARCH                                                       
+                                                                              
+           END-PERFORM                                                        
+           .                                                                  
 
 
 

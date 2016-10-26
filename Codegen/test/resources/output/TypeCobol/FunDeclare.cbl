@@ -14,22 +14,47 @@
       * "1"@(113:8>118:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
+       DATA DIVISION.                                                         
+       WORKING-STORAGE SECTION.                                               
+       01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           
+           88 LibFctList-IsLoaded      VALUE '1'.                             
+                                                                              
+       01  LibFctList-VALUES.                                                 
+      *    F0000001 -> DoesNothing                                            
+           05 PIC X(08) VALUE 'F0000001'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000002 -> ReturnsZero                                            
+           05 PIC X(08) VALUE 'F0000002'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    F0000007 -> IllegalClauses                                         
+           05 PIC X(08) VALUE 'F0000007'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+                                                                              
+       01  LibFctList REDEFINES LibFctList-Values.                            
+           05   LibFctItem    OCCURS 3 INDEXED BY LibFctIndex.                
+             10 LibFctCode    PIC X(08).                                      
+             10 LibFctPointer PROCEDURE-POINTER.                              
+       LINKAGE SECTION.                                                       
+       01  FctList.                                                           
+           05 NumberOfFunctions   PIC 9(04).                                  
+           05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions              
+                                  INDEXED BY FctIndex.                        
+             10 FctCode    PIC X(08).                                         
+             10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
+       01  CallData.                                                          
+           05  DescriptionId PIC X(08).                                       
+             88 CallIsCopy VALUE 'TODO'.                                      
        
-       PROCEDURE DIVISION.
+      *PROCEDURE DIVISION.                                                    
+       PROCEDURE DIVISION USING CallData.                                     
+           IF CallIsCopy                                                      
+             PERFORM Copy-Process-Mode                                        
+           ELSE                                                               
+             PEFORM FctList-Process-Mode                                      
+           END-IF                                                             
                                                                               
-           SET DoesNothing TO ENTRY 'F0000001'                                
-           SET ReturnsZero TO ENTRY 'F0000002'                                
-           SET StrangelyReturnsItsInput TO ENTRY 'F0000003'                   
-           SET SumThreeWithClutterInLinkage TO ENTRY 'F0000004'               
-           SET SwapParameters TO ENTRY 'F0000005'                             
-           SET SwapParametersWrong TO ENTRY 'F0000006'                        
-           SET IllegalClauses TO ENTRY 'F0000007'                             
-           SET FunConditions TO ENTRY 'F0000008'                              
-           SET FunConditions TO ENTRY 'F0000009'                              
-           SET MyNOT TO ENTRY 'F0000010'                                      
-           .                                                                  
-                                                                              
-            .
+           GOBACK                                                             
+           .
        
       *DECLARE function DoesNothing PUBLIC.                                   
 
@@ -90,6 +115,36 @@
       *      INPUT     x type BOOL                                            
       *      RETURNING y TYPE bool                                            
       *  .                                                                    
+                                                                              
+       Copy-Process-Mode.                                                     
+           SET ADDRESS OF FCT TO ADDRESS OF CallData                          
+                                                                              
+           SET FCT-DoesNothing   TO ENTRY 'F0000001'                          
+           SET FCT-ReturnsZero   TO ENTRY 'F0000002'                          
+           SET FCT-IllegalClauses   TO ENTRY 'F0000007'                       
+           .                                                                  
+                                                                              
+       FctList-Process-Mode.                                                  
+           SET ADDRESS OF FctList TO ADDRESS OF CallData                      
+                                                                              
+           IF NOT LibFctList-IsLoaded                                         
+             SET LibFctPointer(1)   TO ENTRY 'F0000001'                       
+             SET LibFctPointer(2)   TO ENTRY 'F0000002'                       
+             SET LibFctPointer(3)   TO ENTRY 'F0000007'                       
+                                                                              
+             SET LibFctList-IsLoaded TO TRUE                                  
+           END-IF                                                             
+                                                                              
+           PERFORM VARYING FctIndex FROM 1 BY 1                               
+                   UNTIL FctIndex > NumberOfFunctions                         
+                                                                              
+             SEARCH LibFctItem VARYING LibFctIndex                            
+               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)               
+                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)       
+             END-SEARCH                                                       
+                                                                              
+           END-PERFORM                                                        
+           .                                                                  
        
        END PROGRAM FunDeclare.
       *_________________________________________________________________      
@@ -250,6 +305,5 @@
            ELSE
       *      SET y TO FALSE                                                   
                SET y-false TO TRUE.                                           
-                                                                              
            END-IF.
        END PROGRAM F0000010.                                                  
