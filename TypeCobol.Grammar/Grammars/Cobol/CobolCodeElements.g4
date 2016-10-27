@@ -209,9 +209,8 @@ codeElement:
 	| tcCodeElement;
 
 // what is here is not important as long as it is not epsilon
-tcCodeElement: PUBLIC | PRIVATE | UNSAFE
+tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
 //	[/TYPECOBOL]
-	;
 
 
 // --- Individual code elements syntax ---

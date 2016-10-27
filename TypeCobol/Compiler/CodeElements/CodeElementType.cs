@@ -157,6 +157,7 @@ namespace TypeCobol.Compiler.CodeElements
         WriteStatementEnd,
         XmlStatementEnd,
 // [TYPECOBOL]
+		LibraryCopy,
 		FunctionDeclarationHeader,
 		FunctionDeclarationEnd,
 // [/TYPECOBOL]

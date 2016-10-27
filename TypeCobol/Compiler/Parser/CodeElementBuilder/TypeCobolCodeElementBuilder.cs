@@ -11,6 +11,16 @@
 
 internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
+	public override void EnterLibraryCopy(CodeElementsParser.LibraryCopyContext context) {
+		var copy = new LibraryCopyCodeElement();
+		if (context.UserDefinedWord() != null) { // TCRFUN_LIBRARY_COPY
+			var value = CobolWordsBuilder.CreateAlphanumericValue(context.UserDefinedWord());
+			copy.Name = new SymbolDefinition(value, SymbolType.FileName);//TODO#278 eww!
+		}
+		Context = context;
+		CodeElement = copy;
+	}
+
 	public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
 		var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
 		SymbolDefinition name = null;

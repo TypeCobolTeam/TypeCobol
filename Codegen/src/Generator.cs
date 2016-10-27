@@ -131,9 +131,7 @@ namespace TypeCobol.Codegen {
 			}
 
 			if (location == null || location.ToLower().Equals("node")) return node;
-			var root = node;
-			while(root.Parent != null) root = root.Parent;
-
+			var root = node.Root;
 			var result = root.Get(location);
 			if (result != null) return result;
 			result = Create(root, location);
@@ -149,9 +147,15 @@ namespace TypeCobol.Codegen {
 				path.Append(part);
 				var current = node.Get(path.ToString());
 				if (current == null) {
-					current = factory.Create(part);
+					string nextsibling;
+					current = factory.Create(part, out nextsibling);
 					if (current == null) return null;
-					result.Add(current, 0);
+					int index = 0;
+					if (nextsibling != null) {
+						var sibling = result.Get(nextsibling);
+						index = sibling.Parent.IndexOf(sibling);
+					}
+					result.Add(current, index);
 				}
 				result = current;
 				path.Append('.');

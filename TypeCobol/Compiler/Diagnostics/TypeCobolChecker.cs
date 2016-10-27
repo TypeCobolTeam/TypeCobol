@@ -224,11 +224,12 @@ class LibraryChecker: NodeListener {
 				}
 			}
 		}
+		var pgm = (Nodes.Program)node.Root.GetChildren<ProgramIdentification>()[0];
+		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
+		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		if (isPublicLibrary) {
-			if (program.Identification.CopyName == null) {
-				var pnode = node.Root.GetChildren<ProgramIdentification>()[0];
-				DiagnosticUtils.AddError(pnode.CodeElement(), "Missing library copy in IDENTIFICATION DIVISION.", context);
-			}
+			if (copy == null || copy.CodeElement().Name == null)
+				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
 
 			for(int c = 0; c < errorMessages.Count; c++)
 				DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);

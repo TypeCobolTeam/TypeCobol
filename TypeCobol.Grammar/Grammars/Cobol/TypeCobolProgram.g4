@@ -2,6 +2,9 @@ grammar TypeCobolProgram;
 
 import CobolProgramClass;
 
+// TCRFUN_LIBRARY_COPY
+programAttributes: ProgramIdentification LibraryCopy?;
+
 // TCRFUN_DECLARATION_AS_NESTED_PROGRAM
 procedureDivision:
 	ProcedureDivisionHeader declaratives? (functionDeclaration | section)*;

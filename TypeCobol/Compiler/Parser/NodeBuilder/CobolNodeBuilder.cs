@@ -95,9 +95,14 @@ namespace TypeCobol.Compiler.Parser
 				CurrentProgram = new NestedProgram(enclosing);
 				Enter(CurrentProgram.SyntaxTree.Root, context, new SymbolTable(TableOfGlobals));
 			}
-			var terminal = context.ProgramIdentification();
-			CurrentProgram.Identification = terminal != null? (ProgramIdentification)terminal.Symbol : null;
-			Enter(new Nodes.Program(CurrentProgram.Identification), context, CurrentProgram.SymbolTable);
+			var pgm = context.programAttributes();
+			if (pgm != null) CurrentProgram.Identification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;
+			Enter(new Nodes.Program(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
+			if (pgm != null && pgm.LibraryCopy() != null) { // TCRFUN_LIBRARY_COPY
+				var cnode = new Nodes.LibraryCopy((LibraryCopyCodeElement)pgm.LibraryCopy().Symbol);
+				Enter(cnode, pgm, CurrentProgram.SymbolTable);
+				Exit();
+			}
 		}
 
 		public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context) {

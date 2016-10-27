@@ -296,6 +296,10 @@ public class Program: Node, CodeElementHolder<ProgramIdentification> {
 		}
 	}
 }
+public class LibraryCopy: Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
+	public LibraryCopy(LibraryCopyCodeElement ce): base(ce) { }
+	public override string ID { get { return "copy"; } }
+}
 
 public class Class: Node, CodeElementHolder<ClassIdentification> {
 	public Class(ClassIdentification identification): base(identification) { }

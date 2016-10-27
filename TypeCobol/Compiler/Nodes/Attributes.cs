@@ -279,9 +279,9 @@ public class Definitions {
 
 	public class NList: List<Node> {
 		internal NList(): base() { }
-		public IList<Node> Public  { get { return retrieve(AccessModifier.Public); } }
-		public IList<Node> Private { get { return retrieve(AccessModifier.Private); } }
-		private IList<Node> retrieve(AccessModifier visibility) {
+		public List<Node> Public  { get { return retrieve(AccessModifier.Public); } }
+		public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
+		private List<Node> retrieve(AccessModifier visibility) {
 			var results = new List<Node>();
 			foreach(var node in this) {
 				var fun = node as FunctionDeclaration;
@@ -303,10 +303,10 @@ internal class VisibilityAttribute: Attribute {
 
 internal class LibraryCopyAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var root = ((Node)o).Root;
-		var program = root.GetChildren<ProgramIdentification>()[0];
-		var copy = program.CodeElement().CopyName;
-		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.Name;
+		var pgm = (Program)((Node)o).Root.GetChildren<ProgramIdentification>()[0];
+		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
+		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
+		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
 	}
 }
 

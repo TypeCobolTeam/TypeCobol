@@ -86,10 +86,6 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
 			var program = new ProgramIdentification();
 			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
-			if (context.UserDefinedWord() != null) { // TCRFUN_LIBRARY_COPY
-				var value = CobolWordsBuilder.CreateAlphanumericValue(context.UserDefinedWord());
-				program.CopyName = new SymbolDefinition(value, SymbolType.FileName);//TODO#278 eww!
-			}
 			if (context.COMMON() != null) {
 				program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
 			}
@@ -100,7 +96,6 @@ namespace TypeCobol.Compiler.Parser
 				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
 			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-
 			Context = context;
 			CodeElement = program;
 		}

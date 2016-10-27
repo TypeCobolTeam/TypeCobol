@@ -14,7 +14,7 @@
       * "1"@(122:8>127:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
-      *SERVICE IS YFUNCOPY.
+      *SERVICE IS YFUNCOPY.                                                   
        DATA DIVISION.                                                         
        WORKING-STORAGE SECTION.                                               
        01  LibFctList-Loaded PIC X(01) VALUE SPACE.                           

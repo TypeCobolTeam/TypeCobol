@@ -8,6 +8,7 @@ cobolCodeElements: codeElement* EOF;
 tcCodeElement:
 	  functionDeclarationHeader
 	| functionDeclarationEnd
+	| libraryCopy
 	;
 
 
@@ -61,12 +62,7 @@ setStatementForConditions:
 
 
 
-programIdentification:
-	(IDENTIFICATION | ID) DIVISION PeriodSeparator
-	PROGRAM_ID PeriodSeparator? programNameDefinition
-	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
-	(SERVICE ID? IS? UserDefinedWord PeriodSeparator?)? // TCRFUN_LIBRARY_COPY
-	authoringProperties;
+libraryCopy: SERVICE ID? IS? UserDefinedWord PeriodSeparator?; // TCRFUN_LIBRARY_COPY
 
 
 

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Text;
+﻿namespace TypeCobol.Compiler.CodeElements {
 
-namespace TypeCobol.Compiler.CodeElements
-{
     public class ProgramIdentification : CodeElement
     {
         public ProgramIdentification() : base(CodeElementType.ProgramIdentification) { }
@@ -30,8 +27,6 @@ namespace TypeCobol.Compiler.CodeElements
         /// must have unique program-names within that separately compiled program.
         /// </summary>
         public SymbolDefinition ProgramName { get; set; }
-
-        public SymbolDefinition CopyName { get; set; }
 
         /// <summary>
         /// Some optional paragraphs in the IDENTIFICATION DIVISION can be omitted.
@@ -80,21 +75,25 @@ namespace TypeCobol.Compiler.CodeElements
         public SyntaxProperty<bool> Common { get; set; }
         public bool IsCommon { get { return Common != null && Common.Value; } }
 
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder(base.ToString());
-            sb.AppendLine("- ProgramName = " + ProgramName);
-            sb.AppendLine("- IsInitial = " + IsInitial);
-            sb.AppendLine("- IsRecursive = " + IsRecursive);
-            sb.AppendLine("- IsCommon = " + IsCommon);
-            if (AuthoringProperties != null)
-            {
-                sb.Append(AuthoringProperties);
-            }
-            return sb.ToString();
-        }
+		public override string ToString() {
+			var sb = new System.Text.StringBuilder(base.ToString());
+			sb.AppendLine("- ProgramName = " + ProgramName);
+			sb.AppendLine("- IsInitial = " + IsInitial);
+			sb.AppendLine("- IsRecursive = " + IsRecursive);
+			sb.AppendLine("- IsCommon = " + IsCommon);
+			if (AuthoringProperties != null) {
+				sb.Append(AuthoringProperties);
+			}
+			return sb.ToString();
+		}
     }
+
+
+
+public class LibraryCopyCodeElement: CodeElement {
+	public LibraryCopyCodeElement(): base(CodeElementType.LibraryCopy) { }
+	public SymbolDefinition Name { get; set; }
 }
+
+}
+

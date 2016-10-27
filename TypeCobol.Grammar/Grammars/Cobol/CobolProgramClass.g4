@@ -159,6 +159,7 @@ tokens
     WriteStatementEnd,
     XmlStatementEnd,
 //	[TYPECOBOL]
+	LibraryCopy,
 	FunctionDeclarationHeader,
 	FunctionDeclarationEnd,
 //	[/TYPECOBOL]
@@ -199,12 +200,14 @@ cobolCompilationUnit :
 // p84 : Format: COBOL source program
 
 cobolProgram:
-	ProgramIdentification
+	programAttributes
 	environmentDivision?
 	dataDivision?
 	procedureDivision?
 		nestedProgram=cobolProgram*
 	ProgramEnd?;
+
+programAttributes: ProgramIdentification;
 
 environmentDivision:
 	EnvironmentDivisionHeader  
