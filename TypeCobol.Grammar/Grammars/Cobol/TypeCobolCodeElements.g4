@@ -62,7 +62,7 @@ setStatementForConditions:
 
 
 
-libraryCopy: SERVICE ID? IS? UserDefinedWord PeriodSeparator?; // TCRFUN_LIBRARY_COPY
+libraryCopy: SERVICE ID? IS? qualifiedTextName PeriodSeparator?; // TCRFUN_LIBRARY_COPY
 
 
 
