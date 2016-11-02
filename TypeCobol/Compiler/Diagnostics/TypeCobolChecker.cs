@@ -231,6 +231,9 @@ class LibraryChecker: NodeListener {
 			if (copy == null || copy.CodeElement().Name == null)
 				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
 
+			if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
+				DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.", context);
+
 			for(int c = 0; c < errorMessages.Count; c++)
 				DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);
 		}

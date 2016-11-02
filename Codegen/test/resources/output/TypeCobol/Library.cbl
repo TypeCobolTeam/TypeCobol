@@ -1,5 +1,6 @@
-﻿      * 13 CodeElements errors
+﻿      * 14 CodeElements errors
       * "1"@(1:8>3:16): [27:1] Syntax error : Missing library copy in IDENTIFICATION DIVISION.
+      * "1"@(42:8>42:16): [27:1] Syntax error : Illegal 1 USING in library PROCEDURE DIVISION.
       * "1"@(73:12>75:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
       * "1"@(96:12>96:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
       * "1"@(97:12>97:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
@@ -86,7 +87,7 @@
 
       *=================================================================
       *PROCEDURE DIVISION USING DVZDAT.                                       
-       PROCEDURE DIVISION USING DVZDAT CallData.                              
+       PROCEDURE DIVISION USING CallData.                                     
            IF CallIsCopy                                                      
              PERFORM Copy-Process-Mode                                        
            ELSE                                                               
