@@ -140,7 +140,7 @@
 @{
   var entries = "";
   foreach (var f in %definitions.functions.Public) {
-    entries += "\n    SET FCT-"+f.Name+"   TO ENTRY \'"+f.Hash+'\'';
+    entries += "\n    SET FCT-"+f.Label+"   TO ENTRY \'"+f.Hash+'\'';
   }
 }
 Copy-Process-Mode.

@@ -128,10 +128,10 @@
        Copy-Process-Mode.                                                     
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
-           SET FCT-DoesNothing   TO ENTRY '05a59b2c'                          
-           SET FCT-DoesNothing   TO ENTRY '8fe03398'                          
-           SET FCT-ReturnsZero   TO ENTRY '9072a866'                          
-           SET FCT-IllegalClauses   TO ENTRY 'e6215ae7'                       
+           SET FCT-DoesNothing-01   TO ENTRY '05a59b2c'                       
+           SET FCT-DoesNothing-02   TO ENTRY '8fe03398'                       
+           SET FCT-ReturnsZero-01   TO ENTRY '9072a866'                       
+           SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'                    
            .                                                                  
                                                                               
        FctList-Process-Mode.                                                  
@@ -192,7 +192,7 @@
        END PROGRAM 8fe03398.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000004.                                                  
+       PROGRAM-ID. StrangelyReturnsItsInput-01.                               
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -208,10 +208,10 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM F0000004.                                                  
+       END PROGRAM StrangelyReturnsItsInput-01.                               
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000005.                                                  
+       PROGRAM-ID. SumThreeWithClutterInLinkag-01.                            
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -233,10 +233,10 @@
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM F0000005.                                                  
+       END PROGRAM SumThreeWithClutterInLinkag-01.                            
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000006.                                                  
+       PROGRAM-ID. SwapParameters-01.                                         
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
@@ -251,10 +251,10 @@
            MOVE y TO x
            MOVE tmp TO y
            .
-       END PROGRAM F0000006.                                                  
+       END PROGRAM SwapParameters-01.                                         
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000007.                                                  
+       PROGRAM-ID. SwapParametersWrong-01.                                    
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -268,7 +268,7 @@
                    BY REFERENCE b                                             
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000007.                                                  
+       END PROGRAM SwapParametersWrong-01.                                    
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e6215ae7.                                                  
@@ -282,7 +282,7 @@
        END PROGRAM e6215ae7.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000009.                                                  
+       PROGRAM-ID. FunConditions-01.                                          
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
@@ -293,10 +293,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000009.                                                  
+       END PROGRAM FunConditions-01.                                          
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000010.                                                  
+       PROGRAM-ID. FunConditions-02.                                          
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 valid-gender.                                                       
@@ -307,10 +307,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000010.                                                  
+       END PROGRAM FunConditions-02.                                          
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000011.                                                  
+       PROGRAM-ID. MyNOT-01.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC X     VALUE LOW-VALUE.                                        
@@ -329,4 +329,4 @@
       *      SET y TO FALSE                                                   
                SET y-false TO TRUE.                                           
            END-IF.
-       END PROGRAM F0000011.                                                  
+       END PROGRAM MyNOT-01.                                                  

@@ -146,7 +146,7 @@
        END PROGRAM Functions.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. F0000001.                                                  
+       PROGRAM-ID. POW-01.                                                    
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(05).                                                        
@@ -158,4 +158,4 @@
                    BY REFERENCE result                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM F0000001.                                                  
+       END PROGRAM POW-01.                                                    

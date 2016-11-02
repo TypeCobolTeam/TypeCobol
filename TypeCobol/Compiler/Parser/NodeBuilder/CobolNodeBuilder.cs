@@ -357,7 +357,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-		private long functionsCounter = 0;
+		private Tools.UIDStore uidfactory = new Tools.UIDStore();
 		/// <summary>Parent node: PROCEDURE DIVISION</summary>
 		/// <param name="context">DECLARE FUNCTION</param>
 		public override void EnterFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
@@ -365,7 +365,7 @@ namespace TypeCobol.Compiler.Parser
 			var header = terminal != null? (FunctionDeclarationHeader)terminal.Symbol : null;
 			if (header != null) header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
 			var node = new FunctionDeclaration(header);
-			node.Label = "F"+(++functionsCounter).ToString("0000000");
+			node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
 			node.Library = CurrentProgram.Identification.ProgramName.Name;
 			CurrentProgram.CurrentTable.AddFunction(node);
 			Enter(node, context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));

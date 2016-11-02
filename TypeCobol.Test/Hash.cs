@@ -16,4 +16,51 @@ public class Hashes {
 	}
 }
 
+[TestClass]
+public class HumanReadableUID {
+	[TestMethod]
+	public void TestUIDStoreConstruction() {
+		UIDStore lut;
+		lut = new UIDStore();
+		Assert.AreEqual(lut.MaxSize, UIDStore.DEFAULT_MAX_SIZE);
+		Assert.AreEqual(lut.MaxItems, 99);
+		Assert.AreEqual(lut.TruncatedSize, 27);
+		lut = new UIDStore(20, 9);
+		Assert.AreEqual(lut.MaxSize, 20);
+		Assert.AreEqual(lut.MaxItems, 9);
+		Assert.AreEqual(lut.TruncatedSize, 18);
+		lut = new UIDStore(20,10);
+		Assert.AreEqual(lut.MaxSize, 20);
+		Assert.AreEqual(lut.MaxItems, 10);
+		Assert.AreEqual(lut.TruncatedSize, 17);
+		lut = new UIDStore(100,999);
+		Assert.AreEqual(lut.MaxSize, 100);
+		Assert.AreEqual(lut.MaxItems, 999);
+		Assert.AreEqual(lut.TruncatedSize, 96);
+	}
+	[TestMethod]
+	public void TestUIDStore() {
+		var lut = new UIDStore();
+
+		Assert.IsNull(lut.FromGenerated("titi-01"));
+		Assert.IsNull(lut.FromGenerated("toto-01"));
+		Assert.IsNull(lut.FromGenerated("0123456789012345678901234567-01"));
+
+		Assert.AreEqual(lut.FromOriginal("titi"), "titi-01");
+		Assert.AreEqual(lut.FromOriginal("toto"), "toto-01");
+		Assert.AreEqual(lut.FromOriginal("titi"), "titi-02");
+		Assert.AreEqual(lut.FromOriginal("123456789012345678901234567890"), "123456789012345678901234567-01");
+		Assert.AreEqual(lut.FromOriginal("123456789012345678901234567890"), "123456789012345678901234567-02");
+
+		Assert.AreEqual(lut.FromGenerated("titi-01"), "titi");
+		Assert.AreEqual(lut.FromGenerated("titi-02"), "titi");
+		Assert.IsNull(lut.FromGenerated("titi-03"));
+		Assert.AreEqual(lut.FromGenerated("toto-01"), "toto");
+		Assert.IsNull(lut.FromGenerated("toto-02"));
+		Assert.AreEqual(lut.FromGenerated("123456789012345678901234567-01"), "123456789012345678901234567890");
+		Assert.AreEqual(lut.FromGenerated("123456789012345678901234567-02"), "123456789012345678901234567890");
+		Assert.IsNull(lut.FromGenerated("123456789012345678901234567-03"));
+	}
+}
+
 }

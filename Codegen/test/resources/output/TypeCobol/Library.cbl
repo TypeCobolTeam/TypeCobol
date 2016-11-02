@@ -120,10 +120,10 @@
        Copy-Process-Mode.                                                     
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
-           SET FCT-currentDate   TO ENTRY '42e5f209'                          
-           SET FCT-currentDateDB2   TO ENTRY '27128b8a'                       
-           SET FCT-currentDateJulian   TO ENTRY '6c4e76b4'                    
-           SET FCT-currentDateFreeFormat   TO ENTRY 'd55b3ea7'                
+           SET FCT-currentDate-01   TO ENTRY '42e5f209'                       
+           SET FCT-currentDateDB2-01   TO ENTRY '27128b8a'                    
+           SET FCT-currentDateJulian-01   TO ENTRY '6c4e76b4'                 
+           SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'             
            .                                                                  
                                                                               
        FctList-Process-Mode.                                                  
