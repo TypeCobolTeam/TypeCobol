@@ -89,14 +89,10 @@ public class GeneratedParameter: CallTargetParameter {
 internal class Sentence: Compiler.Nodes.Sentence, Generated {
 	public Sentence(): base() { }
 
-	private IList<ITextLine> _cache = null;
+	private IList<ITextLine> _nuthin = new List<ITextLine>();
 	public override IEnumerable<ITextLine> Lines {
 		get {
-			if (_cache == null) {
-				_cache = new List<ITextLine>();
-				_cache.Add(new TextLineSnapshot(-1, "DATA DIVISION.", null));
-			}
-			return _cache;
+			return _nuthin;
 		}
 	}
 	public bool IsLeaf { get { return false; } }
