@@ -28,5 +28,8 @@ if __name__ == '__main__':
     archive = zipfile.ZipFile(archive_name, 'w')
     for f in files:
         archive.write(os.path.join(path, f), os.path.basename(f))
+    readme = 'README.txt'
+    os.system('%s --help > %s' % (os.path.join(path, files[0]), readme))
+    archive.write(readme, readme)
     archive.close()
 

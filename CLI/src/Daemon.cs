@@ -46,7 +46,7 @@ namespace TypeCobol.Server
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "c|codegen-on-error",  "If present, this generates code even if there are parsing errors.", v => config.Safe = (v==null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
-                { "s|skeletons=", "{PATH} to the skeletons files (used to generate code).", (string v) => config.skeletonPath = v },
+				{ "s|skeletons=", "{PATH} to the skeletons files.", (string v) => config.skeletonPath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
