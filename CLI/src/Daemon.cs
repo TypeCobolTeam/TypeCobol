@@ -44,7 +44,7 @@ namespace TypeCobol.Server
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", (string v) => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", (string v) => config.OutputFiles.Add(v) },
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
-				{ "c|codegen-on-error",  "If present, this generates code even if there are parsing errors.", v => config.Safe = (v!=null) },
+				{ "c|codegen-on-error",  "If present, this generates code even if there are parsing errors.", v => config.Safe = (v==null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", (string v) => config.ErrorFile = v },
                 { "s|skeletons=", "{PATH} to the skeletons files (used to generate code).", (string v) => config.skeletonPath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
