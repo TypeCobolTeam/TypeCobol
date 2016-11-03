@@ -88,7 +88,7 @@
 @{
   var items = "";
   foreach (var f in %definitions.functions.Public) {
-    items += "*      05 :"+%copyname+":-"+f.Name+"   PROCEDURE-POINTER VALUE NULL.\n";
+    items += "*      05 :"+%copyname+":-"+f.Label+"   PROCEDURE-POINTER VALUE NULL.\n";
   }
 }
 *01  :%copyname:.
