@@ -13,20 +13,20 @@ namespace TypeCobol.Test {
 		[TestMethod]
 		[TestCategory("Parsing")]
 		[TestProperty("Time","long")]
-		[Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
+		//[Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
 		public void CheckGrammarCorrectness() {
 
 			int STOP_AFTER_AS_MANY_ERRORS = 1000;
 			string regex = "*.PGM";
 			string samples = @"Samples";
 			string root = PlatformUtils.GetPathForProjectFile(samples);
-			string[] files = Directory.GetFiles(root, regex, System.IO.SearchOption.AllDirectories);
+			string[] files = Directory.GetFiles(root, regex, SearchOption.AllDirectories);
 			string[] include = { };
 			string[] exclude = { };
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
-			System.IO.File.WriteAllText("CheckGrammarResults.txt", "");
+			File.WriteAllText("CheckGrammarResults.txt", "");
 			int tested = 0, nbFilesInError = 0, ignores = 0;
 			TimeSpan sum = new TimeSpan(0);
 			int parseErrors = 0;
@@ -34,12 +34,12 @@ namespace TypeCobol.Test {
 			foreach (var file in files) {
 
 				string filename = Path.GetFileName(file);
-				System.IO.File.AppendAllText("CheckGrammarResults.txt", (filename + ':'));
+				File.AppendAllText("CheckGrammarResults.txt", (filename + ':'));
 				bool ignore = include.Length > 0 && !include.Contains(filename);
 				if (!ignore) ignore = exclude.Contains(filename);
 				if (ignore) {
 					ignores++;
-					System.IO.File.AppendAllText("CheckGrammarResults.txt", " ignored.\n");
+					File.AppendAllText("CheckGrammarResults.txt", " ignored.\n");
 					continue;
 				}
 				string path = Path.Combine(root, filename);
@@ -51,7 +51,7 @@ namespace TypeCobol.Test {
 				TimeSpan elapsed = watch.Elapsed;
 				sum += elapsed;
 				string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-				System.IO.File.AppendAllText("CheckGrammarResults.txt", (" parsed in " + formatted + "\n"));
+				File.AppendAllText("CheckGrammarResults.txt", (" parsed in " + formatted + "\n"));
 
 				tested++;
 				bool okay = true;
@@ -106,7 +106,7 @@ namespace TypeCobol.Test {
 						errors.AppendLine(String.Format("+{0:"+fmt+"} {1}", i, actual[i]));
 					if (errors.Length > 0) {
 						codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
-						System.IO.File.AppendAllText("CheckGrammarResults.txt", errors.ToString());
+						File.AppendAllText("CheckGrammarResults.txt", errors.ToString());
 						if (okay) nbFilesInError++;
 					}
 				}
@@ -116,26 +116,26 @@ namespace TypeCobol.Test {
 			if (parseErrors > 0)   message += "Parsing errors: "+ parseErrors   + '\n';
 			if (codegenErrors > 0) message += "Codegen errors: "+ codegenErrors + '\n';
 			message += "Total time: " + total;
-			System.IO.File.AppendAllText("CheckGrammarResults.txt", message);
+			File.AppendAllText("CheckGrammarResults.txt", message);
 			if (nbFilesInError > 0) Assert.Fail('\n'+message);
 		}
 
 		private bool hasErrors(TypeCobol.Compiler.Parser.CodeElementsDocument document) {
-			return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Count() > 0;
+			return document != null && document.ParserDiagnostics != null && document.ParserDiagnostics.Any();
 		}
 		private bool hasErrors(TypeCobol.Compiler.Parser.ProgramClassDocument document) {
-			return document != null && document.Diagnostics != null && document.Diagnostics.Count() > 0;
+			return document != null && document.Diagnostics != null && document.Diagnostics.Any();
 		}
 		private int checkErrors(string filename, IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics) {
 			Console.WriteLine(filename);
 			string result = ParserUtils.DiagnosticsToString(diagnostics);
 			Console.WriteLine(result);
-			System.IO.File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
+			File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
 			return diagnostics.Count();
 		}
 
 		private List<string> AsLines(string text) {
-			return text.Replace("\r\n","\n").Replace("\r","\n").Split(new char[]{'\n'}).ToList<string>();
+			return text.Replace("\r\n","\n").Replace("\r","\n").Split('\n').ToList<string>();
 		}
 		private string Lines2FormatString(int lines) {
 			string res = "0";
