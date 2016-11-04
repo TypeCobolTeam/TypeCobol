@@ -44,6 +44,10 @@ namespace TypeCobol.Compiler.Parser
 					foreach(var types in value.Types)
 						foreach(var type in types.Value)
 							TableOfIntrisic.AddType((TypeDefinition)type);
+					foreach(var functions in value.Functions)
+						foreach(var function in functions.Value)
+							if (((FunctionDeclarationHeader)function.CodeElement).Visibility == AccessModifier.Public)
+								TableOfIntrisic.AddFunction((FunctionDeclaration)function);
 				}
 				// TODO#249: use a COPY for these
 				foreach (var type in DataType.BuiltInCustomTypes)

@@ -364,7 +364,7 @@ public class SymbolTable {
 
 	public Dictionary<string,List<Node>> Functions = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
 
-	internal void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
+	public void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
 
 	public List<Node> GetFunction(QualifiedName name, ParametersProfile profile = null) {
 		var found = GetFunction(name.Head);

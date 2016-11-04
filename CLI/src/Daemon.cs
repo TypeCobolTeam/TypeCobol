@@ -17,7 +17,7 @@ namespace TypeCobol.Server
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
-		    public string skeletonPath = "";
+			public string skeletonPath = "";
 			public bool IsErrorXML {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
 			}
@@ -31,7 +31,7 @@ namespace TypeCobol.Server
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
-            var p = new OptionSet () {
+			var p = new OptionSet () {
 				"USAGE",
 				"  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
 				"",
@@ -145,7 +145,7 @@ namespace TypeCobol.Server
 			writer.Flush();
 		}
 
-        private static void AddError(AbstractErrorWriter writer, string message, string path) {
+		private static void AddError(AbstractErrorWriter writer, string message, string path) {
 			var error = new TypeCobol.Tools.Diagnostic();
 			error.Message = message;
 			error.Code = "codegen";
@@ -168,17 +168,21 @@ namespace TypeCobol.Server
 				parser.Init(path);
 				parser.Parse(path);
 
-                if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
-                if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
-                {
-                    Console.WriteLine("Error: Your Intrisic types are not included into a program.");
-                    continue;
-                }
+				if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
+				if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
+					Console.WriteLine("Error: Your Intrisic types are not included into a program.");
+					continue;
+				}
 
-				foreach (var types in parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.Types)
+				var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
+				foreach(var types in symbols.Types)
 					foreach(var type in types.Value)
-						table.AddType((TypeCobol.Compiler.Nodes.TypeDefinition)type);//TODO check if already there
-            }
+						table.AddType((Compiler.Nodes.TypeDefinition)type);
+				foreach(var functions in symbols.Functions)
+					foreach(var function in functions.Value)
+						table.AddFunction((Compiler.Nodes.FunctionDeclaration)function);
+				//TODO check if types or functions are already there
+			}
 			return table;
 		}
 
