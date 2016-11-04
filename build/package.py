@@ -18,7 +18,7 @@ files = [
     'System.Reactive.Windows.Threading.dll',
     'System.Web.Razor.dll',
 
-    os.path.join('resources','config','TypeCobol','ALL.xml'),
+    os.path.join('config','skeletons.xml'),
     ]
 
 if __name__ == '__main__':
@@ -31,5 +31,6 @@ if __name__ == '__main__':
     readme = 'README.txt'
     os.system('%s --help > %s' % (os.path.join(path, files[0]), readme))
     archive.write(readme, readme)
+    os.remove(readme)
     archive.close()
 
