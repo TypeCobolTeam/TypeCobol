@@ -157,9 +157,13 @@ namespace TypeCobol.Server
 			Console.WriteLine(error.Message);
 		}
 
-		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> copies) {
+		private static Compiler.CodeModel.SymbolTable loadCopies(List<string> paths) {
 			var parser = new Parser();
 			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+
+			var copies = new List<string>();
+			foreach(string path in paths) copies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, true));
+
 			foreach(string path in copies) {
 				parser.Init(path);
 				parser.Parse(path);
