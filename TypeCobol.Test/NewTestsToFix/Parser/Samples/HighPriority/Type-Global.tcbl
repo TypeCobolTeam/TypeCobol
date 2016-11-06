@@ -1,0 +1,46 @@
+﻿ID Division. 
+Program-ID. TypeGlobal.          
+Data Division.                 
+Working-Storage Section.    
+*OK a TYPEDEF can be global (TCTYPE_GLOBAL_TYPEDEF)   
+01  NewType typedef pic X global.
+01  NewPrivateType typedef pic X.
+*OK a typed variable can be global (create a Rule on the wiki)
+01 WS-NewType type NewType global.
+procedure division.
+*Ok simple usage of a typed variable
+move WS-NewType to WS-NewType.
+
+Identification Division.                          
+Program-ID. SEC1 Is Common.          
+Data Division.                        
+Working-Storage Section.
+*Ok reference a TYPE defined as global (TCTYPE_GLOBAL_TYPEDEF)
+01  wsNew1 type NewType.  
+01  wsNew2 type NewType.  
+*OK type NewPrivateType is not declared global
+01  wsNew3 type NewPrivateType.
+procedure division.
+*Ok reference a variable defined as global (standard Cobol 85 rule)
+move WS-NewType to WS-NewType
+*Ok reference a variable defined in the same program (standard Cobol 85 rule)
+move wsNew1 to wsNew2
+.
+End Program SEC1. 
+
+Id Division. 
+Program-ID. SEC2 Is Common.          
+Data Division.                        
+Working-Storage Section.
+*Ok reference a TYPE defined as global (TCTYPE_GLOBAL_TYPEDEF)
+01  wsNew1 type NewType.  
+01  wsNew2 type NewType.  
+01  wsNew3 type NewPrivateType.
+procedure division.
+*Ok reference a variable defined as global (standard Cobol 85 rule)
+move WS-NewType to WS-NewType
+*Ok reference a variable defined in the same program (standard Cobol 85 rule)
+move wsNew1 to wsNew2
+.
+End Program SEC2. 
+End Program TypeGlobal.
