@@ -82,7 +82,6 @@
     <Compile Include="Compiler\Text\*.cs" />
     <Content Include="**\Samples\**" />
     <Content Include="**\ResultFiles\**" />
-    <Content Include="NewTestsToFix\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
