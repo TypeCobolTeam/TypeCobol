@@ -886,8 +886,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 		private void AttachEndIfExists(Antlr4.Runtime.Tree.ITerminalNode terminal) {
-            //TODO #331 this can provoke an InvalidCastException (terminal.Symbol is only a IToken if a missing setence end is encoutered
-			var end = terminal != null? (CodeElementEnd)terminal.Symbol : null;
+			var end = terminal != null? terminal.Symbol as CodeElementEnd : null;
 			if (end == null) return;
 			Enter(new End(end));
 			Exit();
