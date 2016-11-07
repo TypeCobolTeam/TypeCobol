@@ -162,7 +162,16 @@ namespace TypeCobol.Compiler.Parser
                     codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, codeElementsLine.InitialLineIndex, codeElementsLine));
 
                     // Visit the parse tree to build a first class object representing the code elements
-                    walker.Walk(codeElementBuilder, codeElementParseTree);
+					try { walker.Walk(codeElementBuilder, codeElementParseTree); }
+					catch (Exception ex) {
+						var code = Diagnostics.MessageCode.ImplementationError;
+						int line = 0; int start = 0; int stop = 0;
+						if (codeElementsLine.SourceTokens != null && codeElementsLine.SourceTokens.Count > 0){
+							start = codeElementsLine.SourceTokens[0].StartIndex;
+							stop = codeElementsLine.SourceTokens[codeElementsLine.SourceTokens.Count-1].StopIndex;
+						}
+						codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), start,stop,line, null, code));
+					}
                     CodeElement codeElement = codeElementBuilder.CodeElement;
                     if (codeElement != null)
                     {
