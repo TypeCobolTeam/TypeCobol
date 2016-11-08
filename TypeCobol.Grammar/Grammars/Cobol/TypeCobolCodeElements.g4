@@ -107,3 +107,22 @@ functionConditionParameter:
 	levelNumber conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
+
+
+
+callStatement: cobolCallStatement | tcCallStatement;
+
+cobolCallStatement:
+	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable
+		(USING callUsingParameters+)?
+		(RETURNING callReturningParameter)?;
+
+tcCallStatement:
+	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable
+		(INPUT  callInputParameter+)?
+		(INOUT  callInoutParameter+)?
+		(OUTPUT callOutputParameter+)?;
+
+callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? variableOrFileNameOrOmitted;
+callInoutParameter: sharedStorageArea1;
+callOutputParameter: sharedStorageArea1;

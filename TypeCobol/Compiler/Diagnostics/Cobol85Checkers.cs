@@ -105,7 +105,7 @@ class CallStatementChecker: CodeElementListener {
 	}
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as CallStatement;
-		var context = c as CodeElementsParser.CallStatementContext;
+		var context = c as CodeElementsParser.CobolCallStatementContext;
 
 		foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 

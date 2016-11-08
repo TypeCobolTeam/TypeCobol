@@ -163,7 +163,9 @@ namespace TypeCobol.Compiler.Parser
 		 // CALL STATEMENT //
 		////////////////////
 
-		internal CallStatement CreateCallStatement(CodeElementsParser.CallStatementContext context) {
+
+
+		internal CallStatement CreateCallStatement(CodeElementsParser.CobolCallStatementContext context) {
 			var statement = new CallStatement();
 			statement.ProgramOrProgramEntryOrProcedureOrFunction = 
 				CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(
@@ -1604,6 +1606,6 @@ namespace TypeCobol.Compiler.Parser
 		private SyntaxProperty<T> CreateSyntaxProperty<T>(T value, ITerminalNode terminalNode) {
 			if (terminalNode == null) return null;
 			return new SyntaxProperty<T>(value, ParseTreeUtils.GetFirstToken(terminalNode));
-		}       
+		}
 	}
 }

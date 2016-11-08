@@ -159,6 +159,17 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		CodeElement = new FunctionDeclarationEnd();
 	}
 
+
+
+	  ////////////////////
+	 // PROCEDURE CALL //
+	////////////////////
+
+	public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context) {
+		Context = context;
+		CodeElement = null;//TODO #287
+	}
+
 }
 
 }
