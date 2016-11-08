@@ -162,6 +162,7 @@ tokens
 	LibraryCopy,
 	FunctionDeclarationHeader,
 	FunctionDeclarationEnd,
+	ProcedureStyleCall,
 //	[/TYPECOBOL]
 }
 
@@ -903,6 +904,7 @@ statement:
 	| PerformProcedureStatement
 // -- program or method linkage --
 	| CallStatement
+	| ProcedureStyleCall
 	| CancelStatement
 	| InvokeStatement
 // -- DB2 & CICS integration --
@@ -935,6 +937,7 @@ statement:
 	| performStatementWithBody
 // -- program or method linkage --
 	| callStatementConditional
+	| procedureStyleCallConditional
 	| invokeStatementConditional
 	;
 
@@ -949,6 +952,8 @@ callStatementConditional:
 	CallStatement
 		(onException | noException | onOverflow)*
 	CallStatementEnd?;
+
+procedureStyleCallConditional: callStatementConditional;
 
 computeStatementConditional:
 	ComputeStatement

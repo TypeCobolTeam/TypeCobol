@@ -122,7 +122,8 @@ tcCallStatement:
 	CALL functionNameReference
 		(INPUT  callInputParameter+)?
 		(INOUT  callInoutParameter+)?
-		(OUTPUT callOutputParameter+)?;
+		(OUTPUT callOutputParameter+)?
+	;
 
 callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileName; // TCRFUN_CALL_INPUT_BY
 callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE

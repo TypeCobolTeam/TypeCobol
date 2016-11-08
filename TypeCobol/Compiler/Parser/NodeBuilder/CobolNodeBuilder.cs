@@ -505,6 +505,8 @@ namespace TypeCobol.Compiler.Parser
 			else if (context.AlterStatement() != null) Enter(new Alter((AlterStatement)context.AlterStatement().Symbol), context);
 			else if (context.CallStatement() != null) Enter(new Call((CallStatement)context.CallStatement().Symbol), context);
 			else if (context.callStatementConditional() != null) { }// Node will be created in EnterCallStatementConditional
+			else if (context.ProcedureStyleCall() != null) Enter(new ProcedureStyleCall((ProcedureStyleCallStatement)context.ProcedureStyleCall().Symbol), context);
+			else if (context.procedureStyleCallConditional() != null) { }// Node will be created in EnterProcedureStyleCallConditional
 			else if (context.CancelStatement() != null) Enter(new Cancel((CancelStatement)context.CancelStatement().Symbol), context);
 			else if (context.ContinueStatement() != null) Enter(new Continue((ContinueStatement)context.ContinueStatement().Symbol), context);
 			else if (context.DeleteStatement() != null) Enter(new Delete((DeleteStatement)context.DeleteStatement().Symbol), context);
@@ -773,6 +775,14 @@ namespace TypeCobol.Compiler.Parser
 			Enter(new Call(statement), context);
 		}
 		public override void ExitCallStatementConditional(ProgramClassParser.CallStatementConditionalContext context) {
+			AttachEndIfExists(context.CallStatementEnd());
+		}
+		public override void EnterProcedureStyleCallConditional(ProgramClassParser.ProcedureStyleCallConditionalContext context) {
+			var terminal = context.ProcedureStyleCall();
+			var statement = terminal != null? (ProcedureStyleCallStatement)terminal.Symbol : null;
+			Enter(new ProcedureStyleCall(statement), context);
+		}
+		public override void ExitProcedureStyleCallConditional(ProgramClassParser.ProcedureStyleCallConditionalContext context) {
 			AttachEndIfExists(context.CallStatementEnd());
 		}
 		public override void EnterInvokeStatementConditional(ProgramClassParser.InvokeStatementConditionalContext context) {

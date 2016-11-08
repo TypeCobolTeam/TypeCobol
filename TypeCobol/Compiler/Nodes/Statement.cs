@@ -21,6 +21,9 @@ public class Alter: Node, CodeElementHolder<AlterStatement>, Statement {
 public class Call: Node, CodeElementHolder<CallStatement>, Statement {
 	public Call(CallStatement statement): base(statement) { }
 }
+public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement {
+	public ProcedureStyleCall(ProcedureStyleCallStatement statement): base(statement) { }
+}
 
 public class Cancel: Node, CodeElementHolder<CancelStatement>, Statement {
 	public Cancel(CancelStatement statement): base(statement) { }
