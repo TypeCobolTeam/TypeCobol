@@ -166,8 +166,37 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	////////////////////
 
 	public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context) {
+		var name = CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference());
+		var inputs = new List<CallSiteParameter>();
+		foreach(var p in context.callInputParameter()) {
+			inputs.Add(new CallSiteParameter {
+					SharingMode = CreateSharingMode(p),
+					StorageAreaOrValue = CobolExpressionsBuilder.CreateSharedVariableOrFileName(p.sharedVariableOrFileName()),
+				});
+		}
+		var inouts = new List<CallSiteParameter>();
+		foreach(var p in context.callInoutParameter()) {
+			inouts.Add(new CallSiteParameter {
+					SharingMode = new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null),
+					StorageAreaOrValue = new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1())),
+				});
+		}
+		var outputs = new List<CallSiteParameter>();
+		foreach(var p in context.callOutputParameter()) {
+			outputs.Add(new CallSiteParameter {
+					SharingMode = new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null),
+					StorageAreaOrValue = new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1())),
+				});
+		}
 		Context = context;
-		CodeElement = null;//TODO #287
+		CodeElement = new ProcedureStyleCall(new ProcedureCall(name, inputs,inouts,outputs));
+	}
+
+	private SyntaxProperty<ParameterSharingMode> CreateSharingMode(CodeElementsParser.CallInputParameterContext parameter) {
+		if (parameter.REFERENCE() != null) return CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByReference, parameter.REFERENCE());
+		if (parameter.CONTENT()   != null) return CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByContent,   parameter.CONTENT());
+		if (parameter.VALUE()     != null) return CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByValue,     parameter.VALUE());
+		return new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null);
 	}
 
 }

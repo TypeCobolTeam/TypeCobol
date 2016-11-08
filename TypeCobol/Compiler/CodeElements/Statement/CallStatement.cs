@@ -131,5 +131,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// that include the RETURNING phrase.
         /// </summary>
         public CallSiteParameter OutputParameter { get; set; }
-    }   
+    }
+
+
+
+public class ProcedureStyleCall: StatementElement {
+	public FunctionCall FunctionCall { get; private set; }
+
+	public ProcedureStyleCall(FunctionCall call)
+		: base(CodeElementType.CallStatement, StatementType.CallStatement)
+	{
+		this.FunctionCall = call;
+	}
+}
+
 }

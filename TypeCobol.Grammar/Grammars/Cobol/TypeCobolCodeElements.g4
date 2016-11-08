@@ -117,12 +117,13 @@ cobolCallStatement:
 		(USING callUsingParameters+)?
 		(RETURNING callReturningParameter)?;
 
+// TCRFUN_CALL_PARAMETER_ORDER
 tcCallStatement:
-	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable
+	CALL functionNameReference
 		(INPUT  callInputParameter+)?
 		(INOUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?;
 
-callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? variableOrFileNameOrOmitted;
-callInoutParameter: sharedStorageArea1;
-callOutputParameter: sharedStorageArea1;
+callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileName; // TCRFUN_CALL_INPUT_BY
+callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
