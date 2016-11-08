@@ -131,7 +131,7 @@
     IF CallIsCopy
       PERFORM Copy-Process-Mode
     ELSE
-      PEFORM FctList-Process-Mode
+      PERFORM FctList-Process-Mode
     END-IF
 
     GOBACK
@@ -231,6 +231,16 @@ PROCEDURE DIVISION USING CallData.
 *    TODO: error management
     END-IF
       </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace procedure-style invocation by a standard COBOL CALL -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.ProcedureStyleCall" />
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
     </patterns>
   </skeleton>
 

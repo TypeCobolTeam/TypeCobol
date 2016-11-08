@@ -91,7 +91,7 @@
            IF CallIsCopy                                                      
              PERFORM Copy-Process-Mode                                        
            ELSE                                                               
-             PEFORM FctList-Process-Mode                                      
+             PERFORM FctList-Process-Mode                                     
            END-IF                                                             
                                                                               
            GOBACK                                                             
