@@ -406,6 +406,8 @@ class WriteTypeConsistencyChecker: NodeListener {
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
+
+    //TODO move this method to DataDefinition (and ITypedNode implementation ?)
 	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
@@ -419,8 +421,12 @@ class WriteTypeConsistencyChecker: NodeListener {
 			if (data.CodeElement is DataRedefinesEntry) {
 				var redefines = (DataRedefinesEntry)data.CodeElement;
 				var qname = new URI(redefines.RedefinesDataName.Name);
-				var node = (DataDescription)GetSymbol(table, qname);
-				entry = node.CodeElement();
+			    var node = GetSymbol(table, qname);
+			    if (node is DataDescription) {
+			        entry = (DataDescriptionEntry) node.CodeElement;
+			    } else {
+                        entry = GetDataDescriptionEntry(table, redefines);
+			    }
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
 			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
 		}
@@ -430,6 +436,24 @@ class WriteTypeConsistencyChecker: NodeListener {
 		if (types.Count != 1) return null;// symbol type not found or ambiguous
 		return types[0].DataType;
 	}
+
+        /// <summary>
+        /// Quick and dirty method, this checker need to be refactored
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="dataRedefinesEntry"></param>
+        /// <returns></returns>
+        private DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
+            var qname = new URI(dataRedefinesEntry.RedefinesDataName.Name);
+            var node = GetSymbol(table, qname);
+            if (node is DataDescription) {
+                return (DataDescriptionEntry)node.CodeElement;
+            }
+            if (node is DataRedefines) {
+                return GetDataDescriptionEntry(table, (DataRedefinesEntry) node.CodeElement);
+            }
+            throw new NotImplementedException(node.Name);
+        }
 
 }
 
