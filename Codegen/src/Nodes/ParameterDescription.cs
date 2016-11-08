@@ -26,7 +26,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 				string name = this.CodeElement().Name;
 				_cache = new List<ITextLine>();
 				if (this.CodeElement().DataType == DataType.Boolean) {
-					_cache.Add(new TextLineSnapshot(-1, "01 "+name+" PIC X     VALUE LOW-VALUE.", null));
+					_cache.Add(new TextLineSnapshot(-1, "01 "+name+"-value PIC X     VALUE LOW-VALUE.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
 				} else {
