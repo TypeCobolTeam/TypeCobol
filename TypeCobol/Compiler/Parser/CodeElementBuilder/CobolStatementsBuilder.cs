@@ -159,8 +159,8 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		////////////////////
-		// CALL STATEMENT //
+		  ////////////////////
+		 // CALL STATEMENT //
 		////////////////////
 
 		internal CallStatement CreateCallStatement(CodeElementsParser.CallStatementContext context) {
@@ -169,9 +169,9 @@ namespace TypeCobol.Compiler.Parser
 				CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(
 					context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable());
 			statement.InputParameters = new List<CallSiteParameter>();
-			if (context.callProgramInputParameters() != null) {
+			if (context.callUsingParameters() != null) {
 				SyntaxProperty<ParameterSharingMode> sendingMode = new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null);
-				foreach (var inputs in context.callProgramInputParameters()) {
+				foreach (var inputs in context.callUsingParameters()) {
 					if (inputs.REFERENCE() != null) {
 						sendingMode = CreateSyntaxProperty(ParameterSharingMode.ByReference, inputs.REFERENCE());
 					} else
@@ -193,37 +193,34 @@ namespace TypeCobol.Compiler.Parser
 					}
 				}
 			}
-			if (context.callProgramOutputParameter() != null) {
-                var storageArea = CobolExpressionsBuilder.CreateSharedStorageArea(context.callProgramOutputParameter().sharedStorageArea1());
-                if (storageArea != null)
-                {
-                    statement.OutputParameter = new CallSiteParameter() { StorageAreaOrValue = new Variable(storageArea) };
-                }
+			if (context.callReturningParameter() != null) {
+				var storageArea = CobolExpressionsBuilder.CreateSharedStorageArea(context.callReturningParameter().sharedStorageArea1());
+				if (storageArea != null)
+				{
+					statement.OutputParameter = new CallSiteParameter() { StorageAreaOrValue = new Variable(storageArea) };
+				}
 			}
 
-            // Register call parameters (shared storage areas) information at the CodeElement level
-            var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference != null ? statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference : null };
-            int parametersCount =
-                (statement.InputParameters != null ? statement.InputParameters.Count : 0)
-                + (statement.OutputParameter != null ? 1 : 0);
-            callSite.Parameters = new CallSiteParameter[parametersCount];
-            int i = 0;
-            if (statement.InputParameters != null && statement.InputParameters.Count > 0)
-            {
-                foreach (var param in statement.InputParameters)
-                {
-                    callSite.Parameters[i] = param;
-                    i++;
-                }
-            }
-            if (statement.OutputParameter != null)
-            {
-                callSite.Parameters[i] = statement.OutputParameter;
-            }
-            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
-            statement.CallSites.Add(callSite);
+			// Register call parameters (shared storage areas) information at the CodeElement level
+			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference != null ? statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference : null };
+			int parametersCount =
+				(statement.InputParameters != null ? statement.InputParameters.Count : 0)
+				+ (statement.OutputParameter != null ? 1 : 0);
+			callSite.Parameters = new CallSiteParameter[parametersCount];
+			int i = 0;
+			if (statement.InputParameters != null && statement.InputParameters.Count > 0) {
+				foreach (var param in statement.InputParameters) {
+					callSite.Parameters[i] = param;
+					i++;
+				}
+			}
+			if (statement.OutputParameter != null) {
+				callSite.Parameters[i] = statement.OutputParameter;
+			}
+			if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+			statement.CallSites.Add(callSite);
 
-            return statement;
+			return statement;
 		}
 		
 		  //////////////////////

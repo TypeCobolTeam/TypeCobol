@@ -107,13 +107,13 @@ class CallStatementChecker: CodeElementListener {
 		var statement = e as CallStatement;
 		var context = c as CodeElementsParser.CallStatementContext;
 
-		foreach (var call in context.callProgramInputParameters()) CheckCallUsings(statement, call);
+		foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
-		if (context.callProgramOutputParameter() != null && statement.OutputParameter == null)
+		if (context.callReturningParameter() != null && statement.OutputParameter == null)
 			DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
 	}
 
-	private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallProgramInputParametersContext context) {
+	private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context) {
 		foreach(var input in statement.InputParameters) {
 			// TODO#249 these checks should be done during semantic phase, after symbol type resolution
 			// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
