@@ -327,6 +327,6 @@
              SET y TO TRUE
            ELSE
       *      SET y TO FALSE                                                   
-               SET y-false TO TRUE.                                           
+               SET y-false TO TRUE                                            
            END-IF.
        END PROGRAM MyNOT-01.                                                  

@@ -42,7 +42,7 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-        SET %receiver-false TO TRUE.
+        SET %receiver-false TO TRUE
       </pattern>
     </patterns>
   </skeleton>
