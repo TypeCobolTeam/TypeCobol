@@ -136,12 +136,12 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 public class ProcedureStyleCallStatement: StatementElement {
-	public FunctionCall FunctionCall { get; private set; }
+	public ProcedureCall ProcedureCall { get; private set; }
 
-	public ProcedureStyleCallStatement(FunctionCall call)
+	public ProcedureStyleCallStatement(ProcedureCall call)
 		: base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
 	{
-		this.FunctionCall = call;
+		this.ProcedureCall = call;
 	}
 }
 

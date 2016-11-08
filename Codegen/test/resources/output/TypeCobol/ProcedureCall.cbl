@@ -26,13 +26,11 @@
       *  .                                                                    
 
        TRAITEMENT.
-      *    CALL ValidateDateFormat
-      *             INPUT      somedate someformat
-      *             OUTPUT     flag     realformat
-      *    END-CALL
-           CALL ValidateDateFormat
-                    USING somedate someformat flag realformat
-           END-CALL
+      *    CALL ValidateDateFormat                                            
+      *             INPUT      somedate someformat                            
+      *             OUTPUT     flag     realformat                            
+       CALL ValidateDateFormat                                                
+           USING  somedate someformat flag realformat                         
            .
 
        END PROGRAM ProcedureCall.
