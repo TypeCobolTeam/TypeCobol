@@ -22,10 +22,37 @@
        END-DECLARE.
 
        TRAITEMENT.
+      * __________________________________________________
+      * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
+           CALL ValidateDateFormat
+                    INPUT      somedate someformat
+                    OUTPUT     flag     realformat
+       
            CALL ValidateDateFormat
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat
            END-CALL
+      * __________________________________________________
+      * KO : procedure doesn't exist
+           CALL ValidateDatFormatt
+                    INPUT      somedate someformat
+                    OUTPUT              realformat
+           END-CALL
+      * __________________________________________________
+      * OK : parameter number for a procedure
+      *      however, this is parsed as a standard COBOL call
+           CALL ValidateDateFormat END-CALL
+      * __________________________________________________
+      * KO : wrong parameter number (TCRFUN_MATCH_PARAMETERS_NUMBER)
+           CALL ValidateDateFormat
+                    INPUT      somedate someformat
+                    OUTPUT              realformat
+           END-CALL
+      * __________________________________________________
+      * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
+           CALL ValidateDateFormat
+                    INPUT      someformat somedate
+                    OUTPUT     realformat flag
            .
 
        END PROGRAM ProcedureCall.
