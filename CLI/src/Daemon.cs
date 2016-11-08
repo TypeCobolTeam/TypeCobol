@@ -6,16 +6,13 @@ using System.IO;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
 
-namespace TypeCobol.Server
-{
+namespace TypeCobol.Server {
+
 	class Server {
 
 		class Config {
 			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
-#if DEBUG
-			public bool Safe = true;
-#endif
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
@@ -46,9 +43,6 @@ namespace TypeCobol.Server
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
-#if DEBUG
-				{ "c|codegen-on-error",  "If present, this generates code even if there are parsing errors.", v => config.Safe = (v==null) },
-#endif
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
@@ -137,11 +131,8 @@ namespace TypeCobol.Server
 					errors += e.Diagnostics.Count;
 					writer.AddErrors(path, parser.Converter.GetDiagnostics(e));
 				}
-#if DEBUG
-				if (config.Codegen && (errors == 0 || !config.Safe)) {
-#else
+
 				if (config.Codegen && errors == 0) {
-#endif
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
 					var codegen = new TypeCobol.Codegen.Generator(new StreamWriter(config.OutputFiles[c]), parser.Results.TokensLines, skeletons);
 					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
