@@ -313,10 +313,10 @@
        PROGRAM-ID. MyNOT-01.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
-       01 x PIC X     VALUE LOW-VALUE.                                        
+       01 x-value PIC X     VALUE LOW-VALUE.                                  
            88 x       VALUE 'T'.                                              
            88 x-false VALUE 'F'.                                              
-       01 y PIC X     VALUE LOW-VALUE.                                        
+       01 y-value PIC X     VALUE LOW-VALUE.                                  
            88 y       VALUE 'T'.                                              
            88 y-false VALUE 'F'.                                              
        PROCEDURE DIVISION                                                     

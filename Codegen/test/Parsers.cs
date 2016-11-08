@@ -124,6 +124,14 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Library")+".cbl", skeletons);
 		}
 
+		[TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+		public void ParseProcedureCall() {
+			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","ProcedureCall")+".cbl", skeletons);
+		}
+
 
 	}
 }
