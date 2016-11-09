@@ -93,6 +93,29 @@ class FunctionCallChecker: NodeListener {
 }
 
 
+class FunctionDeclarationTypeChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() {
+		return new List<Type> { typeof(FunctionDeclarationHeader), };
+	}
+	public void OnCodeElement(CodeElement ce, ParserRuleContext context) {
+		var function = (FunctionDeclarationHeader)ce;
+		if (function.ActualType == FunctionType.Undefined) {
+			DiagnosticUtils.AddError(ce, "Incompatible parameter clauses for "+ToString(function.UserDefinedType)+" \""+function.Name+"\"", context);
+		} else
+		if (  (function.ActualType == FunctionType.Function && function.UserDefinedType == FunctionType.Procedure)
+			||(function.ActualType == FunctionType.Procedure && function.UserDefinedType == FunctionType.Function) ) {
+			var message = "Symbol \""+function.Name+"\" is defined as "+ToString(function.UserDefinedType)
+						+", but parameter clauses describe a "+ToString(function.ActualType);
+			DiagnosticUtils.AddError(ce, message, context);
+		}
+	}
+	private string ToString(FunctionType type) {
+		if (type == FunctionType.Undefined) return "symbol";
+		if (type == FunctionType.Function) return "function";
+		if (type == FunctionType.Procedure) return "procedure";
+		return "function or procedure";
+	}
+}
 
 class FunctionDeclarationChecker: NodeListener {
 

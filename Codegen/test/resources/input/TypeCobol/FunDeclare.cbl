@@ -5,13 +5,13 @@
        PROCEDURE DIVISION.
            .
        
-       DECLARE function DoesNothing PUBLIC.
+       DECLARE FUNCTION DoesNothing PUBLIC.
          PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING'
            .
        END-DECLARE.
 
-       DECLARE function ReturnsZero PUBLIC
+       DECLARE FUNCTION ReturnsZero PUBLIC
              RETURNING result PIC 9(04).
          DATA DIVISION.
          PROCEDURE DIVISION.
@@ -20,7 +20,7 @@
        END-DECLARE.
 
       *OK: second function with same name, but profile is different
-       DECLARE function DoesNothing PUBLIC
+       DECLARE FUNCTION DoesNothing PUBLIC
              INPUT x PIC 9(04).
          PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING WITH ' x
@@ -28,7 +28,7 @@
        END-DECLARE.
 
       * ERROR Illegal FILE SECTION
-       DECLARE function StrangelyReturnsItsInput PRIVATE
+       DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
              INPUT     x      PIC 9(04)
              RETURNING result PIC 9(04)
          .
@@ -45,7 +45,7 @@
        END-DECLARE.
 
       * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
-       DECLARE function SumThreeWithClutterInLinkage PRIVATE
+       DECLARE FUNCTION SumThreeWithClutterInLinkage PRIVATE
              INPUT x PIC 9(04)
                    y PIC 9(04)
                    z PIC 9(04)
@@ -68,7 +68,7 @@
            ADD z to result.
        END-DECLARE.
        
-       DECLARE function SwapParameters PRIVATE
+       DECLARE PROCEDURE SwapParameters PRIVATE
              INOUT x PIC 9(04)
                    y PIC 9(04)
          .
@@ -84,7 +84,7 @@
 
       * ERROR because x and y should be INOUT
       * ERROR because y INPUT vs OUTPUT types differ
-       DECLARE function SwapParametersWrong PRIVATE
+       DECLARE PROCEDURE SwapParametersWrong PRIVATE
              INPUT  x PIC 9(04)
                     y PIC 9(04)
                     a PIC 9(04)
@@ -96,7 +96,7 @@
            CONTINUE.
        END-DECLARE.
       * ERROR because illegal GLOBAL or EXTERNAL
-       DECLARE function IllegalClauses PUBLIC.
+       DECLARE FUNCTION IllegalClauses PUBLIC.
          DATA DIVISION.
            WORKING-STORAGE SECTION.
              01 x PIC X IS GLOBAL.
@@ -108,7 +108,7 @@
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
-       DECLARE function FunConditions PRIVATE
+       DECLARE FUNCTION FunConditions PRIVATE
              INPUT  gender PIC X(01)
                  88  valid-gender VALUE 'F' 'M'
                  88  female VALUE 'F'
@@ -119,7 +119,7 @@
        END-DECLARE.
       * ERROR level-88 parameter items must be subordinate to another item
       * ERROR only level-88 parameter items shall have an explicit level number
-       DECLARE function FunConditions PRIVATE
+       DECLARE FUNCTION FunConditions PRIVATE
              INPUT 88 valid-gender VALUE 'F' 'M'
                       gender PIC X(01)
                    88  female VALUE 'F'

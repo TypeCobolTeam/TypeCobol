@@ -1,0 +1,24 @@
+﻿--- Diagnostics ---
+[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 6)
+[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 7)
+[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 8)
+[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureRETURNING" is defined as procedure, but parameter clauses describe a function (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 27)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for function "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 31)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for procedure "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 34)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for symbol "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 37)
+--- Code Elements ---
+fun():():():():Public:Undefined/Both
+fun():():():():Public:Function/Function
+pro():():():():Private:Procedure/Procedure
+NoVisibility():():():():Private:Undefined/Both
+NoVisibility():():():():Private:Function/Function
+NoVisibility():():():():Private:Procedure/Procedure
+fun(i:Numeric):():():():Private:Function/Function
+fun(i:Wherever, j:Numeric, k:Whenever):():():():Public:Function/Function
+fun():():():(k:Numeric):Public:Function/Function
+fun(i:Numeric, j:Wherever):():():(k:Whenever):Private:Function/Function
+FunctionOrProcedure(i:Numeric):():():():Private:Undefined/Both
+ProcedureRETURNING():():():(i:Numeric):Private:Procedure/Function
+Unknown():():(b:Numeric):(d:Numeric):Public:Function/Undefined
+Unknown():(c:Numeric):():(d:Numeric):Public:Procedure/Undefined
+Unknown(a:Numeric):(c:Numeric):(b:Numeric):(d:Numeric):Public:Undefined/Undefined

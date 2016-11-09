@@ -22,13 +22,16 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	}
 
 	public override void EnterFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
+		var type = FunctionType.Undefined;
+		if (context.PROCEDURE() != null) type = FunctionType.Procedure;
+		if (context.FUNCTION()  != null) type = FunctionType.Function;
 		var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
 		SymbolDefinition name = null;
 		if (context.functionNameDefinition() != null) {
 			name = CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
-        }
+		}
 		Context = context;
-		CodeElement = new FunctionDeclarationHeader(name, visibility);
+		CodeElement = new FunctionDeclarationHeader(name, visibility, type);
 	}
 	public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
@@ -67,9 +70,9 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 					var data = CreateFunctionDataParameter(condition);
 					parameters.Add(data);
 				} else {
-                     var parameter = parameters[parameters.Count - 1];
-                        if (parameter.DataConditions == null) parameter.DataConditions = new List<DataConditionEntry>();
-                        parameter.DataConditions.Add(condition);
+					 var parameter = parameters[parameters.Count - 1];
+						if (parameter.DataConditions == null) parameter.DataConditions = new List<DataConditionEntry>();
+						parameter.DataConditions.Add(condition);
 				}
 			}
 		}
@@ -103,58 +106,46 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		SetConditionValues(parameter, context.valueClauseForCondition());
 		return parameter;
 	}
-        
-    public override void ExitFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context)
-    {
-        // Register call parameters (shared storage areas) information at the CodeElement level
-        var functionDeclarationHeader = (FunctionDeclarationHeader)CodeElement;
-        var callTarget = new CallTarget() { Name = functionDeclarationHeader.FunctionName };
-        int parametersCount =
-            (functionDeclarationHeader.Profile.InputParameters != null ? functionDeclarationHeader.Profile.InputParameters.Count : 0)
-            + (functionDeclarationHeader.Profile.OutputParameters != null ? functionDeclarationHeader.Profile.OutputParameters.Count : 0)
-            + (functionDeclarationHeader.Profile.InoutParameters != null ? functionDeclarationHeader.Profile.InoutParameters.Count : 0)
-            + (functionDeclarationHeader.Profile.ReturningParameter != null ? 1 : 0);
-        callTarget.Parameters = new CallTargetParameter[parametersCount];
-        int i = 0;
-        if (functionDeclarationHeader.Profile.InputParameters != null && functionDeclarationHeader.Profile.InputParameters.Count > 0)
-        {
-            foreach (var param in functionDeclarationHeader.Profile.InputParameters)
-            {
-                callTarget.Parameters[i] = CreateCallTargetParameter(param);
-                i++;
-            }
-        }
-        if (functionDeclarationHeader.Profile.OutputParameters != null && functionDeclarationHeader.Profile.OutputParameters.Count > 0)
-        {
-            foreach (var param in functionDeclarationHeader.Profile.OutputParameters)
-            {
-                callTarget.Parameters[i] = CreateCallTargetParameter(param);
-                i++;
-            }
-        }
-        if (functionDeclarationHeader.Profile.InoutParameters != null && functionDeclarationHeader.Profile.InoutParameters.Count > 0)
-        {
-            foreach (var param in functionDeclarationHeader.Profile.InoutParameters)
-            {
-                callTarget.Parameters[i] = CreateCallTargetParameter(param);
-                i++;
-            }
-        }
-        if (functionDeclarationHeader.Profile.ReturningParameter != null)
-        {
-            callTarget.Parameters[i] = CreateCallTargetParameter(functionDeclarationHeader.Profile.ReturningParameter);
-        }
-        functionDeclarationHeader.CallTarget = callTarget;
-    }
-    private static CallTargetParameter CreateCallTargetParameter(ParameterDescriptionEntry param)
-    {
-        var symbolReference = new SymbolReference(param.DataName);
-        var storageArea = new DataOrConditionStorageArea(symbolReference);
-        var callParameter = new CallTargetParameter { StorageArea = storageArea };
-        return callParameter;
-    }
 
-    public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
+	public override void ExitFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context) {
+		// Register call parameters (shared storage areas) information at the CodeElement level
+		var function = (FunctionDeclarationHeader)CodeElement;
+		var target = new CallTarget() { Name = function.FunctionName };
+		int parametersCount = function.Profile.InputParameters.Count
+							+ function.Profile.InoutParameters.Count
+							+ function.Profile.OutputParameters.Count
+							+ (function.Profile.ReturningParameter != null ? 1 : 0);
+		target.Parameters = new CallTargetParameter[parametersCount];
+		int i = 0;
+		foreach (var param in function.Profile.InputParameters) {
+			target.Parameters[i] = CreateCallTargetParameter(param);
+			i++;
+		}
+		foreach (var param in function.Profile.OutputParameters) {
+			target.Parameters[i] = CreateCallTargetParameter(param);
+			i++;
+		}
+		foreach (var param in function.Profile.InoutParameters) {
+			target.Parameters[i] = CreateCallTargetParameter(param);
+			i++;
+		}
+		if (function.Profile.ReturningParameter != null) {
+			target.Parameters[i] = CreateCallTargetParameter(function.Profile.ReturningParameter);
+		}
+		function.CallTarget = target;
+
+		Context = context;
+		CodeElement = function;
+	}
+	private static CallTargetParameter CreateCallTargetParameter(ParameterDescriptionEntry param)
+	{
+		var symbolReference = new SymbolReference(param.DataName);
+		var storageArea = new DataOrConditionStorageArea(symbolReference);
+		var callParameter = new CallTargetParameter { StorageArea = storageArea };
+		return callParameter;
+	}
+
+	public override void EnterFunctionDeclarationEnd(CodeElementsParser.FunctionDeclarationEndContext context) {
 		Context = context;
 		CodeElement = new FunctionDeclarationEnd();
 	}

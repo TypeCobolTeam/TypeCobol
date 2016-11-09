@@ -29,7 +29,7 @@
 
        PROCEDURE DIVISION.
        
-      *DECLARE FUNCTION ValidateDateFormat PRIVATE                            
+      *DECLARE PROCEDURE ValidateDateFormat PRIVATE                           
       *    INPUT mydate        TYPE Date                                      
       *          format        PIC X(08)                                      
       *   OUTPUT okay          TYPE Bool                                      
