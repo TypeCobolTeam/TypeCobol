@@ -87,7 +87,9 @@ public class ParametersProfile {
 		}
 	}
 
+	/// <summary>TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS</summary>
 	public bool IsFunction  { get { return InoutParameters.Count < 1 && OutputParameters.Count < 1; } }
+	/// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
 	public bool IsProcedure { get { return ReturningParameter == null; } }
 
 	public override bool Equals(object other) {
