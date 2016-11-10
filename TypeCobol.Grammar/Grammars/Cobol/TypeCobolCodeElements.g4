@@ -72,6 +72,8 @@ intrinsicFunctionCall: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator 
 userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
 // - TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
+// - TCRFUN_DOTS
+// - TCRFUN_NO_DOT_AFTER_VISIBILITY
 // - TCRFUN_PARAMETER_DECLARATION_ORDER
 // - TCRFUN_0_TO_N_PARAMETERS (possibly 0 parameters because of "?")
 // - TCRFUN_0_TO_1_RETURNING_PARAMETER
@@ -87,8 +89,9 @@ inoutPhrase:  INOUT  parameterDescription+;
 outputPhrase: OUTPUT parameterDescription+;
 functionReturningPhrase: RETURNING parameterDescription;
 
-// parameterDescription is a rule created from dataDescriptionEntry
-// and enforcing rules TCRFUN_PARAMETER_DESCRIPTION TCRFUN_LEVEL_88_PARAMETERS
+// parameterDescription is a rule created from dataDescriptionEntry and enforcing rules:
+// - TCRFUN_PARAMETER_DESCRIPTION
+// - TCRFUN_LEVEL_88_PARAMETERS
 parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 
 functionDataParameter:

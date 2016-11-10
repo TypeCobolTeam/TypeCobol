@@ -25,7 +25,13 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		var type = FunctionType.Undefined;
 		if (context.PROCEDURE() != null) type = FunctionType.Procedure;
 		if (context.FUNCTION()  != null) type = FunctionType.Function;
+
+		// TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
+		// As the grammar enforces that there must be one least one of the PUBLIC or PRIVATE keywords,
+		// there will be a syntax error if there is neither of these two keywords.
+		// So, the fact of considering a function PRIVATE by default does not break this rule.
 		var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
+
 		SymbolDefinition name = null;
 		if (context.functionNameDefinition() != null) {
 			name = CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
@@ -118,19 +124,16 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		target.Parameters = new CallTargetParameter[parametersCount];
 		int i = 0;
 		foreach (var param in function.Profile.InputParameters) {
-			target.Parameters[i] = CreateCallTargetParameter(param);
-			i++;
+			target.Parameters[i++] = CreateCallTargetParameter(param);
 		}
 		foreach (var param in function.Profile.OutputParameters) {
-			target.Parameters[i] = CreateCallTargetParameter(param);
-			i++;
+			target.Parameters[i++] = CreateCallTargetParameter(param);
 		}
 		foreach (var param in function.Profile.InoutParameters) {
-			target.Parameters[i] = CreateCallTargetParameter(param);
-			i++;
+			target.Parameters[i++] = CreateCallTargetParameter(param);
 		}
 		if (function.Profile.ReturningParameter != null) {
-			target.Parameters[i] = CreateCallTargetParameter(function.Profile.ReturningParameter);
+			target.Parameters[i++] = CreateCallTargetParameter(function.Profile.ReturningParameter);
 		}
 		function.CallTarget = target;
 
