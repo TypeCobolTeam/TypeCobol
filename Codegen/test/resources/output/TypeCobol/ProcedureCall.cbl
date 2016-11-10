@@ -80,7 +80,7 @@
        END PROGRAM ProcedureCall.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. ValidateDateFormat-01.                                     
+       PROGRAM-ID. 718c5875.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 mydate.                                                             
@@ -99,4 +99,4 @@
                    BY REFERENCE actual-format                                 
            .                                                                  
            CONTINUE.
-       END PROGRAM ValidateDateFormat-01.                                     
+       END PROGRAM 718c5875.                                                  

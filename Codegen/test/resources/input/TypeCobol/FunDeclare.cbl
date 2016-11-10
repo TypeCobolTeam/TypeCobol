@@ -28,7 +28,7 @@
        END-DECLARE.
 
       * ERROR Illegal FILE SECTION
-       DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
+       DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC
              INPUT     x      PIC 9(04)
              RETURNING result PIC 9(04)
          .
@@ -45,7 +45,7 @@
        END-DECLARE.
 
       * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
-       DECLARE FUNCTION SumThreeWithClutterInLinkage PRIVATE
+       DECLARE FUNCTION SumThreeWithClutterInLinkage PUBLIC
              INPUT x PIC 9(04)
                    y PIC 9(04)
                    z PIC 9(04)

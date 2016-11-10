@@ -146,7 +146,7 @@
        END PROGRAM Functions.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. POW-01.                                                    
+       PROGRAM-ID. ad9bc8ae.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(05).                                                        
@@ -158,4 +158,4 @@
                    BY REFERENCE result                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM POW-01.                                                    
+       END PROGRAM ad9bc8ae.                                                  

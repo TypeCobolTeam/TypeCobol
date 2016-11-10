@@ -30,12 +30,18 @@
       *    9072a866 -> ReturnsZero                                            
            05 PIC X(08) VALUE '9072a866'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    77144e3e -> StrangelyReturnsItsInput                               
+           05 PIC X(08) VALUE '77144e3e'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
+      *    06c98a20 -> SumThreeWithClutterInLinkage                           
+           05 PIC X(08) VALUE '06c98a20'.                                     
+           05 PIC X(08) VALUE LOW-VALUES.                                     
       *    e6215ae7 -> IllegalClauses                                         
            05 PIC X(08) VALUE 'e6215ae7'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
                                                                               
        01  LibFctList REDEFINES LibFctList-Values.                            
-           05   LibFctItem    OCCURS 4 INDEXED BY LibFctIndex.                
+           05   LibFctItem    OCCURS 6 INDEXED BY LibFctIndex.                
              10 LibFctCode    PIC X(08).                                      
              10 LibFctPointer PROCEDURE-POINTER.                              
        LINKAGE SECTION.                                                       
@@ -71,13 +77,13 @@
       *      INPUT x PIC 9(04).                                               
 
       * ERROR Illegal FILE SECTION
-      *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
+      *DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC                       
       *      INPUT     x      PIC 9(04)                                       
       *      RETURNING result PIC 9(04)                                       
       *  .                                                                    
 
       * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
-      *DECLARE FUNCTION SumThreeWithClutterInLinkage PRIVATE                  
+      *DECLARE FUNCTION SumThreeWithClutterInLinkage PUBLIC                   
       *      INPUT x PIC 9(04)                                                
       *            y PIC 9(04)                                                
       *            z PIC 9(04)                                                
@@ -131,6 +137,8 @@
            SET FCT-DoesNothing-01   TO ENTRY '05a59b2c'                       
            SET FCT-DoesNothing-02   TO ENTRY '8fe03398'                       
            SET FCT-ReturnsZero-01   TO ENTRY '9072a866'                       
+           SET FCT-StrangelyReturnsItsInput-01   TO ENTRY '77144e3e'          
+           SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY '06c98a20'       
            SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'                    
            .                                                                  
                                                                               
@@ -141,7 +149,9 @@
              SET LibFctPointer(1)   TO ENTRY '05a59b2c'                       
              SET LibFctPointer(2)   TO ENTRY '8fe03398'                       
              SET LibFctPointer(3)   TO ENTRY '9072a866'                       
-             SET LibFctPointer(4)   TO ENTRY 'e6215ae7'                       
+             SET LibFctPointer(4)   TO ENTRY '77144e3e'                       
+             SET LibFctPointer(5)   TO ENTRY '06c98a20'                       
+             SET LibFctPointer(6)   TO ENTRY 'e6215ae7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
            END-IF                                                             
@@ -192,7 +202,7 @@
        END PROGRAM 8fe03398.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. StrangelyReturnsItsInput-01.                               
+       PROGRAM-ID. 77144e3e.                                                  
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -208,10 +218,10 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM StrangelyReturnsItsInput-01.                               
+       END PROGRAM 77144e3e.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. SumThreeWithClutterInLinkag-01.                            
+       PROGRAM-ID. 06c98a20.                                                  
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -233,10 +243,10 @@
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM SumThreeWithClutterInLinkag-01.                            
+       END PROGRAM 06c98a20.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. SwapParameters-01.                                         
+       PROGRAM-ID. 43ceb46e.                                                  
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
@@ -251,10 +261,10 @@
            MOVE y TO x
            MOVE tmp TO y
            .
-       END PROGRAM SwapParameters-01.                                         
+       END PROGRAM 43ceb46e.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. SwapParametersWrong-01.                                    
+       PROGRAM-ID. 24f6e9c4.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -268,7 +278,7 @@
                    BY REFERENCE b                                             
            .                                                                  
            CONTINUE.
-       END PROGRAM SwapParametersWrong-01.                                    
+       END PROGRAM 24f6e9c4.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e6215ae7.                                                  
@@ -282,7 +292,7 @@
        END PROGRAM e6215ae7.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. FunConditions-01.                                          
+       PROGRAM-ID. 8b8045ac.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
@@ -293,10 +303,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM FunConditions-01.                                          
+       END PROGRAM 8b8045ac.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. FunConditions-02.                                          
+       PROGRAM-ID. 09f6c8f8.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 valid-gender.                                                       
@@ -307,10 +317,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM FunConditions-02.                                          
+       END PROGRAM 09f6c8f8.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. MyNOT-01.                                                  
+       PROGRAM-ID. ca65c9a2.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x-value PIC X     VALUE LOW-VALUE.                                  
@@ -329,4 +339,4 @@
       *      SET y TO FALSE                                                   
                SET y-false TO TRUE                                            
            END-IF.
-       END PROGRAM MyNOT-01.                                                  
+       END PROGRAM ca65c9a2.                                                  
