@@ -24,6 +24,42 @@ public class SymbolTable {
 
 
 
+	private enum SymbolType {
+		Variable,
+		Section,
+		Paragraph,
+		Type,
+		Function,
+	}
+	private Dictionary<string,List<Node>> GetTable(SymbolType type) {
+		switch(type) {
+			case SymbolType.Variable: return DataEntries;
+			case SymbolType.Section: return Sections;
+			case SymbolType.Paragraph: return Paragraphs;
+			case SymbolType.Type: return Types;
+			case SymbolType.Function: return Functions;
+			default: throw new ArgumentException("Unsupported symbol type \""+type+"\"");
+		}
+	}
+
+	private List<Node> Get(string name, SymbolType type) {
+		var table = GetTable(type);
+		var values = Get(name, table);
+		if (EnclosingScope!= null) {
+			values.AddRange(EnclosingScope.Get(name, type));
+		}
+		return values;
+	}
+
+	private List<Node> Get(string name, Dictionary<string,List<Node>> table) {
+		var values = new List<Node>();
+		if (table.ContainsKey(name))
+			values.AddRange(table[name]);
+		return values;
+	}
+
+
+
 
 
 	  //////////////////
@@ -258,14 +294,7 @@ public class SymbolTable {
 
 
 
-	private List<Node> GetVariable(string name) {
-		var values = new List<Node>();
-		if (DataEntries.ContainsKey(name))
-			values.AddRange(DataEntries[name]);
-		if (EnclosingScope!= null)
-			values.AddRange(EnclosingScope.GetVariable(name));
-		return values;
-	}
+	private List<Node> GetVariable(string name) { return Get(name, SymbolType.Variable); }
 
 	private List<Node> Get(List<Node> found, QualifiedName name) {
 		if (found.Count < 1) return found;
@@ -327,6 +356,29 @@ public class SymbolTable {
 
 
 
+	  //////////////
+	 // SECTIONS //
+	//////////////
+
+	private Dictionary<string,List<Node>> Sections = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
+
+	internal void AddSection(Section section) { Add(Sections, section); }
+
+	public List<Node> GetSection(string name) { return Get(name, SymbolType.Section); }
+
+
+
+	  ////////////////
+	 // PARAGRAPHS //
+	////////////////
+
+	private Dictionary<string,List<Node>> Paragraphs = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
+
+	internal void AddParagraph(Paragraph paragraph) { Add(Paragraphs, paragraph); }
+
+	public List<Node> GetParagraph(string name) { return Get(name, SymbolType.Paragraph); }
+
+
 
 
 	  ///////////
@@ -349,14 +401,7 @@ public class SymbolTable {
 		return Get(found, name);
 	}
 
-	private List<Node> GetType(string name) {
-		var values = new List<Node>();
-		if (Types.ContainsKey(name))
-			values.AddRange(Types[name]);
-		if (EnclosingScope!= null)
-			values.AddRange(EnclosingScope.GetType(name));
-		return values;
-	}
+	private List<Node> GetType(string name) { return Get(name, SymbolType.Type); }
 
 	  ///////////////
 	 // FUNCTIONS //
@@ -394,14 +439,7 @@ public class SymbolTable {
 		return true;
 	}
 
-	private List<Node> GetFunction(string name) {
-		var values = new List<Node>();
-		if (Functions.ContainsKey(name))
-			values.AddRange(Functions[name]);
-		if (EnclosingScope!= null)
-			values.AddRange(EnclosingScope.GetFunction(name));
-		return values;
-	}
+	private List<Node> GetFunction(string name) { return Get(name, SymbolType.Function); }
 
 
 

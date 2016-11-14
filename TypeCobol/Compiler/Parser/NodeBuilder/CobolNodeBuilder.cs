@@ -433,18 +433,24 @@ namespace TypeCobol.Compiler.Parser
 			// if we do not, no need to detach anything in ExitSection
 			if (context.SectionHeader() != null) {
 				SectionHeader header = (SectionHeader)context.SectionHeader().Symbol;
-				Enter(new Section(header), context);
+				var section = new Section(header);
+				Enter(section, context);
+				section.SymbolTable.AddSection(section);
 			} else
 			if (context.ParagraphHeader() != null) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
-				Enter(new Paragraph(header), context);
+				var paragraph = new Paragraph(header);
+				Enter(paragraph, context);
+				paragraph.SymbolTable.AddParagraph(paragraph);
 			}
 		}
 
 		public override void EnterParagraph(ProgramClassParser.ParagraphContext context) {
 			if (!(Program.SyntaxTree.CurrentNode is Paragraph) && context.ParagraphHeader() != null) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
-				Enter(new Paragraph(header), context);
+				var paragraph = new Paragraph(header);
+				Enter(paragraph, context);
+				paragraph.SymbolTable.AddParagraph(paragraph);
 			}
 		}
 		public override void ExitParagraph(ProgramClassParser.ParagraphContext context) {

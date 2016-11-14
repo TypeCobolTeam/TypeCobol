@@ -283,6 +283,32 @@ class SetStatementForIndexesChecker: CodeElementListener {
 
 
 
+
+abstract class SymbolAlreadyDeclaredChecker: NodeListener {
+	public abstract IList<Type> GetNodes();
+	public abstract void OnNode(Node node, ParserRuleContext context, CodeModel.Program program);
+	protected static void Check(Node node, List<Node> found) {
+		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol \'"+node.Name+"\' already declared");
+	}
+}
+
+class SectionAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
+	public override IList<Type> GetNodes() {
+		return new List<Type>() { typeof(Section), };
+	}
+	public override void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		Check(node, node.SymbolTable.GetSection(node.Name));
+	}
+}
+class ParagraphAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
+	public override IList<Type> GetNodes() {
+		return new List<Type>() { typeof(Paragraph), };
+	}
+	public override void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		Check(node, node.SymbolTable.GetParagraph(node.Name));
+	}
+}
+
 class DeclarationChecker: NodeListener {
 	public IList<Type> GetNodes() {
 		return new List<Type>() { typeof(VariableUser), };
