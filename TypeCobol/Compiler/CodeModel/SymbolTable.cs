@@ -493,6 +493,18 @@ public class SymbolTable {
 				foreach(var item in line.Value)
 					Dump(str, item, indent);
 		}
+		if (Sections.Count > 0) {
+			str.AppendLine("-- SECTIONS ----");
+			foreach(var line in Sections)
+				foreach(var item in line.Value)
+					Dump(str, item, indent);
+		}
+		if (Paragraphs.Count > 0) {
+			str.AppendLine("-- PARAGRAPHS --");
+			foreach(var line in Paragraphs)
+				foreach(var item in line.Value)
+					Dump(str, item, indent);
+		}
 		if (Types.Count > 0) {
 			str.AppendLine("-- TYPES -------");
 			foreach(var line in Types)
