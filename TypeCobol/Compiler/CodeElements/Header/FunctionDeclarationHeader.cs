@@ -13,7 +13,7 @@ public class FunctionDeclarationHeader: CodeElement {
 			if (!Profile.IsFunction &&  Profile.IsProcedure) return FunctionType.Procedure;
 			if ( Profile.IsFunction &&  Profile.IsProcedure)
 				if (UserDefinedType == FunctionType.Undefined)
-				     return FunctionType.Both;
+				     return FunctionType.Function;
 				else return UserDefinedType;
 			return FunctionType.Undefined;
 		}
@@ -23,7 +23,7 @@ public class FunctionDeclarationHeader: CodeElement {
 		: base(CodeElementType.FunctionDeclarationHeader) {
 		this.FunctionName = name;
 		this.Visibility = visibility;
-		this.UserDefinedType = (type != null && type != FunctionType.Both) ? type : FunctionType.Undefined;
+		this.UserDefinedType = type != null ? type : FunctionType.Undefined;
 		this.Profile = new ParametersProfile();
 	}
 
@@ -61,7 +61,6 @@ public enum FunctionType: int {
 	Undefined = 0,
 	Function  = 1,
 	Procedure = 2,
-	Both      = 3,
 }
 
 public class ParametersProfile {

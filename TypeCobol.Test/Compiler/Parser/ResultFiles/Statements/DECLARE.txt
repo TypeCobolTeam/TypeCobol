@@ -10,17 +10,17 @@
 [1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for procedure "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 56)
 [1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for symbol "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 59)
 --- Code Elements ---
-fun():():():():Public:Undefined/Both
+fun():():():():Public:Undefined/Function
 fun():():():():Public:Function/Function
 pro():():():():Private:Procedure/Procedure
-NoVisibility():():():():Private:Undefined/Both
+NoVisibility():():():():Private:Undefined/Function
 NoVisibility():():():():Private:Function/Function
 NoVisibility():():():():Private:Procedure/Procedure
 fun(i:Numeric):():():():Private:Function/Function
 fun(i:Wherever, j:Numeric, k:Whenever):():():():Public:Function/Function
 fun():():():(k:Numeric):Public:Function/Function
 fun(i:Numeric, j:Wherever):():():(k:Whenever):Private:Function/Function
-FunctionOrProcedure(i:Numeric):():():():Private:Undefined/Both
+FunctionOrProcedure(i:Numeric):():():():Private:Undefined/Function
 ProcedureINOUT():():(i:Numeric):():Private:Function/Procedure
 ProcedureOUTPUT():(i:Numeric):():():Public:Function/Procedure
 ProcedureINOUTAndOUTPUT(i:Numeric):(k:Numeric):(j:Numeric):(l:Numeric):Public:Function/Undefined
