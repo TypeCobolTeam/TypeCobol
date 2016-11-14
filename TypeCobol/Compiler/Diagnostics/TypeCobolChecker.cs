@@ -133,6 +133,8 @@ class FunctionDeclarationChecker: NodeListener {
 		CheckParameters(header.Profile, header, context);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
 
+		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
+
 		var functions = node.SymbolTable.GetFunction(new URI(header.Name), header.Profile);
 		if (functions.Count > 1)
 			DiagnosticUtils.AddError(header, "A function \""+new URI(header.Name).Head+"\" with the same profile already exists in namespace \""+new URI(header.Name).Tail+"\".", context);
@@ -214,6 +216,25 @@ class FunctionDeclarationChecker: NodeListener {
 	}
 	private void AddErrorAlreadyParameter(Node node, QualifiedName name) {
 		DiagnosticUtils.AddError(node.CodeElement, name.Head+" is already a parameter.");
+	}
+
+	private void CheckNoPerform(SymbolTable table, Node node) {
+		if (node is PerformProcedure) {
+			var perform = (PerformProcedureStatement)node.CodeElement;
+			CheckNotInTable(table, perform.Procedure, perform);
+			CheckNotInTable(table, perform.ThroughProcedure, perform);
+		}
+		foreach(var child in node.Children) CheckNoPerform(table, child);
+	}
+	private void CheckNotInTable(SymbolTable table, SymbolReference symbol, CodeElement ce) {
+		if (symbol == null) return;
+		string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
+		var found = table.GetSection(symbol.Name);
+		if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		else {
+			found = table.GetParagraph(symbol.Name);
+			if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		}
 	}
 }
 
