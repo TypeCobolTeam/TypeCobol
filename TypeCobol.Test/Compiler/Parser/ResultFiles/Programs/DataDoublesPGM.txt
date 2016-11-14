@@ -29,6 +29,8 @@ PROGRAM: Doubles common:False initial:False recursive:False
   EXTRA:Alphanumeric
   V2:Alphanumeric
   ANOTHER-GROUP:?
+-- PARAGRAPHS --
+  PROC1
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

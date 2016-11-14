@@ -9,6 +9,8 @@ PROGRAM: TEST-BOOL common:False initial:False recursive:False
   zoneTxt:Alphanumeric
   check:BOOL
   managed:BOOL
+-- PARAGRAPHS --
+  TEST-BOOL
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

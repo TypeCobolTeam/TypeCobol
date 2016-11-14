@@ -41,6 +41,11 @@ PROGRAM: COLON common:False initial:False recursive:False
   T4-B2:Alphanumeric
   T4-B2:Alphanumeric
   T4-A2:?
+-- PARAGRAPHS --
+  TEST-1
+  TEST-2
+  TEST-3
+  TEST-4
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL
