@@ -2,6 +2,14 @@
 [1,3]<27,Error,Syntax>Syntax error : Symbol 'P3' already declared ([1>3] on line 17)
 [1,3]<27,Error,Syntax>Syntax error : Symbol 'P4' already declared ([1>3] on line 23)
 [1,11]<27,Error,Syntax>Syntax error : Symbol 'S1' already declared ([1>11] on line 32)
+[5,14]<27,Error,Syntax>Syntax error : Symbol P0 is not referenced ([5>14] on line 37)
+[5,14]<27,Error,Syntax>Syntax error : Ambiguous reference to paragraph P3 ([5>14] on line 40)
+[5,14]<27,Error,Syntax>Syntax error : Ambiguous reference to paragraph P4 ([5>14] on line 41)
+[5,14]<27,Error,Syntax>Syntax error : Ambiguous reference to procedure P5 ([5>14] on line 42)
+[5,25]<27,Error,Syntax>Syntax error : Symbol P0 is not referenced ([5>25] on line 45)
+[5,25]<27,Error,Syntax>Syntax error : Ambiguous reference to paragraph P3 ([5>25] on line 48)
+[5,25]<27,Error,Syntax>Syntax error : Ambiguous reference to paragraph P4 ([5>25] on line 49)
+[5,25]<27,Error,Syntax>Syntax error : Ambiguous reference to procedure P5 ([5>25] on line 50)
 
 --- Program ---
 PROGRAM: ParagraphsSections common:False initial:False recursive:False

@@ -309,7 +309,54 @@ class ParagraphAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
 	}
 }
 
-class DeclarationChecker: NodeListener {
+
+class SectionOrParagraphUsageChecker: NodeListener {
+	public IList<Type> GetNodes() {
+		return new List<Type>() { typeof(PerformProcedure), };
+	}
+
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		var perform = (PerformProcedureStatement)node.CodeElement;
+		SymbolReference symbol;
+		symbol = ResolveProcedureName(node.SymbolTable, perform.Procedure as AmbiguousSymbolReference, node.CodeElement);
+		if (symbol != null) perform.Procedure = symbol;
+		symbol = ResolveProcedureName(node.SymbolTable, perform.ThroughProcedure as AmbiguousSymbolReference, node.CodeElement);
+		if (symbol != null) perform.ThroughProcedure = symbol;
+	}
+	/// <summary>Disambiguate between section and paragraph names</summary>
+	/// <param name="table">Symbol table used for name resolution</param>
+	/// <param name="symbol">Symbol to disambiguate</param>
+	/// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
+	/// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
+	private SymbolReference ResolveProcedureName(SymbolTable table, AmbiguousSymbolReference symbol, CodeElement ce) {
+		if (symbol == null) return null;
+
+		SymbolReference sname = null, pname = null;
+		var sfound = table.GetSection(symbol.Name);
+		if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
+		var pfound = table.GetParagraph(symbol.Name);
+		if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
+
+		if (pname == null) {
+			if (sname == null) {
+				DiagnosticUtils.AddError(ce, "Symbol "+symbol.Name+" is not referenced");
+			} else {
+				if (sfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to section "+symbol.Name);
+				return sname;
+			}
+		} else {
+			if (sname == null) {
+				if (pfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to paragraph "+symbol.Name);
+				return pname;
+			} else {
+				DiagnosticUtils.AddError(ce, "Ambiguous reference to procedure "+symbol.Name);
+			}
+		}
+		return null;
+	}
+}
+
+class VariableUsageChecker: NodeListener {
 	public IList<Type> GetNodes() {
 		return new List<Type>() { typeof(VariableUser), };
 	}

@@ -3,6 +3,9 @@
   
 PROCEDURE DIVISION.
 
+procedurename.
+  .
+
 SKIP-01.
   CONTINUE
   SKIP3
