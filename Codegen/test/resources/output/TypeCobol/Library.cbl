@@ -53,14 +53,14 @@
            88 LibFctList-IsLoaded      VALUE '1'.                             
                                                                               
        01  LibFctList-VALUES.                                                 
-      *    42e5f209 -> currentDate                                            
-           05 PIC X(08) VALUE '42e5f209'.                                     
+      *    e5f209fa -> currentDate                                            
+           05 PIC X(08) VALUE 'e5f209fa'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    27128b8a -> currentDateDB2                                         
-           05 PIC X(08) VALUE '27128b8a'.                                     
+      *    b8ac0397 -> currentDateDB2                                         
+           05 PIC X(08) VALUE 'b8ac0397'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    6c4e76b4 -> currentDateJulian                                      
-           05 PIC X(08) VALUE '6c4e76b4'.                                     
+      *    c4e76b45 -> currentDateJulian                                      
+           05 PIC X(08) VALUE 'c4e76b45'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
       *    d55b3ea7 -> currentDateFreeFormat                                  
            05 PIC X(08) VALUE 'd55b3ea7'.                                     
@@ -121,9 +121,9 @@
        Copy-Process-Mode.                                                     
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
-           SET FCT-currentDate-01   TO ENTRY '42e5f209'                       
-           SET FCT-currentDateDB2-01   TO ENTRY '27128b8a'                    
-           SET FCT-currentDateJulian-01   TO ENTRY '6c4e76b4'                 
+           SET FCT-currentDate-01   TO ENTRY 'e5f209fa'                       
+           SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'                    
+           SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'                 
            SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'             
            .                                                                  
                                                                               
@@ -131,9 +131,9 @@
            SET ADDRESS OF FctList TO ADDRESS OF CallData                      
                                                                               
            IF NOT LibFctList-IsLoaded                                         
-             SET LibFctPointer(1)   TO ENTRY '42e5f209'                       
-             SET LibFctPointer(2)   TO ENTRY '27128b8a'                       
-             SET LibFctPointer(3)   TO ENTRY '6c4e76b4'                       
+             SET LibFctPointer(1)   TO ENTRY 'e5f209fa'                       
+             SET LibFctPointer(2)   TO ENTRY 'b8ac0397'                       
+             SET LibFctPointer(3)   TO ENTRY 'c4e76b45'                       
              SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
@@ -158,7 +158,7 @@
        END PROGRAM DVZZDAT.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 42e5f209.                                                  
+       PROGRAM-ID. e5f209fa.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 Result.                                                             
@@ -170,10 +170,10 @@
            .                                                                  
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM 42e5f209.                                                  
+       END PROGRAM e5f209fa.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 27128b8a.                                                  
+       PROGRAM-ID. b8ac0397.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -194,10 +194,10 @@
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
-       END PROGRAM 27128b8a.                                                  
+       END PROGRAM b8ac0397.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 6c4e76b4.                                                  
+       PROGRAM-ID. c4e76b45.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.                                             
@@ -217,7 +217,7 @@
                          (FUNCTION INTEGER-OF-DATE(W-Dat))
                 TO Result
            .
-       END PROGRAM 6c4e76b4.                                                  
+       END PROGRAM c4e76b45.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. d55b3ea7.                                                  

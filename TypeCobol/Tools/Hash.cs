@@ -18,6 +18,18 @@ public class Hash {
 			result.Append(System.String.Format("{0:x2}", b));
 		return result.ToString();
 	}
+
+	public static string CreateCOBOLNameHash(string text, int size=8) {
+		string hash = CreateSHA256(text);
+		int index = 0;
+		foreach(char c in hash) {
+			if (c < 'a' || c > 'f') index++;
+			else break;
+		}
+		string result = hash.Substring(index, System.Math.Min(size, hash.Length-index));
+		while(result.Length < size) result = "z"+result;
+		return result;
+	}
 }
 
 public class UIDStore {

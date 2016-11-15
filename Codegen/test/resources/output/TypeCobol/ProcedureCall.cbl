@@ -80,7 +80,7 @@
        END PROGRAM ProcedureCall.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 718c5875.                                                  
+       PROGRAM-ID. c5875eec.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 mydate.                                                             
@@ -99,4 +99,4 @@
                    BY REFERENCE actual-format                                 
            .                                                                  
            CONTINUE.
-       END PROGRAM 718c5875.                                                  
+       END PROGRAM c5875eec.                                                  

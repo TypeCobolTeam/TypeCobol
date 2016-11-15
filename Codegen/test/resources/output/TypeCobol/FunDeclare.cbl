@@ -21,20 +21,20 @@
            88 LibFctList-IsLoaded      VALUE '1'.                             
                                                                               
        01  LibFctList-VALUES.                                                 
-      *    05a59b2c -> DoesNothing                                            
-           05 PIC X(08) VALUE '05a59b2c'.                                     
+      *    a59b2c49 -> DoesNothing                                            
+           05 PIC X(08) VALUE 'a59b2c49'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    8fe03398 -> DoesNothing                                            
-           05 PIC X(08) VALUE '8fe03398'.                                     
+      *    fe03398a -> DoesNothing                                            
+           05 PIC X(08) VALUE 'fe03398a'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    9072a866 -> ReturnsZero                                            
-           05 PIC X(08) VALUE '9072a866'.                                     
+      *    a866b35c -> ReturnsZero                                            
+           05 PIC X(08) VALUE 'a866b35c'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    77144e3e -> StrangelyReturnsItsInput                               
-           05 PIC X(08) VALUE '77144e3e'.                                     
+      *    e3e490ae -> StrangelyReturnsItsInput                               
+           05 PIC X(08) VALUE 'e3e490ae'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    06c98a20 -> SumThreeWithClutterInLinkage                           
-           05 PIC X(08) VALUE '06c98a20'.                                     
+      *    c98a2036 -> SumThreeWithClutterInLinkage                           
+           05 PIC X(08) VALUE 'c98a2036'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
       *    e6215ae7 -> IllegalClauses                                         
            05 PIC X(08) VALUE 'e6215ae7'.                                     
@@ -134,11 +134,11 @@
        Copy-Process-Mode.                                                     
            SET ADDRESS OF FCT TO ADDRESS OF CallData                          
                                                                               
-           SET FCT-DoesNothing-01   TO ENTRY '05a59b2c'                       
-           SET FCT-DoesNothing-02   TO ENTRY '8fe03398'                       
-           SET FCT-ReturnsZero-01   TO ENTRY '9072a866'                       
-           SET FCT-StrangelyReturnsItsInput-01   TO ENTRY '77144e3e'          
-           SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY '06c98a20'       
+           SET FCT-DoesNothing-01   TO ENTRY 'a59b2c49'                       
+           SET FCT-DoesNothing-02   TO ENTRY 'fe03398a'                       
+           SET FCT-ReturnsZero-01   TO ENTRY 'a866b35c'                       
+           SET FCT-StrangelyReturnsItsInput-01   TO ENTRY 'e3e490ae'          
+           SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY 'c98a2036'       
            SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'                    
            .                                                                  
                                                                               
@@ -146,11 +146,11 @@
            SET ADDRESS OF FctList TO ADDRESS OF CallData                      
                                                                               
            IF NOT LibFctList-IsLoaded                                         
-             SET LibFctPointer(1)   TO ENTRY '05a59b2c'                       
-             SET LibFctPointer(2)   TO ENTRY '8fe03398'                       
-             SET LibFctPointer(3)   TO ENTRY '9072a866'                       
-             SET LibFctPointer(4)   TO ENTRY '77144e3e'                       
-             SET LibFctPointer(5)   TO ENTRY '06c98a20'                       
+             SET LibFctPointer(1)   TO ENTRY 'a59b2c49'                       
+             SET LibFctPointer(2)   TO ENTRY 'fe03398a'                       
+             SET LibFctPointer(3)   TO ENTRY 'a866b35c'                       
+             SET LibFctPointer(4)   TO ENTRY 'e3e490ae'                       
+             SET LibFctPointer(5)   TO ENTRY 'c98a2036'                       
              SET LibFctPointer(6)   TO ENTRY 'e6215ae7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
@@ -170,15 +170,15 @@
        END PROGRAM FunDeclare.
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 05a59b2c.                                                  
+       PROGRAM-ID. a59b2c49.                                                  
        PROCEDURE DIVISION                                                     
            .                                                                  
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM 05a59b2c.                                                  
+       END PROGRAM a59b2c49.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 9072a866.                                                  
+       PROGRAM-ID. a866b35c.                                                  
          DATA DIVISION.
        LINKAGE SECTION.                                                       
        01 result PIC 9(04).                                                   
@@ -187,10 +187,10 @@
            .                                                                  
            MOVE 0 TO result.
            .
-       END PROGRAM 9072a866.                                                  
+       END PROGRAM a866b35c.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 8fe03398.                                                  
+       PROGRAM-ID. fe03398a.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -199,10 +199,10 @@
            .                                                                  
            DISPLAY 'I DO NOTHING WITH ' x
            .
-       END PROGRAM 8fe03398.                                                  
+       END PROGRAM fe03398a.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 77144e3e.                                                  
+       PROGRAM-ID. e3e490ae.                                                  
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -218,10 +218,10 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM 77144e3e.                                                  
+       END PROGRAM e3e490ae.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 06c98a20.                                                  
+       PROGRAM-ID. c98a2036.                                                  
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -243,10 +243,10 @@
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM 06c98a20.                                                  
+       END PROGRAM c98a2036.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 43ceb46e.                                                  
+       PROGRAM-ID. ceb46e19.                                                  
          DATA DIVISION.
          WORKING-STORAGE SECTION.
            01 tmp PIC 9(04).
@@ -261,10 +261,10 @@
            MOVE y TO x
            MOVE tmp TO y
            .
-       END PROGRAM 43ceb46e.                                                  
+       END PROGRAM ceb46e19.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 24f6e9c4.                                                  
+       PROGRAM-ID. f6e9c448.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 x PIC 9(04).                                                        
@@ -278,7 +278,7 @@
                    BY REFERENCE b                                             
            .                                                                  
            CONTINUE.
-       END PROGRAM 24f6e9c4.                                                  
+       END PROGRAM f6e9c448.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e6215ae7.                                                  
@@ -292,7 +292,7 @@
        END PROGRAM e6215ae7.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 8b8045ac.                                                  
+       PROGRAM-ID. b8045acd.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 gender PIC X(01).                                                   
@@ -303,10 +303,10 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM 8b8045ac.                                                  
+       END PROGRAM b8045acd.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. 09f6c8f8.                                                  
+       PROGRAM-ID. f6c8f8b0.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 valid-gender.                                                       
@@ -317,7 +317,7 @@
              USING BY REFERENCE gender                                        
            .                                                                  
            CONTINUE.
-       END PROGRAM 09f6c8f8.                                                  
+       END PROGRAM f6c8f8b0.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. ca65c9a2.                                                  
