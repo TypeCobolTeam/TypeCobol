@@ -48,13 +48,13 @@
              10 LibFctPointer PROCEDURE-POINTER.                              
        LOCAL-STORAGE SECTION.
        LINKAGE SECTION.                                                       
+               COPY YFUNCOPY REPLACING ==:YFUNCOPY:== BY ==FCT==.             
        01  FctList.                                                           
            05 NumberOfFunctions   PIC 9(04).                                  
            05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions              
                                   INDEXED BY FctIndex.                        
              10 FctCode    PIC X(08).                                         
              10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
-           COPY YFUNCOPY REPLACING ==:YFUNCOPY:== BY ==FCT==.                 
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
              88 CallIsCopy VALUE 'YFUNCOPY'.                                  

@@ -78,8 +78,6 @@
                                   INDEXED BY FctIndex.                        
              10 FctCode    PIC X(08).                                         
              10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
-           COPY ?TCRFUN_LIBRARY_COPY? REPLACING ==:?TCRFUN_LIBRARY_COPY?      
-      -:== BY ==FCT==.                                                        
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
              88 CallIsCopy VALUE '?TCRFUN_LIBRARY_COPY?'.                     
