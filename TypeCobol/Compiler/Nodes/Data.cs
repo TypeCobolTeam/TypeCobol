@@ -13,7 +13,11 @@ public class DataDivision: Node, CodeElementHolder<DataDivisionHeader>, Parent<D
 	public DataDivision(DataDivisionHeader header): base(header) { }
 	public override string ID { get { return "data-division"; } }
 
-	public int Where(System.Type section) {
+	public override void Add(Node child, int index = -1) {
+		if (index <= 0) index = WhereShouldIAdd(child.GetType());
+		base.Add(child,index);
+	}
+	private int WhereShouldIAdd(System.Type section) {
 		if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
 		int ifile = -2;
 		int iworking = -2;
@@ -21,7 +25,7 @@ public class DataDivision: Node, CodeElementHolder<DataDivisionHeader>, Parent<D
 		int ilinkage = -2;
 		int c = 0;
 		foreach(var child in this.Children()) {
-			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ilinkage = c;
+			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ifile = c;
 			else
 			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(WorkingStorageSection))) iworking = c;
 			else

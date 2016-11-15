@@ -2,6 +2,10 @@
        PROGRAM-ID. FunDeclare.
        SERVICE IS YFUNCOPY.
        
+       DATA DIVISION.
+       FILE SECTION.
+       LOCAL-STORAGE SECTION.
+
        PROCEDURE DIVISION.
            .
        

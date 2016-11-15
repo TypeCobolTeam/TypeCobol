@@ -54,7 +54,7 @@ public abstract class Node {
 	/// <summary>Adds a node as a children of this one.</summary>
 	/// <param name="child">Child to-be.</param>
 	/// <param name="index">Child position in children list.</param>
-	public void Add(Node child, int index = -1) {
+	public virtual void Add(Node child, int index = -1) {
 		if (index < 0) children.Add(child);
 		else children.Insert(index, child);
 		child.Parent = this;
