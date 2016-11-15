@@ -80,7 +80,7 @@
              10 FctPointer PROCEDURE-POINTER VALUE NULL.                      
        01  CallData.                                                          
            05  DescriptionId PIC X(08).                                       
-             88 CallIsCopy VALUE '?TCRFUN_LIBRARY_COPY?'.                     
+             88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.             
            COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
