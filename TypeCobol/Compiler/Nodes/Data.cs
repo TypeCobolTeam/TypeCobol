@@ -1,6 +1,7 @@
 ﻿
 namespace TypeCobol.Compiler.Nodes {
 
+	using System;
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.CodeElements.Expressions;
@@ -11,6 +12,29 @@ namespace TypeCobol.Compiler.Nodes {
 public class DataDivision: Node, CodeElementHolder<DataDivisionHeader>, Parent<DataSection> {
 	public DataDivision(DataDivisionHeader header): base(header) { }
 	public override string ID { get { return "data-division"; } }
+
+	public int Where(System.Type section) {
+		if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
+		int ifile = -2;
+		int iworking = -2;
+		int ilocal = -2;
+		int ilinkage = -2;
+		int c = 0;
+		foreach(var child in this.Children()) {
+			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ilinkage = c;
+			else
+			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(WorkingStorageSection))) iworking = c;
+			else
+			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LocalStorageSection))) ilocal = c;
+			else
+			if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LinkageSection))) ilinkage = c;
+			c++;
+		}
+		if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0,ifile+1);
+		if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(ifile+1,iworking+1));
+		if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0,Math.Max(ifile+1,Math.Max(iworking+1,ilocal+1)));
+		return 0;
+	}
 }
 
 public abstract class DataSection: Node, CodeElementHolder<DataSectionHeader>, Child<DataDivision>{

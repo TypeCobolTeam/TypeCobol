@@ -41,8 +41,9 @@ namespace TypeCobol.Codegen.Nodes {
 					datadiv = new DataDivision();
 					children.Add(datadiv);
 				}
+				int index = datadiv.Where(typeof(LinkageSection));
 				linkage = new LinkageSection();
-				datadiv.Add(linkage);
+				datadiv.Add(linkage, index);
 			}
 			if (linkage != null) data = linkage.Children();
 			// TCRFUN_CODEGEN_PARAMETERS_ORDER
