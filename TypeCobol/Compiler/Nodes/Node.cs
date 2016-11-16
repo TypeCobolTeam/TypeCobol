@@ -194,9 +194,39 @@ public abstract class Node {
 		get {
 			var lines = new List<ITextLine>();
 			if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
-			foreach(var token in CodeElement.ConsumedTokens)
-				if (!lines.Contains(token.TokensLine))
-					lines.Add(token.TokensLine);
+			Parser.CodeElementsLine previous = null;
+			Scanner.Token token = null;
+			int begin = 0;
+			int end = 0;
+			bool startWithLine = true;
+			for(int c = 0; c < CodeElement.ConsumedTokens.Count; c++) {
+				token = CodeElement.ConsumedTokens[c];
+				if (previous == null) { //first iteration
+					startWithLine = token.IsFirstOfLine;
+					begin = token.StartIndex;
+				}
+				else
+				if (previous == token.TokensLine) ; // same line
+				else { // new line
+					if (startWithLine) lines.Add(previous);
+					else lines.Add(new TextLineSnapshot(-1, previous.Snip(begin), null));
+					startWithLine = true;
+					begin = token.StartIndex;
+				}
+				previous = (Parser.CodeElementsLine)token.TokensLine;
+				end = token.StopIndex;
+			}
+
+			ITextLine line = null;
+			bool endWithLine = token.IsLastOfLine;
+			if (startWithLine) {
+				if (endWithLine) line = previous;
+				else line = new TextLineSnapshot(-1, previous.Snip(7, end), null);
+			} else {
+				line = new TextLineSnapshot(-1, previous.Snip(begin, end), null);
+			}
+			lines.Add(line);
+
 			return lines;
 		}
 	}

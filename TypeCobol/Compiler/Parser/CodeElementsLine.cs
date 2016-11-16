@@ -89,5 +89,9 @@ namespace TypeCobol.Compiler.Parser
 
             ParserDiagnostics.Add(diag);
         }
-    }
+
+		internal string Snip(int begin, int end=-1) {
+			return textLine.TextSegment(begin, end);
+		}
+	}
 }

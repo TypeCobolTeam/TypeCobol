@@ -384,5 +384,26 @@ namespace TypeCobol.Compiler.Scanner
                 return true;
             }
         }
+
+
+
+		public bool IsFirstOfLine {
+			get {
+				foreach(var token in TokensLine.SourceTokens)
+					if (token.TokenFamily >= TokenFamily.SyntaxSeparator)
+						return this == token;
+				return false;
+			}
+		}
+		public bool IsLastOfLine {
+			get {
+				Token last = null;
+				foreach(var token in TokensLine.SourceTokens)
+					if (token.TokenFamily >= TokenFamily.SyntaxSeparator)
+						last = token;
+				return this == last;
+			}
+		}
+
     }
 }
