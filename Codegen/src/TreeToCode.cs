@@ -117,7 +117,10 @@
 			if (line == lastline) return;
 			int c = 0;
 			foreach(var l in Indent(line, isComment)) {
-				Output.WriteLine(l.Text);
+				bool endsLine = true;
+				if (line is TextLineSnapshot) endsLine = ((TextLineSnapshot)line).EndsLine;
+				if (endsLine) Output.WriteLine(l.Text);
+				else Output.Write(l.Text);
 				c++;
 			}
 			offset++;
@@ -137,7 +140,14 @@
 					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
 			} else {
 				if (Layout == ColumnsLayout.CobolReferenceFormat) {
-					var lines = CobolTextLine.Create(line.Text, Layout, line.InitialLineIndex);
+					bool startsLine = true;
+					bool endsLine   = true;
+					if (line is TextLineSnapshot) {
+						var snapshot = (TextLineSnapshot)line;
+						startsLine = snapshot.StartsLine;
+						endsLine   = snapshot.EndsLine;
+					}
+					var lines = CobolTextLine.Create(line.Text, Layout, line.InitialLineIndex, startsLine,endsLine);
 					foreach(var l in lines) results.Add(SetComment(l, isComment));
 				} else
 				if (Layout == ColumnsLayout.FreeTextFormat) {

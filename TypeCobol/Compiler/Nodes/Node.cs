@@ -198,32 +198,33 @@ public abstract class Node {
 			Scanner.Token token = null;
 			int begin = 0;
 			int end = 0;
-			bool startWithLine = true;
+			bool startsLine = true;
+			bool endsLine = false;
 			for(int c = 0; c < CodeElement.ConsumedTokens.Count; c++) {
 				token = CodeElement.ConsumedTokens[c];
 				if (previous == null) { //first iteration
-					startWithLine = token.IsFirstOfLine;
+					startsLine = token.IsFirstOfLine;
 					begin = token.StartIndex;
 				}
 				else
 				if (previous == token.TokensLine) ; // same line
 				else { // new line
-					if (startWithLine) lines.Add(previous);
-					else lines.Add(new TextLineSnapshot(-1, previous.Snip(begin), null));
-					startWithLine = true;
+					if (startsLine) lines.Add(previous);
+					else lines.Add(new TextLineSnapshot(-1, previous.Snip(begin), startsLine, endsLine));
+					startsLine = true;
 					begin = token.StartIndex;
 				}
 				previous = (Parser.CodeElementsLine)token.TokensLine;
 				end = token.StopIndex;
+				endsLine = token.IsLastOfLine;
 			}
 
 			ITextLine line = null;
-			bool endWithLine = token.IsLastOfLine;
-			if (startWithLine) {
-				if (endWithLine) line = previous;
-				else line = new TextLineSnapshot(-1, previous.Snip(7, end), null);
+			if (startsLine) {
+				if (endsLine) line = previous;
+				else line = new TextLineSnapshot(-1, previous.Snip(7, end), startsLine, endsLine);
 			} else {
-				line = new TextLineSnapshot(-1, previous.Snip(begin, end), null);
+				line = new TextLineSnapshot(-1, previous.Snip(begin, end), startsLine, endsLine);
 			}
 			lines.Add(line);
 

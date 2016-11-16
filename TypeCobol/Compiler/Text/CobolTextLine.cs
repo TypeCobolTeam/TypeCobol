@@ -75,45 +75,53 @@ namespace TypeCobol.Compiler.Text
             return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
         }
 
-		public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, int index = -1) {
+		public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, int index = -1, bool startsLine = true, bool endsLine = true) {
 			if (layout == ColumnsLayout.FreeTextFormat) {
 				var result = new List<ITextLine>();
-				result.Add(new TextLineSnapshot(index, text, null));
+				result.Add(new TextLineSnapshot(index, text, startsLine,endsLine));
 				return result;
 			}
 			if (layout == ColumnsLayout.CobolReferenceFormat) {
 				char indicator = ' ';
-				string indent = "";
 				bool wasComment = text.Trim().StartsWith("*");
 				if (wasComment) {
 					indicator = '*';
-					int i = text.IndexOf('*');
-					indent = text.Substring(0, i);
-					text = text.Substring(i+1);
+					text = text.Substring(text.IndexOf('*')+1);
 				}
-				return CreateCobolLines(layout, index, indicator, indent, text);
+				string indent = "";
+				int begin = Array.FindIndex(text.ToCharArray(), x => !char.IsWhiteSpace(x));
+				for (int c=0; c< begin; c++) indent += ' ';
+				text = text.Substring(indent.Length);
+				return CreateCobolLines(layout, index, indicator, indent, text, startsLine,endsLine);
 			}
 			throw new System.NotImplementedException("Unsuported ITextLine type: "+layout);
 		}
-		private static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text) {
+		private static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text, bool startsLine, bool endsLine) {
 			var result = new List<ITextLine>();
 			var lines = Split(text, 65);
-			result.Add(new TextLineSnapshot(index, Convert(layout, lines[0], indicator, indent), null));
+			result.Add(new TextLineSnapshot(index, Convert(layout, lines[0], indicator, indent, startsLine,endsLine), startsLine,endsLine));
 			if (indicator == ' ') indicator = '-';
 			for(int i = 1; i < lines.Count; i++) {
 				if (index > -1) index++;
-				result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent), null));
+				result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent, startsLine,endsLine), startsLine,endsLine));
 			}
 			return result;
 		}
-		private static string Convert(ColumnsLayout layout, string text, char indicator, string indent) {
+		private static string Convert(ColumnsLayout layout, string text, char indicator, string indent, bool startsLine, bool endsLine) {
 			string result = "";
 			if (layout == ColumnsLayout.FreeTextFormat) {
 				result = (indicator=='*'?"*":"")+indent+text;
 			} else {
+				string start = "";
+				if (startsLine) {
+					start = "      "+indicator;
+				}
 				string end = "";
-				for (int c = text.Length; c < 65; c++) end += " ";
-				result = "      "+indicator+indent+text+end+"      ";//+"000000";
+				if (endsLine) {
+					for (int c = text.Length+indent.Length; c < 65; c++) end += " ";
+					end += "      ";//+"000000";
+				}
+				result = start+indent+text+end;
 			}
 			return result;
 		}
