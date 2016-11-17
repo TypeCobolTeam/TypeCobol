@@ -18,7 +18,7 @@ Working-Storage Section.
 *Ok reference a TYPE defined as global (TCTYPE_GLOBAL_TYPEDEF)
 01  wsNew1 type NewType.  
 01  wsNew2 type NewType.  
-*OK type NewPrivateType is not declared global
+*KO type NewPrivateType is NOT declared global
 01  wsNew3 type NewPrivateType.
 procedure division.
 *Ok reference a variable defined as global (standard Cobol 85 rule)
@@ -35,6 +35,7 @@ Working-Storage Section.
 *Ok reference a TYPE defined as global (TCTYPE_GLOBAL_TYPEDEF)
 01  wsNew1 type NewType.  
 01  wsNew2 type NewType.  
+*KO type NewPrivateType is NOT declared global
 01  wsNew3 type NewPrivateType.
 procedure division.
 *Ok reference a variable defined as global (standard Cobol 85 rule)

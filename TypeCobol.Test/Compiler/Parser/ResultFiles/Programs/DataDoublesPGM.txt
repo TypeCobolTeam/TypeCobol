@@ -25,12 +25,14 @@ PROGRAM: Doubles common:False initial:False recursive:False
   VARIANT-1B:Alphanumeric
   VARIANT-2:Alphanumeric
   VARIANT-2:?
-  GLOBO:Alphanumeric
   EXTRA:Alphanumeric
   V2:Alphanumeric
   ANOTHER-GROUP:?
 -- PARAGRAPHS --
   PROC1
+--- Intrinsic:Global
+-- DATA --------
+    GLOBO:Alphanumeric
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

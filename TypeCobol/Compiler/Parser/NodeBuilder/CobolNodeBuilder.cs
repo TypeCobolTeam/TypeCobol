@@ -284,15 +284,28 @@ namespace TypeCobol.Compiler.Parser
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
 			var node = new Nodes.TypeDefinition(typedef);
 			Enter(node);
-			node.SymbolTable.AddType(node);
+			var table = node.SymbolTable;
+			if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
+				while(table.CurrentScope != SymbolTable.Scope.Global)
+					table = table.EnclosingScope;
+			table.AddType(node);
 		}
 // [/COBOL 2002]
+
+		private void AddToSymbolTable(DataDescription node) {
+			if (node.IsPartOfATypeDef) return;
+			var table = node.SymbolTable;
+			if (node.CodeElement().IsGlobal)
+				while(table.CurrentScope != SymbolTable.Scope.Global)
+					table = table.EnclosingScope;
+			table.AddVariable(node);
+        }
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
 			SetCurrentNodeToTopLevelItem(data.LevelNumber);
 			var node = new DataDescription(data);
 			Enter(node);
-			if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+			AddToSymbolTable(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
