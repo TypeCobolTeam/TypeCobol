@@ -333,8 +333,8 @@
            88 y       VALUE 'T'.                                              
            88 y-false VALUE 'F'.                                              
        PROCEDURE DIVISION                                                     
-             USING BY REFERENCE x                                             
-                   BY REFERENCE y                                             
+             USING BY REFERENCE x-value                                       
+                   BY REFERENCE y-value                                       
            .                                                                  
            IF NOT x
              SET y TO TRUE

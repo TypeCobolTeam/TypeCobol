@@ -95,7 +95,7 @@
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE mydate                                        
                    BY REFERENCE format                                        
-                   BY REFERENCE okay                                          
+                   BY REFERENCE okay-value                                    
                    BY REFERENCE actual-format                                 
            .                                                                  
            CONTINUE.

@@ -3,16 +3,17 @@
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.Text;
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.Text;
+	using TypeCobol.Compiler.CodeModel;
 
 internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 
 	public IList<CallTargetParameter> UsingParameters { get; private set; }
 	public CallTargetParameter ReturningParameter { get; private set; }
+	private SymbolTable table;
 
 
 	public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, List<Compiler.Nodes.Node> sentences): base(null) {
+		table = declaration.SymbolTable;
 		UsingParameters = new List<CallTargetParameter>();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER
 		foreach(var parameter in declaration.Profile.InputParameters)
@@ -49,7 +50,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 					if (parameter.SharingMode.Value == ParameterSharingMode.ByValue) strmode = "BY VALUE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
-					if (parameter.StorageArea != null) strname = name;
+					if (parameter.StorageArea != null) strname = CreateName(name);
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					c++;
 				}
@@ -58,13 +59,20 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
 					var named = ReturningParameter.StorageArea;
-					if (named != null) strname = named.SymbolReference.Name;
+					if (named != null) strname = CreateName(named.SymbolReference.Name);
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 				}
 				_cache.Add(new TextLineSnapshot(-1, "    .", null));
 			}
 			return _cache;
 		}
+	}
+	private string CreateName(string name) {
+		var found = table.GetVariable(new Compiler.CodeElements.Expressions.URI(name));
+		if (found.Count != 1) return name;
+		var pentry = (DataDescriptionEntry)found[0].CodeElement;
+		if (pentry.DataType == DataType.Boolean) return name+"-value";
+		return name;
 	}
 
 	public bool IsLeaf { get { return false; } }
