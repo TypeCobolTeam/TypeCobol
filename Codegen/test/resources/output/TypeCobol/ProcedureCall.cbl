@@ -42,21 +42,29 @@
       *    CALL ValidateDateFormat                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT     flag     realformat                            
-       CALL c5875eec                                                          
-           USING  somedate someformat flag realformat                         
+           CALL c5875eec USING                                                
+                                somedate                                      
+                                someformat                                    
+                                flag                                          
+                                realformat                                    
        
       *    CALL ValidateDateFormat                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT     flag     realformat                            
-       CALL c5875eec                                                          
-           USING  somedate someformat flag realformat                         
+           CALL c5875eec USING                                                
+                                somedate                                      
+                                someformat                                    
+                                flag                                          
+                                realformat                                    
       * __________________________________________________
       * KO : procedure doesn't exist
       *    CALL ValidateDatFormatt                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT              realformat                            
-       CALL ValidateDatFormatt                                                
-           USING  somedate someformat realformat                              
+           CALL ValidateDatFormatt USING                                      
+                                          somedate                            
+                                          someformat                          
+                                          realformat                          
       * __________________________________________________
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
@@ -66,15 +74,20 @@
       *    CALL ValidateDateFormat                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT              realformat                            
-       CALL c5875eec                                                          
-           USING  somedate someformat realformat                              
+           CALL c5875eec USING                                                
+                                somedate                                      
+                                someformat                                    
+                                realformat                                    
       * __________________________________________________
       * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
       *    CALL ValidateDateFormat                                            
       *             INPUT      someformat somedate                            
       *             OUTPUT     realformat flag                                
-       CALL c5875eec                                                          
-           USING  someformat somedate realformat flag                         
+           CALL c5875eec USING                                                
+                                someformat                                    
+                                somedate                                      
+                                realformat                                    
+                                flag                                          
            .
 
        END PROGRAM ProcedureCall.
