@@ -39,7 +39,8 @@ public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallState
 			var names = new Dictionary<QualifiedName,object>();
 			names.Add(new URI(call.FunctionName), null);
 			foreach(var parameter in call.Arguments) {
-				names.Add(new URI(parameter.StorageAreaOrValue.ToString()), null);
+				if (!parameter.IsOmitted && !parameter.StorageAreaOrValue.IsLiteral)
+					names.Add(new URI(parameter.StorageAreaOrValue.ToString()), null);
 			}
 			return names;
 		}

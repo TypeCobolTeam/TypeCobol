@@ -63,16 +63,23 @@ public enum FunctionType: int {
 	Procedure = 2,
 }
 
-public class ParametersProfile {
+public interface ParameterList {
+	IList<DataType> InputParameters { get; }
+	IList<DataType> InoutParameters { get; }
+	IList<DataType> OutputParameters { get; }
+	DataType ReturningParameter { get; }
+}
+
+public class ParametersProfile: ParameterList {
 	public IList<ParameterDescriptionEntry> InputParameters { get; set; }
-	public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
 	public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
+	public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
 	public ParameterDescriptionEntry ReturningParameter { get; set; }
 
 	public ParametersProfile() {
 		InputParameters = new List<ParameterDescriptionEntry>();
-		OutputParameters = new List<ParameterDescriptionEntry>();
 		InoutParameters = new List<ParameterDescriptionEntry>();
+		OutputParameters = new List<ParameterDescriptionEntry>();
 		ReturningParameter = null;
 	}
 
@@ -137,6 +144,45 @@ public class ParametersProfile {
 		if (ReturningParameter != null) str.Append(ReturningParameter.Name).Append(':').Append(ReturningParameter.DataType);
 		str.Append(')');
 		return str.ToString();
+	}
+
+
+
+	IList<DataType> _icache = null;
+	IList<DataType> ParameterList.InputParameters {
+		get {
+			if (_icache != null) return _icache;
+			_icache = new List<DataType>();
+			foreach(var parameter in this.InputParameters)
+				_icache.Add(parameter.DataType);
+			return _icache;
+		}
+	}
+	IList<DataType> _ycache = null;
+	IList<DataType> ParameterList.InoutParameters {
+		get {
+			if (_ycache != null) return _ycache;
+			_ycache = new List<DataType>();
+			foreach(var parameter in this.InoutParameters)
+				_ycache.Add(parameter.DataType);
+			return _ycache;
+		}
+	}
+	IList<DataType> _ocache = null;
+	IList<DataType> ParameterList.OutputParameters {
+		get {
+			if (_ocache != null) return _ocache;
+			_ocache = new List<DataType>();
+			foreach(var parameter in this.OutputParameters)
+				_ocache.Add(parameter.DataType);
+			return _ocache;
+		}
+	}
+	DataType ParameterList.ReturningParameter {
+		get {
+			if (this.ReturningParameter == null) return null;
+			return this.ReturningParameter.DataType;
+		}
 	}
 }
 

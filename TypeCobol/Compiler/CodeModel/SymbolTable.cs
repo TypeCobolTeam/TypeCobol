@@ -411,31 +411,32 @@ public class SymbolTable {
 
 	public void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
 
-	public List<Node> GetFunction(QualifiedName name, ParametersProfile profile = null) {
+	public List<Node> GetFunction(QualifiedName name, ParameterList profile = null) {
 		var found = GetFunction(name.Head);
 		found = Get(found, name);
 		if (profile != null) {
 			var filtered = new List<Node>();
-			foreach(var function in found)
+			foreach(var function in found) {
 				if (Matches(((FunctionDeclaration)function).Profile, profile))
 					filtered.Add(function);
+			}
 			found = filtered;
 		}
 		return found;
 	}
-	private bool Matches(ParametersProfile p1, ParametersProfile p2) {
+	private bool Matches(ParameterList p1, ParameterList p2) {
 //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
 //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
-//		if (p1.ReturningParameter.DataType != p2.ReturningParameter.DataType) return false;
+//		if (p1.ReturningParameter != p2.ReturningParameter) return false;
 		if (p1.InputParameters.Count  != p2.InputParameters.Count)  return false;
 		if (p1.InoutParameters.Count  != p2.InoutParameters.Count)  return false;
 		if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
 		for(int c=0; c<p1.InputParameters.Count; c++)
-			if (p1.InputParameters[c].DataType != p2.InputParameters[c].DataType) return false;
+			if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
 		for(int c=0; c<p1.InoutParameters.Count; c++)
-			if (p1.InoutParameters[c].DataType != p2.InoutParameters[c].DataType) return false;
+			if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
 		for(int c=0; c<p1.OutputParameters.Count; c++)
-			if (p1.OutputParameters[c].DataType != p2.OutputParameters[c].DataType) return false;
+			if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
 		return true;
 	}
 

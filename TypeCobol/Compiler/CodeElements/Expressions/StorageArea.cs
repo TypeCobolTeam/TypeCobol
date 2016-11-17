@@ -280,18 +280,68 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-	/// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
-	public abstract class FunctionCall {
-		public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
-			Type = type;
-			Arguments = arguments;
+/// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
+public abstract class FunctionCall {
+	public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
+		Type = type;
+		Arguments = arguments;
+	}
+
+	public FunctionCallType Type { get; private set; }
+	public abstract string FunctionName { get; }
+	public abstract Token FunctionNameToken { get; }
+	public virtual CallSiteParameter[] Arguments { get; private set; }
+
+	public class FunctionCallParameterList: ParameterList {
+		private IList<DataType> inputs = new List<DataType>();
+		public IList<DataType> InputParameters {
+			get { return inputs; }
+			set { inputs = value; }
+		}
+		private IList<DataType> inouts = new List<DataType>();
+		public IList<DataType> InoutParameters {
+			get { return inouts; }
+			set { inouts = value; }
+		}
+		private IList<DataType> outputs = new List<DataType>();
+		public IList<DataType> OutputParameters {
+			get { return outputs; }
+			set { outputs = value; }
+		}
+		private DataType returning = null;
+		public DataType ReturningParameter {
+			get { return returning; }
+			set { returning = value; }
 		}
 
-		public FunctionCallType Type { get; private set; }
-		public abstract string FunctionName { get; }
-		public abstract Token FunctionNameToken { get; }
-		public virtual CallSiteParameter[] Arguments { get; private set; }
+		internal static IList<DataType> CreateParameters(List<CallSiteParameter> parameters, CodeModel.SymbolTable table) {
+			var results = new List<DataType>();
+			foreach(var parameter in parameters) results.Add(CreateParameter(parameter, table));
+			return results;
+		}
+		internal static DataType CreateParameter(CallSiteParameter p, CodeModel.SymbolTable table) {
+			DataType type = null;
+			var parameter = p.StorageAreaOrValue;
+			if (parameter.IsLiteral) {
+				if (parameter.NumericValue != null)
+				     type = DataType.Numeric;
+				else
+				if (parameter.AlphanumericValue != null)
+				     type = DataType.Alphanumeric;
+				else type = DataType.Unknown;
+			} else {
+				var found = table.GetVariable(new URI(parameter.ToString()));
+				foreach(var item in found) {
+					var data = item as Nodes.DataDescription;
+					if (type == null) type = data.DataType;
+					else if (type != data.DataType) type = DataType.Unknown;
+				}
+				if (type == null) type = DataType.Unknown;
+			}
+			return type;
+		}
 	}
+}
 
 	/// <summary>Call to an intrinsic function</summary>
 	public class IntrinsicFunctionCall: FunctionCall {
@@ -344,6 +394,15 @@ namespace TypeCobol.Compiler.CodeElements
 				}
 				return _cache.ToArray();
 			}
+		}
+
+		public ParameterList AsProfile(CodeModel.SymbolTable table) {
+			var profile = new FunctionCallParameterList();
+			profile.InputParameters  = FunctionCallParameterList.CreateParameters(InputParameters, table);
+			profile.InoutParameters  = FunctionCallParameterList.CreateParameters(InoutParameters, table);
+			profile.OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table);
+			profile.ReturningParameter = null;
+			return profile;
 		}
 	}
 

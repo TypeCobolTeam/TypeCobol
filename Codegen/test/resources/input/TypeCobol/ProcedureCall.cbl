@@ -29,7 +29,7 @@
                     OUTPUT     flag     realformat
        
            CALL ValidateDateFormat
-                    INPUT      somedate someformat
+                    INPUT      somedate 'YYYYMMDD'
                     OUTPUT     flag     realformat
            END-CALL
       * __________________________________________________
