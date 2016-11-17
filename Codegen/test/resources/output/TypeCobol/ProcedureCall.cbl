@@ -42,13 +42,13 @@
       *    CALL ValidateDateFormat                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT     flag     realformat                            
-       CALL ValidateDateFormat                                                
+       CALL c5875eec                                                          
            USING  somedate someformat flag realformat                         
        
       *    CALL ValidateDateFormat                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT     flag     realformat                            
-       CALL ValidateDateFormat                                                
+       CALL c5875eec                                                          
            USING  somedate someformat flag realformat                         
       * __________________________________________________
       * KO : procedure doesn't exist
@@ -66,14 +66,14 @@
       *    CALL ValidateDateFormat                                            
       *             INPUT      somedate someformat                            
       *             OUTPUT              realformat                            
-       CALL ValidateDateFormat                                                
+       CALL c5875eec                                                          
            USING  somedate someformat realformat                              
       * __________________________________________________
       * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
       *    CALL ValidateDateFormat                                            
       *             INPUT      someformat somedate                            
       *             OUTPUT     realformat flag                                
-       CALL ValidateDateFormat                                                
+       CALL c5875eec                                                          
            USING  someformat somedate realformat flag                         
            .
 

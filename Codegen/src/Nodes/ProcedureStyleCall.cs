@@ -27,7 +27,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 				_cache = new List<ITextLine>();
 
 				var statement = (ProcedureStyleCallStatement)Node.CodeElement;
-				_cache.Add(new TextLineSnapshot(-1, "CALL "+statement.ProcedureCall.ProcedureName.Name, null));
+				_cache.Add(new TextLineSnapshot(-1, "CALL "+GetHash(statement.ProcedureCall.ProcedureName.Name), null));
 				var str = new System.Text.StringBuilder("    USING ");
 				foreach(var parameter in call.InputParameters) {
 					str.Append(' ').Append(parameter.StorageAreaOrValue.ToString());
@@ -36,6 +36,11 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 			}
 			return _cache;
 		}
+	}
+	private string GetHash(string function) {
+		var found = Node.SymbolTable.GetFunction(new Compiler.CodeElements.Expressions.URI(function));
+		if (found.Count != 1) return function;
+		return ((Compiler.Nodes.FunctionDeclaration)found[0]).Hash;
 	}
 
 	public bool IsLeaf { get { return true; } }
