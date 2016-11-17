@@ -28,11 +28,12 @@ public class Eraser: Solver {
 		output = input;
 		foreach(var word in words) {
 			string pattern = string.Format(@"\b{0}\b", word);
-			var match = Regex.Match(output, pattern);
+			var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+			var match = regex.Match(output);
 			if (match.Success) {
 				somethingDone = true;
 				string padding = this.padded? new String(' ', word.Length) : "";
-				output = new Regex(pattern).Replace(output, padding, match.Groups.Count, match.Index);
+				output = regex.Replace(output, padding, match.Groups.Count, match.Index);
 			}
 		}
 		return somethingDone;

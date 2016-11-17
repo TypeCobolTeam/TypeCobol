@@ -52,7 +52,8 @@
            MOVE        CORRESPONDING identifier-2 TO identifier-1             
       *    MOVE UNSAFE identifier-2 TO identifier-1                           
            MOVE        identifier-2 TO identifier-1                           
-           MOVE unsafe identifier-3 TO identifier-1
+      *    MOVE unsafe identifier-3 TO identifier-1                           
+           MOVE        identifier-3 TO identifier-1                           
       * OK: receiver is strongly-typed, with UNSAFE sender can have no TYPE
       *    MOVE UNSAFE identifier-4 TO identifier-1                           
            MOVE        identifier-4 TO identifier-1                           
@@ -61,7 +62,8 @@
       * WARN: receiver is weakly-typed, UNSAFE is useless
       *    MOVE UNSAFE CORRESPONDING identifier-1 TO identifier-2             
            MOVE        CORRESPONDING identifier-1 TO identifier-2             
-           MOVE unsafe identifier-1 TO identifier-2
+      *    MOVE unsafe identifier-1 TO identifier-2                           
+           MOVE        identifier-1 TO identifier-2                           
       *    MOVE UNSAFE identifier-4 TO identifier-3                           
            MOVE        identifier-4 TO identifier-3                           
       *    MOVE UNSAFE '1337'       TO identifier-3                           
