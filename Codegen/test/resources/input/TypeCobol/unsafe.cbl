@@ -18,6 +18,7 @@
            01 identifier-3 TYPE Small.
            01 identifier-4 PIC 9(04).
            01 myunsafeid PIC 9(04).
+           01 myunsafeTxt PIC X(14).
 
        PROCEDURE DIVISION.
        
@@ -47,6 +48,13 @@
            MOVE UNSAFE identifier-4 TO myunsafeid
            MOVE        myunsafeid   TO identifier-4
            MOVE        myUNSAFEid   TO identifier-4
+           MOVE unsaFe myUNSAFEid   TO identifier-4
+           MOVE uNsaFe myUNSAFEid   TO identifier-4
+           MOVE uNsaFe 'unsafe'     TO myunsafeTxt
+           MOVE uNsaFe ' unsafe '   TO myunsafeTxt
+           MOVE uNsaFe " unsafe "   TO myunsafeTxt
+           MOVE uNsaFe " 'unsafe' "          TO myunsafeTxt
+           MOVE uNsaFe " 'unsafe' unsafe "   TO myunsafeTxt
            .
 
        END PROGRAM Test-UNSAFE.
