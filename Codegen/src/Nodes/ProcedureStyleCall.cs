@@ -29,9 +29,10 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 				var hash = GetHash(statement.ProcedureCall);
 				var callTextLine = new TextLineSnapshot(-1, "    CALL " + hash + " USING ", null);
 				_cache.Add(callTextLine);
-				var prefix = new string(' ', callTextLine.Length + 1);
+				var indent = new string(' ', callTextLine.Length + 1);
 				foreach (var parameter in call.InputParameters) {
-					_cache.Add(new TextLineSnapshot(-1, prefix + parameter.StorageAreaOrValue, null));
+					var name = ToString(parameter.StorageAreaOrValue, Node.SymbolTable);
+					_cache.Add(new TextLineSnapshot(-1, indent + name, null));
 				}
 			}
 			return _cache;
@@ -43,6 +44,16 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		if (found.Count < 1) return "?NOT_FOUND?";
 		if (found.Count > 1) return "?AMBIGUOUS?";
 		return ((Compiler.Nodes.FunctionDeclaration)found[0]).Hash;
+	}
+	private static string ToString(Variable parameter, Compiler.CodeModel.SymbolTable table) {
+		var name = parameter.ToString();
+		if (parameter.IsLiteral) return name;
+		var found = table.GetVariable(new Compiler.CodeElements.Expressions.URI(name));
+		if (found.Count < 1) return "?NOT_FOUND?";
+//		if (found.Count > 1) return "?AMBIGUOUS?";
+		var data = found[0] as Compiler.Nodes.DataDescription;
+		if (data.DataType == DataType.Boolean) name += "-value";
+		return name;
 	}
 
 	public bool IsLeaf { get { return true; } }

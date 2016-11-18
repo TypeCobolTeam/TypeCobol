@@ -45,7 +45,7 @@
            CALL c5875eec USING                                                
                                 somedate                                      
                                 someformat                                    
-                                flag                                          
+                                flag-value                                    
                                 realformat                                    
        
       *    CALL ValidateDateFormat                                            
@@ -54,7 +54,7 @@
            CALL c5875eec USING                                                
                                 somedate                                      
                                 'YYYYMMDD'                                    
-                                flag                                          
+                                flag-value                                    
                                 realformat                                    
       * __________________________________________________
       * KO : procedure doesn't exist
@@ -87,7 +87,7 @@
                                    someformat                                 
                                    somedate                                   
                                    realformat                                 
-                                   flag                                       
+                                   flag-value                                 
            .
 
        END PROGRAM ProcedureCall.
