@@ -53,6 +53,7 @@
              INPUT x PIC 9(04)
                    y PIC 9(04)
                    z PIC 9(04)
+                   t PIC 9(04)
              RETURNING result PIC 9(04)
          .
          DATA DIVISION.
@@ -103,8 +104,8 @@
        DECLARE FUNCTION IllegalClauses PUBLIC.
          DATA DIVISION.
            WORKING-STORAGE SECTION.
-             01 x PIC X IS GLOBAL.
-             01 y PIC X IS EXTERNAL.
+             01 g PIC X IS GLOBAL.
+             01 e PIC X IS EXTERNAL.
          PROCEDURE DIVISION.
            .
        END-DECLARE.

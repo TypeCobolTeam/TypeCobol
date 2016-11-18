@@ -70,7 +70,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	private string CreateName(string name) {
 		var found = table.GetVariable(new Compiler.CodeElements.Expressions.URI(name));
 		if (found.Count < 1) return "?NOT_FOUND?";
-		if (found.Count > 1) return "?AMBIGUOUS?";
+		if (found.Count > 1) return name;
 		var pentry = (DataDescriptionEntry)found[0].CodeElement;
 		if (pentry.DataType == DataType.Boolean) return name+"-value";
 		return name;

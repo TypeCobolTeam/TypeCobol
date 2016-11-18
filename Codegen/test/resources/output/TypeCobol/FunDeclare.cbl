@@ -1,17 +1,17 @@
 ﻿      * 13 CodeElements errors
       * "1"@(9:8>9:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(40:8>40:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
-      * "1"@(60:12>60:26): [27:1] Syntax error : x is already a parameter.
-      * "1"@(61:12>61:26): [27:1] Syntax error : y is already a parameter.
-      * "1"@(63:14>63:28): [27:1] Syntax error : x is already a parameter.
-      * "1"@(64:14>64:28): [27:1] Syntax error : z is already a parameter.
-      * "1"@(67:12>67:31): [27:1] Syntax error : result is already a parameter.
-      * "1"@(69:12>69:27): [27:1] Syntax error : Ambiguous reference to symbol result
-      * "1"@(106:14>106:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
-      * "1"@(107:14>107:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
-      * "1"@(112:8>112:16): [27:1] Syntax error : Illegal non-function item in library
-      * "1"@(126:8>131:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-      * "1"@(126:8>131:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
+      * "1"@(61:12>61:26): [27:1] Syntax error : x is already a parameter.
+      * "1"@(62:12>62:26): [27:1] Syntax error : y is already a parameter.
+      * "1"@(64:14>64:28): [27:1] Syntax error : x is already a parameter.
+      * "1"@(65:14>65:28): [27:1] Syntax error : z is already a parameter.
+      * "1"@(68:12>68:31): [27:1] Syntax error : result is already a parameter.
+      * "1"@(70:12>70:27): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(107:14>107:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
+      * "1"@(108:14>108:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
+      * "1"@(113:8>113:16): [27:1] Syntax error : Illegal non-function item in library
+      * "1"@(127:8>132:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
+      * "1"@(127:8>132:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
       *SERVICE IS YFUNCOPY.                                                   
@@ -35,8 +35,8 @@
       *    e3e490ae -> StrangelyReturnsItsInput                               
            05 PIC X(08) VALUE 'e3e490ae'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
-      *    c98a2036 -> SumThreeWithClutterInLinkage                           
-           05 PIC X(08) VALUE 'c98a2036'.                                     
+      *    d8a9d90f -> SumThreeWithClutterInLinkage                           
+           05 PIC X(08) VALUE 'd8a9d90f'.                                     
            05 PIC X(08) VALUE LOW-VALUES.                                     
       *    e6215ae7 -> IllegalClauses                                         
            05 PIC X(08) VALUE 'e6215ae7'.                                     
@@ -90,6 +90,7 @@
       *      INPUT x PIC 9(04)                                                
       *            y PIC 9(04)                                                
       *            z PIC 9(04)                                                
+      *            t PIC 9(04)                                                
       *      RETURNING result PIC 9(04)                                       
       *  .                                                                    
        
@@ -141,7 +142,7 @@
            SET FCT-DoesNothing-02   TO ENTRY 'fe03398a'                       
            SET FCT-ReturnsZero-01   TO ENTRY 'a866b35c'                       
            SET FCT-StrangelyReturnsItsInput-01   TO ENTRY 'e3e490ae'          
-           SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY 'c98a2036'       
+           SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY 'd8a9d90f'       
            SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'                    
            .                                                                  
                                                                               
@@ -153,7 +154,7 @@
              SET LibFctPointer(2)   TO ENTRY 'fe03398a'                       
              SET LibFctPointer(3)   TO ENTRY 'a866b35c'                       
              SET LibFctPointer(4)   TO ENTRY 'e3e490ae'                       
-             SET LibFctPointer(5)   TO ENTRY 'c98a2036'                       
+             SET LibFctPointer(5)   TO ENTRY 'd8a9d90f'                       
              SET LibFctPointer(6)   TO ENTRY 'e6215ae7'                       
                                                                               
              SET LibFctList-IsLoaded TO TRUE                                  
@@ -224,7 +225,7 @@
        END PROGRAM e3e490ae.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. c98a2036.                                                  
+       PROGRAM-ID. d8a9d90f.                                                  
          DATA DIVISION.
          LINKAGE SECTION.
            01 x PIC 9(04).
@@ -236,17 +237,19 @@
            01 c PIC 9(04).
            01 result PIC 9(04).
        01 z PIC 9(04).                                                        
+       01 t PIC 9(04).                                                        
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE x                                             
                    BY REFERENCE y                                             
                    BY REFERENCE z                                             
+                   BY REFERENCE t                                             
                    BY REFERENCE result                                        
            .                                                                  
            MOVE 0 TO result.
            ADD x to result.
            ADD y to result.
            ADD z to result.
-       END PROGRAM c98a2036.                                                  
+       END PROGRAM d8a9d90f.                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. ceb46e19.                                                  
@@ -287,8 +290,8 @@
        PROGRAM-ID. e6215ae7.                                                  
          DATA DIVISION.
            WORKING-STORAGE SECTION.
-             01 x PIC X IS GLOBAL.
-             01 y PIC X IS EXTERNAL.
+             01 g PIC X IS GLOBAL.
+             01 e PIC X IS EXTERNAL.
        PROCEDURE DIVISION                                                     
            .                                                                  
            .
