@@ -116,9 +116,9 @@
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
     </Compile>
     <Compile Include="Compiler\AntlrUtils\CobolErrorStrategy.cs" />
-    <Compile Include="Compiler\AntlrUtils\CompilerDirectiveErrorStrategy.cs" />
-    <Compile Include="Compiler\AntlrUtils\DiagnosticSyntaxErrorListener.cs" />
+    <Compile Include="Compiler\AntlrUtils\ParserDiagnosticErrorListener.cs" />
     <Compile Include="Compiler\AntlrUtils\LineAwareParser.cs" />
+    <Compile Include="Compiler\AntlrUtils\ParserRuleContextWithDiagnostics.cs" />
     <Compile Include="Compiler\AntlrUtils\ParseTreeUtils.cs" />
     <Compile Include="Compiler\AntlrUtils\RuleStackBuilder.cs" />
     <Compile Include="Compiler\AntlrUtils\TextLineCharStream.cs" />

@@ -6,7 +6,7 @@
 
 grammar CobolCompilerDirectives;
 
-options { superClass=TypeCobol.Compiler.AntlrUtils.LineAwareParser; }
+options { superClass=TypeCobol.Compiler.AntlrUtils.LineAwareParser; contextSuperClass=TypeCobol.Compiler.AntlrUtils.ParserRuleContextWithDiagnostics; }
 
 import CobolWords;
 

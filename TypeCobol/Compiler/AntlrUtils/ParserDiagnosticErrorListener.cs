@@ -3,28 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
     /// <summary>
-    /// Register all errors encountered by the Antlr parser in a list of Diagnostic objects
+    /// Register all errors encountered by the Antlr parser on all parse nodes of type ParserRuleContextWithDiagnostics 
+    /// (insert the following option in the associated grammar : contextSuperClass=TypeCobol.Compiler.AntlrUtils.ParserRuleContextWithDiagnostics)
     /// </summary>
-    public class DiagnosticSyntaxErrorListener : BaseErrorListener 
+    public class ParserDiagnosticErrorListener : BaseErrorListener 
     {
-        /// <summary>
-        /// List of errors found by parsing the program
-        /// </summary>
-        public IList<ParserDiagnostic> Diagnostics { get; private set; }
-
-        public DiagnosticSyntaxErrorListener()
-        {
-            Diagnostics = new List<ParserDiagnostic>();
-        }
-
         /// <summary>
         /// Register a ParserDiagnostic for each syntax error encountered by the parser
         /// </summary>
@@ -36,6 +25,9 @@ namespace TypeCobol.Compiler.AntlrUtils
             bool isFirst = true;
             foreach (string ruleInvocation in stack.Reverse())
             {
+                // Hide the root rule which is useful for error recovery and perf, but does not exist in the pure Cobol grammar
+                if (ruleInvocation == "cobolCodeElements") continue; 
+
                 if(isFirst) { isFirst = false;  }
                 else
                 {
@@ -44,9 +36,16 @@ namespace TypeCobol.Compiler.AntlrUtils
                 ruleStack.Append(ruleInvocation);
             }
 
-            // Register a new diagnostic
+            // Create a new diagnostic object
             ParserDiagnostic diagnostic = new ParserDiagnostic(msg, offendingSymbol, ruleStack.ToString());
-            Diagnostics.Add(diagnostic);
+
+            // Attach this diagnostic to the current parse tree rule
+            var parser = (Antlr4.Runtime.Parser)recognizer;
+            if (parser != null && parser.Context is ParserRuleContextWithDiagnostics)
+            {
+                var currentRuleContext = (ParserRuleContextWithDiagnostics)parser.Context;
+                currentRuleContext.AttachDiagnostic(diagnostic);
+            }
         }
     }
 

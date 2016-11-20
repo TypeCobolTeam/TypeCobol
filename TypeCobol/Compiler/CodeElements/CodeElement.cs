@@ -16,8 +16,8 @@ namespace TypeCobol.Compiler.CodeElements
         public CodeElement(CodeElementType type)
         {
             Type = type;
+            ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
-            Diagnostics = new List<Diagnostic>();
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// All significant tokens consumed in the source document to build this code element
         /// </summary>
-        public IList<Token> ConsumedTokens { get; set; }
+        public IList<Token> ConsumedTokens { get; private set; }
 
         /// <summary>
         /// Is the token is a UserDefinedWord or a literal, it could be a symbol definition or a symbol reference.
@@ -71,8 +71,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
-        public IList<Diagnostic> Diagnostics { get; private set; }
-
+        public IList<Diagnostic> Diagnostics { get; set; }
 
         /// <summary>
         /// Apply propperties of the current CodeElement to the specified one.

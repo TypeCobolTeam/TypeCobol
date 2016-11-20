@@ -87,13 +87,18 @@ namespace TypeCobol.Test.Compiler.Parser
 
             b.Append("\"Diagnostics\": [");
             first = true;
-            foreach (var d in e.Diagnostics)
+            if (e.Diagnostics != null)
             {
-                if (first) {
-                    newline(b, a+3, "");
-                    first = false;
-                } else newline(b, a+3, ",");
-                b.Append(ToJSON(a+3, d));
+                foreach (var d in e.Diagnostics)
+                {
+                    if (first)
+                    {
+                        newline(b, a + 3, "");
+                        first = false;
+                    }
+                    else newline(b, a + 3, ",");
+                    b.Append(ToJSON(a + 3, d));
+                }
             }
             newline(b, a + 1, "");
             b.Append("]");

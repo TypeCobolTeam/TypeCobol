@@ -134,14 +134,20 @@ namespace TypeCobol
 			get {
 				var errors = new List<TypeCobol.Tools.Diagnostic>[2];
 				for(int c = 0; c < errors.Length; c++) errors[c] = new List<TypeCobol.Tools.Diagnostic>();
-				// 'CodeElements' parsing (1st phase) errors
-				errors[0].AddRange(Converter.AsDiagnostics(Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
+                // 'CodeElements' parsing (1st phase) errors
+                if (Results.CodeElementsDocumentSnapshot.ParserDiagnostics != null)
+                {
+                    errors[0].AddRange(Converter.AsDiagnostics(Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
+                }
 				foreach(var e in Results.CodeElementsDocumentSnapshot.CodeElements) {
-					if (e.Diagnostics.Count < 1) continue;
+					if (e.Diagnostics == null || e.Diagnostics.Count < 1) continue;
 					errors[0].AddRange(Converter.GetDiagnostics(e));
 				}
-				// 'ProgramClass' parsing (2nd phase) errors
-				errors[1].AddRange(Converter.AsDiagnostics(Results.ProgramClassDocumentSnapshot.Diagnostics));
+                // 'ProgramClass' parsing (2nd phase) errors
+                if (Results.ProgramClassDocumentSnapshot.Diagnostics != null)
+                {
+                    errors[1].AddRange(Converter.AsDiagnostics(Results.ProgramClassDocumentSnapshot.Diagnostics));
+                }
 				return errors;
 			}
 		}

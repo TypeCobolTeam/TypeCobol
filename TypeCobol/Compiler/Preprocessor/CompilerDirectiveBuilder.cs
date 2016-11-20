@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
+using Antlr4.Runtime.Misc;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -23,18 +24,43 @@ namespace TypeCobol.Compiler.Preprocessor
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
         public CompilerDirective CompilerDirective { get; private set; }
-
-        /// <summary>
-        /// List of syntax diagnostics gathered while transversing the parse tree
-        /// </summary>
-        public IList<Diagnostic> Diagnostics { get; private set; }
         
         // --- Visiting the tree ---
 
         public override void EnterCompilerDirectingStatement(CobolCompilerDirectivesParser.CompilerDirectingStatementContext context)
         {
             CompilerDirective = null;
-            Diagnostics = new List<Diagnostic>();
+        }
+
+        public override void ExitCompilerDirectingStatement([Antlr4.Runtime.Misc.NotNull] CobolCompilerDirectivesParser.CompilerDirectingStatementContext context)
+        {
+            if (CompilerDirective != null)
+            {
+                // Collect all error messages encoutered while parsing this compiler directive
+                AddDiagnosticsAttachedInContext(context);
+            }
+        }
+
+        private void AddDiagnosticsAttachedInContext(ParserRuleContext context)
+        {
+            var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
+            if (ruleNodeWithDiagnostics.Diagnostics != null)
+            {
+                foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
+                {
+                    CompilerDirective.AddDiagnostic(ruleDiagnostic);
+                }
+            }
+            if (context.children != null)
+            {
+                foreach (var childNode in context.children)
+                {
+                    if (childNode is IRuleNode)
+                    {                        
+                        AddDiagnosticsAttachedInContext((ParserRuleContext)((IRuleNode)childNode).RuleContext);
+                    }
+                }
+            }
         }
 
         public override void EnterBasisCompilerStatement(CobolCompilerDirectivesParser.BasisCompilerStatementContext context) 
@@ -72,7 +98,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         MessageCode.InvalidControlCblCompilerStatementOption, 
                         errorToken.Column, errorToken.EndColumn,
                         option);
-                    Diagnostics.Add(diag);
+                    CompilerDirective.AddDiagnostic(diag);
                 }
             }
         }
@@ -341,7 +367,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         MessageCode.InvalidNumericLiteralFormat,
                         errorToken.Column, errorToken.EndColumn,
                         "TODO");
-                    Diagnostics.Add(error);//TODO proper diagnostic error
+                    CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
                 }
             }
         }

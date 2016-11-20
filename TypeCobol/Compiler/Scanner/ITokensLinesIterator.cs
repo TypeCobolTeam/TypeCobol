@@ -36,11 +36,22 @@ namespace TypeCobol.Compiler.Scanner
         /// (in the text document identified by DocumentPath)
         /// </summary>
         int LineIndex { get; }
-        
+
+        /// <summary>
+        /// Current tokens line
+        /// (in the text document identified by DocumentPath)
+        /// </summary>
+        ITokensLine CurrentLine { get;  }
+
+        /// <summary>
+        /// Returns the last token of the last line before EOF
+        /// </summary>
+        ITokensLine LastLine { get; }
+
         /// <summary>
         /// Get next token or EndOfFile
         /// </summary>
-        Token NextToken();
+            Token NextToken();
 
         /// <summary>
         /// Get null (before the first call to NextToken()), current token, or EndOfFile

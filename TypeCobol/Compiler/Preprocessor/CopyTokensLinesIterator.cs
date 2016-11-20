@@ -160,7 +160,44 @@ namespace TypeCobol.Compiler.Preprocessor
                     return currentPosition.ImportedDocumentIterator.LineIndex;
                 }
             }
-        }        
+        }
+
+        /// <summary>
+        /// Current tokens line
+        /// </summary>
+        public ITokensLine CurrentLine
+        {
+            get
+            {
+                if (currentPosition.ImportedDocumentIterator == null)
+                {
+                    return tokensLines[currentPosition.LineIndex];
+                }
+                else
+                {
+                    return currentPosition.ImportedDocumentIterator.CurrentLine;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the last token of the last line before EOF
+        /// </summary>
+        public ITokensLine LastLine
+        {
+            get
+            {
+                if (tokensLines.Count > 0)
+                {
+                    var lastLineIndex = tokensLines.Count - 1;
+                    return tokensLines[lastLineIndex];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// Get an opaque object representing the current position of the iterator.

@@ -1,5 +1,7 @@
 ﻿using Antlr4.Runtime;
 using System;
+using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -49,15 +51,55 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         public void SeekToToken(IToken searchedToken)
         {
+            Reset();
+            ResetStopTokenLookup();
+
             // TO DO : optimize this naive implementation
-            // Not easy because of the underlying Copy and Replace iterators
-            while(Lt(1) != searchedToken)
+            // Not easy because of the underlying Copy and Replace iterators            
+            if (searchedToken != null)
             {
-                Consume();
+                var currentToken = Lt(1);
+                while (currentToken != searchedToken && currentToken.Type != TokenConstants.Eof)
+                {
+                    Consume();
+                    currentToken = Lt(1);
+                }
+                if (currentToken != searchedToken)
+                {
+                    throw new InvalidOperationException("Token not found in this stream");
+                }
             }
-            if(Lt(1) != searchedToken)
+        }
+
+        /// <summary>
+        /// Start monitoring if the token stream reached a specific token which marks the end of an instersting section
+        /// </summary>
+        public void StartLookingForStopToken(Token stopToken)
+        {
+            ResetStopTokenLookup();
+            if (stopToken != null)
             {
-                throw new InvalidOperationException("Token not found in this stream");
+                StopToken = stopToken;
+                stopTokenReplacedByEOF = new ReplacedToken(Token.END_OF_FILE, stopToken);
+                StreamReachedStopToken = false;
+            }
+        }
+
+        /// <summary>
+        /// Cancel a previous replacement of StopToken by EOF
+        /// </summary>
+        public void ResetStopTokenLookup()
+        {
+            // Reset replacement of stop token by EOF
+            if (indexOfStopTokenReplacedByEOF >= 0 && indexOfStopTokenReplacedByEOF < tokens.Count)
+            {
+                if (tokens[indexOfStopTokenReplacedByEOF] == stopTokenReplacedByEOF)
+                {
+                    tokens[indexOfStopTokenReplacedByEOF] = stopTokenReplacedByEOF.OriginalToken;
+                    fetchedEOF = false;
+                }
+                StreamReachedStopToken = false;
+                indexOfStopTokenReplacedByEOF = -1;
             }
         }
 
@@ -66,18 +108,49 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         public IToken StopToken { get; private set; }
 
+        // EOF token which replaces the original StopToken
+        private ReplacedToken stopTokenReplacedByEOF;
+        
         /// <summary>
         /// True when the token stream has reached StopToken
         /// </summary>
         public bool StreamReachedStopToken { get; private set; }
 
+        // Index of the replaced stop token in the buffer
+        private int indexOfStopTokenReplacedByEOF = -1;
+
         /// <summary>
-        /// Start monitoring if the token stream reached a specific token which marks the end of an instersting section
+        /// Override the original Fetch method from BufferedTokenStream : same behavior,
+        /// except that StopToken is replaced with EOF on the fly.
         /// </summary>
-        public void StartLookingForStopToken(IToken stopToken)
+        protected override int Fetch(int n)
         {
-            StopToken = stopToken;
-            StreamReachedStopToken = false;
+            if (fetchedEOF)
+            {
+                return 0;
+            }
+            for (int i = 0; i < n; i++)
+            {
+                IToken t = TokenSource.NextToken();
+                if (t is IWritableToken)
+                {
+                    ((IWritableToken)t).TokenIndex = tokens.Count;
+                }
+                // >>> replacement added
+                if(StopToken != null && t == StopToken)
+                {
+                    t = stopTokenReplacedByEOF;
+                    indexOfStopTokenReplacedByEOF = tokens.Count;
+                }
+                // <<< end of replacement
+                tokens.Add(t);
+                if (t.Type == TokenConstants.Eof)
+                {
+                    fetchedEOF = true;
+                    return i + 1;
+                }
+            }
+            return n;
         }
 
         public override void Consume()
@@ -85,7 +158,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             base.Consume();
             if(StopToken != null)
             {
-                if(Lt(1) == StopToken)
+                if(Lt(1) == stopTokenReplacedByEOF)
                 {
                     StreamReachedStopToken = true;
                 }

@@ -1,5 +1,7 @@
 grammar ProgramClass;
 
+options { contextSuperClass=TypeCobol.Compiler.AntlrUtils.ParserRuleContextWithDiagnostics; }
+
 //import CobolProgramClass;
 import TypeCobolProgram;
 

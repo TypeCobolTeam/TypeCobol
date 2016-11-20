@@ -82,6 +82,30 @@
     <Compile Include="Compiler\Text\*.cs" />
     <Content Include="**\Samples\**" />
     <Content Include="**\ResultFiles\**" />
+    <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
+    <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\CblProcess.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ControlCbl.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Copy.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Delete.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Eject.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Enter.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ExecSqlInclude.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Insert.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ReadyOrResetTrace.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Replace.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ServiceLabel.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ServiceReload.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Skip.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Title.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmEmptyPartialWordReplace.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceFunction.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceMultiple.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceNested.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplacePartial.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceSingle.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceSingleToMultiple.txt" />
     <Content Include="NewTestsToFix\**" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +119,38 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY1.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY2.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY3.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY4.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY5.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY6.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\CPY7.cpy" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\PgmCopy.cbl" />
+    <None Include="Compiler\Preprocessor\CopyTestFiles\PgmCopyReplacing.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Basis.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\CblProcess.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ControlCbl.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Copy.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Delete.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Eject.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Enter.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ExecSqlInclude.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Insert.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ReadyOrResetTrace.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Replace.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ServiceLabel.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\ServiceReload.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Skip.cbl" />
+    <None Include="Compiler\Preprocessor\DirectiveTestFiles\Title.cbl" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\CpyNested.cpy" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmEmptyPartialWordReplace.cpy" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceFunction.cbl" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceMultiple.cbl" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceNested.cbl" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplacePartial.cbl" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceSingle.cbl" />
+    <None Include="Compiler\Preprocessor\ReplaceTestFiles\PgmReplaceSingleToMultiple.cbl" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

@@ -48,6 +48,15 @@ namespace TypeCobol.Compiler.Parser
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
 			if(CodeElement != null)
             {
+                // Attach all tokens consumed by the parser for this code element
+                // Collect all error messages encoutered while parsing this code element
+                IList<Diagnostic> diagnostics = CodeElement.Diagnostics == null ? new List<Diagnostic>() : CodeElement.Diagnostics;
+                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
+                if(diagnostics.Count > 0)
+                {
+                    CodeElement.Diagnostics = diagnostics;
+                }
+
                 if (CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
                     CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
                 }
@@ -70,20 +79,56 @@ namespace TypeCobol.Compiler.Parser
                     CodeElement.CallSites = CobolExpressionsBuilder.callSites;
                 }
             }
+            // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
+            else if (CodeElement == null && context.Diagnostics != null)
+            {
+                var parentRuleContext = (ParserRuleContextWithDiagnostics)context.Parent;
+                foreach (var ruleDiagnostic in context.Diagnostics)
+                {
+                    parentRuleContext.AttachDiagnostic(ruleDiagnostic);
+                }
+            }
 		}
 
-		// Code structure
+        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, IList<Diagnostic> diagnostics, ParserRuleContext context)
+        {
+            var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
+            if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
+            {
+                foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
+                {
+                    diagnostics.Add(ruleDiagnostic);
+                }
+            }
+            if (context.children != null)
+            {
+                foreach(var childNode in context.children)
+                {
+                    if(childNode is IRuleNode)
+                    {                        
+                        AddTokensConsumedAndDiagnosticsAttachedInContext(consumedTokens, diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
+                    }
+                    else if(childNode is ITerminalNode)
+                    {
+                        Token token = (Token)((ITerminalNode)childNode).Symbol;
+                        consumedTokens.Add(token);
+                    }
+                }
+            }
+        }
 
-		  ////////////////////
-		 // IDENTIFICATION //
-		////////////////////
+        // Code structure
+
+        ////////////////////
+        // IDENTIFICATION //
+        ////////////////////
 
 
 
-		 // PROGRAM IDENTIFICATION
-		////////////////////////////
+        // PROGRAM IDENTIFICATION
+        ////////////////////////////
 
-		public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
+        public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
 			var program = new ProgramIdentification();
 			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
 			if (context.COMMON() != null) {
@@ -1726,12 +1771,14 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterPerformStatement(CodeElementsParser.PerformStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreatePerformStatement(context);
-		}
-
-		public override void EnterPerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement(context);
+            if (context.procedureName() != null || context.proceduresRange() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement(context);
+            }
+            else
+            {
+                CodeElement = CobolStatementsBuilder.CreatePerformStatement(context);
+            }
 		}
 
 		public override void EnterPerformStatementEnd(CodeElementsParser.PerformStatementEndContext context) {

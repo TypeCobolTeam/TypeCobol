@@ -133,6 +133,22 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
+        /// Current tokens line
+        /// </summary>
+        public ITokensLine CurrentLine
+        {
+            get { return sourceIterator.CurrentLine; }
+        }
+
+        /// <summary>
+        /// Returns the last token of the last line before EOF
+        /// </summary>
+        public ITokensLine LastLine
+        {
+            get { return sourceIterator.LastLine; }
+        }
+
+        /// <summary>
         /// Get next token after REPLACE processing or EndOfFile
         /// </summary>
         public Token NextToken()

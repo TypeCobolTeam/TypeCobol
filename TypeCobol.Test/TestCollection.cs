@@ -113,6 +113,14 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
+        public void CheckParserRobustness()
+        {
+            TestParserRobustness.CheckProgramCodeElements();
+        }
+
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
         public void CheckParserCobol85()
         {
             TestTokenSource.Check_CobolCharStream();

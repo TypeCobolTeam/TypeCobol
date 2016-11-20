@@ -335,10 +335,19 @@ internal class ArithmeticComparator : FilesComparator {
         {
             ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
             List<Diagnostic> diagnostics = new List<Diagnostic>();
-            diagnostics.AddRange(result.CodeElementsDocumentSnapshot.ParserDiagnostics);
-            diagnostics.AddRange(pcd.Diagnostics);
+            if (result.CodeElementsDocumentSnapshot.ParserDiagnostics != null)
+            {
+                diagnostics.AddRange(result.CodeElementsDocumentSnapshot.ParserDiagnostics);
+            }
+            if (pcd.Diagnostics != null)
+            {
+                diagnostics.AddRange(pcd.Diagnostics);
+            }
             foreach (var element in result.CodeElementsDocumentSnapshot.CodeElements) {
-                diagnostics.AddRange(element.Diagnostics);
+                if (element.Diagnostics != null)
+                {
+                    diagnostics.AddRange(element.Diagnostics);
+                }
             }
             Compare(pcd.Program, pcd.Class, diagnostics, reader);
         }

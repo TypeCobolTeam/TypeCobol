@@ -32,12 +32,12 @@ namespace TypeCobol.Compiler.Parser
             //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
 
             // Register all parse errors in a list in memory
-            DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
+            ParserDiagnosticErrorListener errorListener = new ParserDiagnosticErrorListener();
             cobolParser.RemoveErrorListeners();
             cobolParser.AddErrorListener(errorListener);
 
             // Try to parse a Cobol program or class
-            ProgramClassParser.CobolCompilationUnitContext codeElementParseTree = cobolParser.cobolCompilationUnit();
+            ProgramClassParser.CobolCompilationUnitContext programClassParseTree = cobolParser.cobolCompilationUnit();
 
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
@@ -45,12 +45,14 @@ namespace TypeCobol.Compiler.Parser
 			programClassBuilder.CustomSymbols = customSymbols;
             programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
-            walker.Walk(programClassBuilder, codeElementParseTree);
+            walker.Walk(programClassBuilder, programClassParseTree);
                         
             // Register compiler results
             newProgram = programClassBuilder.Program;
             newClass = programClassBuilder.Class;
-            diagnostics = errorListener.Diagnostics;
+            diagnostics = programClassBuilder.GetDiagnostics(programClassParseTree);
         }
+
+
     }
 }

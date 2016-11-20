@@ -127,7 +127,6 @@ codeElement:
 	exitStatement |
 	gotoStatement |
 	performStatement |
-	performProcedureStatement |
 	performStatementEnd |
 
 	// --- Program or method linkage statements ---
@@ -5589,15 +5588,9 @@ fileNameWithNoRewindOrReversed:
 // executed.
 
 performStatement:
-	PERFORM 
+	PERFORM (procedureName | proceduresRange)?
 	( performTimesPhrase   |
 	  performUntilPhrase   |
-	  performVaryingPhrase )?;
-
-performProcedureStatement:
-	PERFORM (procedureName | proceduresRange) 
-	( performTimesPhrase |
-	  performUntilPhrase |
 	  performVaryingPhrase )?;
 
 performStatementEnd: END_PERFORM;
