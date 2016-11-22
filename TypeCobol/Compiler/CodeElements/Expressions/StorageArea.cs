@@ -278,69 +278,142 @@ namespace TypeCobol.Compiler.CodeElements
         public FunctionCall FunctionCall { get; private set; }
 	}
 
-    /// <summary>
-    /// Common properties for noth types of function calls : list of expressions as arguments
-    /// </summary>
-    public abstract class FunctionCall
-    {
-        public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments)
-        {
-            Type = type;
-            Arguments = arguments;
-        }
 
-        public FunctionCallType Type { get; private set; }
 
-        public abstract string FunctionName { get; }
-        public abstract Token FunctionNameToken { get; }
+/// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
+public abstract class FunctionCall {
+	public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
+		Type = type;
+		Arguments = arguments;
+	}
 
-        public CallSiteParameter[] Arguments { get; private set; }
-    }
+	public FunctionCallType Type { get; private set; }
+	public abstract string FunctionName { get; }
+	public abstract Token FunctionNameToken { get; }
+	public virtual CallSiteParameter[] Arguments { get; private set; }
 
-    /// <summary>
-    /// Call to an intrinsic function
-    /// </summary>
-    public class IntrinsicFunctionCall : FunctionCall
-    {
-        public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
-        {
-            IntrinsicFunctionName = intrinsicFunctionName;
-        }
+	public class FunctionCallParameterList: ParameterList {
+		private IList<DataType> inputs = new List<DataType>();
+		public IList<DataType> InputParameters {
+			get { return inputs; }
+			set { inputs = value; }
+		}
+		private IList<DataType> inouts = new List<DataType>();
+		public IList<DataType> InoutParameters {
+			get { return inouts; }
+			set { inouts = value; }
+		}
+		private IList<DataType> outputs = new List<DataType>();
+		public IList<DataType> OutputParameters {
+			get { return outputs; }
+			set { outputs = value; }
+		}
+		private DataType returning = null;
+		public DataType ReturningParameter {
+			get { return returning; }
+			set { returning = value; }
+		}
 
-        public ExternalName IntrinsicFunctionName { get; private set; }
+		internal static IList<DataType> CreateParameters(List<CallSiteParameter> parameters, CodeModel.SymbolTable table) {
+			var results = new List<DataType>();
+			foreach(var parameter in parameters) results.Add(CreateParameter(parameter, table));
+			return results;
+		}
+		internal static DataType CreateParameter(CallSiteParameter p, CodeModel.SymbolTable table) {
+			DataType type = null;
+			var parameter = p.StorageAreaOrValue;
+			if (parameter.IsLiteral) {
+				if (parameter.NumericValue != null)
+				     type = DataType.Numeric;
+				else
+				if (parameter.AlphanumericValue != null)
+				     type = DataType.Alphanumeric;
+				else type = DataType.Unknown;
+			} else {
+				var found = table.GetVariable(new URI(parameter.ToString()));
+				foreach(var item in found) {
+					var data = item as Nodes.DataDescription;
+					if (type == null) type = data.DataType;
+					else if (type != data.DataType) type = DataType.Unknown;
+				}
+				if (type == null) type = DataType.Unknown;
+			}
+			return type;
+		}
+	}
+}
 
-        public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
+	/// <summary>Call to an intrinsic function</summary>
+	public class IntrinsicFunctionCall: FunctionCall {
+		public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
+			: base(FunctionCallType.IntrinsicFunctionCall, arguments) {
+			IntrinsicFunctionName = intrinsicFunctionName;
+		}
 
-        public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
-    }
+		public ExternalName IntrinsicFunctionName { get; private set; }
+		public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
+		public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
+	}
 
-    /// <summary>
-    /// Call to a TypeCobol user defined function
-    /// </summary>
-    public class UserDefinedFunctionCall : FunctionCall
-    {
-        public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments) : base(FunctionCallType.IntrinsicFunctionCall, arguments)
-        {
-            UserDefinedFunctionName = functionName;
-        }
+	/// <summary>Call to a TypeCobol user defined function</summary>
+	public class UserDefinedFunctionCall: FunctionCall {
+		public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments)
+			: base(FunctionCallType.UserDefinedFunctionCall, arguments) {
+			UserDefinedFunctionName = functionName;
+		}
 
-        public SymbolReference UserDefinedFunctionName { get; private set;  }
+		public SymbolReference UserDefinedFunctionName { get; private set;  }
+		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
+		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
+	}
 
-        public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
+	public class ProcedureCall: FunctionCall {
+		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
+			: base(FunctionCallType.UserDefinedFunctionCall, null) {
+			ProcedureName = name;
+			InputParameters  = inputs  ?? new List<CallSiteParameter>();
+			InoutParameters  = inouts  ?? new List<CallSiteParameter>();
+			OutputParameters = outputs ?? new List<CallSiteParameter>();
+		}
 
-        public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
-    }
+		public SymbolReference ProcedureName { get; private set; }
+		public override string FunctionName { get { return ProcedureName.Name; } }
+		public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
 
-    public enum FunctionCallType
-    {
-        IntrinsicFunctionCall,
-        UserDefinedFunctionCall
-    }
+		public List<CallSiteParameter> InputParameters  { get; private set; }
+		public List<CallSiteParameter> InoutParameters  { get; private set; }
+		public List<CallSiteParameter> OutputParameters { get; private set; }
+		private List<CallSiteParameter> _cache;
+		public override CallSiteParameter[] Arguments {
+			get {
+				if (_cache == null) {
+					_cache = new List<CallSiteParameter>();
+					_cache.AddRange(InputParameters);
+					_cache.AddRange(InoutParameters);
+					_cache.AddRange(OutputParameters);
+				}
+				return _cache.ToArray();
+			}
+		}
 
-    public class GroupCorrespondingImpact
-    {
-        public StorageArea SendingGroupItem { get; set; }
-        public StorageArea ReceivingGroupItem { get; set; }
-        public bool ReceivingGroupIsAlsoSending { get; set; }
-    }
+		public ParameterList AsProfile(CodeModel.SymbolTable table) {
+			var profile = new FunctionCallParameterList();
+			profile.InputParameters  = FunctionCallParameterList.CreateParameters(InputParameters, table);
+			profile.InoutParameters  = FunctionCallParameterList.CreateParameters(InoutParameters, table);
+			profile.OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table);
+			profile.ReturningParameter = null;
+			return profile;
+		}
+	}
+
+	public enum FunctionCallType {
+		IntrinsicFunctionCall,
+		UserDefinedFunctionCall
+	}
+
+	public class GroupCorrespondingImpact {
+		public StorageArea SendingGroupItem { get; set; }
+		public StorageArea ReceivingGroupItem { get; set; }
+		public bool ReceivingGroupIsAlsoSending { get; set; }
+	}
 }

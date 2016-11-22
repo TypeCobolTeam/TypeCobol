@@ -4035,16 +4035,16 @@ alterStatement:
 
 callStatement:
 	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable 
-	(USING callProgramInputParameters+)? 
-	(RETURNING callProgramOutputParameter)?;
+		(USING callUsingParameters+)?
+		(RETURNING callReturningParameter)?;
 
-callProgramInputParameters:
+callUsingParameters:
 	(BY? (REFERENCE | CONTENT | VALUE))? variableOrFileNameOrOmitted+;
 
 variableOrFileNameOrOmitted: 
 	sharedVariableOrFileName | OMITTED;
 
-callProgramOutputParameter:
+callReturningParameter:
 	sharedStorageArea1;
 
 callStatementEnd: END_CALL;

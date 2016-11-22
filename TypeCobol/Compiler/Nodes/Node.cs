@@ -54,7 +54,7 @@ public abstract class Node {
 	/// <summary>Adds a node as a children of this one.</summary>
 	/// <param name="child">Child to-be.</param>
 	/// <param name="index">Child position in children list.</param>
-	public void Add(Node child, int index = -1) {
+	public virtual void Add(Node child, int index = -1) {
 		if (index < 0) children.Add(child);
 		else children.Insert(index, child);
 		child.Parent = this;
@@ -164,7 +164,9 @@ public abstract class Node {
 			return generation;
 		}
 	}
-	/// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
+	
+        //TODO move this method to DataDefinition
+    /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
 	public bool IsPartOfATypeDef {
 		get {
 			var parent = this.Parent;
@@ -203,7 +205,17 @@ public abstract class Node {
 	public void Accept(NodeVisitor visitor) {
 		visitor.Visit(this);
 	}
-}
+
+        /// <summary>
+        /// Return true if this Node is inside a COPY
+        /// 
+        /// TODO To discuss: make a rule: a Node CAN'T have token in two different source file
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInsideCopy() {
+            return CodeElement != null && CodeElement.IsInsideCopy();
+        }
+    }
 
 // --- Temporary base classes for data definition noes ---
 

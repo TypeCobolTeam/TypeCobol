@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
@@ -148,12 +149,14 @@ namespace TypeCobol.Test {
 
 			var errors = new System.Collections.Generic.List<Exception>();
 			int nbOfTests = 0;
-			foreach (string directory in Directory.GetDirectories(sampleRoot)) {
-				var dirname = Path.GetFileName(directory);
-				string[] extensions = {"*.cbl"};
-				if (dirname.Equals("Programs")) extensions = new[] {"*.pgm", "*.cbl", "*.cpy" };
-				Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+            string[] extensions = { "*.cbl", "*.pgm" };
+            string[] compilerExtensions = extensions.Concat(new[] { "*.cpy" }).ToArray();
+
+            foreach (string directory in Directory.GetDirectories(sampleRoot)) {
+                var dirname = Path.GetFileName(directory);
+
+			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
 				try { folderTester.Test(); }
 				catch (Exception ex) { errors.Add(ex); }
 				nbOfTests += folderTester.GetTestCount();
@@ -180,13 +183,14 @@ namespace TypeCobol.Test {
         {
             int nbOfTests = 0;
 
+            string[] extensions = { "*.tcbl" };
+            string[] compilerExtensions = extensions.Concat(new[] { "*.cpy" }).ToArray();
             foreach (string directory in Directory.GetDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);
-                string[] extensions = { "*.tcbl" };
-                if (dirname == "Programs") extensions = new[] { "*.tcbl", "*.cpy" };
+
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
                 folderTester.Test();
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");

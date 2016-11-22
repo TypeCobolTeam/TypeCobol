@@ -2,6 +2,7 @@
 
 	using System;
 	using System.Collections.Generic;
+	using System.Text.RegularExpressions;
 
 public class Eraser: Solver {
 	private string input;
@@ -19,16 +20,21 @@ public class Eraser: Solver {
 	}
 	public string Replace() {
 		Run();
-		return this.output;
+		return output;
 	}
 	public bool Run() {
 		if (output != null) return false;
 		bool somethingDone = false;
-		this.output = this.input;
+		output = input;
 		foreach(var word in words) {
-			if (!somethingDone) somethingDone = this.output.Contains(word);
-			string padding = this.padded? new String(' ', word.Length) : "";
-			this.output = this.output.Replace(word, padding);
+			string pattern = string.Format(@"\b{0}\b", word);
+			var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+			var match = regex.Match(output);
+			if (match.Success) {
+				somethingDone = true;
+				string padding = this.padded? new String(' ', word.Length) : "";
+				output = regex.Replace(output, padding, match.Groups.Count, match.Index);
+			}
 		}
 		return somethingDone;
 	}

@@ -42,7 +42,7 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-        SET %receiver-false TO TRUE.
+        SET %receiver-false TO TRUE
       </pattern>
     </patterns>
   </skeleton>
@@ -57,12 +57,34 @@
     </patterns>
   </skeleton>
 
-  <skeleton name="TCRFUN_LIBRARY_COPY">
+  <skeleton name="TCRFUN_LIBRARY_COPY" var="copyname">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.LibraryCopy"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="comment"></pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_LIBRARY_COPY">
+        COPY %copyname REPLACING ==:%copyname:== BY ==FCT==.
+      </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
+01  CallData.
+    05  DescriptionId PIC X(08).
+      88 CallIsCopy VALUE '%copyname'.
+      </pattern>
+      <!--pattern location="program.begin" action="create" group="TCRFUN_CODEGEN_COPY">
+@{
+  var items = "";
+  foreach (var f in %definitions.functions.Public) {
+    items += "*      05 :"+%copyname+":-"+f.Label+"   PROCEDURE-POINTER VALUE NULL.\n";
+  }
+}
+*01  :%copyname:.
+*    02                         PIC X(08) VALUE '%copyname'.
+*    02                         PIC X(03) VALUE '000'.
+*    02 :%copyname:-FunctionPointers.
+@items*
+*      05 :%copyname:-Reserve   PIC X(361).
+      </pattern-->
     </patterns>
   </skeleton>
 
@@ -80,29 +102,10 @@
       10 FctCode    PIC X(08).
       10 FctPointer PROCEDURE-POINTER VALUE NULL.
       </pattern>
-      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_LIBRARY_COPY">
-    COPY %copyname REPLACING ==:%copyname:== BY ==FCT==.
-      </pattern>
-
-      <!--pattern location="program.begin" action="create" group="TCRFUN_CODEGEN_COPY">
-@{
-  var items = "";
-  foreach (var f in %definitions.functions.Public) {
-    items += "*      05 :"+%copyname+":-"+f.Name+"   PROCEDURE-POINTER VALUE NULL.\n";
-  }
-}
-*01  :%copyname:.
-*    02                         PIC X(08) VALUE '%copyname'.
-*    02                         PIC X(03) VALUE '000'.
-*    02 :%copyname:-FunctionPointers.
-@items*
-*      05 :%copyname:-Reserve   PIC X(361).
-      </pattern-->
-
       <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
 01  CallData.
     05  DescriptionId PIC X(08).
-      88 CallIsCopy VALUE '%copyname'.
+      88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.
       </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
 01  LibFctList-Loaded PIC X(01) VALUE SPACE.
@@ -131,7 +134,7 @@
     IF CallIsCopy
       PERFORM Copy-Process-Mode
     ELSE
-      PEFORM FctList-Process-Mode
+      PERFORM FctList-Process-Mode
     END-IF
 
     GOBACK
@@ -140,7 +143,7 @@
 @{
   var entries = "";
   foreach (var f in %definitions.functions.Public) {
-    entries += "\n    SET FCT-"+f.Name+"   TO ENTRY \'"+f.Hash+'\'';
+    entries += "\n    SET FCT-"+f.Label+"   TO ENTRY \'"+f.Hash+'\'';
   }
 }
 Copy-Process-Mode.
@@ -231,6 +234,16 @@ PROCEDURE DIVISION USING CallData.
 *    TODO: error management
     END-IF
       </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace procedure-style invocation by a standard COBOL CALL -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.ProcedureStyleCall" />
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
     </patterns>
   </skeleton>
 

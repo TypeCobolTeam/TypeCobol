@@ -1,4 +1,7 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+[1,21]<27,Error,Syntax>Syntax error : Symbol procedurename is not referenced ([1>21] on line 14)
+
+--- Program ---
 PROGRAM: perform-program common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic

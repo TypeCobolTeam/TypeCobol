@@ -514,7 +514,7 @@ namespace TypeCobol.Compiler.Parser
                         codeElement = new LibraryCopyCodeElement();
                         break;
                     case CodeElementType.FunctionDeclarationHeader:
-                        codeElement = new FunctionDeclarationHeader(null, AccessModifier.Private);
+                        codeElement = new FunctionDeclarationHeader(null, AccessModifier.Private, FunctionType.Undefined);
                         break;
                     case CodeElementType.FunctionDeclarationEnd:
                         codeElement = new FunctionDeclarationEnd();

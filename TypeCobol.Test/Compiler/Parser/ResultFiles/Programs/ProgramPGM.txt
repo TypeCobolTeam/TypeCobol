@@ -21,6 +21,10 @@ PROGRAM: Simple common:False initial:True recursive:False
   B:BOOL
   sqlcode:NumericEdited
   toto:Alphanumeric
+-- PARAGRAPHS --
+  PARAGRAPH1
+  PARAGRAPH2
+  EMPTY-PARAGRAPH
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

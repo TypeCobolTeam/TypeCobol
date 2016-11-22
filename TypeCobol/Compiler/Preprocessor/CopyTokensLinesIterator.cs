@@ -270,7 +270,9 @@ namespace TypeCobol.Compiler.Preprocessor
                 else
                 {
                     currentPosition.CurrentToken = nextImportedToken;
-                    return nextImportedToken;
+                    //#235 
+                    var copyDirective = (CopyDirective)((CompilerDirectiveToken)currentTokenInMainDocument).CompilerDirective;
+                    return new ImportedToken(nextImportedToken, copyDirective);
                 }
             }
 
@@ -311,7 +313,8 @@ namespace TypeCobol.Compiler.Preprocessor
             if (currentTokenInMainDocument.TokenType == TokenType.CopyImportDirective)
             {
                 // Get next token in the imported document
-                ImportedTokensDocument importedDocument = currentLine.ImportedDocuments[(CopyDirective)((CompilerDirectiveToken)currentTokenInMainDocument).CompilerDirective];
+                var compilerDirective = (CopyDirective)((CompilerDirectiveToken)currentTokenInMainDocument).CompilerDirective;
+                ImportedTokensDocument importedDocument = currentLine.ImportedDocuments[compilerDirective];
                 if (importedDocument != null)
                 {
                     ITokensLinesIterator importedDocumentIterator = importedDocument.GetProcessedTokensIterator();
@@ -328,7 +331,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         currentPosition.ImportedDocumentIterator = importedDocumentIterator;
                         currentPosition.CurrentToken = nextTokenCandidate;
-                        return nextTokenCandidate;
+                        //#235
+                        return new ImportedToken(nextTokenCandidate, compilerDirective);
                     }
                 }   
                 // The reference to the ImportedDocument could not be resolved (error in an earlier phase)

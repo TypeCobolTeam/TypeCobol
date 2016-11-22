@@ -236,6 +236,7 @@ namespace TypeCobol.Codegen {
 		private Dictionary<Type,Type> Generators = new Dictionary<Type,Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
 				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclaration) },
+				{ typeof(ProcedureStyleCallStatement), typeof(Codegen.Nodes.ProcedureStyleCall) },
 				{ typeof(MoveSimpleStatement), typeof(Codegen.Nodes.TypeCobolQualifier) },
 			};
 

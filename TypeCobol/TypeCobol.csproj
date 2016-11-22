@@ -361,6 +361,7 @@
     <Compile Include="Tools\Generator\CodeGenerator.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolStats.cs" />
     <Compile Include="Tools\Hash.cs" />
+    <Compile Include="Tools\FileSystem.cs" />
     <Compile Include="Tools\Reflection.cs" />
     <Compile Include="Tools\CommandLine\TypeCobolCompiler.cs" />
     <Compile Include="Tools\CodeGenerator.cs" />

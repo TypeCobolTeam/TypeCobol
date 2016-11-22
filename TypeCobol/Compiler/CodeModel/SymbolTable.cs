@@ -24,6 +24,42 @@ public class SymbolTable {
 
 
 
+	private enum SymbolType {
+		Variable,
+		Section,
+		Paragraph,
+		Type,
+		Function,
+	}
+	private Dictionary<string,List<Node>> GetTable(SymbolType type) {
+		switch(type) {
+			case SymbolType.Variable: return DataEntries;
+			case SymbolType.Section: return Sections;
+			case SymbolType.Paragraph: return Paragraphs;
+			case SymbolType.Type: return Types;
+			case SymbolType.Function: return Functions;
+			default: throw new ArgumentException("Unsupported symbol type \""+type+"\"");
+		}
+	}
+
+	private List<Node> Get(string name, SymbolType type) {
+		var table = GetTable(type);
+		var values = Get(name, table);
+		if (EnclosingScope!= null) {
+			values.AddRange(EnclosingScope.Get(name, type));
+		}
+		return values;
+	}
+
+	private List<Node> Get(string name, Dictionary<string,List<Node>> table) {
+		var values = new List<Node>();
+		if (table.ContainsKey(name))
+			values.AddRange(table[name]);
+		return values;
+	}
+
+
+
 
 
 	  //////////////////
@@ -258,14 +294,7 @@ public class SymbolTable {
 
 
 
-	private List<Node> GetVariable(string name) {
-		var values = new List<Node>();
-		if (DataEntries.ContainsKey(name))
-			values.AddRange(DataEntries[name]);
-		if (EnclosingScope!= null)
-			values.AddRange(EnclosingScope.GetVariable(name));
-		return values;
-	}
+	private List<Node> GetVariable(string name) { return Get(name, SymbolType.Variable); }
 
 	private List<Node> Get(List<Node> found, QualifiedName name) {
 		if (found.Count < 1) return found;
@@ -327,6 +356,29 @@ public class SymbolTable {
 
 
 
+	  //////////////
+	 // SECTIONS //
+	//////////////
+
+	private Dictionary<string,List<Node>> Sections = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
+
+	internal void AddSection(Section section) { Add(Sections, section); }
+
+	public List<Node> GetSection(string name) { return Get(name, SymbolType.Section); }
+
+
+
+	  ////////////////
+	 // PARAGRAPHS //
+	////////////////
+
+	private Dictionary<string,List<Node>> Paragraphs = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
+
+	internal void AddParagraph(Paragraph paragraph) { Add(Paragraphs, paragraph); }
+
+	public List<Node> GetParagraph(string name) { return Get(name, SymbolType.Paragraph); }
+
+
 
 
 	  ///////////
@@ -349,14 +401,7 @@ public class SymbolTable {
 		return Get(found, name);
 	}
 
-	private List<Node> GetType(string name) {
-		var values = new List<Node>();
-		if (Types.ContainsKey(name))
-			values.AddRange(Types[name]);
-		if (EnclosingScope!= null)
-			values.AddRange(EnclosingScope.GetType(name));
-		return values;
-	}
+	private List<Node> GetType(string name) { return Get(name, SymbolType.Type); }
 
 	  ///////////////
 	 // FUNCTIONS //
@@ -364,44 +409,38 @@ public class SymbolTable {
 
 	public Dictionary<string,List<Node>> Functions = new Dictionary<string,List<Node>>(StringComparer.InvariantCultureIgnoreCase);
 
-	internal void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
+	public void AddFunction(FunctionDeclaration function) { Add(Functions, function); }
 
-	public List<Node> GetFunction(QualifiedName name, ParametersProfile profile = null) {
+	public List<Node> GetFunction(QualifiedName name, ParameterList profile = null) {
 		var found = GetFunction(name.Head);
 		found = Get(found, name);
 		if (profile != null) {
 			var filtered = new List<Node>();
-			foreach(var function in found)
+			foreach(var function in found) {
 				if (Matches(((FunctionDeclaration)function).Profile, profile))
 					filtered.Add(function);
+			}
 			found = filtered;
 		}
 		return found;
 	}
-	private bool Matches(ParametersProfile p1, ParametersProfile p2) {
+	private bool Matches(ParameterList p1, ParameterList p2) {
 //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
 //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
-//		if (p1.ReturningParameter.DataType != p2.ReturningParameter.DataType) return false;
+//		if (p1.ReturningParameter != p2.ReturningParameter) return false;
 		if (p1.InputParameters.Count  != p2.InputParameters.Count)  return false;
 		if (p1.InoutParameters.Count  != p2.InoutParameters.Count)  return false;
 		if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
 		for(int c=0; c<p1.InputParameters.Count; c++)
-			if (p1.InputParameters[c].DataType != p2.InputParameters[c].DataType) return false;
+			if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
 		for(int c=0; c<p1.InoutParameters.Count; c++)
-			if (p1.InoutParameters[c].DataType != p2.InoutParameters[c].DataType) return false;
+			if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
 		for(int c=0; c<p1.OutputParameters.Count; c++)
-			if (p1.OutputParameters[c].DataType != p2.OutputParameters[c].DataType) return false;
+			if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
 		return true;
 	}
 
-	private List<Node> GetFunction(string name) {
-		var values = new List<Node>();
-		if (Functions.ContainsKey(name))
-			values.AddRange(Functions[name]);
-		if (EnclosingScope!= null)
-			values.AddRange(EnclosingScope.GetFunction(name));
-		return values;
-	}
+	private List<Node> GetFunction(string name) { return Get(name, SymbolType.Function); }
 
 
 
@@ -452,6 +491,18 @@ public class SymbolTable {
 		if (DataEntries.Count > 0) {
 			str.AppendLine("-- DATA --------");
 			foreach(var line in DataEntries)
+				foreach(var item in line.Value)
+					Dump(str, item, indent);
+		}
+		if (Sections.Count > 0) {
+			str.AppendLine("-- SECTIONS ----");
+			foreach(var line in Sections)
+				foreach(var item in line.Value)
+					Dump(str, item, indent);
+		}
+		if (Paragraphs.Count > 0) {
+			str.AppendLine("-- PARAGRAPHS --");
+			foreach(var line in Paragraphs)
 				foreach(var item in line.Value)
 					Dump(str, item, indent);
 		}

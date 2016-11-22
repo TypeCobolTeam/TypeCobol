@@ -1,18 +1,16 @@
 ﻿--- Diagnostics ---
-[6,10]<27,Error,Syntax>Syntax error : no viable alternative at input 'USING' (RuleStack=codeElement>callStatement>programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable, OffendingSymbol=[6,10:USING]<USING> on line 2)
-[1,4]<27,Error,Syntax>Syntax error : mismatched input 'CALL' expecting {AlphanumericLiteral, HexadecimalAlphanumericLiteral, NullTerminatedAlphanumericLiteral, NationalLiteral, HexadecimalNationalLiteral, DBCSLiteral, IntegerLiteral, DecimalLiteral, FloatingPointLiteral, UserDefinedWord, ADDRESS, DEBUG_CONTENTS, DEBUG_ITEM, DEBUG_LINE, DEBUG_NAME, DEBUG_SUB_1, DEBUG_SUB_2, DEBUG_SUB_3, JNIENVPTR, LENGTH, LINAGE_COUNTER, RETURN_CODE, SHIFT_IN, SHIFT_OUT, SORT_CONTROL, SORT_CORE_SIZE, SORT_FILE_SIZE, SORT_MESSAGE, SORT_MODE_SIZE, SORT_RETURN, TALLY, WHEN_COMPILED, XML_CODE, XML_EVENT, XML_INFORMATION, XML_NAMESPACE, XML_NAMESPACE_PREFIX, XML_NNAMESPACE, XML_NNAMESPACE_PREFIX, XML_NTEXT, XML_TEXT, HIGH_VALUE, HIGH_VALUES, LOW_VALUE, LOW_VALUES, QUOTE, QUOTES, SPACE, SPACES, ZERO, ZEROES, ZEROS, BY, CONTENT, EBCDIC, FUNCTION, NATIVE, OMITTED, REFERENCE, STANDARD_1, STANDARD_2, VALUE} (RuleStack=codeElement>callStatement, OffendingSymbol=[1,4:CALL]<CALL> on line 4)
-[17,17]<27,Error,Syntax>Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'a' (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[17,17:a]<UserDefinedWord> on line 4)
-[1,4]<27,Error,Syntax>Syntax error : CALL .. RETURNING: Missing identifier (RuleStack=codeElement>callStatement, OffendingSymbol=[1,4:CALL]<CALL> on line 5)
-[1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'CALL' (RuleStack=codeElement>callStatement>callProgramOutputParameter>sharedStorageArea1>identifier>storageAreaReferenceOrConditionReference, OffendingSymbol=[1,4:CALL]<CALL> on line 7)
+[6,10]<27,Error,Syntax>Syntax error : no viable alternative at input 'CALL ... USING' (RuleStack=codeElement>callStatement, OffendingSymbol=[6,10:USING]<USING> on line 2)
+[1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'CALL' (RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters>variableOrFileNameOrOmitted, OffendingSymbol=[1,4:CALL]<CALL> on line 4)
+[17,17]<27,Error,Syntax>Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'a' (RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters, OffendingSymbol=[17,17:a]<UserDefinedWord> on line 4)
+[1,4]<27,Error,Syntax>Syntax error : CALL .. RETURNING: Missing identifier (RuleStack=codeElement>callStatement>cobolCallStatement, OffendingSymbol=[1,4:CALL]<CALL> on line 5)
+[1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'CALL' (RuleStack=codeElement>callStatement>cobolCallStatement>callReturningParameter>sharedStorageArea1>identifier>storageAreaReferenceOrConditionReference, OffendingSymbol=[1,4:CALL]<CALL> on line 7)
 [1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'g ... CALL' (RuleStack=codeElement, OffendingSymbol=[1,4:CALL]<CALL> on line 8)
 [1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'y ... CALL' (RuleStack=codeElement, OffendingSymbol=[1,4:CALL]<CALL> on line 10)
-[17,21]<27,Error,Syntax>Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'MALUS' (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[17,21:MALUS]<UserDefinedWord> on line 11)
-[14,21]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal function identifier (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[14,21:FUNCTION]<FUNCTION> on line 13)
-[14,19]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[14,19:LENGTH]<LENGTH> on line 14)
-[14,27]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LINAGE-COUNTER (RuleStack=codeElement>callStatement>callProgramInputParameters, OffendingSymbol=[14,27:LINAGE-COUNTER]<LINAGE_COUNTER> on line 15)
+[17,21]<27,Error,Syntax>Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'MALUS' (RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters, OffendingSymbol=[17,21:MALUS]<UserDefinedWord> on line 11)
+[14,21]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal function identifier (RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters, OffendingSymbol=[14,21:FUNCTION]<FUNCTION> on line 13)
+[14,19]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase (RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters, OffendingSymbol=[14,19:LENGTH]<LENGTH> on line 14)
+[14,27]<27,Error,Syntax>Syntax error : CALL .. USING: Illegal LINAGE-COUNTER (RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters, OffendingSymbol=[14,27:LINAGE-COUNTER]<LINAGE_COUNTER> on line 15)
 --- Code Elements ---
-[[CallStatement]] [1,4:CALL]<CALL> --> [12,12:x]<UserDefinedWord>
-
 [[CallStatement]] [1,4:CALL]<CALL> --> [8,12:USING]<USING>
 
 [[CallStatement]] [1,4:CALL]<CALL> --> [17,17:a]<UserDefinedWord>

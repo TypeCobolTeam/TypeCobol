@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Preprocessor
             // Support for legacy replacing syntax semantics : 
             // Remove the first 01 level data item found in the COPY text
             // before copying it into the main program
-            public bool SawTheFirst01IntegerLiteral;
+            public bool SawFirstIntegerLiteral;
 #endif
 
             // Current REPLACE directive in effect in the file
@@ -178,21 +178,26 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Support for legacy replacing syntax semantics : 
                 // Remove the first 01 level data item found in the COPY text
                 // before copying it into the main program
-                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawTheFirst01IntegerLiteral)
+                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawFirstIntegerLiteral)
                 {
-                    if(nextToken.TokenType == TokenType.IntegerLiteral && nextToken.Text == "01")
+                    //A Data description entry starts with an integer literal
+                    if(nextToken.TokenType == TokenType.IntegerLiteral)
                     {
-                        // Register that we saw the first "01" integer literal in the underlying file
-                        currentPosition.SawTheFirst01IntegerLiteral = true;
+                        if (nextToken.Text == "01") {
+                            // Register that we saw the first "01" integer literal in the underlying file
+                            currentPosition.SawFirstIntegerLiteral = true;
 
-                        // Skip all tokens after 01 until the next period separator 
-                        while(nextToken.TokenType != TokenType.PeriodSeparator && nextToken.TokenType != TokenType.EndOfFile)
-                        {
-                            nextToken = sourceIterator.NextToken();
-                        }
-                        if(nextToken.TokenType == TokenType.PeriodSeparator)
-                        {
-                            nextToken = sourceIterator.NextToken();
+                            // Skip all tokens after 01 until the next period separator 
+                            while (nextToken.TokenType != TokenType.PeriodSeparator &&
+                                   nextToken.TokenType != TokenType.EndOfFile) {
+                                nextToken = sourceIterator.NextToken();
+                            }
+                            if (nextToken.TokenType == TokenType.PeriodSeparator) {
+                                nextToken = sourceIterator.NextToken();
+                            }
+                        } else {
+                            //It's not a level 01, we don't need to skip tokens for this COPY
+                            currentPosition.SawFirstIntegerLiteral = true;
                         }
                     }
                 }

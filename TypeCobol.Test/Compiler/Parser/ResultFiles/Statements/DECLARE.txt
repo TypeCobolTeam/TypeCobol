@@ -1,0 +1,32 @@
+﻿--- Diagnostics ---
+[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 6)
+[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 7)
+[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 8)
+[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureINOUT" is defined as function, but parameter clauses describe a procedure (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 27)
+[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureOUTPUT" is defined as function, but parameter clauses describe a procedure (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 29)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for function "ProcedureINOUTAndOUTPUT" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 31)
+[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureRETURNING" is defined as procedure, but parameter clauses describe a function (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 50)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for function "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 53)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for procedure "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 56)
+[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for symbol "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 59)
+--- Code Elements ---
+fun():():():():Public:Undefined/Function
+fun():():():():Public:Function/Function
+pro():():():():Private:Procedure/Procedure
+NoVisibility():():():():Private:Undefined/Function
+NoVisibility():():():():Private:Function/Function
+NoVisibility():():():():Private:Procedure/Procedure
+fun(i:Numeric):():():():Private:Function/Function
+fun(i:Wherever, j:Numeric, k:Whenever):():():():Public:Function/Function
+fun():():():(k:Numeric):Public:Function/Function
+fun(i:Numeric, j:Wherever):():():(k:Whenever):Private:Function/Function
+FunctionOrProcedure(i:Numeric):():():():Private:Undefined/Function
+ProcedureINOUT():():(i:Numeric):():Private:Function/Procedure
+ProcedureOUTPUT():(i:Numeric):():():Public:Function/Procedure
+ProcedureINOUTAndOUTPUT(i:Numeric):(k:Numeric):(j:Numeric):(l:Numeric):Public:Function/Undefined
+pro(i:Numeric):():():():Private:Procedure/Procedure
+pro(i:Wherever, j:Whenever):(m:ToBe, n:Numeric, o:Together):(k:Numeric, j:Were, l:Meant):():Public:Procedure/Procedure
+ProcedureRETURNING():():():(i:Numeric):Private:Procedure/Function
+Unknown():():(b:Numeric):(d:Numeric):Public:Function/Undefined
+Unknown():(c:Numeric):():(d:Numeric):Public:Procedure/Undefined
+Unknown(a:Numeric):(c:Numeric):(b:Numeric):(d:Numeric):Public:Undefined/Undefined

@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 	using System;
 	using System.Collections.Generic;
@@ -38,6 +40,7 @@
 		/// with a particular value of a conditional variable.
 		/// (For details, see “VALUE clause” on page 237.)
 		/// </summary>
+		[CanBeNull]
 		public IntegerValue LevelNumber { get; set; }
 
 		/// <summary>

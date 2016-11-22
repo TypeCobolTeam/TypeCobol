@@ -23,3 +23,7 @@ functionDeclaration:
 // TCRFUN_DECLARATION_NO_DECLARATIVES
 functionProcedureDivision:
 	ProcedureDivisionHeader section*;
+
+procedureStyleCallConditional:
+	ProcedureStyleCall
+	CallStatementEnd?;

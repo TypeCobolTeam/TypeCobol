@@ -1,6 +1,44 @@
 ﻿--- Program ---
 PROGRAM: compiler-directing common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
+-- PARAGRAPHS --
+  procedurename
+  SKIP-01
+  SKIP-02
+  SKIP-03
+  SKIP-04
+  SKIP-05
+  SKIP-06
+  SKIP-07
+  SKIP-08
+  SKIP-09
+  EJECT01
+  EJECT02
+  EJECT03
+  EJECT04
+  EJECT05
+  EJECT06
+  EJECT07
+  EJECT08
+  EJECT09
+  COPY01
+  COPY02
+  COPY03
+  COPY04
+  COPY05
+  COPY06
+  COPY07
+  COPY08
+  COPY09
+  BASIS01
+  BASIS02
+  BASIS03
+  BASIS04
+  BASIS05
+  BASIS06
+  BASIS07
+  BASIS08
+  BASIS09
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

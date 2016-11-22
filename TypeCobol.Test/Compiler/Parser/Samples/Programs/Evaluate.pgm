@@ -4,6 +4,9 @@
 PROCEDURE DIVISION.
 *******************
 
+procedurename.
+  .
+
 *  // just one when
 * ///////////////////
 EVALUATE VALUE1

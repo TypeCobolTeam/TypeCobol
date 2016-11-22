@@ -21,6 +21,31 @@ public class Alter: Node, CodeElementHolder<AlterStatement>, Statement {
 public class Call: Node, CodeElementHolder<CallStatement>, Statement {
 	public Call(CallStatement statement): base(statement) { }
 }
+public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller, VariableUser {
+	public ProcedureStyleCall(ProcedureStyleCallStatement statement): base(statement) { }
+
+	public IList<FunctionCall> FunctionCalls {
+		get {
+			var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
+			var calls =  new List<FunctionCall>();
+			calls.Add(call);
+			return calls;
+		}
+	}
+
+	public IDictionary<QualifiedName,object> Variables {
+		get {
+			var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
+			var names = new Dictionary<QualifiedName,object>();
+			names.Add(new URI(call.FunctionName), null);
+			foreach(var parameter in call.Arguments) {
+				if (!parameter.IsOmitted && !parameter.StorageAreaOrValue.IsLiteral)
+					names.Add(new URI(parameter.StorageAreaOrValue.ToString()), null);
+			}
+			return names;
+		}
+	}
+}
 
 public class Cancel: Node, CodeElementHolder<CancelStatement>, Statement {
 	public Cancel(CancelStatement statement): base(statement) { }

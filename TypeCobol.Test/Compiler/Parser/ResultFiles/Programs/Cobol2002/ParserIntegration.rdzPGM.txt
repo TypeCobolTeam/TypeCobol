@@ -16,6 +16,8 @@ PROGRAM: TESTPGM1 common:False initial:False recursive:False
   W-TAB-LCC-CLE-TYP:Alphanumeric
   W-TAB-LCC-CLE-ORD:Alphanumeric
   W-TAB-LCC-CLE-DAT:DATE
+-- PARAGRAPHS --
+  PRINCIPALE
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

@@ -93,6 +93,29 @@ class FunctionCallChecker: NodeListener {
 }
 
 
+class FunctionDeclarationTypeChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() {
+		return new List<Type> { typeof(FunctionDeclarationHeader), };
+	}
+	public void OnCodeElement(CodeElement ce, ParserRuleContext context) {
+		var function = (FunctionDeclarationHeader)ce;
+		if (function.ActualType == FunctionType.Undefined) {
+			DiagnosticUtils.AddError(ce, "Incompatible parameter clauses for "+ToString(function.UserDefinedType)+" \""+function.Name+"\"", context);
+		} else
+		if (  (function.ActualType == FunctionType.Function && function.UserDefinedType == FunctionType.Procedure)
+			||(function.ActualType == FunctionType.Procedure && function.UserDefinedType == FunctionType.Function) ) {
+			var message = "Symbol \""+function.Name+"\" is defined as "+ToString(function.UserDefinedType)
+						+", but parameter clauses describe a "+ToString(function.ActualType);
+			DiagnosticUtils.AddError(ce, message, context);
+		}
+	}
+	private string ToString(FunctionType type) {
+		if (type == FunctionType.Undefined) return "symbol";
+		if (type == FunctionType.Function) return "function";
+		if (type == FunctionType.Procedure) return "procedure";
+		return "function or procedure";
+	}
+}
 
 class FunctionDeclarationChecker: NodeListener {
 
@@ -109,6 +132,8 @@ class FunctionDeclarationChecker: NodeListener {
 
 		CheckParameters(header.Profile, header, context);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
+
+		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
 
 		var functions = node.SymbolTable.GetFunction(new URI(header.Name), header.Profile);
 		if (functions.Count > 1)
@@ -192,6 +217,25 @@ class FunctionDeclarationChecker: NodeListener {
 	private void AddErrorAlreadyParameter(Node node, QualifiedName name) {
 		DiagnosticUtils.AddError(node.CodeElement, name.Head+" is already a parameter.");
 	}
+
+	private void CheckNoPerform(SymbolTable table, Node node) {
+		if (node is PerformProcedure) {
+			var perform = (PerformProcedureStatement)node.CodeElement;
+			CheckNotInTable(table, perform.Procedure, perform);
+			CheckNotInTable(table, perform.ThroughProcedure, perform);
+		}
+		foreach(var child in node.Children) CheckNoPerform(table, child);
+	}
+	private void CheckNotInTable(SymbolTable table, SymbolReference symbol, CodeElement ce) {
+		if (symbol == null) return;
+		string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
+		var found = table.GetSection(symbol.Name);
+		if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		else {
+			found = table.GetParagraph(symbol.Name);
+			if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		}
+	}
 }
 
 
@@ -230,6 +274,9 @@ class LibraryChecker: NodeListener {
 		if (isPublicLibrary) {
 			if (copy == null || copy.CodeElement().Name == null)
 				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
+
+			if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
+				DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.", context);
 
 			for(int c = 0; c < errorMessages.Count; c++)
 				DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);
