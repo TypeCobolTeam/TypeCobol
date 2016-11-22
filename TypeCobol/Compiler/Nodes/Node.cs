@@ -210,6 +210,15 @@ public abstract class Node {
 				if (previous == token.TokensLine) ; // same line
 				else { // new line
 					if (startsLine) lines.Add(previous);
+////////////////////////////////////////////////////////////
+	      // THIS SHOULD GENERATE CobolTextLine  //
+	     // INSTEAD OF TextLineSnapshot         //
+	    // BECAUSE TreeToCode ASSUMES          //
+	   // CobolTextLine ARE ORIGINAL LINES    //
+	  // AND TextLineSnapshot ARE GENERATED  //
+	 // SO WE LOSE SOME INFO, IN PARTICULAR //
+	// COLUMNS BEFORE 7 AND AFTER 73       //
+////////////////////////////////////////////////////////////
 					else lines.Add(new TextLineSnapshot(-1, previous.Snip(begin), startsLine, endsLine));
 					startsLine = true;
 					begin = token.StartIndex;
