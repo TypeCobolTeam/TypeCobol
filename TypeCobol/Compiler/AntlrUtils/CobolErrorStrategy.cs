@@ -207,6 +207,22 @@ namespace TypeCobol.Compiler.AntlrUtils
                         lastConsumedToken.TokenType == TokenType.PeriodSeparator
                    ));
         }
+
+        /// <summary>
+        /// A compiler directive can be embedded anywhere in the Cobol syntax
+        /// so we can consider that EOF is always present in the following set
+        /// </summary>
+        public override void Sync(Antlr4.Runtime.Parser recognizer)
+        {
+            if (GetExpectedTokens(recognizer).Contains(TokenConstants.Eof))
+            {
+                return;
+            }
+            else
+            {
+                base.Sync(recognizer);
+            }
+        }
     }
 
 
