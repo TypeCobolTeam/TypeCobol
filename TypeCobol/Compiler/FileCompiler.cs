@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    throw new Exception(String.Format("Could not find a Cobol source file named {0}", textName));
+                    throw new Exception(String.Format("Could not find a Cobol source file named {0} in {1}", textName, libraryName));
                 }
             }
             // 1.b Register a Cobol source file which was already loaded
