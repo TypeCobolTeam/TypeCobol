@@ -135,8 +135,6 @@
 			lastline = line;
 		}
 
-
-////////////////////////////////////////
 		private IEnumerable<ITextLine> ConvertLine(ITextLine line,bool? isComment) {
 			if (line is CobolTextLine) return ConvertOriginalLine((CobolTextLine)line, isComment);
 			if (line is TextLineSnapshot) return ConvertGeneratedLine((TextLineSnapshot)line, isComment);
@@ -248,78 +246,6 @@
 				line.Append(endOfLineComment);
 			}
 			return line.ToString();
-		}
-////////////////////////////////////////
-
-
-		private IEnumerable<ITextLine> Indent(ITextLine line, bool? isComment) {
-			var results = new List<ITextLine>();
-			var cobol = line as CobolTextLine;
-			if (cobol != null) {
-				if (Layout == ColumnsLayout.CobolReferenceFormat) {
-					results.Add(SetComment(line, isComment));
-				} else
-				if (Layout == ColumnsLayout.FreeTextFormat) {
-					results.Add(SetComment(new TextLineSnapshot(-1, cobol.SourceText ?? "", null), isComment));
-				} else
-					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
-			} else {
-				if (Layout == ColumnsLayout.CobolReferenceFormat) {
-					bool startsLine = true;
-					bool endsLine   = true;
-					if (line is TextLineSnapshot) {
-						var snapshot = (TextLineSnapshot)line;
-						startsLine = snapshot.StartsLine;
-						endsLine   = snapshot.EndsLine;
-					}
-					var lines = CobolTextLine.Create(line.Text, Layout, line.InitialLineIndex, startsLine,endsLine);
-					foreach(var l in lines) results.Add(SetComment(l, isComment));
-				} else
-				if (Layout == ColumnsLayout.FreeTextFormat) {
-					results.Add(SetComment(line, isComment));
-				} else
-					throw new System.NotImplementedException("Unsuported columns layout: "+Layout);
-			}
-			if (results.Count < 1)
-				throw new System.NotImplementedException("Unsuported ITextLine type: "+line.GetType());
-			return results;
-		}
-
-		private static ITextLine SetComment(ITextLine line, bool? isComment) {
-			if (isComment == true)
-				return Comment(line);
-			else
-			if (isComment == false)
-				return Uncomment(line);
-			else // null
-				return line;
-		}
-		private static ITextLine Comment(ITextLine line) {
-			var cobol = line as CobolTextLine;
-			if (cobol != null) {
-				StringBuilder text = new StringBuilder(cobol.Text);
-				text[6] = '*';
-				var lines = CobolTextLine.Create("*"+cobol.SourceText, cobol.ColumnsLayout, cobol.InitialLineIndex);
-				foreach(var l in lines) return l;// there's only one in the collection
-				throw new System.NotImplementedException("I should have at least one item!");
-			} else {
-				return new TextLineSnapshot(line.InitialLineIndex, "*"+line.Text, null);
-			}
-		}
-		private static ITextLine Uncomment(ITextLine line) {
-			var cobol = line as CobolTextLine;
-			if (cobol != null) {
-				StringBuilder text = new StringBuilder(cobol.Text);
-				text[6] = ' ';
-				var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.InitialLineIndex);
-				foreach(var l in lines) return l;// there's only one in the collection
-				throw new System.NotImplementedException("I should have at least one item!");
-			} else {
-				StringBuilder text = new StringBuilder(line.Text);
-				int index = line.Text.IndexOf('*');
-				text[index] = ' ';
-				return new TextLineSnapshot(line.InitialLineIndex, text.ToString(), null);
-			}
 		}
 	}
 

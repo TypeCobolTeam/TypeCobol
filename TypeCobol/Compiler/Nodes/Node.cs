@@ -221,7 +221,7 @@ public abstract class Node {
 				endsLine = token.IsLastOfLine;
 			}
 
-			end = TryToExtendLineFrom(end, token, out endsLine); // hack#364
+			end = TryToExtendLineFrom(end, token, out endsLine); // TODO#364 remove this hack!
 
 			if (startsLine) {
 				if (endsLine) line = previous;
@@ -239,6 +239,7 @@ public abstract class Node {
 		                                line.ColumnsLayout, line.InitialLineIndex, startsLine,endsLine);
 	}
 
+	/// <summary>TODO#364 hack ; this method exists because preprocessor directive tokens are not seeable in AST</summary>
 	private int TryToExtendLineFrom(int index, Scanner.Token token, out bool endsLine) {
 		var tokens = token.TokensLine.SourceTokens;
 		int c = tokens.IndexOf(token);
