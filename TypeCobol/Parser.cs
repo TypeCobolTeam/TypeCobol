@@ -33,9 +33,6 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-	    public void Init([NotNull] string path, DocumentFormat format) {
-	        Init(path, format, null);
-	    }
         public void Init([NotNull] string path, DocumentFormat format = null, params string[] sourceFolders)
 		{
 			FileCompiler compiler;
@@ -48,12 +45,15 @@ namespace TypeCobol
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
 
             //Add copy folder into sourceFileProvider
-            SourceFileProvider sourceFileProvider = project.SourceFileProvider;
-            foreach (var sourceFolder in sourceFolders) {
-                sourceFileProvider.AddLocalDirectoryLibrary(sourceFolder, true, Extensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+            if (sourceFolders != null) {
+                SourceFileProvider sourceFileProvider = project.SourceFileProvider;
+                foreach (var sourceFolder in sourceFolders) {
+                    sourceFileProvider.AddLocalDirectoryLibrary(sourceFolder, true, Extensions, format.Encoding,
+                        format.EndOfLineDelimiter, format.FixedLineLength);
+                }
             }
 
-			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
+            compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
 
