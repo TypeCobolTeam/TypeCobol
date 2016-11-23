@@ -15,7 +15,6 @@ files = [
     'System.Reactive.Interfaces.dll',
     'System.Reactive.Linq.dll',
     'System.Reactive.PlatformServices.dll',
-    'System.Reactive.Windows.Threading.dll',
     'System.Web.Razor.dll',
 
     os.path.join('config','skeletons.xml'),
