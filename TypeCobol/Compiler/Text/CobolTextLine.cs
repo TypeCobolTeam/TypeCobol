@@ -356,7 +356,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Sequence number text : Columns 1 through 6
         /// </summary>
-        public string SequenceNumberText
+        public virtual string SequenceNumberText
         {
             get
             {
@@ -372,7 +372,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Indicator char : Column 7
         /// </summary>
-        public char IndicatorChar
+        public virtual char IndicatorChar
         {
             get
             {
@@ -386,7 +386,7 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public TextArea Source { get; private set; }
 
-        public string SourceText
+        public virtual string SourceText
         {
             get
             {
@@ -399,10 +399,8 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public TextArea Comment { get; private set; }
 
-        /// <summary>
-        /// Comment text : Columns 73 through 80+
-        /// </summary>
-        public string CommentText
+        /// <summary>Comment text : Columns 73 through 80+</summary>
+        public virtual string CommentText
         {
             get
             {
@@ -415,6 +413,14 @@ namespace TypeCobol.Compiler.Text
             return "SequenceNumber" + SequenceNumber + " Indicator" + Indicator + " Source" + Source + " Comment" + Comment;
         }
 
+		public string Dump() {
+			var str = new System.Text.StringBuilder();
+			str.Append(SequenceNumberText ?? "?").Append(':').Append(IndicatorChar)
+			   .Append(':').Append(SourceText ?? "?")
+			   .Append(':').Append(CommentText ?? "?");
+			return str.ToString();
+		}
+
         // --- ITextLine wrapper ---
 
         // Underlying text line
@@ -423,7 +429,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Text of the line, without the end of line delimiters
         /// </summary>
-        public string Text { get { return textLine.Text; } }
+        public virtual string Text { get { return textLine.Text; } }
 
         /// <summary>
         /// Part of the text of the line, from start index to end index (included)
@@ -496,4 +502,53 @@ namespace TypeCobol.Compiler.Text
             }
         }
     }
+
+
+
+
+	public class CobolPartialTextLine: CobolTextLine {
+		public CobolPartialTextLine(
+				string sequence, char indicator, string source, string comment,
+				ColumnsLayout layout, int index, bool startsLine, bool endsLine)
+		: base(new TextLineSnapshot(index, EMPTY_LINE, null), layout) {
+			this.sequence  = sequence;
+			this.indicator = indicator;
+			Tools.Strings.GetIndent(source, out this.indent, out this.source);
+			this.comment   = comment;
+			this.StartsLine = startsLine;
+			this.EndsLine   = endsLine;
+		}
+		private static string EMPTY_LINE = "                                                                                ";
+
+		private string sequence;
+		public override string SequenceNumberText { get { return sequence; } }
+
+		private char indicator;
+		public override char IndicatorChar {
+			get { return indicator; }
+//			set { indicator = value; }
+		}
+		public void SetIndicatorChar(char value) { indicator = value; }
+
+		private string indent;
+		public virtual string Indent { get { return indent; } }
+
+		private string source;
+		public override string SourceText { get { return source; } }
+
+		private string comment;
+		public override string CommentText { get { return comment; } }
+
+		public virtual bool StartsLine { get; private set; }
+		public virtual bool EndsLine   { get; private set; }
+
+		public override string ToString() {
+			var str = new System.Text.StringBuilder();
+			if (StartsLine) str.Append(SequenceNumberText).Append(IndicatorChar.ToString()).Append(Indent);
+			str.Append(SourceText);
+			if (EndsLine) str.Append(CommentText);
+			return str.ToString();
+		}
+		public override string Text { get { return ToString(); } }
+	}
 }

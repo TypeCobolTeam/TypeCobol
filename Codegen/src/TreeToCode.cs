@@ -108,6 +108,7 @@ System.Console.WriteLine("ShouldCopy(\""+line.Text+"\":"+line.GetType().Name+"):
 			return false;
 		}
 
+		int CurrentLineLength = 0;
 		/// <summary>
 		/// Writes one line of Input as one or more lines in Output.
 		///	A single line, once indented, can output as many lines, especially on 80 colons.
@@ -124,8 +125,15 @@ System.Console.Write("\"Write(\""+line.Text+"\":"+line.GetType().Name+", "+(isCo
 			foreach(var l in ConvertLine(line, isComment)) {
 				bool endsLine = true;
 				if (line is TextLineSnapshot) endsLine = ((TextLineSnapshot)line).EndsLine;
-				if (endsLine) Output.WriteLine(l.Text);
-				else Output.Write(l.Text);
+				else if (line is CobolPartialTextLine) endsLine = ((CobolPartialTextLine)line).EndsLine;
+				if (endsLine) {
+					Output.WriteLine(l.Text);
+					CurrentLineLength = 0;
+				} else {
+					Output.Write(l.Text);
+					CurrentLineLength += l.Text.Length;
+System.Console.Write(" [[\""+l.Text+"\",curlen="+CurrentLineLength+"]]");
+				}
 				c++;
 			}
 			offset++;
@@ -148,13 +156,24 @@ System.Console.Write(" --- original");
 //				lines.Add(line); //nothing to do
 //				return lines;
 //			} else {
-				string indent, code;
-				GetIndent(line.SourceText ?? "", out indent, out code);
-System.Console.WriteLine(": \""+line.SequenceNumberText+"\" \'"+line.IndicatorChar+"\' \""+indent+"\"("+indent.Length+") \""+code+"\" \""+line.CommentText+"\"");
-				previousIndent = indent;
 				char indicator = line.IndicatorChar;
 				if (comment != null && comment == true) indicator = '*';
-				return CreateLines(Layout, line.InitialLineIndex, line.SequenceNumberText, indicator, indent, code, line.CommentText, true, true);
+				string indent, code;
+				bool starts, ends;
+				if (line is CobolPartialTextLine) {
+					var lihn = (CobolPartialTextLine)line;
+					starts = lihn.StartsLine;
+					ends   = lihn.EndsLine;
+					indent = lihn.Indent;
+					code   = lihn.SourceText;
+				} else {
+					starts = true;
+					ends   = true;
+					Tools.Strings.GetIndent(line.SourceText ?? "", out indent, out code);
+				}
+System.Console.WriteLine(": \""+line.SequenceNumberText+"\" \'"+line.IndicatorChar+"\' \""+indent+"\"("+indent.Length+") \""+code+"\" \""+line.CommentText+"\" ("+starts+','+ends+", curlen:"+CurrentLineLength+')');
+				previousIndent = indent;
+				return CreateLines(Layout, line.InitialLineIndex, starts,line.SequenceNumberText,indicator,indent, code, ends,CurrentLineLength,line.CommentText);
 //			}
 		}
 		/// <summary>
@@ -168,8 +187,8 @@ System.Console.WriteLine(": \""+line.SequenceNumberText+"\" \'"+line.IndicatorCh
 		private IEnumerable<ITextLine> ConvertGeneratedLine(TextLineSnapshot line, bool? comment) {
 System.Console.Write(" --- generated");
 			string indent, code;
-			GetIndent(line.Text ?? "", out indent, out code);
-System.Console.Write(": \""+indent+"\"("+indent.Length+(previousIndent!=null && previousIndent.Length != indent.Length ? (">"+previousIndent.Length.ToString()):"")+") \""+code+"\"");
+			Tools.Strings.GetIndent(line.Text ?? "", out indent, out code);
+System.Console.Write(": \""+indent+"\"("+indent.Length+(previousIndent!=null && previousIndent.Length != indent.Length ? (">"+previousIndent.Length.ToString()):"")+") \""+code+"\" (curlen:"+CurrentLineLength+')');
 			if (previousIndent != null) indent = previousIndent + indent;
 System.Console.WriteLine();
 			var lines = new List<ITextLine>();
@@ -190,26 +209,24 @@ System.Console.WriteLine();
 					indicator = ' ';
 				}
 			}
-			return CreateLines(Layout, line.InitialLineIndex, null, indicator, indent, code, null, starts, ends);
-		}
-		private void GetIndent(string text, out string indent, out string indented) {
-			int begin = System.Array.FindIndex(text.ToCharArray(), x => !char.IsWhiteSpace(x));
-			if (begin == -1) begin = 0;// text.Length == 0
-			indent = text.Substring(0, begin);
-			indented = text.Substring(begin, text.Length-begin);
+			return CreateLines(Layout, line.InitialLineIndex, starts,null,indicator,indent, code, ends,CurrentLineLength,null);
 		}
 
 
 		private static IEnumerable<ITextLine> CreateLines(ColumnsLayout layout, int index,
-				string sequence, char indicator, string indent, string code,string endOfLineComment,
-				bool startsLine, bool endsLine) {
+				bool startsLine, string sequence, char indicator, string indent, string code,
+				bool endsLine, int linelength, string endOfLineComment) {
 			var result = new List<ITextLine>();
 			var lines = Split(code, 65);
-			result.Add(new TextLineSnapshot(index, Format(layout, startsLine, sequence, indicator, indent, lines[0], endsLine, endOfLineComment), startsLine, endsLine || lines.Count > 1));
+			bool starts = startsLine;
+			bool ends = endsLine || lines.Count > 1;
+			result.Add(new TextLineSnapshot(index, Format(layout, starts,sequence,indicator,indent, lines[0], ends,linelength,endOfLineComment), starts, ends));
 			if (indicator == null || indicator == ' ') indicator = '-';
 			for(int i = 1; i < lines.Count; i++) {
 				if (index > -1) index++;
-				result.Add(new TextLineSnapshot(index, Format(layout, startsLine, sequence, indicator, indent, lines[i], endsLine, endOfLineComment), true, endsLine || ((i+1) < lines.Count)));
+				starts = true;
+				ends = endsLine || ((i+1) < lines.Count);
+				result.Add(new TextLineSnapshot(index, Format(layout, starts,sequence,indicator,indent, lines[i], ends,linelength,endOfLineComment), starts, ends));
 			}
 			return result;
 		}
@@ -225,21 +242,25 @@ System.Console.WriteLine();
 		private static string Format(ColumnsLayout layout,
 		                             bool startsLine, string sequence, char indicator, string indent,
 		                             string code,
-		                             bool endsLine, string endOfLineComment) {
+		                             bool endsLine, int linelength, string endOfLineComment) {
 			var line = new StringBuilder();
 			if (startsLine) {
 				if (layout == ColumnsLayout.CobolReferenceFormat) {
 					if (sequence != null) {
 						if (sequence.Length != 6) throw new ArgumentException("Invalid sequence \""+sequence+"\" (expected length:6)");
 						else line.Append(sequence);
-					} else line.Append("101010");
+					} else line.Append("      ");
 				}
 				// if layout == ColumnsLayout.FreeTextFormat, drop sequence text
 				line.Append(indicator);
 				line.Append(indent);
 			}
 			line.Append(code);
-			if (endsLine && endOfLineComment != null) line.Append(endOfLineComment);
+			if (layout == ColumnsLayout.CobolReferenceFormat && endsLine && endOfLineComment != null) {
+				linelength += line.Length;
+				while(linelength++ < 72) line.Append(' ');
+				line.Append(endOfLineComment);
+			}
 			return line.ToString();
 		}
 ////////////////////////////////////////

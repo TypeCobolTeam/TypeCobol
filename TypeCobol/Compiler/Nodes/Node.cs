@@ -200,6 +200,7 @@ public abstract class Node {
 			int end = 0;
 			bool startsLine = true;
 			bool endsLine = false;
+			ITextLine line = null;
 			for(int c = 0; c < CodeElement.ConsumedTokens.Count; c++) {
 				token = CodeElement.ConsumedTokens[c];
 				if (previous == null) { //first iteration
@@ -209,17 +210,9 @@ public abstract class Node {
 				else
 				if (previous == token.TokensLine) ; // same line
 				else { // new line
-					if (startsLine) lines.Add(previous);
-////////////////////////////////////////////////////////////
-	      // THIS SHOULD GENERATE CobolTextLine  //
-	     // INSTEAD OF TextLineSnapshot         //
-	    // BECAUSE TreeToCode ASSUMES          //
-	   // CobolTextLine ARE ORIGINAL LINES    //
-	  // AND TextLineSnapshot ARE GENERATED  //
-	 // SO WE LOSE SOME INFO, IN PARTICULAR //
-	// COLUMNS BEFORE 7 AND AFTER 73       //
-////////////////////////////////////////////////////////////
-					else lines.Add(new TextLineSnapshot(-1, previous.Snip(begin), startsLine, endsLine));
+					if (startsLine) line = previous;
+					else line = CreateCobolFormattedLine(previous, previous.Snip(begin), startsLine, endsLine);
+					lines.Add(line);
 					startsLine = true;
 					begin = token.StartIndex;
 				}
@@ -228,17 +221,20 @@ public abstract class Node {
 				endsLine = token.IsLastOfLine;
 			}
 
-			ITextLine line = null;
 			if (startsLine) {
 				if (endsLine) line = previous;
-				else line = new TextLineSnapshot(-1, previous.Snip(7, end), startsLine, endsLine);
+				else line = CreateCobolFormattedLine(previous, previous.Snip(7, end), startsLine, endsLine);
 			} else {
-				line = new TextLineSnapshot(-1, previous.Snip(begin, end), startsLine, endsLine);
+				line = CreateCobolFormattedLine(previous, previous.Snip(begin, end), startsLine, endsLine);
 			}
 			lines.Add(line);
 
 			return lines;
 		}
+	}
+	private CobolPartialTextLine CreateCobolFormattedLine(Parser.CodeElementsLine line, string code, bool startsLine,bool endsLine) {
+		return new CobolPartialTextLine(line.SequenceNumberText, line.IndicatorChar, code, line.CommentText, 
+		                                line.ColumnsLayout, line.InitialLineIndex, startsLine,endsLine);
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>

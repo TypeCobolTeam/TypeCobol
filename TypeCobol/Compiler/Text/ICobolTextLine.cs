@@ -1,11 +1,18 @@
-﻿using TypeCobol.Compiler.Concurrency;
+﻿namespace TypeCobol.Compiler.Text {
 
-namespace TypeCobol.Compiler.Text
-{
+	using TypeCobol.Compiler.Concurrency;
+
+public interface CobolFormattedLine {
+	string SequenceNumberText { get; }
+	char IndicatorChar { get; }
+	string SourceText { get; }
+	string CommentText { get; }
+}
+
     /// <summary>
     /// Partition of a COBOL text line into reference format areas
     /// </summary>
-    public interface ICobolTextLine : ITextLine
+    public interface ICobolTextLine : ITextLine, CobolFormattedLine
     {
         /// <summary>
         /// Cobol text line type : Source, Debug, Comment or Continuation
