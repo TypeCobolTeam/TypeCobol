@@ -88,7 +88,6 @@
 		/// <param name="line"></param>
 		/// <returns></returns>
 		private bool ShouldCopy(ICobolTextLine line) {
-System.Console.WriteLine("ShouldCopy(\""+line.Text+"\":"+line.GetType().Name+"): "+line.CompilationStep+","+line.Type);
 			return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank
 			   || line.Type == CobolTextLineType.Debug // #267: Debug lines are copied "AS IS", even if they are invalid in COBOL85!
 			   || (line.Type == CobolTextLineType.Source && line.SourceText.Trim().StartsWith("COPY"));
@@ -117,10 +116,7 @@ System.Console.WriteLine("ShouldCopy(\""+line.Text+"\":"+line.GetType().Name+"):
 		/// <param name="line">Input[offset]</param>
 		/// <param name="isComment">Must line be commented ?</param>
 		private void Write(ITextLine line, bool? isComment) {
-
 			if (line == lastline) return;
-
-System.Console.Write("\"Write(\""+line.Text+"\":"+line.GetType().Name+", "+(isComment==null?"?":isComment.ToString())+")");
 			int c = 0;
 			foreach(var l in ConvertLine(line, isComment)) {
 				bool endsLine = true;
@@ -132,7 +128,6 @@ System.Console.Write("\"Write(\""+line.Text+"\":"+line.GetType().Name+", "+(isCo
 				} else {
 					Output.Write(l.Text);
 					CurrentLineLength += l.Text.Length;
-System.Console.Write(" [[\""+l.Text+"\",curlen="+CurrentLineLength+"]]");
 				}
 				c++;
 			}
@@ -150,31 +145,23 @@ System.Console.Write(" [[\""+l.Text+"\",curlen="+CurrentLineLength+"]]");
 
 		private string previousIndent = null;
 		private IEnumerable<ITextLine> ConvertOriginalLine(CobolTextLine line, bool? comment) {
-System.Console.Write(" --- original");
-//			if (Layout == line.ColumnsLayout) {
-//				var lines = new List<ITextLine>();
-//				lines.Add(line); //nothing to do
-//				return lines;
-//			} else {
-				char indicator = line.IndicatorChar;
-				if (comment != null && comment == true) indicator = '*';
-				string indent, code;
-				bool starts, ends;
-				if (line is CobolPartialTextLine) {
-					var lihn = (CobolPartialTextLine)line;
-					starts = lihn.StartsLine;
-					ends   = lihn.EndsLine;
-					indent = lihn.Indent;
-					code   = lihn.SourceText;
-				} else {
-					starts = true;
-					ends   = true;
-					Tools.Strings.GetIndent(line.SourceText ?? "", out indent, out code);
-				}
-System.Console.WriteLine(": \""+line.SequenceNumberText+"\" \'"+line.IndicatorChar+"\' \""+indent+"\"("+indent.Length+") \""+code+"\" \""+line.CommentText+"\" ("+starts+','+ends+", curlen:"+CurrentLineLength+')');
+			char indicator = line.IndicatorChar;
+			if (comment != null && comment == true) indicator = '*';
+			string indent, code;
+			bool starts, ends;
+			if (line is CobolPartialTextLine) {
+				var lihn = (CobolPartialTextLine)line;
+				starts = lihn.StartsLine;
+				ends   = lihn.EndsLine;
+				indent = lihn.Indent;
+				code   = lihn.SourceText;
+			} else {
+				starts = true;
+				ends   = true;
+				Tools.Strings.GetIndent(line.SourceText ?? "", out indent, out code);
+			}
 				previousIndent = indent;
 				return CreateLines(Layout, line.InitialLineIndex, starts,line.SequenceNumberText,indicator,indent, code, ends,CurrentLineLength,line.CommentText);
-//			}
 		}
 		/// <summary>
 		/// This method assumes two things
@@ -185,12 +172,9 @@ System.Console.WriteLine(": \""+line.SequenceNumberText+"\" \'"+line.IndicatorCh
 		/// <param name="comment"></param>
 		/// <returns></returns>
 		private IEnumerable<ITextLine> ConvertGeneratedLine(TextLineSnapshot line, bool? comment) {
-System.Console.Write(" --- generated");
 			string indent, code;
 			Tools.Strings.GetIndent(line.Text ?? "", out indent, out code);
-System.Console.Write(": \""+indent+"\"("+indent.Length+(previousIndent!=null && previousIndent.Length != indent.Length ? (">"+previousIndent.Length.ToString()):"")+") \""+code+"\" (curlen:"+CurrentLineLength+')');
 			if (previousIndent != null) indent = previousIndent + indent;
-System.Console.WriteLine();
 			var lines = new List<ITextLine>();
 			bool starts = line.StartsLine;
 			bool ends   = line.EndsLine;
