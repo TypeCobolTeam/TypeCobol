@@ -247,8 +247,10 @@ System.Console.WriteLine();
 			if (startsLine) {
 				if (layout == ColumnsLayout.CobolReferenceFormat) {
 					if (sequence != null) {
-						if (sequence.Length != 6) throw new ArgumentException("Invalid sequence \""+sequence+"\" (expected length:6)");
-						else line.Append(sequence);
+						if (sequence.Length != 6) {
+							var msg = "Invalid sequence \""+sequence+"\" (expected length:6, actual:"+sequence.Length+")";
+							throw new ArgumentException(msg);
+						} else line.Append(sequence);
 					} else line.Append("      ");
 				}
 				// if layout == ColumnsLayout.FreeTextFormat, drop sequence text
