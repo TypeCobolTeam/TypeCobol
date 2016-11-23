@@ -221,6 +221,8 @@ public abstract class Node {
 				endsLine = token.IsLastOfLine;
 			}
 
+			end = TryToExtendLineFrom(end, token, out endsLine); // hack#364
+
 			if (startsLine) {
 				if (endsLine) line = previous;
 				else line = CreateCobolFormattedLine(previous, previous.Snip(7, end), startsLine, endsLine);
@@ -235,6 +237,30 @@ public abstract class Node {
 	private CobolPartialTextLine CreateCobolFormattedLine(Parser.CodeElementsLine line, string code, bool startsLine,bool endsLine) {
 		return new CobolPartialTextLine(line.SequenceNumberText, line.IndicatorChar, code, line.CommentText, 
 		                                line.ColumnsLayout, line.InitialLineIndex, startsLine,endsLine);
+	}
+
+	private int TryToExtendLineFrom(int index, Scanner.Token token, out bool endsLine) {
+		var tokens = token.TokensLine.SourceTokens;
+		int c = tokens.IndexOf(token);
+		bool takeall = false;
+		c++;
+		for(; c < tokens.Count; c++) {
+			var t = tokens[c];
+			if (!takeall) {
+				if (t.TokenFamily == Scanner.TokenFamily.Whitespace) {
+					; // take this token
+				} else
+				if (t.TokenFamily == Scanner.TokenFamily.CompilerDirectiveStartingKeyword
+				 || t.TokenFamily == Scanner.TokenFamily.CompilerDirective
+				 || t.TokenFamily == Scanner.TokenFamily.Comments) {
+					takeall = true; // take all tokens untill end of line
+				} else break; // don't take any more tokens
+			}
+			token = t;
+			index = t.StopIndex;
+		}
+		endsLine = token == tokens[tokens.Count-1];
+		return index;
 	}
 
 	/// <summary>Implementation of the GoF Visitor pattern.</summary>

@@ -27,7 +27,6 @@
 000223               mykey                                              000223
 000230    MOVE GetValue(mykey) TO result.                               000230
 000240    CONTINUE.                                                     000240
-000250 
 000260 END PROGRAM Codegen.                                             000260
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
