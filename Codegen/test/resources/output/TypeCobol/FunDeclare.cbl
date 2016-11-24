@@ -171,6 +171,8 @@
              .
        
        END PROGRAM FunDeclare.
+      *
+      *DECLARE FUNCTION DoesNothing PUBLIC.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a59b2c49.
@@ -179,9 +181,12 @@
            DISPLAY 'I DO NOTHING'
            .
            END PROGRAM a59b2c49.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. a866b35c.
+      *    
+      *DECLARE FUNCTION ReturnsZero PUBLIC
+      *      RETURNING result PIC 9(04).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a866b35c.
          DATA DIVISION.
          LINKAGE SECTION.
          01 result PIC 9(04).
@@ -191,21 +196,29 @@
            MOVE 0 TO result.
            .
            END PROGRAM a866b35c.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. fe03398a.
-           DATA DIVISION.
-           LINKAGE SECTION.
-           01 x PIC 9(04).
-           PROCEDURE DIVISION
-                 USING BY REFERENCE x
-               .
+      *    
+      *DECLARE FUNCTION DoesNothing PUBLIC
+      *      INPUT x PIC 9(04).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. fe03398a.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 x PIC 9(04).
+       PROCEDURE DIVISION
+             USING BY REFERENCE x
+           .
            DISPLAY 'I DO NOTHING WITH ' x
            .
            END PROGRAM fe03398a.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. e3e490ae.
+      *    
+      *DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC
+      *      INPUT     x      PIC 9(04)
+      *      RETURNING result PIC 9(04)
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. e3e490ae.
          DATA DIVISION.
          FILE SECTION.
            FD myfile. 01 toto PIC X.
@@ -222,6 +235,14 @@
              MOVE x TO result
            END-IF.
        END PROGRAM e3e490ae.
+      *
+      *DECLARE FUNCTION SumThreeWithClutterInLinkage PUBLIC
+      *      INPUT x PIC 9(04)
+      *            y PIC 9(04)
+      *            z PIC 9(04)
+      *            t PIC 9(04)
+      *      RETURNING result PIC 9(04)
+      *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d8a9d90f.
@@ -249,6 +270,11 @@
            ADD y to result.
            ADD z to result.
        END PROGRAM d8a9d90f.
+      *
+      *DECLARE PROCEDURE SwapParameters PRIVATE
+      *      INOUT x PIC 9(04)
+      *            y PIC 9(04)
+      *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ceb46e19.
@@ -267,23 +293,34 @@
            MOVE tmp TO y
            .
            END PROGRAM ceb46e19.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. f6e9c448.
-           DATA DIVISION.
-           LINKAGE SECTION.
-           01 x PIC 9(04).
-           01 y PIC 9(04).
-           01 a PIC 9(04).
-           01 b PIC 9(04).
-           PROCEDURE DIVISION
-                 USING BY REFERENCE x
-                       BY REFERENCE y
-                       BY REFERENCE a
-                       BY REFERENCE b
-               .
+      *    
+      *DECLARE PROCEDURE SwapParametersWrong PRIVATE
+      *      INPUT  x PIC 9(04)
+      *             y PIC 9(04)
+      *             a PIC 9(04)
+      *      OUTPUT x PIC 9(04)
+      *             y PIC 9(08)
+      *             b PIC 9(04)
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f6e9c448.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 x PIC 9(04).
+       01 y PIC 9(04).
+       01 a PIC 9(04).
+       01 b PIC 9(04).
+       PROCEDURE DIVISION
+             USING BY REFERENCE x
+                   BY REFERENCE y
+                   BY REFERENCE a
+                   BY REFERENCE b
+           .
            CONTINUE.
        END PROGRAM f6e9c448.
+      *
+      *DECLARE FUNCTION IllegalClauses PUBLIC.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e6215ae7.
@@ -295,20 +332,34 @@
                  .
            .
            END PROGRAM e6215ae7.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. b8045acd.
-           DATA DIVISION.
-           LINKAGE SECTION.
-           01 gender PIC X(01).
-               88 valid-gender VALUE 'F' 'M'.
-               88 female VALUE 'F'.
-               88 male VALUE 'M'.
-           PROCEDURE DIVISION
-                 USING BY REFERENCE gender
-               .
+      *    
+      *DECLARE FUNCTION FunConditions PRIVATE
+      *      INPUT  gender PIC X(01)
+      *          88  valid-gender VALUE 'F' 'M'
+      *          88  female VALUE 'F'
+      *          88  male   VALUE 'M'
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b8045acd.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 gender PIC X(01).
+           88 valid-gender VALUE 'F' 'M'.
+           88 female VALUE 'F'.
+           88 male VALUE 'M'.
+       PROCEDURE DIVISION
+             USING BY REFERENCE gender
+           .
            CONTINUE.
        END PROGRAM b8045acd.
+      *
+      *DECLARE FUNCTION FunConditions PRIVATE
+      *      INPUT 88 valid-gender VALUE 'F' 'M'
+      *               gender PIC X(01)
+      *            88  female VALUE 'F'
+      *            01  male   VALUE 'M'
+      *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. f6c8f8b0.
@@ -323,6 +374,11 @@
            .
            CONTINUE.
        END PROGRAM f6c8f8b0.
+      *
+      *DECLARE FUNCTION MyNOT PRIVATE
+      *      INPUT     x type BOOL
+      *      RETURNING y TYPE bool
+      *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ca65c9a2.

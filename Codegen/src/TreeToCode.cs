@@ -142,6 +142,7 @@
 		}
 
 		private string previousIndent = null;
+		private char previousIndicator = ' ';
 		private IEnumerable<ITextLine> ConvertOriginalLine(CobolTextLine line, bool? comment) {
 			char indicator = line.IndicatorChar;
 			if (comment != null && comment == true) indicator = '*';
@@ -158,8 +159,11 @@
 				ends   = true;
 				Tools.Strings.GetIndent(line.SourceText ?? "", out indent, out code);
 			}
+			previousIndicator = line.IndicatorChar;
+			if (previousIndicator != '*') {
 				previousIndent = indent;
-				return CreateLines(Layout, line.InitialLineIndex, starts,line.SequenceNumberText,indicator,indent, code, ends,CurrentLineLength,line.CommentText);
+			}
+			return CreateLines(Layout, line.InitialLineIndex, starts,line.SequenceNumberText,indicator,indent, code, ends,CurrentLineLength,line.CommentText);
 		}
 		/// <summary>
 		/// This method assumes two things
@@ -172,7 +176,7 @@
 		private IEnumerable<ITextLine> ConvertGeneratedLine(TextLineSnapshot line, bool? comment) {
 			string indent, code;
 			Tools.Strings.GetIndent(line.Text ?? "", out indent, out code);
-			if (previousIndent != null) indent = previousIndent + indent;
+			if (previousIndent != null && previousIndicator != '*') indent = previousIndent + indent;
 			var lines = new List<ITextLine>();
 			bool starts = line.StartsLine;
 			bool ends   = line.EndsLine;

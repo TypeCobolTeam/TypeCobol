@@ -144,6 +144,12 @@
            .
        
        END PROGRAM Functions.
+      *
+      *DECLARE function POW PRIVATE
+      *      INPUT x PIC 9(05)
+      *            y PIC 9(03)
+      *      RETURNING result PIC 9(08)
+      *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ad9bc8ae.

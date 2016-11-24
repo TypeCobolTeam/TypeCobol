@@ -106,6 +106,10 @@
        
        
        END PROGRAM Successive.
+      *
+      *DECLARE FUNCTION ConvertUS2EU PRIVATE
+      *                 INPUT     mydate TYPE DATE-US
+      *                 RETURNING result TYPE DATE-EU.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a3ed1262.
@@ -125,6 +129,10 @@
            .
            MOVE mydate TO result.
        END PROGRAM a3ed1262.
+      *
+      *DECLARE PROCEDURE ConvertEU2US PRIVATE
+      *                 INPUT     mydate TYPE DATE-EU
+      *                 OUTPUT    result TYPE DATE-US.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. eb47acd8.
@@ -144,6 +152,9 @@
            .
            MOVE mydate TO result.
        END PROGRAM eb47acd8.
+      *
+      *DECLARE FUNCTION GetCurrentDateUS PUBLIC
+      *                 RETURNING result TYPE DATE-US.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a46caa81.
@@ -164,6 +175,9 @@
            .
            CONTINUE.
        END PROGRAM a46caa81.
+      *
+      *DECLARE FUNCTION GetCurrentDateEU PUBLIC
+      *                 RETURNING result TYPE DATE-EU.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. baa9d61f.

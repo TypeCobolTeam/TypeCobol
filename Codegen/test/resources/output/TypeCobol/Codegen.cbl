@@ -28,6 +28,10 @@
 000230    MOVE GetValue(mykey) TO result.                               000230
 000240    CONTINUE.                                                     000240
 000260 END PROGRAM Codegen.                                             000260
+      *
+000161*DECLARE FUNCTION GetValue PRIVATE                                000161
+      *                 INPUT     ikey   TYPE MyKey
+000163*                 RETURNING result PIC 9(32).                     000163
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. f79c1034.

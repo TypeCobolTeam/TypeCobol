@@ -163,6 +163,9 @@
                .
        
        END PROGRAM DVZZDAT.
+      *
+      *DECLARE FUNCTION currentDate PUBLIC
+      *    RETURNING Result TYPE date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e5f209fa.
@@ -178,9 +181,12 @@
            ACCEPT Result FROM DATE YYYYMMDD
            .
            END PROGRAM e5f209fa.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. b8ac0397.
+      *    
+      *DECLARE FUNCTION currentDateDB2 PUBLIC
+      *    RETURNING Result Type dateDB2.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b8ac0397.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -202,9 +208,12 @@
            MOVE CORR W-Dat          TO Result
            .
            END PROGRAM b8ac0397.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. c4e76b45.
+      *    
+      *DECLARE FUNCTION currentDateJulian PUBLIC
+      *    RETURNING Result Type dateJulian.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c4e76b45.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -225,9 +234,17 @@
                 TO Result
            .
            END PROGRAM c4e76b45.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. d55b3ea7.
+      *    
+      *DECLARE FUNCTION currentDateFreeFormat PUBLIC
+      *                   INPUT dateType   PIC X(01)
+      *                         direction  PIC X(01)
+      *                         separator  PIC X(01)
+      *                         culture    TYPE culture
+      *                         returnCode PIC 9(04)
+      *                   RETURNING Result PIC X(40).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d55b3ea7.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  C-ZDAT2000               PIC X(08) VALUE 'ZDAT2000'.
@@ -277,15 +294,18 @@
            END-IF
            .
            END PROGRAM d55b3ea7.
-      *    _________________________________________________________________
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. bfb0fa9b.
-           DATA DIVISION.
-           LINKAGE SECTION.
-           01 Result PIC 9(08).
-           PROCEDURE DIVISION
-                 USING BY REFERENCE Result
-               .
+      *    
+      *DECLARE FUNCTION currentDateString PUBLIC
+      *    RETURNING Result TYPE dateString.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bfb0fa9b.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 Result PIC 9(08).
+       PROCEDURE DIVISION
+             USING BY REFERENCE Result
+           .
            ACCEPT Result FROM DATE YYYYMMDD
            .
            END PROGRAM bfb0fa9b.

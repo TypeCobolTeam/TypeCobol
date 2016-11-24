@@ -90,6 +90,13 @@
            .
        
        END PROGRAM ProcedureCall.
+      *
+      *DECLARE PROCEDURE ValidateDateFormat PRIVATE
+      *    INPUT mydate        TYPE Date
+      *          format        PIC X(08)
+      *   OUTPUT okay          TYPE Bool
+      *          actual-format PIC X(08).
+      *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c5875eec.
