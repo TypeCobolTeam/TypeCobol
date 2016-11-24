@@ -33,7 +33,7 @@
        PROGRAM-ID. f79c1034.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 ikey.
+       01 ikey PIC X(04).
        01 result PIC 9(32).
        PROCEDURE DIVISION
              USING BY REFERENCE ikey
