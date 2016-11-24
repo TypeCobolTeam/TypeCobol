@@ -272,8 +272,8 @@ class LibraryChecker: NodeListener {
 		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
 		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		if (isPublicLibrary) {
-			if (copy == null || copy.CodeElement().Name == null)
-				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
+//			if (copy == null || copy.CodeElement().Name == null) // TCRFUN_LIBRARY_COPY
+//				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
 
 			if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
 				DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.", context);
