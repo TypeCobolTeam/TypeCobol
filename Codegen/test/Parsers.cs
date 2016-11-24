@@ -140,7 +140,7 @@ namespace TypeCobol.Codegen {
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Codegen")+".cbl", skeletons);
 		}
 
-		[TestMethod]
+		[TestMethod][Ignore]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseSuccessiveCalls() {
