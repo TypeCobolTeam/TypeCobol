@@ -51,9 +51,9 @@ namespace TypeCobol.Server {
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
 								v => config.Format = CreateFormat(v)
 				},
-				{ "y|copy=", "{PATH} to a copy to load. This option can be specified more than once.", v => config.Copies.Add(v) },
+				{ "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => config.Copies.Add(v) },
+				{ "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => config.CopyFolders.Add(v) },
 				{ "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
-				{ "cf|copyFolder=",  "Copy folder ", v => config.CopyFolders.Add(v) },
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
 
