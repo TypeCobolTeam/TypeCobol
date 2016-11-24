@@ -1,17 +1,17 @@
 ﻿      * 13 CodeElements errors
-      * "1"@(42:8>42:16): [27:1] Syntax error : Illegal 1 USING in library PROCEDURE DIVISION.
-      * "1"@(73:12>75:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
-      * "1"@(96:12>96:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
-      * "1"@(97:12>97:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
-      * "1"@(98:12>98:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
-      * "1"@(99:12>99:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
-      * "1"@(100:12>100:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
-      * "1"@(101:12>101:65): [27:1] Syntax error : Symbol DATS20-I-INT-LANG is not referenced
-      * "1"@(102:12>102:65): [27:1] Syntax error : Symbol DATS20-I-INT-PAYS is not referenced
-      * "1"@(103:12>103:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
-      * "1"@(104:12>104:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
-      * "1"@(105:12>105:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced
-      * "1"@(114:16>114:54): [27:1] Syntax error : Symbol DATS20-O-DATE-LONG is not referenced
+      * "1"@(44:8>44:16): [27:1] Syntax error : Illegal 1 USING in library PROCEDURE DIVISION.
+      * "1"@(75:12>77:25): [27:1] Syntax error : Symbol DAY-OF-INTEGER is not referenced
+      * "1"@(98:12>98:52): [27:1] Syntax error : Symbol DATS20-I-FONCTION-FORMATAGE is not referenced
+      * "1"@(99:12>99:62): [27:1] Syntax error : Symbol DATS20-I-DATE1 is not referenced
+      * "1"@(100:12>100:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-TYPE1 is not referenced
+      * "1"@(101:12>101:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SENS1 is not referenced
+      * "1"@(102:12>102:69): [27:1] Syntax error : Symbol DATS20-I-RETOUR-SEPAR is not referenced
+      * "1"@(103:12>103:65): [27:1] Syntax error : Symbol DATS20-I-INT-LANG is not referenced
+      * "1"@(104:12>104:65): [27:1] Syntax error : Symbol DATS20-I-INT-PAYS is not referenced
+      * "1"@(105:12>105:63): [27:1] Syntax error : Symbol DATS20-I-POLICE is not referenced
+      * "1"@(106:12>106:63): [27:1] Syntax error : Symbol DATS20-I-INJOUR is not referenced
+      * "1"@(107:12>107:52): [27:1] Syntax error : Symbol DATS20-I-DATE1-SSAAMMJJ-OUI is not referenced
+      * "1"@(116:16>116:54): [27:1] Syntax error : Symbol DATS20-O-DATE-LONG is not referenced
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
@@ -45,6 +45,8 @@
       *    10                        PIC X(01) VALUE '-'.
       *    10 DD                     PIC 9(02).
        
+      *01  dateString    TYPEDEF     PIC 9(08).
+       
       *01 culture        TYPEDEF.
       *    10 lng                    PIC X(02).
       *    10 cty                    PIC X(02).
@@ -64,9 +66,12 @@
       *        d55b3ea7 -> currentDateFreeFormat
                05 PIC X(08) VALUE 'd55b3ea7'.
                05 PIC X(08) VALUE LOW-VALUES.
+      *        bfb0fa9b -> currentDateString
+               05 PIC X(08) VALUE 'bfb0fa9b'.
+               05 PIC X(08) VALUE LOW-VALUES.
            
            01  LibFctList REDEFINES LibFctList-Values.
-               05   LibFctItem    OCCURS 4 INDEXED BY LibFctIndex.
+               05   LibFctItem    OCCURS 5 INDEXED BY LibFctIndex.
                  10 LibFctCode    PIC X(08).
                  10 LibFctPointer PROCEDURE-POINTER.
       *_________________________________________________________________
@@ -114,43 +119,48 @@
       *                         culture    TYPE culture
       *                         returnCode PIC 9(04)
       *                   RETURNING Result PIC X(40).
-                          
-                          Copy-Process-Mode.
-                              SET ADDRESS OF FCT TO ADDRESS OF CallData
-                          
-                              SET FCT-currentDate-01   TO ENTRY 'e5f209fa'
-                              SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'
-                              SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'
-                              SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'
-                              .
-                          
-                          FctList-Process-Mode.
-                              SET ADDRESS OF FctList TO ADDRESS OF CallData
-                          
-                              IF NOT LibFctList-IsLoaded
-                                SET LibFctPointer(1)   TO ENTRY 'e5f209fa'
-                                SET LibFctPointer(2)   TO ENTRY 'b8ac0397'
-                                SET LibFctPointer(3)   TO ENTRY 'c4e76b45'
-                                SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'
-                          
-                                SET LibFctList-IsLoaded TO TRUE
-                              END-IF
-                          
-                              PERFORM VARYING FctIndex FROM 1 BY 1
-                                      UNTIL FctIndex > NumberOfFunctions
-                          
-                                SEARCH LibFctItem VARYING LibFctIndex
-                                  WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
-                                    SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
-                                END-SEARCH
-                          
-                              END-PERFORM
-                              .
        
        
        
        
        
+      *_________________________________________________________________
+      *DECLARE FUNCTION currentDateString PUBLIC
+      *    RETURNING Result TYPE dateString.
+           
+           Copy-Process-Mode.
+               SET ADDRESS OF FCT TO ADDRESS OF CallData
+           
+               SET FCT-currentDate-01   TO ENTRY 'e5f209fa'
+               SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'
+               SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'
+               SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'
+               SET FCT-currentDateString-01   TO ENTRY 'bfb0fa9b'
+               .
+           
+           FctList-Process-Mode.
+               SET ADDRESS OF FctList TO ADDRESS OF CallData
+           
+               IF NOT LibFctList-IsLoaded
+                 SET LibFctPointer(1)   TO ENTRY 'e5f209fa'
+                 SET LibFctPointer(2)   TO ENTRY 'b8ac0397'
+                 SET LibFctPointer(3)   TO ENTRY 'c4e76b45'
+                 SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'
+                 SET LibFctPointer(5)   TO ENTRY 'bfb0fa9b'
+           
+                 SET LibFctList-IsLoaded TO TRUE
+               END-IF
+           
+               PERFORM VARYING FctIndex FROM 1 BY 1
+                       UNTIL FctIndex > NumberOfFunctions
+           
+                 SEARCH LibFctItem VARYING LibFctIndex
+                   WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
+                     SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
+                 END-SEARCH
+           
+               END-PERFORM
+               .
        
        END PROGRAM DVZZDAT.
       *_________________________________________________________________
@@ -267,3 +277,15 @@
            END-IF
            .
            END PROGRAM d55b3ea7.
+      *    _________________________________________________________________
+           IDENTIFICATION DIVISION.
+           PROGRAM-ID. bfb0fa9b.
+           DATA DIVISION.
+           LINKAGE SECTION.
+           01 Result PIC 9(08).
+           PROCEDURE DIVISION
+                 USING BY REFERENCE Result
+               .
+           ACCEPT Result FROM DATE YYYYMMDD
+           .
+           END PROGRAM bfb0fa9b.
