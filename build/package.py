@@ -6,6 +6,7 @@ files = [
     'TypeCobol.CLI.exe',
       'TypeCobol.Codegen.exe',
         'RazorEngine.dll',
+          'System.Web.Razor.dll',
       'SimpleMsgPack.dll',
       'TypeCobol.exe',
         'Antlr4.Runtime.dll',
