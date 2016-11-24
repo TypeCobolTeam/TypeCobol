@@ -13,9 +13,9 @@ namespace TypeCobol.Server {
 		class Config {
 			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
+			public List<string> CopyFolders = new List<string>();
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
-		    public string CopyFolder = null;
 			public string ErrorFile = null;
 			public string skeletonPath = "";
 			public bool IsErrorXML {
@@ -53,7 +53,7 @@ namespace TypeCobol.Server {
 				},
 				{ "y|copy=", "{PATH} to a copy to load. This option can be specified more than once.", v => config.Copies.Add(v) },
 				{ "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
-                { "cf|copyFolder=",  "Copy folder ", v => config.CopyFolder = v },
+				{ "cf|copyFolder=",  "Copy folder ", v => config.CopyFolders.Add(v) },
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
 
@@ -112,7 +112,7 @@ namespace TypeCobol.Server {
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				try { parser.Init(path, config.Format, config.CopyFolder); }
+				try { parser.Init(path, config.Format, config.CopyFolders); }
 				catch(IOException ex) {
 					AddError(writer, ex.Message, path);
 					continue;

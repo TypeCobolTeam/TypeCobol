@@ -33,31 +33,25 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-        public void Init([NotNull] string path, DocumentFormat format = null, params string[] sourceFolders)
-		{
+		public void Init([NotNull] string path, DocumentFormat format = null, IList<string> copies = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
-            var root = new DirectoryInfo(Directory.GetParent(path).FullName);
-            if (format == null) format = GetFormat(path);
+			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
+			if (format == null) format = GetFormat(path);
 			TypeCobolOptions options = new TypeCobolOptions();
 			CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
-
-            //Add copy folder into sourceFileProvider
-            if (sourceFolders != null) {
-                SourceFileProvider sourceFileProvider = project.SourceFileProvider;
-                foreach (var sourceFolder in sourceFolders) {
-                    sourceFileProvider.AddLocalDirectoryLibrary(sourceFolder, true, Extensions, format.Encoding,
-                        format.EndOfLineDelimiter, format.FixedLineLength);
-                }
-            }
-
-            compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
+			//Add copy folder into sourceFileProvider
+			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
+			copies = copies ?? new List<string>();
+			foreach (var folder in copies) {
+				sourceFileProvider.AddLocalDirectoryLibrary(folder, true, Extensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+			}
+			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
-
-        }
+		}
 
 
 		public void Parse(string path, TextChangedEvent e=null)
