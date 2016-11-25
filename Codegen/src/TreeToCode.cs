@@ -120,8 +120,15 @@
 			int c = 0;
 			foreach(var l in ConvertLine(line, isComment)) {
 				bool endsLine = true;
-				if (line is TextLineSnapshot) endsLine = ((TextLineSnapshot)line).EndsLine;
-				else if (line is CobolPartialTextLine) endsLine = ((CobolPartialTextLine)line).EndsLine;
+				if (isComment == true) {
+					// fix #365: newly commented nodes have their children removed.
+					// so, consider any such cases as complete lines in case of
+					// one of a commented node's children ends the node line
+					endsLine = true;
+				} else
+				if (line is TextLineSnapshot) {
+					endsLine = ((TextLineSnapshot)line).EndsLine;
+				} else if (line is CobolPartialTextLine) endsLine = ((CobolPartialTextLine)line).EndsLine;
 				if (endsLine) {
 					Output.WriteLine(l.Text);
 					CurrentLineLength = 0;

@@ -206,7 +206,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE result
            .
-      *    MOVE FUNCTION GetCurrentDateUS() TO tmp           
+      *    MOVE FUNCTION GetCurrentDateUS() TO tmp
+           
                CALL a46caa81 USING
            
                    BY REFERENCE GetCurrentDateUS-RESULT
@@ -218,7 +219,8 @@
       *        TODO: error management
                END-IF
 .
-      *    MOVE FUNCTION ConvertUS2EU(tmp) TO result           
+      *    MOVE FUNCTION ConvertUS2EU(tmp) TO result
+           
                CALL a3ed1262 USING
                    BY REFERENCE tmp
            
@@ -231,8 +233,8 @@
       *        TODO: error management
                END-IF
 .
-      *    CALL  ConvertEU2US   INPUT mydateeu OUTPUT mydateus
-                CALL eb47acd8 USING 
+      *    CALL  ConvertEU2US   INPUT mydateeu OUTPUT mydateus 
+               CALL eb47acd8 USING 
                                     mydateeu
                                     mydateus
 .
