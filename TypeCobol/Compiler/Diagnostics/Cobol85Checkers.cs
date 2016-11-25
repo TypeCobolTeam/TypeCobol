@@ -467,7 +467,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 				}
 			} else {
-				if (IsUnsafe && node is Move) {
+				if (IsUnsafe) {
 					string message = "Useless UNSAFE with non strongly typed receiver.";
 					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SyntaxWarningInParser);
 				}
