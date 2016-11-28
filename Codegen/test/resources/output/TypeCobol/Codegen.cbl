@@ -24,6 +24,9 @@
       *                 INPUT     ikey   TYPE MyKey
 000163*                 RETURNING result PIC 9(32).                     000163
                                                                         000200
+004010     if :TRAC:                                                    000000
+004020       CONTINUE                                                   000000
+004090     end-if                                                       000000
 000210*   SET b TO FALSE                                                000210
           SET b-false TO TRUE
 000221     MOVE 'TOTO'                                                  000221

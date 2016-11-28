@@ -243,6 +243,7 @@ public abstract class Node {
 	private int TryToExtendLineFrom(int index, Scanner.Token token, out bool endsLine) {
 		var tokens = token.TokensLine.SourceTokens;
 		int c = tokens.IndexOf(token);
+		if (c == -1) { endsLine = true; return index; } // something was probably REPLACEd
 		bool takeall = false;
 		c++;
 		for(; c < tokens.Count; c++) {

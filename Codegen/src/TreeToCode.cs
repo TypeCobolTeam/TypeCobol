@@ -92,6 +92,8 @@
 			   || line.Type == CobolTextLineType.Debug // #267: Debug lines are copied "AS IS", even if they are invalid in COBOL85!
 			   || IsPreprocessingDirective(line);
 		}
+
+// [TODO#364]
 		private bool MultilinePreprocessorDirective = false;
 		private string[] PD = { "COPY", "REPLACE", "SKIP", "EJECT", };
 		private bool IsPreprocessingDirective(ICobolTextLine line) {
@@ -110,6 +112,7 @@
 				}
 			return false;
 		}
+// [/TODO#364]
 
 		/// <summary>Write input lines up to the end.</summary>
 		public void WriteInputLinesUntilEnd() {
