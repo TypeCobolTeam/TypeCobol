@@ -29,6 +29,7 @@
 000222             TO                                                   000222
 000223               mykey                                              000223
 000230    MOVE GetValue(mykey) TO result.                               000230
-000240    CONTINUE.                                                     000240
+000240    GOBACK.                                                       000240
+00024E    EJECT                                                         00024E
 000250 
 000260 END PROGRAM Codegen.                                             000260

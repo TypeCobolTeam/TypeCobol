@@ -114,6 +114,7 @@
        
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
+       
       *DECLARE FUNCTION FunConditions PRIVATE
       *      INPUT  gender PIC X(01)
       *          88  valid-gender VALUE 'F' 'M'

@@ -66,6 +66,7 @@
                                                 someformat
                                                 realformat
            CALL ValidateDateFormat END-CALL
+      * __________________________________________________
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
       * __________________________________________________

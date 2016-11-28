@@ -136,7 +136,6 @@
 		/// <param name="isComment">Must line be commented ?</param>
 		private void Write(ITextLine line, bool? isComment) {
 			if (line == lastline) return;
-			int c = 0;
 			foreach(var l in ConvertLine(line, isComment)) {
 				bool endsLine = true;
 				if (isComment == true) {
@@ -155,9 +154,8 @@
 					Output.Write(l.Text);
 					CurrentLineLength += l.Text.Length;
 				}
-				c++;
 			}
-			offset++;
+			if (CurrentLineLength == 0) offset++;
 			lastline = line;
 		}
 
