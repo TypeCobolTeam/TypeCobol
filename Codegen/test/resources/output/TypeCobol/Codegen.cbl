@@ -15,7 +15,8 @@
        01  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
            88  b-false VALUE 'F'.
-000090 01  mykey  PIC X(04). COPY YSECONDCOPY.                          000090
+000090 01  mykey  PIC X(04). COPY YSECONDCOPY SUPPRESS.                 000090
+002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
 000100 01  result PIC 9(32).                                            000100
        
 000140 PROCEDURE DIVISION.                                              000140
