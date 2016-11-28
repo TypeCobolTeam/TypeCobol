@@ -91,6 +91,7 @@ namespace TypeCobol.Compiler.Parser
         }
 
 		internal string Snip(int begin, int end=-1) {
+			if (end < 0) end = textLine.Length-1;
 			return textLine.TextSegment(begin, end);
 		}
 	}
