@@ -193,7 +193,7 @@ public abstract class Node {
 	public virtual IEnumerable<ITextLine> Lines {
 		get {
 			var lines = new List<ITextLine>();
-			if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
+			if (CodeElement == null || CodeElement.ConsumedTokens == null || CodeElement.ConsumedTokens.Count < 1) return lines;
 			Parser.CodeElementsLine previous = null;
 			Scanner.Token token = null;
 			int begin = 0;
