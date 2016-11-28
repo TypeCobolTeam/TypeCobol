@@ -2,7 +2,7 @@
 000020 PROGRAM-ID. Codegen.    
 000031* If you want to write                                            000031
 000032* a block-commented Haiku                            
-      * you'll need three star signs                                    000033
+      * you'll need three star signs ( ͡° ͜ʖ ͡°)                           000033
 000040 DATA DIVISION.                                                   000040
 000050 WORKING-STORAGE SECTION.                                         000050
 001500 replace ==:PFX:==  by ==CCTFAL-LOG-PFX==                         000000
