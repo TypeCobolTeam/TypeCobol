@@ -3,6 +3,7 @@ using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Text;
 
@@ -58,7 +59,7 @@ namespace TypeCobol.Server {
 			};
 
 		    try {
-		        List<string> args;
+                List<string> args;
 		        try {
 		            args = p.Parse(argv);
 		        } catch (OptionException ex) {
@@ -108,18 +109,18 @@ namespace TypeCobol.Server {
 			writer.Outputs = config.OutputFiles;
 
 			var parser = new Parser();
-			parser.CustomSymbols = LoadCopies(writer, config.Copies);
+			parser.CustomSymbols = LoadCopies(writer, config.Copies, config.Format);
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
 				try { parser.Init(path, config.Format, config.CopyFolders); }
-				catch(IOException ex) {
-					AddError(writer, ex.Message, path);
+				catch(Exception ex) {
+					AddError(writer, ex.Message, path, "parserInit");
 					continue;
 				}
 				parser.Parse(path);
 				if (parser.Results.CodeElementsDocumentSnapshot == null) {
-					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
+					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path, "parsing");
 					continue;
 				}
 
@@ -128,7 +129,7 @@ namespace TypeCobol.Server {
 				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
 
 				if (parser.Results.ProgramClassDocumentSnapshot == null) {
-					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
+					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path, "parsing");
 					continue;
 				}
 				int errors = 0;
@@ -152,10 +153,10 @@ namespace TypeCobol.Server {
 			writer.Flush();
 		}
 
-		private static void AddError(AbstractErrorWriter writer, string message, string path) {
+		private static void AddError(AbstractErrorWriter writer, string message, string path, string errorCode) {
 			var error = new TypeCobol.Tools.Diagnostic();
 			error.Message = message;
-			error.Code = "codegen";
+			error.Code = errorCode;
 			try { error.Source = writer.Inputs[path]; }
 			catch(KeyNotFoundException) { error.Source = writer.Count.ToString(); }
 			var list = new List<TypeCobol.Tools.Diagnostic>();
@@ -164,38 +165,43 @@ namespace TypeCobol.Server {
 			Console.WriteLine(error.Message);
 		}
 
-		private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths) {
+		private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat) {
 			var parser = new Parser();
 			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
 
 			var copies = new List<string>();
-			foreach(string path in paths) copies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, true));
+			foreach(string path in paths) copies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
 
 			foreach(string path in copies) {
-				parser.Init(path);
-				parser.Parse(path);
+			    try {
+			        parser.Init(path, copyDocumentFormat);
+			        parser.Parse(path);
 
+			        foreach (var diagnostic in parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics) {
+			            AddError(writer, "Syntax error during parsing of " + path + ": " + diagnostic, path, "intrinsicLoading");
+			        }
 
-				if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
-				if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
-                    AddError(writer, "Error: Your Intrisic types/functions are not included into a program.", path);
-					continue;
-				}
+			        if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
+			        foreach (var diagnostic in parser.Results.ProgramClassDocumentSnapshot.Diagnostics) {
+			            AddError(writer, "Semantic error during parsing of " + path + ": " + diagnostic, path, "intrinsicLoading");
+			        }
 
-			    foreach (var diagnostic in parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics) {
-                    AddError(writer, "Syntax error during parsing of "+ path + ": " + diagnostic, path);
-                }
-                foreach (var diagnostic in parser.Results.ProgramClassDocumentSnapshot.Diagnostics) {
-                    AddError(writer, "Semantic error during parsing of " + path + ": " + diagnostic, path);
-                }
-                var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
-				foreach(var types in symbols.Types)
-					foreach(var type in types.Value)
-						table.AddType((Compiler.Nodes.TypeDefinition)type);
-				foreach(var functions in symbols.Functions)
-					foreach(var function in functions.Value)
-						table.AddFunction((Compiler.Nodes.FunctionDeclaration)function);
-				//TODO check if types or functions are already there
+			        if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
+			            AddError(writer, "Error: Your Intrisic types/functions are not included into a program.", path,
+			                "intrinsicLoading");
+			            continue;
+			        }
+			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
+			        foreach (var types in symbols.Types)
+			            foreach (var type in types.Value)
+			                table.AddType((Compiler.Nodes.TypeDefinition) type);
+			        foreach (var functions in symbols.Functions)
+			            foreach (var function in functions.Value)
+			                table.AddFunction((Compiler.Nodes.FunctionDeclaration) function);
+			        //TODO check if types or functions are already there
+			    } catch (Exception e) {
+			        AddError(writer, e.Message, path, "intrinsicLoading");
+			    }
 			}
 			return table;
 		}
