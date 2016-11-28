@@ -90,8 +90,27 @@
 		private bool ShouldCopy(ICobolTextLine line) {
 			return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank
 			   || line.Type == CobolTextLineType.Debug // #267: Debug lines are copied "AS IS", even if they are invalid in COBOL85!
-			   || (line.Type == CobolTextLineType.Source && line.SourceText.Trim().StartsWith("COPY"));
+			   || IsPreprocessingDirective(line);
 		}
+		private bool MultilinePreprocessorDirective = false;
+		private string[] PD = { "COPY", "REPLACE", "SKIP", "EJECT", };
+		private bool IsPreprocessingDirective(ICobolTextLine line) {
+			if (line.Type != CobolTextLineType.Source) return false;
+			if (line.CompilationStep != Compiler.Concurrency.CompilationStep.Text) return false;
+			string code = line.SourceText.TrimEnd();
+			if (MultilinePreprocessorDirective) {
+				MultilinePreprocessorDirective = !code.EndsWith(".");
+				return true;
+			}
+			code = code.TrimStart();
+			foreach(var word in PD)
+				if (code.StartsWith(word, StringComparison.InvariantCultureIgnoreCase)) {
+					MultilinePreprocessorDirective = !code.EndsWith(".");
+					return true;
+				}
+			return false;
+		}
+
 		/// <summary>Write input lines up to the end.</summary>
 		public void WriteInputLinesUntilEnd() {
 			while (offset < Input.Count)

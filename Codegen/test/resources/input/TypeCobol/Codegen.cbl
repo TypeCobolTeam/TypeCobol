@@ -5,6 +5,10 @@
       * you'll need three star signs                                    000033
 000040 DATA DIVISION.                                                   000040
 000050 WORKING-STORAGE SECTION.                                         000050
+001500 replace ==:PFX:==  by ==CCTFAL-LOG-PFX==                         000000
+001510         ==:FATAL:==  by ==CCTFAL-LOG-LVL-F or TRC-F==            000000
+001520         ==:INFO:==  by ==CCTFAL-LOG-LVL-I or TRC-I==             000000
+001530         ==:TRAC:==  by ==CCTFAL-LOG-LVL-T or TRC-T==.            000000
 000060 COPY YFIRSTCOPY.                                                 000060
 000070 01  MyKey    TYPEDEF PIC X(04).                                  000070
 000080 01  b TYPE Bool.                                                 000080

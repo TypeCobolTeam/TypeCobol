@@ -254,7 +254,7 @@ public abstract class Node {
 				if (t.TokenFamily == Scanner.TokenFamily.CompilerDirectiveStartingKeyword
 				 || t.TokenFamily == Scanner.TokenFamily.CompilerDirective
 				 || t.TokenFamily == Scanner.TokenFamily.Comments) {
-					takeall = true; // take all tokens untill end of line
+					takeall = true; // take all tokens until end of line
 				} else break; // don't take any more tokens
 			}
 			token = t;
