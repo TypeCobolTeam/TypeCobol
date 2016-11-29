@@ -95,8 +95,11 @@ public class Initialize: Node, CodeElementHolder<InitializeStatement>, Statement
 	public Initialize(InitializeStatement statement): base(statement) { }
 }
 
-public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement {
+public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
 	public Inspect(InspectStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class Invoke: Node, CodeElementHolder<InvokeStatement>, Statement {
