@@ -83,7 +83,7 @@ public class UnstringStatement: StatementElement, VariableWriter {
 			if (variables != null) return variables;
 			variables = new Dictionary<QualifiedName, object>();
 			foreach(var kv in VariablesWritten) variables.Add(kv.Key, kv.Value);
-			if (SendingField != null) variables.Add(new URI(SendingField.StorageArea.SymbolReference.Name), null);
+			if (SendingField != null && !SendingField.IsLiteral) variables.Add(new URI(SendingField.ToString()), null);
 			return variables;
 		}
 	}
@@ -93,9 +93,9 @@ public class UnstringStatement: StatementElement, VariableWriter {
 			if (variablesWritten != null) return variablesWritten;
 			variablesWritten = new Dictionary<QualifiedName, object>();
 			if (ReceivingFields == null) return variablesWritten;
-			string sending = SendingField == null? null : SendingField.StorageArea.SymbolReference.Name;
+			string sending = SendingField == null? null : SendingField.ToString();
 			foreach(var field in ReceivingFields) {
-				var name = field.ReceivingField.StorageArea.SymbolReference.Name;
+				var name = field.ReceivingField.ToString();
 				variablesWritten.Add(new URI(name), sending);
 			}
 			return variablesWritten;

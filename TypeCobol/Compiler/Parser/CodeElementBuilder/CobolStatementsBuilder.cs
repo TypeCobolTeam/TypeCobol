@@ -1242,9 +1242,9 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-        private StringContentToConcatenate CreateStringContentToConcatenate(CodeElementsParser.ContentToConcatenateContext context)
+        private StringStatement.ContentToConcatenate CreateStringContentToConcatenate(CodeElementsParser.ContentToConcatenateContext context)
         {
-            var stringContent = new StringContentToConcatenate();
+            var stringContent = new StringStatement.ContentToConcatenate();
             stringContent.SendingFields = BuildObjectArrayFromParserRules(context.variable6(), ctx => CobolExpressionsBuilder.CreateVariable(ctx));
             if(context.SIZE() != null)
             {

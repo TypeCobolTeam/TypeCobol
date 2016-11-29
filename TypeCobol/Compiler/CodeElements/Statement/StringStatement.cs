@@ -1,140 +1,136 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using JetBrains.Annotations;
-using TypeCobol.Compiler.CodeElements.Expressions;
+﻿namespace TypeCobol.Compiler.CodeElements {
 
-namespace TypeCobol.Compiler.CodeElements
-{
-    /// <summary>
-    /// p433: STRING statement
-    /// The STRING statement strings together the partial or complete contents of two or
-    /// more data items or literals into one single data item.
-    /// One STRING statement can be written instead of a series of MOVE statements.
-    /// </summary>
-    public class StringStatement : StatementElement, VariableWriter
-    {
-        public StringStatement() : base(CodeElementType.StringStatement, StatementType.StringStatement) { }
+	using JetBrains.Annotations;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements.Expressions;
 
-        /// <summary>
-        /// identifier-1, literal-1
-        /// 
-        /// Represents the sending fields.
-        /// </summary>
-        public StringContentToConcatenate[] StringContentsToConcatenate { get; set; }
+/// <summary>
+/// p433: STRING statement
+/// The STRING statement strings together the partial or complete contents of two or
+/// more data items or literals into one single data item.
+/// One STRING statement can be written instead of a series of MOVE statements.
+/// </summary>
+public class StringStatement: StatementElement, VariableWriter {
+	public StringStatement(): base(CodeElementType.StringStatement, StatementType.StringStatement) { }
 
-        /// <summary>
-        /// identifier-3
-        /// 
-        /// INTO phrase: Identifies the receiving field (identifier-3).
-        /// 
-        /// Constraints:
-        /// - identifier-3 must reference data items described explicitly
-        ///   or implicitly as usage DISPLAY, DISPLAY-1, or NATIONAL.
-        ///
-        /// - identifier-3 must not reference a data item of category numeric-edited,
-        /// alphanumeric-edited, or national-edited; an external floating-point data item of
-        /// usage DISPLAY, or an external floating-point data item of usage NATIONAL.
-        ///
-        /// - identifier-3 must not described with the JUSTIFIED clause.
-        /// </summary>
-        public ReceivingStorageArea ReceivingField { [CanBeNull] get; set; }
-        
-        /// <summary>
-        /// identifier-4
-        /// 
-        /// POINTER phrase
-        /// Points to a character position in the receiving field. The pointer field
-        /// indicates a relative alphanumeric character position, DBCS character
-        /// position, or national character position when the receiving field is of usage
-        /// DISPLAY, DISPLAY-1, or NATIONAL, respectively.
-        /// 
-        /// identifier-4
-        /// Represents the pointer field. identifier-4 must be large enough to
-        /// contain a value equal to the length of the receiving field plus 1.
-        /// You must initialize identifier-4 to a nonzero value before execution
-        /// of the STRING statement begins.
-        ///  
-        /// identifier-4 must not be described with the symbol P in its PICTURE
-        /// character-string.
-        /// </summary>
-        public ReceivingStorageArea CharacterPositionInReceivingField {[CanBeNull] get; set; }
-                
-        /// <summary>
-        /// Debug string
-        /// </summary>
-        public override string ToString()
-        {
-            if (StringContentsToConcatenate == null && ReceivingField == null && CharacterPositionInReceivingField == null)
-            {
-                return base.ToString();
-            }
-            else
-            {
-                var sb = new StringBuilder(base.ToString());
-                if (StringContentsToConcatenate != null)
-                {
-                    sb.Append("- variables to concat =");
-                    foreach (var statementWhat in StringContentsToConcatenate)
-                    {
-                        sb.Append(" ").Append(statementWhat);
-                    }
-                }
+	/// <summary>
+	/// identifier-1, literal-1
+	/// Represents the sending fields.
+	/// </summary>
+	public ContentToConcatenate[] StringContentsToConcatenate { get; set; }
 
-                if (ReceivingField != null)
-                {
-                    sb.AppendLine(" into = " + ReceivingField);
-                }
+	/// <summary>
+	/// identifier-3
+	/// INTO phrase: Identifies the receiving field (identifier-3).
+	///
+	/// Constraints:
+	/// - identifier-3 must reference data items described explicitly
+	///   or implicitly as usage DISPLAY, DISPLAY-1, or NATIONAL.
+	///
+	/// - identifier-3 must not reference a data item of category numeric-edited,
+	/// alphanumeric-edited, or national-edited; an external floating-point data item of
+	/// usage DISPLAY, or an external floating-point data item of usage NATIONAL.
+	///
+	/// - identifier-3 must not described with the JUSTIFIED clause.
+	/// </summary>
+	public ReceivingStorageArea ReceivingField { [CanBeNull] get; set; }
 
-                if (CharacterPositionInReceivingField != null)
-                {
-                    sb.AppendLine(" pointer = " + CharacterPositionInReceivingField);
-                }
-                return sb.ToString();
-            }
-        }
+	/// <summary>
+	/// identifier-4
+	///
+	/// POINTER phrase
+	/// Points to a character position in the receiving field. The pointer field
+	/// indicates a relative alphanumeric character position, DBCS character
+	/// position, or national character position when the receiving field is of usage
+	/// DISPLAY, DISPLAY-1, or NATIONAL, respectively.
+	///
+	/// identifier-4
+	/// Represents the pointer field. identifier-4 must be large enough to
+	/// contain a value equal to the length of the receiving field plus 1.
+	/// You must initialize identifier-4 to a nonzero value before execution
+	/// of the STRING statement begins.
+	///
+	/// identifier-4 must not be described with the symbol P in its PICTURE
+	/// character-string.
+	/// </summary>
+	public ReceivingStorageArea CharacterPositionInReceivingField {[CanBeNull] get; set; }
 
-        private IDictionary<QualifiedName,object> variables;
-		public  IDictionary<QualifiedName,object> Variables {
-			get {
-				if (variables != null) return variables;
-				variables = new Dictionary<QualifiedName, object>();
-				if (ReceivingField != null) variables.Add(new URI(ReceivingField.StorageArea.SymbolReference.Name), StringContentsToConcatenate);
-				return variables;
+	public override string ToString() {
+		if (StringContentsToConcatenate == null && ReceivingField == null && CharacterPositionInReceivingField == null) {
+			return base.ToString();
+		}
+		var sb = new System.Text.StringBuilder(base.ToString());
+		if (StringContentsToConcatenate != null) {
+			sb.Append("- variables to concat =");
+			foreach (var statementWhat in StringContentsToConcatenate) {
+				sb.Append(" ").Append(statementWhat);
 			}
 		}
-		public  IDictionary<QualifiedName,object> VariablesWritten { get { return Variables; } }
+		if (ReceivingField != null) {
+			sb.AppendLine(" into = " + ReceivingField);
+		}
+		if (CharacterPositionInReceivingField != null) {
+			sb.AppendLine(" pointer = " + CharacterPositionInReceivingField);
+		}
+		return sb.ToString();
+	}
 
-		public bool IsUnsafe { get { return false; }  }
-    }
+	private IDictionary<QualifiedName,object> variables;
+	public  IDictionary<QualifiedName,object> Variables {
+		get {
+			if (variables != null) return variables;
+			variables = new Dictionary<QualifiedName, object>();
+			foreach(var kv in VariablesWritten) variables.Add(kv.Key, kv.Value);
+			if (StringContentsToConcatenate == null) return variables;
+			foreach(var content in StringContentsToConcatenate) {
+				foreach(var variable in content.SendingFields) {
+					if (variable.IsLiteral) continue;
+					string name = variable.ToString();
+					variables.Add(new URI(name), null);
+				}
+			}
+			return variables;
+		}
+	}
+	private IDictionary<QualifiedName,object> variablesWritten;
+	public  IDictionary<QualifiedName,object> VariablesWritten {
+		get {
+			if (variablesWritten != null) return variablesWritten;
+			variablesWritten = new Dictionary<QualifiedName, object>();
+			if (ReceivingField != null) variablesWritten.Add(new URI(ReceivingField.ToString()), StringContentsToConcatenate);
+			return variablesWritten;
+		}
+	}
+	public bool IsUnsafe { get { return false; }  }
 
-	public class StringContentToConcatenate
-	{
-        /// <summary>
-        /// identifier-1, literal-1
-        /// Represents the sending fields.
-        /// </summary>
+
+
+	public class ContentToConcatenate {
+		/// <summary>
+		/// identifier-1, literal-1
+		/// Represents the sending fields.
+		/// </summary>
 		public Variable[] SendingFields { get; set; }
 
-        /// <summary>
-        /// DELIMITED BY phrase
-        /// Sets the limits of the string.
-        /// SIZE Transfers the complete sending area.
-        /// </summary>
-        public SyntaxProperty<bool> IsDelimitedbySize { get; set; }
+		/// <summary>
+		/// DELIMITED BY phrase
+		/// Sets the limits of the string.
+		/// SIZE Transfers the complete sending area.
+		/// </summary>
+		public SyntaxProperty<bool> IsDelimitedbySize { get; set; }
 
-        /// <summary>
-        /// identifier-2, literal-2
-        /// Are delimiters; that is, characters that delimit the data to be
-        /// transferred.
-        /// </summary>
-        public Variable DelimiterCharacters { get; set; }
+		/// <summary>
+		/// identifier-2, literal-2
+		/// Are delimiters; that is, characters that delimit the data to be
+		/// transferred.
+		/// </summary>
+		public Variable DelimiterCharacters { get; set; }
 		
 		public override string ToString() {
 			if (SendingFields == null && IsDelimitedbySize == null && DelimiterCharacters == null) {
 				return base.ToString();
 			}
-			var str = new StringBuilder();
+			var str = new System.Text.StringBuilder();
 			if (SendingFields != null) {
 				foreach (var item in SendingFields) str.Append(' ').Append(item);
 				str.Append(' ');
@@ -144,5 +140,8 @@ namespace TypeCobol.Compiler.CodeElements
 			return str.ToString();
 		}
 
-    }
+	}
+
+}
+
 }
