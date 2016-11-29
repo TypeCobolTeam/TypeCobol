@@ -1,25 +1,21 @@
-﻿*
-*           Tests for Rule TCTYPE_LIMITED_STRONG_RECEIVER
-*
-IDENTIFICATION DIVISION.
-PROGRAM-ID. TypeCobol.
-ENVIRONMENT DIVISION.                        
-INPUT-OUTPUT SECTION.                                      
-FILE-CONTROL.                                              
+﻿IDENTIFICATION DIVISION.
+PROGRAM-ID. StrongReceivers.
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
     SELECT  FAPPEL  ASSIGN TO UT-S-FAPPEL
 	SELECT WorkFile ASSIGN TO "Work.Tmp".
-           
-                                                           
-DATA DIVISION.                                             
-FILE SECTION.                                              
-FD  FAPPEL BLOCK 0 RECORDS                                 
-           LABEL RECORD STANDARD                           
-           RECORDING MODE F.                               
-01  FIC-APPEL PIC X(128).            
+
+DATA DIVISION.
+FILE SECTION.
+FD  FAPPEL BLOCK 0 RECORDS
+           LABEL RECORD STANDARD
+           RECORDING MODE F.
+01  FIC-APPEL PIC X(128).
 
 SD WorkFile.
 01 WorkRec.
-   02 Temp        PIC X(20).              
+   02 Temp        PIC X(20).
 
 WORKING-STORAGE SECTION.
 * A strongly-typed group item may be referenced as a receiving operand only in one of the following:
@@ -33,79 +29,63 @@ WORKING-STORAGE SECTION.
 * 8.the data item referenced in the DESTINATION clause of an element of the operand of a VALIDATE statement
 * 9.the subject of a data description entry that contains a VALIDATE-STATUS clause that references the element of the operand of a VALIDATE statement.
 * 10.a WRITE statement with the FROM phrase.
-*
 * (source page 807 of ISO Cobol 2014)
 01 IntegerStrong TYPEDEF STRONG.
- 05 Integer-Value pic 9(5).
-01 Integer TYPEDEF pic 9(5).
+ 05 Integer-Value PIC 9(5).
+01 Integer TYPEDEF PIC 9(5).
 01 myStrongInt TYPE IntegerStrong.
 01 myInt TYPE Integer.
 
-
 01 CharsStrong TYPEDEF STRONG.
-  05 Char-Value pic X(5).
-01 Chars TYPEDEF pic X(5).
-01 myStrongChars TYPE CharsStrong.
+  05 Char-Value   PIC X(5).
+01 Chars TYPEDEF  PIC X(5).
+01 myStrongChars  TYPE CharsStrong.
 01 myStrongChars2 TYPE CharsStrong.
-01 myChars TYPE Chars.
-01 myChars2 TYPE Chars.
-
-
-01 varToUnstring   pic X(10) value "me@me.com".
+01 myChars        TYPE Chars.
+01 myChars2       TYPE Chars.
+01 varToUnstring  PIC X(10) value "me@me.com".
 
 PROCEDURE DIVISION.
 
-*OK
-initialize myStrongChars
-initialize myChars
+INITIALIZE myStrongChars
+INITIALIZE myChars
 
-*OK
-move myStrongChars to myStrongChars2
-move myChars to myChars2
-
+MOVE myStrongChars TO myStrongChars2
+MOVE myChars       TO myChars2
 
 OPEN INPUT FAPPEL
 
-*OK
-read FAPPEL into myStrongChars
-read FAPPEL into myChars
+READ FAPPEL INTO myStrongChars
+READ FAPPEL INTO myChars
 
-*OK
-write FAPPEL from myStrongChars
-write FAPPEL from myChars
+WRITE FAPPEL FROM myStrongChars
+WRITE FAPPEL FROM myChars
 
-*OK
-rewrite FAPPEL from myStrongChars
-rewrite FAPPEL from myChars
+REWRITE FAPPEL FROM myStrongChars
+REWRITE FAPPEL FROM myChars
 
-*OK
-release SDWorkRec from myStrongChars
-release SDWorkRec from CharsStrong
+RELEASE SDWorkRec FROM myStrongChars
+RELEASE SDWorkRec FROM CharsStrong
 
-*OK
-return SDWorkRec into myStrongChars
-return SDWorkRec into CharsStrong
+RETURN SDWorkRec INTO myStrongChars
+RETURN SDWorkRec INTO CharsStrong
 
-close FAPPEL
+CLOSE FAPPEL
 
-
+COMPUTE myInt       = 1 + 1
 *KO but myStrongInt is not numeric anyway
-compute myStrongInt of myIntStrong = 1 + 1 
-*OK
-compute myInt  = 1 + 1 
+COMPUTE myStrongInt = 1 + 1
 
+STRING "chaine1" "chaine2" DELIMITED BY SIZE INTO myChars
 *KO myStrongChars is a strongly typed item
-string "chaine1" "chaine2" delimited by size into myStrongChars
-*OK myChars is a weakly typed item
-string "chaine1" "chaine2" delimited by size into myChars
+STRING "chaine1" "chaine2" DELIMITED BY SIZE INTO myStrongChars
 
+UNSTRING varToUnstring     DELIMITED BY '@'  INTO myChars myChars2
 *KO myStrongChars is a strongly typed item
-unstring varToUnstring delimited by '@' into myStrongChars myStrongChars2
-*OK myChars is a weakly typed item
-unstring varToUnstring delimited by '@' into myChars myChars2
+UNSTRING varToUnstring     DELIMITED BY '@'  INTO myStrongChars myStrongChars2
 
+INSPECT myChars       REPLACING FIRST "@" BY '#'
 *KO myStrongChars is a strongly typed item
-inspect myStrongChars replacing first "@" by '#'
-*OK
-inspect myChars replacing first  "@" by '#'
+INSPECT myStrongChars REPLACING FIRST "@" BY '#'
+
 .
