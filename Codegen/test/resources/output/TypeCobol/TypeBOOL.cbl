@@ -1,7 +1,7 @@
 ﻿      * 5 CodeElements errors
-      * "4"@(31:12>31:33): [30:1] Semantic error: Can't write Alphanumeric to strongly typed variable Identifier:BOOL (use UNSAFE keyword for that)
-      * "4"@(32:12>32:39): [30:1] Semantic error: Can't write Alphanumeric to strongly typed variable b:BOOL (use UNSAFE keyword for that)
-      * "4"@(33:12>33:39): [30:1] Semantic error: Can't write Alphanumeric to strongly typed variable d:BOOL (use UNSAFE keyword for that)
+      * "4"@(31:12>31:33): [30:1] Semantic error: Cannot write Alphanumeric to strongly typed variable Identifier:BOOL (use UNSAFE keyword for that)
+      * "4"@(32:12>32:39): [30:1] Semantic error: Cannot write Alphanumeric to strongly typed variable b:BOOL (use UNSAFE keyword for that)
+      * "4"@(33:12>33:39): [30:1] Semantic error: Cannot write Alphanumeric to strongly typed variable d:BOOL (use UNSAFE keyword for that)
       * "1"@(35:12>35:39): [27:1] Syntax error : Symbol Identifier-value is not referenced
       * "1"@(36:12>36:59): [27:1] Syntax error : Symbol Identifier-value.Identifier-false is not referenced
        IDENTIFICATION DIVISION.

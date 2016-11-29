@@ -1,9 +1,9 @@
 ﻿      * 11 CodeElements errors
-      * "4"@(26:12>26:65): [30:1] Semantic error: Can't write SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(27:12>27:51): [30:1] Semantic error: Can't write SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(28:12>28:51): [30:1] Semantic error: Can't write Small to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(30:12>30:51): [30:1] Semantic error: Can't write Numeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
-      * "4"@(31:12>31:51): [30:1] Semantic error: Can't write Alphanumeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(26:12>26:65): [30:1] Semantic error: Cannot write SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(27:12>27:51): [30:1] Semantic error: Cannot write SmallGroup to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(28:12>28:51): [30:1] Semantic error: Cannot write Small to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(30:12>30:51): [30:1] Semantic error: Cannot write Numeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
+      * "4"@(31:12>31:51): [30:1] Semantic error: Cannot write Alphanumeric to strongly typed variable identifier-1:ToughGroup (use UNSAFE keyword for that)
       * "1"@(40:12>40:65): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
       * "1"@(41:12>41:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
       * "1"@(42:12>42:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
