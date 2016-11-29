@@ -465,7 +465,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
 			if (receiving.IsStrong) {
 				if (!IsUnsafe) {
-					string message = "Cannot write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+" (use UNSAFE keyword for that)";
+					string message = "Cannot write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+".";
 					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 				}
 			} else {
