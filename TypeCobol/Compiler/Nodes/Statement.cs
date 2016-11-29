@@ -144,14 +144,16 @@ public class Stop: Node, CodeElementHolder<StopStatement>, Statement {
 
 public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	public String(StringStatement statement): base(statement) { }
-
-    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
-    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
-    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement {
+public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
 	public Unstring(UnstringStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class XmlGenerate: Node, CodeElementHolder<XmlGenerateStatement>, Statement {

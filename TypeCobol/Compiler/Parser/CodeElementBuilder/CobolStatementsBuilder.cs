@@ -1319,9 +1319,9 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
                
-        private UnstringDelimiter CreateUnstringDelimiter(CodeElementsParser.UnstringDelimiterContext context)
+        private UnstringStatement.Delimiter CreateUnstringDelimiter(CodeElementsParser.UnstringDelimiterContext context)
         {
-            var delimiter = new UnstringDelimiter();
+            var delimiter = new UnstringStatement.Delimiter();
             if (context.ALL() != null)
             {
                 delimiter.All = CreateSyntaxProperty(true, context.ALL());
@@ -1330,9 +1330,9 @@ namespace TypeCobol.Compiler.Parser
             return delimiter;
         }
 
-        private UnstringReceivingField CreateUnstringReceivingFields(CodeElementsParser.UnstringReceivingFieldsContext context)
+        private UnstringStatement.Receiving CreateUnstringReceivingFields(CodeElementsParser.UnstringReceivingFieldsContext context)
         {
-            var receivingField = new UnstringReceivingField();
+            var receivingField = new UnstringStatement.Receiving();
             receivingField.ReceivingField = CobolExpressionsBuilder.CreateStorageArea(context.receivingField);
             if (context.associatedDelimiter != null)
             {
