@@ -7,9 +7,9 @@
 /// The SUBTRACT statement subtracts one numeric item, or the sum of two or more
 /// numeric items, from one or more numeric items, and stores the result.
 /// </summary>
-public abstract class SubtractStatement: StatementElement, ArithmeticStatement {
+public abstract class SubtractStatement: AbstractArithmeticStatement {
 	public SubtractStatement(StatementType statementType): base(CodeElementType.SubtractStatement, statementType) { }
-	public abstract Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>

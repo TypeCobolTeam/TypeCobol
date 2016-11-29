@@ -1,4 +1,4 @@
-﻿      * 13 CodeElements errors
+﻿      * 16 CodeElements errors
       * "1"@(9:8>9:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(40:8>40:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
       * "1"@(61:12>61:26): [27:1] Syntax error : x is already a parameter.
@@ -7,6 +7,9 @@
       * "1"@(65:14>65:28): [27:1] Syntax error : z is already a parameter.
       * "1"@(68:12>68:31): [27:1] Syntax error : result is already a parameter.
       * "1"@(70:12>70:27): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(71:12>71:26): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(72:12>72:26): [27:1] Syntax error : Ambiguous reference to symbol result
+      * "1"@(73:12>73:26): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(107:14>107:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
       * "1"@(108:14>108:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
       * "1"@(113:8>113:16): [27:1] Syntax error : Illegal non-function item in library

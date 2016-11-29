@@ -1,6 +1,7 @@
 ﻿namespace TypeCobol.Compiler.CodeElements {
 
 	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements.Expressions;
 
 /// <summary>
 /// p317:
@@ -12,13 +13,13 @@
 /// When arithmetic operations are combined, the COMPUTE statement can be more
 /// efficient than the separate arithmetic statements written in a series.
 /// </summary>
-public class ComputeStatement: StatementElement, ArithmeticStatement {
+public class ComputeStatement: AbstractArithmeticStatement {
 	public ComputeStatement(): base(CodeElementType.ComputeStatement, StatementType.ComputeStatement) { }
 
 	public RoundedResult[] ReceivingStorageAreas { get; set; }
 	public ArithmeticExpression ArithmeticExpression { get; set; }
 
-	public Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
 		get {
 			var map = new Dictionary<string,List<ArithmeticExpression>>();
 			foreach(var receiver in ReceivingStorageAreas) {
@@ -52,6 +53,25 @@ public class RoundedResult {
 
 public interface ArithmeticStatement {
 	Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+}
+
+public abstract class AbstractArithmeticStatement: StatementElement, ArithmeticStatement, VariableWriter {
+	public AbstractArithmeticStatement(CodeElementType ce, StatementType statement): base(ce, statement) { }
+	
+	abstract public Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+
+	public IDictionary<QualifiedName,object> Variables { get { return VariablesWritten; } }
+	private IDictionary<QualifiedName,object> variablesWritten;
+	public  IDictionary<QualifiedName,object> VariablesWritten {
+		get {
+			if (variablesWritten != null) return variablesWritten;
+			variablesWritten = new Dictionary<QualifiedName, object>();
+			foreach(var affectation in Affectations)
+				variablesWritten.Add(new URI(affectation.Key), affectation.Value);
+			return variablesWritten;
+		}
+	}
+	public bool IsUnsafe { get { return false; } }
 }
 
 }
