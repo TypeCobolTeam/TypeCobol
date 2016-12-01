@@ -42,16 +42,16 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL c5875eec USING 
-                    somedate
-                    someformat
-                    flag-value
-                    realformat
+                        CALL 'c5875eec' USING 
+                                               somedate
+                                               someformat
+                                               flag-value
+                                               realformat
        
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-                        CALL c5875eec USING 
+                        CALL 'c5875eec' USING 
                                              somedate
                                              by content 'YYYYMMDD'
                                              flag-value
@@ -76,20 +76,19 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT              realformat
-           CALL ?NOT_FOUND? USING 
-                    somedate
-                    someformat
-                    realformat
+                        CALL '?NOT_FOUND?' USING 
+                                                  somedate
+                                                  someformat
+                                                  realformat
       * __________________________________________________
       * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
       *    CALL ValidateDateFormat
       *             INPUT      someformat somedate
       *             OUTPUT     realformat flag
-           CALL ?NOT_FOUND? USING 
-                    someformat
-                    somedate
-                    realformat
-                    flag-value
+                        CALL '?NOT_FOUND?' USING 
+                                                  somedate
+                                                  someformat
+                                                  realformat
 
       * OK with INPUT on the same line as call 
       *    CALL ValidateDateFormat INPUT      somedate 
