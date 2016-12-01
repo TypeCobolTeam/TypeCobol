@@ -27,7 +27,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 				var statement = (ProcedureStyleCallStatement)Node.CodeElement;
 
 				var hash = GetHash(statement.ProcedureCall);
-				var callTextLine = new TextLineSnapshot(-1, "    CALL " + hash + " USING ", null);
+				var callTextLine = new TextLineSnapshot(-1, "    CALL '" + hash + "' USING ", null);
 				_cache.Add(callTextLine);
 				var indent = new string(' ', callTextLine.Length + 1);
 				foreach (var parameter in call.InputParameters) {
