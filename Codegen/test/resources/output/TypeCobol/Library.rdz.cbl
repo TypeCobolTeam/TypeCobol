@@ -180,7 +180,7 @@
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .
-           END PROGRAM e5f209fa.
+       END PROGRAM e5f209fa.
       *    
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
@@ -207,7 +207,7 @@
            ACCEPT W-Dat             FROM DATE YYYYMMDD
            MOVE CORR W-Dat          TO Result
            .
-           END PROGRAM b8ac0397.
+       END PROGRAM b8ac0397.
       *    
       *DECLARE FUNCTION currentDateJulian PUBLIC
       *    RETURNING Result Type dateJulian.
@@ -233,7 +233,7 @@
                          (FUNCTION INTEGER-OF-DATE(W-Dat))
                 TO Result
            .
-           END PROGRAM c4e76b45.
+       END PROGRAM c4e76b45.
       *    
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
@@ -293,7 +293,7 @@
                MOVE DATS20-O-DATE-LONG       TO Result
            END-IF
            .
-           END PROGRAM d55b3ea7.
+       END PROGRAM d55b3ea7.
       *    
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
@@ -308,4 +308,4 @@
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .
-           END PROGRAM bfb0fa9b.
+       END PROGRAM bfb0fa9b.

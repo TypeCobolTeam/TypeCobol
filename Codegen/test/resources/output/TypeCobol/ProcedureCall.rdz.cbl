@@ -1,14 +1,14 @@
 ﻿      * 10 CodeElements errors
       * "1"@(37:12>39:50): [27:1] Syntax error : Symbol ValidateDatFormatt is not referenced
-      * "1"@(47:12>49:50): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric)
-      * "1"@(47:12>49:50): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8)
-      * "1"@(47:12>49:50): [27:1] Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric
-      * "1"@(53:12>55:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 1 of type DATE (actual: Alphanumeric)
-      * "1"@(53:12>55:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 1 of max length 1 (actual: 8)
-      * "1"@(53:12>55:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 2 of type Alphanumeric (actual: DATE)
-      * "1"@(53:12>55:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric)
-      * "1"@(53:12>55:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8)
-      * "1"@(53:12>55:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 4 of type Alphanumeric (actual: BOOL)
+      * "1"@(48:12>50:50): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric)
+      * "1"@(48:12>50:50): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8)
+      * "1"@(48:12>50:50): [27:1] Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric
+      * "1"@(54:12>56:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 1 of type DATE (actual: Alphanumeric)
+      * "1"@(54:12>56:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 1 of max length 1 (actual: 8)
+      * "1"@(54:12>56:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 2 of type Alphanumeric (actual: DATE)
+      * "1"@(54:12>56:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric)
+      * "1"@(54:12>56:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8)
+      * "1"@(54:12>56:46): [27:1] Syntax error : Function ValidateDateFormat expected parameter 4 of type Alphanumeric (actual: BOOL)
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcedureCall.
        
@@ -42,18 +42,18 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-                        CALL c5875eec USING 
-                                             somedate
-                                             someformat
-                                             flag-value
-                                             realformat
+           CALL c5875eec USING 
+                    somedate
+                    someformat
+                    flag-value
+                    realformat
        
       *    CALL ValidateDateFormat
-      *             INPUT      somedate 'YYYYMMDD'
+      *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
                         CALL c5875eec USING 
                                              somedate
-                                             'YYYYMMDD'
+                                             by content 'YYYYMMDD'
                                              flag-value
                                              realformat
       * __________________________________________________
@@ -61,33 +61,45 @@
       *    CALL ValidateDatFormatt
       *             INPUT      somedate someformat
       *             OUTPUT              realformat
-                        CALL ?NOT_FOUND? USING 
-                                                somedate
-                                                someformat
-                                                realformat
-           CALL ValidateDateFormat END-CALL
+           CALL ?NOT_FOUND? USING 
+                    somedate
+                    someformat
+                    realformat
+
       * __________________________________________________
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
+      *    Will change after issue #366
+           CALL ValidateDateFormat END-CALL
       * __________________________________________________
       * KO : wrong parameter number (TCRFUN_MATCH_PARAMETERS_NUMBER)
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT              realformat
-                        CALL ?NOT_FOUND? USING 
-                                                somedate
-                                                someformat
-                                                realformat
+           CALL ?NOT_FOUND? USING 
+                    somedate
+                    someformat
+                    realformat
       * __________________________________________________
       * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
       *    CALL ValidateDateFormat
       *             INPUT      someformat somedate
       *             OUTPUT     realformat flag
-                        CALL ?NOT_FOUND? USING 
-                                                someformat
-                                                somedate
-                                                realformat
-                                                flag-value
+           CALL ?NOT_FOUND? USING 
+                    someformat
+                    somedate
+                    realformat
+                    flag-value
+
+      * OK with INPUT on the same line as call 
+      *    CALL ValidateDateFormat INPUT      somedate 
+      *                                       by content 'YYYYMMDD'
+      *                            OUTPUT     flag     realformat
+           CALL 'c5875eec' USING 
+                                 somedate
+                    by content   'YYYYMMDD'
+                                 flag-value
+                                 realformat
            .
        
        END PROGRAM ProcedureCall.

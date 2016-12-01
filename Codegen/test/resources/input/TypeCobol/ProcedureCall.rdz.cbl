@@ -29,7 +29,7 @@
                     OUTPUT     flag     realformat
        
            CALL ValidateDateFormat
-                    INPUT      somedate 'YYYYMMDD'
+                    INPUT      somedate by content 'YYYYMMDD'
                     OUTPUT     flag     realformat
            END-CALL
       * __________________________________________________
@@ -41,6 +41,7 @@
       * __________________________________________________
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
+      *    Will change after issue #366
            CALL ValidateDateFormat END-CALL
       * __________________________________________________
       * KO : wrong parameter number (TCRFUN_MATCH_PARAMETERS_NUMBER)
@@ -53,6 +54,12 @@
            CALL ValidateDateFormat
                     INPUT      someformat somedate
                     OUTPUT     realformat flag
+      
+      * OK with INPUT on the same line as call
+           CALL ValidateDateFormat INPUT      somedate 
+                                              by content 'YYYYMMDD'
+                                   OUTPUT     flag     realformat
+           END-CALL
            .
 
        END PROGRAM ProcedureCall.

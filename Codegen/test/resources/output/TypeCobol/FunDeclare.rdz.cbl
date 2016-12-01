@@ -138,7 +138,7 @@
       *      RETURNING y TYPE bool
       *  .
          
-         Copy-Process-Mode.
+       Copy-Process-Mode.
              SET ADDRESS OF FCT TO ADDRESS OF CallData
          
              SET FCT-DoesNothing-01   TO ENTRY 'a59b2c49'
@@ -149,7 +149,7 @@
              SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'
              .
          
-         FctList-Process-Mode.
+       FctList-Process-Mode.
              SET ADDRESS OF FctList TO ADDRESS OF CallData
          
              IF NOT LibFctList-IsLoaded
@@ -184,22 +184,22 @@
            .
            DISPLAY 'I DO NOTHING'
            .
-           END PROGRAM a59b2c49.
+       END PROGRAM a59b2c49.
       *    
       *DECLARE FUNCTION ReturnsZero PUBLIC
       *      RETURNING result PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a866b35c.
-         DATA DIVISION.
-         LINKAGE SECTION.
-         01 result PIC 9(04).
-         PROCEDURE DIVISION
-               USING BY REFERENCE result
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 result PIC 9(04).
+       PROCEDURE DIVISION
+                 USING BY REFERENCE result
              .
            MOVE 0 TO result.
            .
-           END PROGRAM a866b35c.
+       END PROGRAM a866b35c.
       *    
       *DECLARE FUNCTION DoesNothing PUBLIC
       *      INPUT x PIC 9(04).
@@ -210,11 +210,11 @@
        LINKAGE SECTION.
        01 x PIC 9(04).
        PROCEDURE DIVISION
-             USING BY REFERENCE x
+                 USING BY REFERENCE x
            .
            DISPLAY 'I DO NOTHING WITH ' x
            .
-           END PROGRAM fe03398a.
+       END PROGRAM fe03398a.
       *    
       *DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC
       *      INPUT     x      PIC 9(04)
@@ -223,16 +223,16 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e3e490ae.
-         DATA DIVISION.
-         FILE SECTION.
-           FD myfile. 01 toto PIC X.
-         LINKAGE SECTION.
-         01 x PIC 9(04).
-         01 result PIC 9(04).
-         PROCEDURE DIVISION
-               USING BY REFERENCE x
-                     BY REFERENCE result
-             .
+       DATA DIVISION.
+       FILE SECTION.
+       FD myfile. 01 toto PIC X.
+       LINKAGE SECTION.
+       01 x PIC 9(04).
+       01 result PIC 9(04).
+       PROCEDURE DIVISION
+                 USING BY REFERENCE x
+                       BY REFERENCE result
+           .
            IF x = 0
              MOVE 0 TO result
            ELSE
@@ -250,19 +250,19 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d8a9d90f.
-         DATA DIVISION.
-         LINKAGE SECTION.
-           01 x PIC 9(04).
-           01 y PIC 9(02).
-           01 a PIC 9(04).
-             05 x PIC 9(02).
-             05 z PIC 9(02).
-           01 b PIC 9(04).
-           01 c PIC 9(04).
-           01 result PIC 9(04).
-           01 z PIC 9(04).
-           01 t PIC 9(04).
-           PROCEDURE DIVISION
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 x PIC 9(04).
+       01 y PIC 9(02).
+       01 a PIC 9(04).
+         05 x PIC 9(02).
+         05 z PIC 9(02).
+       01 b PIC 9(04).
+       01 c PIC 9(04).
+       01 result PIC 9(04).
+       01 z PIC 9(04).
+       01 t PIC 9(04).
+       PROCEDURE DIVISION
                  USING BY REFERENCE x
                        BY REFERENCE y
                        BY REFERENCE z
@@ -282,13 +282,13 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ceb46e19.
-         DATA DIVISION.
-         WORKING-STORAGE SECTION.
-           01 tmp PIC 9(04).
-           LINKAGE SECTION.
-           01 x PIC 9(04).
-           01 y PIC 9(04).
-           PROCEDURE DIVISION
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 tmp PIC 9(04).
+       LINKAGE SECTION.
+       01 x PIC 9(04).
+       01 y PIC 9(04).
+       PROCEDURE DIVISION
                  USING BY REFERENCE x
                        BY REFERENCE y
                .
@@ -296,7 +296,7 @@
            MOVE y TO x
            MOVE tmp TO y
            .
-           END PROGRAM ceb46e19.
+       END PROGRAM ceb46e19.
       *    
       *DECLARE PROCEDURE SwapParametersWrong PRIVATE
       *      INPUT  x PIC 9(04)
@@ -316,10 +316,10 @@
        01 a PIC 9(04).
        01 b PIC 9(04).
        PROCEDURE DIVISION
-             USING BY REFERENCE x
-                   BY REFERENCE y
-                   BY REFERENCE a
-                   BY REFERENCE b
+                 USING BY REFERENCE x
+                       BY REFERENCE y
+                       BY REFERENCE a
+                       BY REFERENCE b
            .
            CONTINUE.
        END PROGRAM f6e9c448.
@@ -328,14 +328,14 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e6215ae7.
-         DATA DIVISION.
-           WORKING-STORAGE SECTION.
-             01 g PIC X IS GLOBAL.
-             01 e PIC X IS EXTERNAL.
-             PROCEDURE DIVISION
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 g PIC X IS GLOBAL.
+       01 e PIC X IS EXTERNAL.
+       PROCEDURE DIVISION
                  .
            .
-           END PROGRAM e6215ae7.
+       END PROGRAM e6215ae7.
       *    
       *DECLARE FUNCTION FunConditions PRIVATE
       *      INPUT  gender PIC X(01)
@@ -353,7 +353,7 @@
            88 female VALUE 'F'.
            88 male VALUE 'M'.
        PROCEDURE DIVISION
-             USING BY REFERENCE gender
+                 USING BY REFERENCE gender
            .
            CONTINUE.
        END PROGRAM b8045acd.
@@ -374,7 +374,7 @@
            88 female VALUE 'F'.
            88 male VALUE 'M'.
        PROCEDURE DIVISION
-             USING BY REFERENCE gender
+                 USING BY REFERENCE gender
            .
            CONTINUE.
        END PROGRAM f6c8f8b0.
@@ -395,8 +395,8 @@
            88 y       VALUE 'T'.
            88 y-false VALUE 'F'.
        PROCEDURE DIVISION
-             USING BY REFERENCE x-value
-                   BY REFERENCE y-value
+                 USING BY REFERENCE x-value
+                       BY REFERENCE y-value
            .
            IF NOT x
              SET y TO TRUE

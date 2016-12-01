@@ -5,6 +5,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        
+       77  MyVariable1                 pic 9 value 0.
        01  W-InternalRef             PIC X(20).
       * unused variables
        01  W-ELEMENT                 PIC X(20).

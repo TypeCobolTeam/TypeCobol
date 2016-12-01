@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-         PROGRAM-ID.   Test-Name-Qualification.
+       PROGRAM-ID.   Test-Name-Qualification.
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.

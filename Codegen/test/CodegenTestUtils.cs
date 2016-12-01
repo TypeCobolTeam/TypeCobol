@@ -18,8 +18,16 @@ namespace TypeCobol.Codegen {
             ParseGenerateCompare(path, ParseConfig(skeletonPath));
         }
 
+        /// <summary>
+        /// Parse and generate using DocumentFormat.RDZReferenceFormat by default, because it's our only real target 
+        /// for now and we don't have specifications for FreeFormat.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="skeletons"></param>
         public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null) {
-            var format = DocumentFormat.RDZReferenceFormat;
+            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat);
+        }
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format) {
             var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();

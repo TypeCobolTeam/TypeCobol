@@ -36,11 +36,11 @@
              INPUT     x      PIC 9(04)
              RETURNING result PIC 9(04)
          .
-         DATA DIVISION.
-         FILE SECTION.
-           FD myfile. 01 toto PIC X.
-         LINKAGE SECTION.
-         PROCEDURE DIVISION.
+       DATA DIVISION.
+       FILE SECTION.
+       FD myfile. 01 toto PIC X.
+       LINKAGE SECTION.
+       PROCEDURE DIVISION.
            IF x = 0
              MOVE 0 TO result
            ELSE
