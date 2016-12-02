@@ -39,5 +39,6 @@ namespace TypeCobol.Compiler.Diagnostics
         SyntaxWarningInParser = 29,
         SemanticTCErrorInParser = 30,
         ImplementationError = 31,
+        TypeCobolParserLimitation = 32,
     }
 }
