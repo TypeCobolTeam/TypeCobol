@@ -86,7 +86,7 @@
       *DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC
       *      INPUT     x      PIC 9(04)
       *      RETURNING result PIC 9(04)
-      *  .
+      *    .
        
       * ERROR because x,y, a.x,a.z and result shouldn't be in LINKAGE
       *DECLARE FUNCTION SumThreeWithClutterInLinkage PUBLIC
@@ -139,40 +139,40 @@
       *  .
          
        Copy-Process-Mode.
-             SET ADDRESS OF FCT TO ADDRESS OF CallData
+           SET ADDRESS OF FCT TO ADDRESS OF CallData
          
-             SET FCT-DoesNothing-01   TO ENTRY 'a59b2c49'
-             SET FCT-DoesNothing-02   TO ENTRY 'fe03398a'
-             SET FCT-ReturnsZero-01   TO ENTRY 'a866b35c'
-             SET FCT-StrangelyReturnsItsInput-01   TO ENTRY 'e3e490ae'
-             SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY 'd8a9d90f'
-             SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'
-             .
+           SET FCT-DoesNothing-01   TO ENTRY 'a59b2c49'
+           SET FCT-DoesNothing-02   TO ENTRY 'fe03398a'
+           SET FCT-ReturnsZero-01   TO ENTRY 'a866b35c'
+           SET FCT-StrangelyReturnsItsInput-01   TO ENTRY 'e3e490ae'
+           SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY 'd8a9d90f'
+           SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'
+           .
          
        FctList-Process-Mode.
-             SET ADDRESS OF FctList TO ADDRESS OF CallData
+           SET ADDRESS OF FctList TO ADDRESS OF CallData
          
-             IF NOT LibFctList-IsLoaded
-               SET LibFctPointer(1)   TO ENTRY 'a59b2c49'
-               SET LibFctPointer(2)   TO ENTRY 'fe03398a'
-               SET LibFctPointer(3)   TO ENTRY 'a866b35c'
-               SET LibFctPointer(4)   TO ENTRY 'e3e490ae'
-               SET LibFctPointer(5)   TO ENTRY 'd8a9d90f'
-               SET LibFctPointer(6)   TO ENTRY 'e6215ae7'
+           IF NOT LibFctList-IsLoaded
+             SET LibFctPointer(1)   TO ENTRY 'a59b2c49'
+             SET LibFctPointer(2)   TO ENTRY 'fe03398a'
+             SET LibFctPointer(3)   TO ENTRY 'a866b35c'
+             SET LibFctPointer(4)   TO ENTRY 'e3e490ae'
+             SET LibFctPointer(5)   TO ENTRY 'd8a9d90f'
+             SET LibFctPointer(6)   TO ENTRY 'e6215ae7'
          
-               SET LibFctList-IsLoaded TO TRUE
-             END-IF
+             SET LibFctList-IsLoaded TO TRUE
+           END-IF
          
-             PERFORM VARYING FctIndex FROM 1 BY 1
-                     UNTIL FctIndex > NumberOfFunctions
+           PERFORM VARYING FctIndex FROM 1 BY 1
+                   UNTIL FctIndex > NumberOfFunctions
          
-               SEARCH LibFctItem VARYING LibFctIndex
-                 WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
-                   SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
-               END-SEARCH
+             SEARCH LibFctItem VARYING LibFctIndex
+               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
+                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
+             END-SEARCH
          
-             END-PERFORM
-             .
+           END-PERFORM
+           .
        
        END PROGRAM FunDeclare.
       *

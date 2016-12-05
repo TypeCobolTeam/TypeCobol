@@ -5,10 +5,6 @@
        LOCAL-STORAGE SECTION.
 
        01  somedate     TYPE Date.
-       01 myDate2       type Date.
-       01 myDate3       type Date.
-       01 myDate4       type Date.
-
        01  someformat   PIC X(08).
        01  flag         TYPE Bool.
        01  realformat   PIC X(08).
@@ -18,19 +14,6 @@
        DECLARE PROCEDURE ValidateDateFormat PRIVATE
            INPUT mydate        TYPE Date
                  format        PIC X(08)
-          OUTPUT okay          TYPE Bool
-                 actual-format PIC X(08).
-         .
-         PROCEDURE DIVISION.
-           CONTINUE.
-       END-DECLARE.
-
-       DECLARE PROCEDURE myProc PRIVATE
-          INPUT  mydate        TYPE Date
-                 format        PIC X(08)
-                 myDate2       type Date
-          inout  myDate3       type Date
-                 myDate4       type Date
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).
          .
@@ -50,41 +33,32 @@
                     OUTPUT     flag     realformat
            END-CALL
       * __________________________________________________
+      * KO : procedure doesn't exist
+           CALL ValidateDatFormatt
+                    INPUT      somedate someformat
+                    OUTPUT              realformat
+           END-CALL
+      * __________________________________________________
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
            CALL ValidateDateFormat END-CALL
       * __________________________________________________
+      * KO : wrong parameter number (TCRFUN_MATCH_PARAMETERS_NUMBER)
+           CALL ValidateDateFormat
+                    INPUT      somedate someformat
+                    OUTPUT              realformat
+           END-CALL
+      * __________________________________________________
+      * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
+           CALL ValidateDateFormat
+                    INPUT      someformat somedate
+                    OUTPUT     realformat flag
+      
       * OK with INPUT on the same line as call
            CALL ValidateDateFormat INPUT      somedate 
                                               by content 'YYYYMMDD'
                                    OUTPUT     flag     realformat
-           END-CALL
-           .      
-      * __________________________________________________
-      * OK  by content
-           CALL ValidateDateFormat INPUT     by content somedate 
-                                               'YYYYMMDD'
-                                   OUTPUT     flag     realformat
-           END-CALL
-           .      
-      * __________________________________________________
-      * OK  
-           CALL myProc  INPUT     by content somedate 
-                                               'YYYYMMDD'
-                                             myDate2
-                        inout myDate3 myDate4
-                                   OUTPUT     flag     realformat
-           END-CALL     
-      * __________________________________________________
-      * OK  
-           CALL myProc  INPUT  somedate 
-                               by content 'YYYYMMDD'
-                               by reference myDate2
-                        inout  myDate3
-                               myDate4
-                        OUTPUT flag     
-                               realformat
            END-CALL
            .
 

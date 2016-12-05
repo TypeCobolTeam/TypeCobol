@@ -35,7 +35,7 @@
        DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC
              INPUT     x      PIC 9(04)
              RETURNING result PIC 9(04)
-         .
+           .
        DATA DIVISION.
        FILE SECTION.
        FD myfile. 01 toto PIC X.

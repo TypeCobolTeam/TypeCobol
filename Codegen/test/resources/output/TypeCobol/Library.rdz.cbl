@@ -128,39 +128,39 @@
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
            
-           Copy-Process-Mode.
-               SET ADDRESS OF FCT TO ADDRESS OF CallData
-           
-               SET FCT-currentDate-01   TO ENTRY 'e5f209fa'
-               SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'
-               SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'
-               SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'
-               SET FCT-currentDateString-01   TO ENTRY 'bfb0fa9b'
-               .
-           
-           FctList-Process-Mode.
-               SET ADDRESS OF FctList TO ADDRESS OF CallData
-           
-               IF NOT LibFctList-IsLoaded
-                 SET LibFctPointer(1)   TO ENTRY 'e5f209fa'
-                 SET LibFctPointer(2)   TO ENTRY 'b8ac0397'
-                 SET LibFctPointer(3)   TO ENTRY 'c4e76b45'
-                 SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'
-                 SET LibFctPointer(5)   TO ENTRY 'bfb0fa9b'
-           
-                 SET LibFctList-IsLoaded TO TRUE
-               END-IF
-           
-               PERFORM VARYING FctIndex FROM 1 BY 1
-                       UNTIL FctIndex > NumberOfFunctions
-           
-                 SEARCH LibFctItem VARYING LibFctIndex
-                   WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
-                     SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
-                 END-SEARCH
-           
-               END-PERFORM
-               .
+       Copy-Process-Mode.
+           SET ADDRESS OF FCT TO ADDRESS OF CallData
+       
+           SET FCT-currentDate-01   TO ENTRY 'e5f209fa'
+           SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'
+           SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'
+           SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'
+           SET FCT-currentDateString-01   TO ENTRY 'bfb0fa9b'
+           .
+       
+       FctList-Process-Mode.
+           SET ADDRESS OF FctList TO ADDRESS OF CallData
+       
+           IF NOT LibFctList-IsLoaded
+             SET LibFctPointer(1)   TO ENTRY 'e5f209fa'
+             SET LibFctPointer(2)   TO ENTRY 'b8ac0397'
+             SET LibFctPointer(3)   TO ENTRY 'c4e76b45'
+             SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'
+             SET LibFctPointer(5)   TO ENTRY 'bfb0fa9b'
+       
+             SET LibFctList-IsLoaded TO TRUE
+           END-IF
+       
+           PERFORM VARYING FctIndex FROM 1 BY 1
+                   UNTIL FctIndex > NumberOfFunctions
+       
+             SEARCH LibFctItem VARYING LibFctIndex
+               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
+                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
+             END-SEARCH
+       
+           END-PERFORM
+           .
        
        END PROGRAM DVZZDAT.
       *
