@@ -1,17 +1,17 @@
 ﻿      * 16 CodeElements errors
       * "1"@(9:8>9:16): [27:1] Syntax error : Illegal default section in library.
       * "1"@(40:8>40:14): [27:1] Syntax error : Illegal FILE SECTION in function "FunDeclare.StrangelyReturnsItsInput" declaration
-      * "1"@(61:12>61:26): [27:1] Syntax error : x is already a parameter.
-      * "1"@(62:12>62:26): [27:1] Syntax error : y is already a parameter.
-      * "1"@(64:14>64:28): [27:1] Syntax error : x is already a parameter.
-      * "1"@(65:14>65:28): [27:1] Syntax error : z is already a parameter.
-      * "1"@(68:12>68:31): [27:1] Syntax error : result is already a parameter.
+      * "1"@(61:8>61:22): [27:1] Syntax error : x is already a parameter.
+      * "1"@(62:8>62:22): [27:1] Syntax error : y is already a parameter.
+      * "1"@(64:12>64:26): [27:1] Syntax error : x is already a parameter.
+      * "1"@(65:12>65:26): [27:1] Syntax error : z is already a parameter.
+      * "1"@(68:8>68:27): [27:1] Syntax error : result is already a parameter.
       * "1"@(70:12>70:27): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(71:12>71:26): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(72:12>72:26): [27:1] Syntax error : Ambiguous reference to symbol result
       * "1"@(73:12>73:26): [27:1] Syntax error : Ambiguous reference to symbol result
-      * "1"@(107:14>107:34): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
-      * "1"@(108:14>108:36): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
+      * "1"@(107:8>107:28): [27:1] Syntax error : Illegal GLOBAL clause in function data item.
+      * "1"@(108:8>108:30): [27:1] Syntax error : Illegal EXTERNAL clause in function data item.
       * "1"@(113:8>113:16): [27:1] Syntax error : Illegal non-function item in library
       * "1"@(127:8>132:14): [27:1] Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
       * "1"@(127:8>132:10): [27:1] Syntax error : Condition parameter "male" must be level 88.
@@ -137,10 +137,10 @@
       *      INPUT     x type BOOL
       *      RETURNING y TYPE bool
       *  .
-         
+       
        Copy-Process-Mode.
            SET ADDRESS OF FCT TO ADDRESS OF CallData
-         
+       
            SET FCT-DoesNothing-01   TO ENTRY 'a59b2c49'
            SET FCT-DoesNothing-02   TO ENTRY 'fe03398a'
            SET FCT-ReturnsZero-01   TO ENTRY 'a866b35c'
@@ -148,10 +148,10 @@
            SET FCT-SumThreeWithClutterInLinkag-01   TO ENTRY 'd8a9d90f'
            SET FCT-IllegalClauses-01   TO ENTRY 'e6215ae7'
            .
-         
+       
        FctList-Process-Mode.
            SET ADDRESS OF FctList TO ADDRESS OF CallData
-         
+       
            IF NOT LibFctList-IsLoaded
              SET LibFctPointer(1)   TO ENTRY 'a59b2c49'
              SET LibFctPointer(2)   TO ENTRY 'fe03398a'
@@ -159,18 +159,18 @@
              SET LibFctPointer(4)   TO ENTRY 'e3e490ae'
              SET LibFctPointer(5)   TO ENTRY 'd8a9d90f'
              SET LibFctPointer(6)   TO ENTRY 'e6215ae7'
-         
+       
              SET LibFctList-IsLoaded TO TRUE
            END-IF
-         
+       
            PERFORM VARYING FctIndex FROM 1 BY 1
                    UNTIL FctIndex > NumberOfFunctions
-         
+       
              SEARCH LibFctItem VARYING LibFctIndex
                WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
                  SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
              END-SEARCH
-         
+       
            END-PERFORM
            .
        
@@ -185,7 +185,7 @@
            DISPLAY 'I DO NOTHING'
            .
        END PROGRAM a59b2c49.
-      *    
+      *
       *DECLARE FUNCTION ReturnsZero PUBLIC
       *      RETURNING result PIC 9(04).
       *_________________________________________________________________
@@ -195,12 +195,12 @@
        LINKAGE SECTION.
        01 result PIC 9(04).
        PROCEDURE DIVISION
-                 USING BY REFERENCE result
-             .
+             USING BY REFERENCE result
+           .
            MOVE 0 TO result.
            .
        END PROGRAM a866b35c.
-      *    
+      *
       *DECLARE FUNCTION DoesNothing PUBLIC
       *      INPUT x PIC 9(04).
       *_________________________________________________________________
@@ -210,16 +210,16 @@
        LINKAGE SECTION.
        01 x PIC 9(04).
        PROCEDURE DIVISION
-                 USING BY REFERENCE x
+             USING BY REFERENCE x
            .
            DISPLAY 'I DO NOTHING WITH ' x
            .
        END PROGRAM fe03398a.
-      *    
+      *
       *DECLARE FUNCTION StrangelyReturnsItsInput PUBLIC
       *      INPUT     x      PIC 9(04)
       *      RETURNING result PIC 9(04)
-      *  .
+      *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e3e490ae.
@@ -230,8 +230,8 @@
        01 x PIC 9(04).
        01 result PIC 9(04).
        PROCEDURE DIVISION
-                 USING BY REFERENCE x
-                       BY REFERENCE result
+             USING BY REFERENCE x
+                   BY REFERENCE result
            .
            IF x = 0
              MOVE 0 TO result
@@ -255,20 +255,20 @@
        01 x PIC 9(04).
        01 y PIC 9(02).
        01 a PIC 9(04).
-         05 x PIC 9(02).
-         05 z PIC 9(02).
+           05 x PIC 9(02).
+           05 z PIC 9(02).
        01 b PIC 9(04).
        01 c PIC 9(04).
        01 result PIC 9(04).
        01 z PIC 9(04).
        01 t PIC 9(04).
        PROCEDURE DIVISION
-                 USING BY REFERENCE x
-                       BY REFERENCE y
-                       BY REFERENCE z
-                       BY REFERENCE t
-                       BY REFERENCE result
-               .
+             USING BY REFERENCE x
+                   BY REFERENCE y
+                   BY REFERENCE z
+                   BY REFERENCE t
+                   BY REFERENCE result
+           .
            MOVE 0 TO result.
            ADD x to result.
            ADD y to result.
@@ -289,15 +289,15 @@
        01 x PIC 9(04).
        01 y PIC 9(04).
        PROCEDURE DIVISION
-                 USING BY REFERENCE x
-                       BY REFERENCE y
-               .
+             USING BY REFERENCE x
+                   BY REFERENCE y
+           .
            MOVE x TO tmp
            MOVE y TO x
            MOVE tmp TO y
            .
        END PROGRAM ceb46e19.
-      *    
+      *
       *DECLARE PROCEDURE SwapParametersWrong PRIVATE
       *      INPUT  x PIC 9(04)
       *             y PIC 9(04)
@@ -316,10 +316,10 @@
        01 a PIC 9(04).
        01 b PIC 9(04).
        PROCEDURE DIVISION
-                 USING BY REFERENCE x
-                       BY REFERENCE y
-                       BY REFERENCE a
-                       BY REFERENCE b
+             USING BY REFERENCE x
+                   BY REFERENCE y
+                   BY REFERENCE a
+                   BY REFERENCE b
            .
            CONTINUE.
        END PROGRAM f6e9c448.
@@ -333,10 +333,10 @@
        01 g PIC X IS GLOBAL.
        01 e PIC X IS EXTERNAL.
        PROCEDURE DIVISION
-                 .
+           .
            .
        END PROGRAM e6215ae7.
-      *    
+      *
       *DECLARE FUNCTION FunConditions PRIVATE
       *      INPUT  gender PIC X(01)
       *          88  valid-gender VALUE 'F' 'M'
@@ -353,7 +353,7 @@
            88 female VALUE 'F'.
            88 male VALUE 'M'.
        PROCEDURE DIVISION
-                 USING BY REFERENCE gender
+             USING BY REFERENCE gender
            .
            CONTINUE.
        END PROGRAM b8045acd.
@@ -374,7 +374,7 @@
            88 female VALUE 'F'.
            88 male VALUE 'M'.
        PROCEDURE DIVISION
-                 USING BY REFERENCE gender
+             USING BY REFERENCE gender
            .
            CONTINUE.
        END PROGRAM f6c8f8b0.
@@ -395,8 +395,8 @@
            88 y       VALUE 'T'.
            88 y-false VALUE 'F'.
        PROCEDURE DIVISION
-                 USING BY REFERENCE x-value
-                       BY REFERENCE y-value
+             USING BY REFERENCE x-value
+                   BY REFERENCE y-value
            .
            IF NOT x
              SET y TO TRUE

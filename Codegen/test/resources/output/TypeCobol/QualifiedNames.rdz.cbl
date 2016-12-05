@@ -18,25 +18,25 @@
        
        01 Segment.
       *    05 p TYPE POINT.
-               05 p.
-               06 Location.
-                 07 x PIC 9.
-                 07 y PIC 9.
-                 07 z PIC 9.
-               06 Movment.
-                 07 x PIC 9.
-                 07 y PIC 9.
-                 07 z PIC 9.
+           05 p.
+           06 Location.
+             07 x PIC 9.
+             07 y PIC 9.
+             07 z PIC 9.
+           06 Movment.
+             07 x PIC 9.
+             07 y PIC 9.
+             07 z PIC 9.
       *    05 q TYPE POINT.
-               05 q.
-               06 Location.
-                 07 x PIC 9.
-                 07 y PIC 9.
-                 07 z PIC 9.
-               06 Movment.
-                 07 x PIC 9.
-                 07 y PIC 9.
-                 07 z PIC 9.
+           05 q.
+           06 Location.
+             07 x PIC 9.
+             07 y PIC 9.
+             07 z PIC 9.
+           06 Movment.
+             07 x PIC 9.
+             07 y PIC 9.
+             07 z PIC 9.
        
        PROCEDURE DIVISION.
        

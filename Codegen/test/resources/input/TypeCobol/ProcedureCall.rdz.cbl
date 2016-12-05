@@ -21,7 +21,7 @@
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).
          .
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
@@ -34,7 +34,7 @@
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).
          .
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 

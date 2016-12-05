@@ -203,7 +203,7 @@
 		private IEnumerable<ITextLine> ConvertGeneratedLine(TextLineSnapshot line, bool? comment) {
 			string indent, code;
 			Tools.Strings.GetIndent(line.Text ?? "", out indent, out code);
-			if (previousIndent != null && previousIndicator != '*') indent = previousIndent + indent;
+			if (previousIndent != null && previousIndicator != '*' && comment != null) indent = previousIndent + indent;
 			var lines = new List<ITextLine>();
 			bool starts = line.StartsLine;
 			bool ends   = line.EndsLine;

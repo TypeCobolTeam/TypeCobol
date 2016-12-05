@@ -17,8 +17,8 @@
 
        DECLARE FUNCTION ReturnsZero PUBLIC
              RETURNING result PIC 9(04).
-         DATA DIVISION.
-         PROCEDURE DIVISION.
+       DATA DIVISION.
+       PROCEDURE DIVISION.
            MOVE 0 TO result.
            .
        END-DECLARE.
@@ -26,7 +26,7 @@
       *OK: second function with same name, but profile is different
        DECLARE FUNCTION DoesNothing PUBLIC
              INPUT x PIC 9(04).
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING WITH ' x
            .
        END-DECLARE.
@@ -56,17 +56,17 @@
                    t PIC 9(04)
              RETURNING result PIC 9(04)
          .
-         DATA DIVISION.
-         LINKAGE SECTION.
-           01 x PIC 9(04).
-           01 y PIC 9(02).
-           01 a PIC 9(04).
-             05 x PIC 9(02).
-             05 z PIC 9(02).
-           01 b PIC 9(04).
-           01 c PIC 9(04).
-           01 result PIC 9(04).
-         PROCEDURE DIVISION.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 x PIC 9(04).
+       01 y PIC 9(02).
+       01 a PIC 9(04).
+           05 x PIC 9(02).
+           05 z PIC 9(02).
+       01 b PIC 9(04).
+       01 c PIC 9(04).
+       01 result PIC 9(04).
+       PROCEDURE DIVISION.
            MOVE 0 TO result.
            ADD x to result.
            ADD y to result.
@@ -77,10 +77,10 @@
              INOUT x PIC 9(04)
                    y PIC 9(04)
          .
-         DATA DIVISION.
-         WORKING-STORAGE SECTION.
-           01 tmp PIC 9(04).
-         PROCEDURE DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 tmp PIC 9(04).
+       PROCEDURE DIVISION.
            MOVE x TO tmp
            MOVE y TO x
            MOVE tmp TO y
@@ -102,11 +102,11 @@
        END-DECLARE.
       * ERROR because illegal GLOBAL or EXTERNAL
        DECLARE FUNCTION IllegalClauses PUBLIC.
-         DATA DIVISION.
-           WORKING-STORAGE SECTION.
-             01 g PIC X IS GLOBAL.
-             01 e PIC X IS EXTERNAL.
-         PROCEDURE DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 g PIC X IS GLOBAL.
+       01 e PIC X IS EXTERNAL.
+       PROCEDURE DIVISION.
            .
        END-DECLARE.
 
@@ -119,7 +119,7 @@
                  88  female VALUE 'F'
                  88  male   VALUE 'M'
          .
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
       * ERROR level-88 parameter items must be subordinate to another item
@@ -130,7 +130,7 @@
                    88  female VALUE 'F'
                    01  male   VALUE 'M'
          .
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
        
@@ -138,7 +138,7 @@
              INPUT     x type BOOL
              RETURNING y TYPE bool
          .
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            IF NOT x
              SET y TO TRUE
            ELSE

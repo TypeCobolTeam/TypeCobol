@@ -50,30 +50,30 @@
       *01 culture        TYPEDEF.
       *    10 lng                    PIC X(02).
       *    10 cty                    PIC X(02).
-           01  LibFctList-Loaded PIC X(01) VALUE SPACE.
-               88 LibFctList-IsLoaded      VALUE '1'.
-           
-           01  LibFctList-VALUES.
-      *        e5f209fa -> currentDate
-               05 PIC X(08) VALUE 'e5f209fa'.
-               05 PIC X(08) VALUE LOW-VALUES.
-      *        b8ac0397 -> currentDateDB2
-               05 PIC X(08) VALUE 'b8ac0397'.
-               05 PIC X(08) VALUE LOW-VALUES.
-      *        c4e76b45 -> currentDateJulian
-               05 PIC X(08) VALUE 'c4e76b45'.
-               05 PIC X(08) VALUE LOW-VALUES.
-      *        d55b3ea7 -> currentDateFreeFormat
-               05 PIC X(08) VALUE 'd55b3ea7'.
-               05 PIC X(08) VALUE LOW-VALUES.
-      *        bfb0fa9b -> currentDateString
-               05 PIC X(08) VALUE 'bfb0fa9b'.
-               05 PIC X(08) VALUE LOW-VALUES.
-           
-           01  LibFctList REDEFINES LibFctList-Values.
-               05   LibFctItem    OCCURS 5 INDEXED BY LibFctIndex.
-                 10 LibFctCode    PIC X(08).
-                 10 LibFctPointer PROCEDURE-POINTER.
+       01  LibFctList-Loaded PIC X(01) VALUE SPACE.
+           88 LibFctList-IsLoaded      VALUE '1'.
+       
+       01  LibFctList-VALUES.
+      *    e5f209fa -> currentDate
+           05 PIC X(08) VALUE 'e5f209fa'.
+           05 PIC X(08) VALUE LOW-VALUES.
+      *    b8ac0397 -> currentDateDB2
+           05 PIC X(08) VALUE 'b8ac0397'.
+           05 PIC X(08) VALUE LOW-VALUES.
+      *    c4e76b45 -> currentDateJulian
+           05 PIC X(08) VALUE 'c4e76b45'.
+           05 PIC X(08) VALUE LOW-VALUES.
+      *    d55b3ea7 -> currentDateFreeFormat
+           05 PIC X(08) VALUE 'd55b3ea7'.
+           05 PIC X(08) VALUE LOW-VALUES.
+      *    bfb0fa9b -> currentDateString
+           05 PIC X(08) VALUE 'bfb0fa9b'.
+           05 PIC X(08) VALUE LOW-VALUES.
+       
+       01  LibFctList REDEFINES LibFctList-Values.
+           05   LibFctItem    OCCURS 5 INDEXED BY LibFctIndex.
+             10 LibFctCode    PIC X(08).
+             10 LibFctPointer PROCEDURE-POINTER.
       *_________________________________________________________________
        LINKAGE SECTION.
        01  FctList.
@@ -127,7 +127,7 @@
       *_________________________________________________________________
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
-           
+       
        Copy-Process-Mode.
            SET ADDRESS OF FCT TO ADDRESS OF CallData
        
@@ -181,7 +181,7 @@
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM e5f209fa.
-      *    
+      *
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
       *_________________________________________________________________
@@ -208,7 +208,7 @@
            MOVE CORR W-Dat          TO Result
            .
        END PROGRAM b8ac0397.
-      *    
+      *
       *DECLARE FUNCTION currentDateJulian PUBLIC
       *    RETURNING Result Type dateJulian.
       *_________________________________________________________________
@@ -234,7 +234,7 @@
                 TO Result
            .
        END PROGRAM c4e76b45.
-      *    
+      *
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
       *                         direction  PIC X(01)
@@ -278,9 +278,9 @@
            MOVE direction                    TO DATS20-I-RETOUR-SENS1
            MOVE separator                    TO DATS20-I-RETOUR-SEPAR
       *    MOVE culture :: lng               TO DATS20-I-INT-LANG
-               MOVE lng OF culture               TO DATS20-I-INT-LANG
+           MOVE lng OF culture               TO DATS20-I-INT-LANG
       *    MOVE culture :: cty               TO DATS20-I-INT-PAYS
-               MOVE cty OF culture               TO DATS20-I-INT-PAYS
+           MOVE cty OF culture               TO DATS20-I-INT-PAYS
            MOVE 'M'                          TO DATS20-I-POLICE
            MOVE 'P'                          TO DATS20-I-INJOUR
            SET DATS20-I-DATE1-SSAAMMJJ-OUI   TO TRUE
@@ -294,7 +294,7 @@
            END-IF
            .
        END PROGRAM d55b3ea7.
-      *    
+      *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
       *_________________________________________________________________
