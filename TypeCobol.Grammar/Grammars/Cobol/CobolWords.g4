@@ -44,7 +44,6 @@ tokens
     SpaceSeparator,
     CommaSeparator,
     SemicolonSeparator,
-    EndOfFile, // <- do not use in this grammar, use constant EOF instead
     // Comments
     FloatingComment,
     CommentLine,
@@ -81,10 +80,10 @@ tokens
     PictureCharacterString,
     CommentEntry,
     ExecStatementText,
-    // Symbols    
+    // Symbols
     IntrinsicFunctionName,
     ExecTranslatorName,
-    PartialCobolWord ,
+    PartialCobolWord,
     UserDefinedWord,
     // Keywords - Compiler directive starting tokens
     ASTERISK_CBL,
@@ -507,18 +506,16 @@ tokens
     XML_SCHEMA,
     YYYYDDD,
     YYYYMMDD,
-// [COBOL2002]
-	TYPEDEF,
-	STRONG,
-// [/COBOL2002]
-// [TYPECOBOL]
-	DECLARE,
-	END_DECLARE,
-	UNSAFE,
-	PUBLIC,
-	PRIVATE,
-	INOUT,
-// [/TYPECOBOL]
+    // Cobol 2002 tokens
+    TYPEDEF,
+    STRONG,
+    // TypeCobol tokens
+    DECLARE,
+    END_DECLARE,
+    UNSAFE,
+    PUBLIC,
+    PRIVATE,
+    INOUT
 }
 
 

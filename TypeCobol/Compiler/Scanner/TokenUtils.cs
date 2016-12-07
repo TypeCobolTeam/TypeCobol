@@ -15,15 +15,13 @@ namespace TypeCobol.Compiler.Scanner
 			var families = (TokenFamily[])Enum.GetValues(typeof(TokenFamily));
 
 			tokenFamilyFromTokenType = new TokenFamily[types.Length];
-			int tokenType = 0;
 			int family = 0;
-			while (tokenType<types.Length-1) {
-				tokenFamilyFromTokenType[tokenType] = families[family];
-				tokenType ++;
-				if (tokenType == (int)families[family+1]) family++;
+			for (int tokenType = 0; tokenType < types.Length-1; tokenType++) {
+                if (family < (families.Length-1) && tokenType == (int)families[family + 1]) family++;
+                tokenFamilyFromTokenType[tokenType] = families[family];				
 			}
 			// Register the token strings corresponding to each token type (for keywords only)
-			int keywordBegin = 38;
+			int keywordBegin = (int)TokenType.UserDefinedWord+1;
 			int keywordEnd = (int)TokenType.CompilerDirective-1;
 			tokenStringFromTokenType = new string[types.Length];
 			for(int c=keywordBegin; c<types.Length; c++) {
@@ -41,7 +39,7 @@ namespace TypeCobol.Compiler.Scanner
 
 			// Map token string to token type
 			tokenTypeFromTokenString = new Dictionary<string, TokenType>(types.Length-1, StringComparer.OrdinalIgnoreCase);
-			for (tokenType = 0; tokenType < types.Length; tokenType++) {
+			for (int tokenType = 0; tokenType < types.Length; tokenType++) {
                 string tokenString = tokenStringFromTokenType[tokenType];
                 if (!String.IsNullOrEmpty(tokenString) && !tokenTypeFromTokenString.ContainsKey(tokenString))
                 {
