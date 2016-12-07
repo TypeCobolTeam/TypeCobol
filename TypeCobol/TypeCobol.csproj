@@ -376,7 +376,7 @@
     <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Language Reference.pdf" />
     <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf" />
     <None Include="Documentation\Studies\CobolLexer.tokens.xlsx" />
-    <None Include="Documentation\Studies\Code elements.xlsx" />
+    <None Include="Documentation\Studies\Code elements starting tokens.xlsx" />
     <None Include="Documentation\Studies\Compiler directive study.xlsx" />
     <None Include="Documentation\Studies\Compiler options study.xlsx" />
     <None Include="Documentation\Studies\Data item study.docx" />

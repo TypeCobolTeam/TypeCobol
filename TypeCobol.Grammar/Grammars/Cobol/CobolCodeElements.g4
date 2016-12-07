@@ -663,7 +663,7 @@ sourceComputerParagraph:
 
 // p111 : OBJECT-COMPUTER Format
 
-objectComputerParagraph :
+objectComputerParagraph:
     OBJECT_COMPUTER PeriodSeparator
     (computerName=alphanumericValue4 
      memorySizeClause?
@@ -3448,7 +3448,7 @@ useStatement:
 // “Common processing facilities” on page 286.
 
 useStatementForExceptionDeclarative:
-	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileNameReference+ | (INPUT | OUTPUT | I_O | EXTEND));
+	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileNameReference+ | (INPUT | OUTPUT | I_O | EXTEND)) PeriodSeparator;
 
 // p548: ... more rules that appky to declarative procedures until page 549 ...
 
@@ -3504,7 +3504,7 @@ useStatementForExceptionDeclarative:
 // program (except ALTER statements in declarative procedures) 
 
 useStatementForDebuggingDeclarative:
-	USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES));
+	USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES)) PeriodSeparator;
 
 // p252: Procedures
 // Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
