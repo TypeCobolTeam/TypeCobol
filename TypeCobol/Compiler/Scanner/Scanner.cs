@@ -107,13 +107,7 @@ namespace TypeCobol.Compiler.Scanner
             Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions);
             Token nextToken = null;
             while((nextToken = scanner.GetNextToken()) != null)
-            {
-                // Resolve DELETE ambiguity : DELETE + InterLiteral => DELETE_CD
-                // Warning : DELETE and the sequence-number-field must be on the same line
-                if(nextToken.TokenType == TokenType.IntegerLiteral && tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_DELETE)
-                {
-                    tokensLine.ScanState.LastKeywordOrSymbolToken.CorrectType(TokenType.DELETE_CD);
-                }
+            {                
                 tokensLine.AddToken(nextToken);
             }    
         }
@@ -482,69 +476,120 @@ namespace TypeCobol.Compiler.Scanner
 
             // Start scanning at the current index
             int startIndex = currentIndex;
+            MultilineScanState currentState = tokensLine.ScanState;
 
-            // Handle special scanner states
-            KeywordsSequenceState currentState = tokensLine.ScanState.KeywordsState;
-            if (currentState != KeywordsSequenceState.Default)
+            //  -- Special case 1 : Comment Entries in the IDENTIFICATION DIVISION --
+
+            bool tryScanCommentEntry = false;
+            // First token after a comment entry keyword
+            if (currentState.AfterCommentEntryKeyword)
             {
-                // -> PictureCharacterString
-                if(currentState == KeywordsSequenceState.After_PIC_orPICTURE ||
-                   currentState == KeywordsSequenceState.After_PIC_orPICTURE_IS)
+                switch (line[startIndex])
                 {
-                   if(CobolChar.IsStartOfPictureCharacterString(line[startIndex]))
-                   {
-                       return ScanPictureCharacterString(startIndex);
-                   }
-                   else
-                   {
-                       // Continue to the main switch
-                   }
+                    case ' ':
+                        return ScanWhitespace(startIndex);
+                    case '.':
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                    default:
+                        tryScanCommentEntry = true;
+                        break;
                 }
-                // -> PeriodSeparator or CommentEntry
-                else if (currentState == KeywordsSequenceState.After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY)
+            }
+            // First token after a comment entry keyword and one period separator
+            else if (currentState.AfterCommentEntryKeywordPeriod)
+            {
+                switch (line[startIndex])
                 {
-                    switch (line[startIndex])
-                    {
-                        case ' ':
-                            return ScanWhitespace(startIndex);
-                        case '.':
-                            return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
-                        default:
-                            return ScanCommentEntry(startIndex);
-                    }
+                    case ' ':
+                        return ScanWhitespace(startIndex);
+                    default:
+                        tryScanCommentEntry = true;
+                        break;
                 }
-                // -> CommentEntry
-                else if (currentState == KeywordsSequenceState.After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY_PeriodSeparator)
-                {
-                    switch (line[startIndex])
-                    {
-                        case ' ':
-                            return ScanWhitespace(startIndex);
-                        default:
-                            return ScanCommentEntry(startIndex);
-                    }
-                }
-                // -> second CommentEntry
-                else if (currentState == KeywordsSequenceState.After_CommentEntry)
+            }
+            // New token after a previous comment entry
+            else if (currentState.AfterCommentEntry)
+            {
+                tryScanCommentEntry = true;
+            }
+            // Previous state tests show that we should try to scan a comment entry at this point
+            if (tryScanCommentEntry)
+            {
+                // p105 : The comment-entry in any of the optional paragraphs can be any combination of
+                // characters from the character set of the computer. The comment-entry is written in
+                // Area B on one or more lines.
+                // ==> a comment entry is delimited only by characters in area A on the next line
+
+                // Find first non whitespace char
+                int firstCharIndex = startIndex;
+                for (; firstCharIndex <= lastIndex && line[firstCharIndex] == ' '; firstCharIndex++) { }
+                // Check if it starts in area A
+                bool nextTokensStartsInAreaA = line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.Source.StartIndex + 4);
+
+                // A comment entry can't start in area A
+                if(!nextTokensStartsInAreaA)
                 {
                     return ScanCommentEntry(startIndex);
                 }
-                // -> ExecStatementText
-                else if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_EXEC_orEXECUTE_ExecTranslatorName)
+                // => if it is not a comment entry, continue below
+            }
+
+            // -- Special case 2 : Exec Statement and ExecStatementText --
+
+            bool tryScanExecStatementText = false;
+            // First token after EXEC or EXECUTE
+            if(currentState.AfterExec)
+            {
+                switch (line[startIndex])
                 {
-                    switch (line[startIndex])
-                    {
-                        case ' ':
-                            return ScanWhitespace(startIndex);
-                        default:
-                            return ScanExecStatementTextOrExecSqlInclude(startIndex);
-                    }
+                    case ' ':
+                        return ScanWhitespace(startIndex);
+                    default:
+                        return ScanExecTranslatorName(startIndex);
                 }
-                // -> second ExecStatementText
-                else if (currentState == KeywordsSequenceState.After_ExecStatementText)
+            }
+            // First token after ExecTranslatorName
+            else if (currentState.AfterExecTranslatorName)
+            {
+                switch (line[startIndex])
                 {
-                    return ScanExecStatementTextOrExecSqlInclude(startIndex);
+                    case ' ':
+                        return ScanWhitespace(startIndex);
+                    default:
+                        tryScanExecStatementText = true;
+                        break;
                 }
+            }
+            // New token after a previous ExecStatementText
+            else if (currentState.AfterExecStatementText)
+            {
+                tryScanExecStatementText = true;
+            }
+            // Previous state tests show that we should try to scan an exec statement text at this point
+            if (tryScanExecStatementText)
+            {
+                return ScanExecStatementTextOrExecSqlInclude(startIndex);
+            }
+
+            // -- Special case 3 : PictureCharacterString --
+
+            bool tryScanPictureCharacterString = false;
+            // First token after PIC or PICTURE keyword IS?
+            if (currentState.AfterPicture)
+            {
+                if (line[startIndex] == ' ')
+                {
+                    return ScanWhitespace(startIndex);
+                }
+                else
+                {
+                    tryScanPictureCharacterString = true;
+                }
+            }
+            // Previous state tests show that we should try to scan a picture character string at this point
+            if (tryScanPictureCharacterString)
+            {
+                return ScanPictureCharacterStringOrISOrSYMBOL(startIndex);
             }
 
             // --- Main switch ---
@@ -787,7 +832,7 @@ namespace TypeCobol.Compiler.Scanner
 
                         Token delimiterToken = null;
                         // Case 1. Opening delimiter
-                        if (tokensLine.ScanState.KeywordsState != KeywordsSequenceState.InsidePseudoText)
+                        if (!tokensLine.ScanState.InsidePseudoText)
                         {
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, tokensLine);
                         }
@@ -1432,28 +1477,17 @@ namespace TypeCobol.Compiler.Scanner
             // words (all except section-names, paragraph-names, priority-numbers, and
             // level-numbers) must contain at least one alphabetic character. 
 
-            switch(tokensLine.ScanState.KeywordsState)
-            {
-                case KeywordsSequenceState.After_PIC_orPICTURE:
-                case KeywordsSequenceState.After_PIC_orPICTURE_IS:
-                    return ScanPictureCharacterString(startIndex);
+            // All the following special cases are handled before we call this method, at the beginning of GetNextToken()
+            // - ScanCommentEntry(startIndex);
+            // - ScanExecTranslatorName(startIndex);
+            // - ScanExecStatementTextOrExecSqlInclude(startIndex);
+            // - ScanPictureCharacterString(startIndex);
 
-                case KeywordsSequenceState.After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY:
-                case KeywordsSequenceState.After_AUTHOR_orINSTALLATION_orDATE_WRITTEN_orDATE_COMPILED_orSECURITY_PeriodSeparator:
-                    return ScanCommentEntry(startIndex);
-
-                case KeywordsSequenceState.After_EXEC_orEXECUTE:
-                    return ScanExecTranslatorName(startIndex);
-
-                case KeywordsSequenceState.After_EXEC_orEXECUTE_ExecTranslatorName:
-                    return ScanExecStatementTextOrExecSqlInclude(startIndex);
-
-                default:
-                    return ScanKeywordOrUserDefinedWord(startIndex);
-            }
+            // The only possibility remaining is a keyword or a user defined word
+            return ScanKeywordOrUserDefinedWord(startIndex);
         }
 
-        private Token ScanPictureCharacterString(int startIndex)
+        private Token ScanPictureCharacterStringOrISOrSYMBOL(int startIndex)
         {
             //PictureCharacterString = 30,
             // p42: A PICTURE character-string is composed of the currency symbol and certain
@@ -1530,29 +1564,10 @@ namespace TypeCobol.Compiler.Scanner
             //                      (DATE_WRITTEN PeriodSeparator? CommentEntry*)?
             //                      (DATE_COMPILED PeriodSeparator? CommentEntry*)?
             //                      (SECURITY PeriodSeparator? CommentEntry*)?;
-            //
-            // p105 : The comment-entry in any of the optional paragraphs can be any combination of
-            // characters from the character set of the computer. The comment-entry is written in
-            // Area B on one or more lines.
-            // LP -> a comment entry is delimited only by characters in area A on the next line
-
-            // Find first non whitespace char
-            int firstCharIndex = startIndex;
-            for (; firstCharIndex <= lastIndex && line[firstCharIndex] == ' '; firstCharIndex++) { }
-            // Check if it is in area A
-            if(line[firstCharIndex] != ' ' && firstCharIndex < (tokensLine.Source.StartIndex + 4))
-            {
-                // Reset scanner state and retry scanning
-                tokensLine.ScanState.ResetKeywordsState();
-                return GetNextToken();
-            }
-            else
-            {
-                // Consume the entire line as a comment entry
-                currentIndex = lastIndex + 1;
-                return new Token(TokenType.CommentEntry, startIndex, lastIndex, tokensLine);
-            }
-
+            
+            // Consume the entire line as a comment entry
+            currentIndex = lastIndex + 1;
+            return new Token(TokenType.CommentEntry, startIndex, lastIndex, tokensLine);
         }
 
         private Token ScanExecTranslatorName(int startIndex)
@@ -1583,11 +1598,7 @@ namespace TypeCobol.Compiler.Scanner
             // --- Special treatment for EXEC SQL(IMS) INCLUDE ---
 
             // Check if previous tokens were EXEC SQL or EXEC SQLIMS
-            Token lastSymbolToken = tokensLine.ScanState.LastKeywordOrSymbolToken;
-            if(lastSymbolToken.TokenType == TokenType.ExecTranslatorName &&
-               (lastSymbolToken.Text.Equals("SQL", StringComparison.InvariantCultureIgnoreCase) ||
-                lastSymbolToken.Text.Equals("SQLIMS", StringComparison.InvariantCultureIgnoreCase)) &&
-                tokensLine.ScanState.LastToken.TokenType != TokenType.ExecStatementText)
+            if(tokensLine.ScanState.AfterExecSql)
             {
                 // Check if the text immediately following is INCLUDE
                 if (lastIndex - startIndex >= 6 &&
@@ -1614,18 +1625,19 @@ namespace TypeCobol.Compiler.Scanner
             if (endExecIndex > startIndex)
             {
                 endIndex = endExecIndex - 1;
-                
                 // Remove all witespace just before END-EXEC
                 for (; endIndex > startIndex && line[endIndex] == ' '; endIndex--) { }
 
-                // Reset Scan State after END-EXEC
-                tokensLine.ScanState.ResetKeywordsState();
+                // If only whitespace just before END-EXEC, return a whitespace token
+                if(endIndex == startIndex)
+                {
+                    return ScanWhitespace(startIndex);
+                }
             }
             // ExecStatementText is empty
             else if (endExecIndex == startIndex)
             {
-                // Reset Scan State and directly scan END-EXEC keyword
-                tokensLine.ScanState.ResetKeywordsState();
+                // Directly scan END-EXEC keyword
                 return ScanKeywordOrUserDefinedWord(startIndex);
             }
 
@@ -1669,7 +1681,7 @@ namespace TypeCobol.Compiler.Scanner
             // NATIONAL_OF | NUMVAL | NUMVAL_C | ORD | ORD_MAX | ORD_MIN | PRESENT_VALUE | RANDOM | RANGE | REM |
             // REVERSE | SIN | SQRT | STANDARD_DEVIATION | SUM | TAN | ULENGTH | UPOS | UPPER_CASE | USUBSTR |
             // USUPPLEMENTARY | UVALID | UWIDTH | VARIANCE | WHEN_COMPILED | YEAR_TO_YYYY
-            if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_FUNCTION && TokenUtils.COBOL_INTRINSIC_FUNCTIONS.IsMatch(tokenText))
+            if (tokensLine.ScanState.AfterFUNCTION && TokenUtils.COBOL_INTRINSIC_FUNCTIONS.IsMatch(tokenText))
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }
@@ -1706,13 +1718,13 @@ namespace TypeCobol.Compiler.Scanner
                         }
                         break;
                     case TokenType.ENTRY:
-                        if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_TO)
+                        if (tokensLine.ScanState.AfterTO)
                         {
                             tokenType = TokenType.ENTRY_ARG;
                         }
                         break;
                     case TokenType.SORT:
-                        if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SAME)
+                        if (tokensLine.ScanState.AfterSAME)
                         {
                             tokenType = TokenType.SORT_ARG;
                         }
@@ -1722,8 +1734,7 @@ namespace TypeCobol.Compiler.Scanner
                         // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character.
                         // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause.
                         // The symbolic character can be a DBCS user-defined word.
-                        if (tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SYMBOLIC ||
-                                tokensLine.ScanState.KeywordsState == KeywordsSequenceState.After_SYMBOLIC_SymbolicCharacters)
+                        if (tokensLine.ScanState.InsideSymbolicCharacterDefinitions)
                         {
                             // Symbolic character definition
                             tokenType = TokenType.SymbolicCharacter;

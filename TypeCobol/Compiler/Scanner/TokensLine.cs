@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.Scanner
         internal void AddToken(Token token)
         {            
             // Identify pseudo-text tokens : could be necessary to filter them from "real" source text tokens
-            if(ScanState.KeywordsState == KeywordsSequenceState.InsidePseudoText && token.TokenType != TokenType.PseudoTextDelimiter)
+            if(ScanState.InsidePseudoText && token.TokenType != TokenType.PseudoTextDelimiter)
             {
                 token.IsPseudoText = true;
             }
@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.Scanner
             // Advance MultilineScanState
             if (Type != CobolTextLineType.Blank) // see p54 : for continuation, blank lines are treated like comment lines
             {
-                ScanState.AdvanceToNextState(token);
+                ScanState.AdvanceToNextStateAndAdjustTokenProperties(token);
             }
 
             // Register multiline continuation tokens

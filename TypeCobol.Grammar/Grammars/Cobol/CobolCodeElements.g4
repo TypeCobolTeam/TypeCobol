@@ -861,7 +861,7 @@ characterInCollatingSequence:
 // Provides a means of specifying one or more symbolic characters.
 
 symbolicCharactersClause:
-    SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
+	SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
 
 symbolicCharactersOrdinalPositions:
     symbolicCharacterDefinition+ (ARE|IS)? ordinalPositionInCollatingSequence+;
