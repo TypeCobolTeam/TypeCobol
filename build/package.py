@@ -10,6 +10,7 @@ files = [
       'SimpleMsgPack.dll',
       'TypeCobol.exe',
         'Antlr4.Runtime.dll',
+      'TypeCobol.Transform.exe',
     # resource files
     os.path.join('config','skeletons.xml'),
     ]
