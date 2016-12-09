@@ -1710,25 +1710,6 @@ namespace TypeCobol.Compiler.Scanner
                 // Correct token type for context-sensitive tokens
                 switch (tokenType)
                 {
-                    // Inside DATA DIVISION, the DISPLAY keyword is an argument of the PICTURE clause
-                    case TokenType.DISPLAY:
-                        if (tokensLine.ScanState.InsideDataDivision)
-                        {
-                            tokenType = TokenType.DISPLAY_ARG;
-                        }
-                        break;
-                    case TokenType.ENTRY:
-                        if (tokensLine.ScanState.AfterTO)
-                        {
-                            tokenType = TokenType.ENTRY_ARG;
-                        }
-                        break;
-                    case TokenType.SORT:
-                        if (tokensLine.ScanState.AfterSAME)
-                        {
-                            tokenType = TokenType.SORT_ARG;
-                        }
-                        break;
                     case TokenType.UserDefinedWord:
                         // p117: SYMBOLIC CHARACTERS clause
                         // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character.

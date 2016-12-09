@@ -282,16 +282,6 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        public bool AfterTO
-        {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.TO; }
-        }
-
-        public bool AfterSAME
-        {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.SAME; }
-        }
-
         /// <summary>
         /// True after (PIC | PICTURE) IS?
         /// </summary>

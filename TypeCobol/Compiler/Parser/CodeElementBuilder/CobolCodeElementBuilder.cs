@@ -818,10 +818,10 @@ namespace TypeCobol.Compiler.Parser
 					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameRecordArea,
 						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.RECORD()));
 				}
-				else if (sameAreaClauseContext.SORT_ARG() != null)
+				else if (sameAreaClauseContext.SORT() != null)
 				{
 					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameSortArea,
-						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.SORT_ARG()));
+						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.SORT()));
 				}
 				else if (sameAreaClauseContext.SORT_MERGE() != null)
 				{
@@ -1228,7 +1228,7 @@ namespace TypeCobol.Compiler.Parser
 					CreateDataUsageProperty(DataUsage.PackedDecimal, c.COMPUTATIONAL_3()) ??
 					CreateDataUsageProperty(DataUsage.NativeBinary, c.COMP_5()) ??
 					CreateDataUsageProperty(DataUsage.NativeBinary, c.COMPUTATIONAL_5()) ??
-					CreateDataUsageProperty(DataUsage.Display, c.DISPLAY_ARG()) ??
+					CreateDataUsageProperty(DataUsage.Display, c.DISPLAY()) ??
 					CreateDataUsageProperty(DataUsage.DBCS, c.DISPLAY_1()) ??
 					CreateDataUsageProperty(DataUsage.Index, c.INDEX()) ??
 					CreateDataUsageProperty(DataUsage.National, c.NATIONAL()) ??

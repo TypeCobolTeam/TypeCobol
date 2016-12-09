@@ -1528,7 +1528,7 @@ rerunClause:
 // p149: The SAME SORT-MERGE AREA clause is equivalent to the SAME SORT AREA clause.
 
 sameAreaClause:
-    SAME (RECORD | SORT_ARG | SORT_MERGE)? AREA? FOR? fileNameReference+;
+    SAME (RECORD | SORT | SORT_MERGE)? AREA? FOR? fileNameReference+;
 
 // p149: The MULTIPLE FILE TAPE clause (format 1) specifies that two or more files share the same physical reel of tape.
 // This clause is syntax checked, but has no effect on the execution of the program. The function is performed by the system through the LABEL parameter of the DD statement.
@@ -3058,7 +3058,7 @@ usageClause:
 					(COMP_3 NATIVE?) | (COMPUTATIONAL_3 NATIVE?) |
 					(COMP_4 NATIVE?) | (COMPUTATIONAL_4 NATIVE?) |
 					(COMP_5 NATIVE?) | (COMPUTATIONAL_5 NATIVE?) |
-					(DISPLAY_ARG NATIVE?)   |
+					(DISPLAY NATIVE?)   |
 					(DISPLAY_1 NATIVE?) |
 					INDEX |
 					(NATIONAL NATIVE?) |
@@ -6245,7 +6245,7 @@ setStatementForAssignment:
 setSendingField:
 	  integerVariableOrIndex1                       // identifier can also be an index name	//Format 1 + 5
 	| nullPointerValue                              // pointer data item //Format 5 + 6 + 7
-	| ENTRY_ARG programNameOrProgramEntryVariable   // procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| ENTRY programNameOrProgramEntryVariable       // procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| selfObjectIdentifier;                         // object reference id 	//Format 7 (+NULL)
 
 // Format 2: SET for adjusting indexes

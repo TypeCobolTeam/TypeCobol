@@ -318,7 +318,6 @@ tokens
     DELIMITER,
     DEPENDING,
     DESCENDING,
-    DISPLAY_ARG,
     DISPLAY_1,
     DIVISION,
     DOWN,
@@ -331,7 +330,6 @@ tokens
     END,
     END_OF_PAGE,
     ENDING,
-    ENTRY_ARG,
     EOP,
     EQUAL,
     ERROR,
@@ -460,7 +458,6 @@ tokens
     SERVICE,
     SIGN,
     SIZE,
-    SORT_ARG,
     SORT_MERGE,
     SQL,
     SQLIMS,
@@ -1612,7 +1609,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     READY |
     RESET |
     REPLACE |
-    SERVICE |
+    SERVICE_CD |
     SKIP1 |
     SKIP2 |
     SKIP3 |
@@ -1830,7 +1827,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DELIMITER |
     DEPENDING |
     DESCENDING |
-    DISPLAY_ARG |
     DISPLAY_1 |
     DIVISION |
     DOWN |
@@ -1843,7 +1839,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     END |
     END_OF_PAGE |
     ENDING |
-    ENTRY_ARG |
     EOP |
     EQUAL |
     ERROR |
@@ -1969,9 +1964,9 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     SEPARATE |
     SEQUENCE |
     SEQUENTIAL |
+	SERVICE |
     SIGN |
     SIZE |
-    SORT_ARG |
     SORT_MERGE |
     SQL |
     SQLIMS |

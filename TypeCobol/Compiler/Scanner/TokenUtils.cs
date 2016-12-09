@@ -32,10 +32,8 @@ namespace TypeCobol.Compiler.Scanner
 			tokenStringFromTokenType[(int)TokenType.ASTERISK_CBL] = "*CBL";
 			tokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
 			tokenStringFromTokenType[(int)TokenType.DELETE_CD] = "DELETE";
-			tokenStringFromTokenType[(int)TokenType.EXEC_SQL_INCLUDE] = null;
-			tokenStringFromTokenType[(int)TokenType.DISPLAY_ARG] = "DISPLAY";
-			tokenStringFromTokenType[(int)TokenType.ENTRY_ARG] = "ENTRY";
-			tokenStringFromTokenType[(int)TokenType.SORT_ARG] = "SORT";
+            tokenStringFromTokenType[(int)TokenType.SERVICE_CD] = "SERVICE";
+            tokenStringFromTokenType[(int)TokenType.EXEC_SQL_INCLUDE] = "INCLUDE";
 
 			// Map token string to token type
 			tokenTypeFromTokenString = new Dictionary<string, TokenType>(types.Length-1, StringComparer.OrdinalIgnoreCase);
@@ -48,6 +46,8 @@ namespace TypeCobol.Compiler.Scanner
 			}
             // Token type DELETE is much more frequent than DELETE_CD, it should have priority
             tokenTypeFromTokenString["DELETE"] = TokenType.DELETE;
+            // Token type SERVICE is much more frequent than SERVICE_CD, it should have priority
+            tokenTypeFromTokenString["SERVICE"] = TokenType.SERVICE;
         }
 
         private static TokenFamily[] tokenFamilyFromTokenType; 
