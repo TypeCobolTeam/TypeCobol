@@ -50,6 +50,7 @@ tokens
     // Separators - Syntax
     PeriodSeparator,
     ColonSeparator,
+    QualifiedNameSeparator,
     LeftParenthesisSeparator,
     RightParenthesisSeparator,
     PseudoTextDelimiter,
@@ -73,6 +74,7 @@ tokens
     HexadecimalNationalLiteral,
     DBCSLiteral,
     // Literals - Numeric
+    LevelNumber,
     IntegerLiteral,
     DecimalLiteral,
     FloatingPointLiteral,
@@ -81,6 +83,7 @@ tokens
     CommentEntry,
     ExecStatementText,
     // Symbols
+    SectionParagraphName,
     IntrinsicFunctionName,
     ExecTranslatorName,
     PartialCobolWord,
@@ -106,75 +109,28 @@ tokens
     SKIP3,
     TITLE,
     // Keywords - Code element starting tokens
-    APPLY,
-    CONFIGURATION,
-    ELSE,
-    ENVIRONMENT,
-    FD,
-    FILE_CONTROL,
-    I_O_CONTROL,
-    ID,
-    IDENTIFICATION,
-    INPUT_OUTPUT,
-    LINKAGE,
-    LOCAL_STORAGE,
-    MULTIPLE,
-    OBJECT_COMPUTER,
-    REPOSITORY,
-    RERUN,
-    SAME,
-    SD,
-    SELECT,
-    SOURCE_COMPUTER,
-    SPECIAL_NAMES,
-    USE,
-    WORKING_STORAGE,
-    // Keywords - Statement starting tokens
     ACCEPT,
     ADD,
     ALTER,
+    APPLY,
     CALL,
     CANCEL,
     CLOSE,
     COMPUTE,
+    CONFIGURATION,
     CONTINUE,
+    DATA,
+    DECLARATIVES,
+    DECLARE,
     DELETE,
     DISPLAY,
     DIVIDE,
-    ENTRY,
-    EVALUATE,
-    EXEC,
-    EXECUTE,
-    EXIT,
-    GOBACK,
-    GO,
-    IF,
-    INITIALIZE,
-    INSPECT,
-    INVOKE,
-    MERGE,
-    MOVE,
-    MULTIPLY,
-    OPEN,
-    PERFORM,
-    READ,
-    RELEASE,
-    RETURN,
-    REWRITE,
-    SEARCH,
-    SET,
-    SORT,
-    START,
-    STOP,
-    STRING,
-    SUBTRACT,
-    UNSTRING,
-    WRITE,
-    XML,
-    // Keywords - Statement ending tokens
+    ELSE,
+    END,
     END_ADD,
     END_CALL,
     END_COMPUTE,
+    END_DECLARE,
     END_DELETE,
     END_DIVIDE,
     END_EVALUATE,
@@ -193,6 +149,61 @@ tokens
     END_UNSTRING,
     END_WRITE,
     END_XML,
+    ENTRY,
+    ENVIRONMENT,
+    EVALUATE,
+    EXEC,
+    EXECUTE,
+    EXIT,
+    FD,
+    FILE,
+    FILE_CONTROL,
+    GO,
+    GOBACK,
+    I_O_CONTROL,
+    ID,
+    IDENTIFICATION,
+    IF,
+    INITIALIZE,
+    INPUT_OUTPUT,
+    INSPECT,
+    INVOKE,
+    LINKAGE,
+    LOCAL_STORAGE,
+    MERGE,
+    MOVE,
+    MULTIPLE,
+    MULTIPLY,
+    NEXT,
+    OBJECT_COMPUTER,
+    OPEN,
+    PERFORM,
+    PROCEDURE,
+    READ,
+    RELEASE,
+    REPOSITORY,
+    RERUN,
+    RETURN,
+    REWRITE,
+    SAME,
+    SD,
+    SEARCH,
+    SELECT,
+    SERVICE,
+    SET,
+    SORT,
+    SOURCE_COMPUTER,
+    SPECIAL_NAMES,
+    START,
+    STOP,
+    STRING,
+    SUBTRACT,
+    UNSTRING,
+    USE,
+    WHEN,
+    WORKING_STORAGE,
+    WRITE,
+    XML,
     // Keywords - Special registers
     ADDRESS,
     DEBUG_CONTENTS,
@@ -304,7 +315,6 @@ tokens
     CORRESPONDING,
     COUNT,
     CURRENCY,
-    DATA,
     DATE,
     DATE_COMPILED,
     DATE_WRITTEN,
@@ -313,7 +323,6 @@ tokens
     DBCS,
     DEBUGGING,
     DECIMAL_POINT,
-    DECLARATIVES,
     DELIMITED,
     DELIMITER,
     DEPENDING,
@@ -327,7 +336,6 @@ tokens
     EGCS,
     ELEMENT,
     ENCODING,
-    END,
     END_OF_PAGE,
     ENDING,
     EOP,
@@ -339,7 +347,6 @@ tokens
     EXTERNAL,
     FACTORY,
     FALSE,
-    FILE,
     FILLER,
     FIRST,
     FOOTING,
@@ -389,7 +396,6 @@ tokens
     NATIVE,
     NEGATIVE,
     NEW,
-    NEXT,
     NO,
     NONNUMERIC,
     NOT,
@@ -419,7 +425,6 @@ tokens
     POINTER,
     POSITION,
     POSITIVE,
-    PROCEDURE,
     PROCEDURE_POINTER,
     PROCEDURES,
     PROCEED,
@@ -455,7 +460,6 @@ tokens
     SEPARATE,
     SEQUENCE,
     SEQUENTIAL,
-    SERVICE,
     SIGN,
     SIZE,
     SORT_MERGE,
@@ -496,7 +500,6 @@ tokens
     VALUE,
     VALUES,
     VARYING,
-    WHEN,
     WITH,
     WORDS,
     WRITE_ONLY,
@@ -508,8 +511,6 @@ tokens
     TYPEDEF,
     STRONG,
     // Keywords - TypeCobol
-    DECLARE,
-    END_DECLARE,
     UNSAFE,
     PUBLIC,
     PRIVATE,
@@ -1566,14 +1567,14 @@ recordingMode: enumeratedValue1;
 // -> it must be updated each time a new token type is added above
 
 literalOrUserDefinedWordOReservedWordExceptCopy: (
-	// Separators - Whitespace
+    // Separators - Whitespace
     // => excluded
     // Comments
     // => excluded
     // Separators - Syntax
     // => excluded
     // Special character word - Arithmetic operators
-	// => excluded
+    // => excluded
     // Special character word - Relational operators
     // => excluded
     // Literals - Alphanumeric
@@ -1584,22 +1585,26 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     HexadecimalNationalLiteral |
     DBCSLiteral |
     // Literals - Numeric
+    LevelNumber |
     IntegerLiteral |
     DecimalLiteral |
     FloatingPointLiteral |
     // Literals - Syntax tokens
     // => excluded
-    // Symbols    
+
+
+    // Symbols
+    SectionParagraphName |
     IntrinsicFunctionName |
     ExecTranslatorName |
-    PartialCobolWord  |
+    PartialCobolWord |
     UserDefinedWord |
     // Keywords - Compiler directive starting tokens
     ASTERISK_CBL |
     ASTERISK_CONTROL |
     BASIS |
     CBL |
-	// COPY => excluded
+    // COPY => excluded
     DELETE_CD |
     EJECT |
     ENTER |
@@ -1615,75 +1620,28 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     SKIP3 |
     TITLE |
     // Keywords - Code element starting tokens
-    APPLY |
-    CONFIGURATION |
-    ELSE |
-    ENVIRONMENT |
-    FD |
-    FILE_CONTROL |
-    I_O_CONTROL |
-    ID |
-    IDENTIFICATION |
-    INPUT_OUTPUT |
-    LINKAGE |
-    LOCAL_STORAGE |
-    MULTIPLE |
-    OBJECT_COMPUTER |
-    REPOSITORY |
-    RERUN |
-    SAME |
-    SD |
-    SELECT |
-    SOURCE_COMPUTER |
-    SPECIAL_NAMES |
-    USE |
-    WORKING_STORAGE |
-    // Keywords - Statement starting tokens
     ACCEPT |
     ADD |
     ALTER |
+    APPLY |
     CALL |
     CANCEL |
     CLOSE |
     COMPUTE |
+    CONFIGURATION |
     CONTINUE |
+    DATA |
+    DECLARATIVES |
+    DECLARE |
     DELETE |
     DISPLAY |
     DIVIDE |
-    ENTRY |
-    EVALUATE |
-    EXEC |
-    EXECUTE |
-    EXIT |
-    GOBACK |
-    GO |
-    IF |
-    INITIALIZE |
-    INSPECT |
-    INVOKE |
-    MERGE |
-    MOVE |
-    MULTIPLY |
-    OPEN |
-    PERFORM |
-    READ |
-    RELEASE |
-    RETURN |
-    REWRITE |
-    SEARCH |
-    SET |
-    SORT |
-    START |
-    STOP |
-    STRING |
-    SUBTRACT |
-    UNSTRING |
-    WRITE |
-    XML |
-    // Keywords - Statement ending tokens
+    ELSE |
+    END |
     END_ADD |
     END_CALL |
     END_COMPUTE |
+    END_DECLARE |
     END_DELETE |
     END_DIVIDE |
     END_EVALUATE |
@@ -1702,6 +1660,61 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     END_UNSTRING |
     END_WRITE |
     END_XML |
+    ENTRY |
+    ENVIRONMENT |
+    EVALUATE |
+    EXEC |
+    EXECUTE |
+    EXIT |
+    FD |
+    FILE |
+    FILE_CONTROL |
+    GO |
+    GOBACK |
+    I_O_CONTROL |
+    ID |
+    IDENTIFICATION |
+    IF |
+    INITIALIZE |
+    INPUT_OUTPUT |
+    INSPECT |
+    INVOKE |
+    LINKAGE |
+    LOCAL_STORAGE |
+    MERGE |
+    MOVE |
+    MULTIPLE |
+    MULTIPLY |
+    NEXT |
+    OBJECT_COMPUTER |
+    OPEN |
+    PERFORM |
+    PROCEDURE |
+    READ |
+    RELEASE |
+    REPOSITORY |
+    RERUN |
+    RETURN |
+    REWRITE |
+    SAME |
+    SD |
+    SEARCH |
+    SELECT |
+    SERVICE |
+    SET |
+    SORT |
+    SOURCE_COMPUTER |
+    SPECIAL_NAMES |
+    START |
+    STOP |
+    STRING |
+    SUBTRACT |
+    UNSTRING |
+    USE |
+    WHEN |
+    WORKING_STORAGE |
+    WRITE |
+    XML |
     // Keywords - Special registers
     ADDRESS |
     DEBUG_CONTENTS |
@@ -1813,7 +1826,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     CORRESPONDING |
     COUNT |
     CURRENCY |
-    DATA |
     DATE |
     DATE_COMPILED |
     DATE_WRITTEN |
@@ -1822,7 +1834,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DBCS |
     DEBUGGING |
     DECIMAL_POINT |
-    DECLARATIVES |
     DELIMITED |
     DELIMITER |
     DEPENDING |
@@ -1836,7 +1847,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     EGCS |
     ELEMENT |
     ENCODING |
-    END |
     END_OF_PAGE |
     ENDING |
     EOP |
@@ -1848,7 +1858,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     EXTERNAL |
     FACTORY |
     FALSE |
-    FILE |
     FILLER |
     FIRST |
     FOOTING |
@@ -1898,7 +1907,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     NATIVE |
     NEGATIVE |
     NEW |
-    NEXT |
     NO |
     NONNUMERIC |
     NOT |
@@ -1928,7 +1936,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     POINTER |
     POSITION |
     POSITIVE |
-    PROCEDURE |
     PROCEDURE_POINTER |
     PROCEDURES |
     PROCEED |
@@ -1964,7 +1971,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     SEPARATE |
     SEQUENCE |
     SEQUENTIAL |
-	SERVICE |
     SIGN |
     SIZE |
     SORT_MERGE |
@@ -2005,27 +2011,21 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     VALUE |
     VALUES |
     VARYING |
-    WHEN |
     WITH |
     WORDS |
     WRITE_ONLY |
     XML_DECLARATION |
     XML_SCHEMA |
     YYYYDDD |
-    YYYYMMDD
-
-// [COBOL2002]
-	| TYPEDEF
-	| STRONG
-// [/COBOL2002]
-// [TYPECOBOL]
-	| DECLARE
-	| END_DECLARE
-	| UNSAFE
-	| PUBLIC
-	| PRIVATE
-	| INOUT
-// [/TYPECOBOL]
+    YYYYMMDD |
+    // Keywords - Cobol 2002
+    TYPEDEF |
+    STRONG |
+    // Keywords - TypeCobol
+    UNSAFE |
+    PUBLIC |
+    PRIVATE |
+    INOUT
 );
 
 

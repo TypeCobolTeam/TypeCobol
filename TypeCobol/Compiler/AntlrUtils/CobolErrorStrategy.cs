@@ -199,9 +199,9 @@ namespace TypeCobol.Compiler.AntlrUtils
         protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
         {
             return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.StatementStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.StatementEndingKeyword ||
                    nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
+                   nextToken.TokenType == TokenType.LevelNumber || 
+                   nextToken.TokenType == TokenType.SectionParagraphName ||
                    (lastConsumedToken != null && (
                         nextToken.TokensLine != lastConsumedToken.TokensLine ||
                         lastConsumedToken.TokenType == TokenType.PeriodSeparator
@@ -239,9 +239,10 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
         {
-            return nextToken.TokenFamily == TokenFamily.StatementStartingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.StatementEndingKeyword ||
-                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword;
+            return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
+                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
+                   nextToken.TokenType == TokenType.LevelNumber ||
+                   nextToken.TokenType == TokenType.SectionParagraphName;
         }
     }
 }

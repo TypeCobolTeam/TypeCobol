@@ -88,7 +88,7 @@ namespace TypeCobolStudio.Editor
             {
                 return CommentStyle;
             }
-            else if (token.TokenFamily == TokenFamily.StatementStartingKeyword || token.TokenFamily == TokenFamily.StatementEndingKeyword)
+            else if (token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || token.TokenFamily == TokenFamily.CodeElementStartingKeyword)
             {
                 return CobolVerbStyle;
             }
