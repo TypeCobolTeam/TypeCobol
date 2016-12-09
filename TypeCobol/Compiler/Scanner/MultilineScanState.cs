@@ -184,10 +184,18 @@ namespace TypeCobol.Compiler.Scanner
             switch (newToken.TokenType)
             {                
                 case TokenType.IntegerLiteral:
-                    // Resolve DELETE ambiguity : DELETE + InterLiteral => DELETE_CD (compiler directive)
+                    // Resolve DELETE ambiguity : DELETE + IntegerLiteral => DELETE_CD (compiler directive)
                     if (AfterDELETE)
                     {
                         LastSignificantToken.CorrectType(TokenType.DELETE_CD);
+                    }
+                    break;
+                case TokenType.LABEL:
+                case TokenType.RELOAD:
+                    // Resolve SERVICE ambiguity : SERVICE + LABEL | RELOAD => SERVICE_CD (compiler directive)
+                    if (AfterSERVICE)
+                    {
+                        LastSignificantToken.CorrectType(TokenType.SERVICE_CD);
                     }
                     break;
             }
@@ -363,6 +371,11 @@ namespace TypeCobol.Compiler.Scanner
         public bool AfterFUNCTION
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.FUNCTION; }
+        }
+
+        public bool AfterSERVICE
+        {
+            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.SERVICE; }
         }
 
         /// <summary>

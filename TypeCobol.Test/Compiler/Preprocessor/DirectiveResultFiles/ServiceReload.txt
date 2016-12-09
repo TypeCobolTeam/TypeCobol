@@ -1,16 +1,16 @@
 ﻿-- Line 1 --
-*** DIRECTIVE SERVICE_RELOAD Test1 ([8,14:SERVICE]<SERVICE>[15,15: ]<SpaceSeparator>[16,21:RELOAD]<RELOAD>[22,22: ]<SpaceSeparator>[23,27:Test1]<UserDefinedWord>) ***
+*** DIRECTIVE SERVICE_RELOAD Test1 ([8,14:SERVICE]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,21:RELOAD]<RELOAD>[22,22: ]<SpaceSeparator>[23,27:Test1]<UserDefinedWord>) ***
 
 -- Line 2 --
 [8,14:       ]<SpaceSeparator>
-*** DIRECTIVE SERVICE_RELOAD Test2 ([15,21:SERVICE]<SERVICE>[22,29:        ]<SpaceSeparator>[30,35:reload]<RELOAD>[36,36: ]<SpaceSeparator>[37,41:Test2]<UserDefinedWord>) ***
+*** DIRECTIVE SERVICE_RELOAD Test2 ([15,21:SERVICE]<SERVICE_CD>[22,29:        ]<SpaceSeparator>[30,35:reload]<RELOAD>[36,36: ]<SpaceSeparator>[37,41:Test2]<UserDefinedWord>) ***
 
 -- Line 3 --
 [8,14:DISPLAY]<DISPLAY>
 [15,15: ]<SpaceSeparator>
 [16,22:"start"]<AlphanumericLiteral>(",Y,Y){start}
 [23,23: ]<SpaceSeparator>
-*** DIRECTIVE SERVICE_RELOAD Test3 ([24,30:service]<SERVICE>[31,38:        ]<SpaceSeparator>) ***
+*** DIRECTIVE SERVICE_RELOAD Test3 ([24,30:service]<SERVICE_CD>[31,38:        ]<SpaceSeparator>) ***
 
 -- Line 4 --
 +++ CONTINUATION OF CompilerDirective ([8,13:reload]<RELOAD>[14,14: ]<SpaceSeparator>) +++
@@ -25,12 +25,12 @@
 -- Line 6 --
 
 -- Line 7 --
-*** DIRECTIVE SERVICE_RELOAD Test3 ([8,14:SERVICE]<SERVICE>[15,15: ]<SpaceSeparator>[16,21:RELOAD]<RELOAD>[22,22: ]<SpaceSeparator>[23,27:Test3]<UserDefinedWord>) ***
+*** DIRECTIVE SERVICE_RELOAD Test3 ([8,14:SERVICE]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,21:RELOAD]<RELOAD>[22,22: ]<SpaceSeparator>[23,27:Test3]<UserDefinedWord>) ***
 [28,28+:.]<PeriodSeparator>
 
 -- Line 8 --
 [8,11:    ]<SpaceSeparator>
-*** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD  ([12,18:service]<SERVICE>[19,19: ]<SpaceSeparator>[20,25:RELOAD]<RELOAD>[26,26+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD  ([12,18:service]<SERVICE_CD>[19,19: ]<SpaceSeparator>[20,25:RELOAD]<RELOAD>[26,26+:.]<PeriodSeparator>) ***
 [26,26]<27,Error,Syntax>Syntax error : mismatched input '.' expecting UserDefinedWord
 
 -- Line 9 --
@@ -41,12 +41,11 @@
 [15,15: ]<SpaceSeparator>
 [16,20:Test3]<UserDefinedWord>
 [21,21+:.]<PeriodSeparator>
-[16,20]<27,Error,Syntax>Syntax error : no viable alternative at input 'service ... Test3'
 
 -- Line 11 --
 [8,17:ICE RELOAD]<InvalidToken>
 
 -- Line 12 --
-*** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD <missing UserDefinedWord> ([8,14:service]<SERVICE>[15,15: ]<SpaceSeparator>[16,21:reload]<RELOAD>) ***
+*** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD <missing UserDefinedWord> ([8,14:service]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,21:reload]<RELOAD>) ***
 [1,0]<27,Error,Syntax>Syntax error : missing UserDefinedWord at ''
 

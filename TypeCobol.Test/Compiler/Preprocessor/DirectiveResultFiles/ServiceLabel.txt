@@ -1,19 +1,19 @@
 ﻿-- Line 1 --
-*** DIRECTIVE SERVICE_LABEL ([8,14:SERVICE]<SERVICE>[15,15: ]<SpaceSeparator>[16,20:LABEL]<LABEL>) ***
+*** DIRECTIVE SERVICE_LABEL ([8,14:SERVICE]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,20:LABEL]<LABEL>) ***
 
 -- Line 2 --
 [8,14:       ]<SpaceSeparator>
-*** DIRECTIVE SERVICE_LABEL ([15,21:SERVICE]<SERVICE>[22,29:        ]<SpaceSeparator>[30,34:label]<LABEL>) ***
+*** DIRECTIVE SERVICE_LABEL ([15,21:SERVICE]<SERVICE_CD>[22,29:        ]<SpaceSeparator>[30,34:label]<LABEL>) ***
 
 -- Line 3 --
 
 -- Line 4 --
-*** DIRECTIVE SERVICE_LABEL ([8,14:SERVICE]<SERVICE>[15,15: ]<SpaceSeparator>[16,20:LABEL]<LABEL>) ***
+*** DIRECTIVE SERVICE_LABEL ([8,14:SERVICE]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,20:LABEL]<LABEL>) ***
 [21,21+:.]<PeriodSeparator>
 
 -- Line 5 --
 [8,11:    ]<SpaceSeparator>
-*** DIRECTIVE SERVICE_LABEL ([12,18:service]<SERVICE>[19,19: ]<SpaceSeparator>) ***
+*** DIRECTIVE SERVICE_LABEL ([12,18:service]<SERVICE_CD>[19,19: ]<SpaceSeparator>) ***
 
 -- Line 6 --
 +++ CONTINUATION OF CompilerDirective ([8,12:LABEL]<LABEL>) +++
@@ -25,5 +25,4 @@
 [8,12:label]<LABEL>
 [13,13: ]<SpaceSeparator>
 [14,20:service]<SERVICE>
-[1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'service ... '
 

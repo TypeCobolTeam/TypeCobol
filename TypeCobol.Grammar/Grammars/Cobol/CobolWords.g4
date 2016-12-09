@@ -100,7 +100,7 @@ tokens
     READY,
     RESET,
     REPLACE,
-    SERVICE,
+    SERVICE_CD,
     SKIP1,
     SKIP2,
     SKIP3,
@@ -457,6 +457,7 @@ tokens
     SEPARATE,
     SEQUENCE,
     SEQUENTIAL,
+    SERVICE,
     SIGN,
     SIZE,
     SORT_ARG,
@@ -506,10 +507,10 @@ tokens
     XML_SCHEMA,
     YYYYDDD,
     YYYYMMDD,
-    // Cobol 2002 tokens
+    // Keywords - Cobol 2002
     TYPEDEF,
     STRONG,
-    // TypeCobol tokens
+    // Keywords - TypeCobol
     DECLARE,
     END_DECLARE,
     UNSAFE,

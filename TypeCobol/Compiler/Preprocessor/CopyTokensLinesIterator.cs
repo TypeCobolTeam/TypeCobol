@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 if (currentPosition.ImportedDocumentIterator == null)
                 {
-                    return tokensLines[currentPosition.LineIndex];
+                    return currentLine;
                 }
                 else
                 {
