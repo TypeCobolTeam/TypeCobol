@@ -692,6 +692,15 @@ namespace TypeCobol.Compiler.Scanner
                         return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
                     }
                 case ':':
+                    // -- TypeCobol specific syntax --
+                    // QualifiedNameSeparator => qualifierName::qualifiedName
+                    if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
+                    {
+                        // consume two :: chars
+                        currentIndex += 2;
+                        return new Token(TokenType.QualifiedNameSeparator, startIndex, startIndex + 1, tokensLine);
+                    }
+                    // --
                     // The COPY statement with REPLACING phrase can be used to replace parts of words. 
                     // By inserting a dummy operand delimited by colons into the program text, the compiler will replace the dummy operand with the desired text. 
                     int patternEndIndex;

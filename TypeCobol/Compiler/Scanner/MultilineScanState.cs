@@ -424,6 +424,14 @@ namespace TypeCobol.Compiler.Scanner
         }        
 
         /// <summary>
+        /// True at the beggining of a parse section, or after PeriodSeparator, or after END-EXEC
+        /// </summary>
+        public bool AtBeginningOfSentence
+        {
+            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC; }
+        }
+
+        /// <summary>
         /// Used to check if an update to a TokensLine modified the scanner context for the following lines
         /// </summary>
         public override bool Equals(object obj)

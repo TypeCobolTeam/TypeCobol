@@ -17,27 +17,27 @@ qualifiedParagraphNameReference: cobolQualifiedParagraphNameReference | tcQualif
 cobolQualifiedParagraphNameReference: // was qualifiedParagraphNameReference
 	paragraphNameReference (IN | OF) sectionNameReference;
 tcQualifiedParagraphNameReference: // new feature
-	sectionNameReference ColonSeparator ColonSeparator paragraphNameReference;
+	sectionNameReference QualifiedNameSeparator paragraphNameReference;
 
 qualifiedDataName1: cobolQualifiedDataName1 | tcQualifiedDataName1;
 cobolQualifiedDataName1: // was qualifiedDataName1
 	dataNameReference ((IN | OF) dataNameReferenceOrFileNameReference)+;
 tcQualifiedDataName1: // new feature
-	(dataNameReferenceOrFileNameReference ColonSeparator ColonSeparator)+ dataNameReference;
+	(dataNameReferenceOrFileNameReference QualifiedNameSeparator)+ dataNameReference;
 
 qualifiedConditionName: cobolQualifiedConditionName | tcQualifiedConditionName;
 cobolQualifiedConditionName: // was qualifiedConditionName
 	conditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)*;
 tcQualifiedConditionName: // new feature
-	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference;
+	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference QualifiedNameSeparator)* conditionNameReferenceOrConditionForUPSISwitchNameReference;
 
 qualifiedDataNameOrQualifiedConditionName1: cobolQualifiedDataNameOrQualifiedConditionName1 | tcQualifiedDataNameOrQualifiedConditionName1;
 cobolQualifiedDataNameOrQualifiedConditionName1: // was qualifiedDataNameOrQualifiedConditionName1
 	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference ((IN | OF) dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference)+;
 tcQualifiedDataNameOrQualifiedConditionName1: // new feature
-	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference ColonSeparator ColonSeparator)+ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference;
+	(dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference QualifiedNameSeparator)+ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference;
 
-qualifiedTextName: (textName ((IN | OF) libraryName)?) | (libraryName ColonSeparator ColonSeparator textName);
+qualifiedTextName: (textName ((IN | OF) libraryName)?) | (libraryName QualifiedNameSeparator textName);
 
 
 
