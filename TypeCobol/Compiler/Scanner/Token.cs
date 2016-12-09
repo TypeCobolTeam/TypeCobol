@@ -281,6 +281,14 @@ namespace TypeCobol.Compiler.Scanner
             //    because it should be filtered at the parser stage
         }
 
+        internal void DegradePotentialCodeElementStartingKeywordToSyntaxKeyword()
+        {
+            if (TokenFamily == TokenFamily.CodeElementStartingKeyword)
+            {
+                TokenFamily = TokenFamily.SyntaxKeyword;
+            }
+        }
+
         // --- Continuation lines & multiline tokens ---
 
         /// <summary>

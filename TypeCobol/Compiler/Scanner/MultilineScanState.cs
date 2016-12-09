@@ -174,36 +174,14 @@ namespace TypeCobol.Compiler.Scanner
                 return;
             }
 
-            // Adjust new token properties based on context
-            switch (newToken.TokenType)
-            {
-                // ...
-            }
+            // Adjust token properties based on context
+            AdjustPreviousTokenPropertiesBasedOnCurrentToken(newToken);
+            AdjustCurrentTokenPropertiesBasedOnPreviousToken(newToken);
 
-            // Adjust previous token properties based on context
-            switch (newToken.TokenType)
-            {                
-                case TokenType.IntegerLiteral:
-                    // Resolve DELETE ambiguity : DELETE + IntegerLiteral => DELETE_CD (compiler directive)
-                    if (AfterDELETE)
-                    {
-                        LastSignificantToken.CorrectType(TokenType.DELETE_CD);
-                    }
-                    break;
-                case TokenType.LABEL:
-                case TokenType.RELOAD:
-                    // Resolve SERVICE ambiguity : SERVICE + LABEL | RELOAD => SERVICE_CD (compiler directive)
-                    if (AfterSERVICE)
-                    {
-                        LastSignificantToken.CorrectType(TokenType.SERVICE_CD);
-                    }
-                    break;
-            }
-        
             // Inspect the new token and see if it changes the current Scan state
             switch (newToken.TokenType)
-            {                
-                case TokenType.DIVISION:                    
+            {
+                case TokenType.DIVISION:
                     if (LastSignificantToken != null)
                     {
                         // Register the start of the DATA DIVISION
@@ -231,7 +209,7 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 case TokenType.COPY:
                     // Register the end of a pseudo text section (COPY not allowed in pseudo text)
-                    if(InsidePseudoText)
+                    if (InsidePseudoText)
                     {
                         InsidePseudoText = false;
                     }
@@ -254,10 +232,10 @@ namespace TypeCobol.Compiler.Scanner
                     break;
             }
             // Register the end of a SYMBOLIC CHARACTERS? clause
-            if (InsideSymbolicCharacterDefinitions && 
-                newToken.TokenType != TokenType.SYMBOLIC && newToken.TokenType != TokenType.CHARACTERS && 
+            if (InsideSymbolicCharacterDefinitions &&
+                newToken.TokenType != TokenType.SYMBOLIC && newToken.TokenType != TokenType.CHARACTERS &&
                 newToken.TokenType != TokenType.SymbolicCharacter &&
-                newToken.TokenType != TokenType.IS && newToken.TokenType != TokenType.ARE && 
+                newToken.TokenType != TokenType.IS && newToken.TokenType != TokenType.ARE &&
                 newToken.TokenType != TokenType.IntegerLiteral)
             {
                 InsideSymbolicCharacterDefinitions = false;
@@ -266,6 +244,93 @@ namespace TypeCobol.Compiler.Scanner
             // Register the last significant token 
             BeforeLastSignificantToken = LastSignificantToken;
             LastSignificantToken = newToken;
+        }
+
+        private void AdjustPreviousTokenPropertiesBasedOnCurrentToken(Token newToken)
+        {
+            if (LastSignificantToken != null)
+            {
+                // Adjust previous token properties based on current context            
+                switch (LastSignificantToken.TokenType)
+                {
+                    case TokenType.DATA:
+                        if (newToken.TokenType != TokenType.DIVISION)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                    case TokenType.DELETE:
+                        if (newToken.TokenType == TokenType.IntegerLiteral)
+                        {
+                            LastSignificantToken.CorrectType(TokenType.DELETE_CD);
+                        }
+                        break;
+                    case TokenType.END:
+                        if (!(newToken.TokenType == TokenType.PROGRAM || newToken.TokenType == TokenType.CLASS ||
+                              newToken.TokenType == TokenType.FACTORY || newToken.TokenType == TokenType.OBJECT ||
+                              newToken.TokenType == TokenType.METHOD || newToken.TokenType == TokenType.DECLARATIVES))
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                    case TokenType.FILE:
+                        if (newToken.TokenType != TokenType.SECTION)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                    case TokenType.ID:
+                        if (newToken.TokenType != TokenType.DIVISION)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                    case TokenType.NEXT:
+                        if (newToken.TokenType != TokenType.SENTENCE)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                    case TokenType.PROCEDURE:
+                        if (newToken.TokenType != TokenType.DIVISION)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                    case TokenType.SERVICE:
+                        if (newToken.TokenType == TokenType.LABEL || newToken.TokenType == TokenType.RELOAD)
+                        {
+                            LastSignificantToken.CorrectType(TokenType.SERVICE_CD);
+                        }
+                        break;
+                    case TokenType.WHEN:
+                        if (newToken.TokenType == TokenType.HIGH_VALUE || newToken.TokenType == TokenType.HIGH_VALUES ||
+                            newToken.TokenType == TokenType.LOW_VALUE || newToken.TokenType == TokenType.LOW_VALUES ||
+                            newToken.TokenType == TokenType.SPACE || newToken.TokenType == TokenType.SPACES ||
+                            newToken.TokenType == TokenType.ZERO || newToken.TokenType == TokenType.ZEROS || newToken.TokenType == TokenType.ZEROS)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void AdjustCurrentTokenPropertiesBasedOnPreviousToken(Token newToken)
+        {
+            if (LastSignificantToken != null)
+            {
+                // Adjust current token properties based on previous context
+                switch (newToken.TokenType)
+                {
+                    case TokenType.DECLARATIVES:
+                        if (LastSignificantToken.TokenType == TokenType.END)
+                        {
+                            LastSignificantToken.DegradePotentialCodeElementStartingKeywordToSyntaxKeyword();
+                        }
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -280,6 +345,24 @@ namespace TypeCobol.Compiler.Scanner
                (LastSignificantToken.Text.Equals("SQL", StringComparison.InvariantCultureIgnoreCase) ||
                 LastSignificantToken.Text.Equals("SQLIMS", StringComparison.InvariantCultureIgnoreCase));
             }
+        }
+
+        /// <summary>
+        /// True after (EXEC | EXECUTE)
+        /// </summary>
+        public bool AfterExec
+        {
+            get { return LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EXEC || LastSignificantToken.TokenType == TokenType.EXECUTE); }
+        }
+
+        public bool AfterExecTranslatorName
+        {
+            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.ExecTranslatorName; }
+        }
+
+        public bool AfterExecStatementText
+        {
+            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.ExecStatementText; }
         }
 
         /// <summary>
@@ -334,39 +417,11 @@ namespace TypeCobol.Compiler.Scanner
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.CommentEntry; }
         }
-
-        public bool AfterDELETE
-        {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.DELETE; }
-        }
-
-        /// <summary>
-        /// True after (EXEC | EXECUTE)
-        /// </summary>
-        public bool AfterExec
-        {
-            get { return LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EXEC || LastSignificantToken.TokenType == TokenType.EXECUTE); }
-        }
-
-        public bool AfterExecTranslatorName
-        {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.ExecTranslatorName; }
-        }
-
-        public bool AfterExecStatementText
-        {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.ExecStatementText; }
-        }
-
+        
         public bool AfterFUNCTION
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.FUNCTION; }
-        }
-
-        public bool AfterSERVICE
-        {
-            get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.SERVICE; }
-        }
+        }        
 
         /// <summary>
         /// Used to check if an update to a TokensLine modified the scanner context for the following lines

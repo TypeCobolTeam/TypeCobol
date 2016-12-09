@@ -1707,7 +1707,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to match keyword text
                 tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText);
 
-                // Correct token type for context-sensitive tokens
+                // Special case : symbolic characters
                 switch (tokenType)
                 {
                     case TokenType.UserDefinedWord:
