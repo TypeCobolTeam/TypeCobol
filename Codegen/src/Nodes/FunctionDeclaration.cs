@@ -95,10 +95,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 			if (_cache == null) {
 				_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
 				_cache.Add(new TextLineSnapshot(-1, "*", null));
-				foreach(var line in Node.Lines) {
-					var l = (Compiler.Parser.CodeElementsLine)line;
-					_cache.Add(new CobolPartialTextLine(l.SequenceNumberText, '*', l.SourceText, l.CommentText, l.ColumnsLayout, -1, true,true));
-				}
+                    //TODO add Function signature as comment
 				_cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________", null));
 				_cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
 				_cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. "+ProgramName+'.', null));

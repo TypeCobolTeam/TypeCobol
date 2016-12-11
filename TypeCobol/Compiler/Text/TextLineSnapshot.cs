@@ -14,29 +14,12 @@ namespace TypeCobol.Compiler.Text
             LineTrackingReferenceInSourceDocument = lineTrackingReferenceInSourceDocument;
         }
 
-		public TextLineSnapshot(int lineIndex, string text, bool startsLine, bool endsLine)
-				:this(lineIndex, text, null) {
-			StartsLine = startsLine;
-			EndsLine   = endsLine;
-		}
-		private bool startsline = true;
-		public bool StartsLine {
-			get { return startsline; }
-			private set { startsline = value; }
-		}
-		private bool endsline = true;
-		public bool EndsLine {
-			get { return endsline; }
-			private set { endsline = value; }
-		}
-
         public TextLineSnapshot(ITextLine mutableTextLine)
         {
             InitialLineIndex = mutableTextLine.InitialLineIndex;
             Text = mutableTextLine.Text;
             LineTrackingReferenceInSourceDocument = mutableTextLine.LineTrackingReferenceInSourceDocument;
         }
-
 
         /// <summary>
         /// Text of the line, without the end of line delimiters

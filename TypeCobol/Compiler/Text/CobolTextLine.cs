@@ -34,12 +34,12 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         Invalid
     }
-    
+
     /// <summary>
     /// Partition of a COBOL text line into reference format areas
     /// </summary>
     public class CobolTextLine : ICobolTextLine
-    {       
+    {
         public CobolTextLine(ITextLine textLine, ColumnsLayout columnsLayout)
         {
             // Reuse the external text line object
@@ -63,6 +63,78 @@ namespace TypeCobol.Compiler.Text
 
             // First text analysis phase of the incremental compilation process
             CompilationStep = CompilationStep.Text;
+        }
+
+        /// <summary>
+        /// Create an isolated CobolTextLine, not based on a real line of a TextDocument.
+        /// Useful only for unit tests, or to compute intermediate results.
+        /// </summary>
+        public static CobolTextLine Create(string text)
+        {
+            ITextLine isolatedTextLine = new TextLineSnapshot(-1, text, null);
+            return new CobolTextLine(isolatedTextLine, ColumnsLayout.FreeTextFormat);
+        }
+
+        public static ICollection<ITextLine> Create(string text, ColumnsLayout layout, int index = -1)
+        {
+            if (layout == ColumnsLayout.FreeTextFormat)
+            {
+                var result = new List<ITextLine>();
+                result.Add(new TextLineSnapshot(index, text, null));
+                return result;
+            }
+            if (layout == ColumnsLayout.CobolReferenceFormat)
+            {
+                char indicator = ' ';
+                string indent = "";
+                bool wasComment = text.Trim().StartsWith("*");
+                if (wasComment)
+                {
+                    indicator = '*';
+                    int i = text.IndexOf('*');
+                    indent = text.Substring(0, i);
+                    text = text.Substring(i + 1);
+                }
+                return CreateCobolLines(layout, index, indicator, indent, text);
+            }
+            throw new System.NotImplementedException("Unsuported ITextLine type: " + layout);
+        }
+        private static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text)
+        {
+            var result = new List<ITextLine>();
+            var lines = Split(text, 65);
+            result.Add(new TextLineSnapshot(index, Convert(layout, lines[0], indicator, indent), null));
+            if (indicator == ' ') indicator = '-';
+            for (int i = 1; i < lines.Count; i++)
+            {
+                if (index > -1) index++;
+                result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent), null));
+            }
+            return result;
+        }
+        private static string Convert(ColumnsLayout layout, string text, char indicator, string indent)
+        {
+            string result = "";
+            if (layout == ColumnsLayout.FreeTextFormat)
+            {
+                result = (indicator == '*' ? "*" : "") + indent + text;
+            }
+            else {
+                string end = "";
+                for (int c = text.Length; c < 65; c++) end += " ";
+                result = "      " + indicator + indent + text + end + "      ";//+"000000";
+            }
+            return result;
+        }
+        private static IList<string> Split(string line, int max)
+        {
+            var lines = new List<string>();
+            if (line.Length < 1) lines.Add(line);
+            else {
+                for (int i = 0; i < line.Length; i += max)
+                    lines.Add(line.Substring(i, Math.Min(max, line.Length - i)));
+            }
+            return lines;
         }
 
         // --- Cobol text line scanner
@@ -170,7 +242,7 @@ namespace TypeCobol.Compiler.Text
             "DELETE",
             "INSERT",
         };
-        
+
         private static int FindFirstCharOfCompilerDirectiveBeforeColumn8(string line)
         {
             bool compilerDirectiveFound = false;
@@ -259,7 +331,7 @@ namespace TypeCobol.Compiler.Text
             }
 
             // Detect blank lines
-            if((Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation) &&
+            if ((Type == CobolTextLineType.Source || Type == CobolTextLineType.Debug || Type == CobolTextLineType.Continuation) &&
                (Source.IsEmpty || String.IsNullOrWhiteSpace(SourceText)))
             {
                 Type = CobolTextLineType.Blank;
@@ -277,7 +349,7 @@ namespace TypeCobol.Compiler.Text
         /// Cobol text line type : Source, Debug, Comment or Continuation
         /// </summary>
         public CobolTextLineType Type { get; private set; }
-                
+
         /// <summary>
         /// Sequence number area : Columns 1 through 6
         /// </summary>
@@ -286,7 +358,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Sequence number text : Columns 1 through 6
         /// </summary>
-        public virtual string SequenceNumberText
+        public string SequenceNumberText
         {
             get
             {
@@ -302,7 +374,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Indicator char : Column 7
         /// </summary>
-        public virtual char IndicatorChar
+        public char IndicatorChar
         {
             get
             {
@@ -316,7 +388,7 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public TextArea Source { get; private set; }
 
-        public virtual string SourceText
+        public string SourceText
         {
             get
             {
@@ -329,27 +401,21 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public TextArea Comment { get; private set; }
 
-        /// <summary>Comment text : Columns 73 through 80+</summary>
-        public virtual string CommentText
+        /// <summary>
+        /// Comment text : Columns 73 through 80+
+        /// </summary>
+        public string CommentText
         {
             get
             {
                 return Comment.IsEmpty ? null : textLine.TextSegment(Comment.StartIndex, Comment.EndIndex);
             }
         }
-        
+
         public override string ToString()
         {
             return "SequenceNumber" + SequenceNumber + " Indicator" + Indicator + " Source" + Source + " Comment" + Comment;
         }
-
-		public string Dump() {
-			var str = new System.Text.StringBuilder();
-			str.Append(SequenceNumberText ?? "?").Append(':').Append(IndicatorChar)
-			   .Append(':').Append(SourceText ?? "?")
-			   .Append(':').Append(CommentText ?? "?");
-			return str.ToString();
-		}
 
         // --- ITextLine wrapper ---
 
@@ -359,7 +425,7 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Text of the line, without the end of line delimiters
         /// </summary>
-        public virtual string Text { get { return textLine.Text; } }
+        public string Text { get { return textLine.Text; } }
 
         /// <summary>
         /// Part of the text of the line, from start index to end index (included)
@@ -409,7 +475,7 @@ namespace TypeCobol.Compiler.Text
         public object LineTrackingReferenceInSourceDocument { get { return textLine.LineTrackingReferenceInSourceDocument; } }
 
         // --- Incremental compilation process ---
-        
+
         /// <summary>
         /// Indicates which compiler step last updated the properties of this line
         /// </summary>
@@ -422,7 +488,7 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         public bool CanStillBeUpdatedBy(CompilationStep updatingStep)
         {
-            if(CompilationStep >= updatingStep)
+            if (CompilationStep >= updatingStep)
             {
                 return false;
             }
@@ -432,53 +498,4 @@ namespace TypeCobol.Compiler.Text
             }
         }
     }
-
-
-
-
-	public class CobolPartialTextLine: CobolTextLine {
-		public CobolPartialTextLine(
-				string sequence, char indicator, string source, string comment,
-				ColumnsLayout layout, int index, bool startsLine, bool endsLine)
-		: base(new TextLineSnapshot(index, EMPTY_LINE, null), layout) {
-			this.sequence  = sequence;
-			this.indicator = indicator;
-			Tools.Strings.GetIndent(source, out this.indent, out this.source);
-			this.comment   = comment;
-			this.StartsLine = startsLine;
-			this.EndsLine   = endsLine;
-		}
-		private static string EMPTY_LINE = "                                                                                ";
-
-		private string sequence;
-		public override string SequenceNumberText { get { return sequence; } }
-
-		private char indicator;
-		public override char IndicatorChar {
-			get { return indicator; }
-//			set { indicator = value; }
-		}
-		public void SetIndicatorChar(char value) { indicator = value; }
-
-		private string indent;
-		public virtual string Indent { get { return indent; } }
-
-		private string source;
-		public override string SourceText { get { return source; } }
-
-		private string comment;
-		public override string CommentText { get { return comment; } }
-
-		public virtual bool StartsLine { get; private set; }
-		public virtual bool EndsLine   { get; private set; }
-
-		public override string ToString() {
-			var str = new System.Text.StringBuilder();
-			if (StartsLine) str.Append(SequenceNumberText).Append(IndicatorChar.ToString()).Append(Indent);
-			str.Append(SourceText);
-			if (EndsLine) str.Append(CommentText);
-			return str.ToString();
-		}
-		public override string Text { get { return ToString(); } }
-	}
 }
