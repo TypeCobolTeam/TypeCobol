@@ -11,7 +11,7 @@
     <AssemblyName>TypeCobol.Grammar</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
-    <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
+    <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
