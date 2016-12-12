@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
@@ -173,6 +174,24 @@ namespace TypeCobol.Compiler
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary> 
         public ProgramClassDocument ProgramClassDocumentSnapshot { get; private set; }
+
+        public IList<Diagnostic> AllDiagnostics() {
+            var allDiagnostics = new List<Diagnostic>();
+            if (CodeElementsDocumentSnapshot.ParserDiagnostics != null) {
+                allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
+            }
+            if (ProgramClassDocumentSnapshot.Diagnostics != null) {
+                allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+            }
+
+            foreach (var ce in CodeElementsDocumentSnapshot.CodeElements) {
+                if (ce.Diagnostics != null) {
+                    allDiagnostics.AddRange(ce.Diagnostics);
+                }
+            }
+
+            return allDiagnostics;
+        }
 
         /// <summary>
         /// Subscribe to this event to be notified of all changes in the complete program or class view of the document
