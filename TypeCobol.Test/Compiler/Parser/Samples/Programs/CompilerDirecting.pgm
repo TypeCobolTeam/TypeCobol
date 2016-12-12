@@ -3,6 +3,9 @@
   
 PROCEDURE DIVISION.
 
+procedurename.
+  .
+
 SKIP-01.
   CONTINUE
   SKIP3
@@ -22,14 +25,14 @@ SKIP-06.
   CONTINUE
   SKIP3
   CONTINUE.
-SKIP-06.
+SKIP-07.
   PERFORM procedurename
   SKIP3
   .
-SKIP-07.
+SKIP-08.
   PERFORM procedurename.
   SKIP3.
-SKIP-08.
+SKIP-09.
   PERFORM procedurename
   SKIP3
   PERFORM procedurename.
@@ -53,14 +56,14 @@ EJECT06.
   CONTINUE
   EJECT
   CONTINUE.
-EJECT06.
+EJECT07.
   PERFORM procedurename
   EJECT
   .
-EJECT07.
+EJECT08.
   PERFORM procedurename.
   EJECT.
-EJECT08.
+EJECT09.
   PERFORM procedurename
   EJECT
   PERFORM procedurename.
@@ -84,14 +87,14 @@ COPY06.
   CONTINUE
   COPY 'x'.
   CONTINUE.
-COPY06.
+COPY07.
   PERFORM procedurename
   COPY 'x'.
   .
-COPY07.
+COPY08.
   PERFORM procedurename.
   COPY 'x'.
-COPY08.
+COPY09.
   PERFORM procedurename
   COPY 'x'
   PERFORM procedurename.
@@ -115,13 +118,13 @@ BASIS06.
   CONTINUE
   BASIS 'x'
   CONTINUE.
-BASIS06.
+BASIS07.
   PERFORM procedurename
   BASIS 'x'.
-BASIS07.
+BASIS08.
   PERFORM procedurename.
   BASIS 'x'.
-BASIS08.
+BASIS09.
   PERFORM procedurename
   BASIS 'x'
   PERFORM procedurename.

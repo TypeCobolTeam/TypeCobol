@@ -284,15 +284,28 @@ namespace TypeCobol.Compiler.Parser
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
 			var node = new Nodes.TypeDefinition(typedef);
 			Enter(node);
-			node.SymbolTable.AddType(node);
+			var table = node.SymbolTable;
+			if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
+				while(table.CurrentScope != SymbolTable.Scope.Global)
+					table = table.EnclosingScope;
+			table.AddType(node);
 		}
 // [/COBOL 2002]
+
+		private void AddToSymbolTable(DataDescription node) {
+			if (node.IsPartOfATypeDef) return;
+			var table = node.SymbolTable;
+			if (node.CodeElement().IsGlobal)
+				while(table.CurrentScope != SymbolTable.Scope.Global)
+					table = table.EnclosingScope;
+			table.AddVariable(node);
+        }
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
 			SetCurrentNodeToTopLevelItem(data.LevelNumber);
 			var node = new DataDescription(data);
 			Enter(node);
-			if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+			AddToSymbolTable(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {
@@ -337,7 +350,8 @@ namespace TypeCobol.Compiler.Parser
 			while(parent != null) {
 				var data = parent.CodeElement as DataDefinitionEntry;
 				if (data == null) return null;
-				if (data.LevelNumber.Value < level) return parent;
+                //TODO SMEDILOL: this seems wrong: how a parent DataDefinitionEntry can have a greater or equal levelNumber ?
+				if (data.LevelNumber == null || data.LevelNumber.Value < level) return parent;
 				parent = parent.Parent;
 			}
 			return null;
@@ -432,18 +446,24 @@ namespace TypeCobol.Compiler.Parser
 			// if we do not, no need to detach anything in ExitSection
 			if (context.SectionHeader() != null) {
 				SectionHeader header = (SectionHeader)context.SectionHeader().Symbol;
-				Enter(new Section(header), context);
+				var section = new Section(header);
+				Enter(section, context);
+				section.SymbolTable.AddSection(section);
 			} else
 			if (context.ParagraphHeader() != null) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
-				Enter(new Paragraph(header), context);
+				var paragraph = new Paragraph(header);
+				Enter(paragraph, context);
+				paragraph.SymbolTable.AddParagraph(paragraph);
 			}
 		}
 
 		public override void EnterParagraph(ProgramClassParser.ParagraphContext context) {
 			if (!(Program.SyntaxTree.CurrentNode is Paragraph) && context.ParagraphHeader() != null) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
-				Enter(new Paragraph(header), context);
+				var paragraph = new Paragraph(header);
+				Enter(paragraph, context);
+				paragraph.SymbolTable.AddParagraph(paragraph);
 			}
 		}
 		public override void ExitParagraph(ProgramClassParser.ParagraphContext context) {
@@ -505,6 +525,8 @@ namespace TypeCobol.Compiler.Parser
 			else if (context.AlterStatement() != null) Enter(new Alter((AlterStatement)context.AlterStatement().Symbol), context);
 			else if (context.CallStatement() != null) Enter(new Call((CallStatement)context.CallStatement().Symbol), context);
 			else if (context.callStatementConditional() != null) { }// Node will be created in EnterCallStatementConditional
+			else if (context.ProcedureStyleCall() != null) Enter(new ProcedureStyleCall((ProcedureStyleCallStatement)context.ProcedureStyleCall().Symbol), context);
+			else if (context.procedureStyleCallConditional() != null) { }// Node will be created in EnterProcedureStyleCallConditional
 			else if (context.CancelStatement() != null) Enter(new Cancel((CancelStatement)context.CancelStatement().Symbol), context);
 			else if (context.ContinueStatement() != null) Enter(new Continue((ContinueStatement)context.ContinueStatement().Symbol), context);
 			else if (context.DeleteStatement() != null) Enter(new Delete((DeleteStatement)context.DeleteStatement().Symbol), context);
@@ -775,6 +797,14 @@ namespace TypeCobol.Compiler.Parser
 		public override void ExitCallStatementConditional(ProgramClassParser.CallStatementConditionalContext context) {
 			AttachEndIfExists(context.CallStatementEnd());
 		}
+		public override void EnterProcedureStyleCallConditional(ProgramClassParser.ProcedureStyleCallConditionalContext context) {
+			var terminal = context.ProcedureStyleCall();
+			var statement = terminal != null? (ProcedureStyleCallStatement)terminal.Symbol : null;
+			Enter(new ProcedureStyleCall(statement), context);
+		}
+		public override void ExitProcedureStyleCallConditional(ProgramClassParser.ProcedureStyleCallConditionalContext context) {
+			AttachEndIfExists(context.CallStatementEnd());
+		}
 		public override void EnterInvokeStatementConditional(ProgramClassParser.InvokeStatementConditionalContext context) {
 			var terminal = context.InvokeStatement();
 			var statement = terminal != null? (InvokeStatement)terminal.Symbol : null;
@@ -886,7 +916,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 		private void AttachEndIfExists(Antlr4.Runtime.Tree.ITerminalNode terminal) {
-			var end = terminal != null? (CodeElementEnd)terminal.Symbol : null;
+			var end = terminal != null? terminal.Symbol as CodeElementEnd : null;
 			if (end == null) return;
 			Enter(new End(end));
 			Exit();

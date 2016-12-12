@@ -1,0 +1,15 @@
+﻿--- Program ---
+PROGRAM: FileControl common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- DATA --------
+  FIC-APPEL:Alphanumeric
+  FIC-APPEL2:Alphanumeric
+  MyData:Alphanumeric
+  MyData-val1:BOOL
+  MyData-val2:BOOL
+  MyData-val3:BOOL
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

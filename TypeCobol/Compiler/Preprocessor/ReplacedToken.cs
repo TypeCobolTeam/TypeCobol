@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Preprocessor
@@ -112,6 +113,34 @@ namespace TypeCobol.Compiler.Preprocessor
             get
             {
                 return ReplacementToken.Text;
+            }
+        }
+    }
+
+    public class ImportedToken : Token
+    {
+
+        public Token OriginalToken{ get; private set; }
+        public CopyDirective CopyDirective { get; private set; }
+
+
+        public ImportedToken(Token originalToken, CopyDirective copyDirective)
+            : base(originalToken.TokenType, originalToken.StartIndex, originalToken.StopIndex, originalToken.UsesVirtualSpaceAtEndOfLine, originalToken.TokensLine,
+                  originalToken.HasOpeningDelimiter, originalToken.HasClosingDelimiter, originalToken.ExpectedClosingDelimiter)
+        {
+            this.OriginalToken = originalToken;
+            this.CopyDirective = copyDirective;
+
+            HasError = originalToken.HasError;
+            UsesDelimiters = originalToken.UsesDelimiters;
+            LiteralValue = originalToken.LiteralValue;
+        }
+
+        public override string Text
+        {
+            get
+            {
+                return OriginalToken.Text;
             }
         }
     }

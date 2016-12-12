@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         protected override Stream OpenInputStream()
         {
-            return new FileStream(FullPath, FileMode.Open);
+            return new FileStream(FullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         /// <summary>

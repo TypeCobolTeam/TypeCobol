@@ -384,5 +384,6 @@ namespace TypeCobol.Compiler.Scanner
                 return true;
             }
         }
+
     }
 }

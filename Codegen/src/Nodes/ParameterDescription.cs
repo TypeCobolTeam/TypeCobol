@@ -25,14 +25,23 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 			if (_cache == null) {
 				string name = this.CodeElement().Name;
 				_cache = new List<ITextLine>();
+				TypeDefinition customtype = null;
 				if (this.CodeElement().DataType == DataType.Boolean) {
-					_cache.Add(new TextLineSnapshot(-1, "01 "+name+" PIC X     VALUE LOW-VALUE.", null));
+					_cache.Add(new TextLineSnapshot(-1, "01 "+name+"-value PIC X     VALUE LOW-VALUE.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
 				} else {
 					var str = new System.Text.StringBuilder();
 					str.Append("01 ").Append(name);
-					if(this.CodeElement().Picture != null) str.Append(" PIC ").Append(this.CodeElement().Picture);
+					AlphanumericValue picture = null;
+					if (!this.CodeElement().DataType.IsCOBOL) {
+						var found = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
+						if (found.Count > 0) {
+							customtype = (TypeDefinition)found[0];
+							picture = customtype.CodeElement().Picture;
+						}
+					} else picture = this.CodeElement().Picture;
+					if(picture != null) str.Append(" PIC ").Append(picture);
 					str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 
@@ -56,10 +65,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					}
 				}
 
-				if (!this.CodeElement().DataType.IsCOBOL) {
-					var customtype = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
-					if (customtype.Count > 0) _cache.AddRange(TypedDataNode.InsertChildren(this.SymbolTable, (TypeDefinition)customtype[0], 2, 1));
-				}
+				if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(this.SymbolTable, customtype, 2, 1));
 			}
 			return _cache;
 		}

@@ -1,4 +1,5 @@
 ﻿--- Diagnostics ---
+[1,13]<27,Error,Syntax>Syntax error : Symbol PROC1 is not referenced ([1>13] on line 29)
 [3,51]<27,Error,Syntax>Syntax error : Symbol GROUP-DOUBLE.GROUP-DOUBLE.V1A2 is not referenced ([3>51] on line 34)
 [3,13]<27,Error,Syntax>Syntax error : Symbol Y is not referenced ([3>13] on line 37)
 [3,20]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol I-DOUBLE ([3>20] on line 38)
@@ -24,10 +25,14 @@ PROGRAM: Doubles common:False initial:False recursive:False
   VARIANT-1B:Alphanumeric
   VARIANT-2:Alphanumeric
   VARIANT-2:?
-  GLOBO:Alphanumeric
   EXTRA:Alphanumeric
   V2:Alphanumeric
   ANOTHER-GROUP:?
+-- PARAGRAPHS --
+  PROC1
+--- Intrinsic:Global
+-- DATA --------
+    GLOBO:Alphanumeric
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

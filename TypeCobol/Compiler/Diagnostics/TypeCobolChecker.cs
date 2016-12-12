@@ -1,6 +1,7 @@
 ﻿using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -17,7 +18,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 	private static string[] READONLY_DATATYPES = { "DATE", };
 
 	public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter), }; }
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+	public void OnNode([NotNull] Node node, ParserRuleContext context, [NotNull] CodeModel.Program program) {
 		var element = node.CodeElement as VariableWriter;
 		var table = program.SymbolTable;
 		foreach (var pair in element.VariablesWritten) {
@@ -28,7 +29,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 			checkReadOnly(node.CodeElement, receiving as Node);
 		}
 	}
-	private void checkReadOnly(CodeElement ce, Node receiving) {
+	private void checkReadOnly(CodeElement ce, [NotNull] Node receiving) {
 		var rtype = receiving.Parent as ITypedNode;
 		if (rtype == null) return;
 		foreach(var type in READONLY_DATATYPES) {
@@ -47,18 +48,21 @@ class FunctionCallChecker: NodeListener {
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var statement = node as FunctionCaller;
 
-		foreach(var fun in statement.FunctionCalls) {
-			var found = node.SymbolTable.GetFunction(new URI(fun.FunctionName));
-			if (found.Count != 1) continue; // ambiguity is not our job
-			var declaration = (FunctionDeclaration)found[0];
-			Check(node.CodeElement, node.SymbolTable, fun, declaration);
-		}
+	    if (statement != null) {
+	        foreach (var fun in statement.FunctionCalls) {
+	            var found = node.SymbolTable.GetFunction(new URI(fun.FunctionName));
+	            if (found.Count != 1) continue; // ambiguity is not our job
+	            var declaration = (FunctionDeclaration) found[0];
+	            Check(node.CodeElement, node.SymbolTable, fun, declaration);
+	        }
+	    }
 	}
-	private void Check(CodeElement e, SymbolTable table, CodeElements.FunctionCall call, FunctionDeclaration definition) {
+	private void Check(CodeElement e, SymbolTable table, [NotNull] CodeElements.FunctionCall call,
+	    [NotNull] FunctionDeclaration definition) {
 		var parameters = definition.Profile.Parameters;
         var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
         if (callArgsCount > parameters.Count) {
-			var m = System.String.Format("Function {0} only takes {1} parameters", definition.Name, parameters.Count);
+			var m = string.Format("Function {0} only takes {1} parameters", definition.Name, parameters.Count);
 			DiagnosticUtils.AddError(e, m);
 		}
 		for (int c = 0; c < parameters.Count; c++) {
@@ -77,15 +81,15 @@ class FunctionCallChecker: NodeListener {
 				// 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
 				//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
 				if (type == null || type.DataType != expected.DataType) {
-					var m = System.String.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", definition.Name, c+1, expected.DataType, type.DataType);
+					var m = string.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", definition.Name, c+1, expected.DataType, type.DataType);
 					DiagnosticUtils.AddError(e, m);
 				}
-				if (type != null && type.Length > expected.Length) {
-					var m = System.String.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", definition.Name, c+1, expected.Length, type.Length);
+				if (type.Length > expected.Length) {
+					var m = string.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", definition.Name, c+1, expected.Length, type.Length);
 					DiagnosticUtils.AddError(e, m);
 				}
 			} else {
-				var m = System.String.Format("Function {0} is missing parameter {1} of type {2}", definition.Name, c+1, expected.DataType);
+				var m = string.Format("Function {0} is missing parameter {1} of type {2}", definition.Name, c+1, expected.DataType);
 				DiagnosticUtils.AddError(e, m);
 			}
 		}
@@ -93,14 +97,38 @@ class FunctionCallChecker: NodeListener {
 }
 
 
+class FunctionDeclarationTypeChecker: CodeElementListener {
+	public IList<Type> GetCodeElements() {
+		return new List<Type> { typeof(FunctionDeclarationHeader), };
+	}
+	public void OnCodeElement(CodeElement ce, ParserRuleContext context) {
+		var function = (FunctionDeclarationHeader)ce;
+		if (function.ActualType == FunctionType.Undefined) {
+			DiagnosticUtils.AddError(ce, "Incompatible parameter clauses for "+ToString(function.UserDefinedType)+" \""+function.Name+"\"", context);
+		} else
+		if (  (function.ActualType == FunctionType.Function && function.UserDefinedType == FunctionType.Procedure)
+			||(function.ActualType == FunctionType.Procedure && function.UserDefinedType == FunctionType.Function) ) {
+			var message = "Symbol \""+function.Name+"\" is defined as "+ToString(function.UserDefinedType)
+						+", but parameter clauses describe a "+ToString(function.ActualType);
+			DiagnosticUtils.AddError(ce, message, context);
+		}
+	}
+	private string ToString(FunctionType type) {
+		if (type == FunctionType.Undefined) return "symbol";
+		if (type == FunctionType.Function) return "function";
+		if (type == FunctionType.Procedure) return "procedure";
+		return "function or procedure";
+	}
+}
 
 class FunctionDeclarationChecker: NodeListener {
 
 	public IList<Type> GetNodes() {
 		return new List<Type> { typeof(FunctionDeclaration), };
 	}
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+	public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program) {
 		var header = node.CodeElement as FunctionDeclarationHeader;
+	    if (header == null) return; //not my job
 		var filesection = node.Get<FileSection>("file");
 		if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
 			DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
@@ -109,6 +137,8 @@ class FunctionDeclarationChecker: NodeListener {
 
 		CheckParameters(header.Profile, header, context);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
+
+		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
 
 		var functions = node.SymbolTable.GetFunction(new URI(header.Name), header.Profile);
 		if (functions.Count > 1)
@@ -133,17 +163,18 @@ class FunctionDeclarationChecker: NodeListener {
 		}
 	}
 
-	private void CheckParameters(ParametersProfile profile, CodeElement ce, ParserRuleContext context) {
+	private void CheckParameters([NotNull] ParametersProfile profile, CodeElement ce, ParserRuleContext context) {
 		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce, context);
 		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce, context);
 		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context);
 		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context);
 	}
-	private void CheckParameter(ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context) {
+	private void CheckParameter([NotNull] ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context) {
 		// TCRFUN_LEVEL_88_PARAMETERS
-		if (parameter.LevelNumber.Value != 1)
-		DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
-        if (parameter.DataConditions != null)
+		if (parameter.LevelNumber.Value != 1) {
+		    DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
+		}
+	    if (parameter.DataConditions != null)
         {
             foreach (var condition in parameter.DataConditions)
             {
@@ -174,7 +205,7 @@ class FunctionDeclarationChecker: NodeListener {
 		foreach(var definition in node.Children())
 			AddEntries(linkage, definition);
 	}
-	private void AddEntries(List<DataDefinition> linkage, DataDefinition node) {
+	private void AddEntries([NotNull] List<DataDefinition> linkage, DataDefinition node) {
 		linkage.Add(node);
 		foreach(var child in node.Children())
 			AddEntries(linkage, child);
@@ -189,8 +220,27 @@ class FunctionDeclarationChecker: NodeListener {
 		if (parameter != null && parameter.Name.Equals(name)) return parameter;
 		return null;
 	}
-	private void AddErrorAlreadyParameter(Node node, QualifiedName name) {
+	private void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name) {
 		DiagnosticUtils.AddError(node.CodeElement, name.Head+" is already a parameter.");
+	}
+
+	private void CheckNoPerform(SymbolTable table, [NotNull] Node node) {
+		if (node is PerformProcedure) {
+			var perform = (PerformProcedureStatement)node.CodeElement;
+			CheckNotInTable(table, perform.Procedure, perform);
+			CheckNotInTable(table, perform.ThroughProcedure, perform);
+		}
+		foreach(var child in node.Children) CheckNoPerform(table, child);
+	}
+	private void CheckNotInTable(SymbolTable table, SymbolReference symbol, CodeElement ce) {
+		if (symbol == null) return;
+		string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
+		var found = table.GetSection(symbol.Name);
+		if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		else {
+			found = table.GetParagraph(symbol.Name);
+			if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		}
 	}
 }
 
@@ -204,7 +254,7 @@ class LibraryChecker: NodeListener {
 	public IList<Type> GetNodes() {
 		return new List<Type> { typeof(ProcedureDivision), };
 	}
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+	public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program) {
 		var pdiv = node.CodeElement as ProcedureDivisionHeader;
 		bool isPublicLibrary = false;
 		var elementsInError = new List<CodeElement>();
@@ -228,8 +278,8 @@ class LibraryChecker: NodeListener {
 		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
 		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		if (isPublicLibrary) {
-			if (copy == null || copy.CodeElement().Name == null)
-				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
+//			if (copy == null || copy.CodeElement().Name == null) // TCRFUN_LIBRARY_COPY
+//				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
 
 			if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
 				DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.", context);

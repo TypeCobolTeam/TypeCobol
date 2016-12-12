@@ -6,9 +6,9 @@
 /// The DIVIDE statement divides one numeric data item into or by others and sets
 /// the values of data items equal to the quotient and remainder.
 /// </summary>
-public abstract class DivideStatement: StatementElement, ArithmeticStatement {
+public abstract class DivideStatement: AbstractArithmeticStatement {
 	public DivideStatement(StatementType statementType): base(CodeElementType.DivideStatement, statementType) { }
-	public abstract Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>

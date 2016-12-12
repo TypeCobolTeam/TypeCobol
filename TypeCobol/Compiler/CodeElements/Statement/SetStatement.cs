@@ -22,7 +22,7 @@
 public abstract class SetStatement: StatementElement, VariableWriter {
 	public SetStatement(StatementType statementType): base(CodeElementType.SetStatement, statementType) { }
 
-	public bool IsUnsafe { get { return true; } }
+	public bool IsUnsafe { get { return false; } }
 
 	protected IDictionary<QualifiedName,object> variables;
 	public virtual IDictionary<QualifiedName,object> Variables{

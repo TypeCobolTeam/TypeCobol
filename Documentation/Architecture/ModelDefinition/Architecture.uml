@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ComponentDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/dsltools/UseCaseModel"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ComponentDesigner"
   dslVersion="1.0.0.0"
   Id="d928bd81-ef7a-4ddc-a3dd-9d8217d026b4"
   name="ParseCommand" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -68,7 +68,7 @@ parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.CustomTypes.Valu
               <lifelineMoniker
                 Id="728c9fbc-c396-46b5-b83e-d57abbea035e"
                 LastKnownName="[TypeCobol.Compiler.Parser]CodeElementsDocument"
-                LastKnownLocation="A.uml" />
+                LastKnownLocation="Architecture.uml" />
             </annotatedElements>
           </comment>
           <comment
@@ -5625,7 +5625,7 @@ Document loaded once from a file and never modified.
     <packageHasNamedElement>
       <component
         Id="482e9670-4a19-4f17-9b39-68a44a7c56c6"
-        name="CobolCodeElement"
+        name="CobolCodeElements"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -5636,6 +5636,14 @@ Document loaded once from a file and never modified.
             <componentMoniker
               Id="750973a2-1f8c-4987-9b27-ace5f5f72ccd"
               LastKnownName="CobolBase"
+              LastKnownLocation="Architecture.uml" />
+          </generalization>
+          <generalization
+            Id="dbcd1737-517e-4130-8577-8f6825e166fb"
+            isSubstitutable="false">
+            <componentMoniker
+              Id="363d5ad7-fd60-453b-95fd-52412fa94643"
+              LastKnownName="CobolExpressions"
               LastKnownLocation="Architecture.uml" />
           </generalization>
         </generalsInternal>
@@ -5662,7 +5670,7 @@ Document loaded once from a file and never modified.
             isSubstitutable="false">
             <componentMoniker
               Id="482e9670-4a19-4f17-9b39-68a44a7c56c6"
-              LastKnownName="CobolCodeElement"
+              LastKnownName="CobolCodeElements"
               LastKnownLocation="Architecture.uml" />
           </generalization>
         </generalsInternal>
@@ -6080,6 +6088,90 @@ Document loaded once from a file and never modified.
       <executionEvent
         Id="14c571bb-57d5-4660-8d8e-b0a874a89639"
         name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <component
+        Id="b002f834-911f-4cb2-aa85-a3bac03cd0d3"
+        name="CobolWords"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <component
+        Id="363d5ad7-fd60-453b-95fd-52412fa94643"
+        name="CobolExpressions"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="b51f9713-97b4-441b-b43d-624ba7a11d7f"
+            isSubstitutable="false">
+            <componentMoniker
+              Id="b002f834-911f-4cb2-aa85-a3bac03cd0d3"
+              LastKnownName="CobolWords"
+              LastKnownLocation="Architecture.uml" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <component
+        Id="2833a29c-23b6-4a00-a267-42f4651bd07d"
+        name="CobolCompilerDirectives"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="88ef9f95-df7d-4e1f-8f9b-37638e5bf70b"
+            isSubstitutable="false">
+            <componentMoniker
+              Id="b002f834-911f-4cb2-aa85-a3bac03cd0d3"
+              LastKnownName="CobolWords"
+              LastKnownLocation="Architecture.uml" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <component
+        Id="80e8105c-6093-4e9c-8bf1-6246b3776fb1"
+        name="TypeCobolProgram"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9d94f613-bf11-4fa6-a6d1-4a811bb7e24b"
+            isSubstitutable="false">
+            <componentMoniker
+              Id="0359efa9-5283-4df8-baec-2fe9d7e2e441"
+              LastKnownName="CobolProgramClass"
+              LastKnownLocation="Architecture.uml" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <component
+        Id="ec7e5ae3-ab5f-44c9-b655-223c644960ab"
+        name="ProgramClass"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="08023743-3745-4de3-bd06-369587daf3f6"
+            isSubstitutable="false">
+            <componentMoniker
+              Id="80e8105c-6093-4e9c-8bf1-6246b3776fb1"
+              LastKnownName="TypeCobolProgram"
+              LastKnownLocation="Architecture.uml" />
+          </generalization>
+        </generalsInternal>
+      </component>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

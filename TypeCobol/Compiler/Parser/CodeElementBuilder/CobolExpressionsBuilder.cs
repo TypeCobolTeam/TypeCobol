@@ -231,68 +231,54 @@ namespace TypeCobol.Compiler.Parser
             return specialRegister;
         }
 
-		// - 3. Intrinsic function calls (allocate a storage area for the result) -
+		// - 3. Function calls (allocate a storage area for the result) -
 
-		internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
-		{
-            FunctionCallResult result = null;
-            if (context.intrinsicFunctionCall() != null)
-            {
-                result = new FunctionCallResult(CreateIntrinsicFunctionCall(context.intrinsicFunctionCall()));
-            }
-            else
-            {
-                // [TYPECOBOL] user defined function calls
-                result = new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
-            }
-            if (result.DataDescriptionEntry != null)
-            {
-                var dataDescription = result.DataDescriptionEntry;
-                CobolWordsBuilder.symbolInformationForTokens[result.DataDescriptionEntry.DataName.NameLiteral.Token] = result.DataDescriptionEntry.DataName;
-            }
-            if (result.SymbolReference != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[result.SymbolReference.NameLiteral.Token] = result.SymbolReference;
-            }
+		internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context) {
+			FunctionCallResult result = null;
+			if (context.intrinsicFunctionCall() != null) {
+				result = new FunctionCallResult(CreateIntrinsicFunctionCall(context.intrinsicFunctionCall()));
+			} else { // [TYPECOBOL] user defined function calls
+				result = new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
+			}
+			if (result.DataDescriptionEntry != null) {
+				var dataDescription = result.DataDescriptionEntry;
+				CobolWordsBuilder.symbolInformationForTokens[result.DataDescriptionEntry.DataName.NameLiteral.Token] = result.DataDescriptionEntry.DataName;
+			}
+			if (result.SymbolReference != null) {
+				CobolWordsBuilder.symbolInformationForTokens[result.SymbolReference.NameLiteral.Token] = result.SymbolReference;
+			}
+			// Register call parameters (shared storage areas) information at the CodeElement level
+			var functionCall = result.FunctionCall;
+			var callSite = new CallSite() {
+				CallTarget = functionCall is UserDefinedFunctionCall ? ((UserDefinedFunctionCall)functionCall).UserDefinedFunctionName : null, // TO DO : IntrinsicFunctionName
+				Parameters = functionCall.Arguments
+			};
+			this.callSites.Add(callSite);
+			return result;
+		}
 
-            // Register call parameters (shared storage areas) information at the CodeElement level
-            var functionCall = result.FunctionCall;
-            var callSite = new CallSite() {
-                CallTarget = functionCall is UserDefinedFunctionCall ? ((UserDefinedFunctionCall)functionCall).UserDefinedFunctionName : null, // TO DO : IntrinsicFunctionName
-                Parameters = functionCall.Arguments
-            };
-            this.callSites.Add(callSite);
+		internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
+			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName());
+			return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
+		}
 
-            return result;
-        }
+		internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context) {
+			var name = CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference());
+			return new UserDefinedFunctionCall(name, CreateArguments(context.argument()));
+		}
 
-        internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context)
-        {
-            return new IntrinsicFunctionCall(
-                CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName()),
-                CreateArguments(context.argument()));
-        }
-
-        internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context)
-        {
-            return new UserDefinedFunctionCall(
-                CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference()),
-                CreateArguments(context.argument()));
-        }
-
-        private CallSiteParameter[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext)
-		{
-            CallSiteParameter[] arguments = new CallSiteParameter[argumentContext.Length];
-			for(int i = 0; i < argumentContext.Length; i++)
-			{
-                var variableOrExpression = CreateSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
-                if (variableOrExpression != null)
-                {
-                    arguments[i] = new CallSiteParameter() { StorageAreaOrValue = variableOrExpression };
-                }
+		private CallSiteParameter[] CreateArguments(CodeElementsParser.ArgumentContext[] argumentContext) {
+			CallSiteParameter[] arguments = new CallSiteParameter[argumentContext.Length];
+			for(int i = 0; i < argumentContext.Length; i++) {
+				var variableOrExpression = CreateSharedVariableOrExpression(argumentContext[i].sharedVariableOrExpression1());
+				if (variableOrExpression != null) {
+					arguments[i] = new CallSiteParameter() { StorageAreaOrValue = variableOrExpression };
+				}
 			}
 			return arguments;
 		}
+
+
 
 		internal StorageArea CreateStorageAreaReference(CodeElementsParser.StorageAreaReferenceContext context)
 		{
@@ -1489,95 +1475,62 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 
-        // --- Storage areas shared with calling or called program ---
+		// --- Storage areas shared with calling or called program ---
 
-        internal Variable CreateSharedVariable(CodeElementsParser.SharedVariable3Context context)
-        {
-            Variable variable = null;
-            if (context.identifier() != null)
-            {
-                StorageArea storageArea = CreateIdentifier(context.identifier());
-                variable = new Variable(storageArea);
-            }
-            else if (context.numericValue() != null)
-            {
-                variable = new Variable(
-                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-            }
-            else
-            {
-                variable = new Variable(
-                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-            }
+		internal Variable CreateSharedVariable(CodeElementsParser.SharedVariable3Context context) {
+			Variable variable = null;
+			if (context.identifier() != null) {
+				StorageArea storageArea = CreateIdentifier(context.identifier());
+				variable = new Variable(storageArea);
+			} else
+			if (context.numericValue() != null) {
+				variable = new Variable(CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+			} else {
+				variable = new Variable(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+			}
+			// Collect storage area read/writes at the code element level
+			if (variable.StorageArea != null) {
+				this.storageAreaReads.Add(variable.StorageArea);
+			}
+			return variable;
+		}
 
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
+		internal Variable CreateSharedVariableOrFileName(CodeElementsParser.SharedVariableOrFileNameContext context) {
+			if (context.identifierOrFileName() != null) {
+				return new Variable(CreateIdentifierOrFileName(context.identifierOrFileName()));
+			} else
+			if (context.numericValue() != null) {
+				return new Variable(CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+			} else
+			if (context.alphanumericValue2() != null) {
+				return new Variable(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+			} else {
+				return new Variable(CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue1()));
+			}
+		}
 
-            return variable;
-        }
+		internal VariableOrExpression CreateSharedVariableOrExpression(CodeElementsParser.SharedVariableOrExpression1Context context) {
+			if (context.identifier() != null) {
+				return new VariableOrExpression(CreateIdentifier(context.identifier()));
+			} else
+			if (context.numericValue() != null) {
+				return new VariableOrExpression(CobolWordsBuilder.CreateNumericValue(context.numericValue()));
+			} else
+			if (context.alphanumericValue2() != null) {
+				return new VariableOrExpression(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+			} else {
+				return new VariableOrExpression(CreateArithmeticExpression(context.arithmeticExpression()));
+			}
+		}
 
-        internal Variable CreateSharedVariableOrFileName(CodeElementsParser.SharedVariableOrFileNameContext context)
-        {
-            if (context.identifierOrFileName() != null)
-            {
-                return new Variable(
-                    CreateIdentifierOrFileName(context.identifierOrFileName()));
-            }
-            else if (context.numericValue() != null)
-            {
-                return new Variable(
-                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-            }
-            else if (context.alphanumericValue2() != null)
-            {
-                return new Variable(
-                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-            }
-            else
-            {
-                return new Variable(
-                    CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue1()));
-            }
-        }
+		internal StorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea1Context context) {
+			if (context == null || context.identifier() == null) return null;
+			var identifier = CreateIdentifier(context.identifier());
+			return identifier;
+		}
 
-        internal VariableOrExpression CreateSharedVariableOrExpression(CodeElementsParser.SharedVariableOrExpression1Context context)
-        {
-            if (context.identifier() != null)
-            {
-                return new VariableOrExpression(
-                    CreateIdentifier(context.identifier()));
-            }
-            else if (context.numericValue() != null)
-            {
-                return new VariableOrExpression(
-                    CobolWordsBuilder.CreateNumericValue(context.numericValue()));
-            }
-            else if (context.alphanumericValue2() != null)
-            {
-                return new VariableOrExpression(
-                    CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
-            }
-            else
-            {
-                return new VariableOrExpression(
-                    CreateArithmeticExpression(context.arithmeticExpression()));
-            }
-        }
-
-        internal StorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea1Context context)
-        {
-            if (context == null || context.identifier() == null) return null;
-            var identifier = CreateIdentifier(context.identifier());
-            return identifier;
-        }
-
-        internal StorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea2Context context)
-        {
-            return new DataOrConditionStorageArea(
-                    CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()));
-        }
+		internal StorageArea CreateSharedStorageArea(CodeElementsParser.SharedStorageArea2Context context) {
+			return new DataOrConditionStorageArea(CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()));
+		}
     }
 }

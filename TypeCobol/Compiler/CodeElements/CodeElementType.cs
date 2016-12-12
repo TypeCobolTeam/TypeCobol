@@ -160,6 +160,7 @@ namespace TypeCobol.Compiler.CodeElements
 		LibraryCopy,
 		FunctionDeclarationHeader,
 		FunctionDeclarationEnd,
+		ProcedureStyleCall,
 // [/TYPECOBOL]
     }
 }

@@ -105,15 +105,15 @@ class CallStatementChecker: CodeElementListener {
 	}
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as CallStatement;
-		var context = c as CodeElementsParser.CallStatementContext;
+		var context = c as CodeElementsParser.CobolCallStatementContext;
 
-		foreach (var call in context.callProgramInputParameters()) CheckCallUsings(statement, call);
+		foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
-		if (context.callProgramOutputParameter() != null && statement.OutputParameter == null)
+		if (context.callReturningParameter() != null && statement.OutputParameter == null)
 			DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
 	}
 
-	private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallProgramInputParametersContext context) {
+	private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context) {
 		foreach(var input in statement.InputParameters) {
 			// TODO#249 these checks should be done during semantic phase, after symbol type resolution
 			// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
@@ -174,8 +174,10 @@ class InspectConvertingChecker: CodeElementListener {
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as InspectConvertingStatement;
 		var context = c as CodeElementsParser.InspectStatementContext;
-		var seen = new Dictionary<StartCharacterPosition,bool>();
-		foreach(var value in Enum.GetValues(typeof(StartCharacterPosition))) seen[(StartCharacterPosition)value] = false;
+		var seen = new Dictionary<InspectStatement.StartCharacterPosition,bool>();
+		foreach(var value in Enum.GetValues(typeof(InspectTallyingStatement.StartCharacterPosition))) {
+			seen[(InspectTallyingStatement.StartCharacterPosition)value] = false;
+		}
 		for(int i=0; i < statement.ReplacingConditions.Length; i++) {
 			var position = statement.ReplacingConditions[i].StartCharacterPosition;
 			if (seen[position.Value]) {
@@ -283,7 +285,80 @@ class SetStatementForIndexesChecker: CodeElementListener {
 
 
 
-class DeclarationChecker: NodeListener {
+
+abstract class SymbolAlreadyDeclaredChecker: NodeListener {
+	public abstract IList<Type> GetNodes();
+	public abstract void OnNode(Node node, ParserRuleContext context, CodeModel.Program program);
+	protected static void Check(Node node, List<Node> found) {
+		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol \'"+node.Name+"\' already declared");
+	}
+}
+
+class SectionAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
+	public override IList<Type> GetNodes() {
+		return new List<Type>() { typeof(Section), };
+	}
+	public override void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		Check(node, node.SymbolTable.GetSection(node.Name));
+	}
+}
+class ParagraphAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
+	public override IList<Type> GetNodes() {
+		return new List<Type>() { typeof(Paragraph), };
+	}
+	public override void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		Check(node, node.SymbolTable.GetParagraph(node.Name));
+	}
+}
+
+
+class SectionOrParagraphUsageChecker: NodeListener {
+	public IList<Type> GetNodes() {
+		return new List<Type>() { typeof(PerformProcedure), };
+	}
+
+	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		var perform = (PerformProcedureStatement)node.CodeElement;
+		SymbolReference symbol;
+		symbol = ResolveProcedureName(node.SymbolTable, perform.Procedure as AmbiguousSymbolReference, node.CodeElement);
+		if (symbol != null) perform.Procedure = symbol;
+		symbol = ResolveProcedureName(node.SymbolTable, perform.ThroughProcedure as AmbiguousSymbolReference, node.CodeElement);
+		if (symbol != null) perform.ThroughProcedure = symbol;
+	}
+	/// <summary>Disambiguate between section and paragraph names</summary>
+	/// <param name="table">Symbol table used for name resolution</param>
+	/// <param name="symbol">Symbol to disambiguate</param>
+	/// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
+	/// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
+	private SymbolReference ResolveProcedureName(SymbolTable table, AmbiguousSymbolReference symbol, CodeElement ce) {
+		if (symbol == null) return null;
+
+		SymbolReference sname = null, pname = null;
+		var sfound = table.GetSection(symbol.Name);
+		if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
+		var pfound = table.GetParagraph(symbol.Name);
+		if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
+
+		if (pname == null) {
+			if (sname == null) {
+				DiagnosticUtils.AddError(ce, "Symbol "+symbol.Name+" is not referenced");
+			} else {
+				if (sfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to section "+symbol.Name);
+				return sname;
+			}
+		} else {
+			if (sname == null) {
+				if (pfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to paragraph "+symbol.Name);
+				return pname;
+			} else {
+				DiagnosticUtils.AddError(ce, "Ambiguous reference to procedure "+symbol.Name);
+			}
+		}
+		return null;
+	}
+}
+
+class VariableUsageChecker: NodeListener {
 	public IList<Type> GetNodes() {
 		return new List<Type>() { typeof(VariableUser), };
 	}
@@ -390,7 +465,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
 			if (receiving.IsStrong) {
 				if (!IsUnsafe) {
-					string message = "Can't write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+" (use UNSAFE keyword for that)";
+					string message = "Cannot write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+".";
 					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 				}
 			} else {
@@ -406,6 +481,8 @@ class WriteTypeConsistencyChecker: NodeListener {
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
+
+    //TODO move this method to DataDefinition (and ITypedNode implementation ?)
 	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
@@ -419,8 +496,12 @@ class WriteTypeConsistencyChecker: NodeListener {
 			if (data.CodeElement is DataRedefinesEntry) {
 				var redefines = (DataRedefinesEntry)data.CodeElement;
 				var qname = new URI(redefines.RedefinesDataName.Name);
-				var node = (DataDescription)GetSymbol(table, qname);
-				entry = node.CodeElement();
+			    var node = GetSymbol(table, qname);
+			    if (node is DataDescription) {
+			        entry = (DataDescriptionEntry) node.CodeElement;
+			    } else {
+                        entry = GetDataDescriptionEntry(table, redefines);
+			    }
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
 			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
 		}
@@ -430,6 +511,24 @@ class WriteTypeConsistencyChecker: NodeListener {
 		if (types.Count != 1) return null;// symbol type not found or ambiguous
 		return types[0].DataType;
 	}
+
+        /// <summary>
+        /// Quick and dirty method, this checker need to be refactored
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="dataRedefinesEntry"></param>
+        /// <returns></returns>
+        private DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
+            var qname = new URI(dataRedefinesEntry.RedefinesDataName.Name);
+            var node = GetSymbol(table, qname);
+            if (node is DataDescription) {
+                return (DataDescriptionEntry)node.CodeElement;
+            }
+            if (node is DataRedefines) {
+                return GetDataDescriptionEntry(table, (DataRedefinesEntry) node.CodeElement);
+            }
+            throw new NotImplementedException(node.Name);
+        }
 
 }
 

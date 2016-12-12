@@ -31,7 +31,7 @@ public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHea
 			encode(hash, Profile.InoutParameters).Append(':');
 			encode(hash, Profile.OutputParameters).Append(':');
 			hash.Append(encode(Profile.ReturningParameter));
-			return Tools.Hash.CreateSHA256(hash.ToString()).Substring(0,8);
+			return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
 		}
 	}
 	private StringBuilder encode(StringBuilder str, IList<ParameterDescriptionEntry> parameters) {

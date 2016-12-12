@@ -23,5 +23,12 @@
 			if (str.Length > 1) str.Length -= 1;
 			return str.Append(' ').Append(']').ToString();
 		}
+
+		public static void GetIndent(string text, out string indent, out string indented) {
+			int begin = System.Array.FindIndex(text.ToCharArray(), x => !char.IsWhiteSpace(x));
+			if (begin == -1) begin = 0;// text.Length == 0
+			indent = text.Substring(0, begin);
+			indented = text.Substring(begin, text.Length-begin);
+		}
 	}
 }

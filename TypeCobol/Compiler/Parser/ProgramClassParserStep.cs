@@ -45,7 +45,12 @@ namespace TypeCobol.Compiler.Parser
 			programClassBuilder.CustomSymbols = customSymbols;
             programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
-            walker.Walk(programClassBuilder, codeElementParseTree);
+
+			try { walker.Walk(programClassBuilder, codeElementParseTree); }
+			catch (Exception ex) {
+				var code = Diagnostics.MessageCode.ImplementationError;
+				errorListener.Diagnostics.Add(new ParserDiagnostic(ex.ToString(), null,null, code));
+			}
                         
             // Register compiler results
             newProgram = programClassBuilder.Program;

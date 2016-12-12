@@ -1,0 +1,5 @@
+﻿ID Division. 
+Program-ID. MissingSentenceEnd. 
+procedure division.
+move a to b           
+End Program MissingSentenceEnd. 

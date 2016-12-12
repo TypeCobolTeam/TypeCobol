@@ -38,5 +38,7 @@ namespace TypeCobol.Compiler.Diagnostics
         FailedToLoadTextDocumentReferencedByCopyDirective = 28,
         SyntaxWarningInParser = 29,
         SemanticTCErrorInParser = 30,
+        ImplementationError = 31,
+        TypeCobolParserLimitation = 32,
     }
 }

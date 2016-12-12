@@ -1,0 +1,1 @@
+﻿        input dateType  PIC X
