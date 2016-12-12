@@ -141,6 +141,11 @@ WORKING-STORAGE SECTION.
      11 USE-TYPE-GRP-STRONG-RED-2 redefines TYPE-GRP-STRONG-PART3.
     15 USE-TYPE-GRP-STRONG-RED-2-PART1 PIC 9 Comp.
 
+*OK
+01 GroupWithLevel77JustAfter typedef.
+   05 a pic X.
+*This variable must be not be inserted into the previous type definition
+77 MyVariable pic X value 'O'.
 
 * Unauthorized use of reference modification for strong typed groups
 *KO (Rule #10) TYPE-GRP-STRONG-REN renames a strongly typed variable
