@@ -81,6 +81,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new NYName(),
                 new PGMName(),
                 new MemoryName(),
+                new NodeName(),
             };
 
         private IList<string> samples;
@@ -352,6 +353,29 @@ internal class ArithmeticComparator : FilesComparator {
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
         }
     }
+    internal class NodeComparator : FilesComparator
+    {
+        public NodeComparator(Paths path, bool debug = false) : base(path, debug)
+        {
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader) {
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+            
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics) {
+                sb.AppendLine(diagnostic.ToString());
+            }
+
+            sb.AppendLine("--- Nodes ---");
+            sb.Append(pcd.Program.SyntaxTree);
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+        }
+    }
 
 	internal class MemoryComparator: FilesComparator
 	{
@@ -463,6 +487,12 @@ internal class ArithmeticComparator : FilesComparator {
     {
         public string CreateName(string name) { return name + "PGM"; }
         public Type GetComparatorType() { return typeof(ProgramsComparator); }
+    }
+
+    internal class NodeName : Names
+    {
+        public string CreateName(string name) { return name + "-Nodes"; }
+        public Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
     internal class MemoryName : Names
