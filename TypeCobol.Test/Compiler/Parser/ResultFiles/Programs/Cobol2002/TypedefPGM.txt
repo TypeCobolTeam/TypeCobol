@@ -22,8 +22,8 @@
 [5,34]<30,Error,Semantics>Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP' ([5>34] on line 115)
 [5,62]<30,Error,Semantics>Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed ([5>62] on line 132)
 [6,66]<30,Error,Semantics>Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced ([6>66] on line 141)
-[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART1' is strongly-typed ([1>68] on line 151)
-[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART2' is strongly-typed ([1>68] on line 151)
+[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART1' is strongly-typed ([1>68] on line 156)
+[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART2' is strongly-typed ([1>68] on line 156)
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -72,6 +72,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   useTypeGrp2Strong:TYPE-GRP-STRONG
   USE-TYPE-GRP-STRONG-RED-2
   USE-TYPE-GRP-STRONG-RED-2-PART1:Numeric
+  MyVariable:Alphanumeric
   useStrongType1:strongType1
   TYPE-GRP-STRONG-REN
 -- TYPES -------
@@ -89,6 +90,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   TYPE_ELT:TYPE_ELT
   TYPE-GRP:TYPE-GRP
   TYPE-GRP-STRONG:TYPE-GRP-STRONG
+  GroupWithLevel77JustAfter:GroupWithLevel77JustAfter
   strongType1:strongType1
 --- Intrinsic
 -- TYPES -------

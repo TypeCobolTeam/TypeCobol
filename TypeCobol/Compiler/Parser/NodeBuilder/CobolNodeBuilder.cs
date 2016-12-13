@@ -336,8 +336,14 @@ namespace TypeCobol.Compiler.Parser
 		/// </param>
 		private void SetCurrentNodeToTopLevelItem(IntegerValue levelnumber) {
 			long level = levelnumber != null? levelnumber.Value : 1;
-			Node parent = GetTopLevelItem(level);
-			if (parent != null) {
+			Node parent;
+
+		    if (level == 1 || level == 77) {
+		        parent = null;
+		    } else {
+                parent = GetTopLevelItem(level);
+            }
+            if (parent != null) {
 				// Exit() previous sibling and all of its last children
 				while (parent != CurrentNode) Exit();
 			} else {
@@ -350,7 +356,6 @@ namespace TypeCobol.Compiler.Parser
 			while(parent != null) {
 				var data = parent.CodeElement as DataDefinitionEntry;
 				if (data == null) return null;
-                //TODO SMEDILOL: this seems wrong: how a parent DataDefinitionEntry can have a greater or equal levelNumber ?
 				if (data.LevelNumber == null || data.LevelNumber.Value < level) return parent;
 				parent = parent.Parent;
 			}
