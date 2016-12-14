@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Documentation\*" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
