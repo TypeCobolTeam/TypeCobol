@@ -141,16 +141,16 @@ namespace TypeCobol.Test.Compiler.Parser
 
             CodeElementsDocument codeElementsDocument = compilationUnit.CodeElementsDocumentSnapshot;
             Assert.IsTrue(codeElementsDocument.CodeElements.Count() == 1);
-            Assert.IsTrue(codeElementsDocument.CodeElements.First().GetType() == typeof(T));
+            var firstCodeElement = codeElementsDocument.CodeElements.First();
+            Assert.IsTrue(firstCodeElement.GetType() == typeof(T));
 
-            if (correctSyntax)
-            {
-                Assert.IsTrue(codeElementsDocument.ParserDiagnostics.Count() == 0);
-            }
-            else
-            {
-                Assert.IsFalse(codeElementsDocument.ParserDiagnostics.Count() == 0);
-            }
+            bool codeElementOk = !firstCodeElement.Diagnostics.Any();
+            bool codeElementDocumentOk = codeElementsDocument.ParserDiagnostics == null || !codeElementsDocument.ParserDiagnostics.Any();
+
+            //Do not test compilationUnit.ProgramClassDocumentSnapshot.Diagnostics here because we are just parsing a single line
+            //the semantic phase will produce errors.
+
+            Assert.IsTrue((codeElementOk && codeElementDocumentOk) == correctSyntax);
 
             return new Tuple<CodeElementsDocument, T>(codeElementsDocument, (T) codeElementsDocument.CodeElements.First());
         }

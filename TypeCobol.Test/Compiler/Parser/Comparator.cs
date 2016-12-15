@@ -334,15 +334,11 @@ internal class ArithmeticComparator : FilesComparator {
         {
         }
 
-        public override void Compare(CompilationUnit result, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
         {
-            ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-            List<Diagnostic> diagnostics = new List<Diagnostic>();
-            diagnostics.AddRange(result.CodeElementsDocumentSnapshot.ParserDiagnostics);
-            diagnostics.AddRange(pcd.Diagnostics);
-            foreach (var element in result.CodeElementsDocumentSnapshot.CodeElements) {
-                diagnostics.AddRange(element.Diagnostics);
-            }
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            
             Compare(pcd.Program, pcd.Class, diagnostics, reader);
         }
 

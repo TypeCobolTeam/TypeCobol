@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
@@ -83,6 +84,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
+        [NotNull]
         public IList<Diagnostic> Diagnostics { get; private set; }
 
 
