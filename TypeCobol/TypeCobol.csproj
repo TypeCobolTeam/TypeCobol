@@ -315,6 +315,10 @@
     <Compile Include="Compiler\Scanner\LiteralTokenValue.cs" />
     <Compile Include="Compiler\Scanner\ScannerStep.cs" />
     <Compile Include="Compiler\Scanner\TokenDiagnostic.cs" />
+    <Compile Include="Compiler\Source\InvalidPositionException.cs" />
+    <Compile Include="Compiler\Source\Position.cs" />
+    <Compile Include="Compiler\Source\PositionList.cs" />
+    <Compile Include="Compiler\Source\SourceText.cs" />
     <Compile Include="Compiler\Text\ColumnsLayout.cs" />
     <Compile Include="Compiler\DocumentFormat.cs" />
     <Compile Include="Compiler\Text\ICobolTextLine.cs" />
