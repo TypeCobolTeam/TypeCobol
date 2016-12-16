@@ -21,9 +21,9 @@
 [5,35]<30,Error,Semantics>Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP' ([5>35] on line 114)
 [5,34]<30,Error,Semantics>Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP' ([5>34] on line 115)
 [5,62]<30,Error,Semantics>Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed ([5>62] on line 132)
-[6,66]<30,Error,Semantics>Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced ([6>66] on line 141)
-[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART1' is strongly-typed ([1>68] on line 156)
-[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART2' is strongly-typed ([1>68] on line 156)
+[6,66]<30,Error,Semantics>Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced ([6>66] on line 145)
+[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART1' is strongly-typed ([1>68] on line 160)
+[1,68]<30,Error,Semantics>Semantic error: Illegal RENAMES: 'strongType1-PART2' is strongly-typed ([1>68] on line 160)
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -68,6 +68,9 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   USE-TYPE-GRP-STRONG:TYPE-GRP-STRONG
   USE-TYPE-GRP-STRONG-RED
   USE-TYPE-GRP-STRONG-RED-PART1:Numeric
+  MyWeakGroup:?
+  MyWeakVar1:Feature
+  MyWeakVar2
   useTypeGrp2:?
   useTypeGrp2Strong:TYPE-GRP-STRONG
   USE-TYPE-GRP-STRONG-RED-2

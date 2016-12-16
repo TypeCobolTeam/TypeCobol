@@ -4,7 +4,7 @@ namespace TypeCobol.Compiler.CodeElements
 {
 	public class DataType {
 		public string Name { get; private set; }
-		public bool IsStrong { get; private set; }
+		public bool IsStrong { get; internal set; }
 		public bool IsCOBOL  { get; private set; }
 
 		public DataType(string name, bool IsStrong=false, bool IsCOBOL=false) {

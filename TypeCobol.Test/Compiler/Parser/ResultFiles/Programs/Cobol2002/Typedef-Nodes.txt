@@ -108,6 +108,9 @@
           USE-TYPE-GRP-STRONG
           USE-TYPE-GRP-STRONG-RED
             USE-TYPE-GRP-STRONG-RED-PART1
+        MyWeakGroup
+          MyWeakVar1
+          MyWeakVar2
         useTypeGrp2
           useTypeGrp2Strong
             USE-TYPE-GRP-STRONG-RED-2

@@ -297,8 +297,20 @@ namespace TypeCobol.Compiler.Parser
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
 			SetCurrentNodeToTopLevelItem(data.LevelNumber);
+
+            //Update DataType of CodeElement by searching info on the declared Type into SymbolTable.
+            //Note that the AST is not complete here, but you can only refer to a Type that has previously been defined.
 			var node = new DataDescription(data);
-			Enter(node);
+            Enter(node);
+
+            var types = node.SymbolTable.GetTypes(node);
+		    if (types.Count == 1) {
+		        data.DataType.IsStrong = types[0].DataType.IsStrong;
+		    }
+            //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
+            
+
+            
 			AddToSymbolTable(node);
 		}
 

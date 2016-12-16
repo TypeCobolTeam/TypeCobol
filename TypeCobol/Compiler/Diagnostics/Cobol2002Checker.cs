@@ -102,11 +102,10 @@ class RedefinesChecker: NodeListener {
 		var errors = new Error();
 		var data  = node.SymbolTable.GetVariable(redefines);
 		foreach(var v in data) {
-			var nv = (Node)v;
-			if (nv.IsPartOfATypeDef) {
+		    if (v.IsPartOfATypeDef) {
 				errors[Error.Status.TYPEDEFPart]++;
 			} else
-			if (IsStronglyTyped(nv)) {
+			if (IsStronglyTyped(v)) {
 				errors[Error.Status.TYPEStrong]++;
 			}
 		}
@@ -152,10 +151,9 @@ class RedefinesChecker: NodeListener {
 		}
 	}
 	internal static bool IsStronglyTyped(Node node) {
-		if (node == null || node is DataSection) return false;
 		var typed = node as ITypedNode;
 		if (typed == null) return false;
-		if (!typed.DataType.IsCOBOL) return true;
+		if (typed.DataType.IsStrong) return true;
 		return IsStronglyTyped(node.Parent);
 	}
 }
