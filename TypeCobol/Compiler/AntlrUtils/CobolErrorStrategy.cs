@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.Scanner;
 
@@ -34,14 +35,14 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             string tokenName = GetTokenErrorDisplay(t);
             IntervalSet expecting = GetExpectedTokens(recognizer);
-            string msg = "extraneous input " + tokenName + " expecting " + expecting.ToString(recognizer.Vocabulary);
+            string msg = "extraneous input " + tokenName + " expecting " + GetListOfExpectedTokens(expecting, recognizer.Vocabulary);
             return msg;
         }
 
         protected virtual string ErrorMessageForMissingToken(Antlr4.Runtime.Parser recognizer, IToken t)
         {
             IntervalSet expecting = GetExpectedTokens(recognizer);
-            string msg = "missing " + expecting.ToString(recognizer.Vocabulary) + " at " + GetTokenErrorDisplay(t);
+            string msg = "missing " + GetListOfExpectedTokens(expecting, recognizer.Vocabulary) + " at " + GetTokenErrorDisplay(t);
             return msg;
         }
 
@@ -51,7 +52,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             string input;
             if (tokens != null) {
                 if (e.StartToken.Type == TokenConstants.Eof) {
-                    input = "<EOF>";
+                    input = "<end of file>";
                 }
                 else {
                     input = tokens.GetText(e.StartToken, e.OffendingToken);
@@ -66,7 +67,7 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         protected virtual string ErrorMessageForInputMismatch(InputMismatchException e, Antlr4.Runtime.Parser recognizer)
         {
-            string msg = "mismatched input " + GetTokenErrorDisplay(e.OffendingToken) + " expecting " + e.GetExpectedTokens().ToString(recognizer.Vocabulary);
+            string msg = "mismatched input " + GetTokenErrorDisplay(e.OffendingToken) + " expecting " + GetListOfExpectedTokens(e.GetExpectedTokens(), recognizer.Vocabulary);
             return msg;
         }
 
@@ -90,27 +91,50 @@ namespace TypeCobol.Compiler.AntlrUtils
                 buf.Append("{");
             }
             bool first = true;
-            foreach (Interval I in intervalSet.GetIntervals())
+            // Never display more than 10 expected tokens
+            if (intervalSet.Count <= 10)
             {
-                if (!first)
-                    buf.Append(", ");
-                first = false;
+                foreach (Interval I in intervalSet.GetIntervals())
+                {
+                    if (!first)
+                        buf.Append(", ");
+                    first = false;
 
-                int a = I.a;
-                int b = I.b;
-                if (a == b)
-                {
-                    buf.Append(GetTokenTypeDisplayName(vocabulary, a));
-                }
-                else
-                {
-                    for (int i = a; i <= b; i++)
+                    int a = I.a;
+                    int b = I.b;
+                    if (a == b)
                     {
-                        if (i > a)
+                        buf.Append(TokenUtils.GetDisplayNameForTokenType((TokenType)a));
+                    }
+                    else
+                    {
+                        for (int i = a; i <= b; i++)
                         {
-                            buf.Append(", ");
+                            if (i > a)
+                            {
+                                buf.Append(", ");
+                            }
+                            buf.Append(TokenUtils.GetDisplayNameForTokenType((TokenType)i));
                         }
-                        buf.Append(GetTokenTypeDisplayName(vocabulary, i));
+                    }
+                }
+            }
+            // If more than 10 expected tokens, display list of token families
+            else
+            {
+                HashSet<TokenFamily> familySet = new HashSet<TokenFamily>();
+                foreach (Interval I in intervalSet.GetIntervals())
+                {
+                    for (int i = I.a; i <= I.b; i++)
+                    {
+                        TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType((TokenType)i);
+                        if(familySet.Add(tokenFamily))
+                        {
+                            if (!first)
+                                buf.Append(", ");
+                            first = false;
+                            buf.Append(TokenUtils.GetDisplayNameForTokenFamily(tokenFamily));
+                        }
                     }
                 }
             }
@@ -130,35 +154,9 @@ namespace TypeCobol.Compiler.AntlrUtils
             string s = GetSymbolText(t);
             if (s == null)
             {
-                if (GetSymbolType(t) == TokenConstants.Eof)
-                {
-                    s = "<EOF>";
-                }
-                else
-                {
-                    s = "<" + GetSymbolType(t) + ">";
-                }
+                s = "<" + TokenUtils.GetDisplayNameForTokenType((TokenType)t.Type) + ">";
             }
             return EscapeWSAndQuote(s);
-        }
-
-        private static string GetTokenTypeDisplayName(IVocabulary vocabulary, int tokenTypeNum)
-        {
-            if (tokenTypeNum == TokenConstants.Eof)
-            {
-                return "<EOF>";
-            }
-            else
-            {
-                if (tokenTypeNum == TokenConstants.Epsilon)
-                {
-                    return "<EPSILON>";
-                }
-                else
-                {
-                    return vocabulary.GetDisplayName(tokenTypeNum);
-                }
-            }
         }
 
         // --- Please do not touch the methods below which reproduce exactly the default Antlr runtime behaviour --
