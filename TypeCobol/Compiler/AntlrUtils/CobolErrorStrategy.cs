@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using System.Text;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.AntlrUtils
@@ -74,6 +75,90 @@ namespace TypeCobol.Compiler.AntlrUtils
             string ruleName = recognizer.RuleNames[recognizer.RuleContext.RuleIndex];
             string msg = "rule " + ruleName + " " + e.Message;
             return msg;
+        }
+
+        protected string GetListOfExpectedTokens(IntervalSet intervalSet, IVocabulary vocabulary)
+        { 
+            StringBuilder buf = new StringBuilder();
+            if (intervalSet == null || intervalSet.Count == 0)
+            {
+                return "{}";
+            }
+
+            if (intervalSet.Count > 1)
+            {
+                buf.Append("{");
+            }
+            bool first = true;
+            foreach (Interval I in intervalSet.GetIntervals())
+            {
+                if (!first)
+                    buf.Append(", ");
+                first = false;
+
+                int a = I.a;
+                int b = I.b;
+                if (a == b)
+                {
+                    buf.Append(GetTokenTypeDisplayName(vocabulary, a));
+                }
+                else
+                {
+                    for (int i = a; i <= b; i++)
+                    {
+                        if (i > a)
+                        {
+                            buf.Append(", ");
+                        }
+                        buf.Append(GetTokenTypeDisplayName(vocabulary, i));
+                    }
+                }
+            }
+            if (intervalSet.Count > 1)
+            {
+                buf.Append("}");
+            }
+            return buf.ToString();
+        }
+        
+        protected override string GetTokenErrorDisplay(IToken t)
+        {
+            if (t == null)
+            {
+                return "<no token>";
+            }
+            string s = GetSymbolText(t);
+            if (s == null)
+            {
+                if (GetSymbolType(t) == TokenConstants.Eof)
+                {
+                    s = "<EOF>";
+                }
+                else
+                {
+                    s = "<" + GetSymbolType(t) + ">";
+                }
+            }
+            return EscapeWSAndQuote(s);
+        }
+
+        private static string GetTokenTypeDisplayName(IVocabulary vocabulary, int tokenTypeNum)
+        {
+            if (tokenTypeNum == TokenConstants.Eof)
+            {
+                return "<EOF>";
+            }
+            else
+            {
+                if (tokenTypeNum == TokenConstants.Epsilon)
+                {
+                    return "<EPSILON>";
+                }
+                else
+                {
+                    return vocabulary.GetDisplayName(tokenTypeNum);
+                }
+            }
         }
 
         // --- Please do not touch the methods below which reproduce exactly the default Antlr runtime behaviour --

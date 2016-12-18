@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.Preprocessor
         }
         
 		public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) {
-			CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY);
+			CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY, ParseTreeUtils.GetFirstToken(context.COPY()));
 		}
 
 		private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context) {
@@ -331,7 +331,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
         public override void EnterExecSqlIncludeStatement(CobolCompilerDirectivesParser.ExecSqlIncludeStatementContext context)
         {
-            var copyDirective = new CopyDirective(CompilerDirectiveType.EXEC_SQL_INCLUDE);
+            var copyDirective = new CopyDirective(CompilerDirectiveType.EXEC_SQL_INCLUDE, ParseTreeUtils.GetFirstToken(context.EXEC()));
             CompilerDirective = copyDirective;
 
             if (context.copyCompilerStatementBody() != null)

@@ -1230,6 +1230,13 @@ namespace TypeCobol.Compiler.Scanner
                     int endIndex = fstCurrentIndex - 1;
                     Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
                     token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
+
+                    // Distinguish the special case of a LevelNumber
+                    if(tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence)
+                    {
+                        token.CorrectType(TokenType.LevelNumber);
+                    }
+
                     return token;
                 }
             }
@@ -1716,29 +1723,35 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to match keyword text
                 tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText);
 
-                // Special case : symbolic characters
-                switch (tokenType)
+                // Special cases of user defined words : 
+                // - symbolic characters
+                // - section and paragraph names
+                if (tokenType == TokenType.UserDefinedWord)
                 {
-                    case TokenType.UserDefinedWord:
-                        // p117: SYMBOLIC CHARACTERS clause
-                        // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character.
-                        // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause.
-                        // The symbolic character can be a DBCS user-defined word.
-                        if (tokensLine.ScanState.InsideSymbolicCharacterDefinitions)
+                    // p117: SYMBOLIC CHARACTERS clause
+                    // symbolic-character-1 is a user-defined word and must contain at least one alphabetic character.
+                    // The same symbolic-character can appear only once in a SYMBOLIC CHARACTERS clause.
+                    // The symbolic character can be a DBCS user-defined word.
+                    if (tokensLine.ScanState.InsideSymbolicCharacterDefinitions)
+                    {
+                        // Symbolic character definition
+                        tokenType = TokenType.SymbolicCharacter;
+                        tokensLine.ScanState.AddSymbolicCharacter(tokenText);
+                    }
+                    else if (tokensLine.ScanState.SymbolicCharacters != null)
+                    {
+                        // Try to match a previously defined SymbolicCharacter
+                        if (tokensLine.ScanState.SymbolicCharacters.Contains(tokenText))
                         {
-                            // Symbolic character definition
                             tokenType = TokenType.SymbolicCharacter;
-                            tokensLine.ScanState.AddSymbolicCharacter(tokenText);
                         }
-                        else if (tokensLine.ScanState.SymbolicCharacters != null)
-                        {
-                            // Try to match a previously defined SymbolicCharacter
-                            if (tokensLine.ScanState.SymbolicCharacters.Contains(tokenText))
-                            {
-                                tokenType = TokenType.SymbolicCharacter;
-                            }
-                        }
-                        break;
+                    }
+
+                    // Section and paragraph names
+                    if (tokensLine.ScanState.InsideProcedureDivision && tokensLine.ScanState.AtBeginningOfSentence)
+                    {
+                        tokenType = TokenType.SectionParagraphName;
+                    }
                 }
             }
 

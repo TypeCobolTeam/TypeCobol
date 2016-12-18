@@ -2143,7 +2143,7 @@ dataDescriptionEntry:
 	  // dataDescriptionEntry, dataRenamesEntry and dataConditionEntry
 	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 	
 
-	levelNumber (dataNameDefinition | FILLER)? redefinesClause?
+	levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
 	| externalClause
@@ -2170,7 +2170,7 @@ dataDescriptionEntry:
 // data description entry in that record.
 
 dataRenamesEntry: { CurrentToken.Text == "66" }? 
-	levelNumber dataNameDefinition renamesClause PeriodSeparator;
+	levelNumber=integerValue2 dataNameDefinition renamesClause PeriodSeparator;
 
 // p186: Format 3: condition-name
 // Format 3 describes condition-names.
@@ -2183,7 +2183,7 @@ dataRenamesEntry: { CurrentToken.Text == "66" }?
 // alphanumeric group items.
 
 dataConditionEntry: { CurrentToken.Text == "88" }? 
-	levelNumber conditionNameDefinition valueClauseForCondition PeriodSeparator;
+	levelNumber=integerValue2 conditionNameDefinition valueClauseForCondition PeriodSeparator;
 
 // p186: The level-number specifies the hierarchy of data within a record, and identifies
 // special-purpose data entries. A level-number begins a data description entry, a
@@ -2248,7 +2248,7 @@ dataConditionEntry: { CurrentToken.Text == "88" }?
 // Subordinate data-names that are referenced in the program or method must be either uniquely defined, or made unique through qualification. 
 // Unreferenced data-names need not be uniquely defined. 
 
-levelNumber: integerValue;
+// levelNumber: integerValue2 => LevelNumber token
 
 // p187: data-name-1
 // Explicitly identifies the data being described.

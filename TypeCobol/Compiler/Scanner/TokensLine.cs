@@ -70,6 +70,17 @@ namespace TypeCobol.Compiler.Scanner
             // Register new token in list
             SourceTokens.Add(token);
 
+            // Register scan state before COPY and EXECL SQL INCLUDE tokens 
+            // (necessary to scan properly the imported document)
+            if (token.TokenType == TokenType.COPY || token.TokenType == TokenType.EXEC)
+            {
+                if(ScanStateBeforeCOPYToken == null)
+                {
+                    ScanStateBeforeCOPYToken = new Dictionary<Token,MultilineScanState>();
+                }
+                ScanStateBeforeCOPYToken[token] = ScanState.Clone();
+            }
+
             // Advance MultilineScanState
             if (Type != CobolTextLineType.Blank) // see p54 : for continuation, blank lines are treated like comment lines
             {
@@ -156,6 +167,11 @@ namespace TypeCobol.Compiler.Scanner
         internal MultilineScanState InitialScanState { get; private set; }
 
         /// <summary>
+        /// The preprocessor needs to know the exact ScanState just before each COPY token is encountered
+        /// </summary>
+        internal IDictionary<Token,MultilineScanState> ScanStateBeforeCOPYToken { get; private set; }
+
+        /// <summary>
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
         internal MultilineScanState ScanState { get; private set; }
@@ -166,6 +182,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             this.lastSourceIndex = previousLineVersion.lastSourceIndex;
             this.InitialScanState = previousLineVersion.InitialScanState;
+            this.ScanStateBeforeCOPYToken = previousLineVersion.ScanStateBeforeCOPYToken;
             this.ScanState = previousLineVersion.ScanState;
             this.SourceTokens = previousLineVersion.SourceTokens;
             this.ScannerDiagnostics = previousLineVersion.ScannerDiagnostics;

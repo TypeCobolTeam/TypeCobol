@@ -107,7 +107,7 @@ functionDataParameter:
 		)*;
 
 functionConditionParameter:
-	levelNumber conditionNameDefinition valueClauseForCondition;
+	levelNumber=integerValue conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
 

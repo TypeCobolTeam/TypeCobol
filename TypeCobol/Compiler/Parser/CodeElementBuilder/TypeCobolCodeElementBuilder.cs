@@ -106,7 +106,7 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	}
 	private DataConditionEntry CreateFunctionConditionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
 		var parameter = new DataConditionEntry();
-		parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+		parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 		parameter.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
 		SetConditionValues(parameter, context.valueClauseForCondition());
 		return parameter;

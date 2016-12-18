@@ -61,9 +61,9 @@
 			var data = e as DataConditionEntry;
 			var context = c as CodeElementsParser.DataConditionEntryContext;
 			if (data.LevelNumber.Value != 88)
-				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber());
+				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber);
 			if (data.DataName == null)
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber());
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber);
 		}
 	}
 
@@ -76,10 +76,10 @@
 			var context = c as CodeElementsParser.DataConditionEntryContext;
 			if (data.LevelNumber.Value != 66)
 				//(source page 379 of ISO Cobol 2014)
-				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber());
+				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber);
 			if (data.DataName == null)
 				//(source page 379 of ISO Cobol 2014)
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber());
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber);
 			if (data.RenamesFromDataName.Equals(data.RenamesToDataName))
 				//(source page 379 of ISO Cobol 2014)
 				DiagnosticUtils.AddError(data, "Renamed items can't be the same " + data.RenamesFromDataName + " and " + data.RenamesToDataName, context);

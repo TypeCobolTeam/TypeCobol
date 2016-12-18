@@ -1041,8 +1041,8 @@ namespace TypeCobol.Compiler.Parser
                 entry.DataType = DataType.Unknown;
             }
 
-            if (context.levelNumber() != null)
-				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+            if (context.levelNumber != null)
+				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
             
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
@@ -1248,7 +1248,7 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var entry = new DataRedefinesEntry();
 
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
@@ -1264,7 +1264,7 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context) {
 			var entry = new DataRenamesEntry();
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 			if (context.renamesClause().qualifiedDataName() != null) {
 				entry.RenamesFromDataName = CobolWordsBuilder.CreateQualifiedDataName(context.renamesClause().qualifiedDataName());
@@ -1280,7 +1280,7 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context) {
 			var entry = new DataConditionEntry();
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 			entry.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
 			SetConditionValues(entry, context.valueClauseForCondition());
 

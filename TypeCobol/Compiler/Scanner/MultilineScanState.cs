@@ -117,7 +117,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, !insideDataDivision, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
@@ -428,7 +428,10 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool AtBeginningOfSentence
         {
-            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC; }
+            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC ||
+                    // Special case : COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
+                    // Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
+                    (BeforeLastSignificantToken!=null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL_INCLUDE) && LastSignificantToken.TokenType == TokenType.UserDefinedWord); }
         }
 
         /// <summary>

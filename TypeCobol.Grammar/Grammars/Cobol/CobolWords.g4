@@ -734,6 +734,8 @@ booleanValue: TRUE | FALSE;
 
 integerValue: IntegerLiteral;
 
+integerValue2: LevelNumber;
+
 numericValue: numericLiteralToken | numericFigurativeConstant;
 
 characterValue1: alphanumericLiteralToken;
@@ -765,6 +767,8 @@ alphanumericValue9: specialRegister;
 alphanumericValue10: standardCollatingSequence;
 
 alphanumericValue11: SymbolicCharacter;
+
+alphanumericValue12: SectionParagraphName;
 
 enumeratedValue1: UserDefinedWord;
 
@@ -807,6 +811,8 @@ symbolDefinition4: alphanumericValue4;
 symbolDefinition5: alphanumericValue5;
 
 symbolDefinition11: alphanumericValue11;
+
+symbolDefinition12: alphanumericValue12;
 
 symbolReference1: alphanumericValue1;
 
@@ -940,7 +946,7 @@ programNameReferenceOrProgramEntryReference: ambiguousSymbolReference1;
 // section-name, because it cannot be qualified, must be unique
 // within the program in which it is defined.
 
-sectionNameDefinition: symbolDefinition4;
+sectionNameDefinition: symbolDefinition12;
 
 sectionNameReference: symbolReference4;
 
@@ -950,7 +956,7 @@ sectionNameReference: symbolReference4;
 // If there are no declaratives (format 2), a paragraph-name is not
 // required in the PROCEDURE DIVISION.
 
-paragraphNameDefinition: symbolDefinition4;
+paragraphNameDefinition: symbolDefinition12;
 
 paragraphNameReference: symbolReference4;
 
