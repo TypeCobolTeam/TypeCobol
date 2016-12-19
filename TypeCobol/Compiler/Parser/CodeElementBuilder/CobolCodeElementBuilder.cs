@@ -977,8 +977,9 @@ namespace TypeCobol.Compiler.Parser
 				return;
 			}
 
-            DataDescriptionEntry entry; 
-// [COBOL 2002]
+            DataDescriptionEntry entry;
+            // [COBOL 2002]
+            //Variable declared with a TYPEDEF
             if (context.cobol2002TypedefClause() != null) {
 				var typedef = new DataTypeDescriptionEntry();
                 typedef.DataTypeName = CobolWordsBuilder.CreateDataTypeNameDefinition(context.dataNameDefinition());
@@ -987,7 +988,7 @@ namespace TypeCobol.Compiler.Parser
 
                 entry = typedef;
                 entry.DataName = typedef.DataTypeName;
-                entry.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong);               
+                entry.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong, CobolLanguageLevel.Cobol2002);               
             }
 // [/COBOL 2002]
             else {               
@@ -1009,9 +1010,12 @@ namespace TypeCobol.Compiler.Parser
 					entry.DataType = DataType.Create(entry.Picture.Value);
 			}
 // [COBOL 2002]
+            //Variable declared with a Type
 			if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
 				entry.UserDefinedDataType = CobolWordsBuilder.CreateDataTypeNameReference(context.cobol2002TypeClause()[0].dataTypeNameReference());
-				entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name);
+                //Note we can't know here, if the type is strongly typed or not. This must be done during semantic phase (Node)
+                //use false, because we must make a choice
+                entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name, false, CobolLanguageLevel.Cobol2002);
 			}
 // [/COBOL 2002]
 			if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)

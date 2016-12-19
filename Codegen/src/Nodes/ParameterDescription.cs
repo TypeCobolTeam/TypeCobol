@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Codegen.Nodes {
+﻿using TypeCobol.Compiler;
+
+namespace TypeCobol.Codegen.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -34,7 +36,8 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					var str = new System.Text.StringBuilder();
 					str.Append("01 ").Append(name);
 					AlphanumericValue picture = null;
-					if (!this.CodeElement().DataType.IsCOBOL) {
+                        //Type exists from Cobol 2002
+					if (this.CodeElement().DataType.CobolLanguageLevel >= CobolLanguageLevel.Cobol2002) {
 						var found = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
 						if (found.Count > 0) {
 							customtype = (TypeDefinition)found[0];
@@ -53,12 +56,12 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 						if (entry.ConditionValues != null && entry.ConditionValues.Length > 0) {
 							str.Append(" VALUE");
 							foreach(var value in entry.ConditionValues)
-								str.Append(" \'").Append(value.ToString()).Append('\'');
+								str.Append(" \'").Append(value).Append('\'');
 						} else
 						if (entry.ConditionValuesRanges != null && entry.ConditionValuesRanges.Length > 0) {
 							str.Append(" VALUES");
 							foreach(var range in entry.ConditionValuesRanges)
-								str.Append(" \'").Append(range.MinValue.ToString()).Append("\' THRU \'").Append(range.MaxValue.ToString()).Append('\'');
+								str.Append(" \'").Append(range.MinValue).Append("\' THRU \'").Append(range.MaxValue).Append('\'');
 						}
 						str.Append('.');
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
