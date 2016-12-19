@@ -35,7 +35,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// an external data set, and specifies file organization, access mode, and other
         /// information.
         /// </summary>
-        public IDictionary<FileName, FileControlEntry> FileConnectors { get; set; }
+        public IDictionary<SymbolDefinition, FileControlEntry> FileConnectors { get; set; }
 
         /// <summary>
         /// The I-O-CONTROL paragraph specifies when checkpoints are to be taken 
@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// More than one record description entry can be specified; each is an alternative description of the same record storage area.
         /// Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
         /// </summary>
-        public IDictionary<FileName, FileDescription> FileDescriptions { get; set; }
+        public IDictionary<SymbolDefinition, FileDescription> FileDescriptions { get; set; }
 
         /// <summary>
         /// Table of symbols defined in this program.
@@ -92,16 +92,12 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// Outermost program of a compilation unit.
     /// </summary>
-    public class SourceProgram : Program
-    {
-        public SourceProgram()
-        {
-            IsNested = false;
-        }
+    public class SourceProgram: Program {
 
-        public SourceProgram(SymbolTable EnclosingScope) {
-            IsNested = false;
-            SymbolTable = new SymbolTable(EnclosingScope);
+		public SourceProgram(SymbolTable EnclosingScope) {
+			IsNested = false;
+			SymbolTable = new SymbolTable(EnclosingScope);
+			SyntaxTree.Root.SymbolTable = SymbolTable;
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -148,18 +144,15 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs can be directly or indirectly contained in the containing program.     
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
-    public class NestedProgram : Program 
-    {
-        public NestedProgram(Program containingProgram)
-        {
-            IsNested = true;
-            ContainingProgram = containingProgram;
-            SymbolTable = new SymbolTable(containingProgram.SymbolTable);
-        }
+	public class NestedProgram: Program {
+		public NestedProgram(Program containingProgram) {
+			IsNested = true;
+			ContainingProgram = containingProgram;
+			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
+			SyntaxTree.Root.SymbolTable = SymbolTable;
+		}
 
-        /// <summary>
-        /// A nested program is a program that is contained in another program.
-        /// </summary>
-        public Program ContainingProgram { get; private set; }
-    }
+        /// <summary>A nested program is a program that is contained in another program.</summary>
+		public Program ContainingProgram { get; private set; }
+	}
 }

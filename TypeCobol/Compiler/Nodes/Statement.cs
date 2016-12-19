@@ -1,124 +1,169 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
 
-using TypeCobol.Compiler.CodeElements;
+	using System.Collections.Generic;
+	using TypeCobol.Compiler.CodeElements;
+	using TypeCobol.Compiler.CodeElements.Expressions;
+
+
 
 public interface Statement { }
 
 
 
-public class Accept: CodeElementNode<AcceptStatement>, Statement {
+public class Accept: Node, CodeElementHolder<AcceptStatement>, Statement {
 	public Accept(AcceptStatement statement): base(statement) { }
 }
 
-public class Alter: CodeElementNode<AlterStatement>, Statement {
+public class Alter: Node, CodeElementHolder<AlterStatement>, Statement {
 	public Alter(AlterStatement statement): base(statement) { }
 }
 
-public class Call: CodeElementNode<CallStatement>, Statement {
+public class Call: Node, CodeElementHolder<CallStatement>, Statement {
 	public Call(CallStatement statement): base(statement) { }
 }
+public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller, VariableUser {
+	public ProcedureStyleCall(ProcedureStyleCallStatement statement): base(statement) { }
 
-public class Cancel: CodeElementNode<CancelStatement>, Statement {
+	public IList<FunctionCall> FunctionCalls {
+		get {
+			var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
+			var calls =  new List<FunctionCall>();
+			calls.Add(call);
+			return calls;
+		}
+	}
+
+	public IDictionary<QualifiedName,object> Variables {
+		get {
+			var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
+			var names = new Dictionary<QualifiedName,object>();
+			names.Add(new URI(call.FunctionName), null);
+			foreach(var parameter in call.Arguments) {
+				if (!parameter.IsOmitted && !parameter.StorageAreaOrValue.IsLiteral)
+					names.Add(new URI(parameter.StorageAreaOrValue.ToString()), null);
+			}
+			return names;
+		}
+	}
+}
+
+public class Cancel: Node, CodeElementHolder<CancelStatement>, Statement {
 	public Cancel(CancelStatement statement): base(statement) { }
 }
 
-public class Continue: CodeElementNode<ContinueStatement>, Statement {
+public class Continue: Node, CodeElementHolder<ContinueStatement>, Statement {
 	public Continue(ContinueStatement statement): base(statement) { }
 }
 
-public class Delete: CodeElementNode<DeleteStatement>, Statement {
+public class Delete: Node, CodeElementHolder<DeleteStatement>, Statement {
 	public Delete(DeleteStatement statement): base(statement) { }
 }
 
-public class Display: CodeElementNode<DisplayStatement>, Statement {
+public class Display: Node, CodeElementHolder<DisplayStatement>, Statement {
 	public Display(DisplayStatement statement): base(statement) { }
 }
 
-public class Entry: CodeElementNode<EntryStatement>, Statement {
+public class Entry: Node, CodeElementHolder<EntryStatement>, Statement {
 	public Entry(EntryStatement statement): base(statement) { }
 }
 
-public class Exec: CodeElementNode<ExecStatement>, Statement {
+public class Exec: Node, CodeElementHolder<ExecStatement>, Statement {
 	public Exec(ExecStatement statement): base(statement) { }
 }
 
-public class Exit: CodeElementNode<ExitStatement>, Statement {
+public class Exit: Node, CodeElementHolder<ExitStatement>, Statement {
 	public Exit(ExitStatement statement): base(statement) { }
 }
 
-public class ExitMethod: CodeElementNode<ExitMethodStatement>, Statement {
+public class ExitMethod: Node, CodeElementHolder<ExitMethodStatement>, Statement {
 	public ExitMethod(ExitMethodStatement statement): base(statement) { }
 }
 
-public class ExitProgram: CodeElementNode<ExitProgramStatement>, Statement {
+public class ExitProgram: Node, CodeElementHolder<ExitProgramStatement>, Statement {
 	public ExitProgram(ExitProgramStatement statement): base(statement) { }
 }
 
-public class Goback: CodeElementNode<GobackStatement>, Statement {
+public class Goback: Node, CodeElementHolder<GobackStatement>, Statement {
 	public Goback(GobackStatement statement): base(statement) { }
 }
 
-public class Goto: CodeElementNode<GotoStatement>, Statement {
+public class Goto: Node, CodeElementHolder<GotoStatement>, Statement {
 	public Goto(GotoStatement statement): base(statement) { }
 }
 
-public class Initialize: CodeElementNode<InitializeStatement>, Statement {
+public class Initialize: Node, CodeElementHolder<InitializeStatement>, Statement {
 	public Initialize(InitializeStatement statement): base(statement) { }
 }
 
-public class Inspect: CodeElementNode<InspectStatement>, Statement {
+public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
 	public Inspect(InspectStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Invoke: CodeElementNode<InvokeStatement>, Statement {
+public class Invoke: Node, CodeElementHolder<InvokeStatement>, Statement {
 	public Invoke(InvokeStatement statement): base(statement) { }
 }
 
-public class Merge: CodeElementNode<MergeStatement>, Statement {
+public class Merge: Node, CodeElementHolder<MergeStatement>, Statement {
 	public Merge(MergeStatement statement): base(statement) { }
 }
 
-public class Move: CodeElementNode<MoveStatement>, Statement {
+public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
 	public Move(MoveStatement statement): base(statement) { }
+	public IList<FunctionCall> FunctionCalls { get { return this.CodeElement().FunctionCalls; } }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Release: CodeElementNode<ReleaseStatement>, Statement {
+public class Release: Node, CodeElementHolder<ReleaseStatement>, Statement {
 	public Release(ReleaseStatement statement): base(statement) { }
 }
 
-public class Return: CodeElementNode<ReturnStatement>, Statement {
+public class Return: Node, CodeElementHolder<ReturnStatement>, Statement {
 	public Return(ReturnStatement statement): base(statement) { }
 }
 
-public class Set: CodeElementNode<SetStatement>, Statement {
+public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableWriter {
 	public Set(SetStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Sort: CodeElementNode<SortStatement>, Statement {
+public class Sort: Node, CodeElementHolder<SortStatement>, Statement {
 	public Sort(SortStatement statement): base(statement) { }
 }
 
-public class Start: CodeElementNode<StartStatement>, Statement {
+public class Start: Node, CodeElementHolder<StartStatement>, Statement {
 	public Start(StartStatement statement): base(statement) { }
 }
 
-public class Stop: CodeElementNode<StopStatement>, Statement {
+public class Stop: Node, CodeElementHolder<StopStatement>, Statement {
 	public Stop(StopStatement statement): base(statement) { }
 }
 
-public class String: CodeElementNode<StringStatement>, Statement {
+public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	public String(StringStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Unstring: CodeElementNode<UnstringStatement>, Statement {
+public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
 	public Unstring(UnstringStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class XmlGenerate: CodeElementNode<XmlGenerateStatement>, Statement {
+public class XmlGenerate: Node, CodeElementHolder<XmlGenerateStatement>, Statement {
 	public XmlGenerate(XmlGenerateStatement statement): base(statement) { }
 }
 
-public class XmlParse: CodeElementNode<XmlParseStatement>, Statement {
+public class XmlParse: Node, CodeElementHolder<XmlParseStatement>, Statement {
 	public XmlParse(XmlParseStatement statement): base(statement) { }
 }
 
@@ -126,47 +171,62 @@ public class XmlParse: CodeElementNode<XmlParseStatement>, Statement {
 
 // --- ARITHMETIC STATEMENTS ---
 
-public class Add: CodeElementNode<AddStatement>, Statement {
+public class Add: Node, CodeElementHolder<AddStatement>, Statement, VariableWriter {
 	public Add(AddStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Subtract: CodeElementNode<SubtractStatement>, Statement {
+public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
 	public Subtract(SubtractStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Multiply: CodeElementNode<MultiplyStatement>, Statement {
+public class Multiply: Node, CodeElementHolder<MultiplyStatement>, Statement, VariableWriter {
 	public Multiply(MultiplyStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Divide: CodeElementNode<DivideStatement>, Statement {
+public class Divide: Node, CodeElementHolder<DivideStatement>, Statement, VariableWriter {
 	public Divide(DivideStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Compute: CodeElementNode<ComputeStatement>, Statement {
+public class Compute: Node, CodeElementHolder<ComputeStatement>, Statement, VariableWriter {
 	public Compute(ComputeStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 
 
 // --- FILE STATEMENTS ---
 
-public class Open: CodeElementNode<OpenStatement>, Statement {
+public class Open: Node, CodeElementHolder<OpenStatement>, Statement {
 	public Open(OpenStatement statement): base(statement) { }
 }
 
-public class Close: CodeElementNode<CloseStatement>, Statement {
+public class Close: Node, CodeElementHolder<CloseStatement>, Statement {
 	public Close(CloseStatement statement): base(statement) { }
 }
 
-public class Read: CodeElementNode<ReadStatement>, Statement {
+public class Read: Node, CodeElementHolder<ReadStatement>, Statement {
 	public Read(ReadStatement statement): base(statement) { }
 }
 
-public class Write: CodeElementNode<WriteStatement>, Statement {
+public class Write: Node, CodeElementHolder<WriteStatement>, Statement {
 	public Write(WriteStatement statement): base(statement) { }
 }
 
-public class Rewrite: CodeElementNode<RewriteStatement>, Statement {
+public class Rewrite: Node, CodeElementHolder<RewriteStatement>, Statement {
 	public Rewrite(RewriteStatement statement): base(statement) { }
 }
 
@@ -183,16 +243,16 @@ public interface StatementCondition { }
 //  \---> ELSE
 //         \--> statements
 
-public class If: CodeElementNode<IfStatement>, Statement {
+public class If: Node, CodeElementHolder<IfStatement>, Statement {
 	public If(IfStatement statement): base(statement) { }
 }
-public class Then: CodeElementNode<CodeElement>, StatementCondition {
+public class Then: Node, CodeElementHolder<CodeElement>, StatementCondition {
 	public Then(): base(null) { }
 }
-public class Else: CodeElementNode<ElseCondition>, StatementCondition {
+public class Else: Node, CodeElementHolder<ElseCondition>, StatementCondition {
 	public Else(ElseCondition statement): base(statement) { }
 }
-public class NextSentence: CodeElementNode<NextSentenceStatement>, Statement {
+public class NextSentence: Node, CodeElementHolder<NextSentenceStatement>, Statement {
 	public NextSentence(NextSentenceStatement statement): base(statement) { }
 }
 
@@ -224,13 +284,16 @@ public class NextSentence: CodeElementNode<NextSentenceStatement>, Statement {
 //  \---> WHEN-OTHER
 //         \--> statements
 
-public class Evaluate: CodeElementNode<EvaluateStatement>, Statement {
+public class Evaluate: Node, CodeElementHolder<EvaluateStatement>, Statement {
 	public Evaluate(EvaluateStatement statement): base(statement) { }
 }
-public class When: CodeElementNode<WhenConditionalExpression>, StatementCondition {
-	public When(WhenConditionalExpression statement): base(statement) { }
+public class WhenGroup: Node, CodeElementHolder<CodeElement>, StatementCondition {
+	public WhenGroup(): base(null) { }
 }
-public class WhenOther: CodeElementNode<WhenOtherCondition>, StatementCondition {
+public class When: Node, CodeElementHolder<WhenCondition>, StatementCondition {
+	public When(WhenCondition statement): base(statement) { }
+}
+public class WhenOther: Node, CodeElementHolder<WhenOtherCondition>, StatementCondition {
 	public WhenOther(WhenOtherCondition statement): base(statement) { }
 }
 
@@ -238,10 +301,10 @@ public class WhenOther: CodeElementNode<WhenOtherCondition>, StatementCondition 
 // PERFORM
 //  \---> statements
 
-public class Perform: CodeElementNode<PerformStatement>, Statement {
+public class Perform: Node, CodeElementHolder<PerformStatement>, Statement {
 	public Perform(PerformStatement statement): base(statement) { }
 }
-public class PerformProcedure: CodeElementNode<PerformProcedureStatement>, Statement {
+public class PerformProcedure: Node, CodeElementHolder<PerformProcedureStatement>, Statement {
 	public PerformProcedure(PerformProcedureStatement statement): base(statement) { }
 }
 
@@ -266,8 +329,11 @@ public class PerformProcedure: CodeElementNode<PerformProcedureStatement>, State
 //         |--> conditions
 //         \--> THEN
 //               \--> statements
-public class Search: CodeElementNode<SearchStatement>, Statement {
+public class Search: Node, CodeElementHolder<SearchStatement>, Statement {
 	public Search(SearchStatement statement): base(statement) { }
+}
+public class WhenSearch: Node, CodeElementHolder<WhenSearchCondition>, StatementCondition {
+	public WhenSearch(WhenSearchCondition statement): base(statement) { }
 }
 
 } // end of namespace TypeCobol.Compiler.Nodes

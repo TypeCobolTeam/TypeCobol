@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
@@ -42,6 +43,11 @@ namespace TypeCobol.Compiler
         // - iterating on the elements of this list requires the allocation of an external stack object, which is retrieved from a pool
         // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
         private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
+
+        /// <summary>
+        /// Issue #315
+        /// </summary>
+        private MultilineScanState initialScanStateForCopy;
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -95,7 +101,14 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider)
+        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines,
+            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider) :
+            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null)
+        { 
+        }
+
+        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
+            [CanBeNull] MultilineScanState scanState)
         {
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
@@ -119,6 +132,8 @@ namespace TypeCobol.Compiler
             PerfStatsForText = new PerfStatsForCompilationStep(CompilationStep.Text);
             PerfStatsForScanner = new PerfStatsForCompilationStep(CompilationStep.Scanner);
             PerfStatsForPreprocessor = new PerfStatsForCompilationStep(CompilationStep.Preprocessor);
+
+            initialScanStateForCopy = scanState;
         }
 
         /// <summary>
@@ -384,11 +399,11 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions);
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, initialScanStateForCopy);
                 }
                 else
                 {
-                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions);
+                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, initialScanStateForCopy);
 
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;

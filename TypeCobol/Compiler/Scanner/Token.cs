@@ -90,7 +90,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Type from the TokenType enumeration
         /// </summary>
-        public TokenType TokenType { get; private set; }
+        public TokenType TokenType { get; internal set; }
 
         /// <summary>
         /// Family from the TokenFamily Enumeration
@@ -260,7 +260,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Enables the lexer to attach a strongly typed value for literals
         /// </summary>
-        public LiteralValue LiteralValue { get; set; }
+        public LiteralTokenValue LiteralValue { get; set; }
 
         // --- Ambiguous tokens resolved after having been created ---
         
@@ -384,5 +384,6 @@ namespace TypeCobol.Compiler.Scanner
                 return true;
             }
         }
+
     }
 }

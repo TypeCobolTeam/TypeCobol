@@ -18,20 +18,20 @@ PROCEDURE DIVISION.
 
 * correct
 MOVE X     TO E OF T-fixed-2 OF T-fixed-1 (1 1)
-MOVE X     TO T-fixed-1 (1) :: T-fixed-2 (1) :: E
+*MOVE X     TO T-fixed-1 (1) :: T-fixed-2 (1) :: E
 * T-fixed-2,T-fixed-1: missing subscripting
 MOVE X     TO E OF T-fixed-2 OF T-fixed-1
 MOVE X     TO T-fixed-1 :: T-fixed-2 :: E
 * E: too few subscripts
 MOVE X     TO E OF T-fixed-2 OF T-fixed-1 (1)
-MOVE X     TO T-fixed-1 (1) :: T-fixed-2 :: E
-MOVE X     TO T-fixed-1 :: T-fixed-2 (1) :: E
+*MOVE X     TO T-fixed-1 (1) :: T-fixed-2 :: E
+*MOVE X     TO T-fixed-1 :: T-fixed-2 (1) :: E
 * E: too many subscripts
 MOVE X     TO E OF T-fixed-2 OF T-fixed-1 (1 1 1)
-MOVE X     TO T-fixed-1 (1) :: T-fixed-2 (1) :: E (1)
+*MOVE X     TO T-fixed-1 (1) :: T-fixed-2 (1) :: E (1)
 * X: unexpected subscripting
 MOVE X (1) TO E OF T-fixed-2 OF T-fixed-1 (1 1)
-MOVE X (1) TO T-fixed-1 (1) :: T-fixed-2 (1) :: E
+*MOVE X (1) TO T-fixed-1 (1) :: T-fixed-2 (1) :: E
 .
 
 * T-nobounds: missing subscripting
@@ -39,13 +39,13 @@ MOVE X TO   E OF T-nobounds
 MOVE X TO   T-nobounds :: E
 * correct
 MOVE X TO   E OF T-nobounds (9999)
-MOVE X TO   T-nobounds (9999) :: E
+*MOVE X TO   T-nobounds (9999) :: E
 MOVE X TO   E OF T-variable (99)
-MOVE X TO   T-variable (99) :: E
+*MOVE X TO   T-variable (99) :: E
 * TODO? can we see 100 > mysize?
 MOVE X TO   E OF T-variable (100)
-MOVE X TO   T-variable (100) :: E
+*MOVE X TO   T-variable (100) :: E
 * T-variable: out of bounds
 MOVE X TO   E OF T-variable (101)
-MOVE X TO   T-variable (101) :: E
+*MOVE X TO   T-variable (101) :: E
 .

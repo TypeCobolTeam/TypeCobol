@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,14 +10,18 @@ namespace TypeCobol.Compiler.CodeElements
     ///
     /// The REWRITE statement is not supported for line-sequential files.
     /// </summary>
-    public class RewriteStatement : CodeElement
+    public class RewriteStatement : StatementElement
     {
+        public RewriteStatement() : base(CodeElementType.RewriteStatement, StatementType.RewriteStatement)
+        { }
+
         /// <summary>
         /// p405:
         /// Must be the name of a logical record in a DATA DIVISION FD entry. The
         /// record-name can be qualified.
         /// </summary>
-        QualifiedName RecordName;
+        public SymbolReference RecordName { get; set; }
+
         /// <summary>
         /// p405:
         /// FROM phrase
@@ -41,13 +45,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// in identifier-1 (“INTO and FROM phrases” on page 291 under "Common
         /// processing facilities").
         /// </summary>
-        Identifier From;
-
-        public RewriteStatement(QualifiedName recordname, Identifier identifier)
-            : base(CodeElementType.RewriteStatement)
-        {
-            this.RecordName = recordname;
-            this.From = identifier;
-        }
+        public Variable FromVariable { get; set; }
+        
     }
 }

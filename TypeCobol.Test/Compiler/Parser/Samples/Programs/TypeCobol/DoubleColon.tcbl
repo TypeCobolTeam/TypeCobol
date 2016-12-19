@@ -114,5 +114,6 @@ TEST-3.
 
 TEST-4.
     MOVE SPACE TO T4-B1 OF T4-A1 ( 2 3 )
-    MOVE SPACE TO T4-A1 ( 2 ) :: T4-B1 ( 3 )
+* TODO operator '::' specification is insufficient regarding subscripts
+*    MOVE SPACE TO T4-A1 ( 2 ) :: T4-B1 ( 3 )
     .

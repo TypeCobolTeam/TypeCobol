@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -10,8 +10,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// When the START statement is executed, the associated indexed or relative file must
     /// be open in either INPUT or I-O mode.
     /// </summary>
-    public class StartStatement : CodeElement
+    public class StartStatement : StatementElement
     {
+        public StartStatement() : base(CodeElementType.StartStatement, StatementType.StartStatement)
+        { }
+
         /// <summary>
         /// p429:
         /// file-name-1
@@ -19,7 +22,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// defined in an FD entry in the DATA DIVISION and must not name a sort
         /// file.
         /// </summary>
-        public FileName FileName = null;
+        public SymbolReference FileName { get; set; }
+
+        /// <summary>
+        /// When the START statement is executed, a comparison is made between the current
+        /// value in the key data-name and the corresponding key field in the file's index.
+        /// </summary>
+        public SyntaxProperty<RelationalOperator> RelationalOperator { get; set; }
 
         /// <summary>
         /// p429:
@@ -31,17 +40,11 @@ namespace TypeCobol.Compiler.CodeElements
         ///
         /// data-name-1
         /// Can be qualified; it cannot be subscripted.
-        ///
-        /// When the START statement is executed, a comparison is made between the current
-        /// value in the key data-name and the corresponding key field in the file's index.
+        /// 
         /// If the FILE STATUS clause is specified in the file-control entry, the associated file
         /// status key is updated when the START statement is executed (See “File status key”
         /// on page 287).
         /// </summary>
-        public QualifiedName DataName = null;
-
-        public char Operator = '?';
-
-        public StartStatement() : base(CodeElementType.StartStatement) { }
+        public Variable KeyValue { get; set; }
     }
 }

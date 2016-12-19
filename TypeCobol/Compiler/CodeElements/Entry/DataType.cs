@@ -1,17 +1,18 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	public class DataType {
+	public class DataType : ICobolLanguageLevel {
 		public string Name { get; private set; }
-		public bool IsStrong { get; private set; }
-		public bool IsNestable { get; private set; }
+		public bool IsStrong { get; internal set; }
+		public CobolLanguageLevel CobolLanguageLevel  { get; private set; }
 
-		public DataType(string name, bool IsStrong=false, bool IsNestable=true) {
+		public DataType([NotNull] string name, bool isStrong=false, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
 			Name = name;
 			if (name == null) throw new ArgumentNullException();
-			this.IsStrong = IsStrong;
-			this.IsNestable = IsNestable;
+			this.IsStrong = isStrong;
+			this.CobolLanguageLevel = cobolLanguageLevel;
 		}
 
 		public override string ToString() { return Name; }
@@ -34,6 +35,13 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 
+
+		public static DataType CreateCustom(string name, bool isStrong=true, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
+			foreach(var builtin in BuiltInCustomTypes)
+				if (builtin.Name.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
+					return builtin;
+			return new DataType(name, isStrong, cobolLanguageLevel);
+		}
 
 		public static DataType Create(string picture) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
@@ -113,65 +121,42 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
-// [TYPECOBOL]
-		public static readonly DataType Boolean            = new DataType("BOOL", true, true);
+        // [TYPECOBOL]
+        //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
+        public static readonly DataType Boolean            = new DataType("BOOL", true, CobolLanguageLevel.TypeCobol);
+        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+        public static readonly DataType Date               = new DataType("DATE", true, CobolLanguageLevel.TypeCobol);
 
-		public static readonly TypeDefinition Date = CreateDate();
-		private static TypeDefinition CreateDate() {
-			var type = new CustomTypeDefinition(new DataType("DATE", true, true));
-			CreateMember(type, 5, "YYYY", Numeric,4);
-			CreateMember(type, 5, "MM",   Numeric,2);
-			CreateMember(type, 5, "DD",   Numeric,2);
-			return type;
+		public static Nodes.TypeDefinition CreateBuiltIn(DataType type) {
+			if (type == DataType.Date) return CreateDate();
+			return CreateBase(type);
 		}
-		private static void CreateMember(DataDescriptionEntry parent, int level, string name, DataType type, int length) {
+		private static Nodes.TypeDefinition CreateBase(DataType type) {
+			var entry = new DataTypeDescriptionEntry();
+			entry.LevelNumber = new GeneratedIntegerValue(1);
+			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
+			entry.DataType = type;
+			return new Nodes.TypeDefinition(entry);
+		}
+		private static Nodes.TypeDefinition CreateDate() {
+			var node = CreateBase(DataType.Date);
+			node.Add(CreateData(5, "YYYY", '9',4));
+			node.Add(CreateData(5, "MM",   '9',2));
+			node.Add(CreateData(5, "DD",   '9',2));
+			return node;
+		}
+		private static Nodes.DataDescription CreateData(int level, string name, char type, int length) {
 			var data = new DataDescriptionEntry();
-			data.LevelNumber = level;
-			data.DataName = new StringDataName(name);
-			data.DataType = type;
-			data.MemoryArea = new TypeCobol.Compiler.CodeModel.DataInMemory(length, 0);//TODO half-assed
-			data.Picture = String.Format("9 ({0})", data.MemoryArea.Length);
-			data.TopLevel = parent;
-			parent.Subordinates.Add(data);
+			data.LevelNumber = new GeneratedIntegerValue(level);
+			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
+			data.Picture = new GeneratedAlphanumericValue(String.Format("{0}({1})", type, length));
+			data.DataType = DataType.Create(data.Picture.Value);
+			return new Nodes.DataDescription(data);
 		}
+
+		public static readonly DataType[] BuiltInCustomTypes = new DataType[] { DataType.Boolean, DataType.Date, };
 // [/TYPECOBOL]
 
-	}
 
-	public interface TypeDefinition {
-		bool IsTypeDefinition { get; }
-		DataType DataType { get; }
-		System.Collections.Generic.ICollection<DataDescriptionEntry> Subordinates { get; }
-	}
-	public class CustomTypeDefinition: DataDescriptionEntry, TypeDefinition {
-		public CustomTypeDefinition(DataType type) {
-			this.DataType = type;
-		}
-		public override bool IsTypeDefinition { get { return true; } }
-	}
-
-
-
-	public class StringDataName: DataName {
-		private string name_;
-		public override string Name { get { return name_; } }
-		/// <param name="name">Cannot be null</param>
-        public StringDataName(string name): base(null) { name_ = name; }
-
-		public override bool Equals(object obj) {
-			var other = obj as StringDataName;
-			if (other == null) return false;
-			return other == this;
-		}
-		public static bool operator ==(StringDataName x, StringDataName y) {
-			if (Object.ReferenceEquals(x, null) && Object.ReferenceEquals(y, null)) return true;
-			if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-			return x.Name.ToUpper() == y.Name.ToUpper();
-		}
-		public static bool operator !=(StringDataName x, StringDataName y) {
-			return !(x == y);
-		}
-
-		public override string ToString() { return Name; }
 	}
 }

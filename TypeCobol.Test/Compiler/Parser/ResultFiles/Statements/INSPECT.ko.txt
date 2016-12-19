@@ -1,43 +1,45 @@
 ﻿--- Diagnostics ---
-[37,38]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[37,38:BY]<BY> on line 4)
-[37,38]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[37,38:BY]<BY> on line 5)
-[59,60]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[59,60:BY]<BY> on line 5)
-[81,82]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[81,82:BY]<BY> on line 5)
-[37,38]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[37,38:BY]<BY> on line 6)
-[76,77]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[76,77:BY]<BY> on line 6)
-[107,108]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectCharacters>inspectBy, OffendingSymbol=[107,108:BY]<BY> on line 6)
-[32,33]<27,Error,Syntax>Syntax error : INSPECT  TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectIdentifiers>inspectByIdentifiers>inspectBy, OffendingSymbol=[32,33:BY]<BY> on line 7)
-[36,37]<27,Error,Syntax>Syntax error : INSPECT  TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectIdentifiers>inspectByIdentifiers>inspectBy, OffendingSymbol=[36,37:BY]<BY> on line 8)
-[32,33]<27,Error,Syntax>Syntax error : INSPECT  TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectIdentifiers>inspectByIdentifiers>inspectBy, OffendingSymbol=[32,33:BY]<BY> on line 9)
-[53,54]<27,Error,Syntax>Syntax error : INSPECT  TALLYING: illegal CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectTallying>inspectIdentifiers>inspectByIdentifiers>inspectBy, OffendingSymbol=[53,54:BY]<BY> on line 9)
-[26,30]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal FIRST (RuleStack=codeElement>inspectStatement>inspectTallying>inspectIdentifiers, OffendingSymbol=[26,30:FIRST]<FIRST> on line 11)
-[54,58]<27,Error,Syntax>Syntax error : INSPECT TALLYING: illegal FIRST (RuleStack=codeElement>inspectStatement>inspectTallying>inspectIdentifiers, OffendingSymbol=[54,58:FIRST]<FIRST> on line 12)
-[21,30]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectCharacters, OffendingSymbol=[21,30:CHARACTERS]<CHARACTERS> on line 17)
-[21,30]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectCharacters, OffendingSymbol=[21,30:CHARACTERS]<CHARACTERS> on line 18)
-[25,25]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectIdentifiers>inspectByIdentifiers, OffendingSymbol=[25,25:x]<UserDefinedWord> on line 19)
-[27,27]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectIdentifiers>inspectByIdentifiers, OffendingSymbol=[27,27:y]<UserDefinedWord> on line 20)
-[29,29]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectIdentifiers>inspectByIdentifiers, OffendingSymbol=[29,29:z]<UserDefinedWord> on line 21)
-[25,25]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectIdentifiers>inspectByIdentifiers, OffendingSymbol=[25,25:x]<UserDefinedWord> on line 22)
-[33,33]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectIdentifiers>inspectByIdentifiers, OffendingSymbol=[33,33:y]<UserDefinedWord> on line 22)
-[43,43]<27,Error,Syntax>Syntax error : INSPECT REPLACING: Missing CHARACTERS BY <identifier> or <literal> (RuleStack=codeElement>inspectStatement>inspectIdentifiers>inspectByIdentifiers, OffendingSymbol=[43,43:z]<UserDefinedWord> on line 22)
-[37,44]<27,Error,Syntax>Syntax error : no viable alternative at input 'TALLYING' (RuleStack=codeElement, OffendingSymbol=[37,44:TALLYING]<TALLYING> on line 27)
-[37,44]<27,Error,Syntax>Syntax error : no viable alternative at input 'TALLYING' (RuleStack=codeElement, OffendingSymbol=[37,44:TALLYING]<TALLYING> on line 29)
+[37,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'BY' (RuleStack=codeElement, OffendingSymbol=[37,38:BY]<BY> on line 4)
+[37,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'BY' (RuleStack=codeElement, OffendingSymbol=[37,38:BY]<BY> on line 5)
+[37,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'BY' (RuleStack=codeElement, OffendingSymbol=[37,38:BY]<BY> on line 6)
+[32,33]<27,Error,Syntax>Syntax error : no viable alternative at input 'BY' (RuleStack=codeElement, OffendingSymbol=[32,33:BY]<BY> on line 7)
+[36,37]<27,Error,Syntax>Syntax error : no viable alternative at input 'BY' (RuleStack=codeElement, OffendingSymbol=[36,37:BY]<BY> on line 8)
+[32,33]<27,Error,Syntax>Syntax error : no viable alternative at input 'BY' (RuleStack=codeElement, OffendingSymbol=[32,33:BY]<BY> on line 9)
+[26,30]<27,Error,Syntax>Syntax error : no viable alternative at input 'FIRST' (RuleStack=codeElement>inspectStatement>tallyingPhrase>inspectTallyingOperation, OffendingSymbol=[26,30:FIRST]<FIRST> on line 11)
+[54,58]<27,Error,Syntax>Syntax error : no viable alternative at input 'FIRST' (RuleStack=codeElement>inspectStatement>tallyingPhrase>inspectTallyingOperation, OffendingSymbol=[54,58:FIRST]<FIRST> on line 12)
+[103,103]<27,Error,Syntax>Syntax error : no viable alternative at input '8' (RuleStack=codeElement>inspectStatement>tallyingPhrase>inspectTallyingOperation>countAllCharacters>countingOrReplacingCondition>alphanumericVariable1, OffendingSymbol=[103,103:8]<IntegerLiteral>{8} on line 14)
+[1,7]<27,Error,Syntax>Syntax error : mismatched input 'INSPECT' expecting BY (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceAllCharacters, OffendingSymbol=[1,7:INSPECT]<INSPECT> on line 20)
+[32,36]<27,Error,Syntax>Syntax error : mismatched input 'AFTER' expecting BY (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceAllCharacters, OffendingSymbol=[32,36:AFTER]<AFTER> on line 20)
+[1,7]<27,Error,Syntax>Syntax error : mismatched input 'INSPECT' expecting BY (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern, OffendingSymbol=[1,7:INSPECT]<INSPECT> on line 22)
+[1,7]<27,Error,Syntax>Syntax error : mismatched input 'INSPECT' expecting BY (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern, OffendingSymbol=[1,7:INSPECT]<INSPECT> on line 23)
+[1,7]<27,Error,Syntax>Syntax error : mismatched input 'INSPECT' expecting BY (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern, OffendingSymbol=[1,7:INSPECT]<INSPECT> on line 24)
+[27,31]<27,Error,Syntax>Syntax error : mismatched input 'FIRST' expecting BY (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern, OffendingSymbol=[27,31:FIRST]<FIRST> on line 24)
+[32,32]<27,Error,Syntax>Syntax error : no viable alternative at input '1' (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern>alphanumericVariable2, OffendingSymbol=[32,32:1]<IntegerLiteral>{1} on line 26)
+[27,27]<27,Error,Syntax>Syntax error : no viable alternative at input '2' (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern>alphanumericVariable1, OffendingSymbol=[27,27:2]<IntegerLiteral>{2} on line 27)
+[29,29]<27,Error,Syntax>Syntax error : no viable alternative at input '2' (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern>alphanumericVariable1, OffendingSymbol=[29,29:2]<IntegerLiteral>{2} on line 28)
+[43,43]<27,Error,Syntax>Syntax error : no viable alternative at input '1' (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern>alphanumericVariable2, OffendingSymbol=[43,43:1]<IntegerLiteral>{1} on line 29)
+[101,101]<27,Error,Syntax>Syntax error : no viable alternative at input '2' (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern>alphanumericVariable1, OffendingSymbol=[101,101:2]<IntegerLiteral>{2} on line 30)
+[37,44]<27,Error,Syntax>Syntax error : no viable alternative at input 'TALLYING' (RuleStack=codeElement, OffendingSymbol=[37,44:TALLYING]<TALLYING> on line 35)
+[37,44]<27,Error,Syntax>Syntax error : no viable alternative at input 'TALLYING' (RuleStack=codeElement, OffendingSymbol=[37,44:TALLYING]<TALLYING> on line 37)
+[101,101]<27,Error,Syntax>Syntax error : no viable alternative at input '2' (RuleStack=codeElement>inspectStatement>replacingPhrase>replaceCharacterStrings>replaceCharacterStringPattern>alphanumericVariable1, OffendingSymbol=[101,101:2]<IntegerLiteral>{2} on line 40)
 --- Code Elements ---
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [40,40:x]<UserDefinedWord>
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [26,35:CHARACTERS]<CHARACTERS>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [84,84:z]<UserDefinedWord>
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [26,35:CHARACTERS]<CHARACTERS>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [118,118:8]<IntegerLiteral>{8}
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [26,35:CHARACTERS]<CHARACTERS>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [35,35:1]<IntegerLiteral>{1}
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [30,30:x]<UserDefinedWord>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [39,39:2]<IntegerLiteral>{2}
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [34,34:y]<UserDefinedWord>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [56,56:2]<IntegerLiteral>{2}
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [30,30:x]<UserDefinedWord>
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [32,32:x]<UserDefinedWord>
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [60,60:z]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [103,103:8]<IntegerLiteral>{8}
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [21,30:CHARACTERS]<CHARACTERS>
 
@@ -51,7 +53,19 @@
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [43,43:z]<UserDefinedWord>
 
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [32,32:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [32,32:y]<UserDefinedWord>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [34,34:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [71,71:1]<IntegerLiteral>{1}
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [106,106:1]<IntegerLiteral>{1}
+
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [35,35:i]<UserDefinedWord>
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [26,35:CHARACTERS]<CHARACTERS>
+
+[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [106,106:1]<IntegerLiteral>{1}
 

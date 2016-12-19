@@ -17,12 +17,12 @@ namespace TypeCobol.Server
     }
 
     internal abstract class AbstractCommand : Command {
-        internal Parser Parser;
-        internal Stream Input;
-        internal Stream Output;
-        private IntegerSerializer ReturnCodeSerializer = new IntegerSerializer();
+        internal readonly Parser Parser;
+        internal readonly Stream Input;
+        internal readonly Stream Output;
+        private readonly IntegerSerializer _returnCodeSerializer = new IntegerSerializer();
 
-        public AbstractCommand(Parser parser, Stream istream, Stream ostream) {
+        protected AbstractCommand(Parser parser, Stream istream, Stream ostream) {
             this.Parser = parser;
             this.Input  = istream;
             this.Output = ostream;
@@ -31,7 +31,7 @@ namespace TypeCobol.Server
         public abstract void execute();
 
         internal void SerializeReturnCode(int code) {
-            this.ReturnCodeSerializer.Serialize(Output, code);
+            this._returnCodeSerializer.Serialize(Output, code);
         }
     }
 
@@ -49,35 +49,35 @@ namespace TypeCobol.Server
     }
 
 	internal class Parse : AbstractCommand {
-		private StringSerializer Deserializer = new StringSerializer();
-		private TextChangedEventSerializer EventDeserializer = new TextChangedEventSerializer();
-		private CodeElementsListSerializer Serializer = new CodeElementsListSerializer();
+		private readonly StringSerializer _deserializer = new StringSerializer();
+		private readonly TextChangedEventSerializer _eventDeserializer = new TextChangedEventSerializer();
+		private readonly CodeElementsListSerializer _serializer = new CodeElementsListSerializer();
 
 		public Parse(Parser parser, Stream istream, Stream ostream)
 		 : base(parser, istream, ostream) { }
 
 		public override void execute() {
-var sw = Stopwatch.StartNew();
-var time0 = sw.ElapsedMilliseconds;
-			string path = Deserializer.Deserialize(Input);
-			var e = EventDeserializer.Deserialize(Input);
-var time1 = sw.ElapsedMilliseconds;
+            var sw = Stopwatch.StartNew();
+            var time0 = sw.ElapsedMilliseconds;
+			string path = _deserializer.Deserialize(Input);
+			var e = _eventDeserializer.Deserialize(Input);
+            var time1 = sw.ElapsedMilliseconds;
 			Parser.Parse(path, e);
-var time2 = sw.ElapsedMilliseconds;
+            var time2 = sw.ElapsedMilliseconds;
 			SerializeReturnCode(0);
-			Serializer.Lines = Parser.Results.CodeElementsDocumentSnapshot.Lines;
-			Serializer.Serialize(Output, Parser.Results.CodeElementsDocumentSnapshot.CodeElements);
-var time3 = sw.ElapsedMilliseconds;
-sw.Stop();
+			_serializer.Lines = Parser.Results.CodeElementsDocumentSnapshot.Lines;
+			_serializer.Serialize(Output, Parser.Results.CodeElementsDocumentSnapshot.CodeElements);
+            var time3 = sw.ElapsedMilliseconds;
+            sw.Stop();
 
-var str = new System.Text.StringBuilder();
-str .Append("Total time: ")
-	.Append(time3-time0).Append("ms  ")
-	.Append("Parse : ").Append(time2-time1).Append("ms  ")
-	.Append("Serialize: ").Append(time3-time2 + time1-time0).Append("ms  ")
-		.Append("unpack:").Append(time1-time0).Append("ms, ")
-		.Append("pack:").Append(time3-time2).Append("ms)");
-System.Console.WriteLine(str);
+            var str = new System.Text.StringBuilder();
+            str .Append("Total time: ")
+	            .Append(time3-time0).Append("ms  ")
+	            .Append("Parse : ").Append(time2-time1).Append("ms  ")
+	            .Append("Serialize: ").Append(time3-time2 + time1-time0).Append("ms  ")
+		        .Append("unpack:").Append(time1-time0).Append("ms, ")
+		        .Append("pack:").Append(time3-time2).Append("ms)");
+            System.Console.WriteLine(str);
 		}
 	}
 }

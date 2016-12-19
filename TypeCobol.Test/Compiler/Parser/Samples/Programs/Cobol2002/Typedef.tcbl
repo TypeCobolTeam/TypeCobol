@@ -62,12 +62,12 @@ WORKING-STORAGE SECTION.
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines1 REDEFINES BufferTobeRedefined TYPEDEF PIC X.
 01 varNoRedefines1 TYPE NoRedefines1.
+
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines2 REDEFINES BufferTobeRedefined TYPEDEF STRONG.
    05 NoRedefines1Item PIC X.
-
-
 01 varNoRedefines2 TYPE NoRedefines2.
+
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
 01 NoRedefines3 REDEFINES TypeNotDefined TYPEDEF.
    05 NoRedefines1Item PIC X.
@@ -86,7 +86,7 @@ WORKING-STORAGE SECTION.
 *KO:  (Rule #10) -  Cobol 2014 specifications are not clear, but TypeCobol forbid it for now. Better be more restrictive.
 *(source page 807 of ISO Cobol 2014) 
 * varNoRedefines5bis can't rededines data from another TYPEDEF
-01 varNoRedefines5bis TYPEDEF.
+01 varNoRedefines5bis.
     05 varNoRedefines5bis-a redefines varNoRedefines5-a pic 9.
 
 * KO: (Rule #4) - TYPEDEF  clause cannot be specified with the EXTERNAL clause (source page 289-290 of ISO Cobol 2014) 
@@ -131,7 +131,11 @@ WORKING-STORAGE SECTION.
 *KO(Rule #10) USE-TYPE-GRP-STRONG-RED redefines a strongly typed variable
     10  USE-TYPE-GRP-STRONG-RED REDEFINES USE-TYPE-GRP-STRONG.
         15 USE-TYPE-GRP-STRONG-RED-PART1 PIC 9 Comp.
-
+*OK
+01  MyWeakGroup.
+    10  MyWeakVar1 TYPE Feature.
+*Ok (Rule #10) MyWeakVar2 redefines a weakly typed variable
+    10  MyWeakVar2 REDEFINES MyWeakVar1 pic X.
 
 *OK
 01  useTypeGrp2.
@@ -141,6 +145,11 @@ WORKING-STORAGE SECTION.
      11 USE-TYPE-GRP-STRONG-RED-2 redefines TYPE-GRP-STRONG-PART3.
     15 USE-TYPE-GRP-STRONG-RED-2-PART1 PIC 9 Comp.
 
+*OK
+01 GroupWithLevel77JustAfter typedef.
+   05 a pic X.
+*This variable must be not be inserted into the previous type definition
+77 MyVariable pic X value 'O'.
 
 * Unauthorized use of reference modification for strong typed groups
 *KO (Rule #10) TYPE-GRP-STRONG-REN renames a strongly typed variable
@@ -151,55 +160,11 @@ WORKING-STORAGE SECTION.
 66  TYPE-GRP-STRONG-REN RENAMES strongType1-PART1 OF useStrongType1
                            THRU strongType1-PART2 OF useStrongType1.
 
-*Rule #11. A strongly-typed group item may be referenced as a receiving operand only in one of the following:
-* 1.a program, function or method activation as a formal parameter or returning item
-* 2.an INITIALIZE statement
-* 3.A MOVE statement
-* 4.a READ statement
-* 5.a RELEASE statement with the FROM phrase
-* 6.a RETURN statement
-* 7.a REWRITE statement with the FROM phrase
-* 8.the data item referenced in the DESTINATION clause of an element of the operand of a VALIDATE statement
-* 9.the subject of a data description entry that contains a VALIDATE-STATUS clause that references the element of the operand of a VALIDATE statement.
-* 10.a WRITE statement with the FROM phrase.
-*
-* (source page 807 of ISO Cobol 2014)
-01 IntegerStrong TYPEDEF STRONG.
- 05 Integer-Value pic 9(5).
-01 Integer TYPEDEF pic 9(5).
-01 myStrongInt TYPE IntegerStrong.
-01 myInt TYPE Integer.
-
-
-01 CharsStrong TYPEDEF STRONG.
-  05 Char-Value pic X(5).
-01 Chars TYPEDEF pic X(5).
-01 myStrongChars TYPE CharsStrong.
-01 myStrongChars2 TYPE CharsStrong.
-01 myChars TYPE Chars.
-01 myChars2 TYPE Chars.
-
 PROCEDURE DIVISION.
 
 MOVE X OF Coord2d OF Accel2d OF Movment2d OF Point TO X OF Coord2d OF Speed2d OF Movment2d OF Point
-MOVE Y OF Coord2d OF Position2d                    TO Z OF Coord3d OF Position2d
-MOVE Z OF Coord3d In Position2d                    TO Y of Speed2d In Point
-
-*KO (Rule #11), but myStrongInt is not numeric anyway
-compute myStrongInt of myIntStrong = 1 + 1 
-*OK
-compute myInt  = 1 + 1 
-
-*KO (Rule #11) myStrongChars is a strongly typed item
-string "chaine1" "chaine2" delimited by size into myStrongChars
-*OK (Rule #11), myChars is a weakly typed item
-string "chaine1" "chaine2" delimited by size into myChars
-
-*KO (Rule #11) myStrongChars is a strongly typed item
-unstring "me@me.com" delimited by '@' into myStrongChars myStrongChars2
-*OK (Rule #11), myChars is a weakly typed item
-unstring "me@me.com" delimited by '@' into myChars myChars2
-
+MOVE Y OF Position2d OF Point                      TO Z OF Position2d OF Point
+MOVE Z In Accel2d OF Point                         TO Y of Speed2d In Point
 
 .
 *------>Except a Type is not referenced on lines 34, 45, 49, 59

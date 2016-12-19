@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<skeletons>
+
+  <!-- comment TYPEDEF -->
+  <skeleton name="TYPEDEF">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.TypeDefinition"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="comment"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace TYPE BOOL declarations -->
+  <skeleton name="BOOL.DECLARE" var="level,name">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+%level  %name-value PIC X VALUE LOW-VALUE.
+    88  %name       VALUE 'T'.
+    88  %name-false VALUE 'F'.
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete and replace TYPE -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="*"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace SET <boolean> TO FALSE -->
+  <skeleton name="BOOL.SET" var="receiver">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">SET %receiver-false TO TRUE</pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete UNSAFE -->
+  <skeleton name="UNSAFE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableWriter" unsafe="true"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="erase">UNSAFE</pattern>
+    </patterns>
+  </skeleton>
+
+  <skeleton name="TCRFUN_LIBRARY_COPY" var="copyname">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.LibraryCopy"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="comment"></pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_LIBRARY_COPY">
+        COPY %copyname REPLACING ==:%copyname:== BY ==FCT==.
+      </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
+01  CallData.
+    05  DescriptionId PIC X(08).
+      88 CallIsCopy VALUE '%copyname'.
+      </pattern>
+      <!--pattern location="program.begin" action="create" group="TCRFUN_CODEGEN_COPY">
+@{
+  var items = "";
+  foreach (var f in %definitions.functions.Public) {
+    items += "*      05 :"+%copyname+":-"+f.Label+"   PROCEDURE-POINTER VALUE NULL.\n";
+  }
+}
+*01  :%copyname:.
+*    02                         PIC X(08) VALUE '%copyname'.
+*    02                         PIC X(03) VALUE '000'.
+*    02 :%copyname:-FunctionPointers.
+@items*
+*      05 :%copyname:-Reserve   PIC X(361).
+      </pattern-->
+    </patterns>
+  </skeleton>
+
+  <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
+  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALLS_ARRAY">
+01  FctList.
+    05 NumberOfFunctions   PIC 9(04).
+    05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions
+                           INDEXED BY FctIndex.
+      10 FctCode    PIC X(08).
+      10 FctPointer PROCEDURE-POINTER VALUE NULL.
+      </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
+01  CallData.
+    05  DescriptionId PIC X(08).
+      88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
+01  LibFctList-Loaded PIC X(01) VALUE SPACE.
+    88 LibFctList-IsLoaded      VALUE '1'.
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
+@{
+  var items = "";
+  foreach (var f in %definitions.functions.Public) {
+    items += "*    "+f.Hash+" -> "+f.Name+'\n';
+    items += "    05 PIC X(08) VALUE \'"+f.Hash+"\'.\n";
+    items += "    05 PIC X(08) VALUE LOW-VALUES.\n";
+  }
+}
+01  LibFctList-VALUES.
+@items
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_REDEFINED_ARRAY">
+01  LibFctList REDEFINES LibFctList-Values.
+    05   LibFctItem    OCCURS %definitions.functions.Public.Count INDEXED BY LibFctIndex.
+      10 LibFctCode    PIC X(08).
+      10 LibFctPointer PROCEDURE-POINTER.
+      </pattern>
+      <pattern action="expand" location="program.end"></pattern>
+      <pattern location="program.procedure-division.sentence-0.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
+    IF CallIsCopy
+      PERFORM Copy-Process-Mode
+    ELSE
+      PERFORM FctList-Process-Mode
+    END-IF
+
+    GOBACK
+      </pattern>
+      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_COBOL_BEHAVIOUR">
+@{
+  var entries = "";
+  foreach (var f in %definitions.functions.Public) {
+    entries += "\n    SET FCT-"+f.Label+"   TO ENTRY \'"+f.Hash+'\'';
+  }
+}
+Copy-Process-Mode.
+    SET ADDRESS OF FCT TO ADDRESS OF CallData
+@entries
+    .
+
+      </pattern>
+      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_TYPECOBOL_BEHAVIOUR">
+@{
+  var entries = "";
+  int c = 0;
+  foreach (var f in %definitions.functions.Public) {
+    entries += "      SET LibFctPointer("+(++c)+")   TO ENTRY \'"+f.Hash+"\'\n";
+  }
+}
+FctList-Process-Mode.
+    SET ADDRESS OF FctList TO ADDRESS OF CallData
+
+    IF NOT LibFctList-IsLoaded
+@entries
+      SET LibFctList-IsLoaded TO TRUE
+    END-IF
+
+    PERFORM VARYING FctIndex FROM 1 BY 1
+            UNTIL FctIndex > NumberOfFunctions
+
+      SEARCH LibFctItem VARYING LibFctIndex
+        WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
+          SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
+      END-SEARCH
+
+    END-PERFORM
+    .
+
+      </pattern>
+      <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">
+PROCEDURE DIVISION USING CallData.
+      </pattern>
+    </patterns>
+  </skeleton>
+  <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
+  <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="private" />
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="program.end"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace function invocation by a CALL and create utility variables -->
+  <skeleton name="FUN.CALL" var=" function  ,receiver ">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" function="*"/>
+    </conditions>
+    <patterns>
+      <pattern location="data-division.working-storage" action="create" group="%function.Library-VARS" var="function=$function">
+01 %function.Copy COPY %function.Copy.
+01 %function.Library PIC X(08) VALUE '%function.Library'.
+      </pattern>
+      <pattern location="data-division.working-storage" action="create" group="functions">
+01 ERROR-CODE PIC X(08).
+      </pattern>
+      <!--pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
+01 %function.Name-RESULT %function.Result.Definition.
+      </pattern-->
+      <pattern location="procedure-division.begin" action="create" group="%function.Library-CALL">
+    IF %function.Copy-POINTER-TABLE = LOW_VALUE
+        CALL %function.Library USING %function.Copy
+    END-IF
+      </pattern>
+      <pattern location="NODE" action="replace">
+@{
+  var funparams = "";
+  foreach (var p in %function.InputParameters) {
+    funparams += "        BY " + p.SendingMode + " " + p.Value + "\n";
+  }
+}
+    CALL %function.Name USING
+@funparams
+        BY REFERENCE %function.Name-RESULT
+        BY REFERENCE ERROR-CODE
+
+    IF ERROR-CODE = ZERO
+        MOVE %function.Name-RESULT TO %receiver
+    ELSE
+*    TODO: error management
+    END-IF
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace procedure-style invocation by a standard COBOL CALL -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.ProcedureStyleCall" />
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace "::" qualification by "OF" inverse qualification -->
+  <skeleton name="QUALIFICATION">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" variables.typecobol="+"/>
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="NODE"></pattern>
+    </patterns>
+  </skeleton>
+
+</skeletons>

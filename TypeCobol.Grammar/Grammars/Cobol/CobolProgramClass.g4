@@ -53,6 +53,9 @@ tokens
     // -- Data Division --
     FileDescriptionEntry,
     DataDescriptionEntry,
+    DataRedefinesEntry,
+    DataRenamesEntry,
+    DataConditionEntry,
     // -- InputOutput Section --
     FileControlEntry,
     IOControlEntry,
@@ -129,9 +132,9 @@ tokens
     OnSizeErrorCondition,
     NotOnSizeErrorCondition,
     ElseCondition,
-    WhenEvaluateCondition,
-    WhenOtherCondition,
     WhenCondition,
+    WhenOtherCondition,
+    WhenSearchCondition,
 
     // Statement ends
 
@@ -155,10 +158,12 @@ tokens
     UnstringStatementEnd,
     WriteStatementEnd,
     XmlStatementEnd,
-// [TYPECOBOL]
+//	[TYPECOBOL]
+	LibraryCopy,
 	FunctionDeclarationHeader,
 	FunctionDeclarationEnd,
-// [/TYPECOBOL]
+	ProcedureStyleCall,
+//	[/TYPECOBOL]
 }
 
 // --- Starting parser rule for PHASE 2 of parsing ---
@@ -169,7 +174,7 @@ tokens
 // compile.
 
 cobolCompilationUnit : 
-                         (cobolProgram | cobolClass) EOF;
+	(cobolProgram | cobolClass) EOF;
 
 // --- COBOL PROGRAM ---
 
@@ -196,22 +201,31 @@ cobolCompilationUnit :
 // p84 : Format: COBOL source program
 
 cobolProgram:
-	ProgramIdentification
+	programAttributes
 	environmentDivision?
 	dataDivision?
 	procedureDivision?
-		cobolProgram*
-	ProgramEnd?
-	;
+		nestedProgram=cobolProgram*
+	ProgramEnd?;
+
+programAttributes: ProgramIdentification;
 
 environmentDivision:
-	EnvironmentDivisionHeader  configurationSection? inputOutputSection?;
+	EnvironmentDivisionHeader  
+	configurationSection? 
+	inputOutputSection?;
 
 dataDivision:
-	DataDivisionHeader fileSection? workingStorageSection? localStorageSection? linkageSection?;
+	DataDivisionHeader 
+	fileSection? 
+	workingStorageSection? 
+	localStorageSection? 
+	linkageSection?;
 
 procedureDivision:
-	ProcedureDivisionHeader declaratives? section*;
+	ProcedureDivisionHeader 
+	declaratives? 
+	section*;
 
 // p85 : An end program marker separates each program in the sequence of programs. 
 //       program-name must be identical to a program-name declared in a preceding program-ID paragraph.
@@ -230,17 +244,6 @@ procedureDivision:
 // nested) within another program and can be called from siblings of the
 // common program and programs contained within them. The COMMON
 // clause can be used only in nested programs.
-
-// p102 : 
-
-//nestedSourceProgram :
-//                       programIdentification
-//                       (environmentDivisionHeader environmentDivisionContent)?
-//                       (dataDivisionHeader dataDivisionContent)?
-//                       (procedureDivisionHeader procedureDivisionContent?)?
-//                       (nestedSourceProgram)*  
-//                       programEnd
-//                   ;
 
 // --- COBOL CLASS ---
 
@@ -279,26 +282,26 @@ procedureDivision:
 // must be the first paragraph in a class IDENTIFICATION DIVISION.
 
 cobolClass:
-              ClassIdentification
-              EnvironmentDivisionHeader
-                  configurationSection?
-             (FactoryIdentification
-                 (DataDivisionHeader 
-                      workingStorageSection?
-                 )?
-                 (ProcedureDivisionHeader 
-                      methodDefinition*
-                 )?
-              FactoryEnd)?
-             (ObjectIdentification
-                 (DataDivisionHeader 
-                      workingStorageSection?
-                 )?
-                 (ProcedureDivisionHeader 
-                      methodDefinition*
-                 )?             
-              ObjectEnd)?
-              ClassEnd?;
+	ClassIdentification
+	EnvironmentDivisionHeader
+		configurationSection?
+	(FactoryIdentification
+		(DataDivisionHeader 
+		 workingStorageSection?
+		)?
+		(ProcedureDivisionHeader 
+		 methodDefinition*
+		)?
+	FactoryEnd)?
+	(ObjectIdentification
+		(DataDivisionHeader 
+		 workingStorageSection?
+		)?
+		(ProcedureDivisionHeader 
+		 methodDefinition*
+		)?             
+	ObjectEnd)?
+	ClassEnd?;
 
 // p93 : A COBOL method definition describes a method. 
 //       You can specify method definitions only within the factory paragraph and the object paragraph of a class definition.
@@ -348,22 +351,22 @@ cobolClass:
 
 // p93 : Format: method definition 
 
-methodDefinition : 
-                     MethodIdentification
-                    (EnvironmentDivisionHeader
-                         inputOutputSection?
-                    )?
-                    (DataDivisionHeader 
-                         fileSection?
-                         workingStorageSection?
-                         localStorageSection?
-                         linkageSection?
-                    )?
-                    (ProcedureDivisionHeader 
-                         declaratives?
-                         section*
-                    )?
-                     MethodEnd;
+methodDefinition: 
+	MethodIdentification
+	(EnvironmentDivisionHeader
+		inputOutputSection?
+	)?
+	(DataDivisionHeader 
+		fileSection?
+		workingStorageSection?
+		localStorageSection?
+		linkageSection?
+	)?
+	(ProcedureDivisionHeader 
+		declaratives?
+		section*
+	)?
+	MethodEnd;
 
 // --- ENVIRONMENT DIVISION ---
 
@@ -427,9 +430,9 @@ configurationParagraph: SourceComputerParagraph | ObjectComputerParagraph | Spec
 // p125: Format: input-output section
 
 inputOutputSection: 
-                  InputOutputSectionHeader
-                  fileControlParagraph?
-                  ioControlParagraph?;
+	InputOutputSectionHeader
+	fileControlParagraph?
+	ioControlParagraph?;
 
 // p125: FILE-CONTROL
 // The keyword FILE-CONTROL identifies the file-control paragraph. This
@@ -450,9 +453,9 @@ inputOutputSection:
 // by a separator period. It must contain one and only one entry for each file
 // described in an FD or SD entry in the DATA DIVISION.
 
-fileControlParagraph :
-                         FileControlParagraphHeader 
-                         FileControlEntry*;
+fileControlParagraph:
+	FileControlParagraphHeader 
+	FileControlEntry*;
 
 // p125 : I-O-CONTROL
 // The keyword I-O-CONTROL identifies the I-O-CONTROL paragraph.
@@ -468,9 +471,9 @@ fileControlParagraph :
 // The order in which I-O-CONTROL paragraph clauses are written is not significant. 
 // !! The I-O-CONTROL paragraph ends with a separator period.
 
-ioControlParagraph : 
-                       IOControlParagraphHeader
-                       (IOControlEntry+ SentenceEnd)?;
+ioControlParagraph: 
+	IOControlParagraphHeader
+	(IOControlEntry+ SentenceEnd)?;
 
 // --- DATA DIVISION ---
 
@@ -501,10 +504,13 @@ ioControlParagraph :
 // Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
 // A method FILE SECTION can define external files only. A single run-unit-level file connector is shared by all programs and methods that contain a declaration of a given external file.
 
-fileSection :
-                FileSectionHeader 
-                (FileDescriptionEntry 
-                 DataDescriptionEntry+)*;
+fileSection:
+	FileSectionHeader 
+	(fileDescriptionNode dataDefinitionEntry+)*;
+//Olivier Smedile: I created this rule to have a method EnterFileDescriptionNode in ProgramClassBaseListerner (and then in CobolNodeBuilder)
+//Maybe this can be avoided
+fileDescriptionNode:
+	FileDescriptionEntry;
 
 // p155: The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
 // The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
@@ -521,9 +527,13 @@ fileSection :
 // Each is defined in a separate data-item description entry that begins with either the level number 77 or 01. 
 // See Chapter 18, “DATA DIVISION--data description entry,” on page 185 for more information.
 
-workingStorageSection :
-                          WorkingStorageSectionHeader 
-                          (DataDescriptionEntry | ExecStatement SentenceEnd?)*;
+workingStorageSection:
+	WorkingStorageSectionHeader 
+	(dataDefinitionEntry | execStatementNode SentenceEnd?)*;
+
+
+execStatementNode:
+	ExecStatement;
 
 // p156: The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.
 // On each invocation, data items defined in the LOCAL-STORAGE SECTION are reallocated. Each data item that has a VALUE clause is initialized to the value specified in that clause.
@@ -536,8 +546,8 @@ workingStorageSection :
 // Method LOCAL-STORAGE content is the same as program LOCAL-STORAGE content except that the GLOBAL clause has no effect (because methods cannot be nested).
 
 localStorageSection:
-                        LocalStorageSectionHeader 
-                        (DataDescriptionEntry | ExecStatement SentenceEnd?)*;
+	LocalStorageSectionHeader 
+	(dataDefinitionEntry | execStatementNode SentenceEnd?)*;
 
 // p157: The LINKAGE SECTION describes data made available from another program or method. 
 // Record description entries and data item description entries in the LINKAGE SECTION provide names and descriptions, but storage within the program or method is not reserved because the data area exists elsewhere.
@@ -562,8 +572,16 @@ localStorageSection:
 //   any of the above conditions.
 
 linkageSection:
-                   LinkageSectionHeader 
-                   DataDescriptionEntry*;
+	LinkageSectionHeader 
+	dataDefinitionEntry*;
+
+// Four distinct types of data definition entries :
+
+dataDefinitionEntry:
+	  DataDescriptionEntry
+	| DataRedefinesEntry
+	| DataRenamesEntry
+	| DataConditionEntry;
 
 // --- PROCEDURE DIVISION ---
 
@@ -605,11 +623,11 @@ linkageSection:
 // executed.
 
 declaratives:
-                DeclarativesHeader
-                   (SectionHeader UseStatement
-                        paragraph* 
-                   )+
-                DeclarativesEnd;
+	DeclarativesHeader
+	(SectionHeader UseStatement
+		paragraph* 
+	)+
+	DeclarativesEnd;
 
 // p252: Section
 // A section-header optionally followed by one or more paragraphs.
@@ -623,7 +641,7 @@ declaratives:
 // keywords END DECLARATIVES.
 
 section:
-	  ((SectionHeader | ParagraphHeader) paragraph*)
+	((SectionHeader | ParagraphHeader) paragraph*)
 	| sentence+;
 
 // p253: Paragraph
@@ -639,8 +657,8 @@ section:
 // paragraphs are so contained.
 
 paragraph:
-            (ParagraphHeader | sentence)
-            sentence*;
+	(ParagraphHeader | sentence)
+	sentence*;
 
 // Sentence
 // One or more statements terminated by a separator period.
@@ -841,7 +859,7 @@ statement:
              
 // Statements without optional body
 	( ContinueStatement
-        | EntryStatement
+	| EntryStatement
 // -- arithmetic --
 	| AddStatement
 	| ComputeStatement
@@ -886,13 +904,14 @@ statement:
 	| PerformProcedureStatement
 // -- program or method linkage --
 	| CallStatement
+	| ProcedureStyleCall
 	| CancelStatement
 	| InvokeStatement
 // -- DB2 & CICS integration --
 	| ExecStatement)
       
 // Statements with optional body      
-      	| evaluateStatementWithBody
+	| evaluateStatementWithBody
 	| ifStatementWithBody
 	| searchStatementWithBody
 // -- arithmetic --
@@ -918,6 +937,7 @@ statement:
 	| performStatementWithBody
 // -- program or method linkage --
 	| callStatementConditional
+	| procedureStyleCallConditional
 	| invokeStatementConditional
 	;
 
@@ -932,6 +952,8 @@ callStatementConditional:
 	CallStatement
 		(onException | noException | onOverflow)*
 	CallStatementEnd?;
+
+procedureStyleCallConditional: callStatementConditional;
 
 computeStatementConditional:
 	ComputeStatement
@@ -950,17 +972,23 @@ divideStatementConditional:
 
 evaluateStatementWithBody:                             
 	EvaluateStatement
-		whenConditionClause+
+		whenConditionClause*
 		whenOtherClause?
 	EvaluateStatementEnd?;
 
-whenConditionClause: WhenCondition+ statement+;
+whenConditionClause: whenEvaluateCondition+ statement+;
+// whenSearchCondition must be declared BEFORE whenCondition,
+// because the whenCondition is a general case of the whenSearchCondition
+// and is declared after it in CodeElements grammar to avoid ambiguity,
+// we'll sometimes get the former instead of the latter ;
+// so, we have to convert it in C#  [issue #285]
+whenEvaluateCondition: (WhenSearchCondition | WhenCondition);
 whenOtherClause: WhenOtherCondition statement+;
 
 ifStatementWithBody:
 	IfStatement
 		(statement+ | NextSentenceStatement)
-		elseClause?
+	elseClause?
 	IfStatementEnd?;
 
 elseClause: ElseCondition (statement+ | NextSentenceStatement);
@@ -1001,7 +1029,7 @@ searchStatementWithBody:
 		whenSearchConditionClause+
 	SearchStatementEnd?;
 
-whenSearchConditionClause: WhenCondition (statement+ | NextSentenceStatement);
+whenSearchConditionClause: WhenSearchCondition (statement+ | NextSentenceStatement);
 
 startStatementConditional:
 	StartStatement
@@ -1054,4 +1082,3 @@ noOverflow: NotOnOverflowCondition statement+;
 
 onSizeError: OnSizeErrorCondition statement+;
 noSizeError: NotOnSizeErrorCondition statement+;
-

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Scanner;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -13,8 +12,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// contain CALL statements; however, only programs defined with the RECURSIVE
     /// clause can execute a CALL statement that directly or indirectly calls itself.
     /// </summary>
-    public class CallStatement : CodeElement
+    public class CallStatement : StatementElement
     {
+        public CallStatement() : base(CodeElementType.CallStatement, StatementType.CallStatement)
+        { }
+
         /// <summary>
         /// p304:
         /// identifier-1, literal-1
@@ -57,7 +59,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// deleted by the assembler, any function-pointers that had been set to that
         /// function or program's entry point are no longer valid.
         /// </summary>
-        public Program Subprogram;
+        public SymbolReferenceVariable ProgramOrProgramEntryOrProcedureOrFunction { get; set; }
 
         /// <summary>
         /// p305:
@@ -79,7 +81,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// describe the same number of character positions as the description of the
         /// corresponding data items in the calling program.
         /// </summary>
-        public IList<Using> Usings = new List<Using>();
+        public IList<CallSiteParameter> InputParameters { get; set; }
 
         /// <summary>
         /// pp308-309:
@@ -128,92 +130,19 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RETURN-CODE special register is not set by execution of CALL statements
         /// that include the RETURNING phrase.
         /// </summary>
-        public Identifier Returning;
-
-        public CallStatement() : base(CodeElementType.CallStatement) { }
-
-
-        public class Program
-        {
-            /// <summary>
-            /// p304: identifier-1 must be an alphanumeric, alphabetic, or numeric data item 
-            /// described with USAGE DISPLAY such that its value can be a program-name.
-            /// </summary>
-            private Identifier Identifier;
-            /// <summary>
-            /// p304: literal-1 must be an alphanumeric literal.
-            /// </summary>
-            private Literal Literal;
-            /// <summary>
-            /// p305: Must be defined with USAGE IS FUNCTION-POINTER or PROCEDURE-POINTER 
-            /// and must be set to a valid function or program entry point; otherwise, 
-            /// the results of the CALL statement are undefined.
-            /// </summary>
-            private DataName FunctionOrProcedurePointer;
-
-            public Program(Identifier identifier)
-            {
-                this.Identifier = identifier;
-            }
-
-            public Program(Literal literal)
-            {
-                this.Literal = literal;
-            }
-
-            public Program(DataName pointer)
-            {
-                this.FunctionOrProcedurePointer = pointer;
-            }
-        }
-
-        public class Using
-        {
-            /// <summary>
-            /// p306:
-            /// The BY CONTENT, BY REFERENCE, and BY VALUE phrases apply to parameters
-            /// that follow them until another BY CONTENT, BY REFERENCE, or BY VALUE
-            /// phrase is encountered. BY REFERENCE is assumed if you do not specify a BY
-            /// CONTENT, BY REFERENCE, or BY VALUE phrase prior to the first parameter.
-            /// </summary>
-            public enum Mode { REFERENCE, CONTENT, VALUE, UNKNOWN }
-
-            public Mode UsingMode;
-            public Identifier Identifier;
-            public Literal Literal;
-            public FileName Filename;
-            public Omitted Omitted;
-
-            internal Using(Mode mode, Identifier value)
-            {
-                this.UsingMode = mode;
-                this.Identifier = value;
-            }
-            internal Using(Mode mode, Literal value)
-            {
-                this.UsingMode = mode;
-                this.Literal = value;
-            }
-            internal Using(Mode mode, FileName value)
-            {
-                this.UsingMode = mode;
-                this.Filename = value;
-            }
-            internal Using(Mode mode, Omitted value)
-            {
-                this.UsingMode = mode;
-                this.Omitted = value;
-            }
-        }
-
+        public CallSiteParameter OutputParameter { get; set; }
     }
 
-    /// <summary>
-    /// p306: Indicates that no argument is passed.
-    /// </summary>
-    public class Omitted : Expression {
-        Token Token;
-        public Omitted(Token token) { this.Token = token; }
-    }
+
+
+public class ProcedureStyleCallStatement: StatementElement {
+	public ProcedureCall ProcedureCall { get; private set; }
+
+	public ProcedureStyleCallStatement(ProcedureCall call)
+		: base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
+	{
+		this.ProcedureCall = call;
+	}
+}
 
 }

@@ -9,15 +9,13 @@ namespace TypeCobol.Compiler.CodeElements
     public class FileControlEntry : CodeElement
     {
         public FileControlEntry() : base(CodeElementType.FileControlEntry)
-        {
-            IsOptional = false;
-        }
+        { }
 
         /// <summary>
         /// Name of the file in the Cobol program.
         /// Must be identified by an FD or SD entry in the DATA DIVISION.
         /// </summary>
-        public SymbolReference<FileName> FileName { get; set; }
+        public SymbolDefinition FileName { get; set; }
 
         /// <summary>
         /// The ASSIGN clause associates the name of a file in a program with the actual external name of the data file.
@@ -31,7 +29,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The name component of assignment-name-1 is initially treated as a ddname. 
         /// If no file has been allocated using this ddname, then name is treated as an environment variable
         /// </summary>
-        public SymbolReference<AssignmentName> ExternalDataSet { get; set; }
+        public ExternalName ExternalDataSet { get; set; }
 
         /// <summary>
         /// Description of the structure of the file
@@ -42,7 +40,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// You must specify SELECT OPTIONAL for those input files that are not necessarily available each time the object program is executed. 
         /// Can be specified only for files opened in the input, I-O, or extend mode. 
         /// </summary>
-        public bool IsOptional { get; set; }
+        public SyntaxProperty<bool> IsOptional { get; set; }
 
         /// <summary>
         /// The ACCESS MODE clause defines the manner in which the records of the file are made available for processing. 
@@ -50,7 +48,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// NB : File organization is the permanent logical structure of the file.
         /// You tell the computer how to retrieve records from the file by specifying the access mode (sequential, random, or dynamic).
         /// </summary>
-        public FileAccessMode AccessMode { get; set; }
+        public SyntaxProperty<FileAccessMode> AccessMode { get; set; }
 
         /// <summary>
         /// RESERVE clause 
@@ -59,7 +57,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// If the RESERVE clause is omitted, the number of buffers at run time is taken from the DD statement. 
         /// If none is specified, the system default is taken.
         /// </summary>
-        public int ReserveIOBuffersCount { get; set; }
+        public IntegerValue ReserveIOBuffersCount { get; set; }
 
         /// <summary>
         /// The FILE STATUS clause monitors the execution of each input-output operation for the file.
@@ -68,7 +66,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// data-name-1 The file status key data item can be defined in the WORKING-STORAGE, LOCAL-STORAGE, or LINKAGE SECTION as one of the following items: v A two-character data item of category alphanumeric v A two-character data item of category national v A two-digit data item of category numeric with usage DISPLAY or NATIONAL (an external decimal data item) 
         /// The file status key data item must not be variably located; that is, the data item cannot follow a data item that contains an OCCURS DEPENDING ON clause. 
         /// </summary>
-        public SymbolReference<DataName> FileStatus { get; set; }
+        public ReceivingStorageArea FileStatus { get; set; }
 
         /// <summary>
         /// The FILE STATUS clause monitors the execution of each input-output operation for the file.
@@ -81,7 +79,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Function code and feedback code are set if and only if the return code is set to a nonzero value. If they are referenced when the return code is set to zero, the contents of the fields are not dependable.
         /// Values in the return code, function code, and feedback code fields are defined by VSAM. There are no COBOL additions, deletions, or modifications to the VSAM definitions. 
         /// </summary>
-        public SymbolReference<DataName> FileStatus_VSAMReturnCode { get; set; }
+        public ReceivingStorageArea VSAMReturnCode { get; set; }
     }
 
     /// <summary>

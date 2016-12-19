@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
@@ -129,23 +130,27 @@ namespace TypeCobol.Test {
             TestCodeElements.Check_EXITCodeElements();
             TestCodeElements.Check_IDCodeElements();
             TestCodeElements.Check_UDWCodeElements();
-//            TestCodeElements.Check_WHENCodeElements(); //TODO: these cannot be parsed alone anymore since today
+            TestCodeElements.Check_WHENCodeElements();
 
             TestCodeElements.Check_HeaderCodeElements();
             TestCodeElements.Check_IdentificationCodeElements();
             TestCodeElements.Check_ParagraphCodeElements();
-            //TODO  TestCodeElements.Check_EntryCodeElements();// RefreshProgramClassDocumentSnapshot
+            TestCodeElements.Check_EntryCodeElements();
             TestParser.Check_BeforeAfterInsertion();
             TestParser.Check_BeforeAfterInsertionBatched();
 
+			var errors = new System.Collections.Generic.List<Exception>();
 			int nbOfTests = 0;
-			foreach (string directory in Directory.GetDirectories(sampleRoot)) {
-				var dirname = Path.GetFileName(directory);
-				string[] extensions = {"*.cbl"};
-				if (dirname.Equals("Programs")) extensions = new[] {"*.pgm", "*.cbl", "*.cpy" };
-				Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
-				folderTester.Test();
+            string[] extensions = { "*.cbl", "*.pgm" };
+            string[] compilerExtensions = extensions.Concat(new[] { "*.cpy" }).ToArray();
+
+            foreach (string directory in Directory.GetDirectories(sampleRoot)) {
+                var dirname = Path.GetFileName(directory);
+
+			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
+				try { folderTester.Test(); }
+				catch (Exception ex) { errors.Add(ex); }
 				nbOfTests += folderTester.GetTestCount();
 				Console.WriteLine();
 			}
@@ -153,9 +158,11 @@ namespace TypeCobol.Test {
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
 
-            //This test use TypeChecker which is specific to TypeCobol
-            //As specifications of TypeCobol are not final yet this test can't be used
-            //            TestParser.Check_ParserIntegration();
+			if (errors.Count > 0) {
+				var str = new System.Text.StringBuilder();
+				foreach(var ex in errors) str.Append(ex.Message);
+				throw new Exception(str.ToString());
+			}
         }
 
         /// <summary>
@@ -168,13 +175,14 @@ namespace TypeCobol.Test {
         {
             int nbOfTests = 0;
 
+            string[] extensions = { "*.tcbl" };
+            string[] compilerExtensions = extensions.Concat(new[] { "*.cpy" }).ToArray();
             foreach (string directory in Directory.GetDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);
-                string[] extensions = { "*.tcbl" };
-                if (dirname == "Programs") extensions = new[] { "*.tcbl", "*.cpy" };
+
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
                 folderTester.Test();
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");

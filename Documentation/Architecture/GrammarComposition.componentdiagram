@@ -1,27 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<componentModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" dslVersion="1.0.0.0" Id="64867159-64d2-44d8-8b5f-0b414f80e5ad" name="GrammarComposition" linkedPackageId="baaa1a4a-45fb-4e3c-a150-8804e26d8998" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ComponentDesigner">
-  <profileInstances>
-    <packageHasProfileInstances Id="dbc4ab00-300f-4a92-91d6-7bfd8c21a8f3">
-      <profileInstance Id="7243dfd6-487a-4d9b-bb5b-da1d84dbfff5" name="StandardProfileL2">
-        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
-      </profileInstance>
-      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
-    </packageHasProfileInstances>
-    <packageHasProfileInstances Id="8b8e8ef6-3e7e-4377-8faf-caa41fd308ec">
-      <profileInstance Id="6e661f24-f525-43cc-9e00-1df803b37394" name="StandardProfileL3">
-        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
-      </profileInstance>
-      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
-    </packageHasProfileInstances>
-  </profileInstances>
+<componentModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="64867159-64d2-44d8-8b5f-0b414f80e5ad" name="GrammarComposition" linkedPackageId="baaa1a4a-45fb-4e3c-a150-8804e26d8998" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ComponentDesigner">
   <packagedElements>
     <componentModelHasComponents>
-      <component Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" name="CobolCodeElement" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <component Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" name="CobolCodeElements" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="482e9670-4a19-4f17-9b39-68a44a7c56c6" />
         <generalsInternal>
           <generalization Id="6369e6eb-9b0d-4690-9677-472006de1673" isSubstitutable="false">
             <componentMoniker Id="ba05ac01-0d9a-4096-8c46-6689a05b5cb7" LastKnownName="CobolBase" />
             <elementDefinition Id="798e1fbf-2644-4320-865e-1e2e81515f0d" />
+          </generalization>
+          <generalization Id="d5e030d6-67ee-4551-8994-14af7a7f138c" isSubstitutable="false">
+            <componentMoniker Id="74ca4f90-784c-4c15-bcca-283990d26924" LastKnownName="CobolExpressions" />
+            <elementDefinition Id="dbcd1737-517e-4130-8577-8f6825e166fb" />
           </generalization>
         </generalsInternal>
       </component>
@@ -36,7 +26,7 @@
         <elementDefinition Id="090ff777-8cc7-44bc-8d4e-0851ea3b8e06" />
         <generalsInternal>
           <generalization Id="8ad4b8b6-9b26-4662-b4c3-d37411c57789" isSubstitutable="false">
-            <componentMoniker Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" LastKnownName="CobolCodeElement" />
+            <componentMoniker Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" LastKnownName="CobolCodeElements" />
             <elementDefinition Id="c940fe05-14db-4c88-b114-09ab1a1781f9" />
           </generalization>
         </generalsInternal>
@@ -86,8 +76,71 @@
         </generalsInternal>
       </component>
     </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="a949ff81-8080-4132-916f-a64e716175b3" name="CobolWords" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="b002f834-911f-4cb2-aa85-a3bac03cd0d3" />
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="74ca4f90-784c-4c15-bcca-283990d26924" name="CobolExpressions" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="363d5ad7-fd60-453b-95fd-52412fa94643" />
+        <generalsInternal>
+          <generalization Id="4bd8b42e-5aeb-4001-919c-bdc77daf0320" isSubstitutable="false">
+            <componentMoniker Id="a949ff81-8080-4132-916f-a64e716175b3" LastKnownName="CobolWords" />
+            <elementDefinition Id="b51f9713-97b4-441b-b43d-624ba7a11d7f" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="c1acba63-4264-4506-824e-4b04e2871499" name="CobolCompilerDirectives" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="2833a29c-23b6-4a00-a267-42f4651bd07d" />
+        <generalsInternal>
+          <generalization Id="eb872a39-4cee-46c8-b30c-e93c96ba22ea" isSubstitutable="false">
+            <componentMoniker Id="a949ff81-8080-4132-916f-a64e716175b3" LastKnownName="CobolWords" />
+            <elementDefinition Id="88ef9f95-df7d-4e1f-8f9b-37638e5bf70b" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="51cde238-1c9f-4729-8e68-423bd6b75f4b" name="TypeCobolProgram" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="80e8105c-6093-4e9c-8bf1-6246b3776fb1" />
+        <generalsInternal>
+          <generalization Id="fd68f60c-206c-432b-97cf-459f9de2c8f5" isSubstitutable="false">
+            <componentMoniker Id="08c68b3c-2794-4c98-b3a4-1ff372539200" LastKnownName="CobolProgramClass" />
+            <elementDefinition Id="9d94f613-bf11-4fa6-a6d1-4a811bb7e24b" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="941177c0-484d-446c-bdf9-5e0641e0b573" name="ProgramClass" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="ec7e5ae3-ab5f-44c9-b655-223c644960ab" />
+        <generalsInternal>
+          <generalization Id="5c88de85-51f5-4001-a4bf-767eb6bfe31e" isSubstitutable="false">
+            <componentMoniker Id="51cde238-1c9f-4729-8e68-423bd6b75f4b" LastKnownName="TypeCobolProgram" />
+            <elementDefinition Id="08023743-3745-4de3-bd06-369587daf3f6" />
+          </generalization>
+        </generalsInternal>
+      </component>
+    </componentModelHasComponents>
   </packagedElements>
-  <package Id="baaa1a4a-45fb-4e3c-a150-8804e26d8998" name="FileCompileSequence">
+  <package Id="baaa1a4a-45fb-4e3c-a150-8804e26d8998" name="ParseCommand">
     <elementDefinition Id="d928bd81-ef7a-4ddc-a3dd-9d8217d026b4" />
+    <profileInstances>
+      <packageHasProfileInstances Id="dbc4ab00-300f-4a92-91d6-7bfd8c21a8f3">
+        <profileInstance Id="7243dfd6-487a-4d9b-bb5b-da1d84dbfff5" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="8b8e8ef6-3e7e-4377-8faf-caa41fd308ec">
+        <profileInstance Id="6e661f24-f525-43cc-9e00-1df803b37394" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
   </package>
 </componentModel>

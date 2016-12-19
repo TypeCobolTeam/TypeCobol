@@ -13,14 +13,11 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		[TestProperty("Time","fast")]
 		public void QualifiedLength1DataName() {
 			var id = qname("x");
-			Assert.AreEqual(id.Symbol.Name, "x");
-			Assert.AreEqual(id.DataNames.Count, 0);
-			Assert.IsNull(id.FileName);
 			Assert.AreEqual(id.ToString(), "x");
 			Assert.AreEqual(id.Count, 1);
 			Assert.AreEqual(id[0], "x");
 			try{ var x = id[1]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("x"),    0);
 			Assert.AreEqual(id.IndexOf("xin"), -1);
 			Assert.IsTrue(id.Contains("x"));
@@ -31,16 +28,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		[TestProperty("Time","fast")]
 		public void QualifiedLength2DataName() {
 			var id = qname("group.name", false);
-			Assert.AreEqual(id.Symbol.Name, "name");
-			Assert.AreEqual(id.DataNames.Count, 1);
-			Assert.AreEqual(id.DataNames[0].Name, "group");
-			Assert.IsNull(id.FileName);
 			Assert.AreEqual(id.ToString(), "group.name");
 			Assert.AreEqual(id.Count, 2);
 			Assert.AreEqual(id[0], "group");
 			Assert.AreEqual(id[1], "name");
 			try{ var x = id[2]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("group"), 0);
 			Assert.AreEqual(id.IndexOf("name"),  1);
 			Assert.AreEqual(id.IndexOf("x"),    -1);
@@ -55,15 +48,12 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		[TestProperty("Time","fast")]
 		public void QualifiedLength2FileName() {
 			var id = qname("file.name", true);
-			Assert.AreEqual(id.Symbol.Name, "name");
-			Assert.AreEqual(id.DataNames.Count, 0);
-			Assert.AreEqual(id.FileName.Name, "file");
 			Assert.AreEqual(id.ToString(), "file.name");
 			Assert.AreEqual(id.Count, 2);
 			Assert.AreEqual(id[0], "file");
 			Assert.AreEqual(id[1], "name");
 			try{ var x = id[2]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("file"), 0);
 			Assert.AreEqual(id.IndexOf("name"), 1);
 			Assert.AreEqual(id.IndexOf("x"),   -1);
@@ -78,13 +68,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		[TestProperty("Time","fast")]
 		public void QualifiedLength5DataName() {
 			var id = qname("group.aaa.bb.c.name", false);
-			Assert.AreEqual(id.Symbol.Name, "name");
-			Assert.AreEqual(id.DataNames.Count, 4);
-			Assert.AreEqual(id.DataNames[0].Name, "group");
-			Assert.AreEqual(id.DataNames[1].Name, "aaa");
-			Assert.AreEqual(id.DataNames[2].Name, "bb");
-			Assert.AreEqual(id.DataNames[3].Name, "c");
-			Assert.IsNull(id.FileName);
 			Assert.AreEqual(id.ToString(), "group.aaa.bb.c.name");
 			Assert.AreEqual(id.Count, 5);
 			Assert.AreEqual(id[0], "group");
@@ -93,7 +76,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id[3], "c");
 			Assert.AreEqual(id[4], "name");
 			try{ var x = id[5]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("group"), 0);
 			Assert.AreEqual(id.IndexOf("aaa"),   1);
 			Assert.AreEqual(id.IndexOf("bb"),    2);
@@ -114,12 +97,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		[TestProperty("Time","fast")]
 		public void QualifiedLength5FileName() {
 			var id = qname("file.aaa.bb.c.name", true);
-			Assert.AreEqual(id.Symbol.Name, "name");
-			Assert.AreEqual(id.DataNames.Count, 3);
-			Assert.AreEqual(id.DataNames[0].Name, "aaa");
-			Assert.AreEqual(id.DataNames[1].Name, "bb");
-			Assert.AreEqual(id.DataNames[2].Name, "c");
-			Assert.AreEqual(id.FileName.Name, "file");
 			Assert.AreEqual(id.ToString(), "file.aaa.bb.c.name");
 			Assert.AreEqual(id.Count, 5);
 			Assert.AreEqual(id[0], "file");
@@ -128,7 +105,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 			Assert.AreEqual(id[3], "c");
 			Assert.AreEqual(id[4], "name");
 			try{ var x = id[5]; throw new AssertFailedException(); }
-			catch(System.ArgumentOutOfRangeException ex) { }
+			catch(System.ArgumentOutOfRangeException) { }
 			Assert.AreEqual(id.IndexOf("file"), 0);
 			Assert.AreEqual(id.IndexOf("aaa"),  1);
 			Assert.AreEqual(id.IndexOf("bb"),   2);
@@ -147,15 +124,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 
 
 
-		private static SyntacticQualifiedName qname(string uri, bool isFirstFilename = false) {
-			var parts = uri.Split('.');
-			int p = 0;
-			FileName filename = null;
-			if (isFirstFilename) filename = new FileName(token(parts[p++]));
-			var datanames = new List<DataName>();
-			while(p < parts.Length-1) datanames.Add(new DataName(token(parts[p++])));
-			var symbol = new DataName(token(parts[parts.Length-1]));
-			return new SyntacticQualifiedName(symbol, datanames, filename);
+		private static QualifiedName qname(string uri, bool isFirstFilename = false) {
+			return new URI(uri);
 		}
 		private static Token token(string word) {
 			var token = new Mock<Token>();

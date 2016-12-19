@@ -115,7 +115,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             {
                if(token.TokenFamily == TokenFamily.AlphanumericLiteral)
                {
-                   token.LiteralValue = new AlphanumericLiteralValue(text);
+                   token.LiteralValue = new AlphanumericLiteralTokenValue(text);
                }
                else if(token.TokenType == TokenType.IntegerLiteral)
                {
@@ -125,7 +125,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                        sign = text.Substring(0,1);
                        text = text.Substring(1);
                    }
-                   token.LiteralValue = new IntegerLiteralValue(sign, text);
+                   token.LiteralValue = new IntegerLiteralTokenValue(sign, text);
                }
                else if (token.TokenType == TokenType.DecimalLiteral || token.TokenType == TokenType.FloatingPointLiteral)
                {

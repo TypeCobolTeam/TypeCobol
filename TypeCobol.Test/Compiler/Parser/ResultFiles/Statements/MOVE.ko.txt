@@ -1,14 +1,14 @@
 ﻿--- Diagnostics ---
-[20,20]<27,Error,Syntax>Syntax error : MOVE CORRESPONDING: maximum 1 group item after TO (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>moveStatement>identifierOrLiteral, OffendingSymbol=[20,20:a]<UserDefinedWord> on line 2)
-[20,20]<27,Error,Syntax>Syntax error : MOVE CORRESPONDING: illegal <literal> before TO (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>moveStatement>identifierOrLiteral, OffendingSymbol=[20,20:1]<IntegerLiteral>{1} on line 4)
-[20,25]<27,Error,Syntax>Syntax error : MOVE: illegal <intrinsic function> after TO (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>moveStatement, OffendingSymbol=[20,25:RANDOM]<RANDOM> on line 6)
-[20,25]<27,Error,Syntax>Syntax error : MOVE: illegal <intrinsic function> after TO (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>moveStatement, OffendingSymbol=[20,25:LENGTH]<LENGTH> on line 7)
+[1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'y ... MOVE' (RuleStack=codeElement, OffendingSymbol=[1,4:MOVE]<MOVE> on line 4)
+[20,20]<27,Error,Syntax>Syntax error : no viable alternative at input '1' (RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference>qualifiedDataName, OffendingSymbol=[20,20:1]<IntegerLiteral>{1} on line 4)
+[11,18]<27,Error,Syntax>Syntax error : MOVE: illegal <function call> after TO (RuleStack=codeElement>moveStatement>moveSimple>storageArea1, OffendingSymbol=[11,18:FUNCTION]<FUNCTION> on line 6)
+[11,18]<27,Error,Syntax>Syntax error : MOVE: illegal <function call> after TO (RuleStack=codeElement>moveStatement>moveSimple>storageArea1, OffendingSymbol=[11,18:FUNCTION]<FUNCTION> on line 7)
 --- Code Elements ---
-[[MoveStatement]] [1,4:MOVE]<MOVE> --> [27,27:y]<UserDefinedWord>
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [25,25:x]<UserDefinedWord>
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [25,25:x]<UserDefinedWord>
 
-[[MoveStatement]] [1,4:MOVE]<MOVE> --> [20,25:RANDOM]<RANDOM>
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [20,25:RANDOM]<IntrinsicFunctionName>
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [29,29:)]<RightParenthesisSeparator>
 

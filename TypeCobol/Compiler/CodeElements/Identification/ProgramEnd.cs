@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// A user-defined word or alphanumeric literal, but not a figurative constant,
         /// that identifies your program.
         /// </summary>
-        public ProgramName ProgramName { get; set; }
+        public SymbolReference ProgramName { get; set; }
 
         /// <summary>
         /// Debug string

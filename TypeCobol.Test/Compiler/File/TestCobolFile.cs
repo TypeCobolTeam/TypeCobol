@@ -321,7 +321,7 @@ namespace TypeCobol.Test.Compiler.File
             tce = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges[1], docFormat.ColumnsLayout);
             bool okay = false;
             try { CheckLine(filename, tce, 1, "français: salut, tout le monde"); }
-            catch (Exception ex) { okay = true; }
+            catch (Exception) { okay = true; }
             if (!okay) throw new Exception("Exception should have been thrown!");
             CheckLine(filename, tce, 1, "arabic: مرحبا بالعالم");
             tce = new TextChangeMap(textSourceListener.LastTextChangedEvent.TextChanges[2], docFormat.ColumnsLayout);

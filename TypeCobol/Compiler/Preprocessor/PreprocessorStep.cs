@@ -230,7 +230,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         try
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
-                            ProcessedTokensDocument importedDocumentSource = processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName, copyDirective.TextName);
+                            //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
+                            ProcessedTokensDocument importedDocumentSource = processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName, copyDirective.TextName, tokensLineWithCopyDirective.ScanState);
 
                             // Store it on the current line after appying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, importedDocumentSource);

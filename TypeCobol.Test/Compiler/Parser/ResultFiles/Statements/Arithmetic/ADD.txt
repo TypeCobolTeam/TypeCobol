@@ -27,6 +27,10 @@
 
 [[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>
 
+[[AddStatement]] [1,3:ADD]<ADD> --> [28,34:ROUNDED]<ROUNDED>
+
+[[SentenceEnd]] [35,35+:.]<PeriodSeparator> --> [35,35+:.]<PeriodSeparator>
+
 [[AddStatement]] [1,3:ADD]<ADD> --> [20,20:x]<UserDefinedWord>
 
 [[SentenceEnd]] [21,21+:.]<PeriodSeparator> --> [21,21+:.]<PeriodSeparator>
@@ -63,6 +67,10 @@
 
 [[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
 
+[[AddStatement]] [1,3:ADD]<ADD> --> [33,39:ROUNDED]<ROUNDED>
+
+[[SentenceEnd]] [40,40+:.]<PeriodSeparator> --> [40,40+:.]<PeriodSeparator>
+
 [[AddStatement]] [1,3:ADD]<ADD> --> [21,21:x]<UserDefinedWord>
 
 [[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
@@ -83,7 +91,7 @@
 
 [[SentenceEnd]] [25,25+:.]<PeriodSeparator> --> [25,25+:.]<PeriodSeparator>
 
-[[AddStatement]] [1,3:ADD]<ADD> --> [15,15:x]<UserDefinedWord>
+[[AddStatement]] [1,3:ADD]<ADD> --> [17,23:ROUNDED]<ROUNDED>
 
-[[SentenceEnd]] [16,16+:.]<PeriodSeparator> --> [16,16+:.]<PeriodSeparator>
+[[SentenceEnd]] [24,24+:.]<PeriodSeparator> --> [24,24+:.]<PeriodSeparator>
 

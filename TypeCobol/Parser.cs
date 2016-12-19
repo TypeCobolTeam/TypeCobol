@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.File;
 
 namespace TypeCobol
 {
@@ -20,6 +21,8 @@ namespace TypeCobol
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public TypeCobol.Compiler.CodeModel.SymbolTable CustomSymbols = null;
 
+		public string[] Extensions = new string[] { "*.cbl", "*.cpy" };
+
 		public Parser() {
 			Observer = new Observer();
 			Inits = new Dictionary<string,bool>();
@@ -30,21 +33,26 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init(string path, DocumentFormat format = null)
-		{
+		public void Init([NotNull] string path, DocumentFormat format = null, IList<string> copies = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
-			string directory = Directory.GetParent(path).FullName;
 			string filename = Path.GetFileName(path);
-			DirectoryInfo root = new DirectoryInfo(directory);
+			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
 			TypeCobolOptions options = new TypeCobolOptions();
-			CompilationProject project = new CompilationProject(path, root.FullName, new string[] { "*.cbl", "*.cpy" },
+			CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+			//Add copy folder into sourceFileProvider
+			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
+			copies = copies ?? new List<string>();
+			foreach (var folder in copies) {
+				sourceFileProvider.AddLocalDirectoryLibrary(folder, true, Extensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+			}
 			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
 		}
+
 
 		public void Parse(string path, TextChangedEvent e=null)
 		{

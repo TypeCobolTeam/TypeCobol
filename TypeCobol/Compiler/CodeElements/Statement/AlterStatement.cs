@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -39,39 +38,39 @@ namespace TypeCobol.Compiler.CodeElements
     /// * An explicit transfer of control with a PERFORM or GO TO statement
     /// * A sort or merge statement with the INPUT or OUTPUT phrase specified
     /// </summary>
-    public class AlterStatement : CodeElement
+    public class AlterStatement : StatementElement
     {
-        public AlterStatement() : base(CodeElementType.AlterStatement) { }
+        public AlterStatement() : base(CodeElementType.AlterStatement, StatementType.AlterStatement) { }
 
-        public IList<Alter> Items = new List<Alter>();
+        public AlterGotoInstruction[] AlterGotoInstructions { get; set; }         
+    }
+
+    /// <summary>
+    /// p301:
+    /// Before the ALTER statement is executed, when control reaches the paragraph
+    /// specified in procedure-name-1, the GO TO statement transfers control to the
+    /// paragraph specified in the GO TO statement. After execution of the ALTER
+    /// statement however, the next time control reaches the paragraph specified in
+    /// procedure-name-1, the GO TO statement transfers control to the paragraph specified
+    /// in procedure-name-2.
+    /// </summary>
+    public class AlterGotoInstruction
+    {
+        /// <summary>
+        /// p301:
+        /// procedure-name-1
+        /// Must name a PROCEDURE DIVISION paragraph that contains only one
+        /// sentence: a GO TO statement without the DEPENDING ON phrase.
+        /// procedure-name-2
+        /// Must name a PROCEDURE DIVISION section or paragraph.
+        /// </summary>
+        public SymbolReference AlteredProcedure;
 
         /// <summary>
         /// p301:
-        /// Before the ALTER statement is executed, when control reaches the paragraph
-        /// specified in procedure-name-1, the GO TO statement transfers control to the
-        /// paragraph specified in the GO TO statement. After execution of the ALTER
-        /// statement however, the next time control reaches the paragraph specified in
-        /// procedure-name-1, the GO TO statement transfers control to the paragraph specified
-        /// in procedure-name-2.
+        /// procedure-name-2
+        /// Must name a PROCEDURE DIVISION section or paragraph.
         /// </summary>
-        public class Alter
-        {
-            /// <summary>
-            /// p301:
-            /// procedure-name-1
-            /// Must name a PROCEDURE DIVISION paragraph that contains only one
-            /// sentence: a GO TO statement without the DEPENDING ON phrase.
-            /// procedure-name-2
-            /// Must name a PROCEDURE DIVISION section or paragraph.
-            /// </summary>
-            public QualifiedProcedureName Procedure1;
-
-            /// <summary>
-            /// p301:
-            /// procedure-name-2
-            /// Must name a PROCEDURE DIVISION section or paragraph.
-            /// </summary>
-            public QualifiedProcedureName Procedure2;
-        }
+        public SymbolReference NewTargetProcedure;
     }
 }

@@ -2,16 +2,16 @@
 <componentDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="GrammarComposition">
   <componentModelMoniker Id="64867159-64d2-44d8-8b5f-0b414f80e5ad" />
   <nestedChildShapes>
-    <componentShape Id="a4718e97-1203-44b6-99f0-ac347bf94b07" absoluteBounds="1.375, 1.7083333730697632, 1.6979166666666665, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
-      <componentMoniker Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" LastKnownName="CobolCodeElement" />
+    <componentShape Id="a4718e97-1203-44b6-99f0-ac347bf94b07" absoluteBounds="1.375, 2.8333333730697632, 1.6979166666666665, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+      <componentMoniker Id="e47ae5ce-bcc3-45d3-9190-9129daa364dd" LastKnownName="CobolCodeElements" />
     </componentShape>
-    <componentShape Id="8d2cc559-aa9a-4200-804e-55b0b219f369" absoluteBounds="4.375, 1.75, 1.5, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+    <componentShape Id="8d2cc559-aa9a-4200-804e-55b0b219f369" absoluteBounds="3.875, 2.875, 1.5, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
       <componentMoniker Id="ba05ac01-0d9a-4096-8c46-6689a05b5cb7" LastKnownName="CobolBase" />
     </componentShape>
-    <componentShape Id="716f16ec-110b-4b0b-ab04-1dab48f038f3" absoluteBounds="1.25, 4, 1.989583333333333, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+    <componentShape Id="716f16ec-110b-4b0b-ab04-1dab48f038f3" absoluteBounds="1.25, 4.5, 1.989583333333333, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
       <componentMoniker Id="92770d60-69be-4cf4-8887-bf5dc44eba4d" LastKnownName="Cobol2002CodeElements" />
     </componentShape>
-    <generalizationConnector edgePoints="[(3.07291666666667 : 2.20416668653488); (4.375 : 2.20416668653488)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(3.07291666666667 : 3.32916668653488); (3.875 : 3.32916668653488)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
       <generalizationMoniker Id="6369e6eb-9b0d-4690-9677-472006de1673" />
       <relativeChildShapes />
       <nodes>
@@ -19,7 +19,7 @@
         <componentShapeMoniker Id="8d2cc559-aa9a-4200-804e-55b0b219f369" />
       </nodes>
     </generalizationConnector>
-    <generalizationConnector edgePoints="[(2.24479166666667 : 4); (2.24479166666667 : 3.03333337306976); (2.22395833333333 : 3.03333337306976); (2.22395833333333 : 2.65833337306976)]" fixedFrom="NotFixed" fixedTo="Algorithm" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(2.24479166666667 : 4.5); (2.24479166666667 : 4.15833337306976); (2.22395833333333 : 4.15833337306976); (2.22395833333333 : 3.78333337306976)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
       <generalizationMoniker Id="8ad4b8b6-9b26-4662-b4c3-d37411c57789" />
       <relativeChildShapes />
       <nodes>
@@ -27,13 +27,13 @@
         <componentShapeMoniker Id="a4718e97-1203-44b6-99f0-ac347bf94b07" />
       </nodes>
     </generalizationConnector>
-    <componentShape Id="6c754cdf-fe08-4524-97fc-397b58755d1a" absoluteBounds="4.625, 4, 2.53125, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+    <componentShape Id="6c754cdf-fe08-4524-97fc-397b58755d1a" absoluteBounds="3.75, 4.5, 2.53125, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
       <componentMoniker Id="08c68b3c-2794-4c98-b3a4-1ff372539200" LastKnownName="CobolProgramClass" />
     </componentShape>
-    <componentShape Id="248a6e7a-6d97-4b5a-acda-c2f130585437" absoluteBounds="1.25, 5.875, 1.96875, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+    <componentShape Id="248a6e7a-6d97-4b5a-acda-c2f130585437" absoluteBounds="1.25, 6.375, 1.96875, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
       <componentMoniker Id="047ea525-ae44-4795-8e21-21db4ea22a4e" LastKnownName="TypeCobolCodeElements" />
     </componentShape>
-    <generalizationConnector edgePoints="[(2.234375 : 5.875); (2.234375 : 5.325); (2.24479166666667 : 5.325); (2.24479166666667 : 4.95)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(2.234375 : 6.375); (2.234375 : 5.825); (2.24479166666667 : 5.825); (2.24479166666667 : 5.45)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
       <generalizationMoniker Id="fed342b9-77e5-4230-9138-2a2110ae29d8" />
       <relativeChildShapes />
       <nodes>
@@ -41,10 +41,10 @@
         <componentShapeMoniker Id="716f16ec-110b-4b0b-ab04-1dab48f038f3" />
       </nodes>
     </generalizationConnector>
-    <componentShape Id="37267ae3-fabc-414b-8e22-9876674472f2" absoluteBounds="4.875, 5.75, 1.5, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+    <componentShape Id="37267ae3-fabc-414b-8e22-9876674472f2" absoluteBounds="4, 6.25, 1.5, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
       <componentMoniker Id="4047129e-7593-4c83-bdc5-578f74bd4995" LastKnownName="CodeElements" />
     </componentShape>
-    <generalizationConnector edgePoints="[(4.875 : 6.2875); (3.21875 : 6.2875)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(4 : 6.7875); (3.21875 : 6.7875)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
       <generalizationMoniker Id="9dd05a97-cd7a-41f1-88dc-f8cf384cc14b" />
       <relativeChildShapes />
       <nodes>
@@ -52,10 +52,10 @@
         <componentShapeMoniker Id="248a6e7a-6d97-4b5a-acda-c2f130585437" />
       </nodes>
     </generalizationConnector>
-    <componentShape Id="7503b5f4-9fac-4e92-a43a-07662088dacc" absoluteBounds="7, 1.75, 1.9166666666666661, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0.95" whiteBoxBoundsWidth="1.9166666666666661" blackBoxBoundsHeight="0.7" blackBoxBoundsWidth="1.9166666666666661" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0" whiteBoxSettingsInitialized="true" blackBoxSettingsInitialized="true">
+    <componentShape Id="7503b5f4-9fac-4e92-a43a-07662088dacc" absoluteBounds="6.25, 2.875, 1.9166666666666661, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0.95" whiteBoxBoundsWidth="1.9166666666666661" blackBoxBoundsHeight="0.7" blackBoxBoundsWidth="1.9166666666666661" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0" whiteBoxSettingsInitialized="true" blackBoxSettingsInitialized="true">
       <componentMoniker Id="94327e19-8805-4eeb-bac9-9b823e2b156e" LastKnownName="CobolCompilerDirectives" />
     </componentShape>
-    <generalizationConnector edgePoints="[(7 : 2.225); (5.875 : 2.225)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
+    <generalizationConnector edgePoints="[(6.25 : 3.35); (5.375 : 3.35)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
       <generalizationMoniker Id="2ddd7e7a-0175-40d9-8b07-96805b46aa25" />
       <relativeChildShapes />
       <nodes>
@@ -63,7 +63,7 @@
         <componentShapeMoniker Id="8d2cc559-aa9a-4200-804e-55b0b219f369" />
       </nodes>
     </generalizationConnector>
-    <dependencyConnector edgePoints="[(5.625 : 4.95); (5.625 : 5.75)]" fixedFrom="Caller" fixedTo="Caller" customColor="Black">
+    <dependencyConnector edgePoints="[(4.75 : 5.45); (4.75 : 6.25)]" fixedFrom="Caller" fixedTo="Caller" customColor="Black">
       <dependencyMoniker Id="567f086d-0549-4552-b931-044922dc7a39" />
       <relativeChildShapes />
       <nodes>
@@ -71,5 +71,60 @@
         <componentShapeMoniker Id="37267ae3-fabc-414b-8e22-9876674472f2" />
       </nodes>
     </dependencyConnector>
+    <componentShape Id="6b1b4ba2-014c-49c6-a324-698941f5ce46" absoluteBounds="3.625, 1, 1.5, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+      <componentMoniker Id="a949ff81-8080-4132-916f-a64e716175b3" LastKnownName="CobolWords" />
+    </componentShape>
+    <componentShape Id="57e45375-a61f-4f29-b0c4-539e4661df62" absoluteBounds="1.25, 1, 1.8645833333333339, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+      <componentMoniker Id="74ca4f90-784c-4c15-bcca-283990d26924" LastKnownName="CobolExpressions" />
+    </componentShape>
+    <generalizationConnector edgePoints="[(3.11458333333333 : 1.475); (3.625 : 1.475)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
+      <generalizationMoniker Id="4bd8b42e-5aeb-4001-919c-bdc77daf0320" />
+      <relativeChildShapes />
+      <nodes>
+        <componentShapeMoniker Id="57e45375-a61f-4f29-b0c4-539e4661df62" />
+        <componentShapeMoniker Id="6b1b4ba2-014c-49c6-a324-698941f5ce46" />
+      </nodes>
+    </generalizationConnector>
+    <componentShape Id="fc048e24-d886-4c84-8a49-f3561e0957be" absoluteBounds="6.125, 1, 1.96875, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+      <componentMoniker Id="c1acba63-4264-4506-824e-4b04e2871499" LastKnownName="CobolCompilerDirectives" />
+    </componentShape>
+    <generalizationConnector edgePoints="[(6.125 : 1.475); (5.125 : 1.475)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
+      <generalizationMoniker Id="eb872a39-4cee-46c8-b30c-e93c96ba22ea" />
+      <relativeChildShapes />
+      <nodes>
+        <componentShapeMoniker Id="fc048e24-d886-4c84-8a49-f3561e0957be" />
+        <componentShapeMoniker Id="6b1b4ba2-014c-49c6-a324-698941f5ce46" />
+      </nodes>
+    </generalizationConnector>
+    <generalizationConnector edgePoints="[(2.22395833333333 : 2.83333337306976); (2.22395833333333 : 2.325); (2.18229166666667 : 2.325); (2.18229166666667 : 1.95)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
+      <generalizationMoniker Id="d5e030d6-67ee-4551-8994-14af7a7f138c" />
+      <relativeChildShapes />
+      <nodes>
+        <componentShapeMoniker Id="a4718e97-1203-44b6-99f0-ac347bf94b07" />
+        <componentShapeMoniker Id="57e45375-a61f-4f29-b0c4-539e4661df62" />
+      </nodes>
+    </generalizationConnector>
+    <componentShape Id="2fbbbe77-4704-47cb-abca-bd15b7750c40" absoluteBounds="7.125, 4.5, 1.6979166666666679, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+      <componentMoniker Id="51cde238-1c9f-4729-8e68-423bd6b75f4b" LastKnownName="TypeCobolProgram" />
+    </componentShape>
+    <generalizationConnector edgePoints="[(7.125 : 4.975); (6.28125 : 4.975)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110">
+      <generalizationMoniker Id="fd68f60c-206c-432b-97cf-459f9de2c8f5" />
+      <relativeChildShapes />
+      <nodes>
+        <componentShapeMoniker Id="2fbbbe77-4704-47cb-abca-bd15b7750c40" />
+        <componentShapeMoniker Id="6c754cdf-fe08-4524-97fc-397b58755d1a" />
+      </nodes>
+    </generalizationConnector>
+    <componentShape Id="d0692299-92e1-4db0-8e07-fc1fbe511749" absoluteBounds="7.125, 6.375, 1.5, 0.95" customColor="161, 199, 231" whiteBoxBoundsHeight="0" whiteBoxBoundsWidth="0" blackBoxBoundsHeight="0" blackBoxBoundsWidth="0" whiteBoxTopEdgeShapesCount="0" whiteBoxRightEdgeShapesCount="0" whiteBoxBottomEdgeShapesCount="0" whiteBoxLeftEdgeShapesCount="0" blackBoxTopEdgeShapesCount="0" blackBoxRightEdgeShapesCount="0" blackBoxBottomEdgeShapesCount="0" blackBoxLeftEdgeShapesCount="0">
+      <componentMoniker Id="941177c0-484d-446c-bdf9-5e0641e0b573" LastKnownName="ProgramClass" />
+    </componentShape>
+    <generalizationConnector edgePoints="[(7.875 : 6.375); (7.875 : 5.825); (7.97395833333333 : 5.825); (7.97395833333333 : 5.45)]" fixedFrom="NotFixed" fixedTo="NotFixed" customColor="113, 111, 110">
+      <generalizationMoniker Id="5c88de85-51f5-4001-a4bf-767eb6bfe31e" />
+      <relativeChildShapes />
+      <nodes>
+        <componentShapeMoniker Id="d0692299-92e1-4db0-8e07-fc1fbe511749" />
+        <componentShapeMoniker Id="2fbbbe77-4704-47cb-abca-bd15b7750c40" />
+      </nodes>
+    </generalizationConnector>
   </nestedChildShapes>
 </componentDiagram>

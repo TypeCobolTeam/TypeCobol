@@ -3,8 +3,6 @@
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [60,69:CHARACTERS]<CHARACTERS>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [103,103:8]<IntegerLiteral>{8}
-
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [30,30:x]<UserDefinedWord>
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [34,34:y]<UserDefinedWord>
@@ -21,17 +19,5 @@
 
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [30,30:y]<UserDefinedWord>
 
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [32,32:1]<IntegerLiteral>{1}
-
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [32,32:y]<UserDefinedWord>
-
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [34,34:1]<IntegerLiteral>{1}
-
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [71,71:1]<IntegerLiteral>{1}
-
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [106,106:1]<IntegerLiteral>{1}
-
 [[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [61,61:i]<UserDefinedWord>
-
-[[InspectStatement]] [1,7:INSPECT]<INSPECT> --> [106,106:1]<IntegerLiteral>{1}
 

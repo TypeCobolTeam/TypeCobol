@@ -2,9 +2,13 @@
 
 namespace TypeCobol.Compiler.CodeElements
 {
-    public class ContinueStatement : CodeElement
+    /// <summary>
+    /// p319: CONTINUE statement
+    /// The CONTINUE statement is a no operation statement. CONTINUE indicates that no executable instruction is present.
+    /// </summary>
+    public class ContinueStatement : StatementElement
     {
-        public ContinueStatement() : base(CodeElementType.ContinueStatement)
+        public ContinueStatement() : base(CodeElementType.ContinueStatement, StatementType.ContinueStatement)
         { }
     }
 }

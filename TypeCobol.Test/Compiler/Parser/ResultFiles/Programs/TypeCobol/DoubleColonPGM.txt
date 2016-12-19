@@ -7,37 +7,46 @@
 [5,45]<27,Error,Syntax>Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced ([5>45] on line 94)
 [5,45]<27,Error,Syntax>Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced ([5>45] on line 96)
 [5,45]<27,Error,Syntax>Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced ([5>45] on line 97)
-[5,29]<27,Error,Syntax>Syntax error : Symbol T2-A.T2-D1 is not referenced ([5>29] on line 99)
 
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
-SYMBOL TABLE:
-  T1-A {1} GROUP(2) [ T1-B1 T1-B2 ]
-  T1-B1 {5} Alphanumeric <of> T1-A
-  T1-B2 {5} Alphanumeric <of> T1-A
-  T2-A {1} GROUP(1) [ T2-B ]
-  T2-B {5} GROUP(1) [ T2-C ] <of> T2-A
-  T2-C {10} GROUP(2) [ T2-D1 T2-D2 ] <of> T2-B <of> T2-A
-  T2-D1 {15} Alphanumeric <of> T2-C <of> T2-B <of> T2-A
-  T2-D2 {15} Alphanumeric <of> T2-C <of> T2-B <of> T2-A
-  T3-A1 {1} GROUP(2) [ T3-B1 T3-B2 ]
-  T3-B1 {5} GROUP(2) [ T3-C1 T3-C2 ] <of> T3-A1
-  T3-B1 {5} GROUP(2) [ T3-C1 T3-C2 ] <of> T3-A2
-  T3-C1 {10} Alphanumeric <of> T3-B1 <of> T3-A1
-  T3-C1 {10} Alphanumeric <of> T3-B1 <of> T3-A2
-  T3-C2 {10} Alphanumeric <of> T3-B1 <of> T3-A1
-  T3-C2 {10} Alphanumeric <of> T3-B1 <of> T3-A2
-  T3-B2 {5} Alphanumeric <of> T3-A1
-  T3-B2 {5} Alphanumeric <of> T3-A2
-  T3-A2 {1} GROUP(2) [ T3-B1 T3-B2 ]
-  T4-A1[10] {1} GROUP(2) [ T4-B1 T4-B2 ]
-  T4-B1[10] {5} GROUP(2) [ T4-C1 T4-C2 ] <of> T4-A1
-  T4-B1 {5} GROUP(2) [ T4-C1 T4-C2 ] <of> T4-A2
-  T4-C1 {10} Alphanumeric <of> T4-B1 <of> T4-A1
-  T4-C1 {10} Alphanumeric <of> T4-B1 <of> T4-A2
-  T4-C2 {10} Alphanumeric <of> T4-B1 <of> T4-A1
-  T4-C2 {10} Alphanumeric <of> T4-B1 <of> T4-A2
-  T4-B2 {5} Alphanumeric <of> T4-A1
-  T4-B2 {5} Alphanumeric <of> T4-A2
-  T4-A2 {1} GROUP(2) [ T4-B1 T4-B2 ]
+--- Intrinsic:Global:Program
+-- DATA --------
+  T1-A:?
+  T1-B1:Alphanumeric
+  T1-B2:Alphanumeric
+  T2-A:?
+  T2-B:?
+  T2-C:?
+  T2-D1:Alphanumeric
+  T2-D2:Alphanumeric
+  T3-A1:?
+  T3-B1:?
+  T3-B1:?
+  T3-C1:Alphanumeric
+  T3-C1:Alphanumeric
+  T3-C2:Alphanumeric
+  T3-C2:Alphanumeric
+  T3-B2:Alphanumeric
+  T3-B2:Alphanumeric
+  T3-A2:?
+  T4-A1:?
+  T4-B1:?
+  T4-B1:?
+  T4-C1:Alphanumeric
+  T4-C1:Alphanumeric
+  T4-C2:Alphanumeric
+  T4-C2:Alphanumeric
+  T4-B2:Alphanumeric
+  T4-B2:Alphanumeric
+  T4-A2:?
+-- PARAGRAPHS --
+  TEST-1
+  TEST-2
+  TEST-3
+  TEST-4
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

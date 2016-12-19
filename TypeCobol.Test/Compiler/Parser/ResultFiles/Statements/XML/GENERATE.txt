@@ -1,13 +1,12 @@
 ﻿--- Diagnostics ---
-[15,15]<27,Error,Syntax>Syntax error : no viable alternative at input 'x ... .' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>xmlGenerateStatement>identifier>dataReferenceOrConditionReference>qualifiedDataNameOrQualifiedConditionName, OffendingSymbol=[15,15+:.]<PeriodSeparator> on line 3)
-[36,36]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>xmlGenerateStatement>codepage, OffendingSymbol=[36,36+:.]<PeriodSeparator> on line 18)
+[15,15]<27,Error,Syntax>Syntax error : mismatched input '.' expecting FROM (RuleStack=codeElement>xmlGenerateStatement, OffendingSymbol=[15,15+:.]<PeriodSeparator> on line 3)
+[36,36]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>xmlGenerateStatement>codepage>integerVariable1, OffendingSymbol=[36,36+:.]<PeriodSeparator> on line 18)
 [57,71]<27,Error,Syntax>Syntax error : no viable alternative at input 'XML-DECLARATION' (RuleStack=codeElement, OffendingSymbol=[57,71:XML-DECLARATION]<XML_DECLARATION> on line 20)
-[59,60]<27,Error,Syntax>Syntax error : no viable alternative at input '27' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>xmlGenerateStatement>xmlNamespacePrefix, OffendingSymbol=[59,60:27]<IntegerLiteral>{27} on line 27)
-[36,37]<27,Error,Syntax>Syntax error : no viable alternative at input '42' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>xmlGenerateStatement>xmlNamespace, OffendingSymbol=[36,37:42]<IntegerLiteral>{42} on line 28)
+[59,60]<27,Error,Syntax>Syntax error : no viable alternative at input '27' (RuleStack=codeElement>xmlGenerateStatement>alphanumericVariable2, OffendingSymbol=[59,60:27]<IntegerLiteral>{27} on line 27)
+[36,37]<27,Error,Syntax>Syntax error : no viable alternative at input '42' (RuleStack=codeElement>xmlGenerateStatement>alphanumericVariable2, OffendingSymbol=[36,37:42]<IntegerLiteral>{42} on line 28)
 [23,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'NAMESPACE-PREFIX' (RuleStack=codeElement, OffendingSymbol=[23,38:NAMESPACE-PREFIX]<NAMESPACE_PREFIX> on line 30)
 [40,43]<27,Error,Syntax>Syntax error : no viable alternative at input 'NAME' (RuleStack=codeElement, OffendingSymbol=[40,43:NAME]<NAME> on line 35)
-[31,31]<27,Error,Syntax>Syntax error : Expected: Alphanumeric or National literal (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>xmlGenerateStatement>xmlName, OffendingSymbol=[31,31:a]<UserDefinedWord> on line 37)
-[33,34]<27,Error,Syntax>Syntax error : no viable alternative at input 'a ... 47' (RuleStack=codeElement>statement>imperativeStatement>dataMovementStatement>xmlGenerateStatement>xmlName>identifier>dataReferenceOrConditionReference>qualifiedDataNameOrQualifiedConditionName, OffendingSymbol=[33,34:47]<IntegerLiteral>{47} on line 37)
+[33,34]<27,Error,Syntax>Syntax error : missing {AlphanumericLiteral, HexadecimalAlphanumericLiteral, NullTerminatedAlphanumericLiteral, NationalLiteral, HexadecimalNationalLiteral, DBCSLiteral} at '47' (RuleStack=codeElement>xmlGenerateStatement>xmlNameMapping>alphanumericValue2>alphanumericOrNationalLiteralToken, OffendingSymbol=[33,34:47]<IntegerLiteral>{47} on line 37)
 [46,49]<27,Error,Syntax>Syntax error : no viable alternative at input 'TYPE' (RuleStack=codeElement, OffendingSymbol=[46,49:TYPE]<TYPE> on line 44)
 --- Code Elements ---
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [21,21:y]<UserDefinedWord>
@@ -96,7 +95,9 @@
 
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [36,38:'a']<AlphanumericLiteral>(',Y,Y){a}
 
-[[XmlGenerateStatement]] [1,3:XML]<XML> --> [41,41+:.]<PeriodSeparator>
+[[XmlGenerateStatement]] [1,3:XML]<XML> --> [31,31:a]<UserDefinedWord>
+
+[[DataDescriptionEntry]] [33,34:47]<IntegerLiteral>{47} --> [41,41+:.]<PeriodSeparator>
 
 [[XmlGenerateStatement]] [1,3:XML]<XML> --> [36,44:ATTRIBUTE]<ATTRIBUTE>
 

@@ -153,7 +153,18 @@ namespace TypeCobol.Compiler.Parser
                 if (codeElementParseTree.Start.Type > 0)
                 {
                     // Get the first line that was parsed                
-                    CodeElementsLine codeElementsLine = ((CodeElementsLine)((Token)codeElementParseTree.Start).TokensLine);
+                    var tokenStart = (Token)codeElementParseTree.Start;
+                    CodeElementsLine codeElementsLine;
+
+                    var importedToken = tokenStart as ImportedToken;
+                    if (importedToken != null)
+                    {
+                        codeElementsLine = (CodeElementsLine) importedToken.CopyDirective.TextNameSymbol.TokensLine;
+                    }
+                    else
+                    {
+                        codeElementsLine = ((CodeElementsLine) tokenStart.TokensLine);
+                    }
 
                     // Register that this line was updated
                     // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
@@ -162,7 +173,16 @@ namespace TypeCobol.Compiler.Parser
                     codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, codeElementsLine.InitialLineIndex, codeElementsLine));
 
                     // Visit the parse tree to build a first class object representing the code elements
-                    walker.Walk(codeElementBuilder, codeElementParseTree);
+					try { walker.Walk(codeElementBuilder, codeElementParseTree); }
+					catch (Exception ex) {
+						var code = Diagnostics.MessageCode.ImplementationError;
+						int line = 0; int start = 0; int stop = 0;
+						if (codeElementsLine.SourceTokens != null && codeElementsLine.SourceTokens.Count > 0){
+							start = codeElementsLine.SourceTokens[0].StartIndex;
+							stop = codeElementsLine.SourceTokens[codeElementsLine.SourceTokens.Count-1].StopIndex;
+						}
+						codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), start,stop,line, null, code));
+					}
                     CodeElement codeElement = codeElementBuilder.CodeElement;
                     if (codeElement != null)
                     {
@@ -176,6 +196,13 @@ namespace TypeCobol.Compiler.Parser
 								// it includes the first token in error if no token has been matched
 							}
 						}
+
+                        //TODO Issue #384 to discuss if this code should stay here:
+                        //This should be in a Checker, but "codeElement.ConsumedTokens" is only set after all the checkers have been called
+                        //Rule TCLIMITATION_NO_CE_ACROSS_SOURCES
+                        if (codeElement.IsAcrossSourceFile()) {
+                            DiagnosticUtils.AddError(codeElement, "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)", MessageCode.TypeCobolParserLimitation);
+                        }
 
                         // Add code element to the list                    
                         codeElementsLine.AddCodeElement(codeElement);

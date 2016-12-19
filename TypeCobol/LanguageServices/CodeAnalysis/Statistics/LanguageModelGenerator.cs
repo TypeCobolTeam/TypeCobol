@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Symbols;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics

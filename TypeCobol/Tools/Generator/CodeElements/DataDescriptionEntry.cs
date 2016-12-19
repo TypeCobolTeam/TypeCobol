@@ -4,12 +4,15 @@ using TypeCobol.Generator;
 
 namespace TypeCobol.Compiler.CodeElements {
 
+/*
+	//TODO#249 DataDescriptionEntry.TopLevel no longer exists
+
 	public partial class DataDescriptionEntry {
 		/// <summary><see cref="TypeCobol.Generator.CodeGenerator"/></summary>
 		public override void WriteCode(TextWriter stream, SymbolTable scope, ref int line, ref int offset, DocumentFormat format) {
 			// TYPEDEFS and subordinates have no equivalent in COBOL
 			// and thus must not be re-written
-			if (IsTypeDefinitionPart) return;
+			//if (IsTypeDefinitionPart) return;
 
 			int TrueParentGeneration;
 			int HowFarRemoved;
@@ -87,5 +90,5 @@ namespace TypeCobol.Compiler.CodeElements {
 			return false;
 		}
 	}
-
+*/
 }

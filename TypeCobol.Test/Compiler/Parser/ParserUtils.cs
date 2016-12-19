@@ -14,7 +14,6 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.CodeElements.Functions;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -81,12 +80,13 @@ namespace TypeCobol.Test.Compiler.Parser
 
 		public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics) {
 			StringBuilder builder = new StringBuilder();
+
 			builder.Append(DiagnosticsToString(diagnostics));
 			builder.Append(CodeElementsToString(elements));
 			return builder.ToString();
 		}
 
-		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics) {
+		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics, bool printDiagnosticLine = true) {
 			StringBuilder builder = new StringBuilder();
 			bool hasDiagnostic = false;
 			var done = new List<string>();
@@ -107,8 +107,10 @@ namespace TypeCobol.Test.Compiler.Parser
 				hasDiagnostic = true;
 			}
 			if(hasDiagnostic) {
-				builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
-				return builder.ToString();
+			    if (printDiagnosticLine) {
+			        builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
+			    }
+			    return builder.ToString();
 			} else {
 				return String.Empty;
 			}
@@ -152,11 +154,7 @@ namespace TypeCobol.Test.Compiler.Parser
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
-// [TYPECOBOL]
-			Dump(str, program.SymbolTable.CustomTypes);
-			Dump(str, program.SymbolTable.Functions);
-// [/TYPECOBOL]
-            Dump(str, program.SymbolTable);
+			str.AppendLine(program.SymbolTable.ToString(true));
             return str;
         }
 
@@ -174,18 +172,38 @@ namespace TypeCobol.Test.Compiler.Parser
             return str;
         }
 
-        private static StringBuilder Dump(StringBuilder str, AuthoringProperties data)
-        {
-            if (data == null) str.Append("?");
-            else {
-                str.Append(" author: "); Dump(str, data.Author);
-                str.Append(" written: "); Dump(str, data.DateWritten);
-                str.Append(" compiled: "); Dump(str, data.DateCompiled);
-                str.Append(" installation: "); Dump(str, data.Installation);
-                str.Append(" security: "); Dump(str, data.Security);
-            }
-            return str;
-        }
+		private static StringBuilder Dump(StringBuilder str, AuthoringProperties data) {
+			if (data == null) {
+				str.Append("?");
+				return str;
+			}
+			str.Append(" author: ");
+			if (data.Author.Length > 0) {
+				foreach(var value in data.Author) str.Append(value.Value+",");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" written: ");
+			if (data.DateWritten.Length > 0) {
+				foreach(var value in data.DateWritten) str.Append(value.Value+",");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" compiled: ");
+			if (data.DateCompiled.Length > 0) {
+				foreach(var value in data.DateCompiled) str.Append(value.Value+",");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" installation: ");
+			if (data.Installation.Length > 0) {
+				foreach(var value in data.Installation) str.Append(value.Value+",");
+				str.Length -= 1;
+			} else str.Append('?');
+			str.Append(" security: ");
+			if (data.Security.Length > 0) {
+				foreach(var value in data.Security) str.Append(value.Value+",");
+				str.Length -= 1;
+			} else str.Append('?');
+			return str;
+		}
 
         private static StringBuilder Dump<T>(StringBuilder str, SyntaxProperty<T> data)
         {
@@ -199,33 +217,27 @@ namespace TypeCobol.Test.Compiler.Parser
             throw new NotImplementedException("TODO");
         }
 
-        internal static StringBuilder Dump(StringBuilder str, SyntaxBoolean b)
-        {
-            if (b == null) str.Append("?");
-            else str.Append(b.Value);
-            return str;
-        }
-
 // [TYPECOBOL]
-		private static void Dump(StringBuilder str, IEnumerable<TypeDefinition> typedefs) {
+		private static void Dump(StringBuilder str, IEnumerable<TypeCobol.Compiler.Nodes.TypeDefinition> typedefs) {
 			int c = 0;
 			string header = "CUSTOM TYPES:\n";
 			str.Append(header);
 			foreach(var typedef in typedefs) {
 				str.Append(" * ").AppendLine(typedef.DataType.Name.ToString());
-				foreach(var sub in typedef.Subordinates)
-					DumpInTypeDef(str, sub, 2);
+				foreach(var sub in typedef.Children)
+					DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, 2);
 				c++;
 			}
 			if (c==0) str.Length -= header.Length;
 		}
-		private static void DumpInTypeDef(StringBuilder str, DataDescriptionEntry entry, int indent) {
+		private static void DumpInTypeDef(StringBuilder str, TypeCobol.Compiler.Nodes.DataDescription node, int indent) {
 			for (int i=0; i<indent; i++) str.Append("  ");
-			str.Append(" - ").AppendLine(entry.ToString());
-			foreach(var sub in entry.Subordinates)
-				DumpInTypeDef(str, sub, indent+1);
+			str.Append(" - ").AppendLine(node.CodeElement.ToString());
+			foreach(var sub in node.Children)
+				DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, indent+1);
 		}
 
+/*TODO#249
 		private static void Dump(StringBuilder str, IList<Function> functions) {
 			if (functions == null || functions.Count < 1) return;
 			str.AppendLine("FUNCTIONS:");
@@ -255,93 +267,82 @@ namespace TypeCobol.Test.Compiler.Parser
 			}
 		}
 		private static void Dump(StringBuilder str, ParameterDescription parameter) {
-			str.Append(parameter.Name).Append(':').Append(parameter.DataType)
-			   .Append('(').Append(parameter.MemoryArea.Length).Append(')');
+			str.Append(parameter.Name).Append(':');
+			var entry = (ParameterDescriptionEntry)parameter.CodeElement;
+			if (entry.CustomType != null) str.Append(entry.CustomType);
+			else
+			if (entry.Picture != null) str.Append(entry.Picture);
+			else str.Append("?");
 		}
 // [/TYPECOBOL]
 
-        private static StringBuilder Dump(StringBuilder str, SymbolTable table, string header=null)
-        {
-            if (table == null) return str;
-            if (header == null) header = "SYMBOL TABLE:\n";
-            if (table.CurrentScope == SymbolTable.Scope.Intrinsic) header = "INTRISIC SCOPE:\n";
-            if (table.CurrentScope == SymbolTable.Scope.Global) header = "GLOBAL SCOPE:\n";
-            Dictionary<string,List<DataDescriptionEntry>> map = table.DataEntries;
-            if(map.Count > 0) {
-                str.Append(header);
-                Dump(str, map);
-            }
-            Dump(str, table.EnclosingScope, "ENCLOSING SCOPE:\n");
-            return str;
-        }
-
-        private static void Dump(StringBuilder str, Dictionary<string, List<DataDescriptionEntry>> map) {
-            foreach(string key in map.Keys) {
-                foreach (var data in map[key]) {
-                    Dump(str, data, 1);
-                    str.Append("\n");
-                }
-            }
-        }
-
-        private static StringBuilder Dump(StringBuilder str, DataDescriptionEntry data, int indent = 0)
-        {
-            DumpIndent(str, indent);
-            str.Append(data);
-            return str;
-        }
-
-        private static StringBuilder DumpIndent(StringBuilder str, int indent)
-        {
-            for (int c=0; c<indent; c++) str.Append("  ");
-            return str;
-        }
-
-
-        public static void CheckWithResultFile(string result, string testName)
-        {
-            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
-            {
-                CheckWithResultReader(testName, result, reader);
-            }
-        }
-
-        public static void CheckWithResultReader(string testName, string result, StreamReader reader)
-        {
-            string expectedResult = reader.ReadToEnd();
-            TestUtils.compareLines(testName, result, expectedResult);
-        }
+private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
+foreach(string key in map.Keys) {
+    foreach (var data in map[key]) {
+        Dump(str, data, 1);
+        str.Append("\n");
     }
+}
+}
 
-    public class TestErrorListener : BaseErrorListener 
-    {
-        private StringBuilder errorLog;
+private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
+{
+DumpIndent(str, indent);
+str.Append(data.Name);
+return str;
+}
 
-        public TestErrorListener()
-        {
-            errorLog = new StringBuilder();
-            ErrorCount = 0;
-        }
+private static StringBuilder DumpIndent(StringBuilder str, int indent)
+{
+for (int c=0; c<indent; c++) str.Append("  ");
+return str;
+}
+*/
 
-        public int ErrorCount { get; private set; }
+public static void CheckWithResultFile(string result, string testName)
+{
+using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
+{
+    CheckWithResultReader(testName, result, reader);
+}
+}
 
-        public string ErrorLog
-        {
-            get { return errorLog.ToString(); }
-        }
+public static void CheckWithResultReader(string testName, string result, StreamReader reader)
+{
+string expectedResult = reader.ReadToEnd();
+TestUtils.compareLines(testName, result, expectedResult);
+}
+}
 
-        public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
-        {
-            ErrorCount++;
+public class TestErrorListener : BaseErrorListener
+{
+private StringBuilder errorLog;
 
-            IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
-            foreach (string ruleInvocation in stack.Reverse())
-            {
-                errorLog.AppendLine(ruleInvocation);
-            } 
-            errorLog.AppendLine("line " + line + ":" + charPositionInLine + " at " + offendingSymbol);
-            errorLog.AppendLine("=> " + msg);
-            errorLog.AppendLine();
-        }
-    }
+public TestErrorListener()
+{
+errorLog = new StringBuilder();
+ErrorCount = 0;
+}
+
+public int ErrorCount { get; private set; }
+
+public string ErrorLog
+{
+get { return errorLog.ToString(); }
+}
+
+public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+{
+ErrorCount++;
+
+IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
+foreach (string ruleInvocation in stack.Reverse())
+{
+    errorLog.AppendLine(ruleInvocation);
+}
+errorLog.AppendLine("line " + line + ":" + charPositionInLine + " at " + offendingSymbol);
+errorLog.AppendLine("=> " + msg);
+errorLog.AppendLine();
+}
+}
 }

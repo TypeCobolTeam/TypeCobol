@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// A user-defined word that identifies a paragraph. 
         /// A paragraph-name, because it can be qualified, need not be unique.
         /// </summary>
-        public ParagraphName ParagraphName { get; set; }
+        public SymbolDefinition ParagraphName { get; set; }
 
         /// <summary>
         /// Debug string
