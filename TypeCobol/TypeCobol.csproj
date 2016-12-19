@@ -147,6 +147,7 @@
     <Compile Include="Compiler\Diagnostics\Cobol2002Checker.cs" />
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
+    <Compile Include="Compiler\LanguageLevel.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolWordsBuilder.cs" />

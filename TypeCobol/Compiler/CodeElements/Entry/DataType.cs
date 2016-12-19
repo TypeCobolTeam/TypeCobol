@@ -1,17 +1,18 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	public class DataType {
+	public class DataType : ICobolLanguageLevel {
 		public string Name { get; private set; }
 		public bool IsStrong { get; internal set; }
-		public bool IsCOBOL  { get; private set; }
+		public CobolLanguageLevel CobolLanguageLevel  { get; private set; }
 
-		public DataType(string name, bool IsStrong=false, bool IsCOBOL=false) {
+		public DataType([NotNull] string name, bool isStrong=false, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
 			Name = name;
 			if (name == null) throw new ArgumentNullException();
-			this.IsStrong = IsStrong;
-			this.IsCOBOL  = IsCOBOL;
+			this.IsStrong = isStrong;
+			this.CobolLanguageLevel = cobolLanguageLevel;
 		}
 
 		public override string ToString() { return Name; }
@@ -35,11 +36,11 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static DataType CreateCustom(string name, bool IsStrong=true, bool IsCOBOL=false) {
+		public static DataType CreateCustom(string name, bool isStrong=true, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
 			foreach(var builtin in BuiltInCustomTypes)
 				if (builtin.Name.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
 					return builtin;
-			return new DataType(name, IsStrong, IsCOBOL);
+			return new DataType(name, isStrong, cobolLanguageLevel);
 		}
 
 		public static DataType Create(string picture) {
@@ -112,17 +113,19 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static readonly DataType Unknown            = new DataType("?", false, true);
-		public static readonly DataType Alphabetic         = new DataType("Alphabetic", false, true);
-		public static readonly DataType Numeric            = new DataType("Numeric", false, true);
-		public static readonly DataType NumericEdited      = new DataType("NumericEdited", false, true);
-		public static readonly DataType Alphanumeric       = new DataType("Alphanumeric", false, true);
-		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited", false, true);
-		public static readonly DataType DBCS               = new DataType("DBCS", false, true);
-		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint", false, true);
-// [TYPECOBOL]
-		public static readonly DataType Boolean            = new DataType("BOOL", true);
-		public static readonly DataType Date               = new DataType("DATE", true);
+		public static readonly DataType Unknown            = new DataType("?");
+		public static readonly DataType Alphabetic         = new DataType("Alphabetic");
+		public static readonly DataType Numeric            = new DataType("Numeric");
+		public static readonly DataType NumericEdited      = new DataType("NumericEdited");
+		public static readonly DataType Alphanumeric       = new DataType("Alphanumeric");
+		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
+		public static readonly DataType DBCS               = new DataType("DBCS");
+		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
+        // [TYPECOBOL]
+        //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
+        public static readonly DataType Boolean            = new DataType("BOOL", true, CobolLanguageLevel.TypeCobol);
+        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+        public static readonly DataType Date               = new DataType("DATE", true, CobolLanguageLevel.TypeCobol);
 
 		public static Nodes.TypeDefinition CreateBuiltIn(DataType type) {
 			if (type == DataType.Date) return CreateDate();
