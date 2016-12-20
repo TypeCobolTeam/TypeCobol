@@ -1,0 +1,394 @@
+--------------------------
+CodeElement parsing sample
+--------------------------
+
+moveStatement: 
+	moveSimple | moveCorresponding;
+
+1. MoveStatementContext ctx = new MoveStatementContext(parentctx)
+2. EnterRule(ctx)
+	ctx.Start = _input.Lt(1)
+	parentctx.AddChild(ctx)
+	TriggerEnterRuleEvent()
+try{
+
+3. switch ( Interpreter.AdaptivePredict(_input,379,_ctx) ) {
+   case 1:
+	EnterOuterAlt(_localctx, 1);
+		localctx.setAltNumber(altNum);
+		if (_ctx != localctx)
+			parent.RemoveLastChild();
+			parent.AddChild(localctx);
+	moveSimple();
+   case 2:
+	moveCorresponding();
+
+}
+4. catch (RecognitionException re) {
+	ctx.exception = re;
+	ReportError()
+		BeginErrorCondition()
+		NotifyErrorListeners(msg)
+	Recover()
+5. finally() { ExitRule();
+	ctx.Stop = _input.Lt(-1)
+	TriggerExitRuleEvent()
+
+moveSimple:
+	MOVE UNSAFE? (booleanValue | variable7) TO storageArea1+;
+
+1. 2.
+
+Match(MOVE);
+
+_la = _input.La(1);
+if (_la==UNSAFE) {
+	Match(UNSAFE);
+}
+
+switch (_input.La(1)) {
+  case FALSE:
+  case TRUE:
+	booleanValue();		
+  case AlphanumericLiteral:
+  case ...:
+	variable7();
+  default:	
+	throw new NoViableAltException(this);
+}
+
+Match(TO);
+
+_errHandler.Sync(this);
+do {
+	switch (_alt) {
+	  case 1:
+		storageArea1();
+	  default:
+	  	throw new NoViableAltException(this);
+	}
+	_errHandler.Sync(this);
+	_alt = Interpreter.AdaptivePredict(_input,16,_ctx);
+} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.InvalidAltNumber );
+			
+4. 5.
+
+moveCorresponding: 
+	MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemReference TO toGroupItem=dataItemReference;
+
+1. 2.
+
+Match(MOVE);
+			
+_la = _input.La(1);
+if (_la==UNSAFE) {
+	Match(UNSAFE);
+}
+
+_la = _input.La(1);
+if ( !(_la==CORR || _la==CORRESPONDING) ) {
+	_errHandler.RecoverInline(this);
+} else {
+	Consume();
+}
+
+_localctx.fromGroupItem = dataItemReference();
+
+Match(TO);
+
+_localctx.toGroupItem = dataItemReference();
+
+4. 5.
+
+-----------
+++ Match ++
+-----------
+
+if token type OK
+	ReportMatch() => EndErrorCondition()
+	Consume()		
+else
+	t = RecoverInline()
+	if(t) ctx.AddErrorNode(t)
+
+-------------
+++ Consume ++
+-------------
+
+InputStream.Consume()
+if InErrorRecoveryMode()
+	ctx.AddErrorNode(currentToken)
+	=> t = new ErrorNodeImpl(badToken); AddChild(t)
+else
+	ctx.AddChild(currentToken);
+
+-------------------
+++ RecoverInline ++
+-------------------
+
+	if t = SingleTokenDeletion()
+	=> expecting = Atn.GetExpectedTokens(State, Context)
+	   if expecting.Contains(nextTokenType)
+	     ReportUnwantedToken(recognizer)
+             Consume()
+	     matchedSymbol = recognizer.CurrentToken
+	     ReportMatch()
+             return matchedSymbol
+           else
+             return null
+		Consume()
+		return t
+	else if SingleTokenInsertion()
+	=> expectingAtLL2 = atn.NextTokens(next, ...);
+           if expectingAtLL2.Contains(currentSymbolType)
+	      ReportMissingToken(recognizer)
+		BeginErrorCondition()
+		NotifyErrorListeners(msg)
+	      return true
+	    else
+               return false
+		return GetMissingSymbol()	
+		=> expecting = GetExpectedTokens(recognizer);
+		   expectedTokenType = expecting.MinElement;
+		   tokenText = "<missing " + Vocabulary.GetDisplayName(expectedTokenType) + ">"
+		   return ConstructToken(expectedTokenType, tokenText, currentToken)
+                   => tokenSource.TokenFactory.Create(expectedTokenType, tokenText, TokenConstants.DefaultChannel, -1, -1, currentToken.Line, currentToken.Column)
+        }
+	else
+		throw InputMismatchException()
+
+----------
+++ Sync ++
+----------
+
+la = tokens.La(1);
+if Atn.NextTokens(currentState).Contains(la)
+	return
+else if IsExpectedToken(la)
+=> following = atn.NextTokens(s);
+   if following.Contains(symbol)
+      return true
+   while (ctx != null && ctx.invokingState >= 0 ...)
+      following = atn.NextTokens(rt.followState)
+      if (following.Contains(symbol))
+         return true;
+      ctx = (ParserRuleContext)ctx.Parent;
+   return false;
+	return
+else if "LoopEntry"
+	if SingleTokenDeletion()
+		return
+	else
+		throw InputMismatchException()
+else if "LoopBack"
+	ReportUnwantedToken()
+		BeginErrorCondition()
+		NotifyErrorListeners(msg)
+	expecting = Atn.GetExpectedTokens(State, Context)		
+	whatFollowsLoopIterationOrRule = expecting.Or(GetErrorRecoverySet())
+	ConsumeUntil(whatFollowsLoopIterationOrRule)
+	=> while (!set.Contains(nexttokentype)) { Consume() }
+
+-------------
+++ Recover ++
+-------------
+
+	followSet = GetErrorRecoverySet()
+		IntervalSet recoverSet = new IntervalSet();
+		while (ctx != null && ctx.invokingState >= 0)
+            		invokingState = atn.states[ctx.invokingState]
+	                rt = (RuleTransition)invokingState.Transition(0)
+                	follow = atn.NextTokens(rt.followState);
+	                recoverSet.AddAll(follow);
+	                ctx = ctx.Parent;
+	ConsumeUntil(followSet)
+	=> while (!set.Contains(nexttokentype)) { Consume() }
+
+
+-----------------------
+DETAILS - DOCUMENTATION
+-----------------------
+
+** ERROR RECOVERY MODE **
+
+>> inErrorRecoveryMode
+Tests whether or not recognizer is in the process of recovering from an error.
+In error recovery mode, Parser.consume() adds symbols to the parse tree by calling ParserRuleContext.addErrorNode(Token) instead of ParserRuleContext.addChild(Token).
+
+>> reportError
+-- catch block for RecognitionException at the end of each rule --
+++ DefaultErrorStrategy : BeginErrorCondition / ReportXxx or NotifyErrorListeners ++
+Report any kind of RecognitionException. This method is called by the default exception handler generated for a rule method. 
+The default implementation returns immediately if the handler is already in error recovery mode. Otherwise, it calls beginErrorCondition(org.antlr.v4.runtime.Parser) and dispatches the reporting task based on the runtime type of e according to the following table.
+NoViableAltException: Dispatches the call to reportNoViableAlternative
+InputMismatchException: Dispatches the call to reportInputMismatch
+FailedPredicateException: Dispatches the call to reportFailedPredicate
+All other types: calls Parser.notifyErrorListeners(java.lang.String) to report the exception
+
+>> reportUnwantedToken
+This method is called to report a syntax error which requires the removal of a token from the input stream. At the time this method is called, the erroneous symbol is current LT(1) symbol and has not yet been removed from the input stream. When this method returns, recognizer is in error recovery mode. 
+This method is called when singleTokenDeletion(org.antlr.v4.runtime.Parser) identifies single-token deletion as a viable recovery strategy for a mismatched input error.
+The default implementation simply returns if the handler is already in error recovery mode. Otherwise, it calls beginErrorCondition(org.antlr.v4.runtime.Parser) to enter error recovery mode, followed by calling Parser.notifyErrorListeners(java.lang.String).
+
+>> reportMissingToken
+This method is called to report a syntax error which requires the insertion of a missing token into the input stream. At the time this method is called, the missing token has not yet been inserted. When this method returns, recognizer is in error recovery mode. 
+This method is called when singleTokenInsertion(org.antlr.v4.runtime.Parser) identifies single-token insertion as a viable recovery strategy for a mismatched input error.
+The default implementation simply returns if the handler is already in error recovery mode. Otherwise, it calls beginErrorCondition(org.antlr.v4.runtime.Parser) to enter error recovery mode, followed by calling Parser.notifyErrorListeners(java.lang.String).
+
+>> beginErrorCondition
+This method is called to enter error recovery mode when a recognition exception is reported.
+
+>> reportMatch
+-- called in Parser.Match --
+This method is called by when the parser successfully matches an input symbol. The default implementation simply calls endErrorCondition(org.antlr.v4.runtime.Parser).
+
+>> endErrorCondition
+This method is called to leave error recovery mode after recovering from a recognition exception.
+
+
+** RECOVER AND SYNC **
+
+>> sync
+-- called inside rules just before AND just after a subrule repetition (ex : codeElement*, argument+, ((IN | OF) dataNameReferenceOrFileNameReference)+) --
+++ start : if (SingleTokenDeletion(recognizer) != null) return; else throw new InputMismatchException(recognizer); / loopback : ReportUnwantedToken(recognizer); IntervalSet expecting = recognizer.GetExpectedTokens(); IntervalSet whatFollowsLoopIterationOrRule = expecting.Or(GetErrorRecoverySet(recognizer)); ConsumeUntil(recognizer, whatFollowsLoopIterationOrRule); ++
+The default implementation of ANTLRErrorStrategy.sync(org.antlr.v4.runtime.Parser) makes sure that the current lookahead symbol is consistent with what were expecting at this point in the ATN. You can call this anytime but ANTLR only generates code to check before subrules/loops and each iteration. 
+Implements Jim Idle's magic sync mechanism in closures and optional subrules. E.g.,
+ a : sync ( stuff sync )* ;
+ sync : {consume to what can follow sync} ;
+At the start of a sub rule upon error, sync(org.antlr.v4.runtime.Parser) performs single token deletion, if possible. If it can't do that, it bails on the current rule and uses the default error recovery, which consumes until the resynchronization set of the current rule. 
+If the sub rule is optional ((...)?, (...)*, or block with an empty alternative), then the expected set includes what follows the subrule.
+During loop iteration, it consumes until it sees a token that can start a sub rule or what follows loop. Yes, that is pretty aggressive. We opt to stay in the loop as long as possible.
+ORIGINS
+Previous versions of ANTLR did a poor job of their recovery within loops. A single mismatch token or missing token would force the parser to bail out of the entire rules surrounding the loop. So, for rule
+ classDef : 'class' ID '{' member* '}'
+input with an extra token between members would force the parser to consume until it found the next class definition rather than the next member definition of the current class. 
+This functionality cost a little bit of effort because the parser has to compare token set at the start of the loop and at each iteration. If for some reason speed is suffering for you, you can turn off this functionality by simply overriding this method as a blank { }.
+
+>> recover
+-- catch block for RecognitionException at the end of each rule --
+++ IntervalSet followSet = GetErrorRecoverySet(recognizer); ConsumeUntil(recognizer, followSet); ++
+This method is called to recover from exception e. This method is called after ANTLRErrorStrategy.reportError(org.antlr.v4.runtime.Parser, org.antlr.v4.runtime.RecognitionException) by the default exception handler generated for a rule method. 
+The default implementation resynchronizes the parser by consuming tokens until we find one in the resynchronization set--loosely the set of tokens that can follow the current rule.
+
+>> recoverInline
+-- called in Parser.Match/MatchWildward, and simple inline alternatives in rules (ex : symbolicCharacterDefinition+ (ARE|IS)? ordinalPositionInCollatingSequence+, MOVE (CORRESPONDING | CORR) fromGroupItem, SET conditionStorageArea+ TO (TRUE | FALSE)) --
+++ IToken matchedSymbol = SingleTokenDeletion(recognizer); if (matchedSymbol != null) { recognizer.Consume(); return matchedSymbol; } if (SingleTokenInsertion(recognizer)) { return GetMissingSymbol(recognizer); } throw new InputMismatchException(recognizer); ++
+This method is called when an unexpected symbol is encountered during an inline match operation, such as Parser.match(int). If the error strategy successfully recovers from the match failure, this method returns the Token instance which should be treated as the successful result of the match. 
+This method handles the consumption of any tokens - the caller should not call Parser.consume() after a successful recovery.
+Note that the calling code will not report an error if this method returns successfully. The error strategy implementation is responsible for calling Parser.notifyErrorListeners(java.lang.String) as appropriate.
+The default implementation attempts to recover from the mismatched input by using single token insertion and deletion as described below. If the recovery attempt fails, this method throws an InputMismatchException.
+EXTRA TOKEN (single token deletion)
+LA(1) is not what we are looking for. If LA(2) has the right token, however, then assume LA(1) is some extra spurious token and delete it. Then consume and return the next token (which was the LA(2) token) as the successful result of the match operation.
+This recovery strategy is implemented by singleTokenDeletion(org.antlr.v4.runtime.Parser).
+MISSING TOKEN (single token insertion)
+If current token (at LA(1)) is consistent with what could come after the expected LA(1) token, then assume the token is missing and use the parser's TokenFactory to create it on the fly. The "insertion" is performed by returning the created token as the successful result of the match operation.
+This recovery strategy is implemented by singleTokenInsertion(org.antlr.v4.runtime.Parser).
+EXAMPLE
+For example, Input i=(3; is clearly missing the ')'. When the parser returns from the nested call to expr, it will have call chain:
+ stat ? expr ? atom
+and it will be trying to match the ')' at this point in the derivation: 
+ => ID '=' '(' INT ')' ('+' atom)* ';'
+                    ^
+The attempt to match ')' will fail when it sees ';' and call recoverInline(org.antlr.v4.runtime.Parser). To recover, it sees that LA(1)==';' is in the set of tokens that can follow the ')' token reference in rule atom. It can assume that you forgot the ')'.
+
+>> singleTokenInsertion
+This method implements the single-token insertion inline error recovery strategy. It is called by recoverInline(org.antlr.v4.runtime.Parser) if the single-token deletion strategy fails to recover from the mismatched input. If this method returns true, recognizer will be in error recovery mode. 
+This method determines whether or not single-token insertion is viable by checking if the LA(1) input symbol could be successfully matched if it were instead the LA(2) symbol. If this method returns true, the caller is responsible for creating and inserting a token with the correct type to produce this behavior.
+
+>> getMissingSymbol
+-- called only by RecoverInline if SingleTokenInsertion returns true => ctx.AddErrorNode -- 
+Conjure up a missing token during error recovery. The recognizer attempts to recover from single missing symbols. But, actions might refer to that missing symbol. For example, x=ID {f($x);}. The action clearly assumes that there has been an identifier matched previously and that $x points at that token. If that token is missing, but the next token in the stream is what we want we assume that this token is missing and we keep going. Because we have to return some token to replace the missing token, we have to conjure one up. This method gives the user control over the tokens returned for missing tokens. Mostly, you will want to create something special for identifier tokens. For literals such as '{' and ',', the default action in the parser or tree parser works. It simply creates a CommonToken of the appropriate type. The text will be the token. If you change what tokens must be created by the lexer, override this method to cRecoverInlinereate the appropriate tokens.
+
+>> singleTokenDeletion
+This method implements the single-token deletion inline error recovery strategy. It is called by recoverInline(org.antlr.v4.runtime.Parser) to attempt to recover from mismatched input. If this method returns null, the parser and error handler state will not have changed. If this method returns non-null, recognizer will not be in error recovery mode since the returned token was a successful match. 
+If the single-token deletion is successful, this method calls reportUnwantedToken(org.antlr.v4.runtime.Parser) to report the error, followed by Parser.consume() to actually "delete" the extraneous token. Then, before returning reportMatch(org.antlr.v4.runtime.Parser) is called to signal a successful match.
+
+>> getExpectedTokens
+??
+>> getErrorRecoverySet
+??
+>> consumeUntil
+Consume tokens until one matches the given token set.
+
+
+** ERROR REPORTING **
+
+RecognitionException.OffendingToken
+
+>> reportError
+Report any kind of RecognitionException. This method is called by the default exception handler generated for a rule method. 
+The default implementation returns immediately if the handler is already in error recovery mode. Otherwise, it calls beginErrorCondition(org.antlr.v4.runtime.Parser) and dispatches the reporting task based on the runtime type of e according to the following table.
+NoViableAltException: Dispatches the call to reportNoViableAlternative
+InputMismatchException: Dispatches the call to reportInputMismatch
+FailedPredicateException: Dispatches the call to reportFailedPredicate
+All other types: calls Parser.notifyErrorListeners(java.lang.String) to report the exception
+>> reportNoViableAlternative
+>> reportInputMismatch
+>> reportFailedPredicate
+
+>> reportUnwantedToken
+-- called by SingleTokenDeletion & Sync/loopback/ConsumeUntil --
+++ BeginErrorCondition/ NotifyErrorListeners ++
+This method is called to report a syntax error which requires the removal of a token from the input stream. At the time this method is called, the erroneous symbol is current LT(1) symbol and has not yet been removed from the input stream. When this method returns, recognizer is in error recovery mode. 
+This method is called when singleTokenDeletion(org.antlr.v4.runtime.Parser) identifies single-token deletion as a viable recovery strategy for a mismatched input error.
+The default implementation simply returns if the handler is already in error recovery mode. Otherwise, it calls beginErrorCondition(org.antlr.v4.runtime.Parser) to enter error recovery mode, followed by calling Parser.notifyErrorListeners(java.lang.String).
+
+>> reportMissingToken
+--  called by SingleTokenInsertion only --
+++ BeginErrorCondition/ NotifyErrorListeners ++
+This method is called to report a syntax error which requires the insertion of a missing token into the input stream. At the time this method is called, the missing token has not yet been inserted. When this method returns, recognizer is in error recovery mode. 
+This method is called when singleTokenInsertion(org.antlr.v4.runtime.Parser) identifies single-token insertion as a viable recovery strategy for a mismatched input error.
+The default implementation simply returns if the handler is already in error recovery mode. Otherwise, it calls beginErrorCondition(org.antlr.v4.runtime.Parser) to enter error recovery mode, followed by calling Parser.notifyErrorListeners(java.lang.String).
+
+>> getTokenErrorDisplay
+How should a token be displayed in an error message? The default is to display just the text, but during development you might want to have a lot of information spit out. Override in that case to use t.toString() (which, for CommonToken, dumps everything about the token). This is better than forcing you to override a method in your token objects because you don't have to go modify your lexer so that it creates a new Java type.
+>> getSymbolText
+>> getSymbolType
+
+>> RecognitionException
+- int OffendingState
+- IntervalSet GetExpectedTokens()
+- RuleContext Context
+- IToken OffendingToken
+	>> InputMismatchException
+	-- thrown by : Sync/before loop/singletokendeletion failed, Match=>RecoverInline/singletokeninsertiondeletion failed  -- 
+	- this.OffendingToken = recognizer.CurrentToken;
+	>> FailedPredicateException
+	-- thrown if a language specific predicate written in the rule failed --
+	- int RuleIndex
+	- int PredIndex
+	- string Predicate
+	>> NoViableAltException
+	-- thrown directly in rules each time there is an alternative and no token was found to match / catched by the catch block at the end of the rule --
+	- IToken StartToken
+	- ATNConfigSet DeadEndConfigs
+	
+
+-----
+NOTES
+-----
+
+ConsumeUntil ==> ATTENTION : n'ajoute pas les tokens à l'arbre
+
+RecoverInline en ligne pour des tokens non nommés => ATTENTION : tokens non ajoutés à l'arbre, les propriétés nommés qui désignent les tokens seront nulles
+
+GetToken(type, index) => attention, retourne la valeur par défaut si pas trouvé
+
+Ajout d'un contexte à l'arbre : classe contexte créée au début de la règle et ajoutée tout de suite à l'arbre dans EnterRule
+
++ this.Atn.GetExpectedTokens(1430,_localctx)	{{7, 28, 37, 52, 57..126, 128..141, 208, 249, 258, 273..274, 277, 281, 286, 308, 336, 339, 347, 354, 366, 403, 443, 453..454}}	Antlr4.Runtime.Misc.IntervalSet
+
+---------------
+!! Profiling !!
+---------------
+
+Parser.Profile = true
+Parser.ParseInfo.*
+
+http://stackoverflow.com/questions/23173687/how-to-profile-an-antlr-grammar
+
+https://github.com/antlr/intellij-plugin-v4/blob/master/README.md
+
+-------------
+
+
