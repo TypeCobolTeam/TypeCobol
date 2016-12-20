@@ -471,4 +471,3 @@ namespace TypeCobol.Compiler.Source
         }
     }
 }
-
