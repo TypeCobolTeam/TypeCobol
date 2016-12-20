@@ -6,7 +6,6 @@
 	using TypeCobol.Compiler.AntlrUtils;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeModel;
 	using TypeCobol.Compiler.Parser;
 	using TypeCobol.Compiler.Parser.Generated;
 	using TypeCobol.Compiler.Nodes;
@@ -69,96 +68,97 @@ class TypeDefinitionChecker: NodeListener {
 		foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
 	}
 }
-class RedefinesChecker: NodeListener {
-	public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRedefines), }; }
+    class RedefinesChecker: NodeListener {
+	    public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRedefines), }; }
 
-	private class Error: Dictionary<Error.Status,int> {
-		public enum Status { TYPEStrong, TYPEDEFPart, TYPEDEFStrong, }
-		public Error() { foreach(var value in Enum.GetValues(typeof(Status))) this.Add((Status)value,0); }
-		public override string ToString() {
-			var str = new System.Text.StringBuilder("{");
-			foreach(var v in this)
-				if (v.Value > 0 ) str.Append(' ').Append(v.Key).Append(':').Append(v.Value).Append(',');
-			if (this.Errors > 0) str.Length -= 1;
-			return str.Append(" }").ToString();
-		}
-		public int Errors {
-			get {
-				int count = 0;
-				foreach(var v in this.Values) count += v;
-				return count;
-			}
-		}
-		internal int Validate(List<Node> candidates) { return candidates.Count-Errors; }
-	}
+	    private class Error: Dictionary<Error.Status,int> {
+		    public enum Status { TYPEStrong, TYPEDEFPart, TYPEDEFStrong, }
+		    public Error() { foreach(var value in Enum.GetValues(typeof(Status))) this.Add((Status)value,0); }
+		    public override string ToString() {
+			    var str = new System.Text.StringBuilder("{");
+			    foreach(var v in this)
+				    if (v.Value > 0 ) str.Append(' ').Append(v.Key).Append(':').Append(v.Value).Append(',');
+			    if (this.Errors > 0) str.Length -= 1;
+			    return str.Append(" }").ToString();
+		    }
+		    public int Errors {
+			    get {
+				    int count = 0;
+				    foreach(var v in this.Values) count += v;
+				    return count;
+			    }
+		    }
+		    internal int Validate(List<Node> candidates) { return candidates.Count-Errors; }
+	    }
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		if (node.IsPartOfATypeDef) {
-			DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
-			return;
-		}
+	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		    if (node.IsPartOfATypeDef) {
+			    DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
+			    return;
+		    }
 
-		var redefines = new URI(((DataRedefines)node).CodeElement().RedefinesDataName.Name);
-		var errors = new Error();
-		var data  = node.SymbolTable.GetVariable(redefines);
-		foreach(var v in data) {
-			var nv = (Node)v;
-			if (nv.IsPartOfATypeDef) {
-				errors[Error.Status.TYPEDEFPart]++;
-			} else
-			if (IsStronglyTyped(nv)) {
-				errors[Error.Status.TYPEStrong]++;
-			}
-		}
-		int ValidDataRedefinitions = errors.Validate(data);
-		if (ValidDataRedefinitions == 1) return; // at least one data item redefinition OK
 
-		var types = node.SymbolTable.GetType(redefines);
-		foreach(var v in types) {
-			if (((TypeDefinition)v).IsStrong) {
-				errors[Error.Status.TYPEDEFStrong]++;
-			}
-		}
-		int ValidTypeRedefinitions = errors.Validate(data);
-		if (ValidTypeRedefinitions == 1) return; // at least one _weak_ TYPEDEF redefinition OK
+		    var redefines = new URI(((DataRedefines)node).CodeElement().RedefinesDataName.Name);
+		    var errors = new Error();
+		    var redefinedVariables  = node.SymbolTable.GetVariable(redefines);
+		    foreach(var redefinedVariable in redefinedVariables) {
+			    if (redefinedVariable.IsPartOfATypeDef) {
+				    errors[Error.Status.TYPEDEFPart]++;
+			    }
+                if (IsStronglyTyped(redefinedVariable))
+                {
+                    errors[Error.Status.TYPEStrong]++;
+                }
+            }
+		    int ValidDataRedefinitions = errors.Validate(redefinedVariables);
+		    if (ValidDataRedefinitions == 1) return; // at least one data item redefinition OK
 
-		if (ValidDataRedefinitions > 1) {
-			string message = "Illegal REDEFINES: Ambiguous reference to symbol \'"+redefines.Head+"\'";
-			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		}
-		if (ValidTypeRedefinitions > 1) {
-			string message = "Illegal REDEFINES: Ambiguous reference to TYPEDEF \'"+redefines.Head+"\'";
-			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		}
+		    var types = node.SymbolTable.GetType(redefines);
+		    foreach(var v in types) {
+			    if (((TypeDefinition)v).IsStrong) {
+				    errors[Error.Status.TYPEDEFStrong]++;
+			    }
+		    }
+		    int validTypeRedefinitions = errors.Validate(redefinedVariables);
+		    if (validTypeRedefinitions == 1) return; // at least one _weak_ TYPEDEF redefinition OK
 
-		if (errors.Errors > 0) {
-			if (errors[Error.Status.TYPEStrong] > 0) {
-				string message = "Illegal REDEFINES: \'"+redefines.Head+"\' is strongly-typed";
-				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			}
-			if (errors[Error.Status.TYPEDEFPart] > 0) {
-				string message = "Illegal REDEFINES: \'"+redefines.Head+"\' is part of a TYPEDEF";
-				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			}
-			if (errors[Error.Status.TYPEDEFStrong] > 0) {
-				string message = "Illegal REDEFINES: \'"+redefines.Head+"\' is a STRONG TYPEDEF";
-				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			}
-		} else {
-			if (ValidDataRedefinitions+ValidTypeRedefinitions < 1) {
-				string message = "Illegal REDEFINES: Symbol \'"+redefines.Head+"\' is not referenced";
-				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			}
-		}
-	}
-	internal static bool IsStronglyTyped(Node node) {
-		if (node == null || node is DataSection) return false;
-		var typed = node as ITypedNode;
-		if (typed == null) return false;
-		if (!typed.DataType.IsCOBOL) return true;
-		return IsStronglyTyped(node.Parent);
-	}
-}
+		    if (ValidDataRedefinitions > 1) {
+			    string message = "Illegal REDEFINES: Ambiguous reference to symbol \'"+redefines.Head+"\'";
+			    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+		    }
+		    if (validTypeRedefinitions > 1) {
+			    string message = "Illegal REDEFINES: Ambiguous reference to TYPEDEF \'"+redefines.Head+"\'";
+			    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+		    }
+			
+		    if (errors.Errors > 0) {
+			    if (errors[Error.Status.TYPEStrong] > 0) {
+				    string message = "Illegal REDEFINES: \'"+redefines.Head+"\' is strongly-typed";
+				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+			    }
+			    if (errors[Error.Status.TYPEDEFPart] > 0) {
+				    string message = "Illegal REDEFINES: \'"+redefines.Head+"\' is part of a TYPEDEF";
+				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+			    }
+			    if (errors[Error.Status.TYPEDEFStrong] > 0) {
+				    string message = "Illegal REDEFINES: \'"+redefines.Head+"\' is a STRONG TYPEDEF";
+				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+			    }
+		    } else {
+			    if (ValidDataRedefinitions+validTypeRedefinitions < 1) {
+				    string message = "Illegal REDEFINES: Symbol \'"+redefines.Head+"\' is not referenced";
+				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+			    }
+		    }
+	    }
+	    internal static bool IsStronglyTyped(Node node) {
+		    var typed = node as ITypedNode;
+		    if (typed == null) return false;
+		    if (typed.DataType.IsStrong) return true;
+		    return IsStronglyTyped(node.Parent);
+	    }
+    }
+
 class RenamesChecker: NodeListener {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRenames), }; }
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
@@ -177,7 +177,7 @@ class RenamesChecker: NodeListener {
 			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 		}
 		foreach(var v in found) {
-			if (RedefinesChecker.IsStronglyTyped((Node)v)) {
+			if (RedefinesChecker.IsStronglyTyped(v)) {
 				string message = "Illegal RENAMES: \'"+renames.Head+"\' is strongly-typed";
 				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 			}
@@ -196,15 +196,14 @@ class TypedDeclarationChecker: NodeListener {
 			DiagnosticUtils.AddError(node.CodeElement, message, data.Picture.Token);
 		}
 		var type = ((ITypedNode)node).DataType;
-		if (type.IsCOBOL) return; //nothing to do
+		if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return; //nothing to do, Type exists from Cobol 2002
 		var found = node.SymbolTable.GetType(new URI(type.Name));
 		if (found.Count < 1) {
 			string message = "TYPE \'"+type.Name+"\' is not referenced";
 			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		}
-		if (found.Count > 1) {
-			string message = "Ambiguous reference to TYPE \'"+type.Name+"\'";
-			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+		} else if (found.Count > 1) {
+		    string message = "Ambiguous reference to TYPE \'" + type.Name + "\'";
+		    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 		}
 	}
 }

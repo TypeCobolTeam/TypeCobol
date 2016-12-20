@@ -31,6 +31,8 @@
            10                        PIC X(01) VALUE '-'.
            10 DD                     PIC 9(02).
 
+       01  dateString    TYPEDEF     PIC 9(08).
+
        01 culture        TYPEDEF.
            10 lng                    PIC X(02).
            10 cty                    PIC X(02).
@@ -113,6 +115,13 @@
            ELSE
                MOVE DATS20-O-DATE-LONG       TO Result
            END-IF
+           .
+       END-DECLARE.
+      *_________________________________________________________________
+       DECLARE FUNCTION currentDateString PUBLIC
+           RETURNING Result TYPE dateString.
+       PROCEDURE DIVISION.
+           ACCEPT Result FROM DATE YYYYMMDD
            .
        END-DECLARE.
 

@@ -40,22 +40,14 @@
 
 
 		public override string ToString() {
-			var str = new System.Text.StringBuilder();
-			ToString(Root, str, 0);
-			return str.ToString();
-		}
-		private void ToString(Node node, System.Text.StringBuilder str, int indent) {
-			for(int c=1; c<indent; c++) str.Append("  ");
-			str.Append("+ ").Append(node.ToString());
-			str.AppendLine();
-			foreach(var child in node.Children) ToString(child, str, indent+1);
+			return Root.ToString();
 		}
 
 		internal string BranchToString() {
 			var str = new System.Text.StringBuilder();
 			var reversed = new List<Node>();
 			foreach(var node in Branch) reversed.Insert(0, node.Item1);
-			foreach(var node in reversed) str.Append(node.ToString()).Append(" > ");
+			foreach(var node in reversed) str.Append(node).Append(" > ");
 			str.Length -= 2;
 			return str.ToString();
 		}

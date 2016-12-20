@@ -30,3 +30,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 5;29;2;Warning: {0};1;0;Find the corresponding rule in the good practice document
 5;30;1;Semantic error: {0};4;0;Page
 5;31;1;Runtime error: {0};5;0;Page
+4;32;1;A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY);0;0;Page

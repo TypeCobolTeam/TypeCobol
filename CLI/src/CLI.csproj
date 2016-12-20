@@ -8,6 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TypeCobol.CLI</RootNamespace>
     <AssemblyName>TypeCobol.CLI</AssemblyName>
+    <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

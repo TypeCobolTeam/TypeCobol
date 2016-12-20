@@ -192,6 +192,14 @@ namespace TypeCobol.Compiler.Parser
                                 }
                             }
 
+                            //TODO Issue #384 to discuss if this code should stay here:
+                            //This should be in a Checker, but "codeElement.ConsumedTokens" is only set after all the checkers have been called
+                            //Rule TCLIMITATION_NO_CE_ACROSS_SOURCES
+                            if (codeElement.IsAcrossSourceFile())
+                            {
+                                DiagnosticUtils.AddError(codeElement, "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)", MessageCode.TypeCobolParserLimitation);
+                            }
+                            
                             // Add code element to the list                    
                             codeElementsLine.AddCodeElement(codeElement);
                             if (codeElement.Diagnostics != null)

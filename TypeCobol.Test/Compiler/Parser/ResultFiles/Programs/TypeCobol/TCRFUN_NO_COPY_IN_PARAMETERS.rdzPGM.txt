@@ -1,0 +1,28 @@
+﻿--- Diagnostics ---
+[8,35]<32,Error,Syntax>A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY) ([8>35] on line 31)
+[8,35]<32,Error,Syntax>A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY) ([8>35] on line 39)
+[8,35]<32,Error,Syntax>A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY) ([8>35] on line 47)
+
+--- Program ---
+PROGRAM: TCRFUN_NO_COPY_IN_PARAMETERS common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- TYPES -------
+  DateJulian:DateJulian
+  DateDB2:DateDB2
+-- FUNCTIONS ---
+  currentDate
+    return: result:DATE
+  badFunc1
+        in: dateType:Alphanumeric
+    return: y:Numeric
+  badFunc2
+        in: dateType:Alphanumeric
+    return: y:Numeric
+  badFunc3
+        in: prefix-myVar:Alphanumeric
+    return: y:Numeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

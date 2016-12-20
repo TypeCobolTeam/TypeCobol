@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Antlr4.Runtime.Misc;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.AntlrUtils;
@@ -32,11 +31,11 @@ namespace TypeCobol.Compiler.Parser
 		/// <summary>Class object resulting of the visit the parse tree</summary>
 		public CodeModel.Class Class { get; private set; }
 
-		private SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+		private readonly SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
 		private SymbolTable TableOfGlobals;
 
 		public SymbolTable CustomSymbols {
-			private get { throw new System.InvalidOperationException(); }
+			private get { throw new InvalidOperationException(); }
 			set {
 				if (value != null) {
 					foreach(var values in value.DataEntries.Values)
@@ -61,22 +60,17 @@ namespace TypeCobol.Compiler.Parser
 		public NodeDispatcher Dispatcher { get; internal set; }
 
 
-		public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
-		private void Enter(Node node, ParserRuleContext context = null, SymbolTable table = null) {
-//string source = "?";
-//try { source = node.CodeElement.SourceText.Substring(0,Math.Min(55,node.CodeElement.SourceText.Length))+" ..."; } catch (Exception) { }
-//System.Console.WriteLine(">>> Enter("+(node==null?"?":node.GetType().Name)+','+(context==null?"?":context.GetType().Name)+"): \""+source+'\"');
+
+        public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
+		private void Enter([NotNull] Node node, ParserRuleContext context = null, SymbolTable table = null) {
 			node.SymbolTable = table ?? CurrentProgram.CurrentTable;
 			Program.SyntaxTree.Enter(node, context);
 		}
 		private void Exit() {
-			var node = Program.SyntaxTree.CurrentNode;
-			var context = Program.SyntaxTree.CurrentContext;
-//string source = "?";
-//try { source = node.CodeElement.SourceText.Substring(0,Math.Min(55,node.CodeElement.SourceText.Length))+" ..."; } catch (Exception) { }
-//System.Console.WriteLine("<<< Exit("+(node==null?"?":node.GetType().Name)+','+(context==null?"?":context.GetType().Name)+"): \""+source+'\"');
-			Dispatcher.OnNode(node, context, CurrentProgram);
-			Program.SyntaxTree.Exit();
+            var node = Program.SyntaxTree.CurrentNode;
+            var context = Program.SyntaxTree.CurrentContext;
+            Dispatcher.OnNode(node, context, CurrentProgram);
+            Program.SyntaxTree.Exit();
 		}
 
         public IList<ParserDiagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
@@ -163,7 +157,6 @@ namespace TypeCobol.Compiler.Parser
 			var terminal = context.ConfigurationSectionHeader();
 			var header = terminal != null? (ConfigurationSectionHeader)terminal.Symbol : null;
 			Enter(new ConfigurationSection(header), context);
-			var paragraphs = new List<CodeElement>();
 			foreach(var paragraph in context.configurationParagraph()) {
 				if (paragraph.SourceComputerParagraph() != null) {
 					Enter(new SourceComputer((SourceComputerParagraph)paragraph.SourceComputerParagraph().Symbol));
@@ -189,7 +182,7 @@ namespace TypeCobol.Compiler.Parser
 			IDictionary<AlphanumericValue,CharacterValue> currencies = null;
 			var special = CurrentProgram.SyntaxTree.Root.Get<SpecialNames>("special-names");
 			if (special != null) currencies = special.CodeElement().CurrencySymbols;
-			if (currencies == null || currencies.Count < 1) return new char[] { '$' };
+			if (currencies == null || currencies.Count < 1) return new[] { '$' };
 			var chars = new List<char>();
 			foreach(var key in currencies.Keys)
 				if (key.Value.Length == 1) chars.Add(key.Value[0]);
@@ -228,7 +221,7 @@ namespace TypeCobol.Compiler.Parser
 	        var entries = context.FileControlEntry();
 	        if (entries != null) {
 	            foreach (ITerminalNode entry in entries) {
-	                var fileControlEntry = new FileControlEntryNode(((FileControlEntry) entry.Symbol));
+	                var fileControlEntry = new FileControlEntryNode((FileControlEntry) entry.Symbol);
 	                Enter(fileControlEntry, context);
 	                Exit(); //Exit here, so next FileControlEtry will be child of FileControlParagraph
                 }
@@ -304,7 +297,8 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context) {
 			if (context.DataDescriptionEntry() != null) {
 				var data = (DataDescriptionEntry)context.DataDescriptionEntry().Symbol;
-				if (data is DataTypeDescriptionEntry) EnterTypeDefinitionEntry((DataTypeDescriptionEntry)data);
+			    var dataTypeDescriptionEntry = data as DataTypeDescriptionEntry;
+			    if (dataTypeDescriptionEntry != null) EnterTypeDefinitionEntry(dataTypeDescriptionEntry);
 				else EnterDataDescriptionEntry(data);
 			}
 			if (context.DataConditionEntry() != null)
@@ -317,7 +311,7 @@ namespace TypeCobol.Compiler.Parser
 // [COBOL 2002]
 		private void EnterTypeDefinitionEntry(DataTypeDescriptionEntry typedef) {
 			SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
-			var node = new Nodes.TypeDefinition(typedef);
+			var node = new TypeDefinition(typedef);
 			Enter(node);
 			var table = node.SymbolTable;
 			if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
@@ -338,8 +332,20 @@ namespace TypeCobol.Compiler.Parser
 
 		private void EnterDataDescriptionEntry(DataDescriptionEntry data) {
 			SetCurrentNodeToTopLevelItem(data.LevelNumber);
+
+            //Update DataType of CodeElement by searching info on the declared Type into SymbolTable.
+            //Note that the AST is not complete here, but you can only refer to a Type that has previously been defined.
 			var node = new DataDescription(data);
-			Enter(node);
+            Enter(node);
+
+            var types = node.SymbolTable.GetTypes(node);
+		    if (types.Count == 1) {
+		        data.DataType.IsStrong = types[0].DataType.IsStrong;
+		    }
+            //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
+            
+
+            
 			AddToSymbolTable(node);
 		}
 
@@ -371,8 +377,14 @@ namespace TypeCobol.Compiler.Parser
 		/// </param>
 		private void SetCurrentNodeToTopLevelItem(IntegerValue levelnumber) {
 			long level = levelnumber != null? levelnumber.Value : 1;
-			Node parent = GetTopLevelItem(level);
-			if (parent != null) {
+			Node parent;
+
+		    if (level == 1 || level == 77) {
+		        parent = null;
+		    } else {
+                parent = GetTopLevelItem(level);
+            }
+            if (parent != null) {
 				// Exit() previous sibling and all of its last children
 				while (parent != CurrentNode) Exit();
 			} else {
@@ -385,7 +397,6 @@ namespace TypeCobol.Compiler.Parser
 			while(parent != null) {
 				var data = parent.CodeElement as DataDefinitionEntry;
 				if (data == null) return null;
-                //TODO SMEDILOL: this seems wrong: how a parent DataDefinitionEntry can have a greater or equal levelNumber ?
 				if (data.LevelNumber == null || data.LevelNumber.Value < level) return parent;
 				parent = parent.Parent;
 			}
@@ -425,7 +436,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 		public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context) {
 			var terminal = context.FunctionDeclarationEnd();
-			var end = terminal != null? terminal.Symbol is FunctionDeclarationEnd? (FunctionDeclarationEnd)terminal.Symbol : null : null;
+			var end = terminal != null? terminal.Symbol as FunctionDeclarationEnd : null;
 			Enter(new FunctionEnd(end), context);
 			Exit();
 			Exit();// exit DECLARE FUNCTION

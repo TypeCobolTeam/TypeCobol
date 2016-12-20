@@ -118,7 +118,7 @@ public class XMLWriter: AbstractErrorWriter {
 
 	private void writeMessage(string id, Diagnostic error) {
             writer.WriteStartElement("MESSAGE");
-            writer.WriteElementString("MSGNUMBER", "TC-" + "00000".Substring(0, 5-error.Code.Length) + error.Code + AsIBMSuffix(error.Severity));
+            writer.WriteElementString("MSGNUMBER", "TC-" + error.Code.PadLeft(5, '0') + AsIBMSuffix(error.Severity));
             writer.WriteElementString("MSGLINE", error.Range.End.Line.ToString());
             writer.WriteElementString("MSGFILE", id);
             writer.WriteElementString("MSGTEXT", error.Message);

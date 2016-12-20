@@ -41,9 +41,7 @@
       <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">
-        SET %receiver-false TO TRUE
-      </pattern>
+      <pattern location="NODE" action="replace">SET %receiver-false TO TRUE</pattern>
     </patterns>
   </skeleton>
 

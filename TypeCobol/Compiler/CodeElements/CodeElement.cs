@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
@@ -36,8 +37,8 @@ namespace TypeCobol.Compiler.CodeElements
             get { return this._consumedTokens; }
             set {
                 this._consumedTokens = value;
-                resetLazyProperties();
-            }
+                ResetLazyProperties();
+            } 
         }
 
         /// <summary>
@@ -124,21 +125,68 @@ namespace TypeCobol.Compiler.CodeElements
 
         private bool? _isInsideCopy = null; 
 
-        /// <summary> 
-        /// Return true if this CodeElement is inside a COPY 
-        ///   
-        /// TODO To discuss: make a rule: a CodeElement CAN'T have token in two different source file 
-        /// </summary> 
-        /// <returns></returns> 
+        /// <summary>
+        /// Return true if this CodeElement is inside a COPY
+        /// </summary>
+        /// <returns></returns>
         public bool IsInsideCopy() {
-            if (_isInsideCopy == null) {
-                _isInsideCopy = ConsumedTokens != null && ConsumedTokens.OfType<ImportedToken>().Any();
-            }
+            CalculateIsAcrossSourceFile();
             return _isInsideCopy.Value;
-        } 
-         
-        protected void resetLazyProperties() {
+        }
+
+        private bool? _isAcrossSourceFile = null;
+
+        private void CalculateIsAcrossSourceFile() {
+            if (_isAcrossSourceFile == null || _isInsideCopy == null)
+            {
+                CopyDirective firstSource = null; //null = in the main source file
+
+                if (ConsumedTokens != null && ConsumedTokens.Count > 1)
+                {
+                    //Get CopyDirective of first ConsumedToken
+                    var firstConsumedToken = ConsumedTokens[0] as ImportedToken;
+                    if (firstConsumedToken != null)
+                    {
+                        firstSource = firstConsumedToken.CopyDirective;
+                    }
+
+                    foreach (var consumedToken in ConsumedTokens)
+                    {
+                        var it = consumedToken as ImportedToken;
+                        CopyDirective copyDirective = it != null ? it.CopyDirective : null;
+                        if (copyDirective != firstSource)
+                        {
+                            _isAcrossSourceFile = true;
+                            _isInsideCopy = true;
+                            return;
+                        }
+                    }
+                    _isAcrossSourceFile = false;
+                    _isInsideCopy = firstSource != null;
+                } else {
+                    _isInsideCopy = false;
+                    _isAcrossSourceFile = false;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Return true if this CodeElement is across 2 source file.
+        /// Eg: 
+        ///  - in a program source file and a copy
+        ///  - In 2 different copy
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAcrossSourceFile() {
+            CalculateIsAcrossSourceFile();
+            return _isAcrossSourceFile.Value;
+        }
+
+
+        protected void ResetLazyProperties() {
             _isInsideCopy = null;
+            _isAcrossSourceFile = null;
         }
 
         public string SourceText {

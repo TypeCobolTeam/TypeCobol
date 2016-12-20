@@ -174,8 +174,10 @@ class InspectConvertingChecker: CodeElementListener {
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as InspectConvertingStatement;
 		var context = c as CodeElementsParser.InspectStatementContext;
-		var seen = new Dictionary<StartCharacterPosition,bool>();
-		foreach(var value in Enum.GetValues(typeof(StartCharacterPosition))) seen[(StartCharacterPosition)value] = false;
+		var seen = new Dictionary<InspectStatement.StartCharacterPosition,bool>();
+		foreach(var value in Enum.GetValues(typeof(InspectTallyingStatement.StartCharacterPosition))) {
+			seen[(InspectTallyingStatement.StartCharacterPosition)value] = false;
+		}
 		for(int i=0; i < statement.ReplacingConditions.Length; i++) {
 			var position = statement.ReplacingConditions[i].StartCharacterPosition;
 			if (seen[position.Value]) {
@@ -463,7 +465,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
 			if (receiving.IsStrong) {
 				if (!IsUnsafe) {
-					string message = "Can't write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+" (use UNSAFE keyword for that)";
+					string message = "Cannot write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+".";
 					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 				}
 			} else {

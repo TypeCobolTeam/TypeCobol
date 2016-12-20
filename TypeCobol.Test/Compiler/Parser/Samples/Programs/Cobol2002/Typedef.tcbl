@@ -131,7 +131,11 @@ WORKING-STORAGE SECTION.
 *KO(Rule #10) USE-TYPE-GRP-STRONG-RED redefines a strongly typed variable
     10  USE-TYPE-GRP-STRONG-RED REDEFINES USE-TYPE-GRP-STRONG.
         15 USE-TYPE-GRP-STRONG-RED-PART1 PIC 9 Comp.
-
+*OK
+01  MyWeakGroup.
+    10  MyWeakVar1 TYPE Feature.
+*Ok (Rule #10) MyWeakVar2 redefines a weakly typed variable
+    10  MyWeakVar2 REDEFINES MyWeakVar1 pic X.
 
 *OK
 01  useTypeGrp2.
@@ -141,6 +145,11 @@ WORKING-STORAGE SECTION.
      11 USE-TYPE-GRP-STRONG-RED-2 redefines TYPE-GRP-STRONG-PART3.
     15 USE-TYPE-GRP-STRONG-RED-2-PART1 PIC 9 Comp.
 
+*OK
+01 GroupWithLevel77JustAfter typedef.
+   05 a pic X.
+*This variable must be not be inserted into the previous type definition
+77 MyVariable pic X value 'O'.
 
 * Unauthorized use of reference modification for strong typed groups
 *KO (Rule #10) TYPE-GRP-STRONG-REN renames a strongly typed variable

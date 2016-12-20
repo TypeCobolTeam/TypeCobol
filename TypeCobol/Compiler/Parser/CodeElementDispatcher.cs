@@ -1,8 +1,9 @@
 ﻿using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -30,10 +31,10 @@ namespace TypeCobol.Compiler.Parser
 
         /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
         public void OnCodeElement(CodeElement e, ParserRuleContext context) {
-            foreach(var listener in listeners) {
+            foreach(var listener in _listeners) {
                 var types = listener.GetCodeElements();
                 foreach (var expected in types) {
-                    if (TypeCobol.Tools.Reflection.IsTypeOf(e.GetType(), expected)) {
+                    if (Reflection.IsTypeOf(e.GetType(), expected)) {
                         listener.OnCodeElement(e, context);
                         break; // only notify each listener once for a given CodeElement
                     }
@@ -41,7 +42,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private IList<CodeElementListener> listeners = new List<CodeElementListener>();
+        private IList<CodeElementListener> _listeners = null;
 
         /// <summary>
         /// Adds to listeners one instance of each type implementing CodeElementListener interface
@@ -49,11 +50,14 @@ namespace TypeCobol.Compiler.Parser
         /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
         /// </summary>
         internal void CreateListeners() {
-            var namespaces = new string[] { "TypeCobol.Compiler.Diagnostics", };
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            foreach (var names in namespaces) {
-                var instances = TypeCobol.Tools.Reflection.GetInstances<CodeElementListener>(assembly, names);
-                foreach (var checker in instances) listeners.Add(checker);
+            if (_listeners == null) {
+                _listeners = new List<CodeElementListener>();
+                var namespaces = new[] { "TypeCobol.Compiler.Diagnostics", };
+                var assembly = Assembly.GetExecutingAssembly();
+                foreach (var names in namespaces) {
+                    var instances = Reflection.GetInstances<CodeElementListener>(assembly, names);
+                    foreach (var checker in instances) _listeners.Add(checker);
+                }
             }
         }
     }
@@ -85,7 +89,7 @@ namespace TypeCobol.Compiler.Parser
 
 		/// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-			foreach(var listener in listeners) {
+			foreach(var listener in _listeners) {
 				var types = listener.GetNodes();
 				foreach (var expected in types) {
 					if (TypeCobol.Tools.Reflection.IsTypeOf(node!=null? node.GetType():null, expected)) {
@@ -96,20 +100,23 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		private IList<NodeListener> listeners = new List<NodeListener>();
+        private IList<NodeListener> _listeners = null;
 
-		/// <summary>
-		/// Adds to listeners one instance of each type implementing CodeElementListener interface
-		/// and defined in namespace TypeCobol.Compiler.Diagnostics.
-		/// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
-		/// </summary>
-		internal void CreateListeners() {
-			var namespaces = new string[] { "TypeCobol.Compiler.Diagnostics", };
-			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-			foreach (var names in namespaces) {
-				var instances = TypeCobol.Tools.Reflection.GetInstances<NodeListener>(assembly, names);
-				foreach (var checker in instances) listeners.Add(checker);
-			}
-		}
-	}
+        /// <summary>
+        /// Adds to listeners one instance of each type implementing CodeElementListener interface
+        /// and defined in namespace TypeCobol.Compiler.Diagnostics.
+        /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
+        /// </summary>
+        internal void CreateListeners() {
+            if (_listeners == null) {
+                _listeners = new List<NodeListener>();
+                var namespaces = new[] { "TypeCobol.Compiler.Diagnostics", };
+                var assembly = Assembly.GetExecutingAssembly();
+                foreach (var names in namespaces) {
+                    var instances = Reflection.GetInstances<NodeListener>(assembly, names);
+                    foreach (var checker in instances) _listeners.Add(checker);
+                }
+            }
+        }
+    }
 }

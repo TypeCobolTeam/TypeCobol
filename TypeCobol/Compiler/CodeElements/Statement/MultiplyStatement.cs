@@ -3,11 +3,11 @@
 	using System.Collections.Generic;
 
 /// <summary>p376: The MULTIPLY statement multiplies numeric items and sets the values of data items equal to the results.</summary>
-public abstract class MultiplyStatement: StatementElement, ArithmeticStatement {
+public abstract class MultiplyStatement: AbstractArithmeticStatement {
 	public MultiplyStatement(StatementType statementType): base(CodeElementType.MultiplyStatement, statementType) { }
 
 	public NumericVariable Operand { get; set; }
-	public abstract Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>

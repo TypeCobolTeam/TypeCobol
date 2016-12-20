@@ -10,10 +10,10 @@
        01  Identifier TYPE BOOL.
        01  AnotherOne TYPE BOOL.
        01  AGroup.
-         05  a.
-           10  c PIC X.
-           10  b TYPE BOOL.
-         05  d TYPE BOOL.
+           05  a.
+             10  c PIC X.
+             10  b TYPE BOOL.
+           05  d TYPE BOOL.
 
 
 

@@ -81,6 +81,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new NYName(),
                 new PGMName(),
                 new MemoryName(),
+                new NodeName(),
             };
 
         private IList<string> samples;
@@ -333,24 +334,11 @@ internal class ArithmeticComparator : FilesComparator {
         {
         }
 
-        public override void Compare(CompilationUnit result, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
         {
-            ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-            List<Diagnostic> diagnostics = new List<Diagnostic>();
-            if (result.CodeElementsDocumentSnapshot.ParserDiagnostics != null)
-            {
-                diagnostics.AddRange(result.CodeElementsDocumentSnapshot.ParserDiagnostics);
-            }
-            if (pcd.Diagnostics != null)
-            {
-                diagnostics.AddRange(pcd.Diagnostics);
-            }
-            foreach (var element in result.CodeElementsDocumentSnapshot.CodeElements) {
-                if (element.Diagnostics != null)
-                {
-                    diagnostics.AddRange(element.Diagnostics);
-                }
-            }
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            
             Compare(pcd.Program, pcd.Class, diagnostics, reader);
         }
 
@@ -359,6 +347,29 @@ internal class ArithmeticComparator : FilesComparator {
             string result = ParserUtils.DumpResult(program, cls, diagnostics);
             if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
+        }
+    }
+    internal class NodeComparator : FilesComparator
+    {
+        public NodeComparator(Paths path, bool debug = false) : base(path, debug)
+        {
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader) {
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+            
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics) {
+                sb.AppendLine(diagnostic.ToString());
+            }
+
+            sb.AppendLine("--- Nodes ---");
+            sb.Append(pcd.Program.SyntaxTree);
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
         }
     }
 
@@ -472,6 +483,12 @@ internal class ArithmeticComparator : FilesComparator {
     {
         public string CreateName(string name) { return name + "PGM"; }
         public Type GetComparatorType() { return typeof(ProgramsComparator); }
+    }
+
+    internal class NodeName : Names
+    {
+        public string CreateName(string name) { return name + "-Nodes"; }
+        public Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
     internal class MemoryName : Names

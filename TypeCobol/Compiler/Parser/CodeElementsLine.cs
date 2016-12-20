@@ -89,5 +89,5 @@ namespace TypeCobol.Compiler.Parser
 
             ParserDiagnostics.Add(diag);
         }
-    }
+	}
 }

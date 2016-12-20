@@ -95,8 +95,11 @@ public class Initialize: Node, CodeElementHolder<InitializeStatement>, Statement
 	public Initialize(InitializeStatement statement): base(statement) { }
 }
 
-public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement {
+public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
 	public Inspect(InspectStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class Invoke: Node, CodeElementHolder<InvokeStatement>, Statement {
@@ -144,14 +147,16 @@ public class Stop: Node, CodeElementHolder<StopStatement>, Statement {
 
 public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	public String(StringStatement statement): base(statement) { }
-
-    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
-    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
-    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement {
+public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
 	public Unstring(UnstringStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 public class XmlGenerate: Node, CodeElementHolder<XmlGenerateStatement>, Statement {
@@ -166,24 +171,39 @@ public class XmlParse: Node, CodeElementHolder<XmlParseStatement>, Statement {
 
 // --- ARITHMETIC STATEMENTS ---
 
-public class Add: Node, CodeElementHolder<AddStatement>, Statement {
+public class Add: Node, CodeElementHolder<AddStatement>, Statement, VariableWriter {
 	public Add(AddStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement {
+public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
 	public Subtract(SubtractStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Multiply: Node, CodeElementHolder<MultiplyStatement>, Statement {
+public class Multiply: Node, CodeElementHolder<MultiplyStatement>, Statement, VariableWriter {
 	public Multiply(MultiplyStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Divide: Node, CodeElementHolder<DivideStatement>, Statement {
+public class Divide: Node, CodeElementHolder<DivideStatement>, Statement, VariableWriter {
 	public Divide(DivideStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
-public class Compute: Node, CodeElementHolder<ComputeStatement>, Statement {
+public class Compute: Node, CodeElementHolder<ComputeStatement>, Statement, VariableWriter {
 	public Compute(ComputeStatement statement): base(statement) { }
+	public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 }
 
 

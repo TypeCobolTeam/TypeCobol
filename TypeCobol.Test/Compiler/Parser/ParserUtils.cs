@@ -80,12 +80,13 @@ namespace TypeCobol.Test.Compiler.Parser
 
 		public static string DumpResult(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics) {
 			StringBuilder builder = new StringBuilder();
+
 			builder.Append(DiagnosticsToString(diagnostics));
 			builder.Append(CodeElementsToString(elements));
 			return builder.ToString();
 		}
 
-		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics) {
+		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics, bool printDiagnosticLine = true) {
 			StringBuilder builder = new StringBuilder();
 			bool hasDiagnostic = false;
 			var done = new List<string>();
@@ -106,8 +107,10 @@ namespace TypeCobol.Test.Compiler.Parser
 				hasDiagnostic = true;
 			}
 			if(hasDiagnostic) {
-				builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
-				return builder.ToString();
+			    if (printDiagnosticLine) {
+			        builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
+			    }
+			    return builder.ToString();
 			} else {
 				return String.Empty;
 			}

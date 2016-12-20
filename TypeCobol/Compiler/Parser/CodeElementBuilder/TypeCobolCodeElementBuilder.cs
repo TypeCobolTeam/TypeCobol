@@ -161,9 +161,11 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context) {
 		var name = CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference());
 		var inputs = new List<CallSiteParameter>();
+		SyntaxProperty<ParameterSharingMode> mode = null;
 		foreach(var p in context.callInputParameter()) {
+			CreateSharingMode(p, ref mode); // TCRFUN_INPUT_BY
 			inputs.Add(new CallSiteParameter {
-					SharingMode = CreateSharingMode(p), // TCRFUN_CALL_INPUT_BY
+					SharingMode = mode,
 					StorageAreaOrValue = CobolExpressionsBuilder.CreateSharedVariableOrFileName(p.sharedVariableOrFileName()),
 				});
 		}
@@ -185,11 +187,20 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 		CodeElement = new ProcedureStyleCallStatement(new ProcedureCall(name, inputs,inouts,outputs));
 	}
 
-	private SyntaxProperty<ParameterSharingMode> CreateSharingMode(CodeElementsParser.CallInputParameterContext parameter) {
-		if (parameter.REFERENCE() != null) return CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByReference, parameter.REFERENCE());
-		if (parameter.CONTENT()   != null) return CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByContent,   parameter.CONTENT());
-		if (parameter.VALUE()     != null) return CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByValue,     parameter.VALUE());
-		return new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null); // TCRFUN_CALL_INPUT_BY
+	private void CreateSharingMode(CodeElementsParser.CallInputParameterContext parameter, ref SyntaxProperty<ParameterSharingMode> mode) {
+		if (parameter.REFERENCE() != null) {
+			mode = CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByReference, parameter.REFERENCE());
+		} else
+		if (parameter.CONTENT()   != null) {
+			mode = CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByContent,   parameter.CONTENT());
+		} else
+		if (parameter.VALUE()     != null) {
+			mode = CobolStatementsBuilder.CreateSyntaxProperty(ParameterSharingMode.ByValue,     parameter.VALUE());
+		} else {
+			var by = ParameterSharingMode.ByReference;
+			if (mode != null) by = mode.Value;
+			mode = new SyntaxProperty<ParameterSharingMode>(by, null);
+		}
 	}
 
 }

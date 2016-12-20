@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Codegen.Nodes {
+﻿using TypeCobol.Compiler;
+
+namespace TypeCobol.Codegen.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -25,6 +27,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 			if (_cache == null) {
 				string name = this.CodeElement().Name;
 				_cache = new List<ITextLine>();
+				TypeDefinition customtype = null;
 				if (this.CodeElement().DataType == DataType.Boolean) {
 					_cache.Add(new TextLineSnapshot(-1, "01 "+name+"-value PIC X     VALUE LOW-VALUE.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
@@ -32,7 +35,16 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 				} else {
 					var str = new System.Text.StringBuilder();
 					str.Append("01 ").Append(name);
-					if(this.CodeElement().Picture != null) str.Append(" PIC ").Append(this.CodeElement().Picture);
+					AlphanumericValue picture = null;
+                        //Type exists from Cobol 2002
+					if (this.CodeElement().DataType.CobolLanguageLevel >= CobolLanguageLevel.Cobol2002) {
+						var found = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
+						if (found.Count > 0) {
+							customtype = (TypeDefinition)found[0];
+							picture = customtype.CodeElement().Picture;
+						}
+					} else picture = this.CodeElement().Picture;
+					if(picture != null) str.Append(" PIC ").Append(picture);
 					str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 
@@ -44,22 +56,19 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 						if (entry.ConditionValues != null && entry.ConditionValues.Length > 0) {
 							str.Append(" VALUE");
 							foreach(var value in entry.ConditionValues)
-								str.Append(" \'").Append(value.ToString()).Append('\'');
+								str.Append(" \'").Append(value).Append('\'');
 						} else
 						if (entry.ConditionValuesRanges != null && entry.ConditionValuesRanges.Length > 0) {
 							str.Append(" VALUES");
 							foreach(var range in entry.ConditionValuesRanges)
-								str.Append(" \'").Append(range.MinValue.ToString()).Append("\' THRU \'").Append(range.MaxValue.ToString()).Append('\'');
+								str.Append(" \'").Append(range.MinValue).Append("\' THRU \'").Append(range.MaxValue).Append('\'');
 						}
 						str.Append('.');
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 					}
 				}
 
-				if (!this.CodeElement().DataType.IsCOBOL) {
-					var customtype = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
-					if (customtype.Count > 0) _cache.AddRange(TypedDataNode.InsertChildren(this.SymbolTable, (TypeDefinition)customtype[0], 2, 1));
-				}
+				if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(this.SymbolTable, customtype, 2, 1));
 			}
 			return _cache;
 		}

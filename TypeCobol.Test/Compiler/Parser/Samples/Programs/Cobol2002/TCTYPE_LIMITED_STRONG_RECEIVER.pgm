@@ -1,0 +1,91 @@
+﻿IDENTIFICATION DIVISION.
+PROGRAM-ID. StrongReceivers.
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+    SELECT  FAPPEL  ASSIGN TO UT-S-FAPPEL
+	SELECT WorkFile ASSIGN TO "Work.Tmp".
+
+DATA DIVISION.
+FILE SECTION.
+FD  FAPPEL BLOCK 0 RECORDS
+           LABEL RECORD STANDARD
+           RECORDING MODE F.
+01  FIC-APPEL PIC X(128).
+
+SD WorkFile.
+01 WorkRec.
+   02 Temp        PIC X(20).
+
+WORKING-STORAGE SECTION.
+* A strongly-typed group item may be referenced as a receiving operand only in one of the following:
+* 1.a program, function or method activation as a formal parameter or returning item
+* 2.an INITIALIZE statement
+* 3.A MOVE statement
+* 4.a READ statement
+* 5.a RELEASE statement with the FROM phrase
+* 6.a RETURN statement
+* 7.a REWRITE statement with the FROM phrase
+* 8.the data item referenced in the DESTINATION clause of an element of the operand of a VALIDATE statement
+* 9.the subject of a data description entry that contains a VALIDATE-STATUS clause that references the element of the operand of a VALIDATE statement.
+* 10.a WRITE statement with the FROM phrase.
+* (source page 807 of ISO Cobol 2014)
+01 IntegerStrong TYPEDEF STRONG.
+ 05 Integer-Value PIC 9(5).
+01 Integer TYPEDEF PIC 9(5).
+01 myStrongInt TYPE IntegerStrong.
+01 myInt TYPE Integer.
+
+01 CharsStrong TYPEDEF STRONG.
+  05 Char-Value   PIC X(5).
+01 Chars TYPEDEF  PIC X(5).
+01 myStrongChars  TYPE CharsStrong.
+01 myStrongChars2 TYPE CharsStrong.
+01 myChars        TYPE Chars.
+01 myChars2       TYPE Chars.
+01 varToUnstring  PIC X(10) value "me@me.com".
+
+PROCEDURE DIVISION.
+
+INITIALIZE myStrongChars
+INITIALIZE myChars
+
+MOVE myStrongChars TO myStrongChars2
+MOVE myChars       TO myChars2
+
+OPEN INPUT FAPPEL
+
+READ FAPPEL INTO myStrongChars
+READ FAPPEL INTO myChars
+
+WRITE FAPPEL FROM myStrongChars
+WRITE FAPPEL FROM myChars
+
+REWRITE FAPPEL FROM myStrongChars
+REWRITE FAPPEL FROM myChars
+
+RELEASE SDWorkRec FROM myStrongChars
+RELEASE SDWorkRec FROM CharsStrong
+
+RETURN SDWorkRec INTO myStrongChars
+RETURN SDWorkRec INTO CharsStrong
+
+CLOSE FAPPEL
+
+COMPUTE myInt       = 1 + 1
+*KO but myStrongInt is not numeric anyway
+COMPUTE myStrongInt = 1 + 1
+
+STRING "chaine1" "chaine2" DELIMITED BY SIZE INTO myChars
+*KO myStrongChars is a strongly typed item
+STRING "chaine1" "chaine2" DELIMITED BY SIZE INTO myStrongChars
+
+UNSTRING varToUnstring     DELIMITED BY '@'  INTO myChars myChars2
+*KO myStrongChars is a strongly typed item
+UNSTRING varToUnstring     DELIMITED BY '@'  INTO myStrongChars myStrongChars2
+
+INSPECT myChars       REPLACING FIRST "@" BY '#'
+*KO myStrongChars is a strongly typed item
+INSPECT myStrongChars REPLACING FIRST "@" BY '#'
+
+.

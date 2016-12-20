@@ -9,6 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TypeCobol</RootNamespace>
     <AssemblyName>TypeCobol</AssemblyName>
+    <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -146,6 +147,7 @@
     <Compile Include="Compiler\Diagnostics\Cobol2002Checker.cs" />
     <Compile Include="Compiler\Diagnostics\TypeCobolChecker.cs" />
     <Compile Include="Compiler\FileCompiler.cs" />
+    <Compile Include="Compiler\LanguageLevel.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolExpressionsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolStatementsBuilder.cs" />
     <Compile Include="Compiler\Parser\CodeElementBuilder\CobolWordsBuilder.cs" />
@@ -314,6 +316,14 @@
     <Compile Include="Compiler\Scanner\LiteralTokenValue.cs" />
     <Compile Include="Compiler\Scanner\ScannerStep.cs" />
     <Compile Include="Compiler\Scanner\TokenDiagnostic.cs" />
+    <Compile Include="Compiler\Source\GapSourceText.cs" />
+
+    <Compile Include="Compiler\Source\InvalidPositionException.cs" />
+    <Compile Include="Compiler\Source\Position.cs" />
+    <Compile Include="Compiler\Source\PositionList.cs" />
+    <Compile Include="Compiler\Source\SourceDocument.cs" />
+    <Compile Include="Compiler\Source\SourceText.cs" />
+    <Compile Include="Compiler\Source\StringSourceText.cs" />
     <Compile Include="Compiler\Text\ColumnsLayout.cs" />
     <Compile Include="Compiler\DocumentFormat.cs" />
     <Compile Include="Compiler\Text\ICobolTextLine.cs" />

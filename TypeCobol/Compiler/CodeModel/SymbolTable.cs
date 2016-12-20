@@ -42,6 +42,7 @@ public class SymbolTable {
 		}
 	}
 
+        [NotNull]
 	private List<Node> Get(string name, SymbolType type) {
 		var table = GetTable(type);
 		var values = Get(name, table);
@@ -51,6 +52,7 @@ public class SymbolTable {
 		return values;
 	}
 
+        [NotNull]
 	private List<Node> Get(string name, Dictionary<string,List<Node>> table) {
 		var values = new List<Node>();
 		if (table.ContainsKey(name))
@@ -440,6 +442,7 @@ public class SymbolTable {
 		return true;
 	}
 
+        [NotNull]
 	private List<Node> GetFunction(string name) { return Get(name, SymbolType.Function); }
 
 

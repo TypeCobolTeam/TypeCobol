@@ -15,6 +15,7 @@ namespace TypeCobol.Compiler.File
         // Local directory properties
 
         private DirectoryInfo rootDirectory;
+        private string _rootPath;
         private bool includeSubdirectories;
         private string[] fileExtensions;
 
@@ -27,7 +28,7 @@ namespace TypeCobol.Compiler.File
         /// <summary>
         /// Initializes a Cobol text library from files contained in a root directory
         /// </summary>
-        /// <param name="name">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
+        /// <param name="libraryName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
         /// <param name="rootPath">Local directory containing all the Cobol files of this library</param>
         /// <param name="includeSubdirectories">Does this library also includes the files contained in all the subdirectories found below the root path ?</param>
         /// <param name="fileExtensions">File extensions which should be optionnaly appended to the text name to find corresponding Cobol files (for example : { ".cbl",".cpy" })</param>
@@ -38,6 +39,7 @@ namespace TypeCobol.Compiler.File
         {
             Name = libraryName;
 
+            this._rootPath = rootPath;
             rootDirectory = new DirectoryInfo(rootPath);
             if(!rootDirectory.Exists)
             {
@@ -126,14 +128,11 @@ namespace TypeCobol.Compiler.File
 
         private string FindFirstMatchingFilePath_ExtensionsFirst(string textName)
         {
-            string matchingFilePath;
-
-            // Then try with each extension in the order of the table
+            // First try with each extension in the order of the table
             if (fileExtensions != null)
             {
-                foreach (string extension in fileExtensions)
-                {
-                    matchingFilePath = FindFirstMatchingFilePath(textName, extension);
+                foreach (string extension in fileExtensions) {
+                    var matchingFilePath = FindFirstMatchingFilePath(textName, extension);
                     if (matchingFilePath != null)
                     {
                         return matchingFilePath;
@@ -141,30 +140,30 @@ namespace TypeCobol.Compiler.File
                 }
             }
 
-            // First try without extension
-            matchingFilePath = FindFirstMatchingFilePath(textName, String.Empty);
-            if (matchingFilePath != null)
-            {
-                return matchingFilePath;
-            }
-
+            // Then try without extension
+            return FindFirstMatchingFilePath(textName, String.Empty);
             // Not found
-            return null;
         }
 
 
         // Reused part of the previous method
         private string FindFirstMatchingFilePath(string textName, string extension)
         {
-            FileInfo[] candidateFiles = rootDirectory.GetFiles(textName + extension, includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-            if (candidateFiles != null && candidateFiles.Length > 0)
-            {
-                return candidateFiles[0].FullName;
-            }
-            else
-            {
+            if (includeSubdirectories) {
+                FileInfo candidateFiles =
+                    rootDirectory.EnumerateFiles(textName + extension, includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                        .FirstOrDefault();
+                if (candidateFiles != null) {
+                    return candidateFiles.FullName;
+                }
                 return null;
             }
+
+            var fullPath = _rootPath + Path.DirectorySeparatorChar + textName + extension;
+            if (System.IO.File.Exists(fullPath)) {
+                return fullPath;
+            }
+            return null;
         }
 
         /// <summary>
