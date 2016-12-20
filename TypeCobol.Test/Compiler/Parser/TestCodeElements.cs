@@ -144,7 +144,7 @@ namespace TypeCobol.Test.Compiler.Parser
             var firstCodeElement = codeElementsDocument.CodeElements.First();
             Assert.IsTrue(firstCodeElement.GetType() == typeof(T));
 
-            bool codeElementOk = !firstCodeElement.Diagnostics.Any();
+            bool codeElementOk = firstCodeElement.Diagnostics == null || !firstCodeElement.Diagnostics.Any();
             bool codeElementDocumentOk = codeElementsDocument.ParserDiagnostics == null || !codeElementsDocument.ParserDiagnostics.Any();
 
             //Do not test compilationUnit.ProgramClassDocumentSnapshot.Diagnostics here because we are just parsing a single line

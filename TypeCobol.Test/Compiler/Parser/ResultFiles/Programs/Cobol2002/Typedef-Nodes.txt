@@ -1,5 +1,5 @@
 ﻿[14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries
-[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator
+[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
@@ -10,7 +10,7 @@
 [1,31]<30,Error,Semantics>Semantic error: TYPE 'TypeNotDefined' is not referenced
 [1,33]<30,Error,Semantics>Semantic error: TYPE 'TypeDefinedAfter' is not referenced
 [14,20]<27,Error,Syntax>Syntax error : TYPEDEF clause can only be specified for level 01 entries
-[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting PeriodSeparator
+[29,35]<27,Error,Syntax>Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
 [1,41]<30,Error,Semantics>Semantic error: TYPE 'ClausesOrderKO' is not referenced
 [1,32]<30,Error,Semantics>Semantic error: TYPEDEF 'NoDescription' has no description.
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
