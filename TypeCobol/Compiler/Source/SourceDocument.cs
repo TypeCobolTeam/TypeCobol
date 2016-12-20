@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace TypeCobol.Compiler.Source
 {
     /// <summary>
-    /// Class that reprsents a source document. 
+    /// Class that represents a source document. 
     /// </summary>
     public class SourceDocument
     {
@@ -45,10 +46,35 @@ namespace TypeCobol.Compiler.Source
         {
             Source = text;         
             lines = new SourceLine[1];
+            lines[0] = new SourceLine(new Position(0, 0), new Position(0, 0));
             nlines = 0;
             lastIndex = -1;
             ///Add a listener to us.
             text.Observers += TextChangeObserver;
+        }
+
+        /// <summary>
+        /// Load a Source File
+        /// </summary>
+        /// <param name="filepath">The file to load</param>
+        public void LoadSourceFile(String filepath)
+        {
+            string text = "";
+            using (var streamReader = new StreamReader(filepath, Encoding.UTF8))
+            {
+                text = streamReader.ReadToEnd();
+            }
+            LoadSourceText(text);
+        }
+
+        /// <summary>
+        /// Load a source text
+        /// </summary>
+        /// <param name="text">The text to load</param>
+        public void LoadSourceText(String text)
+        {
+            Source.Delete(0, Source.Size);
+            Source.Insert(text, 0, 0);
         }
 
         /// <summary>
@@ -82,7 +108,7 @@ namespace TypeCobol.Compiler.Source
         {
             get
             {
-                if (index < nlines) {
+                if (index >= 0 && index < nlines) {
                     return lines[index];
                 }
                 return null;
@@ -101,6 +127,24 @@ namespace TypeCobol.Compiler.Source
         }
 
         /// <summary>
+        /// Get the line that contains a the given position
+        /// </summary>
+        /// <param name="at">The position to get the line</param>
+        /// <returns>The Source Line instance if the position is valid, null otherwise</returns>
+        public SourceLine GetLineAtPosition(int at)
+        {
+            int index = GetLineIndex(at);
+            SourceLine line = lines[index];
+            int from = line.From;
+            int to = line.To;
+            if ((at >= from) && (at < to))
+            {
+                return line;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// The Text Change event Observer
         /// </summary>
         /// <param name="source"></param>
@@ -114,23 +158,18 @@ namespace TypeCobol.Compiler.Source
                     {                        
                         int from = info.From;
                         int length = info.Size;
-                        if (from > 0) 
-                        {
-                            from -= 1;
-                            length += 1;
-                        }
                         int index = GetLineIndex(from);
                         SourceLine removeLine = this[index];
-                        int removeFrom = removeLine.From;
-                        int removeTo = removeLine.To;
+                        int removeFrom = removeLine != null ? removeLine.From : 0;
+                        int removeTo = removeLine != null ? removeLine.To : 0;
                         int lastPos = removeFrom;
                         try 
                         {
                             List<SourceLine> added = new List<SourceLine>();                        
-                            String s = this.Source.GetTextAt(from, info.To);
+                            String s = this.Source.GetTextAt(from, from + info.Size);
                             bool hasLineFeed = false;
                             for (int i = 0; i < length; i++) 
-                            {   //Check line speed to detected splitted lines
+                            {   //Check line feed to detect splitted lines
                                 char c = s[i];
                                 if (c == '\n') 
                                 {
@@ -142,7 +181,7 @@ namespace TypeCobol.Compiler.Source
                             }
                             if (hasLineFeed) 
                             {
-                                int nremoved = 1;
+                                int nremoved = removeLine != null ? 1 : 0;
                                 if ((from + length == removeTo) && (lastPos != removeTo) && ((index+1) < LineCount)) 
                                 {
                                     SourceLine l = this[index+1];                                    
@@ -183,14 +222,6 @@ namespace TypeCobol.Compiler.Source
             }
         }
 
-        /**
-         * Replaces Document with a new set of lines.
-         *
-         * @param offset the starting offset >= 0
-         * @param length the length to replace >= 0
-         * @param elems the new elements
-         */                
-
         /// <summary>
         /// Replaces some lines of the document with new ones.
         /// </summary>
@@ -206,7 +237,7 @@ namespace TypeCobol.Compiler.Source
             int target = src + amount;
             if ((nlines + amount) >= lines.Length) 
             {
-                // Expand the aray by a multiple of two
+                // Expand the array by a multiple of two
                 int newLength = Math.Max(lines.Length << 1, nlines + amount);
                 SourceLine[] newlines = new SourceLine[newLength];
                 Array.Copy(lines, 0, newlines, 0, from);
@@ -230,6 +261,11 @@ namespace TypeCobol.Compiler.Source
         /// <returns>the element index >= 0</returns>
         public int GetLineIndex(int pos) 
         {
+            if (nlines == 0)
+            {//No Line
+                return 0;
+            }
+
             int index;
             int top = 0;
             int bottom = nlines - 1;
@@ -237,10 +273,6 @@ namespace TypeCobol.Compiler.Source
             int from = From;
             int to;
     
-            if (nlines == 0) 
-            {//No Line
-                return top;
-            }
             if (pos >= To) 
             {//Out of document ==> last index
                 return bottom;
@@ -288,6 +320,36 @@ namespace TypeCobol.Compiler.Source
             //The index was not found but determine where it should be
             lastIndex = index = (pos < from) ? index = middle : index = middle + 1;
             return index;
+        }
+
+        /// <summary>
+        /// Dump this Source Document.
+        /// </summary>
+        public void Dump()
+        {
+            Source.Dump();
+            DumpLinePosition(true);
+            //Source.GetPositionList().Dump();
+        }
+
+        /// <summary>
+        /// Dump this Source Document Line Position.
+        /// <param name="bShowText">true if the text of the line must be displayed</param>
+        /// </summary>
+        public void DumpLinePosition(bool bShowText)
+        {
+            //char[] buffer = new char[255];
+            for (int i = 0; i < LineCount; i++)
+            {
+                SourceLine line = lines[i];
+                System.Console.Write("[{0:00000} - {1:00000}]", line.From, line.To);
+                if (bShowText)
+                {
+                    //Source.CopyInStr(buffer, buffer.Length, line.From, line.To);
+                    String  text = Source.GetTextAt(line.From, line.To);
+                    System.Console.Write(text);
+                }
+            }
         }
 
         /// <summary>

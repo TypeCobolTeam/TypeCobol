@@ -74,6 +74,11 @@ namespace TypeCobol.Compiler.Source
                 throw new NullReferenceException();
         }
 
+        /// <summary>
+        /// Delete a portion of text
+        /// </summary>
+        /// <param name="from">The start offset</param>
+        /// <param name="to">and the end offset</param>
         public override void Delete(int from,int to)
         {
             if (!CheckRange(next, from, to))
@@ -90,14 +95,21 @@ namespace TypeCobol.Compiler.Source
             Send(new TextChangeInfo(TextChanges.TextDeleted, from, to));
         }
 
+        /// <summary>
+        /// Insert the content of a SourceText from a position up to a position.
+        /// </summary>
+        /// <param name="text">The SourceText to insert</param>
+        /// <param name="from">The start location</param>
+        /// <param name="to">The end location</param>
         public override void Insert(SourceText paste, int from, int to)
         {
             StringSourceText ct;
             char[] buf = null;
 
-            if (!(paste is StringSourceText)) { // try to convert
+            if (!(paste is StringSourceText))
+            { // try to convert
 	            int s = paste.Size;
-	            buf= new char[s];
+	            buf = new char[s];
 	            paste.CopyInStr(buf, s, 0, s);
 	            ct= new StringSourceText(buf, s);
             } else
@@ -107,6 +119,9 @@ namespace TypeCobol.Compiler.Source
 
             if (!CheckRange(next, from, to))
 	            return;
+
+            if ((to - from) > 0)
+                Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
 
             if (HighWaterMark(shift))
 	        Expand(GrowBy(size+shift));
@@ -125,12 +140,53 @@ namespace TypeCobol.Compiler.Source
             Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size));     
         }
 
+        /// <summary>
+        /// Insert the content of a String from a position up to a position.
+        /// </summary>
+        /// <param name="text">The String to insert</param>
+        /// <param name="from">The start location</param>
+        /// <param name="to">The end location</param>
+        public override void Insert(String text, int from, int to)
+        {            
+            int shift = text.Length - (to - from);
+
+            if (!CheckRange(next, from, to))
+                return;
+
+            if ((to - from) > 0)
+                Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
+
+            if (HighWaterMark(shift))
+                Expand(GrowBy(size + shift));
+
+            if (shift < 0)
+                Array.Copy(content, to, content, to + shift, next - to);
+            else if (shift > 0)
+                Array.Copy(content, from, content, from + shift, next - from);
+
+            char[] buffer = text.ToCharArray();
+            //---- insert pasted text
+            Array.Copy(buffer, 0, content, from, buffer.Length);
+            next += shift;
+            if (LowWaterMark())
+                Expand(size / 2);
+            base.Insert(text, from, to);
+            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, text.Length));
+        }
+
+        /// <summary>
+        /// Copy a portion of source text into a target SourceText instance
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="from">Start offste of the portion</param>
+        /// <param name="to">End offset of the portion</param>
         public override void Copy(SourceText target, int from, int to)
         {
             if (!CheckRange(next,from,to) || target == null)
 	        return;
 
-            if (!(target is StringSourceText)) { // convert
+            if (!(target is StringSourceText)) 
+            { // convert
 	            int s = to - from;
 	            char[] buf= new char[s];
 	            Array.Copy(content, from, buf, 0, s);
@@ -148,6 +204,13 @@ namespace TypeCobol.Compiler.Source
             ct.next= nSave;
         }
 
+        /// <summary>
+        /// Copy a portion of text from this SourceText to a given buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer in to which to copy a portion of text</param>
+        /// <param name="length">The buffer's length</param>
+        /// <param name="from">The start offset of the portion</param>
+        /// <param name="to">The end offset of the portion</param>
         public override void CopyInStr(char[] buffer, int length, int from, int to)
         {
             if (!CheckRange(next, from, to) || buffer == null)
@@ -158,6 +221,12 @@ namespace TypeCobol.Compiler.Source
             buffer[l]= '\0';
         }
 
+        /// <summary>
+        /// Copy The content of a given buffer in to this Source Text,
+        /// The content of the buffer replaces the content of this SourceText.
+        /// </summary>
+        /// <param name="buffer">The buffer which contains the text to copy</param>
+        /// <param name="count">The count of characters to copy</param>
         public override void ReplaceWithStr(char[] buffer, int count)
         {
             if (count == -1)
@@ -168,6 +237,12 @@ namespace TypeCobol.Compiler.Source
             next = count;
         }
 
+        /// <summary>
+        /// Get the text of a portion
+        /// </summary>
+        /// <param name="from">The Start position of the portion of text to retrieve</param>
+        /// <param name="to">The End position of the portion of text to retrieve</param>
+        /// <returns>The String of the portion</returns>
         public override string GetTextAt(int from, int to)
         {
             if (!CheckRange(next, from, to))
@@ -175,6 +250,12 @@ namespace TypeCobol.Compiler.Source
             return new string(content, from, to - from);
         }
 
+        /// <summary>
+        /// Save a text portion of this SourceText in another SourceText
+        /// </summary>
+        /// <param name="from">The start position of the portion</param>
+        /// <param name="to">The end position of the portion</param>
+        /// <returns>The SourceText containing the portion</returns>
         public override SourceText Save(int from, int to)
         {
             if (!CheckRange(next, from, to))
@@ -182,12 +263,22 @@ namespace TypeCobol.Compiler.Source
             return new StringSourceText(content, from, to - from);
         }
 
+        /// <summary>
+        /// Insert one character in this SourceText from a location to another location.
+        /// The text portion in the range [from - to] will be removed
+        /// </summary>
+        /// <param name="c">The character to insert</param>
+        /// <param name="from">The start offset offset the insert location</param>
+        /// <param name="to">The end offset of the insertion location.</param>
         public override void Insert(char c, int from, int to)
         {
             int shift = to - from + 1;
 
             if (!CheckRange(next, from, to))
 	        return;
+
+            if ((to - from) > 0)
+                Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
 
             if (HighWaterMark(shift))
 	            Expand(GrowBy(size + shift));
@@ -205,6 +296,11 @@ namespace TypeCobol.Compiler.Source
             Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1));     
         }
 
+        /// <summary>
+        /// Indexer operator
+        /// </summary>
+        /// <param name="i">Index of the character</param>
+        /// <returns>The character at the given index.</returns>
         public override char this[int i]
         {
             get
@@ -221,11 +317,19 @@ namespace TypeCobol.Compiler.Source
             }
         }
 
+        /// <summary>
+        /// Reset this Source Text to an empty content with given size capacity.
+        /// </summary>
+        /// <param name="initSize">The reset capacity</param>
         public override void Empty (int initSize)                                         
         {
             next = 0; 
         }
 
+        /// <summary>
+        /// Get the size of this Source Text
+        /// </summary>
+        /// <returns>The Size</returns>
         public override int Size
         {
             get
@@ -234,6 +338,11 @@ namespace TypeCobol.Compiler.Source
             }
         }
 
+        /// <summary>
+        /// Check if the given source text is equals to this one.
+        /// </summary>
+        /// <param name="text">The source text to be checked for equality</param>
+        /// <returns>true if both the given source text is equals to this one, false otherwise</returns>
         public override bool Equals(object obj)
         {
             if (!(obj is StringSourceText))
@@ -244,6 +353,10 @@ namespace TypeCobol.Compiler.Source
             return CompareArrays(content, t.content, next);
         }
 
+        /// <summary>
+        /// Compute a Hash code value
+        /// </summary>
+        /// <returns>The hash code value</returns>
         public override int GetHashCode ()
         {
             int hash;
@@ -254,6 +367,10 @@ namespace TypeCobol.Compiler.Source
             return hash;
         }
 
+        /// <summary>
+        /// Expand the content buffer to a new size
+        /// </summary>
+        /// <param name="newSize">The new size</param>
         private void Expand (int newSize)                                         
         {
             if (newSize == 0)
@@ -266,14 +383,33 @@ namespace TypeCobol.Compiler.Source
             size= newSize;
         }
 
+        /// <summary>
+        /// Are we going beyond the buffer limit if we add n characters ?
+        /// </summary>
+        /// <param name="n">The count of characters to be added</param>
+        /// <returns>true if we go beyond the buffer limit, false otherwise</returns>
         bool HighWaterMark(int n)
         { 
             return (bool)(content == null || next + n >= size); 
         }
+
+        /// <summary>
+        /// Have we reach a the  minimal suitable ratio of content size?
+        /// </summary>
+        /// <returns>true if yes, false otherwise</returns>
         bool LowWaterMark()
         { 
             return (bool)(next < size / 5); 
-        }  
+        }
+
+        /// <summary>
+        /// Dump the content of this Source Text.
+        /// <param name="allChars">Tru eif even non printable chars must be dumped, false otherwise</param>
+        /// </summary>
+        public override void Dump(bool allChars = true)
+        {
+            System.Console.Write(content, 0, next);
+        }
     }
 }
 

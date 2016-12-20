@@ -140,6 +140,22 @@ namespace TypeCobol.Compiler.Source
         }
 
         /// <summary>
+        /// Insert the content of a String from a position up to a position.
+        /// </summary>
+        /// <param name="text">The String to insert</param>
+        /// <param name="from">The start location</param>
+        /// <param name="to">The end location</param>
+        public virtual void Insert(String text, int from, int to)
+        {
+            if (Positions != null)
+            {
+                if (from != to)
+                    Positions.Delete(from, to - from);
+                Positions.Insert(from, text.Length);
+            }
+        }
+
+        /// <summary>
         /// Copy a portion of source text into a target SourceText instance
         /// </summary>
         /// <param name="target"></param>
@@ -255,6 +271,11 @@ namespace TypeCobol.Compiler.Source
             return (to > max || from < 0 || from > to) ? false: true;
         }
 
+        /// <summary>
+        /// A simple implementation to check if a character can be part of a word.
+        /// </summary>
+        /// <param name="c">The character to be checked</param>
+        /// <returns>true if yes, false otherwise.</returns>
         public static bool IsWordCharacter(char c)
         {
             return Char.IsLetterOrDigit(c) || c == '_';
@@ -333,11 +354,23 @@ namespace TypeCobol.Compiler.Source
             return 0;
         }
 
+        /// <summary>
+        /// Check if x is in the range [lb, ub] if yes then return x, otherwise lb or ub
+        /// </summary>
+        /// <param name="lb">The lower bound</param>
+        /// <param name="ub">The upper bound</param>
+        /// <param name="x">The value to be checked</param>
+        /// <returns>x if x is in [lb..ub], lb if x lesset than lb, ub if x is greater than ub</returns>
         protected static int range(int lb, int ub, int x)
         {
             return x < lb ? lb : (x > ub ? ub : x);
         }
 
+        /// <summary>
+        /// Grow the size to a desired size.
+        /// </summary>
+        /// <param name="desiredSize"></param>
+        /// <returns>The Grow size</returns>
         protected int GrowBy(int desiredSize)
         {
             int s= 0;
@@ -409,6 +442,14 @@ namespace TypeCobol.Compiler.Source
             {
                 Observers(this, info);
             }
+        }
+
+        /// <summary>
+        /// Dump the content of this Source Text.
+        /// <param name="allChars">Tru eif even non printable chars must be dumped, false otherwise</param>
+        /// </summary>
+        public virtual void Dump(bool allChars = true)
+        {
         }
 
         /// <summary>
