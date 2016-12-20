@@ -429,9 +429,15 @@ namespace TypeCobol.Compiler.Scanner
         public bool AtBeginningOfSentence
         {
             get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC ||
-                    // Special case : COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
-                    // Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
-                    (BeforeLastSignificantToken!=null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL_INCLUDE) && LastSignificantToken.TokenType == TokenType.UserDefinedWord); }
+                    // Special cases : compiler directives sometimes without a final PeriodSeparator
+                    // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
+                    //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
+                    (BeforeLastSignificantToken!=null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL_INCLUDE) && LastSignificantToken.TokenType == TokenType.UserDefinedWord) ||
+                    // 2. EJECT | SKIP1 | SKIP2 | SKIP3 <= sometimes PeriodSeparator missing here.
+                    (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
+                    // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
+                    (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken.TokenFamily == TokenFamily.AlphanumericLiteral);
+            }
         }
 
         /// <summary>
