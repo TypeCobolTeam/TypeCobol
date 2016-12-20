@@ -155,17 +155,8 @@ namespace TypeCobol.Compiler.Parser
                     foreach (var codeElementParseTree in codeElementsParseTree.codeElement())
                     {
                         // Get the first line that was parsed     
-                        CodeElementsLine codeElementsLine;
                         var tokenStart = (Token)codeElementParseTree.Start;
-                        var importedToken = tokenStart as ImportedToken;
-                        if (importedToken != null)
-                        {
-                            codeElementsLine = (CodeElementsLine)importedToken.CopyDirective.TextNameSymbol.TokensLine;
-                        }
-                        else
-                        {
-                            codeElementsLine = ((CodeElementsLine)tokenStart.TokensLine);
-                        }
+                        CodeElementsLine codeElementsLine = GetCodeElementsLineForToken(tokenStart);
 
                         // Register that this line was updated
                         // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
@@ -211,12 +202,17 @@ namespace TypeCobol.Compiler.Parser
                                 }
                             }
                         }
-                        if (codeElementsParseTree.Diagnostics != null)
-                        {                            
-                            foreach (ParserDiagnostic d in codeElementsParseTree.Diagnostics)
-                            {
-                                codeElementsLine.AddParserDiagnostic(d);
-                            }
+                    }
+                }
+                // If the parse tree contains errors
+                if (codeElementsParseTree.Diagnostics != null)
+                {
+                    foreach (ParserDiagnostic d in codeElementsParseTree.Diagnostics)
+                    {
+                        if (d.OffendingSymbol != null)
+                        {
+                            CodeElementsLine codeElementsLine = GetCodeElementsLineForToken((Token)d.OffendingSymbol);
+                            codeElementsLine.AddParserDiagnostic(d);
                         }
                     }
                 }
@@ -244,7 +240,23 @@ namespace TypeCobol.Compiler.Parser
             return codeElementsLinesChanges;
         }
 
-        
+        private static CodeElementsLine GetCodeElementsLineForToken(Token tokenStart)
+        {
+            CodeElementsLine codeElementsLine;
+            var importedToken = tokenStart as ImportedToken;
+            if (importedToken != null)
+            {
+                codeElementsLine = (CodeElementsLine)importedToken.CopyDirective.TextNameSymbol.TokensLine;
+            }
+            else
+            {
+                codeElementsLine = ((CodeElementsLine)tokenStart.TokensLine);
+            }
+
+            return codeElementsLine;
+        }
+
+
         /// <summary>
         /// Illustration : lines with code elements continued from previous line or with a continuation on next line (before update)
         /// SW represents a code element starting word

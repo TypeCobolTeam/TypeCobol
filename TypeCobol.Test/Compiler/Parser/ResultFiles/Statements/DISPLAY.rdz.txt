@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[16,17]<27,Error,Syntax>Syntax error : no viable alternative at input 'no' (RuleStack=codeElement>displayStatement>variable4, OffendingSymbol=[16,17:no]<NO> on line 6)
-[53,56]<27,Error,Syntax>Syntax error : no viable alternative at input 'toto ... with' (RuleStack=codeElement, OffendingSymbol=[53,56:with]<WITH> on line 16)
+[16,17]<27,Error,Syntax>Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} (RuleStack=codeElement>displayStatement, OffendingSymbol=[16,17:no]<NO> on line 6)
+[48,51]<27,Error,Syntax>Syntax error : extraneous input 'toto' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>displayStatement, OffendingSymbol=[48,51:toto]<UserDefinedWord> on line 16)
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto
@@ -59,9 +59,10 @@
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [16,29+:'C"est à dire']<AlphanumericLiteral>(',Y,Y){C"est à dire}
 - variables = 'C"est à dire'
 
-[[DisplayStatement]] [8,14:display]<DISPLAY> --> [42,46:SYSIN]<UserDefinedWord>
+[[DisplayStatement]] [8,14:display]<DISPLAY> --> [61,69:advancing]<ADVANCING>
 - variables = var1 'litError' var2
 - OutputDeviceName = SYSIN
+- WithNoAdvancing
 
 [[DisplayStatement]] [8,14:display]<DISPLAY> --> [51,59:advancing]<ADVANCING>
 - variables = var1 'lit2' var2

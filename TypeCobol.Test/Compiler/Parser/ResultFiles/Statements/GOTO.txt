@@ -1,10 +1,9 @@
 ﻿--- Diagnostics ---
-[1,2]<27,Error,Syntax>Syntax error : no viable alternative at input 'GO ... GO' (RuleStack=codeElement>gotoStatement, OffendingSymbol=[1,2:GO]<GO> on line 39)
-[1,2]<27,Error,Syntax>Syntax error : no viable alternative at input 'i2 ... GO' (RuleStack=codeElement, OffendingSymbol=[1,2:GO]<GO> on line 45)
+[37,38]<27,Error,Syntax>Syntax error : extraneous input 'i2' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>gotoStatement>gotoConditional>variable1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference, OffendingSymbol=[37,38:i2]<UserDefinedWord> on line 42)
 [1,2]<27,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 45)
-[1,2]<27,Error,Syntax>Syntax error : mismatched input 'GO' expecting DEPENDING (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 46)
+[1,2]<27,Error,Syntax>Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 46)
 [1,2]<27,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 46)
-[1,2]<27,Error,Syntax>Syntax error : mismatched input 'GO' expecting DEPENDING (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 48)
+[1,2]<27,Error,Syntax>Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 48)
 [1,2]<27,Error,Syntax>Syntax error : Conditional GO TO: Maximum 255 <procedure name> allowed (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 50)
 --- Code Elements ---
 GOTO procedurename

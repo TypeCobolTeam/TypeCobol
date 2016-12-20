@@ -1,69 +1,119 @@
 ﻿--- Diagnostics ---
-[27,27]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[27,27+:.]<PeriodSeparator> on line 2)
-[27,27]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[27,27+:.]<PeriodSeparator> on line 3)
-[34,34]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[34,34+:.]<PeriodSeparator> on line 4)
-[34,34]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[34,34+:.]<PeriodSeparator> on line 5)
-[86,86]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[86,86+:.]<PeriodSeparator> on line 6)
-[21,26]<27,Error,Syntax>Syntax error : no viable alternative at input 'GIVING' (RuleStack=codeElement>sortStatement, OffendingSymbol=[21,26:GIVING]<GIVING> on line 8)
-[28,33]<27,Error,Syntax>Syntax error : no viable alternative at input 'GIVING' (RuleStack=codeElement>sortStatement, OffendingSymbol=[28,33:GIVING]<GIVING> on line 9)
-[56,56]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[56,56+:.]<PeriodSeparator> on line 11)
-[42,42]<27,Error,Syntax>Syntax error : no viable alternative at input '.' (RuleStack=codeElement>sortStatement, OffendingSymbol=[42,42+:.]<PeriodSeparator> on line 12)
-[57,61]<27,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement>sortStatement, OffendingSymbol=[57,61:INPUT]<INPUT> on line 14)
-[44,48]<27,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement>sortStatement, OffendingSymbol=[44,48:INPUT]<INPUT> on line 15)
-[54,59]<27,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[54,59:OUTPUT]<OUTPUT> on line 17)
-[71,76]<27,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[71,76:OUTPUT]<OUTPUT> on line 18)
-[19,23]<27,Error,Syntax>Syntax error : no viable alternative at input 'USING' (RuleStack=codeElement>sortStatement>onAscendingDescendingKey>qualifiedDataName, OffendingSymbol=[19,23:USING]<USING> on line 20)
-[19,23]<27,Error,Syntax>Syntax error : no viable alternative at input 'USING' (RuleStack=codeElement>sortStatement>onAscendingDescendingKey>qualifiedDataName, OffendingSymbol=[19,23:USING]<USING> on line 21)
-[19,23]<27,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement>sortStatement>onAscendingDescendingKey>qualifiedDataName, OffendingSymbol=[19,23:INPUT]<INPUT> on line 22)
-[19,23]<27,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement>sortStatement>onAscendingDescendingKey>qualifiedDataName, OffendingSymbol=[19,23:INPUT]<INPUT> on line 23)
+[27,27]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[27,27+:.]<PeriodSeparator> on line 2)
+[27,27]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[27,27+:.]<PeriodSeparator> on line 3)
+[34,34]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[34,34+:.]<PeriodSeparator> on line 4)
+[34,34]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[34,34+:.]<PeriodSeparator> on line 5)
+[86,86]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[86,86+:.]<PeriodSeparator> on line 6)
+[21,26]<27,Error,Syntax>Syntax error : extraneous input 'GIVING' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[21,26:GIVING]<GIVING> on line 8)
+[57,57]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[57,57+:.]<PeriodSeparator> on line 8)
+[28,33]<27,Error,Syntax>Syntax error : extraneous input 'GIVING' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[28,33:GIVING]<GIVING> on line 9)
+[43,43]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, ASCENDING, COLLATING, DESCENDING, DUPLICATES, INPUT, ON, SEQUENCE, USING, WITH} (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[43,43+:.]<PeriodSeparator> on line 9)
+[56,56]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, GIVING, OUTPUT} (RuleStack=codeElement>sortStatement>usingFilenames, OffendingSymbol=[56,56+:.]<PeriodSeparator> on line 11)
+[42,42]<27,Error,Syntax>Syntax error : extraneous input '.' expecting {user defined word, GIVING, OUTPUT} (RuleStack=codeElement>sortStatement>usingFilenames, OffendingSymbol=[42,42+:.]<PeriodSeparator> on line 12)
+[57,61]<27,Error,Syntax>Syntax error : extraneous input 'INPUT' expecting {user defined word, GIVING, OUTPUT} (RuleStack=codeElement>sortStatement>usingFilenames, OffendingSymbol=[57,61:INPUT]<INPUT> on line 14)
+[73,85]<27,Error,Syntax>Syntax error : mismatched input 'procedurename' expecting DIVISION (RuleStack=codeElement>procedureDivisionHeader, OffendingSymbol=[73,85:procedurename]<UserDefinedWord> on line 14)
+[44,48]<27,Error,Syntax>Syntax error : extraneous input 'INPUT' expecting {user defined word, GIVING, OUTPUT} (RuleStack=codeElement>sortStatement>usingFilenames, OffendingSymbol=[44,48:INPUT]<INPUT> on line 15)
+[60,61]<27,Error,Syntax>Syntax error : mismatched input 'IS' expecting DIVISION (RuleStack=codeElement>procedureDivisionHeader, OffendingSymbol=[60,61:IS]<IS> on line 15)
+[54,59]<27,Error,Syntax>Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>sortStatement>givingFilenames, OffendingSymbol=[54,59:OUTPUT]<OUTPUT> on line 17)
+[71,83]<27,Error,Syntax>Syntax error : mismatched input 'procedurename' expecting DIVISION (RuleStack=codeElement>procedureDivisionHeader, OffendingSymbol=[71,83:procedurename]<UserDefinedWord> on line 17)
+[71,76]<27,Error,Syntax>Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>sortStatement>givingFilenames, OffendingSymbol=[71,76:OUTPUT]<OUTPUT> on line 18)
+[88,89]<27,Error,Syntax>Syntax error : mismatched input 'IS' expecting DIVISION (RuleStack=codeElement>procedureDivisionHeader, OffendingSymbol=[88,89:IS]<IS> on line 18)
+[68,81]<27,Error,Syntax>Syntax error : extraneous input 'procedurename2' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[68,81:procedurename2]<UserDefinedWord> on line 20)
+[89,98]<27,Error,Syntax>Syntax error : extraneous input 'procedure3' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[89,98:procedure3]<UserDefinedWord> on line 21)
+[50,63]<27,Error,Syntax>Syntax error : no viable alternative at input 'procedurename2' (RuleStack=codeElement>sortStatement, OffendingSymbol=[50,63:procedurename2]<UserDefinedWord> on line 22)
+[19,23]<27,Error,Syntax>Syntax error : mismatched input 'INPUT' expecting user defined word (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[19,23:INPUT]<INPUT> on line 22)
+[70,79]<27,Error,Syntax>Syntax error : no viable alternative at input 'procedure3' (RuleStack=codeElement>sortStatement, OffendingSymbol=[70,79:procedure3]<UserDefinedWord> on line 23)
+[19,23]<27,Error,Syntax>Syntax error : mismatched input 'INPUT' expecting user defined word (RuleStack=codeElement>sortStatement>onAscendingDescendingKey, OffendingSymbol=[19,23:INPUT]<INPUT> on line 23)
 [25,26]<27,Error,Syntax>Syntax error : missing DUPLICATES at 'IN' (RuleStack=codeElement>sortStatement, OffendingSymbol=[25,26:IN]<IN> on line 25)
 [25,26]<27,Error,Syntax>Syntax error : missing DUPLICATES at 'IN' (RuleStack=codeElement>sortStatement, OffendingSymbol=[25,26:IN]<IN> on line 26)
 [55,56]<27,Error,Syntax>Syntax error : missing SEQUENCE at 'IS' (RuleStack=codeElement>sortStatement>collatingSequence, OffendingSymbol=[55,56:IS]<IS> on line 28)
 [55,56]<27,Error,Syntax>Syntax error : missing SEQUENCE at 'IS' (RuleStack=codeElement>sortStatement>collatingSequence, OffendingSymbol=[55,56:IS]<IS> on line 29)
-[68,72]<27,Error,Syntax>Syntax error : extraneous input 'USING' expecting UserDefinedWord (RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference>symbolReference4>alphanumericValue4, OffendingSymbol=[68,72:USING]<USING> on line 31)
 [84,89]<27,Error,Syntax>Syntax error : no viable alternative at input 'GIVING' (RuleStack=codeElement>sortStatement, OffendingSymbol=[84,89:GIVING]<GIVING> on line 31)
-[68,72]<27,Error,Syntax>Syntax error : extraneous input 'USING' expecting UserDefinedWord (RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference>symbolReference4>alphanumericValue4, OffendingSymbol=[68,72:USING]<USING> on line 32)
+[68,72]<27,Error,Syntax>Syntax error : extraneous input 'USING' expecting user defined word (RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference>symbolReference4>alphanumericValue4, OffendingSymbol=[68,72:USING]<USING> on line 31)
 [84,89]<27,Error,Syntax>Syntax error : no viable alternative at input 'GIVING' (RuleStack=codeElement>sortStatement, OffendingSymbol=[84,89:GIVING]<GIVING> on line 32)
+[68,72]<27,Error,Syntax>Syntax error : extraneous input 'USING' expecting user defined word (RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference>symbolReference4>alphanumericValue4, OffendingSymbol=[68,72:USING]<USING> on line 32)
 [51,60]<27,Error,Syntax>Syntax error : no viable alternative at input 'DUPLICATES' (RuleStack=codeElement>sortStatement, OffendingSymbol=[51,60:DUPLICATES]<DUPLICATES> on line 34)
 [46,49]<27,Error,Syntax>Syntax error : no viable alternative at input 'WITH' (RuleStack=codeElement>sortStatement, OffendingSymbol=[46,49:WITH]<WITH> on line 35)
-[66,75]<27,Error,Syntax>Syntax error : no viable alternative at input 'DUPLICATES' (RuleStack=codeElement, OffendingSymbol=[66,75:DUPLICATES]<DUPLICATES> on line 37)
-[61,64]<27,Error,Syntax>Syntax error : no viable alternative at input 'WITH' (RuleStack=codeElement, OffendingSymbol=[61,64:WITH]<WITH> on line 38)
-[142,151]<27,Error,Syntax>Syntax error : no viable alternative at input 'DUPLICATES' (RuleStack=codeElement, OffendingSymbol=[142,151:DUPLICATES]<DUPLICATES> on line 39)
-[137,140]<27,Error,Syntax>Syntax error : no viable alternative at input 'WITH' (RuleStack=codeElement, OffendingSymbol=[137,140:WITH]<WITH> on line 40)
+[66,75]<27,Error,Syntax>Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>sortStatement>givingFilenames, OffendingSymbol=[66,75:DUPLICATES]<DUPLICATES> on line 37)
+[61,64]<27,Error,Syntax>Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>sortStatement>givingFilenames, OffendingSymbol=[61,64:WITH]<WITH> on line 38)
+[142,151]<27,Error,Syntax>Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[142,151:DUPLICATES]<DUPLICATES> on line 39)
+[137,140]<27,Error,Syntax>Syntax error : extraneous input 'WITH' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[137,140:WITH]<WITH> on line 40)
 --- Code Elements ---
-[[SortStatement]] [1,4:SORT]<SORT> --> [27,27+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [26,26:d]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [27,27+:.]<PeriodSeparator>
+[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [34,34+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [26,26:d]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [34,34+:.]<PeriodSeparator>
+[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [86,86+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [32,33:d3]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [57,57+:.]<PeriodSeparator>
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [43,43+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [32,33:d3]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [56,56+:.]<PeriodSeparator>
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [42,42+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [84,85:d9]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [102,102+:.]<PeriodSeparator>
+[[SentenceEnd]] [86,86+:.]<PeriodSeparator> --> [86,86+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [114,114+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [48,56:filename3]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [44,52:filename2]<UserDefinedWord>
+[[SentenceEnd]] [57,57+:.]<PeriodSeparator> --> [57,57+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [61,69:filename3]<UserDefinedWord>
+[[SortStatement]] [1,4:SORT]<SORT> --> [35,42:filename]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [81,81+:.]<PeriodSeparator>
+[[SentenceEnd]] [43,43+:.]<PeriodSeparator> --> [43,43+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [97,97+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [47,55:filename3]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [80,80+:.]<PeriodSeparator>
+[[SentenceEnd]] [56,56+:.]<PeriodSeparator> --> [56,56+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [96,96+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [34,41:filename]<UserDefinedWord>
+
+[[SentenceEnd]] [42,42+:.]<PeriodSeparator> --> [42,42+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [57,61:INPUT]<INPUT>
+
+[[ProcedureDivisionHeader]] [63,71:PROCEDURE]<PROCEDURE> --> [94,101:filename]<UserDefinedWord>
+
+[[SentenceEnd]] [102,102+:.]<PeriodSeparator> --> [102,102+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [44,48:INPUT]<INPUT>
+
+[[ProcedureDivisionHeader]] [50,58:PROCEDURE]<PROCEDURE> --> [105,113:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [114,114+:.]<PeriodSeparator> --> [114,114+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [54,59:OUTPUT]<OUTPUT>
+
+[[ProcedureDivisionHeader]] [61,69:PROCEDURE]<PROCEDURE> --> [71,83:procedurename]<UserDefinedWord>
+
+[[SentenceEnd]] [84,84+:.]<PeriodSeparator> --> [84,84+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [71,76:OUTPUT]<OUTPUT>
+
+[[ProcedureDivisionHeader]] [78,86:PROCEDURE]<PROCEDURE> --> [111,124:procedurename2]<UserDefinedWord>
+
+[[SentenceEnd]] [125,125+:.]<PeriodSeparator> --> [125,125+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [53,66:procedurename1]<UserDefinedWord>
+
+[[SentenceEnd]] [82,82+:.]<PeriodSeparator> --> [82,82+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [74,87:procedurename2]<UserDefinedWord>
+
+[[SentenceEnd]] [99,99+:.]<PeriodSeparator> --> [99,99+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [72,79:filename]<UserDefinedWord>
+
+[[SentenceEnd]] [80,80+:.]<PeriodSeparator> --> [80,80+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [88,95:filename]<UserDefinedWord>
+
+[[SentenceEnd]] [96,96+:.]<PeriodSeparator> --> [96,96+:.]<PeriodSeparator>
 
 [[SortStatement]] [1,4:SORT]<SORT> --> [91,98:filename]<UserDefinedWord>
 
@@ -81,19 +131,35 @@
 
 [[SentenceEnd]] [182,182+:.]<PeriodSeparator> --> [182,182+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [100,100+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [91,99:filename2]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [100,100+:.]<PeriodSeparator>
+[[SentenceEnd]] [100,100+:.]<PeriodSeparator> --> [100,100+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [113,113+:.]<PeriodSeparator>
+[[SortStatement]] [1,4:SORT]<SORT> --> [91,99:filename2]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [113,113+:.]<PeriodSeparator>
+[[SentenceEnd]] [100,100+:.]<PeriodSeparator> --> [100,100+:.]<PeriodSeparator>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [51,59:filename2]<UserDefinedWord>
+[[SortStatement]] [1,4:SORT]<SORT> --> [104,112:filename2]<UserDefinedWord>
 
-[[SortStatement]] [1,4:SORT]<SORT> --> [51,59:filename2]<UserDefinedWord>
+[[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [104,112:filename2]<UserDefinedWord>
+
+[[SentenceEnd]] [113,113+:.]<PeriodSeparator> --> [113,113+:.]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [108,119:alphabetname]<UserDefinedWord>
+
+[[SentenceEnd]] [120,121:. ]<PeriodSeparator> --> [120,121:. ]<PeriodSeparator>
+
+[[SortStatement]] [1,4:SORT]<SORT> --> [108,119:alphabetname]<UserDefinedWord>
+
+[[SentenceEnd]] [120,120+:.]<PeriodSeparator> --> [120,120+:.]<PeriodSeparator>
 
 [[SortStatement]] [1,4:SORT]<SORT> --> [122,135:procedurename3]<UserDefinedWord>
 
+[[SentenceEnd]] [196,196+:.]<PeriodSeparator> --> [196,196+:.]<PeriodSeparator>
+
 [[SortStatement]] [1,4:SORT]<SORT> --> [122,135:procedurename4]<UserDefinedWord>
+
+[[SentenceEnd]] [196,196+:.]<PeriodSeparator> --> [196,196+:.]<PeriodSeparator>
 

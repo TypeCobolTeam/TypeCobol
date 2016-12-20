@@ -17,8 +17,8 @@ SORT x ASCENDING  d1 d2 d3 USING filename1 INPUT PROCEDURE IS procedurename1 THR
 SORT x DESCENDING d USING filename1 GIVING filename2 OUTPUT PROCEDURE procedurename.
 SORT x ASCENDING  d1 d2 d3 USING filename1 GIVING filename2 filename3 OUTPUT PROCEDURE IS procedurename1 THRU procedurename2.
 * only 1 filename in INPUT/OUTPUT PROCEDURE
-SORT x ASCENDING  USING filename1 OUTPUT PROCEDURE procedurename1 procedurename2.
-SORT x DESCENDING USING filename1 OUTPUT PROCEDURE procedurename1 THRU procedurename2 procedure3.
+SORT x ASCENDING a USING filename1 OUTPUT PROCEDURE procedurename1 procedurename2.
+SORT x DESCENDING d USING filename1 OUTPUT PROCEDURE procedurename1 THRU procedurename2 procedure3.
 SORT x ASCENDING  INPUT PROCEDURE procedurename1 procedurename2 GIVING filename.
 SORT x DESCENDING INPUT PROCEDURE procedurename1 THRU procedurename2 procedure3 GIVING filename.
 * missing DUPLICATES keyword
