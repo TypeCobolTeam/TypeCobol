@@ -51,6 +51,9 @@ namespace TypeCobol.Compiler.Source
             lastIndex = -1;
             ///Add a listener to us.
             text.Observers += TextChangeObserver;
+            ///Build all lines
+            SourceText.TextChangeInfo info = new SourceText.TextChangeInfo(SourceText.TextChanges.TextReplaced, 0, 0, text.Size);
+            text.Send(info, text);
         }
 
         /// <summary>
@@ -72,6 +75,16 @@ namespace TypeCobol.Compiler.Source
         /// </summary>
         /// <param name="text">The text to load</param>
         public void LoadSourceText(String text)
+        {
+            Source.Delete(0, Source.Size);
+            Source.Insert(text, 0, 0);
+        }
+
+        /// <summary>
+        /// Load a source text as an array of characters
+        /// </summary>
+        /// <param name="text">The text</param>
+        public void LoadSourceChar(char[] text)
         {
             Source.Delete(0, Source.Size);
             Source.Insert(text, 0, 0);
@@ -166,11 +179,12 @@ namespace TypeCobol.Compiler.Source
                         try 
                         {
                             List<SourceLine> added = new List<SourceLine>();                        
-                            String s = this.Source.GetTextAt(from, from + info.Size);
+                            IEnumerable<char> s = info.Data == null ? this.Source.GetTextAt(from, from + info.Size) : info.Data;
                             bool hasLineFeed = false;
-                            for (int i = 0; i < length; i++) 
+                            int i = -1;
+                            foreach(char c in s) 
                             {   //Check line feed to detect splitted lines
-                                char c = s[i];
+                                i++;
                                 if (c == '\n') 
                                 {
                                     int lineFeedPos = from + i + 1;

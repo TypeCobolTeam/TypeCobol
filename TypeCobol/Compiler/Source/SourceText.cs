@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Source
     /// Dependents of the Source Text are notivied by the observer mechanism and
     /// receive a change event.
     /// </summary>
-    public abstract class SourceText
+    public abstract class SourceText : IEnumerable<char>
     {
        // A delegate type for hooking up change notifications.
        public delegate void ChangedEventHandler(object sender, EventArgs e);
@@ -66,6 +66,15 @@ namespace TypeCobol.Compiler.Source
             {
                 get;
                 private set;
+            }
+
+            /// <summary>
+            /// Inserted Data if any
+            /// </summary>
+            public IEnumerable<char> Data
+            {
+                get;
+                internal set;
             }
 
             /// <summary>
@@ -152,6 +161,22 @@ namespace TypeCobol.Compiler.Source
                 if (from != to)
                     Positions.Delete(from, to - from);
                 Positions.Insert(from, text.Length);
+            }
+        }
+
+        /// <summary>
+        /// Insert the content of an array of characters from a position up to a position.
+        /// </summary>
+        /// <param name="text">The array of characters to insert</param>
+        /// <param name="from">The start location</param>
+        /// <param name="to">The end location</param>
+        public virtual void Insert(char[] buffer, int from, int to)
+        {
+            if (Positions != null)
+            {
+                if (from != to)
+                    Positions.Delete(from, to - from);
+                Positions.Insert(from, buffer.Length);
             }
         }
 
@@ -436,10 +461,24 @@ namespace TypeCobol.Compiler.Source
         /// Send a TextChange Event
         /// </summary>
         /// <param name="info"></param>
-        protected void Send(TextChangeInfo info)
+        internal void Send(TextChangeInfo info)
         {
             if (Observers != null)
             {
+                info.Data = null;
+                Observers(this, info);
+            }
+        }
+
+        /// <summary>
+        /// Send a TextChange Event
+        /// </summary>
+        /// <param name="info"></param>
+        internal void Send(TextChangeInfo info, IEnumerable<char> data)
+        {
+            if (Observers != null)
+            {
+                info.Data = data;
                 Observers(this, info);
             }
         }
@@ -468,6 +507,24 @@ namespace TypeCobol.Compiler.Source
                 if (a[i] != b[i]) { return false; }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Get the Source Text Enumerator Instance.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<char> GetEnumerator()
+        {
+            int length = Size;
+            for (int i = 0; i < length; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

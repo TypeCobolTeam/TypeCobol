@@ -137,7 +137,7 @@ namespace TypeCobol.Compiler.Source
             if (LowWaterMark())
 	            Expand(size/2);
             base.Insert(paste, from, to);
-            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size));     
+            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size), paste);     
         }
 
         /// <summary>
@@ -171,7 +171,40 @@ namespace TypeCobol.Compiler.Source
             if (LowWaterMark())
                 Expand(size / 2);
             base.Insert(text, from, to);
-            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, text.Length));
+            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, text.Length), text);
+        }
+
+        /// <summary>
+        /// Insert the content of an array of characters from a position up to a position.
+        /// </summary>
+        /// <param name="buffer">The array of characters to insert</param>
+        /// <param name="from">The start location</param>
+        /// <param name="to">The end location</param>
+        public override void Insert(char[] buffer, int from, int to)
+        {
+            int shift = buffer.Length - (to - from);
+
+            if (!CheckRange(next, from, to))
+                return;
+
+            if ((to - from) > 0)
+                Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));
+
+            if (HighWaterMark(shift))
+                Expand(GrowBy(size + shift));
+
+            if (shift < 0)
+                Array.Copy(content, to, content, to + shift, next - to);
+            else if (shift > 0)
+                Array.Copy(content, from, content, from + shift, next - from);
+
+            //---- insert pasted text
+            Array.Copy(buffer, 0, content, from, buffer.Length);
+            next += shift;
+            if (LowWaterMark())
+                Expand(size / 2);
+            base.Insert(buffer, from, to);
+            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, buffer.Length), buffer);
         }
 
         /// <summary>
@@ -293,7 +326,7 @@ namespace TypeCobol.Compiler.Source
             if (LowWaterMark())
 	            Expand(size / 2);
             base.Insert(c, from, to);
-            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1));     
+            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1), new char[] { c });     
         }
 
         /// <summary>

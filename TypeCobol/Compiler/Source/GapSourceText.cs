@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.Source
         /// <param name="buf">The initial content</param>
         /// <param name="len">The len of the initial content</param>
         /// <param name="ic">true if the initial buffer does not need to be copied, otherwise if false the initial buffer is duplicated</param>
-        GapSourceText(char[] buf, int len, bool ic)
+        public GapSourceText(char[] buf, int len, bool ic)
         {   
             if (len < 0)
 	            len = buf.Length;
@@ -242,7 +242,7 @@ namespace TypeCobol.Compiler.Source
             if (LowWaterMark())
 	            Shrink();   
             base.Insert(paste, from, to);
-            base.Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size));
+            base.Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, paste.Size), paste);
         }
 
         /// <summary>
@@ -279,7 +279,43 @@ namespace TypeCobol.Compiler.Source
             if (LowWaterMark())
                 Shrink();
             base.Insert(text, from, to);
-            base.Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, text.Length));
+            base.Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, text.Length), text);
+        }
+
+        /// <summary>
+        /// Insert the content of an array of characters from a position up to a position.
+        /// </summary>
+        /// <param name="buffer">The array of characters to insert</param>
+        /// <param name="from">The start location</param>
+        /// <param name="to">The end location</param>
+        public override void Insert(char[] buffer, int from, int to)
+        {
+            if (!CheckRange(length, from, to))
+                return;
+
+            int shift = buffer.Length - (to - from);
+
+            if ((to - from) > 0)
+                Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));
+
+            if (HighWaterMark(shift))
+                Expand(GrowBy(size + shift), from);
+            else
+                MoveGap(from);
+
+            Array.Copy(buffer, 0, body, from, buffer.Length);
+
+            length += shift;
+            gaplen -= shift;
+            part1len += buffer.Length;
+            part2body -= shift;
+            part2len = length - part1len;
+            body2 = part2body + part1len;
+
+            if (LowWaterMark())
+                Shrink();
+            base.Insert(buffer, from, to);
+            base.Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, buffer.Length), buffer);
         }
 
         /// <summary>
@@ -454,7 +490,7 @@ namespace TypeCobol.Compiler.Source
 	            Shrink();
 
             base.Insert(c, from, to);
-            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1));     
+            Send(new TextChangeInfo(TextChanges.TextReplaced, from, to, 1), new char[]{c});     
         }
 
         /// <summary>
