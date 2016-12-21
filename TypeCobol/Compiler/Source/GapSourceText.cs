@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TypeCobol.Compiler.Source
 {
@@ -455,7 +456,6 @@ namespace TypeCobol.Compiler.Source
 
         /// <summary>
         /// Insert one character in this SourceText from a location to another location.
-        /// The text portion in the range [from - to] will be removed
         /// </summary>
         /// <param name="c">The character to insert</param>
         /// <param name="from">The start offset offset the insert location</param>
@@ -466,9 +466,6 @@ namespace TypeCobol.Compiler.Source
 
             if (!CheckRange(length,from,to))
 	            return;
-
-            if ((to - from) > 0)
-                Send(new TextChangeInfo(TextChanges.TextAboutDeleted, from, to));     
 
             if (HighWaterMark(shift))
 	            Expand(GrowBy(size+shift), from);
@@ -573,6 +570,17 @@ namespace TypeCobol.Compiler.Source
             for (i = part1len + gaplen; i < size; i++)
 	            hash= (hash << 1) ^ body[i];
             return hash;
+        }
+
+        /// <summary>
+        /// Write the content of this SourceText into a TextWriter
+        /// </summary>
+        /// <param name="writer">The TextWriter instance</param>
+        public override void Write(TextWriter writer)
+        {
+            writer.Write(body, 0, part1len);
+            int afterGap = part1len + gaplen + 1;
+            writer.Write(body, afterGap, Size - afterGap);
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TypeCobol.Compiler.Source
 {
@@ -223,7 +224,6 @@ namespace TypeCobol.Compiler.Source
 
         /// <summary>
         /// Insert one character in this SourceText from a location to another location.
-        /// The text portion in the range [from - to] will be removed
         /// </summary>
         /// <param name="c">The character to insert</param>
         /// <param name="from">The start offset offset the insert location</param>
@@ -482,6 +482,12 @@ namespace TypeCobol.Compiler.Source
                 Observers(this, info);
             }
         }
+
+        /// <summary>
+        /// Write the content of this SourceText into a TextWriter
+        /// </summary>
+        /// <param name="writer">The TextWriter instance</param>
+        public abstract void Write(TextWriter writer);
 
         /// <summary>
         /// Dump the content of this Source Text.
