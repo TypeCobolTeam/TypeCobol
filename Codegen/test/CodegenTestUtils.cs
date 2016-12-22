@@ -36,7 +36,7 @@ namespace TypeCobol.Codegen {
             WriteErrors(writer, document.Errors[1], "ProgramClass", columns);
             // write generated code
 #if GENERATOR2
-			var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, skeletons);
+            var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, skeletons);
 #else
             var codegen = new Generator(writer, document.Results.TokensLines, skeletons);
 #endif            

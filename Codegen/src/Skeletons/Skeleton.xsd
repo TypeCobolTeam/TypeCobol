@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Skeleton"
+    targetNamespace="http://tempuri.org/Skeleton.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/Skeleton.xsd"
+    xmlns:mstns="http://tempuri.org/Skeleton.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <xs:element name="skeletons">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="skeleton">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="conditions">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="condition">
+                      <xs:complexType>
+                        <xs:attribute name="node" type="xs:string" use="required"/>
+                        <xs:attribute name="name" type="xs:string"/>
+                        <xs:attribute name="level" type="xs:string"/>
+                        <xs:attribute name="type" type="xs:string"/>
+                        <xs:attribute name="sender" type="xs:string"/>
+                        <xs:attribute name="receiver" type="xs:string"/>
+                        <xs:attribute name="unsafe" type="xs:string"/>
+                        <xs:attribute name="function" type="xs:string"/>
+                        <xs:attribute name="definitions" type="xs:string"/>
+                        <xs:attribute name="variables" type="xs:string"/>
+                        <xs:attribute name="typecobol" type="xs:string"/>
+                        <xs:attribute name="visibility" type="xs:string"/>
+                        <xs:attribute name="copyname" type="xs:string"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="patterns">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="pattern">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="name" type="xs:string"/>
+                            <xs:attribute name="group" type="xs:string"/>
+                            <xs:attribute name="location" type="xs:string"/>
+                            <xs:attribute name="action" type="xs:string"/>
+                            <xs:attribute name="var" type="xs:string"/>
+                            <xs:attribute name="position" type="xs:int"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>                      
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>    
+</xs:schema>

@@ -41,7 +41,8 @@ namespace TypeCobol.Codegen
                 foreach (var pattern in skeleton)
                 {
                     var action = GetAction(node, properties, pattern);
-                    if (action != null) actions.Add(action);
+                    if (action != null) 
+                        actions.Add(action);
                 }
             }
             return actions;
@@ -55,7 +56,8 @@ namespace TypeCobol.Codegen
         {
             var actions = GetActions(node);
             AddRange(actions);
-            foreach (var child in new List<Node>(node.Children)) child.Accept(this);
+            foreach (var child in new List<Node>(node.Children)) 
+                child.Accept(this);
         }
 
         /// <summary>
@@ -68,9 +70,11 @@ namespace TypeCobol.Codegen
             var groups = new List<string>();
             foreach (var action in this)
             {
-                if (action.Group != null && groups.Contains(action.Group)) continue;
+                if (action.Group != null && groups.Contains(action.Group)) 
+                    continue;
                 action.Execute();
-                if (action.Group != null) groups.Add(action.Group);
+                if (action.Group != null) 
+                    groups.Add(action.Group);
             }
         }
 
@@ -83,7 +87,8 @@ namespace TypeCobol.Codegen
                 {
                     active = active || condition.Verify(node); // OR
                 }
-                if (active) return skeleton;//TODO: what if more than 1 skel activates?
+                if (active) 
+                    return skeleton;//TODO: what if more than 1 skel activates?
             }
             return null;
         }
