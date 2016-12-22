@@ -127,7 +127,7 @@ namespace TypeCobol.Codegen
         /// </summary>
         private void CreateTargetDocument()
         {
-            TargetDocument = new Compiler.Source.SourceDocument();
+            TargetDocument = new Compiler.Source.SourceDocument(/*new StringSourceText()*/);
             //Insert all input lines
             StringWriter sw = new StringWriter();
             foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.Parser.Results.TokensLines)
@@ -136,7 +136,7 @@ namespace TypeCobol.Codegen
             }
             //Load the Original source code
             TargetDocument.LoadSourceText(sw.ToString());
-            TargetDocument.Dump();
+            //TargetDocument.Dump();
             SourceLineMap = new Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine>();            
             var iter = this.Parser.Results.TokensLines.GetEnumerator();
             for (int i = 0; i < TargetDocument.LineCount && iter.MoveNext(); i++)

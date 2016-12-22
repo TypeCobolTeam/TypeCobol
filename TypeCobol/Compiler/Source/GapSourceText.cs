@@ -579,8 +579,8 @@ namespace TypeCobol.Compiler.Source
         public override void Write(TextWriter writer)
         {
             writer.Write(body, 0, part1len);
-            int afterGap = part1len + gaplen + 1;
-            writer.Write(body, afterGap, Size - afterGap);
+            int afterGap = part1len + gaplen;
+            writer.Write(body, afterGap, length - part1len);
         }
 
         /// <summary>

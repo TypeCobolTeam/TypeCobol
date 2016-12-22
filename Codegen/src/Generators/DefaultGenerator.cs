@@ -73,7 +73,7 @@ namespace TypeCobol.Codegen.Generators
                 if (l == line) 
                     break;
                 if (!ShouldCopy(l))
-                {//JCM Remove  this line from the Input ????
+                {//JCM Remove  this line from the Input ???? This is the way use to remove line from the source code
                     SourceDocument.SourceLine src_line = SourceLineMap[l as TypeCobol.Compiler.Scanner.ITokensLine];
                     base.TargetDocument.Source.Delete(src_line.From, src_line.To);
                 }
@@ -123,19 +123,26 @@ namespace TypeCobol.Codegen.Generators
         {
             if (line == lastline) 
                 return;
+            StringWriter sw = null;
             if (IsInInput(line))
             {
                 if (isComment == true)
-                {
+                {//If a Line is already in the source code only regenerate those that must be commented.
                     SourceDocument.SourceLine comment_line = base.SourceLineMap[line as TypeCobol.Compiler.Scanner.ITokensLine];
-                    base.TargetDocument.Source.Insert("*", comment_line.From + 6, comment_line.From + 7);
+                    sw = new System.IO.StringWriter();
+                    foreach (var l in Indent(line, isComment))
+                    {                        
+                        sw.WriteLine(l.Text);
+                    }
+                    //Replace the current line
+                    sw.Flush();
+                    base.TargetDocument.Source.Insert(sw.ToString(), comment_line.From, comment_line.To);
                 }
                 offset++;
                 lastline = line;
                 return;
             }
-            int c = 0;
-            StringWriter sw = new System.IO.StringWriter();
+            sw = new System.IO.StringWriter();
             var Input = Parser.Results.TokensLines;
             SourceDocument.SourceLine src_line = offset < Input.Count
              ? base.SourceLineMap[Input[offset] as TypeCobol.Compiler.Scanner.ITokensLine]
@@ -144,7 +151,6 @@ namespace TypeCobol.Codegen.Generators
             {
                 //Insert the line after the current offset                
                 sw.WriteLine(l.Text);                
-                c++;
             }
             sw.Flush();
             int to = src_line != null ? src_line.To : base.TargetDocument.To;
