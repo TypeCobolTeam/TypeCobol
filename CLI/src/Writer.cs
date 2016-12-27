@@ -40,6 +40,10 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 		GetErrors(key).AddRange(errors);
 	}
 
+    public void AddErrors(string key, Diagnostic error) {
+		GetErrors(key).Add(error);
+	}
+
 	private int count = 1;
 	public int Count { get { return count; } }
 	private int GenerateNumber() { return count++; }

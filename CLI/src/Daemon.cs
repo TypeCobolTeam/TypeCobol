@@ -61,8 +61,9 @@ namespace TypeCobol.Server {
 		    try {
                 List<string> args;
 		        try {
-		            args = p.Parse(argv);
-		        } catch (OptionException ex) {
+
+                    args = p.Parse(argv);
+                } catch (OptionException ex) {
                     return exit(1, ex.Message);
 		        }
 
@@ -119,28 +120,17 @@ namespace TypeCobol.Server {
 					continue;
 				}
 				parser.Parse(path);
+
 				if (parser.Results.CodeElementsDocumentSnapshot == null) {
 					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path, "parsing");
 					continue;
-				}
-
-				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
-				// no need to add errors from parser.CodeElementsSnapshot.CodeElements
-				// as they are on parser.CodeElementsSnapshot.CodeElements which are added below
-
-				if (parser.Results.ProgramClassDocumentSnapshot == null) {
+				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {
 					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path, "parsing");
 					continue;
 				}
-				int errors = 0;
-				errors += new List<Compiler.Diagnostics.Diagnostic>(parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics).Count;
-				errors += parser.Results.ProgramClassDocumentSnapshot.Diagnostics.Count;
-				writer.AddErrors(path, parser.Converter.AsDiagnostics(parser.Results.ProgramClassDocumentSnapshot.Diagnostics));
-				foreach(var e in parser.Results.CodeElementsDocumentSnapshot.CodeElements) {
-					if (e.Diagnostics.Count < 1) continue;
-					errors += e.Diagnostics.Count;
-					writer.AddErrors(path, parser.Converter.GetDiagnostics(e));
-				}
+			    var allDiags = parser.Results.AllDiagnostics();
+			    int errors = allDiags.Count;
+				writer.AddErrors(path, parser.Converter.AsDiagnostics(allDiags));
 
 				if (config.Codegen && errors == 0) {
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
@@ -163,9 +153,7 @@ namespace TypeCobol.Server {
 			error.Code = errorCode;
 			try { error.Source = writer.Inputs[path]; }
 			catch(KeyNotFoundException) { error.Source = writer.Count.ToString(); }
-			var list = new List<TypeCobol.Tools.Diagnostic>();
-			list.Add(error);
-			writer.AddErrors(path, list);
+			writer.AddErrors(path, error);
 			Console.WriteLine(error.Message);
 		}
 
@@ -181,20 +169,16 @@ namespace TypeCobol.Server {
 			        parser.Init(path, copyDocumentFormat);
 			        parser.Parse(path);
 
-			        foreach (var diagnostic in parser.Results.CodeElementsDocumentSnapshot.ParserDiagnostics) {
-			            AddError(writer, "Syntax error during parsing of " + path + ": " + diagnostic, path, "intrinsicLoading");
+			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
+			            AddError(writer, "Error during parsing of " + path + ": " + diagnostic, path,
+			                "intrinsicLoading");
 			        }
-
-			        if (parser.Results.ProgramClassDocumentSnapshot == null) continue;
-			        foreach (var diagnostic in parser.Results.ProgramClassDocumentSnapshot.Diagnostics) {
-			            AddError(writer, "Semantic error during parsing of " + path + ": " + diagnostic, path, "intrinsicLoading");
-			        }
-
 			        if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
 			            AddError(writer, "Error: Your Intrisic types/functions are not included into a program.", path,
 			                "intrinsicLoading");
 			            continue;
 			        }
+
 			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
 			        foreach (var types in symbols.Types)
 			            foreach (var type in types.Value)
@@ -204,7 +188,7 @@ namespace TypeCobol.Server {
 			                table.AddFunction((Compiler.Nodes.FunctionDeclaration) function);
 			        //TODO check if types or functions are already there
 			    } catch (Exception e) {
-			        AddError(writer, e.Message, path, "intrinsicLoading");
+			        AddError(writer, e.Message + "\n" + e.StackTrace, path, "intrinsicLoading");
 			    }
 			}
 			return table;
