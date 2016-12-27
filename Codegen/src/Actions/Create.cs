@@ -5,6 +5,9 @@ using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Actions
 {
+    /// <summary>
+    /// Action to create a new Generate Node.
+    /// </summary>
     public class Create : Action
     {
         public string Group { get; private set; }
@@ -12,6 +15,15 @@ namespace TypeCobol.Codegen.Actions
         private Node Child;
         private int? position;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="parent">The parent of the new Generate Node to Create</param>
+        /// <param name="template">The new node generation Template</param>
+        /// <param name="variables">The Substitution variables</param>
+        /// <param name="group">The Group ID</param>
+        /// <param name="delimiter">Substitution variable delimiter</param>
+        /// <param name="position">The Insertion position (index) as child in the Parent node</param>
         public Create(Node parent, string template, Dictionary<string, object> variables, string group, string delimiter, int? position)
         {
             this.Parent = parent;
@@ -21,6 +33,9 @@ namespace TypeCobol.Codegen.Actions
             this.position = position;
         }
 
+        /// <summary>
+        /// Perform the creation action, the new GeneratedNode is added as child in the Parent node.
+        /// </summary>
         public void Execute()
         {
             Parent.Add(Child, (position ?? -1));
