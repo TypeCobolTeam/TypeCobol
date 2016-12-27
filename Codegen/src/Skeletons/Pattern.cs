@@ -44,5 +44,4 @@ namespace TypeCobol.Codegen.Skeletons {
 			return str.ToString();
 		}
 	}
-
 }

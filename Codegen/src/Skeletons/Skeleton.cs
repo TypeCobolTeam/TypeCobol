@@ -44,5 +44,4 @@ namespace TypeCobol.Codegen.Skeletons {
 		public IEnumerator<Pattern> GetEnumerator() { foreach(var item in Patterns) yield return item; }
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
-
 }

@@ -108,5 +108,4 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
 			return new RazorEngine(template, variables ?? new Dictionary<string,object>(), delimiter ?? DEFAULT_DELIMITER);
 		}
 	}
-
 }
