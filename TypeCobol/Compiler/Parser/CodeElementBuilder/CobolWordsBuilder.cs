@@ -30,7 +30,11 @@ namespace TypeCobol.Compiler.Parser
 			return new IntegerValue(ParseTreeUtils.GetFirstToken(context));
 		}
 
-		internal static NumericValue CreateNumericValue(CodeElementsParser.NumericValueContext context) {
+        internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValue2Context context) {
+            return new IntegerValue(ParseTreeUtils.GetFirstToken(context));
+        }
+
+        internal static NumericValue CreateNumericValue(CodeElementsParser.NumericValueContext context) {
 			return new NumericValue(ParseTreeUtils.GetFirstToken(context));
 		}
 
@@ -246,6 +250,14 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinition;
         }
 
+        internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition12Context context, SymbolType symbolType)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue12());
+            var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
+            symbolInformationForTokens[nameLiteral.Token] = symbolDefinition;
+            return symbolDefinition;
+        }
+
         internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference1Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
@@ -427,7 +439,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.SectionName);
+            return CreateSymbolDefinition(context.symbolDefinition12(), SymbolType.SectionName);
         }
 
         internal SymbolReference CreateSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
@@ -437,7 +449,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ParagraphName);
+            return CreateSymbolDefinition(context.symbolDefinition12(), SymbolType.ParagraphName);
         }
 
         internal SymbolReference CreateParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)

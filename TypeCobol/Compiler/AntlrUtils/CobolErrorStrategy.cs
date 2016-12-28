@@ -1,98 +1,331 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
-    // --> TO DO : need to customize this strategy ! --
-
     /// <summary>
-    /// Customized strategy in case of syntax error for the Cobol parser
+    /// Customized error recovery strategy optimized for the Cobol programming language :
+    /// the idea is that we want to benefit as much as possible from the default Antlr
+    /// error recovery strategy, while leveraging insights specific to the Cobol language.
+    /// A Cobol program is really structured as a list of CodeElements, and in many cases
+    /// the next token type is enough to detect the start of the next CodeElement.
+    /// The goal of this customized strategy is then to always avoid going further than
+    /// the start of the next CodeElement when we try to resynchronize with the 
+    /// underlying token stream after a syntax error.
     /// </summary>
     public class CobolErrorStrategy : DefaultErrorStrategy
     {
-        /// <summary>
-        /// When the parser encounters an invalid token before the end of the rule :
-        /// consume all tokens until a PeriodSeparator, the end of the line, or the next statement starting keyword.
-        /// </summary>
-        public override void Recover(Antlr4.Runtime.Parser recognizer, RecognitionException e)
-        {
-            if (lastErrorIndex == ((ITokenStream)recognizer.InputStream).Index && lastErrorStates != null && lastErrorStates.Contains(recognizer.State))
-            {
-                // uh oh, another error at same token index and previously-visited
-                // state in ATN; must be a case where LT(1) is in the recovery
-                // token set so nothing got consumed. Consume a single token
-                // at least to prevent an infinite loop; this is a failsafe.
-                recognizer.Consume();
-            }
-            lastErrorIndex = ((ITokenStream)recognizer.InputStream).Index;
-            if (lastErrorStates == null)
-            {
-                lastErrorStates = new IntervalSet();
-            }
-            lastErrorStates.Add(recognizer.State);
+        // --- Override the method below to customize Antlr Token deleting strategy ---
 
-            // Consume until next statement starting keyword (excluded), PeriodSeparator (included), or the end of line
+        /// <summary>
+        /// Should return true for all the tokens we don't want to be consumed
+        /// by the error recovery strategy when resynchronizing
+        /// </summary>
+        protected virtual bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token currentInvalidToken)
+        {
+            return false;
+        }
+
+        // --- Override the five methods below to customize Antlr error messages ---
+        
+        protected virtual string ErrorMessageForUnexpectedToken(Antlr4.Runtime.Parser recognizer, IToken t)
+        {
+            string tokenName = GetTokenErrorDisplay(t);
+            IntervalSet expecting = GetExpectedTokens(recognizer);
+            string msg = "extraneous input " + tokenName + " expecting " + GetListOfExpectedTokens(expecting, recognizer.Vocabulary);
+            return msg;
+        }
+
+        protected virtual string ErrorMessageForMissingToken(Antlr4.Runtime.Parser recognizer, IToken t)
+        {
+            IntervalSet expecting = GetExpectedTokens(recognizer);
+            string msg = "missing " + GetListOfExpectedTokens(expecting, recognizer.Vocabulary) + " at " + GetTokenErrorDisplay(t);
+            return msg;
+        }
+
+        protected virtual string ErrorMessageForNoViableAlternative(NoViableAltException e, Antlr4.Runtime.Parser recognizer)
+        {
+            ITokenStream tokens = ((ITokenStream)recognizer.InputStream);
+            string input;
+            if (tokens != null) {
+                if (e.StartToken.Type == TokenConstants.Eof) {
+                    input = "<end of file>";
+                }
+                else {
+                    input = tokens.GetText(e.StartToken, e.OffendingToken);
+                }
+            }
+            else {
+                input = "<unknown input>";
+            }
+            string msg = "no viable alternative at input " + EscapeWSAndQuote(input);
+            return msg;
+        }
+
+        protected virtual string ErrorMessageForInputMismatch(InputMismatchException e, Antlr4.Runtime.Parser recognizer)
+        {
+            string msg = "mismatched input " + GetTokenErrorDisplay(e.OffendingToken) + " expecting " + GetListOfExpectedTokens(e.GetExpectedTokens(), recognizer.Vocabulary);
+            return msg;
+        }
+
+        protected virtual string ErrorMessageForFailedPredicate(FailedPredicateException e, Antlr4.Runtime.Parser recognizer)
+        {
+            string ruleName = recognizer.RuleNames[recognizer.RuleContext.RuleIndex];
+            string msg = "rule " + ruleName + " " + e.Message;
+            return msg;
+        }
+
+        protected string GetListOfExpectedTokens(IntervalSet intervalSet, IVocabulary vocabulary)
+        { 
+            StringBuilder buf = new StringBuilder();
+            if (intervalSet == null || intervalSet.Count == 0)
+            {
+                return "{}";
+            }
+
+            if (intervalSet.Count > 1)
+            {
+                buf.Append("{");
+            }
+            bool first = true;
+            // Never display more than 10 expected tokens
+            if (intervalSet.Count <= 10)
+            {
+                foreach (Interval I in intervalSet.GetIntervals())
+                {
+                    if (!first)
+                        buf.Append(", ");
+                    first = false;
+
+                    int a = I.a;
+                    int b = I.b;
+                    if (a == b)
+                    {
+                        buf.Append(TokenUtils.GetDisplayNameForTokenType((TokenType)a));
+                    }
+                    else
+                    {
+                        for (int i = a; i <= b; i++)
+                        {
+                            if (i > a)
+                            {
+                                buf.Append(", ");
+                            }
+                            buf.Append(TokenUtils.GetDisplayNameForTokenType((TokenType)i));
+                        }
+                    }
+                }
+            }
+            // If more than 10 expected tokens, display list of token families
+            else
+            {
+                HashSet<TokenFamily> familySet = new HashSet<TokenFamily>();
+                foreach (Interval I in intervalSet.GetIntervals())
+                {
+                    for (int i = I.a; i <= I.b; i++)
+                    {
+                        TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType((TokenType)i);
+                        if(familySet.Add(tokenFamily))
+                        {
+                            if (!first)
+                                buf.Append(", ");
+                            first = false;
+                            buf.Append(TokenUtils.GetDisplayNameForTokenFamily(tokenFamily));
+                        }
+                    }
+                }
+            }
+            if (intervalSet.Count > 1)
+            {
+                buf.Append("}");
+            }
+            return buf.ToString();
+        }
+        
+        protected override string GetTokenErrorDisplay(IToken t)
+        {
+            if (t == null)
+            {
+                return "<no token>";
+            }
+            string s = GetSymbolText(t);
+            if (s == null)
+            {
+                s = "<" + TokenUtils.GetDisplayNameForTokenType((TokenType)t.Type) + ">";
+            }
+            return EscapeWSAndQuote(s);
+        }
+
+        // --- Please do not touch the methods below which reproduce exactly the default Antlr runtime behaviour --
+
+        /// <summary>
+        /// Single token deletion recovery strategy
+        /// </summary>
+        protected override IToken SingleTokenDeletion(Antlr4.Runtime.Parser recognizer)
+        {
             Token lastConsumedToken = (Token)((ITokenStream)recognizer.InputStream).Lt(-1);
-            Token currentInvalidToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
-            while ((lastConsumedToken == null || currentInvalidToken.TokensLine == lastConsumedToken.TokensLine) && currentInvalidToken.Type != TokenConstants.Eof)
-            {
-                if (((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementStartingKeyword ||
-                    ((Token)currentInvalidToken).TokenFamily == TokenFamily.StatementEndingKeyword ||
-                    ((Token)currentInvalidToken).TokenFamily == TokenFamily.CodeElementStartingKeyword)
-                {
-                    break;
-                }
-                recognizer.Consume();
-                if (currentInvalidToken.Type == (int)TokenType.PeriodSeparator)
-                {
-                    break;
-                }
-                currentInvalidToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
-            }
-        }
-
-        /// <summary>
-        /// When parsing a compiler directive, single token deletion should never
-        /// eat the statement starting keyword 
-        /// </summary>
-        public override IToken RecoverInline(Antlr4.Runtime.Parser recognizer)
-        {
-            // SINGLE TOKEN DELETION
             Token nextToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
-            if (nextToken.TokenFamily != TokenFamily.StatementStartingKeyword &&
-                nextToken.TokenFamily != TokenFamily.StatementEndingKeyword &&
-                nextToken.TokenFamily != TokenFamily.CodeElementStartingKeyword)
+            if (ErrorStrategyShouldNotConsumeThisToken(lastConsumedToken, nextToken))
             {
-                IToken matchedSymbol = SingleTokenDeletion(recognizer);
-                if (matchedSymbol != null)
-                {
-                    // we have deleted the extra token.
-                    // now, move past ttype token as if all were ok
-                    recognizer.Consume();
-                    return matchedSymbol;
-                }
+                return null;
             }
-            // SINGLE TOKEN INSERTION
-            if (SingleTokenInsertion(recognizer))
+            else
             {
-                return GetMissingSymbol(recognizer);
+                return base.SingleTokenDeletion(recognizer);
             }
-            // even that didn't work; must throw the exception
-            throw new InputMismatchException(recognizer);
         }
 
         /// <summary>
-        /// If we attempt attempt to recover from problems while matching subrules,
-        /// we end up consuming the whole file for matching one compiler directive
+        /// Multiple token deletion resynchronization strategy
+        /// </summary>
+        protected override void ConsumeUntil(Antlr4.Runtime.Parser recognizer, IntervalSet set)
+        {
+            Token lastConsumedToken = (Token)((ITokenStream)recognizer.InputStream).Lt(-1);
+            Token nextToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
+            int ttype = nextToken.Type;
+            while (ttype != TokenConstants.Eof && !set.Contains(ttype) &&
+                   !ErrorStrategyShouldNotConsumeThisToken(lastConsumedToken, nextToken))
+            {
+                recognizer.Consume();
+                lastConsumedToken = nextToken;
+                nextToken = (Token)((ITokenStream)recognizer.InputStream).Lt(1);
+                ttype = nextToken.Type;
+            }
+        }
+
+        /// <summary>
+        /// This is called by
+        /// <see cref="ReportError(Parser, RecognitionException)"/>
+        /// when the exception is a
+        /// <see cref="NoViableAltException"/>
+        /// </summary>
+        protected override void ReportNoViableAlternative(Antlr4.Runtime.Parser recognizer, NoViableAltException e)
+        {            
+            string msg = ErrorMessageForNoViableAlternative(e, recognizer);
+            NotifyErrorListeners(recognizer, msg, e);
+        }
+        
+        /// <summary>
+        /// This is called by
+        /// <see cref="ReportError(Parser, RecognitionException)"/>
+        /// when the exception is an
+        /// <see cref="InputMismatchException"/>
+        /// </summary>
+        protected override void ReportInputMismatch(Antlr4.Runtime.Parser recognizer, InputMismatchException e)
+        {
+            string msg = ErrorMessageForInputMismatch(e, recognizer);
+            NotifyErrorListeners(recognizer, msg, e);
+        }
+
+        /// <summary>
+        /// This is called by
+        /// <see cref="ReportError(Parser, RecognitionException)"/>
+        /// when the exception is a
+        /// <see cref="FailedPredicateException"/>
+        /// </summary>
+        protected override void ReportFailedPredicate(Antlr4.Runtime.Parser recognizer, FailedPredicateException e)
+        {
+            string msg = ErrorMessageForFailedPredicate(e, recognizer);
+            NotifyErrorListeners(recognizer, msg, e);
+        }
+
+        /// <summary>
+        /// This method is called to report a syntax error which requires the removal
+        /// of a token from the input stream.
+        /// </summary>
+        protected override void ReportUnwantedToken(Antlr4.Runtime.Parser recognizer)
+        {
+            if (InErrorRecoveryMode(recognizer))
+            {
+                return;
+            }
+            BeginErrorCondition(recognizer);
+            IToken t = recognizer.CurrentToken;
+            string msg= ErrorMessageForUnexpectedToken(recognizer, t);
+            recognizer.NotifyErrorListeners(t, msg, null);
+        }
+        
+        /// <summary>
+        /// This method is called to report a syntax error which requires the
+        /// insertion of a missing token into the input stream.
+        /// </summary>
+        protected override void ReportMissingToken(Antlr4.Runtime.Parser recognizer)
+        {
+            if (InErrorRecoveryMode(recognizer))
+            {
+                return;
+            }
+            BeginErrorCondition(recognizer);
+            IToken t = recognizer.CurrentToken;            
+            string msg = ErrorMessageForMissingToken(recognizer, t);
+            recognizer.NotifyErrorListeners(t, msg, null);
+        }
+    }
+
+    /// <summary>
+    /// Customized strategy in case of syntax error for the CompilerDirective parser :
+    /// the idea is that we only want to avoid Antlr "eating away" the next token 
+    /// when trying to resynchronize after an error 
+    /// - if it is starting the next CompilerDirective or the next CodeElement 
+    /// - if it is not on the same line (many compiler directives are written on a single line)
+    /// - if it follows a PeriodSeparator token (a period always ends a compiler directive)
+    /// </summary>
+    public class CompilerDirectiveErrorStrategy : CobolErrorStrategy
+    {
+        /// <summary>
+        /// Should return true for all the tokens we don't want to be consumed
+        /// by the error recovery strategy when resynchronizing
+        /// </summary>
+        protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
+        {
+            return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
+                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
+                   nextToken.TokenType == TokenType.LevelNumber || 
+                   nextToken.TokenType == TokenType.SectionParagraphName ||
+                   (lastConsumedToken != null && (
+                        nextToken.TokensLine != lastConsumedToken.TokensLine ||
+                        lastConsumedToken.TokenType == TokenType.PeriodSeparator
+                   ));
+        }
+
+        /// <summary>
+        /// A compiler directive can be embedded anywhere in the Cobol syntax
+        /// so we can consider that EOF is always present in the following set
         /// </summary>
         public override void Sync(Antlr4.Runtime.Parser recognizer)
         {
+            if (GetExpectedTokens(recognizer).Contains(TokenConstants.Eof))
+            {
+                return;
+            }
+            else
+            {
+                base.Sync(recognizer);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Customized strategy in case of syntax error for the CodeElements parser :
+    /// the idea is that we only want to avoid Antlr "eating away" the token 
+    /// starting the next CodeElement when trying to resynchronize after an error
+    /// </summary>
+    public class CodeElementErrorStrategy : CobolErrorStrategy
+    {
+        /// <summary>
+        /// Should return true for all the tokens we don't want to be consumed
+        /// by the error recovery strategy when resynchronizing
+        /// </summary>
+        protected override bool ErrorStrategyShouldNotConsumeThisToken(Token lastConsumedToken, Token nextToken)
+        {
+            return nextToken.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword ||
+                   nextToken.TokenFamily == TokenFamily.CodeElementStartingKeyword ||
+                   nextToken.TokenType == TokenType.LevelNumber ||
+                   nextToken.TokenType == TokenType.SectionParagraphName;
         }
     }
 }

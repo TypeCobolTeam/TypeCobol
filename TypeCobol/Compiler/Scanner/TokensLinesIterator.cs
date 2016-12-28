@@ -118,6 +118,36 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
+        /// Current tokens line
+        /// </summary>
+        public ITokensLine CurrentLine
+        {
+            get
+            {
+                return currentLine;
+            }
+        }
+
+        /// <summary>
+        /// Returns the last token of the last line before EOF
+        /// </summary>
+        public ITokensLine LastLine
+        {
+            get
+            {
+                if (tokensLines.Count > 0)
+                {
+                    var lastLineIndex = tokensLines.Count - 1;
+                    return tokensLines[lastLineIndex];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
         /// Resets the iterator position : before the first token of the document
         /// </summary>
         public void Reset()

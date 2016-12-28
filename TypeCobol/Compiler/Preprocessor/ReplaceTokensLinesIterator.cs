@@ -133,6 +133,22 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
+        /// Current tokens line
+        /// </summary>
+        public ITokensLine CurrentLine
+        {
+            get { return sourceIterator.CurrentLine; }
+        }
+
+        /// <summary>
+        /// Returns the last token of the last line before EOF
+        /// </summary>
+        public ITokensLine LastLine
+        {
+            get { return sourceIterator.LastLine; }
+        }
+
+        /// <summary>
         /// Get next token after REPLACE processing or EndOfFile
         /// </summary>
         public Token NextToken()
@@ -165,7 +181,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawFirstIntegerLiteral)
                 {
                     //A Data description entry starts with an integer literal
-                    if(nextToken.TokenType == TokenType.IntegerLiteral)
+                    if(nextToken.TokenType == TokenType.LevelNumber)
                     {
                         if (nextToken.Text == "01") {
                             // Register that we saw the first "01" integer literal in the underlying file

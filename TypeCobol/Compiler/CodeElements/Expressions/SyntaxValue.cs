@@ -227,6 +227,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
+                    case TokenType.SectionParagraphName:
                         return false;
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
@@ -312,6 +313,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
+                    case TokenType.SectionParagraphName:
                         return CharacterEncodingType.Alphanumeric;
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
@@ -362,6 +364,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ExecTranslatorName:
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
+                    case TokenType.SectionParagraphName:
                         return Token.Text;
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:

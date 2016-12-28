@@ -92,7 +92,7 @@
 
 public class LibraryCopyCodeElement: CodeElement {
 	public LibraryCopyCodeElement(): base(CodeElementType.LibraryCopy) { }
-	public SymbolDefinition Name { get; set; }
+	public ExternalName Name { get; set; }
 }
 
 }

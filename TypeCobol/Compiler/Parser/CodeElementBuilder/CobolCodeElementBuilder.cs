@@ -48,6 +48,15 @@ namespace TypeCobol.Compiler.Parser
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
 			if(CodeElement != null)
             {
+                // Attach all tokens consumed by the parser for this code element
+                // Collect all error messages encoutered while parsing this code element
+                IList<Diagnostic> diagnostics = CodeElement.Diagnostics == null ? new List<Diagnostic>() : CodeElement.Diagnostics;
+                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
+                if(diagnostics.Count > 0)
+                {
+                    CodeElement.Diagnostics = diagnostics;
+                }
+
                 if (CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
                     CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
                 }
@@ -70,20 +79,56 @@ namespace TypeCobol.Compiler.Parser
                     CodeElement.CallSites = CobolExpressionsBuilder.callSites;
                 }
             }
+            // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
+            else if (CodeElement == null && context.Diagnostics != null)
+            {
+                var parentRuleContext = (ParserRuleContextWithDiagnostics)context.Parent;
+                foreach (var ruleDiagnostic in context.Diagnostics)
+                {
+                    parentRuleContext.AttachDiagnostic(ruleDiagnostic);
+                }
+            }
 		}
 
-		// Code structure
+        private void AddTokensConsumedAndDiagnosticsAttachedInContext(IList<Token> consumedTokens, IList<Diagnostic> diagnostics, ParserRuleContext context)
+        {
+            var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
+            if (ruleNodeWithDiagnostics != null && ruleNodeWithDiagnostics.Diagnostics != null)
+            {
+                foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
+                {
+                    diagnostics.Add(ruleDiagnostic);
+                }
+            }
+            if (context.children != null)
+            {
+                foreach(var childNode in context.children)
+                {
+                    if(childNode is IRuleNode)
+                    {                        
+                        AddTokensConsumedAndDiagnosticsAttachedInContext(consumedTokens, diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
+                    }
+                    else if(childNode is ITerminalNode)
+                    {
+                        Token token = (Token)((ITerminalNode)childNode).Symbol;
+                        consumedTokens.Add(token);
+                    }
+                }
+            }
+        }
 
-		  ////////////////////
-		 // IDENTIFICATION //
-		////////////////////
+        // Code structure
+
+        ////////////////////
+        // IDENTIFICATION //
+        ////////////////////
 
 
 
-		 // PROGRAM IDENTIFICATION
-		////////////////////////////
+        // PROGRAM IDENTIFICATION
+        ////////////////////////////
 
-		public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
+        public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
 			var program = new ProgramIdentification();
 			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
 			if (context.COMMON() != null) {
@@ -409,9 +454,9 @@ namespace TypeCobol.Compiler.Parser
 					{
 						alphabetName = CobolWordsBuilder.CreateAlphabetNameReference(symbolicCharactersContext.alphabetNameReference());
 					}
-					foreach(var symbolicCharOPContext in symbolicCharactersContext.symbolicCharactersOrdinalPositions())
-					{
-						for (int i = 0; i < Math.Min(symbolicCharOPContext.symbolicCharacterDefinition().Length, symbolicCharOPContext.ordinalPositionInCollatingSequence().Length); i++)
+                    foreach(var symbolicCharOPContext in symbolicCharactersContext.symbolicCharactersOrdinalPositions())
+                    {
+                        for (int i = 0; i < Math.Min(symbolicCharOPContext.symbolicCharacterDefinition().Length, symbolicCharOPContext.ordinalPositionInCollatingSequence().Length); i++)
 						{
 							var symbolicCharacter = CobolWordsBuilder.CreateSymbolicCharacterDefinition(symbolicCharOPContext.symbolicCharacterDefinition()[i]);
 							var ordinalPosition = CobolWordsBuilder.CreateIntegerValue(symbolicCharOPContext.ordinalPositionInCollatingSequence()[i].integerValue());
@@ -773,10 +818,10 @@ namespace TypeCobol.Compiler.Parser
 					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameRecordArea,
 						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.RECORD()));
 				}
-				else if (sameAreaClauseContext.SORT_ARG() != null)
+				else if (sameAreaClauseContext.SORT() != null)
 				{
 					sameAreaEntry.SameAreaType = new SyntaxProperty<SameAreaType>(SameAreaType.SameSortArea,
-						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.SORT_ARG()));
+						ParseTreeUtils.GetFirstToken(sameAreaClauseContext.SORT()));
 				}
 				else if (sameAreaClauseContext.SORT_MERGE() != null)
 				{
@@ -997,8 +1042,8 @@ namespace TypeCobol.Compiler.Parser
                 entry.DataType = DataType.Unknown;
             }
 
-            if (context.levelNumber() != null)
-				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+            if (context.levelNumber != null)
+				entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
             
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
@@ -1187,7 +1232,7 @@ namespace TypeCobol.Compiler.Parser
 					CreateDataUsageProperty(DataUsage.PackedDecimal, c.COMPUTATIONAL_3()) ??
 					CreateDataUsageProperty(DataUsage.NativeBinary, c.COMP_5()) ??
 					CreateDataUsageProperty(DataUsage.NativeBinary, c.COMPUTATIONAL_5()) ??
-					CreateDataUsageProperty(DataUsage.Display, c.DISPLAY_ARG()) ??
+					CreateDataUsageProperty(DataUsage.Display, c.DISPLAY()) ??
 					CreateDataUsageProperty(DataUsage.DBCS, c.DISPLAY_1()) ??
 					CreateDataUsageProperty(DataUsage.Index, c.INDEX()) ??
 					CreateDataUsageProperty(DataUsage.National, c.NATIONAL()) ??
@@ -1207,7 +1252,7 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var entry = new DataRedefinesEntry();
 
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 			if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 			else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
@@ -1223,7 +1268,7 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterDataRenamesEntry(CodeElementsParser.DataRenamesEntryContext context) {
 			var entry = new DataRenamesEntry();
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 			if (context.renamesClause().qualifiedDataName() != null) {
 				entry.RenamesFromDataName = CobolWordsBuilder.CreateQualifiedDataName(context.renamesClause().qualifiedDataName());
@@ -1239,7 +1284,7 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context) {
 			var entry = new DataConditionEntry();
-			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+			entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 			entry.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
 			SetConditionValues(entry, context.valueClauseForCondition());
 
@@ -1730,12 +1775,14 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterPerformStatement(CodeElementsParser.PerformStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreatePerformStatement(context);
-		}
-
-		public override void EnterPerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement(context);
+            if (context.procedureName() != null || context.proceduresRange() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreatePerformProcedureStatement(context);
+            }
+            else
+            {
+                CodeElement = CobolStatementsBuilder.CreatePerformStatement(context);
+            }
 		}
 
 		public override void EnterPerformStatementEnd(CodeElementsParser.PerformStatementEndContext context) {

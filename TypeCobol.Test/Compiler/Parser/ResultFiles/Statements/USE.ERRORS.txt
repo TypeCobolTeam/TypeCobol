@@ -1,37 +1,39 @@
 ﻿--- Diagnostics ---
-[36,40]<27,Error,Syntax>Syntax error : no viable alternative at input 'INPUT' (RuleStack=codeElement, OffendingSymbol=[36,40:INPUT]<INPUT> on line 12)
-[36,41]<27,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[36,41:OUTPUT]<OUTPUT> on line 13)
-[36,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'I-O' (RuleStack=codeElement, OffendingSymbol=[36,38:I-O]<I_O> on line 14)
-[36,41]<27,Error,Syntax>Syntax error : no viable alternative at input 'EXTEND' (RuleStack=codeElement, OffendingSymbol=[36,41:EXTEND]<EXTEND> on line 15)
-[33,38]<27,Error,Syntax>Syntax error : no viable alternative at input 'OUTPUT' (RuleStack=codeElement, OffendingSymbol=[33,38:OUTPUT]<OUTPUT> on line 16)
+[36,40]<27,Error,Syntax>Syntax error : extraneous input 'INPUT' expecting {'.', user defined word} (RuleStack=codeElement>useStatement>useStatementForExceptionDeclarative, OffendingSymbol=[36,40:INPUT]<INPUT> on line 12)
+[36,41]<27,Error,Syntax>Syntax error : extraneous input 'OUTPUT' expecting {'.', user defined word} (RuleStack=codeElement>useStatement>useStatementForExceptionDeclarative, OffendingSymbol=[36,41:OUTPUT]<OUTPUT> on line 13)
+[36,38]<27,Error,Syntax>Syntax error : extraneous input 'I-O' expecting {'.', user defined word} (RuleStack=codeElement>useStatement>useStatementForExceptionDeclarative, OffendingSymbol=[36,38:I-O]<I_O> on line 14)
+[36,41]<27,Error,Syntax>Syntax error : extraneous input 'EXTEND' expecting {'.', user defined word} (RuleStack=codeElement>useStatement>useStatementForExceptionDeclarative, OffendingSymbol=[36,41:EXTEND]<EXTEND> on line 15)
+[33,38]<27,Error,Syntax>Syntax error : mismatched input 'OUTPUT' expecting '.' (RuleStack=codeElement>useStatement>useStatementForExceptionDeclarative, OffendingSymbol=[33,38:OUTPUT]<OUTPUT> on line 16)
 --- Code Elements ---
-[[UseStatement]] [1,3:USE]<USE> --> [50,57:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [58,58+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [46,53:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [54,54+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [39,46:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [47,47+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [30,37:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [38,38+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,34:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [35,35+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [33,34:f3]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [35,35+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,31:INPUT]<INPUT>
+[[UseStatement]] [1,3:USE]<USE> --> [32,32+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,32:OUTPUT]<OUTPUT>
+[[UseStatement]] [1,3:USE]<USE> --> [33,33+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,29:I-O]<I_O>
+[[UseStatement]] [1,3:USE]<USE> --> [30,30+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,32:EXTEND]<EXTEND>
+[[UseStatement]] [1,3:USE]<USE> --> [33,33+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,34:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [41,41+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,34:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [42,42+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,34:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [39,39+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,34:filename]<UserDefinedWord>
+[[UseStatement]] [1,3:USE]<USE> --> [42,42+:.]<PeriodSeparator>
 
-[[UseStatement]] [1,3:USE]<USE> --> [27,31:INPUT]<INPUT>
+[[UseStatement]] [1,3:USE]<USE> --> [44,49:EXTEND]<EXTEND>
+
+[[SentenceEnd]] [50,50+:.]<PeriodSeparator> --> [50,50+:.]<PeriodSeparator>
 

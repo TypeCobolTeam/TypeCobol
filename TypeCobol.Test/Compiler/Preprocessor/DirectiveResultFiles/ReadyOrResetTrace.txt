@@ -16,11 +16,11 @@
 
 -- Line 6 --
 *** DIRECTIVE INVALID SYNTAX -> READY_TRACE ([8,12:READY]<READY>[13,13: ]<SpaceSeparator>[14,18:trace]<TRACE>) ***
-[8,12]<27,Error,Syntax>Syntax error : mismatched input 'reset' expecting PeriodSeparator
+[8,12]<27,Error,Syntax>Syntax error : mismatched input 'reset' expecting '.'
 
 -- Line 7 --
 *** DIRECTIVE INVALID SYNTAX -> RESET_TRACE ([8,12:reset]<RESET>[13,13: ]<SpaceSeparator>[14,18:TRACE]<TRACE>) ***
-[8,12]<27,Error,Syntax>Syntax error : mismatched input 'ready' expecting PeriodSeparator
+[8,12]<27,Error,Syntax>Syntax error : mismatched input 'ready' expecting '.'
 
 -- Line 8 --
 [8,14:Y trace]<CommentLine>

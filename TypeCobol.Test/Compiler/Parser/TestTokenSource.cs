@@ -136,19 +136,10 @@ namespace TypeCobol.Test.Compiler.Parser
                 throw new Exception("Token source name KO");
             }
 
-            IToken token = tokenSource.TokenFactory.Create((int)TokenType.ACCEPT, "AccePt");
-            if (token.Channel != Token.CHANNEL_SourceTokens || token.Column != 1 || token.Line != 0 || 
-                token.StartIndex != 0 || token.StopIndex != 5 || token.Text != "AccePt" || 
-                token.TokenIndex != -1 || token.InputStream == null || token.TokenSource !=null ||
-                token.Type != (int)TokenType.ACCEPT)
-            {
-                throw new Exception("TokenFactory first Create method KO");
-            }
-
             var source = new Tuple<ITokenSource, ICharStream>(tokenSource, tokenSource.InputStream);
-            token = tokenSource.TokenFactory.Create(source, (int)TokenType.IntegerLiteral, "314", Token.CHANNEL_CompilerDirectives, 10, 20, 30, 17);
-            if (token.Channel != Token.CHANNEL_CompilerDirectives || token.Column != 1 || token.Line != 30 ||
-                token.StartIndex != 0 || token.StopIndex != 2 || token.Text != "314" ||
+            IToken token = tokenSource.TokenFactory.Create(source, (int)TokenType.IntegerLiteral, "314", Token.CHANNEL_CompilerDirectives, 10, 20, 30, 17);
+            if (token.Channel != Token.CHANNEL_CompilerDirectives || token.Column != 18 || token.Line != 1 ||
+                token.StartIndex != 17 || token.StopIndex != 16 || token.Text != "314" ||
                 token.TokenIndex != -1 || token.InputStream == null || token.TokenSource == null ||
                 token.Type != (int)TokenType.IntegerLiteral || ((IntegerLiteralTokenValue)((Token)token).LiteralValue).Number != 314)
             {

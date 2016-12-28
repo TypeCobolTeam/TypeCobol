@@ -180,11 +180,10 @@ namespace TypeCobol.Compiler
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
             if (scanState != null) {
-                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.InsideDataDivision ? "D2" : "__")
-                            + (scanState.WithDebuggingMode ? "D3" : "__");
-                //TODO check if another parameter must be included in cacheKey
-                //+ (scanState.InsideRemarksDirective ? "xx" : "__") + (scanState.InsideRemarksParentheses ? "xx" : "__")
-                //+ scanState.EncodingForAlphanumericLiterals + scanState.SymbolicCharacters;
+                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") + 
+                            (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
+                // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
+                // because a COPY is always cleanly delimited at CodeElement boundaries.
             }
             CompilationDocument resultDocument;
             if(importedCompilationDocumentsCache.ContainsKey(cacheKey))

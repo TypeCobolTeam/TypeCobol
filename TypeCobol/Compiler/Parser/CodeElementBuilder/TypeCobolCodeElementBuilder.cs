@@ -13,9 +13,8 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
 	public override void EnterLibraryCopy(CodeElementsParser.LibraryCopyContext context) {
 		var copy = new LibraryCopyCodeElement();
-		if (context.UserDefinedWord() != null) { // TCRFUN_LIBRARY_COPY
-			var value = CobolWordsBuilder.CreateAlphanumericValue(context.UserDefinedWord());
-			copy.Name = new SymbolDefinition(value, SymbolType.FileName);//TODO#278 eww!
+		if (context.qualifiedTextName() != null) { // TCRFUN_LIBRARY_COPY
+			copy.Name = CobolWordsBuilder.CreateQualifiedTextName(context.qualifiedTextName());//TODO#278 eww!
 		}
 		Context = context;
 		CodeElement = copy;
@@ -107,7 +106,7 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	}
 	private DataConditionEntry CreateFunctionConditionParameter(CodeElementsParser.FunctionConditionParameterContext context) {
 		var parameter = new DataConditionEntry();
-		parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber().integerValue());
+		parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
 		parameter.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
 		SetConditionValues(parameter, context.valueClauseForCondition());
 		return parameter;

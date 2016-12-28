@@ -8,6 +8,8 @@
 
 grammar CodeElements;
 
+options { contextSuperClass=TypeCobol.Compiler.AntlrUtils.ParserRuleContextWithDiagnostics; }
+
 // importing boths grammar raises the following error message:
 // "repeated grammar prequel spec (options, tokens, or import); please merge"
 // so we switch between grammars depending wether or not we want TypeCobol

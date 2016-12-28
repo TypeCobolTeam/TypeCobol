@@ -33,13 +33,13 @@
 -- Line 3 --
 [1,8:SYMBOLIC]<SYMBOLIC>
 [9,9: ]<SpaceSeparator>
-[10,18:CHARACTER]<CHARACTER>
-[19,19: ]<SpaceSeparator>
-[20,23:tete]<SymbolicCharacter>
-[24,24: ]<SpaceSeparator>
-[25,26:IS]<IS>
-[27,27: ]<SpaceSeparator>
-[28,29:30]<IntegerLiteral>{30}
+[10,19:CHARACTERS]<CHARACTERS>
+[20,20: ]<SpaceSeparator>
+[21,24:tete]<SymbolicCharacter>
+[25,25: ]<SpaceSeparator>
+[26,27:IS]<IS>
+[28,28: ]<SpaceSeparator>
+[29,30:30]<IntegerLiteral>{30}
 
 -- Line 4 --
 [1,4:tutu]<SymbolicCharacter>

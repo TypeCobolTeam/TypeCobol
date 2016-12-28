@@ -1,10 +1,10 @@
 ﻿--- Diagnostics ---
-[1,4]<27,Error,Syntax>Syntax error : no viable alternative at input 'y ... MOVE' (RuleStack=codeElement, OffendingSymbol=[1,4:MOVE]<MOVE> on line 4)
-[20,20]<27,Error,Syntax>Syntax error : no viable alternative at input '1' (RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference>qualifiedDataName, OffendingSymbol=[20,20:1]<IntegerLiteral>{1} on line 4)
+[27,27]<27,Error,Syntax>Syntax error : extraneous input 'y' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference, OffendingSymbol=[27,27:y]<UserDefinedWord> on line 2)
+[20,20]<27,Error,Syntax>Syntax error : mismatched input '1' expecting user defined word (RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference>qualifiedDataName, OffendingSymbol=[20,20:1]<IntegerLiteral>{1} on line 4)
 [11,18]<27,Error,Syntax>Syntax error : MOVE: illegal <function call> after TO (RuleStack=codeElement>moveStatement>moveSimple>storageArea1, OffendingSymbol=[11,18:FUNCTION]<FUNCTION> on line 6)
 [11,18]<27,Error,Syntax>Syntax error : MOVE: illegal <function call> after TO (RuleStack=codeElement>moveStatement>moveSimple>storageArea1, OffendingSymbol=[11,18:FUNCTION]<FUNCTION> on line 7)
 --- Code Elements ---
-[[MoveStatement]] [1,4:MOVE]<MOVE> --> [25,25:x]<UserDefinedWord>
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [27,27:y]<UserDefinedWord>
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [25,25:x]<UserDefinedWord>
 

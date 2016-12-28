@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.Preprocessor
             directivesParser.ErrorHandler = compilerDirectiveErrorStrategy;
 
             // Register all parse errors in a list in memory
-            DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
+            ParserDiagnosticErrorListener errorListener = new ParserDiagnosticErrorListener();
             directivesParser.RemoveErrorListeners();
             directivesParser.AddErrorListener(errorListener);
 
@@ -114,7 +114,6 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 // Reset parsing error diagnostics
                 compilerDirectiveErrorStrategy.Reset(directivesParser);
-                errorListener.Diagnostics.Clear();
 
                 // 3. Try to parse a compiler directive starting with the current token
                 CobolCompilerDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
@@ -122,7 +121,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // 4. Visit the parse tree to build a first class object representing the compiler directive
                 walker.Walk(directiveBuilder, directiveParseTree);
                 CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
-                bool errorFoundWhileParsingDirective = errorListener.Diagnostics.Count > 0 || directiveBuilder.Diagnostics.Count > 0;
+                bool errorFoundWhileParsingDirective = compilerDirective == null || compilerDirective.Diagnostics != null || directiveParseTree.Diagnostics != null;
 
                 // 5. Get all tokens consumed while parsing the compiler directive
                 //    and partition them line by line 
@@ -184,13 +183,23 @@ namespace TypeCobol.Compiler.Preprocessor
                 if (errorFoundWhileParsingDirective)
                 {
                     ProcessedTokensLine compilerDirectiveLine = documentLines[tokensSelection.FirstLineIndex];
-                    foreach (ParserDiagnostic parserDiag in errorListener.Diagnostics)
+                    if (compilerDirective != null && compilerDirective.Diagnostics != null)
                     {
-                        compilerDirectiveLine.AddDiagnostic(parserDiag);
+                        foreach (Diagnostic directiveDiag in compilerDirective.Diagnostics)
+                        {
+                            compilerDirectiveLine.AddDiagnostic(directiveDiag);
+                        }
                     }
-                    foreach (Diagnostic directiveDiag in directiveBuilder.Diagnostics)
+                    else if (directiveParseTree.Diagnostics != null)
                     {
-                        compilerDirectiveLine.AddDiagnostic(directiveDiag);
+                        foreach (Diagnostic directiveDiag in directiveParseTree.Diagnostics)
+                        {
+                            if(compilerDirective != null)
+                            {
+                                compilerDirective.AddDiagnostic(directiveDiag);
+                            }
+                            compilerDirectiveLine.AddDiagnostic(directiveDiag);
+                        }
                     }
                 }
             }
@@ -231,7 +240,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource = processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName, copyDirective.TextName, tokensLineWithCopyDirective.ScanState);
+                            ProcessedTokensDocument importedDocumentSource = processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName, copyDirective.TextName, tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken]);
 
                             // Store it on the current line after appying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, importedDocumentSource);

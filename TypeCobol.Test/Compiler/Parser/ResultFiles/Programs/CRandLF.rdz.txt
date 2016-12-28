@@ -9,9 +9,9 @@
 
 [[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
 
-[[DataDescriptionEntry]] [8,9:01]<IntegerLiteral>{1} --> [51,51+:.]<PeriodSeparator>
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [51,51+:.]<PeriodSeparator>
 
-[[DataDescriptionEntry]] [8,9:01]<IntegerLiteral>{1} --> [51,52:. ]<PeriodSeparator>
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [51,52:. ]<PeriodSeparator>
 
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
 

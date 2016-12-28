@@ -96,7 +96,8 @@
     <Compile Include="Compiler\Scanner\*.cs" />
     <Compile Include="Compiler\Text\*.cs" />
     <Content Include="**\Samples\**" />
-    <Content Include="**\ResultFiles\**" />
+    <Content Include="**\*TestFiles\**" />
+    <Content Include="**\*ResultFiles\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">

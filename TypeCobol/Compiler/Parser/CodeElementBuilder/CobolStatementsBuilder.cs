@@ -870,7 +870,7 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		internal CodeElement CreatePerformProcedureStatement(CodeElementsParser.PerformProcedureStatementContext context)
+		internal CodeElement CreatePerformProcedureStatement(CodeElementsParser.PerformStatementContext context)
 		{
 			var statement = new PerformProcedureStatement();
 

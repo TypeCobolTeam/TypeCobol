@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Directives
@@ -76,6 +77,17 @@ namespace TypeCobol.Compiler.Directives
         }
 
         public CompilerDirectiveType Type { get; private set; }
+
+        /// <summary>
+        /// List of errors found on this CompilerDirective
+        /// </summary>
+        public IList<Diagnostic> Diagnostics { get; private set; }
+
+        public void AddDiagnostic(Diagnostic diagnostic)
+        {
+            if (Diagnostics == null) Diagnostics = new List<Diagnostic>();
+            Diagnostics.Add(diagnostic);
+        }
 
         public override string ToString()
         {
@@ -303,11 +315,17 @@ namespace TypeCobol.Compiler.Directives
     public class CopyDirective : CompilerDirective
     {
         /// <param name="type">COPY or EXEC_SQL_INCLUDE</param>
-        public CopyDirective(CompilerDirectiveType type) : base(type)
+        public CopyDirective(CompilerDirectiveType type, Token copyOrExecToken) : base(type)
         {
+            COPYToken = copyOrExecToken;
             ReplaceOperations = new List<ReplaceOperation>();
         }
         
+        /// <summary>
+        /// Used to properly scan imported documents
+        /// </summary>
+        internal Token COPYToken { get; private set; }
+
         /// <summary>
         /// Text-name identifies the copy text. 
         /// 
