@@ -68,7 +68,52 @@
     <None Include="resources\config\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\input\**">
+    <None Include="resources\input\Cobol85\CopyData.cpy">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\Cobol85\CopyNotExpanded.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\Cobol85\CopyProcedure.cpy">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\Cobol85\FileControl.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\Codegen.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\Function.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\FunDeclare.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\Library.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\ProcedureCall.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\QualifiedNames.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\SuccessiveCalls.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\TypeBOOL.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\TypeBool.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\TypeDate.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\Types.rdz.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\input\TypeCobol\unsafe.rdz.cbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="resources\output\**">

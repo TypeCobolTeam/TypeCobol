@@ -10,7 +10,7 @@ using TypeCobol.Tools; // CodeElementDiagnostics
 namespace TypeCobol.Codegen {
 
 	[TestClass]
-	public class Parsers {
+	public class TestTypeCobolCodegen {
 
 		[TestMethod]
 		[TestCategory("Config")]
@@ -105,7 +105,7 @@ namespace TypeCobol.Codegen {
 		[TestProperty("Time","fast")]
 		public void ParseFunctions() {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
-			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","FUNCTION")+".rdz.cbl", skeletons);
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Function")+".rdz.cbl", skeletons);
 		}
 
 		[TestMethod]
@@ -150,13 +150,7 @@ namespace TypeCobol.Codegen {
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","SuccessiveCalls")+".rdz.cbl", skeletons);
 		}
 
-		[TestMethod]
-		[TestCategory("Codegen")]
-		[TestProperty("Time", "fast")]
-		[TestProperty("Cobol", "85")]
-		public void ParseCopyNotExpanded() {
-			CodegenTestUtils.ParseGenerateCompare(Path.Combine("Cobol85", "CopyNotExpanded") + ".rdz.cbl");
-		}
+		
 
 	}
 }

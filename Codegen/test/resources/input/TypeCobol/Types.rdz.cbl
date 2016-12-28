@@ -57,9 +57,6 @@
        TRAITEMENT.
            MOVE PERSON-1                  TO PERSON-2
            MOVE Description OF PERSON-1   TO Description OF PERSON-2
-
-           MOVE W-InternalRef            TO InternalRef OF PERSON-2
-           MOVE InternalRef OF PERSON-2  TO ExternalRef OF PERSON-1
            .
 
        END PROGRAM Types.

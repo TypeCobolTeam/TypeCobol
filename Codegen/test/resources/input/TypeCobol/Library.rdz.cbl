@@ -1,10 +1,7 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
-      *REMARKS. COPY=(
-      *    YDATS20   YUTCDAT
-      * ).
-
+       
       *=================================================================
        ENVIRONMENT DIVISION.
       *=================================================================
@@ -20,28 +17,25 @@
        01  W-IfrPgm.
            05 C-PgmNme               PIC X(08) Value 'LIBDATE'.
 
-       01  dateJulian    TYPEDEF.
+       01  dateJulian    TYPEDEF STRONG.
            10 YYYY                   PIC 9(04).
            10 DDD                    PIC 9(03).
 
-       01  dateDB2       TYPEDEF.
+       01  dateDB2       TYPEDEF STRONG.
            10 YYYY                   PIC 9(04).
-           10                        PIC X(01) VALUE '-'.
+           10                        PIC X(01).
            10 MM                     PIC 9(02).
-           10                        PIC X(01) VALUE '-'.
+           10                        PIC X(01).
            10 DD                     PIC 9(02).
 
        01  dateString    TYPEDEF     PIC 9(08).
 
-       01 culture        TYPEDEF.
+       01 culture        TYPEDEF STRONG.
            10 lng                    PIC X(02).
            10 cty                    PIC X(02).
-      *_________________________________________________________________
-       LINKAGE SECTION.
-           COPY YDVZDAT REPLACING ==:DVZDAT:== BY ==DVZDAT==.
 
       *=================================================================
-       PROCEDURE DIVISION USING DVZDAT.
+       PROCEDURE DIVISION.
       *=================================================================
        DECLARE FUNCTION currentDate PUBLIC
            RETURNING Result TYPE date.
@@ -59,11 +53,17 @@
        PROCEDURE DIVISION.
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
-           MOVE CORR W-Dat          TO Result
+		   move W-Dat:YYYY          to Result::YYYY
+		   move W-Dat:MM            to Result::MM
+		   move W-Dat:DD            to Result::DD 
+		   move '-'                 to Result(5:1)
+		   move '-'                 to Result(8:1)
+           
            .
        END-DECLARE.
       *_________________________________________________________________
        DECLARE FUNCTION currentDateJulian PUBLIC
+	  * my comment
            RETURNING Result Type dateJulian.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
@@ -72,9 +72,7 @@
        PROCEDURE DIVISION.
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
-           MOVE FUNCTION DAY-OF-INTEGER
-                         (FUNCTION INTEGER-OF-DATE(W-Dat))
-                TO Result
+           move unsafe W-Dat to Result
            .
        END-DECLARE.
       *_________________________________________________________________
@@ -87,39 +85,18 @@
                           RETURNING Result PIC X(40).
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  C-ZDAT2000               PIC X(08) VALUE 'ZDAT2000'.
-       01  DATS20. COPY YDATS20.
        01  W-Dat       TYPE date.
 
        PROCEDURE DIVISION.
 
-           MOVE SPACES                       TO DATS20
-
-           SET DATS20-I-FONCTION-FORMATAGE   TO TRUE
-           MOVE 'JOUR'                       TO DATS20-I-DATE1
-           MOVE dateType                     TO DATS20-I-RETOUR-TYPE1
-           MOVE direction                    TO DATS20-I-RETOUR-SENS1
-           MOVE separator                    TO DATS20-I-RETOUR-SEPAR
-           MOVE culture :: lng               TO DATS20-I-INT-LANG
-           MOVE culture :: cty               TO DATS20-I-INT-PAYS
-           MOVE 'M'                          TO DATS20-I-POLICE
-           MOVE 'P'                          TO DATS20-I-INJOUR
-           SET DATS20-I-DATE1-SSAAMMJJ-OUI   TO TRUE
-
-           CALL 'ZCALLPGM' USING C-ZDAT2000
-                                 DATS20
-
-           IF DATS20-O-ERREUR
-               MOVE ALL '9'                  TO returnCode
-               DISPLAY DATS20-O-LIBRET
-           ELSE
-               MOVE DATS20-O-DATE-LONG       TO Result
-           END-IF
+           continue
            .
        END-DECLARE.
       *_________________________________________________________________
-       DECLARE FUNCTION currentDateString PUBLIC
-           RETURNING Result TYPE dateString.
+	  *Keep spaces at end of line, because there were 
+	  * presents in source file                      
+       DECLARE FUNCTION currentDateString PUBLIC     
+           RETURNING Result TYPE dateString.         
        PROCEDURE DIVISION.
            ACCEPT Result FROM DATE YYYYMMDD
            .
