@@ -114,6 +114,25 @@ namespace TypeCobol.Compiler.Nodes {
             get { return Attributes.Get(this, attribute); }
         }
 
+        /// <summary>
+        /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value id NULL.
+        /// </summary>
+        public Tuple<int, int> FromToPositions
+        {
+            get
+            {
+                if (CodeElement == null || CodeElement.ConsumedTokens == null) 
+                    return null;                
+                if (CodeElement.ConsumedTokens.Count > 0)
+                {
+                    int from = CodeElement.ConsumedTokens[0].Column;
+                    int to = CodeElement.ConsumedTokens[CodeElement.ConsumedTokens.Count - 1].EndColumn;
+                    return new Tuple<int, int>(from, to);
+                }
+                return null;
+            }
+        }
+
         public virtual IEnumerable<ITextLine> Lines {
             get {
                 var lines = new List<ITextLine>();

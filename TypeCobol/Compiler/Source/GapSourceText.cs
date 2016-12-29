@@ -560,17 +560,17 @@ namespace TypeCobol.Compiler.Source
         /// Compute a Hash code value
         /// </summary>
         /// <returns>The hash code value</returns>
-        public override int GetHashCode()                                         
-        {
-            int hash;
-            int i;
+        //public override int GetHashCode()                                         
+        //{
+        //    int hash;
+        //    int i;
 
-            for (hash= 0, i = 0; i < part1len; i++)
-	            hash= (hash << 1) ^ body[i];
-            for (i = part1len + gaplen; i < size; i++)
-	            hash= (hash << 1) ^ body[i];
-            return hash;
-        }
+        //    for (hash= 0, i = 0; i < part1len; i++)
+        //        hash= (hash << 1) ^ body[i];
+        //    for (i = part1len + gaplen; i < size; i++)
+        //        hash= (hash << 1) ^ body[i];
+        //    return hash;
+        //}
 
         /// <summary>
         /// Write the content of this SourceText into a TextWriter

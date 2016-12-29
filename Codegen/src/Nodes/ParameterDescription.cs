@@ -74,6 +74,13 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 		}
 	}
 	public bool IsLeaf { get { return true; } }
+    public TypeCobol.Compiler.Nodes.Node CommentedNode
+    {
+        get
+        {
+            return null;
+        }
+    }
 }
 
 }

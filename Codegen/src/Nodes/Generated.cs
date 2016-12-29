@@ -10,6 +10,10 @@ public interface Generated {
 	IEnumerable<ITextLine> Lines { get; }
 	/// <summary>Must be treated as a leaf regarding codegen.</summary>
 	bool IsLeaf { get; }
+    /// <summary>
+    /// Get the commented Node associated to this Generated Node
+    /// </summary>
+    Compiler.Nodes.Node CommentedNode { get; }
 }
 
 internal class GeneratedNode: Compiler.Nodes.Node, Generated {
@@ -31,6 +35,13 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 	}
 
 	public bool IsLeaf { get { return false; } }
+    public Compiler.Nodes.Node CommentedNode
+    {
+        get
+        {
+            return null;
+        }
+    }
 }
 
 }

@@ -249,7 +249,6 @@ namespace TypeCobol.Compiler.Source
 
             int l = Math.Min(to, from + length) - from;
                 Array.Copy(content, from, buffer, 0, l);
-            buffer[l]= '\0';
         }
 
         /// <summary>
@@ -384,15 +383,15 @@ namespace TypeCobol.Compiler.Source
         /// Compute a Hash code value
         /// </summary>
         /// <returns>The hash code value</returns>
-        public override int GetHashCode ()
-        {
-            int hash;
-            int i;
+        //public override int GetHashCode ()
+        //{
+        //    int hash;
+        //    int i;
 
-            for (hash = 0, i = 0; i < Size; i++)
-	            hash= (hash << 1) ^ content[i];
-            return hash;
-        }
+        //    for (hash = 0, i = 0; i < Size; i++)
+        //        hash= (hash << 1) ^ content[i];
+        //    return hash;
+        //}
 
         /// <summary>
         /// Expand the content buffer to a new size

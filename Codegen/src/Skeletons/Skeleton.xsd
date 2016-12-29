@@ -74,6 +74,7 @@
                             <xs:attribute name="action" type="ActionEnumType"/>
                             <!-- Variables usable in the pattern-->
                             <xs:attribute name="var" type="xs:string"/>
+                            <!-- Insertion position in a parent node -->
                             <xs:attribute name="position" type="xs:int"/>
                           </xs:extension>
                         </xs:simpleContent>

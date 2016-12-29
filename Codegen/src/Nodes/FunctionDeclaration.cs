@@ -10,8 +10,10 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 
 	string ProgramName = null;
 	Node Node = null;
+    Node SourceNode;
 
 	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {
+        SourceNode = node;
 		ProgramName = node.Hash;
 		foreach(var child in node.Children) {
 			if (child is Compiler.Nodes.ProcedureDivision) {
@@ -105,6 +107,15 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 	}
 
 	public bool IsLeaf { get { return false; } }
+
+    public Node CommentedNode
+    {
+        get
+        {
+            return SourceNode.Comment.HasValue ? (SourceNode.Comment.Value ? SourceNode : null) : null;
+        }
+    }
+
 }
 
 }

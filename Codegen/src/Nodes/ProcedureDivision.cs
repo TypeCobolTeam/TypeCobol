@@ -77,6 +77,13 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	}
 
 	public bool IsLeaf { get { return false; } }
+    public TypeCobol.Compiler.Nodes.Node CommentedNode
+    {
+        get
+        {
+            return null;
+        }
+    }
 }
 
 public class GeneratedParameter: CallTargetParameter {
@@ -105,6 +112,13 @@ internal class Sentence: Compiler.Nodes.Sentence, Generated {
 		}
 	}
 	public bool IsLeaf { get { return false; } }
+    public TypeCobol.Compiler.Nodes.Node CommentedNode
+    {
+        get
+        {
+            return null;
+        }
+    }
 }
 internal class SentenceEnd: Compiler.Nodes.End, Generated {
 	public SentenceEnd(): base(null) { }
@@ -120,6 +134,13 @@ internal class SentenceEnd: Compiler.Nodes.End, Generated {
 		}
 	}
 	public bool IsLeaf { get { return true; } }
+    public TypeCobol.Compiler.Nodes.Node CommentedNode
+    {
+        get
+        {
+            return null;
+        }
+    }
 }
 
 }

@@ -100,5 +100,12 @@ namespace TypeCobol.Codegen {
 			get { return new System.Collections.ObjectModel.ReadOnlyCollection<ITextLine>(_lines); }
 		}
 		public bool IsLeaf { get; private set; }
+        public TypeCobol.Compiler.Nodes.Node CommentedNode
+        {
+            get
+            {
+                return null;
+            }
+        }
 	}
 }

@@ -9,7 +9,9 @@
 
 internal class TypeCobolQualifier: Compiler.Nodes.Node, Generated {
 
+    Compiler.Nodes.Node Node;
 	public TypeCobolQualifier(Compiler.Nodes.Node node): base(node.CodeElement) {
+        Node = node;
 		foreach(var child in node.Children) Add(child);
 	}
 
@@ -86,6 +88,13 @@ internal class TypeCobolQualifier: Compiler.Nodes.Node, Generated {
 	}
 
 	public bool IsLeaf { get { return false; } }
+    public TypeCobol.Compiler.Nodes.Node CommentedNode
+    {
+        get
+        {
+            return Node.Comment.HasValue ? (Node.Comment.Value ? Node : null) : null;
+        }
+    }
 }
 
 }

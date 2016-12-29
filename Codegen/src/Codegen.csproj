@@ -9,6 +9,8 @@
     <RootNamespace>TypeCobol.Codegen</RootNamespace>
     <AssemblyName>TypeCobol.Codegen</AssemblyName>
     <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -68,6 +70,7 @@
     <Compile Include="Actions\Replace.cs" />
     <Compile Include="Config\*.cs" />
     <Compile Include="Generators\DefaultGenerator.cs" />
+    <Compile Include="Generators\DirectiveCodeElementMapper.cs" />
     <Compile Include="Generators\TypeCobolGenerator.cs" />
     <Compile Include="Skeletons\*.cs" />
     <Compile Include="Skeletons\Templates\*.cs" />
@@ -91,6 +94,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

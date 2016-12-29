@@ -81,7 +81,7 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// The source LineMap;
         /// </summary>
-        protected Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine> SourceLineMap
+        internal Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine> SourceLineMap
         {
             get;
             set;
