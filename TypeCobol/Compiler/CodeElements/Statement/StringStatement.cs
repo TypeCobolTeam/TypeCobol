@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using System;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 	using JetBrains.Annotations;
 	using System.Collections.Generic;
@@ -86,8 +88,12 @@ public class StringStatement: StatementElement, VariableWriter {
 				foreach(var variable in content.SendingFields) {
 					if (variable.IsLiteral) continue;
 					string name = variable.ToString();
-					variables.Add(new URI(name), null);
-				}
+
+                    var qualifiedName = new URI(name);
+                    if (!variables.ContainsKey(qualifiedName)) {
+                        variables.Add(qualifiedName, null);
+                    }
+                }
 			}
 			return variables;
 		}

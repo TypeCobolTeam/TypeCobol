@@ -96,7 +96,12 @@ public class UnstringStatement: StatementElement, VariableWriter {
 			string sending = SendingField == null? null : SendingField.ToString();
 			foreach(var field in ReceivingFields) {
 				var name = field.ReceivingField.ToString();
-				variablesWritten.Add(new URI(name), sending);
+			    
+			    var qualifiedName = new URI(name);
+			    if (!variablesWritten.ContainsKey(qualifiedName)) {
+			        variablesWritten.Add(qualifiedName, sending);
+			    }
+			    
 			}
 			return variablesWritten;
 		}
