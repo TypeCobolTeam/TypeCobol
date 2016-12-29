@@ -1645,9 +1645,9 @@ namespace TypeCobol.Compiler.Scanner
                 for (; endIndex > startIndex && line[endIndex] == ' '; endIndex--) { }
 
                 // If only whitespace just before END-EXEC, return a whitespace token
-                if(endIndex == startIndex)
+                if(endIndex == startIndex && line[endIndex] == ' ')
                 {
-                    return ScanWhitespace(startIndex);
+                    return ScanWhitespace(startIndex);  
                 }
             }
             // ExecStatementText is empty
