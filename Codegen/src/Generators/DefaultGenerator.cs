@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -18,6 +19,10 @@ namespace TypeCobol.Codegen.Generators
         private int offset = 0;
         /// <summary>Last line written</summary>
         private TypeCobol.Compiler.Text.ITextLine lastline = null;
+        /// <summary>
+        /// Bit Array Of Original Source line Written.
+        /// </summary>
+        private BitArray WrittenLines;
 
         /// <summary>
         /// The Directive to CodeElement Mapper
@@ -36,7 +41,8 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         public DefaultGenerator(Parser parser, TextWriter destination, List<Skeleton> skeletons)
             : base(parser, destination, skeletons)
-        {           
+        {
+            WrittenLines = new BitArray(parser.Results.TokensLines.Count);
         }
 
         /// <summary>
@@ -48,7 +54,7 @@ namespace TypeCobol.Codegen.Generators
             RootNode.Accept(DirectiveCodeElementMapper);
             //TargetDocument.Dump();
             base.TreeToCode();
-            //Flush all Node SourceTextBuffer
+            //Flush all Node SourceTextBuffer            
             FlushNodeSourceTextBuffers();
         }
 
@@ -57,22 +63,45 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         protected virtual void FlushNodeSourceTextBuffers()
         {
-            //For each Duplicate line that are associated to a Sooyrce Text Buffer
+            //Remove all line that have not been written
+            var Input = Parser.Results.TokensLines;
+            for (int i = 0; i < WrittenLines.Count; i++)
+            {
+                if (!WrittenLines[i])
+                {
+                    SourceDocument.SourceLine src_line = SourceLineMap[Input[i] as TypeCobol.Compiler.Scanner.ITokensLine];
+                    String text = base.TargetDocument.Source.GetTextAt(src_line.From, src_line.To);
+                    int start = src_line.From;
+                    int end = -1;
+                    for (int j = start; j < base.TargetDocument.Source.Size; j++)
+                    {
+                        if (base.TargetDocument.Source[j] == '\n')
+                        {
+                            end = j+1;
+                            break;
+                        }
+                    }
+                    if (end >= 0)                    
+                        base.TargetDocument.Source.Delete(start, end);
+                }
+            }
+
+            //For each Duplicate line that are associated to a Source Text Buffer
             foreach (var line in DirectiveCodeElementMapper.DuplicatedLineSourceTextMap.Keys)
-            {                
+            {
                 StringSourceText sourceText = DirectiveCodeElementMapper.DuplicatedLineSourceTextMap[line];
                 //Pad all splitted segment based on associated node consumed tokens positions
                 List<Compiler.Nodes.Node> nodes = DirectiveCodeElementMapper.SourceTexNodestMap[sourceText];
                 foreach (var node in nodes)
                 {
-                    Tuple<int, int> from_to = node.FromToPositions;
-                    if (from_to != null)
+                    Tuple<int, int, int> from_to_span = node.FromToPositions;
+                    if (from_to_span != null)
                     {                        
                         //Position in the source text
                         Tuple<Position, Position> positions = DirectiveCodeElementMapper.NodeFromToPositionMap[node];
                         if (positions != null)
                         {
-                            int span = from_to.Item2;
+                            int span = from_to_span.Item3;
                             string pad = new string(' ', span);
                             sourceText.Insert(pad, positions.Item2.Pos, positions.Item2.Pos);
                         }
@@ -82,7 +111,6 @@ namespace TypeCobol.Codegen.Generators
                 if (nodes.Count != 0)
                 {// Only if associated nodes exists
                     //Insert the Source Text
-                    var Input = Parser.Results.TokensLines;
                     SourceDocument.SourceLine src_line = line < Input.Count
                      ? base.SourceLineMap[Input[line] as TypeCobol.Compiler.Scanner.ITokensLine]
                      : null;
@@ -153,26 +181,33 @@ namespace TypeCobol.Codegen.Generators
         /// <returns>Number of lines written during this method call.</returns>
         private int WriteInputLinesUpTo(ITextLine line)
         {
-            if (!IsInInput(line)) 
+            if (!IsInInput(line))
+            {
                 return 0;
+            }
             int lines = 0;
             var Input = Parser.Results.TokensLines;
             while (offset < Input.Count)
             {
                 var l = Input[offset];
-                if (l == line) 
+                if (l == line)
+                {
+                    WrittenLines[offset] = true;
                     break;
+                }
                 if (!ShouldCopy(l))
                 {//JCM Remove  this line from the Input ???? This is the way which is used to remove line from the source code
                     SourceDocument.SourceLine src_line = SourceLineMap[l as TypeCobol.Compiler.Scanner.ITokensLine];
                     String text = base.TargetDocument.Source.GetTextAt(src_line.From, src_line.To);
                     base.TargetDocument.Source.Delete(src_line.From, src_line.To);
                 }
+                WrittenLines[offset] = true;
                 offset++;
                 lines++;
             }
             return lines;
         }
+
         /// <summary>
         /// Only copy from input to output lines that are comment or blank.
         /// Everything else is either:
@@ -199,11 +234,15 @@ namespace TypeCobol.Codegen.Generators
 
         private bool IsInInput(ITextLine line)
         {
-            if (line is TypeCobol.Compiler.Scanner.ITokensLine)
+            if (line is TypeCobol.Compiler.Parser.CodeElementsLine)
             {
+                TypeCobol.Compiler.Parser.CodeElementsLine cel_line = line as TypeCobol.Compiler.Parser.CodeElementsLine;
                 int c = offset;
                 if (c < base.SourceLineMap.Count)
                 {
+                    TypeCobol.Compiler.Parser.CodeElementsLine cel_input = Parser.Results.TokensLines[c] as TypeCobol.Compiler.Parser.CodeElementsLine;
+                    if (cel_line.InitialLineIndex < cel_input.InitialLineIndex)
+                        return false;
                     return base.SourceLineMap.ContainsKey(line as TypeCobol.Compiler.Scanner.ITokensLine);
                 }
             }
@@ -237,9 +276,7 @@ namespace TypeCobol.Codegen.Generators
                     //Replace the current line
                     sw.Flush();
                     text = sw.ToString();
-                    sourceText.Insert(text, comment_line.From, comment_line.To);
-                    if (from_to_generated != null)
-                        from_to_generated = new Tuple<Position, Position>(from_to_generated.Item2, from_to_generated.Item2);
+                    this.TargetDocument.Source.Insert(text, comment_line.From, comment_line.To);
                 }
                 offset++;
                 lastline = line;
@@ -262,7 +299,7 @@ namespace TypeCobol.Codegen.Generators
             text = sw.ToString();
             if (from_to_generated != null)
             {
-                sourceText.Insert(text, from_to_generated.Item1.Pos, from_to_generated.Item2.Pos);
+                sourceText.Insert(text, Math.Min(from_to_generated.Item1.Pos, sourceText.Size), Math.Min(from_to_generated.Item2.Pos, sourceText.Size));
                 from_to_generated = new Tuple<Position, Position>(from_to_generated.Item2, from_to_generated.Item2);
             }
             else

@@ -116,18 +116,37 @@ namespace TypeCobol.Compiler.Nodes {
 
         /// <summary>
         /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value id NULL.
+        /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
+        /// The method also calculate the ending span offset from the beginning of the last line..
         /// </summary>
-        public Tuple<int, int> FromToPositions
+        public Tuple<int, int, int> FromToPositions
         {
             get
             {
-                if (CodeElement == null || CodeElement.ConsumedTokens == null) 
-                    return null;                
+                if (CodeElement == null || CodeElement.ConsumedTokens == null)
+                    return null;
                 if (CodeElement.ConsumedTokens.Count > 0)
                 {
+                    int ln_size = System.Environment.NewLine.Length;
                     int from = CodeElement.ConsumedTokens[0].Column;
-                    int to = CodeElement.ConsumedTokens[CodeElement.ConsumedTokens.Count - 1].EndColumn;
-                    return new Tuple<int, int>(from, to);
+                    int to = 0;
+                    int i = 0;
+                    int delta_ln = 0;
+                    int span = 0;
+                    do
+                    {
+                        int curLineIndex = CodeElement.ConsumedTokens[i].Line;
+                        to += delta_ln;
+                        span = 0;
+                        while (i < CodeElement.ConsumedTokens.Count && curLineIndex == CodeElement.ConsumedTokens[i].Line)
+                        {
+                            span = CodeElement.ConsumedTokens[i].EndColumn;
+                            i++;
+                        }
+                        to += span;
+                        delta_ln = ln_size;
+                    } while (i < CodeElement.ConsumedTokens.Count);
+                    return new Tuple<int, int, int>(from, to, span);
                 }
                 return null;
             }
@@ -137,9 +156,12 @@ namespace TypeCobol.Compiler.Nodes {
             get {
                 var lines = new List<ITextLine>();
                 if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
-                foreach (var token in CodeElement.ConsumedTokens)
-                    if (!lines.Contains(token.TokensLine))
-                        lines.Add(token.TokensLine);
+                foreach (var token in CodeElement.ConsumedTokens) {//JCM: Don't take in account imported token.
+                    if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken)) {
+                        if (!lines.Contains(token.TokensLine))
+                            lines.Add(token.TokensLine);
+                    }
+                }
                 return lines;
             }
         }

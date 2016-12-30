@@ -103,14 +103,13 @@ namespace TypeCobol.Codegen.Generators
             if (node.CodeElement != null)
             {
 
-                Tuple<int,int> from_to = node.FromToPositions;
+                Tuple<int, int, int> from_to = node.FromToPositions;
                 if (from_to != null)
                 {
                     bool bCommented = (node.Comment.HasValue ? node.Comment.Value : false);//Shall the node be generated in a commented line
                     int nLineIndex = node.CodeElement.ConsumedTokens[0].Line - 1;
                     var sourceLine = Generator.SourceLineMap[Generator.Parser.Results.TokensLines[nLineIndex]];
                     Tuple<Position, Position> positions = null;
-                    bool bDuplicated = false;
                     //For a Generated Node Check if it is associated to a Line that must be commented
                     TypeCobol.Codegen.Nodes.Generated generated = node as TypeCobol.Codegen.Nodes.Generated;
                     int commentLineIndex = nLineIndex;
@@ -118,22 +117,10 @@ namespace TypeCobol.Codegen.Generators
                     if (commentedNode != null)
                     {//Get the Generated Comment line index
                         commentLineIndex = commentedNode.CodeElement.ConsumedTokens[0].Line - 1;                        
-                    }
+                    }                    
                     if (nLineIndex == commentLineIndex && CommentedLines[commentLineIndex])
-                    {//The target line is duplicate check that it must be duplicated                        
-                        bDuplicated = DuplicatedLineSourceTextMap.ContainsKey(commentLineIndex);
-                        if (!bDuplicated)
-                        {//Duplicate it
-                            string text = Generator.TargetDocument.Source.GetTextAt(sourceLine.From, sourceLine.To);
-                            StringSourceText sourceText = new StringSourceText();
-                            sourceText.Insert(text, 0, 0);
-                            DuplicatedLineSourceTextMap[commentLineIndex] = sourceText;
-                            SourceTexNodestMap[sourceText] = new List<Node>();
-                            bDuplicated = true;
-                        }
-                    }
-                    if (bDuplicated)
-                    {
+                    {   //If the source line of this node target a comented line then
+                        //it may generated in the target lien Source Text Buffer
                         if (bCommented)
                         {
                             // This is a commented Node in a duplicated commbeted node ==> Don't generate it
@@ -142,7 +129,8 @@ namespace TypeCobol.Codegen.Generators
                         }
                         else
                         {
-                            //This node will be generated in a commented line ==> Duplicate the line
+                            //This node will be generated in a separate Source Text Buffer of the original commented line
+                            // => calculate the position where the generated code will be substituted in the source text buffer.
                             StringSourceText sourceText = DuplicatedLineSourceTextMap[nLineIndex];
                             Position from = new Position(from_to.Item1 - 1);
                             Position to = new Position(from_to.Item2);
@@ -166,7 +154,25 @@ namespace TypeCobol.Codegen.Generators
                     this.NodeFromToPositionMap.Add(node, positions);                    
                     if (bCommented) //Remember line that will be commented
                     {
-                        CommentedLines[nLineIndex] = true;                        
+                        if (!DuplicatedLineSourceTextMap.ContainsKey(commentLineIndex))
+                        {//Create the target Souce Text Buffer associated to this commented source line.
+                            StringSourceText sourceText = new StringSourceText();
+                            DuplicatedLineSourceTextMap[commentLineIndex] = sourceText;
+                            SourceTexNodestMap[sourceText] = new List<Node>();
+
+                            //Put each orginal line that must be commented in the Source Text Buffer
+                            //Generated code substitution will operate in this text buffer.
+                            var lines = node.Lines;
+                            System.IO.StringWriter sw = new System.IO.StringWriter();
+                            foreach (var line in lines)
+                            {
+                                string text = line.Text;
+                                sw.WriteLine(text);
+                            }
+                            sourceText.Insert(sw.ToString(), 0, 0);
+                        }
+                        //Construct the line here
+                        CommentedLines[nLineIndex] = true;                          
                     }
                 }
 
