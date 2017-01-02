@@ -74,6 +74,12 @@ namespace TypeCobol.Compiler.CodeElements
             get { return WithNoAdvancing != null && WithNoAdvancing.Value; }
         }
 
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, OutputDeviceName, WithNoAdvancing)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) Variables);
+        }
+
         /// <summary>
         /// Debug string
         /// </summary>

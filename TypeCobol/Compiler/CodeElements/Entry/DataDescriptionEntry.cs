@@ -1,14 +1,8 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements {
-
-	using System;
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeModel;
-	using TypeCobol.Compiler.Scanner;
-
-
 
 	/// <summary>
 	/// Base class for all types of data definition entries :
@@ -18,8 +12,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	/// - DataConditionEntry
 	/// </summary>
 	public abstract class DataDefinitionEntry: NamedCodeElement {
-
-		public DataDefinitionEntry(CodeElementType codeElementType): base(codeElementType) { }
+	    protected DataDefinitionEntry(CodeElementType codeElementType): base(codeElementType) { }
 
 		/// <summary>
 		/// The level-number specifies the hierarchy of data within a record, and identifies
@@ -66,7 +59,12 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public SymbolDefinition DataName { get; set; }
 
-		public override string Name { get { return DataName != null? DataName.Name : null; } }
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, LevelNumber, DataName);
+	    }
+
+	    public override string Name { get { return DataName != null? DataName.Name : null; } }
 	}
 
 	/// <summary>
@@ -97,7 +95,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// treated as though FILLER had been specified.
 		/// </summary>
 		public SyntaxProperty<bool> Filler { get; internal set; }
-		public bool IsFiller { get { return Filler != null? Filler.Value : false; } }
+		public bool IsFiller { get { return Filler != null && Filler.Value; } }
 
 		/// <summary>
 		/// p198:
@@ -139,6 +137,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
 
         public DataType DataType { get; internal set; }
+
 		public int Length {
 			get {
 				if (Picture == null) return 1;
@@ -193,7 +192,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// global name.
 		/// </summary>
 		public SyntaxProperty<bool> External { get; internal set; }
-		public bool IsExternal { get { return External != null? External.Value : false; } }
+		public bool IsExternal { get { return External != null && External.Value; } }
 
 		/// <summary>
 		/// p189:
@@ -220,7 +219,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// any program that directly or indirectly contains the containing program.
 		/// </summary>
 		public SyntaxProperty<bool> Global { get; internal set; }
-		public bool IsGlobal { get { return Global != null? Global.Value : false; } }
+		public bool IsGlobal { get { return Global != null && Global.Value; } }
 
 		/// <summary>
 		/// p189:
@@ -732,6 +731,30 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// USAGE FUNCTION-POINTER, or USAGE OBJECT REFERENCE.
 		/// </summary>
 		public bool IsInitialValueNull { get { return InitialValue.NullPointerValue != null; } }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor,  Filler,
+                                                                Picture,
+                                                                UserDefinedDataType,
+                                                                DataType,
+                                                                IsBlankWhenZero,
+                                                                External,
+                                                                Global,
+                                                                IsJustified,
+                                                                IsGroupUsageNational,
+                                                                MinOccurencesCount,
+                                                                MaxOccurencesCount,
+                                                                HasUnboundedNumberOfOccurences,
+                                                                OccursDependingOn,
+                                                                SignIsSeparate,
+                                                                SignPosition,
+                                                                IsSynchronized,
+                                                                Usage,
+                                                                ObjectReferenceClass,
+                                                                InitialValue)
+                   && this.ContinueVisitToChildren(astVisitor, TableSortingKeys, Indexes);
+        }
 	}
         
     /// <summary>
@@ -748,6 +771,11 @@ namespace TypeCobol.Compiler.CodeElements {
         }
 
         public Token SpecialRegisterName { get; private set; }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, SpecialRegisterName);
+        }
     }
 
     /// <summary>
@@ -755,15 +783,21 @@ namespace TypeCobol.Compiler.CodeElements {
     /// </summary>
     public class FunctionCallResultDescriptionEntry : DataDescriptionEntry
     {
-        public FunctionCallResultDescriptionEntry(FunctionCall functionCall, int callSiteId) : base() {
+        public FunctionCallResultDescriptionEntry(FunctionCall functionCall, int callSiteId) {
             // Generate a unique symbol name for the function call at this specific call site
             var generatedSymbolName = new GeneratedSymbolName(functionCall.FunctionNameToken, functionCall.FunctionName + "-" + callSiteId);
             DataName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
 
-            FunctionCall = functionCall;    
+            FunctionCall = functionCall;
         }
 
         public FunctionCall FunctionCall { get; private set; }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, FunctionCall);
+        }
     }
 
     /// <summary>
@@ -777,6 +811,11 @@ namespace TypeCobol.Compiler.CodeElements {
         // group usage national, blank when zero and so on
 
         public IList<DataConditionEntry> DataConditions { get; internal set; }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, DataConditions);
+        }
     }
 
     /// <summary>
@@ -802,6 +841,12 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public SyntaxProperty<bool> Strong { get; internal set; }
         public bool IsStrong { get { return Strong != null && Strong.Value; } }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, DataTypeName, Strong);
+        }
     }
 
     /// <summary>
@@ -887,7 +932,13 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// contain an OCCURS DEPENDING ON clause.
 		/// </summary>
 		public SymbolReference RedefinesDataName { get; set; }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, Filler, RedefinesDataName);
+        }
+    }
 
 	/// <summary>
 	/// The RENAMES clause specifies alternative and possibly overlapping groupings of
@@ -945,7 +996,13 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public SymbolReference RenamesFromDataName { get; set; }
 		public SymbolReference RenamesToDataName { get; set; }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, RenamesFromDataName, RenamesToDataName);
+        }
+    }
     
     /// <summary>
     /// Format 3: condition-name
@@ -987,7 +1044,13 @@ namespace TypeCobol.Compiler.CodeElements {
 
 		public DataType DataType { get { return DataType.Boolean; } }
 		public int Length { get { return 1; } }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ConditionName, DataType)
+                   && this.ContinueVisitToChildren(astVisitor, ConditionValues, ConditionValuesRanges);
+        }
+    }
 
 	/// <summary>
 	/// literal-1 THROUGH literal-2
@@ -1018,7 +1081,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	///   QUOTE, HIGH-VALUE, LOW-VALUE, symbolic-character, ALL
 	///   national-literal, or ALL literal can be specified.
 	/// </summary>
-	public class ValuesRange
+	public class ValuesRange : IVisitable
 	{
 		public ValuesRange(Value minValue, Value maxValue)
 		{
@@ -1028,6 +1091,9 @@ namespace TypeCobol.Compiler.CodeElements {
 
 		public Value MinValue { get; private set; }
 		public Value MaxValue { get; private set; }
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, MinValue, MaxValue);
+	    }
 	}
 
 	/// <summary>
@@ -1041,7 +1107,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		Descending
 	}
 
-	public class TableSortingKey
+	public class TableSortingKey : IVisitable
 	{
 		public TableSortingKey(SymbolReference sortKey, SyntaxProperty<SortDirection> sortDirection)
 		{
@@ -1052,6 +1118,9 @@ namespace TypeCobol.Compiler.CodeElements {
 		public SymbolReference SortKey { get; private set; }
 
 		public SyntaxProperty<SortDirection> SortDirection { get; private set; }
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SortKey, SortDirection);
+	    }
 	}
 
 	/// <summary>

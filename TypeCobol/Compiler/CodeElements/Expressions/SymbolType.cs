@@ -1,4 +1,4 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -40,5 +40,34 @@ namespace TypeCobol.Compiler.CodeElements
 
         // Used when the type of the symbol has not yet been resolved
         TO_BE_RESOLVED
+    }
+
+    public static class SymbolTypeUtils {
+        public static CobolLanguageLevel GetCobolLanguageLevel(SymbolType symbolType) {
+            if (symbolType == SymbolType.DataTypeName) {
+                return CobolLanguageLevel.Cobol2002;
+            }
+            if (symbolType == SymbolType.FunctionName) {
+                return CobolLanguageLevel.TypeCobol;
+            }
+            return CobolLanguageLevel.Cobol85;
+        }
+
+        public static CobolLanguageLevel GetCobolLanguageLevel([CanBeNull] params SymbolType[] symbolTypes) {
+            CobolLanguageLevel result = CobolLanguageLevel.Cobol85;
+
+            if (symbolTypes != null) {
+                foreach (var symbolType in symbolTypes) {
+                    var current = GetCobolLanguageLevel(symbolType);
+                    if (current == CobolLanguageLevel.TypeCobol) {
+                        return CobolLanguageLevel.TypeCobol;
+                    }
+                    if (current > result) {
+                        result = current;
+                    }
+                }
+            }
+            return result;
+        }
     }
 }

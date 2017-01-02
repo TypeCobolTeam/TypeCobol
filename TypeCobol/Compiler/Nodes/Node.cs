@@ -4,7 +4,6 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
@@ -16,13 +15,13 @@ namespace TypeCobol.Compiler.Nodes {
     ///     - parent/children relations
     ///     - unique identification accross the tree
     /// </summary>
-    public abstract class Node {
+    public abstract class Node : IVisitable{
         protected List<Node> children = new List<Node>();
 
         /// <summary>TODO: Codegen should do its stuff without polluting this class.</summary>
         public bool? Comment = null;
 
-        public Node(CodeElement CodeElement) {
+        protected Node(CodeElement CodeElement) {
             this.CodeElement = CodeElement;
         }
 
@@ -166,6 +165,12 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// <summary>
+        /// Marker for Code Generation to know if this Node will generate code.
+        /// TODO this method should be in CodeGen project
+        /// </summary>
+        public bool NeedGeneration { get; set; }
+
         public IList<CodeElementHolder<T>> GetChildren<T>() where T : CodeElement {
             var results = new List<CodeElementHolder<T>>();
             foreach (var child in children) {
@@ -257,7 +262,28 @@ namespace TypeCobol.Compiler.Nodes {
             return str.ToString();
         }
 
-        private void Dump(StringBuilder str, int i) {
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            //TODO
+            //astVisitor.Visit(this);
+            if (CodeElement != null) {
+                if (astVisitor.BeginCodeElement(CodeElement)) {
+                    CodeElement.AcceptASTVisitor(astVisitor);
+                }
+                astVisitor.EndCodeElement(CodeElement);
+            }
+            foreach (Node child in Children) {
+                if (astVisitor.BeginNode(child)) {
+                    child.AcceptASTVisitor(astVisitor);
+                }
+                astVisitor.EndNode(child);
+            }
+            //no sense here
+            return true;
+        }
+
+
+        private void Dump(StringBuilder str, int i)
+        {
             for (var c = 0; c < i; c++) str.Append("  ");
             if (Comment == true) str.Append('*');
             if (Name != null) str.AppendLine(Name);

@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract class StatementElement : CodeElement
     {
-        public StatementElement(CodeElementType codeElementType, StatementType statementType) : base(codeElementType)
+        protected StatementElement(CodeElementType codeElementType, StatementType statementType) : base(codeElementType)
         {
             StatementType = statementType;
         }
@@ -36,6 +36,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// List of all instrinsic function calls we need to execute for this statement
         /// </summary>
         public FunctionCallResult[] FunctionCalls { get; set; }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, DataReadAccess,
+                                                            DataWriteAccess, 
+                                                            ExpressionsToCompute, 
+                                                            FunctionCalls);
+        }
     }
 
     /// <summary>

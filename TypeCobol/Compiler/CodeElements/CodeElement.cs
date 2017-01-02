@@ -1,8 +1,7 @@
 using Antlr4.Runtime;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
@@ -14,9 +13,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// Common properties shared between all code elements.
     /// A CodeElement produced during the first parsing phase is also a token consumed by the second parsing phase. 
     /// </summary>
-    public abstract partial class CodeElement: IToken
+    public abstract partial class CodeElement: IToken, IVisitable
     {
-        public CodeElement(CodeElementType type)
+        protected CodeElement(CodeElementType type)
         {
             Type = type;
             ConsumedTokens = new List<Token>();
@@ -82,13 +81,29 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
+
         public IList<Diagnostic> Diagnostics { get; set; }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            var continueVisit = astVisitor.Visit(this)
+                                && this.ContinueVisitToChildren(astVisitor, CallTarget, StorageAreaGroupsCorrespondingImpact)
+                                && this.ContinueVisitToChildren(astVisitor, CallSites, ConsumedTokens, StorageAreaReads,StorageAreaWrites);
+            if (continueVisit && StorageAreaDefinitions != null) {
+                continueVisit = this.ContinueVisitToChildren(astVisitor,    StorageAreaDefinitions.Keys,
+                                                                            StorageAreaDefinitions.Values);
+            }
+            if (continueVisit && SymbolInformationForTokens != null) {
+                continueVisit = this.ContinueVisitToChildren(astVisitor, SymbolInformationForTokens.Keys,
+                                                                         SymbolInformationForTokens.Values);
+            }
+            return continueVisit;
+        }
 
         /// <summary>
         /// Apply propperties of the current CodeElement to the specified one.
         /// </summary>
         /// <param name="ce"></param>
-        public void ApplyPropertiesToCE(CodeElement ce)
+        public void ApplyPropertiesToCE([NotNull] CodeElement ce)
         {
             ce.ConsumedTokens = this.ConsumedTokens;
             ce.Diagnostics = this.Diagnostics;
@@ -308,7 +323,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     public abstract class NamedCodeElement : CodeElement
     {
-        public NamedCodeElement(CodeElementType type) : base(type) { }
+        protected NamedCodeElement(CodeElementType type) : base(type) { }
 
         public abstract string Name { get; }
     }

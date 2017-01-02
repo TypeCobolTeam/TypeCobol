@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -545,5 +541,27 @@ namespace TypeCobol.Compiler.Scanner
         ReplaceDirective = 461,
         // - internal token groups -> used by the preprocessor only
         ContinuationTokenGroup = 462
+    }
+
+    public static class TokenConst {
+        private static readonly TokenType[] TypeCobolTokenType =
+        {
+            TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.INOUT,
+            TokenType.UNSAFE
+        };
+
+        private static readonly TokenType[] Cobol2002TokenType = {TokenType.STRONG, TokenType.TYPEDEF};
+
+        public static CobolLanguageLevel GetCobolLanguageLevel(TokenType tokenType) {
+            if (TypeCobolTokenType.Contains(tokenType))
+            {
+                return CobolLanguageLevel.TypeCobol;
+            }
+            if (Cobol2002TokenType.Contains(tokenType))
+            {
+                return CobolLanguageLevel.Cobol2002;
+            }
+            return CobolLanguageLevel.Cobol85;
+        }
     }
 }
