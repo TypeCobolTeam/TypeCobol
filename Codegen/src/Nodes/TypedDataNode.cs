@@ -65,13 +65,6 @@ internal class TypedDataNode: DataDescription, Generated {
 	}
 
 	public bool IsLeaf { get { return true; } }
-    public Node CommentedNode
-    {
-        get 
-        { 
-            return Node.Comment.HasValue ? (Node.Comment.Value ? Node : null) : null; 
-        }
-    }
 }
 
 }

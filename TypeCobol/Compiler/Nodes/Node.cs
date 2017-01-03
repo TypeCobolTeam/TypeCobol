@@ -41,6 +41,11 @@ namespace TypeCobol.Compiler.Nodes {
             get { return children.AsReadOnly(); }
         }
 
+        /// <summary>
+        /// This is usefull durring Code generation phase in order to create un Array of Node.
+        /// Each Node will have it Node Index in the Array.
+        /// </summary>
+        public int NodeIndex { get; set; }
 
         public virtual string Name {
             get { return ID; }
@@ -114,11 +119,12 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
-        /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value id NULL.
+        /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value is NULL.
         /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
-        /// The method also calculate the ending span offset from the beginning of the last line..
+        /// The method also calculate the ending span offset from the beginning of the last line.
+        /// It also get the list of Line numbers occupated by this node.
         /// </summary>
-        public Tuple<int, int, int> FromToPositions
+        public Tuple<int, int, int, List<int>> FromToPositions
         {
             get
             {
@@ -132,20 +138,31 @@ namespace TypeCobol.Compiler.Nodes {
                     int i = 0;
                     int delta_ln = 0;
                     int span = 0;
+                    List<int> lineNumbers = new List<int>();
                     do
                     {
-                        int curLineIndex = CodeElement.ConsumedTokens[i].Line;
-                        to += delta_ln;
-                        span = 0;
-                        while (i < CodeElement.ConsumedTokens.Count && curLineIndex == CodeElement.ConsumedTokens[i].Line)
+                        var token = CodeElement.ConsumedTokens[i];
+                        if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                        {//Don't take in account imported tokens -> This avoid including lines that come from COPYs files.
+                            int curLineIndex = CodeElement.ConsumedTokens[i].Line;
+                            lineNumbers.Add(curLineIndex);
+                            to += delta_ln;
+                            span = 0;
+                            while (i < CodeElement.ConsumedTokens.Count && curLineIndex == CodeElement.ConsumedTokens[i].Line)
+                            {
+                                span = CodeElement.ConsumedTokens[i].EndColumn;
+                                i++;
+                            }
+                            to += span;
+                            delta_ln = ln_size;
+                        }
+                        else
                         {
-                            span = CodeElement.ConsumedTokens[i].EndColumn;
                             i++;
                         }
-                        to += span;
-                        delta_ln = ln_size;
                     } while (i < CodeElement.ConsumedTokens.Count);
-                    return new Tuple<int, int, int>(from, to, span);
+                    lineNumbers.TrimExcess();
+                    return new Tuple<int, int, int, List<int>>(from, to, span, lineNumbers);
                 }
                 return null;
             }

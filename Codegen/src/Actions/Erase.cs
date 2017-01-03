@@ -49,7 +49,7 @@ namespace TypeCobol.Codegen.Actions
             int index = this.Node.Parent.IndexOf(this.Node);
             if (index > -1)
             {
-                var nodegen = new GeneratedNode(solver);
+                var nodegen = new GeneratedNode(solver, this.Node.CodeElement);
                 this.Node.Parent.Add(nodegen, index + 1);
             }
             // comment out original "line" (=~ non expanded node)

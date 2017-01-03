@@ -117,9 +117,6 @@ namespace TypeCobol.Codegen
             //Create the Initial target document.
             CreateTargetDocument();
             TreeToCode();
-            // Step 3: Write target document
-            TargetDocument.Source.Write(Destination);
-            Destination.Flush();
         }
 
         /// <summary>

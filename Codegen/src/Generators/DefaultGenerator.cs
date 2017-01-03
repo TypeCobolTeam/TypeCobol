@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 
@@ -15,24 +16,6 @@ namespace TypeCobol.Codegen.Generators
     /// </summary>
     public class DefaultGenerator : Generator2
     {
-        /// <summary>Index in Input of the next line to write</summary>
-        private int offset = 0;
-        /// <summary>Last line written</summary>
-        private TypeCobol.Compiler.Text.ITextLine lastline = null;
-        /// <summary>
-        /// Bit Array Of Original Source line Written.
-        /// </summary>
-        private BitArray WrittenLines;
-
-        /// <summary>
-        /// The Directive to CodeElement Mapper
-        /// </summary>
-        public DirectiveCodeElementMapper DirectiveCodeElementMapper
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -42,7 +25,6 @@ namespace TypeCobol.Codegen.Generators
         public DefaultGenerator(Parser parser, TextWriter destination, List<Skeleton> skeletons)
             : base(parser, destination, skeletons)
         {
-            WrittenLines = new BitArray(parser.Results.TokensLines.Count);
         }
 
         /// <summary>
@@ -50,267 +32,135 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         protected override void TreeToCode()
         {
-            DirectiveCodeElementMapper = new DirectiveCodeElementMapper(Parser.Results.TokensLines, this);            
-            RootNode.Accept(DirectiveCodeElementMapper);
-            //TargetDocument.Dump();
-            base.TreeToCode();
-            //Flush all Node SourceTextBuffer            
-            FlushNodeSourceTextBuffers();
+            LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
+            mapper.Accept(RootNode);
+            //mapper.Dump();
+            GapSourceText targetSourceText = LinearGeneration(mapper);
+            // Step 3: Write target document
+            targetSourceText.Write(Destination);
+            Destination.Flush();
         }
 
         /// <summary>
-        /// Flushes all Node's Source Text Buffers.
+        /// Perform a linear Generation
         /// </summary>
-        protected virtual void FlushNodeSourceTextBuffers()
-        {
-            //Remove all line that have not been written
+        private GapSourceText LinearGeneration(LinearNodeSourceCodeMapper mapper)
+        {            
+            GapSourceText targetSourceText = new GapSourceText();
+            //Bit Array of Generated Nodes.
+            BitArray generated_node = new BitArray(mapper.NodeCount);
+            //The previous line generation buffer 
+            StringSourceText previousBuffer = null;
             var Input = Parser.Results.TokensLines;
-            for (int i = 0; i < WrittenLines.Count; i++)
+            for (int i = 0; i < mapper.LineData.Length; i++)
             {
-                if (!WrittenLines[i])
+                //--------------------------------------------------------------------------------------------------------------
+                //1) A Non commented line with no Associated nodes is generated without any change.
+                if (!mapper.CommentedLines[i] && mapper.LineData[i].LineNodes == null)
                 {
-                    SourceDocument.SourceLine src_line = SourceLineMap[Input[i] as TypeCobol.Compiler.Scanner.ITokensLine];
-                    String text = base.TargetDocument.Source.GetTextAt(src_line.From, src_line.To);
-                    int start = src_line.From;
-                    int end = -1;
-                    for (int j = start; j < base.TargetDocument.Source.Size; j++)
+                    //If there was a previous buffer ==> Flush it
+                    if (previousBuffer != null)
                     {
-                        if (base.TargetDocument.Source[j] == '\n')
-                        {
-                            end = j+1;
-                            break;
-                        }
+                        targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                        previousBuffer = null;
                     }
-                    if (end >= 0)                    
-                        base.TargetDocument.Source.Delete(start, end);
+                    IEnumerable<ITextLine> lines = Indent(Input[i], null);
+                    foreach (var line in lines)
+                    {
+                        string text = line.Text;
+                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                    }
+                    continue;
                 }
-            }
-
-            //For each Duplicate line that are associated to a Source Text Buffer
-            foreach (var line in DirectiveCodeElementMapper.DuplicatedLineSourceTextMap.Keys)
-            {
-                StringSourceText sourceText = DirectiveCodeElementMapper.DuplicatedLineSourceTextMap[line];
-                //Pad all splitted segment based on associated node consumed tokens positions
-                List<Compiler.Nodes.Node> nodes = DirectiveCodeElementMapper.SourceTexNodestMap[sourceText];
-                foreach (var node in nodes)
+                //--------------------------------------------------------------------------------------------------------------
+                //2) If the line is commented then first comment all following lines that have the same intersection with
+                // the corresponding target Nodes.
+                List<Node> line_nodes = mapper.LineData[i].LineNodes;
+                //If there was a previous buffer ==> Flush it
+                if (previousBuffer != null && mapper.CommentedLines[i])
                 {
-                    Tuple<int, int, int> from_to_span = node.FromToPositions;
-                    if (from_to_span != null)
-                    {                        
-                        //Position in the source text
-                        Tuple<Position, Position> positions = DirectiveCodeElementMapper.NodeFromToPositionMap[node];
-                        if (positions != null)
-                        {
-                            int span = from_to_span.Item3;
-                            string pad = new string(' ', span);
-                            sourceText.Insert(pad, positions.Item2.Pos, positions.Item2.Pos);
-                        }
+                    targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                    previousBuffer = null;
+                }
+                for (int j = i; mapper.CommentedLines[j]; j++)
+                {
+                    List<Node> current_nodes = mapper.LineData[j].LineNodes;
+                    if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
+                        break;//This commented line has no nodes which intersect with the previous line.
+                    IEnumerable<ITextLine> lines = Indent(Input[j], true);
+                    foreach (var line in lines)
+                    {
+                        string text = line.Text;
+                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
                     }
+                    mapper.CommentedLines[j] = false;//This commented line has been generated now
+                    line_nodes = current_nodes;
                 }
-
-                if (nodes.Count != 0)
-                {// Only if associated nodes exists
-                    //Insert the Source Text
-                    SourceDocument.SourceLine src_line = line < Input.Count
-                     ? base.SourceLineMap[Input[line] as TypeCobol.Compiler.Scanner.ITokensLine]
-                     : null;
-                    int to = src_line != null ? src_line.To : this.TargetDocument.To;
-                    TargetDocument.Source.Insert(sourceText, to, to);
+                //--------------------------------------------------------------------------------------------------------------
+                //3)For each node related to this line, and not already generated.
+                line_nodes = mapper.LineData[i].LineNodes;
+                foreach(Node node in line_nodes)
+                {
+                    if (generated_node[node.NodeIndex])
+                        continue;//Already Generated.
+                    StringSourceText curSourceText = mapper.Nodes[node.NodeIndex].Buffer;
+                    if (curSourceText != previousBuffer && previousBuffer != null)
+                    {//Flush previous buffer
+                        targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                        previousBuffer = null;
+                    }
+                    bool bGenerated = node is Generated;
+                    if (!bGenerated)
+                    {//This Node is not Generated ==> do Nothing it is already in the source buffer.
+                    }
+                    else
+                    {
+                        bool bFirst = true;                        
+                        Position from = mapper.Nodes[node.NodeIndex].From;
+                        Position to = mapper.Nodes[node.NodeIndex].To;
+                        foreach (var line in node.Lines)
+                        {
+                            StringWriter sw = new StringWriter();
+                            if (bFirst)
+                            {//The first element don't ident it just insert it a the right position
+                                sw.WriteLine(line.Text);
+                                bFirst = false;
+                            }
+                            else foreach (var l in Indent(line, null))
+                            {
+                                sw.WriteLine(l.Text);
+                            }
+                            sw.Flush();
+                            string text = sw.ToString();
+                            curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                            from = to;
+                            sw.Close();
+                        }                        
+                        //Pad a splitted segment
+                        int span = mapper.Nodes[node.NodeIndex].Positions.Item3;
+                        string pad = new string(' ', span);
+                        curSourceText.Insert(pad, to.Pos, to.Pos);
+                    }
+                    //This node is now generated.
+                    generated_node[node.NodeIndex] = true;
+                    previousBuffer = curSourceText;
                 }
+                //--------------------------------------------------------------------------------------------------------------
             }
+            //If there was a previous buffer ==> Flush it
+            if (previousBuffer != null)
+            {
+                targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                previousBuffer = null;
+            }
+            return targetSourceText;
         }
 
         protected override bool Process(Compiler.Nodes.Node node)
         {
-            //TODO If Node inside a copy are not useful for step 1 of Generator, we can move this to step1.
-            if (node.IsInsideCopy())
-            {
-                return false;
-            }
-            Tuple<Position, Position> from_to_generated = null;
-            if (this.DirectiveCodeElementMapper.NodeFromToPositionMap.ContainsKey(node))
-            {   //A node with no possition shall be ignored.
-                from_to_generated = DirectiveCodeElementMapper.NodeFromToPositionMap[node];
-                if (from_to_generated == null)
-                {
-                    return false;
-                }
-            }
-            var generated = node as Generated;
-            //Are we generating a Node which have a separate buffer ?
-            StringSourceText sourceText = null;
-            if (this.DirectiveCodeElementMapper.NodeSourceTextMap.ContainsKey(node))
-            {
-                sourceText = DirectiveCodeElementMapper.NodeSourceTextMap[node];
-            }
-            if (generated == null || sourceText == null)
-            {//Non generated node or no custom source text ==> ignore custom buffer position
-                from_to_generated = null;
-                sourceText = null;
-            }
-            
-            bool bFirst = true;
-            foreach(var line in node.Lines)
-            {
-                if (generated != null)
-                {
-                    // if we write generated code, we INSERT one line of code between Input lines;
-                    // thus, we must decrease offset as it'll be re-increased by Write(line) and
-                    // we don't want to fuck up next iteration
-                    offset--;
-                }
-                else
-                {
-                    // before we copy an original line of code, we must still write non-source
-                    // lines (eg. comments or empty lines) so they are preserved in Output
-                    WriteInputLinesUpTo(line);
-                }
-                from_to_generated = Write(line, node.Comment, sourceText != null ? sourceText : TargetDocument.Source, from_to_generated, bFirst);
-                bFirst = false;
-                //this.TargetDocument.Dump();
-            }
-            return generated == null || !generated.IsLeaf;
-        }
-
-        /// <summary>
-        /// Write all lines between the last written line (ie. Input[offset-1]) and a given line.
-        /// If line is contained in Input but before offset, all remaining Input will be written.
-        ///	In other words: don't fall in this case.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <returns>Number of lines written during this method call.</returns>
-        private int WriteInputLinesUpTo(ITextLine line)
-        {
-            if (!IsInInput(line))
-            {
-                return 0;
-            }
-            int lines = 0;
-            var Input = Parser.Results.TokensLines;
-            while (offset < Input.Count)
-            {
-                var l = Input[offset];
-                if (l == line)
-                {
-                    WrittenLines[offset] = true;
-                    break;
-                }
-                if (!ShouldCopy(l))
-                {//JCM Remove  this line from the Input ???? This is the way which is used to remove line from the source code
-                    SourceDocument.SourceLine src_line = SourceLineMap[l as TypeCobol.Compiler.Scanner.ITokensLine];
-                    String text = base.TargetDocument.Source.GetTextAt(src_line.From, src_line.To);
-                    base.TargetDocument.Source.Delete(src_line.From, src_line.To);
-                }
-                WrittenLines[offset] = true;
-                offset++;
-                lines++;
-            }
-            return lines;
-        }
-
-        /// <summary>
-        /// Only copy from input to output lines that are comment or blank.
-        /// Everything else is either:
-        ///  - COBOL source, written by original AST nodes
-        ///  - TypeCobol source, written by AST generated nodes
-        ///  - invalid lines (wtf?)
-        /// Source lines are of type Source, Debug or Continuation in CobolTextLineType enum.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <returns></returns>
-        private bool ShouldCopy(ICobolTextLine line)
-        {
-            //Check for a Compiler Directive and consider that it should be copied.
-            if (line.Type == CobolTextLineType.Source && line is TypeCobol.Compiler.Preprocessor.ProcessedTokensLine)
-            {//Fix for tests CASE9, CASE10
-                TypeCobol.Compiler.Preprocessor.ProcessedTokensLine ptl = (TypeCobol.Compiler.Preprocessor.ProcessedTokensLine)line;
-                if (ptl.HasCompilerDirectives)
-                    return true;
-            }
-
-            return line.Type == CobolTextLineType.Comment || line.Type == CobolTextLineType.Blank
-               || line.Type == CobolTextLineType.Debug; // #267: Debug lines are copied "AS IS", even if they are invalid in COBOL85!
-        }
-
-        private bool IsInInput(ITextLine line)
-        {
-            if (line is TypeCobol.Compiler.Parser.CodeElementsLine)
-            {
-                TypeCobol.Compiler.Parser.CodeElementsLine cel_line = line as TypeCobol.Compiler.Parser.CodeElementsLine;
-                int c = offset;
-                if (c < base.SourceLineMap.Count)
-                {
-                    TypeCobol.Compiler.Parser.CodeElementsLine cel_input = Parser.Results.TokensLines[c] as TypeCobol.Compiler.Parser.CodeElementsLine;
-                    if (cel_line.InitialLineIndex < cel_input.InitialLineIndex)
-                        return false;
-                    return base.SourceLineMap.ContainsKey(line as TypeCobol.Compiler.Scanner.ITokensLine);
-                }
-            }
             return false;
-        }
-
-        /// <summary>
-        /// Writes one line of Input as one or more lines in Output.
-        ///	A single line, once indented, can output as many lines, especially on 80 colons.
-        ///	The value of offset is increased once as part of the Write operation.
-        /// </summary>
-        /// <param name="line">Input[offset]</param>
-        /// <param name="isComment">Must line be commented ?</param>
-        /// <param name="from_to_generated"> is this line from generated code, this the interval where to insert the line</param>
-        private Tuple<Position, Position> Write(ITextLine line, bool? isComment, SourceText sourceText, Tuple<Position, Position> from_to_generated, bool bFirst)
-        {
-            if (line == lastline)
-                return from_to_generated;
-            StringWriter sw = null;
-            string text = null;
-            if (IsInInput(line))
-            {
-                if (isComment == true)
-                {//If a Line is already in the source code only regenerate those that must be commented.
-                    SourceDocument.SourceLine comment_line = base.SourceLineMap[line as TypeCobol.Compiler.Scanner.ITokensLine];
-                    sw = new System.IO.StringWriter();
-                    foreach (var l in Indent(line, isComment))
-                    {
-                        sw.WriteLine(l.Text);
-                    }
-                    //Replace the current line
-                    sw.Flush();
-                    text = sw.ToString();
-                    this.TargetDocument.Source.Insert(text, comment_line.From, comment_line.To);
-                }
-                offset++;
-                lastline = line;
-                return from_to_generated;
-            }
-            sw = new System.IO.StringWriter();
-            var Input = Parser.Results.TokensLines;
-            SourceDocument.SourceLine src_line = offset < Input.Count
-             ? base.SourceLineMap[Input[offset] as TypeCobol.Compiler.Scanner.ITokensLine]
-             : null;
-            if (from_to_generated != null && bFirst && isComment != true)
-            {//The first element don't ident it just insert it a the right position
-                sw.WriteLine(line.Text);
-            }
-            else foreach (var l in Indent(line, isComment))
-            {
-                sw.WriteLine(l.Text);
-            }
-            sw.Flush();
-            text = sw.ToString();
-            if (from_to_generated != null)
-            {
-                sourceText.Insert(text, Math.Min(from_to_generated.Item1.Pos, sourceText.Size), Math.Min(from_to_generated.Item2.Pos, sourceText.Size));
-                from_to_generated = new Tuple<Position, Position>(from_to_generated.Item2, from_to_generated.Item2);
-            }
-            else
-            {
-                int to = src_line != null ? src_line.To : sourceText.Size;                
-                sourceText.Insert(text, to, to);
-            }
-            sw.Close();
-            offset++;
-            lastline = line;
-            return from_to_generated;
         }
 
         private IEnumerable<ITextLine> Indent(ITextLine line, bool? isComment)

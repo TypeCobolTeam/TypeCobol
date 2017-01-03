@@ -15,7 +15,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="node">The target nod eto be commnted</param>
+        /// <param name="node">The target node to be commented</param>
         public Comment(Node node) 
         { 
             this.Node = node; 

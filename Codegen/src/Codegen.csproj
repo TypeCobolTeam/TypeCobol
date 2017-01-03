@@ -70,7 +70,7 @@
     <Compile Include="Actions\Replace.cs" />
     <Compile Include="Config\*.cs" />
     <Compile Include="Generators\DefaultGenerator.cs" />
-    <Compile Include="Generators\DirectiveCodeElementMapper.cs" />
+    <Compile Include="Generators\LinearNodeSourceCodeMapper.cs" />
     <Compile Include="Generators\TypeCobolGenerator.cs" />
     <Compile Include="Skeletons\*.cs" />
     <Compile Include="Skeletons\Templates\*.cs" />

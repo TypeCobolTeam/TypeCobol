@@ -88,13 +88,6 @@ internal class TypeCobolQualifier: Compiler.Nodes.Node, Generated {
 	}
 
 	public bool IsLeaf { get { return false; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return Node.Comment.HasValue ? (Node.Comment.Value ? Node : null) : null;
-        }
-    }
 }
 
 }

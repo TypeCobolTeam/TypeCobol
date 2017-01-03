@@ -20,13 +20,6 @@ internal class DataDivision: Compiler.Nodes.DataDivision, Generated {
 		}
 	}
 	public bool IsLeaf { get { return false; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return null;
-        }
-    }
 }
 
 
@@ -45,13 +38,6 @@ internal class WorkingStorageSection: Compiler.Nodes.WorkingStorageSection, Gene
 		}
 	}
 	public bool IsLeaf { get { return false; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return null;
-        }
-    }
 }
 
 internal class LocalStorageSection: Compiler.Nodes.LocalStorageSection, Generated {
@@ -68,13 +54,6 @@ internal class LocalStorageSection: Compiler.Nodes.LocalStorageSection, Generate
 		}
 	}
 	public bool IsLeaf { get { return false; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return null;
-        }
-    }
 }
 
 internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
@@ -91,13 +70,6 @@ internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
 		}
 	}
 	public bool IsLeaf { get { return false; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return null;
-        }
-    }
 }
 
 internal class FileSection: Compiler.Nodes.FileSection, Generated {
@@ -114,13 +86,6 @@ internal class FileSection: Compiler.Nodes.FileSection, Generated {
 		}
 	}
 	public bool IsLeaf { get { return false; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return null;
-        }
-    }
 }
 
 }

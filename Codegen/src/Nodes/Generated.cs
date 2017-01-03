@@ -10,15 +10,20 @@ public interface Generated {
 	IEnumerable<ITextLine> Lines { get; }
 	/// <summary>Must be treated as a leaf regarding codegen.</summary>
 	bool IsLeaf { get; }
-    /// <summary>
-    /// Get the commented Node associated to this Generated Node
-    /// </summary>
-    Compiler.Nodes.Node CommentedNode { get; }
 }
 
 internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 	private Solver Solver;
+    /// <summary>
+    /// Code Element to appy to this Generated Node
+    /// </summary>
+    private CodeElement ApplyCodeElement;
 	public GeneratedNode(Solver solver): base(null) { this.Solver = solver; }
+    public GeneratedNode(Solver solver, CodeElement codelement) : base(null) 
+    { 
+        this.Solver = solver;
+        ApplyCodeElement = codelement;
+    }
 
 	private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
@@ -34,14 +39,18 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 		}
 	}
 
-	public bool IsLeaf { get { return false; } }
-    public Compiler.Nodes.Node CommentedNode
+    /// <summary>
+    /// Get Associated Code Element
+    /// </summary>
+    public override CodeElement CodeElement 
     {
         get
         {
-            return null;
+            return ApplyCodeElement != null ? ApplyCodeElement : base.CodeElement;
         }
     }
+
+	public bool IsLeaf { get { return false; } }
 }
 
 }

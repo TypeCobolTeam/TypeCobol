@@ -57,14 +57,6 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 	}
 
 	public bool IsLeaf { get { return true; } }
-    public TypeCobol.Compiler.Nodes.Node CommentedNode
-    {
-        get
-        {
-            return Node.Comment.HasValue ? (Node.Comment.Value ? Node : null) : null;
-        }
-    }
-
 }
 
 }

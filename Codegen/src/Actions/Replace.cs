@@ -6,7 +6,7 @@ using TypeCobol.Compiler.Nodes;
 namespace TypeCobol.Codegen.Actions
 {
     /// <summary>
-    /// Action to replace a Node by a new Generated one. The Old node is comment but not its children.
+    /// Action to replace a Node by a new Generated one. The Old node is commented but not its children.
     /// The clidren are copie din the new Generated Node.
     /// </summary>
     public class Replace : Action
@@ -29,7 +29,8 @@ namespace TypeCobol.Codegen.Actions
             //Substitute any group code
             if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
             var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
-            this.New = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
+            //JCM Give to the replaced form the same Code element So that positions will be calculated correctly
+            this.New = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver, Old.CodeElement);
         }
 
         /// <summary>
