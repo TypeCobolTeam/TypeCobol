@@ -8,7 +8,7 @@ namespace TypeCobol.Codegen.Actions
     /// <summary>
     /// Action to create a new Generate Node.
     /// </summary>
-    public class Create : Action
+    public class Create : EventArgs, Action
     {
         public string Group { get; private set; }
         internal Node Parent;

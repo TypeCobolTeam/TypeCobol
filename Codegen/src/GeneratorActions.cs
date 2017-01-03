@@ -23,6 +23,15 @@ namespace TypeCobol.Codegen
         }
 
         /// <summary>
+        /// Event Before executing an Action.
+        /// </summary>
+        public event EventHandler BeforeAction;
+        /// <summary>
+        /// Event After executing an action
+        /// </summary>
+        public event EventHandler AfterAction;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Skeletons">Skeletons pattern for actions</param>
@@ -72,7 +81,11 @@ namespace TypeCobol.Codegen
             {
                 if (action.Group != null && groups.Contains(action.Group)) 
                     continue;
+                if (BeforeAction != null)
+                    BeforeAction(this, (EventArgs)action);
                 action.Execute();
+                if (AfterAction != null)
+                    AfterAction(this, (EventArgs)action);
                 if (action.Group != null) 
                     groups.Add(action.Group);
             }

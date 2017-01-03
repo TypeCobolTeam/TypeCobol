@@ -9,7 +9,7 @@ namespace TypeCobol.Codegen.Actions
     /// Action to replace a Node by a new Generated one. The Old node is commented but not its children.
     /// The clidren are copie din the new Generated Node.
     /// </summary>
-    public class Replace : Action
+    public class Replace : EventArgs, Action
     {
         public string Group { get; private set; }
         internal Node Old;

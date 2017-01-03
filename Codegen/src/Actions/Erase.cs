@@ -19,11 +19,20 @@ namespace TypeCobol.Codegen.Actions
     /// move         dateFreeFormat to maDate                              
     /// 
     /// </summary>
-    public class Erase : Action
+    public class Erase : EventArgs, Action, IEraseAction
     {
         public string Group { get; private set; }
         internal Node Node;
         private IEnumerable<string> Words;
+
+        /// <summary>
+        /// Get the list of Erased Nodes
+        /// </summary>
+        public IList<Node> ErasedNodes
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Constructor
@@ -54,6 +63,11 @@ namespace TypeCobol.Codegen.Actions
             }
             // comment out original "line" (=~ non expanded node)
             this.Node.Comment = true;
+            //Get Erased Nodes
+            List<Node> erasedNodes = new List<Node>();
+            this.Node.ListChildren(erasedNodes);
+            erasedNodes.TrimExcess();
+            ErasedNodes = erasedNodes;
             this.Node.Clear();
 
         }

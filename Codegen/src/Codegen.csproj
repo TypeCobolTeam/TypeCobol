@@ -67,6 +67,7 @@
     <Compile Include="Actions\Create.cs" />
     <Compile Include="Actions\Erase.cs" />
     <Compile Include="Actions\Expand.cs" />
+    <Compile Include="Actions\IEraseAction.cs" />
     <Compile Include="Actions\Replace.cs" />
     <Compile Include="Config\*.cs" />
     <Compile Include="Generators\DefaultGenerator.cs" />

@@ -14,12 +14,21 @@ namespace TypeCobol.Codegen.Actions
     /// The Source Node will be commented and its children cleared.
     /// The Expanded node will be added in the Destination's parent node as child at the right index.
     /// </summary>
-    public class Expand : Action
+    public class Expand : EventArgs, Action, IEraseAction
     {
         public string Group { get; private set; }
         internal Node Source;
         internal Node Destination;
         internal string DestinationURI;
+        /// <summary>
+        /// Get the list of Erased Nodes
+        /// </summary>
+        public IList<Node> ErasedNodes
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// The Map that gives for The source Node's CodeElement System.Type object is System.Type expander instance.
         /// </summary>
@@ -63,6 +72,11 @@ namespace TypeCobol.Codegen.Actions
             }
             // comment out original "line" (=~ non expanded node)
             this.Source.Comment = true;
+            //Get Erased Nodes
+            List<Node> erasedNodes = new List<Node>();
+            this.Source.ListChildren(erasedNodes);
+            erasedNodes.TrimExcess();
+            ErasedNodes = erasedNodes;
             this.Source.RemoveAllChildren();
         }
 

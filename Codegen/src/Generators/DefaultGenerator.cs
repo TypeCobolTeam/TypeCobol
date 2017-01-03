@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Generators
         {
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
-            //mapper.Dump();
+            mapper.Dump();
             GapSourceText targetSourceText = LinearGeneration(mapper);
             // Step 3: Write target document
             targetSourceText.Write(Destination);
@@ -103,6 +103,10 @@ namespace TypeCobol.Codegen.Generators
                 line_nodes = mapper.LineData[i].LineNodes;
                 foreach(Node node in line_nodes)
                 {
+                    if (node.NodeIndex == -1)
+                    {//bad Node
+                        continue;
+                    }
                     if (generated_node[node.NodeIndex])
                         continue;//Already Generated.
                     StringSourceText curSourceText = mapper.Nodes[node.NodeIndex].Buffer;
@@ -113,7 +117,14 @@ namespace TypeCobol.Codegen.Generators
                     }
                     bool bGenerated = node is Generated;
                     if (!bGenerated)
-                    {//This Node is not Generated ==> do Nothing it is already in the source buffer.
+                    {   //This Node is not Generated: If it removed then remove its source code otherwise do Nothing it is already in the source buffer.
+                        if (mapper.Nodes[node.NodeIndex].Removed)
+                        {//If this node is removed
+                            //var sourceLine = TargetDocument[i];
+                            Position from = mapper.Nodes[node.NodeIndex].From;
+                            Position to = mapper.Nodes[node.NodeIndex].To;
+                            curSourceText.Delete(from.Pos, to.Pos);
+                        }
                     }
                     else
                     {

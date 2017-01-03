@@ -247,6 +247,20 @@ namespace TypeCobol.Compiler.Nodes {
             children.Clear();
         }
 
+        /// <summary>
+        /// Get All Childrens.
+        /// </summary>
+        /// <param name="lines">A List to store all children.</param>
+        public void ListChildren(List<Node> list)
+        {
+            if (list == null) return;
+            foreach (var child in children)
+            {
+                list.Add(child);
+                child.ListChildren(list);
+            }
+        }
+
         /// <summary>Get this node or one of its children that has a given URI.</summary>
         /// <param name="uri">Node unique identifier to search for</param>
         /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>

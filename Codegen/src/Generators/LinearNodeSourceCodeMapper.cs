@@ -30,9 +30,13 @@ namespace TypeCobol.Codegen.Generators
         public enum Phase
         {
             /// <summary>
-            /// The Phase wich Map the Line that must be commenetd.
+            /// The Linearization Phase.
             /// </summary>
-            CommentedLines,
+            Linearization,
+            /// <summary>
+            /// The Phase to deal with removed Nodes
+            /// </summary>
+            RemovedNodes,
         }
 
         /// <summary>
@@ -110,6 +114,10 @@ namespace TypeCobol.Codegen.Generators
             /// </summary>
             public Node node;
             /// <summary>
+            /// Is This node removed?
+            /// </summary>
+            public Boolean Removed;
+            /// <summary>
             /// Node's Position
             /// Item1 = From
             /// Item2 = to
@@ -156,15 +164,16 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
-        /// The Phase wich Process commented lines.
+        /// The Linearization Phase.
         /// </summary>
-        private bool ProcessCommentedLines(Node node)
+        private bool ProcessLinearization(Node node)
         {
             //During the Commented Line Phase, collect data, index of all Nodes.
             var positions = node.FromToPositions;
             if (positions == null)
             {
-                return true;//Node withous positions probably a generated node.
+                node.NodeIndex = -1;
+                return true;//Node without positions probably a generated node.
             }
             if (positions.Item4.Count == 0)
             {//This must be a Node in an imported COPY it has no lines associated to it
@@ -229,8 +238,15 @@ namespace TypeCobol.Codegen.Generators
         public void Accept(Node node)
         {
             Nodes = new List<NodeData>();
-            CurrentPhase = Phase.CommentedLines;
+            //First Phase Linearization
+            CurrentPhase = Phase.Linearization;
             Visit(node);
+            //Second Phase Removed Nodes
+            CurrentPhase = Phase.RemovedNodes;
+            foreach (Node erased_node in this.Generator.ErasedNodes)
+            {
+                Visit(erased_node);
+            }
             Nodes.TrimExcess();
             //Create All SourceTextBuffer Content associated to Nodes
             var Input = Generator.Parser.Results.TokensLines;
@@ -265,8 +281,26 @@ namespace TypeCobol.Codegen.Generators
             bool doVisitChildren = false;
             switch (CurrentPhase)
             {
-                case Phase.CommentedLines:
-                    doVisitChildren = ProcessCommentedLines(node);
+                case Phase.Linearization:
+                    //If this node is removed then it has already been handled by the RemovedNode Phase
+                    doVisitChildren = ProcessLinearization(node);
+                    break;
+                case Phase.RemovedNodes:
+                    if (node.Comment.HasValue ? node.Comment.Value : false)
+                    {//This node is also commented ==> Thus it has already been treated by linearization phase.
+                    }
+                    else
+                    {
+                        //Same treatment like Linearization phase.
+                        ProcessLinearization(node);
+                    }
+                    if (node.NodeIndex >= 0)
+                    {
+                        //But mark this node as removed.
+                        Nodes[node.NodeIndex].Removed = true;
+                    }
+                    //Remove node phase don't visit Children
+                    doVisitChildren = false;
                     break;
             }            
             if (doVisitChildren) 
@@ -352,8 +386,8 @@ namespace TypeCobol.Codegen.Generators
                     lines.Append(n);
                     lines.Append(",");
                 }
-                System.Console.WriteLine("Node {0}<{6}> : Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5}]", i,
-                    i, data.Positions.Item1, data.Positions.Item2, data.Positions.Item3, lines.ToString(), data.node.GetType().FullName);
+                System.Console.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5}]", i,
+                    i, data.Positions.Item1, data.Positions.Item2, data.Positions.Item3, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
             }
         }
     }

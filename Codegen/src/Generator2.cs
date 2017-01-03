@@ -86,7 +86,15 @@ namespace TypeCobol.Codegen
             get;
             set;
         }
-                
+
+        /// <summary>
+        /// Lines of Erased Nodes.
+        /// </summary>
+        public List<Node> ErasedNodes
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Constructor
@@ -99,6 +107,30 @@ namespace TypeCobol.Codegen
             this.Parser = parser;
             Destination = destination;
             Actions = new GeneratorActions(skeletons);
+            //To Store Erased Nodes by the Erase Action.
+            ErasedNodes = new List<Node>();
+            //The After Action Listener
+            Actions.AfterAction += OnAfterAction;
+        }
+
+        /// <summary>
+        /// Handler called after an Action has beeen executed.
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The action in fact</param>
+        protected virtual void OnAfterAction(object sender, EventArgs e)
+        {
+            Codegen.Actions.Action action = (Codegen.Actions.Action)e;
+            //Collect erased nodes.
+            if (action is TypeCobol.Codegen.Actions.IEraseAction)
+            {
+                TypeCobol.Codegen.Actions.IEraseAction erase = (TypeCobol.Codegen.Actions.IEraseAction)action;
+                IList<Node> nodes = erase.ErasedNodes;
+                if (nodes != null)
+                {
+                    ErasedNodes.AddRange(nodes);
+                }
+            }
         }
 
 		/// <summary>Generates code</summary>
