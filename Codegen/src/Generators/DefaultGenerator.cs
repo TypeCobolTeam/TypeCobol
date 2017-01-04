@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Generators
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
             mapper.Dump();
-            GapSourceText targetSourceText = LinearGeneration(mapper);
+            GapSourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
             // Step 3: Write target document
             targetSourceText.Write(Destination);
             Destination.Flush();
@@ -44,14 +44,14 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Perform a linear Generation
         /// </summary>
-        private GapSourceText LinearGeneration(LinearNodeSourceCodeMapper mapper)
+        private GapSourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
         {            
             GapSourceText targetSourceText = new GapSourceText();
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
-            var Input = Parser.Results.TokensLines;
+            Boolean bBufferWasInFunctionBody = false;
             for (int i = 0; i < mapper.LineData.Length; i++)
             {
                 //--------------------------------------------------------------------------------------------------------------
@@ -61,7 +61,8 @@ namespace TypeCobol.Codegen.Generators
                     //If there was a previous buffer ==> Flush it
                     if (previousBuffer != null)
                     {
-                        targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                        if (!bBufferWasInFunctionBody) 
+                            targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
                     IEnumerable<ITextLine> lines = Indent(Input[i], null);
@@ -76,16 +77,17 @@ namespace TypeCobol.Codegen.Generators
                 //--------------------------------------------------------------------------------------------------------------
                 //2) If the line is commented then first comment all following lines that have the same intersection with
                 // the corresponding target Nodes.
-                List<Node> line_nodes = mapper.LineData[i].LineNodes;
+                List<int> line_nodes = mapper.LineData[i].LineNodes;
                 //If there was a previous buffer ==> Flush it
                 if (previousBuffer != null && mapper.CommentedLines[i])
                 {
-                    targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                    if (!bBufferWasInFunctionBody) 
+                        targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                     previousBuffer = null;
                 }
                 for (int j = i; mapper.CommentedLines[j]; j++)
                 {
-                    List<Node> current_nodes = mapper.LineData[j].LineNodes;
+                    List<int> current_nodes = mapper.LineData[j].LineNodes;
                     if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
                         break;//This commented line has no nodes which intersect with the previous line.
                     IEnumerable<ITextLine> lines = Indent(Input[j], true);
@@ -101,36 +103,40 @@ namespace TypeCobol.Codegen.Generators
                 //--------------------------------------------------------------------------------------------------------------
                 //3)For each node related to this line, and not already generated.
                 line_nodes = mapper.LineData[i].LineNodes;
-                foreach(Node node in line_nodes)
+                foreach(int node_index in line_nodes)
                 {
-                    if (node.NodeIndex == -1)
+                    if (node_index == -1)
                     {//bad Node
                         continue;
                     }
-                    if (generated_node[node.NodeIndex])
+                    if (generated_node[node_index])
                         continue;//Already Generated.
-                    StringSourceText curSourceText = mapper.Nodes[node.NodeIndex].Buffer;
+                    bool bFunctionBodyNode = mapper.Nodes[node_index].FunctionBodyNode != null;
+                    StringSourceText curSourceText = mapper.Nodes[node_index].Buffer;
                     if (curSourceText != previousBuffer && previousBuffer != null)
                     {//Flush previous buffer
-                        targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                        if (!bBufferWasInFunctionBody) 
+                            targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
+                    Node node = mapper.Nodes[node_index].node;
                     bool bGenerated = node is Generated;
                     if (!bGenerated)
                     {   //This Node is not Generated: If it removed then remove its source code otherwise do Nothing it is already in the source buffer.
-                        if (mapper.Nodes[node.NodeIndex].Removed)
+                        if (mapper.Nodes[node_index].Removed)
                         {//If this node is removed
                             //var sourceLine = TargetDocument[i];
-                            Position from = mapper.Nodes[node.NodeIndex].From;
-                            Position to = mapper.Nodes[node.NodeIndex].To;
+                            Position from = mapper.Nodes[node_index].From;
+                            Position to = mapper.Nodes[node_index].To;
                             curSourceText.Delete(from.Pos, to.Pos);
                         }
                     }
                     else
                     {
-                        bool bFirst = true;                        
-                        Position from = mapper.Nodes[node.NodeIndex].From;
-                        Position to = mapper.Nodes[node.NodeIndex].To;
+                        bool bIsFunctionDecl = mapper.Nodes[node_index] is LinearNodeSourceCodeMapper.NodeFunctionData;
+                        bool bFirst = true;
+                        Position from = mapper.Nodes[node_index].From;
+                        Position to = mapper.Nodes[node_index].To;
                         foreach (var line in node.Lines)
                         {
                             StringWriter sw = new StringWriter();
@@ -145,26 +151,86 @@ namespace TypeCobol.Codegen.Generators
                             }
                             sw.Flush();
                             string text = sw.ToString();
-                            curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                            if (bIsFunctionDecl)
+                            {
+                                int f = Math.Min(from.Pos, curSourceText.Size);
+                                int t = Math.Min(to.Pos, curSourceText.Size);
+                                if (f != t)
+                                    curSourceText.Delete(f, t);
+                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                            }
+                            else
+                            {
+                                curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                            }
                             from = to;
                             sw.Close();
                         }                        
                         //Pad a splitted segment
-                        int span = mapper.Nodes[node.NodeIndex].Positions.Item3;
+                        int span = mapper.Nodes[node_index].Positions.Item3;
                         string pad = new string(' ', span);
                         curSourceText.Insert(pad, to.Pos, to.Pos);
                     }
                     //This node is now generated.
-                    generated_node[node.NodeIndex] = true;
+                    generated_node[node_index] = true;
                     previousBuffer = curSourceText;
+                    bBufferWasInFunctionBody = bFunctionBodyNode;
                 }
                 //--------------------------------------------------------------------------------------------------------------
             }
             //If there was a previous buffer ==> Flush it
             if (previousBuffer != null)
             {
-                targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                if (!bBufferWasInFunctionBody) 
+                    targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                 previousBuffer = null;
+            }
+            //--------------------------------------------------------------------------------------------------------------
+            //4)//Flush of Function declation body
+            foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
+            {
+                StringSourceText prevBuffer = null;
+                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                targetSourceText.Insert(funData.FunctionDeclBuffer, targetSourceText.Size, targetSourceText.Size);
+                foreach (int node_index in funData.FunctionDeclNodes)
+                {
+                    if (node_index == -1)
+                        continue;
+                    Node node = mapper.Nodes[node_index].node;
+                    if (mapper.Nodes[node_index].Buffer != null)
+                    {
+                        if (prevBuffer != null && prevBuffer != mapper.Nodes[node_index].Buffer)
+                        {
+                            targetSourceText.Insert(prevBuffer, targetSourceText.Size, targetSourceText.Size);                            
+                        }
+                        prevBuffer = mapper.Nodes[node_index].Buffer;
+                    }
+                    else
+                    {//Generate the code
+                        if (prevBuffer != null)
+                        {
+                            targetSourceText.Insert(prevBuffer, targetSourceText.Size, targetSourceText.Size);
+                            prevBuffer = null;
+                        }
+                        StringWriter sw = new StringWriter();
+                        foreach (var line in node.Lines)
+                        {
+                            foreach (var l in Indent(line, null))
+                            {
+                                sw.WriteLine(l.Text);
+                            }
+                        }
+                        sw.Flush();
+                        string text = sw.ToString();
+                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                    }
+                }
+                if (prevBuffer != null)
+                {
+                    targetSourceText.Insert(prevBuffer, targetSourceText.Size, targetSourceText.Size);
+                    prevBuffer = null;
+                }
             }
             return targetSourceText;
         }

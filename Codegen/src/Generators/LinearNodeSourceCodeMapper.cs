@@ -37,6 +37,10 @@ namespace TypeCobol.Codegen.Generators
             /// The Phase to deal with removed Nodes
             /// </summary>
             RemovedNodes,
+            /// <summary>
+            /// The Phase to deal with Function Declaration
+            /// </summary>
+            FunctionDeclaration,
         }
 
         /// <summary>
@@ -63,13 +67,17 @@ namespace TypeCobol.Codegen.Generators
         public struct LineInfo
         {
             /// <summary>
-            /// The Map which give for each line the associated Node.
+            /// The Map which give for each line the associated Node Index.
             /// </summary>
-            public List<Node> LineNodes;
+            public List<int> LineNodes;
             /// <summary>
             /// The Buffer associated to this line.
             /// </summary>
             public StringSourceText Buffer;
+            /// <summary>
+            /// The Buffer associated to this line when it is generated in a function body.
+            /// </summary>
+            public StringSourceText FunctionBodyBuffer;
         }
         /// <summary>
         /// The Map which give for each line the associated Node.
@@ -102,7 +110,15 @@ namespace TypeCobol.Codegen.Generators
             get;
             internal set;
         }
-        
+
+        /// <summary>
+        /// The Current Function Declaration Node.
+        /// </summary>
+        private Node CurrentFunctionDeclNode
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Structure that holds Data associated to Nodes
@@ -110,13 +126,17 @@ namespace TypeCobol.Codegen.Generators
         public class NodeData
         {
             /// <summary>
-            /// The target Node.
+            /// The corresponding Node.
             /// </summary>
             public Node node;
             /// <summary>
             /// Is This node removed?
             /// </summary>
-            public Boolean Removed;
+            public bool Removed;
+            /// <summary>
+            /// If This node is in a function Body, this the Node of the target Function.
+            /// </summary>
+            public Node FunctionBodyNode;
             /// <summary>
             /// Node's Position
             /// Item1 = From
@@ -140,12 +160,50 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Data for a Function Declaration Node
+        /// </summary>
+        public class NodeFunctionData : NodeData
+        {
+            /// <summary>
+            /// The Buffer where a Function Declaration Node is Generated.
+            /// </summary>
+            public StringSourceText FunctionDeclBuffer;
+            /// <summary>
+            /// Current Position in FunctionDeclBuffer
+            /// </summary>
+            public int FunctionDeclBufferPosition;
+            /// <summary>
+            /// Node Indices associated to Function Declaration.
+            /// </summary>
+            public List<int> FunctionDeclNodes;
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            public NodeFunctionData()
+            {
+                FunctionDeclBuffer = new StringSourceText();
+                FunctionDeclBufferPosition = 0;
+                FunctionDeclNodes = new List<int>();
+            }
+        }
+
+        /// <summary>
         /// The List Of Node Data indexed by Node.NodeIndex
         /// </summary>
         public List<NodeData> Nodes
         {
             get;
             internal set;
+        }
+
+        /// <summary>
+        /// The Indices of Function Declaration Nodes.
+        /// </summary>
+        public List<int> FunctionDeclarationNodeIndices
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -160,15 +218,50 @@ namespace TypeCobol.Codegen.Generators
             int count = generator.Parser.Results.TokensLines.Count;
             CommentedLines = new BitArray(count);
             NodedLines = new BitArray(count);
-            LineData = new LineInfo[count];            
+            LineData = new LineInfo[count];
+            FunctionDeclarationNodeIndices = new List<int>();
+        }
+
+        /// <summary>
+        /// The Function Declaration Processing Phase.
+        /// <param name="node">The node that belongs to a Function Body</param>
+        /// </summary>
+        private bool ProcessFunctionDeclaration(Node node)
+        {
+            //Function Node Data
+            NodeFunctionData funData = (NodeFunctionData)Nodes[CurrentFunctionDeclNode.NodeIndex];
+            //Create a New Data
+            NodeData data = null;
+            bool bHasCodeElement = (node.CodeElement == null || node.CodeElement.ConsumedTokens == null) ? false : node.CodeElement.ConsumedTokens.Count > 0;
+            if (!bHasCodeElement)
+            {
+                //No Code Element ==> certainly a Generated node                
+                node.NodeIndex = NodeCount++;//Give to this node its Index.    
+                data = new NodeData();
+                data.node = node;
+                Nodes.Add(data);
+            }
+            else
+            {//If The Node has positions then linearize it
+                ProcessLinearization(node, true);
+                data = Nodes[node.NodeIndex];
+            }
+            //Associate the Function Node
+            data.FunctionBodyNode = CurrentFunctionDeclNode;
+            //Add the node to the Function Decl nodes list
+            funData.FunctionDeclNodes.Add(node.NodeIndex);
+            return true;
         }
 
         /// <summary>
         /// The Linearization Phase.
+        /// <param name="node">The node to linearize</param>
+        /// <param name="functionBody">true if the node belongs to a function body, false otherwise</param>
+        /// <returns>True children of the given node must be visited, false otherwise</returns>
         /// </summary>
-        private bool ProcessLinearization(Node node)
+        private bool ProcessLinearization(Node node, Boolean functionBody = false)
         {
-            //During the Commented Line Phase, collect data, index of all Nodes.
+            //During the Linearization Line Phase, collect data, index of all Nodes.
             var positions = node.FromToPositions;
             if (positions == null)
             {
@@ -179,7 +272,8 @@ namespace TypeCobol.Codegen.Generators
             {//This must be a Node in an imported COPY it has no lines associated to it
                 return true;
             }
-            NodeData data = new NodeData();
+            bool isFunctionDecl = node is FunctionDeclaration;//Detect Function Declaration
+            NodeData data = isFunctionDecl ? new NodeFunctionData() : new NodeData();
             data.node = node;
             data.Positions = positions;           
             node.NodeIndex = NodeCount++;//Give to this node its Index.            
@@ -201,20 +295,23 @@ namespace TypeCobol.Codegen.Generators
                 //Associate the node to it's line
                 if (LineData[lineIndex].LineNodes == null)
                 {
-                    LineData[lineIndex].LineNodes = new List<Node>();
+                    LineData[lineIndex].LineNodes = new List<int>();
                 }
-                LineData[lineIndex].LineNodes.Add(node);
+                LineData[lineIndex].LineNodes.Add(node.NodeIndex);
                 //Associated all Lines to the Buffer of the First line in the list
                 if (buffer == null)
                 {
-                    buffer = LineData[lineIndex].Buffer;
+                    buffer = functionBody ? LineData[lineIndex].FunctionBodyBuffer : LineData[lineIndex].Buffer;
                     if (buffer == null)
                     {
                         buffer = new StringSourceText();
                     }
                     lineindex_buffer = lineIndex;
                 }
-                LineData[lineIndex].Buffer = buffer;
+                if (functionBody)
+                    LineData[lineIndex].FunctionBodyBuffer = buffer;
+                else
+                    LineData[lineIndex].Buffer = buffer;
             }
             //Associate this node to its buffer
             data.Buffer = buffer;
@@ -228,6 +325,28 @@ namespace TypeCobol.Codegen.Generators
             int delta = line.From - lineindex_srcline.From;
             data.Positions = new Tuple<int, int, int, List<int>>(delta + line_from, delta + line_to, span, lines);
             Nodes.Add(data);
+            //----------------------------------------------
+            //Special case for a Function Declaration Node
+            //----------------------------------------------
+            if (isFunctionDecl && CurrentPhase == Phase.Linearization)
+            {
+                //Save the Current Phase
+                Phase savePhase = CurrentPhase;
+                //Switch to Function Declaration Phase
+                CurrentPhase = Phase.FunctionDeclaration;
+                //The Current Function Node
+                CurrentFunctionDeclNode = node;
+                //Add to the List of encountered function declaration
+                FunctionDeclarationNodeIndices.Add(node.NodeIndex);
+                //Visit Each Function body Node.
+                foreach (Node body_node in node.Children)
+                {
+                    Visit(body_node);
+                }                
+                //Restore the phase
+                CurrentPhase = savePhase;
+                return false;//Don't deal with its Children
+            }
             return true;
         }
 
@@ -259,16 +378,26 @@ namespace TypeCobol.Codegen.Generators
                     LineData[i].Buffer.Insert(line.Text, LineData[i].Buffer.Size, LineData[i].Buffer.Size);
                     LineData[i].Buffer.Insert(Environment.NewLine, LineData[i].Buffer.Size, LineData[i].Buffer.Size);
                 }
+                //Deal with Function buffer
+                if (LineData[i].FunctionBodyBuffer != null)
+                {
+                    TypeCobol.Compiler.Scanner.ITokensLine line = Input[i];
+                    LineData[i].FunctionBodyBuffer.Insert(line.Text, LineData[i].FunctionBodyBuffer.Size, LineData[i].FunctionBodyBuffer.Size);
+                    LineData[i].FunctionBodyBuffer.Insert(Environment.NewLine, LineData[i].FunctionBodyBuffer.Size, LineData[i].FunctionBodyBuffer.Size);
+                }
             }
             //Create All Node's positions in the corresponding source text buffer.
             for (int i = 0; i < Nodes.Count; i++)
             {
-                Position from = new Position(Nodes[i].Positions.Item1);
-                Position to = new Position(Nodes[i].Positions.Item2);
-                Nodes[i].Buffer.AddPosition(from);//from position
-                Nodes[i].Buffer.AddPosition(to);//To Pos
-                Nodes[i].From = from;
-                Nodes[i].To = to;
+                if (Nodes[i].Positions != null)
+                {//Only for Nodes with positions
+                    Position from = new Position(Nodes[i].Positions.Item1);
+                    Position to = new Position(Nodes[i].Positions.Item2);
+                    Nodes[i].Buffer.AddPosition(from);//from position
+                    Nodes[i].Buffer.AddPosition(to);//To Pos
+                    Nodes[i].From = from;
+                    Nodes[i].To = to;
+                }
             }
         }
 
@@ -301,6 +430,9 @@ namespace TypeCobol.Codegen.Generators
                     }
                     //Remove node phase don't visit Children
                     doVisitChildren = false;
+                    break;
+                case Phase.FunctionDeclaration:
+                    doVisitChildren = ProcessFunctionDeclaration(node);
                     break;
             }            
             if (doVisitChildren) 
@@ -364,9 +496,9 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder nodes = new StringBuilder();
                 if (LineData[i].LineNodes != null)
                 {
-                    foreach (Node n in LineData[i].LineNodes)
+                    foreach (int index in LineData[i].LineNodes)
                     {
-                        nodes.Append(n.NodeIndex);
+                        nodes.Append(index);
                         nodes.Append(",");
                     }
                 }
@@ -381,13 +513,19 @@ namespace TypeCobol.Codegen.Generators
             {
                 NodeData data = Nodes[i];
                 StringBuilder lines = new StringBuilder();
-                foreach (int n in data.Positions.Item4)
+                if (data.Positions != null)
                 {
-                    lines.Append(n);
-                    lines.Append(",");
+                    foreach (int n in data.Positions.Item4)
+                    {
+                        lines.Append(n);
+                        lines.Append(",");
+                    }
                 }
+                int from = data.Positions != null ? data.Positions.Item1 : -1;
+                int to = data.Positions != null ? data.Positions.Item2 : -1;
+                int span = data.Positions != null ? data.Positions.Item3 : -1;
                 System.Console.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5}]", i,
-                    i, data.Positions.Item1, data.Positions.Item2, data.Positions.Item3, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
+                    i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
             }
         }
     }
