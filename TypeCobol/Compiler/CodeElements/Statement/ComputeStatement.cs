@@ -56,9 +56,9 @@ public interface ArithmeticStatement {
 }
 
 public abstract class AbstractArithmeticStatement: StatementElement, ArithmeticStatement, VariableWriter {
-	public AbstractArithmeticStatement(CodeElementType ce, StatementType statement): base(ce, statement) { }
+    protected AbstractArithmeticStatement(CodeElementType ce, StatementType statement): base(ce, statement) { }
 	
-	abstract public Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 
 	public IDictionary<QualifiedName,object> Variables { get { return VariablesWritten; } }
 	private IDictionary<QualifiedName,object> variablesWritten;

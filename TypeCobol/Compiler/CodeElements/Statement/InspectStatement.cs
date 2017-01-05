@@ -16,7 +16,7 @@
 /// replacement characters (format 4).
 /// </summary>
 public abstract class InspectStatement: StatementElement, VariableWriter {
-	public InspectStatement(StatementType statementType): base(CodeElementType.InspectStatement, statementType) { }
+    protected InspectStatement(StatementType statementType): base(CodeElementType.InspectStatement, statementType) { }
 
 	/// <summary>
 	/// p349:

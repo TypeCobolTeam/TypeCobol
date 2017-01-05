@@ -20,7 +20,7 @@
     /// Format 1, 5, 6, 7 can be ambiguous
     /// </summary>
     public abstract class SetStatement: StatementElement, VariableWriter {
-	    public SetStatement(StatementType statementType): base(CodeElementType.SetStatement, statementType) { }
+        protected SetStatement(StatementType statementType): base(CodeElementType.SetStatement, statementType) { }
 
 	    public bool IsUnsafe { get { return false; } }
 
