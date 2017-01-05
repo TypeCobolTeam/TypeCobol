@@ -144,7 +144,13 @@ namespace TypeCobol.Compiler.Nodes {
                         var token = CodeElement.ConsumedTokens[i];
                         if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
                         {//Don't take in account imported tokens -> This avoid including lines that come from COPYs files.
-                            int curLineIndex = CodeElement.ConsumedTokens[i].Line;
+                            int curLineIndex = CodeElement.ConsumedTokens[i].Line;                            
+                            if (lineNumbers.Count > 0)
+                            {//Add lines between
+                                int lastLine = lineNumbers[lineNumbers.Count - 1];
+                                while(++lastLine < curLineIndex)
+                                    lineNumbers.Add(lastLine);
+                            }
                             lineNumbers.Add(curLineIndex);
                             to += delta_ln;
                             span = 0;

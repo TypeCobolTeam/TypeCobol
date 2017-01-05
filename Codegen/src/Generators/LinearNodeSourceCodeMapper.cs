@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using TypeCobol.Compiler.Nodes;
@@ -13,7 +14,7 @@ namespace TypeCobol.Codegen.Generators
     /// <summary>
     /// This class create a mapping between Nodes and their target position in the source code
     /// for code generation. It built a linear data structure that map each line from the source
-    /// document to its corresponding nodes. The Linear structure ins built in O(n) where n
+    /// document to its corresponding nodes. The Linear structure is built in O(n) where n
     /// is the number of Nodes in the Abstract Tree Nodes.
     /// Each Node is then given an Index in to an Array Of Nodes which is constructed during a
     /// traverse of the Abstract Tree Nodes.
@@ -169,10 +170,6 @@ namespace TypeCobol.Codegen.Generators
             /// </summary>
             public StringSourceText FunctionDeclBuffer;
             /// <summary>
-            /// Current Position in FunctionDeclBuffer
-            /// </summary>
-            public int FunctionDeclBufferPosition;
-            /// <summary>
             /// Node Indices associated to Function Declaration.
             /// </summary>
             public List<int> FunctionDeclNodes;
@@ -183,7 +180,6 @@ namespace TypeCobol.Codegen.Generators
             public NodeFunctionData()
             {
                 FunctionDeclBuffer = new StringSourceText();
-                FunctionDeclBufferPosition = 0;
                 FunctionDeclNodes = new List<int>();
             }
         }
@@ -225,6 +221,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// The Function Declaration Processing Phase.
         /// <param name="node">The node that belongs to a Function Body</param>
+        /// <returns>True if children of the given node must be visited, false otherwise</returns>
         /// </summary>
         private bool ProcessFunctionDeclaration(Node node)
         {
@@ -257,11 +254,11 @@ namespace TypeCobol.Codegen.Generators
         /// The Linearization Phase.
         /// <param name="node">The node to linearize</param>
         /// <param name="functionBody">true if the node belongs to a function body, false otherwise</param>
-        /// <returns>True children of the given node must be visited, false otherwise</returns>
+        /// <returns>True if children of the given node must be visited, false otherwise</returns>
         /// </summary>
-        private bool ProcessLinearization(Node node, Boolean functionBody = false)
+        private bool ProcessLinearization(Node node, bool functionBody = false)
         {
-            //During the Linearization Line Phase, collect data, index of all Nodes.
+            //During the Linearization Phase, collect data, index of all Nodes.
             var positions = node.FromToPositions;
             if (positions == null)
             {
@@ -528,5 +525,65 @@ namespace TypeCobol.Codegen.Generators
                     i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
             }
         }
+        /// <summary>
+        /// Dump All Structures In the Debugger Output.
+        /// </summary>
+        public void DebugDump()
+        {
+            //Dump Lines Information:
+            Debug.WriteLine("//<<<<<<<<<<<<<<<<<<<<<");
+            Debug.WriteLine("//<<<<<< LINES >>>>>>>");
+            Debug.WriteLine("//>>>>>>>>>>>>>>>>>>>>>");
+            StringSourceText buffer = null;
+            for (int i = 0; i < LineData.Length; i++)
+            {
+                if (LineData[i].Buffer != null && buffer != LineData[i].Buffer)
+                {
+                    buffer = LineData[i].Buffer;
+                    Debug.WriteLine("\\\\\\\\\\\\[StartBuffer]///////////");
+                    Debug.Write(buffer.GetTextAt(0, buffer.Size));                    
+                    Debug.WriteLine("\\\\\\\\\\\\[EndBuffer]///////////");
+                }
+                if (LineData[i].Buffer == null)
+                {
+                    Debug.WriteLine("!!!!!!!!!!![Start NULL Buffer]!!!!!!!!!!!");
+                    Debug.WriteLine("!!!!!!!!!!![End NULL Buffer]!!!!!!!!!!!");
+                }
+                StringBuilder nodes = new StringBuilder();
+                if (LineData[i].LineNodes != null)
+                {
+                    foreach (int index in LineData[i].LineNodes)
+                    {
+                        nodes.Append(index);
+                        nodes.Append(",");
+                    }
+                }
+                Debug.WriteLine("Line {0} : Commented = {1}, Nodes[{2}]", i + 1, CommentedLines[i], nodes.ToString());
+            }
+
+            //Dump Lines Information:
+            Debug.WriteLine("//<<<<<<<<<<<<<<<<<<<<<");
+            Debug.WriteLine("//<<<<<< NODES >>>>>>>");
+            Debug.WriteLine("//>>>>>>>>>>>>>>>>>>>>>");
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                NodeData data = Nodes[i];
+                StringBuilder lines = new StringBuilder();
+                if (data.Positions != null)
+                {
+                    foreach (int n in data.Positions.Item4)
+                    {
+                        lines.Append(n);
+                        lines.Append(",");
+                    }
+                }
+                int from = data.Positions != null ? data.Positions.Item1 : -1;
+                int to = data.Positions != null ? data.Positions.Item2 : -1;
+                int span = data.Positions != null ? data.Positions.Item3 : -1;
+                Debug.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5}]", i,
+                    i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
+            }
+        }
+
     }
 }

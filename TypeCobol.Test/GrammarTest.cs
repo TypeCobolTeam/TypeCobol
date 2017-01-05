@@ -28,7 +28,7 @@ namespace TypeCobol.Test {
 			string samples = @"Samples";
 			string root = PlatformUtils.GetPathForProjectFile(samples);
 			string[] files = Directory.GetFiles(root, regex, SearchOption.AllDirectories);
-			string[] include = { };
+            string[] include = { };
 			string[] exclude = { };
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -90,7 +90,11 @@ namespace TypeCobol.Test {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
+#if GENERATOR2
+                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, null);
+#else
 			        var generator = new TypeCobol.Codegen.Generator(writer, document.Results.TokensLines, null);
+#endif
 			        
 			        var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;

@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Generators
         {
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
-            //mapper.Dump();
+            //mapper.DebugDump();
             GapSourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
             // Step 3: Write target document
             targetSourceText.Write(Destination);
@@ -51,7 +51,7 @@ namespace TypeCobol.Codegen.Generators
             BitArray generated_node = new BitArray(mapper.NodeCount);
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
-            Boolean bBufferWasInFunctionBody = false;
+            bool bBufferWasInFunctionBody = false;
             for (int i = 0; i < mapper.LineData.Length; i++)
             {
                 //--------------------------------------------------------------------------------------------------------------
