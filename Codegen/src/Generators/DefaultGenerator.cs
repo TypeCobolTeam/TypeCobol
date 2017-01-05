@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Generators
         {
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
-            mapper.Dump();
+            //mapper.Dump();
             GapSourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
             // Step 3: Write target document
             targetSourceText.Write(Destination);
@@ -140,7 +140,7 @@ namespace TypeCobol.Codegen.Generators
                         foreach (var line in node.Lines)
                         {
                             StringWriter sw = new StringWriter();
-                            if (bFirst)
+                            if (bFirst && !bIsFunctionDecl)
                             {//The first element don't ident it just insert it a the right position
                                 sw.WriteLine(line.Text);
                                 bFirst = false;
