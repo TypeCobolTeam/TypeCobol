@@ -74,6 +74,12 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 		}
 	}
 	public bool IsLeaf { get { return true; } }
-}
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            //Generated Node doesn't need to be visited
+            return false;
+        }
+    }
 
 }

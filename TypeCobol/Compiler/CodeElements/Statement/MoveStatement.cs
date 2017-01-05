@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    protected IDictionary<QualifiedName,object> variables;
 	    protected List<FunctionCall> _functions = null;
 
-	    public abstract IDictionary<QualifiedName,object> Variables { get; }
+        public abstract IDictionary<QualifiedName,object> Variables { get; }
 	    public virtual  IDictionary<QualifiedName,object> VariablesWritten {
 		    [NotNull]
 		    get {
@@ -29,9 +29,9 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public abstract IList<FunctionCall> FunctionCalls { get; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
-                //TODO VariableUser
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   //TODO VariableUser
                    && astVisitor.VisitVariableWriter(this)
                    && this.ContinueVisitToChildren(astVisitor, Unsafe) //Order is important here, as unsafe is part of VariableWriter interface
                                                                        //TODO VariablesWritten
@@ -70,8 +70,8 @@ namespace TypeCobol.Compiler.CodeElements {
 	    /// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
 	    public ReceivingStorageArea[] ReceivingStorageAreas { get; private set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, SendingVariable, SendingBoolean)
                    && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ReceivingStorageAreas);
         }
@@ -112,52 +112,52 @@ namespace TypeCobol.Compiler.CodeElements {
 			    var sending = SendingItem as QualifiedName;
 			    if (sending != null) variables.Add(sending, null);
 
-			    foreach(var item in ReceivingStorageAreas) {
-				    var name = new URI(item.StorageArea.SymbolReference.Name);
-				    if (variables.ContainsKey(name))
-					    if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
-					    else throw new System.ArgumentException(name+" already written, but not subscripted?");
-				    else variables.Add(name, SendingItem);
-			    }
+                foreach(var item in ReceivingStorageAreas) {
+                    var name = new URI(item.StorageArea.SymbolReference.Name);
+                    if (variables.ContainsKey(name))
+                        if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
+                        else throw new System.ArgumentException(name+" already written, but not subscripted?");
+                    else variables.Add(name, SendingItem);
+                }
 
-			    return variables;
+                return variables;
 		    }
 	    }
 
-	    public IDictionary<QualifiedName,ICollection<List<SubscriptExpression>>> Subscripts {
+        public IDictionary<QualifiedName,ICollection<List<SubscriptExpression>>> Subscripts {
 		    get {
 			    var subscripts = new Dictionary<QualifiedName,ICollection<List<SubscriptExpression>>>();
 			    if (SendingVariable != null) {
 				    var kv = GetSubscriptedVariable(SendingVariable.StorageArea);
-				    if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
-					    AddKeyValue(subscripts, kv);
+                    if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
+                        AddKeyValue(subscripts, kv);
 				    }
 			    }
 			    foreach(var v in ReceivingStorageAreas) {
 				    var kv = GetSubscriptedVariable(v.StorageArea);
-				    if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
-					    AddKeyValue(subscripts, kv);
+                    if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
+                        AddKeyValue(subscripts, kv);
 				    }
 			    }
 			    return subscripts;
 		    }
 	    }
 	    private KeyValuePair<QualifiedName,List<SubscriptExpression>> GetSubscriptedVariable(StorageArea variable) {
-		    var subscripted = variable as DataOrConditionStorageArea;
-		    if (subscripted == null || subscripted.Subscripts.Count < 1) return default(KeyValuePair<QualifiedName,List<SubscriptExpression>>);
-		    var name = new URI(variable.SymbolReference.Name);
-		    return new KeyValuePair<QualifiedName,List<SubscriptExpression>>(name, subscripted.Subscripts);
-	    }
-	    private void AddKeyValue<K,V>([NotNull] Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
-		    ICollection<List<V>> values = new List<List<V>>();
-	        if (map.ContainsKey(kv.Key)) {
+            var subscripted = variable as DataOrConditionStorageArea;
+            if (subscripted == null || subscripted.Subscripts.Count < 1) return default(KeyValuePair<QualifiedName,List<SubscriptExpression>>);
+            var name = new URI(variable.SymbolReference.Name);
+            return new KeyValuePair<QualifiedName,List<SubscriptExpression>>(name, subscripted.Subscripts);
+        }
+        private void AddKeyValue<K,V>([NotNull] Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
+            ICollection<List<V>> values = new List<List<V>>();
+            if (map.ContainsKey(kv.Key)) {
                 values = map[kv.Key];
             } // else values is already initialized as an empty list
-		    values.Add(kv.Value);
-		    map[kv.Key] = values;
-	    }
+            values.Add(kv.Value);
+            map[kv.Key] = values;
+        }
 
-	    private object SendingItem {
+        private object SendingItem {
 		    [CanBeNull]
 		    get {
 		        if (SendingVariable != null) {
@@ -167,8 +167,8 @@ namespace TypeCobol.Compiler.CodeElements {
 					    throw new System.NotSupportedException();
 				    }
                     if(SendingVariable.MainSymbolReference != null)
-				        return new URI(SendingVariable.MainSymbolReference.Name);
-		            return null;
+                        return new URI(SendingVariable.MainSymbolReference.Name);
+                    return null;
 		        }
 		        if (SendingBoolean != null) return SendingBoolean.Value;
 		        return null;
@@ -217,8 +217,8 @@ namespace TypeCobol.Compiler.CodeElements {
 	    public DataOrConditionStorageArea ToGroupItem { get; set; }
 
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, FromGroupItem, ToGroupItem);
         }
 
@@ -228,11 +228,11 @@ namespace TypeCobol.Compiler.CodeElements {
 			    if (variables != null) return variables;
 
 			    variables = new Dictionary<QualifiedName,object>();
-			    if (FromGroupItem != null && FromGroupItem.SymbolReference != null)
-				    variables.Add(new URI(FromGroupItem.SymbolReference.Name), null);
-			    if (  ToGroupItem != null &&   ToGroupItem.SymbolReference != null)
-				    variables.Add(  new URI(ToGroupItem.SymbolReference.Name), FromGroupItem!=null? new URI(FromGroupItem.SymbolReference.Name):null);
-			    return variables;
+                if (FromGroupItem != null && FromGroupItem.SymbolReference != null)
+                    variables.Add(new URI(FromGroupItem.SymbolReference.Name), null);
+                if (  ToGroupItem != null &&   ToGroupItem.SymbolReference != null)
+                    variables.Add(  new URI(ToGroupItem.SymbolReference.Name), FromGroupItem!=null? new URI(FromGroupItem.SymbolReference.Name):null);
+                return variables;
 		    }
 	    }
 

@@ -84,15 +84,22 @@ namespace TypeCobol.Compiler.CodeElements
 
         public IList<Diagnostic> Diagnostics { get; set; }
 
-        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            var continueVisit = astVisitor.Visit(this)
-                                && this.ContinueVisitToChildren(astVisitor, CallTarget, StorageAreaGroupsCorrespondingImpact)
-                                && this.ContinueVisitToChildren(astVisitor, CallSites, ConsumedTokens, StorageAreaReads,StorageAreaWrites);
-            if (continueVisit && StorageAreaDefinitions != null) {
-                continueVisit = this.ContinueVisitToChildren(astVisitor,    StorageAreaDefinitions.Keys,
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            bool continueVisit = astVisitor.BeginCodeElement(this) && VisitCodeElement(astVisitor);
+            astVisitor.EndCodeElement(this);
+            return continueVisit;
+        }
+
+        public virtual bool VisitCodeElement(IASTVisitor astVisitor) {
+            var continueVisit = this.ContinueVisitToChildren(astVisitor, CallTarget, StorageAreaGroupsCorrespondingImpact)
+                                && this.ContinueVisitToChildren(astVisitor, CallSites, ConsumedTokens, StorageAreaReads, StorageAreaWrites);
+            if (continueVisit && StorageAreaDefinitions != null)
+            {
+                continueVisit = this.ContinueVisitToChildren(astVisitor, StorageAreaDefinitions.Keys,
                                                                             StorageAreaDefinitions.Values);
             }
-            if (continueVisit && SymbolInformationForTokens != null) {
+            if (continueVisit && SymbolInformationForTokens != null)
+            {
                 continueVisit = this.ContinueVisitToChildren(astVisitor, SymbolInformationForTokens.Keys,
                                                                          SymbolInformationForTokens.Values);
             }

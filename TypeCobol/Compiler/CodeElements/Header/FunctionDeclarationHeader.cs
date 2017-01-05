@@ -44,8 +44,8 @@
 	    /// <summary>RETURNING dataname.</summary>
 	    public SyntaxProperty<ParameterPassingDirection> Returning { get; internal set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, FunctionName, Profile, Input, Output, Inout, Returning);
         }
 
@@ -206,8 +206,8 @@
     public class FunctionDeclarationEnd: CodeElement {
 	    public FunctionDeclarationEnd(): base(CodeElementType.FunctionDeclarationEnd) { }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
         }
     }
 }

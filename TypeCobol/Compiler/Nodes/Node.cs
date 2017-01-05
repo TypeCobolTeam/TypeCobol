@@ -299,24 +299,35 @@ namespace TypeCobol.Compiler.Nodes {
             return str.ToString();
         }
 
+        /// <summary>
+        /// Don't override this method, implement VisitNode on child
+        /// </summary>
+        /// <param name="astVisitor"></param>
+        /// <returns></returns>
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            //TODO
-            //astVisitor.Visit(this);
-            if (CodeElement != null) {
-                if (astVisitor.BeginCodeElement(CodeElement)) {
-                    CodeElement.AcceptASTVisitor(astVisitor);
-                }
-                astVisitor.EndCodeElement(CodeElement);
+            bool continueVisit = astVisitor.BeginNode(this) && VisitNode(astVisitor);
+
+            if (continueVisit && CodeElement != null)
+            {
+                CodeElement.AcceptASTVisitor(astVisitor);
             }
-            foreach (Node child in Children) {
-                if (astVisitor.BeginNode(child)) {
-                    child.AcceptASTVisitor(astVisitor);
+
+            if (continueVisit) {
+                foreach (Node child in Children) {
+                    if (!continueVisit) {
+                        break;
+                    }
+                    if (astVisitor.BeginNode(child)) {
+                        continueVisit = child.AcceptASTVisitor(astVisitor);
+                    }
                 }
-                astVisitor.EndNode(child);
             }
-            //no sense here
-            return true;
+
+            astVisitor.EndNode(this);
+            return continueVisit;
         }
+
+        public abstract bool VisitNode(IASTVisitor astVisitor);
 
 
         private void Dump(StringBuilder str, int i)
@@ -450,6 +461,10 @@ namespace TypeCobol.Compiler.Nodes {
     /// <summary>Root of any Node tree, with null CodeElement.</summary>
     public class Root : Node, CodeElementHolder<CodeElement> {
         public Root() : base(null) {}
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class Program : Node, CodeElementHolder<ProgramIdentification> {
@@ -461,6 +476,11 @@ namespace TypeCobol.Compiler.Nodes {
                 return this.CodeElement().ProgramName.Name;
             }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class LibraryCopy : Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
@@ -468,6 +488,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ID {
             get { return "copy"; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
         }
     }
 
@@ -477,6 +502,10 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID {
             get { return this.CodeElement().ClassName.Name; }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class Factory : Node, CodeElementHolder<FactoryIdentification> {
@@ -484,6 +513,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ID {
             get { return "TODO#248"; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
         }
     }
 
@@ -493,6 +527,11 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID {
             get { return this.CodeElement().MethodName.Name; }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class Object : Node, CodeElementHolder<ObjectIdentification> {
@@ -501,6 +540,11 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID {
             get { return "TODO#248"; }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class End : Node, CodeElementHolder<CodeElementEnd> {
@@ -508,6 +552,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ID {
             get { return "end"; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
         }
     }
 } // end of namespace TypeCobol.Compiler.Nodes
