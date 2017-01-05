@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -52,6 +53,11 @@ namespace TypeCobol.Compiler.Parser
             {
                 var code = Diagnostics.MessageCode.ImplementationError;
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code);
+            }
+
+            //Complete some information on Node and run checker that need a full AST
+            if (programClassBuilder.Program != null) {
+                programClassBuilder.Program.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
             }
 
             // Register compiler results
