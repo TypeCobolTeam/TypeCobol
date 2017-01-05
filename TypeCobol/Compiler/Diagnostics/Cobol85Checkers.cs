@@ -374,6 +374,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		    foreach(var variable in ((VariableUser)node).Variables.Keys) CheckVariable(node, variable);
 
+            //Subscript checker are desactived because it doesn't works.
+            /*
             var move = node.CodeElement as MoveSimpleStatement;
 		    if (move == null) return;
 		    var subscripts = move.Subscripts;
@@ -387,7 +389,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                 }
                 foreach(var link in links)
                     CheckSubscripting(move, node.SymbolTable, variable, link);
-            }
+            }*/
         }
 	    private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
 		    var map = table.GetVariableExplicit(name);
