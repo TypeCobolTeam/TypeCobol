@@ -5,7 +5,7 @@
 /// condition and adjusts the associated index to indicate that element.
 /// </summary>
 public abstract class SearchStatement: StatementElement {
-	public SearchStatement(StatementType statementType): base(CodeElementType.SearchStatement, statementType) { }
+    protected SearchStatement(StatementType statementType): base(CodeElementType.SearchStatement, statementType) { }
 
 	/// <summary>
 	/// p409:

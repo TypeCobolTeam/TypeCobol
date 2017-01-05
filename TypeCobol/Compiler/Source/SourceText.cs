@@ -117,7 +117,7 @@ namespace TypeCobol.Compiler.Source
         /// <summary>
         /// Empty constructor
         /// </summary>
-        public SourceText()
+        protected SourceText()
         {
             Positions = null;
         }

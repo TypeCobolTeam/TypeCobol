@@ -251,8 +251,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Text name refenced by COPY directive was not found
                             // => register a preprocessor error on this line                            
                             Token failedDirectiveToken = tokensLineWithCopyDirective.TokensWithCompilerDirectives
-                                .Where(token => token.TokenType == TokenType.CopyImportDirective && ((CompilerDirectiveToken)token).CompilerDirective == copyDirective)
-                                .First();
+                                .First(token => token.TokenType == TokenType.CopyImportDirective && ((CompilerDirectiveToken)token).CompilerDirective == copyDirective);
                             Diagnostic diag = new Diagnostic(
                                 MessageCode.FailedToLoadTextDocumentReferencedByCopyDirective,
                                 failedDirectiveToken.Column, failedDirectiveToken.EndColumn,

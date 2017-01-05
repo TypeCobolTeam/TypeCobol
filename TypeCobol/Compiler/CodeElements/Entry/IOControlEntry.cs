@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract class IOControlEntry : CodeElement
     {
-        public IOControlEntry() : base(CodeElementType.IOControlEntry)
+        protected IOControlEntry() : base(CodeElementType.IOControlEntry)
         { }
     }
 

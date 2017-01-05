@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public abstract class LiteralValue
     {
-        public LiteralValue(LiteralValueType type)
+        protected LiteralValue(LiteralValueType type)
         {
             Type = type;
         }

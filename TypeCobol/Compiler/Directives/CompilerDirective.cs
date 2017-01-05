@@ -71,7 +71,7 @@ namespace TypeCobol.Compiler.Directives
 
     public abstract class CompilerDirective
     {
-        public CompilerDirective(CompilerDirectiveType type)
+        protected CompilerDirective(CompilerDirectiveType type)
         {
             Type = type;
         }

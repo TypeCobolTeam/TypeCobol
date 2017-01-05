@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.CodeElements {
     /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
     public abstract class MoveStatement : StatementElement, VariableWriter,FunctionCaller
     {
-	    public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
+        protected MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
     // [TYPECOBOL]
 	    public SyntaxProperty<bool> Unsafe { get; set; }
 	    public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }

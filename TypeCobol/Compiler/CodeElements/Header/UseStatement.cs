@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract class UseStatement : CodeElement
     {
-        public UseStatement() : base(CodeElementType.UseStatement) { }
+        protected UseStatement() : base(CodeElementType.UseStatement) { }
     }
 
     /// <summary>

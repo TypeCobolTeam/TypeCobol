@@ -9,7 +9,7 @@ public class DataDivisionHeader: CodeElement {
 
 
 public abstract class DataSectionHeader: CodeElement {
-	public DataSectionHeader(CodeElementType type): base(type) { }
+    protected DataSectionHeader(CodeElementType type): base(type) { }
 }
 
 /// <summary>
