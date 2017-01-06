@@ -100,5 +100,11 @@ namespace TypeCobol.Codegen {
 			get { return new System.Collections.ObjectModel.ReadOnlyCollection<ITextLine>(_lines); }
 		}
 		public bool IsLeaf { get; private set; }
-	}
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            //Generated Node doesn't need to be visited
+            return false;
+        }
+    }
 }

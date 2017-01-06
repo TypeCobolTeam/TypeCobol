@@ -6,6 +6,8 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using Object = TypeCobol.Compiler.Nodes.Object;
+using String = TypeCobol.Compiler.Nodes.String;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -221,6 +223,113 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(SetSendingVariable setSendingVariable);
         bool Visit(SetUPSISwitchInstruction setUPSISwitchInstruction);
         bool Visit(ParametersProfile parametersProfile);
+
+
+        //Nodes
+        bool Visit(Section section);
+        bool Visit(Paragraph paragraph);
+        bool Visit(Perform perform);
+        bool Visit(PerformProcedure performProcedure);
+        bool Visit(Root root);
+        bool Visit(Program program);
+        bool Visit(LibraryCopy libraryCopy);
+        bool Visit(Class classNode);
+        bool Visit(Factory factory);
+        bool Visit(Method method);
+        bool Visit(Object objectNode);
+        bool Visit(End end);
+
+        bool Visit(Accept accept);
+        bool Visit(Alter alter);
+        bool Visit(Call call);
+        bool Visit(ProcedureStyleCall procedureStyleCall);
+        bool Visit(Cancel cancel);
+        bool Visit(Continue continueNode);
+        bool Visit(Delete delete);
+        bool Visit(Display display);
+        bool Visit(Entry entry);
+        bool Visit(Exec exec);
+        bool Visit(Exit exit);
+        bool Visit(ExitMethod exitMethod);
+        bool Visit(ExitProgram exitProgram);
+        bool Visit(Goback goback);
+        bool Visit(Goto gotoNode);
+        bool Visit(Initialize initialize);
+        bool Visit(Inspect inspect);
+        bool Visit(Invoke invoke);
+        bool Visit(Merge merge);
+        bool Visit(Move move);
+        bool Visit(Release release);
+        bool Visit(Return returnNode);
+        bool Visit(Set set);
+        bool Visit(Sort sort);
+        bool Visit(Start start);
+        bool Visit(Stop stop);
+        bool Visit(String stringNode);
+        bool Visit(Unstring unstring);
+        bool Visit(XmlGenerate xmlGenerate);
+        bool Visit(XmlParse xmlParse);
+        bool Visit(Add add);
+        bool Visit(Subtract subtract);
+        bool Visit(Multiply multiply);
+        bool Visit(Divide divide);
+        bool Visit(Compute compute);
+        bool Visit(Open open);
+        bool Visit(Close close);
+        bool Visit(Read read);
+        bool Visit(Write write);
+        bool Visit(Rewrite rewrite);
+        bool Visit(If ifNode);
+        bool Visit(Then then);
+        bool Visit(Else elseNode);
+        bool Visit(NextSentence nextSentence);
+        bool Visit(Evaluate evaluate);
+        bool Visit(WhenGroup whenGroup);
+        bool Visit(When when);
+        bool Visit(WhenOther whenOther);
+        bool Visit(Search search);
+        bool Visit(WhenSearch whenSearch);
+
+        bool Visit(DataSection dataSection);
+        bool Visit(DataDivision dataDivision);
+        bool Visit(FileSection fileSection);
+        bool Visit(FileDescriptionEntryNode fileDescriptionEntryNode);
+        bool Visit(WorkingStorageSection workingStorageSection);
+        bool Visit(LocalStorageSection localStorageSection);
+        bool Visit(LinkageSection linkageSection);
+        bool Visit(DataDefinition dataDefinition);
+        bool Visit(DataDescription dataDescription);
+        bool Visit(DataCondition dataCondition);
+        bool Visit(DataRedefines dataRedefines);
+        bool Visit(DataRenames dataRenames);
+        bool Visit(TypeDefinition typeDefinition);
+        bool Visit(ParameterDescription parameterDescription);
+
+        bool Visit(EnvironmentDivision environmentDivision);
+        bool Visit(ConfigurationSection configurationSection);
+        bool Visit(SourceComputer sourceComputer);
+        bool Visit(ObjectComputer objectComputer);
+        bool Visit(SpecialNames specialNames);
+        bool Visit(Repository repository);
+        bool Visit(InputOutputSection inputOutputSection);
+        bool Visit(FileControlParagraphHeaderNode fileControlParagraphHeaderNode);
+        bool Visit(FileControlEntryNode fileControlEntryNode);
+
+        bool Visit(OnSizeError onSizeError);
+        bool Visit(NoSizeError noSizeError);
+        bool Visit(OnAtEnd onAtEnd);
+        bool Visit(NoAtEnd noAtEnd);
+        bool Visit(OnException onException);
+        bool Visit(NoException noException);
+        bool Visit(OnInvalidKey onInvalidKey);
+        bool Visit(NoInvalidKey noInvalidKey);
+        bool Visit(OnOverflow onOverflow);
+        bool Visit(NoOverflow noOverflow);
+        bool Visit(ProcedureDivision procedureDivision);
+        bool Visit(FunctionDeclaration functionDeclaration);
+        bool Visit(FunctionEnd functionEnd);
+        bool Visit(Sentence sentence);
+
     }
 
 
@@ -803,6 +912,402 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ParametersProfile parametersProfile) {
+            return true;
+        }
+
+        public virtual bool Visit(Section section) {
+            return true;
+        }
+
+        public virtual bool Visit(Paragraph paragraph) {
+            return true;
+        }
+
+        public virtual bool Visit(Perform perform) {
+            return true;
+        }
+
+        public virtual bool Visit(PerformProcedure performProcedure) {
+            return true;
+        }
+
+        public virtual bool Visit(Root root) {
+            return true;
+        }
+
+        public virtual bool Visit(Program program) {
+            return true;
+        }
+
+        public virtual bool Visit(LibraryCopy libraryCopy) {
+            return true;
+        }
+
+        public virtual bool Visit(Class classNode) {
+            return true;
+        }
+
+        public virtual bool Visit(Factory factory) {
+            return true;
+        }
+
+        public virtual bool Visit(Method method) {
+            return true;
+        }
+
+        public virtual bool Visit(Object objectNode) {
+            return true;
+        }
+
+        public virtual bool Visit(End end) {
+            return true;
+        }
+
+        public virtual bool Visit(Accept accept) {
+            return true;
+        }
+
+        public virtual bool Visit(Alter alter) {
+            return true;
+        }
+
+        public virtual bool Visit(Call call) {
+            return true;
+        }
+
+        public virtual bool Visit(ProcedureStyleCall procedureStyleCall) {
+            return true;
+        }
+
+        public virtual bool Visit(Cancel cancel) {
+            return true;
+        }
+
+        public virtual bool Visit(Continue continueNode) {
+            return true;
+        }
+
+        public virtual bool Visit(Delete delete) {
+            return true;
+        }
+
+        public virtual bool Visit(Display display) {
+            return true;
+        }
+
+        public virtual bool Visit(Entry entry) {
+            return true;
+        }
+
+        public virtual bool Visit(Exec exec) {
+            return true;
+        }
+
+        public virtual bool Visit(Exit exit) {
+            return true;
+        }
+
+        public virtual bool Visit(ExitMethod exitMethod) {
+            return true;
+        }
+
+        public virtual bool Visit(ExitProgram exitProgram) {
+            return true;
+        }
+
+        public virtual bool Visit(Goback goback) {
+            return true;
+        }
+
+        public virtual bool Visit(Goto gotoNode) {
+            return true;
+        }
+
+        public virtual bool Visit(Initialize initialize) {
+            return true;
+        }
+
+        public virtual bool Visit(Inspect inspect) {
+            return true;
+        }
+
+        public virtual bool Visit(Invoke invoke) {
+            return true;
+        }
+
+        public virtual bool Visit(Merge merge) {
+            return true;
+        }
+
+        public virtual bool Visit(Move move) {
+            return true;
+        }
+
+        public virtual bool Visit(Release release) {
+            return true;
+        }
+
+        public virtual bool Visit(Return returnNode) {
+            return true;
+        }
+
+        public virtual bool Visit(Set set) {
+            return true;
+        }
+
+        public virtual bool Visit(Sort sort) {
+            return true;
+        }
+
+        public virtual bool Visit(Start start) {
+            return true;
+        }
+
+        public virtual bool Visit(Stop stop) {
+            return true;
+        }
+
+        public virtual bool Visit(String stringNode) {
+            return true;
+        }
+
+        public virtual bool Visit(Unstring unstring) {
+            return true;
+        }
+
+        public virtual bool Visit(XmlGenerate xmlGenerate) {
+            return true;
+        }
+
+        public virtual bool Visit(XmlParse xmlParse) {
+            return true;
+        }
+
+        public virtual bool Visit(Add add) {
+            return true;
+        }
+
+        public virtual bool Visit(Subtract subtract) {
+            return true;
+        }
+
+        public virtual bool Visit(Multiply multiply) {
+            return true;
+        }
+
+        public virtual bool Visit(Divide divide) {
+            return true;
+        }
+
+        public virtual bool Visit(Compute compute) {
+            return true;
+        }
+
+        public virtual bool Visit(Open open) {
+            return true;
+        }
+
+        public virtual bool Visit(Close close) {
+            return true;
+        }
+
+        public virtual bool Visit(Read read) {
+            return true;
+        }
+
+        public virtual bool Visit(Write write) {
+            return true;
+        }
+
+        public virtual bool Visit(Rewrite rewrite) {
+            return true;
+        }
+
+        public virtual bool Visit(If ifNode) {
+            return true;
+        }
+
+        public virtual bool Visit(Then then) {
+            return true;
+        }
+
+        public virtual bool Visit(Else elseNode) {
+            return true;
+        }
+
+        public virtual bool Visit(NextSentence nextSentence) {
+            return true;
+        }
+
+        public virtual bool Visit(Evaluate evaluate) {
+            return true;
+        }
+
+        public virtual bool Visit(WhenGroup whenGroup) {
+            return true;
+        }
+
+        public virtual bool Visit(When when) {
+            return true;
+        }
+
+        public virtual bool Visit(WhenOther whenOther) {
+            return true;
+        }
+
+        public virtual bool Visit(Search search) {
+            return true;
+        }
+
+        public virtual bool Visit(WhenSearch whenSearch) {
+            return true;
+        }
+
+        public virtual bool Visit(DataSection dataSection) {
+            return true;
+        }
+
+        public virtual bool Visit(DataDivision dataDivision) {
+            return true;
+        }
+
+        public virtual bool Visit(FileSection fileSection) {
+            return true;
+        }
+
+        public virtual bool Visit(FileDescriptionEntryNode fileDescriptionEntryNode) {
+            return true;
+        }
+
+        public virtual bool Visit(WorkingStorageSection workingStorageSection) {
+            return true;
+        }
+
+        public virtual bool Visit(LocalStorageSection localStorageSection) {
+            return true;
+        }
+
+        public virtual bool Visit(LinkageSection linkageSection) {
+            return true;
+        }
+
+        public virtual bool Visit(DataDefinition dataDefinition) {
+            return true;
+        }
+
+        public virtual bool Visit(DataDescription dataDescription) {
+            return true;
+        }
+
+        public virtual bool Visit(DataCondition dataCondition) {
+            return true;
+        }
+
+        public virtual bool Visit(DataRedefines dataRedefines) {
+            return true;
+        }
+
+        public virtual bool Visit(DataRenames dataRenames) {
+            return true;
+        }
+
+        public virtual bool Visit(TypeDefinition typeDefinition) {
+            return true;
+        }
+
+        public virtual bool Visit(ParameterDescription parameterDescription) {
+            return true;
+        }
+
+        public virtual bool Visit(EnvironmentDivision environmentDivision) {
+            return true;
+        }
+
+        public virtual bool Visit(ConfigurationSection configurationSection) {
+            return true;
+        }
+
+        public virtual bool Visit(SourceComputer sourceComputer) {
+            return true;
+        }
+
+        public virtual bool Visit(ObjectComputer objectComputer) {
+            return true;
+        }
+
+        public virtual bool Visit(SpecialNames specialNames) {
+            return true;
+        }
+
+        public virtual bool Visit(Repository repository) {
+            return true;
+        }
+
+        public virtual bool Visit(InputOutputSection inputOutputSection) {
+            return true;
+        }
+
+        public virtual bool Visit(FileControlParagraphHeaderNode fileControlParagraphHeaderNode) {
+            return true;
+        }
+
+        public virtual bool Visit(FileControlEntryNode fileControlEntryNode) {
+            return true;
+        }
+
+        public virtual bool Visit(OnSizeError onSizeError) {
+            return true;
+        }
+
+        public virtual bool Visit(NoSizeError noSizeError) {
+            return true;
+        }
+
+        public virtual bool Visit(OnAtEnd onAtEnd) {
+            return true;
+        }
+
+        public virtual bool Visit(NoAtEnd noAtEnd) {
+            return true;
+        }
+
+        public virtual bool Visit(OnException onException) {
+            return true;
+        }
+
+        public virtual bool Visit(NoException noException) {
+            return true;
+        }
+
+        public virtual bool Visit(OnInvalidKey onInvalidKey) {
+            return true;
+        }
+
+        public virtual bool Visit(NoInvalidKey noInvalidKey) {
+            return true;
+        }
+
+        public virtual bool Visit(OnOverflow onOverflow) {
+            return true;
+        }
+
+        public virtual bool Visit(NoOverflow noOverflow) {
+            return true;
+        }
+
+        public virtual bool Visit(ProcedureDivision procedureDivision) {
+            return true;
+        }
+
+        public virtual bool Visit(FunctionDeclaration functionDeclaration) {
+            return true;
+        }
+
+        public virtual bool Visit(FunctionEnd functionEnd) {
+            return true;
+        }
+
+        public virtual bool Visit(Sentence sentence) {
             return true;
         }
     }

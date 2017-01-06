@@ -59,8 +59,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public SymbolDefinition DataName { get; set; }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
+	        return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, LevelNumber, DataName);
 	    }
 
@@ -732,8 +732,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public bool IsInitialValueNull { get { return InitialValue.NullPointerValue != null; } }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor,  Filler,
                                                                 Picture,
                                                                 UserDefinedDataType,
@@ -772,8 +772,8 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public Token SpecialRegisterName { get; private set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, SpecialRegisterName);
         }
     }
@@ -793,9 +793,9 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public FunctionCall FunctionCall { get; private set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall);
         }
     }
@@ -812,8 +812,8 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public IList<DataConditionEntry> DataConditions { get; internal set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, DataConditions);
         }
     }
@@ -842,9 +842,9 @@ namespace TypeCobol.Compiler.CodeElements {
         public SyntaxProperty<bool> Strong { get; internal set; }
         public bool IsStrong { get { return Strong != null && Strong.Value; } }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, DataTypeName, Strong);
         }
     }
@@ -933,9 +933,9 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public SymbolReference RedefinesDataName { get; set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, Filler, RedefinesDataName);
         }
     }
@@ -997,9 +997,9 @@ namespace TypeCobol.Compiler.CodeElements {
 		public SymbolReference RenamesFromDataName { get; set; }
 		public SymbolReference RenamesToDataName { get; set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, RenamesFromDataName, RenamesToDataName);
         }
     }
@@ -1045,8 +1045,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		public DataType DataType { get { return DataType.Boolean; } }
 		public int Length { get { return 1; } }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, ConditionName, DataType)
                    && this.ContinueVisitToChildren(astVisitor, ConditionValues, ConditionValuesRanges);
         }

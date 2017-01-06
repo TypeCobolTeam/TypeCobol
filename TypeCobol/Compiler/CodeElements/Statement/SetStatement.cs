@@ -20,7 +20,7 @@
     /// Format 1, 5, 6, 7 can be ambiguous
     /// </summary>
     public abstract class SetStatement: StatementElement, VariableWriter {
-	    public SetStatement(StatementType statementType): base(CodeElementType.SetStatement, statementType) { }
+        protected SetStatement(StatementType statementType): base(CodeElementType.SetStatement, statementType) { }
 
 	    public bool IsUnsafe { get { return false; } }
 
@@ -37,8 +37,8 @@
 		    }
 	    }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 //TODO VariableUser
                    && astVisitor.VisitVariableWriter(this); //TODO Variables
         }
@@ -114,8 +114,8 @@
 		    }
 	    }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, SendingVariable)
                    && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ReceivingStorageAreas);
         }
@@ -197,9 +197,9 @@
 		    return str.ToString();
 	    }
 
-            public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+            public override bool VisitCodeElement(IASTVisitor astVisitor)
             {
-                return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                        && this.ContinueVisitToChildren(astVisitor, SendingVariable, IncrementDirection)
                        && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)ReceivingIndexes);
             }
@@ -217,9 +217,9 @@
 	        /// <summary>mnemonicForUPSISwitchNameReference+ TO (ON | OFF)</summary>
 	        public IList<SetUPSISwitchInstruction> SetUPSISwitchInstructions { get; set; }
 
-            public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+            public override bool VisitCodeElement(IASTVisitor astVisitor)
             {
-                return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                         && this.ContinueVisitToChildren(astVisitor, SetUPSISwitchInstructions);
             }
 
@@ -280,9 +280,9 @@
 		    return str.ToString();
 	    }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, SendingValue)
                    && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)Conditions);
         }

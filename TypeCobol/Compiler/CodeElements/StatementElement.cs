@@ -37,8 +37,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public FunctionCallResult[] FunctionCalls { get; set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, DataReadAccess,
                                                             DataWriteAccess, 
                                                             ExpressionsToCompute, 

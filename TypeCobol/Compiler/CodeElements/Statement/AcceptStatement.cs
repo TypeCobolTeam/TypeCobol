@@ -39,8 +39,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// </summary>
 		public ReceivingStorageArea ReceivingStorageArea { get; set; }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
+	        return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, ReceivingStorageArea);
 	    }
     }
@@ -78,8 +78,8 @@ namespace TypeCobol.Compiler.CodeElements
 		/// </summary>
 		public ExternalNameOrSymbolReference InputDevice { get; set; }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, InputDevice);
         }
     }
@@ -117,9 +117,9 @@ namespace TypeCobol.Compiler.CodeElements
 		/// </summary>
 		public SyntaxProperty<SystemDateFormat> SystemDateFormat { get; set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
-            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, SystemDateFormat);
         }
     }

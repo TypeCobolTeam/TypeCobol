@@ -8,7 +8,7 @@
 /// numeric items, from one or more numeric items, and stores the result.
 /// </summary>
 public abstract class SubtractStatement: AbstractArithmeticStatement {
-	public SubtractStatement(StatementType statementType): base(CodeElementType.SubtractStatement, statementType) { }
+    protected SubtractStatement(StatementType statementType): base(CodeElementType.SubtractStatement, statementType) { }
 	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 }
 
@@ -27,10 +27,10 @@ public class SubtractSimpleStatement: SubtractStatement {
 		get {
 			var map = new Dictionary<string,List<ArithmeticExpression>>();
 			ArithmeticExpression left = null;
-			for(int i=0; i<VariablesTogether.Length; i++) {
-				var right = new NumericVariableOperand(VariablesTogether[i]);
-				if (left == null) left = right;
-				else left = ArithmeticOperator.Plus.CreateOperation(left, right);
+			foreach (NumericVariable varTogether in VariablesTogether) {
+			    var right = new NumericVariableOperand(varTogether);
+			    if (left == null) left = right;
+			    else left = ArithmeticOperator.Plus.CreateOperation(left, right);
 			}
 			foreach(var receiver in SendingAndReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
@@ -63,10 +63,10 @@ public class SubtractGivingStatement: SubtractStatement {
 		get {
 			var map = new Dictionary<string,List<ArithmeticExpression>>();
 			ArithmeticExpression left = null;
-			for(int i=0; i<VariablesTogether.Length; i++) {
-				var right = new NumericVariableOperand(VariablesTogether[i]);
-				if (left == null) left = right;
-				else left = ArithmeticOperator.Minus.CreateOperation(left, right);
+			foreach (NumericVariable varTogether in VariablesTogether) {
+			    var right = new NumericVariableOperand(varTogether);
+			    if (left == null) left = right;
+			    else left = ArithmeticOperator.Minus.CreateOperation(left, right);
 			}
 			foreach(var receiver in ReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;

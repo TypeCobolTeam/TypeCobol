@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Diagnostics {
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.Diagnostics {
 
 	using Antlr4.Runtime;
 	using System;
@@ -11,9 +13,30 @@
 	using TypeCobol.Compiler.Parser.Generated;
 	using TypeCobol.Tools;
 
+    public class Cobol85CompleteASTChecker : AbstractAstVisitor
+    {
+        public override bool BeginCodeElement(CodeElement codeElement) {
+            //This checker is only for Node after the full AST has been created
+            return false;
+        }
+
+        public override bool Visit(PerformProcedure performProcedureNode) {
+            SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
+            return true;
+        }
+
+        public override bool Visit(Paragraph paragraph) {
+            SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
+            return true;
+        }
+        public override bool Visit(Section section) {
+            SectionOrParagraphUsageChecker.CheckSection(section);
+            return true;
+        }
+    }
 
 
-	class DataDescriptionChecker: CodeElementListener {
+    class DataDescriptionChecker: CodeElementListener {
 		public IList<Type> GetCodeElements() {
 			return new List<Type> { typeof(DataDescriptionEntry) };
 		}
@@ -99,7 +122,7 @@
 		}
 	}
 
-class CallStatementChecker: CodeElementListener {
+    class CallStatementChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() {
 		return new List<Type>() { typeof(CallStatement), };
 	}
@@ -169,7 +192,7 @@ class CallStatementChecker: CodeElementListener {
 
 	}
 
-class InspectConvertingChecker: CodeElementListener {
+    class InspectConvertingChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(InspectConvertingStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as InspectConvertingStatement;
@@ -190,7 +213,7 @@ class InspectConvertingChecker: CodeElementListener {
 }
 
 
-class MergeUsingChecker: CodeElementListener {
+    class MergeUsingChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(MergeStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as MergeStatement;
@@ -200,7 +223,7 @@ class MergeUsingChecker: CodeElementListener {
 	}
 }
 
-class MoveSimpleChecker: CodeElementListener {
+    class MoveSimpleChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(MoveSimpleStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as MoveSimpleStatement;
@@ -213,7 +236,7 @@ class MoveSimpleChecker: CodeElementListener {
 	}
 }
 
-class SearchStatementChecker: CodeElementListener {
+    class SearchStatementChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SearchStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as SearchStatement;
@@ -231,7 +254,7 @@ class SearchStatementChecker: CodeElementListener {
 	}
 }
 
-class SetStatementForAssignmentChecker: CodeElementListener {
+    class SetStatementForAssignmentChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SetStatementForAssignment), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var set = e as SetStatementForAssignment;
@@ -247,7 +270,7 @@ class SetStatementForAssignmentChecker: CodeElementListener {
 	}
 }
 
-class SetStatementForIndexesChecker: CodeElementListener {
+    class SetStatementForIndexesChecker: CodeElementListener {
 	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SetStatementForIndexes), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var set = e as SetStatementForIndexes;
@@ -285,150 +308,137 @@ class SetStatementForIndexesChecker: CodeElementListener {
 
 
 
+    class SectionOrParagraphUsageChecker {
 
-abstract class SymbolAlreadyDeclaredChecker: NodeListener {
-	public abstract IList<Type> GetNodes();
-	public abstract void OnNode(Node node, ParserRuleContext context, CodeModel.Program program);
-	protected static void Check(Node node, List<Node> found) {
-		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol \'"+node.Name+"\' already declared");
-	}
-}
+	    public static void CheckReferenceToParagraphOrSection(PerformProcedure perform) {
+		    var performCE = (PerformProcedureStatement) perform.CodeElement;
+		    SymbolReference symbol;
+		    symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, performCE);
+		    if (symbol != null) performCE.Procedure = symbol;
+		    symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference, performCE);
+		    if (symbol != null) performCE.ThroughProcedure = symbol;
+	    }
+	    /// <summary>Disambiguate between section and paragraph names</summary>
+	    /// <param name="table">Symbol table used for name resolution</param>
+	    /// <param name="symbol">Symbol to disambiguate</param>
+	    /// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
+	    /// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
+	    private static SymbolReference ResolveProcedureName(SymbolTable table, SymbolReference symbol, CodeElement ce) {
+		    if (symbol == null) return null;
 
-class SectionAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
-	public override IList<Type> GetNodes() {
-		return new List<Type>() { typeof(Section), };
-	}
-	public override void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		Check(node, node.SymbolTable.GetSection(node.Name));
-	}
-}
-class ParagraphAlreadyDeclaredChecker: SymbolAlreadyDeclaredChecker {
-	public override IList<Type> GetNodes() {
-		return new List<Type>() { typeof(Paragraph), };
-	}
-	public override void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		Check(node, node.SymbolTable.GetParagraph(node.Name));
-	}
-}
+		    SymbolReference sname = null, pname = null;
+		    var sfound = table.GetSection(symbol.Name);
+		    if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
+		    var pfound = table.GetParagraph(symbol.Name);
+		    if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
 
-
-class SectionOrParagraphUsageChecker: NodeListener {
-	public IList<Type> GetNodes() {
-		return new List<Type>() { typeof(PerformProcedure), };
-	}
-
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var perform = (PerformProcedureStatement)node.CodeElement;
-		SymbolReference symbol;
-		symbol = ResolveProcedureName(node.SymbolTable, perform.Procedure as AmbiguousSymbolReference, node.CodeElement);
-		if (symbol != null) perform.Procedure = symbol;
-		symbol = ResolveProcedureName(node.SymbolTable, perform.ThroughProcedure as AmbiguousSymbolReference, node.CodeElement);
-		if (symbol != null) perform.ThroughProcedure = symbol;
-	}
-	/// <summary>Disambiguate between section and paragraph names</summary>
-	/// <param name="table">Symbol table used for name resolution</param>
-	/// <param name="symbol">Symbol to disambiguate</param>
-	/// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
-	/// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
-	private SymbolReference ResolveProcedureName(SymbolTable table, AmbiguousSymbolReference symbol, CodeElement ce) {
-		if (symbol == null) return null;
-
-		SymbolReference sname = null, pname = null;
-		var sfound = table.GetSection(symbol.Name);
-		if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
-		var pfound = table.GetParagraph(symbol.Name);
-		if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
-
-		if (pname == null) {
-			if (sname == null) {
-				DiagnosticUtils.AddError(ce, "Symbol "+symbol.Name+" is not referenced");
-			} else {
-				if (sfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to section "+symbol.Name);
-				return sname;
-			}
-		} else {
-			if (sname == null) {
-				if (pfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to paragraph "+symbol.Name);
-				return pname;
-			} else {
-				DiagnosticUtils.AddError(ce, "Ambiguous reference to procedure "+symbol.Name);
-			}
-		}
-		return null;
-	}
-}
-
-class VariableUsageChecker: NodeListener {
-	public IList<Type> GetNodes() {
-		return new List<Type>() { typeof(VariableUser), };
-	}
-
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		foreach(var variable in ((VariableUser)node).Variables.Keys) CheckVariable(node, variable);
-
-		var move = node.CodeElement as MoveSimpleStatement;
-		if (move == null) return;
-		var subscripts = move.Subscripts;
-		foreach(var variable in move.Variables.Keys) {
-			ICollection<List<SubscriptExpression>> links;
-		    if (subscripts.ContainsKey(variable)) {
-		        links = subscripts[variable];
+		    if (pname == null) {
+			    if (sname == null) {
+				    DiagnosticUtils.AddError(ce, "Symbol "+symbol.Name+" is not referenced");
+			    } else {
+				    if (sfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to section "+symbol.Name);
+				    return sname;
+			    }
 		    } else {
-		        links = new List<List<SubscriptExpression>>();
-		        links.Add(new List<SubscriptExpression>());
+			    if (sname == null) {
+				    if (pfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to paragraph "+symbol.Name);
+				    return pname;
+			    } else {
+				    DiagnosticUtils.AddError(ce, "Ambiguous reference to procedure "+symbol.Name);
+			    }
 		    }
-		    foreach(var link in links)
-				CheckSubscripting(move, node.SymbolTable, variable, link);
-		}
-	}
-	private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
-		var map = table.GetVariableExplicit(name);
-		foreach(var kv in map) {
-			if (!kv.Key.QualifiedName.Matches(name)) continue;
-			int expected = CheckSubscripting(e, kv.Value[0], subscripts);
-			if (expected == 0 && subscripts.Count > 0)
-				DiagnosticUtils.AddError(e, name+" must not be subscripted");
-			else
-			if (expected < subscripts.Count)
-				DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
-		}
-	}
-	/// <param name="e">Statement to check</param>
-	/// <param name="link">Explicit nodes used in item qualification</param>
-	/// <param name="subscripts">Parsed number of subscripts</param>
-	/// <returns>Expected number of subscripts</returns>
-	private int CheckSubscripting(CodeElement e, LinkedList<Node> link, List<SubscriptExpression> subscripts) {
-		int index = 0;
-		foreach(var item in link) {
-			var datanode = item as DataDescription;
-			if (datanode == null) continue;// not subscriptable
-			var data = datanode.CodeElement();
-			bool isTable = data.IsTableOccurence;
-			if (!isTable) continue;// not subscriptable
-			int max = -1;
-			int actual = -1;
-			if (index < subscripts.Count) int.TryParse(subscripts[index].ToString(), out actual);
-			if (actual == -1)
-				DiagnosticUtils.AddError(e, item.Name+" must be subscripted");
-			var size = data.MaxOccurencesCount;
-			if (size != null) int.TryParse(size.ToString(), out max);
-			if (actual != -1 && max != -1 && actual > max)
-				DiagnosticUtils.AddError(e, item.Name+" subscripting out of bounds: "+actual+" > max="+max);
-			index++;
-		}
-		return index;
-	}
+		    return null;
+	    }
 
-	private void CheckVariable(Node node, QualifiedName name) {
-		var found = node.SymbolTable.GetVariable(name);
-		if (found.Count < 1)
-			if (node.SymbolTable.GetFunction(name).Count < 1)
-				DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
-		if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
-	}
-}
+        protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
+        {
+            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol \'" + node.Name + "\' already declared");
+        }
 
-class WriteTypeConsistencyChecker: NodeListener {
+        public static void CheckSection(Section section)
+        {
+            Check(section, section.SymbolTable.GetSection(section.Name));
+        }
+
+        public static void CheckParagraph(Paragraph paragraph)
+        {
+            Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+        }
+    }
+
+    class VariableUsageChecker: NodeListener {
+	    public IList<Type> GetNodes() {
+		    return new List<Type> { typeof(VariableUser), };
+	    }
+
+	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+		    foreach(var variable in ((VariableUser)node).Variables.Keys) CheckVariable(node, variable);
+
+            //Subscript checker are desactived because it doesn't works.
+            /*
+            var move = node.CodeElement as MoveSimpleStatement;
+		    if (move == null) return;
+		    var subscripts = move.Subscripts;
+		    foreach(var variable in move.Variables.Keys) {
+                ICollection<List<SubscriptExpression>> links;
+                if (subscripts.ContainsKey(variable)) {
+                    links = subscripts[variable];
+                } else {
+                    links = new List<List<SubscriptExpression>>();
+                    links.Add(new List<SubscriptExpression>());
+                }
+                foreach(var link in links)
+                    CheckSubscripting(move, node.SymbolTable, variable, link);
+            }*/
+        }
+	    private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
+		    var map = table.GetVariableExplicit(name);
+		    foreach(var kv in map) {
+			    if (!kv.Key.QualifiedName.Matches(name)) continue;
+			    int expected = CheckSubscripting(e, kv.Value[0], subscripts);
+			    if (expected == 0 && subscripts.Count > 0)
+			        DiagnosticUtils.AddError(e, name+" must not be subscripted");
+			    else 
+                if (expected < subscripts.Count)
+			        DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
+		    }
+	    }
+	    /// <param name="e">Statement to check</param>
+	    /// <param name="link">Explicit nodes used in item qualification</param>
+	    /// <param name="subscripts">Parsed number of subscripts</param>
+	    /// <returns>Expected number of subscripts</returns>
+	    private int CheckSubscripting(CodeElement e, LinkedList<Node> link, List<SubscriptExpression> subscripts) {
+		    int index = 0;
+		    foreach(var item in link) {
+			    var datanode = item as DataDescription;
+			    if (datanode == null) continue;// not subscriptable
+			    var data = datanode.CodeElement();
+			    bool isTable = data.IsTableOccurence;
+			    if (!isTable) continue;// not subscriptable
+			    int max = -1;
+			    int actual = -1;
+			    if (index < subscripts.Count) int.TryParse(subscripts[index].ToString(), out actual);
+			    if (actual == -1)
+				    DiagnosticUtils.AddError(e, item.Name+" must be subscripted");
+			    var size = data.MaxOccurencesCount;
+			    if (size != null) int.TryParse(size.ToString(), out max);
+			    if (actual != -1 && max != -1 && actual > max)
+				    DiagnosticUtils.AddError(e, item.Name+" subscripting out of bounds: "+actual+" > max="+max);
+			    index++;
+		    }
+		    return index;
+	    }
+
+	    private void CheckVariable(Node node, QualifiedName name) {
+		    var found = node.SymbolTable.GetVariable(name);
+		    if (found.Count < 1)
+			    if (node.SymbolTable.GetFunction(name).Count < 1)
+				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
+		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
+	    }
+    }
+
+    class WriteTypeConsistencyChecker: NodeListener {
 	public IList<Type> GetNodes() {
 		return new List<Type>() { typeof(VariableWriter), };
 	}
@@ -486,8 +496,9 @@ class WriteTypeConsistencyChecker: NodeListener {
 	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
-			if (data is DataCondition)
-				return ((DataCondition)data).CodeElement().DataType;
+		    var dataCondition = data as DataCondition;
+		    if (dataCondition != null)
+				return dataCondition.CodeElement().DataType;
 
 			DataDescriptionEntry entry;
 			if (data.CodeElement is DataDescriptionEntry) {
@@ -500,7 +511,7 @@ class WriteTypeConsistencyChecker: NodeListener {
 			    if (node is DataDescription) {
 			        entry = (DataDescriptionEntry) node.CodeElement;
 			    } else {
-                        entry = GetDataDescriptionEntry(table, redefines);
+                    entry = GetDataDescriptionEntry(table, redefines);
 			    }
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
 			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
