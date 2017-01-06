@@ -59,14 +59,18 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         public void Execute()
         {
+            var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
+#if GENERATOR2
+            if (typegen == typeof(Codegen.Nodes.TypeCobolQualifier))
+                return;//Now handle by qualifier Action
+#endif
             // retrieve data
             int index;
             if (DestinationURI.EndsWith(".end")) index = this.Destination.Parent.Children.Count - 1;
             else index = this.Destination.Parent.IndexOf(this.Destination);
 
             if (index > -1)
-            {
-                var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
+            {                
                 var nodegen = (Node)Activator.CreateInstance(typegen, this.Source);
                 this.Destination.Parent.Add(nodegen, index + 1);
             }

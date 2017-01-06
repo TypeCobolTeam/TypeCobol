@@ -144,8 +144,9 @@ namespace TypeCobol.Codegen.Generators
             /// Item2 = to
             /// Item3 = span on the last line
             /// Item4 = Node's Target Line Numbers.
+            /// Item5 = Node's Target Line offsets.
             /// </summary>
-            public Tuple<int, int, int, List<int>> Positions;
+            public Tuple<int, int, int, List<int>, List<int>> Positions;
             /// <summary>
             /// The Buffer where this Node is Generated.
             /// </summary>
@@ -317,10 +318,11 @@ namespace TypeCobol.Codegen.Generators
             int line_to = data.Positions.Item2;
             int span = data.Positions.Item3;
             List<int> lines = data.Positions.Item4;
+            List<int> line_offsets = data.Positions.Item5;
             SourceDocument.SourceLine lineindex_srcline = Generator.TargetDocument[lineindex_buffer];            
             SourceDocument.SourceLine line = Generator.TargetDocument[lines[0] - 1];
             int delta = line.From - lineindex_srcline.From;
-            data.Positions = new Tuple<int, int, int, List<int>>(delta + line_from, delta + line_to, span, lines);
+            data.Positions = new Tuple<int, int, int, List<int>, List<int>>(delta + line_from, delta + line_to, span, lines, line_offsets);
             Nodes.Add(data);
             //----------------------------------------------
             //Special case for a Function Declaration Node
@@ -394,6 +396,7 @@ namespace TypeCobol.Codegen.Generators
                     Nodes[i].Buffer.AddPosition(to);//To Pos
                     Nodes[i].From = from;
                     Nodes[i].To = to;
+                    //Now if the node has qualifiers the substitution must take place here
                 }
             }
         }

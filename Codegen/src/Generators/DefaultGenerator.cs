@@ -137,7 +137,13 @@ namespace TypeCobol.Codegen.Generators
                         bool bFirst = true;
                         Position from = mapper.Nodes[node_index].From;
                         Position to = mapper.Nodes[node_index].To;
-                        foreach (var line in node.Lines)
+                        bool bIsGenerateAndReplace = node is GeneratedAndReplace;
+                        if (bIsGenerateAndReplace)
+                        {//The node has a source code that must be replace
+                            string code = (node as GeneratedAndReplace).ReplaceCode;
+                            curSourceText.Insert(code, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                        }
+                        else foreach (var line in node.Lines)
                         {
                             StringWriter sw = new StringWriter();
                             if (bFirst && !bIsFunctionDecl)
@@ -166,11 +172,14 @@ namespace TypeCobol.Codegen.Generators
                             }
                             from = to;
                             sw.Close();
-                        }                        
-                        //Pad a splitted segment
-                        int span = mapper.Nodes[node_index].Positions.Item3;
-                        string pad = new string(' ', span);
-                        curSourceText.Insert(pad, to.Pos, to.Pos);
+                        }
+                        if (!bIsGenerateAndReplace)
+                        {
+                            //Pad a splitted segment
+                            int span = mapper.Nodes[node_index].Positions.Item3;
+                            string pad = new string(' ', span);
+                            curSourceText.Insert(pad, to.Pos, to.Pos);
+                        }
                     }
                     //This node is now generated.
                     generated_node[node_index] = true;

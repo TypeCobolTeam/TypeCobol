@@ -147,6 +147,11 @@ namespace TypeCobol.Codegen.Actions
             {
                 get { return true; }
             }
+
+            public override bool VisitNode(IASTVisitor astVisitor)
+            {
+                return true;
+            }
         }
 
         /// <summary>
