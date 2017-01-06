@@ -12,6 +12,16 @@ public interface Generated {
 	bool IsLeaf { get; }
 }
 
+/// <summary>
+/// A Generated interface, which say the the generated code must be replaced as
+/// a whole text rather than as list of lines.
+/// </summary>
+public interface GeneratedAndReplace : Generated
+{
+    /// <summary>Replace code.</summary>
+    string ReplaceCode { get; }
+}
+
 internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 	private Solver Solver;
     /// <summary>
